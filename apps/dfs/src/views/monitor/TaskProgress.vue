@@ -65,7 +65,7 @@
           <ElTable :data="cdcLastTimes">
             <ElTableColumn :label="$t('task_monitor_source_library')" prop="sourceConnectionName"></ElTableColumn>
             <ElTableColumn :label="$t('task_monitor_time')" prop="cdcTime">
-              <template slot-scope="scope">{{ $moment(scope.row.cdcTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
+              <template slot-scope="scope">{{ scope.row.cdcTimeFmt }}</template>
             </ElTableColumn>
             <ElTableColumn :label="$t('task_monitor_target_library')" prop="targetConnectionName"></ElTableColumn>
           </ElTable>
@@ -119,6 +119,7 @@ import Chart from 'web-core/components/chart'
 import EchartHeader from './EchartHeader'
 import { getOverviewData } from '../task/copy/util'
 import { formatTimeByTime } from '@/util'
+import dayjs from 'dayjs'
 
 let lastMsg = ''
 export default {
@@ -229,7 +230,12 @@ export default {
   },
   computed: {
     cdcLastTimes() {
-      return this.task?.cdcLastTimes || []
+      return (
+        this.task?.cdcLastTimes?.map(item => {
+          item.cdcTimeFmt = dayjs(item.cdcTime).format('YYYY-MM-DD HH:mm:ss')
+          return item
+        }) || []
+      )
     }
   },
   watch: {

@@ -56,10 +56,6 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
-          <i class="iconfont icon-hanshu back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button> -->
         <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
@@ -71,7 +67,6 @@
           size="mini"
           @click="create"
         >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           {{ $t('task_create_task') }}
         </el-button>
       </div>
@@ -106,29 +101,14 @@
           </span>
         </template>
       </el-table-column>
-      <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
       <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
           <StatusItem :value="row.statusResult"></StatusItem>
         </template>
       </el-table-column>
-
-      <!-- <el-table-column
-        prop="lag"
-        :label="$t('task_list_execution_status')"
-        width="180"
-        sortable="custom"
-      ></el-table-column> -->
-
-      <!--引擎暂时未回写启动时间，暂时注释-->
-      <!--<el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
-        <template #default="{ row }">
-          {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
-        </template>
-      </el-table-column>-->
       <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="custom">
         <template #default="{ row }">
-          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
+          {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="270" fixed="right">
@@ -170,26 +150,12 @@
               {{ $t('button_edit') }}
             </ElLink>
             <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
-            <!-- <ElLink
-              v-readonlybtn="'SYNC_job_edition'"
-              style="margin-left: 10px"
-              type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) ||
-                row.sync_type !== 'initial_sync' ||
-                row.status === 'running'
-              "
-              @click="handleTaskscheduling(row.id, row)"
-            >
-              {{ $t('task_list_button_schedule') }}
-            </ElLink> -->
             <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
             <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
               <ElLink type="primary" class="rotate-90">
-                <!-- {{ $t('button.more') }} -->
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
@@ -290,20 +256,14 @@
                     :style="{ background: item.color, width: item.value + '%' }"
                   ></span>
                 </div>
-                <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
-                <!-- <span :class="['status-' + previewData.status, 'status-block']">
-                  {{ $t('task_preview_status_' + previewData.status) }}
-                </span> -->
               </div>
             </div>
           </div>
         </header>
         <ul class="info-list">
           <li v-for="item in previewList" :key="item.label">
-            <!-- {{ previewData[item] }} -->
             <template v-if="!!item.value">
               <VIcon class="icon mr-4">{{ item.label }}</VIcon>
-              <!-- <img class="label-img" :src="getImgByData(item.label)" /> -->
               <div class="label-text">
                 <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
                 <div
@@ -326,18 +286,16 @@
 <script>
 import factory from '../../../api/factory'
 const Task = factory('Task')
-// const cluster = factory('cluster');
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
-// import VIcon from '@/components/VIcon'
 import Upload from '@/components/UploadDialog'
 import StatusItem from '../StatusItem'
 import Drawer from '@/components/Drawer'
 import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
-// import { getTaskBtnDisabled } from '../util'
+import dayjs from 'dayjs'
 
 let timeout = null
 export default {
@@ -355,13 +313,10 @@ export default {
       searchParams: {
         keyword: '',
         status: '',
-        progress: '',
-        executionStatus: '',
-        timeData: '',
-        syncType: ''
+        type: ''
       },
       order: 'createTime DESC',
-      progressOptions: [
+      typeOptions: [
         {
           label: this.$t('dataFlow.initial_sync'),
           value: 'initial_sync'
@@ -411,16 +366,10 @@ export default {
     },
     statusOptions() {
       let options = [{ label: this.$t('task_list_status_all'), value: '' }]
-      // let op = {}
       let map = ETL_STATUS_MAP
       for (const key in map) {
         const item = map[key]
         options.push({ label: item.text, value: key })
-        // let value = key
-        // if (options[item.text]) {
-        //   value = options[item.text] + ',' + value
-        // }
-        // options[item.text] = value
       }
       return options
     }
@@ -433,18 +382,21 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
-    let { status } = this.$route.query
-    this.searchParams.status = status ?? ''
+    this.searchParams = this.$route.query
   },
   beforeDestroy() {
     clearInterval(timeout)
   },
   watch: {
     '$route.query'() {
+      this.searchParams = this.$route.query
       this.table.fetch(1)
     }
   },
   methods: {
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
     dataflowChange(data) {
       if (data && data.data && data.data.fullDocument) {
         let dataflow = data.data.fullDocument
@@ -473,23 +425,17 @@ export default {
       this.searchParams = {
         keyword: '',
         status: '',
-        progress: '',
-        executionStatus: '',
-        timeData: '',
-        syncType: ''
+        type: ''
       }
 
       this.multipleSelection = []
       this.table.fetch(1)
     },
     getData({ page, tags }) {
-      let region = this.$route.query.region
       let { current, size } = page
-      let { keyword, status, progress, executionStatus, timeData, syncType, agentId } = this.searchParams
+      let { keyword, status, type } = this.searchParams
 
-      let where = {
-        syncType: 'sync'
-      }
+      let where = {}
       let fields = {
         id: true,
         name: true,
@@ -510,51 +456,9 @@ export default {
           { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
         ]
       }
-      if (agentId) {
-        where['agentId'] = agentId
-        status = status || 'running'
-      }
       if (tags && tags.length) {
         where['listtags.id'] = {
           in: tags
-        }
-      }
-      region && (where['platformInfo.region'] = region)
-      syncType && (where['type'] = syncType)
-      if (executionStatus) {
-        if (executionStatus === 'Lag') {
-          // where['stats.stagesMetrics'] = {
-          //   $elemMatch: {
-          //     status: 'cdc',
-          //     replicationLag: { $gt: 0 }
-          //   }
-          // }
-          where.Lag = true
-        } else if (executionStatus === 'initialized') {
-          where.and = [
-            {
-              'stats.stagesMetrics.status': {
-                inq: ['initialized']
-              }
-            },
-            {
-              'stats.stagesMetrics.status': {
-                nin: ['cdc', 'initializing']
-              }
-            }
-          ]
-        } else {
-          where['stats.stagesMetrics.status'] = executionStatus
-        }
-      }
-      if (timeData && timeData.length) {
-        let dates = this.timeData.concat()
-        if (dates[1]) {
-          dates[1] = new Date(dates[1])
-          dates[1].setHours(dates[1].getHours() + 24)
-        }
-        where.createTime = {
-          between: dates
         }
       }
       if (status) {
@@ -566,7 +470,7 @@ export default {
           where.status = status
         }
       }
-      progress && (where['type'] = progress)
+      type && (where['type'] = type)
       let filter = {
         order: this.order,
         limit: size,
@@ -574,7 +478,6 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      delete filter.where.mappingTemplate
       return this.$api('Task')
         .get({
           filter: JSON.stringify(filter)
@@ -592,10 +495,6 @@ export default {
     },
 
     cookRecord(item) {
-      let platformInfo = item.platformInfo
-      if (platformInfo && platformInfo.regionName) {
-        item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
-      }
       let getLag = lag => {
         let r = ''
         if (lag) {
@@ -625,18 +524,6 @@ export default {
           if (d > 0) {
             r = parseInt(d) + this.$t('timeToLive.d') + r
           }
-          // let m = this.$moment.duration(lag)
-          // if (m.days()) {
-          //   r = m.days() + 'd'
-          // } else if (m.hours()) {
-          //   r = m.hours() + 'h'
-          // } else if (m.minutes()) {
-          //   r = m.minutes() + 'min'
-          //   // } else if (m.seconds()) {
-          //   //   r = m.seconds() + 's'
-          // } else {
-          //   r = lag + 's'
-          // }
         }
         return r
       }
@@ -685,10 +572,6 @@ export default {
         })
     },
     create() {
-      // let routeUrl = this.$router.resolve({
-      //   name: 'taskNew'
-      // })
-      // window.open(routeUrl.href, '_blank')
       this.$router.push({
         name: 'DataflowNew'
       })
@@ -738,14 +621,6 @@ export default {
     },
     handleImport() {
       this.$refs.upload.show()
-      // let routeUrl = this.$router.resolve({
-      //   // path: '/upload?type=dataflow'
-      //   name: 'upload',
-      //   query: {
-      //     type: 'dataflow'
-      //   }
-      // })
-      // window.open(routeUrl.href, '_blank')
     },
     getConfirmMessage(operateStr, isBulk, name) {
       let title = operateStr + '_confirm_title',
@@ -814,16 +689,6 @@ export default {
             inq: ids
           }
         }
-        // where: {
-        //   or: ids.map(item => {
-        //     return {
-        //       'contextMap.dataFlowId': {
-        //         like: item
-        //       }
-        //     }
-        //   }),
-        //   level: 'ERROR'
-        // }
       }
 
       this.$api('Task')
@@ -1054,7 +919,6 @@ export default {
     },
     // 任务调度设置保存
     saveTaskSetting() {
-      // let data = this.formSchedule.taskData;
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
@@ -1073,7 +937,6 @@ export default {
         })
     },
     handleGoFunction() {
-      // top.location.href = '/#/JsFuncs'
       this.$router.push({
         name: 'function'
       })
@@ -1122,7 +985,7 @@ export default {
           }
 
           if (['createTime'].includes(item)) {
-            data[item] = data[item] ? this.$moment(data[item]).format('YYYY-MM-DD HH:mm:ss') : '-'
+            data[item] = this.formatTime(data[item])
           }
           previewList.push({ label: item, value: data[item] || '-' })
         }
@@ -1141,25 +1004,10 @@ export default {
         },
         {
           label: this.$t('task_list_sync_type'),
-          key: 'progress',
+          key: 'type',
           type: 'select-inner',
-          items: this.progressOptions
+          items: this.typeOptions
         },
-        // {
-        //   label: this.$t('task_list_execution_status'),
-        //   key: 'executionStatus',
-        //   type: 'select-inner',
-        //   menuMinWidth: '250px',
-        //   items: async () => {
-        //     let option = ['initializing', 'cdc', 'initialized', 'Lag']
-        //     return option.map(item => {
-        //       return {
-        //         label: this.$t('task_list_status_' + item),
-        //         value: item
-        //       }
-        //     })
-        //   }
-        // },
         {
           placeholder: this.$t('task_list_search_placeholder'),
           key: 'keyword',

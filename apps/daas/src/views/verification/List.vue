@@ -49,8 +49,12 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></el-table-column>
-      <!-- <el-table-column prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></el-table-column> -->
+      <el-table-column
+        prop="sourceTotal"
+        width="120"
+        align="center"
+        :label="$t('verify_history_source_total_rows')"
+      ></el-table-column>
       <el-table-column :label="$t('dataVerification.verifyResult')" width="180">
         <template slot-scope="scope">
           <div class="flex align-center">
@@ -95,7 +99,7 @@
         :label="$t('dataVerification.verifyTime')"
         prop="lastStartTime"
         sortable="lastStartTime"
-        width="140"
+        width="150"
       ></el-table-column>
       <el-table-column :label="$t('dataVerification.operation')" width="250" fixed="right">
         <template slot-scope="scope">
@@ -149,6 +153,8 @@ import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
+import dayjs from 'dayjs'
+
 let timeout = null
 export default {
   components: {
@@ -158,7 +164,6 @@ export default {
   },
   data() {
     return {
-      // isClassShow: true,
       searchParams: {
         keyword: '',
         inspectMethod: '',
@@ -225,7 +230,6 @@ export default {
     // 批量导入
     handleImport() {
       let routeUrl = this.$router.resolve({
-        // path: '/upload?type=Inspect'
         name: 'upload',
         query: {
           type: 'Inspect'
@@ -306,9 +310,7 @@ export default {
                 sourceTotal = result.source_total
                 targetTotal = result.target_total
               }
-              item.lastStartTime = item.lastStartTime
-                ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
+              item.lastStartTime = item.lastStartTime ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.sourceTotal = sourceTotal
               item.targetTotal = targetTotal
               return item
@@ -324,29 +326,22 @@ export default {
       this[command](ids, node)
     },
     toTableInfo(id) {
-      let url = ''
-      let route = this.$router.resolve({
+      this.$router.push({
         name: 'dataVerifyDetails',
         params: {
           id
         }
       })
-      url = route.href
-      window.open(url, '_blank')
     },
     history(id) {
-      let url = ''
-      let route = this.$router.resolve({
+      this.$router.push({
         name: 'dataVerifyHistory',
         params: {
           id
         }
       })
-      url = route.href
-      window.open(url, '_blank')
     },
     startTask(id) {
-      // let multipleSelection = id ? [id] : this.multipleSelection
       this.$api('Inspects')
         .update(
           {
@@ -382,7 +377,6 @@ export default {
         .getId(flowId)
         .then(res => {
           if (['running', 'stop'].includes(res.data.status)) {
-            // this.$router.push('dataVerification/' + id + '/edit')
             this.$router.push({
               name: 'dataVerificationEdit',
               params: {
@@ -454,7 +448,6 @@ export default {
   }
   .search-bar {
     display: flex;
-    // padding-left: 20px;
     .item {
       margin-right: 10px;
     }

@@ -71,9 +71,6 @@
         </template>
       </DynamicScroller>
     </div>
-    <!--    <div class="logs-list empty flex align-items-center justify-content-center" v-else>-->
-    <!--      <div class="p-4">{{ $t('message.noData') }}</div>-->
-    <!--    </div>-->
   </div>
 </template>
 <script>

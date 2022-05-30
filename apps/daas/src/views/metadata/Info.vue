@@ -1,12 +1,5 @@
 <template>
   <section class="metadata-info section-wrap" v-loading="loading">
-    <!-- <header class="header">
-      <span @click="back">
-        {{ $t('metadata.details.dataDirectory') }}
-      </span>
-      / {{ $t('metadata.details.dataDetails') }}
-    </header> -->
-
     <el-container class="metadata-content">
       <!-- 元数据管理详情 头部信息 start -->
       <el-header class="matadata-head">
@@ -65,13 +58,6 @@
               <ElLink type="primary" @click.stop="asideFalg = false" class="iconfont icon-outdent"></ElLink>
             </div>
             <ul class="metadata-aside-main pt-4">
-              <!-- <li>
-									<span class="label">{{ $t('metadata.details.name') }}：</span>
-									<span>{{ metadataDataObj.alias_name }}</span>
-									<el-button type="text" @click="handleChangeName">{{
-										$t('metadata.details.renamed')
-									}}</el-button>
-								</li> -->
               <li>
                 <span class="label">{{ $t('metadata.details.originalTableName') }}：</span>
                 <el-tooltip :content="metadataDataObj.original_name" placement="right">
@@ -96,27 +82,17 @@
                   <span>{{ metadataDataObj.qualified_name }}</span>
                 </el-tooltip>
               </li>
-              <!-- <li>
-									<span class="label">{{ $t('metadata.details.uniquelyIdentifies') }}：</span>
-									<el-tooltip :content="metadataDataObj.qualified_name" placement="right">
-										<span>{{ metadataDataObj.qualified_name }}</span>
-									</el-tooltip>
-								</li> -->
               <li>
                 <span class="label">{{ $t('metadata.details.source') }}：</span>
                 <span>{{ metadataDataObj.create_source }}</span>
               </li>
               <li>
                 <span class="label">{{ $t('metadata.details.creationTime') }}：</span>
-                <span>{{ $moment(metadataDataObj.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                <span>{{ metadataDataObj.createTimeFmt }}</span>
               </li>
-              <!-- <li>
-									<span class="label">{{ $t('metadata.details.founder') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
-								</li> -->
               <li>
                 <span class="label">{{ $t('metadata.details.changeTime') }}：</span>
-                <span>{{ $moment(metadataDataObj.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                <span>{{ metadataDataObj.lastUpdatedFmt }}</span>
               </li>
               <li>
                 <span class="label">{{ $t('metadata.details.Modifier') }}：</span>
@@ -140,22 +116,6 @@
                   $t('button_delete')
                 }}</ElLink>
               </li>
-              <!-- <li>
-									<span class="label">{{ $t('metadata.details.tableLayering') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
-								</li>
-								<li>
-									<span class="label">{{ $t('metadata.details.theme') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
-								</li>
-								<li>
-									<span class="label">{{ $t('metadata.details.taskReference') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
-								</li>
-								<li>
-									<span class="label">{{ $t('metadata.details.APIReference') }}：</span>
-									<span>{{ metadataDataObj.original_name }}</span>
-								</li> -->
             </ul>
           </div>
         </el-aside>
@@ -171,8 +131,6 @@
                 :label="item.name"
                 :name="item.key"
               >
-                <!-- <span slot="label" v-if="item.mateTypes.includes(metadataDataObj.meta_type)">{{ item.name }}</span> -->
-
                 <!-- tab页面 end -->
                 <div class="table-box" v-if="activePanel == 'model'">
                   <div class="table-page-topbar">
@@ -352,19 +310,6 @@
               </el-tab-pane>
             </template>
           </el-tabs>
-          <!-- <div class="tap-nav">
-            <ul class="mune">
-              <li
-                v-for="item in menuList"
-                :key="item.icon"
-                :class="activePanel === item.key ? 'active' : ''"
-                @click="changePanel(item.key)"
-              >
-                <i :class="['iconfont', item.icon]"></i>
-                <span slot="title">{{ item.name }}</span>
-              </li>
-            </ul>
-          </div> -->
         </div>
         <!-- 元数据管理详情 主要内容 end -->
       </el-main>
@@ -443,6 +388,8 @@ import Preview from './Preview'
 import Pipeline from './Pipeline'
 import Collections from './Collections'
 import VIcon from '@/components/VIcon'
+import dayjs from 'dayjs'
+
 export default {
   components: {
     VersionList,
@@ -483,31 +430,6 @@ export default {
           ],
           key: 'version'
         }
-        // {
-        //   name: this.$t('metadata.details.index.title'),
-        //   mateTypes: ['collection'],
-        //   key: 'indexes'
-        // },
-        // {
-        //   name: this.$t('metadata.details.validation.title'),
-        //   mateTypes: ['collection'],
-        //   key: 'validation'
-        // },
-        // {
-        //   name: this.$t('metadata.details.pipeline.title'),
-        //   mateTypes: ['collection', 'mongo_view'],
-        //   key: 'pipeline'
-        // },
-        // {
-        //   name: this.$t('metadata.details.preview.title'),
-        //   mateTypes: ['collection', 'api'],
-        //   key: 'preview'
-        // },
-        // {
-        //   name: this.$t('metadata.details.collection'),
-        //   mateTypes: ['database'],
-        //   key: 'collections'
-        // },
       ],
       description: '',
       searchParams: {},
@@ -591,34 +513,6 @@ export default {
     }
   },
   methods: {
-    // 获取数据
-    // async handleGetDataApi() {
-    // 	let params = {
-    // 		where: {
-    // 			databaseId: {
-    // 				regexp: `^${this.$route.query.id}$`
-    // 			},
-    // 			meta_type: this.metadataDataObj.meta_type,
-    // 			id: {
-    // 				neq: this.metadataDataObj.id
-    // 			},
-    // 			'relation.table_name': {
-    // 				neq: this.metadataDataObj.original_name
-    // 			}
-    // 		},
-    // 		fields: {
-    // 			histories: false,
-    // 			original_name: true,
-    // 			id: true
-    // 		}
-    // 	};
-
-    // 	let resultData = await this.$api('MetadataInstances').get({ filter: JSON.stringify(params) });
-
-    // 	if (resultData.data) {
-    // 		this.getTableData = resultData.data;
-    // 	}
-    // },
     changePanel(key) {
       this.activePanel = key
     },
@@ -639,8 +533,11 @@ export default {
       return this.$api('MetadataInstances')
         .findTablesById([id])
         .then(res => {
-          this.metadataDataObj = res.data
-          this.pageTotal = res.data.fields?.length || 0
+          let data = res.data
+          data.createTimeFmt = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
+          data.lastUpdatedFmt = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
+          this.metadataDataObj = data
+          this.pageTotal = data.fields?.length || 0
           this.setCurrentPageData(this.metadataDataObj.fields || [])
           if (['table', 'collection'].includes(this.metadataDataObj.meta_type)) {
             this.activePanel = 'model'

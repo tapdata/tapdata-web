@@ -15,7 +15,7 @@
       <div v-if="inspect.inspectMethod !== 'row_count'">
         <div class="flex align-items-center">
           <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
-            {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+            {{ $t('verify_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
             <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
               $t('verify_button_diff_task_history')
             }}</ElLink>
@@ -109,6 +109,8 @@
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import VIcon from '@/components/VIcon'
+import dayjs from 'dayjs'
+
 export default {
   components: { ResultTable, ResultView, VIcon },
   data() {
@@ -168,6 +170,7 @@ export default {
         .then(data => {
           let inspect = data
           let inspectResult = inspect.InspectResult
+          inspect.lastStartTimeFmt = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
           this.inspect = inspect
           this.$axios
             .get('tm/api/InspectResults/findById', {

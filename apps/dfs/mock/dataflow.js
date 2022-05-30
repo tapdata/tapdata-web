@@ -1,6 +1,6 @@
 const Mock = require('mockjs')
 const Random = Mock.Random
-const moment = require('moment')
+const dayjs = require('dayjs')
 
 module.exports = {
   '/tm/api/DataFlows/chart': {
@@ -1360,7 +1360,7 @@ module.exports = {
           let obj = {
             outputSize: Random.integer(0, 100),
             outputCount: Random.integer(0, 100),
-            t: moment(currentTime + i * 5000).format('YYYY-MM-DD HH:mm:ss'),
+            t: dayjs(currentTime + i * 5000).format('YYYY-MM-DD HH:mm:ss'),
             inputSize: Random.integer(0, 100),
             inputCount: Random.integer(0, 100)
           }

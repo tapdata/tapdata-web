@@ -86,8 +86,9 @@
 </template>
 <script>
 import i18n from '@/i18n'
-
 import StatusTag from '@/components/StatusTag'
+import dayjs from 'dayjs'
+
 export default {
   name: 'TaskPrgress',
   props: {
@@ -148,7 +149,7 @@ export default {
       return list.map(m => {
         let time = m.status === 'running' ? m.start : m.end
         if (time) {
-          time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss')
+          time = dayjs(time).format('YYYY-MM-DD HH:mm:ss')
         }
         return {
           label: this.$t(`milestone_label_${m.code.toLowerCase()}`),

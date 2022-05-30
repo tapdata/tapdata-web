@@ -618,6 +618,7 @@ import FieldMapping from '@/components/field-mapping/main'
 import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from '../task/const'
 import { uniqueArr, getDatabaseTypes } from '@/util'
+import dayjs from 'dayjs'
 
 let defaultConfig = []
 export default {
@@ -1787,10 +1788,9 @@ export default {
       }
       // same day
       if (
-        this.$moment(current).format('YYYY-MM-DD') ===
-        this.$moment(this.settingModel.scheduleTime || current).format('YYYY-MM-DD')
+        dayjs(current).format('YYYY-MM-DD') === dayjs(this.settingModel.scheduleTime || current).format('YYYY-MM-DD')
       ) {
-        options.selectableRange = this.$moment(current).format('HH:mm:ss') + '-23:59:59'
+        options.selectableRange = dayjs(current).format('HH:mm:ss') + '-23:59:59'
       } else {
         options.selectableRange = '00:00:00' + '-23:59:59'
       }

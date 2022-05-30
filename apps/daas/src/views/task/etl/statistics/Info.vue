@@ -866,6 +866,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.info-line {
+  flex: 1;
+  overflow: hidden;
+}
 .info-line > span {
   line-height: 26px;
 }

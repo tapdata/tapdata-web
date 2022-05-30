@@ -264,6 +264,7 @@ import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
 import ErrorLogDialog from './components/ErrorLogDialog'
 import { isFinished } from './copy/util'
+import dayjs from 'dayjs'
 let timer = null
 
 export default {
@@ -599,10 +600,10 @@ export default {
       let statusInfo = TASK_STATUS_MAP[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
-      item.startTimeFmt = item.startTime ? this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+      item.startTimeFmt = item.startTime ? dayjs(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       item.nextScheduledTimeFmt =
         item.setting.isSchedule && item.nextScheduledTime
-          ? this.$moment(item.nextScheduledTime).format('YYYY-MM-DD HH:mm:ss')
+          ? dayjs(item.nextScheduledTime).format('YYYY-MM-DD HH:mm:ss')
           : '-'
       item.isFinished = isFinished(item) // 全量状态下，任务完成状态时，前端识别为已停止
       return item

@@ -68,6 +68,7 @@
 
 <script>
 import TablePage from '@/components/TablePage'
+import dayjs from 'dayjs'
 
 export default {
   components: { TablePage },
@@ -112,7 +113,7 @@ export default {
             total: res.data?.total,
             data: list.map(item => {
               item.typeFmt = this.typeMapping[item.type]
-              item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }

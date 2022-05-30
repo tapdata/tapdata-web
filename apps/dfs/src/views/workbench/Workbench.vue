@@ -126,6 +126,7 @@ import i18n from '@/i18n'
 import VIcon from '@/components/VIcon'
 import Chart from 'web-core/components/chart'
 import { formatTime, numToThousands } from '@/util'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Workbench',
@@ -447,7 +448,7 @@ export default {
       window.open(item.url, '_blank')
     },
     formatFromNow(date) {
-      return this.$moment(date)?.fromNow()
+      return dayjs(date)?.fromNow()
     },
     hideCustomTip() {
       setTimeout(() => {

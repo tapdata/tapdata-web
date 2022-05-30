@@ -4,17 +4,13 @@
       <ElTable :data="page.data" height="100%">
         <ElTableColumn :label="$t('dataVerification_verifyTime')" prop="start">
           <template slot-scope="scope">
-            {{
-              scope.row.start
-                ? $moment(scope.row.start).format('YYYY-MM-DD HH:mm:ss')
-                : $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')
-            }}
+            {{ scope.row.startTimeFmt }}
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('dataVerification_completeTime')" prop="last_updated" align="center" width="180">
           <template slot-scope="scope">
             <span>
-              {{ scope.row.last_updated ? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}
+              {{ scope.row.lastUpdatedFmt }}
             </span>
           </template>
         </ElTableColumn>
@@ -83,6 +79,8 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import dayjs from 'dayjs'
+
 export default {
   components: { VIcon },
   data() {
@@ -151,7 +149,15 @@ export default {
       this.searchRequest(filter, where)
         .then(([countData, data]) => {
           if (data) {
-            this.page.data = data
+            this.page.data =
+              data?.map(item => {
+                item.startTimeFmt = item.start
+                  ? dayjs(item.start).format('YYYY-MM-DD HH:mm:ss')
+                  : dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+
+                item.lastUpdatedFmt = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
+                return item
+              }) || []
             this.page.current = currentPage
             this.page.total = countData.count
           }

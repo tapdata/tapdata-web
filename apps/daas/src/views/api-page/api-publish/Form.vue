@@ -124,7 +124,7 @@ import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 import VirtualSelect from 'web-core/components/virtual-select'
 export default {
-  name: 'ModuleForm',
+  name: 'ApiPublishForm',
   components: { CustomerApiForm, SelectClassify, VirtualSelect },
   data() {
     return {
@@ -550,7 +550,7 @@ export default {
             .then(res => {
               if (res) {
                 this.$router.push({
-                  name: 'modules'
+                  name: 'apiPublish'
                 })
                 this.$message.success(this.$t('message_save_ok'))
               }
@@ -569,7 +569,7 @@ export default {
     },
     // 返回列表
     handleBack() {
-      this.$router.push({ name: 'modules' })
+      this.$router.push({ name: 'apiPublish' })
     },
     // 表单
     getForm() {

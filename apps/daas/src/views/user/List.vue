@@ -105,7 +105,7 @@
       </el-table-column>
       <el-table-column :label="$t('user_list_change_time')" prop="last_updated" sortable="last_updated">
         <template slot-scope="scope">
-          {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('user_list_source')" prop="source">
@@ -219,6 +219,8 @@
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import FilterBar from '@/components/filter-bar'
+import dayjs from 'dayjs'
+
 export default {
   components: {
     TablePage,
@@ -442,6 +444,7 @@ export default {
               if (item.account_status === 0) {
                 item.status = 'rejected'
               }
+              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }

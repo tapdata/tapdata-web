@@ -145,6 +145,7 @@ import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
 import { toRegExp } from '@/utils/util'
 import { getSubTaskStatus } from '@/utils/util'
+import dayjs from 'dayjs'
 
 export default {
   components: { TablePage, FilterBar, Drawer },
@@ -203,8 +204,8 @@ export default {
           return {
             total: res.data?.total,
             data: list.map(item => {
-              item.createTimeFmt = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              item.cacheTimeAtFmt = this.$moment(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
+              item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              item.cacheTimeAtFmt = dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
 
               let statuses = item.statuses
               item.statusResult = getSubTaskStatus(statuses)[0].status

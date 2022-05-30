@@ -9,7 +9,7 @@
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column width="360" :label="$t('share_list_name')" :show-overflow-tooltip="true">
+      <el-table-column width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -26,16 +26,16 @@
           {{ scope.row.pointTime }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_time')" sortable></el-table-column>
+      <el-table-column sortable width="120" :label="$t('share_list_time')"></el-table-column>
       <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
-      <el-table-column width="100" prop="status" :label="$t('share_list_status')">
+      <el-table-column width="120" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
           <span :class="['status-' + row.statusResult, 'status-block']">
             {{ $t('task_preview_status_' + row.statusResult) }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column width="280" fixed="right" :label="$t('column_operation')">
+      <el-table-column width="250" fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
           <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
             $t('task_list_run')
@@ -160,6 +160,7 @@
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
+import dayjs from 'dayjs'
 
 let timeout = null
 export default {
@@ -283,11 +284,11 @@ export default {
             data: list.map(item => {
               this.$set(item, 'pointTime', pointTime)
               if (item.syncTimePoint === 'current') {
-                item.pointTime = this.$moment(pointTime).format('YYYY-MM-DD HH:mm:ss')
+                item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
               } else {
                 item.pointTime = item.syncTimeZone
               }
-              item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               let statuses = item.statuses
               item.disabledData = getTaskBtnDisabled(item)
               item.statusResult = getSubTaskStatus(statuses)[0].status

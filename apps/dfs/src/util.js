@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { confirm } from 'web-core'
 import i18n from '@/i18n'
 
@@ -29,23 +29,23 @@ export function toRegExp(word) {
 }
 export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
-  return date ? moment(date).format(format) : ''
+  return date ? dayjs(date).format(format) : ''
 }
 // 根据类型做时间格式化，精确到哪种级别
 export const formatTimeByTime = (time, type) => {
   let result = time
   switch (type) {
     case 'second':
-      result = moment(time).format('HH:mm:ss')
+      result = dayjs(time).format('HH:mm:ss')
       break
     case 'minute':
-      result = moment(time).format('HH:mm')
+      result = dayjs(time).format('HH:mm')
       break
     case 'hour':
-      result = moment(time).format('HH:00')
+      result = dayjs(time).format('HH:00')
       break
     case 'day':
-      result = moment(time).format('MM-DD')
+      result = dayjs(time).format('MM-DD')
       break
   }
   return result

@@ -167,6 +167,7 @@ import i18n from '@/i18n'
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import FilterBar from '@/components/filter-bar'
+import dayjs from 'dayjs'
 
 let timer = null
 export default {
@@ -448,7 +449,7 @@ export default {
           targetTotal = result.firstTargetTotal
         }
       }
-      item.lastStartTime = item.lastStartTime ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+      item.lastStartTime = item.lastStartTime ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       item.sourceTotal = sourceTotal
       item.targetTotal = targetTotal
       return item

@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
+
 export default {
   props: {
     data: Object
@@ -29,9 +31,7 @@ export default {
           text: this.$t('schema_progress_status_success'),
           icon: 'success',
           color: 'success',
-          tips: loadTime
-            ? this.$t('schema_progress_load_time', [this.$moment(loadTime).format('YYYY-MM-DD HH:mm:ss')])
-            : ''
+          tips: loadTime ? this.$t('schema_progress_load_time', [dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss')]) : ''
         }
       } else if (data.loadFieldsStatus === 'loading') {
         let process = (data.loadCount * 100) / data.tableCount || 0

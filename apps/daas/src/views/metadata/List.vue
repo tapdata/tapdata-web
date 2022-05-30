@@ -74,7 +74,7 @@
       ></el-table-column>
       <el-table-column :label="$t('metadata.header.last_updated')" prop="last_updated" sortable="custom">
         <template slot-scope="scope">
-          {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('metadata.details.opera')" width="180">
@@ -177,6 +177,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -346,7 +347,11 @@ export default {
         .then(res => {
           return {
             total: res.data.total,
-            data: res.data?.items || []
+            data:
+              res.data?.items.map(item => {
+                item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+                return item
+              }) || []
           }
         })
     },

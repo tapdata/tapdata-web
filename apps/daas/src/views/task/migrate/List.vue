@@ -72,7 +72,6 @@
           size="mini"
           @click="create"
         >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           {{ $t('task_create_task') }}
         </el-button>
       </div>
@@ -100,15 +99,14 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('task_list_task_type')" min-width="150">
+      <el-table-column :label="$t('task_list_task_type')" width="150">
         <template #default="{ row }">
           <span>
             {{ row.type ? syncType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
-      <el-table-column prop="status" :label="$t('task_list_status')" width="180">
+      <el-table-column prop="status" :label="$t('task_list_status')" width="120">
         <template #default="{ row }">
           <!--调度失败任务 统一归类为error-->
           <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
@@ -120,19 +118,12 @@
         </template>
       </el-table-column>
 
-      <!--引擎暂时未回写启动时间，暂时注释-->
-      <!--<el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
+      <el-table-column prop="createTime" :label="$t('column_create_time')" width="180" sortable="createTime">
         <template #default="{ row }">
-          {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
-        </template>
-      </el-table-column>-->
-
-      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="createTime">
-        <template #default="{ row }">
-          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
+          {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="270" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="250" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -177,7 +168,6 @@
             <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
               <ElLink type="primary" class="rotate-90">
-                <!-- {{ $t('button.more') }} -->
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
@@ -218,7 +208,6 @@
           <div class="tab pb-3">
             <div class="img-box">
               <VIcon class="icon">text</VIcon>
-              <!-- <img src="../../../assets/images/migrate/headImage.png" /> -->
             </div>
             <div class="content" v-if="previewData">
               <div class="name fs-6">
@@ -230,7 +219,6 @@
                 {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
               </div>
               <div class="status">
-                <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
                 <span :class="['status-' + previewData.status, 'status-block']">
                   {{ $t('task_preview_status_' + previewData.status) }}
                 </span>
@@ -240,10 +228,8 @@
         </header>
         <ul class="info-list">
           <li v-for="item in previewList" :key="item.label">
-            <!-- {{ previewData[item] }} -->
             <template v-if="!!item.value">
               <VIcon class="icon mr-4">{{ item.label }}</VIcon>
-              <!-- <img class="label-img" :src="getImgByData(item.label)" /> -->
               <div class="label-text">
                 <div class="label font-color-light">{{ $t('task_preview_' + item.label) }}:</div>
                 <div
@@ -265,15 +251,15 @@
 
 <script>
 import factory from '../../../api/factory'
-const Task = factory('Task')
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
 import Upload from '@/components/UploadDialog'
-// import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
+import dayjs from 'dayjs'
+const Task = factory('Task')
 
 let timeout = null
 export default {
@@ -364,8 +350,6 @@ export default {
   },
   created() {
     this.getFilterItems()
-    // let { status } = this.$route.query
-    // this.searchParams.status = status ?? ''
   },
   mounted() {
     //定时轮询
@@ -373,18 +357,21 @@ export default {
       this.table.fetch(null, 0, true)
     }, 8000)
 
-    let { status } = this.$route.query
-    this.searchParams.status = status ?? ''
+    this.searchParams = this.$route.query
   },
   beforeDestroy() {
     clearInterval(timeout)
   },
   watch: {
     '$route.query'() {
+      this.searchParams = this.$route.query
       this.table.fetch(1)
     }
   },
   methods: {
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
     dataflowChange(data) {
       if (data && data.data && data.data.fullDocument) {
         let dataflow = data.data.fullDocument
@@ -599,20 +586,12 @@ export default {
       this.$router.push({
         name: 'MigrateEditor',
         params: {
-          id: id
+          id
         }
       })
     },
     handleImport() {
       this.$refs.upload.show()
-      // let routeUrl = this.$router.resolve({
-      //   // path: '/upload?type=dataflow'
-      //   name: 'upload',
-      //   query: {
-      //     type: 'dataflow'
-      //   }
-      // })
-      // window.open(routeUrl.href, '_blank')
     },
     getConfirmMessage(operateStr, isBulk, name) {
       let title = operateStr + '_confirm_title',
@@ -705,18 +684,13 @@ export default {
               this.$message.error(err.data?.message)
             })
           if (flag) {
-            _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
-              // _this.changeStatus(ids, { status: 'scheduled' })
-            })
-          } else {
-            // _this.changeStatus(ids, { status: 'scheduled' })
+            _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {})
           }
         })
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
-      // let title = msgObj.title
       let list = this.table.list
       for (let i = 0; i < list.length; i++) {
         let node = list[i]
@@ -728,7 +702,6 @@ export default {
             const h = this.$createElement
             let arr = this.$t('message.stopAggregation_message').split('XXX')
             message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-            // title = this.$t('dataFlow.importantReminder')
           }
         }
       }
@@ -748,8 +721,6 @@ export default {
           .catch(err => {
             this.$message.error(err.data?.message)
           })
-        // return
-        // this.changeStatus(ids, { status: 'stopping' })
       })
     },
     forceStop(ids, item = {}) {
@@ -902,7 +873,6 @@ export default {
     },
     // 任务调度设置保存
     saveTaskSetting() {
-      // let data = this.formSchedule.taskData;
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
@@ -921,7 +891,6 @@ export default {
         })
     },
     handleGoFunction() {
-      // top.location.href = '/#/JsFuncs'
       this.$router.push({
         name: 'function'
       })
@@ -971,7 +940,7 @@ export default {
                   'eventTime'
                 ].includes(item)
               ) {
-                res.data[item] = res.data[item] ? this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss') : '-'
+                res.data[item] = this.formatTime(res.data[item])
               }
 
               if (

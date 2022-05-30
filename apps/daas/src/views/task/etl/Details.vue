@@ -5,9 +5,9 @@
         <div class="task-info__img flex justify-center align-items-center mr-8">
           <img src="../../../assets/images/task/task.png" alt="" />
         </div>
-        <div style="flex: 1">
+        <div class="flex-1 overflow-hidden pr-4">
           <div class="flex align-items-center">
-            <span class="fs-6 color-primary">{{ task.name }}</span>
+            <span class="fs-6 color-primary ellipsis">{{ task.name }}</span>
           </div>
           <div class="flex flex-wrap align-items-center">
             <div
@@ -112,6 +112,7 @@ import Subtask from '../Subtask'
 import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
+import dayjs from 'dayjs'
 
 let timeout = null
 export default {
@@ -300,14 +301,14 @@ export default {
       }
     },
     formatTime(time) {
-      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     formatTask(data) {
       let result = JSON.parse(JSON.stringify(data))
       result.totalOutput = result.stats?.output?.rows || 0
       result.totalInput = result.stats?.input?.rows || 0
       result.creator = result.creator || result.username || result.user?.username || '-'
-      result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
+      result.updatedTime = this.formatTime(result.last_updated)
       result.type = this.syncTypeMap[result.type]
       result.statusResult = getSubTaskStatus(result.statuses)
       result.disabledData = getTaskBtnDisabled(
@@ -604,6 +605,10 @@ export default {
       }
     }
   }
+}
+.task-info__left {
+  flex: 1;
+  overflow: hidden;
 }
 .task-info__right {
   .type-chart {

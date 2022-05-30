@@ -1,5 +1,5 @@
 <template>
-  <section class="apiaudit-info-wrap section-wrap">
+  <section v-loading="loading" class="apiaudit-info-wrap section-wrap">
     <div class="details-box bg-white p-6 rounded-2">
       <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_log_info') }}</div>
       <ElRow class="pt-4" v-if="auditData">
@@ -56,14 +56,16 @@
 
 <script>
 import { formatMs } from '@/utils/util'
+import dayjs from 'dayjs'
+
 export default {
   name: 'ApiAudit',
   data() {
     return {
       auditData: null,
+      loading: true,
       list: [
         { label: this.$t('apiaudit_access_records'), key: 'visitTotalCount', value: 0 },
-        // { label: this.$t('apiaudit_access_bandwidth'), key: 'visitTotal', value: 0 },
         { label: this.$t('apiaudit_average_access_rate'), key: 'speed', value: 0 },
         { label: this.$t('apiaudit_access_time'), key: 'latency', value: 0 },
         { label: this.$t('apiaudit_average_response_time'), key: 'averResponseTime', value: 0 }
@@ -73,18 +75,18 @@ export default {
   created() {
     this.getData()
   },
-  mounted() {},
   methods: {
     // 获取数据
     getData() {
       let id = this.$route.params?.id
-      return this.$api('ApiCalls')
+      this.loading = true
+      this.$api('ApiCalls')
         .get([id])
         .then(res => {
           if (res) {
             this.auditData = res.data
             this.auditData.createAt = res.data['createAt']
-              ? this.$moment(res.data['createAt']).format('YYYY-MM-DD HH:mm:ss')
+              ? dayjs(res.data['createAt']).format('YYYY-MM-DD HH:mm:ss')
               : '-'
 
             this.list.forEach(item => {
@@ -96,11 +98,12 @@ export default {
             })
           }
         })
+        .finally(() => {
+          this.loading = false
+        })
     },
     formatDuring(mss) {
       let time = ''
-      // let days = parseInt(mss / (1000 * 60 * 60 * 24))
-      // let hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
       let minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
       let seconds = (mss % (1000 * 60)) / 1000
       if (minutes > 1) {

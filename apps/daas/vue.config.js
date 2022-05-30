@@ -1,7 +1,6 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
-const webpack = require('webpack')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -45,8 +44,6 @@ module.exports = {
   chainWebpack(config) {
     //  ============ 配置别名 ============
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
-
-    config.plugin('ignore').use(new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn$/))
 
     // ============ svg处理 ============
     const iconDir = resolve('src/assets/icons/svg')

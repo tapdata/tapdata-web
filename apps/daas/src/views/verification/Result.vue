@@ -13,7 +13,7 @@
               class="color-info flex align-items-center"
               style="font-size: 12px"
             >
-              {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+              {{ $t('verify_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
               <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
                 $t('verify_button_diff_task_history')
               }}</ElLink>
@@ -66,6 +66,8 @@
 <script>
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
+import dayjs from 'dayjs'
+
 export default {
   components: { ResultTable, ResultView },
   data() {
@@ -117,6 +119,7 @@ export default {
             let stats = result.stats
             let inspect = result.inspect
             inspect.status = result.status
+            inspect.lastStartTimeFmt = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
             this.inspect = inspect
             if (stats.length) {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined

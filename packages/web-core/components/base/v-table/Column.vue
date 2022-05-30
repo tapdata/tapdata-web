@@ -23,7 +23,8 @@
 
 <script>
 import Column from './Column'
-import moment from 'moment'
+import dayjs from 'dayjs'
+
 export default {
   name: 'Column',
   components: { Column },
@@ -42,7 +43,7 @@ export default {
   },
   methods: {
     formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
-      return time ? moment(time).format(fmt) : ''
+      return time ? dayjs(time).format(fmt) : ''
     },
     getValue(val, d) {
       return val ?? d

@@ -17,7 +17,6 @@
           {{ $t('modules_api_server_status') }}:
           <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
         </div>
-        <!-- <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar> -->
         <SelectList
           v-if="apiServersList.length"
           v-model="searchParams.api_server_process_id"
@@ -47,10 +46,6 @@
         </ElButton>
       </div>
       <div slot="operation">
-        <!-- <ElButton v-readonlybtn="'API_data_time_zone_editing'" class="btn" size="mini" @click="timeZoneDialog = true">
-          <span v-if="save_timezone === 0 || save_timezone === '0'">{{ $t('dataExplorer_zone') }}</span>
-          <span v-else>{{ timezoneLabel }}</span>
-        </ElButton> -->
         <ElSelect
           v-model="without_timezone"
           size="mini"
@@ -167,29 +162,6 @@
         <span>{{ $t('dataExplorer_render_time') }}: {{ renderTime }}s</span>
       </div>
     </TablePage>
-    <!-- 时区设置 -->
-    <!-- <el-dialog
-      width="600px"
-      custom-class="zone-setting-dialog"
-      :title="$t('dataExplorer_zone_setting')"
-      :close-on-click-modal="false"
-      :visible.sync="timeZoneDialog"
-    >
-      <el-select
-        v-model="without_timezone"
-        size="mini"
-        width="100%"
-        :label="
-          $t('dataExplorer_datetype_without_timezone') + '. ' + $t('dataExplorer_mysql_datetype_without_timezone')
-        "
-      >
-        <el-option v-for="item in timezones" :label="item.label" :value="item.value" :key="item.value"></el-option>
-      </el-select>
-      <span slot="footer" class="dialog-footer">
-        <ElButton @click="timeZoneDialog = false" size="small">{{ $t('message.cancel') }}</ElButton>
-        <ElButton type="primary" @click="saveTimeZone()" size="small">{{ $t('message.confirm') }}</ElButton>
-      </span>
-    </el-dialog> -->
     <!-- 导出 -->
     <el-dialog
       width="600px"
@@ -225,7 +197,6 @@
     >
       <div class="create-dialog-box">
         <JsEditor v-model="jsonDoc" height="200"></JsEditor>
-        <!-- <el-input type="textarea" v-model="jsonDoc" :autosize="{ maxRows: 15 }"></el-input> -->
       </div>
 
       <ul v-if="jsonDocHint.length">
@@ -246,9 +217,11 @@ import BrowseQuery from './BrowseQuery'
 import APIClient from '@/api/ApiClient'
 import SelectList from '@/components/SelectList'
 import { JsEditor } from '@tap/component'
+import dayjs from 'dayjs'
+
 let time = 0
 export default {
-  name: 'DataExplorer',
+  name: 'ApiExplorer',
   components: {
     TablePage,
     BrowseQuery,
@@ -375,16 +348,6 @@ export default {
     }
   },
   methods: {
-    // 重置查询条件
-    reset(name) {
-      if (name === 'reset') {
-        // this.searchParams = {
-        //   api_server_process_id: '',
-        //   collection: ''
-        // }
-      }
-      this.table.fetch(1)
-    },
     // 双击编辑字段
     editItem(item, key) {
       this.editCol = key
@@ -467,7 +430,6 @@ export default {
                   let url = operations[operationName].url
                   _this.collectionsList.push({
                     collection: item,
-                    // text: url.substring(url.lastIndexOf('/') + 1),
                     text: item + '/' + url.substring(url.lastIndexOf('/') + 1),
                     value: url,
                     method: operations[operationName].method,
@@ -657,7 +619,6 @@ export default {
       })
       this.condition = condition
       this.table.fetch()
-      // console.log(data, _this.tableHeader, this.queryFields, this.condition)
       this.$api('users')
         .get()
         .then(res => {
@@ -686,7 +647,6 @@ export default {
             }
           }
         })
-      // this.table.fetch()
     },
     // 查询弹窗关闭
     backDialogVisible() {
@@ -792,9 +752,6 @@ export default {
     },
     // 创建
     openCreate() {
-      // this.$nextTick(() => {
-      //   this.$refs.form.clearValidate()
-      // })
       function clearContent(obj) {
         if (obj && typeof obj === 'object') {
           Object.keys(obj).forEach(key => {
@@ -841,11 +798,6 @@ export default {
       this.jsonDoc = JSON.stringify(example, '', '\t')
       this.openCreateDialog = true
       this.jsonDocHint = []
-      // this.createForm = {
-      //   processId: this.generatorSecret(),
-      //   clientName: '',
-      //   clientURI: ''
-      // }
     },
     // 格式化json
     formatJson() {
@@ -959,8 +911,6 @@ export default {
         if (tmp && tmp.length > 0) {
           let openApi = tmp[0].clientURI + '/openapi.json'
           let token = await this.apiClient.getAPIServerToken()
-          // let url = `${location.protocol}//${location.hostname}:${location.port}/old/static/explorer/index.html?url=${openApi}&token=${token}#/`
-          // window.open(url,"_blank")
 
           let cols = this.collectionsList.filter(v => v.value === this.searchParams.collection)
           let api = cols && cols.length === 1 ? cols[0].text : ''
@@ -1037,12 +987,6 @@ export default {
         })
       _this.intervalId = setTimeout(_this.getWorkers, 5000)
     },
-
-    // 切换api
-    // changeCollection() {
-    //   // 重置查询的条件
-    //   this.queryBuildKey++
-    // },
 
     // 获取数据
     async getData({ page, tags }) {
@@ -1133,7 +1077,7 @@ export default {
                   headerMap[v] = h
                 }
                 if (isValidDate) {
-                  let time = _this.$moment(new Date(record[v])).format('YYYY-MM-DD HH:mm:ss')
+                  let time = dayjs(new Date(record[v])).format('YYYY-MM-DD HH:mm:ss')
                   record[v] = _this.timeZoneConversion(time)
                 }
               })
@@ -1351,7 +1295,7 @@ export default {
     // 时区转换
     timeZoneConversion(time) {
       let getTime = this.timeZoneFormat(this.save_timezone, time)
-      return this.$moment(new Date(getTime)).format('YYYY-MM-DD HH:mm:ss')
+      return dayjs(new Date(getTime)).format('YYYY-MM-DD HH:mm:ss')
     },
 
     // 时区时间转换
@@ -1370,41 +1314,6 @@ export default {
       this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     }
-    // getFilterItems() {
-    //   this.filterItems = [
-    //     {
-    //       label: this.$t('dataExplorer_apiservr'),
-    //       key: 'api_server_process_id',
-    //       type: 'select-inner',
-    //       items: async () => {
-    //         let res = await this.$api('ApiServer').get({})
-    //         let items = res?.data?.items || []
-    //         this.apiServersList = items
-    //         this.searchParams.api_server_process_id = this.apiServersList[0].processId
-    //         this.apiClient.setApiServer(this.apiServersList[0])
-    //         return items.map(item => {
-    //           return {
-    //             label: item.clientName,
-    //             value: item.processId
-    //           }
-    //         })
-    //       },
-    //       selectedWidth: '200px'
-    //     },
-    //     {
-    //       label: this.$t('dataExplorer_base_path'),
-    //       key: 'collection',
-    //       type: 'select-inner',
-    //       items: this.collectionsList,
-    //       selectedWidth: '200px'
-    //     },
-    //     {
-    //       placeholder: this.$t('modules_name_placeholder'),
-    //       key: 'keyword',
-    //       type: 'input'
-    //     }
-    //   ]
-    // }
   },
   beforeDestroy() {
     if (this.intervalId) {

@@ -21,7 +21,7 @@
         sortable="createTime"
       >
         <template #default="{ row }">
-          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '-' }}
+          {{ row.createTimeFmt }}
         </template>
       </el-table-column>
       <el-table-column prop="code" width="80" :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true">
@@ -58,6 +58,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import dayjs from 'dayjs'
 
 export default {
   name: 'ApiAudit',
@@ -145,7 +146,11 @@ export default {
           if (res) {
             return {
               total: res.data?.total || 0,
-              data: res.data?.items || []
+              data:
+                res.data?.items.map(item => {
+                  item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+                  return item
+                }) || []
             }
           }
         })

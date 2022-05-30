@@ -104,7 +104,7 @@
       </el-table-column>
       <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom" width="140">
         <template slot-scope="scope">
-          {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_operator')" width="260" fixed="right">
@@ -178,46 +178,6 @@
     </TablePage>
     <!-- 导入 -->
     <Upload :type="'api'" ref="upload"></Upload>
-    <!-- <ElDialog
-      width="600px"
-      custom-class="import-upload-dialog"
-      :title="$t('modules_dialog_import_title')"
-      :close-on-click-modal="false"
-      :visible.sync="importDialogVisible"
-    >
-      <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
-        <ElFormItem :label="$t('modules_dialog_condition') + ':'">
-          <el-radio v-model="importForm.upsert" :label="1">{{ $t('modules_dialog_overwrite_data') }}</el-radio>
-          <el-radio v-model="importForm.upsert" :label="0">{{ $t('modules_dialog_skip_data') }}</el-radio>
-        </ElFormItem>
-        <ElFormItem :label="$t('modules_dialog_group') + ':'">
-          <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">
-            <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem :label="$t('modules_dialog_file') + ':'">
-          <ElUpload
-            class="upload-demo"
-            ref="upload"
-            :action="importForm.action"
-            :accept="importForm.accept"
-            :file-list="importForm.fileList"
-            :auto-upload="false"
-            :on-success="handleSuccess"
-            :on-change="handleChange"
-          >
-            <ElButton type="text" plain slot="trigger" size="small">
-              <VIcon class="mr-1 link-primary" size="18">upload</VIcon>
-              {{ $t('modules_dialog_upload_files') }}</ElButton
-            >
-          </ElUpload>
-        </ElFormItem>
-      </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton @click="importDialogVisible = false" size="small">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="submitUpload()" size="small">{{ $t('button_confirm') }}</ElButton>
-      </span>
-    </ElDialog> -->
   </section>
 </template>
 
@@ -226,9 +186,10 @@ import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import Upload from '@/components/UploadDialog'
 import { toRegExp } from '@/utils/util'
+import dayjs from 'dayjs'
 
 export default {
-  name: 'Modules',
+  name: 'ApiPublish',
   components: {
     TablePage,
     FilterBar,
@@ -280,7 +241,6 @@ export default {
   },
 
   created() {
-    // this.getDbOptions()
     this.getWorkers()
     this.getFilterItems()
   },
@@ -352,7 +312,11 @@ export default {
         .then(res => {
           return {
             total: res.data.total,
-            data: res.data?.items || []
+            data:
+              res.data?.items.map(item => {
+                item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+                return item
+              }) || []
           }
         })
     },
@@ -432,11 +396,11 @@ export default {
     },
     // 创建api
     openCreateDialog() {
-      this.$router.push({ name: 'module' })
+      this.$router.push({ name: 'apiPublishCreate' })
     },
     // 预览
     preview(item) {
-      this.$router.push({ name: 'dataExplorer', query: { id: item.basePath + '_' + item.apiVersion } })
+      this.$router.push({ name: 'apiExplorer', query: { id: item.basePath + '_' + item.apiVersion } })
     },
     // api文档及测试
     toDocumentTest(item) {
@@ -499,7 +463,7 @@ export default {
     // 编辑
     edit(item) {
       this.$router.push({
-        name: 'editModule',
+        name: 'apiPublishEdit',
         query: { id: item.id, name: item.table_name },
         params: {
           id: item.id

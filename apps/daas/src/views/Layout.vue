@@ -356,6 +356,7 @@ import { signOut } from '../utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import PageHeader from '@/components/PageHeader'
 import VIcon from 'web-core/components/VIcon'
+import dayjs from 'dayjs'
 
 const Languages = {
   sc: '中文 (简)',
@@ -401,13 +402,12 @@ let menuSetting = [
     icon: 'connection',
     code: 'data_publish',
     children: [
-      { name: 'modules', code: 'API_management_menu' },
-      { name: 'dataExplorer', code: 'API_data_explorer_menu' },
+      { name: 'apiPublishList', code: 'API_management_menu' },
+      { name: 'apiExplorer', code: 'API_data_explorer_menu' },
       { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
-      // { name: 'apiAnalysis', code: 'API_stats_menu' }, //隐藏api 统计入口
       { name: 'apiClient', code: 'API_clients_menu' },
       { name: 'apiServers', code: 'API_server_menu' },
-      { name: 'apiauditList', code: 'API_server_menu' },
+      { name: 'apiAuditList', code: 'API_server_menu' },
       { name: 'apiMonitor', code: 'API_server_menu' }
     ]
   },
@@ -417,12 +417,9 @@ let menuSetting = [
     icon: 'system',
     code: 'system_management',
     children: [
-      // { name: 'metadataDefinition', code: 'data_catalog_menu' },
       { name: 'clusterManagement', code: 'Cluster_management_menu' },
-      // { name: 'agents', code: 'agents_menu' },
       { name: 'users', code: 'user_management_menu' },
       { name: 'roleList', code: 'role_management_menu' }
-      // { name: 'settings', code: 'system_settings_menu', alias: 'page_title_setting' }
     ]
   }
 ]
@@ -636,7 +633,7 @@ export default {
               this.licenseExpireVisible = Number(showDay) > endTime
               this.licenseExpire = endTime
             }
-            this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss')
+            this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
           }
         })
     }

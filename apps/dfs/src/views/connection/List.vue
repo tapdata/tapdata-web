@@ -61,7 +61,7 @@
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('connection_list_change_time')" prop="last_updated" width="150" sortable="custom">
-          <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
+          <template slot-scope="scope">{{ scope.row.lastUpdatedFmt }}</template>
         </ElTableColumn>
         <ElTableColumn :label="$t('list_operation')" width="280">
           <template slot-scope="scope">
@@ -176,6 +176,7 @@ import Preview from './Preview.vue'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
 import { getDatabaseTypes } from '@/util'
+import dayjs from 'dayjs'
 
 let timer = null
 export default {
@@ -383,6 +384,7 @@ export default {
       let statusInfo = this.statusMap[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
+      item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
       return item
     },
     sortChange({ prop, order }) {

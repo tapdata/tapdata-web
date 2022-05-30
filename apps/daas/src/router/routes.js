@@ -7,7 +7,7 @@ const VerificationHistory = () => import(/* webpackChunkName: "verification-hist
 const VerificationResult = () => import(/* webpackChunkName: "verification-result" */ '@/views/verification/Result')
 const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
 const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
-const ApiPublishForm = () => import(/* webpackChunkName: "api-publish-form" */ '@/views/api-page/ModuleForm')
+const ApiPublishForm = () => import(/* webpackChunkName: "api-publish-form" */ '@/views/api-page/api-publish/Form')
 const RoleDetails = () => import(/* webpackChunkName: "role-details" */ '@/views/role/Role')
 const DagEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
@@ -547,7 +547,7 @@ export default [
       /* ---------- API发布  ----------*/
       {
         path: '/api-publish',
-        name: 'publish',
+        name: 'apiPublish',
         component: Parent,
         redirect: 'api-publish/',
         meta: {
@@ -556,8 +556,8 @@ export default [
         children: [
           {
             path: '',
-            name: 'modules',
-            component: () => import(/* webpackChunkName: "api-publish" */ '@/views/api-page/Modules'),
+            name: 'apiPublishList',
+            component: () => import(/* webpackChunkName: "api-publish" */ '@/views/api-page/api-publish/List'),
             meta: {
               title: 'page_title_api_publish',
               code: 'API_management_menu'
@@ -565,7 +565,7 @@ export default [
           },
           {
             path: 'create',
-            name: 'module',
+            name: 'apiPublishCreate',
             component: ApiPublishForm,
             meta: {
               title: 'page_title_api_publish_create',
@@ -574,7 +574,7 @@ export default [
           },
           {
             path: ':id/edit',
-            name: 'editModule',
+            name: 'apiPublishEdit',
             component: ApiPublishForm,
             meta: {
               title: 'page_title_api_publish_edit',
@@ -586,8 +586,8 @@ export default [
       /* ---------- API浏览  ----------*/
       {
         path: '/api-browse',
-        name: 'dataExplorer',
-        component: () => import(/* webpackChunkName: "api-explorer" */ '@/views/api-page/DataExplorer'),
+        name: 'apiExplorer',
+        component: () => import(/* webpackChunkName: "api-explorer" */ '@/views/api-page/ApiExplorer'),
         meta: {
           title: 'page_title_api_browse',
           code: 'API_data_explorer_menu'
@@ -624,16 +624,6 @@ export default [
         }
       },
 
-      /* ---------- API统计  ----------*/
-      {
-        path: '/api-statistics',
-        name: 'apiAnalysis',
-        component: () => import(/* webpackChunkName: "api-analysis" */ '@/views/api-page/ApiAnalysis'),
-        meta: {
-          title: 'page_title_api_stat',
-          code: 'API_stats_menu'
-        }
-      },
       /* ---------- API审计  ----------*/
       {
         path: '/api-audit',
@@ -647,7 +637,7 @@ export default [
         children: [
           {
             path: '',
-            name: 'apiauditList',
+            name: 'apiAuditList',
             component: () => import(/* webpackChunkName: "api-audit" */ '@/views/api-page/ApiAudit'),
             meta: {
               title: 'page_title_api_audit',
@@ -706,16 +696,6 @@ export default [
         meta: {
           title: 'page_title_cluster',
           code: 'Cluster_management_menu'
-        }
-      },
-      /* ---------- 进程管理  ----------*/
-      {
-        path: '/process',
-        name: 'agents',
-        component: () => import(/* webpackChunkName: "process" */ '@/views/process/List'),
-        meta: {
-          title: 'page_title_process',
-          code: 'agents_menu'
         }
       },
       /* ---------- 用户管理  ----------*/

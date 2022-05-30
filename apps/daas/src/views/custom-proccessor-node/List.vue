@@ -30,6 +30,7 @@
 import TablePage from '@/components/TablePage'
 import FilterBar from '../../components/filter-bar/Main'
 import { CustomNode } from '@tap/api'
+import dayjs from 'dayjs'
 
 const api = new CustomNode()
 
@@ -88,8 +89,8 @@ export default {
           return {
             total,
             data: items.map(item => {
-              item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              item.last_updated = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              item.last_updated = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }

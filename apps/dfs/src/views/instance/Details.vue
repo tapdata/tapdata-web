@@ -41,6 +41,7 @@
 <script>
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Details',
@@ -150,7 +151,7 @@ export default {
             }
             Object.assign(data, data?.metric || {}, data?.spec || {}, data?.tmInfo || {})
             data.hostname = data?.tmInfo?.hostname
-            data.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
+            data.createAt = data.createAt ? dayjs(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
             if (data?.metric?.systemInfo) {
               let arr = ['cpus', 'installationDirectory', 'ips', 'logDir']
               arr.forEach(el => {

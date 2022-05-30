@@ -96,6 +96,7 @@ import i18n from '@/i18n'
 
 import VIcon from '@/components/VIcon'
 import { downloadBlob } from '@/util'
+import dayjs from 'dayjs'
 
 export default {
   components: { VIcon },
@@ -274,7 +275,7 @@ export default {
       }
       return {
         color: colorMap[log.level],
-        time: log.date ? this.$moment(log.date).format('YYYY-MM-DD HH:mm:ss') : '',
+        time: log.date ? dayjs(log.date).format('YYYY-MM-DD HH:mm:ss') : '',
         level: markKeyword(log.level),
         threadName: markKeyword(log.threadName),
         loggerName: markKeyword(log.loggerName),

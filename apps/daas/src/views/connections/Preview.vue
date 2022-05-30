@@ -86,6 +86,7 @@ import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import Drawer from '@/components/Drawer'
 import { CONFIG_MODEL } from './util'
+import dayjs from 'dayjs'
 
 export default {
   name: 'DetailsDrawer',
@@ -159,7 +160,7 @@ export default {
       this.showProgress = false
       this.connection = row
       //组装数据
-      this.connection['last_updated'] = this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
       this.loadList(row.database_type)
     },
     edit() {
@@ -245,7 +246,7 @@ export default {
           let data = res.data
           this.connection = res.data
           //组装数据
-          this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
+          this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100

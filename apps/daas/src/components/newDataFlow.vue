@@ -202,7 +202,7 @@ export default {
     //跳转发布api
     handleModules() {
       let routeUrl = this.$router.resolve({
-        name: 'module'
+        name: 'apiPublishCreate'
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()

@@ -37,6 +37,7 @@ import Connection from './Connection'
 import History from './History'
 import FieldMapping from '@/components/field-mapping/main'
 import { isFinished } from './util'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Index',
@@ -173,7 +174,7 @@ export default {
       return data
     },
     formatTime(time) {
-      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     tabHandler() {
       this.$nextTick(() => {

@@ -66,8 +66,6 @@
                     </ElLink>
                     <span>{{ typeMap[item.msg] }}</span>
                   </div>
-
-                  <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
                 </div>
                 <div class="list-item-time">
                   <span>{{ item.createTime }}</span>
@@ -81,22 +79,6 @@
               <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
             </div>
           </div>
-          <!-- <div class="notice-footer">
-            <span v-readonlybtn="'home_notice_settings'">
-              <router-link to="/settingCenter/notificationSetting">
-                <span>
-                  {{ $t('notify_setting') }}
-                </span>
-              </router-link>
-            </span>
-            <span class="notice-footer-text">
-              <router-link to="/notification">
-                <span>
-                  {{ $t('notify_view_more') }}
-                </span>
-              </router-link>
-            </span>
-          </div> -->
         </div>
       </el-tab-pane>
       <el-tab-pane class="tab-item" :label="$t('notify_user_notice')" name="user" v-loading="loading">
@@ -105,7 +87,7 @@
             <li class="notification-item" v-for="record in userOperations" :key="record.id">
               <UserOperation :record="record"></UserOperation>
               <div class="item-time">
-                {{ $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+                {{ record.createTimeFmt }}
               </div>
             </li>
           </ul>
@@ -115,14 +97,6 @@
               <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
             </div>
           </div>
-          <!-- <div class="notice-footer">
-            <span></span>
-            <router-link to="/notification?type=user">
-              <span class="more-text">
-                {{ $t('notify_view_more') }}
-              </span>
-            </router-link>
-          </div> -->
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -134,8 +108,9 @@ import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
-import { formatTime, uniqueArr } from '@/utils/util'
+import { uniqueArr } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -190,7 +165,7 @@ export default {
         this.getUnreadData()
         let data = res?.data
         if (data) {
-          data.createTime = formatTime(data.createTime)
+          data.createTime = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
           self.listData = uniqueArr([data, ...this.listData])
           // this.$store.commit('notification', {
           //   unRead: data.total
@@ -238,7 +213,7 @@ export default {
           })
           // this.unRead = total
           this.listData = items.map(t => {
-            t.createTime = formatTime(t.createTime)
+            t.createTime = dayjs(t.createTime).format('YYYY-MM-DD HH:mm:ss')
             return t
           })
         })
@@ -251,28 +226,7 @@ export default {
             this.getUnreadData()
             this.$root.$emit('notificationUpdate')
           }
-
-          // if (res.data) {
-          //   this.listData = []
-          //
-          // }
         })
-    },
-    getLag(lag) {
-      let r = '0s'
-      if (lag) {
-        let m = this.$moment.duration(lag, 'seconds')
-        if (m.days()) {
-          r = m.days() + 'd'
-        } else if (m.hours()) {
-          r = m.hours() + 'h'
-        } else if (m.minutes()) {
-          r = m.minutes() + 'm'
-        } else {
-          r = lag + 's'
-        }
-      }
-      return r
     },
     handleGo(item) {
       switch (item.system) {
@@ -326,7 +280,11 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          this.userOperations = res.data?.items || []
+          this.userOperations =
+            res.data?.items.map(item => {
+              item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            }) || []
         })
         .finally(() => {
           this.loading = false

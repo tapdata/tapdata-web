@@ -15,6 +15,7 @@ import {
   DataZoomComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
+import dayjs from 'dayjs'
 
 use([
   CanvasRenderer,
@@ -438,7 +439,7 @@ export default {
         hour: 'HH:00',
         day: 'MM-DD'
       }
-      return this.$moment(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
+      return dayjs(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
     },
     valueToFixed(val, fixed) {
       if (fixed) {

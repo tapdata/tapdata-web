@@ -30,6 +30,7 @@ import Info from './Info'
 import Schedule from './Schedule'
 import ShareMining from './ShareMining'
 import Log from '@/components/logs/Index'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Statistics',
@@ -150,12 +151,12 @@ export default {
       data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)
-      data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
+      data.endTimeFmt = this.formatTime(data.finishTime)
       data.cdcTimeFmt = this.formatTime(cdcTime)
       return data
     },
     formatTime(time) {
-      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     infoRemoteMethod(params) {
       return this.$api('Measurement')

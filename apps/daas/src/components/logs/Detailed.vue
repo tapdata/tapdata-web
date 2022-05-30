@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 export default {
   props: {
     id: String
@@ -173,7 +174,7 @@ export default {
       }
       return {
         color: colorMap[log.level],
-        time: log.date ? this.$moment(log.date).format('YYYY-MM-DD HH:mm:ss') : '',
+        time: log.date ? dayjs(log.date).format('YYYY-MM-DD HH:mm:ss') : '',
         level: markKeyword(log.level),
         threadName: markKeyword(log.threadName),
         loggerName: markKeyword(log.loggerName),

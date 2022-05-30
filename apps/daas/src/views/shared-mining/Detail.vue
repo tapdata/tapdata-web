@@ -13,7 +13,7 @@
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-normal head-label font-color-light">{{ $t('share_detail_log_mining_time') }}:</div>
-          <div class="font-color-dark fw-normal">{{ $moment(detailData.logTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
+          <div class="font-color-dark fw-normal">{{ formatTime(detailData.logTime) }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-normal head-label font-color-light">{{ $t('share_detail_log_time') }}:</div>
@@ -58,10 +58,10 @@
         ref="tableList"
       >
         <template slot="sourceTimestamp" slot-scope="scope">
-          <span>{{ $moment(scope.row.sourceTimestamp).format('YYYY-MM-DD HH:mm:ss') }}</span>
+          <span>{{ formatTime(scope.row.sourceTimestamp) }}</span>
         </template>
         <template slot="syncTimestamp" slot-scope="scope">
-          <span> {{ $moment(scope.row.syncTimestamp).format('YYYY-MM-DD HH:mm:ss') }}</span>
+          <span> {{ formatTime(scope.row.syncTimestamp) }}</span>
         </template>
         <template slot="status" slot-scope="scope">
           <span :class="['status-' + scope.row.status, 'status-block']">
@@ -112,8 +112,10 @@
 <script>
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
-import { formatTime, formatMs } from '@/utils/util'
+import { formatMs } from '@/utils/util'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
+import dayjs from 'dayjs'
+
 export default {
   name: 'Info',
   components: { Chart, TableList, DatetimeRange },
@@ -270,8 +272,8 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   methods: {
-    formatTime(date) {
-      return formatTime(date)
+    formatTime(date, f = 'YYYY-MM-DD HH:mm:ss') {
+      return dayjs(date).format(f)
     },
     formatMs(ms) {
       return formatMs(ms)
@@ -353,7 +355,7 @@ export default {
           let { inputQPS = [], outputQPS = [] } = qpsData
           let qpsDataTime = qpsData.time || []
 
-          let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+          let xArr = qpsDataTime.map(t => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
           const xArrLen = xArr.length
           if (this.lineDataDeep.x.length > 20) {
             this.lineDataDeep.x.splice(0, xArrLen)
@@ -391,7 +393,7 @@ export default {
               xAxis: {
                 axisLabel: {
                   formatter: val => {
-                    return formatTime(val, guanluaryFormat)
+                    return this.formatTime(val, guanluaryFormat)
                   }
                 }
               },
@@ -461,7 +463,6 @@ export default {
     },
     changeTimeRangeFnc() {
       this.getMeasurement()
-      //this.resetTimer()
     },
     getReplicateLagTime(val) {
       if (val < 1000) {

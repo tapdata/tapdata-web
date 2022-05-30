@@ -162,6 +162,7 @@ import Test from './Test'
 import FilterBar from '@/components/filter-bar'
 import { TYPEMAP } from 'web-core/const'
 import Cookie from '@tap/shared/src/cookie'
+import dayjs from 'dayjs'
 
 let timeout = null
 
@@ -375,7 +376,7 @@ export default {
                 item.connectionUrl = item.kafkaBootstrapServers
               }
               item.connectionSource = this.sourceTypeMapping[item.sourceType]
-              item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdateTime = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }

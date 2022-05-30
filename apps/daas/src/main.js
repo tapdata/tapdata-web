@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from '@/App.vue'
-import moment from 'moment' // 时间格式化
 import store from '@/vuex' // 引入全局数据控制
 import i18n from './i18n'
 import VueClipboard from 'vue-clipboard2'
@@ -25,7 +24,6 @@ Vue.use(VueClipboard)
 Vue.use(LoadMore)
 Vue.use(TapdataWebCore)
 
-Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
 
 Vue.component(VIcon.name, VIcon)

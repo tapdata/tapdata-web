@@ -29,6 +29,7 @@
 
 <script>
 import TablePage from '@/components/TablePage'
+import dayjs from 'dayjs'
 
 export default {
   components: { TablePage },
@@ -57,7 +58,7 @@ export default {
           return {
             total: res.data?.total || 0,
             data: list.map(item => {
-              let expirationDate = this.$moment(item.expirationDate)
+              let expirationDate = dayjs(item.expirationDate)
               let duration = expirationDate.valueOf() - Date.now()
               let status = 'normal'
               if (duration < 0) {
@@ -87,9 +88,7 @@ export default {
                 }
               }[status]
               item.expirationDateFmt = item.expirationDate ? expirationDate.format('YYYY-MM-DD HH:mm:ss') : ''
-              item.lastUpdatedFmt = item.last_updated
-                ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-                : ''
+              item.lastUpdatedFmt = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
               return item
             })
           }
