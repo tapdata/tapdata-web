@@ -1,10 +1,13 @@
 import { defineComponent, ref, watch, onMounted, computed, nextTick } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { h as createElement, useFieldSchema, useForm, RecursionField } from '@formily/vue'
-import { observe, toJS } from '@formily/reactive'
+import { observe } from '@formily/reactive'
 import { Space } from '../space'
 import './style.scss'
 import { getNodeIconSrc } from '@tap/business'
+import { MetadataInstances } from '@tap/api'
+
+const metadataApi = new MetadataInstances()
 
 export const MergeTableTree = observer(
   defineComponent({
@@ -17,7 +20,7 @@ export const MergeTableTree = observer(
         default: 320
       }
     },
-    setup(props, { emit, refs }) {
+    setup(props, { emit, refs, root }) {
       const formRef = useForm()
       const form = formRef.value
       const schemaRef = useFieldSchema()
@@ -51,7 +54,7 @@ export const MergeTableTree = observer(
         treeRef,
         val => {
           console.log('🤖MergeTableTree.watch', val, treeRef.value)
-          emit('change', toJS(val))
+          emit('change', val)
         },
         { deep: true }
       )
@@ -146,27 +149,20 @@ export const MergeTableTree = observer(
       const loadField = (selfId, selfPath) => {
         const pathArr = selfPath.split('.children.')
         if (pathArr.length < 2) return
-        const parentPath = pathArr.slice(0, pathArr.length - 1).join('.children.')
-        const parentId = form.getValuesIn(`mergeProperties.${parentPath}.id`)
         props.loadFieldsMethod(selfId).then(fields => {
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
             loading: false,
             dataSource: fields
           })
         })
-        /*props.loadFieldsMethod(parentId).then(fields => {
-          /!*if (!recordRef.value.joinKeys?.length) {
-            const joinKeys = fields
-              .filter(item => item.isPrimaryKey)
-              .map(item => ({ source: item.value, target: item.value }))
-            formRef.value.setValuesIn(`mergeProperties.${indexRef.value}.joinKeys`, joinKeys)
-          }*!/
-
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: false,
-            dataSource: fields
+        setTimeout(() => {
+          metadataApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
+            form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+              loading: false,
+              dataSource: fields
+            })
           })
-        })*/
+        }, 500)
       }
 
       const handleCurrentChange = (data, node) => {
