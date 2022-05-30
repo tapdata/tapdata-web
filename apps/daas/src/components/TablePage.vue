@@ -46,6 +46,10 @@
             @sort-change="$emit('sort-change', $event)"
           >
             <slot></slot>
+            <div slot="empty" class="empty">
+              <VIcon size="140">no-data-color</VIcon>
+              <slot name="noDataText"></slot>
+            </div>
           </el-table>
           <div class="table-footer">
             <slot name="tableFooter"></slot>
@@ -78,11 +82,13 @@
 import Classification from '@/components/Classification'
 import SelectClassify from '@/components/SelectClassify'
 import { delayTrigger } from '../utils/util'
+import VIcon from '@/components/VIcon'
 
 export default {
   components: {
     Classification,
-    SelectClassify
+    SelectClassify,
+    VIcon
   },
   props: {
     title: String,

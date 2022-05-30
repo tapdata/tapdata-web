@@ -202,7 +202,7 @@ export default {
         status: 'all'
       },
       filterItems: [],
-      order: 'tablename DESC',
+      order: 'last_updated DESC',
       status: 'stop',
       dbOptions: [],
       statusList: [

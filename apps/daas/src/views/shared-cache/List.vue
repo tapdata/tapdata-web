@@ -1,6 +1,6 @@
 <template>
   <section class="shared-cache-list-wrap section-wrap">
-    <TablePage ref="table" row-key="id" :remoteMethod="getData">
+    <TablePage ref="table" row-key="id" :remoteMethod="getData" @sort-change="handleSortTable">
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
@@ -23,8 +23,16 @@
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="createTimeFmt" :label="$t('column_create_time')"></ElTableColumn>
-      <ElTableColumn prop="cacheTimeAtFmt" :label="$t('shared_cache_time')"></ElTableColumn>
+      <ElTableColumn prop="createTime" :label="$t('column_create_time')" sortable="createTime">
+        <template slot-scope="scope">
+          {{ scope.row.createTimeFmt }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="cacheTimeAt" :label="$t('shared_cache_time')">
+        <template slot-scope="scope">
+          {{ scope.row.cacheTimeAtFmt }}
+        </template>
+      </ElTableColumn>
       <ElTableColumn :label="$t('column_operation')">
         <template #default="{ row }">
           <!-- <ElLink type="primary" @click="edit(row.id)">{{ $t('button_edit') }}</ElLink> -->
@@ -169,7 +177,8 @@ export default {
       ],
       details: {},
       info: [],
-      isShowDetails: false
+      isShowDetails: false,
+      order: 'cacheTimeAt DESC'
     }
   },
   computed: {
@@ -189,8 +198,9 @@ export default {
       let where = {}
       name && (where.name = { like: toRegExp(name), options: 'i' })
       connectionName && (where.connectionName = { like: toRegExp(connectionName), options: 'i' })
+
       let filter = {
-        order: 'createTime DESC',
+        order: this.order,
         limit: size,
         skip: (current - 1) * size,
         where
@@ -204,8 +214,8 @@ export default {
           return {
             total: res.data?.total,
             data: list.map(item => {
-              item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              item.cacheTimeAtFmt = dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
+              item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              item.cacheTimeAtFmt = item.cacheTimeAt ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
 
               let statuses = item.statuses
               item.statusResult = getSubTaskStatus(statuses)[0].status
@@ -257,6 +267,11 @@ export default {
             })
         }
       })
+    },
+    //筛选条件
+    handleSortTable({ order, prop }) {
+      this.order = `${order ? prop : 'cacheTimeAt'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.table.fetch(1)
     }
   }
 }

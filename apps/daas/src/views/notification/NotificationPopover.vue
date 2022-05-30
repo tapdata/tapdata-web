@@ -25,7 +25,7 @@
                     {{ `${item.serverName} , ` }}
                   </span>
                   <template v-else>
-                    <ElLink type="primary" class="cursor-pointer px-1" @click="handleGo(item)">
+                    <ElLink type="primary" class="cursor-pointer task px-1" @click="handleGo(item)">
                       {{ `${item.serverName} , ` }}
                     </ElLink>
                   </template>
@@ -58,10 +58,10 @@
                   <div class="flex">
                     <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
                     <span>{{ systemMap[item.system] }} </span>
-                    <ElLink v-if="item.msg === 'deleted'">
+                    <ElLink class="task" v-if="item.msg === 'deleted'">
                       {{ `${item.serverName} ` }}
                     </ElLink>
-                    <ElLink type="primary" v-else class="cursor-pointer px-1" @click="handleGo(item)">
+                    <ElLink type="primary" v-else class="cursor-pointer px-1 task" @click="handleGo(item)">
                       {{ item.serverName }}
                     </ElLink>
                     <span>{{ typeMap[item.msg] }}</span>
@@ -425,6 +425,11 @@ export default {
           }
           span {
             font-size: 12px;
+          }
+          .task {
+            max-width: 200px;
+            text-overflow: ellipsis;
+            overflow: hidden;
           }
         }
         .list-item-platform {

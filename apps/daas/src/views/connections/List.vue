@@ -102,7 +102,7 @@
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
-      <ElTableColumn width="160" prop="last_updated" sortable="custom" :label="$t('connection.lastUpdateTime')">
+      <ElTableColumn width="160" prop="last_updated" sortable="last_updated" :label="$t('connection.lastUpdateTime')">
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
@@ -136,6 +136,9 @@
           </ElButton>
         </template>
       </ElTableColumn>
+      <!-- <div slot="noDataText">
+       {{$t('connection_list_no_data',[$t('connection_form_creat_connection')])}}
+      </div> -->
     </TablePage>
     <Preview ref="preview"></Preview>
     <DatabaseTypeDialog
@@ -376,7 +379,7 @@ export default {
                 item.connectionUrl = item.kafkaBootstrapServers
               }
               item.connectionSource = this.sourceTypeMapping[item.sourceType]
-              item.lastUpdateTime = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdateTime = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '-'
               return item
             })
           }

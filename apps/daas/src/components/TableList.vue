@@ -1,5 +1,5 @@
 <template>
-  <VTable v-bind="$attrs" v-on="$listeners" ref="table" class="table-list">
+  <VTable v-bind="$attrs" v-on="$listeners" ref="table" border class="table-list">
     <div slot="empty" class="pt-6">
       <slot name="empty">
         <div class="instance-table__empty" slot="empty">
@@ -34,7 +34,19 @@ export default {
 <style scoped lang="scss">
 .table-list {
   ::v-deep {
+    .el-table {
+      border: none;
+    }
     .el-table__header {
+      .el-table__cell {
+        border-right: 0;
+        &.is-leaf {
+          border-bottom: 0;
+        }
+        &:hover {
+          border-right: 1px solid map-get($borderColor, light);
+        }
+      }
       th {
         color: map-get($fontColor, normal);
         font-weight: 500;
@@ -46,6 +58,9 @@ export default {
       td {
         color: map-get($fontColor, light);
       }
+    }
+    &:after {
+      width: 0;
     }
   }
 }
