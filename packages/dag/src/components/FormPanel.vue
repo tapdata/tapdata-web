@@ -71,7 +71,8 @@ export default {
 
   watch: {
     stateIsReadonly(v) {
-      console.log('监听：stateIsReadonly', v) // eslint-disable-line
+      // eslint-disable-next-line no-console
+      console.log('监听：stateIsReadonly', v)
       this.form.setState({ disabled: v })
     },
 
@@ -679,14 +680,19 @@ export default {
     useEffects() {
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
-        console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`) // eslint-disable-line
-        console.trace(JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+
+        // eslint-disable-next-line no-console
+        console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`)
+        // eslint-disable-next-line no-console
+        console.trace(JSON.parse(JSON.stringify(form.values)))
+        // eslint-disable-next-line no-console
         console.groupEnd()
         this.updateNodeProps(form)
       })
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
-        console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+        // eslint-disable-next-line no-console
+        console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values)))
         this.updateNodeProps(form)
       })
       onFieldReact('*', field => {

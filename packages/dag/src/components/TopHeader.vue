@@ -89,40 +89,6 @@
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
-      <!--搜索节点-->
-      <!--<ElPopover
-        v-model="showSearchNodePopover"
-        placement="bottom"
-        trigger="click"
-        popper-class="rounded-xl p-0"
-        @after-leave="nodeSearchInput = null"
-      >
-        <ElTooltip slot="reference" transition="tooltip-fade-in" :content="$t('button_search_node')">
-          <button class="icon-btn mx-2">
-            <VIcon size="20">magnify</VIcon>
-          </button>
-        </ElTooltip>
-
-        <div class="choose-pane-wrap">
-          <ElInput class="input-filled" v-model="nodeSearchInput" :placeholder="$t('dag_search_node_placeholder')">
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-            </template>
-          </ElInput>
-          <ElDivider class="m-0" />
-          <ElScrollbar tag="div" wrap-class="choose-list-wrap" view-class="choose-list p-2">
-            <div
-              v-for="(node, i) in nodeList"
-              :key="i"
-              class="choose-item ellipsis px-4"
-              @click="handleClickNode(node)"
-            >
-              {{ node.name }}
-            </div>
-            <EmptyItem v-if="!nodeList.length"></EmptyItem>
-          </ElScrollbar>
-        </div>
-      </ElPopover>-->
       <!--设置-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
@@ -208,8 +174,6 @@ import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'
-import { Select } from 'element-ui'
-import EmptyItem from './EmptyItem'
 import { StatusItem } from '@tap/business'
 
 export default {
@@ -225,7 +189,7 @@ export default {
     scale: Number
   },
 
-  components: { StatusItem, EmptyItem, VDivider, VIcon, ElScrollbar: Select.components.ElScrollbar },
+  components: { StatusItem, VDivider, VIcon },
 
   data() {
     return {

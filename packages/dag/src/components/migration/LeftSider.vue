@@ -144,7 +144,6 @@ import { debounce } from 'lodash'
 import { Connections } from '@tap/api'
 import { Select } from 'element-ui'
 const connections = new Connections()
-import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'

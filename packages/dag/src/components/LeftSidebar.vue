@@ -563,7 +563,6 @@ export default {
      * @returns {Promise<void>}
      */
     async loadDatabaseTable(loadMore) {
-      const connection = this.activeConnection
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
 

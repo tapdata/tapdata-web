@@ -232,7 +232,7 @@ export default observer({
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch'
-                      },
+                      }
                       // shareCdcEnable: {
                       //   title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
                       //   type: 'boolean',
@@ -310,7 +310,6 @@ export default observer({
           return item
         }
       })
-      // 过滤重复数据源
       // 过滤重复数据源
       let map = {}
       let filterSourceNodes = () => {

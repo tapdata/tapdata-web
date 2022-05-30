@@ -53,6 +53,7 @@ export const MergeTableTree = observer(
       watch(
         treeRef,
         val => {
+          // eslint-disable-next-line
           console.log('🤖MergeTableTree.watch', val, treeRef.value)
           emit('change', val)
         },
@@ -114,6 +115,7 @@ export const MergeTableTree = observer(
       makeTree()
 
       observe(formRef.value.values.$inputs, () => {
+        // eslint-disable-next-line
         console.log('formRef.value.values.$inputs', formRef.value.values.$inputs)
         makeTree()
       })

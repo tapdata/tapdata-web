@@ -619,7 +619,6 @@ export default {
       })
 
       // 创建节点
-      let nodeType
       nodes.forEach(node => {
         node.$inputs = inputsMap[node.id] || []
         node.$outputs = outputsMap[node.id] || []

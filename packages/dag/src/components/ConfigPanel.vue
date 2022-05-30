@@ -50,9 +50,7 @@ import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from './FormPanel'
 import SettingPanel from './SettingPanel'
-// import DataPane from './DataPane'
 import MetaPane from './MetaPane'
-import PdkPane from './PdkPane'
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import NodeIcon from './NodeIcon'
@@ -71,7 +69,7 @@ export default {
     }
   },
 
-  components: { NodeIcon, VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel, PdkPane },
+  components: { NodeIcon, VIcon, MetaPane, FormPanel, SettingPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),

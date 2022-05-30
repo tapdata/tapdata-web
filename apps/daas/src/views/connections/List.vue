@@ -46,7 +46,7 @@
               <img :src="getConnectionIcon(scope.row)" alt="" />
             </div>
             <div class="database-text">
-               <!-- @click.stop="preview(scope.row)" -->
+              <!-- @click.stop="preview(scope.row)" -->
               <ElLink type="primary" style="display: block; line-height: 20px">
                 {{ scope.row.name }}
               </ElLink>
@@ -161,7 +161,6 @@ import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 import FilterBar from '@/components/filter-bar'
-import { TYPEMAP } from 'web-core/const'
 import { getConnectionIcon } from './util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'

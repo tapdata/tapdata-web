@@ -226,7 +226,7 @@
                         {{ item.name || item.connectionId }}
                       </div>
                       <ElCol :span="8" style="margin-right: 10px">
-                        <ElSelect v-model="item.pointType" placeholder="请选择" @change="hh">
+                        <ElSelect v-model="item.pointType" placeholder="请选择">
                           <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
                           </ElOption>
                         </ElSelect>
@@ -247,7 +247,7 @@
               </ElFormItem>
             </div>
           </div>
-           <!--开启共享日志挖掘-->
+          <!--开启共享日志挖掘-->
           <div class="setting-panel-box bg-white border-bottom pt-3" v-if="settings.type !== 'initial_sync'">
             <div class="setting-title fs-7 px-5">
               共享挖掘设置
@@ -354,10 +354,6 @@ export default {
   methods: {
     ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setDataflowSettings']),
 
-    // 获取所有节点
-    hh(val) {
-      console.log(val)
-    },
     getAllNode() {
       const allNodes = this.allNodes
       const allSource = this.$store.getters['dataflow/allEdges'].map(item => item.source)
