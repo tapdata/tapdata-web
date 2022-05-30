@@ -1,6 +1,6 @@
 <template>
   <section class="function-list-wrapper section-wrap">
-    <TablePage ref="table" class="h-100" :remoteMethod="getData"  @sort-change="handleSortTable">
+    <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
       <ul class="search-bar" slot="search">
         <li class="item">
           <ElRadioGroup v-model="searchParams.type" size="small" @input="table.fetch(1)">
