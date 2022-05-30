@@ -663,15 +663,17 @@ export default {
           type: 'select-inner',
           menuMinWidth: '250px',
           items: async () => {
-            let res = await this.$api('connections').getDataTypes()
-            let databaseTypes = res?.data || []
+            let res = await this.$api('DatabaseTypes').get()
+            let data = res?.data || []
+            let databaseTypes = []
+            databaseTypes.push(...data.filter(t => t.pdkType === 'pdk'))
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
             )
             return databaseTypeOptions.map(item => {
               return {
-                label: TYPEMAP[item],
-                value: item
+                label: item.name,
+                value: item.type
               }
             })
           }

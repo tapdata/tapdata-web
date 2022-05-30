@@ -147,17 +147,7 @@ export default [
             component: () => import('@/views/connections/List'),
             meta: {
               title: 'page_title_connections',
-              code: 'datasource_menu',
-              desc: (h, t) => {
-                return [
-                  t('connection_list_desc'),
-                  h(
-                    'ElLink',
-                    { props: { type: 'primary', href: 'https://docs.tapdata.net/data-source' }, class: 'ml-1' },
-                    [t('connection_list_help_doc')]
-                  )
-                ]
-              }
+              code: 'datasource_menu'
             }
           },
           {
