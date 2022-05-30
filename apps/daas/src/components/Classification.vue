@@ -1,17 +1,13 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <!-- <el-button class="btn-query" size="mini" type="text">
-      <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
-    </el-button> -->
     <ElButton type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
-      <i class="iconfont icon-zhankai2"></i>
+      <VIcon size="16" class="icon">expand-list</VIcon>
     </ElButton>
     <div class="classification-header" v-else>
       <ElButton type="text" class="btn-expand" size="mini" @click="toggle()">
-        <i class="iconfont icon-zhankai2"></i>
+        <VIcon size="16" class="icon">expand-list</VIcon>
       </ElButton>
       <ElButton class="btn-addIcon" size="mini" type="text" v-readonlybtn="authority" @click="showDialog()">
-        <!-- <i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i> -->
         {{ $t('button_button') }}
       </ElButton>
       <div class="title">
@@ -19,15 +15,15 @@
       </div>
       <!-- v-if="searchFalg" -->
       <div class="search-box">
-        <el-input class="search" size="mini" v-model="filterText">
+        <ElInput class="search" size="mini" v-model="filterText">
           <span slot="suffix" class="el-input__icon h-100 ml-1">
             <VIcon size="14">search</VIcon>
           </span>
-        </el-input>
+        </ElInput>
       </div>
     </div>
     <div class="tree-block" v-if="isExpand">
-      <el-tree
+      <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly
         show-checkbox
@@ -44,22 +40,22 @@
         @check="checkHandler"
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span class="iconfont icon-Folder-closed icon-folder"></span>
+          <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <span class="table-label">{{ data.value }}</span>
-          <el-dropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
-            <el-button type="text"><i class="iconfont icon-gengduo3 task-list-icon"></i></el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="add">
+          <ElDropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
+            <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
+            <ElDropdownMenu slot="dropdown">
+              <ElDropdownItem command="add">
                 {{ $t('classification.addChildernNode') }}
-              </el-dropdown-item>
-              <el-dropdown-item command="edit">{{ $t('classification.editNode') }}</el-dropdown-item>
-              <el-dropdown-item command="delete">{{ $t('classification.deleteNode') }}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+              </ElDropdownItem>
+              <ElDropdownItem command="edit">{{ $t('classification.editNode') }}</ElDropdownItem>
+              <ElDropdownItem command="delete">{{ $t('classification.deleteNode') }}</ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>
         </span>
-      </el-tree>
-      <el-button
+      </ElTree>
+      <ElButton
         v-if="treeData && treeData.length === 0 && isExpand"
         type="text"
         v-readonlybtn="authority"
@@ -67,24 +63,24 @@
         class="create"
       >
         {{ types[0] === 'user' ? $t('classification.creatUserGroup') : $t('classification.creatDataClassification') }}
-      </el-button>
+      </ElButton>
     </div>
-    <el-dialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+    <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
-      <el-input
+      <ElInput
         size="mini"
         v-model="dialogConfig.label"
         :placeholder="$t('classification.nodeName')"
         maxlength="50"
         show-word-limit
-      ></el-input>
+      ></ElInput>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="hideDialog()">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="dialogSubmit()">
+        <ElButton size="mini" @click="hideDialog()">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="dialogSubmit()">
           {{ $t('button_confirm') }}
-        </el-button>
+        </ElButton>
       </span>
-    </el-dialog>
+    </ElDialog>
   </div>
 </template>
 
@@ -511,7 +507,7 @@ export default {
       top: 0;
       left: 19px;
       transform: rotate(180deg);
-      .icon-zhankai2 {
+      .icon {
         font-size: 16px;
         // color: map-get($color, primary);
         &:hover {
