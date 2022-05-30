@@ -92,6 +92,7 @@ import TableList from '@/components/TableList'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
 
+let timeout = null
 export default {
   name: 'Subtask',
   components: { TableList, VIcon },
@@ -155,8 +156,16 @@ export default {
       return this.$refs.tableList
     }
   },
+  mounted() {
+    //定时轮询
+    timeout = setInterval(() => {
+      this.$refs.tableList.fetch(null, 0, true)
+    }, 5000)
+  },
+  destroyed() {
+    clearInterval(timeout)
+  },
   methods: {
-    init() {},
     remoteMethod({ page }) {
       const { taskId } = this
       let { current, size } = page

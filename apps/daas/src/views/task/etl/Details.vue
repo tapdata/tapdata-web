@@ -140,12 +140,6 @@ export default {
           key: 'type',
           icon: 'menu',
           label: this.$t('task_monitor_sync_type')
-        },
-        {
-          key: 'type',
-          icon: 'menu',
-          label: this.$t('task_monitor_incremental_lag'),
-          show: 'cdc'
         }
       ],
       ouputItems: [
@@ -197,36 +191,6 @@ export default {
       )
     }
   },
-  created() {
-    this.$ws.on('watch', this.taskChange)
-    this.$ws.send({
-      type: 'watch',
-      collection: 'DataFlows',
-      filter: {
-        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
-        fields: {
-          'fullDocument.id': true,
-          'fullDocument.name': true,
-          'fullDocument.status': true,
-          'fullDocument.executeMode': true,
-          'fullDocument.stopOnError': true,
-          'fullDocument.last_updated': true,
-          'fullDocument.createTime': true,
-          'fullDocument.children': true,
-          'fullDocument.stats': true,
-          'fullDocument.setting': true,
-          'fullDocument.cdcLastTimes': true,
-          'fullDocument.listtags': true,
-          'fullDocument.finishTime': true,
-          'fullDocument.startTime': true,
-          'fullDocument.errorEvents': true,
-          'fullDocument.milestones': true,
-          'fullDocument.user': true,
-          'fullDocument.mappingTemplate': true
-        }
-      }
-    })
-  },
   mounted() {
     this.init()
     //定时轮询
@@ -235,7 +199,6 @@ export default {
     }, 2000)
   },
   destroyed() {
-    this.$ws.off('watch', this.taskChange)
     clearInterval(timeout)
   },
   methods: {
