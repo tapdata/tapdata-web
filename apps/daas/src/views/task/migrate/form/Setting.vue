@@ -243,7 +243,7 @@ export default {
                 'x-component-props': {
                   gap: 8,
                   align: 'start'
-                },
+                }
 
                 // properties: {
                 //   accessNodeType: {

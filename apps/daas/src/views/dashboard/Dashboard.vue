@@ -292,7 +292,6 @@ export default {
             }
 
             let html = params.name + `<span style="padding: 0 4px; text-align: center;"></span><br/>` + val
-            // console.log(html, this.handleChangeUnit(val))
             return html
           }
         }
@@ -539,7 +538,6 @@ export default {
         data.forEach(res => {
           dataName.push(res.name)
           total += parseFloat(res.value) * 1
-          // res.value = this.handleChangeUnit(res.value)
         })
         totalFalg = data.some(item => item.value > 0)
         total = this.toThousandsUnit(total)
@@ -601,7 +599,7 @@ export default {
                 show: true,
                 fontWeight: 'bold',
                 formatter: ({ name, value }) => {
-                  return `{name|${this.handleChangeUnit(value)}}\n{value|${name}}`
+                  return `{name|${this.toThousandsUnit(value)}}\n{value|${name}}`
                 },
                 width: 60,
                 height: 34,

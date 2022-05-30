@@ -311,7 +311,6 @@ export default observer({
         }
       })
       // 过滤重复数据源
-      // 过滤重复数据源
       let map = {}
       let filterSourceNodes = () => {
         sourceNodes.forEach(item => {

@@ -106,8 +106,6 @@
 <script>
 import factory from '@/api/factory'
 import formConfig from './config'
-import GitBook from './GitBook'
-import { JsEditor } from '@tap/component'
 import Test from './Test'
 import { TYPEMAPCONFIG, defaultModel, getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -120,7 +118,7 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { GitBook, Test, DatabaseTypeDialog, JsEditor, VIcon, SchemaToForm },
+  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
