@@ -137,7 +137,7 @@ export class MergeTable extends NodeType {
                             type: 'void',
                             'x-component': 'ArrayTable.Column',
                             'x-component-props': {
-                              title: '主表字段',
+                              title: '当前表字段',
                               align: 'center',
                               asterisk: false
                             },
@@ -159,7 +159,7 @@ export class MergeTable extends NodeType {
                             type: 'void',
                             'x-component': 'ArrayTable.Column',
                             'x-component-props': {
-                              title: '子表字段',
+                              title: '目标表字段',
                               align: 'center',
                               asterisk: false
                             },
@@ -200,10 +200,6 @@ export class MergeTable extends NodeType {
                           'x-component': 'ArrayTable.Addition'
                         }
                       }
-                    },
-                    children: {
-                      type: 'array',
-                      'x-display': 'hidden'
                     }
                   }
                 }
