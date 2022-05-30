@@ -348,3 +348,19 @@ export function getTaskBtnDisabled(row, or) {
   }
   return result
 }
+
+// 转化单位
+export function toThousandsUnit(val) {
+  if ([undefined, null, ''].includes(val)) {
+    return '-'
+  }
+  if (val / (1000 * 1000 * 1000) > 1) {
+    return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
+  } else if (val / (1000 * 1000) > 1) {
+    return (val / (1000 * 1000)).toFixed(1) + 'M'
+  } else if (val / 1000 > 1) {
+    return (val / 1000).toFixed(1) + 'K'
+  } else {
+    return val
+  }
+}

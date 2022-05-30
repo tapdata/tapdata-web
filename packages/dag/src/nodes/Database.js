@@ -1,162 +1,192 @@
 import { NodeType } from './extends/NodeType'
-import i18n from '@/i18n'
 
 export class Database extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {}
+  type = 'database'
+
+  minInputs = 0 // 最小输入个数
+
+  maxInputs = 0 // 最大输入个数
+
+  maxOutputs = 1 // 最大输出个数
 
   group = 'data'
 
-  /*formSchema = {
+  formSchema = {
     type: 'object',
     properties: {
-      datasource: {
-        title: '数据库',
-        type: 'void',
-        'x-decorator': 'ElFormItem',
-        'x-decorator-props': {
-          asterisk: true
-        },
-        'x-component': 'Row',
-        'x-component-props': {
-          type: 'flex',
-          gap: '8px'
-        },
-        properties: {
-          connectionId: {
-            type: 'string',
-            required: true,
-            'x-decorator': 'Col',
-            'x-decorator-props': { flex: 1 },
-            'x-component': 'ComboSelect',
-            'x-component-props': {
-              config: { placeholder: '请选择数据库' }
-            },
-            'x-reactions': ['{{useAsyncDataSource(loadDatabase)}}']
-          },
-          connectionBtn: {
-            type: 'void',
-            'x-component': 'AddDatabaseBtn'
-          }
-        }
-      },
-      name: {
-        type: 'string',
-        'x-display': 'hidden',
-        'x-reactions': {
-          dependencies: ['connectionId'],
-          fulfill: {
-            run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
-          }
-        }
-      },
-      datasourceInfo: {
-        type: 'string',
-        'x-component': 'DatabaseInfo',
-        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo)}}']
-      }
-    }
-  }
-
-  linkFormSchema = {
-    type: 'object',
-    properties: {
-      dropType: {
-        type: 'string',
-        title: '对目标端已存在的结构和数据的处理',
-        default: 'no_drop',
-        'x-decorator': 'ElFormItem',
-        'x-component': 'Select',
-        'x-reactions': ['{{loadDropOptions}}']
-      },
-      table_prefix: {
-        type: 'string',
-        default: '',
-        'x-display': 'hidden'
-      },
-      table_suffix: {
-        type: 'string',
-        default: '',
-        'x-display': 'hidden'
-      },
-      syncObjects: {
+      $inputs: {
         type: 'array',
-        default: [
-          {
-            type: 'table'
+        'x-display': 'hidden'
+      },
+      $outputs: {
+        type: 'array',
+        'x-display': 'hidden'
+      },
+      databaseType: {
+        type: 'string',
+        'x-display': 'hidden'
+      },
+
+      'attrs.connectionName': {
+        type: 'string',
+        title: '连接名称',
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          className: 'form-item-text'
+        },
+        'x-component': 'PreviewText.Input',
+        'x-component-props': {
+          style: {
+            color: '#535F72'
           }
-        ],
+        }
+      },
+
+      // 所属agent
+      'attrs.accessNodeProcessId': {
+        type: 'string',
+        title: '所属agent',
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          className: 'form-item-text'
+        },
+        'x-component': 'PreviewText.Input',
+        'x-component-props': {
+          content:
+            '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
+          style: {
+            color: '#535F72'
+          }
+        },
+        'x-reactions': {
+          fulfill: {
+            state: {
+              display: '{{!$self.value ? "hidden":"visible"}}'
+            }
+          }
+        }
+      },
+
+      desc: {
+        type: 'string',
+        title: '节点描述',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input.TextArea',
+        'x-component-props': {
+          autosize: { maxRows: 2 }
+        }
+      },
+
+      increaseReadSize: {
+        title: '批量读取条数', //增量批次读取条数
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'InputNumber',
+        'x-decorator-props': {
+          tooltip: '全量每批次读取的条数'
+        },
+        'x-component-props': {
+          min: 1,
+          max: 100000
+        },
+        default: 100
+      },
+
+      'attrs.howManyTable': {
+        title: '选择表',
+        type: 'string',
+        default: 'all',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Radio.Group',
         enum: [
           {
-            label: 'Table',
-            value: 'table',
-            tooltip: 'editor.cell.link.tableTip',
-            disabled: true
+            label: '全部',
+            value: 'all'
           },
           {
-            label: 'View',
-            value: 'view',
-            tooltip: 'editor.cell.link.viewTip'
-          },
-          {
-            label: 'Function',
-            value: 'function'
-          },
-          {
-            label: 'Procedure',
-            value: 'procedure'
+            label: '自定义',
+            value: 'some'
           }
         ],
-        'x-component': 'SyncObjects',
-        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
+        'x-reactions': {
+          target: 'tableNames',
+          effects: ['onFieldInputValueChange'],
+          fulfill: {
+            state: {
+              value: '{{$self.value === "some" ? []:$self.value}}'
+            }
+          }
+        }
+      },
+
+      tableCard: {
+        type: 'void',
+        properties: {
+          tableNames: {
+            type: 'array',
+            'x-component': 'TableListCard',
+            'x-component-props': {
+              connectionId: '{{$values.connectionId}}'
+            },
+            'x-reactions': {
+              dependencies: ['attrs.howManyTable'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0] !== "some" ? "visible":"hidden"}}'
+                },
+                schema: {
+                  required: '{{$deps[0] !== "some"}}'
+                }
+              }
+            }
+          }
+        }
+      },
+
+      tableNames: {
+        type: 'array',
+        default: [],
+        'x-component': 'TableSelector',
+        'x-component-props': {
+          connectionId: '{{$values.connectionId}}',
+          style: {
+            minHeight: 0,
+            maxHeight: 'calc(100vh - 120px)'
+          }
+        },
+        'x-reactions': {
+          dependencies: ['attrs.howManyTable'],
+          fulfill: {
+            state: {
+              display: '{{$deps[0] === "some" ? "visible":"hidden"}}'
+            },
+            schema: {
+              required: '{{$deps[0] === "some"}}'
+            }
+          }
+        }
+      },
+
+      name: {
+        type: 'string',
+        'x-display': 'hidden'
+      },
+
+      // 切换连接，保存连接的类型
+      'attrs.connectionType': {
+        type: 'string',
+        'x-display': 'hidden'
       }
     }
-  }*/
-
-  /**
-   * 获取额外添加到节点上的属性
-   */
-  getExtraAttr() {
-    return {
-      databaseType: this.attr.databaseType,
-      inputLanes: [],
-      outputLanes: []
-    }
   }
 
-  validate(data) {
-    if (!data.connectionId) return `${data.name}: ${i18n.t('editor.cell.data_node.database.none_database')}`
-    return true
-  }
-
-  allowTarget(target, source) {
-    console.log('allowTarget', arguments) // eslint-disable-line
-    if (source.databaseType === 'elasticsearch') {
-      return target.databaseType === 'kafka'
-    }
-    return (
-      target.type === 'database' &&
-      target.databaseType !== 'hbase' &&
-      target.inputLanes.length < 1 &&
-      target.outputLanes.length < 1
-    )
-  }
-
-  allowSource(source) {
-    return (
-      source.type === 'database' &&
-      source.databaseType !== 'kudu' &&
-      source.inputLanes.length < 1 &&
-      source.outputLanes.length < 1
-    )
+  selector(node) {
+    // attrs.isTarget 是UI属性，在无UI的模式生成的节点，通过是否有输入($inputs)来判断
+    return node.type === 'database' && !node.attrs?.isTarget && !node.$inputs?.length
   }
 }

@@ -51,11 +51,11 @@
         </button>
       </ElTooltip>
       <!--移动画布-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
+      <!--<ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
         <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
           <VIcon size="20">hand</VIcon>
         </button>
-      </ElTooltip>
+      </ElTooltip>-->
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out')">
@@ -88,11 +88,9 @@
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
-    </div>
-    <div class="flex align-center flex-grow-1">
-      <div class="flex-grow-1"></div>
+      <VDivider class="mx-3" vertical inset></VDivider>
       <!--搜索节点-->
-      <ElPopover
+      <!--<ElPopover
         v-model="showSearchNodePopover"
         placement="bottom"
         trigger="click"
@@ -124,31 +122,23 @@
             <EmptyItem v-if="!nodeList.length"></EmptyItem>
           </ElScrollbar>
         </div>
-      </ElPopover>
+      </ElPopover>-->
+      <!--设置-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
+        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
+          <VIcon size="20">setting</VIcon>
+        </button>
+      </ElTooltip>
+    </div>
+    <div class="flex align-center flex-grow-1">
+      <div class="flex-grow-1"></div>
 
-      <ElButton
-        v-if="stateIsReadonly"
-        size="mini"
-        class="mx-1 btn--text"
-        @click="
-          $router.push({
-            name: 'dataflowDetails',
-            params: {
-              id: dataflow.id
-            }
-          })
-        "
-      >
+      <ElButton v-if="stateIsReadonly" size="mini" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
         {{ $t('task_list_button_monitor') }}
       </ElButton>
 
-      <ElButton size="mini" class="mx-1 btn--text" @click="$emit('showSettings')">
-        <VIcon>setting</VIcon>
-        <!--设置-->
-        {{ $t('button_setting') }}
-      </ElButton>
       <ElButton v-if="!stateIsReadonly" :loading="isSaving" size="mini" class="mx-2" @click="$emit('save')">
         <!--保存-->
         {{ $t('button_save') }}
@@ -252,7 +242,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes']),
+    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
     ...mapState('dataflow', ['spaceKeyPressed']),
 
     syncTxt() {
@@ -429,7 +419,7 @@ $sidebarBg: #fff;
       transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
       &:focus {
-        border-color: #409eff;
+        border-color: map-get($color, primary);
         & + .title-input-icon {
           color: map-get($color, primary);
         }
@@ -578,7 +568,7 @@ $sidebarBg: #fff;
     cursor: pointer;
 
     &:hover {
-      background-color: #eef3ff;
+      background-color: #edf1f9;
     }
   }
   &.auto-width .choose-item {

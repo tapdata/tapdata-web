@@ -1,3 +1,4 @@
 import Editor from './Editor'
+import MigrationEditor from './MigrationEditor'
 
-export { Editor }
+export { Editor, MigrationEditor }

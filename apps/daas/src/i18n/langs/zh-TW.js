@@ -839,6 +839,10 @@ export default {
   dag_data_setting_example: '例子:',
   dag_data_setting_runMinute: '每分鐘運行一次',
   dag_data_setting_runDay: '每天2點運行',
+  dag_attributes_exist_data_deal: '已有數據處理',
+  dag_attributes_exist_data_keep_data: '保持已存在的數據',
+  dag_attributes_exist_data_remove_data: '運行前刪除已存在的數據',
+  dag_attributes_exist_data_drop_table: '運行前刪除表結構',
 
   dag_dialog_field_mapping_change_type_field_rename: '類型修改',
   dag_dialog_field_mapping_batch_change_type: '批量修改字段類型',
@@ -863,6 +867,10 @@ export default {
   dag_dialog_field_mapping_selected: '已選中',
   dag_dialog_field_mapping_search_field: '搜索字段',
   dag_dialog_field_mapping_source_field: '源表字段名',
+  dag_dialog_field_mapping_field: '字段名',
+  dag_dialog_field_mapping_type: '字段類型',
+  dag_dialog_field_mapping_precision: '字段長度',
+  dag_dialog_field_mapping_scale: '字段精度',
   dag_dialog_field_mapping_source_type: '源表類型',
   dag_dialog_field_mapping_source_precision: '源表長度',
   dag_dialog_field_mapping_source_scale: '源表精度',
@@ -1192,6 +1200,9 @@ export default {
   task_setting_cron_feedbackText:
     '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ',
   task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
+  task_setting_cron_tip:
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
+  task_setting_syncPoint_tip: '任務將從該時間點開始收集增量日誌',
 
   //字段映射
   task_form_no_fields_not_save: '當前表被刪除了所有字段，不允許保存操作',
@@ -1372,6 +1383,7 @@ export default {
   shared_cdc_setting_no_mongodb_tip: ' 請先創建mongodb數據源',
   shared_cdc_name: '請輸入挖掘名稱',
   shared_cdc_setting_refresh: '刷新數據',
+  shared_cdc_setting_select_mode: '存储模式',
   shared_cdc_setting_select_mongodb_tip: '請選擇mongodb連接',
   shared_cdc_setting_select_table_tip: '請選擇表名',
   shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',

@@ -7,11 +7,15 @@
     </el-radio-group>
     <template v-if="type === 'sourcedata'">
       <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">
-        <li v-for="item in types" :key="item" @click="$emit('select', item)">
+        <li v-for="item in types" :key="item.pdkType ? item.type : item" @click="$emit('select', item)">
           <div class="img-box">
-            <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
+            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
+            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
           </div>
-          <ElTooltip class="item" effect="dark" :content="typeMap[item]" placement="bottom">
+          <ElTooltip v-if="item.pdkType" class="item" effect="dark" :content="item.name" placement="bottom">
+            <div class="content">{{ item.name }}</div>
+          </ElTooltip>
+          <ElTooltip v-else class="item" effect="dark" :content="typeMap[item]" placement="bottom">
             <div class="content">{{ typeMap[item] }}</div>
           </ElTooltip>
         </li>
@@ -58,6 +62,8 @@
 </template>
 
 <script>
+import Cookie from '@tap/shared/src/cookie'
+
 export default {
   name: 'ConnectionTypeSelector',
   props: {
@@ -104,6 +110,10 @@ export default {
   methods: {
     changeType(type) {
       this.type = type
+    },
+    getPdkIcon(item) {
+      const token = Cookie.get('token')
+      return `/api/pdk/icon?access_token=${token}&pdkHash=${item.pdkHash}`
     }
   }
 }

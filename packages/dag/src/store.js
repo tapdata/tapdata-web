@@ -5,8 +5,8 @@ import { debounce } from 'lodash'
 import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
-import { AllLocales } from './nodes/locales'
 import { setValidateLanguage } from '@formily/core'
+import { CustomProcessor } from './nodes/extends/CustomProcessor'
 
 const taskApi = new Task()
 const customNodeApi = new CustomNode()
@@ -47,79 +47,10 @@ const langMap = {
 const getState = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
   stateIsReadonly: false, // 状态是否被污染，标识数据改变
+  allResourceIns: [],
   nodeTypes: [], // 所有节点类型
   nodeErrorState: {}, // 节点错误状态
-  processorNodeTypes: [
-    {
-      icon: 'javascript',
-      name: 'JavaScript',
-      type: 'js_processor',
-      constructor: 'JavaScript',
-      locales: AllLocales.JavaScript
-    },
-    // {
-    //   icon: 'field-processor',
-    //   name: '字段处理',
-    //   type: 'field_processor',
-    //   constructor: 'FieldProcessor'
-    // },
-    {
-      icon: 'aggregator',
-      name: '聚合',
-      type: 'aggregation_processor',
-      constructor: 'Aggregate',
-      locales: AllLocales.Aggregate
-    },
-    {
-      icon: 'row-filter',
-      name: 'Row Filter',
-      type: 'row_filter_processor',
-      constructor: 'RowFilter'
-    },
-    {
-      icon: 'join',
-      name: '连接',
-      type: 'join_processor',
-      constructor: 'Join',
-      locales: AllLocales.Join
-    },
-    {
-      icon: 'merge_table',
-      name: '主从合并',
-      type: 'merge_table_processor',
-      constructor: 'MergeTable'
-    },
-    {
-      icon: 'field_calc',
-      name: '字段计算',
-      type: 'field_calc_processor',
-      constructor: 'FieldCalc'
-    },
-    {
-      icon: 'field_mod_type',
-      name: '类型修改',
-      type: 'field_mod_type_processor',
-      constructor: 'FieldModType'
-    },
-    {
-      icon: 'field_rename',
-      name: '字段改名',
-      type: 'field_rename_processor',
-      constructor: 'FieldRename'
-    },
-    {
-      icon: 'field_add_del',
-      name: '增删字段',
-      type: 'field_add_del_processor',
-      constructor: 'FieldAddDel'
-    }
-    // {
-    //   icon: 'joint-cache',
-    //   name: '关联缓存',
-    //   type: 'cache_lookup_processor',
-    //   constructor: 'JointCache'
-    // }
-  ],
+  processorNodeTypes: [],
   nodeViewOffsetPosition: [0, 0],
   spaceKeyPressed: false,
   paperMoveInProgress: false,
@@ -180,10 +111,10 @@ const getters = {
     const nodeType = node.type
     let foundType
     const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
-    if (nodeType === 'database') {
+    /*if (nodeType === 'database') {
       const dbType = node.databaseType
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
-    } else if (nodeType === 'custom_processor') {
+    } else*/ if (nodeType === 'custom_processor') {
       foundType = state.processorNodeTypes.find(typeData => typeData.attr?.customNodeId === node.customNodeId)
     } else {
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType)
@@ -192,6 +123,11 @@ const getters = {
     if (foundType === undefined) return null
 
     return foundType
+  },
+
+  // 节点资源实例
+  getResourceIns: state => node => {
+    return state.allResourceIns.find(ins => ins.selector(node))
   },
 
   dag: state => state.dag,
@@ -297,21 +233,33 @@ const actions = {
 
   async loadCustomNode({ commit }) {
     const { items } = await customNodeApi.get()
+    const insArr = []
     commit(
       'addProcessorNode',
       items.map(item => {
-        return {
-          icon: 'custom-node',
+        const node = {
           name: item.name,
           type: 'custom_processor',
-          constructor: 'CustomProcessor',
-          attr: {
-            customNodeId: item.id,
-            formSchema: item.formSchema
-          }
+          customNodeId: item.id
         }
+
+        const ins = new CustomProcessor({
+          customNodeId: item.id,
+          formSchema: item.formSchema
+        })
+
+        insArr.push(ins)
+
+        // 设置属性__Ctor不可枚举
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
+
+        return node
       })
     )
+    commit('addResourceIns', insArr)
     // console.log('loadCustomNode', data)
   }
 }
@@ -373,6 +321,10 @@ const mutations = {
 
   setCtorTypes(state, ctorTypes) {
     Vue.set(state, 'ctorTypes', ctorTypes)
+  },
+
+  addResourceIns(state, allResourceIns) {
+    state.allResourceIns.push(...allResourceIns)
   },
 
   // 设置激活节点
@@ -765,8 +717,8 @@ const mutations = {
 
       if (!nodes.length) return
 
-      const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
-      const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
+      // const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
+      // const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
       const sourceMap = {},
         targetMap = {}
 
@@ -793,6 +745,9 @@ const mutations = {
         node.attrs.position[0] += 20
         node.attrs.position[1] += 20
 
+        node.$inputs = []
+        node.$outputs = []
+
         // 替换连线里绑定的ID
         if (sourceMap[oldId]) {
           sourceMap[oldId].forEach(item => (item.source = node.id))
@@ -802,18 +757,39 @@ const mutations = {
           targetMap[oldId].forEach(item => (item.target = node.id))
         }
 
-        const nodeType = nodeTypesMap[node.type]
-
-        if (nodeType) {
-          const Ctor = state.ctorTypes[nodeType.constructor]
-          const ins = new Ctor(nodeType)
-
-          Object.defineProperty(node, '__Ctor', {
-            value: ins,
-            enumerable: false
-          })
-        }
+        const ins = state.allResourceIns.find(ins => ins.selector(node))
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
       })
+
+      if (edges.length) {
+        const outputsMap = {}
+        const inputsMap = {}
+
+        edges.forEach(({ source, target }) => {
+          let _source = outputsMap[source]
+          let _target = inputsMap[target]
+
+          if (!_source) {
+            outputsMap[source] = [target]
+          } else {
+            _source.push(target)
+          }
+
+          if (!_target) {
+            inputsMap[target] = [source]
+          } else {
+            _target.push(source)
+          }
+        })
+
+        nodes.forEach(node => {
+          node.$inputs = inputsMap[node.id] || []
+          node.$outputs = outputsMap[node.id] || []
+        })
+      }
 
       // 执行添加dag命令，可以撤销/重做
       await command.exec(new AddDagCommand(dag))

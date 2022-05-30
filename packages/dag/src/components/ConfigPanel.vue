@@ -12,7 +12,7 @@
     </div>
     <div class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
-        <ElImage class="mr-2" :src="icon"></ElImage>
+        <NodeIcon class="mr-2" :node="activeNode" />
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
             ref="nameInput"
@@ -36,6 +36,9 @@
         <!--<ElTabPane label="数据详情">
           <DataPane></DataPane>
         </ElTabPane>-->
+        <!--        <ElTabPane label="pdk">-->
+        <!--          <PdkPane v-on="$listeners" v-bind="$attrs" ref="pdkPane"></PdkPane>-->
+        <!--        </ElTabPane>-->
       </ElTabs>
     </div>
   </section>
@@ -49,9 +52,10 @@ import FormPanel from './FormPanel'
 import SettingPanel from './SettingPanel'
 // import DataPane from './DataPane'
 import MetaPane from './MetaPane'
+import PdkPane from './PdkPane'
 import VIcon from 'web-core/components/VIcon'
-import { NODE_TYPE_ICON } from '../constants'
 import focusSelect from 'web-core/directives/focusSelect'
+import NodeIcon from './NodeIcon'
 
 export default {
   name: 'ConfigPanel',
@@ -67,16 +71,13 @@ export default {
     }
   },
 
-  components: { VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel },
+  components: { NodeIcon, VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel, PdkPane },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
 
     icon() {
-      const node = this.activeNode
-      if (!node) return null
-      const icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
-      return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+      return this.getIcon(this.activeNode)
     }
   },
 

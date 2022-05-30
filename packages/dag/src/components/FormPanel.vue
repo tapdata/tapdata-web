@@ -1,20 +1,14 @@
 <template>
-  <div class="attr-panel">
-    <div class="attr-panel-body overflow-auto">
-      <Form class-name="form-wrap" :form="form" v-bind="formProps">
-        <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
-      </Form>
-    </div>
-  </div>
+  <FormRender :form="form" :schema="schema" :scope="scope" />
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { Form, SchemaField } from '@tap/form'
 import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
 import { Path } from '@formily/path'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import { debounce } from 'lodash'
+import FormRender from './FormRender'
 
 const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
@@ -32,7 +26,7 @@ export default {
     scope: {}
   },
 
-  components: { Form, SchemaField },
+  components: { FormRender },
 
   data() {
     return {
@@ -72,12 +66,6 @@ export default {
 
     ins() {
       return this.node?.__Ctor
-    },
-
-    nodeType() {
-      const { getters } = this.$store
-      const getNodeType = getters['dataflow/nodeType']
-      return getNodeType(this.activeNode)
     }
   },
 
@@ -672,7 +660,8 @@ export default {
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
       if (!this.node) return
-      const formValues = { ...form.values }
+      const formValues = JSON.parse(JSON.stringify(form.values))
+      // const formValues = { ...form.values }
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
       filterProps.forEach(path => {
         Path.setIn(formValues, path, undefined)
@@ -690,7 +679,9 @@ export default {
     useEffects() {
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
-        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+        console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`) // eslint-disable-line
+        console.trace(JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+        console.groupEnd()
         this.updateNodeProps(form)
       })
       onFormInputChange(form => {
@@ -702,7 +693,7 @@ export default {
         const path = field.path.toString().replace(/\.[\d+]/g, '')
         const takeMessage = prop => {
           const token = `${path}${prop ? `.${prop}` : ''}`
-          return this.getMessage(token, this.nodeType.locales)
+          return this.getMessage(token, this.ins.locales)
         }
         const title = takeMessage('title') || takeMessage()
         const description = takeMessage('description')
@@ -755,89 +746,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-$radius: 4px;
-$headerH: 48px;
-$padding: 16px;
-$headerBg: #fff;
-.attr-panel {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-
-  &-header {
-    display: flex;
-    align-items: center;
-    padding: 0 $padding;
-    height: $headerH;
-    line-height: $headerH;
-    font-size: 14px;
-    //box-shadow: 0 0 4px 0 rgb(0 0 0 / 10%);
-    background-color: $headerBg;
-
-    .header-icon {
-      display: inline-block;
-      width: $headerH;
-      height: $headerH;
-      text-align: center;
-      background-color: map-get($color, primary);
-      cursor: pointer;
-      color: #fff;
-    }
-
-    .header-txt {
-      font-size: 14px;
-    }
-  }
-
-  &-body {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: $padding;
-    height: 0;
-
-    .el-form-item.--label-w100 {
-      .el-form-item__label {
-        width: 100%;
-      }
-    }
-
-    .el-form-item__content > .el-row {
-      width: 100%;
-    }
-  }
-
-  ::v-deep {
-    .form-wrap {
-      flex: 1;
-      > form {
-        height: 100%;
-        > .formily-element-space {
-          height: 100%;
-        }
-      }
-    }
-
-    // 覆盖数字输入框的宽度
-    .formily-element-form-item {
-      .el-input-number {
-        width: 180px;
-      }
-      .el-input-number--small {
-        width: 130px;
-      }
-    }
-
-    .formily-element-form-item-layout-vertical .formily-element-form-item-label-tooltip {
-      height: 40px;
-    }
-  }
-}
-</style>

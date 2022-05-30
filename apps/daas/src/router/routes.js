@@ -13,6 +13,10 @@ const DagEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
   return Editor
 }
+const MigrationEditor = async () => {
+  const { MigrationEditor } = await import('@tap/dag')
+  return MigrationEditor
+}
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
@@ -93,6 +97,35 @@ export default [
       code: 'Data_SYNC_menu'
     }
   },
+
+  {
+    path: '/migrate/editor',
+    name: 'MigrateCreate',
+    component: MigrationEditor,
+    meta: {
+      title: 'page_title_task_edit',
+      code: 'Data_SYNC_menu'
+    }
+  },
+  {
+    path: '/migrate/editor/:id',
+    name: 'MigrateEditor',
+    component: MigrationEditor,
+    meta: {
+      title: 'page_title_task_edit',
+      code: 'Data_SYNC_menu'
+    }
+  },
+  {
+    path: '/migrate/viewer/:id',
+    name: 'MigrateViewer',
+    component: MigrationEditor,
+    meta: {
+      title: 'page_title_task_edit',
+      code: 'Data_SYNC_menu'
+    }
+  },
+
   {
     path: '/',
     name: 'layout',
@@ -122,17 +155,7 @@ export default [
             component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connections/List'),
             meta: {
               title: 'page_title_connections',
-              code: 'datasource_menu',
-              desc: (h, t) => {
-                return [
-                  t('connection_list_desc'),
-                  h(
-                    'ElLink',
-                    { props: { type: 'primary', href: 'https://docs.tapdata.net/data-source' }, class: 'ml-1' },
-                    [t('connection_list_help_doc')]
-                  )
-                ]
-              }
+              code: 'datasource_menu'
             }
           },
           {
@@ -186,15 +209,6 @@ export default [
           {
             path: 'viewer/:id',
             name: 'MigrateViewer',
-            component: MigrateForm,
-            meta: {
-              title: 'page_title_task_edit',
-              code: 'Data_SYNC_menu'
-            }
-          },
-          {
-            path: 'edit/:id',
-            name: 'MigrateEditor',
             component: MigrateForm,
             meta: {
               title: 'page_title_task_edit',

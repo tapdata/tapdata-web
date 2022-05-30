@@ -10,9 +10,14 @@
     :close-on-press-escape="false"
   >
     <div class="test-result">
-      <div v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'" style="color: #d54e21">
+      <div
+        v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
+        style="color: #d54e21"
+        class="flex align-items-baseline"
+      >
         <i class="el-icon-warning" style="color: #d54e21"></i>
-        <span class="test-title">{{ wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error') }}</span>
+        <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto mt-0"></pre>
+        <span v-else>{{ $t('dataForm.test.error') }}</span>
       </div>
       <div v-else>
         <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
@@ -43,7 +48,7 @@
     >
       <el-table-column prop="show_msg" :label="$t('dataForm.test.items')">
         <template slot-scope="scope">
-          <span>{{ $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
+          <span>{{ scope.row.show_msg }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="status" :label="$t('dataForm.test.result')" width="150">
@@ -146,6 +151,7 @@ export default {
     },
     handleClose() {
       this.$emit('update:dialogTestVisible', false)
+      this.clearInterval()
     },
     handleWS() {
       this.$ws.ready(() => {

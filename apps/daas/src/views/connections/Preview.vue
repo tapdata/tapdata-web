@@ -4,7 +4,7 @@
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">
           <div class="img-box">
-            <img :src="getImgByType(connection.database_type)" />
+            <img :src="getConnectionIcon()" />
           </div>
         </div>
         <div class="ml-4">
@@ -85,7 +85,7 @@
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import Drawer from '@/components/Drawer'
-import { CONFIG_MODEL } from './util'
+import { CONFIG_MODEL, getConnectionIcon } from './util'
 import dayjs from 'dayjs'
 
 export default {
@@ -158,20 +158,33 @@ export default {
     open(row) {
       this.visible = true
       this.showProgress = false
+      if (row.pdkType === 'pdk') {
+        for (let key in row.config) {
+          row['database_' + key] = row.config[key]
+        }
+      }
       this.connection = row
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
       this.loadList(row.database_type)
     },
     edit() {
+      const { connection = {} } = this
+      const { id, database_type, pdkType, pdkHash } = connection
+      let query = {
+        databaseType: database_type
+      }
+      if (pdkType) {
+        query.pdkType = pdkType
+        query.pdkHash = pdkHash
+      }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id: this.connection.id
+          id,
+          databaseType: database_type
         },
-        query: {
-          databaseType: this.connection.database_type
-        }
+        query
       })
     },
     async beforeTest() {
@@ -275,6 +288,13 @@ export default {
     loadList(type) {
       let whiteList = ['kafka', 'mq']
       this.list = whiteList.includes(type) ? CONFIG_MODEL[type] : CONFIG_MODEL['default']
+    },
+    getConnectionIcon() {
+      const { connection } = this
+      if (!connection) {
+        return
+      }
+      return getConnectionIcon(connection)
     }
   }
 }

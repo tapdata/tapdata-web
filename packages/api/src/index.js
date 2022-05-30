@@ -10,6 +10,8 @@ export * from './TypeMapping'
 export * from './CustomNode'
 export * from './Cluster'
 export * from './Function'
+export * from './MetadataTransformer'
+
 export { CancelToken }
 
 export default Http

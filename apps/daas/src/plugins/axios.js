@@ -119,7 +119,8 @@ axios.interceptors.response.use(response => {
   let data = response.data
   if (data.code === 'ok') {
     return {
-      data: (data && data.data) || data || {},
+      // data: (data && data.data) || data || {}, // 这种写法data.data = false 会不通过
+      data: data?.data ?? (data || {}),
       response: response
     }
   } else {

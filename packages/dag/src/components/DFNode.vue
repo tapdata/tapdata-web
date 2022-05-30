@@ -96,12 +96,12 @@ export default {
       if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
       if (this.canBeConnectedNodeIds.includes(this.nodeId)) list.push('can-be-connected')
-      list.push(`node--${this.ins.group}`)
+      this.ins && list.push(`node--${this.ins.group}`)
       return list
     },
 
     nodeStyle() {
-      const [left, top] = this.data.attrs.position
+      const [left = 0, top = 0] = this.data.attrs?.position || []
       return {
         left: left + 'px',
         top: top + 'px'
@@ -118,7 +118,7 @@ export default {
   },
 
   mounted() {
-    if (this.data) {
+    if (this.data && this.ins) {
       this.__init()
     }
   },
@@ -240,7 +240,7 @@ export default {
         uuid: id + '_target'
       })
 
-      const maxOutputs = this.ins.attr.maxOutputs ?? -1
+      const maxOutputs = this.ins.maxOutputs ?? -1
 
       this.jsPlumbIns.addEndpoint(
         this.$el,
@@ -267,6 +267,7 @@ export default {
       if (this.isActionActive('dragActive')) {
         this.removeActiveAction('dragActive')
       } else {
+        if (!this.ins) return
         if (this.isCtrlKeyPressed(e) === false) {
           // 如果不是多选模式则取消所有节点选中
           this.$emit('deselectAllNodes')

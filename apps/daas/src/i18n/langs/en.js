@@ -877,6 +877,10 @@ export default {
   dag_data_setting_example: '例子:',
   dag_data_setting_runMinute: '每分鐘運行一次',
   dag_data_setting_runDay: '每天2點運行',
+  dag_attributes_exist_data_deal: 'Existing data processing',
+  dag_attributes_exist_data_keep_data: 'Keep existing data',
+  dag_attributes_exist_data_remove_data: 'Remove existing data before running',
+  dag_attributes_exist_data_drop_table: 'Drop table structure before running',
 
   //Field mapping字段映射
   dag_link_button_field_mapping: 'Field mapping',
@@ -897,6 +901,10 @@ export default {
   dag_dialog_field_mapping_selected: 'Selected',
   dag_dialog_field_mapping_search_field: 'Search Field',
   dag_dialog_field_mapping_source_field: 'Source table field name',
+  dag_dialog_field_mapping_field: 'Name',
+  dag_dialog_field_mapping_type: 'Type',
+  dag_dialog_field_mapping_precision: 'Precision',
+  dag_dialog_field_mapping_scale: 'Scale',
   dag_dialog_field_mapping_source_type: 'Source table type',
   dag_dialog_field_mapping_source_precision: 'Source table scale',
   dag_dialog_field_mapping_source_scale: 'Source table precision',
@@ -1218,6 +1226,9 @@ export default {
   task_setting_cron_feedbackText:
     'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year *',
   task_setting_cron_extra: 'Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
+  task_setting_cron_tip:
+    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year * ; Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
+  task_setting_syncPoint_tip: 'The task will collect incremental logs from this point in time',
 
   task_name: 'Task name',
   task_status: 'Task Status',
@@ -1437,6 +1448,7 @@ export default {
   shared_cdc_setting_no_mongodb_tip: 'Please create a mongodb data source first',
   shared_cdc_name: 'Please enter the task name ',
   shared_cdc_setting_refresh: 'Refresh data',
+  shared_cdc_setting_select_mode: 'Storage mode',
   shared_cdc_setting_select_mongodb_tip: 'Please select mongodb connection',
   shared_cdc_setting_select_table_tip: 'Please select the table name',
   shared_cdc_setting_select_time_tip: 'Please select the log saving time',
@@ -1454,7 +1466,7 @@ export default {
   share_list_dig_setting: 'digging settings',
   share_form_setting_connection_name: 'Store MongoDB connection name',
   share_form_setting_table_name: 'Store MongoDB table name',
-  share_form_setting_log_time: 'log save time',
+  share_form_setting_log_time: 'Log save time',
   share_form_edit_name: 'Mining name',
   share_form_edit_dig_time: 'Log mining time',
   share_form_edit_localTZ_type: 'User browser time zone',

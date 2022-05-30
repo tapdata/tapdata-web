@@ -1,0 +1,67 @@
+.merge-table-tree-space {
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: 16px;
+  bottom: 0;
+
+  .formily-element-space-item {
+    overflow-y: auto;
+  }
+
+  .el-tree {
+    &-node{
+      margin-top: 1px;
+
+      &__content {
+        height: 30px;
+        border-radius: 4px;
+        &:hover {
+          background-color: rgba(47, 46, 63, 0.05);
+        }
+
+        .el-tree-node__expand-icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 30px;
+          height: 30px;
+          margin-left: -4px;
+        }
+
+        .el-image {
+          width: 20px;
+          height: 20px;
+          vertical-align: middle;
+        }
+      }
+
+      &.is-current > .el-tree-node__content {
+        background-color: #eef3ff;
+      }
+
+      &.is-drop-inner > .el-tree-node__content {
+        background-color: #d0deff;
+      }
+    //rgba(47, 46, 63, 0.05)
+    }
+
+    &__drop-indicator {
+      height: 2px;
+      background-color: #2c65ff;
+      &:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        display: block;
+        padding: 2px;
+        border-radius: 100%;
+        border: 2px solid #2c65ff;
+        transform: translate(-100%, -50%);
+      }
+    }
+  }
+}

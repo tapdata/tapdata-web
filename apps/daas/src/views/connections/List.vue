@@ -39,14 +39,15 @@
         </ElButton>
       </div>
       <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn prop="name" min-width="150" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="150" :label="$t('connection.dataBaseName')">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
-              <img :src="$util.getConnectionTypeDialogImg(scope.row.database_type)" />
+              <img :src="getConnectionIcon(scope.row)" alt="" />
             </div>
             <div class="database-text">
-              <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(scope.row)">
+               <!-- @click.stop="preview(scope.row)" -->
+              <ElLink type="primary" style="display: block; line-height: 20px">
                 {{ scope.row.name }}
               </ElLink>
               <div class="region-info">{{ scope.row.regionInfo }}</div>
@@ -54,7 +55,7 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.connectionInfo')" min-width="150">
+      <ElTableColumn show-overflow-tooltip :label="$t('connection.connectionInfo')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
@@ -136,9 +137,6 @@
           </ElButton>
         </template>
       </ElTableColumn>
-      <!-- <div slot="noDataText">
-       {{$t('connection_list_no_data',[$t('connection_form_creat_connection')])}}
-      </div> -->
     </TablePage>
     <Preview ref="preview"></Preview>
     <DatabaseTypeDialog
@@ -159,11 +157,12 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import TablePage from '@/components/TablePage'
 import VIcon from '@/components/VIcon'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
-import Preview from './Preview.vue'
+import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 import FilterBar from '@/components/filter-bar'
 import { TYPEMAP } from 'web-core/const'
+import { getConnectionIcon } from './util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
 
@@ -318,9 +317,9 @@ export default {
         // where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
         where.name = { like: verify(keyword), options: 'i' }
       }
-      where.database_type = {
-        in: window.getSettingByKey('ALLOW_CONNECTION_TYPE').split(',')
-      }
+      // where.database_type = {
+      //   in: window.getSettingByKey('ALLOW_CONNECTION_TYPE').split(',')
+      // }
       region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
       // if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
@@ -356,28 +355,40 @@ export default {
               if (platformInfo && platformInfo.regionName) {
                 item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
               }
-              if (item.database_type !== 'mongodb') {
-                item.connectionUrl = ''
-                if (item.database_username) {
-                  item.connectionUrl += item.database_username + ':***@'
+
+              if (item.config) {
+                if (item.config.uri) {
+                  item.connectionUrl = item.config.uri
+                } else {
+                  item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
+                    item.config.schema ? `/${item.config.schema}` : ''
+                  }`
                 }
-                item.connectionUrl += item.database_host + ':' + item.database_port
               } else {
-                item.connectionUrl = item.database_uri || item.connection_name
+                if (item.database_type !== 'mongodb') {
+                  item.connectionUrl = ''
+                  if (item.database_username) {
+                    item.connectionUrl += item.database_username + ':***@'
+                  }
+                  item.connectionUrl += item.database_host + ':' + item.database_port
+                } else {
+                  item.connectionUrl = item.database_uri || item.connection_name
+                }
+                if (item.database_type === 'mq' && item.mqType === '0') {
+                  item.connectionUrl = item.brokerURL
+                }
+                // 不存在uri 和 port === 0
+                if (!item.database_uri && !item.database_port && item.mqType !== '0') {
+                  item.connectionUrl = ''
+                }
+                if (item.database_type === 'kudu') {
+                  item.connectionUrl = item.database_host
+                }
+                if (item.database_type === 'kafka') {
+                  item.connectionUrl = item.kafkaBootstrapServers
+                }
               }
-              if (item.database_type === 'mq' && item.mqType === '0') {
-                item.connectionUrl = item.brokerURL
-              }
-              // 不存在uri 和 port === 0
-              if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-                item.connectionUrl = ''
-              }
-              if (item.database_type === 'kudu') {
-                item.connectionUrl = item.database_host
-              }
-              if (item.database_type === 'kafka') {
-                item.connectionUrl = item.kafkaBootstrapServers
-              }
+
               item.connectionSource = this.sourceTypeMapping[item.sourceType]
               item.lastUpdateTime = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '-'
               return item
@@ -403,15 +414,20 @@ export default {
       if (item.search_databaseType) {
         type = item.search_databaseType
       }
+      let query = {
+        databaseType: type
+      }
+      if (item.pdkType) {
+        query.pdkType = item.pdkType
+        query.pdkHash = item.pdkHash
+      }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
           id: id,
           databaseType: type
         },
-        query: {
-          databaseType: type
-        }
+        query
       })
     },
     copy(data) {
@@ -439,9 +455,6 @@ export default {
             }
           }
         })
-      // .finally(() => {
-      //   this.$set(data, 'copyLoading', false)
-      // })
     },
     remove(data) {
       const h = this.$createElement
@@ -566,13 +579,18 @@ export default {
     handleDialogDatabaseTypeVisible() {
       this.dialogDatabaseTypeVisible = false
     },
-    handleDatabaseType(type) {
+    handleDatabaseType(type, item) {
       this.handleDialogDatabaseTypeVisible()
+      let query = {
+        databaseType: type
+      }
+      if (item) {
+        query.pdkType = item.pdkType
+        query.pdkHash = item.pdkHash
+      }
       this.$router.push({
         name: 'connectionsCreate',
-        query: {
-          databaseType: type
-        }
+        query
       })
     },
 
@@ -644,15 +662,17 @@ export default {
           type: 'select-inner',
           menuMinWidth: '250px',
           items: async () => {
-            let res = await this.$api('connections').getDataTypes()
-            let databaseTypes = res?.data || []
+            let res = await this.$api('DatabaseTypes').get()
+            let data = res?.data || []
+            let databaseTypes = []
+            databaseTypes.push(...data.filter(t => t.pdkType === 'pdk'))
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
             )
             return databaseTypeOptions.map(item => {
               return {
-                label: TYPEMAP[item],
-                value: item
+                label: item.name,
+                value: item.type
               }
             })
           }
@@ -663,6 +683,9 @@ export default {
           type: 'input'
         }
       ]
+    },
+    getConnectionIcon() {
+      return getConnectionIcon(...arguments)
     }
   }
 }

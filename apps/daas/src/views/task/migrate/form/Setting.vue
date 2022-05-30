@@ -17,18 +17,12 @@
 </template>
 
 <script>
-import * as components from '@tap/form'
-import { createSchemaField } from '@formily/vue'
+import { SchemaField, Form } from '@tap/form'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 
-const { SchemaField } = createSchemaField({
-  components: {
-    ...components
-  }
-})
 export default {
   name: 'Setting',
-  components: { Form: components.Form, SchemaField },
+  components: { Form, SchemaField },
   props: ['dataSourceData', 'settingData', 'accessNodeList'],
   data() {
     return {
@@ -210,7 +204,33 @@ export default {
                 ],
                 default: 'intellect'
               },
-
+              existDataProcessMode: {
+                title: this.$t('dag_attributes_exist_data_deal'),
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Radio.Group',
+                'x-component-props': {
+                  optionType: 'button'
+                },
+                enum: [
+                  {
+                    label: this.$t('dag_attributes_exist_data_keep_data'),
+                    value: 'keepData'
+                  },
+                  {
+                    label: this.$t('dag_attributes_exist_data_remove_data'),
+                    value: 'removeData'
+                  },
+                  {
+                    label: this.$t('dag_attributes_exist_data_drop_table'),
+                    value: 'dropTable'
+                  }
+                ],
+                default: 'keepData',
+                'x-decorator-props': {
+                  wrapperWidth: 420
+                }
+              },
               accessNodeWrap: {
                 type: 'void',
                 title: this.$t('connection_form_access_node'),
@@ -225,45 +245,45 @@ export default {
                   align: 'start'
                 },
 
-                properties: {
-                  accessNodeType: {
-                    type: 'string',
-                    default: 'AUTOMATIC_PLATFORM_ALLOCATION',
-                    'x-disabled': this.disabledAccessNode,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Select',
-                    enum: [
-                      {
-                        label: this.$t('connection_form_automatic'),
-                        value: 'AUTOMATIC_PLATFORM_ALLOCATION'
-                      },
-                      {
-                        label: this.$t('connection_form_manual'),
-                        value: 'MANUALLY_SPECIFIED_BY_THE_USER'
-                      }
-                    ]
-                  },
-                  accessNodeProcessId: {
-                    type: 'string',
-                    enum: this.accessNodeList,
-                    'x-disabled': this.disabledAccessNode,
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      style: { flex: 1 }
-                    },
-                    'x-component': 'Select',
-                    'x-reactions': {
-                      dependencies: ['accessNodeType'],
-                      fulfill: {
-                        state: {
-                          visible: '{{$deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER"}}',
-                          value:
-                            '{{console.log("$self.value", $self.value, $self.dataSource), $self.value || ($deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER" && $self.dataSource.length ? $self.dataSource[0].value : undefined)}}'
-                        }
-                      }
-                    }
-                  }
-                }
+                // properties: {
+                //   accessNodeType: {
+                //     type: 'string',
+                //     default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                //     'x-disabled': this.disabledAccessNode,
+                //     'x-decorator': 'FormItem',
+                //     'x-component': 'Select',
+                //     enum: [
+                //       {
+                //         label: this.$t('connection_form_automatic'),
+                //         value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+                //       },
+                //       {
+                //         label: this.$t('connection_form_manual'),
+                //         value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                //       }
+                //     ]
+                //   },
+                //   accessNodeProcessId: {
+                //     type: 'string',
+                //     enum: this.accessNodeList,
+                //     'x-disabled': this.disabledAccessNode,
+                //     'x-decorator': 'FormItem',
+                //     'x-decorator-props': {
+                //       style: { flex: 1 }
+                //     },
+                //     'x-component': 'Select',
+                //     'x-reactions': {
+                //       dependencies: ['accessNodeType'],
+                //       fulfill: {
+                //         state: {
+                //           visible: '{{$deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER"}}',
+                //           value:
+                //             '{{console.log("$self.value", $self.value, $self.dataSource), $self.value || ($deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER" && $self.dataSource.length ? $self.dataSource[0].value : undefined)}}'
+                //         }
+                //       }
+                //     }
+                //   }
+                // }
               },
 
               isStopOnError: {
