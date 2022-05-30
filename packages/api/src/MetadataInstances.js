@@ -95,6 +95,6 @@ export class MetadataInstances extends Http {
    * @returns {Promise<AxiosResponse<any>>}
    */
   getMergerNodeParentFields(taskId, nodeId) {
-    return this.axios.get(`${this.url}'/mergerNode/parent/fields?taskId=${taskId}&nodeId=${nodeId}`).then(this.useData)
+    return this.axios.get(`${this.url}/mergerNode/parent/fields?taskId=${taskId}&nodeId=${nodeId}`).then(this.useData)
   }
 }
