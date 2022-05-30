@@ -159,7 +159,11 @@ export const MergeTableTree = observer(
           metadataApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
             form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
               loading: false,
-              dataSource: fields
+              dataSource: fields.map(item => ({
+                label: item.field_name,
+                value: item.field_name,
+                isPrimaryKey: item.primary_key_position > 0
+              }))
             })
           })
         }, 500)
