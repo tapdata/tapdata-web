@@ -87,4 +87,14 @@ export class MetadataInstances extends Http {
   getTables(connectionId) {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId).then(this.useData)
   }
+
+  /**
+   * 主从合并获取父节点字段
+   * @param taskId
+   * @param nodeId
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  getMergerNodeParentFields(taskId, nodeId) {
+    return this.axios.get(`${this.url}'/mergerNode/parent/fields?taskId=${taskId}&nodeId=${nodeId}`).then(this.useData)
+  }
 }
