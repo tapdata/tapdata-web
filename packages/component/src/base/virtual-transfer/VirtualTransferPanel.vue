@@ -46,8 +46,10 @@
           </template>
         </RecycleScroller>
       </el-checkbox-group>
-      <p class="el-transfer-panel__empty" v-show="hasNoMatch">{{ $t('el.transfer.noMatch') }}</p>
-      <p class="el-transfer-panel__empty" v-show="data.length === 0 && !hasNoMatch">{{ $t('el.transfer.noData') }}</p>
+      <p class="el-transfer-panel__empty" v-show="hasNoMatch">{{ t('virtual_transfer_panel_no_match') }}</p>
+      <p class="el-transfer-panel__empty" v-show="data.length === 0 && !hasNoMatch">
+        {{ t('virtual_transfer_panel_no_data') }}
+      </p>
     </div>
     <p class="el-transfer-panel__footer" v-if="hasFooter">
       <slot></slot>
@@ -60,7 +62,7 @@ import { cloneDeep } from 'lodash'
 import { Transfer } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-
+import Locale from '../../mixins/locale'
 const TransferPanel = cloneDeep(Transfer.components.TransferPanel)
 
 delete TransferPanel.watch.checked
@@ -105,6 +107,8 @@ export default {
   },
 
   extends: TransferPanel,
+
+  mixins: [Locale],
 
   props: {
     buffer: {

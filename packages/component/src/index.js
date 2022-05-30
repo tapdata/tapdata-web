@@ -1,4 +1,4 @@
-import langs from './locale'
+import locale from './locale'
 
 // base
 import VirtualTransfer from './base/virtual-transfer'
@@ -9,5 +9,4 @@ import VTable from './base/v-table'
 // business
 import Chart from './chart'
 import MqTransfer from './mq-transfer'
-
-export { langs, VirtualTransfer, VirtualTransferPanel, VirtualSelect, VTable, Chart, MqTransfer }
+export { locale, VirtualTransfer, VirtualTransferPanel, VirtualSelect, VTable, Chart, MqTransfer }

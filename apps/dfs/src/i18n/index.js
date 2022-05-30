@@ -10,7 +10,7 @@ import enSource from './langs/en'
 import zhTWSource from './langs/zh-TW'
 import modify from './modify'
 
-import { langs as tapComponentLangs } from '@tap/component'
+import { locale as tapComponentLocale } from '@tap/component'
 
 let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
 let localLangModifyEn = localStorage.getItem('localLangModifyEn')
@@ -41,26 +41,11 @@ const i18n = new VueI18n({
   messages: {} // eleLangs
 })
 const current = i18n.locale
-const langsArr = [localLangs, langs, tapComponentLangs]
+const langsArr = [localLangs, langs]
 langsArr.forEach(el => {
   i18n.mergeLocaleMessage(current, el[current])
 })
 locale.use(eleLangs[current])
-// 定位矫正文案
-// let currentLang = i18n.messages?.[current] || {}
-// if (process.env.NODE_ENV === 'development') {
-//   let equal = localStorage.getItem('equalLang') ?? ''
-//   let inc = localStorage.getItem('includesLang') ?? ''
-//   equal = equal ? equal.split(',') : []
-//   inc = inc ? inc.split(',') : []
-//   for (let key in currentLang) {
-//     let item = currentLang[key]
-//     if (!!equal.length && equal.some(t => item === t)) {
-//       delete currentLang[key]
-//     }
-//     if (item && !!inc.length && inc.some(t => item?.includes(t))) {
-//       delete currentLang[key]
-//     }
-//   }
-// }
+tapComponentLocale.use(current)
+
 export default i18n
