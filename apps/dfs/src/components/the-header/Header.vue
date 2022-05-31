@@ -67,7 +67,9 @@ export default {
     }
   },
   created() {
-    this.setLang()
+    this.lang =
+      Cookie.get('lang') || Cookie.get('_authing_lang') || navigator.language || navigator.browserLanguage || 'zh-CN'
+    this.setLangCookie()
   },
   methods: {
     command(command) {
@@ -120,13 +122,7 @@ export default {
     // 中英文切换
     changeLanguage(lang) {
       this.lang = lang
-      const langMap = {
-        'zh-CN': 'zh-CN',
-        'zh-TW': 'zh-TW',
-        'en-US': 'en'
-      }
-      this.$i18n.locale = langMap[this.lang]
-      Cookie.set('lang', this.lang, { expires: 365 })
+      this.setLangCookie()
       location.reload()
     },
     clearCookie() {
@@ -137,14 +133,8 @@ export default {
         }
       }
     },
-    setLang() {
-      let getItem = Cookie.get('lang')
-      if (getItem) {
-        this.lang = getItem
-        return
-      }
-      let lang = Cookie.get('_authing_lang') || navigator.language || navigator.browserLanguage || 'zh-CN'
-      this.changeLanguage(lang)
+    setLangCookie() {
+      Cookie.set('lang', this.lang, { expires: 365 })
     }
   }
 }
