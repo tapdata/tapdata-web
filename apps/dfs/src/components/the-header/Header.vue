@@ -50,14 +50,8 @@
 <script>
 import Cookie from '@tap/shared/src/cookie'
 import NotificationPopover from '@/views/workbench/NotificationPopover'
-// import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
-// i18n需要的格式
-const langMap = {
-  'zh-CN': 'zh-CN',
-  'zh-TW': 'zh-TW',
-  'en-US': 'en'
-}
+
 export default {
   components: { VIcon, NotificationPopover },
   data() {
@@ -105,7 +99,6 @@ export default {
           }).then(res => {
             if (res) {
               this.clearCookie()
-              localStorage.removeItem('tapdata_localize_lang') // 清除国际化
               location.href = './logout'
             }
           })
@@ -127,11 +120,14 @@ export default {
     // 中英文切换
     changeLanguage(lang) {
       this.lang = lang
-      this.$i18n.locale = langMap[lang]
-      localStorage.setItem('tapdata_localize_lang', lang)
-      Cookie.set('lang', lang)
+      const langMap = {
+        'zh-CN': 'zh-CN',
+        'zh-TW': 'zh-TW',
+        'en-US': 'en'
+      }
+      this.$i18n.locale = langMap[this.lang]
+      Cookie.set('lang', this.lang, { expires: 365 })
       location.reload()
-      // window.__USER_LANG__ = lang
     },
     clearCookie() {
       let keys = document.cookie.match(/[^ =;]+(?==)/g)
@@ -141,22 +137,10 @@ export default {
         }
       }
     },
-    getLangKey(value, obj) {
-      if (!value) {
-        return
-      }
-      let res = obj || langMap
-      for (let key in res) {
-        if (res[key] === value) {
-          return key
-        }
-      }
-    },
     setLang() {
-      let getItem = localStorage.getItem('tapdata_localize_lang')
+      let getItem = Cookie.get('lang')
       if (getItem) {
         this.lang = getItem
-        Cookie.set('lang', getItem)
         return
       }
       let lang = Cookie.get('_authing_lang') || navigator.language || navigator.browserLanguage || 'zh-CN'

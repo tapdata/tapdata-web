@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Moment from 'moment'
-let localeValue = localStorage.getItem('tapdata_localize_lang') || 'zh-CN'
+import Cookie from '@tap/shared/src/cookie'
+let localeValue = Cookie.get('lang') || 'zh-CN'
 const langMap = {
   'zh-CN': 'zh-CN',
   'zh-TW': 'zh-TW',

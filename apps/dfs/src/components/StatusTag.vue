@@ -56,11 +56,6 @@ export default {
       type: String
     }
   },
-  data() {
-    return {
-      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
-    }
-  },
   computed: {
     map() {
       return (
@@ -78,11 +73,7 @@ export default {
       return this.map[this.status] || this.map[this.defaultStatus] || {}
     },
     imgSrc() {
-      if (this.lang === 'en') {
-        return require(`../../public/images/task/${this.statusObj.icon}.svg`)
-      } else {
-        return require(`../../public/images/task/${this.statusObj.icon}.png`)
-      }
+      return require(`../../public/images/task/${this.statusObj.icon}.png`)
     }
   }
 }

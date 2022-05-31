@@ -84,8 +84,7 @@ export default {
           text: this.$t('task_status_error'),
           type: 'danger'
         }
-      },
-      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
+      }
     }
   },
   methods: {

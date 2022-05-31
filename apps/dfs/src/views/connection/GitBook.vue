@@ -15,8 +15,7 @@ export default {
   },
   data() {
     return {
-      htmlMD: '',
-      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
+      htmlMD: ''
     }
   },
   watch: {
