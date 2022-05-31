@@ -538,7 +538,8 @@ export default {
           meta_type: {
             in: ['collection', 'table', 'view']
           },
-          is_deleted: false
+          is_deleted: false,
+          sourceType: 'SOURCE'
         },
         fields: {
           id: true,
