@@ -5,13 +5,6 @@ export class Locale {
     this.merged = false
     this.lang = defaultLang
     this.langs = langs
-    this.mixins = {
-      methods: {
-        t(...args) {
-          return this.t.apply(this, args)
-        }
-      }
-    }
   }
 
   format(string) {
