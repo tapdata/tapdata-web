@@ -53,6 +53,9 @@ export default class MetadataInstancesAPI extends PublicApi {
   getTables(connectionId) {
     return axios.get(this.url + '/tables?connectionId=' + connectionId)
   }
+  getSourceTables(connectionId) {
+    return axios.get(this.url + '/tables?connectionId=' + connectionId + '&sourceType=SOURCE')
+  }
   findInspect(data) {
     return axios.post(this.url + '/findInspectPost', data)
   }
