@@ -33,6 +33,7 @@ export default {
   button_details: '详情',
   button_test_connection: '连接测试',
   button_bind: '绑定',
+  button_unbind: '解绑',
   button_retry: '重试',
 
   // 链接
@@ -63,6 +64,7 @@ export default {
   user_phone_number: '手机号',
   user_email: '邮箱',
   user_avatar: '头像',
+  user_wechat: '微信',
 
   // 操作结果
   operate_delete_fail: '删除失败',

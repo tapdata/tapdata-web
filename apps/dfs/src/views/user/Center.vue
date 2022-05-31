@@ -51,10 +51,10 @@
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <!--          <ElCol :span="12" class="user-item">-->
-          <!--            <div class="user-item__label">微信：</div>-->
+          <!--            <div class="user-item__label">{{ $t('user_wechat') + $t('symbol_colon') }}</div>-->
           <!--            <div class="user-item__value">{{ userData.wx || $t('user_Center_weiBangDing') }}</div>-->
-          <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">解绑</ElLink>-->
-          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{$t('button_bind')}}</ElLink>-->
+          <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">{{ $t('button_unbind') }}</ElLink>-->
+          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('button_bind') }}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_Center_youXiang') }}</div>
@@ -99,7 +99,9 @@
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
-        <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData">{{ $t('user_Center_qiYeXinXiXiu') }}</VButton>
+        <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData">{{
+          $t('user_Center_qiYeXinXiXiu')
+        }}</VButton>
         <template v-else>
           <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('button_cancel') }}</VButton>
           <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('button_save') }}</VButton>
