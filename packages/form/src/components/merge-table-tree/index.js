@@ -87,7 +87,8 @@ export const MergeTableTree = observer(
             newTree.push({
               id,
               mergeType: 'updateOrInsert',
-              targetPath: node.name,
+              targetPath: null,
+              tableName: node.name,
               // joinKeys: [],
               children: []
             })

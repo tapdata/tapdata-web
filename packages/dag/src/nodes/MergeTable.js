@@ -38,6 +38,10 @@ export class MergeTable extends NodeType {
               type: 'void',
               'x-component': 'FormContent',
               properties: {
+                id: {
+                  type: 'string',
+                  'x-display': 'hidden'
+                },
                 mergeType: {
                   type: 'string',
                   title: '数据写入模式',
@@ -52,6 +56,15 @@ export class MergeTable extends NodeType {
                     { label: '更新已存在或插入新数据', value: 'updateOrInsert' },
                     { label: '更新进内嵌数组', value: 'updateIntoArray' }
                   ]
+                  /*'x-reactions': {
+                    target: 'targetPath', //要操作的字段路径，支持FormPathPattern路径语法，注意：不支持相对路径！！
+                    effects: ['onFieldInputValueChange'], //主动模式下的独立生命周期钩子
+                    fulfill: {
+                      state: {
+                        value: `{{ $self.value === null && ? || ($deps[0] === "updateOrInsert" ? "" : findNodeById($deps[1])?.name) }}`
+                      }
+                    }
+                  }*/
                 },
                 wrap: {
                   type: 'void',
@@ -83,8 +96,7 @@ export class MergeTable extends NodeType {
                             dependencies: ['.mergeType', '.id'],
                             fulfill: {
                               state: {
-                                // visible: '{{ $deps[0] !== "appendWrite" }}',
-                                // value: `{{ $self.value || ($deps[0] === "updateOrInsert" ? "" : findNodeById($deps[1])?.name) }}`
+                                value: `{{ !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1])?.name : $self.value }}`
                               }
                             }
                           }
