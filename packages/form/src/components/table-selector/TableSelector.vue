@@ -508,7 +508,7 @@ export default {
     getTables() {
       this.loading = true
       this.$api('MetadataInstances')
-        .getTables(this.connectionId)
+        .getSourceTables(this.connectionId)
         .then(res => {
           let tables = res.data || []
           tables = tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
