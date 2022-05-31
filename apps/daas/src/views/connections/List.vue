@@ -47,7 +47,7 @@
             </div>
             <div class="database-text">
               <!-- @click.stop="preview(scope.row)" -->
-              <ElLink type="primary" style="display: block; line-height: 20px">
+              <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(scope.row)">
                 {{ scope.row.name }}
               </ElLink>
               <div class="region-info">{{ scope.row.regionInfo }}</div>
