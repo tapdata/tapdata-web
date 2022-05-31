@@ -285,6 +285,7 @@ export default {
   },
   mounted() {
     this.dataFlow = this.getDataFlow()
+    this.dataFlow['id'] = this.dataFlow.taskId
     this.dataFlow['nodeId'] = this.dataFlow.activeNodeId
     if (this.isMetaData) {
       this.getMetaData() //触发推演接口则需要等待ws 第一次回消息刷新页面 以免拿到没有上次没有推演完的结果
