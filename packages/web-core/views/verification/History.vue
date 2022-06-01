@@ -1,37 +1,44 @@
 <template>
-  <section class="data-verify-history-wrap g-panel-container" v-loading="loading">
-    <div class="panel-main">
+  <section class="data-verify-history-wrap section-wrap" v-loading="loading">
+    <div class="panel-main section-wrap-box">
       <el-table :data="page.data" height="100%">
         <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
           <template slot-scope="scope">
-            {{
-              scope.row.start
-                ? $moment(scope.row.start).format('YYYY-MM-DD HH:mm:ss')
-                : $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')
-            }}
+            {{ scope.row.startTimeFmt }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('dataVerification.completeTime')" prop="end" align="center" width="180">
+        <el-table-column :label="$t('dataVerification.completeTime')" prop="last_updated" align="center" width="180">
           <template slot-scope="scope">
             <span>
-              {{ scope.row.end ? $moment(scope.row.end).format('YYYY-MM-DD HH:mm:ss') : '' }}
+              {{ formatTime(scope.row.last_updated) }}
             </span>
           </template>
         </el-table-column>
         <template v-if="$route.name === 'VerifyDiffHistory'">
-          <el-table-column :label="$t('verify_history_source_rows')" prop="source_total"></el-table-column>
-          <el-table-column :label="$t('verify_history_target_rows')" prop="target_total"></el-table-column>
+          <el-table-column
+            :label="$t('verify_history_source_rows')"
+            prop="source_total"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            :label="$t('verify_history_target_rows')"
+            prop="target_total"
+            align="center"
+          ></el-table-column>
         </template>
         <template v-else>
-          <el-table-column :label="$t('verify_history_source_total_rows')" prop="firstSourceTotal"></el-table-column>
-          <!--          <el-table-column :label="$t('verify_history_target_total_rows')" prop="firstTargetTotal"></el-table-column>-->
+          <el-table-column
+            :label="$t('verify_history_source_total_rows')"
+            prop="firstSourceTotal"
+            align="center"
+          ></el-table-column>
         </template>
         <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
           <template slot-scope="scope">
             <div>
               <span>{{
-                `${Math.round(scope.row.progress * 10000) / 100 ? Math.round(scope.row.progress * 10000) / 100 : 0}%`
-              }}</span>
+                  `${Math.round(scope.row.progress * 10000) / 100 ? Math.round(scope.row.progress * 10000) / 100 : 0}%`
+                }}</span>
             </div>
           </template>
         </el-table-column>
@@ -83,11 +90,10 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import dayjs from 'dayjs'
+
 export default {
   components: { VIcon },
-  props: {
-    remoteMethod: Function
-  },
   data() {
     return {
       loading: true,
@@ -113,6 +119,28 @@ export default {
     this.search(1)
   },
   methods: {
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+    searchRequest(filter) {
+      if (filter?.where?.inspect_id?.regexp) {
+        filter.where.inspect_id = filter.where.inspect_id.regexp.replace(/^\^(.*)\$$/, '$1')
+      }
+      if (filter?.where?.firstCheckId?.regexp) {
+        filter.where.firstCheckId = filter.where.firstCheckId.regexp.replace(/^\^(.*)\$$/, '$1')
+      }
+      if (filter?.where?.parentId?.eq === null) {
+        delete filter.where.parentId
+      }
+      return this.$api('InspectResults')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let data = res.data
+          return [{ count: data.total }, data.items]
+        })
+    },
     search(pageNum) {
       this.loading = true
       let { current, size } = this.page
@@ -135,10 +163,13 @@ export default {
         delete filter.inspectGroupByFirstCheckId
       }
       filter.where = where
-      this.remoteMethod(filter, where)
+      this.searchRequest(filter, where)
         .then(([countData, data]) => {
           if (data) {
-            this.page.data = data
+            this.page.data = data?.map(item => {
+              item.startTimeFmt = this.formatTime(item.start || item.createTime)
+              return item
+            })
             this.page.current = currentPage
             this.page.total = countData.count
           }
@@ -147,8 +178,18 @@ export default {
           this.loading = false
         })
     },
-    rowClick(row) {
-      this.$emit('row-click', row)
+    rowClick(item) {
+      let id = item.id
+      let routeName = 'dataVerifyResult'
+      if (this.$route.name === 'VerifyDiffHistory') {
+        routeName = 'VerifyDiffDetails'
+      }
+      this.$router.push({
+        name: routeName,
+        params: {
+          id
+        }
+      })
     }
   }
 }
@@ -156,13 +197,8 @@ export default {
 
 <style lang="scss" scoped>
 .data-verify-history-wrap {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  overflow: hidden;
-  box-sizing: border-box;
   .data-verify-history__icon {
-    color: #fff;
+    color: map-get($fontColor, white);
   }
   .panel-slider {
     width: 200px;
@@ -177,13 +213,13 @@ export default {
     .tip {
       height: 30px;
       font-size: 12px;
-      background: #f5f5f5;
-      border: 1px solid #dedee4;
+      background: map-get($bgColor, main);
+      border: 1px solid map-get($borderColor, light);
       line-height: 30px;
     }
     .title {
       font-weight: bold;
-      color: #409eff;
+      color: map-get($color, primary);
       margin: 10px 0;
     }
 
@@ -202,7 +238,7 @@ export default {
     .pagination {
       white-space: nowrap;
       padding: 2px 5px;
-      color: #303133;
+      color: map-get($fontColor, dark);
       font-weight: 700;
     }
     .back-btn-icon-box {
@@ -213,7 +249,7 @@ export default {
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
-      background: #409eff;
+      background: map-get($color, primary);
       border: 0;
       -webkit-appearance: none;
       text-align: center;

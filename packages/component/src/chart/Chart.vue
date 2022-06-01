@@ -406,39 +406,9 @@ export default {
         data.yAxis[0].max = null
         return
       }
-      let result
-      let stamp = new Date().getTime()
-      if (typeof noX === 'string') {
-        switch (noX) {
-          case 'second':
-          case 'min':
-          case 'hour':
-          case 'day':
-          case 'time':
-            result = new Array(20).fill().map((t, i) => {
-              let time = stamp + i * 10000
-              return this.formatTime(noX, time)
-            })
-            break
-          default:
-            result = new Array(20).fill().map((t, i) => i++)
-            break
-        }
-      } else {
-        result = noX
-      }
-      data.xAxis.data = result
+      data.xAxis.data = noX
       data.yAxis[0].min = noY[0] || 0
       data.yAxis[0].max = noY[1] || 1
-    },
-    formatTime(type, time) {
-      let map = {
-        second: 'HH:mm:ss',
-        min: 'HH:mm',
-        hour: 'HH:00',
-        day: 'MM-DD'
-      }
-      return this.$moment(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
     },
     valueToFixed(val, fixed) {
       if (fixed) {
