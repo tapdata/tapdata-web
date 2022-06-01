@@ -437,10 +437,6 @@ export class Table extends NodeType {
                     default: 'updateOrInsert',
                     enum: [
                       {
-                        label: '更新写入',
-                        value: 'updateWrite'
-                      },
-                      {
                         label: '追加写入',
                         value: 'appendWrite'
                       },
@@ -459,7 +455,7 @@ export class Table extends NodeType {
                         target: 'updateConditionFields',
                         fulfill: {
                           state: {
-                            visible: '{{$self.value!=="appendWrite"'
+                            visible: '{{$self.value!=="appendWrite"}}'
                           }
                         }
                       }
