@@ -30,5 +30,6 @@ export * from './table-list-card'
 export * from './table-selector'
 export * from './schema-field-mapping'
 export * from './create-command'
+export * from './text-file-reader'
 
 export * from '@formily/element'
