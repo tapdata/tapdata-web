@@ -1085,8 +1085,8 @@ export default {
         this.isSaving = false
         return true
       } catch (e) {
-        this.handleError(e)
         this.isSaving = false
+        this.handleError(e)
         return false
       }
     },
@@ -1644,9 +1644,9 @@ export default {
     },
 
     handleError(error, msg = '出错了') {
-      if (error?.data.code === 'Task.ListWarnMessage') {
+      if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []
-        if (error.data.data) {
+        if (error.data?.data) {
           const keys = Object.keys(error.data.data)
           keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
