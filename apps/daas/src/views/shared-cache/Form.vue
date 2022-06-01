@@ -226,7 +226,7 @@ export default {
           name: true
         },
         where: {
-          database_type: 'mongodb',
+          database_type: 'MongoDB',
           connection_type: { in: ['source', 'source_and_target'] }
         }
       }
