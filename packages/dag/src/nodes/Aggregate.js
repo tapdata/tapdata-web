@@ -66,7 +66,7 @@ export class Aggregate extends NodeType {
                 },
                 default: [
                   {
-                    name: 'COUNT',
+                    // name: 'COUNT',
                     filterPredicate: '',
                     aggFunction: 'COUNT',
                     aggExpression: '',
