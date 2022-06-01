@@ -134,7 +134,10 @@ export default {
       }
     },
     setLangCookie() {
-      Cookie.set('lang', this.lang, { expires: 365 })
+      const map = {
+        en: 'en-US'
+      }
+      Cookie.set('lang', map[this.lang] || this.lang, { expires: 365 })
     }
   }
 }

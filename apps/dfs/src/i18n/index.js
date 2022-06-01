@@ -12,6 +12,7 @@ import modify from './modify'
 
 import dayjs from '../plugins/dayjs'
 import { locale as tapComponentLocale } from '@tap/component'
+import { locale as formLocale } from '@tap/form'
 
 let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
 let localLangModifyEn = localStorage.getItem('localLangModifyEn')
@@ -45,6 +46,7 @@ langsArr.forEach(el => {
 })
 locale.use(eleLangs[current])
 tapComponentLocale.use(current)
+formLocale.use(current)
 dayjs.locale(current)
 
 export default i18n
