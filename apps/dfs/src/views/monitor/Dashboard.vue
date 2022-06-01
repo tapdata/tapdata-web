@@ -212,8 +212,11 @@ import FieldMapping from '@/components/field-mapping/main'
 import Log from './Log.vue'
 import { isFinished } from '../task/copy/util'
 import { getDatabaseTypes } from '@/util'
+import timeFunction from '@/mixins/timeFunction'
+
 export default {
   components: { StatusTag, TaskProgress, Log, FieldMapping },
+  mixins: [timeFunction],
   data() {
     return {
       loading: true,
@@ -325,7 +328,7 @@ export default {
       return list.map(m => {
         let time = m.status === 'running' ? m.start : m.end
         if (time) {
-          time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss')
+          time = this.formatTime(time)
         }
         return {
           label: this.$t(`milestone_label_${m.code.toLowerCase()}`),
@@ -484,9 +487,6 @@ export default {
       data.cdcTimeFmt = this.formatTime(cdcTime)
       data.isFinished = isFinished(data)
       return data
-    },
-    formatTime(time) {
-      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     // 以下方法需要考虑和列表的重构合并，暂时先复制过来
     async changeStatus({ status, errorEvents }) {

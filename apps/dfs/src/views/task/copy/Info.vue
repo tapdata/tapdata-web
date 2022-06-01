@@ -93,13 +93,15 @@ import i18n from '@/i18n'
 import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import { Chart } from '@tap/component'
-import { formatTime, isEmpty, formatTimeByTime } from '@/util'
+import { isEmpty, formatTimeByTime } from '@/util'
+import timeFunction from '@/mixins/timeFunction'
 
 let lastMsg
 
 export default {
   name: 'Info',
   components: { StatusTag, VIcon, Chart },
+  mixins: [timeFunction],
   props: {
     task: {
       type: Object,
@@ -347,9 +349,6 @@ export default {
     },
     changeUtil() {
       this.sendMsg()
-    },
-    formatTime(date) {
-      return formatTime(date)
     },
     start() {
       this.$checkAgentStatus(async () => {

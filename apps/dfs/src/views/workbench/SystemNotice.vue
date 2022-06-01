@@ -84,12 +84,13 @@
 
 <script>
 import { TYPEMAP } from './tyepMap'
-// import NotificationPopover from './NotificationPopover'
 import Setting from './components/Setting'
 import VIcon from '@/components/VIcon'
+import timeFunction from '@/mixins/timeFunction'
 
 export default {
   components: { Setting, VIcon },
+  mixins: [timeFunction],
   data() {
     return {
       visible: false,
@@ -187,7 +188,7 @@ export default {
       // this.getCount(this.read)
     },
     formatData(item) {
-      item['createTime'] = item.createTime ? this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+      item['createTime'] = this.formatTime(item.createTime)
       return item
     },
     handleGo(item) {
@@ -248,7 +249,7 @@ export default {
     getLag(lag) {
       let r = '0s'
       if (lag) {
-        let m = this.$moment.duration(lag, 'seconds')
+        let m = this.duration(lag, 'seconds')
         if (m.days()) {
           r = m.days() + 'd'
         } else if (m.hours()) {

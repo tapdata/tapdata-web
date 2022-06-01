@@ -223,6 +223,7 @@ importers:
       cross-env: ^7.0.3
       crypto-js: ^4.0.0
       dagre: ^0.8.5
+      dayjs: ^1.11.2
       element-ui: ^2.15.1
       eslint: ^6.7.2
       eslint-plugin-prettier: ^3.3.1
@@ -235,7 +236,6 @@ importers:
       lint-staged: ^10.5.3
       markdown-loader: ^6.0.0
       mockjs: ^1.1.0
-      moment: ^2.29.1
       mousetrap: ^1.6.5
       nodemon: ^2.0.12
       prettier: ^2.2.1
@@ -268,11 +268,11 @@ importers:
       core-js: registry.npmmirror.com/core-js/3.21.0
       crypto-js: registry.npmmirror.com/crypto-js/4.1.1
       dagre: registry.npmmirror.com/dagre/0.8.5
+      dayjs: registry.npmmirror.com/dayjs/1.11.2
       element-ui: registry.npmmirror.com/element-ui/2.15.6_vue@2.6.14
       github-markdown-css: registry.npmmirror.com/github-markdown-css/4.0.0
       highlight.js: registry.npmmirror.com/highlight.js/11.4.0
       jsonwebtoken: registry.npmmirror.com/jsonwebtoken/8.5.1
-      moment: registry.npmmirror.com/moment/2.29.1
       mousetrap: registry.npmmirror.com/mousetrap/1.6.5
       vue: registry.npmmirror.com/vue/2.6.14
       vue-clipboard2: registry.npmmirror.com/vue-clipboard2/0.3.3
@@ -5544,6 +5544,12 @@ packages:
     name: date-fns
     version: 1.30.1
     dev: true
+
+  registry.npmmirror.com/dayjs/1.11.2:
+    resolution: {integrity: sha512-F4LXf1OeU9hrSYRPTTj/6FbO4HTjPKXvEIC1P2kcnFurViINCVk3ZV0xAS3XVx9MkMsXbbqlK6hjseaYbgKEHw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/dayjs/-/dayjs-1.11.2.tgz}
+    name: dayjs
+    version: 1.11.2
+    dev: false
 
   registry.npmmirror.com/de-indent/1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/de-indent/-/de-indent-1.0.2.tgz}

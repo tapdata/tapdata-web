@@ -12,7 +12,7 @@
             class="color-info flex align-items-center"
             style="font-size: 12px"
           >
-            {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+            {{ $t('verify_last_start_time') }}: {{ formatTime(inspect.lastStartTime) }}
             <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
               $t('verify_button_diff_task_history')
             }}</ElLink>
@@ -70,8 +70,11 @@
 <script>
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
+import timeFunction from '@/mixins/timeFunction'
+
 export default {
   components: { ResultTable, ResultView },
+  mixins: [timeFunction],
   data() {
     return {
       loading: false,

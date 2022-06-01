@@ -16,9 +16,7 @@
     </div>
     <div slot="reference" class="inner-select">
       <span v-if="!!label" class="inner-select__title">{{ label }}</span>
-      <span :class="['inner-select__value', { placeholder: !value }]">{{
-        value || $t('form_placeholder_input')
-      }}</span>
+      <span :class="['inner-select__value', { placeholder: !value }]">{{ value || $t('form_placeholder_input') }}</span>
       <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
     </div>

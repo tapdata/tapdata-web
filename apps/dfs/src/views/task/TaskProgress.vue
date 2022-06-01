@@ -86,10 +86,12 @@
 </template>
 <script>
 import i18n from '@/i18n'
-
 import StatusTag from '@/components/StatusTag'
+import timeFunction from '@/mixins/timeFunction'
+
 export default {
   name: 'TaskPrgress',
+  mixins: [timeFunction],
   props: {
     task: {
       type: Object,
@@ -148,7 +150,7 @@ export default {
       return list.map(m => {
         let time = m.status === 'running' ? m.start : m.end
         if (time) {
-          time = this.$moment(time).format('YYYY-MM-DD HH:mm:ss')
+          time = this.formatTime(time)
         }
         return {
           label: this.$t(`milestone_label_${m.code.toLowerCase()}`),

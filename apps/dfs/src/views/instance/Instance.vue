@@ -139,7 +139,7 @@
         </ElTableColumn>
         <ElTableColumn prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="150">
           <template slot-scope="scope">
-            <span>{{ $moment(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
+            <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('list_operation')" width="200" fixed="right">
@@ -283,6 +283,7 @@ import { INSTANCE_STATUS_MAP } from '../../const'
 import VIcon from '../../components/VIcon'
 import Details from './Details'
 import FilterBar from '@/components/filter-bar'
+import timeFunction from '@/mixins/timeFunction'
 
 let timer = null
 
@@ -294,6 +295,7 @@ export default {
     Details,
     FilterBar
   },
+  mixins: [timeFunction],
   data() {
     return {
       isShowTestBtn: window.__config__.ENV === 'dev',

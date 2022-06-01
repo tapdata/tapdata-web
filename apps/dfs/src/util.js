@@ -1,6 +1,6 @@
-import moment from 'moment'
 import { confirm } from 'web-core'
 import i18n from '@/i18n'
+import timeFunction from '@/mixins/timeFunction'
 
 export function toDecimal2(x) {
   var float = parseFloat(x)
@@ -28,24 +28,22 @@ export function toRegExp(word) {
   return word
 }
 export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
-export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
-  return date ? moment(date).format(format) : ''
-}
+export const formatTime = timeFunction.methods.formatTime
 // 根据类型做时间格式化，精确到哪种级别
 export const formatTimeByTime = (time, type) => {
   let result = time
   switch (type) {
     case 'second':
-      result = moment(time).format('HH:mm:ss')
+      result = formatTime(time, '', 'HH:mm:ss')
       break
     case 'minute':
-      result = moment(time).format('HH:mm')
+      result = formatTime(time, '', 'HH:mm')
       break
     case 'hour':
-      result = moment(time).format('HH:00')
+      result = formatTime(time, '', 'HH:00')
       break
     case 'day':
-      result = moment(time).format('MM-DD')
+      result = formatTime(time, '', 'MM-DD')
       break
   }
   return result

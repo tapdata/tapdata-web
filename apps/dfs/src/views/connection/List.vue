@@ -61,7 +61,7 @@
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('connection_list_change_time')" prop="last_updated" width="150" sortable="custom">
-          <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
+          <template slot-scope="scope">{{ formatTime(scope.row.last_updated) }}</template>
         </ElTableColumn>
         <ElTableColumn :label="$t('list_operation')" width="280" fixed="right">
           <template slot-scope="scope">
@@ -176,10 +176,12 @@ import Preview from './Preview.vue'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
 import { getDatabaseTypes } from '@/util'
+import timeFunction from '@/mixins/timeFunction'
 
 let timer = null
 export default {
   components: { StatusTag, Preview, VIcon, SchemaProgress, FilterBar },
+  mixins: [timeFunction],
   data() {
     return {
       loading: true,

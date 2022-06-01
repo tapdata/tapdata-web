@@ -46,10 +46,13 @@
 <script>
 import { TYPEMAP } from './tyepMap'
 import VIcon from '@/components/VIcon'
-import { formatTime, uniqueArr } from '@/util'
+import { uniqueArr } from '@/util'
 import Setting from './components/Setting'
+import timeFunction from '@/mixins/timeFunction'
+
 export default {
   components: { VIcon, Setting },
+  mixins: [timeFunction],
   data() {
     return {
       loading: false,
@@ -89,7 +92,7 @@ export default {
           this.getUnReadNum()
           let data = res?.data
           if (data) {
-            data.createTime = formatTime(data.createTime)
+            data.createTime = this.formatTime(data.createTime)
             this.listData = uniqueArr([data, ...this.listData])
           }
         })
@@ -126,7 +129,7 @@ export default {
         .then(({ items, total }) => {
           this.unRead = total
           this.listData = items.map(t => {
-            t.createTime = formatTime(t.createTime)
+            t.createTime = this.formatTime(t.createTime)
             return t
           })
         })

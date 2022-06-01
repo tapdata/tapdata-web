@@ -44,5 +44,6 @@ langsArr.forEach(el => {
 })
 locale.use(eleLangs[current])
 tapComponentLocale.use(current)
+dayjs.locale(current)
 
 export default i18n

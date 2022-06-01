@@ -142,12 +142,13 @@
 import TableList from '@/components/TableList'
 import Milestone from './Milestone'
 import StatusTag from '@/components/StatusTag'
-import { formatTime } from '@/util'
 import { getOverviewData, isFinished } from './util'
+import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'Schedule',
   components: { TableList, Milestone, StatusTag },
+  mixins: [timeFunction],
   props: {
     task: {
       type: Object,
@@ -259,7 +260,7 @@ export default {
         if (el.group && el.group !== item?.group) {
           stepsData.push({
             label: map[el.group],
-            time: formatTime(el.start) || formatTime(el.end),
+            time: this.formatTime(el.start) || this.formatTime(el.end),
             group: el.group
           })
         }
@@ -282,8 +283,7 @@ export default {
       this.milestonesData = this.task.milestones
         .filter(item => item.group === this.currentStep.group)
         .map(m => {
-          let time = m.status === 'running' ? formatTime(m.start) : formatTime(m.end)
-          // let time = formatTime(m.start)
+          let time = m.status === 'running' ? this.formatTime(m.start) : this.formatTime(m.end)
           return {
             label: this.$t(`milestone_label_${m.code.toLowerCase()}`),
             status: m.status,
@@ -364,9 +364,6 @@ export default {
         }
       ]
       this.$refs.initialTableList?.fetch?.()
-    },
-    getTime(time) {
-      return formatTime(parseInt(time))
     },
     getMilestoneStatus(status) {
       let result = status

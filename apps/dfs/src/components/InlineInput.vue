@@ -50,9 +50,7 @@
           @click="save"
           >{{ $t('button_save') }}</ElButton
         >
-        <ElButton class="inline-input-button" size="mini" @click="cancel">{{
-          $t('button_cancel')
-        }}</ElButton>
+        <ElButton class="inline-input-button" size="mini" @click="cancel">{{ $t('button_cancel') }}</ElButton>
       </template>
     </span>
   </div>

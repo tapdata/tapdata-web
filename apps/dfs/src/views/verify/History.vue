@@ -4,17 +4,13 @@
       <ElTable :data="page.data" height="100%">
         <ElTableColumn :label="$t('dataVerification_verifyTime')" prop="start">
           <template slot-scope="scope">
-            {{
-              scope.row.start
-                ? $moment(scope.row.start).format('YYYY-MM-DD HH:mm:ss')
-                : $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')
-            }}
+            {{ scope.row.start ? formatTime(scope.row.start) : formatTime(scope.row.createTime) }}
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('dataVerification_completeTime')" prop="last_updated" align="center" width="180">
           <template slot-scope="scope">
             <span>
-              {{ scope.row.last_updated ? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}
+              {{ formatTime(scope.row.last_updated) }}
             </span>
           </template>
         </ElTableColumn>
@@ -83,8 +79,11 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import timeFunction from '@/mixins/timeFunction'
+
 export default {
   components: { VIcon },
+  mixins: [timeFunction],
   data() {
     return {
       loading: true,

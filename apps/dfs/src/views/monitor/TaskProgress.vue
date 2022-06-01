@@ -65,7 +65,7 @@
           <ElTable :data="cdcLastTimes">
             <ElTableColumn :label="$t('task_monitor_source_library')" prop="sourceConnectionName"></ElTableColumn>
             <ElTableColumn :label="$t('task_monitor_time')" prop="cdcTime">
-              <template slot-scope="scope">{{ $moment(scope.row.cdcTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
+              <template slot-scope="scope">{{ formatTime(scope.row.cdcTime) }}</template>
             </ElTableColumn>
             <ElTableColumn :label="$t('task_monitor_target_library')" prop="targetConnectionName"></ElTableColumn>
           </ElTable>
@@ -119,11 +119,13 @@ import { Chart } from '@tap/component'
 import EchartHeader from './EchartHeader'
 import { getOverviewData } from '../task/copy/util'
 import { formatTimeByTime } from '@/util'
+import timeFunction from '@/mixins/timeFunction'
 
 let lastMsg = ''
 export default {
   name: 'TaskProgress',
   components: { EchartHeader, Chart },
+  mixins: [timeFunction],
   props: {
     task: {
       type: Object,

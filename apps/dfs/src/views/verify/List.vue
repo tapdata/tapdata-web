@@ -167,10 +167,12 @@ import i18n from '@/i18n'
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import FilterBar from '@/components/filter-bar'
+import timeFunction from '@/mixins/timeFunction'
 
 let timer = null
 export default {
   components: { VIcon, StatusTag, FilterBar },
+  mixins: [timeFunction],
   data() {
     // const $t = this.$t.bind(this)
     return {
@@ -448,7 +450,7 @@ export default {
           targetTotal = result.firstTargetTotal
         }
       }
-      item.lastStartTime = item.lastStartTime ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+      item.lastStartTime = this.formatTime(item.lastStartTime, '-')
       item.sourceTotal = sourceTotal
       item.targetTotal = targetTotal
       return item

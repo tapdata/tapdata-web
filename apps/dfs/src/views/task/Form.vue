@@ -110,15 +110,6 @@
                         ></ElDatePicker>
                       </ElFormItem>
                     </ElForm>
-                    <!--                    <ElDatePicker-->
-                    <!--                      v-if="settingModel.isSchedule"-->
-                    <!--                      value-format="yyyy-MM-dd HH:mm:ss"-->
-                    <!--                      format="yyyy-MM-dd HH:mm:ss"-->
-                    <!--                      v-model="settingModel.scheduleTime"-->
-                    <!--                      type="datetime"-->
-                    <!--                      class="ml-4"-->
-                    <!--                      :picker-options="getCurrentOptions()"-->
-                    <!--                    ></ElDatePicker>-->
                   </ElRow>
                 </template>
                 <template slot="cronExpression">
@@ -618,10 +609,12 @@ import FieldMapping from '@/components/field-mapping/main'
 import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from '../task/const'
 import { uniqueArr, getDatabaseTypes } from '@/util'
+import timeFunction from '@/mixins/timeFunction'
 
 let defaultConfig = []
 export default {
   components: { Transfer, FieldMapping, VIcon },
+  mixins: [timeFunction],
   data() {
     return {
       id: '',
@@ -1787,10 +1780,10 @@ export default {
       }
       // same day
       if (
-        this.$moment(current).format('YYYY-MM-DD') ===
-        this.$moment(this.settingModel.scheduleTime || current).format('YYYY-MM-DD')
+        this.formatTime(current, '', 'YYYY-MM-DD') ===
+        this.formatTime(this.settingModel.scheduleTime || current, '', 'YYYY-MM-DD')
       ) {
-        options.selectableRange = this.$moment(current).format('HH:mm:ss') + '-23:59:59'
+        options.selectableRange = this.formatTime(current, '', 'HH:mm:ss') + '-23:59:59'
       } else {
         options.selectableRange = '00:00:00' + '-23:59:59'
       }

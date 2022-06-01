@@ -80,10 +80,12 @@ import i18n from '@/i18n'
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import { CONFIG_MODEL } from './const'
+import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'DetailsDrawer',
   components: { VIcon, StatusTag },
+  mixins: [timeFunction],
   props: {
     hideOperation: {
       type: Boolean,
@@ -157,7 +159,7 @@ export default {
       data['database_password'] = data.agentType === 'Cloud' ? data['database_username'] : '-'
       this.connection = data
       //组装数据
-      this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      this.connection['last_updated'] = this.formatTime(data.last_updated)
       this.loadList(type)
     },
     edit() {

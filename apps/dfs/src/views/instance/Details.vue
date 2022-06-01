@@ -41,10 +41,12 @@
 <script>
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
+import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'Details',
   components: { VIcon, StatusTag },
+  mixins: [timeFunction],
   props: {
     value: Boolean,
     detailId: [String, Number]
@@ -150,7 +152,7 @@ export default {
             }
             Object.assign(data, data?.metric || {}, data?.spec || {}, data?.tmInfo || {})
             data.hostname = data?.tmInfo?.hostname
-            data.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
+            data.createAt = this.formatTime(data.createAt)
             if (data?.metric?.systemInfo) {
               let arr = ['cpus', 'installationDirectory', 'ips', 'logDir']
               arr.forEach(el => {

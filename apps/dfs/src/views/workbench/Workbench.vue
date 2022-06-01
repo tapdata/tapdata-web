@@ -50,7 +50,7 @@
                   {{ item.name }}
                 </ElLink>
                 <div class="notice-list__time">
-                  {{ formatFromNow(item.time) }}
+                  {{ fromNow(item.time) }}
                 </div>
               </li>
             </ul>
@@ -125,11 +125,13 @@ import i18n from '@/i18n'
 
 import VIcon from '@/components/VIcon'
 import { Chart } from '@tap/component'
-import { formatTime, numToThousands } from '@/util'
+import { numToThousands } from '@/util'
+import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'Workbench',
   components: { VIcon, Chart },
+  mixins: [timeFunction],
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -238,7 +240,7 @@ export default {
         xAxis: {
           axisLabel: {
             formatter: val => {
-              return formatTime(val, 'MM-DD')
+              return this.formatTime(val, '', 'MM-DD')
             }
           },
           axisLine: {
@@ -445,9 +447,6 @@ export default {
         return
       }
       window.open(item.url, '_blank')
-    },
-    formatFromNow(date) {
-      return this.$moment(date)?.fromNow()
     },
     hideCustomTip() {
       setTimeout(() => {

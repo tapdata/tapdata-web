@@ -24,8 +24,11 @@
 </template>
 
 <script>
+import timeFunction from '@/mixins/timeFunction'
+
 export default {
   name: 'ErrorLogDialog',
+  mixins: [timeFunction],
   props: {
     value: {
       type: Boolean
@@ -104,7 +107,7 @@ export default {
       }
       return {
         color: colorMap[log.level],
-        time: log.date ? this.$moment(log.date).format('YYYY-MM-DD HH:mm:ss') : '',
+        time: this.formatTime(log.date),
         level: markKeyword(log.level),
         threadName: markKeyword(log.threadName),
         loggerName: markKeyword(log.loggerName),

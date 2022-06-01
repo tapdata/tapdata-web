@@ -32,15 +32,16 @@
 import Info from './Info'
 import Schedule from './Schedule'
 import Log from '@/views/monitor/Log'
-// src/views/monitor/Log.vue
 import Connection from './Connection'
 import History from './History'
 import FieldMapping from '@/components/field-mapping/main'
 import { isFinished } from './util'
+import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'Index',
   components: { Info, Schedule, Log, Connection, History, FieldMapping },
+  mixins: [timeFunction],
   data() {
     return {
       loading: true,
@@ -166,14 +167,11 @@ export default {
           ? this.$t('task_monitor_migration_task')
           : this.$t('task_monitor_sync_task')
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
-      data.startTimeFmt = this.formatTime(data.startTime)
+      data.startTimeFmt = this.formatTime(data.startTime, '-')
       data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
-      data.cdcTimeFmt = this.formatTime(cdcTime)
+      data.cdcTimeFmt = this.formatTime(cdcTime, '-')
       data.isFinished = isFinished(data)
       return data
-    },
-    formatTime(time) {
-      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     tabHandler() {
       this.$nextTick(() => {

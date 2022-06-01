@@ -264,10 +264,12 @@ import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
 import ErrorLogDialog from './components/ErrorLogDialog'
 import { isFinished } from './copy/util'
+import timeFunction from '@/mixins/timeFunction'
 let timer = null
 
 export default {
   components: { StatusTag, VIcon, FilterBar, ErrorLogDialog },
+  mixins: [timeFunction],
   data() {
     return {
       loading: true,
@@ -599,11 +601,8 @@ export default {
       let statusInfo = TASK_STATUS_MAP[item.status] || {}
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
-      item.startTimeFmt = item.startTime ? this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-      item.nextScheduledTimeFmt =
-        item.setting.isSchedule && item.nextScheduledTime
-          ? this.$moment(item.nextScheduledTime).format('YYYY-MM-DD HH:mm:ss')
-          : '-'
+      item.startTimeFmt = this.formatTime(item.startTime, '-')
+      item.nextScheduledTimeFmt = item.setting.isSchedule ? this.formatTime(item.nextScheduledTime) : '-'
       item.isFinished = isFinished(item) // 全量状态下，任务完成状态时，前端识别为已停止
       return item
     },

@@ -38,7 +38,7 @@
               </li>
               <li class="info-item">
                 <span class="label">{{ $t('purchase_Purchase_dingGouShiJian') }}</span>
-                <span class="value">{{ $moment(agentInfo.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                <span class="value">{{ formatTime(agentInfo.createAt) }}</span>
               </li>
               <li class="info-item" v-if="isInternet && agentInfo.orderInfo.periodType === 'month'">
                 <span class="label">{{ $t('purchase_Purchase_daoQiShiJian') }}</span>
@@ -288,6 +288,8 @@ import Header from './Header'
 import { TOPOLOGY_MAP, SPEC_MAP, CHARGE_MAP } from '../../const'
 import { toDecimal2 } from '../../util'
 import VIcon from '../../components/VIcon'
+import timeFunction from '@/mixins/timeFunction'
+import dayjs from '../../plugins/dayjs'
 
 const getProductKey = item => {
   return ['chargingMode', 'periodType', 'specType', 'topology'].map(key => item[key]).join('_')
@@ -297,6 +299,7 @@ export default {
     Header,
     VIcon
   },
+  mixins: [timeFunction],
   data() {
     return {
       isInternet: window.__USER_INFO__.isInternet,
@@ -310,7 +313,7 @@ export default {
           region: 'same', // 同地域是否相同：same-同资源池；different-跨资源池
           specType: 'medium' // micro-微小，small-小，medium-中，large-大，self-自定义
         },
-        name: 'DRS_' + this.$moment().format('YYYYMMDDHHmmss') + Math.floor(Math.random() * 16 * 1000),
+        name: 'DRS_' + this.formatTime(null, 'YYYYMMDDHHmmss') + Math.floor(Math.random() * 16 * 1000),
         serviceId: '',
         groupId: '',
         measureId: '',
@@ -357,7 +360,7 @@ export default {
       if (this.agentInfo && this.agentInfo.endTime) {
         let date = new Date(this.agentInfo.endTime)
         date.setMonth(date.getMonth() + this.form.duration)
-        return this.$moment(date).format('YYYY-MM-DD')
+        return this.formatTime(date, 'YYYY-MM-DD')
       }
       return '-'
     },
@@ -416,7 +419,7 @@ export default {
         this.agentInfo.spec = spec
         this.agentInfo.regionFmt = regionMap[data.region] || data.region
         this.agentInfo.zoneFmt = zoneMap[data.zone] || data.zone
-        this.agentInfo.endTimeStr = data.endTime ? this.$moment(data.endTime).format('YYYY-MM-DD') : ''
+        this.agentInfo.endTimeStr = this.formatTime(data.endTime, 'YYYY-MM-DD')
       })
     },
     getRegion(cb) {
