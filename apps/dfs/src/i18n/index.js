@@ -10,6 +10,7 @@ import enSource from './langs/en'
 import zhTWSource from './langs/zh-TW'
 import modify from './modify'
 
+import dayjs from '../plugins/dayjs'
 import { locale as tapComponentLocale } from '@tap/component'
 
 let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
