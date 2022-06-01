@@ -317,6 +317,7 @@ export default {
       },
       order: 'createTime DESC',
       typeOptions: [
+        { label: this.$t('select_option_all'), value: '' },
         {
           label: this.$t('dataFlow.initial_sync'),
           value: 'initial_sync'
@@ -450,11 +451,7 @@ export default {
         desc: true
       }
       if (keyword && keyword.trim()) {
-        where.or = [
-          { name: { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
-        ]
+        where.name = { like: toRegExp(keyword), options: 'i' }
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
@@ -470,6 +467,7 @@ export default {
           where.status = status
         }
       }
+      where['syncType'] = 'sync' //过滤当前是数据开发
       type && (where['type'] = type)
       let filter = {
         order: this.order,
@@ -1009,7 +1007,7 @@ export default {
           items: this.typeOptions
         },
         {
-          placeholder: this.$t('task_list_search_placeholder'),
+          placeholder: this.$t('task_list_name'),
           key: 'keyword',
           type: 'input'
         }
