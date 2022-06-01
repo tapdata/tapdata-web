@@ -287,7 +287,7 @@ importers:
       '@vue/cli-plugin-babel': registry.npmmirror.com/@vue/cli-plugin-babel/4.5.15_4c1e5ebbf041a85328f9984e4ede8f8a
       '@vue/cli-plugin-eslint': registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.15_159f9ca94908a7070131e2c321d72521
       '@vue/cli-plugin-router': registry.npmmirror.com/@vue/cli-plugin-router/4.5.15_@vue+cli-service@4.5.15
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_vue-template-compiler@2.6.14
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
       '@vue/eslint-config-prettier': registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0_4adef71036e25249dceaf9dc58301895
       ace-builds: registry.npmmirror.com/ace-builds/1.4.14
       babel-eslint: registry.npmmirror.com/babel-eslint/10.1.0_eslint@6.8.0
@@ -377,6 +377,7 @@ importers:
       '@formily/reactive-vue': ^2.0.18
       '@formily/shared': ^2.0.18
       '@tap/api': workspace:^1.0.0
+      '@tap/locale': workspace:^1.0.0
       '@vue/composition-api': ^1.2.4
       ace-builds: ^1.4.13
       highlight.js: ^11.0.1
@@ -389,6 +390,7 @@ importers:
       '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf
       '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
       '@tap/api': link:../api
+      '@tap/locale': link:../locale
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6_vue@2.6.14
       ace-builds: registry.npmmirror.com/ace-builds/1.4.14
       highlight.js: registry.npmmirror.com/highlight.js/11.4.0
@@ -2741,7 +2743,7 @@ packages:
     dependencies:
       '@babel/core': registry.npmmirror.com/@babel/core/7.17.4
       '@vue/babel-preset-app': registry.npmmirror.com/@vue/babel-preset-app/4.5.15_vue@2.6.14
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_vue-template-compiler@2.6.14
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       babel-loader: registry.npmmirror.com/babel-loader/8.2.3_6fb82b936942eb9f11ea0fd3e177918b
       cache-loader: registry.npmmirror.com/cache-loader/4.1.0_webpack@4.46.0
@@ -2763,7 +2765,7 @@ packages:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
       eslint: '>= 1.6.0 < 7.0.0'
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_vue-template-compiler@2.6.14
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       eslint: registry.npmmirror.com/eslint/6.8.0
       eslint-loader: registry.npmmirror.com/eslint-loader/2.2.1_eslint@6.8.0+webpack@4.46.0
@@ -2784,7 +2786,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_vue-template-compiler@2.6.14
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
     dev: true
 
@@ -2796,7 +2798,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_vue-template-compiler@2.6.14
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
     dev: true
 
   registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164:
@@ -2978,102 +2980,6 @@ packages:
       url-loader: registry.npmmirror.com/url-loader/2.3.0_file-loader@4.3.0+webpack@4.46.0
       vue-loader: registry.npmmirror.com/vue-loader/15.9.8_0aadd186e864c83cab1284bae568d6ae
       vue-style-loader: registry.npmmirror.com/vue-style-loader/4.1.3
-      webpack: registry.npmmirror.com/webpack/4.46.0
-      webpack-bundle-analyzer: registry.npmmirror.com/webpack-bundle-analyzer/3.9.0
-      webpack-chain: registry.npmmirror.com/webpack-chain/6.5.1
-      webpack-dev-server: registry.npmmirror.com/webpack-dev-server/3.11.3_webpack@4.46.0
-      webpack-merge: registry.npmmirror.com/webpack-merge/4.2.2
-    optionalDependencies:
-      vue-loader-v16: registry.npmmirror.com/vue-loader/16.8.3_webpack@4.46.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-      - webpack-cli
-      - webpack-command
-    dev: true
-
-  registry.npmmirror.com/@vue/cli-service/4.5.15_vue-template-compiler@2.6.14:
-    resolution: {integrity: sha512-sFWnLYVCn4zRfu45IcsIE9eXM0YpDV3S11vlM2/DVbIPAGoYo5ySpSof6aHcIvkeGsIsrHFpPHzNvDZ/efs7jA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/cli-service/-/cli-service-4.5.15.tgz}
-    id: registry.npmmirror.com/@vue/cli-service/4.5.15
-    name: '@vue/cli-service'
-    version: 4.5.15
-    engines: {node: '>=8'}
-    hasBin: true
-    peerDependencies:
-      '@vue/compiler-sfc': ^3.0.0-beta.14
-      less-loader: '*'
-      pug-plain-loader: '*'
-      raw-loader: '*'
-      sass-loader: '*'
-      stylus-loader: '*'
-      vue-template-compiler: ^2.0.0
-    peerDependenciesMeta:
-      '@vue/compiler-sfc':
-        optional: true
-      less-loader:
-        optional: true
-      pug-plain-loader:
-        optional: true
-      raw-loader:
-        optional: true
-      sass-loader:
-        optional: true
-      stylus-loader:
-        optional: true
-      vue-template-compiler:
-        optional: true
-    dependencies:
-      '@intervolga/optimize-cssnano-plugin': registry.npmmirror.com/@intervolga/optimize-cssnano-plugin/1.0.6_webpack@4.46.0
-      '@soda/friendly-errors-webpack-plugin': registry.npmmirror.com/@soda/friendly-errors-webpack-plugin/1.8.1_webpack@4.46.0
-      '@soda/get-current-script': registry.npmmirror.com/@soda/get-current-script/1.0.2
-      '@types/minimist': registry.npmmirror.com/@types/minimist/1.2.2
-      '@types/webpack': registry.npmmirror.com/@types/webpack/4.41.32
-      '@types/webpack-dev-server': registry.npmmirror.com/@types/webpack-dev-server/3.11.6_debug@4.3.3
-      '@vue/cli-overlay': registry.npmmirror.com/@vue/cli-overlay/4.5.15
-      '@vue/cli-plugin-router': registry.npmmirror.com/@vue/cli-plugin-router/4.5.15_@vue+cli-service@4.5.15
-      '@vue/cli-plugin-vuex': registry.npmmirror.com/@vue/cli-plugin-vuex/4.5.15_@vue+cli-service@4.5.15
-      '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
-      '@vue/component-compiler-utils': registry.npmmirror.com/@vue/component-compiler-utils/3.3.0
-      '@vue/preload-webpack-plugin': registry.npmmirror.com/@vue/preload-webpack-plugin/1.1.2_502c618fc8a7d35df07e93275324a2d0
-      '@vue/web-component-wrapper': registry.npmmirror.com/@vue/web-component-wrapper/1.3.0
-      acorn: registry.npmmirror.com/acorn/7.4.1
-      acorn-walk: registry.npmmirror.com/acorn-walk/7.2.0
-      address: registry.npmmirror.com/address/1.1.2
-      autoprefixer: registry.npmmirror.com/autoprefixer/9.8.8
-      browserslist: registry.npmmirror.com/browserslist/4.19.1
-      cache-loader: registry.npmmirror.com/cache-loader/4.1.0_webpack@4.46.0
-      case-sensitive-paths-webpack-plugin: registry.npmmirror.com/case-sensitive-paths-webpack-plugin/2.4.0
-      cli-highlight: registry.npmmirror.com/cli-highlight/2.1.11
-      clipboardy: registry.npmmirror.com/clipboardy/2.3.0
-      cliui: registry.npmmirror.com/cliui/6.0.0
-      copy-webpack-plugin: registry.npmmirror.com/copy-webpack-plugin/5.1.2_webpack@4.46.0
-      css-loader: registry.npmmirror.com/css-loader/3.6.0_webpack@4.46.0
-      cssnano: registry.npmmirror.com/cssnano/4.1.11
-      debug: registry.npmmirror.com/debug/4.3.3
-      default-gateway: registry.npmmirror.com/default-gateway/5.0.5
-      dotenv: registry.npmmirror.com/dotenv/8.6.0
-      dotenv-expand: registry.npmmirror.com/dotenv-expand/5.1.0
-      file-loader: registry.npmmirror.com/file-loader/4.3.0_webpack@4.46.0
-      fs-extra: registry.npmmirror.com/fs-extra/7.0.1
-      globby: registry.npmmirror.com/globby/9.2.0
-      hash-sum: registry.npmmirror.com/hash-sum/2.0.0
-      html-webpack-plugin: registry.npmmirror.com/html-webpack-plugin/3.2.0_webpack@4.46.0
-      launch-editor-middleware: registry.npmmirror.com/launch-editor-middleware/2.3.0
-      lodash.defaultsdeep: registry.npmmirror.com/lodash.defaultsdeep/4.6.1
-      lodash.mapvalues: registry.npmmirror.com/lodash.mapvalues/4.6.0
-      lodash.transform: registry.npmmirror.com/lodash.transform/4.6.0
-      mini-css-extract-plugin: registry.npmmirror.com/mini-css-extract-plugin/0.9.0_webpack@4.46.0
-      minimist: registry.npmmirror.com/minimist/1.2.5
-      pnp-webpack-plugin: registry.npmmirror.com/pnp-webpack-plugin/1.7.0
-      portfinder: registry.npmmirror.com/portfinder/1.0.28
-      postcss-loader: registry.npmmirror.com/postcss-loader/3.0.0
-      ssri: registry.npmmirror.com/ssri/8.0.1
-      terser-webpack-plugin: registry.npmmirror.com/terser-webpack-plugin/1.4.5_webpack@4.46.0
-      thread-loader: registry.npmmirror.com/thread-loader/2.1.3_webpack@4.46.0
-      url-loader: registry.npmmirror.com/url-loader/2.3.0_file-loader@4.3.0+webpack@4.46.0
-      vue-loader: registry.npmmirror.com/vue-loader/15.9.8_679359cdb69c218f2f8f476b2ba08796
-      vue-style-loader: registry.npmmirror.com/vue-style-loader/4.1.3
-      vue-template-compiler: registry.npmmirror.com/vue-template-compiler/2.6.14
       webpack: registry.npmmirror.com/webpack/4.46.0
       webpack-bundle-analyzer: registry.npmmirror.com/webpack-bundle-analyzer/3.9.0
       webpack-chain: registry.npmmirror.com/webpack-chain/6.5.1
@@ -3812,7 +3718,7 @@ packages:
     name: axios
     version: 0.21.4
     dependencies:
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
     transitivePeerDependencies:
       - debug
     dev: false
@@ -7049,8 +6955,9 @@ packages:
       readable-stream: registry.npmmirror.com/readable-stream/2.3.7
     dev: true
 
-  registry.npmmirror.com/follow-redirects/1.14.8:
+  registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3:
     resolution: {integrity: sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.14.8.tgz}
+    id: registry.npmmirror.com/follow-redirects/1.14.8
     name: follow-redirects
     version: 1.14.8
     engines: {node: '>=4.0'}
@@ -7059,6 +6966,8 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dependencies:
+      debug: registry.npmmirror.com/debug/4.3.3
 
   registry.npmmirror.com/for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/for-in/-/for-in-1.0.2.tgz}
@@ -7921,7 +7830,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: registry.npmmirror.com/eventemitter3/4.0.7
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
       requires-port: registry.npmmirror.com/requires-port/1.0.0
     transitivePeerDependencies:
       - debug

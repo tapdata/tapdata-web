@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@tap/api": "workspace:^1.0.0",
+    "@tap/locale": "workspace:^1.0.0",
     "@formily/core": "^2.0.9",
     "@formily/element": "^2.0.9",
     "@formily/json-schema": "^2.0.9",
