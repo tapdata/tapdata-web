@@ -187,7 +187,7 @@ export default {
   page_title_setting: 'System settings',
   page_title_license: 'License',
   page_title_back_menu: 'Back menu',
-  page_title_custom_node: 'Custom Proccessor Node',
+  page_title_custom_node: 'Custom Nodes',
   page_title_account: 'Personal settings',
 
   // 通用组件

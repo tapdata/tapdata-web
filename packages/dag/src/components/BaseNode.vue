@@ -224,6 +224,18 @@ $height: 40px;
         border-color: #2c65ff;
       }
     }
+
+    &.dropHover ~ svg.jtk-connector.jtk-dragging {
+      path:nth-child(2) {
+        stroke: #2c65ff;
+      }
+      path:nth-child(3) {
+        fill: #2c65ff;
+        stroke: #2c65ff;
+      }
+      //fill: #2c65ff;
+      //stroke: #2c65ff;
+    }
   }
 }
 

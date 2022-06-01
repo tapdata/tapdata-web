@@ -51,34 +51,14 @@ export class MergeTable extends NodeType {
                   },
                   'x-component': 'Select',
                   enum: [
-                    { label: '追加写入', value: 'appendWrite' },
                     { label: '更新写入', value: 'updateWrite' },
                     { label: '更新已存在或插入新数据', value: 'updateOrInsert' },
                     { label: '更新进内嵌数组', value: 'updateIntoArray' }
                   ]
-                  /*'x-reactions': {
-                    target: 'targetPath', //要操作的字段路径，支持FormPathPattern路径语法，注意：不支持相对路径！！
-                    effects: ['onFieldInputValueChange'], //主动模式下的独立生命周期钩子
-                    fulfill: {
-                      state: {
-                        value: `{{ $self.value === null && ? || ($deps[0] === "updateOrInsert" ? "" : findNodeById($deps[1])?.name) }}`
-                      }
-                    }
-                  }*/
                 },
                 wrap: {
                   type: 'void',
                   'x-component': 'FormContent',
-                  'x-reactions': [
-                    {
-                      dependencies: ['.mergeType'],
-                      fulfill: {
-                        state: {
-                          visible: '{{ $deps[0] !== "appendWrite" }}'
-                        }
-                      }
-                    }
-                  ],
                   properties: {
                     space: {
                       type: 'void',
@@ -132,16 +112,6 @@ export class MergeTable extends NodeType {
                       title: '关联条件',
                       'x-decorator': 'FormItem',
                       'x-component': 'ArrayTable',
-                      'x-reactions': [
-                        {
-                          dependencies: ['.mergeType'],
-                          fulfill: {
-                            state: {
-                              // visible: '{{$deps[0] !== "appendWrite"}}'
-                            }
-                          }
-                        }
-                      ],
                       items: {
                         type: 'object',
                         properties: {

@@ -17,7 +17,7 @@ export const ArrayAggregate = connect(
 
           if (aggregation.groupByExpression.length) {
             result._id = {
-              _tapd8_sub_name: aggregation.name
+              // _tapd8_sub_name: aggregation.name
             }
             aggregation.groupByExpression.forEach(key => {
               result._id[key] = 'XXX'
