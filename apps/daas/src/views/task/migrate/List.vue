@@ -280,13 +280,11 @@ export default {
       searchParams: {
         keyword: '',
         status: '',
-        progress: '',
-        executionStatus: '',
-        timeData: '',
-        syncType: ''
+        type: ''
       },
       order: 'createTime DESC',
       progressOptions: [
+        { label: this.$t('select_option_all'), value: '' },
         {
           label: this.$t('dataFlow.initial_sync'),
           value: 'initial_sync'
@@ -401,71 +399,40 @@ export default {
       this.searchParams = {
         keyword: '',
         status: '',
-        progress: '',
-        executionStatus: '',
-        timeData: '',
-        syncType: ''
+        type: ''
       }
 
       this.multipleSelection = []
       this.table.fetch(1)
     },
     getData({ page, tags }) {
-      let region = this.$route.query.region
       let { current, size } = page
-      let { keyword, status, progress, executionStatus, timeData, syncType, agentId } = this.searchParams
-
+      let { keyword, status, type } = this.searchParams
+      let fields = {
+        id: true,
+        name: true,
+        status: true,
+        last_updated: true,
+        createTime: true,
+        user_id: true,
+        startTime: true,
+        agentId: true,
+        statuses: true,
+        type: true,
+        desc: true
+      }
       let where = {
         syncType: 'migrate'
       }
       if (keyword && keyword.trim()) {
-        where.or = [
-          { name: { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
-        ]
-      }
-      if (agentId) {
-        where['agentId'] = agentId
-        status = status || 'running'
+        where.name = { like: toRegExp(keyword), options: 'i' }
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
           in: tags
         }
       }
-      region && (where['platformInfo.region'] = region)
-      syncType && (where['type'] = syncType)
-      if (executionStatus) {
-        if (executionStatus === 'Lag') {
-          where.Lag = true
-        } else if (executionStatus === 'initialized') {
-          where.and = [
-            {
-              'stats.stagesMetrics.status': {
-                inq: ['initialized']
-              }
-            },
-            {
-              'stats.stagesMetrics.status': {
-                nin: ['cdc', 'initializing']
-              }
-            }
-          ]
-        } else {
-          where['stats.stagesMetrics.status'] = executionStatus
-        }
-      }
-      if (timeData && timeData.length) {
-        let dates = this.timeData.concat()
-        if (dates[1]) {
-          dates[1] = new Date(dates[1])
-          dates[1].setHours(dates[1].getHours() + 24)
-        }
-        where.createTime = {
-          between: dates
-        }
-      }
+      type && (where['type'] = type)
       if (status) {
         if (status.includes(',')) {
           where.status = {
@@ -475,14 +442,13 @@ export default {
           where.status = status
         }
       }
-      progress && (where['type'] = progress)
       let filter = {
         order: this.order,
         limit: size,
+        fields: fields,
         skip: (current - 1) * size,
         where
       }
-      delete filter.where.mappingTemplate
       return this.$api('Task')
         .get({
           filter: JSON.stringify(filter)
@@ -971,27 +937,12 @@ export default {
         },
         {
           label: this.$t('task_list_sync_type'),
-          key: 'progress',
+          key: 'type',
           type: 'select-inner',
           items: this.progressOptions
         },
-        // {
-        //   label: this.$t('task_list_execution_status'),
-        //   key: 'executionStatus',
-        //   type: 'select-inner',
-        //   menuMinWidth: '250px',
-        //   items: async () => {
-        //     let option = ['initializing', 'cdc', 'initialized', 'Lag']
-        //     return option.map(item => {
-        //       return {
-        //         label: this.$t('task_list_status_' + item),
-        //         value: item
-        //       }
-        //     })
-        //   }
-        // },
         {
-          placeholder: this.$t('task_list_search_placeholder'),
+          placeholder: this.$t('task_list_name'),
           key: 'keyword',
           type: 'input'
         }
