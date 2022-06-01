@@ -1,5 +1,6 @@
 import { defineComponent, ref } from 'vue-demi'
 import { MetadataInstances } from '@tap/api'
+import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import './style.scss'
 
 const api = new MetadataInstances()
@@ -29,9 +30,13 @@ export const TableListCard = defineComponent({
           </div>
           <div v-loading={loading.value} class="table-list">
             {list.value.map(name => (
-              <div key={name} class="table-list-item font-color-light rounded-2 px-2">
-                {name}
-              </div>
+              <OverflowTooltip
+                class="w-100 text-truncate source table-list-item font-color-light rounded-2 px-2"
+                text={name}
+                key={name}
+                placement="right"
+                open-delay={400}
+              />
             ))}
           </div>
         </ElCard>
