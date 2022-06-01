@@ -418,8 +418,8 @@ let menuSetting = [
     code: 'system_management',
     children: [
       { name: 'clusterManagement', code: 'Cluster_management_menu' },
-      { name: 'users', code: 'user_management_menu' },
-      { name: 'roleList', code: 'role_management_menu' }
+      // { name: 'users', code: 'user_management_menu' },
+      // { name: 'roleList', code: 'role_management_menu' }
     ]
   }
 ]
