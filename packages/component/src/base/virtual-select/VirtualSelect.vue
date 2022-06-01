@@ -147,6 +147,7 @@
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import Locale from '../../mixins/locale'
 
 export default {
   name: 'VirtualSelect',
@@ -154,6 +155,8 @@ export default {
   components: {
     RecycleScroller
   },
+
+  mixins: [Locale],
 
   extends: Select,
 
@@ -196,14 +199,14 @@ export default {
 
     emptyText() {
       if (this.loading) {
-        return this.loadingText || this.t('el.select.loading')
+        return this.loadingText || this.t('loading')
       } else {
         if (this.remote && this.query === '' && this.options.length === 0) return false
         if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
-          return this.noMatchText || this.t('el.select.noMatch')
+          return this.noMatchText || this.t('no_match')
         }
         if (this.filteredItems.length === 0) {
-          return this.noDataText || this.t('el.select.noData')
+          return this.noDataText || this.t('no_data')
         }
       }
       return null

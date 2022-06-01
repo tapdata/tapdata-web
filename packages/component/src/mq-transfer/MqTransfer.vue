@@ -6,9 +6,9 @@
       ref="leftPanel"
       class="flex-1"
       :data="sourceData"
-      :title="titles[0] || t('virtual_transfer_titles.0')"
+      :title="titles[0] || t('transfer_titles.0')"
       :default-checked="leftDefaultChecked"
-      :placeholder="filterPlaceholder || t('virtual_transfer_filter_placeholder')"
+      :placeholder="filterPlaceholder || t('filter_placeholder')"
       @checked-change="onSourceCheckedChange"
     >
       <slot name="left" :option="option"></slot>
@@ -67,9 +67,9 @@
         ref="rightPanel"
         class="w-100 mb-4"
         :data="rightTopData"
-        :title="titles[1] || t('virtual_transfer_titles.1')"
+        :title="titles[1] || t('transfer_titles.1')"
         :default-checked="rightTopDefaultChecked"
-        :placeholder="filterPlaceholder || t('virtual_transfer_filter_placeholder')"
+        :placeholder="filterPlaceholder || t('filter_placeholder')"
         @checked-change="onTargetCheckedChange('top', ...arguments)"
       >
         <slot name="right" :option="option"></slot>
@@ -81,9 +81,9 @@
         ref="rightPanel"
         class="w-100"
         :data="rightBottomData"
-        :title="titles[2] || t('virtual_transfer_titles.1')"
+        :title="titles[2] || t('transfer_titles.1')"
         :default-checked="rightBottomDefaultChecked"
-        :placeholder="filterPlaceholder || t('virtual_transfer_filter_placeholder')"
+        :placeholder="filterPlaceholder || t('filter_placeholder')"
         @checked-change="onTargetCheckedChange('bottom', ...arguments)"
       >
         <slot name="right" :option="option"></slot>
