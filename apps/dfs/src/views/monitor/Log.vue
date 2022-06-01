@@ -133,6 +133,11 @@ export default {
             value: 5 * 24
           }
         ]
+      },
+      page: {
+        total: 0,
+        limit: 20,
+        skip: 0
       }
     }
   },
@@ -147,6 +152,7 @@ export default {
     }
     this.$ws.on('logs', this.updateLogs)
     this.$ws.send(msg)
+    this.getLogsTotal()
   },
   beforeDestroy() {
     this.$ws.off('logs', this.updateLogs)
@@ -180,6 +186,13 @@ export default {
       let el = event.target
       this.isScrollBottom = el.scrollTop + el.clientHeight >= el.scrollHeight
       if (el.scrollTop <= 0 && !this.noMore && !this.loading) {
+        if (this.page.skip <= 0) {
+          return
+        } else if (this.page.skip < this.page.limit) {
+          this.page.skip = 0
+        } else {
+          this.page.skip -= this.page.limit
+        }
         this.getLogs()
       }
     },
@@ -212,7 +225,7 @@ export default {
           }
         },
         order: `id DESC`,
-        limit: 35
+        limit: this.page.limit
       }
       const { keyword, checkList } = this
       const len = checkList.length
@@ -227,9 +240,7 @@ export default {
         filter.where.$or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }
       if (!isSearch && this.logs.length) {
-        filter.where.id = {
-          lt: this.logs[0].id
-        }
+        filter.skip = this.page.skip
       }
       this.$axios
         .get(`tm/api/Logs?filter=${encodeURIComponent(JSON.stringify(filter))}`)
@@ -240,6 +251,7 @@ export default {
             this.isScrollBottom = true
             this.logs = list.reverse().map(this.formatLog)
             this.scrollToBottom()
+            this.resetPageSkip(data.total)
             return
           }
           if (!list.length) {
@@ -308,6 +320,26 @@ export default {
         .finally(() => {
           resetLoading?.()
         })
+    },
+    getLogsTotal() {
+      let filter = {
+        where: {
+          'contextMap.dataFlowId': {
+            $eq: this.id
+          }
+        },
+        limit: 0
+      }
+      this.$axios.get(`tm/api/Logs?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+        this.resetPageSkip(data.total)
+      })
+    },
+    resetPageSkip(total) {
+      this.page.total = total
+      this.page.skip = this.page.total - this.page.limit
+      if (this.page.skip < 0) {
+        this.page.skip = 0
+      }
     }
   }
 }
