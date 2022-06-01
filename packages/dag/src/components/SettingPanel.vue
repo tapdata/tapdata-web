@@ -121,11 +121,12 @@
                     <ElSwitch v-model="settings.isAutoCreateIndex"></ElSwitch>
                   </ElFormItem>
                 </ElCol>
-                <ElCol :span="4">
+                <!--PDK不支持，暂时隐藏-->
+                <!--<ElCol :span="4">
                   <ElFormItem :label="$t('task_setting_automatic_ddl')">
                     <ElSwitch v-model="settings.isOpenAutoDDL"></ElSwitch>
                   </ElFormItem>
-                </ElCol>
+                </ElCol>-->
                 <ElCol :span="4">
                   <ElFormItem :label="$t('task_setting_distinct_write_type')">
                     <ElSelect v-model="settings.deduplicWriteMode">
