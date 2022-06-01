@@ -265,6 +265,8 @@ import FilterBar from '@/components/filter-bar'
 import ErrorLogDialog from './components/ErrorLogDialog'
 import { isFinished } from './copy/util'
 import timeFunction from '@/mixins/timeFunction'
+import { buried } from '@/util'
+
 let timer = null
 
 export default {
@@ -655,16 +657,24 @@ export default {
     createTask() {
       this.createLoading = true
       this.$checkAgentStatus(() => {
-        // this.createVisible = true
         this.createMigrate()
-      }).finally(() => {
-        this.createLoading = false
       })
+        .catch(() => {
+          buried('trigger', {
+            target: 'createMigrationFail-AgentNotWork'
+          })
+        })
+        .finally(() => {
+          this.createLoading = false
+        })
     },
     closeCreateDialog() {
       this.createVisible = false
     },
     createMigrate() {
+      buried('trigger', {
+        target: 'createMigration'
+      })
       this.closeCreateDialog()
       this.$router.push({
         name: 'DataflowCreate'
@@ -701,8 +711,20 @@ export default {
       this.$axios
         .patch('tm/api/DataFlows?where=', attributes)
         .then(data => {
+          if (status === 'scheduled') {
+            buried('trigger', {
+              target: 'startMigration-success'
+            })
+          }
           this.fetch()
           this.responseHandler(data, this.$t('task_operation_successful'))
+        })
+        .catch(() => {
+          if (status === 'scheduled') {
+            buried('trigger', {
+              target: 'startMigration-fail'
+            })
+          }
         })
         .finally(() => {
           finallyEvents?.()
@@ -789,7 +811,12 @@ export default {
           status: 'scheduled',
           finallyEvents: resetLoading
         })
-      }).catch(resetLoading)
+      }).catch(() => {
+        buried('trigger', {
+          target: 'startMigration-AgentNotWork'
+        })
+        resetLoading?.()
+      })
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', item.name)

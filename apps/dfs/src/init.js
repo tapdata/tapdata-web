@@ -13,7 +13,7 @@ import TapdataWebCore from 'web-core'
 import i18n from './i18n'
 import Purchase from '@/views/purchase/Purchase'
 import store from '@/store'
-import { errorConfirmFnc } from '@/util'
+import { errorConfirmFnc, buried } from '@/util'
 import VConfirm from '@/components/v-confirm'
 
 Vue.config.productionTip = false
@@ -58,7 +58,25 @@ Vue.prototype.$confirm = (message, title, options) => {
 
 export default ({ routes }) => {
   let loading = null
+  let all = {
+    timer: null,
+    count: 0
+  }
+  let one = {
+    timer: null,
+    count: 0
+  }
   const init = () => {
+    all.timer && clearInterval(all.timer)
+    all.timer = setInterval(() => {
+      all.count++
+      if (all.count >= 30) {
+        buried('stay', {
+          path: '/'
+        })
+        clearInterval(all.timer)
+      }
+    }, 1000)
     if (window.__config__.ENV === 'dev') {
       routes.push({
         path: '/Purchase',
@@ -71,6 +89,20 @@ export default ({ routes }) => {
     })
     router.beforeEach((to, from, next) => {
       next()
+      buried('access', {
+        path: to.path || '/'
+      })
+      one.count = 0
+      one.timer && clearInterval(one.timer)
+      one.timer = setInterval(() => {
+        one.count++
+        if (one.count >= 30) {
+          buried('stay', {
+            path: to.path || '/'
+          })
+          clearInterval(one.timer)
+        }
+      }, 1000)
     })
     var loc = window.location,
       wsUrl = 'ws://'

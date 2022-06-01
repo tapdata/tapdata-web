@@ -38,6 +38,7 @@ import VIcon from '@/components/VIcon'
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import BindPhone from '@/views/user/components/BindPhone'
+import { buried } from '@/util'
 
 export default {
   components: {
@@ -130,6 +131,9 @@ export default {
   methods: {
     createConnection(type) {
       this.dialogVisible = false
+      buried('trigger', {
+        target: 'createConnection'
+      })
       this.$router.push({
         name: 'ConnectionCreate',
         query: { databaseType: type }

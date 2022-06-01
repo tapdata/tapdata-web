@@ -608,7 +608,7 @@ import Transfer from './Transfer'
 import FieldMapping from '@/components/field-mapping/main'
 import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from '../task/const'
-import { uniqueArr, getDatabaseTypes } from '@/util'
+import { uniqueArr, getDatabaseTypes, buried } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 
 let defaultConfig = []
@@ -1637,6 +1637,9 @@ export default {
       if (this.loading) {
         return
       }
+      buried('trigger', {
+        target: 'submitMigration'
+      })
       //保存字段映射
       if (!this.hiddenFieldMapping) {
         let returnData = this.$refs.fieldMapping.returnData()
@@ -1667,9 +1670,15 @@ export default {
       this.loading = true
       promise
         .then(() => {
+          buried('trigger', {
+            target: 'submitMigration-success'
+          })
           this.routerBack()
         })
         .catch(e => {
+          buried('trigger', {
+            target: 'submitMigration-fail'
+          })
           if (e.response?.msg === 'duplication for names') {
             this.$message.error(this.$t('message_exists_name'))
           } else {

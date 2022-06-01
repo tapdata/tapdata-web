@@ -212,3 +212,28 @@ export const errorConfirmFnc = error => {
     }
   })
 }
+
+export const buried = (type, obj = {}) => {
+  let userInfo = window.__USER_INFO__ || {}
+  let result = {
+    createTime: Date.now(),
+    user_id: userInfo.user_id,
+    acton: type // 记录行为，访问页面-access、时长触发-stay、事件触发-trigger
+    // path: 'connection/create', // 目标页面
+    // targetId: '' // 操作对象的id，比如agentId
+  }
+  switch (type) {
+    case 'access':
+      result.path = obj.path
+      break
+    case 'stay':
+      result.path = obj.path
+      break
+    case 'trigger':
+      result.target = ''
+      break
+    default:
+      break
+  }
+  console.log('buried', JSON.stringify(result))
+}

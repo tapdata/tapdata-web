@@ -175,7 +175,7 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import Preview from './Preview.vue'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
-import { getDatabaseTypes } from '@/util'
+import { getDatabaseTypes, buried } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 
 let timer = null
@@ -399,6 +399,9 @@ export default {
       this.fetch(1)
     },
     create() {
+      buried('trigger', {
+        target: 'openConnection'
+      })
       this.$root.$emit('select-connection-type')
     },
     edit(item) {
@@ -465,6 +468,10 @@ export default {
         let loading = this.$loading()
         this.test(item)
         loading.close()
+      }).catch(() => {
+        buried('trigger', {
+          target: 'testConnectionFail-AgentNotWork'
+        })
       })
     },
     async test(data, isShowDialog = true) {
@@ -482,6 +489,9 @@ export default {
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
       } catch (error) {
+        buried('trigger', {
+          target: 'testConnectionFail'
+        })
         this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
       }
     },
