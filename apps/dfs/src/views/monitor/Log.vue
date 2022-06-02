@@ -189,6 +189,7 @@ export default {
         if (this.page.skip <= 0) {
           return
         } else if (this.page.skip < this.page.limit) {
+          this.page.limit = this.page.skip
           this.page.skip = 0
         } else {
           this.page.skip -= this.page.limit
@@ -260,7 +261,7 @@ export default {
           }
           let el = this.$refs.logs
           let itemEl = el.querySelector('li:nth-child(2)')
-          list = list.reverse().map(this.formatLog)
+          list = list.map(this.formatLog)
           this.logs.unshift(...list)
           this.$nextTick(() => {
             if (itemEl) {
