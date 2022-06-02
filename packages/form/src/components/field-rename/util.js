@@ -18,7 +18,7 @@ export const convertSchemaToTreeData = function (Schema) {
             ),
           label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
           field_name: jsonPathForFieldName[jsonPathForFieldName.length - 1],
-          type: field.originalDataType, // TODO 需要补充originalDataType
+          type: field.originalDataType || field.data_type,
           data_type: field.data_type,
           primary_key_position: field.primary_key_position,
           table_name: field.table_name || 'table',
