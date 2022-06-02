@@ -116,7 +116,7 @@ export const FieldModType = connect(
                       slot-scope="{ node, data }"
                     >
                       <span class="flex-1 inline-block">{data.field_name}</span>
-                      <span class="flex-1 inline-block">{data.originalDataType}</span>
+                      <span class="flex-1 inline-block">{data.type}</span>
                       <ElSelect
                         v-model={data.data_type}
                         class="field-type inline-block"
@@ -194,9 +194,9 @@ export const FieldModType = connect(
               id: data.id,
               field: nativeData.original_field_name,
               operand: data.data_type,
-              originalDataType: nativeData.original_java_type,
+              originalDataType: nativeData.originalDataType,
               table_name: data.table_name,
-              type: data.data_type,
+              type: data.type,
               primary_key_position: data.primary_key_position,
               color: data.color,
               label: data.field_name,
@@ -207,7 +207,7 @@ export const FieldModType = connect(
             op = ops[0]
             op.data_type = data.data_type
             op.operand = data.data_type
-            op.originalDataType = nativeData.original_java_type
+            op.originalDataType = nativeData.originalDataType
           }
         },
         handleReset(node, data) {
@@ -223,7 +223,7 @@ export const FieldModType = connect(
               if (self.operations[i].id === data.id) {
                 let ops = self.operations[i]
                 if (ops.op === 'CONVERT') {
-                  if (nativeData) node.data.data_type = nativeData.data_type
+                  if (nativeData) node.data.data_type = nativeData.type
                   self.operations.splice(i, 1)
                   i--
                   continue

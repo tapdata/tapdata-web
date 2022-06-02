@@ -177,7 +177,7 @@ export default {
     },
     goNew() {
       let routeUrl = this.$router.resolve({
-        name: 'MigrateNew'
+        name: 'MigrateCreate'
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
