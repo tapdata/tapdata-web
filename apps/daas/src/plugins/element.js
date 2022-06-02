@@ -73,6 +73,8 @@ import {
 
 // 组件默认尺寸为small
 Vue.prototype.$ELEMENT = { size: 'small' }
+// 提示框默认不显示箭头
+Tooltip.props.visibleArrow.default = false
 
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function (option, byClick) {
