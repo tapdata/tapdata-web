@@ -224,7 +224,7 @@ export default {
             $eq: this.id
           }
         },
-        order: `id DESC`,
+        order: `id ASC`,
         limit: this.page.limit
       }
       const { keyword, checkList } = this
@@ -249,7 +249,7 @@ export default {
           if (isSearch) {
             this.noMore = false
             this.isScrollBottom = true
-            this.logs = list.reverse().map(this.formatLog)
+            this.logs = list.map(this.formatLog)
             this.scrollToBottom()
             this.resetPageSkip(data.total)
             return
