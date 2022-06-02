@@ -325,9 +325,11 @@ importers:
   packages/component:
     specifiers:
       '@tap/locale': workspace:^1.0.0
+      dayjs: ^1.11.2
       echarts: ^5.0.2
     dependencies:
       '@tap/locale': link:../locale
+      dayjs: registry.npmmirror.com/dayjs/1.11.2
       echarts: registry.npmmirror.com/echarts/5.3.0
 
   packages/dag:
