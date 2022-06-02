@@ -182,6 +182,10 @@ export default {
       order: 'last_updated DESC',
       databaseModelOptions: [
         {
+          label: this.$t('select_option_all'),
+          value: ''
+        },
+        {
           label: this.$t('connection_list_source'),
           value: 'source'
         },
@@ -650,7 +654,7 @@ export default {
           selectedWidth: '200px'
         },
         {
-          label: this.$t('connection_list_form_sync_type'),
+          label: this.$t('connection_list_type'),
           key: 'databaseModel',
           type: 'select-inner',
           items: this.databaseModelOptions
@@ -668,6 +672,12 @@ export default {
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
             )
+            //默认全部
+            let all = {
+              name: this.$t('select_option_all'),
+              type: ''
+            }
+            databaseTypeOptions.unshift(all)
             return databaseTypeOptions.map(item => {
               return {
                 label: item.name,
@@ -677,7 +687,7 @@ export default {
           }
         },
         {
-          placeholder: this.$t('task_list_search_placeholder'),
+          placeholder: this.$t('connection_list_name'),
           key: 'keyword',
           type: 'input'
         }
