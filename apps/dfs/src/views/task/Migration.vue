@@ -660,9 +660,7 @@ export default {
         this.createMigrate()
       })
         .catch(() => {
-          buried('trigger', {
-            target: 'createMigrationFail-AgentNotWork'
-          })
+          buried('migrationCreateAgentFail')
         })
         .finally(() => {
           this.createLoading = false
@@ -672,9 +670,7 @@ export default {
       this.createVisible = false
     },
     createMigrate() {
-      buried('trigger', {
-        target: 'createMigration'
-      })
+      buried('migrationCreate')
       this.closeCreateDialog()
       this.$router.push({
         name: 'DataflowCreate'
@@ -712,8 +708,8 @@ export default {
         .patch('tm/api/DataFlows?where=', attributes)
         .then(data => {
           if (status === 'scheduled') {
-            buried('trigger', {
-              target: 'startMigration-success'
+            buried('migrationStart', '', {
+              result: true
             })
           }
           this.fetch()
@@ -721,8 +717,8 @@ export default {
         })
         .catch(() => {
           if (status === 'scheduled') {
-            buried('trigger', {
-              target: 'startMigration-fail'
+            buried('migrationStart', '', {
+              result: false
             })
           }
         })
@@ -806,15 +802,14 @@ export default {
       }
     },
     runTask(ids, row, resetLoading) {
+      buried('migrationStart')
       this.$checkAgentStatus(() => {
         this.changeStatus(ids, {
           status: 'scheduled',
           finallyEvents: resetLoading
         })
       }).catch(() => {
-        buried('trigger', {
-          target: 'startMigration-AgentNotWork'
-        })
+        buried('migrationStartAgentFail')
         resetLoading?.()
       })
     },

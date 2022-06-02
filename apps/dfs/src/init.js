@@ -70,11 +70,10 @@ export default ({ routes }) => {
     all.timer && clearInterval(all.timer)
     all.timer = setInterval(() => {
       all.count++
-      if (all.count >= 30) {
-        buried('stay', {
-          path: '/'
+      if (all.count > 0 && all.count % 30 === 0) {
+        buried('timeOnSite', '/', {
+          times: all.count + 's'
         })
-        clearInterval(all.timer)
       }
     }, 1000)
     if (window.__config__.ENV === 'dev') {
@@ -89,18 +88,15 @@ export default ({ routes }) => {
     })
     router.beforeEach((to, from, next) => {
       next()
-      buried('access', {
-        path: to.path || '/'
-      })
+      buried('accessPage', to.path || '/')
       one.count = 0
       one.timer && clearInterval(one.timer)
       one.timer = setInterval(() => {
         one.count++
-        if (one.count >= 30) {
-          buried('stay', {
-            path: to.path || '/'
+        if (one.count > 0 && one.count % 30 === 0) {
+          buried('timeOnPage', to.path || '/', {
+            times: one.count + 's'
           })
-          clearInterval(one.timer)
         }
       }, 1000)
     })

@@ -547,9 +547,7 @@ export default {
       if (this.deployBtnDisabled(row)) {
         return
       }
-      buried('trigger', {
-        target: 'deployAgent'
-      })
+      buried('agentDeploy')
       let downloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
@@ -799,9 +797,7 @@ export default {
           agentType: 'Local'
         })
         .then(data => {
-          buried('trigger', {
-            target: 'createAgent'
-          })
+          buried('agentCreate')
           this.fetch()
           this.deployConfirm(data.agentId)
         })

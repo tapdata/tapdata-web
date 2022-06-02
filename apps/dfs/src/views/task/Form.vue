@@ -1637,9 +1637,7 @@ export default {
       if (this.loading) {
         return
       }
-      buried('trigger', {
-        target: 'submitMigration'
-      })
+      buried('migrationSubmit')
       //保存字段映射
       if (!this.hiddenFieldMapping) {
         let returnData = this.$refs.fieldMapping.returnData()
@@ -1670,14 +1668,14 @@ export default {
       this.loading = true
       promise
         .then(() => {
-          buried('trigger', {
-            target: 'submitMigration-success'
+          buried('migrationSubmit', '', {
+            result: true
           })
           this.routerBack()
         })
         .catch(e => {
-          buried('trigger', {
-            target: 'submitMigration-fail'
+          buried('migrationSubmit', '', {
+            result: false
           })
           if (e.response?.msg === 'duplication for names') {
             this.$message.error(this.$t('message_exists_name'))

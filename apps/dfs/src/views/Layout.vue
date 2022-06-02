@@ -131,9 +131,7 @@ export default {
   methods: {
     createConnection(type) {
       this.dialogVisible = false
-      buried('trigger', {
-        target: 'createConnection'
-      })
+      buried('connectionCreate')
       this.$router.push({
         name: 'ConnectionCreate',
         query: { databaseType: type }

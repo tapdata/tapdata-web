@@ -109,7 +109,7 @@
         @current-change="fetch"
       >
       </ElPagination>
-      <ConnectionTest ref="test"></ConnectionTest>
+      <ConnectionTest ref="test" @receive="receive"></ConnectionTest>
       <Preview ref="preview" @close="fetch()" @reload-schema="fetch()"></Preview>
     </div>
   </section>
@@ -399,9 +399,7 @@ export default {
       this.fetch(1)
     },
     create() {
-      buried('trigger', {
-        target: 'openConnection'
-      })
+      buried('connectionCreateDialog')
       this.$root.$emit('select-connection-type')
     },
     edit(item) {
@@ -464,14 +462,13 @@ export default {
       })
     },
     testConnection(item) {
+      buried('connectionTest')
       this.$checkAgentStatus(async () => {
         let loading = this.$loading()
         this.test(item)
         loading.close()
       }).catch(() => {
-        buried('trigger', {
-          target: 'testConnectionFail-AgentNotWork'
-        })
+        buried('connectionTestAgentFail')
       })
     },
     async test(data, isShowDialog = true) {
@@ -489,9 +486,7 @@ export default {
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
       } catch (error) {
-        buried('trigger', {
-          target: 'testConnectionFail'
-        })
+        buried('connectionTestFail')
         this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
       }
     },
@@ -519,6 +514,15 @@ export default {
         return null
       }
       return require('web-core/assets/icons/node/' + row.database_type.toLowerCase() + '.svg')
+    },
+    receive(data = {}) {
+      let status = data?.status
+      if ([undefined, null].includes(status)) {
+        return
+      }
+      buried('connectionTest', '', {
+        result: status === 'ready'
+      })
     }
   }
 }

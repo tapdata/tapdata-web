@@ -467,9 +467,7 @@ export default {
       return data[0][ops.name]
     },
     submit() {
-      buried('trigger', {
-        target: 'submitConnection'
-      })
+      buried('connectionSubmit')
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
@@ -541,8 +539,8 @@ export default {
           promise
             .then(() => {
               this.$message.success(this.$t('form_save_success'))
-              buried('trigger', {
-                target: 'submitConnectionSuccess'
+              buried('connectionSubmit', '', {
+                result: true
               })
               if (this.$route.query.step) {
                 this.$router.push({
@@ -565,8 +563,8 @@ export default {
               } else {
                 this.$message.error(this.$t('form_save_fail'))
               }
-              buried('trigger', {
-                target: 'submitConnectionFail'
+              buried('connectionSubmit', '', {
+                result: false
               })
             })
             .finally(() => {
