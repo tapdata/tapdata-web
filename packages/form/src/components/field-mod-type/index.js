@@ -116,9 +116,9 @@ export const FieldModType = connect(
                       slot-scope="{ node, data }"
                     >
                       <span class="flex-1 inline-block">{data.field_name}</span>
-                      <span class="flex-1 inline-block">{data.type}</span>
+                      <span class="flex-1 inline-block">{data.originalDataType}</span>
                       <ElSelect
-                        v-model={data.java_type}
+                        v-model={data.data_type}
                         class="field-type inline-block"
                         size="mini"
                         onChange={() => this.handleDataType(node, data)}
@@ -178,7 +178,7 @@ export const FieldModType = connect(
                 if (targetIndex === -1) {
                   continue
                 }
-                fields[targetIndex].java_type = this.operations[i].operand
+                fields[targetIndex].data_type = this.operations[i].operand
               }
             }
           }
@@ -193,10 +193,10 @@ export const FieldModType = connect(
             op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
               id: data.id,
               field: nativeData.original_field_name,
-              operand: data.java_type,
+              operand: data.data_type,
               originalDataType: nativeData.original_java_type,
               table_name: data.table_name,
-              type: data.type,
+              type: data.data_type,
               primary_key_position: data.primary_key_position,
               color: data.color,
               label: data.field_name,
@@ -205,8 +205,8 @@ export const FieldModType = connect(
             this.operations.push(op)
           } else {
             op = ops[0]
-            op.java_type = data.java_type
-            op.operand = data.java_type
+            op.data_type = data.data_type
+            op.operand = data.data_type
             op.originalDataType = nativeData.original_java_type
           }
         },
@@ -223,7 +223,7 @@ export const FieldModType = connect(
               if (self.operations[i].id === data.id) {
                 let ops = self.operations[i]
                 if (ops.op === 'CONVERT') {
-                  if (nativeData) node.data.java_type = nativeData.type
+                  if (nativeData) node.data.data_type = nativeData.data_type
                   self.operations.splice(i, 1)
                   i--
                   continue
