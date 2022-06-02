@@ -90,7 +90,7 @@ export const FieldProcess = connect(
             op: 'CREATE',
             field: '',
             tableName: '',
-            java_type: 'String',
+            data_type: 'String',
             id: '',
 
             action: '',
@@ -139,7 +139,7 @@ export const FieldProcess = connect(
             return
           }
           if (item.op === 'CONVERT') {
-            fields[targetIndex].java_type = item.operand
+            fields[targetIndex].data_type = item.operand
           } else if (item.op === 'RENAME') {
             const name = fields[targetIndex].field_name
             let newName = name.split('.')
@@ -160,8 +160,8 @@ export const FieldProcess = connect(
               field_name: item.field || item.field_name,
               table_name: item.tableName || item.table_name,
               original_field_name: item.field || item.field_name,
-              java_type: item.java_type,
-              data_type: 'STRING',
+              data_type: item.data_type,
+              // data_type: 'STRING',
               primary_key_position: 0,
               dataType: 2,
               is_nullable: true,
@@ -234,7 +234,7 @@ export const FieldProcess = connect(
                       </span>
                       <span class="e-desc">{data.desc}</span>
                       <ElSelect
-                        v-model={data.java_type}
+                        v-model={data.data_type}
                         size="mini"
                         disabled={this.isRemove(data.id)}
                         class={[this.isConvertDataType(data.id) ? 'active__type' : '', 'e-select']}
@@ -461,7 +461,7 @@ export const FieldProcess = connect(
           let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
           if (createOps && createOps.length > 0) {
             let op = createOps[0]
-            op.java_type = data.java_type
+            op.data_type = data.data_type
           } else {
             let nativeData = this.getNativeData(data.id)
             let ops = this.operations.filter(v => v.id === data.id && v.op === 'CONVERT')
@@ -470,10 +470,10 @@ export const FieldProcess = connect(
               op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
                 id: data.id,
                 field: nativeData.original_field_name,
-                operand: data.java_type,
-                originalDataType: nativeData.original_java_type,
+                operand: data.data_type,
+                originalDataType: nativeData.originalDataType,
                 table_name: data.table_name,
-                type: data.java_type,
+                type: data.data_type,
                 primary_key_position: data.primary_key_position,
                 color: data.color,
                 label: data.field_name,
@@ -482,9 +482,9 @@ export const FieldProcess = connect(
               this.operations.push(op)
             } else {
               op = ops[0]
-              op.type = data.java_type
-              op.operand = data.java_type
-              op.originalDataType = nativeData.original_java_type
+              op.type = data.data_type
+              op.operand = data.data_type
+              op.originalDataType = nativeData.originalDataType
             }
           }
         },
@@ -582,7 +582,7 @@ export const FieldProcess = connect(
           let newFieldOperation = Object.assign(JSON.parse(JSON.stringify(this.CREATE_OPS_TPL)), {
             field: parentFieldName ? parentFieldName + '.newFieldName' : 'newFieldName',
             tableName: data.table_name,
-            java_type: 'String',
+            data_type: 'String',
             id: fieldId,
             action: action,
             triggerFieldId: node.data.id,

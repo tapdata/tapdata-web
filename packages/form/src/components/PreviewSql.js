@@ -77,7 +77,7 @@ export const PreviewSql = connect(
                 if (cond.type === 'group') res += ' ' + cond.operator + ' (' + genSqlWhere(cond.conditions) + ')'
                 else {
                   let quota = ['String', 'Date'].includes(
-                      table.fields.find(it => it.field_name === cond.field).javaType
+                      table.fields.find(it => it.field_name === cond.field).data_type
                     )
                       ? "'"
                       : '',
@@ -121,7 +121,7 @@ export const PreviewSql = connect(
             } else if (condition.type === 'condition' && condition.field) {
               let val = condition.value
               // console.log('table.fields', table.fields, val)
-              if (!['String', 'Date'].includes(table.fields.find(it => it.field_name === condition.field).javaType))
+              if (!['String', 'Date'].includes(table.fields.find(it => it.field_name === condition.field).data_type))
                 val = parseFloat(val)
               if (condition.command === 'eq') {
                 return {

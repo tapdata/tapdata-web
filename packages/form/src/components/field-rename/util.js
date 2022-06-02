@@ -18,8 +18,8 @@ export const convertSchemaToTreeData = function (Schema) {
             ),
           label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
           field_name: jsonPathForFieldName[jsonPathForFieldName.length - 1],
-          type: field.javaType || field.java_type,
-          java_type: field.javaType || field.java_type,
+          type: field.originalDataType, // TODO 需要补充originalDataType
+          data_type: field.data_type,
           primary_key_position: field.primary_key_position,
           table_name: field.table_name || 'table',
           original_field_name: field.original_field_name || field.field_name,
@@ -164,7 +164,7 @@ export const isValidate = function (operations, schema) {
           action: operation[i].action,
           op: operation[i].op,
           field: operation[i].field,
-          javaType: operation[i].javaType,
+          data_type: operation[i].data_type,
           level: operation[i].level,
           tableName: operation[i].tableName,
           triggerFieldId: operation[i].triggerFieldId
