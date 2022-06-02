@@ -72,14 +72,30 @@ export class MergeTable extends NodeType {
                             wrapperWidth: 320
                           },
                           'x-component': 'Input',
-                          'x-reactions': {
-                            dependencies: ['.mergeType', '.id'],
-                            fulfill: {
-                              state: {
-                                value: `{{ !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1])?.name : $self.value }}`
+                          'x-reactions': [
+                            {
+                              dependencies: ['.mergeType', '.id'],
+                              fulfill: {
+                                state: {
+                                  value: `{{ !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1])?.name : $self.value }}`
+                                }
+                              }
+                            },
+                            {
+                              effects: ['onFieldInputValueChange'],
+                              fulfill: {
+                                run: `{{
+                                  const arr = $self.value.split('.')
+                                  if (arr.length > 2) {
+                                    $self.value = arr.slice(0,2).join('.')
+                                    $self.description = '最多支持两层嵌套'
+                                  } else {
+                                    $self.description = ''
+                                  }
+                                }}`
                               }
                             }
-                          }
+                          ]
                         },
                         arrayKeys: {
                           type: 'array',
