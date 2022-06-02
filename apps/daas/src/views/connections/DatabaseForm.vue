@@ -14,7 +14,7 @@
               <img :src="getConnectionIcon()" alt="" />
             </div>
             <div class="content ml-2">{{ model.name }}</div>
-            <div class="addBtn color-primary ml-2" @click="dialogEditNameVisible = true">
+            <div class="addBtn cursor-pointer color-primary ml-2" @click="dialogEditNameVisible = true">
               {{ $t('connection_form_rename') }}
             </div>
           </div>
