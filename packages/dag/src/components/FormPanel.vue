@@ -118,6 +118,7 @@ export default {
             // eslint-disable-next-line no-console
             console.log('👷 更新$inputs', $inputs.value)
             this.form.setValuesIn('$inputs', [...v])
+            this.$emit('update:InputsOrOutputs')
           }
         })
       )
@@ -131,6 +132,7 @@ export default {
             // eslint-disable-next-line no-console
             console.log('👷 更新$outputs', $outputs.value, v)
             this.form.setValuesIn('$outputs', [...v])
+            this.$emit('update:InputsOrOutputs')
           }
         })
       )
