@@ -35,11 +35,10 @@ import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
-import ShareMining from '../../etl/statistics/ShareMining'
 
 export default {
   name: 'Index',
-  components: { Info, Schedule, Log, Connection, History, ShareMining },
+  components: { Info, Schedule, Log, Connection, History },
   data() {
     return {
       timer: null,
