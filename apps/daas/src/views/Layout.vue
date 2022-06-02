@@ -45,7 +45,7 @@
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
           <span class="icon-btn py-1 px-3">
-            <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
+            <VIcon size="16">{{ { zh_CN: 'language-sc', en_US: 'language-sc', zh_TW: 'language-sc' }[lang] }}</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
@@ -358,16 +358,6 @@ import PageHeader from '@/components/PageHeader'
 import VIcon from 'web-core/components/VIcon'
 import dayjs from 'dayjs'
 
-const Languages = {
-  sc: '中文 (简)',
-  en: 'English',
-  tc: '中文 (繁)'
-}
-const LanguagesKey = {
-  sc: 'zh_CN',
-  en: 'en_US',
-  tc: 'zh_TW'
-}
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
   { name: 'connectionsList', icon: 'agent', code: 'datasource_menu' },
@@ -428,8 +418,12 @@ export default {
   data() {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-      languages: Languages,
-      lang: localStorage.getItem('tapdata_localize_lang') || 'en',
+      languages: {
+        zh_CN: '中文 (简)',
+        en_US: 'English',
+        zh_TW: '中文 (繁)'
+      },
+      lang: Cookie.get('lang') || 'en_US',
       settingVisibility:
         this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
       settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
@@ -460,9 +454,8 @@ export default {
   },
   created() {
     this.getMenus()
-    if (Cookie.get('email')) {
-      this.userName = Cookie.get('username') || Cookie.get('email').split('@')[0] || ''
-    }
+
+    this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
 
     window.iframeRouterChange = route => {
       this.$router.push(route)
@@ -475,7 +468,6 @@ export default {
     window.getFormLocal = data => {
       return self.$store.state[data]
     }
-    // this.handleGetPermissions();
 
     if (window.getSettingByKey('SHOW_LICENSE')) {
       this.getLicense()
@@ -608,8 +600,7 @@ export default {
       })
     },
     changeLanguage(lang) {
-      localStorage.setItem('tapdata_localize_lang', lang)
-      Cookie.set('lang', LanguagesKey[lang])
+      Cookie.set('lang', lang)
       location.reload()
     },
 

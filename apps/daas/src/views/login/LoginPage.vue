@@ -19,35 +19,27 @@
 </template>
 <script>
 import Cookie from '@tap/shared/src/cookie'
-const langMap = {
-  sc: 'zh-CN',
-  tc: 'zh-TW',
-  en: 'en'
-}
-const Languages = {
-  sc: '中文 (简)',
-  en: 'English',
-  tc: '中文 (繁)'
-}
-const LanguagesKey = {
-  sc: 'zh_CN',
-  en: 'en_US',
-  tc: 'zh_TW'
-}
 export default {
   name: 'LoginHeader',
   data() {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.loginUrl,
-      languages: Languages,
-      lang: localStorage.getItem('tapdata_localize_lang')
+      languages: {
+        zh_CN: '中文 (简)',
+        en_US: 'English',
+        zh_TW: '中文 (繁)'
+      },
+      lang: Cookie.get('lang') || 'en_US'
     }
   },
   methods: {
     langChange(lang) {
-      localStorage.setItem('tapdata_localize_lang', lang)
-      Cookie.set('lang', LanguagesKey[lang])
-      this.$i18n.locale = langMap[lang]
+      Cookie.set('lang', lang)
+      this.$i18n.locale = {
+        zh_CN: 'zh-CN',
+        zh_TW: 'zh-TW',
+        en_US: 'en'
+      }[lang]
       this.lang = lang
     }
   }

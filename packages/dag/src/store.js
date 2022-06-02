@@ -7,6 +7,7 @@ import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
 import { setValidateLanguage } from '@formily/core'
 import { CustomProcessor } from './nodes/extends/CustomProcessor'
+import Cookie from '@tap/shared/src/cookie'
 
 const taskApi = new Task()
 const customNodeApi = new CustomNode()
@@ -39,9 +40,9 @@ const findByCod = (arr, cond) => {
 }
 
 const langMap = {
-  sc: 'zh-CN',
-  tc: 'zh-TW',
-  en: 'en-US'
+  zh_CN: 'zh-CN',
+  zh_TW: 'zh-TW',
+  en_US: 'en-US'
 }
 
 const getState = () => ({
@@ -197,7 +198,7 @@ const getters = {
   hasNodeError: state => id => state.nodeErrorState[id],
 
   language: () => {
-    return langMap[localStorage.getItem('tapdata_localize_lang')].toLocaleLowerCase()
+    return langMap[Cookie.get('lang')].toLocaleLowerCase()
   },
 
   getMessage: (state, getters) => (token, locales) => {
@@ -824,7 +825,7 @@ const mutations = {
   },
 
   setValidateLanguage() {
-    setValidateLanguage(langMap[localStorage.getItem('tapdata_localize_lang')])
+    setValidateLanguage(langMap[Cookie.get('lang')])
   },
 
   setNodeInputsWatcher(state, watcher) {

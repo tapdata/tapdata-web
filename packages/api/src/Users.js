@@ -5,7 +5,11 @@ export class Users extends Http {
     super('/api/users')
   }
 
-  getPermissions(userId) {
-    return this.axios.get(`${this.url}/${userId}/permissions`).then(this.useData)
+  login(params) {
+    return this.axios.post(`${this.url}/login`, params).then(this.useData)
+  }
+
+  getInfo() {
+    return this.axios.get(`${this.url}/byToken`).then(this.useData)
   }
 }

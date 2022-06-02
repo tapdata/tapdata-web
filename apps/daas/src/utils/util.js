@@ -3,38 +3,35 @@ import i18n from '@/i18n'
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from '@/const'
 import Cookie from '@tap/shared/src/cookie'
 
-export function setPermission(list) {
+export function configUser(user = {}) {
+  Cookie.set('email', user.email)
+  Cookie.set('username', user.username || '')
+  Cookie.set('isAdmin', parseInt(user.role) || 0)
+  Cookie.set('user_id', user.id)
   let permissions = []
-  if (list) {
+  let list = user?.permissions || []
+  if (list.length) {
     list.forEach(permission => {
       if (permission.resources && permission.resources.length > 0) {
         permission.resources.forEach(res => {
-          // if (res.type === 'page')
           permissions.push(res)
         })
       }
     })
+    sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
   }
-  sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
   return permissions
 }
 
 export function signOut() {
   Cookie.remove('token')
-  Cookie.remove('user_id')
-  Cookie.remove('login')
-  Cookie.remove('isAdmin')
   Cookie.remove('email')
   Cookie.remove('username')
-  Cookie.remove('isReadonly')
+  Cookie.remove('isAdmin')
+  Cookie.remove('user_id')
   sessionStorage.setItem('lastLocationHref', location.href)
-  if (window !== top) {
-    top.window.location.href = '/login'
-  } else {
-    window.App.$router.push({
-      name: 'login'
-    })
-  }
+  location.href = location.href.split('#')[0] + '#/login'
+  return null
 }
 
 export function toRegExp(word) {

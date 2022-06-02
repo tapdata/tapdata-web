@@ -56,11 +56,6 @@ export default {
       type: String
     }
   },
-  data() {
-    return {
-      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
-    }
-  },
   computed: {
     map() {
       return (

@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     resize() {
-      let top = document.body.getElementsByClassName('layout-header')[0].clientHeight
+      let top = document.body.getElementsByClassName('layout-header')?.[0]?.clientHeight || 0
       let height = document.body.clientHeight - top
       this.height = height + 'px'
     },

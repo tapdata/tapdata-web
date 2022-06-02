@@ -33,12 +33,6 @@ import factory from '@/api/factory'
 import Cookie from '@tap/shared/src/cookie'
 const usersModel = factory('users')
 
-const LanguagesKey = {
-  sc: 'zh_CN',
-  en: 'en_US',
-  tc: 'zh_TW'
-}
-
 export default {
   name: 'SignIn',
   components: { LoginPage },
@@ -65,12 +59,6 @@ export default {
   },
 
   methods: {
-    langChange(lang) {
-      localStorage.setItem('tapdata_localize_lang', lang)
-      Cookie.set('lang', LanguagesKey[lang])
-      location.reload()
-    },
-
     // 重新发送
     async send() {
       const TIME_COUNT = 60
