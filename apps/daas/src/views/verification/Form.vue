@@ -628,8 +628,8 @@ export default {
       let where = {
         status: {
           inq: ['running', 'stop', 'complete']
-        }
-        // syncType: 'migrate'
+        },
+        syncType: 'migrate'
       }
       this.$api('Task')
         .get({
