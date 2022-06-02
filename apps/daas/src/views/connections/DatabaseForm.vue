@@ -1255,8 +1255,13 @@ export default {
             type: 'string',
             title: this.$t('connection_form_connection_type'),
             required: true,
-            default: 'source',
+            default: 'source_and_target',
             enum: [
+              {
+                label: this.$t('connection_form_source_and_target'),
+                value: 'source_and_target',
+                tip: this.$t('connection_form_source_and_target_tip')
+              },
               {
                 label: this.$t('connection_form_source'),
                 value: 'source',
@@ -1266,15 +1271,13 @@ export default {
                 label: this.$t('connection_form_target'),
                 value: 'target',
                 tip: this.$t('connection_form_target_tip')
-              },
-              {
-                label: this.$t('connection_form_source_and_target'),
-                value: 'source_and_target',
-                tip: this.$t('connection_form_source_and_target_tip')
               }
             ],
             'x-decorator': 'FormItem',
-            'x-component': 'Radio.Group'
+            'x-component': 'Radio.Group',
+            'x-component-props': {
+              optionType: 'button'
+            }
           }
           result.properties.config = data?.properties?.connection || {}
           this.schemaData = result

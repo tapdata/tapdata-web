@@ -14,61 +14,41 @@
       }}</ElButton>
       <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
-          <ul class="tab-list cuk-list" v-if="listData.length">
-            <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
-              <div class="list-item-content" v-if="item.msg === 'JobDDL'">
-                <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
-                <div class="list-item-desc">
+          <ul class="tab-list notification-list" v-if="listData.length">
+            <li class="notification-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
+              <div class="flex flex-row">
+                <div class="mr-1">
+                  <span class="unread-1zPaAXtSu inline-block"></span>
+                </div>
+                <div>
                   <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-                  <span>{{ systemMap[item.system] }}</span>
+                  <span>{{ systemMap[item.system] }} </span>
                   <span v-if="item.msg === 'deleted'">
-                    {{ `${item.serverName} , ` }}
+                    {{ `${item.serverName} ` }}
                   </span>
-                  <template v-else>
-                    <ElLink type="primary" class="cursor-pointer task px-1" @click="handleGo(item)">
-                      {{ `${item.serverName} , ` }}
-                    </ElLink>
+                  <span v-else class="cursor-pointer px-1 primary" @click="handleGo(item)">
+                    {{ item.serverName }}
+                  </span>
+                  <template v-if="item.msg === 'JobDDL'">
+                    <span class="list-item-platform">
+                      {{
+                        `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
+                          item.databaseName
+                        } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
+                      }}
+                    </span>
+                    <el-tooltip :content="item.sql" placement="top">
+                      <span>
+                        {{ `DDL SQL : ${item.sql}` }}
+                      </span>
+                    </el-tooltip>
                   </template>
-
-                  <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
-                    <span class="link-primary">
-                      {{ `${item.serverName} , ` }}
-                    </span>
-                  </router-link> -->
-                  <span class="list-item-platform">
-                    {{
-                      `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
-                        item.databaseName
-                      } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
-                    }}
-                  </span>
-                  <el-tooltip :content="item.sql" placement="top">
-                    <span>
-                      {{ `DDL SQL : ${item.sql}` }}
-                    </span>
-                  </el-tooltip>
-                </div>
-                <div class="list-item-time">
-                  <span>{{ item.createTime }}</span>
-                </div>
-              </div>
-              <div class="list-item-content" v-else>
-                <div class="unread-1zPaAXtSu"></div>
-                <div class="list-item-desc">
-                  <div class="flex">
-                    <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-                    <span>{{ systemMap[item.system] }} </span>
-                    <ElLink class="task" v-if="item.msg === 'deleted'">
-                      {{ `${item.serverName} ` }}
-                    </ElLink>
-                    <ElLink type="primary" v-else class="cursor-pointer px-1 task" @click="handleGo(item)">
-                      {{ item.serverName }}
-                    </ElLink>
+                  <template v-else>
                     <span>{{ typeMap[item.msg] }}</span>
+                  </template>
+                  <div class="item-time">
+                    <span>{{ item.createTime }}</span>
                   </div>
-                </div>
-                <div class="list-item-time">
-                  <span>{{ item.createTime }}</span>
                 </div>
               </div>
             </li>
@@ -380,68 +360,6 @@ export default {
         overflow-y: auto;
       }
     }
-    .cuk-list {
-      font-size: 12px;
-      .list-item {
-        position: relative;
-        background: map-get($bgColor, white);
-        border-bottom: 1px solid #dedee4;
-        padding: 0 5px 5px 0;
-        cursor: pointer;
-        &:hover {
-          background-color: #ecf5ff;
-        }
-        .list-item-content {
-          position: relative;
-          height: 40px;
-          line-height: 40px;
-          padding-left: 14px;
-          box-sizing: border-box;
-          overflow: hidden;
-          display: block;
-        }
-        .unread-1zPaAXtSu {
-          position: absolute;
-          top: 22px;
-          left: 8px;
-          width: 6px;
-          height: 6px;
-          background: #f81d22;
-          border-radius: 50%;
-        }
-        .list-item-desc {
-          color: map-get($fontColor, light);
-          position: absolute;
-          top: -5px;
-          left: 30px;
-          right: 20px;
-          overflow: hidden;
-
-          & > div {
-            width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-          span {
-            font-size: 12px;
-          }
-          .task {
-            max-width: 200px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-          }
-        }
-        .list-item-platform {
-          color: map-get($fontColor, light);
-        }
-        .list-item-time {
-          margin: 15px 0 0 17px;
-          color: map-get($fontColor, slight);
-          font-size: 12px;
-        }
-      }
-    }
     .notification-list {
       box-sizing: border-box;
       .notification-item {
@@ -449,6 +367,17 @@ export default {
         border-bottom: 1px solid map-get($borderColor, light);
         font-size: 12px;
         color: map-get($fontColor, light);
+        .primary {
+          color: map-get($color, primary);
+        }
+        .unread-1zPaAXtSu {
+          top: 22px;
+          left: 8px;
+          width: 6px;
+          height: 6px;
+          background: #ee5353;
+          border-radius: 50%;
+        }
         &:hover {
           background-color: #ecf5ff;
         }

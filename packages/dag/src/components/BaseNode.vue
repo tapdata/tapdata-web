@@ -187,7 +187,7 @@ $height: 40px;
   &.active,
   &.selected {
     border-color: #2c65ff;
-    outline: 1px solid #2c65ff;
+    box-shadow: 0 0 0 1px #2c65ff;
     .df-node-icon {
       border-top-left-radius: 8px;
       border-bottom-left-radius: 8px;

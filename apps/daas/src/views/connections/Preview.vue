@@ -155,15 +155,36 @@ export default {
       }
       return require(`web-core/assets/icons/node/${type.toLowerCase()}.svg`)
     },
+    transformData(row) {
+      if (row.pdkType === 'pdk') {
+        row.database_host = row.config.host
+        row.database_port = row.config.port
+        row.database_name = row.config.database
+        row.database_owner = row.config.schema
+        row.database_username = row.config.user || row.config.username
+        row.additionalString = row.config.extParams || row.config.additionalString
+        row.database_datetype_without_timezone = row.config.timezone
+        if (row.config.uri && row.config.isUri !== false) {
+          const res =
+            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+              row.config.uri
+            )
+          if (res && res.groups) {
+            const hostArr = res.groups.host.split(':')
+            row.database_host = hostArr[0]
+            row.database_port = hostArr[1]
+            row.database_name = res.groups.database
+            row.database_username = res.groups.username
+            row.additionalString = res.groups.query
+          }
+        }
+      }
+      return row
+    },
     open(row) {
       this.visible = true
       this.showProgress = false
-      if (row.pdkType === 'pdk') {
-        for (let key in row.config) {
-          row['database_' + key] = row.config[key]
-        }
-      }
-      this.connection = row
+      this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
       this.loadList(row.database_type)
@@ -257,7 +278,7 @@ export default {
         .getNoSchema(this.connection.id)
         .then(res => {
           let data = res.data
-          this.connection = res.data
+          this.connection = this.transformData(data)
           //组装数据
           this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态

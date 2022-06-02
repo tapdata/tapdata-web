@@ -153,9 +153,13 @@ export default {
       }
     },
     contentWrapStyle() {
-      return {
+      const style = {
         transform: `translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
       }
+      if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
+        style.position = 'relative'
+      }
+      return style
     }
   },
 

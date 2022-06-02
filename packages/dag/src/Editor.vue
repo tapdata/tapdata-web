@@ -397,30 +397,68 @@ export default {
       await this.loadCustomNode()
     },
 
+    checkAsTarget(target, showMsg) {
+      const connectionType = target.attrs.connectionType
+      if (connectionType && !connectionType.includes('target')) {
+        showMsg && this.$message.info(`该节点「${target.name}」仅支持作为源`)
+        return false
+      }
+      return true
+    },
+
+    checkAsSource(source, showMsg) {
+      const connectionType = source.attrs.connectionType
+      if (connectionType && !connectionType.includes('source')) {
+        showMsg && this.$message.info(`该节点「${source.name}」仅支持作为目标`)
+        return false
+      }
+      return true
+    },
+
+    checkTargetMaxInputs(target, showMsg) {
+      const maxInputs = target.__Ctor.maxInputs ?? -1
+      const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + target.id })
+
+      if (maxInputs !== -1 && connections.length >= maxInputs) {
+        showMsg && this.$message.info('该节点已经达到最大连线限制')
+        return false
+      }
+      return true
+    },
+
+    checkSourceMaxOutputs(source, showMsg) {
+      const maxOutputs = source.__Ctor.maxOutputs ?? -1
+      const connections = this.jsPlumbIns.getConnections({ source: NODE_PREFIX + source.id })
+
+      if (maxOutputs !== -1 && connections.length >= maxOutputs) {
+        showMsg && this.$message.info('该节点已经达到最大连线限制')
+        return false
+      }
+      return true
+    },
+
+    checkAllowTargetOrSource(source, target, showMsg) {
+      if (!target.__Ctor.allowSource(source)) {
+        showMsg && this.$message.warning(`该节点「${target.name}」不支持「${source.name}」作为源`)
+        return false
+      }
+      if (!source.__Ctor.allowTarget(target, source)) {
+        showMsg && this.$message.warning(`「${source.name}」不支持该节点「${target.name}」作为目标`)
+        return false
+      }
+      return true
+    },
+
     checkCanBeConnected(sourceId, targetId, showMsg) {
       if (sourceId === targetId) return false
       if (this.isConnected(sourceId, targetId)) return false
 
       const source = this.nodeById(sourceId)
       const target = this.nodeById(targetId)
-      const maxInputs = target.__Ctor.maxInputs ?? -1
-      const connectionType = target.attrs.connectionType
 
-      if (connectionType && !connectionType.includes('target')) {
-        showMsg && this.$message.info(`该节点「${target.name}」仅支持作为源`)
-        return false
-      }
-
-      const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + targetId })
-
-      if (maxInputs !== -1 && connections.length >= maxInputs) {
-        showMsg && this.$message.info('该节点已经达到最大连线限制')
-        return false
-      }
-
-      if (this.allowConnect(sourceId, targetId)) {
-        return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)
-      }
+      if (!this.checkAsTarget(target, showMsg)) return false
+      if (!this.checkTargetMaxInputs(target, showMsg)) return false
+      if (this.allowConnect(sourceId, targetId) && this.checkAllowTargetOrSource(source, target, showMsg)) return true
 
       return false
     },
@@ -1085,8 +1123,8 @@ export default {
         this.isSaving = false
         return true
       } catch (e) {
-        this.handleError(e)
         this.isSaving = false
+        this.handleError(e)
         return false
       }
     },
@@ -1474,6 +1512,7 @@ export default {
         const source = this.getRealId(connection.sourceId)
         const target = this.getRealId(connection.targetId)
         this.addNodeOnConn(item, newPosition, source, target)
+        this.jsPlumbIns.select().removeClass('connection-highlight')
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
@@ -1576,21 +1615,23 @@ export default {
       const a = this.nodeById(source)
       const b = this.createNode(position, nodeType)
       const c = this.nodeById(target)
-      const aCtor = a.__Ctor
-      const bCtor = b.__Ctor
-      const cCtor = c.__Ctor
 
-      if (bCtor.allowSource(a) && aCtor.allowTarget(b, a) && cCtor.allowSource(b) && bCtor.allowTarget(cCtor, b)) {
-        this.command.exec(
-          new AddNodeOnConnectionCommand(
-            {
-              source,
-              target
-            },
-            b
-          )
+      if (!this.checkAsTarget(b, true)) return
+      if (!this.checkAsSource(b, true)) return
+      if (!this.checkTargetMaxInputs(b, true)) return
+      if (!this.checkSourceMaxOutputs(b, true)) return
+      if (!this.checkAllowTargetOrSource(a, b, true)) return
+      if (!this.checkAllowTargetOrSource(b, c, true)) return
+
+      this.command.exec(
+        new AddNodeOnConnectionCommand(
+          {
+            source,
+            target
+          },
+          b
         )
-      }
+      )
     },
 
     addNodeOnConnByNodeMenu(nodeType) {
@@ -1644,9 +1685,9 @@ export default {
     },
 
     handleError(error, msg = '出错了') {
-      if (error?.data.code === 'Task.ListWarnMessage') {
+      if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []
-        if (error.data.data) {
+        if (error.data?.data) {
           const keys = Object.keys(error.data.data)
           keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
