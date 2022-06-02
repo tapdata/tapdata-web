@@ -64,7 +64,8 @@ export default ({ routes }) => {
   }
   let one = {
     timer: null,
-    count: 0
+    count: 0,
+    page: ''
   }
   const init = () => {
     all.timer && clearInterval(all.timer)
@@ -89,6 +90,7 @@ export default ({ routes }) => {
     router.beforeEach((to, from, next) => {
       next()
       buried('accessPage', to.path || '/')
+      one.page = to.path
       one.count = 0
       one.timer && clearInterval(one.timer)
       one.timer = setInterval(() => {
@@ -100,6 +102,17 @@ export default ({ routes }) => {
         }
       }, 1000)
     })
+    let startTime = Date.now()
+    window.onbeforeunload = () => {
+      buried('leaveSite', one.page, {
+        times: (Date.now() - startTime) / 1000 + 's'
+      })
+      setTimeout(() => {
+        buried('leavePage', one.page, {
+          times: one.count + 's'
+        })
+      }, 300)
+    }
     var loc = window.location,
       wsUrl = 'ws://'
     if (loc.protocol === 'https:') {

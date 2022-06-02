@@ -223,9 +223,5 @@ export const buried = (code, page, attrs) => {
   if (attrs) {
     data.attrs = attrs
   }
-  console.log('buried', JSON.stringify(data))
-
-  window.axios.get('api/tcm/user/behavior?data=' + encodeURIComponent(JSON.stringify(data))).then(res => {
-    console.log('res', res)
-  })
+  window.axios.get('api/tcm/user/behavior?data=' + encodeURIComponent(JSON.stringify(data)))
 }
