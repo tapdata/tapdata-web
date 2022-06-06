@@ -26,7 +26,13 @@
       @reset="handleReset"
       @edit="handleEdit"
       @detail="handleDetail"
-    ></TopHeader>
+    >
+      <template #status="{ result }">
+        <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
+          {{ $t('task_preview_status_' + result[0].status) }}
+        </span>
+      </template>
+    </TopHeader>
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSider
@@ -72,7 +78,7 @@
         <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
           <EmptyItem></EmptyItem>
         </div>
-        <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
+        <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
         <NodePopover
           :popover="nodeMenu"
           @click-node="handleClickNodePopover"
