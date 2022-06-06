@@ -1129,12 +1129,14 @@ export default {
   task_info_subtasks_name: '子任务名称',
   task_info_subtasks_status: '状态',
 
+  task_stetting_basic_setting: '基本设置',
+  task_stetting_most_setting: '高级设置',
   task_stetting_name: '任务名称',
   task_stetting_desc: '任务描述',
   task_setting_sync_type: '同步类型',
-  task_setting_initial_sync: '全量同步',
-  task_setting_cdc: '增量同步',
-  task_setting_initial_sync_cdc: '全量 + 增量同步',
+  task_setting_initial_sync: '全量',
+  task_setting_cdc: '增量',
+  task_setting_initial_sync_cdc: '全量 + 增量',
   task_setting_initial_sync_tip:
     '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
   task_setting_cdc_tip:
@@ -1190,6 +1192,7 @@ export default {
   task_setting_cron_tip:
     '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
   task_setting_syncPoint_tip: '任务将从该时间点开始收集增量日志',
+  task_setting_plan_start_date: '计划开始时间',
 
   task_name: '任务名称',
   task_status: '任务状态',

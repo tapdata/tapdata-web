@@ -62,9 +62,6 @@ export default observer({
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
-                'x-component-props': {
-                  optionType: 'button'
-                },
                 default: 'initial_sync+cdc',
                 enum: [
                   {
@@ -100,11 +97,11 @@ export default observer({
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: '高级设置'
+                      title: this.$t('task_stetting_most_setting')
                     },
                     properties: {
                       planStartDateFlag: {
-                        title: '计划开始时间', //计划时间
+                        title: this.$t('task_setting_plan_start_date'), //计划时间
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
@@ -348,3 +345,18 @@ export default observer({
   }
 })
 </script>
+<style lang="scss" scoped>
+.attr-panel {
+  ::v-deep {
+    .formily-element-form-item-label label {
+      font-size: 12px;
+    }
+    .el-collapse-item__header {
+      font-size: 14px;
+    }
+    .el-radio-group .el-radio {
+      margin-right: 8px;
+    }
+  }
+}
+</style>

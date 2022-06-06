@@ -855,7 +855,9 @@ export default {
         let obj = target.syncObjects[0]
         let sourceTablesNames = obj.objectNames || []
         sourceTablesNames.forEach(name => {
-          let targetTableName = target.tablePrefix + name + target.tableSuffix
+          let targetPrefix = target.tablePrefix || ''
+          let targetSuffix = target.tablePrefix || ''
+          let targetTableName = targetPrefix + name + targetSuffix
           if (target.tableNameTransform) {
             targetTableName = targetTableName[target.tableNameTransform]()
           }
@@ -875,14 +877,16 @@ export default {
               connectionId: sourceTable.source.id,
               connectionName: sourceTable.source.name,
               fields: sourceTable.fields,
-              tableName: sourceTable.original_name
+              tableName: sourceTable.original_name,
+              nodeId: source.id
             })
             this.flowStages.push({
               id: outputLanes,
               connectionId: targetTable.source.id,
               connectionName: targetTable.source.name,
               fields: targetTable.fields,
-              tableName: targetTable.original_name
+              tableName: targetTable.original_name,
+              nodeId: target.id
             })
           } else {
             this.flowStages = null
@@ -1068,7 +1072,8 @@ export default {
         databaseType: stage.databaseType,
         table: stage.tableName,
         sortColumn,
-        fields: sortField(stage.fields)
+        fields: sortField(stage.fields),
+        nodeId: stage.nodeId
       }
     },
     addTable() {

@@ -1165,12 +1165,14 @@ export default {
   task_info_subtasks_name: 'Subtask name',
   task_info_subtasks_status: 'Status',
 
+  task_stetting_basic_setting: 'Basic settings',
+  task_stetting_most_setting: 'Advanced settings',
   task_stetting_name: 'Task name',
   task_stetting_desc: 'Task description',
   task_setting_sync_type: 'Sync type',
-  task_setting_initial_sync: 'full synchronization',
+  task_setting_initial_sync: 'Full synchronization',
   task_setting_cdc: 'Incremental synchronization',
-  task_setting_initial_sync_cdc: 'full + incremental synchronization',
+  task_setting_initial_sync_cdc: 'Full + Incremental synchronization',
   task_setting_initial_sync_tip:
     'Full synchronization is also called initialization synchronization, that is, at the time of task startup, the source data snapshot is read and synchronized to the target end; this synchronization has two modes: update write, delete and rewrite. ',
   task_setting_cdc_tip:
@@ -1229,6 +1231,7 @@ export default {
   task_setting_cron_tip:
     'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year * ; Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
   task_setting_syncPoint_tip: 'The task will collect incremental logs from this point in time',
+  task_setting_plan_start_date: 'Plan start date',
 
   task_name: 'Task name',
   task_status: 'Task Status',
