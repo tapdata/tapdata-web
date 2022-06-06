@@ -286,10 +286,7 @@ export default {
       this.$api('Task')
         .start(id)
         .then(() => {
-          this.$message.success(this.$t('message.operationSuccuess'))
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
+          this.$message.success(this.$t('message_operation_succuess'))
         })
         .finally(resetLoading)
     },
@@ -316,10 +313,7 @@ export default {
           this.$api('Task')
             .stop(id)
             .then(() => {
-              this.$message.success(this.$t('message.operationSuccuess'))
-            })
-            .catch(err => {
-              this.$message.error(err.data?.message)
+              this.$message.success(this.$t('message_operation_succuess'))
             })
             .finally(resetLoading)
         } else {
@@ -336,10 +330,7 @@ export default {
           this.$api('Task')
             .forceStop([id])
             .then(() => {
-              this.$message.success(this.$t('message.operationSuccuess'))
-            })
-            .catch(err => {
-              this.$message.error(err.data?.message)
+              this.$message.success(this.$t('message_operation_succuess'))
             })
         }
       })
