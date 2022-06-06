@@ -71,6 +71,7 @@ export default ({ routes }) => {
   const init = () => {
     Cookie.set('tapdata_user_id', window.__USER_INFO__?.userId, {
       domain: 'tapdata.net',
+      path: '/',
       expires: 365
     })
     all.timer && clearInterval(all.timer)
