@@ -15,6 +15,7 @@ import Purchase from '@/views/purchase/Purchase'
 import store from '@/store'
 import { errorConfirmFnc, buried } from '@/util'
 import VConfirm from '@/components/v-confirm'
+import Cookie from '@tap/shared/src/cookie'
 
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
@@ -68,6 +69,10 @@ export default ({ routes }) => {
     page: ''
   }
   const init = () => {
+    Cookie.set('tapdata_user_id', window.__USER_INFO__?.userId, {
+      domain: 'tapdata.net',
+      expires: 365
+    })
     all.timer && clearInterval(all.timer)
     all.timer = setInterval(() => {
       all.count++
