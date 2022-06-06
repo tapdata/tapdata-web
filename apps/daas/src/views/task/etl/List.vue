@@ -704,11 +704,8 @@ export default {
           this.$api('Task')
             .batchStart(ids)
             .then(res => {
-              this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+              this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
               this.table.fetch()
-            })
-            .catch(err => {
-              this.$message.error(err.data?.message)
             })
           if (flag) {
             _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
@@ -749,14 +746,9 @@ export default {
         this.$api('Task')
           .batchStop(ids)
           .then(res => {
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
           })
-          .catch(err => {
-            this.$message.error(err.data?.message)
-          })
-        // return
-        // this.changeStatus(ids, { status: 'stopping' })
       })
     },
     forceStop(ids, item = {}) {
@@ -771,11 +763,8 @@ export default {
         this.$api('Task')
           .forceStop(ids)
           .then(res => {
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
-          })
-          .catch(err => {
-            this.$message.error(err.data?.message)
           })
       })
     },
@@ -857,17 +846,17 @@ export default {
         .update(where, attributes)
         .then(res => {
           this.table.fetch()
-          this.responseHandler(res.data, this.$t('message.operationSuccuess'))
+          this.responseHandler(res.data, this.$t('message_operation_succuess'))
         })
-        .catch(err => {
-          if (err.response.msg === 'Metadata transformer error') {
-            this.$message.error('任务启动失败，请编辑任务完成映射配置')
-          } else if (err.response.msg === 'DataFlow has add or del stages') {
-            this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
-          } else if (err.response.msg === 'running transformer') {
-            this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
-          }
-        })
+      // .catch(err => {
+      //   if (err.response.msg === 'Metadata transformer error') {
+      //     this.$message.error('任务启动失败，请编辑任务完成映射配置')
+      //   } else if (err.response.msg === 'DataFlow has add or del stages') {
+      //     this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
+      //   } else if (err.response.msg === 'running transformer') {
+      //     this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
+      //   }
+      // })
     },
     skipHandler(id, errorEvents) {
       this.changeStatus([id], { status: 'scheduled', errorEvents })
