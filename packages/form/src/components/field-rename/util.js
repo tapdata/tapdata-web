@@ -48,13 +48,13 @@ export const convertSchemaToTreeData = function (Schema) {
     }
     re(root, 0)
 
-    let sort = function (node) {
-      if (node.children && node.children.length > 0) {
-        node.children.sort((c1, c2) => (c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1))
-        node.children.forEach(sort)
-      }
-    }
-    sort(root)
+    // let sort = function (node) {
+    //   if (node.children && node.children.length > 0) {
+    //     node.children.sort((c1, c2) => (c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1))
+    //     node.children.forEach(sort)
+    //   }
+    // }
+    // sort(root)
     fields = root.children
     return fields
   } else {
