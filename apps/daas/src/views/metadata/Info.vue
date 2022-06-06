@@ -228,10 +228,10 @@
                         </div>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="java_type" :label="$t('metadata.details.fieldType')" width="100">
+                    <el-table-column prop="data_type" :label="$t('metadata.details.fieldType')" width="150">
                       <template slot-scope="scope">
                         <div>
-                          {{ $t('metadata.details.' + scope.row.java_type) }}
+                          {{ scope.row.data_type }}
                         </div>
                       </template>
                     </el-table-column>
@@ -873,7 +873,6 @@ export default {
         .metadata-aside-box {
           flex: 1;
           padding: 20px;
-          overflow: auto;
           .metadata-aside-head {
             display: flex;
             i {
@@ -899,6 +898,7 @@ export default {
                 max-width: calc(100% - 100px);
                 width: 100%;
                 text-overflow: ellipsis;
+                white-space: nowrap;
                 overflow: hidden;
                 text-align: right;
               }
