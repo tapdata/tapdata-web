@@ -855,7 +855,9 @@ export default {
         let obj = target.syncObjects[0]
         let sourceTablesNames = obj.objectNames || []
         sourceTablesNames.forEach(name => {
-          let targetTableName = target.tablePrefix + name + target.tableSuffix
+          let targetPrefix = target.tablePrefix || ''
+          let targetSuffix = target.tablePrefix || ''
+          let targetTableName = targetPrefix + name + targetSuffix
           if (target.tableNameTransform) {
             targetTableName = targetTableName[target.tableNameTransform]()
           }

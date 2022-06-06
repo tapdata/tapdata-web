@@ -71,8 +71,8 @@ Vue.prototype.$confirm = (message, title, options) => {
 let token = Cookie.get('token')
 let init = settings => {
   window.__settings__ = settings
-  let lang = Cookie.get('lang')
-  if (!lang) {
+  let lang = Cookie.get('lang') || 'en_US'
+  if (!lang || !['zh_CN', 'zh_TW', 'en_US'].includes(lang)) {
     Cookie.set('lang', 'en_US')
     i18n.locale = {
       zh_CN: 'zh-CN',
