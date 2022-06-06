@@ -18,7 +18,9 @@
           <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
         </div>
       </template>
-      <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100">任务设置</div>
+      <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100">
+        {{ $t('task_stetting_basic_setting') }}
+      </div>
 
       <VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>
     </div>
