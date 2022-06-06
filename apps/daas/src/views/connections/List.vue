@@ -361,7 +361,14 @@ export default {
 
               if (item.config) {
                 if (item.config.uri) {
-                  item.connectionUrl = item.config.uri
+                  const res =
+                    /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+                      item.config.uri
+                    )
+                  if (res && res.groups && res.groups.password) {
+                    const {username, host,database, query } = res.groups
+                    item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query:''}`
+                  }
                 } else {
                   item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
                     item.config.schema ? `/${item.config.schema}` : ''
