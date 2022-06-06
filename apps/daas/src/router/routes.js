@@ -206,15 +206,15 @@ export default [
               code: 'Data_SYNC_menu'
             }
           },
-          {
-            path: 'viewer/:id',
-            name: 'MigrateViewer',
-            component: MigrateForm,
-            meta: {
-              title: 'page_title_task_edit',
-              code: 'Data_SYNC_menu'
-            }
-          },
+          // {
+          //   path: 'viewer/:id',
+          //   name: 'MigrateViewer',
+          //   component: MigrateForm,
+          //   meta: {
+          //     title: 'page_title_task_edit',
+          //     code: 'Data_SYNC_menu'
+          //   }
+          // },
           {
             path: 'details/:id',
             name: 'MigrateDetails',
