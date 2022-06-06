@@ -196,6 +196,7 @@ export default {
   component_table_selector_error: '所選表存在異常',
   component_table_selector_autofix: '清除異常表',
   component_table_selector_bulk_pick: '批量選表',
+  component_table_selector_bulk_name: '粘貼表名',
   component_table_selector_not_checked: '您暫時沒有選擇表',
   component_table_selector_tables_empty: '您暫時沒有表，請點擊右上角重新加載表',
   component_table_selector_clipboard_placeholder: '請輸入表名稱並以逗號分隔,例如：table_a,table_b',

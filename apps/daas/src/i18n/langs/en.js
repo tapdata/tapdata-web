@@ -198,6 +198,7 @@ export default {
   component_table_selector_error: 'Selected tables has exceptions',
   component_table_selector_autofix: 'Clear exception tables',
   component_table_selector_bulk_pick: 'Bulk pick',
+  component_table_selector_bulk_name: 'Paste table name',
   component_table_selector_not_checked: 'You have not selected a table',
   component_table_selector_tables_empty:
     'You do not have a table at the moment, please click on the upper right corner to reload the table',
