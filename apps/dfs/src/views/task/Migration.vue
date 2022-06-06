@@ -76,7 +76,6 @@
               "
               inner-loading
               auto-loading
-              class="no-loading"
               @click="run([scope.row.id], scope.row, arguments[0])"
             >
               {{ $t('task_start_task') }}

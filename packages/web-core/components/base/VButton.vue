@@ -44,7 +44,7 @@ export default {
     }
     let className = 'v-button'
     if (this.innerLoading) {
-      className += 'inner-loading loader-width'
+      className += ' inner-loading loader-width'
     }
     return h(
       'el-button',
@@ -112,7 +112,7 @@ export default {
     position: absolute;
     left: 0;
     top: 0;
-    color: map-get($color, disable);
+    color: #c9cdd4;
     width: 100%;
     height: 100%;
     overflow: hidden;
