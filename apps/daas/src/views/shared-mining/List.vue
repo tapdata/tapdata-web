@@ -389,11 +389,8 @@ export default {
             this.$api('Task')
               .batchStart(ids)
               .then(res => {
-                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+                this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
                 this.table.fetch()
-              })
-              .catch(err => {
-                this.$message.error(err.data?.message)
               })
           }
         })
@@ -436,11 +433,8 @@ export default {
         this.$api('Task')
           .batchStop(ids)
           .then(res => {
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
-          })
-          .catch(err => {
-            this.$message.error(err.data?.message)
           })
       })
     },
@@ -456,11 +450,8 @@ export default {
         this.$api('Task')
           .forceStop(ids)
           .then(res => {
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
-          })
-          .catch(err => {
-            this.$message.error(err.data?.message)
           })
       })
     },
@@ -503,10 +494,7 @@ export default {
           .batchRenew(ids)
           .then(res => {
             this.table.fetch()
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-          })
-          .catch(err => {
-            this.$message.error(err.data?.message)
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           })
           .finally(() => {
             this.restLoading = false

@@ -1302,15 +1302,11 @@ export default {
           return
         }
 
-        try {
-          this.dataflow.disabledData.stop = true
-
-          await taskApi.stop(this.dataflow.id)
-          this.$message.success(this.$t('message.operationSuccuess'))
-        } catch (e) {
-          this.handleError(e, this.$t('message.stopFail'))
-          console.log(e) // eslint-disable-line
-        }
+        this.dataflow.disabledData.stop = true
+        await taskApi.stop(this.dataflow.id).catch(e => {
+          this.handleError(e, this.$t('message_operation_error'))
+        })
+        this.$message.success(this.$t('message_operation_succuess'))
       })
     },
 
