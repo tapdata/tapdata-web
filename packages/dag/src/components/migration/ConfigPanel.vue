@@ -9,13 +9,18 @@
         <NodeIcon class="mr-2" :node="activeNode" />
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
+            v-show="showEdit"
             ref="nameInput"
             v-focus-select
             :value="activeNode ? activeNode.name : ''"
             class="title-input text-truncate"
             @change="handleChangeName"
+            @blur="showEdit = false"
           />
-          <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
+          <div v-if="!showEdit" class="flex align-center flex-1 overflow-hidden">
+            <span class="text-truncate">{{ activeNode ? activeNode.name : '' }}</span>
+            <VIcon v-if="!stateIsReadonly" class="ml-1" size="14" @click="focusNameInput">edit-outline</VIcon>
+          </div>
         </div>
       </template>
       <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100">
@@ -53,7 +58,8 @@ export default {
 
   data() {
     return {
-      currentTab: '0'
+      currentTab: '0',
+      showEdit: false
     }
   },
 
@@ -80,7 +86,10 @@ export default {
     },
 
     focusNameInput() {
-      this.$refs.nameInput.focus()
+      this.showEdit = true
+      this.$nextTick(() => {
+        this.$refs.nameInput.focus()
+      })
     },
 
     handleClosePanel() {
@@ -115,12 +124,13 @@ $headerHeight: 40px;
   position: relative;
   flex: 1;
   font-size: 14px;
+  min-width: 0;
 
   &:hover {
     .title-input {
       border-color: #dcdfe6;
     }
-    .title-input-icon {
+    .v-icon {
       color: $color;
     }
   }
@@ -148,8 +158,6 @@ $headerHeight: 40px;
   }
 
   .title-input-icon {
-    position: absolute;
-    right: 8px;
     height: 28px;
   }
 }
