@@ -93,7 +93,7 @@
         </div>
         <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
           <div class="flex align-center">
-            <span v-if="selected.tables.length && !isOpenClipMode">{{ $t('component_table_selector_bulk_name') }}</span>
+            <span v-if="!isOpenClipMode">{{ $t('component_table_selector_bulk_name') }}</span>
             <span v-else>{{ $t('component_table_selector_bulk_pick') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
           </div>
