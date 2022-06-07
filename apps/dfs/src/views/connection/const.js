@@ -214,6 +214,14 @@ export const DEFAULT_MODEL = {
     plain_password: '',
     qingFlowTagId: '',
     qingflowTagName: ''
+  },
+  doris: {
+    name: '',
+    database_type: '',
+    connection_type: '',
+    database_host: '',
+    plain_password: '',
+    dorisHttp: ''
   }
 }
 export const CONFIG_MODEL = {

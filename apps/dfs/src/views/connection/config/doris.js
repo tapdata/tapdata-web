@@ -70,6 +70,12 @@ export default function (vm) {
       },
       {
         type: 'input',
+        field: 'dorisHttp',
+        disabled: false,
+        label: vm.$t('connection_form_doris_http')
+      },
+      {
+        type: 'input',
         field: 'database_name',
         label: vm.$t('dataForm_form_databaseName'),
         required: true

@@ -209,6 +209,8 @@ export default {
         this.model = Object.assign({}, DEFAULT_MODEL['vika'])
       } else if (type === 'qingflow') {
         this.model = Object.assign({}, DEFAULT_MODEL['qingflow'])
+      } else if (type === 'doris') {
+        this.model = Object.assign({}, DEFAULT_MODEL['default'], DEFAULT_MODEL['doris'])
       } else if (DEFAULT_MODEL[type]) {
         this.model = Object.assign({}, DEFAULT_MODEL[type])
       }

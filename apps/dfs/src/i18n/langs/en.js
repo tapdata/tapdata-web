@@ -435,6 +435,8 @@ export default {
   connection_form_tidb_none_server: 'PDServer address cannot be empty',
   connection_form_mongo_standard_mode_tip:
     'This mode connects to a separate server in the network that provides a TSL / SSL channel to the database. If your database is on an inaccessible subnet, you can try this method',
+  connection_form_doris_http: 'http interface address',
+  connection_form_doris_http_tip: 'http interface address cannot be empty',
   connection_test_schema_tips:
     'Possible reason: There is a problem with the Schema case setting, you can try to modify the case and try again',
   connection_preview_load_schema: 'Load Schema',

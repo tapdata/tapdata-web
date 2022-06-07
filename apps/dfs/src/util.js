@@ -1,4 +1,4 @@
-import { confirm } from 'web-core'
+import VConfirm from '@/components/v-confirm'
 import i18n from '@/i18n'
 import timeFunction from '@/mixins/timeFunction'
 
@@ -200,7 +200,7 @@ export const errorConfirmFnc = error => {
                 )}</label>
               </div>`
   }
-  confirm(msg, title, {
+  VConfirm.confirm(msg, title, {
     type: 'error',
     iconSize: 18,
     dangerouslyUseHTMLString: true,

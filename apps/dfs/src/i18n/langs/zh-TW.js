@@ -405,6 +405,8 @@ export default {
   connection_form_tidb_none_server: 'PDServer地址不能為空',
   connection_form_mongo_standard_mode_tip:
     '此模式將連接網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。 如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
+  connection_form_doris_http: 'http接口地址',
+  connection_form_doris_http_tip: 'http接口地址不能為空',
   connection_test_schema_tips: '可能原因：Schema大小寫設定有問題，您可嘗試修改大小寫後重試',
   connection_preview_load_schema: '加載Schema',
   connection_preview_edit: '編輯',
