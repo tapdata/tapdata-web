@@ -64,12 +64,22 @@
     <!-- 左右箭头 按钮 -->
     <div class="selector-center">
       <div class="selector-btns">
-        <span class="btn-transfer" :class="{ 'btn-transfer--disabled': isOpenClipMode || disabled }" @click="add">
+        <span
+          class="btn-transfer"
+          :class="{
+            'btn-transfer--disabled': isOpenClipMode || disabled,
+            'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled
+          }"
+          @click="add"
+        >
           <i class="el-icon-arrow-right"></i>
         </span>
         <span
           class="btn-transfer mt-4"
-          :class="{ 'btn-transfer--disabled': isOpenClipMode || disabled }"
+          :class="{
+            'btn-transfer--disabled': isOpenClipMode || disabled,
+            'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled
+          }"
           @click="remove"
         >
           <i class="el-icon-arrow-left"></i>
@@ -284,6 +294,10 @@
       background: map-get($bgColor, main);
       color: map-get($fontColor, normal);
       cursor: not-allowed;
+    }
+    &.btn-transfer--primary {
+      background: map-get($color, primary);
+      color: map-get($fontColor, white);
     }
   }
 }
