@@ -159,7 +159,10 @@
       </template>
 
       <ElButton
-        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses.length > 0)"
+        :disabled="
+          isSaving ||
+          (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses && dataflow.statuses.length > 0)
+        "
         size="mini"
         class="mx-2"
         type="primary"
