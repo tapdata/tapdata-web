@@ -184,7 +184,7 @@
           <ElLink class="ml-2" type="primary" @click="autofix">{{ $t('component_table_selector_autofix') }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
-          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>
+          <!--          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>-->
           <ElButton type="primary" @click="submitClipboard">{{ $t('button_confirm') }}</ElButton>
         </div>
       </div>
@@ -255,7 +255,7 @@
   }
 }
 .selector-center {
-  width: 76px;
+  width: 46px;
   display: flex;
   flex-direction: column;
   align-items: center;
