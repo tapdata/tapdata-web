@@ -214,22 +214,22 @@ export default {
               })
             }
           })
-          .catch(err => {
-            if (err && err.response) {
-              if (err.response.msg.indexOf('duplication for names') > -1) {
-                this.$message.error(this.$t('dataForm.error.connectionNameExist'))
-              } else if (err.response.msg.indexOf('duplicate source') > -1) {
-                // this.connectionObj.name = err.response.data.name;
-                // this.connectionObj.id = err.response.data.id;
-                // this.repeatDialogVisible = true;
-                this.$message.error(this.$t('dataForm.error.duplicateSource'))
-              } else {
-                this.$message.error(err.response.msg)
-              }
-            } else {
-              this.$message.error(this.$t('message_save_fail'))
-            }
-          })
+          // .catch(err => {
+          //   if (err && err.response) {
+          //     if (err.response.msg.indexOf('duplication for names') > -1) {
+          //       this.$message.error(this.$t('dataForm.error.connectionNameExist'))
+          //     } else if (err.response.msg.indexOf('duplicate source') > -1) {
+          //       // this.connectionObj.name = err.response.data.name;
+          //       // this.connectionObj.id = err.response.data.id;
+          //       // this.repeatDialogVisible = true;
+          //       this.$message.error(this.$t('dataForm.error.duplicateSource'))
+          //     } else {
+          //       this.$message.error(err.response.msg)
+          //     }
+          //   } else {
+          //     this.$message.error(this.$t('message_save_fail'))
+          //   }
+          // })
           .finally(() => {
             this.submitBtnLoading = false
           })

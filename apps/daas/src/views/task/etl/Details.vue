@@ -286,10 +286,7 @@ export default {
       this.$api('Task')
         .start(id)
         .then(() => {
-          this.$message.success(this.$t('message.operationSuccuess'))
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
+          this.$message.success(this.$t('message_operation_succuess'))
         })
         .finally(resetLoading)
     },
@@ -316,10 +313,7 @@ export default {
           this.$api('Task')
             .stop(id)
             .then(() => {
-              this.$message.success(this.$t('message.operationSuccuess'))
-            })
-            .catch(err => {
-              this.$message.error(err.data?.message)
+              this.$message.success(this.$t('message_operation_succuess'))
             })
             .finally(resetLoading)
         } else {
@@ -336,10 +330,7 @@ export default {
           this.$api('Task')
             .forceStop([id])
             .then(() => {
-              this.$message.success(this.$t('message.operationSuccuess'))
-            })
-            .catch(err => {
-              this.$message.error(err.data?.message)
+              this.$message.success(this.$t('message_operation_succuess'))
             })
         }
       })
@@ -392,11 +383,11 @@ export default {
           .then(data => {
             this.responseHandler(data, this.$t('message.deleteOK'))
           })
-          .catch(error => {
-            if (error?.isException) {
-              this.$message.error('重置失败')
-            }
-          })
+          // .catch(error => {
+          //   if (error?.isException) {
+          //     this.$message.error('重置失败')
+          //   }
+          // })
           .finally(() => {
             this.loadingObj.reset = false
           })
@@ -425,11 +416,11 @@ export default {
         .then(data => {
           this.responseHandler(data, this.$t('message.deleteOK'))
         })
-        .catch(error => {
-          if (error?.isException) {
-            this.$message.error('任务启动失败，请编辑任务完成映射配置')
-          }
-        })
+        // .catch(error => {
+        //   if (error?.isException) {
+        //     this.$message.error('任务启动失败，请编辑任务完成映射配置')
+        //   }
+        // })
         .finally(() => {
           finallyEvents?.()
         })
@@ -466,9 +457,9 @@ export default {
           this.task.desc = val
           this.$message.success(this.$t('message_update_success'))
         })
-        .catch(err => {
-          this.$message.error(err.data.message)
-        })
+      // .catch(err => {
+      //   this.$message.error(err.data.message)
+      // })
     },
     // 编辑
     handleEditor(id) {

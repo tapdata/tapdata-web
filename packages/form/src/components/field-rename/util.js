@@ -1,9 +1,8 @@
-import { sortBy, get, set, merge } from 'lodash'
+import { get, set, merge } from 'lodash'
 export const convertSchemaToTreeData = function (Schema) {
   if (Schema) {
     let root = {}
     let fields = Schema || []
-    fields = sortBy(fields, [field => field.table_name + field.field_name])
     for (let i = 0; i < fields.length; i++) {
       let field = fields[i]
       if (field && field.field_name && field.original_field_name) {
@@ -49,13 +48,13 @@ export const convertSchemaToTreeData = function (Schema) {
     }
     re(root, 0)
 
-    let sort = function (node) {
-      if (node.children && node.children.length > 0) {
-        node.children.sort((c1, c2) => (c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1))
-        node.children.forEach(sort)
-      }
-    }
-    sort(root)
+    // let sort = function (node) {
+    //   if (node.children && node.children.length > 0) {
+    //     node.children.sort((c1, c2) => (c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1))
+    //     node.children.forEach(sort)
+    //   }
+    // }
+    // sort(root)
     fields = root.children
     return fields
   } else {

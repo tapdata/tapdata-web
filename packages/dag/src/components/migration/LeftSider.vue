@@ -17,9 +17,9 @@
           目标
         </div>
         <div class="flex-grow-1"></div>
-        <div class="connection-tabs-extra">
+        <!--<div class="connection-tabs-extra">
           <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
-        </div>
+        </div>-->
       </div>
 
       <div class="px-4 py-3">
@@ -34,8 +34,8 @@
           @click.native.stop
           @input="handleDBInput"
         >
-          <template #prefix>
-            <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
+          <template #suffix>
+            <VIcon size="14" class="mr-1 h-100">magnify</VIcon>
           </template>
         </ElInput>
       </div>
@@ -69,7 +69,9 @@
                 class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
                 @dblclick="$emit('add-node', getNodeProps(db))"
               >
-                <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
+                <div class="flex-shrink-0 mr-2 db-item-icon">
+                  <NodeIcon :node="db" />
+                </div>
                 <div class="flex flex-column justify-center db-item-content">
                   <OverflowTooltip class="w-100 text-truncate" :text="db.name" placement="right" :open-delay="400" />
                   <OverflowTooltip
@@ -607,9 +609,15 @@ $hoverBg: #eef3ff;
       }
 
       .el-image {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
         vertical-align: middle;
+      }
+
+      &-icon {
+        padding: 4px;
+        border: 1px solid #f2f2f2;
+        border-radius: 50%;
       }
 
       &-content {

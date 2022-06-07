@@ -342,9 +342,9 @@ export default {
             this.$message.success(this.$t('message_save_ok'))
           }
         })
-        .catch(e => {
-          this.$message.error(e.response.msg)
-        })
+      // .catch(e => {
+      //   this.$message.error(e.response.msg)
+      // })
     },
     // 邮件模板
     checkTemplate() {
@@ -361,16 +361,12 @@ export default {
           2
         )
       }
-      try {
-        this.$api('Setting')
-          .testEmail()
-          .then(() => {
-            localStorage.setItem('Tapdata_settings_email_countdown', now)
-            this.$message.success(this.$t('setting_test_email_success'))
-          })
-      } catch (error) {
-        this.$message.error(this.$t('setting_requestFailed'))
-      }
+      this.$api('Setting')
+        .testEmail()
+        .then(() => {
+          localStorage.setItem('Tapdata_settings_email_countdown', now)
+          this.$message.success(this.$t('setting_test_email_success'))
+        })
     }
   }
 }

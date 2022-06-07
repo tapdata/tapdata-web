@@ -74,12 +74,12 @@
           </div>
         </ElTabPane>
         <ElTabPane label="高级设置" name="advanced">
-          <div class="setting-panel-box bg-white border-bottom pt-3">
+          <!--<div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               运行设置
               <span class="pl-2">任务在启动和运行时的环境设置</span>
             </div>
-            <!-- <div class="px-5">
+             <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem :label="$t('connection_form_access_node')">
@@ -107,8 +107,8 @@
                   </ElFormItem>
                 </ElCol>
               </ElRow>
-            </div> -->
-          </div>
+            </div>
+          </div>-->
           <div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               读写设置
@@ -138,13 +138,13 @@
               </ElRow>
             </div>
           </div>
-          <div class="setting-panel-box bg-white border-bottom pt-3">
+          <!--<div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               全量设置
               <span class="pl-2">任务的同步类型为全量或全量+增量时执行的</span>
             </div>
             <div class="px-5">
-              <!--目标写入线程数-->
+              &lt;!&ndash;目标写入线程数&ndash;&gt;
               <ElFormItem :label="$t('task_setting_transformer_concurrency')">
                 <ElInputNumber
                   controls-position="right"
@@ -154,7 +154,7 @@
                 ></ElInputNumber>
               </ElFormItem>
             </div>
-          </div>
+          </div>-->
           <div class="setting-panel-box bg-white border-bottom mt-5 px-5">
             <div class="setting-title fs-7">
               增量设置

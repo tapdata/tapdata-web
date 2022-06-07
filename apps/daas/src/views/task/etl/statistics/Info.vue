@@ -704,11 +704,8 @@ export default {
       this.$api('SubTask')
         .start(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
     },
@@ -716,11 +713,8 @@ export default {
       this.$api('SubTask')
         .stop(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
     },

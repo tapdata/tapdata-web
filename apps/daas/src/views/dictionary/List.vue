@@ -359,9 +359,9 @@ export default {
               this.$message.success(this.$t('message.deleteOK'))
               this.table.fetch()
             })
-            .catch(() => {
-              this.$message.info(this.$t('message.deleteFail'))
-            })
+          // .catch(() => {
+          //   this.$message.info(this.$t('message.deleteFail'))
+          // })
         }
       })
     },
@@ -452,13 +452,13 @@ export default {
               this.table.fetch()
               this.$message.success(this.$t('message_save_ok'))
             })
-            .catch(e => {
-              if (e.response.msg.indexOf('Dictionary already exists') !== -1) {
-                this.$message.error(this.$t('dictionary.alreadyExists'))
-              } else {
-                this.$message.error(this.$t('message_save_fail'))
-              }
-            })
+            // .catch(e => {
+            //   if (e.response.msg.indexOf('Dictionary already exists') !== -1) {
+            //     this.$message.error(this.$t('dictionary.alreadyExists'))
+            //   } else {
+            //     this.$message.error(this.$t('message_save_fail'))
+            //   }
+            // })
             .finally(() => {
               this.createDialogVisible = false
             })

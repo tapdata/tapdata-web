@@ -137,6 +137,9 @@ axios.interceptors.response.use(response => {
         }
         throw response
       default:
+        Message.error({
+          message: data.message
+        })
         throw response
     }
   }

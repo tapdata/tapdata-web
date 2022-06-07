@@ -621,9 +621,9 @@ export default {
             this.getData()
             this.$message.success(this.$t('message.deleteOK'))
           })
-          .catch(() => {
-            this.$message.info(this.$t('message.deleteFail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message.deleteFail'))
+        // })
       })
     },
     // 关闭弹窗
@@ -687,9 +687,9 @@ export default {
             this.getData()
             this.$message.success(this.$t('metadata.details.success_Release'))
           })
-          .catch(() => {
-            this.$message.error(this.$t('message_save_fail'))
-          })
+        // .catch(() => {
+        //   this.$message.error(this.$t('message_save_fail'))
+        // })
         // .finally(() => {
         //   instance.confirmButtonLoading = false
         // })
@@ -709,9 +709,9 @@ export default {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+        // .catch(() => {
+        //   this.$message.error(this.$t('message_save_fail'))
+        // })
         .finally(() => {
           this.businessDialogVisible = false
         })
@@ -737,9 +737,9 @@ export default {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+        // .catch(() => {
+        //   this.$message.error(this.$t('message_save_fail'))
+        // })
         .finally(() => {
           this.editNameDialogVisible = false
         })
@@ -755,9 +755,9 @@ export default {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+        // .catch(() => {
+        //   this.$message.error(this.$t('message_save_fail'))
+        // })
         .finally(() => {
           this.editCommentDialogVisible = false
         })

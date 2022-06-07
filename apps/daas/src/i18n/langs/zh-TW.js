@@ -84,6 +84,8 @@ export default {
   button_finish: '完成',
   button_btn_back: '上一步',
   button_btn_next: '下一步',
+  button_bulk_import: '批量導入',
+  button_bulk_export: '批量導出',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -196,6 +198,7 @@ export default {
   component_table_selector_error: '所選表存在異常',
   component_table_selector_autofix: '清除異常表',
   component_table_selector_bulk_pick: '批量選表',
+  component_table_selector_bulk_name: '粘貼表名',
   component_table_selector_not_checked: '您暫時沒有選擇表',
   component_table_selector_tables_empty: '您暫時沒有表，請點擊右上角重新加載表',
   component_table_selector_clipboard_placeholder: '請輸入表名稱並以逗號分隔,例如：table_a,table_b',
@@ -1177,10 +1180,11 @@ export default {
   task_setting_cdc_share_filter_on_server: '共享挖掘日誌過濾',
   task_setting_lag_time: '增量滯後判斷時間設置',
 
+  task_stetting_basic_setting: '基本設置',
+  task_stetting_most_setting: '高級設置',
   task_name: '任務名稱',
   task_status: '任務狀態',
   task_sync_type: '任務同步類型',
-  task_create_task: '創建任務',
   task_button_pause: '暫停',
   task_button_recover: '恢復',
   task_button_start: '啟動', // 停止 編輯 子任務
@@ -1203,6 +1207,7 @@ export default {
   task_setting_cron_tip:
     '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
   task_setting_syncPoint_tip: '任務將從該時間點開始收集增量日誌',
+  task_setting_plan_start_date: '计划开始时间',
 
   //字段映射
   task_form_no_fields_not_save: '當前表被刪除了所有字段，不允許保存操作',
@@ -1305,7 +1310,6 @@ export default {
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',
-  function_button_create_custom_function: '創建函數',
   function_button_import_jar: '導入jar包',
   function_button_edit_function: '編輯函數',
   function_details: '函數詳情',
@@ -1919,7 +1923,6 @@ export default {
   role_name_Data_SYNC: '瀏覽複製開發任務',
   role_name_SYNC_category_management: '任務分類管理',
   role_name_SYNC_category_application: '任務分類應用',
-  role_name_SYNC_job_creation: '創建任務',
   role_name_SYNC_job_delete: '刪除任務',
   role_name_SYNC_job_edition: '編輯任務',
   role_name_SYNC_job_operation: '任務操作',

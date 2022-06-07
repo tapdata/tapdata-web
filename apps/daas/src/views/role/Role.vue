@@ -913,9 +913,9 @@ export default {
           // 		self.saveloading = false;
           // 	});
         })
-        .catch(() => {
-          this.$message.success(this.$t('message_save_fail'))
-        })
+        // .catch(() => {
+        //   this.$message.success(this.$t('message_save_fail'))
+        // })
         .finally(() => {
           self.saveloading = false
         })

@@ -1,14 +1,8 @@
 <template>
   <section>
-    <ElButton
-      size="mini"
-      plain
-      class="btn-refresh position-absolute"
-      style="right: 145px; top: 41px"
-      @click.stop="dialogVisible = true"
-    >
-      <VIcon class="text-primary">edit-outline</VIcon>
-    </ElButton>
+    <ElLink type="primary" class="position-absolute" style="right: 10px; top: 41px" @click.stop="dialogVisible = true">
+      {{ $t('button_edit') }}
+    </ElLink>
     <List :isMetaData="true" :readOnly="true"></List>
     <Dialog v-if="dialogVisible" :visible.sync="dialogVisible"></Dialog>
   </section>
@@ -17,11 +11,10 @@
 <script>
 import List from './List'
 import Dialog from './Dialog'
-import VIcon from 'web-core/components/VIcon'
 
 export default {
   name: 'FieldMapping',
-  components: { List, Dialog, VIcon },
+  components: { List, Dialog },
   data() {
     return {
       dialogVisible: false

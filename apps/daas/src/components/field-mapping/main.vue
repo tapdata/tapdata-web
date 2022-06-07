@@ -203,9 +203,6 @@ export default {
           data = res
           this.initWSSed() //发送ws 监听schema进度
         })
-        .catch(e => {
-          this.$message.error(e)
-        })
       return data
     },
     //清空表改名 字段改名

@@ -164,9 +164,9 @@ export default {
               if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
               this.$message.success(this.$t('metadata.details.pipeline.success'))
             })
-            .catch(() => {
-              this.$message.error(this.$t('metadata.details.pipeline.failed'))
-            })
+          // .catch(() => {
+          //   this.$message.error(this.$t('metadata.details.pipeline.failed'))
+          // })
         }
       })
     },
@@ -180,9 +180,9 @@ export default {
         .then(() => {
           this.$message.success(this.$t('message_save_ok'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_save_fail'))
+      // })
     }
   }
 }

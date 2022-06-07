@@ -681,13 +681,13 @@ export default {
                 this.table.fetch()
               }
             })
-            .catch(e => {
-              if (e.response.msg.indexOf('User already exists') !== -1) {
-                that.$message.error(this.$t('user_form_already_exists'))
-              } else {
-                that.$message.error(this.$t('message_save_fail'))
-              }
-            })
+            // .catch(e => {
+            //   if (e.response.msg.indexOf('User already exists') !== -1) {
+            //     that.$message.error(this.$t('user_form_already_exists'))
+            //   } else {
+            //     that.$message.error(this.$t('message_save_fail'))
+            //   }
+            // })
             .finally(() => {
               that.createDialogVisible = false
             })
@@ -710,9 +710,9 @@ export default {
                 this.table.fetch()
                 done()
               })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
+              // .catch(() => {
+              //   this.$message.info(this.$t('message.deleteFail'))
+              // })
               .finally(() => {
                 instance.confirmButtonLoading = false
               })
@@ -777,9 +777,9 @@ export default {
                 this.table.fetch()
                 done()
               })
-              .catch(() => {
-                this.$message.info(errorMsg)
-              })
+              // .catch(() => {
+              //   this.$message.info(errorMsg)
+              // })
               .finally(() => {
                 instance.confirmButtonLoading = false
               })
@@ -819,9 +819,9 @@ export default {
             this.$message.success(this.$t('message_operation_succuess'))
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_operation_error'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_operation_error'))
+      // })
     },
     // 关联用户
     permissionsmethod(data) {

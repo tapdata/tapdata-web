@@ -71,7 +71,7 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <EmptyItem></EmptyItem>
           </div>
-          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
+          <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
           <NodePopover
             :popover="nodeMenu"
             @click-node="handleClickNodePopover"
@@ -116,7 +116,7 @@ import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
-import PaperEmpty from './components/PaperEmpty'
+// import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
@@ -136,7 +136,7 @@ export default {
   components: {
     NodePopover,
     EmptyItem,
-    PaperEmpty,
+    // PaperEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,
@@ -360,10 +360,10 @@ export default {
           name: 'JavaScript',
           type: 'js_processor'
         },
-        {
+        /*{
           name: '聚合',
           type: 'aggregation_processor'
-        },
+        },*/
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
@@ -1708,14 +1708,15 @@ export default {
             }
           }
         }
-        this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
-      } else if (error?.data?.message) {
-        this.$message.error(error.data.message)
-      } else {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        this.$message.error(msg)
+        // this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
       }
+      // else if (error?.data?.message) {
+      //   this.$message.error(error.data.message)
+      // } else {
+      //   // eslint-disable-next-line no-console
+      //   console.error(error)
+      //   this.$message.error(msg)
+      // }
     },
 
     async handleUpdateName(name) {
@@ -1775,15 +1776,11 @@ export default {
           return
         }
 
-        try {
-          this.dataflow.disabledData.stop = true
-
-          await taskApi.stop(this.dataflow.id)
-          this.$message.success(this.$t('message.operationSuccuess'))
-        } catch (e) {
-          this.handleError(e, this.$t('message.stopFail'))
-          console.log(e) // eslint-disable-line
-        }
+        this.dataflow.disabledData.stop = true
+        await taskApi.stop(this.dataflow.id).catch(e => {
+          this.handleError(e, this.$t('message_operation_error'))
+        })
+        this.$message.success(this.$t('message_operation_succuess'))
       })
     },
 

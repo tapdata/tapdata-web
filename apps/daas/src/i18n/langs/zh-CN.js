@@ -83,6 +83,8 @@ export default {
   button_finish: '完成',
   button_btn_back: '上一步',
   button_btn_next: '下一步',
+  button_bulk_import: '批量导入',
+  button_bulk_export: '批量导出',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -196,6 +198,7 @@ export default {
   component_table_selector_error: '所选表存在异常',
   component_table_selector_autofix: '清除异常表',
   component_table_selector_bulk_pick: '批量选表',
+  component_table_selector_bulk_name: '粘贴表名',
   component_table_selector_not_checked: '您暂时没有选择表',
   component_table_selector_tables_empty: '您暂时没有表，请点击右上角重新加载表',
   component_table_selector_clipboard_placeholder: '请输入表名称并以逗号分隔,例如：table_a,table_b',
@@ -1129,12 +1132,14 @@ export default {
   task_info_subtasks_name: '子任务名称',
   task_info_subtasks_status: '状态',
 
+  task_stetting_basic_setting: '基本设置',
+  task_stetting_most_setting: '高级设置',
   task_stetting_name: '任务名称',
   task_stetting_desc: '任务描述',
   task_setting_sync_type: '同步类型',
-  task_setting_initial_sync: '全量同步',
-  task_setting_cdc: '增量同步',
-  task_setting_initial_sync_cdc: '全量 + 增量同步',
+  task_setting_initial_sync: '全量',
+  task_setting_cdc: '增量',
+  task_setting_initial_sync_cdc: '全量 + 增量',
   task_setting_initial_sync_tip:
     '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
   task_setting_cdc_tip:
@@ -1190,11 +1195,11 @@ export default {
   task_setting_cron_tip:
     '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
   task_setting_syncPoint_tip: '任务将从该时间点开始收集增量日志',
+  task_setting_plan_start_date: '计划开始时间',
 
   task_name: '任务名称',
   task_status: '任务状态',
   task_sync_type: '任务同步类型',
-  task_create_task: '创建任务',
   task_button_pause: '暂停',
   task_button_recover: '恢复',
   task_button_start: '启动', // 停止 编辑 子任务
@@ -1314,7 +1319,6 @@ export default {
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
-  function_button_create_custom_function: '创建函数',
   function_button_import_jar: '导入jar包',
   function_button_edit_function: '编辑函数',
   function_details: '函数详情',
@@ -1935,7 +1939,6 @@ export default {
   role_name_Data_SYNC: '浏览复制开发任务',
   role_name_SYNC_category_management: '任务分类管理',
   role_name_SYNC_category_application: '任务分类应用',
-  role_name_SYNC_job_creation: '创建任务',
   role_name_SYNC_job_delete: '删除任务',
   role_name_SYNC_job_edition: '编辑任务',
   role_name_SYNC_job_operation: '任务操作',

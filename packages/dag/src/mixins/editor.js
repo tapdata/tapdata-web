@@ -1241,14 +1241,15 @@ export default {
             }
           }
         }
-        this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
-      } else if (error?.data?.message) {
-        this.$message.error(error.data.message)
-      } else {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        this.$message.error(msg)
+        // this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
       }
+      // else if (error?.data?.message) {
+      //   this.$message.error(error.data.message)
+      // } else {
+      //   // eslint-disable-next-line no-console
+      //   console.error(error)
+      //   this.$message.error(msg)
+      // }
     },
 
     async handleUpdateName(name) {
@@ -1302,15 +1303,11 @@ export default {
           return
         }
 
-        try {
-          this.dataflow.disabledData.stop = true
-
-          await taskApi.stop(this.dataflow.id)
-          this.$message.success(this.$t('message.operationSuccuess'))
-        } catch (e) {
-          this.handleError(e, this.$t('message.stopFail'))
-          console.log(e) // eslint-disable-line
-        }
+        this.dataflow.disabledData.stop = true
+        await taskApi.stop(this.dataflow.id).catch(e => {
+          this.handleError(e, this.$t('message_operation_error'))
+        })
+        this.$message.success(this.$t('message_operation_succuess'))
       })
     },
 

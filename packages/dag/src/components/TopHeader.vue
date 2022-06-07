@@ -1,7 +1,7 @@
 <template>
   <header class="layout-header border-bottom px-4">
     <button @click="$emit('page-return')" class="icon-btn">
-      <VIcon size="20">left</VIcon>
+      <VIcon size="18">left</VIcon>
     </button>
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
       <input
@@ -15,7 +15,9 @@
       <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
     </div>
 
-    <StatusItem inline :value="dataflow.statusResult" />
+    <slot name="status" :result="dataflow.statusResult">
+      <StatusItem inline :value="dataflow.statusResult" />
+    </slot>
 
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
@@ -92,7 +94,7 @@
       <!--设置-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
-          <VIcon size="20">setting</VIcon>
+          <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
     </div>
@@ -157,7 +159,10 @@
       </template>
 
       <ElButton
-        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses.length > 0)"
+        :disabled="
+          isSaving ||
+          (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses && dataflow.statuses.length > 0)
+        "
         size="mini"
         class="mx-2"
         type="primary"
@@ -404,6 +409,7 @@ $sidebarBg: #fff;
     width: 30px;
     height: 30px;
     padding: 5px;
+    color: #4e5969;
     background: #fff;
     border: 1px solid transparent;
     border-radius: $radius;
@@ -468,7 +474,6 @@ $sidebarBg: #fff;
 
   ::v-deep {
     .el-button {
-      min-width: 64px;
       line-height: 1;
 
       &.btn--text {

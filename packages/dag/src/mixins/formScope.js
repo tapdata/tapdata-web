@@ -516,11 +516,13 @@ export default {
          */
         loadNodeFieldOptions: async nodeId => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
-          return fields.map(item => ({
-            label: item.field_name,
-            value: item.field_name,
-            isPrimaryKey: item.primary_key_position > 0
-          }))
+          return fields
+            .map(item => ({
+              label: item.field_name,
+              value: item.field_name,
+              isPrimaryKey: item.primary_key_position > 0
+            }))
+            .filter(item => !item.is_deleted)
         },
 
         /**

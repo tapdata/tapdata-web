@@ -16,7 +16,6 @@
           >
         </div>
         <span v-if="showProgress" class="ml-2 color-primary">
-          <span>{{ $t('message_loading') }}</span>
           <i class="el-icon-loading mx-2"></i>
           <span>{{ progress }}%</span>
         </span>
@@ -64,12 +63,22 @@
     <!-- 左右箭头 按钮 -->
     <div class="selector-center">
       <div class="selector-btns">
-        <span class="btn-transfer" :class="{ 'btn-transfer--disabled': isOpenClipMode || disabled }" @click="add">
+        <span
+          class="btn-transfer"
+          :class="{
+            'btn-transfer--disabled': isOpenClipMode || disabled,
+            'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled
+          }"
+          @click="add"
+        >
           <i class="el-icon-arrow-right"></i>
         </span>
         <span
           class="btn-transfer mt-4"
-          :class="{ 'btn-transfer--disabled': isOpenClipMode || disabled }"
+          :class="{
+            'btn-transfer--disabled': isOpenClipMode || disabled,
+            'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled
+          }"
           @click="remove"
         >
           <i class="el-icon-arrow-left"></i>
@@ -93,7 +102,8 @@
         </div>
         <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
           <div class="flex align-center">
-            <span>{{ $t('component_table_selector_bulk_pick') }}</span>
+            <span v-if="!isOpenClipMode">{{ $t('component_table_selector_bulk_name') }}</span>
+            <span v-else>{{ $t('component_table_selector_bulk_pick') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
           </div>
         </ElLink>
@@ -183,7 +193,7 @@
           <ElLink class="ml-2" type="primary" @click="autofix">{{ $t('component_table_selector_autofix') }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
-          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>
+          <!--          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>-->
           <ElButton type="primary" @click="submitClipboard">{{ $t('button_confirm') }}</ElButton>
         </div>
       </div>
@@ -194,12 +204,13 @@
 <style lang="scss" scoped>
 .table-selector {
   display: flex;
+  align-items: stretch;
   height: 100%;
   overflow: hidden;
 }
 .selector-panel {
   flex: 1;
-  height: 100%;
+  //height: 100%;
   display: flex;
   flex-direction: column;
   border: 1px solid map-get($borderColor, light);
@@ -254,7 +265,7 @@
   }
 }
 .selector-center {
-  width: 76px;
+  width: 46px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -283,6 +294,10 @@
       background: map-get($bgColor, main);
       color: map-get($fontColor, normal);
       cursor: not-allowed;
+    }
+    &.btn-transfer--primary {
+      background: map-get($color, primary);
+      color: map-get($fontColor, white);
     }
   }
 }
@@ -580,7 +595,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('connection_reload_schema_fail'))
+          // this.$message.error(this.$t('connection_reload_schema_fail'))
           this.showProgress = false
           this.progress = 0 //加载完成
         })

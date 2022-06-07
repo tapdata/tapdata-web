@@ -115,7 +115,7 @@
 .el-input,
 .el-textarea {
   .el-input__count {
-    background-color: rgba(239, 241, 244, 0.2)!important;
+    background-color: rgba(239, 241, 244, 0.2) !important;
     .el-input__count-inner {
       color: rgba(0, 0, 0, 0.65);
       background-color: rgba(239, 241, 244, 0.2);
@@ -136,12 +136,6 @@
 .el-input-group__prepend {
   color: map-get($color, primary);
 }
-.el-input-group__append {
-  button.el-button {
-    // border-color: map-get($color, primary);
-    // background-color: map-get($color, primary);
-  }
-}
 .el-radio .el-radio__label {
   font-size: 12px;
   // color: map-get($fontColor, dark);
@@ -157,15 +151,15 @@
   border-color: map-get($color, primary);
 }
 .el-radio__inner::after {
-  width: 8px!important;
-  height: 8px!important;
+  width: 8px !important;
+  height: 8px !important;
   background-color: map-get($color, primary);
 }
 
 .el-radio-button__inner {
   font-weight: 400 !important;
   // color: map-get($fontColor, normal);
-  background:  map-get($bgColor, white)!important;
+  background: map-get($bgColor, white) !important;
 }
 .el-radio-button--mini .el-radio-button__inner {
   padding: 5px 16px;
@@ -183,20 +177,12 @@
   border-radius: 0 $borderRadiusBtn $borderRadiusBtn 0;
 }
 .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-  font-weight: 500!important;
+  font-weight: 500 !important;
   // color: map-get($color, primary);
-  background-color:  map-get($bgColor, white);
+  background-color: map-get($bgColor, white);
   // border-color: map-get($color, primary);
   // box-shadow: -1px 0 0 0 map-get($color, primary);
 }
-.el-switch__core {
-  // border-color: map-get($color, primary);
-  // background-color: map-get($color, primary);
-}
-// .el-switch.is-checked .el-switch__core {
-//   border-color: map-get($color, primary);
-//   background-color: map-get($color, primary);
-// }
 .el-divider__text,
 .el-link {
   font-size: 12px;
@@ -225,7 +211,7 @@
   cursor: default;
 }
 .el-link.el-link--primary.is-disabled {
-  color: map-get($color, disable)!important;
+  color: map-get($color, disable) !important;
   cursor: no-drop;
 }
 .el-tooltip__popper {
@@ -254,12 +240,12 @@
 //   border-color: map-get($color, primary);
 // }
 // .el-button--primary {
-  // color: map-get($fontColor, white);
-  // background-color: map-get($color, primary);
-  // border-color: map-get($color, primary);
+// color: map-get($fontColor, white);
+// background-color: map-get($color, primary);
+// border-color: map-get($color, primary);
 // }
 .el-button--text {
-  font-weight: 400!important;
+  font-weight: 400 !important;
   min-width: auto;
   // color: map-get($color, primary);
   border: none;
@@ -280,59 +266,9 @@
 .el-button--text.is-disabled:hover {
   color: map-get($color, disable);
 }
-// .el-button:focus,
-// .el-button:hover {
-//   background-color: map-get($color, primary);
-//   //color: #fff;
-//   border-color: map-get($color, primary);
-// }
-// .el-button--primary:hover {
-//   background-color: map-get($color, lprimary);
-//   border-color: map-get($color, lprimary);
-//   color: map-get($fontColor, white);
-// }
-.el-button--primary:focus.el-button--primary:hover {
-  // background-color: map-get($color, lprimary);
-  // border-color: map-get($color, lprimary);
-  // color: map-get($fontColor, white);
-}
-.el-button--primary:focus,
-.el-button--primary.is-active,
-.el-button--primary:active {
-  // background-color: map-get($color, primary);
-  // border-color: map-get($color, primary);
-  // color: map-get($fontColor, white);
-}
-// .el-button--primary.is-disabled,
-// .el-button--primary.is-disabled:active,
-// .el-button--primary.is-disabled:focus,
-// .el-button--primary.is-disabled:hover {
-//   color: map-get($color, disable);
-//   border-color: map-get($borderColor, disable) !important;
-//   background-color: map-get($bgColor, disable);
-// }
-// .el-button.is-plain:hover {
-//   border-color: map-get($color, primary);
-//   color: map-get($color, primary);
-// }
-// .el-checkbox {
-//   font-weight: normal;
-//   color: map-get($fontColor, normal);
-// }
 .el-checkbox__label {
   font-size: 12px;
 }
-// .el-checkbox__inner:hover {
-//   border-color: map-get($color, primary);
-// }
-// .el-checkbox__input.is-focus .el-checkbox__inner {
-//   border-color: map-get($color, primary);
-// }
-// .el-checkbox__input.is-checked .el-checkbox__inner,
-// .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-//   border-color: map-get($color, primary);
-//   background-color: map-get($color, primary);
-// }
 .el-checkbox__input.is-checked + .el-checkbox__label {
   color: unset;
 }
@@ -367,13 +303,6 @@
   line-height: 40px;
   border-left: 3px solid map-get($bgColor, white);
 }
-.el-menu-item.is-active {
-  // color: map-get($color, primary);
-  // border-color: map-get($color, primary);
-}
-// .el-table {
-//   color: map-get($fontColor, dark);
-// }
 .el-table::before {
   display: none;
 }
@@ -387,8 +316,8 @@
 //   color: map-get($fontColor, normal);
 
 // }
-.el-table__fixed-right-patch {
-  background: #f4f5f7;
+.el-table .el-table__fixed-right-patch {
+  background-color: map-get($bgColor, normal);
 }
 .el-table th {
   // background: #f4f5f7;
@@ -417,20 +346,11 @@
   white-space: nowrap;
 }
 .el-table th.el-table__cell.is-leaf {
-  border-bottom: 0!important;
+  border-bottom: 0 !important;
 }
 .el-table .el-table__header-wrapper .el-table__header {
-  border-color: inherit!important;
+  border-color: inherit !important;
 }
-// .el-table .el-table__header th {
-//   background-color: map-get($bgColor, normal);
-// }
-// .el-table .ascending .sort-caret.ascending {
-//   border-bottom-color: map-get($color, primary);
-// }
-// .el-table .descending .sort-caret.descending {
-//   border-top-color: map-get($color, primary);
-// }
 .el-table__body tr.hover-row > td {
   background-color: map-get($bgColor, hover);
 }
@@ -438,10 +358,10 @@
   background-color: inherit;
 }
 .el-table--border::after {
-  width: 0!important;
+  width: 0 !important;
 }
 .el-table__empty-block {
-  height: 70%!important;
+  height: 70% !important;
 }
 .el-table__empty-block .el-table__empty-text .empty {
   line-height: 30px;
@@ -461,19 +381,19 @@
 .el-breadcrumb__inner a,
 .el-breadcrumb__inner.is-link {
   font-size: 12px;
-  font-weight: 400!important;
-  color: map-get($fontColor, light)!important;
+  font-weight: 400 !important;
+  color: map-get($fontColor, light) !important;
 }
 .el-breadcrumb__inner a:hover,
 .el-breadcrumb__inner.is-link:hover {
-  color: map-get($color, primary)!important;
+  color: map-get($color, primary) !important;
 }
 .el-breadcrumb__item:last-child .el-breadcrumb__inner,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-  font-weight: 500!important;
-  color: map-get($fontColor, normal)!important;
+  font-weight: 500 !important;
+  color: map-get($fontColor, normal) !important;
 }
 .el-tag--small {
   border-radius: $borderRadius;
@@ -491,7 +411,7 @@
 //   background-color: map-get($color, linfo);
 // }
 .el-message__content {
-  color: map-get($fontColor, dark)!important;
+  color: map-get($fontColor, dark) !important;
 }
 .el-message-box {
   position: relative;
@@ -525,7 +445,7 @@
 .el-message-box__content {
   padding: 5px 15px 15px 15px;
   font-size: 12px;
-  color: map-get($fontColor, normal)!important;
+  color: map-get($fontColor, normal) !important;
 }
 .el-message-box__message {
   overflow: hidden;

@@ -357,21 +357,17 @@ export default {
           params.parent_id = id
           params.parent_gid = gid
         }
-        UserGroupModel[method](params)
-          .then(res => {
-            let self = this
-            if (res.data) {
-              self.getData(() => {
-                this.$nextTick(() => {
-                  this.emitCheckedNodes()
-                })
+        UserGroupModel[method](params).then(res => {
+          let self = this
+          if (res.data) {
+            self.getData(() => {
+              this.$nextTick(() => {
+                this.emitCheckedNodes()
               })
-              self.hideDialog()
-            }
-          })
-          .catch(e => {
-            this.$message.error('MetadataInstances error' + e)
-          })
+            })
+            self.hideDialog()
+          }
+        })
       } else {
         let params = {
           item_type: itemType,
@@ -383,25 +379,24 @@ export default {
         } else if (id) {
           params.parent_id = id
         }
-        MetadataDefinitions[method](params)
-          .then(res => {
-            let self = this
-            if (res.data) {
-              self.getData(() => {
-                this.$nextTick(() => {
-                  this.emitCheckedNodes()
-                })
+        MetadataDefinitions[method](params).then(res => {
+          let self = this
+          if (res.data) {
+            self.getData(() => {
+              this.$nextTick(() => {
+                this.emitCheckedNodes()
               })
-              self.hideDialog()
-            }
-          })
-          .catch(e => {
-            if (e.data?.code === 'MetadataDefinition.Value.Exist') {
-              this.$message.error(this.$t('classification_name_already_exists'))
-            } else {
-              this.$message.error('MetadataInstances error' + e)
-            }
-          })
+            })
+            self.hideDialog()
+          }
+        })
+        // .catch(e => {
+        //   if (e.data?.code === 'MetadataDefinition.Value.Exist') {
+        //     this.$message.error(this.$t('classification_name_already_exists'))
+        //   } else {
+        //     this.$message.error('MetadataInstances error' + e)
+        //   }
+        // })
       }
     },
     deleteNode(id) {
@@ -422,23 +417,15 @@ export default {
               gid: id
             }
           }
-          UserGroupModel.delete(params)
-            .then(() => {
-              let self = this
-              self.getData()
-            })
-            .catch(() => {
-              this.$message.info(this.$t('message.deleteFail'))
-            })
+          UserGroupModel.delete(params).then(() => {
+            let self = this
+            self.getData()
+          })
         } else {
-          MetadataDefinitions.delete(id)
-            .then(() => {
-              let self = this
-              self.getData()
-            })
-            .catch(() => {
-              this.$message.info(this.$t('message.deleteFail'))
-            })
+          MetadataDefinitions.delete(id).then(() => {
+            let self = this
+            self.getData()
+          })
         }
       })
     },

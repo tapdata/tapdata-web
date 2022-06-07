@@ -1445,6 +1445,18 @@ export default {
             }
           }
         }
+
+        ::v-deep {
+          .formily-element-form-item {
+            font-size: 12px;
+            .el-input-number {
+              width: 180px;
+            }
+            .el-input-number--small {
+              width: 130px;
+            }
+          }
+        }
       }
       // .form {
       //   padding: 0 20px;

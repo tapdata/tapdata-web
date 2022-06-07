@@ -63,7 +63,7 @@
           </div>
           <ElPagination
             small
-            class="flex mt-3"
+            class="flex mt-3 din-font"
             layout="total, prev, slot, next"
             :current-page.sync="page.current"
             :page-size.sync="page.size"
@@ -91,15 +91,16 @@
             </div>
             <div class="item ml-2">
               <ElButton plain class="btn-refresh" @click="rest">
-                <VIcon class="text-primary">refresh</VIcon>
+                <VIcon>refresh</VIcon>
               </ElButton>
-              <ElButton v-if="!readOnly" type="text" class="btn-rest" @click="updateMetaData"> 重置 </ElButton>
+              <ElButton v-if="!readOnly" type="text" class="btn-rest" @click="updateMetaData">
+                {{ $t('button_reset') }}
+              </ElButton>
             </div>
           </div>
           <ElTable
             class="field-mapping-table table-border"
             height="100%"
-            border
             :data="viewTableData"
             v-loading="loadingTable"
           >
@@ -183,6 +184,7 @@
         <ElAutocomplete
           v-model="editValueType[currentOperationType]"
           class="inline-input"
+          style="width: 350px"
           :fetch-suggestions="querySearchPdkType"
         ></ElAutocomplete>
         <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
@@ -343,7 +345,8 @@ export default {
           this.initWSSed() //发送ws 监听schema进度
         })
         .finally(() => {
-          this.loading = false
+          this.loadingNav = false
+          this.loadingTable = false
         })
     },
     select(item, index) {
@@ -749,7 +752,7 @@ export default {
     &:hover,
     &.is-plain:focus:hover {
       border-color: map-get($color, primary);
-      background-color: map-get($color, disable);
+      background-color: map-get($color, white);
     }
   }
   .task-form-body {
@@ -773,25 +776,25 @@ export default {
         display: flex;
         padding: 16px 0 10px 10px;
         &:hover {
-          background: rgba(44, 101, 255, 0.05);
+          background: map-get($bgColor, disactive);
           cursor: pointer;
-          border-left: 2px solid #2c65ff;
+          border-left: 2px solid map-get($color, primary);
         }
         &.active {
-          background: rgba(44, 101, 255, 0.05);
-          border-left: 2px solid #2c65ff;
+          background: map-get($bgColor, disactive);
+          border-left: 2px solid map-get($color, primary);
           cursor: pointer;
         }
         .task-form__img {
-          width: 34px;
-          height: 34px;
+          width: 20px;
+          height: 42px;
           img {
             width: 100%;
             height: 100%;
           }
         }
         .task-form-text-box {
-          margin-left: 16px;
+          margin-left: 10px;
           width: 140px;
           .source {
             font-size: 12px;
@@ -807,8 +810,8 @@ export default {
             font-size: 12px;
             font-weight: 400;
             color: #ef9868;
-            line-height: 10px;
-            margin-top: 13px;
+            line-height: 20px;
+            margin-top: 17px;
             text-align: left;
             white-space: nowrap;
             overflow: hidden;
@@ -817,8 +820,8 @@ export default {
           .select {
             font-size: 12px;
             font-weight: 400;
-            color: #000000;
-            line-height: 17px;
+            color: #86909c;
+            line-height: 5px;
             margin-top: 10px;
             display: flex;
             justify-content: space-between;

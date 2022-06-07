@@ -75,7 +75,11 @@ export default {
 
 <style lang="scss">
 .schema-error-dialog {
-  width: 80%;
+  width: 60% !important;
+  .el-message-box__content {
+    max-height: 350px;
+    overflow-y: auto;
+  }
 }
 .schema-progress-wrapper .connections-schema-status__icon {
   font-size: 14px;
