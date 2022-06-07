@@ -114,11 +114,9 @@ export default ({ routes }) => {
       buried('leaveSite', one.page, {
         times: t + 's'
       })
-      setTimeout(() => {
-        buried('leavePage', one.page, {
-          times: one.count + 's'
-        })
-      }, 300)
+      buried('leavePage', one.page, {
+        times: one.count + 's'
+      })
     }
     var loc = window.location,
       wsUrl = 'ws://'
