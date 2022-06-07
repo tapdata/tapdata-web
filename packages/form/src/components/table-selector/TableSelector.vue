@@ -204,12 +204,13 @@
 <style lang="scss" scoped>
 .table-selector {
   display: flex;
+  align-items: stretch;
   height: 100%;
   overflow: hidden;
 }
 .selector-panel {
   flex: 1;
-  height: 100%;
+  //height: 100%;
   display: flex;
   flex-direction: column;
   border: 1px solid map-get($borderColor, light);
