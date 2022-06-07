@@ -38,9 +38,9 @@
           </div>
         </ElFormItem>
       </ElForm>
-      <div class="mb-4">
+      <div class="flex flex-column flex-1 overflow-hidden">
         <div class="mb-4" style="font-size: 14px">{{ $t('function_import_list_title') }}</div>
-        <ElTable border class="table-border" :data="funcList">
+        <ElTable :data="funcList" height="100%">
           <ElTableColumn :label="$t('function_name_label')">
             <template #default="{ row, $index }">
               <div class="flex align-center">
@@ -52,7 +52,7 @@
                     placement="top"
                     :content="$t('function_tips_name_repeat')"
                   >
-                    <i class="el-icon-warning mr-2 color-error"></i>
+                    <i class="el-icon-warning mr-2 color-danger"></i>
                   </ElTooltip>
                   <span class="ellipsis">{{ row.function_name }}</span>
                   <ElButton
@@ -91,10 +91,10 @@
         </ElTable>
         <!-- </div>
         </div> -->
-        <div class="footer p-6">
-          <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
-          <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
-        </div>
+      </div>
+      <div class="footer mt-6">
+        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
+        <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
       </div>
     </div>
 
@@ -386,7 +386,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: map-get($bgColor, normal);
+  width: 100%;
   .btn {
     min-width: 80px;
   }
