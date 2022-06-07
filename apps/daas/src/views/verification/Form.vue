@@ -9,7 +9,7 @@
         class="grey"
         ref="baseForm"
         label-position="left"
-        label-width="96px"
+        label-width="160px"
         :model="form"
         :rules="rules"
         :validate-on-rule-change="false"
@@ -216,7 +216,7 @@
                   item.target.sortColumn || $t('message.placeholderSelect')
                 }}</span>
               </div>
-              <div v-if="editId === item.id" class="setting-item mt-4">
+              <!-- <div v-if="editId === item.id" class="setting-item mt-4">
                 <label class="item-label"></label>
                 <span class="item-select">
                   <label class="item-label mr-2">{{ $t('verify_form_source_filter') }}</label>
@@ -275,7 +275,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <div class="setting-item mt-4">
                 <ElCheckbox
                   v-if="editId === item.id"
@@ -522,11 +522,11 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './MultiSelection.vue'
-import { VCodeEditor, JsEditor } from '@tap/component'
+import { /*VCodeEditor,*/ JsEditor } from '@tap/component'
 
 import { DATA_NODE_TYPES } from '@/const.js'
 export default {
-  components: { MultiSelection, VCodeEditor, JsEditor },
+  components: { MultiSelection, /*VCodeEditor,*/ JsEditor },
   data() {
     let self = this
     let requiredValidator = (msg, check) => {

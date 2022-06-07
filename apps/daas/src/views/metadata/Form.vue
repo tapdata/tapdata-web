@@ -254,7 +254,6 @@ export default {
     this.fieldNameDisabled = this.data && this.data.id ? true : false
     this.getMetadataTable()
     this.getTypeMapping(this.metadata?.source?.database_type)
-    console.log(this.data, this.metadata)
   },
   methods: {
     // 获取外键表数据
