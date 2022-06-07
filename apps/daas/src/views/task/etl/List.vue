@@ -79,11 +79,12 @@
       >
       </el-table-column>
 
-      <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="400" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span class="dataflow-name link-primary">
+          <span class="dataflow-name link-primary flex">
             <ElLink
               type="primary"
+              class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handlePreview(row)"
               >{{ row.name }}</ElLink
@@ -94,24 +95,24 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('task_list_task_type')" min-width="150">
+      <el-table-column :label="$t('task_list_task_type')" min-width="140">
         <template #default="{ row }">
           <span>
             {{ row.type ? syncType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('task_list_status')" width="180">
+      <el-table-column prop="status" :label="$t('task_list_status')" min-width="110">
         <template #default="{ row }">
           <StatusItem :value="row.statusResult"></StatusItem>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="custom">
+      <el-table-column prop="createTime" :label="$t('column_create_time')" min-width="160" sortable="custom">
         <template #default="{ row }">
           {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="270" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="240" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
