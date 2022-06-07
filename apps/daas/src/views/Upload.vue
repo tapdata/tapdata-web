@@ -151,22 +151,6 @@ export default {
       // this.handlerUpload();
       this.$refs.upload.submit()
     }
-
-    // handlerUpload() {
-    // 	let formData = new FormData();
-    // 	if (this.fileList.length) {
-    // 		formData.append('file', this.fileList[0].file);
-    // 	}
-
-    // 	MetadataInstance.upload(this.upsert, this.downType, JSON.stringify(this.tagList), formData)
-    // 		.then(() => {
-    // 			this.status = true;
-    // 		})
-    // 		.catch(() => {
-    // 			this.status = false;
-    // 			this.$message.error(this.$t('dataFlow.uploadError'));
-    // 		});
-    // }
   }
 }
 </script>

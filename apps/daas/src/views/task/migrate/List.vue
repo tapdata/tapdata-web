@@ -63,7 +63,7 @@
           @click="handleImport"
         >
           <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('dataFlow.bulkImport') }}</span>
+          <span> {{ $t('button_bulk_import') }}</span>
         </el-button>
         <el-button
           v-readonlybtn="'SYNC_job_creation'"
@@ -72,7 +72,7 @@
           size="mini"
           @click="create"
         >
-          {{ $t('task_create_task') }}
+          {{ $t('button_create') }}
         </el-button>
       </div>
 
@@ -84,11 +84,12 @@
       >
       </el-table-column>
 
-      <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="400" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary">
             <ElLink
               type="primary"
+              class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handlePreview(row.id)"
               >{{ row.name }}</ElLink
@@ -99,14 +100,14 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('task_list_task_type')" width="150">
+      <el-table-column :label="$t('task_list_task_type')" min-width="140">
         <template #default="{ row }">
           <span>
             {{ row.type ? syncType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('task_list_status')" width="120">
+      <el-table-column prop="status" :label="$t('task_list_status')" min-width="110">
         <template #default="{ row }">
           <!--调度失败任务 统一归类为error-->
           <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
@@ -119,12 +120,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="createTime" :label="$t('column_create_time')" width="180" sortable="createTime">
+      <el-table-column prop="createTime" :label="$t('column_create_time')" min-width="160" sortable="createTime">
         <template #default="{ row }">
           {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="250" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="240" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -347,25 +348,22 @@ export default {
       return this.$refs.table
     }
   },
-  created() {
-    this.getFilterItems()
-  },
-  mounted() {
-    //定时轮询
-    timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 8000)
-
-    this.searchParams = this.$route.query
-  },
-  beforeDestroy() {
-    clearInterval(timeout)
-  },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
     }
+  },
+  created() {
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 8000)
+    this.getFilterItems()
+    this.searchParams = Object.assign(this.searchParams, this.$route.query)
+  },
+  beforeDestroy() {
+    clearInterval(timeout)
   },
   methods: {
     formatTime(time) {
@@ -737,9 +735,9 @@ export default {
             this.table.fetch()
             this.responseHandler(res.data, this.$t('message.resetOk'))
           })
-          .catch(() => {
-            this.$message.info(this.$t('message.cancelReset'))
-          })
+          // .catch(() => {
+          //   this.$message.info(this.$t('message.cancelReset'))
+          // })
           .finally(() => {
             this.restLoading = false
           })
@@ -758,9 +756,9 @@ export default {
           this.table.fetch()
           this.$message.success(this.$t('message.copySuccess'))
         })
-        .catch(() => {
-          this.$message.info(this.$t('message.copyFail'))
-        })
+      // .catch(() => {
+      //   this.$message.info(this.$t('message.copyFail'))
+      // })
     },
     setTag(ids, node) {
       this.dataFlowId = node.id
@@ -782,15 +780,6 @@ export default {
           this.table.fetch()
           this.responseHandler(res.data, this.$t('message_operation_succuess'))
         })
-      // .catch(err => {
-      //   if (err.response.msg === 'Metadata transformer error') {
-      //     this.$message.error('任务启动失败，请编辑任务完成映射配置')
-      //   } else if (err.response.msg === 'DataFlow has add or del stages') {
-      //     this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
-      //   } else if (err.response.msg === 'running transformer') {
-      //     this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
-      //   }
-      // })
     },
     skipHandler(id, errorEvents) {
       this.changeStatus([id], { status: 'scheduled', errorEvents })
@@ -841,9 +830,9 @@ export default {
             this.$message.success(this.$t('message_save_ok'))
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+        // .catch(() => {
+        //   this.$message.error(this.$t('message_save_fail'))
+        // })
         .finally(() => {
           this.taskSettingsDialog = false
         })

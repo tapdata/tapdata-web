@@ -481,9 +481,9 @@ export default {
               }
               // this.toDetails(res.data);
             })
-            .catch(() => {
-              this.$message.success(this.$t('message_save_fail'))
-            })
+          // .catch(() => {
+          //   this.$message.success(this.$t('message_save_fail'))
+          // })
         }
       })
     },
@@ -500,9 +500,9 @@ export default {
           this.changeNameDialogVisible = false
           this.table.fetch()
         })
-        .catch(() => {
-          this.$message.info(this.$t('message_save_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.info(this.$t('message_save_fail'))
+      // })
     },
     changeName(item) {
       this.changeNameDialogVisible = true
@@ -551,9 +551,9 @@ export default {
             this.$message.success(this.$t('message.deleteOK'))
             this.table.fetch()
           })
-          .catch(() => {
-            this.$message.info(this.$t('message.deleteFail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message.deleteFail'))
+        // })
         // .finally(() => {
         //   instance.confirmButtonLoading = false
         // })

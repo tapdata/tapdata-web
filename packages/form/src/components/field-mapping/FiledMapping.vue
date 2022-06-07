@@ -11,11 +11,10 @@
 <script>
 import List from './List'
 import Dialog from './Dialog'
-import VIcon from 'web-core/components/VIcon'
 
 export default {
   name: 'FieldMapping',
-  components: { List, Dialog, VIcon },
+  components: { List, Dialog },
   data() {
     return {
       dialogVisible: false

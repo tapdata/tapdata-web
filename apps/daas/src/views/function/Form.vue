@@ -1,11 +1,6 @@
 <template>
   <section v-loading="loading" class="custom-form-wrapper section-wrap">
     <div class="section-wrap-box overflow-auto">
-      <!-- <div class="container-header">
-        {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
-      </div> -->
-      <!-- <div v-loading="$route.params.id && !details.id" class="custom-form__body">
-        <div class="main px-6 py-4"> -->
       <ElForm
         v-if="!$route.params.id || details.id"
         ref="form"
@@ -211,9 +206,9 @@ export default {
                   this.$router.back()
                 }
               })
-              .catch(err => {
-                this.$message.error(err?.data?.message || this.$t('message_save_fail'))
-              })
+              // .catch(err => {
+              //   this.$message.error(err?.data?.message || this.$t('message_save_fail'))
+              // })
               .finally(() => {
                 this.loading = false
               })

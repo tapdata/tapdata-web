@@ -17,7 +17,9 @@
         </div>
       </template>
       <template slot="status" slot-scope="scope">
-        <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
+        <span :class="['status-connection-' + scope.row.status, 'status-block']">
+          {{ $t('connection.status.' + scope.row.status) }}
+        </span>
       </template>
       <template slot="schemaHeader">
         <div>
@@ -49,7 +51,6 @@
 
 <script>
 import TableList from '@/components/TableList'
-import StatusTag from '@/components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
@@ -57,7 +58,7 @@ import { getConnectionIcon } from '@/views/connections/util'
 
 export default {
   name: 'Connection',
-  components: { TableList, StatusTag, VIcon, SchemaProgress },
+  components: { TableList, VIcon, SchemaProgress },
   props: {
     ids: {
       type: Array,
@@ -180,9 +181,9 @@ export default {
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
       } catch (error) {
-        if (error?.isException) {
-          this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
-        }
+        // if (error?.isException) {
+        //   this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
+        // }
       }
     },
     async reload(row) {

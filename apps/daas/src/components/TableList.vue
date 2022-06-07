@@ -1,5 +1,5 @@
 <template>
-  <VTable v-bind="$attrs" v-on="$listeners" ref="table" border class="table-list">
+  <VTable v-bind="$attrs" v-on="$listeners" ref="table" class="table-list">
     <div slot="empty" class="pt-6">
       <slot name="empty">
         <div class="instance-table__empty" slot="empty">

@@ -200,15 +200,13 @@ export default {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       }
       let data = ''
-      taskApi
-        .getMetadata(this.dataFlow)
-        .then(res => {
-          data = res
-          this.initWSSed() //发送ws 监听schema进度
-        })
-        .catch(e => {
-          this.$message.error(e)
-        })
+      taskApi.getMetadata(this.dataFlow).then(res => {
+        data = res
+        this.initWSSed() //发送ws 监听schema进度
+      })
+      // .catch(e => {
+      //   this.$message.error(e)
+      // })
       return data
     },
     //清空表改名 字段改名

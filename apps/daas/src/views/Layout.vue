@@ -372,8 +372,8 @@ let menuSetting = [
       { name: 'dataVerificationList', code: 'Data_verify_menu' },
       // { name: 'sharedMiningList', code: 'log_collector_menu' },
       { name: 'functionList', code: 'SYNC_Function_management' },
-      { name: 'customNodeList', code: 'custom_node_menu' },
-      { name: 'sharedCacheList', code: 'shared_cache_menu' }
+      { name: 'customNodeList', code: 'custom_node_menu' }
+      // { name: 'sharedCacheList', code: 'shared_cache_menu' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
   {

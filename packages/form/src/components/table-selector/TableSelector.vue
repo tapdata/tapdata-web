@@ -64,12 +64,22 @@
     <!-- 左右箭头 按钮 -->
     <div class="selector-center">
       <div class="selector-btns">
-        <span class="btn-transfer" :class="{ 'btn-transfer--disabled': isOpenClipMode || disabled }" @click="add">
+        <span
+          class="btn-transfer"
+          :class="{
+            'btn-transfer--disabled': isOpenClipMode || disabled,
+            'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled
+          }"
+          @click="add"
+        >
           <i class="el-icon-arrow-right"></i>
         </span>
         <span
           class="btn-transfer mt-4"
-          :class="{ 'btn-transfer--disabled': isOpenClipMode || disabled }"
+          :class="{
+            'btn-transfer--disabled': isOpenClipMode || disabled,
+            'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled
+          }"
           @click="remove"
         >
           <i class="el-icon-arrow-left"></i>
@@ -184,7 +194,7 @@
           <ElLink class="ml-2" type="primary" @click="autofix">{{ $t('component_table_selector_autofix') }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
-          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>
+          <!--          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>-->
           <ElButton type="primary" @click="submitClipboard">{{ $t('button_confirm') }}</ElButton>
         </div>
       </div>
@@ -256,7 +266,7 @@
   }
 }
 .selector-center {
-  width: 76px;
+  width: 46px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -285,6 +295,10 @@
       background: map-get($bgColor, main);
       color: map-get($fontColor, normal);
       cursor: not-allowed;
+    }
+    &.btn-transfer--primary {
+      background: map-get($color, primary);
+      color: map-get($fontColor, white);
     }
   }
 }
@@ -582,7 +596,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('connection_reload_schema_fail'))
+          // this.$message.error(this.$t('connection_reload_schema_fail'))
           this.showProgress = false
           this.progress = 0 //加载完成
         })

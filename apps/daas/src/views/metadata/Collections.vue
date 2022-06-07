@@ -171,9 +171,9 @@ export default {
               this.getData(page)
               this.$message.success(this.$t('message_save_ok'))
             })
-            .catch(() => {
-              this.$message.error(this.$t('message_save_fail'))
-            })
+          // .catch(() => {
+          //   this.$message.error(this.$t('message_save_fail'))
+          // })
         }
       })
     },
@@ -192,9 +192,9 @@ export default {
               this.getData()
               this.$message.success(this.$t('message.deleteOK'))
             })
-            .catch(() => {
-              this.$message.info(this.$t('message.deleteFail'))
-            })
+          // .catch(() => {
+          //   this.$message.info(this.$t('message.deleteFail'))
+          // })
         }
       })
     },

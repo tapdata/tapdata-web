@@ -11,16 +11,16 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <div slot="operation">
-        <el-button
+        <ElButton
           v-readonlybtn="'SYNC_category_application'"
           size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="handleExport"
         >
-          <i class="iconfont icon-dakai1 back-btn-icon"></i>
-          <span> {{ $t('dataFlow.bulkExport') }}</span>
-        </el-button>
+          <i class="iconfont icon-daoru back-btn-icon"></i>
+          <span> {{ $t('button_bulk_export') }}</span>
+        </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
@@ -28,13 +28,13 @@
           size="mini"
           @click="$router.push({ name: 'dataVerificationCreate' })"
         >
-          <span> {{ $t('dataVerification.addVerifyTip') }}</span>
+          <span> {{ $t('button_create') }}</span>
         </ElButton>
       </div>
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyJobName')" min-width="180" show-overflow-tooltip>
+      <el-table-column :label="$t('dataVerification.verifyJobName')" min-width="250" show-overflow-tooltip>
         <template slot-scope="scope">
-          <div>{{ scope.row.name }}</div>
+          <div class="ellipsis">{{ scope.row.name }}</div>
           <div class="font-color-slight">
             <span
               >{{ inspectMethod[scope.row.inspectMethod] }} (
@@ -51,11 +51,11 @@
       </el-table-column>
       <el-table-column
         prop="sourceTotal"
-        width="120"
+        min-width="140"
         align="center"
         :label="$t('verify_history_source_total_rows')"
       ></el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyResult')" width="180">
+      <el-table-column :label="$t('dataVerification.verifyResult')" min-width="180">
         <template slot-scope="scope">
           <div class="flex align-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
@@ -87,7 +87,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
+      <el-table-column :label="$t('dataVerification.verifyStatus')" min-width="120" prop="status">
         <template slot-scope="scope">
           <span>{{ statusMap[scope.row.status] }}</span>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
@@ -99,9 +99,9 @@
         :label="$t('dataVerification.verifyTime')"
         prop="lastStartTime"
         sortable="lastStartTime"
-        width="150"
+        min-width="150"
       ></el-table-column>
-      <el-table-column :label="$t('dataVerification.operation')" width="250" fixed="right">
+      <el-table-column :label="$t('dataVerification.operation')" width="260" fixed="right">
         <template slot-scope="scope">
           <ElLink
             v-readonlybtn="'verify_job_edition'"
@@ -188,12 +188,14 @@ export default {
         running: this.$t('dataVerification.running')
       },
       validList: [
+        { label: this.$t('select_option_all'), value: '' },
         { label: this.$t('verify_check_same'), value: 'passed' },
         { label: this.$t('verify_count_difference'), value: 'row_count' },
         { label: this.$t('verify_content_difference'), value: 'valueDiff' },
-        { label: 'ERROR', value: 'error' }
+        { label: 'Error', value: 'error' }
       ],
       verifyTypeList: [
+        { label: this.$t('select_option_all'), value: '' },
         { label: this.$t('verify_row_verify'), value: 'row_count' },
         { label: this.$t('verify_content_verify'), value: 'field' },
         { label: this.$t('verify_joint_verify'), value: 'jointField' }
@@ -207,15 +209,18 @@ export default {
       return this.$refs.table
     }
   },
-  created() {
-    if (this.$route && this.$route.query) {
-      this.searchParams.keyword = this.$route.query.name
-      this.searchParams.result = this.$route.query.executionStatus
+  watch: {
+    '$route.query'() {
+      this.searchParams = this.$route.query
+      this.table.fetch(1)
     }
+  },
+  created() {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 10000)
+    }, 8000)
     this.getFilterItems()
+    this.searchParams = Object.assign(this.searchParams, this.$route.query)
   },
   destroyed() {
     clearInterval(timeout)
@@ -406,6 +411,7 @@ export default {
           key: 'mode',
           type: 'select-inner',
           items: [
+            { label: this.$t('select_option_all'), value: '' },
             { label: this.$t('verify_single'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
             { label: this.$t('verify_repeating'), value: 'cron' }
           ]
@@ -415,6 +421,7 @@ export default {
           key: 'enabled',
           type: 'select-inner',
           items: [
+            { label: this.$t('select_option_all'), value: '' },
             { label: this.$t('verify_job_enable'), value: 1 },
             { label: this.$t('verify_job_disable'), value: 2 }
           ]

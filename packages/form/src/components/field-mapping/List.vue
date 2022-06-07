@@ -184,6 +184,7 @@
         <ElAutocomplete
           v-model="editValueType[currentOperationType]"
           class="inline-input"
+          style="width: 350px"
           :fetch-suggestions="querySearchPdkType"
         ></ElAutocomplete>
         <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>

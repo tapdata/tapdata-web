@@ -376,9 +376,9 @@ export default {
                 this.getDataApi()
                 this.$message.success(this.$t('message_save_ok'))
               })
-              .catch(() => {
-                this.$message.error(this.$t('message_save_fail'))
-              })
+              // .catch(() => {
+              //   this.$message.error(this.$t('message_save_fail'))
+              // })
               .finally(() => {
                 this.dialogForm = false
               })
@@ -391,9 +391,9 @@ export default {
                 this.getDataApi()
                 this.$message.success(this.$t('message_save_ok'))
               })
-              .catch(() => {
-                this.$message.error(this.$t('message_save_fail'))
-              })
+              // .catch(() => {
+              //   this.$message.error(this.$t('message_save_fail'))
+              // })
               .finally(() => {
                 this.dialogForm = false
               })
@@ -422,15 +422,13 @@ export default {
           if (!resFlag) {
             return
           }
-          cluster
-            .removeMonitor(params)
-            .then(() => {
-              this.getDataApi()
-              this.$message.success(this.$t('message_save_ok'))
-            })
-            .catch(() => {
-              this.$message.error(this.$t('message_save_fail'))
-            })
+          cluster.removeMonitor(params).then(() => {
+            this.getDataApi()
+            this.$message.success(this.$t('message_save_ok'))
+          })
+          // .catch(() => {
+          //   this.$message.error(this.$t('message_save_fail'))
+          // })
         })
       } else {
         this.$message.error(this.$t('cluster_startup_after_delete'))
@@ -625,9 +623,9 @@ export default {
             this.$message.success(this.$t('message_delete_ok'))
             this.getDataApi()
           })
-          .catch(() => {
-            this.$message.info(this.$t('message_delete_fail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message_delete_fail'))
+        // })
       })
     },
     removeNode(id) {
@@ -637,9 +635,9 @@ export default {
           this.deleteDialogVisible = false
           this.$message.success(this.$t('message_delete_ok'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_delete_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_delete_fail'))
+      // })
     },
     //编辑
     editAgent(item) {
@@ -667,9 +665,9 @@ export default {
           this.editAgentDialog = false
           this.$message.success(this.$t('message_delete_ok'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_delete_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_delete_fail'))
+      // })
     },
     editNameRest() {
       this.agentName = this.currentNde.hostname

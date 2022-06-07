@@ -82,13 +82,13 @@ export default {
             inviteCode: this.inviteCode
           })
         } catch (e) {
-          if (e.response && e.response.msg) {
-            if (e.response.msg.indexOf('Email already exists')) {
-              this.$message.error(this.$t('app.signIn.email_existed'))
-            } else {
-              this.$message.error(`${e.response.msg}`)
-            }
-          }
+          // if (e.response && e.response.msg) {
+          //   if (e.response.msg.indexOf('Email already exists')) {
+          //     this.$message.error(this.$t('app.signIn.email_existed'))
+          //   } else {
+          //     this.$message.error(`${e.response.msg}`)
+          //   }
+          // }
           clearInterval(this.timer)
           this.timer = null
           // this.loading = false;

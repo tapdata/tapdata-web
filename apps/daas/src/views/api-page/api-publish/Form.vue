@@ -443,9 +443,9 @@ export default {
             this.$message.error(this.$t('module_form_no_server_preview_api'))
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('module_form_get_api_uri_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('module_form_get_api_uri_fail'))
+      // })
     },
     // 获取角色权限
     getRoles() {
@@ -460,9 +460,9 @@ export default {
             })
           }
         })
-        .catch(e => {
-          this.$message.error(e.response.msg)
-        })
+      // .catch(e => {
+      //   this.$message.error(e.response.msg)
+      // })
     },
     // // 更新权限编辑按钮展示
     // updateAuthority() {
@@ -552,12 +552,12 @@ export default {
                 this.$message.success(this.$t('message_save_ok'))
               }
             })
-            .catch(e => {
-              if (e?.response?.msg == 'duplication for name') {
-                this.$message.error(this.$t('module_form_duplication_name') + ',' + this.$t('message_save_fail'))
-              }
-              this.$message.error(this.$t('message_save_fail'))
-            })
+            // .catch(e => {
+            //   if (e?.response?.msg == 'duplication for name') {
+            //     this.$message.error(this.$t('module_form_duplication_name') + ',' + this.$t('message_save_fail'))
+            //   }
+            //   this.$message.error(this.$t('message_save_fail'))
+            // })
             .finally(() => {
               this.loadingFrom = false
             })
