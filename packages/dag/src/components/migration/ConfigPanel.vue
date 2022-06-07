@@ -19,7 +19,7 @@
           />
           <div v-if="!showEdit" class="flex align-center flex-1 overflow-hidden">
             <span class="text-truncate">{{ activeNode ? activeNode.name : '' }}</span>
-            <VIcon v-if="!stateIsReadonly" class="ml-1" size="14" @click="focusNameInput">edit-outline</VIcon>
+            <VIcon v-if="!stateIsReadonly" class="ml-2" size="14" @click="focusNameInput">edit-outline</VIcon>
           </div>
         </div>
       </template>

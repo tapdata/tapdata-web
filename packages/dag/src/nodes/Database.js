@@ -31,41 +31,48 @@ export class Database extends NodeType {
         'x-display': 'hidden'
       },
 
-      'attrs.connectionName': {
-        type: 'string',
-        title: '连接名称',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          className: 'form-item-text'
-        },
-        'x-component': 'PreviewText.Input',
+      layout: {
+        type: 'void',
+        title: '节点描述',
+        'x-component': 'FormLayout',
         'x-component-props': {
-          style: {
-            color: '#535F72'
-          }
-        }
-      },
-
-      // 所属agent
-      'attrs.accessNodeProcessId': {
-        type: 'string',
-        title: '所属agent',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          className: 'form-item-text'
+          layout: 'horizontal',
+          colon: false,
+          feedbackLayout: 'none'
         },
-        'x-component': 'PreviewText.Input',
-        'x-component-props': {
-          content:
-            '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
-          style: {
-            color: '#535F72'
-          }
-        },
-        'x-reactions': {
-          fulfill: {
-            state: {
-              display: '{{!$self.value ? "hidden":"visible"}}'
+        properties: {
+          'attrs.connectionName': {
+            type: 'string',
+            title: '连接名称',
+            'x-decorator': 'FormItem',
+            'x-component': 'PreviewText.Input',
+            'x-component-props': {
+              style: {
+                color: '#535F72'
+              }
+            }
+          },
+          'attrs.accessNodeProcessId': {
+            type: 'string',
+            title: '所属agent',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              className: 'form-item-text'
+            },
+            'x-component': 'PreviewText.Input',
+            'x-component-props': {
+              content:
+                '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
+              style: {
+                color: '#535F72'
+              }
+            },
+            'x-reactions': {
+              fulfill: {
+                state: {
+                  display: '{{!$self.value ? "hidden":"visible"}}'
+                }
+              }
             }
           }
         }
@@ -102,7 +109,15 @@ export class Database extends NodeType {
         default: 'all',
         required: true,
         'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          className: 'form-item-dense'
+        },
         'x-component': 'Radio.Group',
+        'x-component-props': {
+          style: {
+            marginBottom: '8px'
+          }
+        },
         enum: [
           {
             label: '全部',
@@ -118,7 +133,7 @@ export class Database extends NodeType {
           effects: ['onFieldInputValueChange'],
           fulfill: {
             state: {
-              value: '{{$self.value === "some" ? []:$self.value}}'
+              value: '{{$self.value === "some" ? [] : $target.value}}'
             }
           }
         }
@@ -155,6 +170,7 @@ export class Database extends NodeType {
         'x-component-props': {
           connectionId: '{{$values.connectionId}}',
           style: {
+            height: 'unset',
             minHeight: 0,
             maxHeight: 'calc(100vh - 120px)'
           }

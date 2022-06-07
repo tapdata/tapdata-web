@@ -71,7 +71,7 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <EmptyItem></EmptyItem>
           </div>
-          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
+          <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
           <NodePopover
             :popover="nodeMenu"
             @click-node="handleClickNodePopover"

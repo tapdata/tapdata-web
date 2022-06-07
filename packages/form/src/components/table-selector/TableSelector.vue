@@ -16,7 +16,6 @@
           >
         </div>
         <span v-if="showProgress" class="ml-2 color-primary">
-          <span>{{ $t('message_loading') }}</span>
           <i class="el-icon-loading mx-2"></i>
           <span>{{ progress }}%</span>
         </span>
@@ -205,12 +204,13 @@
 <style lang="scss" scoped>
 .table-selector {
   display: flex;
+  align-items: stretch;
   height: 100%;
   overflow: hidden;
 }
 .selector-panel {
   flex: 1;
-  height: 100%;
+  //height: 100%;
   display: flex;
   flex-direction: column;
   border: 1px solid map-get($borderColor, light);
