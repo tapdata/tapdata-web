@@ -116,7 +116,7 @@ import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
-import PaperEmpty from './components/PaperEmpty'
+// import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
@@ -136,7 +136,7 @@ export default {
   components: {
     NodePopover,
     EmptyItem,
-    PaperEmpty,
+    // PaperEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,
