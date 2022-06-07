@@ -217,7 +217,7 @@ export default {
         field_name: '',
         alias_name: '',
         comment: '',
-        data_type: 'String',
+        data_type: '',
         is_auto_allowed: false,
         autoincrement: 0,
         primary_key: false,

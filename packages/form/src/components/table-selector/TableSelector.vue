@@ -16,7 +16,6 @@
           >
         </div>
         <span v-if="showProgress" class="ml-2 color-primary">
-          <span>{{ $t('message_loading') }}</span>
           <i class="el-icon-loading mx-2"></i>
           <span>{{ progress }}%</span>
         </span>
