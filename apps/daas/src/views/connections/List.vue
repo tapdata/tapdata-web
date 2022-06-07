@@ -368,6 +368,8 @@ export default {
                   if (res && res.groups && res.groups.password) {
                     const { username, host, database, query } = res.groups
                     item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+                  } else {
+                    item.connectionUrl = item.config.uri
                   }
                 } else {
                   item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
