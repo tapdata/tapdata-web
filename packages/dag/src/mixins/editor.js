@@ -145,32 +145,75 @@ export default {
       return str.replace(new RegExp(`^${NODE_PREFIX}`), '')
     },
 
+    checkAsTarget(target, showMsg) {
+      let { allowSource } = target.__Ctor
+      allowSource = typeof allowSource === 'boolean' ? allowSource : true
+      const connectionType = target.attrs.connectionType
+      if (!allowSource || (connectionType && !connectionType.includes('target'))) {
+        showMsg && this.$message.error(`该节点「${target.name}」仅支持作为源`)
+        return false
+      }
+      return true
+    },
+
+    checkAsSource(source, showMsg) {
+      let { allowTarget } = source.__Ctor
+      allowTarget = typeof allowTarget === 'boolean' ? allowTarget : true
+      const connectionType = source.attrs.connectionType
+      if (!allowTarget || (connectionType && !connectionType.includes('source'))) {
+        showMsg && this.$message.error(`该节点「${source.name}」仅支持作为目标`)
+        return false
+      }
+      return true
+    },
+
+    checkTargetMaxInputs(target, showMsg) {
+      const maxInputs = target.__Ctor.maxInputs ?? -1
+      const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + target.id })
+
+      if (maxInputs !== -1 && connections.length >= maxInputs) {
+        showMsg && this.$message.error('该节点已经达到最大连线限制')
+        return false
+      }
+      return true
+    },
+
+    checkSourceMaxOutputs(source, showMsg) {
+      const maxOutputs = source.__Ctor.maxOutputs ?? -1
+      const connections = this.jsPlumbIns.getConnections({ source: NODE_PREFIX + source.id })
+
+      if (maxOutputs !== -1 && connections.length >= maxOutputs) {
+        showMsg && this.$message.error('该节点已经达到最大连线限制')
+        return false
+      }
+      return true
+    },
+
+    checkAllowTargetOrSource(source, target, showMsg) {
+      const { allowSource } = target.__Ctor
+      const { allowTarget } = source.__Ctor
+
+      if (typeof allowSource === 'function' && !allowSource(source)) {
+        showMsg && this.$message.error(`该节点「${target.name}」不支持「${source.name}」作为源`)
+        return false
+      }
+      if (typeof allowTarget === 'function' && !allowTarget(target, source)) {
+        showMsg && this.$message.error(`「${source.name}」不支持该节点「${target.name}」作为目标`)
+        return false
+      }
+      return true
+    },
+
     checkCanBeConnected(sourceId, targetId, showMsg) {
       if (sourceId === targetId) return false
       if (this.isConnected(sourceId, targetId)) return false
 
       const source = this.nodeById(sourceId)
       const target = this.nodeById(targetId)
-      const maxInputs = target.__Ctor.maxInputs ?? -1
-      const connectionType = target.attrs.connectionType
 
-      if (connectionType && !connectionType.includes('target')) {
-        showMsg && this.$message.info(`该节点「${target.name}」仅支持作为源`)
-        return false
-      }
-
-      const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + targetId })
-
-      if (maxInputs !== -1 && connections.length >= maxInputs) {
-        showMsg && this.$message.info('该节点已经达到最大连线限制')
-        return false
-      }
-
-      if (this.allowConnect(sourceId, targetId)) {
-        return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)
-      }
-
-      return false
+      if (!this.checkAsTarget(target, showMsg)) return false
+      if (!this.checkTargetMaxInputs(target, showMsg)) return false
+      return this.allowConnect(sourceId, targetId) && this.checkAllowTargetOrSource(source, target, showMsg)
     },
 
     checkGotoViewer() {
@@ -639,12 +682,7 @@ export default {
         if (this.stateIsReadonly) return false
         // 根据连接类型判断，节点是否仅支持作为目标
         const node = this.nodeById(this.getRealId(sourceId))
-        const connectionType = node.attrs.connectionType
-        if (connectionType && !connectionType.includes('source')) {
-          this.$message.info(`该节点「${node.name}」仅支持作为目标`)
-          return false
-        }
-        return true
+        return this.checkAsSource(node, true)
       })
 
       // 连线拖动时，可以被连的节点在画布上凸显

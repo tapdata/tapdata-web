@@ -7,9 +7,9 @@ export class TargetDatabase extends NodeType {
 
   type = 'database'
 
-  minInputs = 0 // 最小输入个数
   maxInputs = 1 // 最大输入个数
-  maxOutputs = 0 // 最大输出个数
+
+  allowTarget = false // 该节点不允许有目标
 
   group = 'output'
 
