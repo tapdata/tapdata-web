@@ -440,13 +440,6 @@ export default {
     getTime(time) {
       return formatTime(parseInt(time))
     },
-    getMilestoneStatus(status) {
-      let result = status
-      if (['draft', 'pause', 'error'].includes(this.task?.status) && status === 'running') {
-        result = 'pause'
-      }
-      return result
-    },
     getSearchItems() {
       this.filterItems = [
         {
