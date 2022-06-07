@@ -84,6 +84,8 @@ export default {
   button_finish: '完成',
   button_btn_back: '上一步',
   button_btn_next: '下一步',
+  button_bulk_import: '批量導入',
+  button_bulk_export: '批量導出',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -1183,7 +1185,6 @@ export default {
   task_name: '任務名稱',
   task_status: '任務狀態',
   task_sync_type: '任務同步類型',
-  task_create_task: '創建任務',
   task_button_pause: '暫停',
   task_button_recover: '恢復',
   task_button_start: '啟動', // 停止 編輯 子任務
@@ -1309,7 +1310,6 @@ export default {
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',
-  function_button_create_custom_function: '創建函數',
   function_button_import_jar: '導入jar包',
   function_button_edit_function: '編輯函數',
   function_details: '函數詳情',
@@ -1923,7 +1923,6 @@ export default {
   role_name_Data_SYNC: '瀏覽複製開發任務',
   role_name_SYNC_category_management: '任務分類管理',
   role_name_SYNC_category_application: '任務分類應用',
-  role_name_SYNC_job_creation: '創建任務',
   role_name_SYNC_job_delete: '刪除任務',
   role_name_SYNC_job_edition: '編輯任務',
   role_name_SYNC_job_operation: '任務操作',
