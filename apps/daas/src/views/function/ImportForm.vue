@@ -368,9 +368,9 @@ export default {
                 this.$router.back()
               }
             })
-            .catch(e => {
-              this.$message.error(e.response.msg)
-            })
+            // .catch(e => {
+            //   this.$message.error(e.response.msg)
+            // })
             .finally(() => {
               loading.close()
             })

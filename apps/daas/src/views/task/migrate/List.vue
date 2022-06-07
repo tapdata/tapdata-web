@@ -735,9 +735,9 @@ export default {
             this.table.fetch()
             this.responseHandler(res.data, this.$t('message.resetOk'))
           })
-          .catch(() => {
-            this.$message.info(this.$t('message.cancelReset'))
-          })
+          // .catch(() => {
+          //   this.$message.info(this.$t('message.cancelReset'))
+          // })
           .finally(() => {
             this.restLoading = false
           })
@@ -756,9 +756,9 @@ export default {
           this.table.fetch()
           this.$message.success(this.$t('message.copySuccess'))
         })
-        .catch(() => {
-          this.$message.info(this.$t('message.copyFail'))
-        })
+      // .catch(() => {
+      //   this.$message.info(this.$t('message.copyFail'))
+      // })
     },
     setTag(ids, node) {
       this.dataFlowId = node.id
@@ -830,9 +830,9 @@ export default {
             this.$message.success(this.$t('message_save_ok'))
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+        // .catch(() => {
+        //   this.$message.error(this.$t('message_save_fail'))
+        // })
         .finally(() => {
           this.taskSettingsDialog = false
         })

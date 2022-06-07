@@ -137,10 +137,6 @@ export default {
             this.$message.success(this.$t('license_renew_success'))
             this.$table.fetch()
           })
-          .catch(err => {
-            let msg = err?.response?.msg || err
-            this.$message.error(msg)
-          })
           .finally(() => {
             this.dialogLoading = false
           })

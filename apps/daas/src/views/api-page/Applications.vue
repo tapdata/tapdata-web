@@ -225,9 +225,9 @@ export default {
             this.$message.success(this.$t('message_delete_ok'))
             this.table.fetch()
           })
-          .catch(() => {
-            this.$message.info(this.$t('message_delete_fail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message_delete_fail'))
+        // })
       })
     },
     // 保存
@@ -250,9 +250,9 @@ export default {
                 this.$message.success(this.$t('message_save_ok'))
               }
             })
-            .catch(() => {
-              this.$message.error(this.$t('message_save_fail'))
-            })
+          // .catch(() => {
+          //   this.$message.error(this.$t('message_save_fail'))
+          // })
         }
       })
     },

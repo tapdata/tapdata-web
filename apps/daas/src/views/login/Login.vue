@@ -114,12 +114,8 @@ export default {
           sessionStorage.removeItem('lastLocationHref')
         }, 50)
       } catch (e) {
-        let msg = e?.data?.message
-        if (msg) {
-          this.$message.error(msg)
-          this.loading = false
-          this.form.password = oldPassword
-        }
+        this.loading = false
+        this.form.password = oldPassword
       }
     },
     // 注册账号

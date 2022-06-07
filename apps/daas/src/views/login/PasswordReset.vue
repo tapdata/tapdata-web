@@ -223,9 +223,9 @@ export default {
             this.$message.success(this.$t('signin_verify_code_success'))
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('signin_verify_code_error'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('signin_verify_code_error'))
+      // })
     },
 
     // 跳转登录

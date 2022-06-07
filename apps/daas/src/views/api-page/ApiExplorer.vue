@@ -400,132 +400,130 @@ export default {
     // 获取api下拉数据
     async loadOpenAPI(tag) {
       let _this = this
-      await this.apiClient
-        .loadOpenAPI()
-        .then(res => {
-          if (res) {
-            this.collectionsList = []
-            Object.keys(res.data).forEach(item => {
-              let operations = res.data[item].api,
-                apiId = res.data[item].apiId,
-                _apiName = res.data[item].apiName || '',
-                downloadFileUrl = ''
-              if (operations['downloadById']) {
-                downloadFileUrl = operations['downloadById'].url
-              }
-              if (operations['findPage_post']) {
+      await this.apiClient.loadOpenAPI().then(res => {
+        if (res) {
+          this.collectionsList = []
+          Object.keys(res.data).forEach(item => {
+            let operations = res.data[item].api,
+              apiId = res.data[item].apiId,
+              _apiName = res.data[item].apiName || '',
+              downloadFileUrl = ''
+            if (operations['downloadById']) {
+              downloadFileUrl = operations['downloadById'].url
+            }
+            if (operations['findPage_post']) {
+              _this.collectionsList.push({
+                collection: item,
+                apiName: _apiName,
+                text: item,
+                value: operations['findPage_post'].url,
+                method: operations['findPage_post'].method,
+                downloadFileUrl: downloadFileUrl,
+                apiId: apiId,
+                type: 'preset'
+              })
+            }
+            Object.keys(operations).forEach(operationName => {
+              if (operationName !== 'findPage_post' && operationName.startsWith('findPage_')) {
+                let url = operations[operationName].url
                 _this.collectionsList.push({
                   collection: item,
-                  apiName: _apiName,
-                  text: item,
-                  value: operations['findPage_post'].url,
-                  method: operations['findPage_post'].method,
+                  text: item + '/' + url.substring(url.lastIndexOf('/') + 1),
+                  value: url,
+                  method: operations[operationName].method,
                   downloadFileUrl: downloadFileUrl,
+                  operationName: operationName,
                   apiId: apiId,
-                  type: 'preset'
+                  type: 'custom'
                 })
               }
-              Object.keys(operations).forEach(operationName => {
-                if (operationName !== 'findPage_post' && operationName.startsWith('findPage_')) {
-                  let url = operations[operationName].url
-                  _this.collectionsList.push({
-                    collection: item,
-                    text: item + '/' + url.substring(url.lastIndexOf('/') + 1),
-                    value: url,
-                    method: operations[operationName].method,
-                    downloadFileUrl: downloadFileUrl,
-                    operationName: operationName,
-                    apiId: apiId,
-                    type: 'custom'
-                  })
-                }
-              })
+            })
+          })
+
+          if (_this.collectionsList?.length) {
+            let collectionsArr = []
+            // 去重
+            let obj = {}
+            _this.collectionsList = _this.collectionsList.reduce((cur, next) => {
+              obj[next.text] ? '' : (obj[next.text] = true && cur.push(next))
+              return cur
+            }, [])
+
+            _this.collectionsList.forEach(item => {
+              // 数据类目
+              if (tag && tag.length) {
+                tag.forEach(tagId => {
+                  if (tagId.id === item.apiId) {
+                    item.text = tagId.name || item.text
+                    collectionsArr.push(item)
+                  }
+                })
+              }
             })
 
-            if (_this.collectionsList?.length) {
-              let collectionsArr = []
-              // 去重
-              let obj = {}
-              _this.collectionsList = _this.collectionsList.reduce((cur, next) => {
-                obj[next.text] ? '' : (obj[next.text] = true && cur.push(next))
-                return cur
-              }, [])
-
-              _this.collectionsList.forEach(item => {
-                // 数据类目
-                if (tag && tag.length) {
-                  tag.forEach(tagId => {
-                    if (tagId.id === item.apiId) {
-                      item.text = tagId.name || item.text
-                      collectionsArr.push(item)
-                    }
-                  })
-                }
-              })
-
-              _this.collectionsList = collectionsArr?.length ? collectionsArr : _this.collectionsList
-              // 基础路径下拉获取值
-              _this.pathList = _this.collectionsList.map(item => {
-                return {
-                  label: item.text,
-                  value: item.value
-                }
-              })
-            }
-
-            // 页面缓存改变api
-            if (_this.collectionsList.length) {
-              // 如果缓存的api不在当前api列表中,则重置排序，默认第一个api
-              // let formData = window.getFormLocal('apiDataExplorer')
-              if (
-                this.searchParams.collection &&
-                _this.collectionsList.find(v => v.value === this.searchParams.collection)
-              ) {
-                // _this.searchParams.collection = formData.collection
-              } else {
-                _this.searchParams.collection = _this.collectionsList[0].value
+            _this.collectionsList = collectionsArr?.length ? collectionsArr : _this.collectionsList
+            // 基础路径下拉获取值
+            _this.pathList = _this.collectionsList.map(item => {
+              return {
+                label: item.text,
+                value: item.value
               }
-            } else {
-              _this.searchParams.collection = ''
-            }
-
-            // 页面传参改变默认api
-            let defaultCollection = _this.$route.query.collection || _this.$route.query['id']
-            if (defaultCollection) {
-              let obj = this.collectionsList.find(v => v.collection === defaultCollection && v.method === 'post')
-              if (obj) {
-                this.searchParams.collection = obj.value
-              }
-            }
-
-            let api = _this.collectionsList.filter(v => v.value === _this.searchParams.collection)
-            if (api[0]) {
-              _this.apiClient.setCollection(api[0])
-              _this.apiId = api[0].apiId
-            }
-
-            if (_this.searchParams.collection) {
-              _this.applyQueryParams()
-              // _this.table.fetch()
-            } else {
-              _this.tableHeader = []
-              _this.tableData = []
-              _this.searchParams.collection = ''
-            }
+            })
           }
-        })
-        .catch(e => {
-          const msg = {
-            default: this.$t('dataExplorer_timeout'),
-            504: this.$t('dataExplorer_timeout'),
-            401: this.$t('dataExplorer_unauthenticated')
-          }
-          if (e?.response) {
-            this.$message.error(msg['' + (e?.response?.status || '')])
+
+          // 页面缓存改变api
+          if (_this.collectionsList.length) {
+            // 如果缓存的api不在当前api列表中,则重置排序，默认第一个api
+            // let formData = window.getFormLocal('apiDataExplorer')
+            if (
+              this.searchParams.collection &&
+              _this.collectionsList.find(v => v.value === this.searchParams.collection)
+            ) {
+              // _this.searchParams.collection = formData.collection
+            } else {
+              _this.searchParams.collection = _this.collectionsList[0].value
+            }
           } else {
-            this.$message.error(this.$t('dataExplorer_timeout'))
+            _this.searchParams.collection = ''
           }
-        })
+
+          // 页面传参改变默认api
+          let defaultCollection = _this.$route.query.collection || _this.$route.query['id']
+          if (defaultCollection) {
+            let obj = this.collectionsList.find(v => v.collection === defaultCollection && v.method === 'post')
+            if (obj) {
+              this.searchParams.collection = obj.value
+            }
+          }
+
+          let api = _this.collectionsList.filter(v => v.value === _this.searchParams.collection)
+          if (api[0]) {
+            _this.apiClient.setCollection(api[0])
+            _this.apiId = api[0].apiId
+          }
+
+          if (_this.searchParams.collection) {
+            _this.applyQueryParams()
+            // _this.table.fetch()
+          } else {
+            _this.tableHeader = []
+            _this.tableData = []
+            _this.searchParams.collection = ''
+          }
+        }
+      })
+      // .catch(e => {
+      //   const msg = {
+      //     default: this.$t('dataExplorer_timeout'),
+      //     504: this.$t('dataExplorer_timeout'),
+      //     401: this.$t('dataExplorer_unauthenticated')
+      //   }
+      //   if (e?.response) {
+      //     this.$message.error(msg['' + (e?.response?.status || '')])
+      //   } else {
+      //     this.$message.error(this.$t('dataExplorer_timeout'))
+      //   }
+      // })
     },
     // 获取表头
     async getTableHeader() {
@@ -888,15 +886,13 @@ export default {
           if (!resFlag) {
             return
           }
-          this.apiClient
-            .deleteById(item._id)
-            .then(() => {
-              this.$message.success(this.$t('message_delete_ok'))
-              this.table.fetch()
-            })
-            .catch(() => {
-              this.$message.info(this.$t('message_delete_fail'))
-            })
+          this.apiClient.deleteById(item._id).then(() => {
+            this.$message.success(this.$t('message_delete_ok'))
+            this.table.fetch()
+          })
+          // .catch(() => {
+          //   this.$message.info(this.$t('message_delete_fail'))
+          // })
         })
       )
     },
@@ -1038,100 +1034,102 @@ export default {
             }
           })
       }
-      return Promise.all([await _this.apiClient.find(filter)])
-        .then(res => {
-          let typeMap = {
-            '[object String]': 'string',
-            '[object Boolean]': 'boolean',
-            '[object Number]': 'number',
-            '[object Object]': 'object'
-          }
-          let oldHeaders = JSON.parse(JSON.stringify(_this.tableHeader))
-          let headerMap = {}
-          // 保存之前的headers
-          oldHeaders.forEach(v => {
-            headerMap[v.value] = v
-          })
-          let findData = res?.[0]?.data?.data || []
-          if (findData?.length) {
-            findData.forEach(record => {
-              Object.keys(record).forEach(v => {
-                let isValidDate =
-                  typeof record[v] === 'string' &&
-                  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3}Z)?(\+\d{2}:\d{2})?$/.test(record[v])
-                if (!headerMap[v]) {
-                  let value = record[v]
-                  let h = {
-                    show: true,
-                    text: _this.aliasNameObj[v] || v,
-                    type: typeMap[Object.prototype.toString.call(value)],
-                    value: v,
-                    pkName: record[_this.pkName]
+      return (
+        Promise.all([await _this.apiClient.find(filter)])
+          .then(res => {
+            let typeMap = {
+              '[object String]': 'string',
+              '[object Boolean]': 'boolean',
+              '[object Number]': 'number',
+              '[object Object]': 'object'
+            }
+            let oldHeaders = JSON.parse(JSON.stringify(_this.tableHeader))
+            let headerMap = {}
+            // 保存之前的headers
+            oldHeaders.forEach(v => {
+              headerMap[v.value] = v
+            })
+            let findData = res?.[0]?.data?.data || []
+            if (findData?.length) {
+              findData.forEach(record => {
+                Object.keys(record).forEach(v => {
+                  let isValidDate =
+                    typeof record[v] === 'string' &&
+                    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3}Z)?(\+\d{2}:\d{2})?$/.test(record[v])
+                  if (!headerMap[v]) {
+                    let value = record[v]
+                    let h = {
+                      show: true,
+                      text: _this.aliasNameObj[v] || v,
+                      type: typeMap[Object.prototype.toString.call(value)],
+                      value: v,
+                      pkName: record[_this.pkName]
+                    }
+                    let header = oldHeaders.find(it => it.value === v)
+                    if (header) {
+                      h.show = header.show
+                    } else if (isValidDate) {
+                      h.type = 'date'
+                    }
+                    headerMap[v] = h
                   }
-                  let header = oldHeaders.find(it => it.value === v)
-                  if (header) {
-                    h.show = header.show
-                  } else if (isValidDate) {
-                    h.type = 'date'
-                  }
-                  headerMap[v] = h
-                }
-                if (isValidDate) {
-                  let time = dayjs(new Date(record[v])).format('YYYY-MM-DD HH:mm:ss')
-                  record[v] = _this.timeZoneConversion(time)
-                }
-              })
-              let isPrimaryKey = {
-                pkName: _this.pkName,
-                pkValue: record[_this.pkName]
-              }
-              this.$set(record, 'isshow', {})
-              this.$set(record, 'isspancen', {})
-              this.$set(record, 'isPrimaryKey', isPrimaryKey)
-              for (let i in record) {
-                record.isshow[i] = false
-                record.isspancen[i] = true
-              }
-              if (fields.length) {
-                Object.keys(fields).forEach((v, index) => {
-                  if (fields[index].dictionary) {
-                    fields[index].dictionary.forEach(j => {
-                      if (j.key == record['' + fields[index].field_name + '']) {
-                        record['' + fields[index].field_name + ''] = j.value
-                      }
-                    })
+                  if (isValidDate) {
+                    let time = dayjs(new Date(record[v])).format('YYYY-MM-DD HH:mm:ss')
+                    record[v] = _this.timeZoneConversion(time)
                   }
                 })
-              }
-              tableData.push(record)
-              record.istrue = false
-            })
-          }
+                let isPrimaryKey = {
+                  pkName: _this.pkName,
+                  pkValue: record[_this.pkName]
+                }
+                this.$set(record, 'isshow', {})
+                this.$set(record, 'isspancen', {})
+                this.$set(record, 'isPrimaryKey', isPrimaryKey)
+                for (let i in record) {
+                  record.isshow[i] = false
+                  record.isspancen[i] = true
+                }
+                if (fields.length) {
+                  Object.keys(fields).forEach((v, index) => {
+                    if (fields[index].dictionary) {
+                      fields[index].dictionary.forEach(j => {
+                        if (j.key == record['' + fields[index].field_name + '']) {
+                          record['' + fields[index].field_name + ''] = j.value
+                        }
+                      })
+                    }
+                  })
+                }
+                tableData.push(record)
+                record.istrue = false
+              })
+            }
 
-          this.tableData = tableData
-          _this.queryTime = formatTime(new Date().getTime() - time)
-          return {
-            total: res[0].data.total.count,
-            data: this.tableData
-          }
-        })
-        .catch(e => {
-          const msg = {
-            504: _this.$t('dataExplorer_message_timeout'),
-            500: _this.$t('dataExplorer_publish').replace('{id}', _this.collection),
-            401: _this.$t('dataExplorer_unauthenticated'), // user not have permissions
-            403: _this.$t('dataExplorer_no_permissions') // token expired
-          }
-          if (e?.response) {
-            _this.$message.error(msg['' + (e.response ? e.response.status : '')] || e.msg)
-          }
-        })
-        .finally(() => {
-          let renderStart = new Date().getTime()
-          _this.$nextTick(() => {
-            _this.renderTime = formatTime(new Date().getTime() - renderStart)
+            this.tableData = tableData
+            _this.queryTime = formatTime(new Date().getTime() - time)
+            return {
+              total: res[0].data.total.count,
+              data: this.tableData
+            }
           })
-        })
+          // .catch(e => {
+          //   const msg = {
+          //     504: _this.$t('dataExplorer_message_timeout'),
+          //     500: _this.$t('dataExplorer_publish').replace('{id}', _this.collection),
+          //     401: _this.$t('dataExplorer_unauthenticated'), // user not have permissions
+          //     403: _this.$t('dataExplorer_no_permissions') // token expired
+          //   }
+          //   if (e?.response) {
+          //     _this.$message.error(msg['' + (e.response ? e.response.status : '')] || e.msg)
+          //   }
+          // })
+          .finally(() => {
+            let renderStart = new Date().getTime()
+            _this.$nextTick(() => {
+              _this.renderTime = formatTime(new Date().getTime() - renderStart)
+            })
+          })
+      )
     },
     // 表格显示别名
     handleAliasName(aliasName) {

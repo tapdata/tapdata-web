@@ -155,11 +155,11 @@ export default {
           this.lastId = this.searchData[this.searchData.length - 1].id
           this.first = false //不是第一次请求
         })
-        .catch(err => {
-          if (err && err.response) {
-            this.$message.error(err.response.msg)
-          }
-        })
+        // .catch(err => {
+        //   if (err && err.response) {
+        //     this.$message.error(err.response.msg)
+        //   }
+        // })
         .finally(() => {
           this.loading = false
         })

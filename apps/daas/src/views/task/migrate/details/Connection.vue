@@ -181,9 +181,9 @@ export default {
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
       } catch (error) {
-        if (error?.isException) {
-          this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
-        }
+        // if (error?.isException) {
+        //   this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
+        // }
       }
     },
     async reload(row) {

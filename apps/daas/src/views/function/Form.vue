@@ -206,9 +206,9 @@ export default {
                   this.$router.back()
                 }
               })
-              .catch(err => {
-                this.$message.error(err?.data?.message || this.$t('message_save_fail'))
-              })
+              // .catch(err => {
+              //   this.$message.error(err?.data?.message || this.$t('message_save_fail'))
+              // })
               .finally(() => {
                 this.loading = false
               })

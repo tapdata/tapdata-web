@@ -561,9 +561,9 @@ export default {
                 this.$emit('dialogVisible', false)
                 this.$message.success(this.$t('metadata.details.success_Release'))
               })
-              .catch(() => {
-                this.$message.error(this.$t('message_save_fail'))
-              })
+            // .catch(() => {
+            //   this.$message.error(this.$t('message_save_fail'))
+            // })
           } else {
             this.$message.error(this.$t('metadata.details.filedName_repeat'))
           }

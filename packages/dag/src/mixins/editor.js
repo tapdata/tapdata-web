@@ -1241,14 +1241,15 @@ export default {
             }
           }
         }
-        this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
-      } else if (error?.data?.message) {
-        this.$message.error(error.data.message)
-      } else {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        this.$message.error(msg)
+        // this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
       }
+      // else if (error?.data?.message) {
+      //   this.$message.error(error.data.message)
+      // } else {
+      //   // eslint-disable-next-line no-console
+      //   console.error(error)
+      //   this.$message.error(msg)
+      // }
     },
 
     async handleUpdateName(name) {

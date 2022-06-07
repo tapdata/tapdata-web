@@ -567,7 +567,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('connection_reload_schema_fail'))
+          // this.$message.error(this.$t('connection_reload_schema_fail'))
           this.showProgress = false
           this.progress = 0 //加载完成
         })

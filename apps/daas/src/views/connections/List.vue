@@ -366,8 +366,8 @@ export default {
                       item.config.uri
                     )
                   if (res && res.groups && res.groups.password) {
-                    const {username, host,database, query } = res.groups
-                    item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query:''}`
+                    const { username, host, database, query } = res.groups
+                    item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
                   }
                 } else {
                   item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
@@ -458,13 +458,13 @@ export default {
             this.$message.success(this.$t('connection.copyMsg'))
           }
         })
-        .catch(err => {
-          if (err && err.response) {
-            if (err.response.msg === 'duplicate source') {
-              this.$message.error(this.$t('connection.copyFailedMsg'))
-            }
-          }
-        })
+      // .catch(err => {
+      //   if (err && err.response) {
+      //     if (err.response.msg === 'duplicate source') {
+      //       this.$message.error(this.$t('connection.copyFailedMsg'))
+      //     }
+      //   }
+      // })
     },
     remove(data) {
       const h = this.$createElement
@@ -499,23 +499,23 @@ export default {
               this.table.fetch()
             }
           })
-          .catch(err => {
-            let msg = err?.data?.message
-            if (msg && (msg.jobs || msg.modules)) {
-              this.$message.error(this.$t('connection.cannot_delete_remind'))
-              // const h = this.$createElement;
-              // this.$message.error(
-              // 	h('div', {}, [
-              // 		h('div', {}, ['数据源 ', h('span', {}, data.name), ' 被以下资源占用']),
-              // 		...msg.jobs.map(j => h('div', {}, [])),
-              // 		...msg.modules.map(j => h('div', {}, []))
-              // 	])
-              // );
-            } else if (err?.data?.code === 'Datasource.LinkJobs') {
-              this.$message.error(this.$t('connection_list_delete_link_job'))
-            } else {
-              this.$message.error(msg || this.$t('connection.deleteFail'))
-            }
+          .catch(() => {
+            // let msg = err?.data?.message
+            // if (msg && (msg.jobs || msg.modules)) {
+            //   this.$message.error(this.$t('connection.cannot_delete_remind'))
+            //   // const h = this.$createElement;
+            //   // this.$message.error(
+            //   // 	h('div', {}, [
+            //   // 		h('div', {}, ['数据源 ', h('span', {}, data.name), ' 被以下资源占用']),
+            //   // 		...msg.jobs.map(j => h('div', {}, [])),
+            //   // 		...msg.modules.map(j => h('div', {}, []))
+            //   // 	])
+            //   // );
+            // } else if (err?.data?.code === 'Datasource.LinkJobs') {
+            //   this.$message.error(this.$t('connection_list_delete_link_job'))
+            // } else {
+            //   this.$message.error(msg || this.$t('connection.deleteFail'))
+            // }
             resFlag.closeLoading()
           })
       })
@@ -581,9 +581,9 @@ export default {
           this.table.fetch()
           this.$message.success(this.$t('message_save_ok'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_save_fail'))
+      // })
     },
     //选择创建类型
     handleDialogDatabaseTypeVisible() {

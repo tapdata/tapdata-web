@@ -1309,10 +1309,10 @@ export default {
                 this.$router.back()
               }
             })
-            .catch(err => {
-              let message = err?.data?.message || this.$t('message_operation_error')
-              this.$message.error(message)
-            })
+          // .catch(err => {
+          //   let message = err?.data?.message || this.$t('message_operation_error')
+          //   this.$message.error(message)
+          // })
         }
       })
     }

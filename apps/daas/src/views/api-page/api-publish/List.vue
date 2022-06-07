@@ -386,9 +386,9 @@ export default {
           this.table.fetch()
           this.$message.success(this.$t('message_save_ok'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_save_fail'))
+      // })
     },
     // 状态改变查询
     statusChange() {
@@ -428,9 +428,9 @@ export default {
               this.table.fetch()
             }
           })
-          .catch(() => {
-            this.$message.error(this.$t('modules_status_deploy_fail'))
-          })
+        // .catch(() => {
+        //   this.$message.error(this.$t('modules_status_deploy_fail'))
+        // })
       })
     },
     // 取消发布
@@ -455,9 +455,9 @@ export default {
               this.table.fetch()
             }
           })
-          .catch(() => {
-            this.$message.error(this.$t('modules_cancel_failed'))
-          })
+        // .catch(() => {
+        //   this.$message.error(this.$t('modules_cancel_failed'))
+        // })
       })
     },
     // 编辑
@@ -486,9 +486,9 @@ export default {
             this.$message.success(this.$t('message_delete_ok'))
             this.table.fetch()
           })
-          .catch(() => {
-            this.$message.info(this.$t('message_delete_fail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message_delete_fail'))
+        // })
       })
     },
     // 批量取消和批量发布
@@ -591,9 +591,9 @@ export default {
             this.table.fetch()
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_copy_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_copy_fail'))
+      // })
     },
     getFilterItems() {
       this.filterItems = [
