@@ -58,7 +58,7 @@
         </el-dropdown>
         <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('dataFlow.bulkImport') }}</span>
+          <span> {{ $t('button_bulk_import') }}</span>
         </el-button>
         <el-button
           v-readonlybtn="'SYNC_job_creation'"
@@ -67,7 +67,7 @@
           size="mini"
           @click="create"
         >
-          {{ $t('task_create_task') }}
+          {{ $t('button_create') }}
         </el-button>
       </div>
 
@@ -376,24 +376,22 @@ export default {
       return options
     }
   },
-  created() {
-    this.getFilterItems()
-  },
-  mounted() {
-    //定时轮询
-    timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 8000)
-    this.searchParams = this.$route.query
-  },
-  beforeDestroy() {
-    clearInterval(timeout)
-  },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
     }
+  },
+  created() {
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 8000)
+    this.getFilterItems()
+    this.searchParams = Object.assign(this.searchParams, this.$route.query)
+  },
+  beforeDestroy() {
+    clearInterval(timeout)
   },
   methods: {
     formatTime(time) {
@@ -1241,7 +1239,7 @@ export default {
     border: 0;
     border-radius: 0;
     box-sizing: border-box;
-    background-: map-get($color, primary);
+    background: map-get($color, primary);
     transition: 0.1s;
     -webkit-appearance: none;
     -webkit-box-sizing: border-box;

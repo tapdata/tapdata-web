@@ -63,7 +63,7 @@
           @click="handleImport"
         >
           <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('dataFlow.bulkImport') }}</span>
+          <span> {{ $t('button_bulk_import') }}</span>
         </el-button>
         <el-button
           v-readonlybtn="'SYNC_job_creation'"
@@ -72,7 +72,7 @@
           size="mini"
           @click="create"
         >
-          {{ $t('task_create_task') }}
+          {{ $t('button_create') }}
         </el-button>
       </div>
 
@@ -348,25 +348,22 @@ export default {
       return this.$refs.table
     }
   },
-  created() {
-    this.getFilterItems()
-  },
-  mounted() {
-    //定时轮询
-    timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 8000)
-
-    this.searchParams = this.$route.query
-  },
-  beforeDestroy() {
-    clearInterval(timeout)
-  },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
     }
+  },
+  created() {
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 8000)
+    this.getFilterItems()
+    this.searchParams = Object.assign(this.searchParams, this.$route.query)
+  },
+  beforeDestroy() {
+    clearInterval(timeout)
   },
   methods: {
     formatTime(time) {
@@ -783,15 +780,6 @@ export default {
           this.table.fetch()
           this.responseHandler(res.data, this.$t('message_operation_succuess'))
         })
-      // .catch(err => {
-      //   if (err.response.msg === 'Metadata transformer error') {
-      //     this.$message.error('任务启动失败，请编辑任务完成映射配置')
-      //   } else if (err.response.msg === 'DataFlow has add or del stages') {
-      //     this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
-      //   } else if (err.response.msg === 'running transformer') {
-      //     this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
-      //   }
-      // })
     },
     skipHandler(id, errorEvents) {
       this.changeStatus([id], { status: 'scheduled', errorEvents })

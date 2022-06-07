@@ -83,6 +83,8 @@ export default {
   button_finish: '完成',
   button_btn_back: '上一步',
   button_btn_next: '下一步',
+  button_bulk_import: '批量导入',
+  button_bulk_export: '批量导出',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -1198,7 +1200,6 @@ export default {
   task_name: '任务名称',
   task_status: '任务状态',
   task_sync_type: '任务同步类型',
-  task_create_task: '创建任务',
   task_button_pause: '暂停',
   task_button_recover: '恢复',
   task_button_start: '启动', // 停止 编辑 子任务
@@ -1318,7 +1319,6 @@ export default {
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
-  function_button_create_custom_function: '创建函数',
   function_button_import_jar: '导入jar包',
   function_button_edit_function: '编辑函数',
   function_details: '函数详情',
@@ -1939,7 +1939,6 @@ export default {
   role_name_Data_SYNC: '浏览复制开发任务',
   role_name_SYNC_category_management: '任务分类管理',
   role_name_SYNC_category_application: '任务分类应用',
-  role_name_SYNC_job_creation: '创建任务',
   role_name_SYNC_job_delete: '删除任务',
   role_name_SYNC_job_edition: '编辑任务',
   role_name_SYNC_job_operation: '任务操作',
