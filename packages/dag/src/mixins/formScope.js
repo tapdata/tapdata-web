@@ -522,7 +522,7 @@ export default {
               value: item.field_name,
               isPrimaryKey: item.primary_key_position > 0
             }))
-            .filter(item => item.is_deleted)
+            .filter(item => !item.is_deleted)
         },
 
         /**
