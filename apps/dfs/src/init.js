@@ -107,8 +107,12 @@ export default ({ routes }) => {
     })
     let startTime = Date.now()
     window.onbeforeunload = () => {
+      let t = (Date.now() - startTime) / 1000
+      if (t < 1) {
+        return
+      }
       buried('leaveSite', one.page, {
-        times: (Date.now() - startTime) / 1000 + 's'
+        times: t + 's'
       })
       setTimeout(() => {
         buried('leavePage', one.page, {
