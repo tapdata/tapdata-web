@@ -381,7 +381,7 @@ export default {
       this.$api('Task')
         .getId(flowId)
         .then(res => {
-          if (['running', 'stop'].includes(res.data.status)) {
+          if (['running', 'stop', 'complete'].includes(res.data.status)) {
             this.$router.push({
               name: 'dataVerificationEdit',
               params: {
