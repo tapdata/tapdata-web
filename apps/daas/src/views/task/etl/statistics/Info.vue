@@ -223,7 +223,8 @@ export default {
           edit: true,
           stop: true,
           complete: true,
-          error: true
+          error: true,
+          schedule_failed: true
         },
         pause: {
           running: true
