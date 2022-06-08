@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="field-mapping flex flex-column">
+    <div class="node-field-mapping flex flex-column">
       <div class="task-form-body">
         <div class="task-form-left flex flex-column">
           <div class="flex mb-2 ml-2 mr-2">
@@ -296,9 +296,8 @@ export default {
     this.dataFlow['nodeId'] = this.dataFlow.activeNodeId
     if (this.isMetaData) {
       this.getMetaData() //触发推演接口则需要等待ws 第一次回消息刷新页面 以免拿到没有上次没有推演完的结果
-    } else {
-      this.getMetadataTransformer() //不需要推演 直接拿推演结果
     }
+    this.getMetadataTransformer() //不需要推演 直接拿推演结果
     //接收数据
     let id = this.dataFlow.nodeId
     let self = this
@@ -307,16 +306,16 @@ export default {
         let { finished, total, status } = res?.data
         self.progress.finished = finished
         self.progress.total = total
-        self.page.total = finished
+        self.page.total = total
         self.page.count = Math.ceil(finished / 10) === 0 ? 1 : Math.ceil(finished / 10)
+        if (self.navData?.length < self.page.size && self.page.current === 1 && total > self.page.size) {
+          //第一页 navData.length < page.size && total > page.size
+          self.getMetadataTransformer()
+        }
         if (status !== 'done') {
           self.progress.showProgress = true
-          if (self.navData?.length < self.page.size && self.page.current === 1) {
-            self.getMetadataTransformer()
-          }
         } else {
           self.progress.showProgress = false
-          self.getMetadataTransformer()
         }
       }
     })
@@ -685,7 +684,7 @@ export default {
 </script>
 
 <style lang="scss">
-.field-mapping {
+.node-field-mapping {
   .el-table::before {
     left: 0;
     bottom: 0;
@@ -697,10 +696,13 @@ export default {
     font-size: 12px;
     color: #999;
   }
+  .el-pagination button:hover {
+    color: map-get($color, primary);
+  }
 }
 </style>
 <style scoped lang="scss">
-.field-mapping {
+.node-field-mapping {
   flex: 1;
   height: 100%;
   overflow: hidden;
