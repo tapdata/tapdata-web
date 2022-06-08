@@ -1821,7 +1821,8 @@ const tc = {
         CHECK_BIN_LOG_SYNC: '檢查binlog日誌同步是否開啟',
         CHECK_GTID: ' 檢查GTID模式與GTID一致性是否開啟',
         CHECK_VIKA_API_TOKEN: '檢查vika驗證是否正確',
-        CHECK_REDO_LOG_PARSER: '檢查裸日誌解析服務是否可用'
+        CHECK_REDO_LOG_PARSER: '檢查裸日誌解析服務是否可用',
+        DORIS_HTTP: 'HTTP 連接是否可用'
       },
       initialReadSize: '初始化數據大小',
       incrementalTps: '測試速率(次/秒)',

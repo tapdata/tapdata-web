@@ -1850,7 +1850,8 @@ const cn = {
         CHECK_GTID: ' 检查GTID模式与GTID一致性是否开启',
         CHECK_VIKA_API_TOKEN: '检查vika密钥是否正确',
         CHECK_QINGFLOW_ACCESS_TOKEN: '检查access token是否可用',
-        CHECK_REDO_LOG_PARSER: '检查裸日志解析服务是否可用'
+        CHECK_REDO_LOG_PARSER: '检查裸日志解析服务是否可用',
+        DORIS_HTTP: 'HTTP 连接是否可用'
       },
       initialReadSize: '初始化数据大小',
       incrementalTps: '测试速率(次/秒)',

@@ -1871,7 +1871,8 @@ const en = {
         CHECK_BIN_LOG_SYNC: 'Check BINLOG sync enable',
         CHECK_GTID: 'Check of GTID mode and GTID consistency enable',
         CHECK_VIKA_API_TOKEN: 'Check if the vika key is correct',
-        CHECK_REDO_LOG_PARSER: 'Check if the raw log parsing service is available'
+        CHECK_REDO_LOG_PARSER: 'Check if the raw log parsing service is available',
+        DORIS_HTTP: 'HTTP connection available'
       },
       file: {
         fileAddr: 'File Address',
