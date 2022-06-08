@@ -3,7 +3,7 @@
     <div class="field-mapping flex flex-column">
       <div class="task-form-body">
         <div class="task-form-left flex flex-column">
-          <div class="flex mb-2">
+          <div class="flex mb-2 ml-2 mr-2">
             <div class="flex">
               <ElInput
                 v-model="searchTable"
@@ -15,9 +15,12 @@
               ></ElInput>
             </div>
           </div>
-          <div class="mb-2" v-if="progress.showProgress">
-            {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
-            ><span>{{ $t('dag_dialog_field_mapping_loading_schema') }}</span>
+          <div class="flex justify-content-between mb-2 ml-2">
+            <span class="font-weight-bold">表名</span>
+            <span class="mr-4" v-if="progress.showProgress"
+              ><i class="el-icon-loading link-primary mx-2"></i>
+              <span class="link-primary"> {{ progress.finished }} / {{ progress.total }} </span></span
+            >
           </div>
           <div class="task-form-left__ul flex flex-column" v-loading="loadingNav">
             <ul v-if="navData.length > 0">
@@ -135,7 +138,7 @@
               </template>
             </ElTableColumn>
             <div class="field-mapping-table__empty" slot="empty">
-              <div class="table__empty_img" style="margin-left: 40%"><img style="" :src="noData" /></div>
+              <div class="table__empty_img" style="margin-left: 30%"><img style="" :src="noData" /></div>
               <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
             </div>
           </ElTable>
@@ -681,21 +684,17 @@ export default {
 
 <style lang="scss">
 .field-mapping {
-  .el-table .delete-row {
-    background: #f2f2f2;
+  .el-table::before {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0;
   }
-  .el-table .error-row {
-    background: rgba(255, 0, 0, 0.3);
-    color: #fff;
+  .field-mapping-data-type {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #999;
   }
-  .el-table th {
-    background: #f4f5f7;
-  }
-}
-.field-mapping-data-type {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #999;
 }
 </style>
 <style scoped lang="scss">
@@ -745,7 +744,6 @@ export default {
   .btn-refresh {
     padding: 0;
     height: 28px;
-    line-height: 26px;
     width: 28px;
     min-width: 28px;
     font-size: 16px;
@@ -761,10 +759,14 @@ export default {
     height: 0;
     min-height: 350px;
     max-height: 350px;
+    border: 1px solid #f2f2f2;
+    .task-form-left {
+      margin-top: 8px;
+      border-right: 1px solid #f2f2f2;
+    }
     .task-form-left__ul {
       flex: 1;
       border-top: 1px solid #f2f2f2;
-      border-right: 1px solid #f2f2f2;
       max-width: 210px;
       overflow-x: hidden;
       overflow-y: auto;
@@ -835,6 +837,7 @@ export default {
       flex: 1;
       overflow: hidden;
       flex-direction: column;
+      margin-top: 8px;
     }
     .color-darkorange {
       color: darkorange;
@@ -849,6 +852,38 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
       line-height: 9px;
+    }
+  }
+  .field-mapping-table {
+    ::v-deep {
+      .el-table {
+        border: none;
+      }
+      .el-table__header {
+        .el-table__cell {
+          border-right: 0;
+          &.is-leaf {
+            border-bottom: 0;
+          }
+          &:hover {
+            border-right: 1px solid map-get($borderColor, light);
+          }
+        }
+        th {
+          color: map-get($fontColor, normal);
+          font-weight: 500;
+          white-space: nowrap;
+          background-color: map-get($bgColor, normal);
+        }
+      }
+      .el-table__body {
+        td {
+          color: map-get($fontColor, light);
+        }
+      }
+      &:after {
+        width: 0;
+      }
     }
   }
 }
