@@ -112,7 +112,7 @@
           {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="280" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="280">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
