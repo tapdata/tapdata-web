@@ -267,7 +267,7 @@ export default {
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
       this.allNodes.some(node => {
         const { id } = node
-        const minInputs = node.__Ctor.minInputs ?? 1 // 没有设置minInputs则缺省为1
+        const minInputs = node.__Ctor.minInputs ?? 1
         const inputNum = targetMap[id]?.length ?? 0
 
         if (!sourceMap[id] && !targetMap[id]) {
@@ -277,7 +277,7 @@ export default {
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要一个源节点`
+          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
           return true
         }
 

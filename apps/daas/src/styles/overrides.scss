@@ -68,6 +68,12 @@
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
   color: map-get($color, primary);
 }
+.el-select-dropdown.el-popper {
+  .popper__arrow,
+  .popper__arrow::after {
+    display: none;
+  }
+}
 // .el-select .el-input.is-focus .el-input__inner,
 // .el-select .el-input__inner:focus,
 // .el-input.is-active .el-input__inner,
@@ -713,9 +719,3 @@
     border-bottom: none;
   }
 }
-
-/*!* 改变主题色变量 *!
-$--color-primary: map-get($color, primary);
-!* 改变 icon 字体路径变量，必需 *!
-$--font-path: '~element-ui/lib/theme-chalk/fonts';
-@import "~element-ui/packages/theme-chalk/src/index";*/
