@@ -198,7 +198,9 @@ const getters = {
   hasNodeError: state => id => state.nodeErrorState[id],
 
   language: () => {
-    return langMap[Cookie.get('lang')].toLocaleLowerCase()
+    let lang = Cookie.get('lang')
+    lang = lang ? lang.replace('-', '_') : 'en_US'
+    if (lang) return langMap[Cookie.get('lang')].toLocaleLowerCase()
   },
 
   getMessage: (state, getters) => (token, locales) => {

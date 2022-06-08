@@ -101,7 +101,7 @@
         sortable="lastStartTime"
         min-width="150"
       ></el-table-column>
-      <el-table-column :label="$t('dataVerification.operation')" width="260" fixed="right">
+      <el-table-column :label="$t('dataVerification.operation')" width="260">
         <template slot-scope="scope">
           <ElLink
             v-readonlybtn="'verify_job_edition'"

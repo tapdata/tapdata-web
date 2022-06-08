@@ -12,14 +12,14 @@ export class NodeType {
   }
 
   /**
-   * 验证此允许连接到目标
+   * 验证能否作为该节点的目标
    */
   allowTarget() {
     return true
   }
 
   /**
-   * 验证接收源连接
+   * 验证能否作为该节点的源
    */
   allowSource() {
     return true

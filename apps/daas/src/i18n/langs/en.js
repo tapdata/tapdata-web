@@ -52,7 +52,7 @@ export default {
   button_copy: 'Copy',
   button_details: 'Details',
   button_preview: 'Preview',
-  button_reload: 'Reload schema',
+  button_reload: 'Reload',
   button_ok: 'OK',
   button_restart: 'Restart',
   button_start: 'Start',

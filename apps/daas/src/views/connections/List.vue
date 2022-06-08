@@ -60,39 +60,21 @@
           {{ scope.row.connectionUrl }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" width="100">
+      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" min-width="100">
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
               {{ $t('connection.status.' + row.status) }}
             </span>
-            <!--            <span v-if="['invalid'].includes(scope.row.status)" class="error">-->
-            <!--              <i class="connections-status__icon el-icon-error"></i>-->
-            <!--              <span>-->
-            <!--                {{ $t('connection.status.invalid') }}-->
-            <!--              </span>-->
-            <!--            </span>-->
-            <!--            <span v-if="['ready'].includes(scope.row.status)" class="success">-->
-            <!--              <i class="connections-status__icon el-icon-success"></i>-->
-            <!--              <span>-->
-            <!--                {{ $t('connection.status.ready') }}-->
-            <!--              </span>-->
-            <!--            </span>-->
-            <!--            <span v-if="['testing'].includes(scope.row.status)" class="warning">-->
-            <!--              <VIcon class="connections-status__icon">loading-circle</VIcon>-->
-            <!--              <span>-->
-            <!--                {{ $t('connection.status.testing') }}-->
-            <!--              </span>-->
-            <!--            </span>-->
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" width="160" :label="$t('connection.connectionType')">
+      <ElTableColumn prop="connection_type" min-width="140" :label="$t('connection.connectionType')">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="160">
+      <ElTableColumn min-width="160">
         <div slot="header">
           {{ $t('connection_list_column_schema_status') }}
           <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
@@ -103,12 +85,17 @@
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
-      <ElTableColumn width="160" prop="last_updated" sortable="last_updated" :label="$t('connection.lastUpdateTime')">
+      <ElTableColumn
+        prop="last_updated"
+        sortable="last_updated"
+        min-width="160"
+        :label="$t('connection.lastUpdateTime')"
+      >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="220" fixed="right" :label="$t('connection.operate')">
+      <ElTableColumn width="200" :label="$t('connection.operate')">
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElButton>
           <ElDivider direction="vertical"></ElDivider>
