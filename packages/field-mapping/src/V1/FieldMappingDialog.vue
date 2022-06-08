@@ -144,16 +144,16 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_type')" width="150">
             <template slot-scope="scope">
-              <div
-                class="cursor-pointer"
-                v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_type']"
-                @click="edit(scope.row, 'data_type')"
-              >
-                <span>{{ scope.row.t_data_type }}</span>
-                <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
-                <i class="icon el-icon-arrow-down"></i>
-              </div>
-              <div v-else>
+              <!--              <div-->
+              <!--                class="cursor-pointer"-->
+              <!--                v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_type']"-->
+              <!--                @click="edit(scope.row, 'data_type')"-->
+              <!--              >-->
+              <!--                <span>{{ scope.row.t_data_type }}</span>-->
+              <!--                <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>-->
+              <!--                <i class="icon el-icon-arrow-down"></i>-->
+              <!--              </div>-->
+              <div>
                 <span>{{ scope.row.t_data_type }}</span>
               </div>
             </template>
@@ -191,7 +191,9 @@
           <ElTableColumn :label="$t('meta_table_default')" width="180">
             <template slot-scope="scope">
               <div class="cursor-pointer" @click="edit(scope.row, 'default_value')">
-                <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
+                <ElTooltip class="item" effect="dark" :content="scope.row.t_default_value" placement="left">
+                  <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
+                </ElTooltip>
                 <i class="icon el-icon-edit-outline"></i>
               </div>
             </template>
@@ -1365,7 +1367,7 @@ export default {
   height: 100%;
   overflow: hidden;
   .icon {
-    color: #6dc5e8;
+    color: #2c65ff;
   }
   .icon-error {
     color: red;
@@ -1460,11 +1462,12 @@ export default {
     }
     .field-mapping-table__default_value {
       display: inline-block;
-      max-width: 60px;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
-      line-height: 9px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-height: 15px;
     }
   }
 }
