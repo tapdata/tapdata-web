@@ -1327,7 +1327,7 @@ export default {
     },
     getPdkEditValueType() {
       let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
-      if (findOne.rules) {
+      if (findOne?.rules) {
         findOne.rules.value?.forEach((el, i) => {
           if (Math.abs(el) === Infinity) {
             findOne.rules.value[i] = el + ''

@@ -620,7 +620,7 @@ export default {
           try {
             const data = await metadataApi.nodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
-            fields.sort((a, b) => {
+            /*fields.sort((a, b) => {
               const aIsPrimaryKey = a.primary_key_position > 0
               const bIsPrimaryKey = b.primary_key_position > 0
 
@@ -629,7 +629,7 @@ export default {
               } else {
                 return a.field_name.localeCompare(b.field_name)
               }
-            })
+            })*/
             return fields
           } catch (e) {
             // eslint-disable-next-line no-console
@@ -644,7 +644,7 @@ export default {
             const data = await metadataApi.nodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
             const keyMap = {}
-            fields.sort((a, b) => {
+            /*fields.sort((a, b) => {
               const aIsPrimaryKey = a.primary_key_position > 0
               const bIsPrimaryKey = b.primary_key_position > 0
 
@@ -656,7 +656,7 @@ export default {
               } else {
                 return a.field_name.localeCompare(b.field_name)
               }
-            })
+            })*/
             console.log('keyMap', keyMap) // eslint-disable-line
             field.setState({
               dataSource: Object.keys(keyMap)
