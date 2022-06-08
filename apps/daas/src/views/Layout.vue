@@ -76,7 +76,7 @@
         <ElMenu
           unique-opened
           class="menu"
-          :default-active="$route.name"
+          :default-active="activeMenu"
           :collapse="isCollapse"
           :collapse-transition="false"
           @select="menuHandler"
@@ -360,20 +360,20 @@ import dayjs from 'dayjs'
 
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
-  { name: 'connectionsList', icon: 'agent', code: 'datasource_menu' },
+  { name: 'connectionsList', icon: 'agent', code: 'datasource_menu', parent: 'connections' },
   {
     name: 'dataPipeline',
     label: 'page_title_data_pipeline',
     icon: 'huowuchuanshu',
     code: 'data_transmission',
     children: [
-      { name: 'migrateList', code: 'Data_SYNC_menu' },
-      { name: 'dataflowList', code: 'Data_SYNC_menu' },
-      { name: 'dataVerificationList', code: 'Data_verify_menu' },
-      // { name: 'sharedMiningList', code: 'log_collector_menu' },
-      { name: 'functionList', code: 'SYNC_Function_management' },
-      { name: 'customNodeList', code: 'custom_node_menu' }
-      // { name: 'sharedCacheList', code: 'shared_cache_menu' } // PDK暂时不支持共享缓存，暂时屏蔽
+      { name: 'migrateList', code: 'Data_SYNC_menu', parent: 'migrate' },
+      { name: 'dataflowList', code: 'Data_SYNC_menu', parent: 'dataflow' },
+      { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
+      // { name: 'sharedMiningList', code: 'log_collector_menu', parent: 'sharedMining' },
+      { name: 'functionList', code: 'SYNC_Function_management', parent: 'function' },
+      { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' }
+      // { name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
   {
@@ -382,8 +382,8 @@ let menuSetting = [
     icon: 'shujuzhili',
     code: 'data_government',
     children: [
-      { name: 'metadataList', code: 'data_catalog_menu' },
-      { name: 'search', code: 'data_search_menu' }
+      { name: 'metadataList', code: 'data_catalog_menu', parent: 'metadata' },
+      { name: 'search', code: 'data_search_menu', parent: 'search' }
     ]
   },
   {
@@ -392,13 +392,13 @@ let menuSetting = [
     icon: 'connection',
     code: 'data_publish',
     children: [
-      { name: 'apiPublishList', code: 'API_management_menu' },
-      { name: 'apiExplorer', code: 'API_data_explorer_menu' },
-      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
-      { name: 'apiClient', code: 'API_clients_menu' },
-      { name: 'apiServers', code: 'API_server_menu' },
-      { name: 'apiAuditList', code: 'API_server_menu' },
-      { name: 'apiMonitor', code: 'API_server_menu' }
+      { name: 'apiPublishList', code: 'API_management_menu', parent: 'apiPublish' },
+      { name: 'apiExplorer', code: 'API_data_explorer_menu', parent: 'apiExplorer' },
+      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu', parent: 'apiDocAndTest' },
+      { name: 'apiClient', code: 'API_clients_menu', parent: 'apiClient' },
+      { name: 'apiServers', code: 'API_server_menu', parent: 'apiServers' },
+      { name: 'apiAuditList', code: 'API_server_menu', parent: 'apiAudit' },
+      { name: 'apiMonitor', code: 'API_server_menu', parent: 'apiMonitor' }
     ]
   },
   {
@@ -407,9 +407,9 @@ let menuSetting = [
     icon: 'system',
     code: 'system_management',
     children: [
-      { name: 'clusterManagement', code: 'Cluster_management_menu' }
-      // { name: 'users', code: 'user_management_menu' },
-      // { name: 'roleList', code: 'role_management_menu' }
+      { name: 'clusterManagement', code: 'Cluster_management_menu', parent: 'migrate' }
+      // { name: 'users', code: 'user_management_menu', parent: 'migrate' },
+      // { name: 'roleList', code: 'role_management_menu', parent: 'migrate' }
     ]
   }
 ]
@@ -439,7 +439,8 @@ export default {
       licenseExpireDate: '',
       breadcrumbData: [],
       isCollapse: false,
-      isNotAside: this.$route?.meta?.isNotAside || false
+      isNotAside: this.$route?.meta?.isNotAside || false,
+      activeMenu: ''
     }
   },
   computed: {
@@ -450,10 +451,12 @@ export default {
   watch: {
     $route(data) {
       this.isNotAside = data?.meta?.isNotAside || false
+      this.getActiveMenu()
     }
   },
   created() {
     this.getMenus()
+    this.getActiveMenu()
 
     this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
 
@@ -477,6 +480,25 @@ export default {
     this.$root.$off('updateMenu')
   },
   methods: {
+    getActiveMenu() {
+      let route = this.$route
+      let activeMap = {}
+      const getMap = menus => {
+        menus.forEach(item => {
+          if (item?.children?.length) {
+            getMap(item?.children)
+          } else {
+            // parent 是用来匹配菜单是否激活的，比如函数管理的详情页，也属于函数管理，菜单也应该处于激活状态
+            // 之所以使用parent是因为管理的列表页面使用的也是子路由的，比如连接管理使用的是connectionList，而不是connection
+            activeMap[item.parent || item.name] = item.name
+          }
+        })
+      }
+      getMap(menuSetting)
+      let matched = route.matched || []
+      let activeRoute = matched.find(r => activeMap[r.name])
+      this.activeMenu = activeMap[activeRoute?.name] || ''
+    },
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
 
