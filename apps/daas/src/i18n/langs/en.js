@@ -601,7 +601,7 @@ export default {
   connection_form_tidb_server: 'PDServer address',
   connection_tidb_none_server: 'PDServer address cannot be empty',
 
-  connection_list_column_schema_status: 'Schema loading status',
+  connection_list_column_schema_status: 'Schema status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
   // 连接

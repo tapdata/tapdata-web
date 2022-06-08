@@ -125,7 +125,7 @@ $headerHeight: 40px;
   flex: 1;
   font-size: 14px;
   min-width: 0;
-
+  color: map_get($fontColor, normal);
   &:hover {
     .title-input {
       border-color: #dcdfe6;

@@ -15,8 +15,8 @@
               ></ElInput>
             </div>
           </div>
-          <div class="flex justify-content-between mb-2 ml-2">
-            <span class="font-weight-bold">表名</span>
+          <div class="bg-main flex justify-content-between mb-2 ml-2">
+            <span class="table-name ml-1">表名</span>
             <span class="mr-4" v-if="progress.showProgress"
               ><i class="el-icon-loading link-primary mx-2"></i>
               <span class="link-primary"> {{ progress.finished }} / {{ progress.total }} </span></span
@@ -131,7 +131,9 @@
             <ElTableColumn :label="$t('meta_table_default')">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!readOnly" @click="edit(row, 'default_value')">
-                  <span class="field-mapping-table__default_value">{{ row.default_value }}</span>
+                  <ElTooltip class="item" effect="dark" :content="row.default_value" placement="left">
+                    <span class="field-mapping-table__default_value">{{ row.default_value }}</span>
+                  </ElTooltip>
                   <i class="field-mapping__icon el-icon-edit-outline"></i>
                 </div>
                 <div v-else>{{ row.default_value }}</div>
@@ -702,9 +704,6 @@ export default {
   flex: 1;
   height: 100%;
   overflow: hidden;
-  .icon {
-    color: #6dc5e8;
-  }
   .icon-error {
     color: red;
   }
@@ -759,22 +758,26 @@ export default {
     height: 0;
     min-height: 350px;
     max-height: 350px;
-    border: 1px solid #f2f2f2;
+    border: 1px solid map-get($borderColor, light);
+    border-radius: 4px;
     .task-form-left {
-      margin-top: 8px;
-      border-right: 1px solid #f2f2f2;
+      padding-top: 8px;
+      border-right: 1px solid map-get($borderColor, light);
+      .table-name {
+        font-size: 12px;
+        color: map-get($fontColor, normal);
+        font-weight: 500;
+      }
     }
     .task-form-left__ul {
       flex: 1;
-      border-top: 1px solid #f2f2f2;
       max-width: 210px;
       overflow-x: hidden;
       overflow-y: auto;
       li {
-        background: #ffffff;
+        background: map-get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-        border-radius: 4px;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid map-get($borderColor, light);
         display: flex;
         padding: 16px 0 10px 10px;
         &:hover {
@@ -837,7 +840,7 @@ export default {
       flex: 1;
       overflow: hidden;
       flex-direction: column;
-      margin-top: 8px;
+      padding-top: 8px;
     }
     .color-darkorange {
       color: darkorange;
@@ -846,12 +849,12 @@ export default {
       color: map-get($color, primary);
     }
     .field-mapping-table__default_value {
-      display: inline-block;
-      max-width: 60px;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
-      line-height: 9px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-height: 15px;
     }
   }
   .field-mapping-table {
