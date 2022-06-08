@@ -271,7 +271,8 @@
                   class="value align-items-center align-middle"
                   :class="{ 'align-top': item.value && item.value.length > 15 }"
                 >
-                  {{ item.value }}
+                  <span v-if="item.label === 'type'"> {{ syncType[item.value] }} </span>
+                  <span v-else>{{ item.value }}</span>
                 </div>
               </div>
             </template>
@@ -599,16 +600,10 @@ export default {
         if (!resFlag) {
           return
         }
-        let routeUrl = this.$router.resolve({
+        this.$router.push({
           name: 'DataflowEditor',
           params: { id: id }
         })
-        setTimeout(() => {
-          document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-            it.outerHTML = ''
-          })
-          window.open(routeUrl.href, 'edit_' + id)
-        }, 200)
       })
       setTimeout(() => {
         document.querySelectorAll('.el-tooltip__popper').forEach(it => {
@@ -965,11 +960,7 @@ export default {
       this.isShowDetails = true
       this.previewData = data
       for (let item in data) {
-        if (['createUser', 'type', 'id', 'createTime'].includes(item)) {
-          if (['type'].includes(item)) {
-            data[item] = this.syncType[data[item]]
-          }
-
+        if (['type', 'createTime'].includes(item)) {
           if (['createTime'].includes(item)) {
             data[item] = this.formatTime(data[item])
           }

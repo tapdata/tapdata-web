@@ -766,7 +766,6 @@ export default {
     }
     .task-form-left__ul {
       flex: 1;
-      border-top: 1px solid #f2f2f2;
       max-width: 210px;
       overflow-x: hidden;
       overflow-y: auto;

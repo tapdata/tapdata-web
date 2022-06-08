@@ -589,7 +589,7 @@ export default {
   connection_form_tidb_server: 'PDServer 地址',
   connection_tidb_none_server: 'PDServer 地址不能為空',
 
-  connection_list_column_schema_status: 'Schema加載狀態',
+  connection_list_column_schema_status: 'Schema狀態',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
 
   // 連接
