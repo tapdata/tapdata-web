@@ -651,25 +651,28 @@
 // }
 
 // 页签
-.el-tabs__nav-wrap::after {
-  height: 1px;
-}
-// .el-tabs__item {
-//   color: map-get($fontColor, light)!important;
-// }
-.el-tabs__item.is-active {
-  color: map-get($color, primary);
-}
-.el-tabs__item:hover {
-  color: map-get($color, primary);
-}
-.el-tabs__active-bar {
-  background-color: map-get($color, primary);
-}
-.el-tabs__item {
-  // color: map-get($fontColor, light);
-  font-weight: 400;
-  user-select: none;
+.el-tabs {
+  .el-tabs__nav-wrap::after {
+    height: 1px;
+  }
+  .el-tabs__item {
+    color: map-get($fontColor, light);
+  }
+  .el-tabs__item.is-active {
+    color: map-get($color, primary);
+    font-weight: 500;
+  }
+  .el-tabs__item:hover {
+    color: map-get($color, primary);
+  }
+  .el-tabs__active-bar {
+    background-color: map-get($color, primary);
+  }
+  .el-tabs__item {
+    // color: map-get($fontColor, light);
+    font-weight: 400;
+    user-select: none;
+  }
 }
 .el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active {
   color: map-get($color, primary);
