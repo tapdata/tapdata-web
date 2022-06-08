@@ -39,7 +39,7 @@
         </ElButton>
       </div>
       <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="150" :label="$t('connection.dataBaseName')">
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('connection.dataBaseName')">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -55,12 +55,12 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('connection.connectionInfo')" min-width="150">
+      <ElTableColumn show-overflow-tooltip :label="$t('connection.connectionInfo')" min-width="200">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" min-width="100">
+      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" min-width="80">
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
@@ -69,12 +69,12 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="140" :label="$t('connection.connectionType')">
+      <ElTableColumn prop="connection_type" min-width="120" :label="$t('connection.connectionType')">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="160">
+      <ElTableColumn min-width="120">
         <div slot="header">
           {{ $t('connection_list_column_schema_status') }}
           <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
@@ -88,14 +88,14 @@
       <ElTableColumn
         prop="last_updated"
         sortable="last_updated"
-        min-width="160"
+        min-width="150"
         :label="$t('connection.lastUpdateTime')"
       >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="200" :label="$t('connection.operate')">
+      <ElTableColumn width="220" :label="$t('connection.operate')">
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElButton>
           <ElDivider direction="vertical"></ElDivider>
