@@ -306,7 +306,7 @@ export default {
         self.progress.finished = finished
         self.progress.total = total
         self.page.total = finished
-        self.page.count = Math.floor(finished / 10) === 0 ? 1 : Math.floor(finished / 10)
+        self.page.count = Math.ceil(finished / 10) === 0 ? 1 : Math.ceil(finished / 10)
         if (status !== 'done') {
           self.progress.showProgress = true
           if (self.navData?.length < self.page.size && self.page.current === 1) {
@@ -402,7 +402,7 @@ export default {
         .then(res => {
           let { total, items } = res
           this.page.total = total
-          this.page.count = Math.floor(total / 10) === 0 ? 1 : Math.floor(total / 10)
+          this.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
           this.navData = items
           //请求左侧table数据
           this.selectRow = this.navData?.[0] || {}
