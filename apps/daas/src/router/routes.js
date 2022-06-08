@@ -8,7 +8,7 @@ const VerificationResult = () => import(/* webpackChunkName: "verification-resul
 const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
 const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
 const ApiPublishForm = () => import(/* webpackChunkName: "api-publish-form" */ '@/views/api-page/api-publish/Form')
-const RoleDetails = () => import(/* webpackChunkName: "role-details" */ '@/views/role/Role')
+// const RoleDetails = () => import(/* webpackChunkName: "role-details" */ '@/views/role/Role')
 const DagEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
   return Editor
@@ -460,7 +460,9 @@ export default [
       /* ---------- 自定义节点  ----------*/
       {
         path: '/custom-node',
+        name: 'customNode',
         component: Parent,
+        redirect: 'custom-node/',
         meta: {
           title: 'page_title_custom_node'
         },
@@ -637,11 +639,10 @@ export default [
           code: 'API_server_menu'
         }
       },
-
       /* ---------- API审计  ----------*/
       {
         path: '/api-audit',
-        name: 'apiaudit',
+        name: 'apiAudit',
         component: Parent,
         redirect: 'api-audit/',
         meta: {
@@ -680,28 +681,28 @@ export default [
         }
       },
       /* ---------- 元数据管理  ----------*/
-      {
-        path: '/metadata',
-        name: 'metadataDefinition',
-        component: () => import(/* webpackChunkName: "metadata-definition" */ '@/views/metadata/List'),
-        meta: {
-          title: 'page_title_data_metadata',
-          code: 'data_catalog_menu',
-          types: [
-            'table',
-            'view',
-            'collection',
-            'mongo_view',
-            'database',
-            'job',
-            'dataflow',
-            'api',
-            'directory',
-            'ftp',
-            'apiendpoint'
-          ]
-        }
-      },
+      // {
+      //   path: '/metadata',
+      //   name: 'metadataDefinition',
+      //   component: () => import(/* webpackChunkName: "metadata-definition" */ '@/views/metadata/List'),
+      //   meta: {
+      //     title: 'page_title_data_metadata',
+      //     code: 'data_catalog_menu',
+      //     types: [
+      //       'table',
+      //       'view',
+      //       'collection',
+      //       'mongo_view',
+      //       'database',
+      //       'job',
+      //       'dataflow',
+      //       'api',
+      //       'directory',
+      //       'ftp',
+      //       'apiendpoint'
+      //     ]
+      //   }
+      // },
       /* ---------- 集群管理  ----------*/
       {
         path: '/cluster',
@@ -713,54 +714,54 @@ export default [
         }
       },
       /* ---------- 用户管理  ----------*/
-      {
-        path: '/user',
-        name: 'users',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/List'),
-        meta: {
-          title: 'page_title_user',
-          code: 'user_management_menu'
-        }
-      },
+      // {
+      //   path: '/user',
+      //   name: 'users',
+      //   component: () => import(/* webpackChunkName: "user" */ '@/views/user/List'),
+      //   meta: {
+      //     title: 'page_title_user',
+      //     code: 'user_management_menu'
+      //   }
+      // },
       /* ---------- 角色管理  ----------*/
-      {
-        path: '/role',
-        name: 'roles',
-        component: Parent,
-        redirect: 'role/',
-        meta: {
-          title: 'page_title_role'
-        },
-        children: [
-          {
-            path: '',
-            name: 'roleList',
-            component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
-            meta: {
-              title: 'page_title_role',
-              code: 'role_management_menu'
-            }
-          },
-          {
-            path: 'create',
-            name: 'role',
-            component: RoleDetails,
-            meta: {
-              title: 'page_title_role',
-              code: 'role_creation'
-            }
-          },
-          {
-            path: ':id/edit',
-            name: 'editRole',
-            component: RoleDetails,
-            meta: {
-              title: 'page_title_role',
-              code: 'role_edition'
-            }
-          }
-        ]
-      },
+      // {
+      //   path: '/role',
+      //   name: 'roles',
+      //   component: Parent,
+      //   redirect: 'role/',
+      //   meta: {
+      //     title: 'page_title_role'
+      //   },
+      //   children: [
+      //     {
+      //       path: '',
+      //       name: 'roleList',
+      //       component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
+      //       meta: {
+      //         title: 'page_title_role',
+      //         code: 'role_management_menu'
+      //       }
+      //     },
+      //     {
+      //       path: 'create',
+      //       name: 'role',
+      //       component: RoleDetails,
+      //       meta: {
+      //         title: 'page_title_role',
+      //         code: 'role_creation'
+      //       }
+      //     },
+      //     {
+      //       path: ':id/edit',
+      //       name: 'editRole',
+      //       component: RoleDetails,
+      //       meta: {
+      //         title: 'page_title_role',
+      //         code: 'role_edition'
+      //       }
+      //     }
+      //   ]
+      // },
       /* ---------- 设置  ----------*/
       {
         path: '/settingCenter',
@@ -804,15 +805,6 @@ export default [
         path: '/dailyRecord',
         name: 'dailyRecord',
         component: () => import('@/views/cluster/DailyRecord')
-      },
-      {
-        path: '/upload',
-        name: 'upload',
-        component: () => import('@/views/Upload'),
-        meta: {
-          title: 'tap.upload',
-          code: 'SYNC_job_import'
-        }
       },
       {
         path: '/dictionary',

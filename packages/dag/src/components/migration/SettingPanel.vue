@@ -348,14 +348,15 @@ export default observer({
 <style lang="scss" scoped>
 .attr-panel {
   ::v-deep {
+    .attr-panel-body {
+      padding-top: 0;
+    }
     .formily-element-form-item-label label {
       font-size: 12px;
     }
     .el-collapse-item__header {
       font-size: 14px;
-    }
-    .el-radio-group .el-radio {
-      margin-right: 8px;
+      font-weight: 500;
     }
   }
 }

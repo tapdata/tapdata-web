@@ -232,16 +232,6 @@ export default {
       }
       this.table.fetch(1)
     },
-    // 批量导入
-    handleImport() {
-      let routeUrl = this.$router.resolve({
-        name: 'upload',
-        query: {
-          type: 'Inspect'
-        }
-      })
-      window.open(routeUrl.href, '_blank')
-    },
     // 批量导出
     handleExport() {
       let ids = this.multipleSelection.map(item => item.id)
