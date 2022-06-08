@@ -966,7 +966,7 @@ export default {
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要一个源节点`
+          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
           return true
         }
 
