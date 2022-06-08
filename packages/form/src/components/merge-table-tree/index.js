@@ -146,7 +146,23 @@ export const MergeTableTree = observer(
         return setPath(temp)
       }
 
-      const loadField = (selfId, selfPath) => {
+      const loadTargetField = (selfId, selfPath) => {
+        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+          loading: true
+        })
+        metadataApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: false,
+            dataSource: fields.map(item => ({
+              label: item.field_name,
+              value: item.field_name,
+              isPrimaryKey: item.primary_key_position > 0
+            }))
+          })
+        })
+      }
+
+      const loadField = (selfId, selfPath, ifWait) => {
         const pathArr = selfPath.split('.children.')
         if (pathArr.length < 2) return
         props.loadFieldsMethod(selfId).then(fields => {
@@ -155,18 +171,22 @@ export const MergeTableTree = observer(
             dataSource: fields
           })
         })
-        setTimeout(() => {
-          metadataApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
-            form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-              loading: false,
-              dataSource: fields.map(item => ({
-                label: item.field_name,
-                value: item.field_name,
-                isPrimaryKey: item.primary_key_position > 0
-              }))
-            })
+
+        if (ifWait) {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: true
           })
-        }, 500)
+          // 等待自动保存接口响应后查询
+          let unwatch = root.$watch(
+            () => root.$store.state.dataflow.editVersion,
+            () => {
+              unwatch()
+              loadTargetField(selfId, selfPath)
+            }
+          )
+        } else {
+          loadTargetField(selfId, selfPath)
+        }
       }
 
       const handleCurrentChange = (data, node) => {
@@ -176,16 +196,14 @@ export const MergeTableTree = observer(
         if (data.id !== oldKey) {
           loadField(currentKey.value, path)
         }
-        console.log('handleCurrentChange', node) // eslint-disable-line
       }
 
-      const handleNodeDrop = node => {
-        console.log('handleNodeDrop', node, currentKey.value) // eslint-disable-line
+      const handleNodeDrop = () => {
         refs.tree.setCurrentKey(currentKey.value)
         const oldPath = currentPath.value
         const path = updatePath(refs.tree.getNode(currentKey.value))
         if (path !== oldPath) {
-          loadField(currentKey.value, path)
+          loadField(currentKey.value, path, true)
         }
       }
 

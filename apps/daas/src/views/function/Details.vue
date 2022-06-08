@@ -6,38 +6,38 @@
       </div> -->
       <!-- <div class="function-details__body" v-loading="!details.id">
         <div class="main px-6 py-4"> -->
-      <ElForm label-position="left" label-width="120px" size="small" :model="details">
+      <ElForm label-position="left" label-width="160px" size="small" :model="details">
         <ElFormItem :label="$t('function_name_label') + ':'">
-          <span>{{ details.function_name }}</span>
+          <span class="details-value">{{ details.function_name }}</span>
         </ElFormItem>
         <ElFormItem :label="$t('function_type_label') + ':'">
-          <span>{{ details.typeFmt }}</span>
+          <span class="details-value">{{ details.typeFmt }}</span>
         </ElFormItem>
         <template v-if="details.type === 'jar'">
           <ElFormItem :label="$t('function_jar_file_label') + ':'">
-            <span>{{ details.fileName }}</span>
+            <span class="details-value">{{ details.fileName }}</span>
           </ElFormItem>
           <ElFormItem :label="$t('function_package_name_label') + ':'">
-            <span>{{ details.packageName }}</span>
+            <span class="details-value">{{ details.packageName }}</span>
           </ElFormItem>
           <ElFormItem :label="$t('function_class_name_label') + ':'">
-            <span>{{ details.classNameFmt }}</span>
+            <span class="details-value">{{ details.classNameFmt }}</span>
           </ElFormItem>
           <ElFormItem :label="$t('function_method_name_label') + ':'">
-            <span>{{ details.methodName }}</span>
+            <span class="details-value">{{ details.methodName }}</span>
           </ElFormItem>
         </template>
         <ElFormItem :label="$t('function_describe_label') + ':'">
-          <span>{{ details.describe }}</span>
+          <span class="details-value">{{ details.describe }}</span>
         </ElFormItem>
         <ElFormItem :label="$t('function_format') + ':'">
-          <span>{{ details.format }}</span>
+          <span class="details-value">{{ details.format }}</span>
         </ElFormItem>
         <ElFormItem :label="$t('function_parameters_describe_label') + ':'">
-          <span>{{ details.parameters_desc }}</span>
+          <span class="details-value">{{ details.parameters_desc }}</span>
         </ElFormItem>
         <ElFormItem :label="$t('function_return_value_label') + ':'">
-          <span>{{ details.return_value }}</span>
+          <span class="details-value">{{ details.return_value }}</span>
         </ElFormItem>
       </ElForm>
       <div v-if="details.type === 'custom'" class="mb-4">
@@ -109,6 +109,10 @@ export default {
   //   background-color: map-get($bgColor, white);
   //   box-shadow: 0px 0px 3px 0px #cccccc;
   //   overflow: hidden;
+  .details-value {
+    color: map-get($fontColor, dark);
+    font-size: 12px;
+  }
   ::v-deep {
     .el-form {
       flex: 1;

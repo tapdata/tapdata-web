@@ -107,7 +107,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('task_list_status')" min-width="110">
+      <el-table-column prop="status" :label="$t('task_list_status')" min-width="120">
         <template #default="{ row }">
           <!--调度失败任务 统一归类为error-->
           <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">

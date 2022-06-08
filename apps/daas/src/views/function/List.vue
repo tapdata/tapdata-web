@@ -41,8 +41,8 @@
           <span>{{ $t('button_create') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn :label="$t('function_name_label')" prop="function_name" min-width="390"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="120"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_name_label')" prop="function_name" min-width="300"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="160"> </ElTableColumn>
       <ElTableColumn :label="$t('function_describe_label')" prop="describe" min-width="300"> </ElTableColumn>
       <ElTableColumn
         :label="$t('function_last_update_label')"
@@ -55,7 +55,7 @@
         </template>
       </ElTableColumn>
 
-      <ElTableColumn width="160" :label="$t('column_operation')">
+      <ElTableColumn width="180" :label="$t('column_operation')">
         <template #default="{ row }">
           <ElLink
             size="mini"
