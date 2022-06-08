@@ -1024,10 +1024,11 @@ export default {
         let id = this.$route.params?.id
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
+        let __TAPDATA = formValues.__TAPDATA
+        delete formValues['__TAPDATA']
         let params = Object.assign(
           {
-            name: formValues.name, // 必填
-            connection_type: formValues.connection_type, // 必填
+            ...__TAPDATA,
             database_type: pdkOptions.type,
             pdkHash: pdkOptions.pdkHash
           },
@@ -1042,7 +1043,7 @@ export default {
             pdkType: 'pdk'
           },
           {
-            config: formValues.config
+            config: formValues
           }
         )
         if (id) {
@@ -1085,9 +1086,10 @@ export default {
     },
     startTestPdk() {
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
-      this.model.name = formValues.name
-      this.model.connection_type = formValues.connection_type
-      this.model.config = formValues.config
+      let __TAPDATA = formValues.__TAPDATA
+      this.model = { ...this.model, ...__TAPDATA }
+      delete formValues['__TAPDATA']
+      this.model.config = formValues
       this.model.pdkType = 'pdk'
       this.model.pdkHash = this.$route.query?.pdkHash
       this.dialogTestVisible = true
@@ -1242,48 +1244,58 @@ export default {
             },
             properties: {}
           }
-          if (!id) {
-            result.properties.name = {
+          result.properties = {
+            '__TAPDATA.name': {
               type: 'string',
               title: this.$t('connection_form_connection_name'),
               required: true,
               'x-decorator': 'FormItem',
               'x-component': 'Input'
-            }
-          }
-          result.properties.connection_type = {
-            type: 'string',
-            title: this.$t('connection_form_connection_type'),
-            required: true,
-            default: 'source_and_target',
-            enum: [
-              {
-                label: this.$t('connection_form_source_and_target'),
-                value: 'source_and_target',
-                tip: this.$t('connection_form_source_and_target_tip')
-              },
-              {
-                label: this.$t('connection_form_source'),
-                value: 'source',
-                tip: this.$t('connection_form_source_tip')
-              },
-              {
-                label: this.$t('connection_form_target'),
-                value: 'target',
-                tip: this.$t('connection_form_target_tip')
+            },
+            '__TAPDATA.connection_type': {
+              type: 'string',
+              title: this.$t('connection_form_connection_type'),
+              required: true,
+              default: 'source_and_target',
+              enum: [
+                {
+                  label: this.$t('connection_form_source_and_target'),
+                  value: 'source_and_target',
+                  tip: this.$t('connection_form_source_and_target_tip')
+                },
+                {
+                  label: this.$t('connection_form_source'),
+                  value: 'source',
+                  tip: this.$t('connection_form_source_tip')
+                },
+                {
+                  label: this.$t('connection_form_target'),
+                  value: 'target',
+                  tip: this.$t('connection_form_target_tip')
+                }
+              ],
+              'x-decorator': 'FormItem',
+              'x-component': 'Radio.Group',
+              'x-component-props': {
+                optionType: 'button'
               }
-            ],
-            'x-decorator': 'FormItem',
-            'x-component': 'Radio.Group',
-            'x-component-props': {
-              optionType: 'button'
+            },
+            ...(data?.properties?.connection?.properties || {}),
+            '__TAPDATA.table_filter': {
+              type: 'string',
+              title: this.$t('connection_form_table_filter'),
+              'x-decorator': 'FormItem',
+              'x-component': 'Input.TextArea',
+              'x-component-props': {
+                placeholder: this.$t('connection_form_database_owner_tip')
+              }
             }
           }
-          result.properties.config = data?.properties?.connection || {}
-          this.schemaData = result
           if (id) {
             this.getPdkData(id)
+            delete result.properties['__TAPDATA.name']
           }
+          this.schemaData = result
         })
     },
     getPdkData(id) {
@@ -1291,9 +1303,15 @@ export default {
         .getNoSchema(id)
         .then(res => {
           this.model = res.data
+          let { name, connection_type, table_filter } = this.model
+          let __TAPDATA = {
+            name,
+            connection_type,
+            table_filter
+          }
           this.schemaFormInstance.setValues({
-            connection_type: this.model.connection_type,
-            config: this.model?.config
+            __TAPDATA,
+            ...this.model?.config
           })
           this.renameData.rename = this.model.name
         })
