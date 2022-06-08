@@ -72,6 +72,7 @@ importers:
       core-js: ^3.6.5
       cross-env: ^7.0.3
       crypto-js: ^4.0.0
+      css-unicode-loader: ^1.0.3
       dagre: ^0.8.5
       dayjs: ^1.11.2
       echarts: ^5.0.2
@@ -146,6 +147,7 @@ importers:
       babel-plugin-lodash: registry.npmmirror.com/babel-plugin-lodash/3.3.4
       compression-webpack-plugin: registry.npmmirror.com/compression-webpack-plugin/5.0.2
       cross-env: registry.npmmirror.com/cross-env/7.0.3
+      css-unicode-loader: registry.npmmirror.com/css-unicode-loader/1.0.3
       eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1
       eslint-plugin-vue: registry.npmmirror.com/eslint-plugin-vue/6.2.2
       express: registry.npmmirror.com/express/4.18.1
@@ -4243,7 +4245,7 @@ packages:
     name: axios
     version: 0.21.4
     dependencies:
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.0_debug@4.3.4
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -6257,6 +6259,12 @@ packages:
       source-map: registry.npmmirror.com/source-map/0.6.1
     dev: true
 
+  registry.npmmirror.com/css-unicode-loader/1.0.3:
+    resolution: {integrity: sha512-mszxqB0LCBO2ixbaz/tAH17iEAXmytUv0j/YXtPxhOi8D8Teh+mOXqmz+DZRtDil5tFx7ltbgw16dUptEw4jOg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/css-unicode-loader/-/css-unicode-loader-1.0.3.tgz}
+    name: css-unicode-loader
+    version: 1.0.3
+    dev: true
+
   registry.npmmirror.com/css-what/3.4.2:
     resolution: {integrity: sha512-ACUm3L0/jiZTqfzRM3Hi9Q8eZqd6IK37mMWPLz9PJxkLWllYeRf+EHUSHYEtFop2Eqytaq1FizFVh7XfBnXCDQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/css-what/-/css-what-3.4.2.tgz}
     name: css-what
@@ -8138,9 +8146,8 @@ packages:
       readable-stream: registry.npmmirror.com/readable-stream/2.3.7
     dev: true
 
-  registry.npmmirror.com/follow-redirects/1.15.0_debug@4.3.4:
+  registry.npmmirror.com/follow-redirects/1.15.0:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.0.tgz}
-    id: registry.npmmirror.com/follow-redirects/1.15.0
     name: follow-redirects
     version: 1.15.0
     engines: {node: '>=4.0'}
@@ -8149,8 +8156,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dependencies:
-      debug: registry.npmmirror.com/debug/4.3.4
 
   registry.npmmirror.com/for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/for-in/-/for-in-1.0.2.tgz}
@@ -9021,7 +9026,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: registry.npmmirror.com/eventemitter3/4.0.7
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.0_debug@4.3.4
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.0
       requires-port: registry.npmmirror.com/requires-port/1.0.0
     transitivePeerDependencies:
       - debug
@@ -12570,11 +12575,12 @@ packages:
     dev: true
 
   registry.npmmirror.com/prettier/2.6.2:
-    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/prettier/-/prettier-2.6.2.tgz}
+    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/prettier/-/prettier-2.6.2.tgz}
     name: prettier
     version: 2.6.2
     engines: {node: '>=10.13.0'}
     hasBin: true
+    requiresBuild: true
     dev: true
 
   registry.npmmirror.com/pretty-error/2.1.2:
@@ -15730,7 +15736,6 @@ packages:
     resolution: {integrity: sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue/-/vue-2.6.14.tgz}
     name: vue
     version: 2.6.14
-    dev: false
 
   registry.npmmirror.com/vuex/3.6.2:
     resolution: {integrity: sha512-ETW44IqCgBpVomy520DT5jf8n0zoCac+sxWnn+hMe/CzaSejb/eVw2YToiXYX+Ex/AuHHia28vWTq4goAexFbw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vuex/-/vuex-3.6.2.tgz}
