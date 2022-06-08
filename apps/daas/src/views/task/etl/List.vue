@@ -600,16 +600,10 @@ export default {
         if (!resFlag) {
           return
         }
-        let routeUrl = this.$router.resolve({
+        this.$router.push({
           name: 'DataflowEditor',
           params: { id: id }
         })
-        setTimeout(() => {
-          document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-            it.outerHTML = ''
-          })
-          window.open(routeUrl.href, 'edit_' + id)
-        }, 200)
       })
       setTimeout(() => {
         document.querySelectorAll('.el-tooltip__popper').forEach(it => {
