@@ -708,6 +708,12 @@
   }
 }
 
+.el-collapse-item {
+  &:last-child > .el-collapse-item__wrap {
+    border-bottom: none;
+  }
+}
+
 /*!* 改变主题色变量 *!
 $--color-primary: map-get($color, primary);
 !* 改变 icon 字体路径变量，必需 *!
