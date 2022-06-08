@@ -445,7 +445,8 @@ export default {
       formIndex: '',
       webScript: '',
       allStages: null,
-      jointErrorMessage: ''
+      jointErrorMessage: '',
+      isSelected: false
     }
   },
   created() {
@@ -580,9 +581,13 @@ export default {
     },
     //dataflow改变时
     selectedFnc(option) {
-      this.form.tasks = []
-      this.sourceTree = []
-      this.targetTree = []
+      if (this.isSelected) {
+        this.form.tasks = []
+        this.sourceTree = []
+        this.targetTree = []
+      } else {
+        this.isSelected = true
+      }
       this.form.name = this.form.name || option.name || ''
       this.getFlowStages()
     },
