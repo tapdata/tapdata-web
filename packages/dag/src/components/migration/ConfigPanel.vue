@@ -7,7 +7,7 @@
     <div class="panel-header flex align-center px-4 border-bottom">
       <template v-if="activeType !== 'settings'">
         <NodeIcon class="mr-2" :node="activeNode" />
-        <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
+        <div class="title-input-wrap flex align-center flex-shrink-0 h-100 font-color-light">
           <input
             v-show="showEdit"
             ref="nameInput"

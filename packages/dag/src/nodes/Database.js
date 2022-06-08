@@ -7,11 +7,9 @@ export class Database extends NodeType {
 
   type = 'database'
 
-  minInputs = 0 // 最小输入个数
-
-  maxInputs = 0 // 最大输入个数
-
   maxOutputs = 1 // 最大输出个数
+
+  allowSource = false // 该节点不允许有源
 
   group = 'data'
 
