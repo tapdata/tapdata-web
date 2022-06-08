@@ -144,16 +144,16 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_type')" width="150">
             <template slot-scope="scope">
-              <div
-                class="cursor-pointer"
-                v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_type']"
-                @click="edit(scope.row, 'data_type')"
-              >
-                <span>{{ scope.row.t_data_type }}</span>
-                <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
-                <i class="icon el-icon-arrow-down"></i>
-              </div>
-              <div v-else>
+              <!--              <div-->
+              <!--                class="cursor-pointer"-->
+              <!--                v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_type']"-->
+              <!--                @click="edit(scope.row, 'data_type')"-->
+              <!--              >-->
+              <!--                <span>{{ scope.row.t_data_type }}</span>-->
+              <!--                <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>-->
+              <!--                <i class="icon el-icon-arrow-down"></i>-->
+              <!--              </div>-->
+              <div>
                 <span>{{ scope.row.t_data_type }}</span>
               </div>
             </template>
