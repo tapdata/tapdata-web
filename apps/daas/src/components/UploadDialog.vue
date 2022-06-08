@@ -28,9 +28,9 @@
           :on-success="handleSuccess"
           :on-change="handleChange"
         >
-          <ElButton type="text" plain slot="trigger" size="mini">
-            <VIcon class="mr-1 link-primary" size="18">upload</VIcon>
-            {{ $t('modules_dialog_upload_files') }}</ElButton
+          <ElLink type="primary" plain slot="trigger" size="mini">
+            <VIcon class="mr-1 link-primary">upload</VIcon>
+            {{ $t('modules_dialog_upload_files') }}</ElLink
           >
         </ElUpload>
       </ElFormItem>
