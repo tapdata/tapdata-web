@@ -8,7 +8,7 @@
           }}
         </div>
         <div class="connection-from-label" v-if="$route.params.id">
-          <label class="label">{{ $t('connection_form_data_source') }}: </label>
+          <label class="label">{{ $t('connection_form_connection_name') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
