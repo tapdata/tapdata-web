@@ -190,18 +190,26 @@
           <!--          </ElTableColumn>-->
           <ElTableColumn :label="$t('meta_table_default')" width="180">
             <template slot-scope="scope">
-              <div class="cursor-pointer" @click="edit(scope.row, 'default_value')">
+              <div
+                class="cursor-pointer"
+                v-if="scope.row.field_name.indexOf('.') === -1"
+                @click="edit(scope.row, 'default_value')"
+              >
                 <ElTooltip class="item" effect="dark" :content="scope.row.t_default_value" placement="left">
                   <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
                 </ElTooltip>
                 <i class="icon el-icon-edit-outline"></i>
+              </div>
+              <div class="cursor-pointer" v-else>
+                <ElTooltip class="item" effect="dark" :content="scope.row.t_default_value" placement="left">
+                  <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
+                </ElTooltip>
               </div>
             </template>
           </ElTableColumn>
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
             :width="100"
-            fixed="right"
             v-if="modeMapping[transform.mode]['field_table_ops']"
           >
             <template slot-scope="scope">

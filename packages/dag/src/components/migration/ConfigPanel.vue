@@ -23,7 +23,7 @@
           </div>
         </div>
       </template>
-      <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100">
+      <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
         {{ $t('task_stetting_basic_setting') }}
       </div>
 

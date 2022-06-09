@@ -24,8 +24,8 @@ export class FieldRename extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'FieldRename',
         'x-reactions': [
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}',
-          '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0], $values.fieldsNameTransform)}}'
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}',
+          '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true}, $values.id, $values.$inputs[0], $values.fieldsNameTransform)}}'
         ],
         fieldsNameTransform: {
           type: 'string',

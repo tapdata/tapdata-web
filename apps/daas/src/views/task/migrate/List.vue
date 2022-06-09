@@ -84,7 +84,7 @@
       >
       </el-table-column>
 
-      <el-table-column min-width="400" :label="$t('task_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="380" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary">
             <ElLink

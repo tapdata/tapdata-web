@@ -66,7 +66,7 @@
                   onStop
                 }"
                 :key="db.id"
-                class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
+                class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
                 @dblclick="$emit('add-node', getNodeProps(db))"
               >
                 <div class="flex-shrink-0 mr-2 db-item-icon">
