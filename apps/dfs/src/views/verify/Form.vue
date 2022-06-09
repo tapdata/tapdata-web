@@ -17,8 +17,8 @@
         <AsyncSelect
           v-model="form.flowId"
           :method="getFlowItems"
-          :onSetSelected="selectedFnc"
           style="width: 342px"
+          @change="selectedFnc"
         ></AsyncSelect>
       </ElFormItem>
       <ElFormItem required class="form-item" :label="$t('verify_form_label_type') + ': '">
@@ -445,8 +445,7 @@ export default {
       formIndex: '',
       webScript: '',
       allStages: null,
-      jointErrorMessage: '',
-      isSelected: false
+      jointErrorMessage: ''
     }
   },
   created() {
@@ -581,13 +580,9 @@ export default {
     },
     //dataflow改变时
     selectedFnc(option) {
-      if (this.isSelected) {
-        this.form.tasks = []
-        this.sourceTree = []
-        this.targetTree = []
-      } else {
-        this.isSelected = true
-      }
+      this.form.tasks = []
+      this.sourceTree = []
+      this.targetTree = []
       this.form.name = this.form.name || option.name || ''
       this.getFlowStages()
     },
