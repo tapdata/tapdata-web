@@ -225,3 +225,19 @@ export const buried = (code, page, attrs) => {
   }
   window.axios.get('api/tcm/user/behavior?data=' + encodeURIComponent(JSON.stringify(data)))
 }
+
+export const addEvent = (target, eventType, handle) => {
+  if (document.addEventListener) {
+    target.addEventListener(eventType, handle)
+  } else {
+    target.attachEvent('on' + eventType, handle)
+  }
+}
+
+export const removeEvent = (target, eventType, handle) => {
+  if (document.removeEventListener) {
+    target.removeEventListener(eventType, handle)
+  } else {
+    target.detachEvent('on' + eventType, handle)
+  }
+}

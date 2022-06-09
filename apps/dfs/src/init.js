@@ -13,7 +13,7 @@ import TapdataWebCore from 'web-core'
 import i18n from './i18n'
 import Purchase from '@/views/purchase/Purchase'
 import store from '@/store'
-import { errorConfirmFnc, buried } from '@/util'
+import { errorConfirmFnc, buried, addEvent, removeEvent } from '@/util'
 import VConfirm from '@/components/v-confirm'
 
 Vue.config.productionTip = false
@@ -106,7 +106,7 @@ export default ({ routes }) => {
       }, 1000)
     })
     let startTime = Date.now()
-    window.onbeforeunload = () => {
+    const un = () => {
       let t = (Date.now() - startTime) / 1000
       if (t < 1) {
         return
@@ -118,6 +118,8 @@ export default ({ routes }) => {
         times: one.count + 's'
       })
     }
+    removeEvent(window, 'beforeunload', un)
+    addEvent(window, 'beforeunload', un)
     var loc = window.location,
       wsUrl = 'ws://'
     if (loc.protocol === 'https:') {
