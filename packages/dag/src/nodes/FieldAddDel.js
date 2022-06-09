@@ -25,7 +25,7 @@ export class FieldAddDel extends NodeType {
         'x-component': 'FieldAddDel',
         'x-reactions': [
           '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}',
-          '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0], $values.deleteAllFields)}}'
+          '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true},  $values.id , $values.$inputs[0], $values.deleteAllFields)}}'
         ]
       },
       deleteAllFields: {
