@@ -201,7 +201,6 @@
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
             :width="100"
-            fixed="right"
             v-if="modeMapping[transform.mode]['field_table_ops']"
           >
             <template slot-scope="scope">
