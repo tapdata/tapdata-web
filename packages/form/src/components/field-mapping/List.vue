@@ -60,7 +60,7 @@
               </li>
             </ul>
             <div class="task-form-left__ul flex flex-column align-items-center" v-else>
-              <div class="table__empty_img" style="margin-top: 40%"><img style="" :src="noData" /></div>
+              <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
               <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
             </div>
           </div>
@@ -863,6 +863,9 @@ export default {
     ::v-deep {
       .el-table {
         border: none;
+      }
+      .el-table__empty-block {
+        height: 100% !important;
       }
       .el-table__header {
         .el-table__cell {

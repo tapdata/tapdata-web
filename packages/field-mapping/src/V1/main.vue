@@ -268,7 +268,7 @@ export default {
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       // 初始化所有字段都映射 只取顶级字段
-      source = source.filter(field => field.field_name.indexOf('.') === -1)
+      //source = source.filter(field => field.field_name.indexOf('.') === -1)
       //映射关系
       let fieldsMapping = row.fieldsMapping
       //源表 目标表数据组合
