@@ -94,7 +94,7 @@ export const FieldModType = connect(
             <div class="field-processor-operation flex">
               <span class="flex-1 text inline-block ml-6">字段名称</span>
               <span class="flex-1 text inline-block ml-10">源字段类型</span>
-              <span class="field-type text inline-block pl-11">目标字段类型</span>
+              <span class="flex-1 text inline-block pl-11">目标字段类型</span>
               <span class="field-ops inline-block ml-10">
                 <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
                   revoke
@@ -119,7 +119,7 @@ export const FieldModType = connect(
                       <span class="flex-1 inline-block">{data.type}</span>
                       <ElSelect
                         v-model={data.data_type}
-                        class="field-type inline-block"
+                        class="flex-1 inline-block"
                         size="mini"
                         onChange={() => this.handleDataType(node, data)}
                       >

@@ -121,20 +121,13 @@ export const FieldRename = connect(
                         ) : (
                           ''
                         )}
-                        {this.isRename(data.id) ? (
-                          <VIcon class={['ml-3', 'clickable']} size="12">
-                            info
-                          </VIcon>
-                        ) : (
-                          ''
-                        )}
                       </span>
                       <span class="e-ops mr-12">
                         <ElButton
                           type="text"
                           class="ml-5"
                           disabled={
-                            (!this.isRename(data.id) && this.fieldsNameTransforms === '') || this.isReset(data.id)
+                            (this.fieldsNameTransforms === '' && !this.isRename(data.id)) || this.isReset(data.id)
                           }
                           onClick={() => this.handleReset(node, data)}
                         >
@@ -156,6 +149,10 @@ export const FieldRename = connect(
         },
         isReset(id) {
           let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.reset)
+          return ops && ops.length > 0
+        },
+        firstReset(id) {
+          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.firstReset)
           return ops && ops.length > 0
         },
         checkOps(fields) {
@@ -204,7 +201,7 @@ export const FieldRename = connect(
         /*rename
          * @node 当前tree
          * @data 当前数据*/
-        handleRename(node, data) {
+        handleRename(node, data, first) {
           console.log('fieldProcessor.handleRename', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id) //查找初始schema
           let existsName = this.handleExistsName(node, data)
@@ -226,14 +223,15 @@ export const FieldRename = connect(
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
               field: nativeData.original_field_name,
-              operand: data.field_name,
+              operand: this.fieldsNameTransforms !== '' ? nativeData.original_field_name : data.field_name,
               table_name: data.table_name,
               type: data.type,
               primary_key_position: data.primary_key_position,
               color: data.color,
               label: data.field_name,
               field_name: data.field_name,
-              reset: this.fieldsNameTransforms !== ''
+              reset: this.fieldsNameTransforms !== '',
+              firstReset: first || false
             })
             this.operations.push(op)
           } else {
@@ -246,6 +244,7 @@ export const FieldRename = connect(
               op.operand = data.field_name
               op.label = data.field_name
               op.field_name = data.field_name
+              op.reset = false
             }
           }
           this.$forceUpdate()
@@ -284,9 +283,9 @@ export const FieldRename = connect(
           return field
         },
         handleReset(node, data) {
-          if (this.fieldsNameTransforms !== '') {
-            //所有字段批量修改过，撤回既是保持原来字段名
-            this.handleRename(node, data)
+          if (this.fieldsNameTransforms !== '' && !this.firstReset(data.id)) {
+            //所有字段批量修改过，撤回既是保持原来字段名 且第一次重置
+            this.handleRename(node, data, true)
             return
           }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
