@@ -766,6 +766,8 @@ export default {
       padding-top: 8px;
       border-right: 1px solid map-get($borderColor, light);
       .table-name {
+        height: 40px;
+        line-height: 42px;
         font-size: 12px;
         color: map-get($fontColor, normal);
         font-weight: 500;
