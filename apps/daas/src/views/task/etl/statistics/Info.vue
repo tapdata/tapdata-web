@@ -594,7 +594,7 @@ export default {
             } else if (reset) {
               overData[key] = val1 - val0
             } else {
-              overData[key] += val1 - val0
+              overData[key] = val1 - val0 + (overData[key] || 0)
             }
           }
         }
