@@ -18,7 +18,8 @@
           v-model="form.flowId"
           :method="getFlowItems"
           style="width: 342px"
-          @change="selectedFnc"
+          :onSetSelected="selectedFnc"
+          @change="changeFnc"
         ></AsyncSelect>
       </ElFormItem>
       <ElFormItem required class="form-item" :label="$t('verify_form_label_type') + ': '">
@@ -579,12 +580,14 @@ export default {
         })
     },
     //dataflow改变时
-    selectedFnc(option) {
+    changeFnc() {
       this.form.tasks = []
       this.sourceTree = []
       this.targetTree = []
-      this.form.name = this.form.name || option.name || ''
       this.getFlowStages()
+    },
+    selectedFnc(option) {
+      this.form.name = this.form.name || option.name || ''
     },
     dealData(flowData, callback, isDB) {
       let types = isDB ? ['database'] : ['table', 'collection', 'kafka']
