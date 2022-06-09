@@ -1024,11 +1024,13 @@ export default {
         let id = this.$route.params?.id
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
-        let __TAPDATA = formValues.__TAPDATA
-        delete formValues['__TAPDATA']
+        let { __TAPDATA_START, __TAPDATA_END } = formValues
+        delete formValues['__TAPDATA_START']
+        delete formValues['__TAPDATA_END']
         let params = Object.assign(
           {
-            ...__TAPDATA,
+            ...__TAPDATA_START,
+            ...__TAPDATA_END,
             database_type: pdkOptions.type,
             pdkHash: pdkOptions.pdkHash
           },
@@ -1086,9 +1088,10 @@ export default {
     },
     startTestPdk() {
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
-      let __TAPDATA = formValues.__TAPDATA
-      Object.assign(this.model, __TAPDATA)
-      delete formValues['__TAPDATA']
+      let { __TAPDATA_START, __TAPDATA_END } = formValues
+      Object.assign(this.model, __TAPDATA_START, __TAPDATA_END)
+      delete formValues['__TAPDATA_START']
+      delete formValues['__TAPDATA_END']
       this.model.config = formValues
       this.model.pdkType = 'pdk'
       this.model.pdkHash = this.$route.query?.pdkHash
@@ -1305,7 +1308,7 @@ export default {
           }
           if (id) {
             this.getPdkData(id)
-            delete result.properties['__TAPDATA.name']
+            delete result.properties['__TAPDATA_START.name']
           }
           this.schemaData = result
         })
@@ -1316,13 +1319,14 @@ export default {
         .then(res => {
           this.model = res.data
           let { name, connection_type, table_filter } = this.model
-          let __TAPDATA = {
-            name,
-            connection_type,
-            table_filter
-          }
           this.schemaFormInstance.setValues({
-            __TAPDATA,
+            __TAPDATA_START: {
+              name,
+              connection_type
+            },
+            __TAPDATA_END: {
+              table_filter
+            },
             ...this.model?.config
           })
           this.renameData.rename = this.model.name
