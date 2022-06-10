@@ -65,7 +65,7 @@
             {{ statusMap[scope.row.status] }}
           </span>
           <span v-else :style="`color: ${colorMap[scope.row.status]};`">
-            <VIcon :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
+            <VIcon size="14" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
             {{ statusMap[scope.row.status] }}
           </span>
         </template>
@@ -120,11 +120,11 @@ export default {
         unTest: '#aaaaaa'
       },
       iconMap: {
-        ready: 'el-icon-success',
+        ready: 'success',
         invalid: 'error',
         testing: '',
-        passed: 'el-icon-success',
-        waiting: 'el-icon-question',
+        passed: 'success',
+        waiting: 'question-fill',
         failed: 'error',
         unTest: ''
       },

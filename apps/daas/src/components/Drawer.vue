@@ -54,7 +54,7 @@ export default {
   position: absolute;
   right: 0px;
   bottom: 0px;
-  z-index: 10;
+  z-index: 2001;
   height: 100%;
   width: 304px;
   background-color: map-get($bgColor, white);

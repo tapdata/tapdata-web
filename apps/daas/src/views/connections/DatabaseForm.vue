@@ -66,8 +66,7 @@
           </div>
         </footer>
       </main>
-      <!-- </div>
-      </main> -->
+      <GitBook :value="doc"></GitBook>
     </div>
     <Test
       ref="test"
@@ -113,12 +112,13 @@ import VIcon from '@/components/VIcon'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
+import GitBook from './GitBook'
 
 const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm },
+  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
@@ -239,7 +239,8 @@ export default {
       },
       pdkOptions: {},
       schemaData: null,
-      pdkFormModel: {}
+      pdkFormModel: {},
+      doc: ''
     }
   },
   computed: {
@@ -340,6 +341,7 @@ export default {
     this.checkDataTypeOptions(this.databaseType)
     this.getCluster()
     this.getPdkForm()
+    this.getPdkDoc()
   },
   watch: {
     'model.multiTenant'(val) {
@@ -1245,62 +1247,61 @@ export default {
             'x-component-props': {
               width: 500
             },
-            properties: {}
-          }
-          result.properties = {
-            __TAPDATA_START: {
-              type: 'object',
-              'x-index': 0,
-              properties: {
-                name: {
-                  type: 'string',
-                  title: this.$t('connection_form_connection_name'),
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input'
-                },
-                connection_type: {
-                  type: 'string',
-                  title: this.$t('connection_form_connection_type'),
-                  required: true,
-                  default: 'source_and_target',
-                  enum: [
-                    {
-                      label: this.$t('connection_form_source_and_target'),
-                      value: 'source_and_target',
-                      tip: this.$t('connection_form_source_and_target_tip')
-                    },
-                    {
-                      label: this.$t('connection_form_source'),
-                      value: 'source',
-                      tip: this.$t('connection_form_source_tip')
-                    },
-                    {
-                      label: this.$t('connection_form_target'),
-                      value: 'target',
-                      tip: this.$t('connection_form_target_tip')
+            properties: {
+              __TAPDATA_START: {
+                type: 'object',
+                'x-index': 0,
+                properties: {
+                  name: {
+                    type: 'string',
+                    title: this.$t('connection_form_connection_name'),
+                    required: true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input'
+                  },
+                  connection_type: {
+                    type: 'string',
+                    title: this.$t('connection_form_connection_type'),
+                    required: true,
+                    default: 'source_and_target',
+                    enum: [
+                      {
+                        label: this.$t('connection_form_source_and_target'),
+                        value: 'source_and_target',
+                        tip: this.$t('connection_form_source_and_target_tip')
+                      },
+                      {
+                        label: this.$t('connection_form_source'),
+                        value: 'source',
+                        tip: this.$t('connection_form_source_tip')
+                      },
+                      {
+                        label: this.$t('connection_form_target'),
+                        value: 'target',
+                        tip: this.$t('connection_form_target_tip')
+                      }
+                    ],
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Radio.Group',
+                    'x-component-props': {
+                      optionType: 'button'
                     }
-                  ],
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Radio.Group',
-                  'x-component-props': {
-                    optionType: 'button'
                   }
                 }
-              }
-            },
-            ...(data?.properties?.connection?.properties || {}),
-            __TAPDATA_END: {
-              type: 'object',
-              'x-index': 1000000,
-              properties: {
-                table_filter: {
-                  type: 'string',
-                  title: this.$t('connection_form_table_filter'),
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input.TextArea',
-                  'x-component-props': {
-                    placeholder: this.$t('connection_form_database_owner_tip')
+              },
+              ...(data?.properties?.connection?.properties || {}),
+              __TAPDATA_END: {
+                type: 'object',
+                'x-index': 1000000,
+                properties: {
+                  table_filter: {
+                    type: 'string',
+                    title: this.$t('connection_form_table_filter'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input.TextArea',
+                    'x-component-props': {
+                      placeholder: this.$t('connection_form_database_owner_tip')
+                    }
                   }
                 }
               }
@@ -1308,7 +1309,7 @@ export default {
           }
           if (id) {
             this.getPdkData(id)
-            delete result.properties['__TAPDATA_START.name']
+            delete result.properties.__TAPDATA_START.properties.name
           }
           this.schemaData = result
         })
@@ -1341,6 +1342,14 @@ export default {
       result.pdkHash = pdkHash
       result.pdkType = pdkType
       return getConnectionIcon(result)
+    },
+    getPdkDoc() {
+      const { pdkHash } = this.$route.query || {}
+      this.$api('Pdk')
+        .doc(pdkHash)
+        .then(res => {
+          this.doc = res.data
+        })
     }
   }
 }
