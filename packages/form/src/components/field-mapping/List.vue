@@ -353,7 +353,11 @@ export default {
           this.loadingTable = false
         })
     },
-    select(item, index) {
+    async select(item, index) {
+      if (!this.readOnly) {
+        //先保存
+        await this.save()
+      }
       this.position = '' //再次点击清空去一个样式
       this.searchField = ''
       this.fieldCount = 0
@@ -361,7 +365,6 @@ export default {
       this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
       this.position = index
       this.intiFieldMappingTableData(this.selectRow)
-      this.save()
     },
     async intiFieldMappingTableData(row) {
       if (!row.sinkQulifiedName) return
@@ -375,7 +378,10 @@ export default {
         }
       }
       this.viewTableData = this.target
-      this.getTypeMapping(this.selectRow)
+      if (!this.readOnly) {
+        this.getTypeMapping(this.selectRow)
+      }
+
       this.loadingTable = false
     },
     getMetadataTransformer(value) {
