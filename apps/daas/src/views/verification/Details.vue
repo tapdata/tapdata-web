@@ -14,7 +14,7 @@
                 $t('verify_button_diff_task_history')
               }}</ElLink>
             </div>
-            <div
+            <!-- <div
               v-if="
                 inspect.result !== 'passed' &&
                 !['running', 'scheduling'].includes(inspect.status) &&
@@ -29,7 +29,7 @@
                 </div>
                 <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
               </ElTooltip>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
