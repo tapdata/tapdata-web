@@ -1245,62 +1245,61 @@ export default {
             'x-component-props': {
               width: 500
             },
-            properties: {}
-          }
-          result.properties = {
-            __TAPDATA_START: {
-              type: 'object',
-              'x-index': 0,
-              properties: {
-                name: {
-                  type: 'string',
-                  title: this.$t('connection_form_connection_name'),
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input'
-                },
-                connection_type: {
-                  type: 'string',
-                  title: this.$t('connection_form_connection_type'),
-                  required: true,
-                  default: 'source_and_target',
-                  enum: [
-                    {
-                      label: this.$t('connection_form_source_and_target'),
-                      value: 'source_and_target',
-                      tip: this.$t('connection_form_source_and_target_tip')
-                    },
-                    {
-                      label: this.$t('connection_form_source'),
-                      value: 'source',
-                      tip: this.$t('connection_form_source_tip')
-                    },
-                    {
-                      label: this.$t('connection_form_target'),
-                      value: 'target',
-                      tip: this.$t('connection_form_target_tip')
+            properties: {
+              __TAPDATA_START: {
+                type: 'object',
+                'x-index': 0,
+                properties: {
+                  name: {
+                    type: 'string',
+                    title: this.$t('connection_form_connection_name'),
+                    required: true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input'
+                  },
+                  connection_type: {
+                    type: 'string',
+                    title: this.$t('connection_form_connection_type'),
+                    required: true,
+                    default: 'source_and_target',
+                    enum: [
+                      {
+                        label: this.$t('connection_form_source_and_target'),
+                        value: 'source_and_target',
+                        tip: this.$t('connection_form_source_and_target_tip')
+                      },
+                      {
+                        label: this.$t('connection_form_source'),
+                        value: 'source',
+                        tip: this.$t('connection_form_source_tip')
+                      },
+                      {
+                        label: this.$t('connection_form_target'),
+                        value: 'target',
+                        tip: this.$t('connection_form_target_tip')
+                      }
+                    ],
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Radio.Group',
+                    'x-component-props': {
+                      optionType: 'button'
                     }
-                  ],
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Radio.Group',
-                  'x-component-props': {
-                    optionType: 'button'
                   }
                 }
-              }
-            },
-            ...(data?.properties?.connection?.properties || {}),
-            __TAPDATA_END: {
-              type: 'object',
-              'x-index': 1000000,
-              properties: {
-                table_filter: {
-                  type: 'string',
-                  title: this.$t('connection_form_table_filter'),
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input.TextArea',
-                  'x-component-props': {
-                    placeholder: this.$t('connection_form_database_owner_tip')
+              },
+              ...(data?.properties?.connection?.properties || {}),
+              __TAPDATA_END: {
+                type: 'object',
+                'x-index': 1000000,
+                properties: {
+                  table_filter: {
+                    type: 'string',
+                    title: this.$t('connection_form_table_filter'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input.TextArea',
+                    'x-component-props': {
+                      placeholder: this.$t('connection_form_database_owner_tip')
+                    }
                   }
                 }
               }
@@ -1308,7 +1307,7 @@ export default {
           }
           if (id) {
             this.getPdkData(id)
-            delete result.properties['__TAPDATA_START.name']
+            delete result.properties.__TAPDATA_START.properties.name
           }
           this.schemaData = result
         })
