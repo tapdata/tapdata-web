@@ -20,7 +20,7 @@
           <el-button style="min-width: 50px" size="mini" @click="edit()">
             {{ $t('connection_preview_edit') }}
           </el-button>
-          <el-button class="flex-1" size="mini" @click="beforeTest()">
+          <el-button class="flex-1" size="mini" @click="$emit('test', connection)">
             {{ $t('connection_preview_test') }}
           </el-button>
         </div>
@@ -77,7 +77,6 @@
         </div>
       </div>
     </div>
-    <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
   </Drawer>
 </template>
 
@@ -316,6 +315,14 @@ export default {
         return
       }
       return getConnectionIcon(connection)
+    },
+
+    sync(list) {
+      if (!this.visible) return
+      const result = list.find(item => item.id === this.connection.id)
+      if (!result) return
+      console.log('result', result) // eslint-disable-line
+      this.connection = this.transformData(result)
     }
   }
 }
