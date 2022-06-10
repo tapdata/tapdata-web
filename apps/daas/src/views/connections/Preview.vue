@@ -77,6 +77,7 @@
         </div>
       </div>
     </div>
+    <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
   </Drawer>
 </template>
 
