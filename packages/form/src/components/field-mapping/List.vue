@@ -756,10 +756,7 @@ export default {
   }
   .task-form-body {
     display: flex;
-    flex: 1;
-    height: 0;
-    min-height: 350px;
-    max-height: 350px;
+    height: 60vh;
     border: 1px solid map-get($borderColor, light);
     border-radius: 4px;
     .task-form-left {
