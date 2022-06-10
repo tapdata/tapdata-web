@@ -66,8 +66,7 @@
           </div>
         </footer>
       </main>
-      <!-- </div>
-      </main> -->
+      <GitBook :value="doc"></GitBook>
     </div>
     <Test
       ref="test"
@@ -113,12 +112,13 @@ import VIcon from '@/components/VIcon'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
+import GitBook from './GitBook'
 
 const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm },
+  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
@@ -239,7 +239,8 @@ export default {
       },
       pdkOptions: {},
       schemaData: null,
-      pdkFormModel: {}
+      pdkFormModel: {},
+      doc: ''
     }
   },
   computed: {
@@ -340,6 +341,7 @@ export default {
     this.checkDataTypeOptions(this.databaseType)
     this.getCluster()
     this.getPdkForm()
+    this.getPdkDoc()
   },
   watch: {
     'model.multiTenant'(val) {
@@ -1340,6 +1342,14 @@ export default {
       result.pdkHash = pdkHash
       result.pdkType = pdkType
       return getConnectionIcon(result)
+    },
+    getPdkDoc() {
+      const { pdkHash } = this.$route.query || {}
+      this.$api('Pdk')
+        .doc(pdkHash)
+        .then(res => {
+          this.doc = res.data
+        })
     }
   }
 }
