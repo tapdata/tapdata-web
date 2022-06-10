@@ -54,7 +54,8 @@
       <el-table-column prop="status" :label="$t('dataForm.test.result')" width="150">
         <template slot-scope="scope">
           <span v-if="scope.row.status === 'failed' && !scope.row.required" :style="`color: ${colorMap['warning']};`">
-            <i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>
+            <VIcon size="12" :style="{ color: colorMap[status] }">warning</VIcon>
+            <!--<i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>-->
             {{ statusMap[scope.row.status] }}
           </span>
           <span v-else-if="scope.row.status === 'unTest'" :style="`color: ${colorMap[scope.row.status]};`">
@@ -65,7 +66,7 @@
             {{ statusMap[scope.row.status] }}
           </span>
           <span v-else :style="`color: ${colorMap[scope.row.status]};`">
-            <VIcon size="14" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
+            <VIcon size="12" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
             {{ statusMap[scope.row.status] }}
           </span>
         </template>

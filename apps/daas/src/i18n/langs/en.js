@@ -827,7 +827,7 @@ export default {
 
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',
-  connection_preview_test: 'Connection Test',
+  connection_preview_test: 'Test',
   connection_preview_no_sure: 'Do not confirm',
   connection_preview_master_partition: 'Write to master partition only',
   connection_preview_isr_partition: 'Write all ISR partitions',
