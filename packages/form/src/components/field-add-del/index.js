@@ -9,7 +9,7 @@ import '../field-rename/index.scss'
 export const FieldAddDel = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options'],
+      props: ['loading', 'options', 'disabled'],
 
       setup() {
         const formRef = useForm()
@@ -77,21 +77,31 @@ export const FieldAddDel = connect(
               <span class="flex-1 text inline-block ml-6">字段名称</span>
               <span class="field-ops inline-block ml-10">
                 <VIcon
-                  class={[this.deleteAllFieldsData ? 'active__delete' : '', 'clickable', 'ml-5']}
+                  class={[
+                    this.deleteAllFieldsData ? 'active__delete' : '',
+                    this.disabled ? 'disable__btn' : 'clickable',
+                    'ml-5'
+                  ]}
                   size="12"
+                  disabled={this.disabled}
                   onClick={() => this.handleAllDelete()}
                 >
                   delete
                 </VIcon>
                 <VIcon
-                  class="clickable ml-5"
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
-                  disabled={fields.length === 0}
+                  disabled={fields.length === 0 || this.disabled}
                   onClick={() => this.handleCreate()}
                 >
                   add
                 </VIcon>
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
+                <VIcon
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  size="12"
+                  disabled={this.disabled}
+                  onClick={() => this.handleAllReset()}
+                >
                   revoke
                 </VIcon>
               </span>
@@ -134,7 +144,12 @@ export const FieldAddDel = connect(
                               <span class="text__inner">{data.field_name}</span>
                             )}
                             {!data.showInput ? (
-                              <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => this.showInput(node.data)}>
+                              <VIcon
+                                class={['ml-3', 'clickable']}
+                                size="12"
+                                disabled={this.disabled}
+                                onClick={() => this.showInput(node.data)}
+                              >
                                 edit-outline
                               </VIcon>
                             ) : (
@@ -165,7 +180,9 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={(this.isRemove(data.id) || data.is_deleted) && !this.isRest(data.id)}
+                          disabled={
+                            ((this.isRemove(data.id) || data.is_deleted) && !this.isRest(data.id)) || this.disabled
+                          }
                           onClick={() => this.handleDelete(node, data)}
                         >
                           <VIcon> delete</VIcon>
@@ -173,7 +190,9 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={(!this.isRemove(data.id) && !data.is_deleted) || this.isRest(data.id)}
+                          disabled={
+                            (!this.isRemove(data.id) && !data.is_deleted) || this.isRest(data.id) || this.disabled
+                          }
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
