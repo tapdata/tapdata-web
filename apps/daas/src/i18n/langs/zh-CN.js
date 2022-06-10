@@ -1127,6 +1127,7 @@ export default {
   task_info_status_waiting: '待运行',
   task_info_status_running: '同步中',
   task_info_status_done: '已完成',
+  task_info_status_paused: '已暂停',
 
   task_info_subtasks_tip: '在Tapdata中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情',
   task_info_subtasks_name: '子任务名称',
