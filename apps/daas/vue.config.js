@@ -125,17 +125,6 @@ module.exports = {
         ]
       })
       .end()
-
-    // markdown loader
-    config.module
-      .rule('md')
-      .test(/\.md$/)
-      .use('html')
-      .loader('html-loader')
-      .end()
-      .use('markdown')
-      .loader('markdown-loader')
-      .end()
   },
   configureWebpack: config => {
     // 尽量保证项目中文件后缀的精确
