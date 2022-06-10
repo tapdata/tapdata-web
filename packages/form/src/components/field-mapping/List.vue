@@ -441,6 +441,7 @@ export default {
     rest() {
       this.searchField = ''
       this.searchTable = ''
+      this.position = 0
       this.getMetadataTransformer()
     },
     //获取typeMapping
