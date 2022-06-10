@@ -1162,6 +1162,7 @@ export default {
   task_info_status_waiting: 'Waiting',
   task_info_status_running: 'Running',
   task_info_status_done: 'Done',
+  task_info_status_paused: 'Paused',
 
   task_info_subtasks_tip:
     'In Tapdata, each target node in the task you create will be defined as a subtask. You can view the details of each subtask below',
