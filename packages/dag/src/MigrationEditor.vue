@@ -36,7 +36,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSider
-        v-show="showLeftSider || allNodes.length === 0"
+        v-show="showLeftSider"
         v-if="!stateIsReadonly"
         v-resize.right="{
           minWidth: 260,
@@ -165,6 +165,14 @@ export default {
 
       scale: 1,
       showLeftSider: true
+    }
+  },
+
+  watch: {
+    'allNodes.length'(v) {
+      if (v === 0) {
+        this.showLeftSider = true
+      }
     }
   },
 
