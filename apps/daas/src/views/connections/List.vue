@@ -125,7 +125,7 @@
         </template>
       </ElTableColumn>
     </TablePage>
-    <Preview ref="preview"></Preview>
+    <Preview ref="preview" @test="testConnection"></Preview>
     <DatabaseTypeDialog
       :dialogVisible="dialogDatabaseTypeVisible"
       @dialogVisible="handleDialogDatabaseTypeVisible"
@@ -337,61 +337,67 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let list = res.data?.items || []
-          return {
-            total: res.data?.total,
-            data: list.map(item => {
-              let platformInfo = item.platformInfo
-              if (platformInfo && platformInfo.regionName) {
-                item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
-              }
+          let data = (res.data?.items || []).map(item => {
+            let platformInfo = item.platformInfo
+            if (platformInfo && platformInfo.regionName) {
+              item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
+            }
 
-              if (item.config) {
-                if (item.config.uri) {
-                  const res =
-                    /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                      item.config.uri
-                    )
-                  if (res && res.groups && res.groups.password) {
-                    const { username, host, database, query } = res.groups
-                    item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
-                  } else {
-                    item.connectionUrl = item.config.uri
-                  }
+            if (item.config) {
+              if (item.config.uri) {
+                const res =
+                  /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+                    item.config.uri
+                  )
+                if (res && res.groups && res.groups.password) {
+                  const { username, host, database, query } = res.groups
+                  item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
                 } else {
-                  item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
-                    item.config.schema ? `/${item.config.schema}` : ''
-                  }`
+                  item.connectionUrl = item.config.uri
                 }
               } else {
-                if (item.database_type !== 'mongodb') {
-                  item.connectionUrl = ''
-                  if (item.database_username) {
-                    item.connectionUrl += item.database_username + ':***@'
-                  }
-                  item.connectionUrl += item.database_host + ':' + item.database_port
-                } else {
-                  item.connectionUrl = item.database_uri || item.connection_name
-                }
-                if (item.database_type === 'mq' && item.mqType === '0') {
-                  item.connectionUrl = item.brokerURL
-                }
-                // 不存在uri 和 port === 0
-                if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-                  item.connectionUrl = ''
-                }
-                if (item.database_type === 'kudu') {
-                  item.connectionUrl = item.database_host
-                }
-                if (item.database_type === 'kafka') {
-                  item.connectionUrl = item.kafkaBootstrapServers
-                }
+                item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
+                  item.config.schema ? `/${item.config.schema}` : ''
+                }`
               }
+            } else {
+              if (item.database_type !== 'mongodb') {
+                item.connectionUrl = ''
+                if (item.database_username) {
+                  item.connectionUrl += item.database_username + ':***@'
+                }
+                item.connectionUrl += item.database_host + ':' + item.database_port
+              } else {
+                item.connectionUrl = item.database_uri || item.connection_name
+              }
+              if (item.database_type === 'mq' && item.mqType === '0') {
+                item.connectionUrl = item.brokerURL
+              }
+              // 不存在uri 和 port === 0
+              if (!item.database_uri && !item.database_port && item.mqType !== '0') {
+                item.connectionUrl = ''
+              }
+              if (item.database_type === 'kudu') {
+                item.connectionUrl = item.database_host
+              }
+              if (item.database_type === 'kafka') {
+                item.connectionUrl = item.kafkaBootstrapServers
+              }
+            }
 
-              item.connectionSource = this.sourceTypeMapping[item.sourceType]
-              item.lastUpdateTime = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : '-'
-              return item
-            })
+            item.connectionSource = this.sourceTypeMapping[item.sourceType]
+            item.lastUpdateTime = item.last_updated = item.last_updated
+              ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
+            return item
+          })
+
+          // 同步抽屉数据
+          this.$refs.preview.sync(data)
+
+          return {
+            total: res.data?.total,
+            data
           }
         })
     },
