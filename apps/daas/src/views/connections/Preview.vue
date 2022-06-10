@@ -14,13 +14,13 @@
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" size="mini" class="flex-1" @click="reload()">
+          <el-button type="primary" size="mini" class="flex-fill min-w-0" @click="reload()">
             {{ $t('connection_preview_load_schema') }}
           </el-button>
-          <el-button style="min-width: 50px" size="mini" @click="edit()">
+          <el-button class="flex-fill min-w-0" size="mini" @click="edit()">
             {{ $t('connection_preview_edit') }}
           </el-button>
-          <el-button class="flex-1" size="mini" @click="$emit('test', connection)">
+          <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
             {{ $t('connection_preview_test') }}
           </el-button>
         </div>
@@ -77,6 +77,7 @@
         </div>
       </div>
     </div>
+    <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
   </Drawer>
 </template>
 
