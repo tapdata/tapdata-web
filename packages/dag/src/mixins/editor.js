@@ -1499,6 +1499,14 @@ export default {
       } else {
         this.addNodeOnConnByNodeMenu(node)
       }
+    },
+
+    handleToggleExpand() {
+      this.showLeftSider = !this.showLeftSider
+      if (this.activeType === 'node') {
+        this.deselectAllNodes()
+        this.setActiveNode(null)
+      }
     }
   }
 }

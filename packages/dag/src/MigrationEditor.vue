@@ -33,7 +33,7 @@
         </span>
       </template>
     </TopHeader>
-    <section class="layout-wrap layout-has-sider">
+    <section class="layout-wrap layout-has-sider position-relative">
       <!--左侧边栏-->
       <LeftSider
         v-show="showLeftSider"
@@ -45,7 +45,11 @@
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
         @add-node="handleAddNode"
+        @toggle-expand="handleToggleExpand"
       />
+      <div v-show="!showLeftSider" class="sider-expand-wrap flex justify-center align-center shadow">
+        <VIcon size="18" class="font-color-light" @click.stop="handleToggleExpand">expand-list</VIcon>
+      </div>
       <!--内容体-->
       <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
         <PaperScroller
@@ -114,6 +118,7 @@ import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
+import VIcon from 'web-core/components/VIcon'
 
 const taskApi = new Task()
 
@@ -133,7 +138,8 @@ export default {
     PaperScroller,
     TopHeader,
     DFNode,
-    LeftSider
+    LeftSider,
+    VIcon
   },
 
   data() {
@@ -595,5 +601,20 @@ $sidebarBg: #fff;
   height: 10000px;
   top: -5000px;
   left: -5000px;
+}
+
+.sider-expand-wrap {
+  position: absolute;
+  z-index: 2;
+  left: 16px;
+  top: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+
+  &:hover .v-icon {
+    color: map-get($color, primary);
+  }
 }
 </style>

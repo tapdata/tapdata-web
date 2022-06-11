@@ -17,9 +17,11 @@
           目标
         </div>
         <div class="flex-grow-1"></div>
-        <!--<div class="connection-tabs-extra">
-          <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
-        </div>-->
+        <div class="connection-tabs-extra">
+          <VIcon size="18" class="expand-icon click-btn mr-2 font-color-light" @click.stop="$emit('toggle-expand')"
+            >expand-list</VIcon
+          >
+        </div>
       </div>
 
       <div class="px-4 py-3">
@@ -393,6 +395,7 @@ export default {
 
     loadMoreDB() {
       console.log('loadMoreDB') // eslint-disable-line
+      if (this.disabledDBMore) return
       this.loadDatabase(true)
     },
 
@@ -510,6 +513,10 @@ $hoverBg: #eef3ff;
 .layout-sidebar.--left {
   overflow: hidden;
   $headerH: 34px;
+
+  .expand-icon {
+    transform: rotate(180deg);
+  }
 
   .connection-tabs {
     position: relative;
