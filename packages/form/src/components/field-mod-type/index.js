@@ -9,7 +9,7 @@ import '../field-rename/index.scss'
 export const FieldModType = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options'],
+      props: ['loading', 'options', 'disabled'],
 
       setup() {
         const formRef = useForm()
@@ -96,7 +96,12 @@ export const FieldModType = connect(
               <span class="flex-1 text inline-block ml-10">源字段类型</span>
               <span class="flex-1 text inline-block pl-11">目标字段类型</span>
               <span class="field-ops inline-block ml-10">
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
+                <VIcon
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  size="12"
+                  disabled={this.disabled}
+                  onClick={() => this.handleAllReset()}
+                >
                   revoke
                 </VIcon>
               </span>
@@ -121,6 +126,7 @@ export const FieldModType = connect(
                         v-model={data.data_type}
                         class="flex-1 inline-block"
                         size="mini"
+                        disabled={this.disabled}
                         onChange={() => this.handleDataType(node, data)}
                       >
                         {this.selectList.map(op => (
@@ -131,7 +137,7 @@ export const FieldModType = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isConvertDataType(data.id)}
+                          disabled={!this.isConvertDataType(data.id) || this.disabled}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>

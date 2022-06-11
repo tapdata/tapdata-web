@@ -1,6 +1,12 @@
 <template>
   <section>
-    <ElLink type="primary" class="position-absolute" style="right: 10px; top: 41px" @click.stop="dialogVisible = true">
+    <ElLink
+      type="primary"
+      class="position-absolute"
+      style="right: 10px; top: 41px"
+      :disabled="stateIsReadonly"
+      @click.stop="dialogVisible = true"
+    >
       {{ $t('button_edit') }}
     </ElLink>
     <List :isMetaData="true" :readOnly="true"></List>
@@ -17,6 +23,7 @@ export default {
   components: { List, Dialog },
   data() {
     return {
+      stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
       dialogVisible: false
     }
   }

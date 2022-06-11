@@ -8,7 +8,7 @@ import './index.scss'
 export const FieldRename = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options'],
+      props: ['loading', 'options', 'disabled'],
 
       setup() {
         const formRef = useForm()
@@ -65,13 +65,28 @@ export const FieldRename = connect(
               <span class="flex-1 text inline-block ml-6">源字段名</span>
               <span class="flex-1 text inline-block">目标字段名</span>
               <span class="field-ops  inline-block mr-12">
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllToUpperCase()}>
+                <VIcon
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  size="12"
+                  disabled={this.disabled}
+                  onClick={() => this.handleAllToUpperCase()}
+                >
                   toUpperCase
                 </VIcon>
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllToLowerCase()}>
+                <VIcon
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  size="12"
+                  disabled={this.disabled}
+                  onClick={() => this.handleAllToLowerCase()}
+                >
                   toLowerCase
                 </VIcon>
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
+                <VIcon
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  size="12"
+                  disabled={this.disabled}
+                  onClick={() => this.handleAllReset()}
+                >
                   revoke
                 </VIcon>
               </span>
@@ -115,7 +130,12 @@ export const FieldRename = connect(
                           <span class="text__inner">{data.field_name}</span>
                         )}
                         {!data.showInput && data.level === 1 ? (
-                          <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => this.showInput(node.data)}>
+                          <VIcon
+                            class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-3']}
+                            size="12"
+                            disabled={this.disabled}
+                            onClick={() => this.showInput(node.data)}
+                          >
                             edit-outline
                           </VIcon>
                         ) : (
@@ -127,7 +147,9 @@ export const FieldRename = connect(
                           type="text"
                           class="ml-5"
                           disabled={
-                            (this.fieldsNameTransforms === '' && !this.isRename(data.id)) || this.isReset(data.id)
+                            (this.fieldsNameTransforms === '' && !this.isRename(data.id)) ||
+                            this.isReset(data.id) ||
+                            this.disabled
                           }
                           onClick={() => this.handleReset(node, data)}
                         >
