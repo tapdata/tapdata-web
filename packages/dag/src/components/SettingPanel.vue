@@ -224,7 +224,7 @@
                     <ElRow>
                       <div class="labelTxt">
                         数据源:
-                        {{ item.name || item.connectionId }}
+                        {{ item.connectionName || item.connectionId }}
                       </div>
                       <ElCol :span="8" style="margin-right: 10px">
                         <ElSelect v-model="item.pointType" placeholder="请选择">
