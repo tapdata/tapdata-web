@@ -293,10 +293,12 @@ export default {
           })
           const connectionType = form.getValuesIn('attrs.connectionType')
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId')
+          const connectionName = form.getValuesIn('attrs.connectionName')
 
           connectionType !== item.connectionType && form.setValuesIn('attrs.connectionType', item.connectionType)
           accessNodeProcessId !== item.accessNodeProcessId &&
             form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)
+          connectionName !== item.name && form.setValuesIn('attrs.connectionName', item.name)
         },
 
         /**

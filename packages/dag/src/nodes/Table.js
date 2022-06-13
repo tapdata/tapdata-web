@@ -501,6 +501,12 @@ export class Table extends NodeType {
       'attrs.connectionType': {
         type: 'string',
         'x-display': 'hidden'
+      },
+
+      // 连接名称
+      'attrs.connectionName': {
+        type: 'string',
+        'x-display': 'hidden'
       }
     }
   }

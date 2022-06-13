@@ -754,6 +754,7 @@ export default {
         connectionId: connection.id,
         tableName,
         attrs: {
+          connectionName: connection.name,
           connectionType: connection.connection_type,
           accessNodeProcessId: connection.accessNodeProcessId,
           pdkType: connection.pdkType,
