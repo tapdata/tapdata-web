@@ -379,7 +379,7 @@ export default {
                 pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
                 dateTime: '',
                 timeZone: this.systemTimeZone,
-                connectionName: item.name
+                connectionName: item.connectionName
               }
             } else {
               let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
@@ -389,7 +389,7 @@ export default {
                   pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
                   dateTime: oldPoint[0].dateTime || '',
                   timeZone: this.systemTimeZone,
-                  connectionName: item.name
+                  connectionName: item.connectionName
                 }
               } else {
                 map[item.connectionId] = {
@@ -397,7 +397,7 @@ export default {
                   pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
                   dateTime: '',
                   timeZone: this.systemTimeZone,
-                  connectionName: item.name
+                  connectionName: item.connectionName
                 }
               }
             }
