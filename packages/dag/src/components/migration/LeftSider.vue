@@ -256,7 +256,7 @@ export default {
         })
     },
     getPdkData(data) {
-      this.database.push(...data.filter(t => t.pdkType === 'pdk'))
+      this.database.push(...data)
     },
     createConnection(type) {
       this.connectionDialog = false
