@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@tap/locale": "workspace:^1.0.0",
+    "ace-builds": "^1.4.13",
     "echarts": "^5.0.2",
     "dayjs": "^1.11.2"
   }

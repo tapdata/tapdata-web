@@ -304,10 +304,12 @@ importers:
   packages/component:
     specifiers:
       '@tap/locale': workspace:^1.0.0
+      ace-builds: ^1.4.13
       dayjs: ^1.11.2
       echarts: ^5.0.2
     dependencies:
       '@tap/locale': link:../locale
+      ace-builds: registry.npmmirror.com/ace-builds/1.5.1
       dayjs: registry.npmmirror.com/dayjs/1.11.2
       echarts: registry.npmmirror.com/echarts/5.3.2
 
