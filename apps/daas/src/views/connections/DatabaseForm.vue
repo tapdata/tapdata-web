@@ -342,6 +342,7 @@ export default {
     this.getCluster()
     this.getPdkForm()
     this.getPdkDoc()
+    this.check()
   },
   watch: {
     'model.multiTenant'(val) {
@@ -533,7 +534,42 @@ export default {
           let digSettingForm = res?.data
           if (verify && !digSettingForm?.persistenceMongodb_uri_db) {
             this.showSystemConfig = true
-            this.getMongodb() //打开全局设置
+            let config = {
+              persistenceMongodb_uri_db: {
+                type: 'string',
+                title: this.$t('share_form_setting_connection_name'),
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-reactions': {
+                  dependencies: ['.shareCdcEnable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
+              persistenceMongodb_collection: {
+                type: 'string',
+                title: this.$t('share_form_setting_table_name'),
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-reactions': {
+                  dependencies: ['.shareCdcEnable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              }
+            }
+            this.schemaData.properties.__TAPDATA_END.properties = Object.assign(
+              {},
+              this.schemaData.properties.__TAPDATA_END.properties,
+              config
+            )
+            console.log(this.schemaData.properties.__TAPDATA_END.properties)
           }
         }
       )
@@ -1302,6 +1338,16 @@ export default {
                     'x-component-props': {
                       placeholder: this.$t('connection_form_database_owner_tip')
                     }
+                  },
+                  shareCdcEnable: {
+                    type: 'boolean',
+                    default: false,
+                    title: this.$t('connection_form_shared_mining'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    'x-component-props': {
+                      placeholder: this.$t('connection_form_shared_mining_tip')
+                    }
                   }
                 }
               }
@@ -1311,6 +1357,7 @@ export default {
             this.getPdkData(id)
             delete result.properties.__TAPDATA_START.properties.name
           }
+          //this.showSystemConfig = true
           this.schemaData = result
         })
     },
