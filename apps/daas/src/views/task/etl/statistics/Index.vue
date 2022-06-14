@@ -16,6 +16,9 @@
           <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
             <Log :id="task.id"></Log>
           </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
+            <ShareMining :id="task.id"></ShareMining>
+          </ElTabPane>
         </ElTabs>
       </div>
     </div>
@@ -27,10 +30,11 @@ import Info from './Info'
 import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import dayjs from 'dayjs'
+import ShareMining from './ShareMining'
 
 export default {
   name: 'Statistics',
-  components: { Info, Schedule, Log },
+  components: { Info, Schedule, Log, ShareMining },
   data() {
     return {
       timer: null,
