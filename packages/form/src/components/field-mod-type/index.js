@@ -9,7 +9,7 @@ import '../field-rename/index.scss'
 export const FieldModType = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options'],
+      props: ['loading', 'options', 'disabled'],
 
       setup() {
         const formRef = useForm()
@@ -94,9 +94,14 @@ export const FieldModType = connect(
             <div class="field-processor-operation flex">
               <span class="flex-1 text inline-block ml-6">字段名称</span>
               <span class="flex-1 text inline-block ml-10">源字段类型</span>
-              <span class="field-type text inline-block pl-11">目标字段类型</span>
+              <span class="flex-1 text inline-block pl-11">目标字段类型</span>
               <span class="field-ops inline-block ml-10">
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
+                <VIcon
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  size="12"
+                  disabled={this.disabled}
+                  onClick={() => this.handleAllReset()}
+                >
                   revoke
                 </VIcon>
               </span>
@@ -118,9 +123,10 @@ export const FieldModType = connect(
                       <span class="flex-1 inline-block">{data.field_name}</span>
                       <span class="flex-1 inline-block">{data.type}</span>
                       <ElSelect
-                        v-model={data.java_type}
-                        class="field-type inline-block"
+                        v-model={data.data_type}
+                        class="flex-1 inline-block"
                         size="mini"
+                        disabled={this.disabled}
                         onChange={() => this.handleDataType(node, data)}
                       >
                         {this.selectList.map(op => (
@@ -131,7 +137,7 @@ export const FieldModType = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isConvertDataType(data.id)}
+                          disabled={!this.isConvertDataType(data.id) || this.disabled}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -178,7 +184,7 @@ export const FieldModType = connect(
                 if (targetIndex === -1) {
                   continue
                 }
-                fields[targetIndex].java_type = this.operations[i].operand
+                fields[targetIndex].data_type = this.operations[i].operand
               }
             }
           }
@@ -193,8 +199,8 @@ export const FieldModType = connect(
             op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
               id: data.id,
               field: nativeData.original_field_name,
-              operand: data.java_type,
-              originalDataType: nativeData.original_java_type,
+              operand: data.data_type,
+              originalDataType: nativeData.originalDataType,
               table_name: data.table_name,
               type: data.type,
               primary_key_position: data.primary_key_position,
@@ -205,9 +211,9 @@ export const FieldModType = connect(
             this.operations.push(op)
           } else {
             op = ops[0]
-            op.java_type = data.java_type
-            op.operand = data.java_type
-            op.originalDataType = nativeData.original_java_type
+            op.data_type = data.data_type
+            op.operand = data.data_type
+            op.originalDataType = nativeData.originalDataType
           }
         },
         handleReset(node, data) {
@@ -223,7 +229,7 @@ export const FieldModType = connect(
               if (self.operations[i].id === data.id) {
                 let ops = self.operations[i]
                 if (ops.op === 'CONVERT') {
-                  if (nativeData) node.data.java_type = nativeData.type
+                  if (nativeData) node.data.data_type = nativeData.type
                   self.operations.splice(i, 1)
                   i--
                   continue

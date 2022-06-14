@@ -105,7 +105,7 @@
       </el-table-column>
       <el-table-column :label="$t('user_list_change_time')" prop="last_updated" sortable="last_updated">
         <template slot-scope="scope">
-          {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('user_list_source')" prop="source">
@@ -219,6 +219,8 @@
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import FilterBar from '@/components/filter-bar'
+import dayjs from 'dayjs'
+
 export default {
   components: {
     TablePage,
@@ -367,9 +369,6 @@ export default {
     // this.getCount();
     this.getFilterItems()
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
   computed: {
     table() {
       return this.$refs.table
@@ -445,6 +444,7 @@ export default {
               if (item.account_status === 0) {
                 item.status = 'rejected'
               }
+              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }
@@ -681,13 +681,13 @@ export default {
                 this.table.fetch()
               }
             })
-            .catch(e => {
-              if (e.response.msg.indexOf('User already exists') !== -1) {
-                that.$message.error(this.$t('user_form_already_exists'))
-              } else {
-                that.$message.error(this.$t('message_save_fail'))
-              }
-            })
+            // .catch(e => {
+            //   if (e.response.msg.indexOf('User already exists') !== -1) {
+            //     that.$message.error(this.$t('user_form_already_exists'))
+            //   } else {
+            //     that.$message.error(this.$t('message_save_fail'))
+            //   }
+            // })
             .finally(() => {
               that.createDialogVisible = false
             })
@@ -710,9 +710,9 @@ export default {
                 this.table.fetch()
                 done()
               })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
+              // .catch(() => {
+              //   this.$message.info(this.$t('message.deleteFail'))
+              // })
               .finally(() => {
                 instance.confirmButtonLoading = false
               })
@@ -777,9 +777,9 @@ export default {
                 this.table.fetch()
                 done()
               })
-              .catch(() => {
-                this.$message.info(errorMsg)
-              })
+              // .catch(() => {
+              //   this.$message.info(errorMsg)
+              // })
               .finally(() => {
                 instance.confirmButtonLoading = false
               })
@@ -819,9 +819,9 @@ export default {
             this.$message.success(this.$t('message_operation_succuess'))
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_operation_error'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_operation_error'))
+      // })
     },
     // 关联用户
     permissionsmethod(data) {

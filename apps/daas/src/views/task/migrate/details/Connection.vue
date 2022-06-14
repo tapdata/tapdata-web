@@ -10,18 +10,16 @@
     >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
-          <img
-            class="mr-2"
-            style="width: 24px; height: 24px"
-            :src="require('web-core/assets/icons/node/' + scope.row.database_type.toLowerCase() + '.svg')"
-          />
+          <img class="mr-2" style="width: 24px; height: 24px" :src="getConnectionIcon(scope.row)" alt="" />
           <ElLink type="primary" style="display: block; line-height: 20px">
             {{ scope.row.name }}
           </ElLink>
         </div>
       </template>
       <template slot="status" slot-scope="scope">
-        <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
+        <span :class="['status-connection-' + scope.row.status, 'status-block']">
+          {{ $t('connection.status.' + scope.row.status) }}
+        </span>
       </template>
       <template slot="schemaHeader">
         <div>
@@ -53,14 +51,14 @@
 
 <script>
 import TableList from '@/components/TableList'
-import StatusTag from '@/components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
+import { getConnectionIcon } from '@/views/connections/util'
 
 export default {
   name: 'Connection',
-  components: { TableList, StatusTag, VIcon, SchemaProgress },
+  components: { TableList, VIcon, SchemaProgress },
   props: {
     ids: {
       type: Array,
@@ -183,9 +181,9 @@ export default {
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
       } catch (error) {
-        if (error?.isException) {
-          this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
-        }
+        // if (error?.isException) {
+        //   this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
+        // }
       }
     },
     async reload(row) {
@@ -229,6 +227,9 @@ export default {
           this.loadFieldsStatus = res?.data.loadFieldsStatus //同步reload状态
           this.$refs.test.start(row, false, true)
         })
+    },
+    getConnectionIcon() {
+      return getConnectionIcon(...arguments)
     }
   }
 }

@@ -21,6 +21,22 @@ export default {
   common_placeholder_input: '请输入',
   common_placeholder_search_input: '请输入搜索内容...',
 
+  status_running: '运行中',
+  status_paused: '待启动',
+  status_draft: '待启动',
+  status_ready: '待启动',
+  status_edit: '编辑中',
+  status_error: '错误',
+  status_wait_run: '启动中',
+  status_scheduled: '启动中',
+  status_scheduling: '启动中',
+  status_complete: '完成',
+  status_stop: '已停止',
+  status_stopping: '停止中',
+  status_finished: '已完成',
+  status_force_stopping: '强制停止中',
+  status_schedule_failed: '错误',
+
   // 通用按钮
   button_help: '帮助',
   button_edit: '编辑',
@@ -67,6 +83,8 @@ export default {
   button_finish: '完成',
   button_btn_back: '上一步',
   button_btn_next: '下一步',
+  button_bulk_import: '批量导入',
+  button_bulk_export: '批量导出',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -180,6 +198,7 @@ export default {
   component_table_selector_error: '所选表存在异常',
   component_table_selector_autofix: '清除异常表',
   component_table_selector_bulk_pick: '批量选表',
+  component_table_selector_bulk_name: '粘贴表名',
   component_table_selector_not_checked: '您暂时没有选择表',
   component_table_selector_tables_empty: '您暂时没有表，请点击右上角重新加载表',
   component_table_selector_clipboard_placeholder: '请输入表名称并以逗号分隔,例如：table_a,table_b',
@@ -571,7 +590,7 @@ export default {
   connection_form_tidb_server: 'PDServer 地址',
   connection_tidb_none_server: 'PDServer 地址不能为空',
 
-  connection_list_column_schema_status: 'Schema加载状态',
+  connection_list_column_schema_status: 'Schema状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
   // 连接
@@ -612,6 +631,8 @@ export default {
   connection_list_help_doc: '帮助文档',
   connection_list_test_button: '连接测试',
   connection_list_delete_link_job: '连接被应用,不能删除',
+  connection_list_no_data_title: '快来',
+  connection_list_no_data_title1: '开始实时数据同步吧~',
 
   connection_form_kuduhost: 'IP地址:端口; 支持多个; 用 , 分割',
   connection_form_table_filter_tips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
@@ -827,6 +848,10 @@ export default {
   dag_data_setting_example: '例子:',
   dag_data_setting_runMinute: '每分钟运行一次',
   dag_data_setting_runDay: '每天2点运行',
+  dag_attributes_exist_data_deal: '已有数据处理',
+  dag_attributes_exist_data_keep_data: '保持已存在的数据',
+  dag_attributes_exist_data_remove_data: '运行前删除已存在的数据',
+  dag_attributes_exist_data_drop_table: '运行前删除表结构',
   //字段映射
   dag_link_button_field_mapping: '字段映射',
   dag_link_button_mapping_configuration: '映射配置',
@@ -845,6 +870,10 @@ export default {
   dag_dialog_field_mapping_selected: '已选中',
   dag_dialog_field_mapping_search_field: '搜索字段',
   dag_dialog_field_mapping_source_field: '源表字段名',
+  dag_dialog_field_mapping_field: '字段名',
+  dag_dialog_field_mapping_type: '字段类型',
+  dag_dialog_field_mapping_precision: '字段长度',
+  dag_dialog_field_mapping_scale: '字段精度',
   dag_dialog_field_mapping_source_type: '源表类型',
   dag_dialog_field_mapping_source_precision: '源表长度',
   dag_dialog_field_mapping_source_scale: '源表精度',
@@ -955,6 +984,10 @@ export default {
   task_preview_status_schedule_failed: '调度失败',
   task_preview_status_ready: '待启动',
 
+  task_status_running: '已运行',
+  task_status_not_running: '未运行',
+  task_status_error: '错误',
+
   task_monitor_progress: '任务进度',
   task_monitor_full_sync: '全量同步概览',
   task_monitor_full_completion_time: '预计全量完成还需时间',
@@ -975,6 +1008,9 @@ export default {
   task_monitor_unit_second: '单位：/秒',
   task_monitor_not_start: '未开始',
   task_monitor_founder: '创建人',
+  task_monitor_change_time: '修改时间',
+  task_monitor_sync_type: '同步类型',
+  task_monitor_incremental_lag: '增量滞后',
   task_monitor_start: '启动',
   task_monitor_stop: '停止',
   task_monitor_reset: '重置',
@@ -1011,6 +1047,11 @@ export default {
   task_monitor_sync_task: '同步任务',
 
   task_info_start_time: '开始时间',
+  task_info_initial_sync: '全量',
+  task_info_initial_cdc: '增量',
+  task_info_node: '节点',
+  task_info_cycle: '周期',
+  task_info_frequency: '频率',
   task_info_start: '启动',
   task_info_stopt: '停止',
   task_info_data_screening: '事件统计',
@@ -1086,13 +1127,20 @@ export default {
   task_info_status_waiting: '待运行',
   task_info_status_running: '同步中',
   task_info_status_done: '已完成',
+  task_info_status_paused: '已暂停',
 
+  task_info_subtasks_tip: '在Tapdata中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情',
+  task_info_subtasks_name: '子任务名称',
+  task_info_subtasks_status: '状态',
+
+  task_stetting_basic_setting: '基本设置',
+  task_stetting_most_setting: '高级设置',
   task_stetting_name: '任务名称',
   task_stetting_desc: '任务描述',
   task_setting_sync_type: '同步类型',
-  task_setting_initial_sync: '全量同步',
-  task_setting_cdc: '增量同步',
-  task_setting_initial_sync_cdc: '全量 + 增量同步',
+  task_setting_initial_sync: '全量',
+  task_setting_cdc: '增量',
+  task_setting_initial_sync_cdc: '全量 + 增量',
   task_setting_initial_sync_tip:
     '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
   task_setting_cdc_tip:
@@ -1145,11 +1193,14 @@ export default {
   task_setting_cron_feedbackText:
     '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ',
   task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
+  task_setting_cron_tip:
+    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
+  task_setting_syncPoint_tip: '任务将从该时间点开始收集增量日志',
+  task_setting_plan_start_date: '计划开始时间',
 
   task_name: '任务名称',
   task_status: '任务状态',
   task_sync_type: '任务同步类型',
-  task_create_task: '创建任务',
   task_button_pause: '暂停',
   task_button_recover: '恢复',
   task_button_start: '启动', // 停止 编辑 子任务
@@ -1269,7 +1320,6 @@ export default {
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
-  function_button_create_custom_function: '创建函数',
   function_button_import_jar: '导入jar包',
   function_button_edit_function: '编辑函数',
   function_details: '函数详情',
@@ -1350,6 +1400,7 @@ export default {
   shared_cdc_setting_no_mongodb_tip: ' 请先创建mongodb数据源',
   shared_cdc_name: '请输入挖掘名称',
   shared_cdc_setting_refresh: '刷新数据',
+  shared_cdc_setting_select_mode: '存储模式',
   shared_cdc_setting_select_mongodb_tip: '请选择mongodb连接',
   shared_cdc_setting_select_table_tip: '请选择表名',
   shared_cdc_setting_select_time_tip: '请选择日志保存时长',
@@ -1889,7 +1940,6 @@ export default {
   role_name_Data_SYNC: '浏览复制开发任务',
   role_name_SYNC_category_management: '任务分类管理',
   role_name_SYNC_category_application: '任务分类应用',
-  role_name_SYNC_job_creation: '创建任务',
   role_name_SYNC_job_delete: '删除任务',
   role_name_SYNC_job_edition: '编辑任务',
   role_name_SYNC_job_operation: '任务操作',
@@ -1990,6 +2040,7 @@ export default {
   milestone_list_status_error: '错误',
   milestone_list_status_waiting: '待执行',
   milestone_list_status_running: '运行中',
+  milestone_list_status_paused: '已暂停',
 
   classification_name_already_exists: '分类名称已存在',
 

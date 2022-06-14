@@ -9,12 +9,12 @@
         <div v-if="inspect.inspectMethod !== 'row_count'">
           <div class="flex align-items-center">
             <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
-              {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+              {{ $t('verify_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
               <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
                 $t('verify_button_diff_task_history')
               }}</ElLink>
             </div>
-            <div
+            <!-- <div
               v-if="
                 inspect.result !== 'passed' &&
                 !['running', 'scheduling'].includes(inspect.status) &&
@@ -29,7 +29,7 @@
                 </div>
                 <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
               </ElTooltip>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -88,6 +88,8 @@
 <script>
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
+import dayjs from 'dayjs'
+
 export default {
   components: { ResultTable, ResultView },
   data() {
@@ -139,6 +141,7 @@ export default {
         .then(res => {
           let inspect = res.data?.items[0]
           let inspectResult = inspect.InspectResult
+          inspect.lastStartTime = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
           this.inspect = inspect
           this.$api('InspectResults')
             .get({

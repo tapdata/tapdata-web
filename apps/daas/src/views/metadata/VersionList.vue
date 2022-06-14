@@ -1,36 +1,29 @@
 <template>
   <section class="version-list-wrap">
-    <!-- <TablePage
-      ref="table"
-      row-key="id"
-      class="metadata-list"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    > -->
     <div class="history-text">
       {{ $t('metadata.details.version.lastVersion') }}
     </div>
     <!-- 数据校验表格 start -->
-    <el-table :data="tableData" class="table-page-table" height="100%">
-      <el-table-column :label="$t('metadata.details.version.versionNum')" prop="version"> </el-table-column>
-      <el-table-column :label="$t('metadata.details.version.updateTime')" prop="version_time">
+    <ElTable :data="tableData" class="table-page-table" height="100%">
+      <ElTableColumn :label="$t('metadata.details.version.versionNum')" prop="version"> </ElTableColumn>
+      <ElTableColumn :label="$t('metadata.details.version.updateTime')" prop="version_time">
         <template slot-scope="scope">
-          {{ $moment(scope.row.version_time).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ scope.row.versionTimeFmt }}
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('metadata.details.version.operator')" prop="version_user_name"></el-table-column>
-      <el-table-column :label="$t('metadata.details.version.modifyDescription')" prop="version_description">
-      </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="80">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('metadata.details.version.operator')" prop="version_user_name"></ElTableColumn>
+      <ElTableColumn :label="$t('metadata.details.version.modifyDescription')" prop="version_description">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('column_operation')" width="80">
         <template slot-scope="scope">
-          <el-button v-readonlybtn="'data_catalog_edition'" size="mini" type="text" @click="toDetails(scope.row)">
+          <ElButton v-readonlybtn="'data_catalog_edition'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('metadata.details.version.compared') }}
-          </el-button>
+          </ElButton>
         </template>
-      </el-table-column>
-    </el-table>
+      </ElTableColumn>
+    </ElTable>
     <!-- 数据校验表格 end -->
-    <el-dialog
+    <ElDialog
       custom-class="history-dialog"
       :title="histories.name"
       :close-on-click-modal="false"
@@ -41,13 +34,13 @@
         :currentVersion="currentVersion"
         v-if="showVersionDialog"
       ></HistoryVersion>
-    </el-dialog>
+    </ElDialog>
   </section>
 </template>
 
 <script>
 import HistoryVersion from './HistoryVersion'
-// import { toRegExp } from '../../utils/util'
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -93,25 +86,12 @@ export default {
       let histories = self.histories?.histories || []
       if (histories?.length)
         histories.forEach(item => {
-          // let version_description = item.version_description
-          // let descriptionArr = version_description?.split(';')
-          // let localizeDescriptionArr = []
-          // version_description = ''
-          // descriptionArr.forEach(desc => {
-          //   if (desc) {
-          //     localizeDescriptionArr.push(desc ? this.$t('metadata.details.' + desc) : '')
-          //   }
-          // })
-          // if (localizeDescriptionArr && localizeDescriptionArr.length > 0) {
-          //   version_description = localizeDescriptionArr.join(', ')
-          // }
           this.tableData.unshift({
             id: this.histories.id,
             version: item.version,
             version_user_id: item.version_user_id,
             version_user_name: item.version_user_name,
-            version_time: item.version_time
-            // version_description: version_description
+            versionTimeFmt: dayjs(item.version_time).format('YYYY-MM-DD HH:mm:ss')
           })
           this.currentVersion = this.histories.version
         })
@@ -139,9 +119,6 @@ export default {
   .history-text {
     padding-bottom: 16px;
     font-size: 12px;
-  }
-  .table-page-table {
-    // height: calc(100% - 60px);
   }
 }
 </style>

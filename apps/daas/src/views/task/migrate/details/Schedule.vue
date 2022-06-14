@@ -85,7 +85,7 @@
             </template>
             <template slot="status" slot-scope="scope">
               <span :class="['status-' + scope.row.status, 'status-block', 'mr-2']">
-                {{ $t('task_info_status_' + scope.row.status) }}
+                {{ $t('task_info_status_' + getStatus(scope.row.status)) }}
               </span>
             </template>
           </TableList>
@@ -281,6 +281,13 @@ export default {
     }
   },
   methods: {
+    getStatus(status) {
+      let result = status
+      if (['edit', 'stop', 'error'].includes(this.task.status) && status === 'running') {
+        result = 'paused'
+      }
+      return result
+    },
     init() {
       this.id = this.$route.query?.subId
       this.loadRuntimeInfo()

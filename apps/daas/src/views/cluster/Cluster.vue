@@ -376,9 +376,9 @@ export default {
                 this.getDataApi()
                 this.$message.success(this.$t('message_save_ok'))
               })
-              .catch(() => {
-                this.$message.error(this.$t('message_save_fail'))
-              })
+              // .catch(() => {
+              //   this.$message.error(this.$t('message_save_fail'))
+              // })
               .finally(() => {
                 this.dialogForm = false
               })
@@ -391,9 +391,9 @@ export default {
                 this.getDataApi()
                 this.$message.success(this.$t('message_save_ok'))
               })
-              .catch(() => {
-                this.$message.error(this.$t('message_save_fail'))
-              })
+              // .catch(() => {
+              //   this.$message.error(this.$t('message_save_fail'))
+              // })
               .finally(() => {
                 this.dialogForm = false
               })
@@ -422,15 +422,13 @@ export default {
           if (!resFlag) {
             return
           }
-          cluster
-            .removeMonitor(params)
-            .then(() => {
-              this.getDataApi()
-              this.$message.success(this.$t('message_save_ok'))
-            })
-            .catch(() => {
-              this.$message.error(this.$t('message_save_fail'))
-            })
+          cluster.removeMonitor(params).then(() => {
+            this.getDataApi()
+            this.$message.success(this.$t('message_save_ok'))
+          })
+          // .catch(() => {
+          //   this.$message.error(this.$t('message_save_fail'))
+          // })
         })
       } else {
         this.$message.error(this.$t('cluster_startup_after_delete'))
@@ -523,26 +521,6 @@ export default {
       this.canUpdate = false
     },
     async getVersion(datas) {
-      // for (let i = 0; i < datas.length; i++)
-      // 	if (datas[i].status != 'down')
-      // 		await clusterVersion
-      // 			.get({ filter: JSON.stringify({ where: { 'version.uuid': datas[i].uuid } }) })
-      // 			.then(res => {
-      // 				if (res.data && res.data.length) {
-      // 					datas[i].curVersion = res.data[0].version.backend;
-      // 				}
-      // 			});
-      // let where = {},
-      // 	allCdc = false;
-      // if (!parseInt(this.$cookie.get('isAdmin')) && localStorage.getItem('BTN_AUTHS') !== 'BTN_AUTHS')
-      // 	where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` };
-      // where['stats.stagesMetrics.status'] = { neq: 'cdc' };
-      // where.status = { eq: 'running' };
-      // await dataFlows.count({ where: where }).then(res => {
-      // 	if (res.data) {
-      // 		if (res.data.count == 0) allCdc = true;
-      // 	}
-      // });
       for (let i = 0; i < datas.length; i++) datas[i].canUpdate = false //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
       let [...waterfallData] = datas
       let [...newWaterfallData] = [[], []]
@@ -645,9 +623,9 @@ export default {
             this.$message.success(this.$t('message_delete_ok'))
             this.getDataApi()
           })
-          .catch(() => {
-            this.$message.info(this.$t('message_delete_fail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message_delete_fail'))
+        // })
       })
     },
     removeNode(id) {
@@ -657,9 +635,9 @@ export default {
           this.deleteDialogVisible = false
           this.$message.success(this.$t('message_delete_ok'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_delete_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_delete_fail'))
+      // })
     },
     //编辑
     editAgent(item) {
@@ -687,9 +665,9 @@ export default {
           this.editAgentDialog = false
           this.$message.success(this.$t('message_delete_ok'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_delete_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_delete_fail'))
+      // })
     },
     editNameRest() {
       this.agentName = this.currentNde.hostname

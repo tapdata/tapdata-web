@@ -12,8 +12,16 @@
           {{ $t('dataFlow.createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn" placement="bottom" @command="command">
-          <VIcon size="16">wenda</VIcon>
+        <ElDropdown
+          v-if="$getSettingByKey('SHOW_QA_AND_HELP')"
+          class="btn"
+          placement="bottom"
+          @command="command"
+          command="help"
+        >
+          <span class="icon-btn py-1 px-3">
+            <VIcon size="16">wenda</VIcon>
+          </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
           </ElDropdownMenu>
@@ -24,7 +32,10 @@
           placement="bottom"
           @command="command"
         >
-          <VIcon size="16">shezhi</VIcon>
+          <span class="icon-btn py-1 px-3">
+            <VIcon size="16">shezhi</VIcon>
+          </span>
+          <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
             <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
@@ -33,7 +44,9 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
-          <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
+          <span class="icon-btn py-1 px-3">
+            <VIcon size="16">{{ { zh_CN: 'language-sc', en_US: 'language-sc', zh_TW: 'language-sc' }[lang] }}</VIcon>
+          </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
@@ -41,8 +54,8 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <ElDropdown class="menu-user btn" placement="bottom" @command="command">
-          <span>
+        <ElDropdown class="menu-user btn pl-2" placement="bottom" @command="command">
+          <span class="icon-btn">
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
           </span>
@@ -63,7 +76,7 @@
         <ElMenu
           unique-opened
           class="menu"
-          :default-active="$route.name"
+          :default-active="activeMenu"
           :collapse="isCollapse"
           :collapse-transition="false"
           @select="menuHandler"
@@ -149,7 +162,7 @@
       display: flex;
       align-items: center;
       .btn {
-        padding: 6px 12px;
+        padding: 6px 0;
         color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
         i {
@@ -230,15 +243,15 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        color: map-get($fontColor, normal);
+        // color: map-get($fontColor, normal);
         background: #f7f8fa;
         .submenu-item {
-          color: map-get($fontColor, light);
+          // color: map-get($fontColor, light);
           padding-left: 12px;
         }
         &.is-active,
         &:hover {
-          color: map-get($color, primary) !important;
+          // color: map-get($color, primary) !important;
           background: rgba(44, 101, 255, 0.05);
         }
       }
@@ -259,7 +272,7 @@
             background-color: rgba(44, 101, 255, 0.05);
             .submenu-item {
               font-weight: 500;
-              color: map-get($color, primary) !important;
+              // color: map-get($color, primary) !important;
             }
           }
         }
@@ -300,7 +313,7 @@
       border: none;
     }
     .el-badge__content.is-fixed {
-      right: 18px;
+      right: 26px;
       top: 3px;
     }
   }
@@ -343,33 +356,24 @@ import { signOut } from '../utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import PageHeader from '@/components/PageHeader'
 import VIcon from 'web-core/components/VIcon'
+import dayjs from 'dayjs'
 
-const Languages = {
-  sc: '中文 (简)',
-  en: 'English',
-  tc: '中文 (繁)'
-}
-const LanguagesKey = {
-  sc: 'zh_CN',
-  en: 'en_US',
-  tc: 'zh_TW'
-}
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
-  { name: 'connectionsList', icon: 'agent', code: 'datasource_menu' },
+  { name: 'connectionsList', icon: 'agent', code: 'datasource_menu', parent: 'connections' },
   {
     name: 'dataPipeline',
     label: 'page_title_data_pipeline',
     icon: 'huowuchuanshu',
     code: 'data_transmission',
     children: [
-      { name: 'migrateList', code: 'Data_SYNC_menu' },
-      { name: 'dataflowList', code: 'Data_SYNC_menu' },
-      { name: 'dataVerificationList', code: 'Data_verify_menu' },
-      { name: 'sharedMiningList', code: 'log_collector_menu' },
-      { name: 'functionList', code: 'SYNC_Function_management' },
-      { name: 'customNodeList', code: 'custom_node_menu' },
-      { name: 'sharedCacheList', code: 'shared_cache_menu' }
+      { name: 'migrateList', code: 'Data_SYNC_menu', parent: 'migrate' },
+      { name: 'dataflowList', code: 'Data_SYNC_menu', parent: 'dataflow' },
+      { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
+      // { name: 'sharedMiningList', code: 'log_collector_menu', parent: 'sharedMining' },
+      { name: 'functionList', code: 'SYNC_Function_management', parent: 'function' },
+      { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' }
+      // { name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
   {
@@ -378,8 +382,8 @@ let menuSetting = [
     icon: 'shujuzhili',
     code: 'data_government',
     children: [
-      { name: 'metadataList', code: 'data_catalog_menu' },
-      { name: 'search', code: 'data_search_menu' }
+      { name: 'metadataList', code: 'data_catalog_menu', parent: 'metadata' },
+      { name: 'search', code: 'data_search_menu', parent: 'search' }
     ]
   },
   {
@@ -388,14 +392,13 @@ let menuSetting = [
     icon: 'connection',
     code: 'data_publish',
     children: [
-      { name: 'modules', code: 'API_management_menu' },
-      { name: 'dataExplorer', code: 'API_data_explorer_menu' },
-      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
-      // { name: 'apiAnalysis', code: 'API_stats_menu' }, //隐藏api 统计入口
-      { name: 'apiClient', code: 'API_clients_menu' },
-      { name: 'apiServers', code: 'API_server_menu' },
-      { name: 'apiauditList', code: 'API_server_menu' },
-      { name: 'apiMonitor', code: 'API_server_menu' }
+      { name: 'apiPublishList', code: 'API_management_menu', parent: 'apiPublish' },
+      { name: 'apiExplorer', code: 'API_data_explorer_menu', parent: 'apiExplorer' },
+      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu', parent: 'apiDocAndTest' },
+      { name: 'apiClient', code: 'API_clients_menu', parent: 'apiClient' },
+      { name: 'apiServers', code: 'API_server_menu', parent: 'apiServers' },
+      { name: 'apiAuditList', code: 'API_server_menu', parent: 'apiAudit' },
+      { name: 'apiMonitor', code: 'API_server_menu', parent: 'apiMonitor' }
     ]
   },
   {
@@ -404,13 +407,9 @@ let menuSetting = [
     icon: 'system',
     code: 'system_management',
     children: [
-      // { name: 'metadataDefinition', code: 'data_catalog_menu' },
-      // { name: 'tasks', code: 'schedule_jobs_menu' },
-      { name: 'clusterManagement', code: 'Cluster_management_menu' },
-      // { name: 'agents', code: 'agents_menu' },
-      { name: 'users', code: 'user_management_menu' },
-      { name: 'roleList', code: 'role_management_menu' }
-      // { name: 'settings', code: 'system_settings_menu', alias: 'page_title_setting' }
+      { name: 'clusterManagement', code: 'Cluster_management_menu' }
+      // { name: 'users', code: 'user_management_menu', parent: 'migrate' },
+      // { name: 'roleList', code: 'role_management_menu', parent: 'migrate' }
     ]
   }
 ]
@@ -419,8 +418,12 @@ export default {
   data() {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-      languages: Languages,
-      lang: localStorage.getItem('tapdata_localize_lang') || 'en',
+      languages: {
+        zh_CN: '中文 (简)',
+        en_US: 'English',
+        zh_TW: '中文 (繁)'
+      },
+      lang: Cookie.get('lang') || 'en_US',
       settingVisibility:
         this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
       settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
@@ -436,7 +439,8 @@ export default {
       licenseExpireDate: '',
       breadcrumbData: [],
       isCollapse: false,
-      isNotAside: this.$route?.meta?.isNotAside || false
+      isNotAside: this.$route?.meta?.isNotAside || false,
+      activeMenu: ''
     }
   },
   computed: {
@@ -447,13 +451,14 @@ export default {
   watch: {
     $route(data) {
       this.isNotAside = data?.meta?.isNotAside || false
+      this.getActiveMenu()
     }
   },
   created() {
     this.getMenus()
-    if (this.$cookie.get('email')) {
-      this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || ''
-    }
+    this.getActiveMenu()
+
+    this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
 
     window.iframeRouterChange = route => {
       this.$router.push(route)
@@ -466,7 +471,6 @@ export default {
     window.getFormLocal = data => {
       return self.$store.state[data]
     }
-    // this.handleGetPermissions();
 
     if (window.getSettingByKey('SHOW_LICENSE')) {
       this.getLicense()
@@ -476,6 +480,25 @@ export default {
     this.$root.$off('updateMenu')
   },
   methods: {
+    getActiveMenu() {
+      let route = this.$route
+      let activeMap = {}
+      const getMap = menus => {
+        menus.forEach(item => {
+          if (item?.children?.length) {
+            getMap(item?.children)
+          } else {
+            // parent 是用来匹配菜单是否激活的，比如函数管理的详情页，也属于函数管理，菜单也应该处于激活状态
+            // 之所以使用parent是因为管理的列表页面使用的也是子路由的，比如连接管理使用的是connectionList，而不是connection
+            activeMap[item.parent || item.name] = item.name
+          }
+        })
+      }
+      getMap(menuSetting)
+      let matched = route.matched || []
+      let activeRoute = matched.find(r => activeMap[r.name])
+      this.activeMenu = activeMap[activeRoute?.name] || ''
+    },
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
 
@@ -599,8 +622,7 @@ export default {
       })
     },
     changeLanguage(lang) {
-      localStorage.setItem('tapdata_localize_lang', lang)
-      Cookie.set('lang', LanguagesKey[lang])
+      Cookie.set('lang', lang)
       location.reload()
     },
 
@@ -617,14 +639,14 @@ export default {
         .then(res => {
           if (res) {
             let expires_on = res.data.expires_on || ''
-            if (this.$cookie.get('isAdmin') == 1) {
+            if (Cookie.get('isAdmin') == 1) {
               let endTime = expires_on - stime
               endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
               let showDay = window.getSettingByKey('licenseNoticeDays') || 0
               this.licenseExpireVisible = Number(showDay) > endTime
               this.licenseExpire = endTime
             }
-            this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss')
+            this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
           }
         })
     }

@@ -289,7 +289,6 @@ import { TOPOLOGY_MAP, SPEC_MAP, CHARGE_MAP } from '../../const'
 import { toDecimal2 } from '../../util'
 import VIcon from '../../components/VIcon'
 import timeFunction from '@/mixins/timeFunction'
-import dayjs from '../../plugins/dayjs'
 
 const getProductKey = item => {
   return ['chargingMode', 'periodType', 'specType', 'topology'].map(key => item[key]).join('_')

@@ -1,19 +1,13 @@
 import { NodeType } from './extends/NodeType'
 
 export class FieldCalc extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {
-    maxInputs: 1 // 最大输入个数
-  }
+  type = 'field_calc_processor'
+
+  maxInputs = 1 // 最大输入个数
 
   group = 'processor'
 
@@ -29,7 +23,8 @@ export class FieldCalc extends NodeType {
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldValue',
-        'x-reactions': '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}'
+        'x-reactions':
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
       }
     }
   }

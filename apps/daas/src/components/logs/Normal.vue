@@ -59,21 +59,19 @@
                 <span v-if="item.link" class="color-primary ml-2 cursor-pointer" @click="toLink(item.link)">{{
                   $t('customer_logs_to_link')
                 }}</span>
-                <span
+                <!--产品决定临时屏蔽-->
+                <!--<span
                   v-if="item.params.errorCode"
                   class="color-primary cursor-pointer ml-2"
                   @click="toSolutions(item.params.errorCode)"
                   >{{ $t('customer_logs_to_solutions') }}</span
-                >
+                >-->
               </div>
             </div>
           </DynamicScrollerItem>
         </template>
       </DynamicScroller>
     </div>
-    <!--    <div class="logs-list empty flex align-items-center justify-content-center" v-else>-->
-    <!--      <div class="p-4">{{ $t('message.noData') }}</div>-->
-    <!--    </div>-->
   </div>
 </template>
 <script>

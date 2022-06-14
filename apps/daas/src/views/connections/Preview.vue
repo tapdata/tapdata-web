@@ -4,7 +4,7 @@
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">
           <div class="img-box">
-            <img :src="getImgByType(connection.database_type)" />
+            <img :src="getConnectionIcon()" />
           </div>
         </div>
         <div class="ml-4">
@@ -14,13 +14,13 @@
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" size="mini" class="flex-1" @click="reload()">
+          <el-button type="primary" size="mini" class="flex-fill min-w-0" @click="reload()">
             {{ $t('connection_preview_load_schema') }}
           </el-button>
-          <el-button style="min-width: 50px" size="mini" @click="edit()">
+          <el-button class="flex-fill min-w-0" size="mini" @click="edit()">
             {{ $t('connection_preview_edit') }}
           </el-button>
-          <el-button class="flex-1" size="mini" @click="beforeTest()">
+          <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
             {{ $t('connection_preview_test') }}
           </el-button>
         </div>
@@ -85,7 +85,8 @@
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import Drawer from '@/components/Drawer'
-import { CONFIG_MODEL } from './util'
+import { CONFIG_MODEL, getConnectionIcon } from './util'
+import dayjs from 'dayjs'
 
 export default {
   name: 'DetailsDrawer',
@@ -154,23 +155,57 @@ export default {
       }
       return require(`web-core/assets/icons/node/${type.toLowerCase()}.svg`)
     },
+    transformData(row) {
+      if (row.pdkType === 'pdk') {
+        row.database_host = row.config.host
+        row.database_port = row.config.port
+        row.database_name = row.config.database
+        row.database_owner = row.config.schema
+        row.database_username = row.config.user || row.config.username
+        row.additionalString = row.config.extParams || row.config.additionalString
+        row.database_datetype_without_timezone = row.config.timezone
+        if (row.config.uri && row.config.isUri !== false) {
+          const res =
+            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+              row.config.uri
+            )
+          if (res && res.groups) {
+            const hostArr = res.groups.host.split(':')
+            row.database_host = hostArr[0]
+            row.database_port = hostArr[1]
+            row.database_name = res.groups.database
+            row.database_username = res.groups.username
+            row.additionalString = res.groups.query
+          }
+        }
+      }
+      return row
+    },
     open(row) {
       this.visible = true
       this.showProgress = false
-      this.connection = row
+      this.connection = this.transformData(row)
       //组装数据
-      this.connection['last_updated'] = this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
       this.loadList(row.database_type)
     },
     edit() {
+      const { connection = {} } = this
+      const { id, database_type, pdkType, pdkHash } = connection
+      let query = {
+        databaseType: database_type
+      }
+      if (pdkType) {
+        query.pdkType = pdkType
+        query.pdkHash = pdkHash
+      }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id: this.connection.id
+          id,
+          databaseType: database_type
         },
-        query: {
-          databaseType: this.connection.database_type
-        }
+        query
       })
     },
     async beforeTest() {
@@ -243,9 +278,9 @@ export default {
         .getNoSchema(this.connection.id)
         .then(res => {
           let data = res.data
-          this.connection = res.data
+          this.connection = this.transformData(data)
           //组装数据
-          this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
+          this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100
@@ -274,6 +309,21 @@ export default {
     loadList(type) {
       let whiteList = ['kafka', 'mq']
       this.list = whiteList.includes(type) ? CONFIG_MODEL[type] : CONFIG_MODEL['default']
+    },
+    getConnectionIcon() {
+      const { connection } = this
+      if (!connection) {
+        return
+      }
+      return getConnectionIcon(connection)
+    },
+
+    sync(list) {
+      if (!this.visible) return
+      const result = list.find(item => item.id === this.connection.id)
+      if (!result) return
+      console.log('result', result) // eslint-disable-line
+      this.connection = this.transformData(result)
     }
   }
 }

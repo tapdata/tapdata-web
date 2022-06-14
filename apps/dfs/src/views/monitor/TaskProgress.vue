@@ -231,7 +231,11 @@ export default {
   },
   computed: {
     cdcLastTimes() {
-      return this.task?.cdcLastTimes || []
+      return (
+        this.task?.cdcLastTimes?.map(item => {
+          return item
+        }) || []
+      )
     }
   },
   watch: {

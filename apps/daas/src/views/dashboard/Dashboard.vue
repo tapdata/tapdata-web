@@ -64,7 +64,7 @@
                 <li v-for="task in syncTaskList" :key="task.label">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
                   <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
-                  ><span class="num pl-7 font-color-dark">{{ handleChangeUnit(task.value) }}</span>
+                  ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(task.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -124,7 +124,7 @@
                 <li v-for="item in transBarData" :key="item.key">
                   <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
                   <span class="fw-normal font-color-light">{{ item.name }}</span
-                  ><span class="num pl-7 font-color-dark">{{ handleChangeUnit(item.value) }}</span>
+                  ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(item.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -210,6 +210,7 @@
 <script>
 import { Chart } from '@tap/component'
 import { Cluster, Task } from '@tap/api'
+import { toThousandsUnit } from '@/utils/util'
 
 let clusterApi = new Cluster()
 let taskApi = new Task()
@@ -289,6 +290,7 @@ export default {
             if (val === 1.1) {
               val = 1
             }
+
             let html = params.name + `<span style="padding: 0 4px; text-align: center;"></span><br/>` + val
             return html
           }
@@ -391,6 +393,8 @@ export default {
     }
   },
   methods: {
+    toThousandsUnit,
+
     // 任务概览跳转页面
     handleTask(item) {
       if (item.key === 'copy_total') {
@@ -524,18 +528,6 @@ export default {
       }
       return statusItem
     },
-    handleChangeUnit(val) {
-      // return size
-      if (val / (1000 * 1000 * 1000) > 1) {
-        return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
-      } else if (val / (1000 * 1000) > 1) {
-        return (val / (1000 * 1000)).toFixed(1) + 'M'
-      } else if (val / 1000 > 1) {
-        return (val / 1000).toFixed(1) + 'K'
-      } else {
-        return val
-      }
-    },
 
     getPieOption(data) {
       let dataName = []
@@ -548,7 +540,7 @@ export default {
           total += parseFloat(res.value) * 1
         })
         totalFalg = data.some(item => item.value > 0)
-        total = this.handleChangeUnit(total)
+        total = this.toThousandsUnit(total)
       }
 
       return {
@@ -606,7 +598,9 @@ export default {
               label: {
                 show: true,
                 fontWeight: 'bold',
-                formatter: '{name|{c}}\n{value|{b}}',
+                formatter: ({ name, value }) => {
+                  return `{name|${this.toThousandsUnit(value)}}\n{value|${name}}`
+                },
                 width: 60,
                 height: 34,
                 rich: {

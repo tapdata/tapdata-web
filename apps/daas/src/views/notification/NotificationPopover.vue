@@ -1,7 +1,7 @@
 <template>
   <el-popover popper-class="notification-popover" placement="bottom" trigger="hover" @show="activeTab = 'system'">
     <div class="btn" slot="reference" @click="toCenter()">
-      <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
+      <el-badge class="item-badge icon-btn px-3" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon size="16">xiaoxi-2</VIcon>
       </el-badge>
     </div>
@@ -14,48 +14,41 @@
       }}</ElButton>
       <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
-          <ul class="tab-list cuk-list" v-if="listData.length">
-            <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
-              <div class="list-item-content" v-if="item.msg === 'JobDDL'">
-                <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
-                <div class="list-item-desc">
+          <ul class="tab-list notification-list" v-if="listData.length">
+            <li class="notification-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
+              <div class="flex flex-row">
+                <div class="mr-1">
+                  <span class="unread-1zPaAXtSu inline-block"></span>
+                </div>
+                <div>
                   <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-                  <span>{{ systemMap[item.system] }}</span>
-                  <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
-                    <span class="link-primary">
-                      {{ `${item.serverName} , ` }}
-                    </span>
-                  </router-link>
-                  <span class="list-item-platform">
-                    {{
-                      `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
-                        item.databaseName
-                      } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
-                    }}
+                  <span>{{ systemMap[item.system] }} </span>
+                  <span v-if="item.msg === 'deleted'">
+                    {{ `${item.serverName} ` }}
                   </span>
-                  <el-tooltip :content="item.sql" placement="top">
-                    <span>
-                      {{ `DDL SQL : ${item.sql}` }}
-                    </span>
-                  </el-tooltip>
-                </div>
-                <div class="list-item-time">
-                  <span>{{ item.createTime }}</span>
-                </div>
-              </div>
-              <div class="list-item-content" v-else>
-                <div class="unread-1zPaAXtSu"></div>
-                <div class="list-item-desc">
-                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-                  <span>{{ systemMap[item.system] }}</span>
-                  <span class="link-primary" @click="handleGo(item)">
+                  <span v-else class="cursor-pointer px-1 primary" @click="handleGo(item)">
                     {{ item.serverName }}
                   </span>
-                  <span>{{ typeMap[item.msg] }}</span>
-                  <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
-                </div>
-                <div class="list-item-time">
-                  <span>{{ item.createTime }}</span>
+                  <template v-if="item.msg === 'JobDDL'">
+                    <span class="list-item-platform">
+                      {{
+                        `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
+                          item.databaseName
+                        } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
+                      }}
+                    </span>
+                    <el-tooltip :content="item.sql" placement="top">
+                      <span>
+                        {{ `DDL SQL : ${item.sql}` }}
+                      </span>
+                    </el-tooltip>
+                  </template>
+                  <template v-else>
+                    <span>{{ typeMap[item.msg] }}</span>
+                  </template>
+                  <div class="item-time">
+                    <span>{{ item.createTime }}</span>
+                  </div>
                 </div>
               </div>
             </li>
@@ -66,22 +59,6 @@
               <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
             </div>
           </div>
-          <!-- <div class="notice-footer">
-            <span v-readonlybtn="'home_notice_settings'">
-              <router-link to="/settingCenter/notificationSetting">
-                <span>
-                  {{ $t('notify_setting') }}
-                </span>
-              </router-link>
-            </span>
-            <span class="notice-footer-text">
-              <router-link to="/notification">
-                <span>
-                  {{ $t('notify_view_more') }}
-                </span>
-              </router-link>
-            </span>
-          </div> -->
         </div>
       </el-tab-pane>
       <el-tab-pane class="tab-item" :label="$t('notify_user_notice')" name="user" v-loading="loading">
@@ -90,7 +67,7 @@
             <li class="notification-item" v-for="record in userOperations" :key="record.id">
               <UserOperation :record="record"></UserOperation>
               <div class="item-time">
-                {{ $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+                {{ record.createTimeFmt }}
               </div>
             </li>
           </ul>
@@ -100,14 +77,6 @@
               <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
             </div>
           </div>
-          <!-- <div class="notice-footer">
-            <span></span>
-            <router-link to="/notification?type=user">
-              <span class="more-text">
-                {{ $t('notify_view_more') }}
-              </span>
-            </router-link>
-          </div> -->
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -119,7 +88,9 @@ import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
-import { formatTime, uniqueArr } from '@/utils/util'
+import { uniqueArr } from '@/utils/util'
+import Cookie from '@tap/shared/src/cookie'
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -165,8 +136,8 @@ export default {
       let msg = {
         type: 'notification'
       }
-      if (!parseInt(this.$cookie.get('isAdmin'))) {
-        msg.userId = this.$cookie.get('user_id')
+      if (!parseInt(Cookie.get('isAdmin'))) {
+        msg.userId = Cookie.get('user_id')
       }
       this.getUnreadData()
       this.$ws.on('notification', res => {
@@ -174,7 +145,7 @@ export default {
         this.getUnreadData()
         let data = res?.data
         if (data) {
-          data.createTime = formatTime(data.createTime)
+          data.createTime = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
           self.listData = uniqueArr([data, ...this.listData])
           // this.$store.commit('notification', {
           //   unRead: data.total
@@ -222,7 +193,7 @@ export default {
           })
           // this.unRead = total
           this.listData = items.map(t => {
-            t.createTime = formatTime(t.createTime)
+            t.createTime = dayjs(t.createTime).format('YYYY-MM-DD HH:mm:ss')
             return t
           })
         })
@@ -235,28 +206,7 @@ export default {
             this.getUnreadData()
             this.$root.$emit('notificationUpdate')
           }
-
-          // if (res.data) {
-          //   this.listData = []
-          //
-          // }
         })
-    },
-    getLag(lag) {
-      let r = '0s'
-      if (lag) {
-        let m = this.$moment.duration(lag, 'seconds')
-        if (m.days()) {
-          r = m.days() + 'd'
-        } else if (m.hours()) {
-          r = m.hours() + 'h'
-        } else if (m.minutes()) {
-          r = m.minutes() + 'm'
-        } else {
-          r = lag + 's'
-        }
-      }
-      return r
     },
     handleGo(item) {
       switch (item.system) {
@@ -310,7 +260,11 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          this.userOperations = res.data?.items || []
+          this.userOperations =
+            res.data?.items.map(item => {
+              item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            }) || []
         })
         .finally(() => {
           this.loading = false
@@ -332,6 +286,7 @@ export default {
     padding: 10px 16px;
     overflow: hidden;
     .el-tabs__header {
+      color: map-get($fontColor, light);
       border-bottom: 1px solid map-get($borderColor, light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
@@ -341,9 +296,9 @@ export default {
       .el-tabs__item {
         font-size: 14px;
         font-weight: 400;
-        color: map-get($fontColor, light);
+
         &.is-active {
-          color: map-get($color, primary);
+          // color: map-get($color, primary);
           font-weight: 500;
           border-color: map-get($color, primary);
         }
@@ -405,58 +360,6 @@ export default {
         overflow-y: auto;
       }
     }
-    .cuk-list {
-      font-size: 12px;
-      .list-item {
-        position: relative;
-        background: map-get($bgColor, white);
-        border-bottom: 1px solid #dedee4;
-        padding: 0 5px 5px 0;
-        cursor: pointer;
-        &:hover {
-          background-color: #ecf5ff;
-        }
-        .list-item-content {
-          position: relative;
-          height: 40px;
-          line-height: 40px;
-          padding-left: 14px;
-          box-sizing: border-box;
-          overflow: hidden;
-          display: block;
-        }
-        .unread-1zPaAXtSu {
-          position: absolute;
-          top: 22px;
-          left: 8px;
-          width: 6px;
-          height: 6px;
-          background: #f81d22;
-          border-radius: 50%;
-        }
-        .list-item-desc {
-          color: map-get($fontColor, light);
-          position: absolute;
-          top: -5px;
-          left: 30px;
-          right: 20px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          span {
-            font-size: 12px;
-          }
-        }
-        .list-item-platform {
-          color: map-get($fontColor, light);
-        }
-        .list-item-time {
-          margin: 15px 0 0 17px;
-          color: map-get($fontColor, slight);
-          font-size: 12px;
-        }
-      }
-    }
     .notification-list {
       box-sizing: border-box;
       .notification-item {
@@ -464,6 +367,17 @@ export default {
         border-bottom: 1px solid map-get($borderColor, light);
         font-size: 12px;
         color: map-get($fontColor, light);
+        .primary {
+          color: map-get($color, primary);
+        }
+        .unread-1zPaAXtSu {
+          top: 22px;
+          left: 8px;
+          width: 6px;
+          height: 6px;
+          background: #ee5353;
+          border-radius: 50%;
+        }
         &:hover {
           background-color: #ecf5ff;
         }

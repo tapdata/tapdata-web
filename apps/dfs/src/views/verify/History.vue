@@ -150,7 +150,7 @@ export default {
       this.searchRequest(filter, where)
         .then(([countData, data]) => {
           if (data) {
-            this.page.data = data
+            this.page.data = data || []
             this.page.current = currentPage
             this.page.total = countData.count
           }

@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue-demi'
-import CodeEditor from 'web-core/components/base/VCodeEditor'
+import { VCodeEditor } from '@tap/component'
 
 export const CodeEditorWidget = defineComponent({
   props: ['customNode', 'tree', 'onChange', 'options'],
@@ -12,7 +12,7 @@ export const CodeEditorWidget = defineComponent({
         ...props.options
       }
       return (
-        <CodeEditor
+        <VCodeEditor
           value={props.customNode.template}
           lang="javascript"
           options={options}

@@ -58,7 +58,7 @@
     <ul class="list pl-6">
       <li class="item" v-for="record in list" :key="record._id">
         <UserOperation :record="record"></UserOperation>
-        <span class="item-time">{{ $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+        <span class="item-time">{{ record.createTimeFmt }}</span>
       </li>
     </ul>
     <el-pagination
@@ -80,6 +80,8 @@ import UserOperation from './UserOperation'
 import SelectList from '@/components/SelectList'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { toRegExp } from '../../utils/util'
+import Cookie from '@tap/shared/src/cookie'
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -90,7 +92,7 @@ export default {
   data() {
     return {
       loading: false,
-      isAdmin: parseInt(this.$cookie.get('isAdmin')),
+      isAdmin: parseInt(Cookie.get('isAdmin')),
       search: {
         keyword: '',
         range: [],
@@ -108,8 +110,6 @@ export default {
   created() {
     if (this.isAdmin) {
       this.getUsers()
-    } else {
-      // this.search.userId = this.$cookie.get('user_id');
     }
     this.getData()
   },
@@ -160,13 +160,6 @@ export default {
         where: where
       }
       let UserLogs = this.$api('UserLogs')
-      // UserLogs.count({
-      //   where
-      // }).then(res => {
-      //   if (res.data) {
-      //     this.page.total = res.data.count
-      //   }
-      // })
       UserLogs.get({
         filter: JSON.stringify(filter)
       })
@@ -175,7 +168,11 @@ export default {
             this.page.total = res.data.total
           }
           this.page.index = current
-          this.list = res.data?.items || []
+          this.list =
+            res.data?.items.map(item => {
+              item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            }) || []
         })
         .finally(() => {
           this.loading = false

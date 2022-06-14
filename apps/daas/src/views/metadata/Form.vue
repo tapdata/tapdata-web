@@ -39,25 +39,30 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('metadata.details.fieldType')" prop="java_type" required>
-          <el-select v-model="form.java_type" :disabled="fieldNameDisabled" size="mini">
-            <el-option v-for="item in dataType_list" :label="item.name" :value="item.type" :key="item.type"></el-option>
-          </el-select>
+        <el-form-item :label="$t('metadata.details.fieldType')" prop="data_type" required>
+          <ElAutocomplete
+            :disabled="fieldNameDisabled"
+            v-model="form.data_type"
+            class="inline-input"
+            style="width: 350px"
+            :fetch-suggestions="querySearchPdkType"
+          ></ElAutocomplete>
+          <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         </el-form-item>
         <el-form-item style="margin-left: 100px">
           <el-checkbox v-model="form.is_auto_allowed">{{ $t('metadata.details.allowOverwrite') }}</el-checkbox>
           <el-checkbox v-model="form.autoincrement">{{ $t('metadata.details.selfIncreasing') }}</el-checkbox>
           <el-checkbox v-model="form.primary_key">{{ $t('metadata.details.primaryKey') }}</el-checkbox>
         </el-form-item>
-        <el-form-item :label="$t('metadata.details.fieldLength')">
-          <el-input-number v-model="form.columnSize" :min="0" size="mini"></el-input-number>
-        </el-form-item>
-        <el-form-item :label="$t('metadata.details.accuracy')">
-          <el-input-number v-model="form.scale" :min="0" size="mini"></el-input-number>
-        </el-form-item>
-        <el-form-item :label="$t('metadata.details.numberLength')">
-          <el-input-number v-model="form.precision" :min="0" size="mini"></el-input-number>
-        </el-form-item>
+        <!--        <el-form-item :label="$t('metadata.details.fieldLength')">-->
+        <!--          <el-input-number v-model="form.columnSize" :min="0" size="mini"></el-input-number>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item :label="$t('metadata.details.accuracy')">-->
+        <!--          <el-input-number v-model="form.scale" :min="0" size="mini"></el-input-number>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item :label="$t('metadata.details.numberLength')">-->
+        <!--          <el-input-number v-model="form.precision" :min="0" size="mini"></el-input-number>-->
+        <!--        </el-form-item>-->
       </div>
       <!-- 字典模板 -->
       <!-- <div class="box">
@@ -185,6 +190,8 @@
   </el-dialog>
 </template>
 <script>
+import { TypeMapping } from '@tap/api'
+const typeMappingApi = new TypeMapping()
 export default {
   props: {
     data: {
@@ -210,14 +217,11 @@ export default {
         field_name: '',
         alias_name: '',
         comment: '',
-        java_type: 'String',
+        data_type: '',
         is_auto_allowed: false,
         autoincrement: 0,
         primary_key: false,
         primary_key_position: 0,
-        columnSize: 0,
-        precision: 0,
-        scale: 0,
         dictionary: [{ name: '', key: '', value: '' }],
         relation: [{ table_name: '', field_name: '', rel: '' }]
       },
@@ -230,22 +234,7 @@ export default {
           }
         ]
       },
-      dataType_list: [
-        { name: this.$t('metadata.details.Float'), type: 'Float' },
-        { name: this.$t('metadata.details.String'), type: 'String' },
-        { name: this.$t('metadata.details.Boolean'), type: 'Boolean' },
-        { name: this.$t('metadata.details.Date'), type: 'Date' },
-        { name: this.$t('metadata.details.Integer'), type: 'Integer' },
-        { name: this.$t('metadata.details.Short'), type: 'Short' },
-        { name: this.$t('metadata.details.Array'), type: 'Array' },
-        { name: this.$t('metadata.details.Map'), type: 'Map' },
-        { name: this.$t('metadata.details.BigDecimal'), type: 'BigDecimal' },
-        { name: this.$t('metadata.details.Byte'), type: 'Byte' },
-        { name: this.$t('metadata.details.Bytes'), type: 'Bytes' },
-        { name: this.$t('metadata.details.Long'), type: 'Long' },
-        { name: this.$t('metadata.details.Double'), type: 'Double' },
-        { name: 'Null', type: 'Null' }
-      ],
+      typeMapping: [],
       relationshipList: [
         { name: this.$t('metadata.details.oneone'), key: 'oneone' },
         { name: this.$t('metadata.details.onemany'), key: 'onemany' },
@@ -264,6 +253,7 @@ export default {
     this.form.relation = this.data.relation || []
     this.fieldNameDisabled = this.data && this.data.id ? true : false
     this.getMetadataTable()
+    this.getTypeMapping(this.metadata?.source?.database_type)
   },
   methods: {
     // 获取外键表数据
@@ -299,6 +289,30 @@ export default {
       if (resultData.data?.items) {
         this.getTableData = resultData.data?.items
       }
+    },
+    //获取typeMapping
+    getTypeMapping(type) {
+      typeMappingApi.pdkDataType(type).then(res => {
+        let targetObj = JSON.parse(res?.data || '{}')
+        for (let key in targetObj) {
+          this.typeMapping.push({
+            dbType: key,
+            rules: targetObj[key]
+          })
+        }
+      })
+    },
+    querySearchPdkType(queryString, cb) {
+      let result = this.typeMapping.map(t => {
+        return {
+          value: t.dbType
+        }
+      })
+      cb(result)
+    },
+    getPdkEditValueType() {
+      let findOne = this.typeMapping.find(t => t.dbType === this.form.data_type)
+      return findOne?.rules || ''
     },
     // 获取有效表
     getAvailableTable(index) {
@@ -376,7 +390,7 @@ export default {
       let that = this
       if (
         ['String', 'Integer', 'Boolean', 'Short', 'Long', 'Float', 'Double', 'BigDecimal'].includes(
-          that.form.java_type
+          that.form.data_type
         ) &&
         this.form.field_name
       ) {
@@ -385,9 +399,9 @@ export default {
         that.dictionaryList = []
         let fieldsType
 
-        if (item.java_type == 'String') {
+        if (item.data_type == 'String') {
           fieldsType = 'string'
-        } else if (item.java_type == 'Boolean') {
+        } else if (item.data_type == 'Boolean') {
           fieldsType = 'bool'
         } else {
           fieldsType = 'double'
@@ -426,7 +440,7 @@ export default {
     addDictionary() {
       if (
         ['String', 'Integer', 'Boolean', 'Short', 'Long', 'Float', 'Double', 'BigDecimal'].includes(
-          this.form.java_type
+          this.form.data_type
         ) &&
         this.form.field_name
       ) {
@@ -542,7 +556,7 @@ export default {
             // field_name: this.form.field_name,
             // alias_name: this.form.alias_name,
             // comment: this.form.comment,
-            // java_type: this.form.java_type,
+            // data_type: this.form.data_type,
             // is_auto_allowed: this.form.is_auto_allowed,
             // autoincrement: this.form.autoincrement,
             // primary_key_position: this.form.primary_key_position,
@@ -561,9 +575,9 @@ export default {
                 this.$emit('dialogVisible', false)
                 this.$message.success(this.$t('metadata.details.success_Release'))
               })
-              .catch(() => {
-                this.$message.error(this.$t('message_save_fail'))
-              })
+            // .catch(() => {
+            //   this.$message.error(this.$t('message_save_fail'))
+            // })
           } else {
             this.$message.error(this.$t('metadata.details.filedName_repeat'))
           }
@@ -642,21 +656,14 @@ export default {
       .e-table {
         th {
           padding: 4px 10px;
-          color: map-get($fontColor, light);
-          background-color: #eff1f4;
+          // color: map-get($fontColor, light);
+          // background-color: #eff1f4;
         }
         td {
           padding: 0;
         }
         .el-table__body-wrapper {
           border-bottom: 1px solid #ececec;
-        }
-      }
-      .addBtn {
-        .el-button {
-          color: map-get($fontColor, light);
-          background-color: #ececec;
-          border-color: #ececec;
         }
       }
     }

@@ -43,9 +43,9 @@
         <template slot-scope="scope">
           <div class="metadata-name">
             <div class="name ellipsis">
-              <a @click="toDetails(scope.row)">
+              <ElLink type="primary" @click="toDetails(scope.row)">
                 {{ scope.row.name || scope.row.original_name }}
-              </a>
+              </ElLink>
               <el-tag
                 v-if="scope.row.classifications && scope.row.classifications.length"
                 class="tag"
@@ -74,7 +74,7 @@
       ></el-table-column>
       <el-table-column :label="$t('metadata.header.last_updated')" prop="last_updated" sortable="custom">
         <template slot-scope="scope">
-          {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('metadata.details.opera')" width="180">
@@ -177,6 +177,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -263,12 +264,6 @@ export default {
       this.table.fetch(1)
     }
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    // let cache = this.table.getCache()
-    // cache.isFuzzy = cache.isFuzzy === true
-    // this.searchParams = cache
-  },
   computed: {
     table() {
       return this.$refs.table
@@ -350,14 +345,13 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          this.table.setCache({
-            keyword,
-            metaType,
-            dbId
-          })
           return {
             total: res.data.total,
-            data: res.data?.items || []
+            data:
+              res.data?.items.map(item => {
+                item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+                return item
+              }) || []
           }
         })
     },
@@ -487,9 +481,9 @@ export default {
               }
               // this.toDetails(res.data);
             })
-            .catch(() => {
-              this.$message.success(this.$t('message_save_fail'))
-            })
+          // .catch(() => {
+          //   this.$message.success(this.$t('message_save_fail'))
+          // })
         }
       })
     },
@@ -506,9 +500,9 @@ export default {
           this.changeNameDialogVisible = false
           this.table.fetch()
         })
-        .catch(() => {
-          this.$message.info(this.$t('message_save_fail'))
-        })
+      // .catch(() => {
+      //   this.$message.info(this.$t('message_save_fail'))
+      // })
     },
     changeName(item) {
       this.changeNameDialogVisible = true
@@ -557,9 +551,9 @@ export default {
             this.$message.success(this.$t('message.deleteOK'))
             this.table.fetch()
           })
-          .catch(() => {
-            this.$message.info(this.$t('message.deleteFail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message.deleteFail'))
+        // })
         // .finally(() => {
         //   instance.confirmButtonLoading = false
         // })
@@ -645,16 +639,16 @@ export default {
       }
     }
     .metadata-name {
-      .name {
-        color: map-get($color, primary);
-        a {
-          color: inherit;
-          cursor: pointer;
-        }
-      }
-      .name:hover {
-        text-decoration: underline;
-      }
+      // .name {
+      //   color: map-get($color, primary);
+      //   a {
+      //     color: inherit;
+      //     cursor: pointer;
+      //   }
+      // }
+      // .name:hover {
+      //   text-decoration: underline;
+      // }
       .tag {
         margin-left: 5px;
         color: map-get($fontColor, light);

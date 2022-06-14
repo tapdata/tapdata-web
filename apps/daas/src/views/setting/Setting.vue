@@ -1,7 +1,7 @@
 <template>
   <section class="setting-list-wrap">
     <div class="setting-list-box">
-      <ul class="setting-nav" :style="lang === 'en' ? '280px' : '160px'">
+      <ul class="setting-nav" :style="lang === 'en_US' ? '280px' : '160px'">
         <li
           v-for="(item, index) in formData.items"
           :key="index"
@@ -100,7 +100,6 @@
               </div>
             </template>
             <template v-if="item.category !== 'license'">
-              <!-- <span class="title">{{ $t('setting_' + item.category) }}</span> -->
               <span class="btns" v-if="item.category === 'SMTP'">
                 <a class="link-primary" @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
                 <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
@@ -187,8 +186,9 @@
   </section>
 </template>
 <script>
-import _ from 'lodash'
+import { uniq, find } from 'lodash'
 import VIcon from '@/components/VIcon'
+import Cookie from '@tap/shared/src/cookie'
 export default {
   name: 'Setting',
   components: { VIcon },
@@ -201,7 +201,7 @@ export default {
       },
       activeTab: 0,
       activePanel: 'Log',
-      lang: localStorage.getItem('tapdata_localize_lang') || 'en',
+      lang: Cookie.get('lang') || 'en_US',
       emailTabs: [
         {
           label: this.$t('setting_Email_Template_Running'),
@@ -281,7 +281,7 @@ export default {
           if (res && res.data.length) {
             items = res.data.map(item => item.category)
           }
-          items = _.uniq(items)
+          items = uniq(items)
           items.sort((a, b) => {
             return a.sort < b.sort ? -1 : 1
           })
@@ -309,7 +309,7 @@ export default {
           })
 
           let vals = sortCategories.map(item => {
-            let value = _.find(itemsCategories, val => {
+            let value = find(itemsCategories, val => {
               return val.category === item.category
             })
             return Object.assign(value, item)
@@ -342,9 +342,9 @@ export default {
             this.$message.success(this.$t('message_save_ok'))
           }
         })
-        .catch(e => {
-          this.$message.error(e.response.msg)
-        })
+      // .catch(e => {
+      //   this.$message.error(e.response.msg)
+      // })
     },
     // 邮件模板
     checkTemplate() {
@@ -361,16 +361,12 @@ export default {
           2
         )
       }
-      try {
-        this.$api('Setting')
-          .testEmail()
-          .then(() => {
-            localStorage.setItem('Tapdata_settings_email_countdown', now)
-            this.$message.success(this.$t('setting_test_email_success'))
-          })
-      } catch (error) {
-        this.$message.error(this.$t('setting_requestFailed'))
-      }
+      this.$api('Setting')
+        .testEmail()
+        .then(() => {
+          localStorage.setItem('Tapdata_settings_email_countdown', now)
+          this.$message.success(this.$t('setting_test_email_success'))
+        })
     }
   }
 }

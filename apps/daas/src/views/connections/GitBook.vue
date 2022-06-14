@@ -1,23 +1,36 @@
 <template>
   <div class="markdown-body-wrap git-book">
-    <div class="markdown-body" v-html="htmlMD"></div>
+    <div class="markdown-body" v-html="html"></div>
   </div>
 </template>
 
 <script>
+import MarkdownIt from 'markdown-it'
+
 export default {
   name: 'GitBook',
-  data() {
-    return {
-      htmlMD: ''
+  props: {
+    value: {
+      type: String,
+      require: true
     }
   },
-  mounted() {
-    this.getHtmlMD(this.$route.query.databaseType)
+  data() {
+    return {
+      html: ''
+    }
   },
-  methods: {
-    getHtmlMD(type) {
-      this.htmlMD = require(`@/assets/md/connection/${type.toLowerCase()}.md`)
+  watch: {
+    value(v) {
+      if (v) {
+        const reader = new FileReader()
+        const blob = new Blob([v])
+        reader.readAsText(blob, 'utf8')
+        reader.onload = () => {
+          const md = new MarkdownIt()
+          this.html = md.render(reader.result)
+        }
+      }
     }
   }
 }

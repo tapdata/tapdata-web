@@ -1,24 +1,12 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-// const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://localhost:3000', // TM端本地默认地址
   jet: 'http://jet.devops.tapdata.net:31613',
-  // test: 'http://192.168.1.181:31438/' // 自定义节点
-  test: 'http://192.168.1.181:31025' // v2.0
-  // test: 'http://192.168.1.181:30726' // v2-dev
-  // test: 'http://192.168.1.126:3003/' // tm 重构
-  // test: 'http://192.168.1.181:30474/' // v1-30
-  // test: 'http://192.168.1.132:32535/' // v1-29
-  // test: 'http://192.168.1.181:32220/' // v1-28
-  // test: 'http://192.168.1.181:31119/' // v1-27
-  // test: 'http://192.168.1.193:31704' // table-many
-  // test: 'http://192.168.1.181:30390' // v1-25
-  // test: 'http://192.168.1.181:30649'  // v1-24
-  // test: 'http://192.168.1.181:31703'  // v1-23
-  // test: 'http://192.168.1.181:30891'  // v1-22
+  test: 'http://192.168.1.132:31787' // v2.0
 }
 let origin
 const { argv } = process
@@ -54,6 +42,10 @@ module.exports = {
     }
   },
   chainWebpack(config) {
+    //  ============ 配置别名 ============
+    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
+
+    // ============ svg处理 ============
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
     const webCoreIconDir = resolve('../../packages/web-core/assets/icons/svg')
@@ -144,20 +136,22 @@ module.exports = {
       .use('markdown')
       .loader('markdown-loader')
       .end()
-
-    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
   },
   configureWebpack: config => {
+    // 尽量保证项目中文件后缀的精确
+    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json']
+
     if (process.env.NODE_ENV === 'production') {
       // gzip
       config.plugins.push(
         new CompressionWebpackPlugin({
-          // 正在匹配需要压缩的文件后缀
-          test: /\.(js|css|svg|woff|ttf|json|html)$/,
-          // 大于10kb的会压缩
-          threshold: 10240
+          test: /\.(js|css|svg|woff|ttf|json|html|otf)$/, // 正在匹配需要压缩的文件后缀
+          threshold: 10240 // 大于10kb的会压缩
           // 其余配置查看compression-webpack-plugin
-        })
+        }),
+
+        // 分析工具
+        new SpeedMeasurePlugin()
       )
 
       config['performance'] = {
@@ -166,17 +160,24 @@ module.exports = {
         maxAssetSize: 30000000
       }
 
-      /*config.plugins.push(
-        new HardSourceWebpackPlugin(),
-        new HardSourceWebpackPlugin.ExcludeModulePlugin([
-          {
-            test: /.*\.DS_Store/
-          }
-        ])
-      )*/
+      const sassLoader = require.resolve('sass-loader')
+      config.module.rules
+        .filter(rule => {
+          return rule.test.toString().indexOf('scss') !== -1
+        })
+        .forEach(rule => {
+          rule.oneOf.forEach(oneOfRule => {
+            const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
+            oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
+          })
+        })
     }
   },
   css: {
+    extract: {
+      // 一个官方维护人员的回复如下，简单的说，就是在js里css的引入顺序导致的问题，多个css的在js里的引入顺序不同，就会提示这个警告。例如，在1.js 里，引入的顺序是a.css, b.css; 在2.js里，引入顺序是b.css,a.css, 出现了这种引入顺序不同，就导致了警告。在两个js里把引入顺序调成一致，就没问题了。在1.js和2.js里的引入顺序都调整成a.css, b.css 就没有那个警告了。
+      ignoreOrder: true // 对于通过使用 scoping 或命名约定来解决 css order 的项目，可以通过将插件的 ignoreOrder 选项设置为 true 来禁用 css order 警告。
+    },
     loaderOptions: {
       scss: {
         additionalData: `@use "~@/styles/var.scss" as *;`

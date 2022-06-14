@@ -67,3 +67,4 @@ export const ClipboardButton = defineComponent({
     }
   }
 })
+export default ClipboardButton

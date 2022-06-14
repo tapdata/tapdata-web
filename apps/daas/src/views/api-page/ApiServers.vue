@@ -89,6 +89,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   name: 'ApiServers',
@@ -148,9 +149,6 @@ export default {
   created() {
     this.getFilterItems()
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
   computed: {
     table() {
       return this.$refs.table
@@ -202,15 +200,15 @@ export default {
             this.$message.success(this.$t('message_delete_ok'))
             this.table.fetch()
           })
-          .catch(() => {
-            this.$message.info(this.$t('message_delete_fail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message_delete_fail'))
+        // })
       })
     },
 
     // 下载api配置文件
     downloadConfig(item) {
-      let token = this.$cookie.get('token')
+      let token = Cookie.get('token')
       window.open(this.$api('ApiServer').url + '/download/' + item.id + '?access_token=' + token, '_blank')
     },
 
@@ -229,9 +227,9 @@ export default {
                 this.$message.success(this.$t('message_save_ok'))
               }
             })
-            .catch(() => {
-              this.$message.error(this.$t('message_save_fail'))
-            })
+          // .catch(() => {
+          //   this.$message.error(this.$t('message_save_fail'))
+          // })
         }
       })
     },
@@ -268,9 +266,6 @@ export default {
         })
         .then(res => {
           if (res) {
-            this.table.setCache({
-              keyword
-            })
             return {
               total: res.data?.total || 0,
               data: res.data?.items || []

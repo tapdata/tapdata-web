@@ -193,11 +193,6 @@ export default {
   created() {
     this.getUserData()
     this.getFilterItems()
-    // this.getDbOptions();
-    // this.getCount();
-  },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
   },
   watch: {
     '$route.query'() {
@@ -306,9 +301,9 @@ export default {
                 this.$message.success(this.$t('role_list_delete_success'))
               }
             })
-            .catch(() => {
-              this.$message.error(this.$t('role_list_delete_error'))
-            })
+          // .catch(() => {
+          //   this.$message.error(this.$t('role_list_delete_error'))
+          // })
         }
       })
     },
@@ -363,15 +358,15 @@ export default {
                 this.table.fetch()
               }
             })
-            .catch(e => {
-              if (e.response && e.response.msg) {
-                if (e.response.msg.indexOf('already exists')) {
-                  this.$message.error(this.$t('role_form_already_exists'))
-                } else {
-                  this.$message.error(`${e.response.msg}`)
-                }
-              }
-            })
+            // .catch(e => {
+            //   if (e.response && e.response.msg) {
+            //     if (e.response.msg.indexOf('already exists')) {
+            //       this.$message.error(this.$t('role_form_already_exists'))
+            //     } else {
+            //       this.$message.error(`${e.response.msg}`)
+            //     }
+            //   }
+            // })
             .finally(() => {
               self.dialogFormVisible = false
             })
@@ -461,15 +456,15 @@ export default {
             this.$message.success(this.$t('message_save_ok'))
           }
         })
-        .catch(e => {
-          if (e.response && e.response.msg) {
-            if (e.response.msg.indexOf('already exists')) {
-              this.$message.error(this.$t('role_form_already_exists'))
-            } else {
-              this.$message.error(`${e.response.msg}`)
-            }
-          }
-        })
+      // .catch(e => {
+      //   if (e.response && e.response.msg) {
+      //     if (e.response.msg.indexOf('already exists')) {
+      //       this.$message.error(this.$t('role_form_already_exists'))
+      //     } else {
+      //       this.$message.error(`${e.response.msg}`)
+      //     }
+      //   }
+      // })
       this.dialogUserVisible = false
     },
     // 改变列表默认值val
@@ -552,17 +547,6 @@ export default {
 
     .num {
       padding-top: 10px;
-    }
-  }
-
-  .el-dialog__body {
-    // padding: 30px;
-    .el-form-item {
-      // margin-bottom: 15px;
-    }
-    .el-form-item__error {
-      // padding-top: 0;
-      // line-height: 12px;
     }
   }
 

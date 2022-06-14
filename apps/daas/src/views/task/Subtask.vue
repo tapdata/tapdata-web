@@ -92,6 +92,7 @@ import TableList from '@/components/TableList'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
 
+let timeout = null
 export default {
   name: 'Subtask',
   components: { TableList, VIcon },
@@ -109,16 +110,16 @@ export default {
       fetchTimer: null,
       columns: [
         {
-          label: '子任务名称',
+          label: this.$t('task_info_subtasks_name'),
           prop: 'name'
         },
         {
-          label: '状态',
+          label: this.$t('task_info_subtasks_status'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '操作',
+          label: this.$t('column_operation'),
           prop: 'operation',
           slotName: 'operation'
         }
@@ -155,8 +156,16 @@ export default {
       return this.$refs.tableList
     }
   },
+  mounted() {
+    //定时轮询
+    timeout = setInterval(() => {
+      this.$refs.tableList.fetch(null, 0, true)
+    }, 5000)
+  },
+  destroyed() {
+    clearInterval(timeout)
+  },
   methods: {
-    init() {},
     remoteMethod({ page }) {
       const { taskId } = this
       let { current, size } = page
@@ -184,11 +193,8 @@ export default {
       this.$api('SubTask')
         .start(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
     },
@@ -196,11 +202,8 @@ export default {
       this.$api('SubTask')
         .stop(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
     },
@@ -208,11 +211,8 @@ export default {
       this.$api('SubTask')
         .renew(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
     },
@@ -220,11 +220,8 @@ export default {
       this.$api('SubTask')
         .pause(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
     },

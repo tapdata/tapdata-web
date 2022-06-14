@@ -424,10 +424,10 @@ export default {
               this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
               this.tranModelVersionControl()
             })
-            .catch(() => {
-              this.loading = false
-              this.$message.error('表单检验不通过，任务名称必填')
-            })
+            // .catch(() => {
+            //   this.loading = false
+            //   this.$message.error('表单检验不通过，任务名称必填')
+            // })
             .finally(() => {
               this.loading = false
             })
@@ -480,13 +480,6 @@ export default {
             }
           }
         }
-        this.$message.error(`${this.$t('dag_save_fail')}`)
-      } else if (error?.data?.message) {
-        this.$message.error(error.data.message)
-      } else {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        this.$message.error(`${this.$t('dag_save_fail')}`)
       }
     },
     createTask() {
@@ -593,7 +586,8 @@ export default {
             name: this.dataSourceData.source_connectionName,
             tableName: this.dataSourceData.source_connectionName, //?
             type: 'database',
-            fieldProcess: this.transferData.fieldProcess
+            fieldProcess: this.transferData.fieldProcess,
+            existDataProcessMode: this.settingData.existDataProcessMode
           }
         ),
         Object.assign(
@@ -610,7 +604,8 @@ export default {
             tableSuffix: this.transferData.tableSuffix,
             tableNameTransform: this.transferData.tableNameTransform,
             fieldsNameTransform: this.transferData.fieldsNameTransform,
-            batchOperationList: this.transferData.batchOperationList
+            batchOperationList: this.transferData.batchOperationList,
+            existDataProcessMode: this.settingData.existDataProcessMode
           }
         )
       ]

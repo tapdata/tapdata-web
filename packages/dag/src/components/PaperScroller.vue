@@ -9,6 +9,8 @@
   >
     <div ref="scrollerBg" class="paper-scroller-background" :style="scrollerBgStyle">
       <div ref="paper" class="paper" :style="paperStyle">
+        <!--safari 低版本 增加-->
+        <!--<div class="paper-content-wrap" :style="contentWrapStyle" style="position: relative">-->
         <div class="paper-content-wrap" :style="contentWrapStyle">
           <slot></slot>
           <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>
@@ -83,7 +85,7 @@ export default {
         x: 0,
         y: 0
       },
-      showMiniView: true
+      showMiniView: false
     }
   },
 
@@ -151,9 +153,13 @@ export default {
       }
     },
     contentWrapStyle() {
-      return {
+      const style = {
         transform: `translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
       }
+      if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
+        style.position = 'relative'
+      }
+      return style
     }
   },
 
@@ -447,9 +453,15 @@ export default {
       this.selectBoxAttr = { x, y, w, h, right: x + w, bottom: y + h }
     },
 
-    mouseUp() {
+    mouseUp(event) {
       off(window, 'mouseup', this.mouseUp)
-
+      if (
+        [this.$refs.paper, this.$refs.scrollerBg, this.$el].includes(event.target) &&
+        !this.showSelectBox &&
+        !this.$store.getters['dataflow/isPaperMoveInProgress']
+      ) {
+        this.$emit('click-blank')
+      }
       this.mouseUpMouseSelect()
       this.mouseUpMovePaper()
       this.removeActiveAction('dragActive')

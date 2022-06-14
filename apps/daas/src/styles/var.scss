@@ -19,7 +19,7 @@ $color: (
   info: #75849b,
   linfo: #e9edf2,
   disable: #c9cdd4,
-  white: #fff
+  white: #fff,
 );
 
 $fontColor: (
@@ -40,7 +40,9 @@ $bgColor: (
   stopping: #c39700,
   complete: #008b58,
   special: #c9cdd4,
-  white: #fff
+  white: #fff,
+  pageCount: rgba(44, 101, 255, 0.08),
+  disactive: rgba(106, 161, 255, 0.1)
 );
 
 $borderColor: (

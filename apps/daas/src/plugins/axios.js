@@ -117,9 +117,16 @@ axios.interceptors.request.use(function (config) {
 axios.interceptors.response.use(response => {
   removePending(response.config)
   let data = response.data
+  if (response?.config?.responseType === 'blob') {
+    return {
+      data: data?.data ?? (data || {}),
+      response: response
+    }
+  }
   if (data.code === 'ok') {
     return {
-      data: (data && data.data) || data || {},
+      // data: (data && data.data) || data || {}, // 这种写法data.data = false 会不通过
+      data: data?.data ?? (data || {}),
       response: response
     }
   } else {
@@ -136,6 +143,9 @@ axios.interceptors.response.use(response => {
         }
         throw response
       default:
+        Message.error({
+          message: data.message
+        })
         throw response
     }
   }

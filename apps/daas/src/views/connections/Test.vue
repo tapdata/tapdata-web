@@ -10,9 +10,14 @@
     :close-on-press-escape="false"
   >
     <div class="test-result">
-      <div v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'" style="color: #d54e21">
+      <div
+        v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
+        style="color: #d54e21"
+        class="flex align-items-baseline"
+      >
         <i class="el-icon-warning" style="color: #d54e21"></i>
-        <span class="test-title">{{ wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error') }}</span>
+        <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto mt-0"></pre>
+        <span v-else>{{ $t('dataForm.test.error') }}</span>
       </div>
       <div v-else>
         <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
@@ -43,13 +48,14 @@
     >
       <el-table-column prop="show_msg" :label="$t('dataForm.test.items')">
         <template slot-scope="scope">
-          <span>{{ $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
+          <span>{{ scope.row.show_msg }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="status" :label="$t('dataForm.test.result')" width="150">
         <template slot-scope="scope">
           <span v-if="scope.row.status === 'failed' && !scope.row.required" :style="`color: ${colorMap['warning']};`">
-            <i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>
+            <VIcon size="12" :style="{ color: colorMap[status] }">warning</VIcon>
+            <!--<i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>-->
             {{ statusMap[scope.row.status] }}
           </span>
           <span v-else-if="scope.row.status === 'unTest'" :style="`color: ${colorMap[scope.row.status]};`">
@@ -60,7 +66,7 @@
             {{ statusMap[scope.row.status] }}
           </span>
           <span v-else :style="`color: ${colorMap[scope.row.status]};`">
-            <VIcon :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
+            <VIcon size="12" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
             {{ statusMap[scope.row.status] }}
           </span>
         </template>
@@ -115,11 +121,11 @@ export default {
         unTest: '#aaaaaa'
       },
       iconMap: {
-        ready: 'el-icon-success',
+        ready: 'success',
         invalid: 'error',
         testing: '',
-        passed: 'el-icon-success',
-        waiting: 'el-icon-question',
+        passed: 'success',
+        waiting: 'question-fill',
         failed: 'error',
         unTest: ''
       },
@@ -146,6 +152,7 @@ export default {
     },
     handleClose() {
       this.$emit('update:dialogTestVisible', false)
+      this.clearInterval()
     },
     handleWS() {
       this.$ws.ready(() => {

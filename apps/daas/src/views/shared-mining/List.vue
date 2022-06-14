@@ -9,7 +9,7 @@
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column width="360" :label="$t('share_list_name')" :show-overflow-tooltip="true">
+      <el-table-column width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -26,16 +26,16 @@
           {{ scope.row.pointTime }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_time')" sortable></el-table-column>
+      <el-table-column sortable width="120" :label="$t('share_list_time')"></el-table-column>
       <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
-      <el-table-column width="100" prop="status" :label="$t('share_list_status')">
+      <el-table-column width="120" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
           <span :class="['status-' + row.statusResult, 'status-block']">
             {{ $t('task_preview_status_' + row.statusResult) }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column width="280" fixed="right" :label="$t('column_operation')">
+      <el-table-column width="250" fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
           <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
             $t('task_list_run')
@@ -75,41 +75,41 @@
         :disabled="!showEditSettingBtn"
         :rules="rules"
       >
-        <el-form-item prop="persistenceMongodb_uri_db" size="mini" :label="$t('share_form_setting_connection_name')">
-          <el-select
-            v-model="digSettingForm.persistenceMongodb_uri_db"
-            :placeholder="$t('shared_cdc_setting_select_mongodb_tip')"
-            @change="handleTables"
-          >
-            <el-option v-for="item in mongodbList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-          </el-select>
-          <div v-if="showEditSettingBtn && mongodbList.length === 0">
-            <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb">{{
-              $t('shared_cdc_setting_no_mongodb_tip')
-            }}</el-link>
-            /
-            <span class="refresh" @click="getMongodb">
-              {{ $t('shared_cdc_setting_refresh') }} <VIcon class="font-color-slight">refresh</VIcon></span
-            >
-          </div>
-        </el-form-item>
-        <el-form-item prop="persistenceMongodb_collection" size="mini" :label="$t('share_form_setting_table_name')">
-          <el-select
-            v-model="digSettingForm.persistenceMongodb_collection"
-            :placeholder="$t('shared_cdc_setting_select_table_tip')"
-            allow-create
-            filterable
-          >
-            <el-option
-              v-for="table in tableList"
-              :key="table.tableId"
-              :label="table.table_name"
-              :value="table.table_name"
-            >
-            </el-option>
+        <el-form-item prop="persistenceMongodb_uri_db" size="mini" :label="$t('shared_cdc_setting_select_mode')">
+          <el-select v-model="digSettingForm.persistenceMode">
+            <el-option v-for="item in enumsItems" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
+
+        <el-form-item
+          v-if="digSettingForm.persistenceMode === 'MongoDB'"
+          prop="persistenceMongodb_uri_db"
+          size="mini"
+          label="MongoDB URI"
+        >
+          <el-input v-model="digSettingForm.persistenceMongodb_uri_db"></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="digSettingForm.persistenceMode === 'MongoDB'"
+          prop="persistenceMongodb_collection"
+          size="mini"
+          :label="$t('share_form_setting_table_name')"
+        >
+          <el-input v-model="digSettingForm.persistenceMongodb_collection"> </el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="digSettingForm.persistenceMode === 'RocksDB'"
+          prop="persistenceMongodb_collection"
+          size="mini"
+          :label="$t('setting_share_cdc_persistence_rocksdb_path')"
+        >
+          <el-input v-model="digSettingForm.persistenceRocksdb_path"></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="['MongoDB', 'RocksDB'].includes(digSettingForm.persistenceMode)"
+          size="mini"
+          :label="$t('share_form_setting_log_time')"
+        >
           <el-select
             allow-create
             filterable
@@ -160,6 +160,7 @@
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
+import dayjs from 'dayjs'
 
 let timeout = null
 export default {
@@ -191,10 +192,13 @@ export default {
       editDialogVisible: false,
       loadingConfig: false,
       digSettingForm: {
-        persistenceMongodb_uri_db: '',
-        persistenceMongodb_collection: '',
+        persistenceMode: 'Mem', // 存储模式
+        persistenceMongodb_uri_db: '', // mongodb uri
+        persistenceMongodb_collection: '', // mongodb tablename
+        persistenceRocksdb_path: '', // rocksdb路径
         share_cdc_ttl_day: 3
       },
+      enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
       mongodbList: [],
       tableList: [],
       editForm: {
@@ -202,6 +206,7 @@ export default {
         name: '',
         storageTime: 3
       },
+      currentForm: {},
       options: [
         {
           label: this.$t('share_form_edit_localTZ_type'),
@@ -239,7 +244,6 @@ export default {
     }
   },
   mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -267,7 +271,7 @@ export default {
       taskName && (where.taskName = taskName)
       connectionName && (where.connectionName = connectionName)
       let filter = {
-        order: 'createTime DESC',
+        order: this.order,
         limit: size,
         skip: (current - 1) * size,
         where
@@ -278,18 +282,17 @@ export default {
         })
         .then(res => {
           let list = res.data?.items || []
-          // this.table.setCache({ keyword })
           let pointTime = new Date()
           return {
             total: res.data.total,
             data: list.map(item => {
               this.$set(item, 'pointTime', pointTime)
               if (item.syncTimePoint === 'current') {
-                item.pointTime = this.$moment(pointTime).format('YYYY-MM-DD HH:mm:ss')
+                item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
               } else {
                 item.pointTime = item.syncTimeZone
               }
-              item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               let statuses = item.statuses
               item.disabledData = getTaskBtnDisabled(item)
               item.statusResult = getSubTaskStatus(statuses)[0].status
@@ -386,11 +389,8 @@ export default {
             this.$api('Task')
               .batchStart(ids)
               .then(res => {
-                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+                this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
                 this.table.fetch()
-              })
-              .catch(err => {
-                this.$message.error(err.data?.message)
               })
           }
         })
@@ -433,11 +433,8 @@ export default {
         this.$api('Task')
           .batchStop(ids)
           .then(res => {
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
-          })
-          .catch(err => {
-            this.$message.error(err.data?.message)
           })
       })
     },
@@ -453,11 +450,8 @@ export default {
         this.$api('Task')
           .forceStop(ids)
           .then(res => {
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
-          })
-          .catch(err => {
-            this.$message.error(err.data?.message)
           })
       })
     },
@@ -467,9 +461,15 @@ export default {
       this.editForm.id = item.id
       this.editForm.name = item.name
       this.editForm.storageTime = item.storageTime
+      this.currentForm = JSON.parse(JSON.stringify(this.editForm))
     },
     // 取消编辑
     cancelEdit() {
+      //弹框没有任何修改 直接关闭不需要二次提示
+      if (this.editForm.name === this.currentForm.name && this.editForm.storageTime === this.currentForm.storageTime) {
+        this.editDialogVisible = false
+        return
+      }
       this.$confirm(this.$t('share_form_edit_text'), this.$t('share_form_edit_title'), {
         type: 'warning',
         closeOnClickModal: false
@@ -494,10 +494,7 @@ export default {
           .batchRenew(ids)
           .then(res => {
             this.table.fetch()
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-          })
-          .catch(err => {
-            this.$message.error(err.data?.message)
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           })
           .finally(() => {
             this.restLoading = false

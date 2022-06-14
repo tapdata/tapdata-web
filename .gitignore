@@ -24,3 +24,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# 屏蔽VueCli 的webpack配置
+output.js
+webpack.confi.production.js

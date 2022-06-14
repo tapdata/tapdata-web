@@ -124,9 +124,7 @@ export default {
   },
   created() {
     this.fetch()
-    // this.getUnreadNum() //未读消息数量
     this.$root.$on('notificationUpdate', () => {
-      // this.getUnreadNum() //未读消息数量
       this.fetch()
     })
   },
@@ -157,7 +155,6 @@ export default {
         }
 
         this.loading = true
-        // this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))),
         this.$axios
           .get('tm/api/Messages?filter=' + encodeURIComponent(JSON.stringify(filter)))
           .then(data => {
@@ -169,23 +166,6 @@ export default {
             this.loading = false
           })
       }, debounce)
-      // notification
-      //   .get({ filter: JSON.stringify(filter) })
-      //   .then(res => {
-      //     if (res.data) {
-      //       this.listData = res.data
-      //       //格式化日期
-      //       if (this.listData && this.listData.length > 0) {
-      //         this.listData.map(item => {
-      //           item['createTime'] = item.createTime ? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
-      //         })
-      //       }
-      //     }
-      //   })
-      //   .finally(() => {
-      //     this.loading = false
-      //   })
-      // this.getCount(this.read)
     },
     formatData(item) {
       item['createTime'] = this.formatTime(item.createTime)
@@ -238,14 +218,6 @@ export default {
           break
       }
     },
-    // 获取任务数据
-    // getTaskData(id) {
-    //   this.$axios.get('tm/api/DataFlows/' + id).catch(err => {
-    //     if (err?.data?.msg === 'no permission') {
-    //       this.taskFalg = true
-    //     }
-    //   })
-    // },
     getLag(lag) {
       let r = '0s'
       if (lag) {
@@ -295,38 +267,6 @@ export default {
         }
       })
     },
-    // handleDelete(type) {
-    //   let where = {}
-    //   if (type === 'one') {
-    //     let ids = this.multipleSelection.map(item => item.id)
-    //     where.id = { inq: ids }
-    //   } else {
-    //     where = {}
-    //   }
-    //   let data = {
-    //     isDeleted: true
-    //   }
-    //   this.$confirm('是否确认删除通知？', '删除通知', {
-    //     type: 'warning'
-    //   }).then(res => {
-    //     if (res) {
-    //       this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), data)
-    //       this.fetch()
-    //     }
-    //   })
-    // },
-    // 已读消息
-    // handleRead(id) {
-    //   // let read = this.read
-    //   this.$axios.post('tm/api/Messages', { id: id }).then(res => {
-    //     if (res) {
-    //       // this.getUnreadNum() //未读消息数量
-    //       this.fetch()
-    //       // this.read = read
-    //       this.$root.$emit('notificationUpdate')
-    //     }
-    //   })
-    // },
     // 标记为已读
     handleReadNotice(id) {
       let where = {}
@@ -339,10 +279,7 @@ export default {
 
       this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
         if (res) {
-          // this.getUnreadNum() //未读消息数量
           this.fetch()
-          // this.read = read
-          // this.$root.$emit('notificationUpdate')
         }
       })
     },
@@ -350,45 +287,10 @@ export default {
     handleReadNoticeAll() {
       this.$axios.post('tm/api/Messages/readAll').then(res => {
         if (res) {
-          // this.getUnreadNum() //未读消息数量
           this.fetch()
-          // this.read = read
-          // this.$root.$emit('notificationUpdate')
         }
       })
     }
-    // handleReadNotice(type) {
-    //   let where = {}
-    //   if (type === 'one') {
-    //     let ids = this.multipleSelection.map(item => item.id)
-    //     where.id = { inq: ids }
-    //   } else {
-    //     where = {}
-    //   }
-    //   this.$axios
-    //     .post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), {
-    //       read: true
-    //     })
-    //     .then(res => {
-    //       if (res) {
-    //         // this.getUnreadNum() //未读消息数量
-    //         this.fetch()
-    //         // this.read = read
-    //         this.$root.$emit('notificationUpdate')
-    //       }
-    //     })
-    // }
-    // 未读消息
-    // getUnreadNum() {
-    //   let where = {
-    //     read: false
-    //   }
-    //   this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-    //     if (res) {
-    //       this.unReadCount = res
-    //     }
-    //   })
-    // }
   }
 }
 </script>

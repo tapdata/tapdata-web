@@ -5,9 +5,9 @@
         <div class="task-info__img flex justify-center align-items-center mr-8">
           <img src="../../../assets/images/task/task.png" alt="" />
         </div>
-        <div style="flex: 1">
+        <div class="flex-1 overflow-hidden pr-4">
           <div class="flex align-items-center">
-            <span class="fs-6 color-primary">{{ task.name }}</span>
+            <span class="fs-6 color-primary ellipsis">{{ task.name }}</span>
           </div>
           <div class="flex flex-wrap align-items-center">
             <div
@@ -16,7 +16,7 @@
               :class="['flex', 'align-items-center', 'mr-6', 'mt-4']"
             >
               <VIcon size="12" class="v-icon">{{ item.icon }}</VIcon>
-              <span class="ml-1">{{ item.label }}</span>
+              <span class="ml-1">{{ item.label }}: </span>
               <span>{{ task[item.key] }}</span>
             </div>
             <div class="mr-6 mt-4 flex align-items-center">
@@ -34,7 +34,7 @@
             </div>
           </div>
           <div class="operation-row mt-4">
-            <VButton
+            <ElButton
               type="primary"
               auto-loading
               :disabled="task.disabledData.start"
@@ -42,15 +42,15 @@
             >
               <VIcon size="12">start-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_start') }}</span>
-            </VButton>
-            <VButton
+            </ElButton>
+            <ElButton
               v-if="isShowForceStop(task.statuses)"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', task.user_id)"
               @click="forceStop($route.params.id)"
             >
               {{ $t('task_list_force_stop') }}
-            </VButton>
-            <VButton
+            </ElButton>
+            <ElButton
               v-else
               auto-loading
               :disabled="task.disabledData.stop"
@@ -59,15 +59,15 @@
             >
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
-            </VButton>
-            <VButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
+            </ElButton>
+            <ElButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
-            </VButton>
-            <VButton @click="toView(task.id)">
+            </ElButton>
+            <ElButton @click="toView(task.id)">
               <VIcon size="12">yulan</VIcon>
               <span class="ml-1">{{ $t('button_check') }}</span>
-            </VButton>
+            </ElButton>
           </div>
         </div>
       </div>
@@ -83,22 +83,19 @@
     </div>
     <div class="sub-task flex-fill mt-6 px-6 py-2 bg-white">
       <ElTabs v-model="activeTab" class="dashboard-tabs">
-        <ElTabPane label="子任务" name="subTask">
+        <ElTabPane :label="$t('task_preview_subtasks')" name="subTask">
           <div slot="label">
             <span class="mr-2">{{ $t('task_details_sub_task') }}</span>
-            <ElTooltip
-              placement="top"
-              content="在Tapdata中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"
-            >
+            <ElTooltip placement="top" :content="$t('task_info_subtasks_tip')">
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
           </div>
           <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
         </ElTabPane>
-        <ElTabPane label="连接" name="connect">
+        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect">
           <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
         </ElTabPane>
-        <ElTabPane label="历史运行记录" name="history">
+        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history">
           <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
       </ElTabs>
@@ -115,6 +112,7 @@ import Subtask from '../Subtask'
 import { Chart } from '@tap/component'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
+import dayjs from 'dayjs'
 
 let timeout = null
 export default {
@@ -131,39 +129,33 @@ export default {
         {
           key: 'creator',
           icon: 'account-fill',
-          label: '创建人：'
+          label: this.$t('task_monitor_founder')
         },
         {
           key: 'updatedTime',
           icon: 'time-fill',
-          label: '修改时间：'
+          label: this.$t('task_monitor_change_time')
         },
         {
           key: 'type',
           icon: 'menu',
-          label: '同步类型：'
-        },
-        {
-          key: 'type',
-          icon: 'menu',
-          label: '增量滞后:',
-          show: 'cdc'
+          label: this.$t('task_monitor_sync_type')
         }
       ],
       ouputItems: [
         {
           key: 'totalOutput',
-          label: '总输出'
+          label: this.$t('task_monitor_total_input')
         },
         {
           key: 'totalInput',
-          label: '总输入'
+          label: this.$t('task_monitor_total_output')
         }
       ],
       syncTypeMap: {
-        initial_sync: '全量',
-        cdc: '增量',
-        'initial_sync+cdc': '全量+增量'
+        initial_sync: this.$t('dataFlow.initial_sync'),
+        cdc: this.$t('dataFlow.cdc'),
+        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
       list: [],
       loadingObj: {
@@ -176,7 +168,7 @@ export default {
       pieData: [],
       pieOptions: {
         title: {
-          text: '任务状态',
+          text: this.$t('task_status'),
           left: 'center',
           top: 'center',
           textStyle: {
@@ -199,36 +191,6 @@ export default {
       )
     }
   },
-  created() {
-    this.$ws.on('watch', this.taskChange)
-    this.$ws.send({
-      type: 'watch',
-      collection: 'DataFlows',
-      filter: {
-        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
-        fields: {
-          'fullDocument.id': true,
-          'fullDocument.name': true,
-          'fullDocument.status': true,
-          'fullDocument.executeMode': true,
-          'fullDocument.stopOnError': true,
-          'fullDocument.last_updated': true,
-          'fullDocument.createTime': true,
-          'fullDocument.children': true,
-          'fullDocument.stats': true,
-          'fullDocument.setting': true,
-          'fullDocument.cdcLastTimes': true,
-          'fullDocument.listtags': true,
-          'fullDocument.finishTime': true,
-          'fullDocument.startTime': true,
-          'fullDocument.errorEvents': true,
-          'fullDocument.milestones': true,
-          'fullDocument.user': true,
-          'fullDocument.mappingTemplate': true
-        }
-      }
-    })
-  },
   mounted() {
     this.init()
     //定时轮询
@@ -237,7 +199,6 @@ export default {
     }, 2000)
   },
   destroyed() {
-    this.$ws.off('watch', this.taskChange)
     clearInterval(timeout)
   },
   methods: {
@@ -301,14 +262,14 @@ export default {
       }
     },
     formatTime(time) {
-      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     formatTask(data) {
       let result = JSON.parse(JSON.stringify(data))
       result.totalOutput = result.stats?.output?.rows || 0
       result.totalInput = result.stats?.input?.rows || 0
       result.creator = result.creator || result.username || result.user?.username || '-'
-      result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
+      result.updatedTime = this.formatTime(result.last_updated)
       result.type = this.syncTypeMap[result.type]
       result.statusResult = getSubTaskStatus(result.statuses)
       result.disabledData = getTaskBtnDisabled(
@@ -325,10 +286,7 @@ export default {
       this.$api('Task')
         .start(id)
         .then(() => {
-          this.$message.success(this.$t('message.operationSuccuess'))
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
+          this.$message.success(this.$t('message_operation_succuess'))
         })
         .finally(resetLoading)
     },
@@ -355,10 +313,7 @@ export default {
           this.$api('Task')
             .stop(id)
             .then(() => {
-              this.$message.success(this.$t('message.operationSuccuess'))
-            })
-            .catch(err => {
-              this.$message.error(err.data?.message)
+              this.$message.success(this.$t('message_operation_succuess'))
             })
             .finally(resetLoading)
         } else {
@@ -375,10 +330,7 @@ export default {
           this.$api('Task')
             .forceStop([id])
             .then(() => {
-              this.$message.success(this.$t('message.operationSuccuess'))
-            })
-            .catch(err => {
-              this.$message.error(err.data?.message)
+              this.$message.success(this.$t('message_operation_succuess'))
             })
         }
       })
@@ -431,11 +383,11 @@ export default {
           .then(data => {
             this.responseHandler(data, this.$t('message.deleteOK'))
           })
-          .catch(error => {
-            if (error?.isException) {
-              this.$message.error('重置失败')
-            }
-          })
+          // .catch(error => {
+          //   if (error?.isException) {
+          //     this.$message.error('重置失败')
+          //   }
+          // })
           .finally(() => {
             this.loadingObj.reset = false
           })
@@ -464,11 +416,11 @@ export default {
         .then(data => {
           this.responseHandler(data, this.$t('message.deleteOK'))
         })
-        .catch(error => {
-          if (error?.isException) {
-            this.$message.error('任务启动失败，请编辑任务完成映射配置')
-          }
-        })
+        // .catch(error => {
+        //   if (error?.isException) {
+        //     this.$message.error('任务启动失败，请编辑任务完成映射配置')
+        //   }
+        // })
         .finally(() => {
           finallyEvents?.()
         })
@@ -505,9 +457,9 @@ export default {
           this.task.desc = val
           this.$message.success(this.$t('message_update_success'))
         })
-        .catch(err => {
-          this.$message.error(err.data.message)
-        })
+      // .catch(err => {
+      //   this.$message.error(err.data.message)
+      // })
     },
     // 编辑
     handleEditor(id) {
@@ -605,6 +557,10 @@ export default {
       }
     }
   }
+}
+.task-info__left {
+  flex: 1;
+  overflow: hidden;
 }
 .task-info__right {
   .type-chart {

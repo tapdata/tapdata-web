@@ -9,7 +9,7 @@
         class="grey"
         ref="baseForm"
         label-position="left"
-        label-width="96px"
+        label-width="160px"
         :model="form"
         :rules="rules"
         :validate-on-rule-change="false"
@@ -216,7 +216,7 @@
                   item.target.sortColumn || $t('message.placeholderSelect')
                 }}</span>
               </div>
-              <div v-if="editId === item.id" class="setting-item mt-4">
+              <!-- <div v-if="editId === item.id" class="setting-item mt-4">
                 <label class="item-label"></label>
                 <span class="item-select">
                   <label class="item-label mr-2">{{ $t('verify_form_source_filter') }}</label>
@@ -237,7 +237,12 @@
                 <div class="item-filter">
                   <div v-if="item.source.sourceFilterFalg" class="item-filter-body">
                     <template v-if="editId === item.id">
-                      <CodeEditor v-model.trim="item.source.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
+                      <VCodeEditor
+                        v-model.trim="item.source.where"
+                        class="mb-2"
+                        lang="sql"
+                        height="200px"
+                      ></VCodeEditor>
                       <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
                       <div v-if="item.source.databaseType === 'mongodb'" class="filter-example">
                         {"field": 1, "field2": "value"}
@@ -253,7 +258,12 @@
                 <div class="item-filter">
                   <div v-if="item.target.targeFilterFalg" class="item-filter-body">
                     <template v-if="editId === item.id">
-                      <CodeEditor v-model.trim="item.target.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
+                      <VCodeEditor
+                        v-model.trim="item.target.where"
+                        class="mb-2"
+                        lang="sql"
+                        height="200px"
+                      ></VCodeEditor>
                       <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
                       <div v-if="item.target.databaseType === 'mongodb'" class="filter-example">
                         {"field": 1, "field2": "value"}
@@ -265,7 +275,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <div class="setting-item mt-4">
                 <ElCheckbox
                   v-if="editId === item.id"
@@ -323,7 +333,7 @@
       <div class="js-wrap">
         <div class="jsBox">
           <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <CodeEditor class="js-editor" v-model="webScript" lang="javascript"></CodeEditor>
+          <JsEditor v-model="webScript" class="js-editor"></JsEditor>
           <div class="js-fixText">}</div>
         </div>
         <div class="markdown-body-wrap example ml-4">
@@ -512,11 +522,11 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './MultiSelection.vue'
-import CodeEditor from '@/components/CodeEditor.vue'
+import { /*VCodeEditor,*/ JsEditor } from '@tap/component'
 
 import { DATA_NODE_TYPES } from '@/const.js'
 export default {
-  components: { MultiSelection, CodeEditor },
+  components: { MultiSelection, /*VCodeEditor,*/ JsEditor },
   data() {
     let self = this
     let requiredValidator = (msg, check) => {
@@ -845,7 +855,9 @@ export default {
         let obj = target.syncObjects[0]
         let sourceTablesNames = obj.objectNames || []
         sourceTablesNames.forEach(name => {
-          let targetTableName = target.tablePrefix + name + target.tableSuffix
+          let targetPrefix = target.tablePrefix || ''
+          let targetSuffix = target.tablePrefix || ''
+          let targetTableName = targetPrefix + name + targetSuffix
           if (target.tableNameTransform) {
             targetTableName = targetTableName[target.tableNameTransform]()
           }
@@ -865,14 +877,16 @@ export default {
               connectionId: sourceTable.source.id,
               connectionName: sourceTable.source.name,
               fields: sourceTable.fields,
-              tableName: sourceTable.original_name
+              tableName: sourceTable.original_name,
+              nodeId: source.id
             })
             this.flowStages.push({
               id: outputLanes,
               connectionId: targetTable.source.id,
               connectionName: targetTable.source.name,
               fields: targetTable.fields,
-              tableName: targetTable.original_name
+              tableName: targetTable.original_name,
+              nodeId: target.id
             })
           } else {
             this.flowStages = null
@@ -1058,7 +1072,8 @@ export default {
         databaseType: stage.databaseType,
         table: stage.tableName,
         sortColumn,
-        fields: sortField(stage.fields)
+        fields: sortField(stage.fields),
+        nodeId: stage.nodeId
       }
     },
     addTable() {
@@ -1294,10 +1309,10 @@ export default {
                 this.$router.back()
               }
             })
-            .catch(err => {
-              let message = err?.data?.message || this.$t('message_operation_error')
-              this.$message.error(message)
-            })
+          // .catch(err => {
+          //   let message = err?.data?.message || this.$t('message_operation_error')
+          //   this.$message.error(message)
+          // })
         }
       })
     }

@@ -28,7 +28,7 @@
       </template>
       <template slot="status" slot-scope="scope">
         <span :class="['status-' + scope.row.status, 'fs-8', 'px-2', 'py-1', 'rounded-md']">
-          {{ $t('milestone_list_status_' + scope.row.status) }}
+          {{ $t('milestone_list_status_' + getMilestoneStatus(scope.row.status)) }}
         </span>
 
         <!-- <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)"></StatusTag> -->
@@ -89,7 +89,7 @@ export default {
   methods: {
     getMilestoneStatus(status) {
       let result = status
-      if (['draft', 'paused', 'error'].includes(this.taskStatus) && status === 'running') {
+      if (['edit', 'stop', 'error'].includes(this.taskStatus) && status === 'running') {
         result = 'paused'
       }
       return result

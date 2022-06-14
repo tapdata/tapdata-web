@@ -1,42 +1,35 @@
 import Vue from 'vue'
 import App from '@/App.vue'
-import moment from 'moment' // 时间格式化
 import store from '@/vuex' // 引入全局数据控制
-import VueCookie from 'vue-cookie'
 import i18n from './i18n'
-import VueBus from 'vue-bus'
 import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
-import Cache from '@/utils/cache'
 import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
 import VIcon from '@/components/VIcon'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
+import { Users, Settings } from '@tap/api'
 
 import '@/plugins/element'
 import '@/plugins/icon'
-import 'element-ui/lib/theme-chalk/index.css'
 import '@/directives'
 import 'github-markdown-css'
 import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'
+import '@/styles/element-variables.scss'
+import '@/plugins/axios'
+import { configUser } from '@/utils/util'
 
 Vue.config.productionTip = false
-Vue.use(VueCookie)
-Vue.use(VueBus)
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
 Vue.use(TapdataWebCore)
 
-Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
-Vue.prototype.$cache = new Cache()
 
 Vue.component(VIcon.name, VIcon)
-
-window.VueCookie = VueCookie
 
 window._TAPDATA_OPTIONS_ = {
   logoUrl: require('@/assets/images/logo.png'),
@@ -75,24 +68,17 @@ Vue.prototype.$confirm = (message, title, options) => {
   }).catch(() => {})
 }
 
-const langMap = {
-  sc: 'zh-CN',
-  tc: 'zh-TW',
-  en: 'en'
-}
-const LanguagesKey = {
-  sc: 'zh_CN',
-  en: 'en_US',
-  tc: 'zh_TW'
-}
+let token = Cookie.get('token')
 let init = settings => {
   window.__settings__ = settings
-  let lang = localStorage.getItem('tapdata_localize_lang')
-  if (!lang) {
-    lang = window.getSettingByKey('DEFAULT_LANGUAGE')
-    localStorage.setItem('tapdata_localize_lang', lang || 'en')
-    Cookie.set('lang', LanguagesKey[lang || 'en'])
-    i18n.locale = langMap[lang]
+  let lang = Cookie.get('lang') || 'en_US'
+  if (!lang || !['zh_CN', 'zh_TW', 'en_US'].includes(lang)) {
+    Cookie.set('lang', 'en_US')
+    i18n.locale = {
+      zh_CN: 'zh-CN',
+      zh_TW: 'zh-TW',
+      en_US: 'en'
+    }[lang]
   }
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
@@ -102,7 +88,6 @@ let init = settings => {
   if (loc.protocol === 'https:') {
     wsUrl = 'wss:'
   }
-  let token = Cookie.get('token')
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent?access_token=${token}`
 
   window.App = new Vue({
@@ -116,14 +101,24 @@ let init = settings => {
     render: h => h(App)
   })
 }
-
-factory('Setting')
+const userApi = new Users()
+const settingsApi = new Settings()
+settingsApi
   .get()
-  .then(({ data }) => {
-    if (data && data.length) {
-      localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(data))
+  .then(async data => {
+    let initData = data || []
+    if (initData.length) {
+      localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
     }
-    init(data || [])
+    if (token) {
+      //无权限，说明是首次进入页面，重新请求后台获取
+      let user = await userApi.getInfo().catch(() => {
+        init(initData)
+      })
+      //权限存在则存入缓存并继续向下走
+      configUser(user)
+    }
+    init(initData)
   })
   .catch(err => {
     // eslint-disable-next-line

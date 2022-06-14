@@ -21,9 +21,9 @@
         <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
           <History :ids="[task.parentId]" :operations="operations"></History>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
-          <ShareMining :id="task.id"></ShareMining>
-        </ElTabPane>
+        <!--        <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>-->
+        <!--          <ShareMining :id="task.id"></ShareMining>-->
+        <!--        </ElTabPane>-->
       </ElTabs>
     </div>
   </div>
@@ -35,12 +35,10 @@ import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
-import ShareMining from '../../etl/statistics/ShareMining'
-// import FieldMapping from '@/components/FieldMapping'
 
 export default {
   name: 'Index',
-  components: { Info, Schedule, Log, Connection, History, ShareMining },
+  components: { Info, Schedule, Log, Connection, History },
   data() {
     return {
       timer: null,
@@ -168,14 +166,7 @@ export default {
       data.totalInput = data.stats?.input?.rows || 0
       data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
       data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
-      let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
-      data.startTimeFmt = this.formatTime(data.startTime)
-      data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
-      data.cdcTimeFmt = this.formatTime(cdcTime)
       return data
-    },
-    formatTime(time) {
-      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     infoRemoteMethod(params) {
       return this.$api('Measurement')

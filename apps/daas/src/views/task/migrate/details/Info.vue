@@ -20,18 +20,18 @@
         </span>
       </div>
       <div class="operation">
-        <VButton type="primary" :disabled="startDisabled" @click="start(task, arguments[0])">
+        <ElButton type="primary" :disabled="startDisabled" @click="start(task, arguments[0])">
           <VIcon size="12">start-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_start') }}</span>
-        </VButton>
-        <VButton type="danger" :disabled="stopDisabled" @click="stop(task, arguments[0])">
+        </ElButton>
+        <ElButton type="danger" :disabled="stopDisabled" @click="stop(task, arguments[0])">
           <VIcon size="12">pause-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_stop') }}</span>
-        </VButton>
-        <!--        <VButton :disabled="editDisabled" @click="edit">-->
+        </ElButton>
+        <!--        <ElButton :disabled="editDisabled" @click="edit">-->
         <!--          <VIcon size="12">edit-fill</VIcon>-->
         <!--          <span class="ml-1">{{ $t('button_edit') }}</span>-->
-        <!--        </VButton>-->
+        <!--        </ElButton>-->
       </div>
     </div>
     <div class="filter-bar flex align-center mt-3">
@@ -39,7 +39,7 @@
         v-if="stagesItems.length"
         v-model="selectedStage"
         :items="stagesItems"
-        inner-label="节点"
+        :inner-label="$t('task_info_node')"
         none-border
         last-page-text=""
         clearable
@@ -50,7 +50,7 @@
       <SelectList
         v-model="selectedTime"
         :items="selectedTimeItems"
-        inner-label="周期"
+        :inner-label="$t('task_info_cycle')"
         none-border
         last-page-text=""
         :placeholder="$t('task_info_select_period')"
@@ -67,7 +67,7 @@
       <SelectList
         v-model="selectedRate"
         :items="selectedRateItems"
-        inner-label="频率"
+        :inner-label="$t('task_info_frequency')"
         none-border
         last-page-text=""
         :placeholder="$t('task_info_select_frequency')"
@@ -80,50 +80,45 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span class="font-color-light">{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <ElTooltip v-if="overData.inputTotal" :content="overData.inputTotal.toString()" placement="left-start">
+        <ElTooltip :content="overData.inputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
-            {{ handleChangeUnit(overData.inputTotal) }}
+            {{ toThousandsUnit(overData.inputTotal) }}
           </div>
         </ElTooltip>
-        <div v-else class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">-</div>
 
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span class="font-color-light">{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <ElTooltip v-if="overData.outputTotal" :content="overData.outputTotal.toString()" placement="left-start">
+        <ElTooltip :content="overData.outputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">
-            {{ handleChangeUnit(overData.outputTotal) }}
+            {{ toThousandsUnit(overData.outputTotal) }}
           </div>
         </ElTooltip>
-        <div v-else class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">-</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_insert') }}</div>
-            <ElTooltip v-if="overData.insertedTotal" :content="overData.insertedTotal.toString()">
+            <ElTooltip :content="overData.insertedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
-                {{ handleChangeUnit(overData.insertedTotal) }}
+                {{ toThousandsUnit(overData.insertedTotal) }}
               </div>
             </ElTooltip>
-            <div v-else class="fs-7 font-color-dark fw-bolder din-font">-</div>
           </div>
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_update') }}</div>
-            <ElTooltip v-if="overData.updatedTotal" :content="overData.updatedTotal.toString()">
+            <ElTooltip :content="overData.updatedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
-                {{ handleChangeUnit(overData.updatedTotal) }}
+                {{ toThousandsUnit(overData.updatedTotal) }}
               </div>
             </ElTooltip>
-            <div v-else class="fs-7 font-color-dark fw-bolder din-font">-</div>
           </div>
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_delete') }}</div>
-            <ElTooltip v-if="overData.deletedTotal" :content="overData.deletedTotal.toString()">
+            <ElTooltip :content="overData.deletedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
-                {{ handleChangeUnit(overData.deletedTotal) }}
+                {{ toThousandsUnit(overData.deletedTotal) }}
               </div>
             </ElTooltip>
-            <div v-else class="fs-7 font-color-dark fw-bolder din-font">-</div>
           </div>
         </div>
       </div>
@@ -201,6 +196,7 @@ import SelectList from '@/components/SelectList'
 import { Chart } from '@tap/component'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs } from '@/utils/util'
+import { toThousandsUnit } from '@/utils/util'
 
 export default {
   name: 'Info',
@@ -343,11 +339,11 @@ export default {
         ]
       },
       overData: {
-        inputTotal: 0,
-        outputTotal: 0,
-        insertedTotal: 0,
-        updatedTotal: 0,
-        deletedTotal: 0
+        inputTotal: '',
+        outputTotal: '',
+        insertedTotal: '',
+        updatedTotal: '',
+        deletedTotal: ''
       },
       writeData: {
         cdcTime: '',
@@ -440,18 +436,7 @@ export default {
     this.getSyncOverViewData()
   },
   methods: {
-    // 转化单位
-    handleChangeUnit(val) {
-      if (val / (1000 * 1000 * 1000) > 1) {
-        return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
-      } else if (val / (1000 * 1000) > 1) {
-        return (val / (1000 * 1000)).toFixed(1) + 'M'
-      } else if (val / 1000 > 1) {
-        return (val / 1000).toFixed(1) + 'K'
-      } else {
-        return val
-      }
-    },
+    toThousandsUnit,
     //概览信息
     getSyncOverViewData() {
       //调用前 先清掉上一个定时器
@@ -659,15 +644,21 @@ export default {
         const { overData, writeData } = this
         // 总输入总输出
         for (let key in overData) {
-          let val0 = countObj[key]?.[0] || 0
-          let val1 = countObj[key]?.[1] || 0
-          // 默认是查询任务的，不做叠加
-          if (selectedTime === 'default') {
-            overData[key] = Math.max(val1, val0)
-          } else if (reset) {
-            overData[key] = val1 - val0
+          let val0 = countObj[key]?.[0]
+          let val1 = countObj[key]?.[1]
+          if (val0 === undefined && val1 === undefined) {
+            overData[key] = ''
           } else {
-            overData[key] += val1 - val0
+            val0 = val0 || 0
+            val1 = val1 || 0
+            // 默认是查询任务的，不做叠加
+            if (selectedTime === 'default') {
+              overData[key] = Math.max(val1, val0)
+            } else if (reset) {
+              overData[key] = val1 - val0
+            } else {
+              overData[key] = val1 - val0 + (overData[key] || 0)
+            }
           }
         }
         // 右侧增量延迟信息
@@ -768,11 +759,8 @@ export default {
       this.$api('SubTask')
         .start(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
     },
@@ -780,11 +768,8 @@ export default {
       this.$api('SubTask')
         .stop(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
-        })
-        .catch(err => {
-          this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
     },
@@ -880,6 +865,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.info-line {
+  flex: 1;
+  overflow: hidden;
+}
 .info-line > span {
   line-height: 26px;
 }

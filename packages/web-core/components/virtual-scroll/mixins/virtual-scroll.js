@@ -1,4 +1,4 @@
-import debounce from 'lodash/debounce'
+import { debounce } from 'lodash'
 import { os } from 'web-core/utils/util'
 
 const aggBucketSize = 1000

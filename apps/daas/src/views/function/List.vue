@@ -1,6 +1,6 @@
 <template>
   <section class="function-list-wrapper section-wrap">
-    <TablePage ref="table" class="h-100" :remoteMethod="getData">
+    <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
       <ul class="search-bar" slot="search">
         <li class="item">
           <ElRadioGroup v-model="searchParams.type" size="small" @input="table.fetch(1)">
@@ -38,15 +38,24 @@
             })
           "
         >
-          <span>{{ $t('function_button_create_custom_function') }}</span>
+          <span>{{ $t('button_create') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn :label="$t('function_name_label')" prop="function_name"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="120"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_describe_label')" prop="describe"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_last_update_label')" prop="lastUpdatedFmt"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_name_label')" prop="function_name" min-width="300"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="160"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_describe_label')" prop="describe" min-width="300"> </ElTableColumn>
+      <ElTableColumn
+        :label="$t('function_last_update_label')"
+        prop="last_updated"
+        sortable="last_updated"
+        min-width="180"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.lastUpdatedFmt }}
+        </template>
+      </ElTableColumn>
 
-      <ElTableColumn width="160" :label="$t('column_operation')">
+      <ElTableColumn width="180" :label="$t('column_operation')">
         <template #default="{ row }">
           <ElLink
             size="mini"
@@ -68,6 +77,7 @@
 
 <script>
 import TablePage from '@/components/TablePage'
+import dayjs from 'dayjs'
 
 export default {
   components: { TablePage },
@@ -112,7 +122,7 @@ export default {
             total: res.data?.total,
             data: list.map(item => {
               item.typeFmt = this.typeMapping[item.type]
-              item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }
@@ -144,6 +154,10 @@ export default {
       this.$router.push({
         name: 'FunctionCreate'
       })
+    },
+    handleSortTable({ order, prop }) {
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.table.fetch(1)
     }
   }
 }

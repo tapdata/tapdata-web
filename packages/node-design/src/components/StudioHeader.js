@@ -60,7 +60,7 @@ export const StudioHeader = observer(
         } catch (e) {
           // eslint-disable-next-line no-console
           console.log('CustomNode save error', e)
-          root.$message.error(root.$t('message_save_fail'))
+          // root.$message.error(root.$t('message_save_fail'))
         }
         saving.value = false
       }

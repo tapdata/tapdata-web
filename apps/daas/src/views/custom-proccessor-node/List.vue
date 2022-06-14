@@ -1,6 +1,6 @@
 <template>
   <section class="function-list-wrapper section-wrap">
-    <TablePage ref="table" class="h-100" :remoteMethod="getData">
+    <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
@@ -13,7 +13,11 @@
       <ElTableColumn :label="$t('function_describe_label')" prop="desc"> </ElTableColumn>
 
       <ElTableColumn prop="createTime" :label="$t('column_create_time')"></ElTableColumn>
-      <ElTableColumn prop="last_updated" :label="$t('function_last_update_label')"></ElTableColumn>
+      <ElTableColumn
+        prop="last_updated"
+        sortable="last_updated"
+        :label="$t('function_last_update_label')"
+      ></ElTableColumn>
 
       <ElTableColumn width="150" :label="$t('column_operation')">
         <template #default="{ row }">
@@ -30,6 +34,7 @@
 import TablePage from '@/components/TablePage'
 import FilterBar from '../../components/filter-bar/Main'
 import { CustomNode } from '@tap/api'
+import dayjs from 'dayjs'
 
 const api = new CustomNode()
 
@@ -88,8 +93,8 @@ export default {
           return {
             total,
             data: items.map(item => {
-              item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              item.last_updated = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              item.last_updated = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }
@@ -164,6 +169,11 @@ export default {
           name: 'NodeNew'
         }).href
       )
+    },
+    //筛选条件
+    handleSortTable({ order, prop }) {
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.table.fetch(1)
     }
   }
 }

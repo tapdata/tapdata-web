@@ -1,41 +1,37 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import i18n from '@/i18n'
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from '@/const'
+import Cookie from '@tap/shared/src/cookie'
 
-export function setPermission(list) {
+export function configUser(user = {}) {
+  Cookie.set('email', user.email)
+  Cookie.set('username', user.username || '')
+  Cookie.set('isAdmin', parseInt(user.role) || 0)
+  Cookie.set('user_id', user.id)
   let permissions = []
-  if (list) {
+  let list = user?.permissions || []
+  if (list.length) {
     list.forEach(permission => {
       if (permission.resources && permission.resources.length > 0) {
         permission.resources.forEach(res => {
-          // if (res.type === 'page')
           permissions.push(res)
         })
       }
     })
+    sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
   }
-  sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
   return permissions
 }
 
 export function signOut() {
-  let cookie = window.VueCookie
-
-  cookie.delete('token')
-  cookie.delete('user_id')
-  cookie.delete('login')
-  cookie.delete('isAdmin')
-  cookie.delete('email')
-  cookie.delete('username')
-  cookie.delete('isReadonly')
+  Cookie.remove('token')
+  Cookie.remove('email')
+  Cookie.remove('username')
+  Cookie.remove('isAdmin')
+  Cookie.remove('user_id')
   sessionStorage.setItem('lastLocationHref', location.href)
-  if (window !== top) {
-    top.window.location.href = '/login'
-  } else {
-    window.App.$router.push({
-      name: 'login'
-    })
-  }
+  location.href = location.href.split('#')[0] + '#/login'
+  return null
 }
 
 export function toRegExp(word) {
@@ -78,6 +74,8 @@ export function delayTrigger(func, t = 500) {
     func && func()
   }
 }
+
+// TODO 去掉
 export const getImgByType = function (type) {
   if (!type) {
     type = 'default'
@@ -85,28 +83,32 @@ export const getImgByType = function (type) {
   return require(`@/assets/images/types/${type.toLowerCase()}.png`)
 }
 export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
+// TODO 去掉
 export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
-  return date ? moment(date).format(format) : ''
+  return date ? dayjs(date).format(format) : ''
 }
+
+// TODO 去掉
 // 根据类型做时间格式化，精确到哪种级别
 export const formatTimeByTime = (time, type) => {
   let result = time
   switch (type) {
     case 'second':
-      result = moment(time).format('HH:mm:ss')
+      result = dayjs(time).format('HH:mm:ss')
       break
     case 'minute':
-      result = moment(time).format('HH:mm')
+      result = dayjs(time).format('HH:mm')
       break
     case 'hour':
-      result = moment(time).format('HH:00')
+      result = dayjs(time).format('HH:00')
       break
     case 'day':
-      result = moment(time).format('MM-DD')
+      result = dayjs(time).format('MM-DD')
       break
   }
   return result
 }
+// TODO 去掉
 // 毫秒换算成时分秒
 export const formatMs = (msTime = 0, type = 'time') => {
   let time = msTime / 1000
@@ -342,4 +344,20 @@ export function getTaskBtnDisabled(row, or) {
     }
   }
   return result
+}
+
+// 转化单位
+export function toThousandsUnit(val) {
+  if ([undefined, null, ''].includes(val)) {
+    return '-'
+  }
+  if (val / (1000 * 1000 * 1000) > 1) {
+    return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
+  } else if (val / (1000 * 1000) > 1) {
+    return (val / (1000 * 1000)).toFixed(1) + 'M'
+  } else if (val / 1000 > 1) {
+    return (val / 1000).toFixed(1) + 'K'
+  } else {
+    return val
+  }
 }

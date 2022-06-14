@@ -30,12 +30,12 @@
         <el-checkbox class="keep-sign-in" v-model="keepSignIn">
           {{ $t('app.signIn.keepSignIn') }}
         </el-checkbox>
-        <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
+        <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
           {{ $t('app.signIn.signIn') }}
-        </el-button>
+        </ElButton>
 
         <div class="remember">
-          <span @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</span>
+          <ElButton type="text" @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</ElButton>
         </div>
       </div>
     </section>
@@ -43,10 +43,11 @@
 </template>
 
 <script>
-import crypto from 'crypto'
-import CryptoJS from 'crypto-js'
+import cryptoJS from 'crypto-js'
 import LoginPage from './LoginPage'
-import _ from 'lodash'
+import Cookie from '@tap/shared/src/cookie'
+import { Users } from '@tap/api'
+import { configUser } from '@/utils/util'
 
 export default {
   name: 'SignIn',
@@ -59,12 +60,7 @@ export default {
         password: ''
       },
       keepSignIn: true,
-      errorMessage: '',
-      langMap: {
-        sc: 'zh-CN',
-        tc: 'zh-TW',
-        en: 'en'
-      }
+      errorMessage: ''
     }
   },
   created() {
@@ -75,7 +71,7 @@ export default {
   methods: {
     async submit() {
       let form = this.form
-      let oldPassword = _.clone(this.form.password)
+      let oldPassword = this.form.password + ''
       let message = ''
       if (!form.email || !form.email.trim()) {
         message = this.$t('app.signIn.email_require')
@@ -93,58 +89,33 @@ export default {
       }
       this.loading = true
       try {
-        let usersModel = this.$api('users')
+        const userApi = new Users()
         let timeStamp = this.$api('TimeStamp')
         //登陆密码加密
         let timeStampData = await timeStamp.get()
         this.form['stime'] = timeStampData.data
-        this.form.password = CryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString()
+        this.form.password = cryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString()
         let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8'
-        this.form['sign'] = crypto.createHash('sha1').update(Str).digest('hex').toUpperCase()
-        let { data } = await usersModel.login(this.form)
-        // if (!data.permissions) {
-        // 	this.loading = false;
-        // 	this.form.password = oldPassword;
-        // 	return;
-        // }
-        if (data.textStatus === 'WAITING_APPROVE') {
-          this.errorMessage = this.$t('app.signIn.account_waiting_approve')
-          return
-        }
-        if (data.textStatus === 'ACCOUNT_DISABLED') {
-          this.errorMessage = this.$t('app.signIn.account_disabled')
-          return
-        }
-        // if (!data.permissions || data.permissions.length === 0) {
-        // 	this.errorMessage = this.$t('app.signIn.permission_denied');
-        // 	return;
-        // }
-        let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`)
+        this.form['sign'] = cryptoJS.SHA1(Str).toString().toUpperCase()
+
+        let data = await userApi.login(this.form)
+        Cookie.set('token', data.id)
         // eslint-disable-next-line
         console.log('登录成功：', data)
-        this.$cookie.set('email', this.form.email)
-        this.$cookie.set('username', user.data.username || '')
-        this.$cookie.set('login', 1)
-        this.$cookie.set('token', data.id)
-        this.$cookie.set('isAdmin', parseInt(user.data.role) || 0)
-        this.$cookie.set('user_id', data.userId)
-        this.$cookie.set('lang', this.langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN')
+
+        let user = await userApi.getInfo()
+        configUser(user)
 
         let lastLocationHref = sessionStorage.getItem('lastLocationHref')
         if (lastLocationHref) {
-          location.href = lastLocationHref
+          location.href = lastLocationHref.includes('login') ? location.href.split('#')[0] : lastLocationHref
         }
         setTimeout(() => {
           sessionStorage.removeItem('lastLocationHref')
-          // location.reload()
         }, 50)
       } catch (e) {
-        let msg = e?.data?.message
-        if (msg) {
-          this.$message.error(msg)
-          this.loading = false
-          this.form.password = oldPassword
-        }
+        this.loading = false
+        this.form.password = oldPassword
       }
     },
     // 注册账号

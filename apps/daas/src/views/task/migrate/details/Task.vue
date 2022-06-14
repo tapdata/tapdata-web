@@ -19,6 +19,7 @@
 
 <script>
 import TableList from '@/components/TableList'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Task',
@@ -79,11 +80,11 @@ export default {
             data: list.map(item => {
               this.$set(item, 'pointTime', pointTime)
               if (item.syncTimePoint === 'current') {
-                item.pointTime = this.$moment(pointTime).format('YYYY-MM-DD HH:mm:ss')
+                item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
               } else {
                 item.pointTime = item.syncTimeZone
               }
-              item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }

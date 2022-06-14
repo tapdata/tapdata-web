@@ -4,27 +4,34 @@
       <el-table :data="page.data" height="100%">
         <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
           <template slot-scope="scope">
-            {{
-              scope.row.start
-                ? $moment(scope.row.start).format('YYYY-MM-DD HH:mm:ss')
-                : $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')
-            }}
+            {{ scope.row.startTimeFmt }}
           </template>
         </el-table-column>
         <el-table-column :label="$t('dataVerification.completeTime')" prop="last_updated" align="center" width="180">
           <template slot-scope="scope">
             <span>
-              {{ scope.row.last_updated ? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}
+              {{ formatTime(scope.row.last_updated) }}
             </span>
           </template>
         </el-table-column>
         <template v-if="$route.name === 'VerifyDiffHistory'">
-          <el-table-column :label="$t('verify_history_source_rows')" prop="source_total"></el-table-column>
-          <el-table-column :label="$t('verify_history_target_rows')" prop="target_total"></el-table-column>
+          <el-table-column
+            :label="$t('verify_history_source_rows')"
+            prop="source_total"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            :label="$t('verify_history_target_rows')"
+            prop="target_total"
+            align="center"
+          ></el-table-column>
         </template>
         <template v-else>
-          <el-table-column :label="$t('verify_history_source_total_rows')" prop="firstSourceTotal"></el-table-column>
-          <!--          <el-table-column :label="$t('verify_history_target_total_rows')" prop="firstTargetTotal"></el-table-column>-->
+          <el-table-column
+            :label="$t('verify_history_source_total_rows')"
+            prop="firstSourceTotal"
+            align="center"
+          ></el-table-column>
         </template>
         <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
           <template slot-scope="scope">
@@ -83,6 +90,8 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import dayjs from 'dayjs'
+
 export default {
   components: { VIcon },
   data() {
@@ -110,6 +119,9 @@ export default {
     this.search(1)
   },
   methods: {
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
     searchRequest(filter) {
       if (filter?.where?.inspect_id?.regexp) {
         filter.where.inspect_id = filter.where.inspect_id.regexp.replace(/^\^(.*)\$$/, '$1')
@@ -154,7 +166,10 @@ export default {
       this.searchRequest(filter, where)
         .then(([countData, data]) => {
           if (data) {
-            this.page.data = data
+            this.page.data = data?.map(item => {
+              item.startTimeFmt = this.formatTime(item.start || item.createTime)
+              return item
+            })
             this.page.current = currentPage
             this.page.total = countData.count
           }
@@ -164,20 +179,17 @@ export default {
         })
     },
     rowClick(item) {
-      let url = ''
       let id = item.id
       let routeName = 'dataVerifyResult'
       if (this.$route.name === 'VerifyDiffHistory') {
         routeName = 'VerifyDiffDetails'
       }
-      let route = this.$router.resolve({
+      this.$router.push({
         name: routeName,
         params: {
           id
         }
       })
-      url = route.href
-      window.open(url, '_blank')
     }
   }
 }
@@ -185,11 +197,6 @@ export default {
 
 <style lang="scss" scoped>
 .data-verify-history-wrap {
-  // display: flex;
-  // height: 100%;
-  // flex-direction: column;
-  // overflow: hidden;
-  // box-sizing: border-box;
   .data-verify-history__icon {
     color: map-get($fontColor, white);
   }

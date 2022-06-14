@@ -1,14 +1,8 @@
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 2020/11/27
- * @description
- */
-import _ from 'lodash'
+import { get, set, merge } from 'lodash'
 export const convertSchemaToTreeData = function (Schema) {
   if (Schema) {
     let root = {}
     let fields = Schema || []
-    fields = _.sortBy(fields, [field => field.table_name + field.field_name])
     for (let i = 0; i < fields.length; i++) {
       let field = fields[i]
       if (field && field.field_name && field.original_field_name) {
@@ -23,8 +17,8 @@ export const convertSchemaToTreeData = function (Schema) {
             ),
           label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
           field_name: jsonPathForFieldName[jsonPathForFieldName.length - 1],
-          type: field.javaType || field.java_type,
-          java_type: field.javaType || field.java_type,
+          type: field.originalDataType || field.data_type,
+          data_type: field.data_type,
           primary_key_position: field.primary_key_position,
           table_name: field.table_name || 'table',
           original_field_name: field.original_field_name || field.field_name,
@@ -32,11 +26,11 @@ export const convertSchemaToTreeData = function (Schema) {
           comment: field.comment
         }
         let path = 'children.' + jsonPathForFieldName.join('.children.')
-        let partField = _.get(root, path)
+        let partField = get(root, path)
         if (!partField) {
-          _.set(root, path, treeItem)
+          set(root, path, treeItem)
         } else {
-          _.set(root, path, _.merge(partField, treeItem))
+          set(root, path, merge(partField, treeItem))
         }
       }
     }
@@ -54,13 +48,13 @@ export const convertSchemaToTreeData = function (Schema) {
     }
     re(root, 0)
 
-    let sort = function (node) {
-      if (node.children && node.children.length > 0) {
-        node.children.sort((c1, c2) => (c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1))
-        node.children.forEach(sort)
-      }
-    }
-    sort(root)
+    // let sort = function (node) {
+    //   if (node.children && node.children.length > 0) {
+    //     node.children.sort((c1, c2) => (c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1))
+    //     node.children.forEach(sort)
+    //   }
+    // }
+    // sort(root)
     fields = root.children
     return fields
   } else {
@@ -169,7 +163,7 @@ export const isValidate = function (operations, schema) {
           action: operation[i].action,
           op: operation[i].op,
           field: operation[i].field,
-          javaType: operation[i].javaType,
+          data_type: operation[i].data_type,
           level: operation[i].level,
           tableName: operation[i].tableName,
           triggerFieldId: operation[i].triggerFieldId

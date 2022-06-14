@@ -25,6 +25,7 @@
       @forceStop="handleForceStop"
       @reset="handleReset"
       @edit="handleEdit"
+      @detail="handleDetail"
     ></TopHeader>
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
@@ -70,7 +71,7 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <EmptyItem></EmptyItem>
           </div>
-          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
+          <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
           <NodePopover
             :popover="nodeMenu"
             @click-node="handleClickNodePopover"
@@ -93,7 +94,7 @@ import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
 import { connectorActiveStyle } from './style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
-import { ctorTypes, nodeTypes } from './nodes/loader'
+import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
@@ -115,7 +116,7 @@ import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
-import PaperEmpty from './components/PaperEmpty'
+// import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
@@ -135,7 +136,7 @@ export default {
   components: {
     NodePopover,
     EmptyItem,
-    PaperEmpty,
+    // PaperEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,
@@ -212,9 +213,6 @@ export default {
     }
     this.setValidateLanguage()
     await this.initNodeType()
-  },
-
-  mounted() {
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -241,8 +239,8 @@ export default {
       'setStateReadonly',
       'setEdges',
       'setTaskId',
-      'setNodeTypes',
-      'setCtorTypes',
+      'addResourceIns',
+      'addProcessorNode',
       'updateNodeProperties',
       'setActiveNode',
       'setActiveConnection',
@@ -357,10 +355,105 @@ export default {
     },
 
     async initNodeType() {
-      let _nodeTypes = nodeTypes
-      this.setNodeTypes(_nodeTypes)
-      this.setCtorTypes(ctorTypes)
+      this.addProcessorNode([
+        {
+          name: 'JavaScript',
+          type: 'js_processor'
+        },
+        /*{
+          name: '聚合',
+          type: 'aggregation_processor'
+        },*/
+        {
+          name: 'Row Filter',
+          type: 'row_filter_processor'
+        },
+        {
+          name: '连接',
+          type: 'join_processor'
+        },
+        {
+          name: '主从合并',
+          type: 'merge_table_processor'
+        },
+        {
+          name: '字段计算',
+          type: 'field_calc_processor'
+        },
+        {
+          name: '类型修改',
+          type: 'field_mod_type_processor'
+        },
+        {
+          name: '字段改名',
+          type: 'field_rename_processor'
+        },
+        {
+          name: '增删字段',
+          type: 'field_add_del_processor'
+        }
+      ])
+      this.addResourceIns(allResourceIns)
       await this.loadCustomNode()
+    },
+
+    checkAsTarget(target, showMsg) {
+      let { allowSource } = target.__Ctor
+      allowSource = typeof allowSource === 'boolean' ? allowSource : true
+      const connectionType = target.attrs.connectionType
+      if (!allowSource || (connectionType && !connectionType.includes('target'))) {
+        showMsg && this.$message.error(`该节点「${target.name}」仅支持作为源`)
+        return false
+      }
+      return true
+    },
+
+    checkAsSource(source, showMsg) {
+      let { allowTarget } = source.__Ctor
+      allowTarget = typeof allowTarget === 'boolean' ? allowTarget : true
+      const connectionType = source.attrs.connectionType
+      if (!allowTarget || (connectionType && !connectionType.includes('source'))) {
+        showMsg && this.$message.error(`该节点「${source.name}」仅支持作为目标`)
+        return false
+      }
+      return true
+    },
+
+    checkTargetMaxInputs(target, showMsg) {
+      const maxInputs = target.__Ctor.maxInputs ?? -1
+      const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + target.id })
+
+      if (maxInputs !== -1 && connections.length >= maxInputs) {
+        showMsg && this.$message.error('该节点已经达到最大连线限制')
+        return false
+      }
+      return true
+    },
+
+    checkSourceMaxOutputs(source, showMsg) {
+      const maxOutputs = source.__Ctor.maxOutputs ?? -1
+      const connections = this.jsPlumbIns.getConnections({ source: NODE_PREFIX + source.id })
+
+      if (maxOutputs !== -1 && connections.length >= maxOutputs) {
+        showMsg && this.$message.error('该节点已经达到最大连线限制')
+        return false
+      }
+      return true
+    },
+
+    checkAllowTargetOrSource(source, target, showMsg) {
+      const { allowSource } = target.__Ctor
+      const { allowTarget } = source.__Ctor
+
+      if (typeof allowSource === 'function' && !allowSource(source)) {
+        showMsg && this.$message.error(`该节点「${target.name}」不支持「${source.name}」作为源`)
+        return false
+      }
+      if (typeof allowTarget === 'function' && !allowTarget(target, source)) {
+        showMsg && this.$message.error(`「${source.name}」不支持该节点「${target.name}」作为目标`)
+        return false
+      }
+      return true
     },
 
     checkCanBeConnected(sourceId, targetId, showMsg) {
@@ -369,26 +462,10 @@ export default {
 
       const source = this.nodeById(sourceId)
       const target = this.nodeById(targetId)
-      const maxInputs = target.__Ctor.attr.maxInputs ?? -1
-      const connectionType = target.attrs.connectionType
 
-      if (connectionType && !connectionType.includes('target')) {
-        showMsg && this.$message.info(`该节点「${target.name}」仅支持作为源`)
-        return false
-      }
-
-      const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + targetId })
-
-      if (connections?.length && maxInputs !== -1 && connections.length >= maxInputs) {
-        showMsg && this.$message.info('该节点已经达到最大连线限制')
-        return false
-      }
-
-      if (this.allowConnect(sourceId, targetId)) {
-        return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)
-      }
-
-      return false
+      if (!this.checkAsTarget(target, showMsg)) return false
+      if (!this.checkTargetMaxInputs(target, showMsg)) return false
+      return this.allowConnect(sourceId, targetId) && this.checkAllowTargetOrSource(source, target, showMsg)
     },
 
     initNodeView() {
@@ -495,12 +572,7 @@ export default {
         if (this.stateIsReadonly) return false
         // 根据连接类型判断，节点是否仅支持作为目标
         const node = this.nodeById(this.getRealId(sourceId))
-        const connectionType = node.attrs.connectionType
-        if (connectionType && !connectionType.includes('source')) {
-          this.$message.info(`该节点「${node.name}」仅支持作为目标`)
-          return false
-        }
-        return true
+        return this.checkAsSource(node, true)
       })
 
       // 连线拖动时，可以被连的节点在画布上凸显
@@ -563,9 +635,7 @@ export default {
 
     async addNodes({ nodes, edges }) {
       if (!nodes?.length) return
-      const { getters } = this.$store
-      const getNodeType = getters['dataflow/nodeType']
-      const getCtor = getters['dataflow/getCtor']
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const outputsMap = {}
       const inputsMap = {}
 
@@ -587,25 +657,15 @@ export default {
       })
 
       // 创建节点
-      let nodeType
       nodes.forEach(node => {
-        delete node.outputSchema // 粗暴删除不需要的节点属性
-        nodeType = getNodeType(node)
-
-        if (nodeType !== null) {
-          const Ctor = getCtor(nodeType.constructor)
-          const ins = new Ctor(nodeType)
-
-          Object.defineProperty(node, '__Ctor', {
-            value: ins,
-            enumerable: false
-          })
-
-          node.$inputs = inputsMap[node.id] || []
-          node.$outputs = outputsMap[node.id] || []
-
-          this.addNode(node)
-        }
+        node.$inputs = inputsMap[node.id] || []
+        node.$outputs = outputsMap[node.id] || []
+        const ins = getResourceIns(node)
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
+        this.addNode(node)
       })
 
       await this.$nextTick()
@@ -896,7 +956,7 @@ export default {
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
       this.allNodes.some(node => {
         const { id } = node
-        const minInputs = node.__Ctor.attr.minInputs ?? 1 // 没有设置minInputs则缺省为1
+        const minInputs = node.__Ctor.minInputs ?? 1 // 没有设置minInputs则缺省为1
         const inputNum = targetMap[id]?.length ?? 0
 
         if (!sourceMap[id] && !targetMap[id]) {
@@ -906,7 +966,7 @@ export default {
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要一个源节点`
+          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
           return true
         }
 
@@ -1063,8 +1123,8 @@ export default {
         this.isSaving = false
         return true
       } catch (e) {
-        this.handleError(e)
         this.isSaving = false
+        this.handleError(e)
         return false
       }
     },
@@ -1452,6 +1512,7 @@ export default {
         const source = this.getRealId(connection.sourceId)
         const target = this.getRealId(connection.targetId)
         this.addNodeOnConn(item, newPosition, source, target)
+        this.jsPlumbIns.select().removeClass('connection-highlight')
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
@@ -1477,24 +1538,21 @@ export default {
     },
 
     createNode(position, item) {
-      const getCtor = this.$store.getters['dataflow/getCtor']
-      const Ctor = getCtor(item.constructor)
-      const ins = new Ctor(item)
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const node = merge(
         {
           id: uuid(),
-          name: item.name,
-          type: item.type,
           attrs: { position }
         },
-        ins.getExtraAttr()
+        item
       )
 
-      // 设置属性__Ctor不可枚举
+      const ins = item.__Ctor || getResourceIns(item)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
         enumerable: false
       })
+
       return node
     },
 
@@ -1557,21 +1615,23 @@ export default {
       const a = this.nodeById(source)
       const b = this.createNode(position, nodeType)
       const c = this.nodeById(target)
-      const aCtor = a.__Ctor
-      const bCtor = b.__Ctor
-      const cCtor = c.__Ctor
 
-      if (bCtor.allowSource(a) && aCtor.allowTarget(b, a) && cCtor.allowSource(b) && bCtor.allowTarget(cCtor, b)) {
-        this.command.exec(
-          new AddNodeOnConnectionCommand(
-            {
-              source,
-              target
-            },
-            b
-          )
+      if (!this.checkAsTarget(b, true)) return
+      if (!this.checkAsSource(b, true)) return
+      if (!this.checkTargetMaxInputs(b, true)) return
+      if (!this.checkSourceMaxOutputs(b, true)) return
+      if (!this.checkAllowTargetOrSource(a, b, true)) return
+      if (!this.checkAllowTargetOrSource(b, c, true)) return
+
+      this.command.exec(
+        new AddNodeOnConnectionCommand(
+          {
+            source,
+            target
+          },
+          b
         )
-      }
+      )
     },
 
     addNodeOnConnByNodeMenu(nodeType) {
@@ -1625,9 +1685,9 @@ export default {
     },
 
     handleError(error, msg = '出错了') {
-      if (error?.data.code === 'Task.ListWarnMessage') {
+      if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []
-        if (error.data.data) {
+        if (error.data?.data) {
           const keys = Object.keys(error.data.data)
           keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
@@ -1648,14 +1708,15 @@ export default {
             }
           }
         }
-        this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
-      } else if (error?.data?.message) {
-        this.$message.error(error.data.message)
-      } else {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        this.$message.error(msg)
+        // this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
       }
+      // else if (error?.data?.message) {
+      //   this.$message.error(error.data.message)
+      // } else {
+      //   // eslint-disable-next-line no-console
+      //   console.error(error)
+      //   this.$message.error(msg)
+      // }
     },
 
     async handleUpdateName(name) {
@@ -1715,15 +1776,11 @@ export default {
           return
         }
 
-        try {
-          this.dataflow.disabledData.stop = true
-
-          await taskApi.stop(this.dataflow.id)
-          this.$message.success(this.$t('message.operationSuccuess'))
-        } catch (e) {
-          this.handleError(e, this.$t('message.stopFail'))
-          console.log(e) // eslint-disable-line
-        }
+        this.dataflow.disabledData.stop = true
+        await taskApi.stop(this.dataflow.id).catch(e => {
+          this.handleError(e, this.$t('message_operation_error'))
+        })
+        this.$message.success(this.$t('message_operation_succuess'))
       })
     },
 
@@ -1765,6 +1822,15 @@ export default {
       this.$router.push({
         name: 'DataflowEditor',
         params: { id: this.dataflow.id, action: 'dataflowEdit' }
+      })
+    },
+
+    handleDetail() {
+      this.$router.push({
+        name: 'dataflowDetails',
+        params: {
+          id: this.dataflow.id
+        }
       })
     },
 

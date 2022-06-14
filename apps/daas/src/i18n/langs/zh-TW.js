@@ -22,6 +22,22 @@ export default {
   common_placeholder_input: '請輸入',
   common_placeholder_search_input: '請輸入搜索內容...',
 
+  status_running: '運行中',
+  status_paused: '待啟動',
+  status_draft: '待啟動',
+  status_ready: '待啟動',
+  status_edit: '編輯中',
+  status_error: '錯誤',
+  status_wait_run: '啟動中',
+  status_scheduled: '啟動中',
+  status_scheduling: '啟動中',
+  status_complete: '完成',
+  status_stop: '已停止',
+  status_stopping: '停止中',
+  status_finished: '已完成',
+  status_force_stopping: '強制停止中',
+  status_schedule_failed: '錯誤',
+
   // 通用按钮
   button_help: '幫助',
   button_edit: '編輯',
@@ -68,6 +84,8 @@ export default {
   button_finish: '完成',
   button_btn_back: '上一步',
   button_btn_next: '下一步',
+  button_bulk_import: '批量導入',
+  button_bulk_export: '批量導出',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -180,6 +198,7 @@ export default {
   component_table_selector_error: '所選表存在異常',
   component_table_selector_autofix: '清除異常表',
   component_table_selector_bulk_pick: '批量選表',
+  component_table_selector_bulk_name: '粘貼表名',
   component_table_selector_not_checked: '您暫時沒有選擇表',
   component_table_selector_tables_empty: '您暫時沒有表，請點擊右上角重新加載表',
   component_table_selector_clipboard_placeholder: '請輸入表名稱並以逗號分隔,例如：table_a,table_b',
@@ -570,7 +589,7 @@ export default {
   connection_form_tidb_server: 'PDServer 地址',
   connection_tidb_none_server: 'PDServer 地址不能為空',
 
-  connection_list_column_schema_status: 'Schema加載狀態',
+  connection_list_column_schema_status: 'Schema狀態',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
 
   // 連接
@@ -823,6 +842,10 @@ export default {
   dag_data_setting_example: '例子:',
   dag_data_setting_runMinute: '每分鐘運行一次',
   dag_data_setting_runDay: '每天2點運行',
+  dag_attributes_exist_data_deal: '已有數據處理',
+  dag_attributes_exist_data_keep_data: '保持已存在的數據',
+  dag_attributes_exist_data_remove_data: '運行前刪除已存在的數據',
+  dag_attributes_exist_data_drop_table: '運行前刪除表結構',
 
   dag_dialog_field_mapping_change_type_field_rename: '類型修改',
   dag_dialog_field_mapping_batch_change_type: '批量修改字段類型',
@@ -847,6 +870,10 @@ export default {
   dag_dialog_field_mapping_selected: '已選中',
   dag_dialog_field_mapping_search_field: '搜索字段',
   dag_dialog_field_mapping_source_field: '源表字段名',
+  dag_dialog_field_mapping_field: '字段名',
+  dag_dialog_field_mapping_type: '字段類型',
+  dag_dialog_field_mapping_precision: '字段長度',
+  dag_dialog_field_mapping_scale: '字段精度',
   dag_dialog_field_mapping_source_type: '源表類型',
   dag_dialog_field_mapping_source_precision: '源表長度',
   dag_dialog_field_mapping_source_scale: '源表精度',
@@ -949,6 +976,10 @@ export default {
   task_preview_status_schedule_failed: '調度失敗',
   task_preview_status_ready: '待啟動',
 
+  task_status_running: '已運行',
+  task_status_not_running: '未運行',
+  task_status_error: '錯誤',
+
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',
   task_monitor_full_completion_time: '預計全量完成還需時間',
@@ -969,6 +1000,9 @@ export default {
   task_monitor_unit_second: '單位：/秒',
   task_monitor_not_start: '未開始',
   task_monitor_founder: '創建人',
+  task_monitor_change_time: '修改時間',
+  task_monitor_sync_type: '同步類型',
+  task_monitor_incremental_lag: '增量滯後',
   task_monitor_start: '啟動',
   task_monitor_stop: '停止',
   task_monitor_reset: '重置',
@@ -1005,6 +1039,11 @@ export default {
   task_monitor_sync_task: '同步任務',
 
   task_info_start_time: '開始時間',
+  task_info_initial_sync: '全量',
+  task_info_initial_cdc: '增量',
+  task_info_node: '節點',
+  task_info_cycle: '週期',
+  task_info_frequency: '頻率',
   task_info_start: '啟動',
   task_info_stopt: '停止',
   task_info_data_screening: '事件統計',
@@ -1080,6 +1119,11 @@ export default {
   task_info_status_waiting: '待運行',
   task_info_status_running: '同步中',
   task_info_status_done: '已完成',
+  task_info_status_paused: '已暫停',
+
+  task_info_subtasks_tip: '在Tapdata中你創建任務裡的每個目標節點均會被定義為子任務 您可以在下方查看每個子任務詳情',
+  task_info_subtasks_name: '子任務名稱',
+  task_info_subtasks_status: '狀態',
 
   task_stetting_name: '任務名稱',
   task_stetting_desc: '任務描述',
@@ -1137,10 +1181,11 @@ export default {
   task_setting_cdc_share_filter_on_server: '共享挖掘日誌過濾',
   task_setting_lag_time: '增量滯後判斷時間設置',
 
+  task_stetting_basic_setting: '基本設置',
+  task_stetting_most_setting: '高級設置',
   task_name: '任務名稱',
   task_status: '任務狀態',
   task_sync_type: '任務同步類型',
-  task_create_task: '創建任務',
   task_button_pause: '暫停',
   task_button_recover: '恢復',
   task_button_start: '啟動', // 停止 編輯 子任務
@@ -1160,6 +1205,10 @@ export default {
   task_setting_cron_feedbackText:
     '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ',
   task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
+  task_setting_cron_tip:
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
+  task_setting_syncPoint_tip: '任務將從該時間點開始收集增量日誌',
+  task_setting_plan_start_date: '计划开始时间',
 
   //字段映射
   task_form_no_fields_not_save: '當前表被刪除了所有字段，不允許保存操作',
@@ -1262,7 +1311,6 @@ export default {
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',
-  function_button_create_custom_function: '創建函數',
   function_button_import_jar: '導入jar包',
   function_button_edit_function: '編輯函數',
   function_details: '函數詳情',
@@ -1340,6 +1388,7 @@ export default {
   shared_cdc_setting_no_mongodb_tip: ' 請先創建mongodb數據源',
   shared_cdc_name: '請輸入挖掘名稱',
   shared_cdc_setting_refresh: '刷新數據',
+  shared_cdc_setting_select_mode: '存储模式',
   shared_cdc_setting_select_mongodb_tip: '請選擇mongodb連接',
   shared_cdc_setting_select_table_tip: '請選擇表名',
   shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',
@@ -1875,7 +1924,6 @@ export default {
   role_name_Data_SYNC: '瀏覽複製開發任務',
   role_name_SYNC_category_management: '任務分類管理',
   role_name_SYNC_category_application: '任務分類應用',
-  role_name_SYNC_job_creation: '創建任務',
   role_name_SYNC_job_delete: '刪除任務',
   role_name_SYNC_job_edition: '編輯任務',
   role_name_SYNC_job_operation: '任務操作',
@@ -1973,9 +2021,10 @@ export default {
   milestone_label_write_cdc_event: '【數據傳輸】目標處理器進入增量寫入模式',
 
   milestone_list_status_finish: '已完成',
-  milestone_list_status_error: '错误',
+  milestone_list_status_error: '錯誤',
   milestone_list_status_waiting: '待執行',
-  milestone_list_status_running: '运行中',
+  milestone_list_status_running: '運行中',
+  milestone_list_status_paused: '已暫停',
 
   classification_name_already_exists: '分類名稱已存在',
 

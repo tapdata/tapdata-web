@@ -63,7 +63,7 @@
           @click="handleImport"
         >
           <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('dataFlow.bulkImport') }}</span>
+          <span> {{ $t('button_bulk_import') }}</span>
         </el-button>
         <el-button
           v-readonlybtn="'SYNC_job_creation'"
@@ -72,8 +72,7 @@
           size="mini"
           @click="create"
         >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-          {{ $t('task_create_task') }}
+          {{ $t('button_create') }}
         </el-button>
       </div>
 
@@ -85,51 +84,48 @@
       >
       </el-table-column>
 
-      <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="380" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary">
-            <span :class="['name', { 'has-children': row.hasChildren }]" @click.stop="handlePreview(row.id)">{{
-              row.name
-            }}</span>
+            <ElLink
+              type="primary"
+              class="justify-content-start ellipsis block"
+              :class="['name', { 'has-children': row.hasChildren }]"
+              @click.stop="handlePreview(row.id)"
+              >{{ row.name }}</ElLink
+            >
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
             </el-tag>
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('task_list_task_type')" min-width="150">
+      <el-table-column :label="$t('task_list_task_type')" min-width="140">
         <template #default="{ row }">
           <span>
             {{ row.type ? syncType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
-      <el-table-column prop="status" :label="$t('task_list_status')" width="180">
+      <el-table-column prop="status" :label="$t('task_list_status')" min-width="120">
         <template #default="{ row }">
           <!--调度失败任务 统一归类为error-->
           <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
             {{ $t('task_preview_status_' + row.statusResult[0].status) }}
           </span>
-          <span v-if="row.transformStatus && row.transformStatus === 'running'">
+          <!--产品测暂时决定隐藏-->
+          <!--<span v-if="row.transformStatus && row.transformStatus === 'running'">
             <span v-if="row.transformProcess && row.transformProcess !== 1">{{ row.transformProcess * 100 }} %</span>
-          </span>
+          </span>-->
         </template>
       </el-table-column>
 
-      <!--引擎暂时未回写启动时间，暂时注释-->
-      <!--<el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
+      <el-table-column prop="createTime" :label="$t('column_create_time')" min-width="160" sortable="createTime">
         <template #default="{ row }">
-          {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
-        </template>
-      </el-table-column>-->
-
-      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="createTime">
-        <template #default="{ row }">
-          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
+          {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="270" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="280">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -174,7 +170,6 @@
             <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
               <ElLink type="primary" class="rotate-90">
-                <!-- {{ $t('button.more') }} -->
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
@@ -215,7 +210,6 @@
           <div class="tab pb-3">
             <div class="img-box">
               <VIcon class="icon">text</VIcon>
-              <!-- <img src="../../../assets/images/migrate/headImage.png" /> -->
             </div>
             <div class="content" v-if="previewData">
               <div class="name fs-6">
@@ -227,7 +221,6 @@
                 {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
               </div>
               <div class="status">
-                <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
                 <span :class="['status-' + previewData.status, 'status-block']">
                   {{ $t('task_preview_status_' + previewData.status) }}
                 </span>
@@ -237,10 +230,8 @@
         </header>
         <ul class="info-list">
           <li v-for="item in previewList" :key="item.label">
-            <!-- {{ previewData[item] }} -->
             <template v-if="!!item.value">
               <VIcon class="icon mr-4">{{ item.label }}</VIcon>
-              <!-- <img class="label-img" :src="getImgByData(item.label)" /> -->
               <div class="label-text">
                 <div class="label font-color-light">{{ $t('task_preview_' + item.label) }}:</div>
                 <div
@@ -262,15 +253,15 @@
 
 <script>
 import factory from '../../../api/factory'
-const Task = factory('Task')
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
 import Upload from '@/components/UploadDialog'
-// import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
+import dayjs from 'dayjs'
+const Task = factory('Task')
 
 let timeout = null
 export default {
@@ -290,13 +281,11 @@ export default {
       searchParams: {
         keyword: '',
         status: '',
-        progress: '',
-        executionStatus: '',
-        timeData: '',
-        syncType: ''
+        type: ''
       },
       order: 'createTime DESC',
       progressOptions: [
+        { label: this.$t('select_option_all'), value: '' },
         {
           label: this.$t('dataFlow.initial_sync'),
           value: 'initial_sync'
@@ -359,30 +348,27 @@ export default {
       return this.$refs.table
     }
   },
-  created() {
-    this.getFilterItems()
-    // let { status } = this.$route.query
-    // this.searchParams.status = status ?? ''
+  watch: {
+    '$route.query'() {
+      this.searchParams = this.$route.query
+      this.table.fetch(1)
+    }
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+  created() {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
-
-    let { status } = this.$route.query
-    this.searchParams.status = status ?? ''
+    this.getFilterItems()
+    this.searchParams = Object.assign(this.searchParams, this.$route.query)
   },
   beforeDestroy() {
     clearInterval(timeout)
   },
-  watch: {
-    '$route.query'() {
-      this.table.fetch(1)
-    }
-  },
   methods: {
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
     dataflowChange(data) {
       if (data && data.data && data.data.fullDocument) {
         let dataflow = data.data.fullDocument
@@ -411,71 +397,40 @@ export default {
       this.searchParams = {
         keyword: '',
         status: '',
-        progress: '',
-        executionStatus: '',
-        timeData: '',
-        syncType: ''
+        type: ''
       }
 
       this.multipleSelection = []
       this.table.fetch(1)
     },
     getData({ page, tags }) {
-      let region = this.$route.query.region
       let { current, size } = page
-      let { keyword, status, progress, executionStatus, timeData, syncType, agentId } = this.searchParams
-
+      let { keyword, status, type } = this.searchParams
+      let fields = {
+        id: true,
+        name: true,
+        status: true,
+        last_updated: true,
+        createTime: true,
+        user_id: true,
+        startTime: true,
+        agentId: true,
+        statuses: true,
+        type: true,
+        desc: true
+      }
       let where = {
         syncType: 'migrate'
       }
       if (keyword && keyword.trim()) {
-        where.or = [
-          { name: { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
-        ]
-      }
-      if (agentId) {
-        where['agentId'] = agentId
-        status = status || 'running'
+        where.name = { like: toRegExp(keyword), options: 'i' }
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
           in: tags
         }
       }
-      region && (where['platformInfo.region'] = region)
-      syncType && (where['type'] = syncType)
-      if (executionStatus) {
-        if (executionStatus === 'Lag') {
-          where.Lag = true
-        } else if (executionStatus === 'initialized') {
-          where.and = [
-            {
-              'stats.stagesMetrics.status': {
-                inq: ['initialized']
-              }
-            },
-            {
-              'stats.stagesMetrics.status': {
-                nin: ['cdc', 'initializing']
-              }
-            }
-          ]
-        } else {
-          where['stats.stagesMetrics.status'] = executionStatus
-        }
-      }
-      if (timeData && timeData.length) {
-        let dates = this.timeData.concat()
-        if (dates[1]) {
-          dates[1] = new Date(dates[1])
-          dates[1].setHours(dates[1].getHours() + 24)
-        }
-        where.createTime = {
-          between: dates
-        }
-      }
+      type && (where['type'] = type)
       if (status) {
         if (status.includes(',')) {
           where.status = {
@@ -485,14 +440,13 @@ export default {
           where.status = status
         }
       }
-      progress && (where['type'] = progress)
       let filter = {
         order: this.order,
         limit: size,
+        fields: fields,
         skip: (current - 1) * size,
         where
       }
-      delete filter.where.mappingTemplate
       return this.$api('Task')
         .get({
           filter: JSON.stringify(filter)
@@ -500,13 +454,6 @@ export default {
         .then(res => {
           let data = res.data
           let list = data?.items || []
-          this.table.setCache({
-            keyword,
-            status,
-            progress,
-            executionStatus,
-            timeData
-          })
           return {
             total: data.total,
             data: list.map(item => {
@@ -597,27 +544,19 @@ export default {
     },
     create() {
       this.$router.push({
-        name: 'MigrateNew'
+        name: 'MigrateCreate'
       })
     },
     handleEditor(id) {
       this.$router.push({
         name: 'MigrateEditor',
         params: {
-          id: id
+          id
         }
       })
     },
     handleImport() {
       this.$refs.upload.show()
-      // let routeUrl = this.$router.resolve({
-      //   // path: '/upload?type=dataflow'
-      //   name: 'upload',
-      //   query: {
-      //     type: 'dataflow'
-      //   }
-      // })
-      // window.open(routeUrl.href, '_blank')
     },
     getConfirmMessage(operateStr, isBulk, name) {
       let title = operateStr + '_confirm_title',
@@ -703,25 +642,17 @@ export default {
           this.$api('Task')
             .batchStart(ids)
             .then(res => {
-              this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+              this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
               this.table.fetch()
             })
-            .catch(err => {
-              this.$message.error(err.data?.message)
-            })
           if (flag) {
-            _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
-              // _this.changeStatus(ids, { status: 'scheduled' })
-            })
-          } else {
-            // _this.changeStatus(ids, { status: 'scheduled' })
+            _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {})
           }
         })
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
-      // let title = msgObj.title
       let list = this.table.list
       for (let i = 0; i < list.length; i++) {
         let node = list[i]
@@ -733,7 +664,6 @@ export default {
             const h = this.$createElement
             let arr = this.$t('message.stopAggregation_message').split('XXX')
             message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-            // title = this.$t('dataFlow.importantReminder')
           }
         }
       }
@@ -747,14 +677,9 @@ export default {
         this.$api('Task')
           .batchStop(ids)
           .then(res => {
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
           })
-          .catch(err => {
-            this.$message.error(err.data?.message)
-          })
-        // return
-        // this.changeStatus(ids, { status: 'stopping' })
       })
     },
     forceStop(ids, item = {}) {
@@ -769,11 +694,8 @@ export default {
         this.$api('Task')
           .forceStop(ids)
           .then(res => {
-            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
-          })
-          .catch(err => {
-            this.$message.error(err.data?.message)
           })
       })
     },
@@ -813,9 +735,9 @@ export default {
             this.table.fetch()
             this.responseHandler(res.data, this.$t('message.resetOk'))
           })
-          .catch(() => {
-            this.$message.info(this.$t('message.cancelReset'))
-          })
+          // .catch(() => {
+          //   this.$message.info(this.$t('message.cancelReset'))
+          // })
           .finally(() => {
             this.restLoading = false
           })
@@ -834,9 +756,9 @@ export default {
           this.table.fetch()
           this.$message.success(this.$t('message.copySuccess'))
         })
-        .catch(() => {
-          this.$message.info(this.$t('message.copyFail'))
-        })
+      // .catch(() => {
+      //   this.$message.info(this.$t('message.copyFail'))
+      // })
     },
     setTag(ids, node) {
       this.dataFlowId = node.id
@@ -856,16 +778,7 @@ export default {
         .update(where, attributes)
         .then(res => {
           this.table.fetch()
-          this.responseHandler(res.data, this.$t('message.operationSuccuess'))
-        })
-        .catch(err => {
-          if (err.response.msg === 'Metadata transformer error') {
-            this.$message.error('任务启动失败，请编辑任务完成映射配置')
-          } else if (err.response.msg === 'DataFlow has add or del stages') {
-            this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
-          } else if (err.response.msg === 'running transformer') {
-            this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
-          }
+          this.responseHandler(res.data, this.$t('message_operation_succuess'))
         })
     },
     skipHandler(id, errorEvents) {
@@ -907,7 +820,6 @@ export default {
     },
     // 任务调度设置保存
     saveTaskSetting() {
-      // let data = this.formSchedule.taskData;
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
@@ -918,15 +830,14 @@ export default {
             this.$message.success(this.$t('message_save_ok'))
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
+        // .catch(() => {
+        //   this.$message.error(this.$t('message_save_fail'))
+        // })
         .finally(() => {
           this.taskSettingsDialog = false
         })
     },
     handleGoFunction() {
-      // top.location.href = '/#/JsFuncs'
       this.$router.push({
         name: 'function'
       })
@@ -976,7 +887,7 @@ export default {
                   'eventTime'
                 ].includes(item)
               ) {
-                res.data[item] = res.data[item] ? this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss') : '-'
+                res.data[item] = this.formatTime(res.data[item])
               }
 
               if (
@@ -1006,27 +917,12 @@ export default {
         },
         {
           label: this.$t('task_list_sync_type'),
-          key: 'progress',
+          key: 'type',
           type: 'select-inner',
           items: this.progressOptions
         },
-        // {
-        //   label: this.$t('task_list_execution_status'),
-        //   key: 'executionStatus',
-        //   type: 'select-inner',
-        //   menuMinWidth: '250px',
-        //   items: async () => {
-        //     let option = ['initializing', 'cdc', 'initialized', 'Lag']
-        //     return option.map(item => {
-        //       return {
-        //         label: this.$t('task_list_status_' + item),
-        //         value: item
-        //       }
-        //     })
-        //   }
-        // },
         {
-          placeholder: this.$t('task_list_search_placeholder'),
+          placeholder: this.$t('task_list_name'),
           key: 'keyword',
           type: 'input'
         }

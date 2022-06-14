@@ -53,12 +53,12 @@
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
             <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
-            <span v-if="item.msg === 'deleted'" class="link-primary">
+            <ElLink v-if="item.msg === 'deleted'">
+              {{ `${item.serverName} ` }}
+            </ElLink>
+            <ElLink type="primary" v-else class="link-primary cursor-pointer" @click="handleGo(item)">
               {{ `${item.serverName} , ` }}
-            </span>
-            <span v-else class="link-primary cursor-pointer" @click="handleGo(item)">
-              {{ `${item.serverName} , ` }}
-            </span>
+            </ElLink>
 
             <!-- </router-link> -->
             <span>
@@ -83,14 +83,14 @@
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
-            <span v-if="item.msg === 'deleted'" class="link-primary">
-              {{ `${item.serverName} , ` }}
+            <span v-if="item.msg === 'deleted'">
+              {{ `${item.serverName} ` }}
             </span>
-            <span v-else class="link-primary cursor-pointer" @click="handleGo(item)">
+            <ElLink type="primary" v-else class="cursor-pointer px-1" @click="handleGo(item)">
               {{ item.serverName }}
-            </span>
+            </ElLink>
             <span>{{ typeMap[item.msg] }}</span>
-            <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
+            <!-- <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span> -->
             <span v-if="item.restDay">{{ item.restDay }} {{ $t('notify_day') }}</span>
           </div>
           <div class="list-item-time">
@@ -121,9 +121,10 @@
 </template>
 
 <script>
-import * as moment from 'moment'
 import { TYPEMAP } from './tyepMap'
 import SelectList from '@/components/SelectList'
+import dayjs from 'dayjs'
+
 export default {
   components: { SelectList },
   data() {
@@ -225,7 +226,6 @@ export default {
   },
   created() {
     this.getData()
-    // this.getUnreadNum() //未读消息数量
     this.getFilterItems()
     this.$root.$on('notificationUpdate', () => {
       this.getData()
@@ -264,7 +264,7 @@ export default {
             //格式化日期
             if (this.listData && this.listData.length > 0) {
               this.listData.map(item => {
-                item['createTime'] = item.createTime ? moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                item['createTime'] = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
               })
             }
           }
@@ -405,22 +405,6 @@ export default {
         this.read = false //未读
       }
       this.getData()
-    },
-    getLag(lag) {
-      let r = '0s'
-      if (lag) {
-        let m = moment.duration(lag, 'seconds')
-        if (m.days()) {
-          r = m.days() + 'd'
-        } else if (m.hours()) {
-          r = m.hours() + 'h'
-        } else if (m.minutes()) {
-          r = m.minutes() + 'm'
-        } else {
-          r = lag + 's'
-        }
-      }
-      return r
     },
     handleGo(item) {
       switch (item.system) {
@@ -609,11 +593,11 @@ $unreadColor: #ee5353;
     height: 40px;
     line-height: 40px;
     font-size: 14px;
-    color: map-get($fontColor, light);
+    // color: map-get($fontColor, light);
     font-weight: 400;
     &.is-active {
       font-weight: 500;
-      color: map-get($color, primary);
+      // color: map-get($color, primary);
     }
   }
 }

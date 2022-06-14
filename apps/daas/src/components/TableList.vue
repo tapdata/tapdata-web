@@ -35,10 +35,23 @@ export default {
 <style scoped lang="scss">
 .table-list {
   ::v-deep {
+    .el-table {
+      border: none;
+    }
     .el-table__header {
+      .el-table__cell {
+        border-right: 0;
+        &.is-leaf {
+          border-bottom: 0;
+        }
+        &:hover {
+          border-right: 1px solid map-get($borderColor, light);
+        }
+      }
       th {
         color: map-get($fontColor, normal);
         font-weight: 500;
+        white-space: nowrap;
         background-color: map-get($bgColor, normal);
       }
     }
@@ -46,6 +59,9 @@ export default {
       td {
         color: map-get($fontColor, light);
       }
+    }
+    &:after {
+      width: 0;
     }
   }
 }

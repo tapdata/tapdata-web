@@ -104,7 +104,7 @@ export const isValidate = function (operations, schema) {
           action: operation[i].action,
           op: operation[i].op,
           field: operation[i].field,
-          javaType: operation[i].javaType,
+          data_type: operation[i].data_type,
           level: operation[i].level,
           tableName: operation[i].tableName,
           triggerFieldId: operation[i].triggerFieldId

@@ -13,6 +13,7 @@
 
 <script>
 import APIClient from '@/api/ApiClient'
+import Cookie from '@tap/shared/src/cookie'
 export default {
   name: 'ApiDocAndTest',
   data() {
@@ -23,7 +24,7 @@ export default {
   },
   created() {
     // this.$emit('amount').$attrs.classname.isclass = true
-    if (!parseInt(this.$cookie.get('user_id'))) {
+    if (!parseInt(Cookie.get('user_id'))) {
       return this.$router.push({
         name: 'login',
         query: { redirect: '/apiAnalysis' }
@@ -66,7 +67,8 @@ export default {
         this.$message.error(this.$t('api_server_no_available')) || 'No available API Server'
       }
     } catch (e) {
-      // console.log(e)
+      // eslint-disable-next-line
+      console.log(e)
     }
   },
   methods: {

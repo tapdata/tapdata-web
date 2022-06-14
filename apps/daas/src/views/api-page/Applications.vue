@@ -169,10 +169,6 @@ export default {
   },
   created() {
     this.getFilterItems()
-  },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-
     this.getRoles()
   },
   computed: {
@@ -229,9 +225,9 @@ export default {
             this.$message.success(this.$t('message_delete_ok'))
             this.table.fetch()
           })
-          .catch(() => {
-            this.$message.info(this.$t('message_delete_fail'))
-          })
+        // .catch(() => {
+        //   this.$message.info(this.$t('message_delete_fail'))
+        // })
       })
     },
     // 保存
@@ -254,9 +250,9 @@ export default {
                 this.$message.success(this.$t('message_save_ok'))
               }
             })
-            .catch(() => {
-              this.$message.error(this.$t('message_save_fail'))
-            })
+          // .catch(() => {
+          //   this.$message.error(this.$t('message_save_fail'))
+          // })
         }
       })
     },
@@ -292,9 +288,6 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          this.table.setCache({
-            keyword
-          })
           return {
             total: res.data?.total || 0,
             data: res.data?.items || []

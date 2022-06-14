@@ -260,7 +260,8 @@ export default {
               meta_type: {
                 in: ['collection', 'table', 'view'] //,
               },
-              is_deleted: false
+              is_deleted: false,
+              sourceType: 'SOURCE'
             })
           Object.assign(filter, {
             fields: {
@@ -292,10 +293,12 @@ export default {
           })
           const connectionType = form.getValuesIn('attrs.connectionType')
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId')
+          const connectionName = form.getValuesIn('attrs.connectionName')
 
           connectionType !== item.connectionType && form.setValuesIn('attrs.connectionType', item.connectionType)
           accessNodeProcessId !== item.accessNodeProcessId &&
             form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)
+          connectionName !== item.name && form.setValuesIn('attrs.connectionName', item.name)
         },
 
         /**
@@ -515,11 +518,13 @@ export default {
          */
         loadNodeFieldOptions: async nodeId => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
-          return fields.map(item => ({
-            label: item.field_name,
-            value: item.field_name,
-            isPrimaryKey: item.primary_key_position > 0
-          }))
+          return fields
+            .map(item => ({
+              label: item.field_name,
+              value: item.field_name,
+              isPrimaryKey: item.primary_key_position > 0
+            }))
+            .filter(item => !item.is_deleted)
         },
 
         /**
@@ -617,7 +622,7 @@ export default {
           try {
             const data = await metadataApi.nodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
-            fields.sort((a, b) => {
+            /*fields.sort((a, b) => {
               const aIsPrimaryKey = a.primary_key_position > 0
               const bIsPrimaryKey = b.primary_key_position > 0
 
@@ -626,7 +631,7 @@ export default {
               } else {
                 return a.field_name.localeCompare(b.field_name)
               }
-            })
+            })*/
             return fields
           } catch (e) {
             // eslint-disable-next-line no-console
@@ -641,7 +646,7 @@ export default {
             const data = await metadataApi.nodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
             const keyMap = {}
-            fields.sort((a, b) => {
+            /*fields.sort((a, b) => {
               const aIsPrimaryKey = a.primary_key_position > 0
               const bIsPrimaryKey = b.primary_key_position > 0
 
@@ -653,7 +658,7 @@ export default {
               } else {
                 return a.field_name.localeCompare(b.field_name)
               }
-            })
+            })*/
             console.log('keyMap', keyMap) // eslint-disable-line
             field.setState({
               dataSource: Object.keys(keyMap)

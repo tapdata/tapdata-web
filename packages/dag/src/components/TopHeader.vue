@@ -1,7 +1,7 @@
 <template>
   <header class="layout-header border-bottom px-4">
     <button @click="$emit('page-return')" class="icon-btn">
-      <VIcon size="20">left</VIcon>
+      <VIcon size="18">left</VIcon>
     </button>
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
       <input
@@ -15,7 +15,9 @@
       <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
     </div>
 
-    <StatusItem inline :value="dataflow.statusResult" />
+    <slot name="status" :result="dataflow.statusResult">
+      <StatusItem inline :value="dataflow.statusResult" />
+    </slot>
 
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
@@ -51,11 +53,11 @@
         </button>
       </ElTooltip>
       <!--移动画布-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
+      <!--<ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
         <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
           <VIcon size="20">hand</VIcon>
         </button>
-      </ElTooltip>
+      </ElTooltip>-->
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out')">
@@ -88,67 +90,23 @@
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
+      <VDivider class="mx-3" vertical inset></VDivider>
+      <!--设置-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
+        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
+          <VIcon size="20">setting-outline</VIcon>
+        </button>
+      </ElTooltip>
     </div>
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <!--搜索节点-->
-      <ElPopover
-        v-model="showSearchNodePopover"
-        placement="bottom"
-        trigger="click"
-        popper-class="rounded-xl p-0"
-        @after-leave="nodeSearchInput = null"
-      >
-        <ElTooltip slot="reference" transition="tooltip-fade-in" :content="$t('button_search_node')">
-          <button class="icon-btn mx-2">
-            <VIcon size="20">magnify</VIcon>
-          </button>
-        </ElTooltip>
 
-        <div class="choose-pane-wrap">
-          <ElInput class="input-filled" v-model="nodeSearchInput" :placeholder="$t('dag_search_node_placeholder')">
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-            </template>
-          </ElInput>
-          <ElDivider class="m-0" />
-          <ElScrollbar tag="div" wrap-class="choose-list-wrap" view-class="choose-list p-2">
-            <div
-              v-for="(node, i) in nodeList"
-              :key="i"
-              class="choose-item ellipsis px-4"
-              @click="handleClickNode(node)"
-            >
-              {{ node.name }}
-            </div>
-            <EmptyItem v-if="!nodeList.length"></EmptyItem>
-          </ElScrollbar>
-        </div>
-      </ElPopover>
-
-      <ElButton
-        v-if="stateIsReadonly"
-        size="mini"
-        class="mx-1 btn--text"
-        @click="
-          $router.push({
-            name: 'dataflowDetails',
-            params: {
-              id: dataflow.id
-            }
-          })
-        "
-      >
+      <ElButton v-if="stateIsReadonly" size="mini" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
         {{ $t('task_list_button_monitor') }}
       </ElButton>
 
-      <ElButton size="mini" class="mx-1 btn--text" @click="$emit('showSettings')">
-        <VIcon>setting</VIcon>
-        <!--设置-->
-        {{ $t('button_setting') }}
-      </ElButton>
       <ElButton v-if="!stateIsReadonly" :loading="isSaving" size="mini" class="mx-2" @click="$emit('save')">
         <!--保存-->
         {{ $t('button_save') }}
@@ -201,7 +159,10 @@
       </template>
 
       <ElButton
-        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses.length > 0)"
+        :disabled="
+          isSaving ||
+          (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses && dataflow.statuses.length > 0)
+        "
         size="mini"
         class="mx-2"
         type="primary"
@@ -218,8 +179,6 @@ import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'
-import { Select } from 'element-ui'
-import EmptyItem from './EmptyItem'
 import { StatusItem } from '@tap/business'
 
 export default {
@@ -235,7 +194,7 @@ export default {
     scale: Number
   },
 
-  components: { StatusItem, EmptyItem, VDivider, VIcon, ElScrollbar: Select.components.ElScrollbar },
+  components: { StatusItem, VDivider, VIcon },
 
   data() {
     return {
@@ -252,7 +211,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes']),
+    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
     ...mapState('dataflow', ['spaceKeyPressed']),
 
     syncTxt() {
@@ -429,7 +388,7 @@ $sidebarBg: #fff;
       transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
       &:focus {
-        border-color: #409eff;
+        border-color: map-get($color, primary);
         & + .title-input-icon {
           color: map-get($color, primary);
         }
@@ -450,6 +409,7 @@ $sidebarBg: #fff;
     width: 30px;
     height: 30px;
     padding: 5px;
+    color: #4e5969;
     background: #fff;
     border: 1px solid transparent;
     border-radius: $radius;
@@ -514,7 +474,6 @@ $sidebarBg: #fff;
 
   ::v-deep {
     .el-button {
-      min-width: 64px;
       line-height: 1;
 
       &.btn--text {
@@ -578,7 +537,7 @@ $sidebarBg: #fff;
     cursor: pointer;
 
     &:hover {
-      background-color: #eef3ff;
+      background-color: #edf1f9;
     }
   }
   &.auto-width .choose-item {

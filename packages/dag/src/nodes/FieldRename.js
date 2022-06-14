@@ -1,19 +1,13 @@
 import { NodeType } from './extends/NodeType'
 
 export class FieldRename extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {
-    maxInputs: 1 // 最大输入个数
-  }
+  type = 'field_rename_processor'
+
+  maxInputs = 1 // 最大输入个数
 
   group = 'processor'
 
@@ -31,7 +25,7 @@ export class FieldRename extends NodeType {
         'x-component': 'FieldRename',
         'x-reactions': [
           '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}',
-          '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true}, $values.id, $values.fieldsNameTransform)}}'
+          '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true}, $values.id, $values.$inputs[0], $values.fieldsNameTransform)}}'
         ],
         fieldsNameTransform: {
           type: 'string',

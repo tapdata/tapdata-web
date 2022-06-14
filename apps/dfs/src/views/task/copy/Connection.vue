@@ -10,7 +10,6 @@
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
           <img class="mr-2" style="width: 24px; height: 24px" :src="getDatabaseImg(scope.row)" />
-          <!--:src="require('static/editor/' + scope.row.database_type.toLowerCase() + '.svg')"  -->
           <ElLink
             type="primary"
             style="display: block; line-height: 20px"

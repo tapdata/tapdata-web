@@ -71,41 +71,14 @@
 </template>
 
 <script>
-// import crypto from 'crypto';
-// import CryptoJS from 'crypto-js';
 import Header from './Header'
-// import _ from 'lodash';
+import Cookie from '@tap/shared/src/cookie'
 
-// const Languages = {
-// 	sc: '中文 (简)',
-// 	en: 'English',
-// 	tc: '中文 (繁)'
-// };
 export default {
   name: 'SignIn',
   components: { Header },
   data() {
-    // var userEmail = (rule, value, callback) => {
-    // 	// eslint-disable-next-line
-    // 	const mailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    // 	if (!value) {
-    // 		return callback(new Error(this.$t('app.signIn.email_null')));
-    // 	}
-    // 	setTimeout(() => {
-    // 		if (mailReg.test(value)) {
-    // 			callback();
-    // 		} else {
-    // 			callback(new Error(this.$t('app.signIn.email_invalid')));
-    // 		}
-    // 	}, 100);
-    // };
-    // var validatePass = (rule, value, callback) => {
-    // 	if (!value || value.length < 5) {
-    // 		callback(new Error(this.$t('app.signIn.password_invalid')));
-    // 	}
-    // };
     return {
-      // originUrl: window.location.origin,
       loading: false,
       form: {
         email: '',
@@ -117,10 +90,6 @@ export default {
       keepSignIn: true,
       passwordType: 'password',
       flag: false
-      // rules: {
-      // 	email: [{ validator: userEmail, trigger: 'blur' }],
-      // 	password: [{ validator: validatePass, trigger: 'blur' }]
-      // }
     }
   },
 
@@ -164,14 +133,14 @@ export default {
       try {
         let usersModel = this.$api('users')
 
-        this.$cookie.set('location_origin', window.location.origin)
+        Cookie.set('location_origin', window.location.origin)
 
         let { data } = await usersModel.post(this.form)
         if (data.textStatus === 'DISABLE_SIGNUP') {
           this.errorMessage = data.textStatus
           return
         }
-        this.$cookie.set('user_id', data.id)
+        Cookie.set('user_id', data.id)
         this.$router.replace({
           name: 'verificationEmail',
           params: { data: this.form }
@@ -297,32 +266,6 @@ export default {
         font-size: 14px;
         color: rgba(245, 108, 108, 1);
       }
-      // form {
-      // 	border-radius: 4px;
-      // 	overflow: hidden;
-      // 	border: 1px solid #dedee4;
-      // 	.input {
-      // 		display: block;
-      // 		padding: 15px;
-      // 		width: 100%;
-      // 		height: 44px;
-      // 		color: #606266;
-      // 		line-height: 44px;
-      // 		border-radius: 0;
-      // 		box-sizing: border-box;
-      // 		border: none;
-      // 		outline: none;
-      // 		font-size: 14px;
-      // 		font-family: inherit;
-      // 		&:last-child {
-      // 			border-top: 1px solid #dedee4;
-      // 		}
-      // 		&::placeholder {
-      // 			font-size: 14px;
-      // 			color: rgba(204, 204, 204, 1);
-      // 		}
-      // 	}
-      // }
       .keep-sign-in {
         font-size: 14px;
         color: rgba(153, 153, 153, 1);

@@ -20,7 +20,7 @@ export const Table = {
     },
     writeStrategy: {
       title: '数据写入模式',
-      dataSource: ['更新写入', '追加写入', '更新已存在或者插入新数据']
+      dataSource: ['追加写入', '更新已存在或者插入新数据']
     },
     updateConditionFields: '更新条件字段'
   },
@@ -45,7 +45,7 @@ export const Table = {
     },
     writeStrategy: {
       title: '數據寫入模式',
-      dataSource: ['更新寫入', '追加寫入', '更新已存在或者插入新數據']
+      dataSource: ['追加寫入', '更新已存在或者插入新數據']
     },
     updateConditionFields: '更新條件字段'
   },
@@ -70,7 +70,7 @@ export const Table = {
     },
     writeStrategy: {
       title: 'Write Strategy',
-      dataSource: ['Update Write', 'Append Write', 'Update Or Insert']
+      dataSource: ['Append Write', 'Update Or Insert']
     },
     updateConditionFields: 'Update Condition Fields'
   }

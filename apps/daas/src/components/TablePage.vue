@@ -46,6 +46,10 @@
             @sort-change="$emit('sort-change', $event)"
           >
             <slot></slot>
+            <div slot="empty" class="empty">
+              <VIcon size="140">no-data-color</VIcon>
+              <slot name="noDataText"></slot>
+            </div>
           </el-table>
           <div class="table-footer">
             <slot name="tableFooter"></slot>
@@ -78,11 +82,13 @@
 import Classification from '@/components/Classification'
 import SelectClassify from '@/components/SelectClassify'
 import { delayTrigger } from '../utils/util'
+import VIcon from '@/components/VIcon'
 
 export default {
   components: {
     Classification,
-    SelectClassify
+    SelectClassify,
+    VIcon
   },
   props: {
     title: String,
@@ -119,12 +125,6 @@ export default {
     }
   },
   mounted() {
-    // 获取缓存的每页条数
-    let cachePageSize = this.$cache.get('TABLE_PAGE_SIZE')
-    if (cachePageSize && cachePageSize[this.$route.name]) {
-      this.page.size = cachePageSize[this.$route.name]
-    }
-
     this.fetch(1)
   },
   // created() {
@@ -138,27 +138,6 @@ export default {
   //   }
   // },
   methods: {
-    getCache() {
-      let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
-      let key = this.$route.name
-      // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
-      if (key === 'dataFlows') {
-        key = key + this.$route.query['mapping']
-      }
-      return params[key] || {}
-    },
-    setCache(cache) {
-      let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
-      let key = this.$route.name
-      // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
-      if (key === 'dataFlows') {
-        key = key + this.$route.query['mapping']
-      }
-      let pageParams = params[key] || {}
-      pageParams = Object.assign({}, pageParams, cache)
-      params[key] = pageParams
-      this.$cache.set('TABLE_PAGE_PARAMS', params)
-    },
     fetch(pageNum, debounce = 0, hideLoading, callback) {
       let timer = null
       if (pageNum === 1) {
@@ -176,18 +155,15 @@ export default {
             this.remoteMethod({
               page: this.page,
               tags: this.tags,
-              data: this.list,
-              cache: this.cache
+              data: this.list
             })
               .then(({ data, total }) => {
-                this.cache = null
                 this.page.total = total
                 this.list = data || []
 
                 // 缓存每页条数
                 let pageData = {}
                 pageData[this.$route.name] = this.page.size
-                this.$cache.set('TABLE_PAGE_SIZE', pageData)
 
                 if (total > 0 && (!data || !data.length)) {
                   clearTimeout(timer)
@@ -329,7 +305,8 @@ export default {
     .el-table--border th {
       font-weight: 500;
       border-right: 0;
-      background-color: map-get($bgColor, normal);
+      border-bottom: 0;
+      // background-color: map-get($bgColor, normal);
       &:hover {
         border-right: 1px solid #ebeef5;
       }
@@ -338,8 +315,9 @@ export default {
       }
       .cell {
         white-space: nowrap;
-        font-weight: 500;
-        color: map-get($fontColor, normal);
+
+        // font-weight: 500;
+        // color: map-get($fontColor, normal);
       }
     }
     .el-table--border td {

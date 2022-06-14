@@ -9,6 +9,11 @@ export * from './Tcm'
 export * from './TypeMapping'
 export * from './CustomNode'
 export * from './Cluster'
+export * from './Function'
+export * from './MetadataTransformer'
+export * from './Users'
+export * from './Settings'
+
 export { CancelToken }
 
 export default Http

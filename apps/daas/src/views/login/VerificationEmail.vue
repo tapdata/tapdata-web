@@ -33,12 +33,6 @@ import factory from '@/api/factory'
 import Cookie from '@tap/shared/src/cookie'
 const usersModel = factory('users')
 
-const LanguagesKey = {
-  sc: 'zh_CN',
-  en: 'en_US',
-  tc: 'zh_TW'
-}
-
 export default {
   name: 'SignIn',
   components: { LoginPage },
@@ -65,12 +59,6 @@ export default {
   },
 
   methods: {
-    langChange(lang) {
-      localStorage.setItem('tapdata_localize_lang', lang)
-      Cookie.set('lang', LanguagesKey[lang])
-      location.reload()
-    },
-
     // 重新发送
     async send() {
       const TIME_COUNT = 60
@@ -78,7 +66,7 @@ export default {
       if (!this.timer) {
         try {
           this.time = TIME_COUNT
-          this.$cookie.set('location_origin', window.location.origin)
+          Cookie.set('location_origin', window.location.origin)
 
           this.timer = setInterval(() => {
             if (this.time > 0 && this.time <= TIME_COUNT) {
@@ -94,13 +82,13 @@ export default {
             inviteCode: this.inviteCode
           })
         } catch (e) {
-          if (e.response && e.response.msg) {
-            if (e.response.msg.indexOf('Email already exists')) {
-              this.$message.error(this.$t('app.signIn.email_existed'))
-            } else {
-              this.$message.error(`${e.response.msg}`)
-            }
-          }
+          // if (e.response && e.response.msg) {
+          //   if (e.response.msg.indexOf('Email already exists')) {
+          //     this.$message.error(this.$t('app.signIn.email_existed'))
+          //   } else {
+          //     this.$message.error(`${e.response.msg}`)
+          //   }
+          // }
           clearInterval(this.timer)
           this.timer = null
           // this.loading = false;
@@ -115,7 +103,7 @@ export default {
       // this.loading = true;
       if (!this.timer) {
         this.time = TIME_COUNT
-        this.$cookie.set('location_origin', window.location.origin)
+        Cookie.set('location_origin', window.location.origin)
         this.timer = setInterval(() => {
           if (this.time > 0 && this.time <= TIME_COUNT) {
             this.time--

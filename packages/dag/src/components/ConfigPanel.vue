@@ -12,7 +12,7 @@
     </div>
     <div class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
-        <ElImage class="mr-2" :src="icon"></ElImage>
+        <NodeIcon class="mr-2" :node="activeNode" />
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
             ref="nameInput"
@@ -27,31 +27,38 @@
       <ElTabs v-model="currentTab" class="config-tabs">
         <!--属性设置-->
         <ElTabPane :label="$t('dag_property_setting')">
-          <FormPanel v-on="$listeners" v-bind="$attrs" ref="formPanel"></FormPanel>
+          <FormPanel
+            v-on="$listeners"
+            v-bind="$attrs"
+            ref="formPanel"
+            @update:InputsOrOutputs="handleLoadMeta"
+          ></FormPanel>
         </ElTabPane>
         <!--元数据-->
         <ElTabPane :label="$t('dag_meta_data')">
-          <MetaPane :is-show="currentTab === '1'"></MetaPane>
+          <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
         </ElTabPane>
         <!--<ElTabPane label="数据详情">
           <DataPane></DataPane>
         </ElTabPane>-->
+        <!--        <ElTabPane label="pdk">-->
+        <!--          <PdkPane v-on="$listeners" v-bind="$attrs" ref="pdkPane"></PdkPane>-->
+        <!--        </ElTabPane>-->
       </ElTabs>
     </div>
   </section>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from './FormPanel'
 import SettingPanel from './SettingPanel'
-// import DataPane from './DataPane'
 import MetaPane from './MetaPane'
 import VIcon from 'web-core/components/VIcon'
-import { NODE_TYPE_ICON } from '../constants'
 import focusSelect from 'web-core/directives/focusSelect'
+import NodeIcon from './NodeIcon'
 
 export default {
   name: 'ConfigPanel',
@@ -67,16 +74,14 @@ export default {
     }
   },
 
-  components: { VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel },
+  components: { NodeIcon, VIcon, MetaPane, FormPanel, SettingPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapState('dataflow', ['editVersion']),
 
     icon() {
-      const node = this.activeNode
-      if (!node) return null
-      const icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
-      return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+      return this.getIcon(this.activeNode)
     }
   },
 
@@ -102,6 +107,16 @@ export default {
 
     async validateForm() {
       await this.$refs.formPanel?.validate()
+    },
+
+    handleLoadMeta() {
+      let watcher = this.$watch('editVersion', () => {
+        watcher()
+        const metaPane = this.$refs.metaPane
+        if (metaPane && this.currentTab === '1') {
+          metaPane.loadFields()
+        }
+      })
     }
   }
 }

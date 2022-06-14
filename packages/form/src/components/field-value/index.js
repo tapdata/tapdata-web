@@ -8,7 +8,7 @@ import { convertSchemaToTreeData } from '../field-rename/util'
 export const FieldValue = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options'],
+      props: ['loading', 'options', 'disabled'],
 
       setup() {
         const formRef = useForm()
@@ -69,7 +69,12 @@ export const FieldValue = connect(
               <span class="flex-1 text inline-block ml-6">字段名称</span>
               <span class="flex-1 text inline-block ml-7">字段赋值</span>
               <span class="field-ops inline-block ml-10">
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
+                <VIcon
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  disabled={this.disabled}
+                  size="12"
+                  onClick={() => this.handleAllReset()}
+                >
                   revoke
                 </VIcon>
               </span>
@@ -100,14 +105,19 @@ export const FieldValue = connect(
                       </span>
                       <span class="field-name inline-block">{data.script}</span>
                       <span class="e-ops">
-                        <ElButton type="text" class="ml-5" onClick={() => this.handleScript(node, data)}>
+                        <ElButton
+                          type="text"
+                          class="ml-5"
+                          disabled={this.disabled}
+                          onClick={() => this.handleScript(node, data)}
+                        >
                           <VIcon>js</VIcon>
                         </ElButton>
                         <ElButton
                           type="text"
                           class="ml-5"
                           onClick={() => this.handleReset(node, data)}
-                          disabled={!this.isScript(data.id)}
+                          disabled={!this.isScript(data.id) || this.disabled}
                         >
                           <VIcon size="12">revoke</VIcon>
                         </ElButton>

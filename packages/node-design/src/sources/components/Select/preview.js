@@ -29,32 +29,16 @@ Select.Behavior = createBehavior(
   }
 )
 
-Select.Resource = createResource(
-  {
-    icon: 'SelectSource',
-    elements: [
-      {
-        componentName: 'Field',
-        props: {
-          title: 'Select',
-          'x-decorator': 'FormItem',
-          'x-component': 'Select'
-        }
+Select.Resource = createResource({
+  icon: 'SelectSource',
+  elements: [
+    {
+      componentName: 'Field',
+      props: {
+        title: 'Select',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select'
       }
-    ]
-  },
-  {
-    icon: 'SelectSource',
-    elements: [
-      {
-        componentName: 'Field',
-        props: {
-          title: '选择字段',
-          'x-decorator': 'FormItem',
-          'x-component': 'Select',
-          'x-reactions': '{{useAsyncDataSource(loadSourceNodeFieldNames)}}'
-        }
-      }
-    ]
-  }
-)
+    }
+  ]
+})

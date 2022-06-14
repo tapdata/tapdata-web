@@ -24,7 +24,7 @@
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
       <ElButton plain class="btn-refresh" @click="fetch">
-        <VIcon class="text-primary">refresh</VIcon>
+        <VIcon>refresh</VIcon>
       </ElButton>
     </ElFormItem>
   </ElForm>
@@ -246,11 +246,6 @@ export default {
   width: 32px;
   min-width: 32px;
   font-size: 16px;
-  &:hover,
-  &.is-plain:focus:hover {
-    border-color: map-get($color, primary);
-    background-color: map-get($color, disable);
-  }
 }
 .filter-form {
   font-size: 12px;

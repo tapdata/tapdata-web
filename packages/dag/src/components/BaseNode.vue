@@ -1,7 +1,8 @@
 <template functional>
   <div v-bind="data.attrs" v-on="listeners" class="df-node" :class="[data.class, data.staticClass]" :style="data.style">
     <div class="df-node-icon">
-      <ElImage :src="$options.getIcon(props.node)"></ElImage>
+      <component :is="$options.components.NodeIcon" :node="props.node" />
+      <!--<NodeIcon :node="props.node"></NodeIcon>-->
     </div>
     <slot name="text" v-bind:text="props.node.name">
       <div class="df-node-text">{{ props.node.name }}</div>
@@ -11,23 +12,20 @@
 </template>
 
 <script>
-import { NODE_TYPE_ICON } from '../constants'
+import NodeIcon from './NodeIcon'
 
 export default {
   name: 'BaseNode',
+  components: { NodeIcon },
   props: {
     node: Object
-  },
-  getIcon(node) {
-    let icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
-    return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
   }
 }
 </script>
 
 <style lang="scss">
 $width: 180px;
-$height: 50px;
+$height: 40px;
 
 .layout-content .df-node {
   cursor: move;
@@ -55,7 +53,7 @@ $height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 53px;
+    width: 48px;
     height: 100%;
     background-color: rgba(44, 101, 255, 0.2);
     border-right-style: solid;
@@ -63,6 +61,7 @@ $height: 50px;
     border-color: inherit;
     border-top-left-radius: 9px;
     border-bottom-left-radius: 9px;
+    box-sizing: content-box;
 
     .icon-wrap {
       border-radius: 50%;
@@ -123,15 +122,16 @@ $height: 50px;
     }
   }
 
-  &.node--data {
+  &.node--data,
+  &.node--input {
     border-color: #6236ff;
     .df-node-icon {
       background-color: rgba(98, 54, 255, 0.2);
       &:before {
         content: '';
         position: absolute;
-        width: 34px;
-        height: 34px;
+        width: 32px;
+        height: 32px;
         border: 1px solid #6236ff;
         border-radius: 50%;
         background: #fff;
@@ -151,6 +151,34 @@ $height: 50px;
     }
   }
 
+  &.node--output {
+    border-color: #008eff;
+    .df-node-icon {
+      background-color: rgba(0, 155, 255, 0.2);
+      &:before {
+        content: '';
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        border: 1px solid #008eff;
+        border-radius: 50%;
+        background: #fff;
+      }
+      .v-icon {
+        width: 28px;
+        height: 28px;
+        background-color: #008eff;
+        color: #fff;
+        font-size: 14px;
+        border-radius: 100%;
+        .v-icon__svg {
+          width: 1em;
+          height: 1em;
+        }
+      }
+    }
+  }
+
   //&.active,
   //&.selected {
   //  border-color: #2c65ff;
@@ -158,8 +186,8 @@ $height: 50px;
 
   &.active,
   &.selected {
-    border-color: #2c65ff;
-    border-width: 2px;
+    //border-color: #2c65ff;
+    box-shadow: 0 0 0 2px rgba(44, 101, 255, 0.3);
     .df-node-icon {
       border-top-left-radius: 8px;
       border-bottom-left-radius: 8px;
@@ -195,6 +223,18 @@ $height: 50px;
         height: 16px;
         border-color: #2c65ff;
       }
+    }
+
+    &.dropHover ~ svg.jtk-connector.jtk-dragging {
+      path:nth-child(2) {
+        stroke: #2c65ff;
+      }
+      path:nth-child(3) {
+        fill: #2c65ff;
+        stroke: #2c65ff;
+      }
+      //fill: #2c65ff;
+      //stroke: #2c65ff;
     }
   }
 }

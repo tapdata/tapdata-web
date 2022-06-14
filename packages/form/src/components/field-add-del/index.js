@@ -9,7 +9,7 @@ import '../field-rename/index.scss'
 export const FieldAddDel = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options'],
+      props: ['loading', 'options', 'disabled'],
 
       setup() {
         const formRef = useForm()
@@ -39,7 +39,7 @@ export const FieldAddDel = connect(
             op: 'CREATE',
             field: '',
             tableName: '',
-            java_type: 'String',
+            data_type: 'String',
             id: '',
 
             action: '',
@@ -77,21 +77,31 @@ export const FieldAddDel = connect(
               <span class="flex-1 text inline-block ml-6">字段名称</span>
               <span class="field-ops inline-block ml-10">
                 <VIcon
-                  class={[this.deleteAllFieldsData ? 'active__delete' : '', 'clickable', 'ml-5']}
+                  class={[
+                    this.deleteAllFieldsData ? 'active__delete' : '',
+                    this.disabled ? 'disable__btn' : 'clickable',
+                    'ml-5'
+                  ]}
                   size="12"
+                  disabled={this.disabled}
                   onClick={() => this.handleAllDelete()}
                 >
                   delete
                 </VIcon>
                 <VIcon
-                  class="clickable ml-5"
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
-                  disabled={fields.length === 0}
+                  disabled={fields.length === 0 || this.disabled}
                   onClick={() => this.handleCreate()}
                 >
                   add
                 </VIcon>
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
+                <VIcon
+                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  size="12"
+                  disabled={this.disabled}
+                  onClick={() => this.handleAllReset()}
+                >
                   revoke
                 </VIcon>
               </span>
@@ -134,7 +144,12 @@ export const FieldAddDel = connect(
                               <span class="text__inner">{data.field_name}</span>
                             )}
                             {!data.showInput ? (
-                              <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => this.showInput(node.data)}>
+                              <VIcon
+                                class={['ml-3', 'clickable']}
+                                size="12"
+                                disabled={this.disabled}
+                                onClick={() => this.showInput(node.data)}
+                              >
                                 edit-outline
                               </VIcon>
                             ) : (
@@ -165,7 +180,9 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={(this.isRemove(data.id) || data.is_deleted) && !this.isRest(data.id)}
+                          disabled={
+                            ((this.isRemove(data.id) || data.is_deleted) && !this.isRest(data.id)) || this.disabled
+                          }
                           onClick={() => this.handleDelete(node, data)}
                         >
                           <VIcon> delete</VIcon>
@@ -173,7 +190,9 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={(!this.isRemove(data.id) && !data.is_deleted) || this.isRest(data.id)}
+                          disabled={
+                            (!this.isRemove(data.id) && !data.is_deleted) || this.isRest(data.id) || this.disabled
+                          }
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -212,8 +231,8 @@ export const FieldAddDel = connect(
                   field_name: this.operations[i].field,
                   table_name: this.operations[i].tableName || this.operations[i].table_name,
                   original_field_name: this.operations[i].field || this.operations[i].field_name,
-                  java_type: this.operations[i].java_type,
-                  data_type: 'STRING',
+                  data_type: this.operations[i].data_type,
+                  // data_type: 'STRING',
                   primary_key_position: 0,
                   dataType: 2,
                   is_nullable: true,
@@ -337,7 +356,7 @@ export const FieldAddDel = connect(
             field: 'newFieldName',
             label: 'newFieldName',
             tableName: this.fields[0]?.tableName || '',
-            java_type: 'String',
+            data_type: 'String',
             id: fieldId,
             action: 'create_sibling',
             triggerFieldId: '',
@@ -397,7 +416,7 @@ export const FieldAddDel = connect(
                 field: field.original_field_name,
                 operand: !self.deleteAllFieldsData,
                 table_name: field.table_name,
-                type: field.java_type,
+                type: field.data_type,
                 primary_key_position: field.primary_key_position,
                 color: field.color,
                 label: field.field_name,

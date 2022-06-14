@@ -6,6 +6,7 @@
       class="flex justify-content-end mr-5 mt-3"
       :transform="transform"
       :getDataFlow="getDataFlow"
+      @returnPreFixSuffix="loadFields"
     ></FieldMapping>
     <div class="total mb-2 mt-4">共有 {{ tableData.length }} 个字段</div>
     <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
@@ -19,8 +20,8 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="data_type" :label="$t('meta_table_field_type')"> </ElTableColumn>
-      <ElTableColumn prop="scale" :label="$t('meta_table_scale')"> </ElTableColumn>
-      <ElTableColumn prop="precision" :label="$t('meta_table_precision')"> </ElTableColumn>
+      <!--      <ElTableColumn prop="scale" :label="$t('meta_table_scale')"> </ElTableColumn>-->
+      <!--      <ElTableColumn prop="precision" :label="$t('meta_table_precision')"> </ElTableColumn>-->
       <ElTableColumn prop="default_value" :label="$t('meta_table_default')"> </ElTableColumn>
       <ElTableColumn prop="is_nullable" :label="$t('meta_table_not_null')">
         <template #default="{ row }">
@@ -110,7 +111,7 @@ export default {
         let data = await metadataApi.nodeSchema(this.activeNode.id)
         let fields = data?.[0]?.fields || []
         fields = fields.filter(f => !f.is_deleted)
-        fields.sort((a, b) => {
+        /*fields.sort((a, b) => {
           const aIsPrimaryKey = a.primary_key_position > 0
           const bIsPrimaryKey = b.primary_key_position > 0
 
@@ -119,7 +120,7 @@ export default {
           } else {
             return a.field_name.localeCompare(b.field_name)
           }
-        })
+        })*/
         this.tableData = fields
       } catch (e) {
         this.tableData = []

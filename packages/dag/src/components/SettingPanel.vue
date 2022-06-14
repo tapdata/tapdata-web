@@ -74,12 +74,12 @@
           </div>
         </ElTabPane>
         <ElTabPane label="高级设置" name="advanced">
-          <div class="setting-panel-box bg-white border-bottom pt-3">
+          <!--<div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               运行设置
               <span class="pl-2">任务在启动和运行时的环境设置</span>
             </div>
-            <div class="px-5">
+             <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem :label="$t('connection_form_access_node')">
@@ -108,7 +108,7 @@
                 </ElCol>
               </ElRow>
             </div>
-          </div>
+          </div>-->
           <div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               读写设置
@@ -121,11 +121,12 @@
                     <ElSwitch v-model="settings.isAutoCreateIndex"></ElSwitch>
                   </ElFormItem>
                 </ElCol>
-                <ElCol :span="4">
+                <!--PDK不支持，暂时隐藏-->
+                <!--<ElCol :span="4">
                   <ElFormItem :label="$t('task_setting_automatic_ddl')">
                     <ElSwitch v-model="settings.isOpenAutoDDL"></ElSwitch>
                   </ElFormItem>
-                </ElCol>
+                </ElCol>-->
                 <ElCol :span="4">
                   <ElFormItem :label="$t('task_setting_distinct_write_type')">
                     <ElSelect v-model="settings.deduplicWriteMode">
@@ -137,13 +138,13 @@
               </ElRow>
             </div>
           </div>
-          <div class="setting-panel-box bg-white border-bottom pt-3">
+          <!--<div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               全量设置
               <span class="pl-2">任务的同步类型为全量或全量+增量时执行的</span>
             </div>
             <div class="px-5">
-              <!--目标写入线程数-->
+              &lt;!&ndash;目标写入线程数&ndash;&gt;
               <ElFormItem :label="$t('task_setting_transformer_concurrency')">
                 <ElInputNumber
                   controls-position="right"
@@ -153,7 +154,7 @@
                 ></ElInputNumber>
               </ElFormItem>
             </div>
-          </div>
+          </div>-->
           <div class="setting-panel-box bg-white border-bottom mt-5 px-5">
             <div class="setting-title fs-7">
               增量设置
@@ -223,21 +224,22 @@
                     <ElRow>
                       <div class="labelTxt">
                         数据源:
-                        {{ item.name || item.connectionId }}
+                        {{ item.connectionName || item.connectionId }}
                       </div>
                       <ElCol :span="8" style="margin-right: 10px">
-                        <ElSelect v-model="item.type" placeholder="请选择">
+                        <ElSelect v-model="item.pointType" placeholder="请选择">
                           <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
                           </ElOption>
                         </ElSelect>
                       </ElCol>
-                      <ElCol :span="14" v-if="item.type !== 'current'">
+                      <ElCol :span="14" v-if="item.pointType !== 'current'">
                         <ElDatePicker
                           format="yyyy-MM-dd HH:mm:ss"
+                          value-format="timestamp"
                           style="width: 95%"
-                          v-model="item.date"
+                          v-model="item.dateTime"
                           type="datetime"
-                          :disabled="item.type === 'current'"
+                          :disabled="item.pointType === 'current'"
                         ></ElDatePicker>
                       </ElCol>
                     </ElRow>
@@ -246,18 +248,18 @@
               </ElFormItem>
             </div>
           </div>
-          <div class="setting-panel-box bg-white border-bottom pt-3" v-if="settings.type !== 'initial_sync'">
-            <div class="setting-title fs-7 px-5">
-              共享挖掘设置
-              <span class="pl-2">任务的同步类型为增量或全量+增量时执行</span>
-            </div>
-            <div class="px-5">
-              <!--开启共享日志挖掘-->
-              <ElFormItem :label="$t('connection_form_shared_mining')">
-                <ElSwitch v-model="settings.shareCdcEnable"></ElSwitch>
-              </ElFormItem>
-            </div>
-          </div>
+          <!--开启共享日志挖掘-->
+          <!--          <div class="setting-panel-box bg-white border-bottom pt-3" v-if="settings.type !== 'initial_sync'">-->
+          <!--            <div class="setting-title fs-7 px-5">-->
+          <!--              共享挖掘设置-->
+          <!--              <span class="pl-2">任务的同步类型为增量或全量+增量时执行</span>-->
+          <!--            </div>-->
+          <!--            <div class="px-5">-->
+          <!--              <ElFormItem :label="$t('connection_form_shared_mining')">-->
+          <!--                <ElSwitch v-model="settings.shareCdcEnable"></ElSwitch>-->
+          <!--              </ElFormItem>-->
+          <!--            </div>-->
+          <!--          </div>-->
         </ElTabPane>
       </ElTabs>
     </ElForm>
@@ -370,20 +372,40 @@ export default {
       let filterSourceNodes = () => {
         sourceNodes.forEach(item => {
           if (!map[item.connectionId]) {
-            map[item.connectionId] = {
-              connectionId: item.connectionId,
-              type: 'current', // localTZ: 本地时区； connTZ：连接时区
-              time: '',
-              date: '',
-              timezone: this.systemTimeZone,
-              name: item.name
+            //是否已有保存数据
+            if (!this.settings.syncPoints) {
+              map[item.connectionId] = {
+                connectionId: item.connectionId,
+                pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+                dateTime: '',
+                timeZone: this.systemTimeZone,
+                connectionName: item.attrs?.connectionName
+              }
+            } else {
+              let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
+              if (oldPoint?.length > 0) {
+                map[item.connectionId] = {
+                  connectionId: item.connectionId,
+                  pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
+                  dateTime: oldPoint[0].dateTime || '',
+                  timeZone: this.systemTimeZone,
+                  connectionName: item.attrs?.connectionName
+                }
+              } else {
+                map[item.connectionId] = {
+                  connectionId: item.connectionId,
+                  pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+                  dateTime: '',
+                  timeZone: this.systemTimeZone,
+                  connectionName: item.attrs?.connectionName
+                }
+              }
             }
           }
         })
         return map
       }
       this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
-      // let arr = filterSourceNodes()
       // eslint-disable-next-line
       console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())
     },

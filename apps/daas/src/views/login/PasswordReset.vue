@@ -51,13 +51,13 @@
               </el-col>
             </el-row>
           </el-form-item>
-          <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
+          <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
             {{ $t('app.signIn.nextStep') }}
-          </el-button>
+          </ElButton>
         </el-form>
         <div class="back-login">
           {{ $t('app.signIn.rememberPasswords') }}
-          <span @click="backLogin">{{ $t('app.signIn.backLogin') }}</span>
+          <ElButton type="text" @click="backLogin">{{ $t('app.signIn.backLogin') }}</ElButton>
         </div>
       </div>
     </section>
@@ -223,9 +223,9 @@ export default {
             this.$message.success(this.$t('signin_verify_code_success'))
           }
         })
-        .catch(() => {
-          this.$message.error(this.$t('signin_verify_code_error'))
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('signin_verify_code_error'))
+      // })
     },
 
     // 跳转登录

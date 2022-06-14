@@ -43,10 +43,10 @@
             @click.prevent="select(item, index)"
           >
             <div class="task-form__img" v-if="item.invalid">
-              <img src="web-core/assets/images/fieldMapping-table-error.png" alt="" />
+              <img :src="fieldMapping_table_error" alt="" />
             </div>
             <div class="task-form__img" v-else>
-              <img src="web-core/assets/images/fieldMapping-table.png" alt="" />
+              <img :src="fieldMapping_table" alt="" />
             </div>
             <div class="task-form-text-box">
               <div class="source">{{ item.sourceObjectName }}</div>
@@ -100,12 +100,7 @@
           :row-class-name="tableRowClassName"
           v-loading="loading"
         >
-          <ElTableColumn
-            show-overflow-tooltip
-            :label="$t('dag_dialog_field_mapping_source_field')"
-            prop="field_name"
-            width="150"
-          >
+          <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_source_field')" prop="field_name">
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
                 >{{ scope.row.field_name }}
@@ -119,14 +114,21 @@
             prop="data_type"
             width="150"
           ></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_precision')" prop="precision" width="150">
-            <template slot-scope="scope">
-              <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
-          <ElTableColumn :label="$t('meta_table_default')" prop="default_value" width="100"></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
+          <!--          <ElTableColumn-->
+          <!--            :label="$t('dag_dialog_field_mapping_source_precision')"-->
+          <!--            prop="precision"-->
+          <!--            width="150"-->
+          <!--          >-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>-->
+          <!--            </template>-->
+          <!--          </ElTableColumn>-->
+          <!--          <ElTableColumn-->
+          <!--            :label="$t('dag_dialog_field_mapping_source_scale')"-->
+          <!--            prop="scale"-->
+          <!--            width="100"-->
+          <!--          ></ElTableColumn>-->
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
@@ -142,62 +144,72 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_type')" width="150">
             <template slot-scope="scope">
-              <div
-                class="cursor-pointer"
-                v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_type']"
-                @click="edit(scope.row, 'data_type')"
-              >
+              <!--              <div-->
+              <!--                class="cursor-pointer"-->
+              <!--                v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_type']"-->
+              <!--                @click="edit(scope.row, 'data_type')"-->
+              <!--              >-->
+              <!--                <span>{{ scope.row.t_data_type }}</span>-->
+              <!--                <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>-->
+              <!--                <i class="icon el-icon-arrow-down"></i>-->
+              <!--              </div>-->
+              <div>
                 <span>{{ scope.row.t_data_type }}</span>
-                <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
-                <i class="icon el-icon-arrow-down"></i>
-              </div>
-              <div v-else>
-                <span>{{ scope.row.t_data_type }}</span>
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_precision')" width="150">
+          <!--          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_precision')" width="150">-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <div-->
+          <!--                class="cursor-pointer"-->
+          <!--                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && modeMapping[transform.mode]['precision']"-->
+          <!--                @click="edit(scope.row, 'precision')"-->
+          <!--              >-->
+          <!--                <span>{{ scope.row.t_precision }}</span>-->
+          <!--                <i class="icon el-icon-edit-outline"></i>-->
+          <!--              </div>-->
+          <!--              <div v-else>-->
+          <!--                <span>{{ scope.row.t_precision === -1 ? '' : scope.row.t_precision }}</span>-->
+          <!--              </div>-->
+          <!--            </template>-->
+          <!--          </ElTableColumn>-->
+          <!--          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_scale')" width="100">-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <div-->
+          <!--                class="cursor-pointer"-->
+          <!--                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale']"-->
+          <!--                @click="edit(scope.row, 'scale')"-->
+          <!--              >-->
+          <!--                <span>{{ scope.row.t_scale }}</span>-->
+          <!--                <i class="icon el-icon-edit-outline"></i>-->
+          <!--              </div>-->
+          <!--              <div v-else>-->
+          <!--                <span>{{ scope.row.t_scale }}</span>-->
+          <!--              </div>-->
+          <!--            </template>-->
+          <!--          </ElTableColumn>-->
+          <ElTableColumn :label="$t('meta_table_default')" width="180">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
-                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && modeMapping[transform.mode]['precision']"
-                @click="edit(scope.row, 'precision')"
+                v-if="scope.row.field_name.indexOf('.') === -1"
+                @click="edit(scope.row, 'default_value')"
               >
-                <span>{{ scope.row.t_precision }}</span>
+                <ElTooltip class="item" effect="dark" :content="scope.row.t_default_value" placement="left">
+                  <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
+                </ElTooltip>
                 <i class="icon el-icon-edit-outline"></i>
               </div>
-              <div v-else>
-                <span>{{ scope.row.t_precision === -1 ? '' : scope.row.t_precision }}</span>
-              </div>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_scale')" width="100">
-            <template slot-scope="scope">
-              <div
-                class="cursor-pointer"
-                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale']"
-                @click="edit(scope.row, 'scale')"
-              >
-                <span>{{ scope.row.t_scale }}</span>
-                <i class="icon el-icon-edit-outline"></i>
-              </div>
-              <div v-else>
-                <span>{{ scope.row.t_scale }}</span>
-              </div>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('meta_table_default')" width="100">
-            <template slot-scope="scope">
-              <div class="cursor-pointer" @click="edit(scope.row, 'default_value')">
-                <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
-                <i class="icon el-icon-edit-outline"></i>
+              <div class="cursor-pointer" v-else>
+                <ElTooltip class="item" effect="dark" :content="scope.row.t_default_value" placement="left">
+                  <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
+                </ElTooltip>
               </div>
             </template>
           </ElTableColumn>
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
-            width="80"
-            fixed="right"
+            :width="100"
             v-if="modeMapping[transform.mode]['field_table_ops']"
           >
             <template slot-scope="scope">
@@ -253,14 +265,12 @@
         </div>
       </div>
       <div v-if="['data_type'].includes(currentOperationType)">
-        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
-          <ElOption
-            :label="item.dbType"
-            :value="item.dbType"
-            v-for="(item, index) in typeMapping"
-            :key="index"
-          ></ElOption>
-        </ElSelect>
+        <ElAutocomplete
+          v-model="editValueType[currentOperationType]"
+          class="inline-input"
+          :fetch-suggestions="querySearchPdkType"
+        ></ElAutocomplete>
+        <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
@@ -402,7 +412,9 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
-const { delayTrigger } = this.$util
+import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
+import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
+import { delayTrigger } from 'web-core/util'
 import { modeMapping } from './const'
 
 export default {
@@ -415,7 +427,8 @@ export default {
     updateMetadata: Function,
     getNavDataMethod: Function,
     fieldProcess: Array,
-    transform: Object
+    transform: Object,
+    getDataFlow: Function
   },
   data() {
     return {
@@ -469,6 +482,8 @@ export default {
       currentForm: {},
       sourceTableName: 'tableName',
       rollback,
+      fieldMapping_table,
+      fieldMapping_table_error,
       //批量修改字段
       batchOperation: [
         {
@@ -526,7 +541,7 @@ export default {
       this.$nextTick(() => {
         this.remoteMethod &&
           this.remoteMethod(this.selectRow)
-            .then(({ data, target }) => {
+            .then(({ data = [], target = [] }) => {
               this.target = target
               this.fieldMappingTableData = data
               this.initShowEdit()
@@ -960,15 +975,17 @@ export default {
         }
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
-        let option = this.target.filter(v => v.id === id)
-        if (option.length === 0) return
-        option = option[0]
+        let option = this.target.find(v => v.id === id)
+        if (!option) {
+          return
+        }
         if (value === option.data_type) {
           this.handleClose() //类型无改变
           return
         }
         //如果是改类型 需要手动修改字段的长度以及精度
-        this.influences(id, this.currentTypeRules || [])
+        // this.influences(id, this.currentTypeRules || [])
+        this.updateTargetView(id, 'tapType', '')
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {
@@ -1045,6 +1062,9 @@ export default {
       })
     },
     showScaleEdit(id, data) {
+      if (data instanceof Object) {
+        return
+      }
       let isScale = data.filter(v => v.minScale < v.maxScale)
       if (isScale.length !== 0) {
         //固定值
@@ -1054,6 +1074,9 @@ export default {
       }
     },
     showPrecisionEdit(id, data) {
+      if (data instanceof Object) {
+        return
+      }
       let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
       if (isPrecision.length !== 0) {
         //固定值
@@ -1303,6 +1326,25 @@ export default {
     },
     returnForm() {
       return this.form
+    },
+    querySearchPdkType(queryString, cb) {
+      let result = this.typeMapping.map(t => {
+        return {
+          value: t.dbType
+        }
+      })
+      cb(result)
+    },
+    getPdkEditValueType() {
+      let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
+      if (findOne?.rules) {
+        findOne.rules.value?.forEach((el, i) => {
+          if (Math.abs(el) === Infinity) {
+            findOne.rules.value[i] = el + ''
+          }
+        })
+      }
+      return findOne?.rules || ''
     }
   }
 }
@@ -1333,7 +1375,7 @@ export default {
   height: 100%;
   overflow: hidden;
   .icon {
-    color: #6dc5e8;
+    color: #2c65ff;
   }
   .icon-error {
     color: red;
@@ -1381,13 +1423,16 @@ export default {
         }
         .task-form-text-box {
           margin-left: 16px;
-          width: 200px;
+          width: 190px;
           .source {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
             line-height: 17px;
             text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .target {
             font-size: 12px;
@@ -1396,6 +1441,9 @@ export default {
             line-height: 17px;
             margin-top: 16px;
             text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .select {
             font-size: 12px;
@@ -1422,11 +1470,12 @@ export default {
     }
     .field-mapping-table__default_value {
       display: inline-block;
-      max-width: 60px;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
-      line-height: 9px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-height: 15px;
     }
   }
 }

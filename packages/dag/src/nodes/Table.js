@@ -1,22 +1,18 @@
 import { NodeType } from './extends/NodeType'
+import { AllLocales } from './locales'
 
 export class Table extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {
-    minInputs: 0, // 最小输入个数
-    maxInputs: 1 // 最大输入个数
-  }
+  type = 'table'
 
   group = 'data'
+
+  minInputs = 0 // 最小输入个数
+
+  maxInputs = 1 // 最大输入个数
 
   formSchema = {
     type: 'object',
@@ -441,10 +437,6 @@ export class Table extends NodeType {
                     default: 'updateOrInsert',
                     enum: [
                       {
-                        label: '更新写入',
-                        value: 'updateWrite'
-                      },
-                      {
                         label: '追加写入',
                         value: 'appendWrite'
                       },
@@ -460,19 +452,10 @@ export class Table extends NodeType {
                     'x-component': 'Select',
                     'x-reactions': [
                       {
-                        dependencies: ['$inputs'],
-                        fulfill: {
-                          state: {
-                            visible: '{{findNodeById($deps[0][0])?.type !== "merge_table_processor"}}'
-                          }
-                        }
-                      },
-                      {
                         target: 'updateConditionFields',
                         fulfill: {
                           state: {
-                            visible:
-                              '{{$self.value!=="appendWrite" && findNodeById($values.$inputs[0])?.type !== "merge_table_processor"}}'
+                            visible: '{{$self.value!=="appendWrite"}}'
                           }
                         }
                       }
@@ -518,22 +501,15 @@ export class Table extends NodeType {
       'attrs.connectionType': {
         type: 'string',
         'x-display': 'hidden'
+      },
+
+      // 连接名称
+      'attrs.connectionName': {
+        type: 'string',
+        'x-display': 'hidden'
       }
     }
   }
-  /**
-   * 获取额外添加到节点上的属性
-   */
-  getExtraAttr() {
-    const { tableName, databaseType, connectionId, connectionType, accessNodeProcessId } = this.attr
-    return {
-      tableName,
-      databaseType,
-      connectionId,
-      attrs: {
-        connectionType,
-        accessNodeProcessId
-      }
-    }
-  }
+
+  locales = AllLocales.Table
 }

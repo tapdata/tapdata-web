@@ -69,8 +69,11 @@
                 </div>
                 <ul class="column" v-if="item.columns && item.columns.length > 0">
                   <li v-for="filed in item.columns" :key="filed.field_name">
-                    <div class="image-box">
-                      <el-image :src="getImgByType(filed.type) || getImgByType('Default')"></el-image>
+                    <!-- <div class="image-box">
+                      <el-image :src="getImgByType(filed.type)"></el-image>
+                    </div> -->
+                    <div class="color-info">
+                      {{ filed.type }}
                     </div>
                     <div class="info-box">
                       <span class="title" v-html="filed.field_name"></span>
@@ -95,7 +98,7 @@
 </template>
 
 <script>
-import { getImgByType } from '../../utils/util'
+// import { getImgByType } from '../../utils/util'
 export default {
   name: 'Search',
   data() {
@@ -125,7 +128,7 @@ export default {
     }
   },
   methods: {
-    getImgByType,
+    // getImgByType,
     handleSearch(id) {
       if (this.keyword === '') {
         this.showNoSearch = true
@@ -155,11 +158,11 @@ export default {
           this.lastId = this.searchData[this.searchData.length - 1].id
           this.first = false //不是第一次请求
         })
-        .catch(err => {
-          if (err && err.response) {
-            this.$message.error(err.response.msg)
-          }
-        })
+        // .catch(err => {
+        //   if (err && err.response) {
+        //     this.$message.error(err.response.msg)
+        //   }
+        // })
         .finally(() => {
           this.loading = false
         })

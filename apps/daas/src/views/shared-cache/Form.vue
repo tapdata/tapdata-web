@@ -226,7 +226,7 @@ export default {
           name: true
         },
         where: {
-          database_type: 'mongodb',
+          database_type: 'MongoDB',
           connection_type: { in: ['source', 'source_and_target'] }
         }
       }
@@ -337,9 +337,9 @@ export default {
                 name: 'sharedCacheList'
               })
             })
-            .catch(err => {
-              this.$message.error(err?.data?.message || this.$t('message_save_fail'))
-            })
+            // .catch(err => {
+            //   this.$message.error(err?.data?.message || this.$t('message_save_fail'))
+            // })
             .finally(() => {
               this.loading = false
             })

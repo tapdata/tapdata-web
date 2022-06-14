@@ -28,6 +28,7 @@
         :updateMetadata="updateMetadata"
         :fieldProcess="transform.fieldProcess"
         :transform="transform"
+        :getDataFlow="getDataFlow"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
       ></FieldMappingDialog>
@@ -57,6 +58,13 @@ export default {
       dialogFieldProcessVisible: false,
       loading: false,
       fieldProcess: this.transform.fieldProcess
+    }
+  },
+  mounted() {
+    //点击按钮重新拿值
+    if (this.getDataFlow) {
+      this.dataFlow = this.getDataFlow()
+      this.dataFlow.id = this.dataFlow.id || this.dataFlow?.taskId
     }
   },
   methods: {
@@ -192,15 +200,13 @@ export default {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       }
       let data = ''
-      taskApi
-        .getMetadata(this.dataFlow)
-        .then(res => {
-          data = res
-          this.initWSSed() //发送ws 监听schema进度
-        })
-        .catch(e => {
-          this.$message.error(e)
-        })
+      taskApi.getMetadata(this.dataFlow).then(res => {
+        data = res
+        this.initWSSed() //发送ws 监听schema进度
+      })
+      // .catch(e => {
+      //   this.$message.error(e)
+      // })
       return data
     },
     //清空表改名 字段改名
@@ -251,13 +257,18 @@ export default {
      * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
      * */
     async intiFieldMappingTableData(row) {
-      if (!this.$refs.fieldMappingDom) return //打开弹窗才能请求弹窗列表数据
+      if (!this.$refs.fieldMappingDom || !row) {
+        return {
+          data: [],
+          target: []
+        }
+      } //打开弹窗才能请求弹窗列表数据
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       // 初始化所有字段都映射 只取顶级字段
-      source = source.filter(field => field.field_name.indexOf('.') === -1)
+      //source = source.filter(field => field.field_name.indexOf('.') === -1)
       //映射关系
       let fieldsMapping = row.fieldsMapping
       //源表 目标表数据组合
@@ -408,18 +419,39 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      if (!row) return
-      return Promise.all([
-        this.$api('TypeMapping').getId(row.sourceDbType),
-        this.$api('TypeMapping').getId(row.sinkDbType)
-      ]).then(([sourceData, targetData]) => {
+      if (!row) {
         return {
-          sourceData: sourceData?.data,
-          targetData: targetData?.data
+          sourceData: [],
+          targetData: []
+        }
+      }
+      return Promise.all([
+        this.$api('TypeMapping').pdkDataType(row.sourceDbType),
+        this.$api('TypeMapping').pdkDataType(row.sinkDbType)
+      ]).then(res => {
+        let sourceData = [],
+          targetData = []
+        let sourceObj = JSON.parse(res?.[0]?.data || '{}')
+        let targetObj = JSON.parse(res?.[1]?.data || '{}')
+        for (let key in sourceObj) {
+          sourceData.push({
+            dbType: key,
+            rules: sourceObj[key]
+          })
+        }
+        for (let key in targetObj) {
+          targetData.push({
+            dbType: key,
+            rules: targetObj[key]
+          })
+        }
+        return {
+          sourceData: sourceData,
+          targetData: targetData
         }
       })
     },
-    saveReturnData() {
+    async saveReturnData() {
       //保存字段映射
       let returnData = this.$refs.fieldMappingDom.returnData()
       if (!returnData.valid) return //检验不通过
@@ -428,12 +460,14 @@ export default {
         this.$message.error(this.$t('dag_link_field_mapping_error_all_deleted'))
         return //所有字段被删除了 不可以保存任务
       }
+      await this.saveOperations(returnData.row, returnData.operations, returnData.target, () => {
+        taskApi.getMetadata(this.dataFlow)
+      })
       this.$emit('returnPreFixSuffix', returnData.changNameData)
-      this.saveOperations(returnData.row, returnData.operations, returnData.target, returnData.changNameData)
       this.dialogFieldProcessVisible = false
     },
     //保存字段处理器
-    saveOperations(row, operations, target) {
+    saveOperations(row, operations, target, callback) {
       if (!target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
@@ -441,7 +475,11 @@ export default {
       let data = {
         fields: target
       }
-      this.$api('MetadataInstances').update(where, data)
+      this.$api('MetadataInstances')
+        .update(where, data)
+        .then(() => {
+          callback?.()
+        })
       if (this.transform.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.fieldProcess = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.fieldProcess)

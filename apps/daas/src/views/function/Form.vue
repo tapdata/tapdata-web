@@ -1,31 +1,26 @@
 <template>
   <section v-loading="loading" class="custom-form-wrapper section-wrap">
     <div class="section-wrap-box overflow-auto">
-      <!-- <div class="container-header">
-        {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
-      </div> -->
-      <!-- <div v-loading="$route.params.id && !details.id" class="custom-form__body">
-        <div class="main px-6 py-4"> -->
       <ElForm
         v-if="!$route.params.id || details.id"
         ref="form"
         label-position="left"
-        label-width="120px"
+        label-width="160px"
         size="small"
         :model="form"
       >
         <template v-if="$route.params.id && details.type === 'jar'">
           <ElFormItem :label="$t('function_jar_file_label') + ':'">
-            <span>{{ details.fileName }}</span>
+            <span class="details-value">{{ details.fileName }}</span>
           </ElFormItem>
           <ElFormItem :label="$t('function_package_name_label') + ':'">
-            <span>{{ details.packageName }}</span>
+            <span class="details-value">{{ details.packageName }}</span>
           </ElFormItem>
           <ElFormItem :label="$t('function_class_name_label') + ':'">
-            <span>{{ details.classNameFmt }}</span>
+            <span class="details-value">{{ details.classNameFmt }}</span>
           </ElFormItem>
           <ElFormItem :label="$t('function_method_name_label') + ':'">
-            <span>{{ details.methodName }}</span>
+            <span class="details-value">{{ details.methodName }}</span>
           </ElFormItem>
           <ElFormItem
             prop="function_name"
@@ -46,7 +41,7 @@
           :rules="scriptRules"
         >
           <div class="script-editor">
-            <CodeEditor v-model="form.script" ref="editor" lang="javascript" height="200"></CodeEditor>
+            <JsEditor v-model="form.script" ref="editor" height="200"></JsEditor>
           </div>
         </ElFormItem>
         <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
@@ -89,7 +84,9 @@
 </template>
 
 <script>
-import CodeEditor from '@/components/CodeEditor'
+import { JsEditor } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
+
 const getScriptObj = script => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
   let name = matchArr1?.[0] || ''
@@ -105,7 +102,7 @@ const getScriptObj = script => {
   }
 }
 export default {
-  components: { CodeEditor },
+  components: { JsEditor },
   data() {
     let self = this
     return {
@@ -200,7 +197,7 @@ export default {
               [method](
                 Object.assign({}, this.form, params, {
                   last_updated: new Date(),
-                  user_id: this.$cookie.get('user_id')
+                  user_id: Cookie.get('user_id')
                 })
               )
               .then(res => {
@@ -209,9 +206,9 @@ export default {
                   this.$router.back()
                 }
               })
-              .catch(err => {
-                this.$message.error(err?.data?.message || this.$t('message_save_fail'))
-              })
+              // .catch(err => {
+              //   this.$message.error(err?.data?.message || this.$t('message_save_fail'))
+              // })
               .finally(() => {
                 this.loading = false
               })
@@ -224,6 +221,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.details-value {
+  color: map-get($fontColor, dark);
+  font-size: 12px;
+}
 .custom-form__body {
   margin: 30px 24px 0 24px;
   flex: 1;
