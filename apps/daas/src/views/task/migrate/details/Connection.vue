@@ -10,7 +10,7 @@
     >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
-          <img class="mr-2" style="width: 24px; height: 24px" :src="getConnectionIcon(scope.row)" alt="" />
+          <img class="mr-2" style="width: 24px; height: 24px" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
           <ElLink type="primary" style="display: block; line-height: 20px">
             {{ scope.row.name }}
           </ElLink>

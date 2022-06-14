@@ -594,10 +594,7 @@ export const CONFIG_MODEL = {
   ]
 }
 // 数据源图标
-export const getConnectionIcon = row => {
+export const getConnectionIcon = pdkHash => {
   const token = Cookie.get('token')
-  if (row.pdkType) {
-    return `/api/pdk/icon?access_token=${token}&pdkHash=${row.pdkHash}`
-  }
-  return getConnectionTypeDialogImg(row.database_type || row.databaseType)
+  return `/api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`
 }
