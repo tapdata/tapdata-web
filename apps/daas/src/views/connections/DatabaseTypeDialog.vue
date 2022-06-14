@@ -50,8 +50,8 @@ export default {
       this.$emit('update:dialogVisible', false)
     },
     databaseType(item) {
-      this.$emit('databaseType', item.type, item)
-      this.$store.commit('createConnection', { databaseType: item.type, item })
+      this.$emit('databaseType', item)
+      this.$store.commit('createConnection', { item })
     },
     getDatabaseType() {
       this.$api('DatabaseTypes')

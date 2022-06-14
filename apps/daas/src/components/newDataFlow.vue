@@ -222,19 +222,14 @@ export default {
     handleDialogDatabaseTypeVisible() {
       this.dialogDatabaseTypeVisible = false
     },
-    handleDatabaseType(type) {
+    handleDatabaseType(item) {
       this.handleDialogDatabaseTypeVisible()
-      if (this.whiteList.includes(type)) {
-        this.$router.push({
-          name: 'connectionsCreate',
-          query: {
-            databaseType: type
-          }
-        })
-      } else {
-        top.location.href = '/#/connection'
-        localStorage.setItem('connectionDatabaseType', type)
-      }
+      const { pdkHash } = item
+      let query = { pdkHash }
+      this.$router.push({
+        name: 'connectionsCreate',
+        query
+      })
     }
   }
 }

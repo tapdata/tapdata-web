@@ -258,13 +258,14 @@ export default {
     getPdkData(data) {
       this.database.push(...data)
     },
-    createConnection(type) {
+    createConnection(item) {
       this.connectionDialog = false
       // this.connectionFormDialog = true
-      this.databaseType = type
+      this.databaseType = item.type
+      const { pdkHash } = item
       this.$router.push({
         name: 'connectionsCreate',
-        query: { databaseType: type }
+        query: { pdkHash }
       })
     },
     async init() {
