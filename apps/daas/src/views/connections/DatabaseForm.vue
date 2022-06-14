@@ -616,7 +616,6 @@ export default {
             width: 396px;
             ::v-deep {
               .e-form-builder-item {
-                // width: 396px;
                 &.large-item {
                   width: 610px;
                   .el-form-item__content {
@@ -646,12 +645,8 @@ export default {
                     padding-top: 0;
                   }
                 }
-                // .el-form-item__content {
-                //   width: 300px;
-                // }
                 .el-input .el-input__inner,
                 .el-textarea__inner {
-                  // width: 300px;
                   background-color: rgba(239, 241, 244, 0.2);
                 }
                 .el-textarea__inner {
@@ -678,169 +673,6 @@ export default {
           }
         }
       }
-      // .form {
-      //   padding: 0 20px;
-      //   width: 640px;
-      //   margin: 0 auto;
-      //   padding-right: 200px;
-      //   .url-tip {
-      //     font-size: 12px;
-      //     color: #999;
-      //     line-height: 18px;
-      //   }
-      //   .rest-api-box {
-      //     display: flex;
-      //     flex: 1;
-      //     div.rest-api-label {
-      //       width: 210px;
-      //       padding-right: 20px;
-      //       line-height: 28px;
-      //       font-size: 12px;
-      //       color: #606266;
-      //       text-align: right;
-      //       box-sizing: border-box;
-      //     }
-      //     .rest-api-url {
-      //       width: calc(100% - 200px);
-      //       border: 1px solid #dedee4;
-      //       padding: 10px;
-      //       margin-top: 5px;
-      //       .rest-api-row {
-      //         margin-bottom: 10px;
-      //       }
-      //       .rest-api-margin {
-      //         margin-left: 10px;
-      //       }
-      //       .rest-api-marginB {
-      //         margin-bottom: 10px;
-      //       }
-      //       .rest-api-label {
-      //         display: inline-block;
-      //         width: 80px;
-      //       }
-      //       .rest-api-FloatL {
-      //         float: left;
-      //       }
-      //       .small-input {
-      //         width: 104px;
-      //       }
-      //       .min-input {
-      //         width: 80px;
-      //       }
-      //       .medium-input {
-      //         width: 130px;
-      //       }
-      //       .rest-api-Array {
-      //         margin-bottom: 10px;
-      //       }
-      //       .add-btn-icon {
-      //         cursor: pointer;
-      //       }
-      //     }
-      //   }
-      //   .gridfs-box {
-      //     font-size: 12px;
-      //     .separate {
-      //       margin: 0 10px;
-      //     }
-      //   }
-      //   .fileBox {
-      //     display: flex;
-      //     flex: 1;
-      //     div.file-label {
-      //       width: 210px;
-      //       padding-right: 20px;
-      //       line-height: 28px;
-      //       font-size: 12px;
-      //       color: #606266;
-      //       text-align: right;
-      //       box-sizing: border-box;
-      //     }
-      //     .file-form-content {
-      //       width: calc(100% - 200px);
-      //       padding: 0 10px;
-      //     }
-      //     .fromLoopBox {
-      //       padding: 10px 20px 20px !important;
-      //       margin-bottom: 12px;
-      //       box-sizing: border-box;
-      //       background-color: map-get($bgColor, white);
-      //       border: 1px solid #dedee4;
-      //       border-radius: 3px;
-      //       .el-input--mini .el-input__inner {
-      //         width: 100%;
-      //       }
-      //     }
-      //   }
-      // }
-      // .edit-header-box {
-      //   border-bottom: 1px solid #eee;
-      //   margin-bottom: 20px;
-      // }
-      // .edit-header {
-      //   display: flex;
-      //   justify-content: flex-start;
-      //   width: 578px;
-      //   margin: 30px auto;
-      // }
-      // .title {
-      //   display: flex;
-      //   justify-content: flex-start;
-      //   width: 568px;
-      //   margin: 40px auto 20px auto;
-      // }
-      // .img-box {
-      //   display: flex;
-      //   width: 52px;
-      //   height: 52px;
-      //   justify-content: center;
-      //   align-items: center;
-      //   background-color: map-get($bgColor, white);
-      //   border-radius: 3px;
-      //   margin-right: 10px;
-      //   img {
-      //     width: 100%;
-      //   }
-      // }
-      // .content {
-      //   display: flex;
-      //   align-items: center;
-      //   margin-left: 15px;
-      //   font-size: 22px;
-      //   max-width: 445px;
-      //   white-space: nowrap;
-      //   word-break: break-word;
-      //   text-overflow: ellipsis;
-      //   overflow: hidden;
-      // }
-      // .addBtn {
-      //   cursor: pointer;
-      //   font-size: 12px;
-      //   margin-top: 22px;
-      //   margin-left: 10px;
-      // }
-      // .content-box {
-      //   .addBtn {
-      //     cursor: pointer;
-      //     font-size: 12px;
-      //     margin-top: 0;
-      //     margin-left: 10px;
-      //   }
-
-      //   .tip {
-      //     margin-left: 15px;
-      //     font-size: 12px;
-      //     color: #999;
-      //     margin-top: 5px;
-      //     line-height: 18px;
-      //     width: 430px;
-      //   }
-      // }
-      // .test {
-      //   margin-left: 200px;
-      //   margin-bottom: 20px;
-      //   margin-top: 16px;
-      // }
     }
     .status {
       font-size: 12px;
@@ -856,21 +688,7 @@ export default {
       }
     }
   }
-  // .header {
-  //   height: 50px;
-  //   line-height: 50px;
-  //   padding-left: 20px;
-  //   background-color: rgba(250, 250, 250, 100);
-  //   color: rgba(51, 51, 51, 100);
-  //   font-size: 18px;
-  //   text-align: left;
-  //   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
-  //   border: 1px solid rgba(222, 222, 228, 100);
-  //   border-left: none;
-  //   position: relative;
-  // }
   .footer {
-    // margin: 10px auto;
     width: 100%;
     height: 62px;
     background-color: map-get($bgColor, white);
@@ -884,105 +702,6 @@ export default {
       margin: 0 auto;
       padding-top: 18px;
     }
-    // button {
-    //   margin-left: 10px;
-    //   padding: 0 15px;
-    //   height: 32px;
-    //   line-height: 32px;
-    //   border-radius: 2px;
-    // }
   }
 }
-</style>
-<style lang="scss">
-// .databaseFrom .el-form--label-right .el-form-item {
-//   .el-form-item__label .e-form-builder-item-label {
-//     float: right;
-//   }
-//   margin-top: 16px;
-// }
-// .databaseFrom .el-form--label-right .el-form-item {
-//   .el-form-item__label {
-//     display: inline-block;
-//     padding: 0 20px 0 0;
-//   }
-// }
-// .databaseFrom .form {
-//   .url-tip {
-//     margin-top: -14px;
-//     b {
-//       color: map-get($fontColor, light);
-//     }
-//   }
-//   .file-form-content {
-//     .el-form-item {
-//       margin-bottom: 6px;
-//     }
-//     .el-form-item__label {
-//       padding-bottom: 0;
-//       line-height: 28px;
-//       font-size: 12px;
-//     }
-//     .el-form-item__content {
-//       line-height: 30px;
-//     }
-//   }
-//   .urlInfoForm {
-//     .el-form-item {
-//       margin-bottom: 0;
-//     }
-//   }
-// }
-// .databaseFrom .gridfs-box {
-//   .el-form-item {
-//     margin-bottom: 0;
-//     margin-top: 0;
-//   }
-
-//   .el-form-item__content {
-//     display: flex;
-//     font-size: 12px;
-//     margin-right: 20px;
-//   }
-
-//   .el-form-item__error {
-//     padding-top: 0;
-//   }
-
-//   .el-form-item__label:before {
-//     content: '*';
-//     color: #f56c6c;
-//     margin-right: 4px;
-//   }
-
-//   .excel_value_start {
-//     .el-form-item__label:before {
-//       content: '';
-//     }
-//   }
-
-//   .el-form-item__label {
-//     font-size: 12px;
-//   }
-
-//   .el-radio__label {
-//     font-size: 12px;
-//   }
-
-//   .headerType .el-form-item__content {
-//     flex-direction: column;
-
-//     .excel_header_start {
-//       display: flex;
-//       font-size: 12px;
-//     }
-//   }
-
-//   .excelHeaderType {
-//     .el-form-item__content {
-//       display: block;
-//       font-size: 12px;
-//     }
-//   }
-// }
 </style>
