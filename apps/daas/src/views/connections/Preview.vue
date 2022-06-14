@@ -156,27 +156,25 @@ export default {
       return require(`web-core/assets/icons/node/${type.toLowerCase()}.svg`)
     },
     transformData(row) {
-      if (row.pdkType === 'pdk') {
-        row.database_host = row.config.host
-        row.database_port = row.config.port
-        row.database_name = row.config.database
-        row.database_owner = row.config.schema
-        row.database_username = row.config.user || row.config.username
-        row.additionalString = row.config.extParams || row.config.additionalString
-        row.database_datetype_without_timezone = row.config.timezone
-        if (row.config.uri && row.config.isUri !== false) {
-          const res =
-            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-              row.config.uri
-            )
-          if (res && res.groups) {
-            const hostArr = res.groups.host.split(':')
-            row.database_host = hostArr[0]
-            row.database_port = hostArr[1]
-            row.database_name = res.groups.database
-            row.database_username = res.groups.username
-            row.additionalString = res.groups.query
-          }
+      row.database_host = row.config.host
+      row.database_port = row.config.port
+      row.database_name = row.config.database
+      row.database_owner = row.config.schema
+      row.database_username = row.config.user || row.config.username
+      row.additionalString = row.config.extParams || row.config.additionalString
+      row.database_datetype_without_timezone = row.config.timezone
+      if (row.config.uri && row.config.isUri !== false) {
+        const res =
+          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+            row.config.uri
+          )
+        if (res && res.groups) {
+          const hostArr = res.groups.host.split(':')
+          row.database_host = hostArr[0]
+          row.database_port = hostArr[1]
+          row.database_name = res.groups.database
+          row.database_username = res.groups.username
+          row.additionalString = res.groups.query
         }
       }
       return row
@@ -191,19 +189,14 @@ export default {
     },
     edit() {
       const { connection = {} } = this
-      const { id, database_type, pdkType, pdkHash } = connection
+      const { id, pdkHash } = connection
       let query = {
-        databaseType: database_type
-      }
-      if (pdkType) {
-        query.pdkType = pdkType
-        query.pdkHash = pdkHash
+        pdkHash
       }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id,
-          databaseType: database_type
+          id
         },
         query
       })

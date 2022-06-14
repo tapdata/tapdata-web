@@ -11,7 +11,7 @@ export default {
   name: 'GitBook',
   props: {
     value: {
-      type: String,
+      type: [String, Blob],
       require: true
     }
   },
@@ -21,15 +21,24 @@ export default {
     }
   },
   watch: {
-    value(v) {
-      if (v) {
-        const reader = new FileReader()
-        const blob = new Blob([v])
-        reader.readAsText(blob, 'utf8')
-        reader.onload = () => {
-          const md = new MarkdownIt()
-          this.html = md.render(reader.result)
-        }
+    value(v1, v2) {
+      if (v1 !== v2) {
+        this.init()
+      }
+    }
+  },
+  mounted() {
+    this.value && this.init()
+  },
+  methods: {
+    init() {
+      const v = this.value
+      const reader = new FileReader()
+      const blob = new Blob([v])
+      reader.readAsText(blob, 'utf8')
+      reader.onload = () => {
+        const md = new MarkdownIt()
+        this.html = md.render(reader.result)
       }
     }
   }

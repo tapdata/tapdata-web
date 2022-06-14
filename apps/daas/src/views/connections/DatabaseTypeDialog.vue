@@ -58,12 +58,9 @@ export default {
         .get()
         .then(res => {
           if (res.data) {
-            this.getPdkData(res.data)
+            this.database.push(...res.data)
           }
         })
-    },
-    getPdkData(data) {
-      this.database.push(...data.filter(t => t.pdkType === 'pdk'))
     }
   }
 }

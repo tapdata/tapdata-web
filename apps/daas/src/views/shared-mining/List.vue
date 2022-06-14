@@ -200,7 +200,6 @@ export default {
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
       mongodbList: [],
-      tableList: [],
       editForm: {
         id: '',
         name: '',
@@ -316,10 +315,6 @@ export default {
               .then(res => {
                 if (res) {
                   this.digSettingForm = res.data
-                  this.getMongodb()
-                  if (this.digSettingForm?.persistenceMongodb_uri_db) {
-                    this.handleTables(this.digSettingForm?.persistenceMongodb_uri_db, true) //编辑页面请求tables
-                  }
                 }
               })
               .finally(() => {
@@ -331,40 +326,20 @@ export default {
           this.loadingConfig = false
         })
     },
-    //获取所有mongo连接
-    getMongodb() {
-      let filter = {
-        where: {
-          database_type: 'mongodb'
-        }
-      }
-      this.$api('connections')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          if (res) {
-            this.mongodbList = res?.data?.items
-          }
-        })
-    },
-    //根据已选connectionId->tables
-    handleTables(id, isClear) {
-      this.$api('connections')
-        .customQuery(id, { schema: true })
-        .then(res => {
-          if (res) {
-            if (!isClear) {
-              this.digSettingForm.persistenceMongodb_collection = ''
-            }
-            this.tableList = res?.data?.schema?.tables || []
-          }
-        })
-    },
     //保存全局挖掘设置
     saveSetting() {
       this.$refs.digSettingForm.validate(valid => {
         if (valid) {
+          if (this.digSettingForm === 'Mem') {
+            this.digSettingForm.persistenceMongodb_uri_db = ''
+            this.digSettingForm.persistenceMongodb_collection = ''
+            this.digSettingForm.persistenceRocksdb_path = ''
+          } else if (this.digSettingForm === 'MongoDB') {
+            this.digSettingForm.persistenceRocksdb_path = ''
+          } else {
+            this.digSettingForm.persistenceMongodb_uri_db = ''
+            this.digSettingForm.persistenceMongodb_collection = ''
+          }
           this.$api('logcollector')
             .patchSystemConfig(this.digSettingForm)
             .then(res => {
