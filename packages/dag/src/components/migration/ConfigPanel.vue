@@ -7,21 +7,13 @@
     <div class="panel-header flex align-center px-4 border-bottom">
       <template v-if="activeType !== 'settings'">
         <NodeIcon class="mr-2" :node="activeNode" />
-        <div class="title-input-wrap flex align-center flex-shrink-0 h-100 font-color-light">
-          <input
-            v-show="showEdit"
-            ref="nameInput"
-            v-focus-select
-            :value="activeNode ? activeNode.name : ''"
-            class="title-input text-truncate"
-            @change="handleChangeName"
-            @blur="showEdit = false"
-          />
-          <div v-if="!showEdit" class="flex align-center flex-1 overflow-hidden">
-            <span class="text-truncate">{{ activeNode ? activeNode.name : '' }}</span>
-            <VIcon v-if="!stateIsReadonly" class="ml-2" size="14" @click="focusNameInput">edit-outline</VIcon>
-          </div>
-        </div>
+        <TextEditable
+          ref="nameInput"
+          v-model="name"
+          class="flex-1 min-w-0"
+          :value="activeNode ? activeNode.name : ''"
+          @change="handleChangeName"
+        />
       </template>
       <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
         {{ $t('task_stetting_basic_setting') }}
@@ -39,7 +31,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from '../FormPanel'
@@ -47,6 +39,7 @@ import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
+import TextEditable from '../TextEditable'
 
 export default {
   name: 'ConfigPanel',
@@ -59,37 +52,38 @@ export default {
   data() {
     return {
       currentTab: '0',
-      showEdit: false
+      name: this.activeNode?.name
     }
   },
 
-  components: { SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
+  components: { TextEditable, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
   },
 
+  watch: {
+    'activeNode.name'(v) {
+      this.name = v
+    }
+  },
+
   methods: {
     ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
+    ...mapActions('dataflow', ['updateDag']),
 
-    handleChangeName(e) {
-      if (e.target.value) {
+    handleChangeName(name) {
+      if (name) {
         this.updateNodeProperties({
           id: this.activeNode.id,
           properties: {
-            name: e.target.value
+            name
           }
         })
+        this.updateDag()
       } else {
-        this.$refs.nameInput.value = this.activeNode.name
+        this.name = this.activeNode.name
       }
-    },
-
-    focusNameInput() {
-      this.showEdit = true
-      this.$nextTick(() => {
-        this.$refs.nameInput.focus()
-      })
     },
 
     handleClosePanel() {
