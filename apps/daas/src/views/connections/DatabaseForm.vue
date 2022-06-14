@@ -112,7 +112,7 @@ import VIcon from '@/components/VIcon'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
-import GitBook from './GitBook'
+import GitBook from '@/components/GitBook'
 
 const connectionsModel = factory('connections')
 let defaultConfig = []
