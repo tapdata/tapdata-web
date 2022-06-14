@@ -11,7 +11,7 @@ export default {
   name: 'GitBook',
   props: {
     value: {
-      type: String,
+      type: [String, Blob],
       require: true
     }
   },
