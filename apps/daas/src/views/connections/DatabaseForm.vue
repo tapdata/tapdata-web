@@ -25,7 +25,7 @@
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
             </div>
-            <span class="ml-2">{{ pdkOptions .name }}</span>
+            <span class="ml-2">{{ pdkOptions.name }}</span>
             <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
               {{ $t('connection_form_change') }}
             </el-button>
@@ -204,6 +204,50 @@ export default {
                     }
                   }
                 }
+              },
+              share_cdc_ttl_day: {
+                type: 'string',
+                title: this.$t('share_form_setting_log_time'),
+                'x-decorator': 'FormItem',
+                enum: [
+                  {
+                    label: 1 + this.$t('share_form_edit_day'),
+                    value: 1
+                  },
+                  {
+                    label: 2 + this.$t('share_form_edit_day'),
+                    value: 2
+                  },
+                  {
+                    label: 3 + this.$t('share_form_edit_day'),
+                    value: 3
+                  },
+                  {
+                    label: 4 + this.$t('share_form_edit_day'),
+                    value: 4
+                  },
+                  {
+                    label: 5 + this.$t('share_form_edit_day'),
+                    value: 5
+                  },
+                  {
+                    label: 6 + this.$t('share_form_edit_day'),
+                    value: 6
+                  },
+                  {
+                    label: 7 + this.$t('share_form_edit_day'),
+                    value: 7
+                  }
+                ],
+                'x-component': 'Select',
+                'x-reactions': {
+                  dependencies: ['.shareCdcEnable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
               }
             }
             this.schemaData.properties.__TAPDATA_END.properties = Object.assign(
@@ -217,12 +261,7 @@ export default {
       )
     },
     //保存全局挖掘设置
-    saveSetting() {
-      let digSettingForm = {
-        persistenceMongodb_uri_db: this.model.persistenceMongodb_uri_db,
-        persistenceMongodb_collection: this.model.persistenceMongodb_collection,
-        share_cdc_ttl_day: this.model.share_cdc_ttl_day
-      }
+    saveSetting(digSettingForm) {
       this.$api('logcollector')
         .patchSystemConfig(digSettingForm)
         .then(res => {
@@ -282,6 +321,16 @@ export default {
             config: formValues
           }
         )
+        if (this.showSystemConfig) {
+          //打开挖掘配置
+          let digSettingForm = {
+            persistenceMode: 'MongoDB',
+            persistenceMongodb_uri_db: params.persistenceMongodb_uri_db,
+            persistenceMongodb_collection: params.persistenceMongodb_collection,
+            share_cdc_ttl_day: params.share_cdc_ttl_day
+          }
+          this.saveSetting(digSettingForm)
+        }
         if (id) {
           params.id = id
         }

@@ -13,16 +13,13 @@
     <div class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
         <NodeIcon class="mr-2" :node="activeNode" />
-        <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
-          <input
-            ref="nameInput"
-            v-focus-select
-            :value="activeNode ? activeNode.name : ''"
-            class="title-input text-truncate"
-            @change="handleChangeName"
-          />
-          <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
-        </div>
+        <TextEditable
+          ref="nameInput"
+          v-model="name"
+          class="flex-1 min-w-0"
+          :value="activeNode ? activeNode.name : ''"
+          @change="handleChangeName"
+        />
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
         <!--属性设置-->
@@ -50,7 +47,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from './FormPanel'
@@ -59,6 +56,7 @@ import MetaPane from './MetaPane'
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import NodeIcon from './NodeIcon'
+import TextEditable from './TextEditable'
 
 export default {
   name: 'ConfigPanel',
@@ -70,11 +68,12 @@ export default {
 
   data() {
     return {
-      currentTab: '0'
+      currentTab: '0',
+      name: this.activeNode?.name
     }
   },
 
-  components: { NodeIcon, VIcon, MetaPane, FormPanel, SettingPanel },
+  components: { TextEditable, NodeIcon, VIcon, MetaPane, FormPanel, SettingPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
@@ -85,16 +84,28 @@ export default {
     }
   },
 
+  watch: {
+    'activeNode.name'(v) {
+      this.name = v
+    }
+  },
+
   methods: {
     ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
+    ...mapActions('dataflow', ['updateDag']),
 
-    handleChangeName(e) {
-      this.updateNodeProperties({
-        id: this.activeNode.id,
-        properties: {
-          name: e.target.value
-        }
-      })
+    handleChangeName(name) {
+      if (name) {
+        this.updateNodeProperties({
+          id: this.activeNode.id,
+          properties: {
+            name
+          }
+        })
+        this.updateDag()
+      } else {
+        this.name = this.activeNode.name
+      }
     },
 
     focusNameInput() {
@@ -136,7 +147,7 @@ export default {
 </style>
 <style scoped lang="scss">
 $color: map-get($color, primary);
-$tabsHeaderWidth: 180px;
+$tabsHeaderWidth: 220px;
 $headerHeight: 40px;
 
 .title-input-wrap {
@@ -243,7 +254,7 @@ $headerHeight: 40px;
       > .el-tabs__header {
         margin: 0;
         .el-tabs__nav-wrap {
-          padding-left: $tabsHeaderWidth + 32px;
+          padding-left: $tabsHeaderWidth;
           padding-right: 16px;
 
           &::after {

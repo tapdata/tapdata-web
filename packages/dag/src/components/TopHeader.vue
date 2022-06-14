@@ -3,17 +3,15 @@
     <button @click="$emit('page-return')" class="icon-btn">
       <VIcon size="18">left</VIcon>
     </button>
-    <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
-      <input
-        v-focus-select
-        ref="nameInput"
-        v-model.trim="name"
-        class="title-input"
-        :readonly="stateIsReadonly"
-        @change="onNameInputChange"
-      />
-      <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
-    </div>
+
+    <TextEditable
+      v-model="name"
+      class="mr-3 title-editable"
+      :readonly="stateIsReadonly"
+      placeholder="请输入任务名称"
+      max-width="200"
+      @change="onNameInputChange"
+    />
 
     <slot name="status" :result="dataflow.statusResult">
       <StatusItem inline :value="dataflow.statusResult" />
@@ -180,6 +178,7 @@ import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'
 import { StatusItem } from '@tap/business'
+import TextEditable from './TextEditable'
 
 export default {
   name: 'TopHeader',
@@ -194,7 +193,7 @@ export default {
     scale: Number
   },
 
-  components: { StatusItem, VDivider, VIcon },
+  components: { TextEditable, StatusItem, VDivider, VIcon },
 
   data() {
     return {
@@ -347,6 +346,10 @@ $sidebarBg: #fff;
     width: $sidebarW;
   }
 
+  .title-editable {
+    max-width: 290px;
+  }
+
   .nav-icon {
     width: 40px;
     height: 100%;
@@ -411,6 +414,7 @@ $sidebarBg: #fff;
     padding: 5px;
     color: #4e5969;
     background: #fff;
+    outline: none;
     border: 1px solid transparent;
     border-radius: $radius;
     transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
