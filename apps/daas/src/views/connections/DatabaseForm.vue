@@ -392,11 +392,8 @@ export default {
     },
     handleDatabaseType(type, item) {
       this.dialogDatabaseTypeVisible = false
-      let query = {}
-      if (item) {
-        query.pdkType = item.pdkType
-        query.pdkHash = item.pdkHash
-      }
+      const { pdkHash } = item
+      let query = { pdkHash }
       this.$router.push({
         name: 'connectionsCreate',
         query
@@ -514,11 +511,8 @@ export default {
         })
     },
     getConnectionIcon() {
-      let result = {}
-      const { pdkHash, pdkType } = this.$route.query || {}
-      result.pdkHash = pdkHash
-      result.pdkType = pdkType
-      return getConnectionIcon(result)
+      const { pdkHash } = this.$route.query || {}
+      return getConnectionIcon(pdkHash)
     },
     getPdkDoc() {
       const { pdkHash } = this.$route.query || {}

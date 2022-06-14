@@ -43,7 +43,7 @@
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
-              <img :src="getConnectionIcon(scope.row)" alt="" />
+              <img :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
             </div>
             <div class="database-text">
               <!-- @click.stop="preview(scope.row)" -->
@@ -303,19 +303,10 @@ export default {
       let where = {}
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
-        // let filterObj = { like: verify(keyword), options: 'i' };
-        // where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
         where.name = { like: verify(keyword), options: 'i' }
       }
-      // where.database_type = {
-      //   in: window.getSettingByKey('ALLOW_CONNECTION_TYPE').split(',')
-      // }
       region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
-      // if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
-      // 	where.search_databaseType = databaseType;
-      // 	where.database_type = 'mysql';
-      // }
       databaseModel && (where.connection_type = databaseModel)
       sourceType && (where.sourceType = sourceType)
       if (tags && tags.length) {
@@ -416,21 +407,14 @@ export default {
       this.$refs.preview.open(row)
     },
     edit(id, type, item) {
-      if (item.search_databaseType) {
-        type = item.search_databaseType
-      }
+      const { pdkHash } = item
       let query = {
-        databaseType: type
-      }
-      if (item.pdkType) {
-        query.pdkType = item.pdkType
-        query.pdkHash = item.pdkHash
+        pdkHash
       }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id: id,
-          databaseType: type
+          id: id
         },
         query
       })
@@ -586,12 +570,9 @@ export default {
     },
     handleDatabaseType(type, item) {
       this.handleDialogDatabaseTypeVisible()
+      const { pdkHash } = item
       let query = {
-        databaseType: type
-      }
-      if (item) {
-        query.pdkType = item.pdkType
-        query.pdkHash = item.pdkHash
+        pdkHash
       }
       this.$router.push({
         name: 'connectionsCreate',
@@ -670,7 +651,7 @@ export default {
             let res = await this.$api('DatabaseTypes').get()
             let data = res?.data || []
             let databaseTypes = []
-            databaseTypes.push(...data.filter(t => t.pdkType === 'pdk'))
+            databaseTypes.push(...data)
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
             )
