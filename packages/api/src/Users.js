@@ -1,6 +1,6 @@
 import Http from './http'
 
-export class Users extends Http {
+export default class Users extends Http {
   constructor() {
     super('/api/users')
   }
@@ -13,3 +13,4 @@ export class Users extends Http {
     return this.axios.get(`${this.url}/byToken`).then(this.useData)
   }
 }
+export { Users }

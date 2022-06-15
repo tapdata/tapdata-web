@@ -1,6 +1,6 @@
 import Http from './http'
 
-export class DatabaseTypes extends Http {
+export default class DatabaseTypes extends Http {
   constructor() {
     super('/api/DatabaseTypes')
   }
@@ -8,3 +8,4 @@ export class DatabaseTypes extends Http {
     return this.axios.get(this.url + '/pdkHash/' + pdkHash).then(this.useData)
   }
 }
+export { DatabaseTypes }

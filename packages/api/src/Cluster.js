@@ -24,3 +24,4 @@ export class Cluster extends Http {
     return this.axios.get(this.url + '/findAccessNodeInfo', { params }).then(this.useData)
   }
 }
+export default Cluster

@@ -323,12 +323,12 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('connections')
+      return this.$api('Connections')
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let data = (res.data?.items || []).map(item => {
+          let data = (res?.items || []).map(item => {
             let platformInfo = item.platformInfo
             if (platformInfo && platformInfo.regionName) {
               item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
@@ -362,7 +362,7 @@ export default {
           this.$refs.preview.sync(data)
 
           return {
-            total: res.data?.total,
+            total: res?.total,
             data
           }
         })
@@ -407,7 +407,7 @@ export default {
           data.name
         )
         .then(res => {
-          if (res && res.data) {
+          if (res) {
             this.table.fetch()
             this.$message.success(this.$t('connection.copyMsg'))
           }

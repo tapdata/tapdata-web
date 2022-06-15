@@ -1,6 +1,6 @@
 import Http from './http'
 
-export class Connections extends Http {
+export default class Connections extends Http {
   constructor() {
     super('/api/Connections')
   }
@@ -42,3 +42,5 @@ export class Connections extends Http {
     return this.axios.get(`${this.url}/databaseType`).then(this.useData)
   }
 }
+
+export { Connections }

@@ -1,6 +1,6 @@
 import Http from './http'
 
-export class DataFlows extends Http {
+export default class DataFlows extends Http {
   constructor() {
     super('/api/DataFlows')
   }
@@ -84,3 +84,4 @@ export class DataFlows extends Http {
     return this.axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
   }
 }
+export { DataFlows }

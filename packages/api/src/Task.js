@@ -1,7 +1,7 @@
 import Http from './http'
 import qs from 'qs'
 
-export class Task extends Http {
+export default class Task extends Http {
   constructor() {
     super('/api/Task')
   }
@@ -60,3 +60,4 @@ export class Task extends Http {
     }
   }
 }
+export { Task }

@@ -5,7 +5,7 @@
  */
 import Http from './http'
 
-export class TCM extends Http {
+export default class TCM extends Http {
   constructor() {
     super('/api/tcm')
   }
@@ -41,3 +41,4 @@ export class TCM extends Http {
     return this.axios.get(this.url + '/ecs/list/' + id, { params })
   }
 }
+export { TCM }
