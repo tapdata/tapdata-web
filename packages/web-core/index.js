@@ -8,13 +8,11 @@ import CheckStage from './components/CheckStage'
 
 import WSClient from './plugins/ws-client'
 import * as _util from './util'
-import * as _const from './const'
 
 const components = [ConnectionTypeSelector, ConnectionTest, FieldMapping, CheckStage].concat(baseComponents)
 
 const install = Vue => {
   Vue.prototype.$util = _util
-  Vue.prototype.$const = _const
 
   Vue.use(FormBuilder)
 

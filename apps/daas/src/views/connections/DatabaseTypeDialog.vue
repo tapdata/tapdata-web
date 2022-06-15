@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { getImgByType, TYPEMAP } from './util'
+import { getImgByType } from './util'
 export default {
   name: 'DatasourceDialog',
   props: {
@@ -35,9 +35,7 @@ export default {
   data() {
     return {
       database: [],
-      otherType: [],
-      typeMap: TYPEMAP
-      // automationType: '' //插件化数据源
+      otherType: []
     }
   },
   created() {
