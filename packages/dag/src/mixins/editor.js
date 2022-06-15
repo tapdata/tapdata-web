@@ -17,10 +17,15 @@ import {
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
+import resize from 'web-core/directives/resize'
 
 const taskApi = new Task()
 
 export default {
+  directives: {
+    resize
+  },
+
   computed: {
     ...mapState('dataflow', ['activeNodeId']),
     ...mapGetters('dataflow', [
@@ -86,7 +91,8 @@ export default {
       'selectConnection',
       'deselectAllConnections',
       'setCanBeConnectedNodeIds',
-      'setValidateLanguage'
+      'setValidateLanguage',
+      'addProcessorNode'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
