@@ -1,5 +1,4 @@
 import Parent from './Parent.vue'
-const MigrateForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/form/Form.vue')
 const MigrateDetails = () => import(/* webpackChunkName: "task-details" */ '../views/task/migrate/details/Index.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '@/views/connections/DatabaseForm')
 const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
@@ -197,24 +196,6 @@ export default [
               code: 'Data_SYNC_menu'
             }
           },
-          {
-            path: 'create',
-            name: 'MigrateNew',
-            component: MigrateForm,
-            meta: {
-              title: 'page_title_task_create',
-              code: 'Data_SYNC_menu'
-            }
-          },
-          // {
-          //   path: 'viewer/:id',
-          //   name: 'MigrateViewer',
-          //   component: MigrateForm,
-          //   meta: {
-          //     title: 'page_title_task_edit',
-          //     code: 'Data_SYNC_menu'
-          //   }
-          // },
           {
             path: 'details/:id',
             name: 'MigrateDetails',
