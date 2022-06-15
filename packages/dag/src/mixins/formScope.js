@@ -366,29 +366,6 @@ export default {
           return tables
         },
 
-        /**
-         * 对目标端已存在的结构和数据的处理，下拉选项
-         * @param field
-         */
-        loadDropOptions: field => {
-          const options = [
-            {
-              label: this.$t('editor.cell.link.existingSchema.keepSchema'),
-              value: 'no_drop'
-            },
-            {
-              label: this.$t('editor.cell.link.existingSchema.keepExistedData'),
-              value: 'drop_data'
-            }
-          ]
-          if (field.form.values.database_type === 'mongodb') {
-            options.push({
-              label: this.$t('editor.cell.link.existingSchema.removeSchema'),
-              value: 'drop_schema'
-            })
-          }
-          field.dataSource = options
-        },
 
         /**
          * 数据写入模式

@@ -103,7 +103,7 @@
             v-readonlybtn="'datasource_edition'"
             type="text"
             :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
-            @click="edit(scope.row.id, scope.row.database_type, scope.row)"
+            @click="edit(scope.row.id, scope.row)"
             >{{ $t('button_edit') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
@@ -145,7 +145,7 @@ import TablePage from '@/components/TablePage'
 import VIcon from '@/components/VIcon'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
-import { defaultModel, verify, desensitization } from './util'
+import { defaultModel, verify } from './util'
 import Test from './Test'
 import FilterBar from '@/components/filter-bar'
 import { getConnectionIcon } from './util'
@@ -334,46 +334,21 @@ export default {
               item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
             }
 
-            if (item.config) {
-              if (item.config.uri) {
-                const res =
-                  /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                    item.config.uri
-                  )
-                if (res && res.groups && res.groups.password) {
-                  const { username, host, database, query } = res.groups
-                  item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
-                } else {
-                  item.connectionUrl = item.config.uri
-                }
+            if (item.config?.uri) {
+              const res =
+                /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+                  item.config.uri
+                )
+              if (res && res.groups && res.groups.password) {
+                const { username, host, database, query } = res.groups
+                item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
               } else {
-                item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
-                  item.config.schema ? `/${item.config.schema}` : ''
-                }`
+                item.connectionUrl = item.config.uri
               }
             } else {
-              if (item.database_type !== 'mongodb') {
-                item.connectionUrl = ''
-                if (item.database_username) {
-                  item.connectionUrl += item.database_username + ':***@'
-                }
-                item.connectionUrl += item.database_host + ':' + item.database_port
-              } else {
-                item.connectionUrl = item.database_uri || item.connection_name
-              }
-              if (item.database_type === 'mq' && item.mqType === '0') {
-                item.connectionUrl = item.brokerURL
-              }
-              // 不存在uri 和 port === 0
-              if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-                item.connectionUrl = ''
-              }
-              if (item.database_type === 'kudu') {
-                item.connectionUrl = item.database_host
-              }
-              if (item.database_type === 'kafka') {
-                item.connectionUrl = item.kafkaBootstrapServers
-              }
+              item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
+                item.config.schema ? `/${item.config.schema}` : ''
+              }`
             }
 
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
@@ -406,7 +381,7 @@ export default {
     preview(row) {
       this.$refs.preview.open(row)
     },
-    edit(id, type, item) {
+    edit(id, item) {
       const { pdkHash } = item
       let query = {
         pdkHash
@@ -525,19 +500,6 @@ export default {
           return 'Source | Target'
       }
     },
-    formatterListTags(row) {
-      let listTags = row.listtags || []
-      return listTags.map(tag => tag.value).join(',')
-    },
-    formatterDatabaseType(row) {
-      let url = null
-      if (['mongodb', 'gridfs'].includes(row.database_type)) {
-        url = desensitization(row.database_uri)
-      } else {
-        url = row.database_host
-      }
-      return url
-    },
     handleSelectTag() {
       let tagList = {}
       this.multipleSelection.forEach(row => {
@@ -560,15 +522,12 @@ export default {
           this.table.fetch()
           this.$message.success(this.$t('message_save_ok'))
         })
-      // .catch(() => {
-      //   this.$message.error(this.$t('message_save_fail'))
-      // })
     },
     //选择创建类型
     handleDialogDatabaseTypeVisible() {
       this.dialogDatabaseTypeVisible = false
     },
-    handleDatabaseType(type, item) {
+    handleDatabaseType(item) {
       this.handleDialogDatabaseTypeVisible()
       const { pdkHash } = item
       let query = {
@@ -590,13 +549,6 @@ export default {
       this.$root.checkAgent(() => {
         let loading = this.$loading()
         this.testData = Object.assign({}, defaultModel['default'], item)
-        if (['gridfs', 'mongodb'].includes(item.database_type)) {
-          delete this.testData.database_uri
-          this.testData.justTest = true
-        }
-        if (item.database_type !== 'redis') {
-          delete this.testData['database_password']
-        }
         this.$api('connections')
           .updateById(
             item.id,

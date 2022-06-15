@@ -256,15 +256,16 @@ export default {
         })
     },
     getPdkData(data) {
-      this.database.push(...data.filter(t => t.pdkType === 'pdk'))
+      this.database.push(...data)
     },
-    createConnection(type) {
+    createConnection(item) {
       this.connectionDialog = false
       // this.connectionFormDialog = true
-      this.databaseType = type
+      this.databaseType = item.type
+      const { pdkHash } = item
       this.$router.push({
         name: 'connectionsCreate',
-        query: { databaseType: type }
+        query: { pdkHash }
       })
     },
     async init() {
@@ -342,30 +343,6 @@ export default {
             connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
               item.config.schema ? `/${item.config.schema}` : ''
             }`
-          }
-        } else {
-          if (item.database_type !== 'mongodb') {
-            // if (item.database_username) {
-            //   connectionUrl += item.database_username + ':***@'
-            // }
-            connectionUrl += `${item.database_host}:${item.database_port}/${item.database_name}${
-              item.database_owner ? `/${item.database_owner}` : ''
-            }`
-          } else {
-            connectionUrl = item.database_uri || item.connection_name
-          }
-          if (item.database_type === 'mq' && item.mqType === '0') {
-            connectionUrl = item.brokerURL
-          }
-          // 不存在uri 和 port === 0
-          if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-            connectionUrl = ''
-          }
-          if (item.database_type === 'kudu') {
-            connectionUrl = item.database_host
-          }
-          if (item.database_type === 'kafka') {
-            connectionUrl = item.kafkaBootstrapServers
           }
         }
 

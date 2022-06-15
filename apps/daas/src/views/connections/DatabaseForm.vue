@@ -439,7 +439,7 @@ export default {
         }
       })
     },
-    handleDatabaseType(type, item) {
+    handleDatabaseType(item) {
       this.dialogDatabaseTypeVisible = false
       const { pdkHash } = item
       let query = { pdkHash }

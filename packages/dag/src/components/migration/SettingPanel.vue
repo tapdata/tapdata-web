@@ -229,22 +229,22 @@ export default observer({
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch'
+                      },
+                      shareCdcEnable: {
+                        title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
+                        type: 'boolean',
+                        default: false,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
+                            }
+                          }
+                        }
                       }
-                      // shareCdcEnable: {
-                      //   title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
-                      //   type: 'boolean',
-                      //   default: false,
-                      //   'x-decorator': 'FormItem',
-                      //   'x-component': 'Switch',
-                      //   'x-reactions': {
-                      //     dependencies: ['type'],
-                      //     fulfill: {
-                      //       state: {
-                      //         visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
-                      //       }
-                      //     }
-                      //   }
-                      // }
                       // isAutoInspect: {
                       //   title: '数据校验', //共享挖掘日志过滤
                       //   type: 'boolean',

@@ -3,57 +3,16 @@
     <el-radio-group v-if="!hideType && otherTypes.length" class="pb-5" v-model="type" @change="changeType">
       <el-radio-button label="sourcedata">{{ $t('connection_form_data_source') }}</el-radio-button>
       <el-radio-button label="other">Other Type</el-radio-button>
-      <!-- <el-radio-button label="automation">Automation Type</el-radio-button> -->
     </el-radio-group>
     <template v-if="type === 'sourcedata'">
       <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">
-        <li v-for="item in types" :key="item.pdkType ? item.type : item" @click="$emit('select', item)">
+        <li v-for="item in types" :key="item.type" @click="$emit('select', item)">
           <div class="img-box">
             <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
             <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
           </div>
-          <ElTooltip v-if="item.pdkType" class="item" effect="dark" :content="item.name" placement="bottom">
+          <ElTooltip class="item" effect="dark" :content="item.name" placement="bottom">
             <div class="content">{{ item.name }}</div>
-          </ElTooltip>
-          <ElTooltip v-else class="item" effect="dark" :content="typeMap[item]" placement="bottom">
-            <div class="content">{{ typeMap[item] }}</div>
-          </ElTooltip>
-        </li>
-        <li v-for="item in comingTypes" :key="item" class="item--disabled">
-          <div class="img-box position-relative">
-            <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
-            <div class="img-box__mask position-absolute">
-              <span class="mask-text">即将上线</span>
-            </div>
-          </div>
-          <ElTooltip class="item" effect="dark" :content="typeMap[item]" placement="bottom">
-            <div class="content">{{ typeMap[item] }}</div>
-          </ElTooltip>
-        </li>
-      </ul>
-    </template>
-    <template v-if="type === 'other'">
-      <!-- <span class="title" v-if="otherTypes && otherTypes.length > 0">Other Type</span> -->
-      <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">
-        <li v-for="(item, index) in otherTypes" :key="index" @click="$emit('select', item)">
-          <div class="img-box">
-            <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
-          </div>
-          <ElTooltip class="item" effect="dark" :content="typeMap[item]" placement="bottom">
-            <div class="content">{{ typeMap[item] }}</div>
-          </ElTooltip>
-        </li>
-      </ul>
-    </template>
-    <template v-if="type === 'automation'">
-      <!-- <span class="title" v-if="automationType && automationType.length > 0">Automation Type</span> -->
-      <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">
-        <li v-for="(item, index) in automationType" :key="index" @click="$emit('select', item.type)">
-          <div class="img-box">
-            <ElImage :src="$util.getConnectionTypeDialogImg('default')" />
-          </div>
-          <ElTooltip class="item" effect="dark" :content="typeMap[item]" placement="bottom">
-            <div class="content">{{ typeMap[item] }}</div>
           </ElTooltip>
         </li>
       </ul>
@@ -103,7 +62,6 @@ export default {
   },
   data() {
     return {
-      typeMap: this.$const.TYPEMAP,
       type: 'sourcedata'
     }
   },

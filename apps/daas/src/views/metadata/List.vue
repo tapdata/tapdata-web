@@ -365,7 +365,6 @@ export default {
           status: true
         },
         where: {
-          database_type: 'mongodb',
           connection_type: { $in: ['target', 'source_and_target'] }
         }
       }
