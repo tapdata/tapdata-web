@@ -387,7 +387,7 @@
 .el-breadcrumb__inner a,
 .el-breadcrumb__inner.is-link {
   font-size: 12px;
-  font-weight: 400 !important;
+  font-weight: normal !important;
   color: map-get($fontColor, light) !important;
 }
 .el-breadcrumb__inner a:hover,
