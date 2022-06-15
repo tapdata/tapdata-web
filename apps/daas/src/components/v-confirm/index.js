@@ -5,7 +5,6 @@ const MessageBoxConstructor = Vue.extend(msgboxVue)
 let currentMsg, instance
 
 const defaults = {
-  icon: '', // 图标
   iconColor: '',
   iconSize: 18,
   title: '', // 标题
