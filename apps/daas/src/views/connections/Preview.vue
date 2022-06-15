@@ -62,11 +62,7 @@
             </div>
             <!-- 共享挖掘文字转换 /裸日志文字转换  start -->
             <div
-              v-else-if="
-                connection[temp.key] &&
-                (temp.key === 'shareCdcEnable' ||
-                  (temp.key === 'redoLogParserEnable' && ['oracle', 'db2'].includes(connection.database_type)))
-              "
+              v-else-if="connection[temp.key] && (temp.key === 'shareCdcEnable' || temp.key === 'redoLogParserEnable')"
               class="box-line__value ellipsis"
             >
               <span>{{ connection[temp.key] ? $t('text_open') : $t('text_close') }}</span>
@@ -210,13 +206,6 @@ export default {
           })
           .then(() => {
             let testData = JSON.parse(JSON.stringify(this.connection))
-            if (['gridfs', 'mongodb'].includes(testData.database_type)) {
-              delete testData.database_uri
-              testData.justTest = true
-            }
-            if (testData.database_type !== 'redis') {
-              delete testData['database_password']
-            }
             this.$refs.test.start(testData)
           })
       })
@@ -299,9 +288,8 @@ export default {
       if (!data.status || data.status === null) return
       this.status = data.status
     },
-    loadList(type) {
-      let whiteList = ['kafka', 'mq']
-      this.list = whiteList.includes(type) ? CONFIG_MODEL[type] : CONFIG_MODEL['default']
+    loadList() {
+      this.list = CONFIG_MODEL['default']
     },
     getConnectionIcon() {
       const { connection } = this

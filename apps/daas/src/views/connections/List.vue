@@ -103,7 +103,7 @@
             v-readonlybtn="'datasource_edition'"
             type="text"
             :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
-            @click="edit(scope.row.id, scope.row.database_type, scope.row)"
+            @click="edit(scope.row.id, scope.row)"
             >{{ $t('button_edit') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
@@ -381,7 +381,7 @@ export default {
     preview(row) {
       this.$refs.preview.open(row)
     },
-    edit(id, type, item) {
+    edit(id, item) {
       const { pdkHash } = item
       let query = {
         pdkHash
@@ -549,13 +549,6 @@ export default {
       this.$root.checkAgent(() => {
         let loading = this.$loading()
         this.testData = Object.assign({}, defaultModel['default'], item)
-        if (['gridfs', 'mongodb'].includes(item.database_type)) {
-          delete this.testData.database_uri
-          this.testData.justTest = true
-        }
-        if (item.database_type !== 'redis') {
-          delete this.testData['database_password']
-        }
         this.$api('connections')
           .updateById(
             item.id,

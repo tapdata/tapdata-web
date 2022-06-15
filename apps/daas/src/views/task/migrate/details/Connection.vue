@@ -167,13 +167,6 @@ export default {
       })
     },
     async test(data, isShowDialog = true) {
-      if (['gridfs', 'mongodb'].includes(data.database_type)) {
-        delete data.database_uri
-        data.justTest = true
-      }
-      if (data.database_type !== 'redis') {
-        delete data['database_password']
-      }
       try {
         await this.$api('connections').patch(data.id, {
           status: 'testing'
