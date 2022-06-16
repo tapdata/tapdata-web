@@ -311,9 +311,9 @@ export default {
         })
         .then(res => {
           return {
-            total: res.data.total,
+            total: res?.total,
             data:
-              res.data?.items.map(item => {
+              res?.items.map(item => {
                 item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
                 return item
               }) || []
@@ -342,8 +342,8 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res?.data?.items?.length) {
-            let record = res?.data?.items[0] || {}
+          if (res?.items?.length) {
+            let record = res?.items[0] || {}
             let workerStatus = record.workerStatus || record.worker_status || {}
             if (this.status !== workerStatus.status) {
               this.status = workerStatus.status
@@ -527,7 +527,7 @@ export default {
         })
 
         Promise.all(modulesData).then(res => {
-          let successResults = res.filter(rs => rs.data)
+          let successResults = res.filter(rs => rs)
           if (successResults.length === jobs.length) {
             this.table.fetch()
             this.$message.success(this.$t('message_save_ok'))

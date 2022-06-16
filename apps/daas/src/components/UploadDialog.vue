@@ -118,7 +118,7 @@ export default {
         })
         .then(res => {
           if (res) {
-            this.classifyList = res.data?.items || []
+            this.classifyList = res?.items || []
           }
         })
     },

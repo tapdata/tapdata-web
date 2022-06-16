@@ -190,10 +190,10 @@ export default {
             limit: 999
           })
         }).then(res => {
-          if (res.data) {
+          if (res) {
             let treeData = []
-            if (res.data?.items?.length) {
-              treeData = res.data.items.map(item => ({
+            if (res.items?.length) {
+              treeData = res.items.map(item => ({
                 value: item.name,
                 name: item.name,
                 id: item.id,
@@ -212,9 +212,9 @@ export default {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
         }).then(res => {
-          if (res.data?.items) {
-            this.treeData = this.formatData(res.data?.items || [])
-            cb && cb(res.data?.items || [])
+          if (res?.items) {
+            this.treeData = this.formatData(res?.items || [])
+            cb && cb(res?.items || [])
           }
         })
       }
@@ -229,10 +229,10 @@ export default {
             limit: 999
           })
         }).then(res => {
-          if (res.data) {
+          if (res) {
             let treeData = []
-            if (res.data?.items?.length) {
-              treeData = res.data.items.map(item => ({
+            if (res?.items?.length) {
+              treeData = res?.items.map(item => ({
                 value: item.name,
                 id: item.id,
                 gid: item.gid,
@@ -247,9 +247,9 @@ export default {
         })
       } else {
         MetadataDefinitions.get().then(res => {
-          if (res.data?.items) {
+          if (res?.items) {
             // this.treeData = this.formatData(res.data);
-            cb && cb(res.data?.items || [])
+            cb && cb(res?.items || [])
           }
         })
       }

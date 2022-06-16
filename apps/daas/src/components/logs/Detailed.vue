@@ -132,7 +132,7 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let list = res.data?.items || []
+          let list = res?.items || []
           if (isSearch) {
             this.noMore = false
             this.isScrollBottom = true

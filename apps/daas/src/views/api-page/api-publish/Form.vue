@@ -229,7 +229,7 @@ export default {
       this.$api('MetadataInstances')
         .get(params)
         .then(res => {
-          let table = res?.data?.items?.[0]
+          let table = res?.items?.[0]
           this.createForm.fields = this.fields = table.fields
         })
     },
@@ -274,10 +274,10 @@ export default {
         .get([this.$route.query.id])
         .then(res => {
           if (res) {
-            Object.assign(_this.createForm, res.data)
+            Object.assign(_this.createForm, res)
             // _this.createForm.apiType = res.data.apiType
             // _this.createForm.datasource = res.data.datasource
-            _this.fields = res.data.fields
+            _this.fields = res?.fields
             _this.getTableData()
           }
         })
@@ -301,7 +301,7 @@ export default {
       this.$api('connections')
         .listAll(params)
         .then(res => {
-          let options = res?.data || []
+          let options = res || []
           options = options.map(db => {
             return {
               label: db.name,
@@ -316,7 +316,7 @@ export default {
       this.$api('MetadataInstances')
         .getTables(this.createForm.datasource)
         .then(result => {
-          let schemas = result?.data || []
+          let schemas = result || []
           if (schemas?.length) {
             let tableList = schemas
               .sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
@@ -424,8 +424,8 @@ export default {
       this.$api('ApiServer')
         .get({ 'filter[limit]': 1 })
         .then(res => {
-          if (res?.data?.length) {
-            let apiServer = res.data[0]
+          if (res?.length) {
+            let apiServer = res[0]
             let apiServerUri = apiServer.clientURI
             let openApiUri = apiServerUri + '/openapi.json'
             let api = this.createForm.basePath + '_' + this.createForm.apiVersion
@@ -453,7 +453,7 @@ export default {
         .get({})
         .then(res => {
           if (res) {
-            this.roles = res?.data?.items || []
+            this.roles = res?.items || []
             this.roles.push({
               name: this.$t('module_form_public_api'),
               id: '$everyone'

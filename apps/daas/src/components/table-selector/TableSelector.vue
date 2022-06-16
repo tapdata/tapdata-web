@@ -497,7 +497,7 @@ export default {
       this.$api('MetadataInstances')
         .getTables(this.connectionId)
         .then(res => {
-          let tables = res.data || []
+          let tables = res || []
           tables = tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
           this.table.tables = Object.freeze(tables)
         })
@@ -535,7 +535,7 @@ export default {
         .updateById(this.connectionId, parms)
         .then(res => {
           if (this?.$refs?.test) {
-            let data = res?.data
+            let data = res
             this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
             this.$refs.test.start(data, false, true)
             this.getProgress()
@@ -547,7 +547,7 @@ export default {
       this.$api('connections')
         .getNoSchema(this.connectionId)
         .then(res => {
-          let data = res?.data
+          let data = res
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100

@@ -106,8 +106,8 @@ export default {
             limit: 999
           })
         }).then(res => {
-          if (res.data?.items) {
-            let treeData = res.data.items.map(item => ({
+          if (res?.items) {
+            let treeData = res?.items.map(item => ({
               value: item.name,
               id: item.id,
               gid: item.gid,
@@ -123,9 +123,9 @@ export default {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
         }).then(res => {
-          if (res.data?.items) {
-            this.treeData = this.formatData(res.data?.items || [])
-            cb && cb(res.data?.items || [])
+          if (res?.items) {
+            this.treeData = this.formatData(res?.items || [])
+            cb && cb(res?.items || [])
           }
         })
       }

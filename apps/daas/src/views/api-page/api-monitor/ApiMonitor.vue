@@ -279,7 +279,7 @@ export default {
       this.$api('ApiMonitor')
         .preview()
         .then(res => {
-          this.previewData = res.data
+          this.previewData = res
         })
         .finally(() => {
           this.loadingTotal = false
@@ -291,7 +291,7 @@ export default {
         .apiClientName()
         .then(res => {
           //重组数据
-          let data = res.data
+          let data = res
           if (data?.length > 0) {
             for (let i = 0; i < data.length; i++) {
               let obj = {
@@ -354,7 +354,7 @@ export default {
         })
         .then(res => {
           //map
-          let data = res.data.items.map(item => {
+          let data = res?.items.map(item => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -393,7 +393,7 @@ export default {
         })
         .then(res => {
           //map
-          let data = res.data.items.map(item => {
+          let data = res?.items.map(item => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -401,7 +401,7 @@ export default {
             }
             return abj
           })
-          this.page.consumingTimeTotal = res.data.total
+          this.page.consumingTimeTotal = res?.total
           this.consumingTimeList = data || []
         })
         .finally(() => {
@@ -441,7 +441,7 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let data = res.data
+          let data = res
           this.apiList = data.items
           this.page.apiListTotal = data.total
         })

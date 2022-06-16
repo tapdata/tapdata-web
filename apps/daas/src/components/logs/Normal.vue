@@ -247,7 +247,7 @@ export default {
       this.$api('CustomerJobLogs')
         .get({ filter: JSON.stringify(filter) })
         .then(res => {
-          let data = res.data.items.reverse()
+          let data = res?.items.reverse()
           if (!data.length) {
             if (reset) {
               this.list = []

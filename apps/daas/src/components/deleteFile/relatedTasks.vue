@@ -51,8 +51,8 @@ export default {
         tableName: this.taskData.tableName
       }
       dataFlowApi.relatedDataFlows(params).then(res => {
-        if (res.data && res.data.length > 0) {
-          this.taskList = res.data
+        if (res) {
+          this.taskList = res
         }
       })
     },
