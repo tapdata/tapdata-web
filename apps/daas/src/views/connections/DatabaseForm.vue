@@ -255,7 +255,6 @@ export default {
               this.schemaData.properties.__TAPDATA_END.properties,
               config
             )
-            console.log(this.schemaData.properties.__TAPDATA_END.properties)
           }
         }
       )
