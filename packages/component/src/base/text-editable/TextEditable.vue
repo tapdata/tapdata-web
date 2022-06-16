@@ -1,5 +1,5 @@
 <template>
-  <div class="text-editable-wrap inline-flex position-relative align-center">
+  <div class="text-editable-wrap inline-flex position-relative align-center" :style="style">
     <div class="text-editable min-w-0">
       <input
         ref="input"
@@ -29,8 +29,13 @@ export default {
     }
   },
 
-  data() {
-    return {}
+  computed: {
+    style() {
+      const maxWidth = this.maxWidth
+      return {
+        maxWidth: maxWidth && !isNaN(maxWidth) ? `${maxWidth}px` : maxWidth
+      }
+    }
   },
 
   watch: {

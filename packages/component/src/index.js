@@ -22,3 +22,5 @@ export {
   VCodeEditor,
   JsEditor
 }
+
+export * from './base'

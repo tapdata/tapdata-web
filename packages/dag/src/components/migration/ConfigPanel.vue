@@ -39,7 +39,7 @@ import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
-import TextEditable from '../TextEditable'
+import { TextEditable } from '@tap/component'
 
 export default {
   name: 'ConfigPanel',

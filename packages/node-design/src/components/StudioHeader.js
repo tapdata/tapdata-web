@@ -6,6 +6,7 @@ import { transformToTreeNode } from '../core'
 import { CustomNode } from '@tap/api'
 import { IconWidget } from './widgets'
 import { observer } from '@formily/reactive-vue'
+import { TextEditable } from '@tap/component'
 
 const API = new CustomNode()
 
@@ -83,21 +84,14 @@ export const StudioHeader = observer(
             <IconWidget size="24" infer="CustomNode" />
           </div>
           <div class="panel-header-title">
-            <div class="title-input-wrap flex align-center flex-shrink-0 h-100" data-value="hiddenValue">
-              <input
-                placeholder="请输入节点名称"
-                value={customNodeRef.value.name}
-                onInput={e => {
-                  customNodeRef.value.name = e.target.value
-                }}
-                v-focus-select
-                ref="nameInput"
-                class="title-input"
-              />
-              <VIcon onClick={focusNameInput} class="title-input-icon" size="14">
-                edit-outline
-              </VIcon>
-            </div>
+            <TextEditable
+              maxWidth="254"
+              placeholder="请输入节点名称"
+              value={customNodeRef.value.name}
+              onInput={val => {
+                customNodeRef.value.name = val
+              }}
+            />
           </div>
           <div class="panel-header-tools flex align-center">
             <ElTooltip transition="tooltip-fade-in" content="表单设计">

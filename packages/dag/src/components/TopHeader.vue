@@ -6,10 +6,10 @@
 
     <TextEditable
       v-model="name"
-      class="mr-3 title-editable"
+      class="mr-3"
       :readonly="stateIsReadonly"
       placeholder="请输入任务名称"
-      max-width="200"
+      max-width="260"
       @change="onNameInputChange"
     />
 
@@ -178,7 +178,7 @@ import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'
 import { StatusItem } from '@tap/business'
-import TextEditable from './TextEditable'
+import { TextEditable } from '@tap/component'
 
 export default {
   name: 'TopHeader',
@@ -213,26 +213,8 @@ export default {
     ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
     ...mapState('dataflow', ['spaceKeyPressed']),
 
-    syncTxt() {
-      const settings = this.$store.getters['dataflow/dataflowSettings']
-      return this.syncMap[settings.sync_type]
-    },
-
-    hiddenValue() {
-      let value = this.name.replace(/\s/g, '.')
-      return `${value}`
-    },
-
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
-    },
-
-    nodeList() {
-      if (this.nodeSearchInput) {
-        const txt = this.nodeSearchInput.toLocaleLowerCase()
-        return this.allNodes.filter(node => node.name.toLocaleLowerCase().includes(txt))
-      }
-      return this.allNodes
     }
   },
 
@@ -283,15 +265,6 @@ export default {
         }
       }
       backToList()
-    },
-
-    toggleMovePaper() {
-      this.setPaperSpaceKeyPressed(!this.spaceKeyPressed)
-    },
-
-    handleClickNode(node) {
-      this.showSearchNodePopover = false
-      this.$emit('locate-node', node)
     }
   }
 }
@@ -344,10 +317,6 @@ $sidebarBg: #fff;
 
   .title-wrap {
     width: $sidebarW;
-  }
-
-  .title-editable {
-    max-width: 290px;
   }
 
   .nav-icon {
