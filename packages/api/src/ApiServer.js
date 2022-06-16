@@ -6,34 +6,34 @@ export default class ApiServers extends Http {
   }
   findOne(params) {
     params = params || {}
-    return axios.get(this.url + '/findOne', { params })
+    return this.axios.get(this.url + '/findOne', { params })
   }
   patch(params) {
-    return axios.patch(this.url, params)
+    return this.axios.patch(this.url, params)
   }
   count(params) {
-    return axios.get(this.url + '/count', { params })
+    return this.axios.get(this.url + '/count', { params })
   }
   get(params) {
     if (Array.isArray(params)) {
-      return axios.get(this.url + '/' + params.join('/'))
+      return this.axios.get(this.url + '/' + params.join('/'))
     }
     params = params || {}
-    return axios.get(this.url, { params })
+    return this.axios.get(this.url, { params })
   }
   delete(id, name) {
     // return axios.delete(`${this.url}/${id}`)
     if (name == '') {
-      return axios.delete(`${this.url}/${id}`)
+      return this.axios.delete(`${this.url}/${id}`)
     } else {
-      return axios.delete(`${this.url}/${id}?clientName=${name}`)
+      return this.axios.delete(`${this.url}/${id}?clientName=${name}`)
     }
   }
   post(params) {
     if (params.uri) {
-      return axios.post(`${this.url}/${params.uri}`, params)
+      return this.axios.post(`${this.url}/${params.uri}`, params)
     }
-    return axios.post(this.url, params)
+    return this.axios.post(this.url, params)
   }
 }
 export { ApiServers }

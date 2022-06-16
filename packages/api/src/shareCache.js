@@ -5,10 +5,10 @@ export default class SharedCacheAPI extends Http {
     super('/api/shareCache')
   }
   findOne(id) {
-    return axios.get(`${this.url}/${id}`)
+    return this.axios.get(`${this.url}/${id}`)
   }
   patch(params) {
-    return axios.patch(`${this.url}/${params.id}`, params)
+    return this.axios.patch(`${this.url}/${params.id}`, params)
   }
 }
 export { SharedCacheAPI }

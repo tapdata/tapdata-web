@@ -5,10 +5,10 @@ export default class file extends Http {
     super('/api/file')
   }
   upload(params) {
-    return axios.post(this.url + '/upload', params)
+    return this.axios.post(this.url + '/upload', params)
   }
   removeFile(id) {
-    return axios.delete(this.url + '/delete?id=' + id)
+    return this.axios.delete(this.url + '/delete?id=' + id)
   }
 }
 export { file }

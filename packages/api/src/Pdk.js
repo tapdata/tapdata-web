@@ -6,7 +6,7 @@ export default class Pdk extends Http {
   }
   doc(pdkHash) {
     let url = `${this.url}/doc?pdkHash=${pdkHash}`
-    return axios.get(url, {
+    return this.axios.get(url, {
       responseType: 'blob'
     })
   }

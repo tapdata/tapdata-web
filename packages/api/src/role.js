@@ -9,7 +9,7 @@ export default class Roles extends Http {
   }
 
   patch(params) {
-    return axios.patch(`${this.url}/${params.id}`, params)
+    return this.axios.patch(`${this.url}/${params.id}`, params)
   }
 
   delete(id, name) {

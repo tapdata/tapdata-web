@@ -4,7 +4,7 @@ export default class MetadataDefinitions extends Http {
     super('/api/MetadataDefinition')
   }
   changeById(params) {
-    return axios.patch(`${this.url}/${params.id}`, params)
+    return this.axios.patch(`${this.url}/${params.id}`, params)
   }
 }
 export { MetadataDefinitions }

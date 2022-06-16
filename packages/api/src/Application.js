@@ -8,15 +8,15 @@ export default class Applications extends Http {
   delete(id, name) {
     // return axios.delete(`${this.url}/${id}`)
     if (name == '') {
-      return axios.delete(`${this.url}/${id}`)
+      return this.axios.delete(`${this.url}/${id}`)
     } else {
-      return axios.delete(`${this.url}/${id}?name=${name}`)
+      return this.axios.delete(`${this.url}/${id}?name=${name}`)
     }
   }
 
   findOne(params) {
     params = params || {}
-    return axios.get(this.url + '/findOne', { params })
+    return this.axios.get(this.url + '/findOne', { params })
   }
 }
 
