@@ -5,11 +5,11 @@ export default class LineageGraphsAPI extends Http {
     super('/api/LineageGraphs')
   }
   graphData(params) {
-    return axios.post(`${this.url}/graphData`, params)
+    return this.axios.post(`${this.url}/graphData`, params)
   }
   refreshGraphData() {
     let url = `${this.url}/refreshGraphData?`
-    return axios.get(url)
+    return this.axios.get(url)
   }
 }
 export { LineageGraphsAPI }

@@ -5,7 +5,7 @@ export default class UserLogsAPI extends Http {
   }
 
   post(params) {
-    return axios.post(this.url, params)
+    return this.axios.post(this.url, params)
   }
 }
 

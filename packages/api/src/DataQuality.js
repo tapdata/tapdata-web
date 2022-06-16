@@ -6,15 +6,15 @@ export default class DataQualityAPI extends Http {
   }
 
   getCount(params) {
-    return axios.get(this.url + '/getCount', { params: params })
+    return this.axios.get(this.url + '/getCount', { params: params })
   }
 
   getList(params) {
-    return axios.get(this.url + '/getList', { params: params })
+    return this.axios.get(this.url + '/getList', { params: params })
   }
 
   analyzeByConnId(params) {
-    return axios.post(this.url + '/analyzeByConnId', params)
+    return this.axios.post(this.url + '/analyzeByConnId', params)
   }
 }
 export { DataQualityAPI }

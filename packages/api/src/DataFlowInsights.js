@@ -6,7 +6,7 @@ export default class DataFlowInsights extends Http {
   }
 
   runtimeMonitor(params) {
-    return axios.get(this.url + '/runtimeMonitor', params)
+    return this.axios.get(this.url + '/runtimeMonitor', params)
   }
 }
 export { DataFlowInsights }

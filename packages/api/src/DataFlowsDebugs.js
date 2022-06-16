@@ -6,7 +6,7 @@ export default class DataFlowsDebugs extends Http {
   }
 
   getTables(params) {
-    return axios.get(this.url + '/getTables', { params: params })
+    return this.axios.get(this.url + '/getTables', { params: params })
   }
 }
 export { DataFlowsDebugs }

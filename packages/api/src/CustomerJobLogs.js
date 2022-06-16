@@ -5,7 +5,7 @@ export default class CustomerJobLogs extends Http {
     super('/api/CustomerJobLogs')
   }
   solutions(params) {
-    return axios.get(this.url + '/solutions', { params })
+    return this.axios.get(this.url + '/solutions', { params })
   }
 }
 export { CustomerJobLogs }

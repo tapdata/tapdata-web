@@ -7,50 +7,50 @@ export default class LogcollectorApi extends Http {
 
   get(params) {
     if (Array.isArray(params)) {
-      return axios.get(this.url + '/' + params.join('/'))
+      return this.axios.get(this.url + '/' + params.join('/'))
     }
     if (params.url) {
-      return axios.get(params.url)
+      return this.axios.get(params.url)
     }
     params = params || {}
-    return axios.get(this.url, { params })
+    return this.axios.get(this.url, { params })
   }
 
   patch(id, params) {
-    return axios.patch(`${this.url}/${id}`, params)
+    return this.axios.patch(`${this.url}/${id}`, params)
   }
 
   byConnectionName(name) {
     if (name) {
-      return axios.get(`${this.url}/byConnectionName/${name}`)
+      return this.axios.get(`${this.url}/byConnectionName/${name}`)
     }
   }
 
   getSystemConfig(params) {
-    return axios.get(this.url + '/system/config', { params })
+    return this.axios.get(this.url + '/system/config', { params })
   }
 
   patchSystemConfig(params) {
-    return axios.patch(this.url + '/system/config', params)
+    return this.axios.patch(this.url + '/system/config', params)
   }
 
   getDetail(id) {
-    return axios.get(`${this.url}/detail/${id}`)
+    return this.axios.get(`${this.url}/detail/${id}`)
   }
   getChart(params) {
-    return axios.get(`${this.url}/system/config/stats`, { params })
+    return this.axios.get(`${this.url}/system/config/stats`, { params })
   }
   check() {
-    return axios.get(`${this.url}/check/system/config`)
+    return this.axios.get(`${this.url}/check/system/config`)
   }
   byTaskId(taskId) {
-    return axios.get(`${this.url}/byTaskId/${taskId}`)
+    return this.axios.get(`${this.url}/byTaskId/${taskId}`)
   }
   bySubTaskId(subTaskId) {
-    return axios.get(`${this.url}/bySubTaskId/${subTaskId}`)
+    return this.axios.get(`${this.url}/bySubTaskId/${subTaskId}`)
   }
   tableNames(taskId, params) {
-    return axios.get(`${this.url}/tableNames/${taskId}`, { params })
+    return this.axios.get(`${this.url}/tableNames/${taskId}`, { params })
   }
 }
 export { LogcollectorApi }

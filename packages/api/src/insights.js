@@ -6,21 +6,21 @@ export default class Insights extends Http {
   }
 
   count(params) {
-    return axios.get(this.url + '/count', { params })
+    return this.axios.get(this.url + '/count', { params })
   }
   get(params) {
     if (Array.isArray(params)) {
-      return axios.get(this.url + '/' + params.join('/'))
+      return this.axios.get(this.url + '/' + params.join('/'))
     }
     if (params.url) {
-      return axios.get(params.url)
+      return this.axios.get(params.url)
     }
     params = params || {}
-    return axios.get(this.url, { params })
+    return this.axios.get(this.url, { params })
   }
 
   findOne(params) {
-    return axios.get(this.url + '/findOne', { params })
+    return this.axios.get(this.url + '/findOne', { params })
   }
 }
 export { Insights }

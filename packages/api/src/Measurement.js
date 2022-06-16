@@ -5,10 +5,10 @@ export default class Measurement extends Http {
     super('/api/measurement')
   }
   query(params) {
-    return axios.post(this.url + '/query', params)
+    return this.axios.post(this.url + '/query', params)
   }
   queryTransmitTotal() {
-    return axios.get(this.url + '/queryTransmitTotal')
+    return this.axios.get(this.url + '/queryTransmitTotal')
   }
 }
 export { Measurement }
