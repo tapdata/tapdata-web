@@ -156,6 +156,7 @@ let timeout = null
 
 export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
+  inject: ['checkAgent'],
   data() {
     return {
       filterItems: [],
@@ -541,12 +542,12 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         this.dialogDatabaseTypeVisible = true
       })
     },
     async testConnection(item) {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         let loading = this.$loading()
         this.testData = Object.assign({}, defaultModel['default'], item)
         this.$api('connections')

@@ -4,7 +4,7 @@ export default class WorkerAPI extends Http {
     super('/api/Workers')
   }
   getAvailableAgent() {
-    return this.axios.get(this.url + '/availableAgent')
+    return this.axios.get(this.url + '/availableAgent').then(this.useData)
   }
 }
 export { WorkerAPI }

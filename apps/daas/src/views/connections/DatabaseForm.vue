@@ -117,6 +117,7 @@ const connectionsModel = factory('connections')
 export default {
   name: 'DatabaseForm',
   components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook },
+  inject: ['checkAgent'],
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
@@ -362,7 +363,7 @@ export default {
     },
     //开始测试
     async startTest() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         this.schemaFormInstance.validate().then(() => {
           this.startTestPdk()
         })

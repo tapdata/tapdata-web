@@ -59,6 +59,7 @@ import { getConnectionIcon } from '@/views/connections/util'
 export default {
   name: 'Connection',
   components: { TableList, VIcon, SchemaProgress },
+  inject: ['checkAgent'],
   props: {
     ids: {
       type: Array,
@@ -162,7 +163,7 @@ export default {
       this.fetchTimer = null
     },
     testConnection(item) {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         this.test(item)
       })
     },
@@ -180,7 +181,7 @@ export default {
       }
     },
     async reload(row) {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         let config = {
           title: this.$t('connection.reloadTittle'),
           Message: this.$t('connection.reloadMsg'),

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import App from '@/App.vue'
+import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
 import i18n from './i18n'
 import VueClipboard from 'vue-clipboard2'

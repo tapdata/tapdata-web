@@ -87,6 +87,7 @@ import dayjs from 'dayjs'
 export default {
   name: 'DetailsDrawer',
   components: { VIcon, StatusTag, Drawer },
+  inject: ['checkAgent'],
   props: {
     hideOperation: {
       type: Boolean,
@@ -198,7 +199,7 @@ export default {
       })
     },
     async beforeTest() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         //先将管理端状态改为testing
         this.$api('connections')
           .updateById(this.connection.id, {
@@ -211,7 +212,7 @@ export default {
       })
     },
     async reload() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         let config = {
           title: this.$t('connection.reloadTittle'),
           Message: this.$t('connection.reloadMsg'),
