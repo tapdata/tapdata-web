@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import APIClient from '@/api/ApiClient'
+import APIClient from '@tap/api'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 import { VirtualSelect } from '@tap/component'

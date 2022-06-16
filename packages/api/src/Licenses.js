@@ -6,11 +6,11 @@ export default class Licenses extends Http {
   }
 
   expires(params) {
-    return axios.get(this.url + '/expires', params)
+    return this.axios.get(this.url + '/expires', params)
   }
 
   getSid(ids) {
-    return axios.get(`${this.url}/sid`, {
+    return this.axios.get(`${this.url}/sid`, {
       params: {
         id: JSON.stringify(ids)
       }
@@ -18,7 +18,7 @@ export default class Licenses extends Http {
   }
 
   updateLicense(params) {
-    return axios.post(`${this.url}/upload`, params)
+    return this.axios.post(`${this.url}/upload`, params)
   }
 }
 export { Licenses }

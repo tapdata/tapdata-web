@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import APIClient from '@/api/ApiClient'
+import APIClient from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 export default {
   name: 'ApiDocAndTest',
