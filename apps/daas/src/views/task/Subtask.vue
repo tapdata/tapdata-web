@@ -91,6 +91,7 @@
 import TableList from '@/components/TableList'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
+import { SubTaskApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -173,54 +174,48 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$api('SubTask')
-        .byTaskId(taskId, {
-          filter: JSON.stringify(filter)
+      return SubTaskApi.byTaskId(taskId, {
+        filter: JSON.stringify(filter)
+      }).then(res => {
+        let items = res?.data || []
+        let data = items.map(item => {
+          item.status = item.status === 'edit' ? 'ready' : item.status
+          return deepCopy(item)
         })
-        .then(res => {
-          let items = res.data
-          let data = items.map(item => {
-            item.status = item.status === 'edit' ? 'ready' : item.status
-            return deepCopy(item)
-          })
-          return {
-            total: data.length,
-            data: data
-          }
-        })
+        return {
+          total: data.length,
+          data: data
+        }
+      })
     },
     start(row = {}, resetLoading) {
-      this.$api('SubTask')
-        .start(row.id)
+      SubTaskApi.start(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
     },
     stop(row, resetLoading) {
-      this.$api('SubTask')
-        .stop(row.id)
+      SubTaskApi.stop(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
     },
     renew(row, resetLoading) {
-      this.$api('SubTask')
-        .renew(row.id)
+      SubTaskApi.renew(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
     },
     pause(row = {}, resetLoading) {
-      this.$api('SubTask')
-        .pause(row.id)
+      SubTaskApi.pause(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)

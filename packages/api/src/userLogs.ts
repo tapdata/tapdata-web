@@ -1,5 +1,5 @@
 import Http from './http'
-export default class UserLogsAPI extends Http {
+export default class UserLogs extends Http {
   constructor() {
     super('/api/UserLogs')
   }
@@ -9,4 +9,4 @@ export default class UserLogsAPI extends Http {
   }
 }
 
-export { UserLogsAPI }
+export { UserLogs }

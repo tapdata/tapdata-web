@@ -1,8 +1,8 @@
 import Http from './http'
 
-export default class Javascript_functions extends Http {
+export default class JavascriptFunctions extends Http {
   constructor() {
     super('/api/Javascript_functions')
   }
 }
-export { Javascript_functions }
+export { JavascriptFunctions }

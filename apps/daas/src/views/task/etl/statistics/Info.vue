@@ -195,6 +195,7 @@ import { Chart } from '@tap/component'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs } from '@/utils/util'
 import { toThousandsUnit } from '@/utils/util'
+import { SubTaskApi } from '@tap/api'
 
 export default {
   name: 'Info',
@@ -569,7 +570,8 @@ export default {
       if (!params) {
         return
       }
-      this.remoteMethod(params).then(data => {
+      this.remoteMethod(params).then(res => {
+        let data = res?.data
         let { samples } = data
         samples.forEach(el => {
           for (let key in el) {
@@ -702,19 +704,17 @@ export default {
       return formatMs(val, 'time')
     },
     start(row = {}, resetLoading) {
-      this.$api('SubTask')
-        .start(row.id)
+      SubTaskApi.start(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
     },
     stop(row, resetLoading) {
-      this.$api('SubTask')
-        .stop(row.id)
+      SubTaskApi.stop(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)

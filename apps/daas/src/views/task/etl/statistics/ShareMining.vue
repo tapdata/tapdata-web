@@ -57,11 +57,9 @@ export default {
   },
   methods: {
     getData(id) {
-      this.$api('logcollector')
-        .bySubTaskId(id)
-        .then(res => {
-          this.taskList = res?.data || []
-        })
+      LogcollectorApi.bySubTaskId(id).then(res => {
+        this.taskList = res || []
+      })
     },
     goShareCdcInfo(id) {
       this.$router.push({

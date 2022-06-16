@@ -161,6 +161,7 @@ import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
+import { TaskApi, LogcollectorApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -275,46 +276,42 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('logcollector')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          let list = res.data?.items || []
-          let pointTime = new Date()
-          return {
-            total: res.data.total,
-            data: list.map(item => {
-              this.$set(item, 'pointTime', pointTime)
-              if (item.syncTimePoint === 'current') {
-                item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
-              } else {
-                item.pointTime = item.syncTimeZone
-              }
-              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              let statuses = item.statuses
-              item.disabledData = getTaskBtnDisabled(item)
-              item.statusResult = getSubTaskStatus(statuses)[0].status
-              return item
-            })
-          }
-        })
+      return LogcollectorApi.get({
+        filter: JSON.stringify(filter)
+      }).then(res => {
+        let list = res?.items || []
+        let pointTime = new Date()
+        return {
+          total: res?.total,
+          data: list.map(item => {
+            this.$set(item, 'pointTime', pointTime)
+            if (item.syncTimePoint === 'current') {
+              item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
+            } else {
+              item.pointTime = item.syncTimeZone
+            }
+            item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+            let statuses = item.statuses
+            item.disabledData = getTaskBtnDisabled(item)
+            item.statusResult = getSubTaskStatus(statuses)[0].status
+            return item
+          })
+        }
+      })
     },
 
     handleSetting() {
       //是否可以全局设置
       this.loadingConfig = true
-      this.$api('logcollector')
-        .check()
+      LogcollectorApi.check()
         .then(res => {
           if (res) {
-            this.showEditSettingBtn = res?.data?.data //true是可用，false是禁用
+            this.showEditSettingBtn = res?.data //true是可用，false是禁用
             this.settingDialogVisible = true
-            this.$api('logcollector')
-              .getSystemConfig()
+            LogcollectorApi.getSystemConfig()
               .then(res => {
                 if (res) {
-                  this.digSettingForm = res.data
+                  this.digSettingForm = res
                 }
               })
               .finally(() => {
@@ -340,14 +337,12 @@ export default {
             this.digSettingForm.persistenceMongodb_uri_db = ''
             this.digSettingForm.persistenceMongodb_collection = ''
           }
-          this.$api('logcollector')
-            .patchSystemConfig(this.digSettingForm)
-            .then(res => {
-              if (res) {
-                this.settingDialogVisible = false
-                this.$message.success(this.$t('message_save_ok'))
-              }
-            })
+          LogcollectorApi.patchSystemConfig(this.digSettingForm).then(res => {
+            if (res) {
+              this.settingDialogVisible = false
+              this.$message.success(this.$t('message_save_ok'))
+            }
+          })
         }
       })
     },
@@ -357,18 +352,14 @@ export default {
           id: ids[0]
         }
       }
-      this.$api('Task')
-        .get({ filter: JSON.stringify(filter) })
-        .then(res => {
-          if (res) {
-            this.$api('Task')
-              .batchStart(ids)
-              .then(res => {
-                this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
-                this.table.fetch()
-              })
-          }
-        })
+      TaskApi.get({ filter: JSON.stringify(filter) }).then(res => {
+        if (res) {
+          TaskApi.batchStart(ids).then(res => {
+            this.$message.success(res?.message || this.$t('message_operation_succuess'))
+            this.table.fetch()
+          })
+        }
+      })
     },
     getConfirmMessage(operateStr, isBulk, name) {
       let title = operateStr + '_confirm_title',
@@ -405,12 +396,10 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('Task')
-          .batchStop(ids)
-          .then(res => {
-            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
-            this.table.fetch()
-          })
+        TaskApi.batchStop(ids).then(res => {
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+          this.table.fetch()
+        })
       })
     },
     forceStop(ids, item = {}) {
@@ -422,12 +411,10 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('Task')
-          .forceStop(ids)
-          .then(res => {
-            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
-            this.table.fetch()
-          })
+        TaskApi.forceStop(ids).then(res => {
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+          this.table.fetch()
+        })
       })
     },
     // 编辑
@@ -465,11 +452,10 @@ export default {
           return
         }
         this.restLoading = true
-        this.$api('Task')
-          .batchRenew(ids)
+        TaskApi.batchRenew(ids)
           .then(res => {
             this.table.fetch()
-            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+            this.$message.success(res?.message || this.$t('message_operation_succuess'))
           })
           .finally(() => {
             this.restLoading = false
@@ -482,15 +468,13 @@ export default {
       this.$refs['editForm'].validate(valid => {
         if (valid) {
           let id = this.editForm?.id
-          this.$api('logcollector')
-            .patch(id, this.editForm)
-            .then(res => {
-              if (res) {
-                this.editDialogVisible = false
-                this.table.fetch(1)
-                this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
-              }
-            })
+          LogcollectorApi.patch(id, this.editForm).then(res => {
+            if (res) {
+              this.editDialogVisible = false
+              this.table.fetch(1)
+              this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
+            }
+          })
         }
       })
     },

@@ -55,6 +55,7 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
 import { getConnectionIcon } from '@/views/connections/util'
+import { ConnectionsApi } from '@tap/api'
 
 export default {
   name: 'Connection',
@@ -134,20 +135,18 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$api('connections')
-        .get({
-          filter: JSON.stringify(filter)
+      return ConnectionsApi.get({
+        filter: JSON.stringify(filter)
+      }).then(res => {
+        let data = res?.items.map(item => {
+          item.connectType = this.connectTypeMap[item.connection_type]
+          return deepCopy(item)
         })
-        .then(res => {
-          let data = res.data.items.map(item => {
-            item.connectType = this.connectTypeMap[item.connection_type]
-            return deepCopy(item)
-          })
-          return {
-            total: res.data.total,
-            data: data
-          }
-        })
+        return {
+          total: res?.total,
+          data: data
+        }
+      })
     },
     getTableData() {
       return this.$refs.tableList?.getData()
@@ -212,15 +211,13 @@ export default {
       }
       this.loadFieldsStatus = 'loading'
       this.reloadLoading = true
-      this.$api('connections')
-        .patch(row.id, parms)
-        .then(res => {
-          if (!this?.$refs?.test) {
-            return
-          }
-          this.loadFieldsStatus = res?.data.loadFieldsStatus //同步reload状态
-          this.$refs.test.start(row, false, true)
-        })
+      ConnectionsApi.patch(row.id, parms).then(res => {
+        if (!this?.$refs?.test) {
+          return
+        }
+        this.loadFieldsStatus = res?.loadFieldsStatus //同步reload状态
+        this.$refs.test.start(row, false, true)
+      })
     },
     getConnectionIcon() {
       return getConnectionIcon(...arguments)

@@ -1,6 +1,6 @@
 import Http from './http'
 
-export default class LogcollectorApi extends Http {
+export default class Logcollector extends Http {
   constructor() {
     super('/api/logcollector')
   }
@@ -16,7 +16,7 @@ export default class LogcollectorApi extends Http {
     return this.axios.get(this.url, { params })
   }
 
-  patch(id, params) {
+  patchId(id, params) {
     return this.axios.patch(`${this.url}/${id}`, params)
   }
 
@@ -53,4 +53,4 @@ export default class LogcollectorApi extends Http {
     return this.axios.get(`${this.url}/tableNames/${taskId}`, { params })
   }
 }
-export { LogcollectorApi }
+export { Logcollector }

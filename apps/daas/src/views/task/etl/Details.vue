@@ -113,6 +113,7 @@ import { Chart } from '@tap/component'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
+import { TaskApi, DataFlowsApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -210,10 +211,9 @@ export default {
       if (!hiddenLoading) {
         this.loading = true
       }
-      this.$api('Task')
-        .get([id])
+      TaskApi.get([id])
         .then(res => {
-          this.task = this.formatTask(res.data)
+          this.task = this.formatTask(res)
 
           this.getSubTaskStatusCount()
         })
@@ -283,8 +283,7 @@ export default {
     },
     start(id, resetLoading) {
       // this.changeStatus(id, { status: 'scheduled', finallyEvents: resetLoading })
-      this.$api('Task')
-        .start(id)
+      TaskApi.start(id)
         .then(() => {
           this.$message.success(this.$t('message_operation_succuess'))
         })
@@ -310,8 +309,7 @@ export default {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
-          this.$api('Task')
-            .stop(id)
+          TaskApi.stop(id)
             .then(() => {
               this.$message.success(this.$t('message_operation_succuess'))
             })
@@ -327,11 +325,9 @@ export default {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
-          this.$api('Task')
-            .forceStop([id])
-            .then(() => {
-              this.$message.success(this.$t('message_operation_succuess'))
-            })
+          TaskApi.forceStop([id]).then(() => {
+            this.$message.success(this.$t('message_operation_succuess'))
+          })
         }
       })
     },
@@ -378,8 +374,7 @@ export default {
           return
         }
         this.loadingObj.reset = true
-        this.$api('Task')
-          .reset(id)
+        TaskApi.reset(id)
           .then(data => {
             this.responseHandler(data, this.$t('message.deleteOK'))
           })
@@ -411,8 +406,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      this.$api('DataFlows')
-        .update(where, attributes)
+      DataFlowsApi.update(where, attributes)
         .then(data => {
           this.responseHandler(data, this.$t('message.deleteOK'))
         })
@@ -449,14 +443,12 @@ export default {
       }
     },
     updateDesc(val, id) {
-      this.$api('Task')
-        .patchId(id, {
-          desc: val
-        })
-        .then(() => {
-          this.task.desc = val
-          this.$message.success(this.$t('message_update_success'))
-        })
+      TaskApi.patchId(id, {
+        desc: val
+      }).then(() => {
+        this.task.desc = val
+        this.$message.success(this.$t('message_update_success'))
+      })
       // .catch(err => {
       //   this.$message.error(err.data.message)
       // })

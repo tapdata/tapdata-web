@@ -1,5 +1,5 @@
 import Http from './http'
-export default class TaskAPI extends Http {
+export default class SubTask extends Http {
   constructor() {
     super('/api/SubTask')
   }
@@ -37,4 +37,4 @@ export default class TaskAPI extends Http {
     return this.axios.post(this.url + `/increase/backtracking/${id}?srcNode=${srcId}&tgtNode=${tgtId}`, params)
   }
 }
-export { TaskAPI }
+export { SubTask }

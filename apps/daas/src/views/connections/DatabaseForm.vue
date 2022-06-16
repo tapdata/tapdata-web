@@ -103,7 +103,6 @@
 </template>
 
 <script>
-import factory from '@/api/factory'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -111,8 +110,7 @@ import VIcon from '@/components/VIcon'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 import GitBook from '@/components/GitBook'
-
-const connectionsModel = factory('connections')
+import { ConnectionsApi, DatabaseTypesApi, LogcollectorApi, pdkApi } from '@tap/api'
 
 export default {
   name: 'DatabaseForm',
@@ -171,105 +169,101 @@ export default {
   methods: {
     // 共享挖掘设置
     check() {
-      Promise.all([this.$api('logcollector').check(), this.$api('logcollector').getSystemConfig()]).then(
-        ([check, res]) => {
-          let verify = check?.data
-          let digSettingForm = res?.data
-          if (verify && !digSettingForm?.persistenceMongodb_uri_db) {
-            this.showSystemConfig = true
-            let config = {
-              persistenceMongodb_uri_db: {
-                type: 'string',
-                title: this.$t('share_form_setting_connection_name'),
-                'x-decorator': 'FormItem',
-                'x-component': 'Input',
-                'x-reactions': {
-                  dependencies: ['.shareCdcEnable'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] ? "visible" : "hidden"}}'
-                    }
+      Promise.all([LogcollectorApi.check(), LogcollectorApi.getSystemConfig()]).then(([check, res]) => {
+        let verify = check
+        let digSettingForm = res
+        if (verify && !digSettingForm?.persistenceMongodb_uri_db) {
+          this.showSystemConfig = true
+          let config = {
+            persistenceMongodb_uri_db: {
+              type: 'string',
+              title: this.$t('share_form_setting_connection_name'),
+              'x-decorator': 'FormItem',
+              'x-component': 'Input',
+              'x-reactions': {
+                dependencies: ['.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
                   }
                 }
-              },
-              persistenceMongodb_collection: {
-                type: 'string',
-                title: this.$t('share_form_setting_table_name'),
-                'x-decorator': 'FormItem',
-                'x-component': 'Input',
-                'x-reactions': {
-                  dependencies: ['.shareCdcEnable'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] ? "visible" : "hidden"}}'
-                    }
+              }
+            },
+            persistenceMongodb_collection: {
+              type: 'string',
+              title: this.$t('share_form_setting_table_name'),
+              'x-decorator': 'FormItem',
+              'x-component': 'Input',
+              'x-reactions': {
+                dependencies: ['.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
                   }
                 }
-              },
-              share_cdc_ttl_day: {
-                type: 'string',
-                title: this.$t('share_form_setting_log_time'),
-                'x-decorator': 'FormItem',
-                enum: [
-                  {
-                    label: 1 + this.$t('share_form_edit_day'),
-                    value: 1
-                  },
-                  {
-                    label: 2 + this.$t('share_form_edit_day'),
-                    value: 2
-                  },
-                  {
-                    label: 3 + this.$t('share_form_edit_day'),
-                    value: 3
-                  },
-                  {
-                    label: 4 + this.$t('share_form_edit_day'),
-                    value: 4
-                  },
-                  {
-                    label: 5 + this.$t('share_form_edit_day'),
-                    value: 5
-                  },
-                  {
-                    label: 6 + this.$t('share_form_edit_day'),
-                    value: 6
-                  },
-                  {
-                    label: 7 + this.$t('share_form_edit_day'),
-                    value: 7
-                  }
-                ],
-                'x-component': 'Select',
-                'x-reactions': {
-                  dependencies: ['.shareCdcEnable'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] ? "visible" : "hidden"}}'
-                    }
+              }
+            },
+            share_cdc_ttl_day: {
+              type: 'string',
+              title: this.$t('share_form_setting_log_time'),
+              'x-decorator': 'FormItem',
+              enum: [
+                {
+                  label: 1 + this.$t('share_form_edit_day'),
+                  value: 1
+                },
+                {
+                  label: 2 + this.$t('share_form_edit_day'),
+                  value: 2
+                },
+                {
+                  label: 3 + this.$t('share_form_edit_day'),
+                  value: 3
+                },
+                {
+                  label: 4 + this.$t('share_form_edit_day'),
+                  value: 4
+                },
+                {
+                  label: 5 + this.$t('share_form_edit_day'),
+                  value: 5
+                },
+                {
+                  label: 6 + this.$t('share_form_edit_day'),
+                  value: 6
+                },
+                {
+                  label: 7 + this.$t('share_form_edit_day'),
+                  value: 7
+                }
+              ],
+              'x-component': 'Select',
+              'x-reactions': {
+                dependencies: ['.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
                   }
                 }
               }
             }
-            this.schemaData.properties.__TAPDATA_END.properties = Object.assign(
-              {},
-              this.schemaData.properties.__TAPDATA_END.properties,
-              config
-            )
           }
+          this.schemaData.properties.__TAPDATA_END.properties = Object.assign(
+            {},
+            this.schemaData.properties.__TAPDATA_END.properties,
+            config
+          )
         }
-      )
+      })
     },
     //保存全局挖掘设置
     saveSetting(digSettingForm) {
-      this.$api('logcollector')
-        .patchSystemConfig(digSettingForm)
-        .then(res => {
-          if (res) {
-            this.settingDialogVisible = false
-            this.$message.success('保存全局设置成功')
-          }
-        })
+      LogcollectorApi.patchSystemConfig(digSettingForm).then(res => {
+        if (res) {
+          this.settingDialogVisible = false
+          this.$message.success('保存全局设置成功')
+        }
+      })
     },
     goBack() {
       let msg = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
@@ -337,7 +331,7 @@ export default {
         if (!params.id) {
           params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
         }
-        connectionsModel[params.id ? 'patchId' : 'post'](params)
+        ConnectionsApi[params.id ? 'patchId' : 'post'](params)
           .then(() => {
             this.$message.success(this.$t('message.saveOK'))
             if (this.$route.query.step) {
@@ -413,8 +407,7 @@ export default {
             id: this.model.id,
             submit: true
           }
-          this.$api('connections')
-            .patchId(params)
+          ConnectionsApi.patchId(params)
             .then(() => {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
@@ -451,113 +444,109 @@ export default {
     },
     getPdkForm() {
       const pdkHash = this.$route.query?.pdkHash
-      this.$api('DatabaseTypes')
-        .pdkHash(pdkHash)
-        .then(({ data }) => {
-          let id = this.id || this.$route.params.id
-          this.pdkOptions = data
-          let result = {
-            type: 'object',
-            'x-component-props': {
-              width: 500
-            },
-            properties: {
-              __TAPDATA_START: {
-                type: 'object',
-                'x-index': 0,
-                properties: {
-                  name: {
-                    type: 'string',
-                    title: this.$t('connection_form_connection_name'),
-                    required: true,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Input'
-                  },
-                  connection_type: {
-                    type: 'string',
-                    title: this.$t('connection_form_connection_type'),
-                    required: true,
-                    default: 'source_and_target',
-                    enum: [
-                      {
-                        label: this.$t('connection_form_source_and_target'),
-                        value: 'source_and_target',
-                        tip: this.$t('connection_form_source_and_target_tip')
-                      },
-                      {
-                        label: this.$t('connection_form_source'),
-                        value: 'source',
-                        tip: this.$t('connection_form_source_tip')
-                      },
-                      {
-                        label: this.$t('connection_form_target'),
-                        value: 'target',
-                        tip: this.$t('connection_form_target_tip')
-                      }
-                    ],
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Radio.Group',
-                    'x-component-props': {
-                      optionType: 'button'
+      DatabaseTypesApi.pdkHash(pdkHash).then(res => {
+        let id = this.id || this.$route.params.id
+        this.pdkOptions = res
+        let result = {
+          type: 'object',
+          'x-component-props': {
+            width: 500
+          },
+          properties: {
+            __TAPDATA_START: {
+              type: 'object',
+              'x-index': 0,
+              properties: {
+                name: {
+                  type: 'string',
+                  title: this.$t('connection_form_connection_name'),
+                  required: true,
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input'
+                },
+                connection_type: {
+                  type: 'string',
+                  title: this.$t('connection_form_connection_type'),
+                  required: true,
+                  default: 'source_and_target',
+                  enum: [
+                    {
+                      label: this.$t('connection_form_source_and_target'),
+                      value: 'source_and_target',
+                      tip: this.$t('connection_form_source_and_target_tip')
+                    },
+                    {
+                      label: this.$t('connection_form_source'),
+                      value: 'source',
+                      tip: this.$t('connection_form_source_tip')
+                    },
+                    {
+                      label: this.$t('connection_form_target'),
+                      value: 'target',
+                      tip: this.$t('connection_form_target_tip')
                     }
+                  ],
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Radio.Group',
+                  'x-component-props': {
+                    optionType: 'button'
                   }
                 }
-              },
-              ...(data?.properties?.connection?.properties || {}),
-              __TAPDATA_END: {
-                type: 'object',
-                'x-index': 1000000,
-                properties: {
-                  table_filter: {
-                    type: 'string',
-                    title: this.$t('connection_form_table_filter'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Input.TextArea',
-                    'x-component-props': {
-                      placeholder: this.$t('connection_form_database_owner_tip')
-                    }
-                  },
-                  shareCdcEnable: {
-                    type: 'boolean',
-                    default: false,
-                    title: this.$t('connection_form_shared_mining'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Switch',
-                    'x-component-props': {
-                      placeholder: this.$t('connection_form_shared_mining_tip')
-                    }
+              }
+            },
+            ...(res?.properties?.connection?.properties || {}),
+            __TAPDATA_END: {
+              type: 'object',
+              'x-index': 1000000,
+              properties: {
+                table_filter: {
+                  type: 'string',
+                  title: this.$t('connection_form_table_filter'),
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input.TextArea',
+                  'x-component-props': {
+                    placeholder: this.$t('connection_form_database_owner_tip')
+                  }
+                },
+                shareCdcEnable: {
+                  type: 'boolean',
+                  default: false,
+                  title: this.$t('connection_form_shared_mining'),
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Switch',
+                  'x-component-props': {
+                    placeholder: this.$t('connection_form_shared_mining_tip')
                   }
                 }
               }
             }
           }
-          if (id) {
-            this.getPdkData(id)
-            delete result.properties.__TAPDATA_START.properties.name
-          }
-          //this.showSystemConfig = true
-          this.schemaData = result
-          this.loadingFrom = false
-        })
+        }
+        if (id) {
+          this.getPdkData(id)
+          delete result.properties.__TAPDATA_START.properties.name
+        }
+        //this.showSystemConfig = true
+        this.schemaData = result
+        this.loadingFrom = false
+      })
     },
     getPdkData(id) {
-      this.$api('connections')
-        .getNoSchema(id)
-        .then(res => {
-          this.model = res.data
-          let { name, connection_type, table_filter } = this.model
-          this.schemaFormInstance.setValues({
-            __TAPDATA_START: {
-              name,
-              connection_type
-            },
-            __TAPDATA_END: {
-              table_filter
-            },
-            ...this.model?.config
-          })
-          this.renameData.rename = this.model.name
+      ConnectionsApi.getNoSchema(id).then(res => {
+        this.model = res
+        let { name, connection_type, table_filter } = this.model
+        this.schemaFormInstance.setValues({
+          __TAPDATA_START: {
+            name,
+            connection_type
+          },
+          __TAPDATA_END: {
+            table_filter
+          },
+          ...this.model?.config
         })
+        this.renameData.rename = this.model.name
+      })
     },
     getConnectionIcon() {
       const { pdkHash } = this.$route.query || {}
@@ -565,11 +554,9 @@ export default {
     },
     getPdkDoc() {
       const { pdkHash } = this.$route.query || {}
-      this.$api('Pdk')
-        .doc(pdkHash)
-        .then(res => {
-          this.doc = res.data
-        })
+      pdkApi.doc(pdkHash).then(res => {
+        this.doc = res?.data
+      })
     }
   }
 }
