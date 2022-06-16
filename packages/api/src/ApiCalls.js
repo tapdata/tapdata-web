@@ -1,12 +1,6 @@
-/**
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 2/27/20
- * @description
- */
-import PublicAPI from './publicApi'
-import axios from '@/plugins/axios'
-export default class ApiCalls extends PublicAPI {
+import Http from './http'
+
+export default class ApiCalls extends Http {
   constructor() {
     super('/api/ApiCalls')
   }
@@ -19,3 +13,4 @@ export default class ApiCalls extends PublicAPI {
     return axios.get(this.url + '/getAllResponseCode', { params })
   }
 }
+export { ApiCalls }
