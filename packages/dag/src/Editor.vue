@@ -71,7 +71,6 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <EmptyItem></EmptyItem>
           </div>
-          <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
           <NodePopover
             :popover="nodeMenu"
             @click-node="handleClickNodePopover"
@@ -86,14 +85,12 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSidebar from './components/LeftSidebar'
 import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
-import { connectorActiveStyle } from './style'
-import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
+import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
@@ -101,26 +98,12 @@ import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
 import { uuid } from '@tap/shared'
 import { Task } from '@tap/api'
-import {
-  AddConnectionCommand,
-  AddNodeCommand,
-  AddNodeOnConnectionCommand,
-  CommandManager,
-  MoveNodeCommand,
-  QuickAddTargetCommand,
-  RemoveConnectionCommand,
-  RemoveNodeCommand
-} from './command'
-import Mousetrap from 'mousetrap'
+import { AddNodeOnConnectionCommand, MoveNodeCommand } from './command'
 import dagre from 'dagre'
-import { validateBySchema } from '@tap/form/src/shared/validate'
-import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
-// import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
-import { getSubTaskStatus, getTaskBtnDisabled } from '@tap/business'
 import editor from './mixins/editor'
 
 const taskApi = new Task()
@@ -133,7 +116,6 @@ export default {
   components: {
     NodePopover,
     EmptyItem,
-    // PaperEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,
