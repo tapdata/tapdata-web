@@ -104,8 +104,8 @@ textarea::-webkit-input-placeholder {
 }
 .status-active,
 .status-activated {
-  color: #178061 ;
-  background-color: #C4F3CB;
+  color: #178061;
+  background-color: #c4f3cb;
 }
 .status-edit {
   color: #0083c7;
@@ -200,4 +200,72 @@ textarea::-webkit-input-placeholder {
 .message-button-cancel:hover {
   background-color: map-get($bgColor, white);
   border: 1px solid #2c65ff;
+}
+
+.markdown-body-wrap .markdown-body {
+  h2 {
+    font-size: 18px;
+    margin: 1em 0 15px;
+    padding-top: 0.8em;
+    padding-bottom: 0.8em;
+  }
+  h3 {
+    font-size: 14px;
+    margin: 22px 0 16px;
+  }
+  h4 {
+    font-size: 13px;
+    margin: 20px 0 16px;
+  }
+  h5 {
+    font-size: 12px;
+    margin: 16px 0 16px;
+    font-weight: 700;
+  }
+  p {
+    font-size: 12px;
+    line-height: 24px;
+    color: map-get($fontColor, light);
+    margin-top: 0px;
+    margin: 8px 0;
+    margin: 14px 0 14px;
+  }
+  pre {
+    background-color: map-get($bgColor, hover);
+    margin-bottom: 8px;
+    margin-top: 8px;
+    margin: 12px 0 12px;
+  }
+  blockquote {
+    margin-bottom: 8px;
+    margin-top: 8px;
+    margin: 14px 0 14px;
+    background-color: map-get($bgColor, hover);
+    padding: 16px 16px;
+  }
+  tr {
+    background-color: map-get($bgColor, main);
+  }
+  code {
+    background-color: map-get($bgColor, hover);
+  }
+  ul,
+  ol,
+  li {
+    list-style: unset;
+    font-size: 12px;
+    line-height: 20px;
+    color: map-get($fontColor, main);
+    margin-top: 0px;
+    margin: 8px 0;
+  }
+  blockquote {
+    border-color: map-get($color, primary);
+  }
+  table {
+    display: table;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
 }

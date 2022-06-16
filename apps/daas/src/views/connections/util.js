@@ -1,5 +1,4 @@
 import Cookie from '@tap/shared/src/cookie'
-import { getConnectionTypeDialogImg } from 'web-core/util'
 
 /**
  * @author lg<lirufei0808@gmail.com>

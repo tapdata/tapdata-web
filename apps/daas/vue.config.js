@@ -125,10 +125,18 @@ module.exports = {
         ]
       })
       .end()
+
+    // ============ ts处理 ============
+    config.module
+      .rule('compile')
+      .test(/\.(jsx|tsx|ts)$/)
+      .use('babel')
+      .loader('babel-loader')
+      .end()
   },
   configureWebpack: config => {
     // 尽量保证项目中文件后缀的精确
-    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json']
+    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
 
     if (process.env.NODE_ENV === 'production') {
       // gzip

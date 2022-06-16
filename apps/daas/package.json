@@ -45,6 +45,7 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@babel/plugin-transform-typescript": "^7.18.4",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
@@ -53,6 +54,7 @@
     "@vue/composition-api": "^1.6.2",
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.5",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "babel-plugin-lodash": "^3.3.4",
     "compression-webpack-plugin": "~5.0.1",
