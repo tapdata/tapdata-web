@@ -17,7 +17,8 @@
     "apps/daas/src/**/*.tsx",
     "apps/daas/src/**/*.vue",
     "apps/daas/tests/**/*.ts",
-    "apps/daas/tests/**/*.tsx"
+    "apps/daas/tests/**/*.tsx",
+    "packages/api/src/*.ts"
   ],
   "exclude": ["node_modules"]
 }

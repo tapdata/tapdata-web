@@ -331,6 +331,7 @@ export default {
     },
     value: Array
   },
+  inject: ['checkAgent'],
   data() {
     return {
       stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
@@ -507,7 +508,7 @@ export default {
     },
     //重新加载模型
     async reload() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         let config = {
           title: this.$t('connection_reload_schema_confirm_title'),
           Message: this.$t('connection_reload_schema_confirm_msg')

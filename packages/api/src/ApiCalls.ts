@@ -6,11 +6,11 @@ export default class ApiCalls extends Http {
   }
 
   getAllMethod(params) {
-    return axios.get(this.url + '/getAllMethod', { params })
+    return this.axios.get(this.url + '/getAllMethod', { params })
   }
 
   getAllResponseCode(params) {
-    return axios.get(this.url + '/getAllResponseCode', { params })
+    return this.axios.get(this.url + '/getAllResponseCode', { params })
   }
 }
 export { ApiCalls }

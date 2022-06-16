@@ -1,7 +1,10 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 
 const CancelToken = axios.CancelToken
 export default class Http {
+  url: string
+  axios: AxiosInstance
+
   constructor(url) {
     this.url = url
     this.axios = axios

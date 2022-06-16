@@ -1,7 +1,7 @@
 import Http from './http'
-export default class InspectAPI extends Http {
+export default class InspectDetailsAPI extends Http {
   constructor() {
     super('/api/InspectDetails')
   }
 }
-export { InspectAPI }
+export { InspectDetailsAPI }

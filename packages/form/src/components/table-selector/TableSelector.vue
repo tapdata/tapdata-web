@@ -345,6 +345,7 @@
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
+import { WorkerAPI } from '@tap/api'
 
 export default {
   components: { RecycleScroller, OverflowTooltip },
@@ -535,7 +536,11 @@ export default {
     },
     //重新加载模型
     async reload() {
-      this.$root.checkAgent(() => {
+      const workerApi = new WorkerAPI()
+      const data = await workerApi.getAvailableAgent()
+      if (!data?.result?.length) {
+        this.$message.error(this.$t('agent_check_error'))
+      } else {
         let config = {
           title: this.$t('connection_reload_schema_confirm_title'),
           Message: this.$t('connection_reload_schema_confirm_msg')
@@ -550,7 +555,7 @@ export default {
             this.testSchema()
           }
         })
-      })
+      }
     },
     //请求测试连接并获取进度
     testSchema() {

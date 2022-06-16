@@ -56,7 +56,7 @@ export * from './TimeStamp'
 export * from './UserGroup'
 export * from './UserLogs'
 export * from './validationResults'
-export * from './Workers'
+export * from './Workers.ts'
 
 export { CancelToken }
 

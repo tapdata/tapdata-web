@@ -28,6 +28,7 @@ importers:
       prettier: ^2.2.1
       sass: ^1.34.1
       sass-loader: ^10.2.0
+      tslib: ^2.4.0
       vue: ^2.6.14
       vue-router: ^3.2.0
     dependencies:
@@ -46,6 +47,7 @@ importers:
       prettier: registry.npmmirror.com/prettier/2.6.2
       sass: registry.npmmirror.com/sass/1.52.1
       sass-loader: registry.npmmirror.com/sass-loader/10.2.1_sass@1.52.1
+      tslib: registry.npmmirror.com/tslib/2.4.0
 
   apps/daas:
     specifiers:
@@ -140,21 +142,21 @@ importers:
     devDependencies:
       '@babel/plugin-transform-typescript': registry.npmmirror.com/@babel/plugin-transform-typescript/7.18.4
       '@vue/cli-plugin-babel': registry.npmmirror.com/@vue/cli-plugin-babel/4.5.17_35f0b1f30f9cd58cccd59daefb36f3da
-      '@vue/cli-plugin-eslint': registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.17_66e28910525a36c0b6c9f5a4d333c57c
+      '@vue/cli-plugin-eslint': registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.17_@vue+cli-service@4.5.17
       '@vue/cli-plugin-router': registry.npmmirror.com/@vue/cli-plugin-router/4.5.17_@vue+cli-service@4.5.17
       '@vue/cli-plugin-vuex': registry.npmmirror.com/@vue/cli-plugin-vuex/4.5.17_@vue+cli-service@4.5.17
       '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_bd35ede954b13d40bce924b0d62135a8
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.6.2_vue@2.6.14
-      '@vue/eslint-config-prettier': registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0_e0662012f150bb5684e22d64f94e3ff8
-      babel-eslint: registry.npmmirror.com/babel-eslint/10.1.0_eslint@6.8.0
+      '@vue/eslint-config-prettier': registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0_eslint-plugin-prettier@3.4.1
+      babel-eslint: registry.npmmirror.com/babel-eslint/10.1.0
       babel-loader: registry.npmmirror.com/babel-loader/8.2.5
       babel-plugin-dynamic-import-node: registry.npmmirror.com/babel-plugin-dynamic-import-node/2.3.3
       babel-plugin-lodash: registry.npmmirror.com/babel-plugin-lodash/3.3.4
       compression-webpack-plugin: registry.npmmirror.com/compression-webpack-plugin/5.0.2
       cross-env: registry.npmmirror.com/cross-env/7.0.3
       css-unicode-loader: registry.npmmirror.com/css-unicode-loader/1.0.3
-      eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1_eslint@6.8.0+prettier@2.6.2
-      eslint-plugin-vue: registry.npmmirror.com/eslint-plugin-vue/6.2.2_eslint@6.8.0
+      eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1
+      eslint-plugin-vue: registry.npmmirror.com/eslint-plugin-vue/6.2.2
       express: registry.npmmirror.com/express/4.18.1
       express-ws: registry.npmmirror.com/express-ws/4.0.0_express@4.18.1
       html-loader: registry.npmmirror.com/html-loader/1.3.2
@@ -2878,7 +2880,7 @@ packages:
     dependencies:
       '@babel/core': registry.npmmirror.com/@babel/core/7.18.0
       '@vue/babel-preset-app': registry.npmmirror.com/@vue/babel-preset-app/4.5.17_vue@2.6.14
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_bd35ede954b13d40bce924b0d62135a8
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_2b50be06b5fb1b72c53517f2d8ffe927
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.17
       babel-loader: registry.npmmirror.com/babel-loader/8.2.5_f4a88f85e288be9bff187970542559ba
       cache-loader: registry.npmmirror.com/cache-loader/4.1.0_webpack@4.46.0
@@ -2900,10 +2902,32 @@ packages:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
       eslint: '>= 1.6.0 < 7.0.0'
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_bd35ede954b13d40bce924b0d62135a8
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_2b50be06b5fb1b72c53517f2d8ffe927
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.17
       eslint: registry.npmmirror.com/eslint/6.8.0
       eslint-loader: registry.npmmirror.com/eslint-loader/2.2.1_eslint@6.8.0+webpack@4.46.0
+      globby: registry.npmmirror.com/globby/9.2.0
+      inquirer: registry.npmmirror.com/inquirer/7.3.3
+      webpack: registry.npmmirror.com/webpack/4.46.0
+      yorkie: registry.npmmirror.com/yorkie/2.0.0
+    transitivePeerDependencies:
+      - supports-color
+      - webpack-cli
+      - webpack-command
+    dev: true
+
+  registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.17_@vue+cli-service@4.5.17:
+    resolution: {integrity: sha512-bVNDP+SuWcuJrBMc+JLaKvlxx25XKIlZBa+zzFnxhHZlwPZ7CeBD3e2wnsygJyPoKgDZcZwDgmEz1BZzMEjsNw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/cli-plugin-eslint/-/cli-plugin-eslint-4.5.17.tgz}
+    id: registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.17
+    name: '@vue/cli-plugin-eslint'
+    version: 4.5.17
+    peerDependencies:
+      '@vue/cli-service': ^3.0.0 || ^4.0.0-0
+      eslint: '>= 1.6.0 < 7.0.0'
+    dependencies:
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_bd35ede954b13d40bce924b0d62135a8
+      '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.17
+      eslint-loader: registry.npmmirror.com/eslint-loader/2.2.1_webpack@4.46.0
       globby: registry.npmmirror.com/globby/9.2.0
       inquirer: registry.npmmirror.com/inquirer/7.3.3
       webpack: registry.npmmirror.com/webpack/4.46.0
@@ -2922,7 +2946,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_bd35ede954b13d40bce924b0d62135a8
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_2b50be06b5fb1b72c53517f2d8ffe927
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.17
     dev: true
 
@@ -2934,7 +2958,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_bd35ede954b13d40bce924b0d62135a8
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.17_2b50be06b5fb1b72c53517f2d8ffe927
     dev: true
 
   registry.npmmirror.com/@vue/cli-service/4.5.17_2b50be06b5fb1b72c53517f2d8ffe927:
@@ -3357,6 +3381,20 @@ packages:
       eslint-config-prettier: registry.npmmirror.com/eslint-config-prettier/6.15.0_eslint@6.8.0
       eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1_eslint@6.8.0+prettier@2.6.2
       prettier: registry.npmmirror.com/prettier/2.6.2
+    dev: true
+
+  registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0_eslint-plugin-prettier@3.4.1:
+    resolution: {integrity: sha512-wFQmv45c3ige5EA+ngijq40YpVcIkAy0Lihupnsnd1Dao5CBbPyfCzqtejFLZX1EwH/kCJdpz3t6s+5wd3+KxQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/eslint-config-prettier/-/eslint-config-prettier-6.0.0.tgz}
+    id: registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0
+    name: '@vue/eslint-config-prettier'
+    version: 6.0.0
+    peerDependencies:
+      eslint: '>= 5.0.0'
+      eslint-plugin-prettier: ^3.1.0
+      prettier: '>= 1.13.0'
+    dependencies:
+      eslint-config-prettier: registry.npmmirror.com/eslint-config-prettier/6.15.0
+      eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1
     dev: true
 
   registry.npmmirror.com/@vue/preload-webpack-plugin/1.1.2_502c618fc8a7d35df07e93275324a2d0:
@@ -4067,6 +4105,25 @@ packages:
       - debug
     dev: false
 
+  registry.npmmirror.com/babel-eslint/10.1.0:
+    resolution: {integrity: sha512-ifWaTHQ0ce+448CYop8AdrQiBsGrnC+bMgfyKFdi6EsPLTAWG+QfyDeM6OH+FmWnKvEq5NnBMLvlBUPKQZoDSg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/babel-eslint/-/babel-eslint-10.1.0.tgz}
+    name: babel-eslint
+    version: 10.1.0
+    engines: {node: '>=6'}
+    deprecated: babel-eslint is now @babel/eslint-parser. This package will no longer receive updates.
+    peerDependencies:
+      eslint: '>= 4.12.1'
+    dependencies:
+      '@babel/code-frame': registry.npmmirror.com/@babel/code-frame/7.16.7
+      '@babel/parser': registry.npmmirror.com/@babel/parser/7.18.0
+      '@babel/traverse': registry.npmmirror.com/@babel/traverse/7.18.0
+      '@babel/types': registry.npmmirror.com/@babel/types/7.18.0
+      eslint-visitor-keys: registry.npmmirror.com/eslint-visitor-keys/1.3.0
+      resolve: registry.npmmirror.com/resolve/1.22.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   registry.npmmirror.com/babel-eslint/10.1.0_eslint@6.8.0:
     resolution: {integrity: sha512-ifWaTHQ0ce+448CYop8AdrQiBsGrnC+bMgfyKFdi6EsPLTAWG+QfyDeM6OH+FmWnKvEq5NnBMLvlBUPKQZoDSg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/babel-eslint/-/babel-eslint-10.1.0.tgz}
     id: registry.npmmirror.com/babel-eslint/10.1.0
@@ -4617,7 +4674,7 @@ packages:
       mississippi: registry.npmmirror.com/mississippi/3.0.0
       mkdirp: registry.npmmirror.com/mkdirp/0.5.6
       move-concurrently: registry.npmmirror.com/move-concurrently/1.0.1
-      promise-inflight: registry.npmmirror.com/promise-inflight/1.0.1
+      promise-inflight: registry.npmmirror.com/promise-inflight/1.0.1_bluebird@3.7.2
       rimraf: registry.npmmirror.com/rimraf/2.7.1
       ssri: registry.npmmirror.com/ssri/6.0.2
       unique-filename: registry.npmmirror.com/unique-filename/1.1.1
@@ -6885,6 +6942,17 @@ packages:
     engines: {node: '>=0.8.0'}
     dev: true
 
+  registry.npmmirror.com/eslint-config-prettier/6.15.0:
+    resolution: {integrity: sha512-a1+kOYLR8wMGustcgAjdydMsQ2A/2ipRPwRKUmfYaSxc9ZPcrku080Ctl6zrZzZNs/U82MjSv+qKREkoq3bJaw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-config-prettier/-/eslint-config-prettier-6.15.0.tgz}
+    name: eslint-config-prettier
+    version: 6.15.0
+    hasBin: true
+    peerDependencies:
+      eslint: '>=3.14.1'
+    dependencies:
+      get-stdin: registry.npmmirror.com/get-stdin/6.0.0
+    dev: true
+
   registry.npmmirror.com/eslint-config-prettier/6.15.0_eslint@6.8.0:
     resolution: {integrity: sha512-a1+kOYLR8wMGustcgAjdydMsQ2A/2ipRPwRKUmfYaSxc9ZPcrku080Ctl6zrZzZNs/U82MjSv+qKREkoq3bJaw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-config-prettier/-/eslint-config-prettier-6.15.0.tgz}
     id: registry.npmmirror.com/eslint-config-prettier/6.15.0
@@ -6917,6 +6985,40 @@ packages:
       webpack: registry.npmmirror.com/webpack/4.46.0
     dev: true
 
+  registry.npmmirror.com/eslint-loader/2.2.1_webpack@4.46.0:
+    resolution: {integrity: sha512-RLgV9hoCVsMLvOxCuNjdqOrUqIj9oJg8hF44vzJaYqsAHuY9G2YAeN3joQ9nxP0p5Th9iFSIpKo+SD8KISxXRg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-loader/-/eslint-loader-2.2.1.tgz}
+    id: registry.npmmirror.com/eslint-loader/2.2.1
+    name: eslint-loader
+    version: 2.2.1
+    deprecated: This loader has been deprecated. Please use eslint-webpack-plugin
+    peerDependencies:
+      eslint: '>=1.6.0 <7.0.0'
+      webpack: '>=2.0.0 <5.0.0'
+    dependencies:
+      loader-fs-cache: registry.npmmirror.com/loader-fs-cache/1.0.3
+      loader-utils: registry.npmmirror.com/loader-utils/1.4.0
+      object-assign: registry.npmmirror.com/object-assign/4.1.1
+      object-hash: registry.npmmirror.com/object-hash/1.3.1
+      rimraf: registry.npmmirror.com/rimraf/2.7.1
+      webpack: registry.npmmirror.com/webpack/4.46.0
+    dev: true
+
+  registry.npmmirror.com/eslint-plugin-prettier/3.4.1:
+    resolution: {integrity: sha512-htg25EUYUeIhKHXjOinK4BgCcDwtLHjqaxCDsMy5nbnUMkKFvIhMVCp+5GFUXQ4Nr8lBsPqtGAqBenbpFqAA2g==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.4.1.tgz}
+    name: eslint-plugin-prettier
+    version: 3.4.1
+    engines: {node: '>=6.0.0'}
+    peerDependencies:
+      eslint: '>=5.0.0'
+      eslint-config-prettier: '*'
+      prettier: '>=1.13.0'
+    peerDependenciesMeta:
+      eslint-config-prettier:
+        optional: true
+    dependencies:
+      prettier-linter-helpers: registry.npmmirror.com/prettier-linter-helpers/1.0.0
+    dev: true
+
   registry.npmmirror.com/eslint-plugin-prettier/3.4.1_eslint@6.8.0+prettier@2.6.2:
     resolution: {integrity: sha512-htg25EUYUeIhKHXjOinK4BgCcDwtLHjqaxCDsMy5nbnUMkKFvIhMVCp+5GFUXQ4Nr8lBsPqtGAqBenbpFqAA2g==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.4.1.tgz}
     id: registry.npmmirror.com/eslint-plugin-prettier/3.4.1
@@ -6934,6 +7036,21 @@ packages:
       eslint: registry.npmmirror.com/eslint/6.8.0
       prettier: registry.npmmirror.com/prettier/2.6.2
       prettier-linter-helpers: registry.npmmirror.com/prettier-linter-helpers/1.0.0
+    dev: true
+
+  registry.npmmirror.com/eslint-plugin-vue/6.2.2:
+    resolution: {integrity: sha512-Nhc+oVAHm0uz/PkJAWscwIT4ijTrK5fqNqz9QB1D35SbbuMG1uB6Yr5AJpvPSWg+WOw7nYNswerYh0kOk64gqQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-plugin-vue/-/eslint-plugin-vue-6.2.2.tgz}
+    name: eslint-plugin-vue
+    version: 6.2.2
+    engines: {node: '>=8.10'}
+    peerDependencies:
+      eslint: ^5.0.0 || ^6.0.0
+    dependencies:
+      natural-compare: registry.npmmirror.com/natural-compare/1.4.0
+      semver: registry.npmmirror.com/semver/5.7.1
+      vue-eslint-parser: registry.npmmirror.com/vue-eslint-parser/7.11.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.npmmirror.com/eslint-plugin-vue/6.2.2_eslint@6.8.0:
@@ -7746,6 +7863,22 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  registry.npmmirror.com/follow-redirects/1.15.0_debug@4.3.4:
+    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.0.tgz}
+    id: registry.npmmirror.com/follow-redirects/1.15.0
+    name: follow-redirects
+    version: 1.15.0
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: registry.npmmirror.com/debug/4.3.4
+    dev: true
 
   registry.npmmirror.com/for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/for-in/-/for-in-1.0.2.tgz}
@@ -8616,7 +8749,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: registry.npmmirror.com/eventemitter3/4.0.7
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.0
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.0_debug@4.3.4
       requires-port: registry.npmmirror.com/requires-port/1.0.0
     transitivePeerDependencies:
       - debug
@@ -12184,7 +12317,7 @@ packages:
     dev: true
 
   registry.npmmirror.com/prettier/2.6.2:
-    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/prettier/-/prettier-2.6.2.tgz}
+    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/prettier/-/prettier-2.6.2.tgz}
     name: prettier
     version: 2.6.2
     engines: {node: '>=10.13.0'}
@@ -12229,6 +12362,20 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
+
+  registry.npmmirror.com/promise-inflight/1.0.1_bluebird@3.7.2:
+    resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/promise-inflight/-/promise-inflight-1.0.1.tgz}
+    id: registry.npmmirror.com/promise-inflight/1.0.1
+    name: promise-inflight
+    version: 1.0.1
+    peerDependencies:
+      bluebird: '*'
+    peerDependenciesMeta:
+      bluebird:
+        optional: true
+    dependencies:
+      bluebird: registry.npmmirror.com/bluebird/3.7.2
     dev: true
 
   registry.npmmirror.com/proxy-addr/2.0.7:
@@ -14343,7 +14490,7 @@ packages:
     dev: true
 
   registry.npmmirror.com/tslib/1.14.1:
-    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-1.14.1.tgz}
+    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-1.14.1.tgz}
     name: tslib
     version: 1.14.1
     dev: true
@@ -14355,7 +14502,7 @@ packages:
     dev: false
 
   registry.npmmirror.com/tslib/2.4.0:
-    resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-2.4.0.tgz}
+    resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-2.4.0.tgz}
     name: tslib
     version: 2.4.0
 
@@ -14910,6 +15057,25 @@ packages:
       vue: registry.npmmirror.com/vue/2.6.14
       vue-demi: registry.npmmirror.com/vue-demi/0.12.5_15c6fb5f1023fd6e78cda31fffe52e59
     dev: false
+
+  registry.npmmirror.com/vue-eslint-parser/7.11.0:
+    resolution: {integrity: sha512-qh3VhDLeh773wjgNTl7ss0VejY9bMMa0GoDG2fQVyDzRFdiU3L7fw74tWZDHNQXdZqxO3EveQroa9ct39D2nqg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-eslint-parser/-/vue-eslint-parser-7.11.0.tgz}
+    name: vue-eslint-parser
+    version: 7.11.0
+    engines: {node: '>=8.10'}
+    peerDependencies:
+      eslint: '>=5.0.0'
+    dependencies:
+      debug: registry.npmmirror.com/debug/4.3.4
+      eslint-scope: registry.npmmirror.com/eslint-scope/5.1.1
+      eslint-visitor-keys: registry.npmmirror.com/eslint-visitor-keys/1.3.0
+      espree: registry.npmmirror.com/espree/6.2.1
+      esquery: registry.npmmirror.com/esquery/1.4.0
+      lodash: registry.npmmirror.com/lodash/4.17.21
+      semver: registry.npmmirror.com/semver/6.3.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   registry.npmmirror.com/vue-eslint-parser/7.11.0_eslint@6.8.0:
     resolution: {integrity: sha512-qh3VhDLeh773wjgNTl7ss0VejY9bMMa0GoDG2fQVyDzRFdiU3L7fw74tWZDHNQXdZqxO3EveQroa9ct39D2nqg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-eslint-parser/-/vue-eslint-parser-7.11.0.tgz}
