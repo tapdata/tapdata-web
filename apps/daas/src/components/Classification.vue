@@ -85,11 +85,8 @@
 </template>
 
 <script>
-import factory from '../api/factory'
 import VIcon from '@/components/VIcon'
-
-const MetadataDefinitions = factory('MetadataDefinitions')
-const UserGroupModel = factory('UserGroup')
+import { MetadataDefinitionsApi, UserGroupsApi } from '@tap/api'
 
 export default {
   components: { VIcon },
@@ -185,7 +182,7 @@ export default {
         where
       }
       if (this.types[0] === 'user') {
-        UserGroupModel.get({
+        UserGroupsApi.get({
           filter: JSON.stringify({
             limit: 999
           })
@@ -209,7 +206,7 @@ export default {
           }
         })
       } else {
-        MetadataDefinitions.get({
+        MetadataDefinitionsApi.get({
           filter: JSON.stringify(filter)
         }).then(res => {
           if (res?.items) {
@@ -224,7 +221,7 @@ export default {
       //   filter: {}
       // }
       if (this.types[0] === 'user') {
-        UserGroupModel.get({
+        UserGroupsApi.get({
           filter: JSON.stringify({
             limit: 999
           })
@@ -246,7 +243,7 @@ export default {
           }
         })
       } else {
-        MetadataDefinitions.get().then(res => {
+        MetadataDefinitionsApi.get().then(res => {
           if (res?.items) {
             // this.treeData = this.formatData(res.data);
             cb && cb(res?.items || [])
@@ -357,7 +354,7 @@ export default {
           params.parent_id = id
           params.parent_gid = gid
         }
-        UserGroupModel[method](params).then(res => {
+        UserGroupsApi[method](params).then(res => {
           let self = this
           if (res.data) {
             self.getData(() => {
@@ -379,7 +376,7 @@ export default {
         } else if (id) {
           params.parent_id = id
         }
-        MetadataDefinitions[method](params).then(res => {
+        MetadataDefinitionsApi[method](params).then(res => {
           let self = this
           if (res.data) {
             self.getData(() => {
@@ -417,12 +414,12 @@ export default {
               gid: id
             }
           }
-          UserGroupModel.delete(params).then(() => {
+          UserGroupsApi.delete(params).then(() => {
             let self = this
             self.getData()
           })
         } else {
-          MetadataDefinitions.delete(id).then(() => {
+          MetadataDefinitionsApi.delete(id).then(() => {
             let self = this
             self.getData()
           })

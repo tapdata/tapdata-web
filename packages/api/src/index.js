@@ -33,6 +33,15 @@ const DataFlowsApi = new DataFlows()
 import JavascriptFunctions from './javascriptFunctions'
 const JavascriptFunctionsApi = new JavascriptFunctions()
 
+import MetadataInstances from './metadataInstances'
+const MetadataInstancesApi = new MetadataInstances()
+
+import MetadataDefinitions from './metadataDefinitions'
+const MetadataDefinitionsApi = new MetadataDefinitions()
+
+import UserGroups from './userGroup'
+const UserGroupsApi = new UserGroups()
+
 import file from './file'
 const fileApi = new file()
 
@@ -48,11 +57,14 @@ export {
   DataFlowInsightsApi,
   DataFlowsApi,
   JavascriptFunctionsApi,
-  fileApi
+  fileApi,
+  MetadataInstancesApi,
+  MetadataDefinitionsApi,
+  UserGroupsApi
 }
 export * from './databaseTypes'
 export * from './dataFlows'
-export * from './MetadataInstances'
+export * from './metadataInstances'
 export * from './task'
 export * from './Tcm'
 export * from './TypeMapping'
@@ -60,7 +72,7 @@ export * from './CustomNode'
 export * from './Cluster'
 export * from './Function'
 export * from './MetadataTransformer'
-export * from './MetadataDefinitions'
+export * from './metadataDefinitions'
 export * from './Users'
 export * from './Settings'
 export * from './ApiMonitor'
@@ -101,7 +113,7 @@ export * from './shareCache'
 export * from './subTask'
 export * from './TaskHistories'
 export * from './TimeStamp'
-export * from './UserGroup'
+export * from './userGroup'
 export * from './userLogs'
 export * from './validationResults'
 export * from './Workers.ts'

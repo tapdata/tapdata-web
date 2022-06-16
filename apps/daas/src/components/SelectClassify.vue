@@ -52,11 +52,8 @@
 </template>
 
 <script>
-import factory from '../api/factory'
 import Cookie from '@tap/shared/src/cookie'
-
-const MetadataDefinitions = factory('MetadataDefinitions')
-const UserGroupModel = factory('UserGroup')
+import { MetadataDefinitionsApi, UserGroupsApi } from '@tap/api'
 
 export default {
   name: 'SelectClassify',
@@ -101,7 +98,7 @@ export default {
       }
 
       if (this.types[0] === 'user') {
-        UserGroupModel.get({
+        UserGroupsApi.get({
           filter: JSON.stringify({
             limit: 999
           })
@@ -120,7 +117,7 @@ export default {
           }
         })
       } else {
-        MetadataDefinitions.get({
+        MetadataDefinitionsApi.get({
           filter: JSON.stringify(filter)
         }).then(res => {
           if (res?.items) {

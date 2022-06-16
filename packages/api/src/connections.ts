@@ -41,6 +41,9 @@ export default class Connections extends Http {
   getAllowDatabaseType() {
     return this.axios.get(`${this.url}/databaseType`).then(this.useData)
   }
+  findAll(filter) {
+    return this.axios.get(`${this.url}/findAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
+  }
 }
 
 export { Connections }
