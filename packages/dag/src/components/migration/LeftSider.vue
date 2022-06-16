@@ -18,9 +18,7 @@
         </div>
         <div class="flex-grow-1"></div>
         <div class="connection-tabs-extra">
-          <VIcon size="18" class="expand-icon click-btn mr-2 font-color-light" @click.stop="$emit('toggle-expand')"
-            >expand-list</VIcon
-          >
+          <VIcon size="24" class="click-btn mr-2 font-color-light" @click.stop="$emit('toggle-expand')">expand</VIcon>
         </div>
       </div>
 
@@ -36,8 +34,8 @@
           @click.native.stop
           @input="handleDBInput"
         >
-          <template #suffix>
-            <VIcon size="14" class="mr-1 h-100">magnify</VIcon>
+          <template #prefix>
+            <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
           </template>
         </ElInput>
       </div>
@@ -490,10 +488,6 @@ $hoverBg: #eef3ff;
 .layout-sidebar.--left {
   overflow: hidden;
   $headerH: 34px;
-
-  .expand-icon {
-    transform: rotate(180deg);
-  }
 
   .connection-tabs {
     position: relative;

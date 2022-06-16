@@ -47,8 +47,8 @@
         @add-node="handleAddNode"
         @toggle-expand="handleToggleExpand"
       />
-      <div v-show="!showLeftSider" class="sider-expand-wrap flex justify-center align-center shadow">
-        <VIcon size="18" class="font-color-light" @click.stop="handleToggleExpand">expand-list</VIcon>
+      <div v-show="!showLeftSider" class="sider-expand-wrap flex justify-center align-center shadow rotate-180">
+        <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
       <!--内容体-->
       <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
