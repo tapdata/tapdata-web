@@ -313,19 +313,6 @@ const mutations = {
     state.spaceKeyPressed = value
   },
 
-  setNodeViewOffsetPosition(state, data) {
-    state.nodeViewOffsetPosition = data.newOffset
-  },
-
-  // 加载所有节点类型
-  setNodeTypes(state, nodeTypes) {
-    Vue.set(state, 'nodeTypes', nodeTypes)
-  },
-
-  setCtorTypes(state, ctorTypes) {
-    Vue.set(state, 'ctorTypes', ctorTypes)
-  },
-
   addResourceIns(state, allResourceIns) {
     state.allResourceIns.push(...allResourceIns)
   },
