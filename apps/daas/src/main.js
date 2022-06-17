@@ -103,8 +103,7 @@ let init = settings => {
     render: h => h(App)
   })
 }
-const userApi = new Users()
-const settingsApi = new Settings()
+import { settingsApi, usersApi } from '@tap/api'
 settingsApi
   .get()
   .then(async data => {
@@ -114,7 +113,7 @@ settingsApi
     }
     if (token) {
       //无权限，说明是首次进入页面，重新请求后台获取
-      let user = await userApi.getInfo().catch(() => {
+      let user = await usersApi.getInfo().catch(() => {
         init(initData)
       })
       //权限存在则存入缓存并继续向下走

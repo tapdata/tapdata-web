@@ -141,8 +141,8 @@ export default {
       settingsApi
         .findOne('76')
         .then(res => {
-          if (res.value) {
-            let value = JSON.parse(res.value)
+          if (res?.data?.value) {
+            let value = JSON.parse(res.data?.value)
             this.runNotification = value.runNotification
             this.systemNotification = value.systemNotification
             this.agentNotification = value.agentNotification

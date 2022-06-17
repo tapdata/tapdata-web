@@ -93,6 +93,18 @@ const sharedCacheApi = new SharedCache()
 import Licenses from './Licenses'
 const licensesApi = new Licenses()
 
+import Inspect from './Inspects'
+const inspectApi = new Inspect()
+
+import InspectDetails from './InspectDetails'
+const inspectDetailsApi = new InspectDetails()
+
+import InspectResults from './InspectResults'
+const inspectResultsApi = new InspectResults()
+
+import TimeStamp from './TimeStamp'
+const timeStampApi = new TimeStamp()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -124,7 +136,11 @@ export {
   applicationApi,
   clusterApi,
   sharedCacheApi,
-  licensesApi
+  licensesApi,
+  inspectApi,
+  inspectDetailsApi,
+  inspectResultsApi,
+  timeStampApi
 }
 export * from './DatabaseTypes'
 export * from './DataFlows'

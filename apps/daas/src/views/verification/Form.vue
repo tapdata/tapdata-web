@@ -524,6 +524,7 @@ import { /*VCodeEditor,*/ JsEditor } from '@tap/component'
 
 import { DATA_NODE_TYPES } from '@/const.js'
 import GitBook from '@/components/GitBook'
+import { metadataInstancesApi, taskApi } from '@tap/api'
 
 export default {
   components: { MultiSelection, /*VCodeEditor,*/ JsEditor, GitBook },
@@ -631,7 +632,7 @@ export default {
         },
         syncType: 'migrate'
       }
-      this.$api('Task')
+      taskApi
         .get({
           filter: JSON.stringify({
             where: where,
@@ -645,7 +646,7 @@ export default {
           })
         })
         .then(res => {
-          let data = res.data?.items
+          let data = res?.items
           this.flowOptions = data || []
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
@@ -669,7 +670,7 @@ export default {
           })
         })
         .then(res => {
-          let data = res.data
+          let data = res
           if (data) {
             data.tasks = data.tasks.map(t => {
               t.sourceTable = [t.source.connectionId, t.source.table]
@@ -691,10 +692,10 @@ export default {
     },
     getFlowStages() {
       this.loading = true
-      this.$api('Task')
+      taskApi
         .getId(this.form.flowId)
         .then(res => {
-          let data = res.data
+          let data = res
           let flowData = data
           this.flowStages = []
           this.isDbClone = flowData.syncType === 'migrate'
@@ -776,13 +777,13 @@ export default {
         where.original_name = {
           inq: Array.from(new Set(tableNames))
         }
-        this.$api('MetadataInstances')
+        metadataInstancesApi
           .findInspect({
             where,
             fields: META_INSTANCE_FIELDS
           })
           .then(res => {
-            let data = res.data || []
+            let data = res || []
             let tables = data || []
             if (isDB) {
               this.stageMap = {}
@@ -1304,8 +1305,7 @@ export default {
               })
             )
             .then(res => {
-              let data = res.data
-              if (data) {
+              if (res) {
                 this.$router.back()
               }
             })

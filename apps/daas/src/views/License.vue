@@ -30,6 +30,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import dayjs from 'dayjs'
+import { licensesApi } from '@tap/api'
 
 export default {
   components: { TablePage },
@@ -49,12 +50,12 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return this.$api('Licenses')
+      return licensesApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let list = res.data?.items || []
+          let list = res?.items || []
           return {
             total: res.data?.total || 0,
             data: list.map(item => {
@@ -99,10 +100,10 @@ export default {
       let ids = table.multipleSelection?.map(item => item.sid)
       if (ids?.length) {
         this.copyLoading = true
-        this.$api('Licenses')
+        licensesApi
           .getSid(ids)
           .then(res => {
-            let sid = res?.data?.sid
+            let sid = res?.sid
             if (sid) {
               this.$copyText(sid).then(() => {
                 this.$message.success(this.$t('license_copied_clipboard'))
@@ -128,7 +129,7 @@ export default {
       this.dialogLoading = true
       let ids = this.$refs?.table?.multipleSelection?.map(item => item.sid)
       if (ids?.length) {
-        this.$api('Licenses')
+        licensesApi
           .updateLicense({
             sid: ids,
             license: this.license

@@ -89,6 +89,7 @@
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import dayjs from 'dayjs'
+import { inspectDetailsApi, inspectApi } from '@tap/api'
 
 export default {
   components: { ResultTable, ResultView },
@@ -130,7 +131,7 @@ export default {
   methods: {
     getData() {
       this.loading = true
-      this.$api('Inspects')
+      inspectApi
         .get({
           filter: JSON.stringify({
             where: {
@@ -139,7 +140,7 @@ export default {
           })
         })
         .then(res => {
-          let inspect = res.data?.items[0]
+          let inspect = res?.items[0]
           let inspectResult = inspect.InspectResult
           inspect.lastStartTime = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
           this.inspect = inspect
@@ -152,7 +153,7 @@ export default {
               })
             })
             .then(res => {
-              let result = res.data?.items[0]
+              let result = res?.items[0]
               if (result) {
                 if (result) {
                   this.resultInfo = result
@@ -192,12 +193,12 @@ export default {
           limit: showAdvancedVerification ? 1 : size,
           skip: (current - 1) * (showAdvancedVerification ? 1 : size)
         }
-        return this.$api('InspectDetails')
+        return inspectDetailsApi
           .get({
             filter: JSON.stringify(filter)
           })
           .then(res => {
-            let data = res.data
+            let data = res
             let resultList = []
             if (data?.items) {
               if (showAdvancedVerification) {
@@ -227,7 +228,7 @@ export default {
       if (keep < totalFailed) {
         return this.$message.error(this.$t('verify_message_out_of_limit'))
       }
-      this.$api('Inspects')
+      inspectApi
         .update(
           {
             id: this.inspect.id
