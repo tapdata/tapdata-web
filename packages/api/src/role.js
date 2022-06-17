@@ -5,7 +5,7 @@ export default class Roles extends Http {
   }
 
   post(params) {
-    return axios.post(this.url, params)
+    return this.axios.post(this.url, params)
   }
 
   patch(params) {
@@ -14,14 +14,14 @@ export default class Roles extends Http {
 
   delete(id, name) {
     if (name == '') {
-      return axios.delete(`${this.url}/${id}`)
+      return this.axios.delete(`${this.url}/${id}`)
     } else {
-      return axios.delete(`${this.url}/${id}?name=${name}`)
+      return this.axios.delete(`${this.url}/${id}?name=${name}`)
     }
   }
 
   principals(id) {
-    return axios.delete(`${this.url}/${id}/principals`)
+    return this.axios.delete(`${this.url}/${id}/principals`)
   }
 }
 export { Roles }

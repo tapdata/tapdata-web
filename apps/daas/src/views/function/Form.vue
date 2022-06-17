@@ -86,7 +86,7 @@
 <script>
 import { JsEditor } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
-import { JavascriptFunctionsApi } from '@tap/api'
+import { javascriptFunctionsApi } from '@tap/api'
 
 const getScriptObj = script => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
@@ -146,13 +146,14 @@ export default {
   methods: {
     getData(id) {
       this.loading = true
-      JavascriptFunctionsApi.findOne({
-        filter: JSON.stringify({
-          where: {
-            id
-          }
+      javascriptFunctionsApi
+        .findOne({
+          filter: JSON.stringify({
+            where: {
+              id
+            }
+          })
         })
-      })
         .then(res => {
           let details = res || {}
           // 处理老数据问题
@@ -193,7 +194,7 @@ export default {
               params.format = `${params.function_name}(${params.parameters})`
             }
             this.loading = true
-            JavascriptFunctionsApi[method](
+            javascriptFunctionsApi[method](
               Object.assign({}, this.form, params, {
                 last_updated: new Date(),
                 user_id: Cookie.get('user_id')

@@ -141,7 +141,7 @@
 
 <script>
 import Cookie from '@tap/shared/src/cookie'
-import { JavascriptFunctionsApi, fileApi } from '@tap/api'
+import { javascriptFunctionsApi, fileApi } from '@tap/api'
 
 let timer = null
 export default {
@@ -193,23 +193,25 @@ export default {
         map[name] = true
       })
 
-      JavascriptFunctionsApi.get({
-        filter: JSON.stringify({
-          fields: { function_name: 1 },
-          where: {
-            function_name: {
-              inq: Object.keys(map)
+      javascriptFunctionsApi
+        .get({
+          filter: JSON.stringify({
+            fields: { function_name: 1 },
+            where: {
+              function_name: {
+                inq: Object.keys(map)
+              }
             }
-          }
+          })
         })
-      }).then(res => {
-        let data = res?.items || []
-        names = names.concat(data.map(item => item.function_name))
-        this.repeatNames = Array.from(new Set(names))
-        this.funcList.forEach(item => {
-          item.isRepeat = this.repeatNames.includes(item.function_name)
+        .then(res => {
+          let data = res?.items || []
+          names = names.concat(data.map(item => item.function_name))
+          this.repeatNames = Array.from(new Set(names))
+          this.funcList.forEach(item => {
+            item.isRepeat = this.repeatNames.includes(item.function_name)
+          })
         })
-      })
     },
     changeName(index) {
       let item = this.funcList[index]
@@ -357,7 +359,8 @@ export default {
               user_id: useId
             }
           })
-          JavascriptFunctionsApi.post(params)
+          javascriptFunctionsApi
+            .post(params)
             .then(res => {
               if (res) {
                 this.$message.success(this.$t('message_save_ok'))

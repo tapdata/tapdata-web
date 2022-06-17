@@ -83,7 +83,7 @@ import StatusTag from '@/components/StatusTag'
 import Drawer from '@/components/Drawer'
 import { CONFIG_MODEL, getConnectionIcon } from './util'
 import dayjs from 'dayjs'
-import { ConnectionsApi } from '@tap/api'
+import { connectionsApi } from '@tap/api'
 
 export default {
   name: 'DetailsDrawer',
@@ -202,12 +202,14 @@ export default {
     async beforeTest() {
       this.checkAgent(() => {
         //先将管理端状态改为testing
-        ConnectionsApi.updateById(this.connection.id, {
-          status: 'testing'
-        }).then(() => {
-          let testData = JSON.parse(JSON.stringify(this.connection))
-          this.$refs.test.start(testData)
-        })
+        connectionsApi
+          .updateById(this.connection.id, {
+            status: 'testing'
+          })
+          .then(() => {
+            let testData = JSON.parse(JSON.stringify(this.connection))
+            this.$refs.test.start(testData)
+          })
       })
     },
     async reload() {
@@ -242,7 +244,7 @@ export default {
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
-      ConnectionsApi.updateById(this.connection.id, parms).then(result => {
+      connectionsApi.updateById(this.connection.id, parms).then(result => {
         let data = result
         if (!this?.$refs?.test) {
           return
@@ -254,7 +256,8 @@ export default {
     },
     getProgress() {
       this.clearInterval()
-      ConnectionsApi.getNoSchema(this.connection.id)
+      connectionsApi
+        .getNoSchema(this.connection.id)
         .then(res => {
           let data = res
           this.connection = this.transformData(data)

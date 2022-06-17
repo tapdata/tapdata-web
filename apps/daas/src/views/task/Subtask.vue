@@ -91,7 +91,7 @@
 import TableList from '@/components/TableList'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
-import { SubTaskApi } from '@tap/api'
+import { subtaskApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -174,22 +174,25 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return SubTaskApi.byTaskId(taskId, {
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        let items = res?.data || []
-        let data = items.map(item => {
-          item.status = item.status === 'edit' ? 'ready' : item.status
-          return deepCopy(item)
+      return subtaskApi
+        .byTaskId(taskId, {
+          filter: JSON.stringify(filter)
         })
-        return {
-          total: data.length,
-          data: data
-        }
-      })
+        .then(res => {
+          let items = res?.data || []
+          let data = items.map(item => {
+            item.status = item.status === 'edit' ? 'ready' : item.status
+            return deepCopy(item)
+          })
+          return {
+            total: data.length,
+            data: data
+          }
+        })
     },
     start(row = {}, resetLoading) {
-      SubTaskApi.start(row.id)
+      subtaskApi
+        .start(row.id)
         .then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
@@ -197,7 +200,8 @@ export default {
         .finally(resetLoading)
     },
     stop(row, resetLoading) {
-      SubTaskApi.stop(row.id)
+      subtaskApi
+        .stop(row.id)
         .then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
@@ -205,7 +209,8 @@ export default {
         .finally(resetLoading)
     },
     renew(row, resetLoading) {
-      SubTaskApi.renew(row.id)
+      subtaskApi
+        .renew(row.id)
         .then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
@@ -213,7 +218,8 @@ export default {
         .finally(resetLoading)
     },
     pause(row = {}, resetLoading) {
-      SubTaskApi.pause(row.id)
+      subtaskApi
+        .pause(row.id)
         .then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()

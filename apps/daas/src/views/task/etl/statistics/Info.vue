@@ -195,7 +195,7 @@ import { Chart } from '@tap/component'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs } from '@/utils/util'
 import { toThousandsUnit } from '@/utils/util'
-import { SubTaskApi } from '@tap/api'
+import { subtaskApi } from '@tap/api'
 
 export default {
   name: 'Info',
@@ -704,7 +704,8 @@ export default {
       return formatMs(val, 'time')
     },
     start(row = {}, resetLoading) {
-      SubTaskApi.start(row.id)
+      subtaskApi
+        .start(row.id)
         .then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
@@ -712,7 +713,8 @@ export default {
         .finally(resetLoading)
     },
     stop(row, resetLoading) {
-      SubTaskApi.stop(row.id)
+      subtaskApi
+        .stop(row.id)
         .then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()

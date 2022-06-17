@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { MetadataInstancesApi } from '@tap/api'
+import { metadataInstancesApi } from '@tap/api'
 export default {
   // components: {
   //   TablePage
@@ -113,7 +113,7 @@ export default {
   methods: {
     // 获取表格数据
     getData() {
-      MetadataInstancesApi.findTablesById([this.$route.params.id]).then(res => {
+      metadataInstancesApi.findTablesById([this.$route.params.id]).then(res => {
         if (res) {
           this.collectionTableData = res?.collections
           this.pageTotal = this.collectionTableData.length
@@ -158,7 +158,7 @@ export default {
             // eslint-disable-next-line
             .split(/\/|\.|@|\&|:|\?|%|=/)
             .join('_')
-          MetadataInstancesApi.post(params).then(() => {
+          metadataInstancesApi.post(params).then(() => {
             this.createDialogVisible = false
             let page = {
               current: 1,
@@ -182,7 +182,7 @@ export default {
         closeOnClickModal: false
       }).then(res => {
         if (res) {
-          MetadataInstancesApi.delete(item.id).then(() => {
+          metadataInstancesApi.delete(item.id).then(() => {
             this.getData()
             this.$message.success(this.$t('message.deleteOK'))
           })

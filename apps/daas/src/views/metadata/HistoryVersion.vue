@@ -245,7 +245,7 @@
   </section>
 </template>
 <script>
-import { MetadataInstancesApi } from '@tap/api'
+import { metadataInstancesApi } from '@tap/api'
 export default {
   components: {
     // TablePage
@@ -291,7 +291,7 @@ export default {
       let params = {
         historyVersion: this.comparedData.version
       }
-      MetadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then(res => {
+      metadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then(res => {
         this.properties = res?.properties
         this.fieldsItems = res?.fields
 

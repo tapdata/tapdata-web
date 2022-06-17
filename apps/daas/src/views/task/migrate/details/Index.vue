@@ -35,7 +35,7 @@ import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
-import { MeasurementApi, SubTaskApi } from '@tap/api'
+import { measurementApi, subtaskApi } from '@tap/api'
 
 export default {
   name: 'Index',
@@ -144,7 +144,8 @@ export default {
         this.loading = true
       }
       let id = this.$route.query?.subId
-      SubTaskApi.get([id])
+      subtaskApi
+        .get([id])
         .then(res => {
           if (JSON.stringify(this.formatTask(res)) === JSON.stringify(this.task)) {
             return
@@ -169,7 +170,7 @@ export default {
       return data
     },
     infoRemoteMethod(params) {
-      return MeasurementApi.query(params).then(res => {
+      return measurementApi.query(params).then(res => {
         return res
       })
     },

@@ -82,7 +82,7 @@ import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { toRegExp } from '../../utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
-import { UserLogsApi, UsersApi } from '@tap/api'
+import { userLogsApi, usersApi } from '@tap/api'
 
 export default {
   components: {
@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     getUsers() {
-      UsersApi.get().then(res => {
+      usersApi.get().then(res => {
         let data = res?.items || []
         this.userOptions = data.map(item => {
           return {
@@ -159,9 +159,10 @@ export default {
         where: where
       }
 
-      UserLogsApi.get({
-        filter: JSON.stringify(filter)
-      })
+      userLogsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
           if (res) {
             this.page.total = res?.total

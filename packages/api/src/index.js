@@ -1,105 +1,105 @@
 import Http, { CancelToken } from './http'
 
-import Connections from './connections'
-const ConnectionsApi = new Connections()
+import Connections from './Connections'
+const connectionsApi = new Connections()
 
-import DatabaseTypes from './databaseTypes'
-const DatabaseTypesApi = new DatabaseTypes()
+import DatabaseTypes from './DatabaseTypes'
+const databaseTypesApi = new DatabaseTypes()
 
-import Logcollector from './logcollector'
-const LogcollectorApi = new Logcollector()
+import Logcollector from './Logcollector'
+const logcollectorApi = new Logcollector()
 
-import pdk from './pdk'
-const pdkApi = new pdk()
+import PDK from './PDK'
+const pdkApi = new PDK()
 
-import Task from './task'
-const TaskApi = new Task()
+import Task from './Task'
+const taskApi = new Task()
 
-import SubTask from './subTask'
-const SubTaskApi = new SubTask()
+import SubTask from './SubTask'
+const subtaskApi = new SubTask()
 
-import UserLogs from './userLogs'
-const UserLogsApi = new UserLogs()
+import UserLogs from './UserLogs'
+const userLogsApi = new UserLogs()
 
-import Measurement from './measurement'
-const MeasurementApi = new Measurement()
+import Measurement from './Measurement'
+const measurementApi = new Measurement()
 
-import DataFlowInsights from './dataFlowInsights'
-const DataFlowInsightsApi = new DataFlowInsights()
+import DataFlowInsights from './DataFlowInsights'
+const dataFlowInsightsApi = new DataFlowInsights()
 
-import DataFlows from './dataFlows'
-const DataFlowsApi = new DataFlows()
+import DataFlows from './DataFlows'
+const dataFlowsApi = new DataFlows()
 
-import JavascriptFunctions from './javascriptFunctions'
-const JavascriptFunctionsApi = new JavascriptFunctions()
+import JavascriptFunctions from './JavascriptFunctions'
+const javascriptFunctionsApi = new JavascriptFunctions()
 
-import MetadataInstances from './metadataInstances'
-const MetadataInstancesApi = new MetadataInstances()
+import MetadataInstances from './MetadataInstances'
+const metadataInstancesApi = new MetadataInstances()
 
-import MetadataDefinitions from './metadataDefinitions'
-const MetadataDefinitionsApi = new MetadataDefinitions()
+import MetadataDefinitions from './MetadataDefinitions'
+const metadataDefinitionsApi = new MetadataDefinitions()
 
-import UserGroups from './userGroup'
-const UserGroupsApi = new UserGroups()
+import UserGroups from './UserGroup'
+const userGroupsApi = new UserGroups()
 
-import file from './file'
-const fileApi = new file()
+import File from './File'
+const fileApi = new File()
 
-import ScheduleTasks from './scheduleTasks'
-const ScheduleTasksApi = new ScheduleTasks()
+import ScheduleTasks from './ScheduleTasks'
+const scheduleTasksApi = new ScheduleTasks()
 
-import PreviewData from './previewData'
-const PreviewDataApi = new PreviewData()
+import PreviewData from './PreviewData'
+const previewDataApi = new PreviewData()
 
-import DataRule from './dataRule'
+import DataRule from './DataRule'
 const DataRuleApi = new DataRule()
 
-import Notification from './notification'
-const NotificationApi = new Notification()
+import Notification from './Notification'
+const notificationApi = new Notification()
 
-import Users from './users'
-const UsersApi = new Users()
+import Users from './Users'
+const usersApi = new Users()
 
-import ApiMonitor from './apiMonitor'
-const ApiMonitorApi = new ApiMonitor()
+import ApiMonitor from './ApiMonitor'
+const apiMonitorApi = new ApiMonitor()
 
 export {
-  ConnectionsApi,
-  DatabaseTypesApi,
-  LogcollectorApi,
+  connectionsApi,
+  databaseTypesApi,
+  logcollectorApi,
   pdkApi,
-  TaskApi,
-  SubTaskApi,
-  UserLogsApi,
-  MeasurementApi,
-  DataFlowInsightsApi,
-  DataFlowsApi,
-  JavascriptFunctionsApi,
+  taskApi,
+  subtaskApi,
+  userLogsApi,
+  measurementApi,
+  dataFlowInsightsApi,
+  dataFlowsApi,
+  javascriptFunctionsApi,
   fileApi,
-  MetadataInstancesApi,
-  MetadataDefinitionsApi,
-  UserGroupsApi,
-  ScheduleTasksApi,
-  PreviewDataApi,
+  metadataInstancesApi,
+  metadataDefinitionsApi,
+  userGroupsApi,
+  scheduleTasksApi,
+  previewDataApi,
   DataRuleApi,
-  NotificationApi,
-  UsersApi,
-  ApiMonitorApi
+  notificationApi,
+  usersApi,
+  apiMonitorApi
 }
-export * from './databaseTypes'
-export * from './dataFlows'
-export * from './metadataInstances'
-export * from './task'
+export * from './DatabaseTypes'
+export * from './DataFlows'
+export * from './MetadataInstances'
+export * from './Task'
 export * from './Tcm'
 export * from './TypeMapping'
 export * from './CustomNode'
 export * from './Cluster'
 export * from './Function'
 export * from './MetadataTransformer'
-export * from './metadataDefinitions'
-export * from './users'
+export * from './MetadataDefinitions'
+export * from './Users'
 export * from './Settings'
-export * from './apiMonitor'
+export * from './ApiMonitor'
 export * from './ApiCalls'
 export * from './ApiClient'
 export * from './ApiServer'
@@ -107,38 +107,38 @@ export * from './Application'
 export * from './ConnectionFormSchemas'
 export * from './CustomerJobLogs'
 export * from './DataFlowFormSchemas'
-export * from './dataFlowInsights'
+export * from './DataFlowInsights'
 export * from './DataQuality'
-export * from './dataRule'
+export * from './DataRule'
 export * from './DataRules'
 export * from './Dictionary'
 export * from './insights'
 export * from './InspectDetails'
 export * from './InspectResults'
 export * from './Inspects'
-export * from './javascriptFunctions'
+export * from './JavascriptFunctions'
 export * from './Licenses'
 export * from './LineageGraphs'
-export * from './logcollector'
+export * from './Logcollector'
 export * from './logs'
-export * from './dataRule'
-export * from './measurement'
+export * from './DataRule'
+export * from './Measurement'
 export * from './Metrics'
 export * from './modules'
 export * from './nodeConfigs'
-export * from './notification'
-export * from './pdk'
+export * from './Notification'
+export * from './PDK'
 export * from './Permissions'
-export * from './previewData'
+export * from './PreviewData'
 export * from './role'
 export * from './roleMapping'
-export * from './scheduleTasks'
+export * from './ScheduleTasks'
 export * from './shareCache'
-export * from './subTask'
+export * from './SubTask'
 export * from './TaskHistories'
 export * from './TimeStamp'
-export * from './userGroup'
-export * from './userLogs'
+export * from './UserGroup'
+export * from './UserLogs'
 export * from './validationResults'
 export * from './Workers.ts'
 

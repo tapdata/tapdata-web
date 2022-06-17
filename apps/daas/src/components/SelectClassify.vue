@@ -53,7 +53,7 @@
 
 <script>
 import Cookie from '@tap/shared/src/cookie'
-import { MetadataDefinitionsApi, UserGroupsApi } from '@tap/api'
+import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 
 export default {
   name: 'SelectClassify',
@@ -98,33 +98,37 @@ export default {
       }
 
       if (this.types[0] === 'user') {
-        UserGroupsApi.get({
-          filter: JSON.stringify({
-            limit: 999
+        userGroupsApi
+          .get({
+            filter: JSON.stringify({
+              limit: 999
+            })
           })
-        }).then(res => {
-          if (res?.items) {
-            let treeData = res?.items.map(item => ({
-              value: item.name,
-              id: item.id,
-              gid: item.gid,
-              parent_id: item.parent_id,
-              last_updated: item.last_updated,
-              user_id: item.user_id
-            }))
-            this.treeData = this.formatData(treeData)
-            cb && cb(res.data)
-          }
-        })
+          .then(res => {
+            if (res?.items) {
+              let treeData = res?.items.map(item => ({
+                value: item.name,
+                id: item.id,
+                gid: item.gid,
+                parent_id: item.parent_id,
+                last_updated: item.last_updated,
+                user_id: item.user_id
+              }))
+              this.treeData = this.formatData(treeData)
+              cb && cb(res.data)
+            }
+          })
       } else {
-        MetadataDefinitionsApi.get({
-          filter: JSON.stringify(filter)
-        }).then(res => {
-          if (res?.items) {
-            this.treeData = this.formatData(res?.items || [])
-            cb && cb(res?.items || [])
-          }
-        })
+        metadataDefinitionsApi
+          .get({
+            filter: JSON.stringify(filter)
+          })
+          .then(res => {
+            if (res?.items) {
+              this.treeData = this.formatData(res?.items || [])
+              cb && cb(res?.items || [])
+            }
+          })
       }
     },
     //格式化分类数据

@@ -10,7 +10,7 @@
 
 <script>
 import TableList from '@/components/TableList'
-import { UserLogsApi } from '@tap/api'
+import { userLogsApi } from '@tap/api'
 
 export default {
   name: 'History',
@@ -72,14 +72,16 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return UserLogsApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        return {
-          total: res?.total || 0,
-          data: res?.items || []
-        }
-      })
+      return userLogsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          return {
+            total: res?.total || 0,
+            data: res?.items || []
+          }
+        })
     }
   }
 }

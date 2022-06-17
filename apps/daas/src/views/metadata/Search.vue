@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { MetadataInstancesApi } from '@tap/api'
+import { metadataInstancesApi } from '@tap/api'
 export default {
   name: 'Search',
   data() {
@@ -142,7 +142,8 @@ export default {
       let params = this.handleParams(id)
       this.firstSearch = this.firstSearch === 0 ? 1 : this.firstSearch
       this.loading = true
-      MetadataInstancesApi.search(params)
+      metadataInstancesApi
+        .search(params)
         .then(result => {
           let data = result || []
           this.noMore = false

@@ -151,7 +151,7 @@ import FilterBar from '@/components/filter-bar'
 import { getConnectionIcon } from './util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
-import { ConnectionsApi, DatabaseTypesApi } from '@tap/api'
+import { connectionsApi, databaseTypesApi } from '@tap/api'
 
 let timeout = null
 
@@ -325,47 +325,49 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return ConnectionsApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        let data = (res?.items || []).map(item => {
-          let platformInfo = item.platformInfo
-          if (platformInfo && platformInfo.regionName) {
-            item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
-          }
-
-          if (item.config?.uri) {
-            const res =
-              /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                item.config.uri
-              )
-            if (res && res.groups && res.groups.password) {
-              const { username, host, database, query } = res.groups
-              item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
-            } else {
-              item.connectionUrl = item.config.uri
-            }
-          } else {
-            item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
-              item.config.schema ? `/${item.config.schema}` : ''
-            }`
-          }
-
-          item.connectionSource = this.sourceTypeMapping[item.sourceType]
-          item.lastUpdateTime = item.last_updated = item.last_updated
-            ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-            : '-'
-          return item
+      return connectionsApi
+        .get({
+          filter: JSON.stringify(filter)
         })
+        .then(res => {
+          let data = (res?.items || []).map(item => {
+            let platformInfo = item.platformInfo
+            if (platformInfo && platformInfo.regionName) {
+              item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
+            }
 
-        // 同步抽屉数据
-        this.$refs.preview.sync(data)
+            if (item.config?.uri) {
+              const res =
+                /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+                  item.config.uri
+                )
+              if (res && res.groups && res.groups.password) {
+                const { username, host, database, query } = res.groups
+                item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+              } else {
+                item.connectionUrl = item.config.uri
+              }
+            } else {
+              item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
+                item.config.schema ? `/${item.config.schema}` : ''
+              }`
+            }
 
-        return {
-          total: res?.total,
-          data
-        }
-      })
+            item.connectionSource = this.sourceTypeMapping[item.sourceType]
+            item.lastUpdateTime = item.last_updated = item.last_updated
+              ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
+            return item
+          })
+
+          // 同步抽屉数据
+          this.$refs.preview.sync(data)
+
+          return {
+            total: res?.total,
+            data
+          }
+        })
     },
     getImgByType(type) {
       // if (!type || type === 'jira') {
@@ -397,19 +399,21 @@ export default {
     copy(data) {
       let headersName = { 'lconname-name': data.name }
       this.$set(data, 'copyLoading', true)
-      ConnectionsApi.copy(
-        data.id,
-        {
-          uri: `${data.id}/copy`,
-          headers: headersName
-        },
-        data.name
-      ).then(res => {
-        if (res) {
-          this.table.fetch()
-          this.$message.success(this.$t('connection.copyMsg'))
-        }
-      })
+      connectionsApi
+        .copy(
+          data.id,
+          {
+            uri: `${data.id}/copy`,
+            headers: headersName
+          },
+          data.name
+        )
+        .then(res => {
+          if (res) {
+            this.table.fetch()
+            this.$message.success(this.$t('connection.copyMsg'))
+          }
+        })
       // .catch(err => {
       //   if (err && err.response) {
       //     if (err.response.msg === 'duplicate source') {
@@ -439,7 +443,8 @@ export default {
         if (!resFlag) {
           return
         }
-        ConnectionsApi.deleteConnection(data.id, data.name)
+        connectionsApi
+          .deleteConnection(data.id, data.name)
           .then(res => {
             let jobs = res.jobs || []
             let modules = res.modules || []
@@ -513,7 +518,7 @@ export default {
         id: this.multipleSelection.map(r => r.id),
         listtags
       }
-      ConnectionsApi.batchUpdateListtags(attributes).then(() => {
+      connectionsApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
         this.$message.success(this.$t('message_save_ok'))
       })
@@ -544,15 +549,16 @@ export default {
       this.checkAgent(() => {
         let loading = this.$loading()
         this.testData = Object.assign({}, defaultModel['default'], item)
-        ConnectionsApi.updateById(
-          item.id,
-          Object.assign(
-            {},
-            {
-              status: 'testing'
-            }
+        connectionsApi
+          .updateById(
+            item.id,
+            Object.assign(
+              {},
+              {
+                status: 'testing'
+              }
+            )
           )
-        )
           .then(() => {
             this.dialogTestVisible = true
             this.$refs.test.start()
@@ -594,7 +600,7 @@ export default {
           type: 'select-inner',
           menuMinWidth: '250px',
           items: async () => {
-            let res = await DatabaseTypesApi.get()
+            let res = await databaseTypesApi.get()
             let data = res || []
             let databaseTypes = []
             databaseTypes.push(...data)

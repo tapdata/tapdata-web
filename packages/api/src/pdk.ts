@@ -1,6 +1,6 @@
 import Http from './http'
 
-export default class Pdk extends Http {
+export default class PDK extends Http {
   constructor() {
     super('/api/pdk')
   }
@@ -11,4 +11,4 @@ export default class Pdk extends Http {
     })
   }
 }
-export { Pdk }
+export { PDK }

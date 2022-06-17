@@ -286,7 +286,7 @@
 </template>
 
 <script>
-import { TaskApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import TablePage from '@/components/TablePage'
@@ -475,18 +475,20 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return TaskApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        let data = res
-        let list = data?.items || []
-        return {
-          total: data.total,
-          data: list.map(item => {
-            return this.cookRecord(item)
-          })
-        }
-      })
+      return taskApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let data = res
+          let list = data?.items || []
+          return {
+            total: data.total,
+            data: list.map(item => {
+              return this.cookRecord(item)
+            })
+          }
+        })
     },
 
     cookRecord(item) {
@@ -559,7 +561,7 @@ export default {
         id: ids,
         listtags
       }
-      TaskApi.batchUpdateListtags(attributes).then(() => {
+      taskApi.batchUpdateListtags(attributes).then(() => {
         this.dataFlowId = ''
         this.table.fetch()
       })
@@ -661,7 +663,7 @@ export default {
       )
     },
     export(ids) {
-      TaskApi.export(ids)
+      taskApi.export(ids)
     },
     start(ids) {
       let _this = this
@@ -678,7 +680,7 @@ export default {
         }
       }
 
-      TaskApi.get({ filter: JSON.stringify(filter) }).then(res => {
+      taskApi.get({ filter: JSON.stringify(filter) }).then(res => {
         let flag = false
         let items = res?.items || []
         if (items.length) {
@@ -688,7 +690,7 @@ export default {
             }
           })
         }
-        TaskApi.batchStart(ids).then(res => {
+        taskApi.batchStart(ids).then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
@@ -728,7 +730,7 @@ export default {
         if (!resFlag) {
           return
         }
-        TaskApi.batchStop(ids).then(res => {
+        taskApi.batchStop(ids).then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
@@ -743,7 +745,7 @@ export default {
         if (!resFlag) {
           return
         }
-        TaskApi.forceStop(ids).then(res => {
+        taskApi.forceStop(ids).then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
@@ -757,7 +759,7 @@ export default {
         if (!resFlag) {
           return
         }
-        TaskApi.batchDelete(ids).then(res => {
+        taskApi.batchDelete(ids).then(res => {
           if (res) {
             this.table.fetch()
             this.responseHandler(res, this.$t('message.deleteOK'))
@@ -776,7 +778,8 @@ export default {
           return
         }
         this.restLoading = true
-        TaskApi.batchRenew(ids)
+        taskApi
+          .batchRenew(ids)
           .then(res => {
             this.table.fetch()
             this.responseHandler(res, this.$t('message.resetOk'))
@@ -796,7 +799,7 @@ export default {
       })
     },
     copy(ids, node) {
-      TaskApi.copy(node.id).then(() => {
+      taskApi.copy(node.id).then(() => {
         this.table.fetch()
         this.$message.success(this.$t('message.copySuccess'))
       })
@@ -818,7 +821,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      TaskApi.update(where, attributes).then(res => {
+      taskApi.update(where, attributes).then(res => {
         this.table.fetch()
         this.responseHandler(res, this.$t('message_operation_succuess'))
       })
@@ -883,7 +886,8 @@ export default {
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
-      TaskApi.patchId(this.formSchedule.id, { setting: data })
+      taskApi
+        .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
           if (result) {
             this.$message.success(this.$t('message_save_ok'))

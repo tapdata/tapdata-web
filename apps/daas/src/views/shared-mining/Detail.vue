@@ -115,7 +115,7 @@ import TableList from '@/components/TableList'
 import { formatMs } from '@/utils/util'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import dayjs from 'dayjs'
-import { MeasurementApi, LogcollectorApi } from '@tap/api'
+import { measurementApi, logcollectorApi } from '@tap/api'
 
 export default {
   name: 'Info',
@@ -281,7 +281,7 @@ export default {
     },
 
     getData(id) {
-      LogcollectorApi.getDetail(id).then(res => {
+      logcollectorApi.getDetail(id).then(res => {
         let detailData = res
         detailData.taskList = detailData.taskList?.map(item => {
           item.status = item.status === 'edit' ? 'ready' : item.status === 'schedule_failed' ? 'error' : item.status //没有子任务的概念
@@ -337,7 +337,7 @@ export default {
       let diff = (end || Date.now()) - start
       params.samples[0].guanluary = this.getGuanluary(diff)
       let guanluaryFormat = this.getGuanluary(diff, true)
-      MeasurementApi.query(params).then(res => {
+      measurementApi.query(params).then(res => {
         let data = res
         let { samples } = data
         samples.forEach(el => {
@@ -474,7 +474,7 @@ export default {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize
       }
-      LogcollectorApi.tableNames(this.detailData.id, filter).then(res => {
+      logcollectorApi.tableNames(this.detailData.id, filter).then(res => {
         this.tableNameList = res?.items
         this.tableNameTotal = res?.total
       })

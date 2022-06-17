@@ -197,7 +197,7 @@ import { Chart } from '@tap/component'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs } from '@/utils/util'
 import { toThousandsUnit } from '@/utils/util'
-import { SubTaskApi } from '@tap/api'
+import { subtaskApi } from '@tap/api'
 
 export default {
   name: 'Info',
@@ -442,7 +442,7 @@ export default {
     getSyncOverViewData() {
       //调用前 先清掉上一个定时器
       clearTimeout(this.timerOverView)
-      SubTaskApi.syncOverView(this.$route.query?.subId).then(res => {
+      subtaskApi.syncOverView(this.$route.query?.subId).then(res => {
         let data = res
         this.finishDuration = this.handleTime(data?.finishDuration)
         this.progress = data?.progress
@@ -756,7 +756,8 @@ export default {
       return formatMs(ms)
     },
     start(row = {}, resetLoading) {
-      SubTaskApi.start(row.id)
+      subtaskApi
+        .start(row.id)
         .then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
@@ -764,7 +765,8 @@ export default {
         .finally(resetLoading)
     },
     stop(row, resetLoading) {
-      SubTaskApi.stop(row.id)
+      subtaskApi
+        .stop(row.id)
         .then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
 import Cookie from '@tap/shared/src/cookie'
 import { signOut } from '../utils/util'
 import { Message } from 'element-ui'
@@ -11,7 +11,7 @@ const CancelToken = axios.CancelToken
 
 axios.defaults.baseURL = process.env.BASE_URL || './'
 
-const getPendingKey = config => {
+const getPendingKey = (config: AxiosRequestConfig): string => {
   let { url, method, data, params } = config
   let headers = {}
   for (const key in config.headers) {
@@ -30,14 +30,14 @@ const getPendingKey = config => {
   })
   return key
 }
-const removePending = config => {
+const removePending = (config: AxiosRequestConfig): void => {
   let key = getPendingKey(config)
   let index = pending.findIndex(it => it === key)
   if (index >= 0) {
     pending.splice(index, 1)
   }
 }
-const errorCallback = error => {
+const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
   if (axios.isCancel(error)) {
     // eslint-disable-next-line no-console
     console.log('Request canceled', error.message)
@@ -56,32 +56,32 @@ const errorCallback = error => {
       case 401:
         signOut()
         setTimeout(() => {
-          Message.error({ message: i18n.t('message_401') })
+          Message.error({ message: i18n.t('message_401').toString() })
         }, 500)
         break
       // 请求的资源不存在
       case 404:
-        Message.error({ message: i18n.t('message_404') })
+        Message.error({ message: i18n.t('message_404').toString() })
         break
       case 504:
-        Message.error({ message: i18n.t('message_5xx') })
+        Message.error({ message: i18n.t('message_5xx').toString() })
         break
       case 500:
-        Message.error({ message: i18n.t('message_5xx') })
+        Message.error({ message: i18n.t('message_5xx').toString() })
         break
     }
   } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error' || !window.navigator.onLine) {
     Message.error({
-      message: i18n.t('message_network_unconnected')
+      message: i18n.t('message_network_unconnected').toString()
     })
   } else if (error.message && error.message.includes('timeout')) {
     Message.error({
-      message: i18n.t('message_request_timeout')
+      message: i18n.t('message_request_timeout').toString()
     })
   }
   return Promise.reject(error)
 }
-axios.interceptors.request.use(function (config) {
+axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosRequestConfig {
   config.paramsSerializer = params => {
     return Qs.stringify(params, {
       arrayFormat: 'brackets',
@@ -114,7 +114,7 @@ axios.interceptors.request.use(function (config) {
   return config
 }, errorCallback)
 
-axios.interceptors.response.use(response => {
+axios.interceptors.response.use((response: AxiosResponse): any => {
   removePending(response.config)
   let data = response.data
   if (response?.config?.responseType === 'blob') {
@@ -134,7 +134,7 @@ axios.interceptors.response.use(response => {
       case 'SystemError':
         if (data.message === 'System error: null') {
           Message.error({
-            message: i18n.t('message_request_error')
+            message: i18n.t('message_request_error').toString()
           })
         } else {
           Message.error({

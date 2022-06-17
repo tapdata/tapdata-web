@@ -1,10 +1,9 @@
-import { Connections, MetadataInstances, Cluster } from '@tap/api'
+import { connectionsApi, MetadataInstances, Cluster } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
 import { merge } from 'lodash'
 
-const connections = new Connections()
 const metadataApi = new MetadataInstances()
 const clusterApi = new Cluster()
 
@@ -135,7 +134,7 @@ export default {
               }
             }
 
-            let result = await connections.get({
+            let result = await connectionsApi.get({
               filter: JSON.stringify(filter)
             })
             return (result.items || result).map(item => {
@@ -162,7 +161,7 @@ export default {
          */
         loadDatabaseInfo: async ({ field }, connectionId = field.query('connectionId').get('value')) => {
           if (!connectionId) return
-          return await connections.customQuery([connectionId], {
+          return await connectionsApi.customQuery([connectionId], {
             schema: true
           })
         },
@@ -231,7 +230,7 @@ export default {
                 options: 'i'
               }
             }
-            let result = await connections.get({
+            let result = await connectionsApi.get({
               filter: JSON.stringify(merge(filter, _filter))
             })
 
@@ -361,11 +360,10 @@ export default {
         // 加载数据集
         loadCollections: async ({ field }, connectionId = field.query('connectionId').get('value')) => {
           if (!connectionId) return
-          let result = await connections.get([connectionId])
+          let result = await connectionsApi.get([connectionId])
           const tables = result.data?.schema?.tables || []
           return tables
         },
-
 
         /**
          * 数据写入模式

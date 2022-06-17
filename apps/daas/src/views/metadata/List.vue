@@ -178,7 +178,7 @@ import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import dayjs from 'dayjs'
-import { ConnectionsApi, MetadataInstancesApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi } from '@tap/api'
 
 export default {
   components: {
@@ -341,18 +341,20 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return MetadataInstancesApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        return {
-          total: res?.total,
-          data:
-            res?.items.map(item => {
-              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-              return item
-            }) || []
-        }
-      })
+      return metadataInstancesApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          return {
+            total: res?.total,
+            data:
+              res?.items.map(item => {
+                item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+                return item
+              }) || []
+          }
+        })
     },
     getDbOptions() {
       let filter = {
@@ -367,15 +369,17 @@ export default {
           connection_type: { $in: ['target', 'source_and_target'] }
         }
       }
-      ConnectionsApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        let dbOptions = res?.items || []
-
-        this.dbOptions = dbOptions.map(item => {
-          return { label: item.name, value: item.id }
+      connectionsApi
+        .get({
+          filter: JSON.stringify(filter)
         })
-      })
+        .then(res => {
+          let dbOptions = res?.items || []
+
+          this.dbOptions = dbOptions.map(item => {
+            return { label: item.name, value: item.id }
+          })
+        })
     },
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
@@ -396,16 +400,18 @@ export default {
       return tagList
     },
     handleOperationClassify(classifications) {
-      MetadataInstancesApi.classification({
-        metadatas: this.multipleSelection.map(it => {
-          return {
-            id: it.id,
-            classifications: classifications
-          }
+      metadataInstancesApi
+        .classification({
+          metadatas: this.multipleSelection.map(it => {
+            return {
+              id: it.id,
+              classifications: classifications
+            }
+          })
         })
-      }).then(() => {
-        this.table.fetch()
-      })
+        .then(() => {
+          this.table.fetch()
+        })
     },
     metaTypeChange(val) {
       if (!this.whiteList.includes(val)) {
@@ -466,7 +472,7 @@ export default {
             comment: ''
           }
           params.fields = model_type === 'collection' ? fields : []
-          MetadataInstancesApi.post(params).then(res => {
+          metadataInstancesApi.post(params).then(res => {
             if (res) {
               this.createDialogVisible = false
               this.$message.success(this.$t('message_save_ok'))
@@ -483,13 +489,15 @@ export default {
       this.$router.push({ name: 'metadataDetails', params: { id: item.id } })
     },
     saveChangeName() {
-      MetadataInstancesApi.updateById(this.changeNameData.id, {
-        name: this.changeNameValue
-      }).then(() => {
-        this.$message.success(this.$t('message_save_ok'))
-        this.changeNameDialogVisible = false
-        this.table.fetch()
-      })
+      metadataInstancesApi
+        .updateById(this.changeNameData.id, {
+          name: this.changeNameValue
+        })
+        .then(() => {
+          this.$message.success(this.$t('message_save_ok'))
+          this.changeNameDialogVisible = false
+          this.table.fetch()
+        })
       // .catch(() => {
       //   this.$message.info(this.$t('message_save_fail'))
       // })
@@ -508,7 +516,7 @@ export default {
       //   if (!resFlag) {
       //     return
       //   }
-      //  MetadataInstancesApi
+      //  metadataInstancesApi
       //     .updateById(item.id, {
       //       name: resFlag.value
       //     })
@@ -535,7 +543,7 @@ export default {
         if (!resFlag) {
           return
         }
-        MetadataInstancesApi.delete(item.id).then(() => {
+        metadataInstancesApi.delete(item.id).then(() => {
           this.$message.success(this.$t('message.deleteOK'))
           this.table.fetch()
         })
@@ -579,7 +587,7 @@ export default {
           key: 'dbId',
           type: 'select-inner',
           items: async () => {
-            let data = await ConnectionsApi.findAll(filter)
+            let data = await connectionsApi.findAll(filter)
             let items = data || []
             return items.map(item => {
               return {

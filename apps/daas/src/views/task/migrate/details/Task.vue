@@ -20,7 +20,7 @@
 <script>
 import TableList from '@/components/TableList'
 import dayjs from 'dayjs'
-import { LogcollectorApi } from '@tap/api'
+import { logcollectorApi } from '@tap/api'
 
 export default {
   name: 'Task',
@@ -68,26 +68,28 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return LogcollectorApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        let list = res.data?.items || []
-        let pointTime = new Date()
+      return logcollectorApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let list = res.data?.items || []
+          let pointTime = new Date()
 
-        return {
-          total: res.data.total,
-          data: list.map(item => {
-            this.$set(item, 'pointTime', pointTime)
-            if (item.syncTimePoint === 'current') {
-              item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
-            } else {
-              item.pointTime = item.syncTimeZone
-            }
-            item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-            return item
-          })
-        }
-      })
+          return {
+            total: res.data.total,
+            data: list.map(item => {
+              this.$set(item, 'pointTime', pointTime)
+              if (item.syncTimePoint === 'current') {
+                item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
+              } else {
+                item.pointTime = item.syncTimeZone
+              }
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
+          }
+        })
     },
     getTableData() {
       return this.$refs.tableList?.getData()

@@ -1,6 +1,6 @@
 import Http from './http'
 
-export default class file extends Http {
+export default class File extends Http {
   constructor() {
     super('/api/file')
   }
@@ -11,4 +11,4 @@ export default class file extends Http {
     return this.axios.delete(this.url + '/delete?id=' + id)
   }
 }
-export { file }
+export { File }
