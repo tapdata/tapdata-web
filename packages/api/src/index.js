@@ -78,6 +78,21 @@ const workerApi = new Worker()
 import Settings from './Settings'
 const settingsApi = new Settings()
 
+import ApiCalls from './ApiCalls'
+const apiCallsApi = new ApiCalls()
+
+import Application from './Application'
+const applicationApi = new Application()
+
+import Cluster from './Cluster'
+const clusterApi = new Cluster()
+
+import SharedCache from './shareCache'
+const sharedCacheApi = new SharedCache()
+
+import Licenses from './Licenses'
+const licensesApi = new Licenses()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -104,7 +119,12 @@ export {
   apiServersApi,
   roleApi,
   workerApi,
-  settingsApi
+  settingsApi,
+  apiCallsApi,
+  applicationApi,
+  clusterApi,
+  sharedCacheApi,
+  licensesApi
 }
 export * from './DatabaseTypes'
 export * from './DataFlows'

@@ -121,9 +121,8 @@
 </template>
 
 <script>
-import factory from '@/api/factory'
 import Cookie from '@tap/shared/src/cookie'
-const usersModel = factory('users')
+import { UsersApi } from '@tap/api'
 
 export default {
   name: 'list',
@@ -261,7 +260,7 @@ export default {
     // 获取当前信息
     async handleGetData() {
       this.loading = true
-      let result = await usersModel.get([Cookie.get('user_id')])
+      let result = await UsersApi.get([Cookie.get('user_id')])
       let items = result.data
       if (items) {
         this.infoList.forEach(item => {
@@ -301,7 +300,7 @@ export default {
         username: this.userName
       }
       if (this.userName) {
-        usersModel.patch(parmas).then(() => {
+        UsersApi.patch(parmas).then(() => {
           this.$message.success(this.$t('account.nameModifySuccess'))
           this.usernameDialogFalg = false
           this.handleGetData()
@@ -328,7 +327,7 @@ export default {
       }
       this.$refs.form.validate(valid => {
         if (valid) {
-          usersModel.changePassword(parmas).then(res => {
+          UsersApi.changePassword(parmas).then(res => {
             if (res.msg === 'Invalid current password') {
               this.$message.error(this.$t('account.currerPawErrorTip'))
             }

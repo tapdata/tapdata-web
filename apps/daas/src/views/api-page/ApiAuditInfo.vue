@@ -57,6 +57,7 @@
 <script>
 import { formatMs } from '@/utils/util'
 import dayjs from 'dayjs'
+import { apiCallsApi } from '@tap/api'
 
 export default {
   name: 'ApiAudit',
@@ -80,19 +81,17 @@ export default {
     getData() {
       let id = this.$route.params?.id
       this.loading = true
-      this.$api('ApiCalls')
+      apiCallsApi
         .get([id])
         .then(res => {
           if (res) {
-            this.auditData = res.data
-            this.auditData.createAt = res.data['createAt']
-              ? dayjs(res.data['createAt']).format('YYYY-MM-DD HH:mm:ss')
-              : '-'
+            this.auditData = res
+            this.auditData.createAt = res['createAt'] ? dayjs(res['createAt']).format('YYYY-MM-DD HH:mm:ss') : '-'
 
             this.list.forEach(item => {
-              for (let el in res.data) {
+              for (let el in res) {
                 if (item.key === el) {
-                  item.value = res.data[el]
+                  item.value = res[el]
                 }
               }
             })

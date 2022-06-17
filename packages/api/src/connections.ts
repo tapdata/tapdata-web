@@ -44,6 +44,9 @@ export default class Connections extends Http {
   findAll(filter) {
     return this.axios.get(`${this.url}/findAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
   }
+  listAll(filter) {
+    return this.axios.get(`${this.url}/listAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
+  }
 }
 
 export { Connections }

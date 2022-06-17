@@ -1,6 +1,6 @@
 import Http from './Http'
 
-export default class SharedCacheAPI extends Http {
+export default class SharedCache extends Http {
   constructor() {
     super('/api/shareCache')
   }
@@ -11,4 +11,4 @@ export default class SharedCacheAPI extends Http {
     return this.axios.patch(`${this.url}/${params.id}`, params)
   }
 }
-export { SharedCacheAPI }
+export { SharedCache }
