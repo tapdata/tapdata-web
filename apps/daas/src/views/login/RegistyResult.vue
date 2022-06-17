@@ -42,8 +42,7 @@
 
 <script>
 import Header from './Header'
-import factory from '@/api/factory'
-const usersModel = factory('users')
+import { usersApi } from '@tap/api'
 
 export default {
   name: 'SignIn',
@@ -81,7 +80,7 @@ export default {
   methods: {
     getResetdata() {
       this.loading = true
-      usersModel
+      usersApi
         .newResetPassword(this.queryData.access_token)
         .then(res => {
           if (res) {
@@ -98,7 +97,7 @@ export default {
 
     getRegistydata(uid, token) {
       this.loading = true
-      usersModel
+      usersApi
         .confirm(uid, token)
         .then(res => {
           if (res) {

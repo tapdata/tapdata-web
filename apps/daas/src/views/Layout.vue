@@ -357,6 +357,7 @@ import Cookie from '@tap/shared/src/cookie'
 import PageHeader from '@/components/PageHeader'
 import VIcon from 'web-core/components/VIcon'
 import dayjs from 'dayjs'
+import { usersApi } from '@tap/api'
 
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
@@ -607,11 +608,9 @@ export default {
       }
     },
     signOut() {
-      this.$api('users')
-        .logout()
-        .then(() => {
-          signOut()
-        })
+      usersApi.logout().then(() => {
+        signOut()
+      })
     },
     menuHandler(name) {
       if (this.$route.name === name) {
