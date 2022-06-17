@@ -1,4 +1,4 @@
-import Http from './http'
+import Http from './Http'
 export default class Roles extends Http {
   constructor() {
     super('/api/roles')

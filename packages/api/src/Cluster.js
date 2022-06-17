@@ -1,5 +1,5 @@
 // 集群管理
-import Http from './http'
+import Http from './Http'
 
 export class Cluster extends Http {
   constructor() {

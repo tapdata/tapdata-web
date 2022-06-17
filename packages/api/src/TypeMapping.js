@@ -1,4 +1,4 @@
-import Http from './http'
+import Http from './Http'
 export default class TypeMapping extends Http {
   constructor() {
     super('/api/TypeMappings')

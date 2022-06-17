@@ -1,4 +1,4 @@
-import Http from './http'
+import Http from './Http'
 export default class Notification extends Http {
   constructor() {
     super('/api/Messages')

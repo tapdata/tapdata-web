@@ -3,7 +3,7 @@
  * @date 3/2/20
  * @description
  */
-import Http from './http'
+import Http from './Http'
 
 export default class TCM extends Http {
   constructor() {

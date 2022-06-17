@@ -1,4 +1,4 @@
-import Http from './http'
+import Http from './Http'
 import Cookie from '@tap/shared/src/cookie'
 
 export default class Task extends Http {

@@ -1,4 +1,4 @@
-import Http, { CancelToken } from './http'
+import Http, { CancelToken } from './Http'
 
 import Connections from './Connections'
 const connectionsApi = new Connections()
@@ -52,7 +52,7 @@ import PreviewData from './PreviewData'
 const previewDataApi = new PreviewData()
 
 import DataRule from './DataRule'
-const DataRuleApi = new DataRule()
+const dataRuleApi = new DataRule()
 
 import Notification from './Notification'
 const notificationApi = new Notification()
@@ -96,7 +96,7 @@ export {
   userGroupsApi,
   scheduleTasksApi,
   previewDataApi,
-  DataRuleApi,
+  dataRuleApi,
   notificationApi,
   usersApi,
   apiMonitorApi,

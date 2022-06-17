@@ -1,4 +1,4 @@
-import Http from './http'
+import Http from './Http'
 import { isPlainObj } from '@tap/shared'
 export default class MetadataTransformer extends Http {
   constructor() {

@@ -1,4 +1,4 @@
-import Http from './http'
+import Http from './Http'
 
 export default class SharedCacheAPI extends Http {
   constructor() {
