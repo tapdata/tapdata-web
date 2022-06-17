@@ -189,7 +189,7 @@ import VStep from '@/components/VStep'
 import Milestone from './Milestone'
 import Overview from '../../etl/statistics/Overview'
 import { formatTime } from '@/utils/util'
-import { DataFlowInsightsApi, SubTaskApi } from '@tap/api'
+import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
 
 export default {
   name: 'Schedule',
@@ -295,7 +295,7 @@ export default {
       this.getSyncOverViewData() //数据初始化
     },
     loadRuntimeInfo() {
-      SubTaskApi.runtimeInfo(this.id).then(res => {
+      subtaskApi.runtimeInfo(this.id).then(res => {
         this.runtimeInfo = res?.data || {}
         this.getStep()
         this.getColumns()
@@ -498,16 +498,18 @@ export default {
         skip: (current - 1) * size,
         order: 'createTime DESC'
       }
-      return DataFlowInsightsApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        return {
-          total: res.data.total,
-          data: res.data.items.map(item => {
-            return Object.assign(item, item.statsData)
-          })
-        }
-      })
+      return dataFlowInsightsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          return {
+            total: res.data.total,
+            data: res.data.items.map(item => {
+              return Object.assign(item, item.statsData)
+            })
+          }
+        })
     },
     clickStep(index = 0) {
       if (index + 1 > this.active) {
@@ -523,14 +525,14 @@ export default {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize
       }
-      SubTaskApi.syncTable(this.id, filter).then(res => {
+      subtaskApi.syncTable(this.id, filter).then(res => {
         this.syncTableList = res?.items
         this.tableTotal = res?.total
       })
     },
     //概览信息
     getSyncOverViewData() {
-      SubTaskApi.syncOverView(this.id).then(res => {
+      subtaskApi.syncOverView(this.id).then(res => {
         this.syncOverViewData = res
         this.$emit('sync', res)
         this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
@@ -573,12 +575,12 @@ export default {
     },
     //增量同步
     getCdcTableList() {
-      SubTaskApi.cdcIncrease(this.id).then(res => {
+      subtaskApi.cdcIncrease(this.id).then(res => {
         this.list = res
       })
     },
     handleClear(row) {
-      SubTaskApi.clearIncrease(this.id, row.srcId, row.tgtId).then(() => {
+      subtaskApi.clearIncrease(this.id, row.srcId, row.tgtId).then(() => {
         this.$message.success(this.$t('message_update_success'))
       })
     },
@@ -604,7 +606,7 @@ export default {
         pointType: this.syncPointType,
         timeZone: systemTimeZone
       }
-      SubTaskApi.rollbackIncrease(this.id, this.currentRow.srcId, this.currentRow.tgtId, params).then(() => {
+      subtaskApi.rollbackIncrease(this.id, this.currentRow.srcId, this.currentRow.tgtId, params).then(() => {
         this.rollbackVisible = false
         this.$message.success(this.$t('message_update_success'))
       })

@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import { ScheduleTasksApi } from '@tap/api'
+import { scheduleTasksApi } from '@tap/api'
 export default {
   props: {
     indexData: {
@@ -338,7 +338,7 @@ export default {
               uri: _this.indexData.source ? _this.indexData.source.database_uri : ''
             }
           }
-          ScheduleTasksApi.post(params).then(() => {
+          scheduleTasksApi.post(params).then(() => {
             this.createDialogVisible = false
             this.$message.success(this.$t('message_save_ok'))
             // this.toDetails(res.data);
@@ -359,20 +359,22 @@ export default {
         closeOnClickModal: false
       }).then(res => {
         if (res) {
-          ScheduleTasksApi.post({
-            task_name: 'mongodb_drop_index',
-            task_type: 'MONGODB_DROP_INDEX',
-            status: 'waiting',
-            task_data: {
-              collection_name: _this.indexData.original_name,
-              uri: _this.indexData.source ? _this.indexData.source.database_uri : '',
-              name: item.name,
-              ns: item.ns,
-              meta_id: _this.$route.params.id
-            }
-          }).then(() => {
-            this.$message.success(this.$t('message.deleting'))
-          })
+          scheduleTasksApi
+            .post({
+              task_name: 'mongodb_drop_index',
+              task_type: 'MONGODB_DROP_INDEX',
+              status: 'waiting',
+              task_data: {
+                collection_name: _this.indexData.original_name,
+                uri: _this.indexData.source ? _this.indexData.source.database_uri : '',
+                name: item.name,
+                ns: item.ns,
+                meta_id: _this.$route.params.id
+              }
+            })
+            .then(() => {
+              this.$message.success(this.$t('message.deleting'))
+            })
           // .catch(() => {
           //   this.$message.info(this.$t('message.deleteFail'))
           // })

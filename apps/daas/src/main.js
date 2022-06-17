@@ -20,7 +20,7 @@ import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'
 import '@/styles/element-variables.scss'
-import '@/plugins/axios'
+import '@/plugins/axios.ts'
 import { configUser } from '@/utils/util'
 
 Vue.config.productionTip = false

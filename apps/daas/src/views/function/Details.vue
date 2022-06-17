@@ -58,7 +58,7 @@
 
 <script>
 import { JsEditor } from '@tap/component'
-import { JavascriptFunctionsApi } from '@tap/api'
+import { javascriptFunctionsApi } from '@tap/api'
 export default {
   components: { JsEditor },
   data() {
@@ -77,7 +77,7 @@ export default {
         system: this.$t('function_type_option_system')
       }
 
-      JavascriptFunctionsApi.get([this.$route.params.id]).then(res => {
+      javascriptFunctionsApi.get([this.$route.params.id]).then(res => {
         let details = res || {}
         // 处理老数据问题
         if (details.type === 'custom' && !details.script) {

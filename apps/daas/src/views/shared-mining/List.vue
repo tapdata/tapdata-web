@@ -161,7 +161,7 @@ import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
-import { TaskApi, LogcollectorApi } from '@tap/api'
+import { taskApi, logcollectorApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -276,39 +276,43 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return LogcollectorApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        let list = res?.items || []
-        let pointTime = new Date()
-        return {
-          total: res?.total,
-          data: list.map(item => {
-            this.$set(item, 'pointTime', pointTime)
-            if (item.syncTimePoint === 'current') {
-              item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
-            } else {
-              item.pointTime = item.syncTimeZone
-            }
-            item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-            let statuses = item.statuses
-            item.disabledData = getTaskBtnDisabled(item)
-            item.statusResult = getSubTaskStatus(statuses)[0].status
-            return item
-          })
-        }
-      })
+      return logcollectorApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let list = res?.items || []
+          let pointTime = new Date()
+          return {
+            total: res?.total,
+            data: list.map(item => {
+              this.$set(item, 'pointTime', pointTime)
+              if (item.syncTimePoint === 'current') {
+                item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
+              } else {
+                item.pointTime = item.syncTimeZone
+              }
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              let statuses = item.statuses
+              item.disabledData = getTaskBtnDisabled(item)
+              item.statusResult = getSubTaskStatus(statuses)[0].status
+              return item
+            })
+          }
+        })
     },
 
     handleSetting() {
       //是否可以全局设置
       this.loadingConfig = true
-      LogcollectorApi.check()
+      logcollectorApi
+        .check()
         .then(res => {
           if (res) {
             this.showEditSettingBtn = res?.data //true是可用，false是禁用
             this.settingDialogVisible = true
-            LogcollectorApi.getSystemConfig()
+            logcollectorApi
+              .getSystemConfig()
               .then(res => {
                 if (res) {
                   this.digSettingForm = res
@@ -337,7 +341,7 @@ export default {
             this.digSettingForm.persistenceMongodb_uri_db = ''
             this.digSettingForm.persistenceMongodb_collection = ''
           }
-          LogcollectorApi.patchSystemConfig(this.digSettingForm).then(res => {
+          logcollectorApi.patchSystemConfig(this.digSettingForm).then(res => {
             if (res) {
               this.settingDialogVisible = false
               this.$message.success(this.$t('message_save_ok'))
@@ -352,9 +356,9 @@ export default {
           id: ids[0]
         }
       }
-      TaskApi.get({ filter: JSON.stringify(filter) }).then(res => {
+      taskApi.get({ filter: JSON.stringify(filter) }).then(res => {
         if (res) {
-          TaskApi.batchStart(ids).then(res => {
+          taskApi.batchStart(ids).then(res => {
             this.$message.success(res?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
           })
@@ -396,7 +400,7 @@ export default {
         if (!resFlag) {
           return
         }
-        TaskApi.batchStop(ids).then(res => {
+        taskApi.batchStop(ids).then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
@@ -411,7 +415,7 @@ export default {
         if (!resFlag) {
           return
         }
-        TaskApi.forceStop(ids).then(res => {
+        taskApi.forceStop(ids).then(res => {
           this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
@@ -452,7 +456,8 @@ export default {
           return
         }
         this.restLoading = true
-        TaskApi.batchRenew(ids)
+        taskApi
+          .batchRenew(ids)
           .then(res => {
             this.table.fetch()
             this.$message.success(res?.message || this.$t('message_operation_succuess'))
@@ -468,7 +473,7 @@ export default {
       this.$refs['editForm'].validate(valid => {
         if (valid) {
           let id = this.editForm?.id
-          LogcollectorApi.patch(id, this.editForm).then(res => {
+          logcollectorApi.patch(id, this.editForm).then(res => {
             if (res) {
               this.editDialogVisible = false
               this.table.fetch(1)

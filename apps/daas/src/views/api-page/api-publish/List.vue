@@ -187,7 +187,7 @@ import TablePage from '@/components/TablePage'
 import Upload from '@/components/UploadDialog'
 import { toRegExp } from '@/utils/util'
 import dayjs from 'dayjs'
-import { ModulesApi, WorkerApi } from '@tap/api'
+import { modulesApi, workerApi } from '@tap/api'
 
 export default {
   name: 'ApiPublish',
@@ -306,18 +306,20 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return ModulesApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        return {
-          total: res?.total,
-          data:
-            res?.items.map(item => {
-              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-              return item
-            }) || []
-        }
-      })
+      return modulesApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          return {
+            total: res?.total,
+            data:
+              res?.items.map(item => {
+                item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+                return item
+              }) || []
+          }
+        })
     },
     // 获取状态
     getWorkers() {
@@ -336,19 +338,21 @@ export default {
         },
         where
       }
-      WorkerApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        if (res?.items?.length) {
-          let record = res?.items[0] || {}
-          let workerStatus = record.workerStatus || record.worker_status || {}
-          if (this.status !== workerStatus.status) {
-            this.status = workerStatus.status
+      workerApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res?.items?.length) {
+            let record = res?.items[0] || {}
+            let workerStatus = record.workerStatus || record.worker_status || {}
+            if (this.status !== workerStatus.status) {
+              this.status = workerStatus.status
+            }
+          } else {
+            this.status = 'stop'
           }
-        } else {
-          this.status = 'stop'
-        }
-      })
+        })
       this.intervalId = setTimeout(this.getWorkers, 5000)
     },
     // 表格排序
@@ -377,7 +381,7 @@ export default {
         id: this.multipleSelection.map(r => r.id),
         listtags
       }
-      ModulesApi.batchUpdateListtags(attributes).then(() => {
+      modulesApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
         this.$message.success(this.$t('message_save_ok'))
       })
@@ -415,7 +419,7 @@ export default {
           id: item.id,
           tablename: item.tablename
         }
-        ModulesApi.patch(parmas).then(res => {
+        modulesApi.patch(parmas).then(res => {
           if (res) {
             this.$message.success(this.$t('modules_active'))
             this.table.fetch()
@@ -440,7 +444,7 @@ export default {
           id: item.id,
           tablename: item.tablename
         }
-        ModulesApi.patch(parmas).then(res => {
+        modulesApi.patch(parmas).then(res => {
           if (res) {
             this.$message.success(this.$t('modules_pending'))
             this.table.fetch()
@@ -471,7 +475,7 @@ export default {
         if (!resFlag) {
           return
         }
-        ModulesApi.delete(item.id, item.name).then(() => {
+        modulesApi.delete(item.id, item.name).then(() => {
           this.$message.success(this.$t('message_delete_ok'))
           this.table.fetch()
         })
@@ -512,7 +516,7 @@ export default {
                   id: item.id,
                   status: 'pending'
                 }
-          modulesData.push(ModulesApi.patch(data))
+          modulesData.push(modulesApi.patch(data))
         })
 
         Promise.all(modulesData).then(res => {
@@ -572,7 +576,7 @@ export default {
         uri: `${item.id}/copy`,
         headers: { 'lconname-name': item.basePath }
       }
-      ModulesApi.post(parmas, { 'lconname-name': item.basePath }).then(res => {
+      modulesApi.post(parmas, { 'lconname-name': item.basePath }).then(res => {
         if (res) {
           this.$message.success(this.$t('message_copy_success'))
           this.table.fetch()

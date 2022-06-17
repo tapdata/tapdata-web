@@ -21,7 +21,7 @@
 <script>
 import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
-import { LogcollectorApi } from '@tap/api'
+import { logcollectorApi } from '@tap/api'
 export default {
   name: 'ShareMining',
   components: { TableList, StatusTag },
@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     getData(id) {
-      LogcollectorApi.bySubTaskId(id).then(res => {
+      logcollectorApi.bySubTaskId(id).then(res => {
         this.taskList = res || []
       })
     },

@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { ScheduleTasksApi, MetadataInstancesApi } from '@tap/api'
+import { scheduleTasksApi, metadataInstancesApi } from '@tap/api'
 export default {
   props: {
     pipelineData: {
@@ -110,7 +110,7 @@ export default {
       }
     }
 
-    MetadataInstancesApi.get(params).then(res => {
+    metadataInstancesApi.get(params).then(res => {
       this.collections = res?.items || []
       this.model.collection = this.collections[0].original_name
     })
@@ -141,26 +141,28 @@ export default {
       let _this = this
       this.$refs.form.validate(valid => {
         if (valid) {
-          ScheduleTasksApi.post({
-            task_name: 'mongodb_apply_pipeline',
-            task_type: 'MONGODB_APPLY_PIPELINE',
-            status: 'waiting',
-            task_data: {
-              name: this.pipelineData.original_name,
-              id: this.pipelineData.id,
-              database: this.pipelineData.databaseId,
-              collection: this.model.collection,
-              pipeline: this.model.pipeline,
-              type: 'view',
-              isApplication: true,
-              dropIfExists: true,
-              source: this.pipelineData.source._id
-            }
-          }).then(res => {
-            _this.isApplication = res?.task_data.isApplication
-            if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
-            this.$message.success(this.$t('metadata.details.pipeline.success'))
-          })
+          scheduleTasksApi
+            .post({
+              task_name: 'mongodb_apply_pipeline',
+              task_type: 'MONGODB_APPLY_PIPELINE',
+              status: 'waiting',
+              task_data: {
+                name: this.pipelineData.original_name,
+                id: this.pipelineData.id,
+                database: this.pipelineData.databaseId,
+                collection: this.model.collection,
+                pipeline: this.model.pipeline,
+                type: 'view',
+                isApplication: true,
+                dropIfExists: true,
+                source: this.pipelineData.source._id
+              }
+            })
+            .then(res => {
+              _this.isApplication = res?.task_data.isApplication
+              if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
+              this.$message.success(this.$t('metadata.details.pipeline.success'))
+            })
           // .catch(() => {
           //   this.$message.error(this.$t('metadata.details.pipeline.failed'))
           // })
@@ -170,11 +172,13 @@ export default {
 
     // 保存
     saveSubmit() {
-      MetadataInstancesApi.patchId(this.pipelineData.id, {
-        pipline: this.model
-      }).then(() => {
-        this.$message.success(this.$t('message_save_ok'))
-      })
+      metadataInstancesApi
+        .patchId(this.pipelineData.id, {
+          pipline: this.model
+        })
+        .then(() => {
+          this.$message.success(this.$t('message_save_ok'))
+        })
       // .catch(() => {
       //   this.$message.error(this.$t('message_save_fail'))
       // })

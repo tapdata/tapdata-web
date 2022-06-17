@@ -78,7 +78,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import dayjs from 'dayjs'
-import { JavascriptFunctionsApi } from '@tap/api'
+import { javascriptFunctionsApi } from '@tap/api'
 
 export default {
   components: { TablePage },
@@ -113,19 +113,21 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return JavascriptFunctionsApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        let list = res?.items || []
-        return {
-          total: res?.total,
-          data: list.map(item => {
-            item.typeFmt = this.typeMapping[item.type]
-            item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-            return item
-          })
-        }
-      })
+      return javascriptFunctionsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let list = res?.items || []
+          return {
+            total: res?.total,
+            data: list.map(item => {
+              item.typeFmt = this.typeMapping[item.type]
+              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
+          }
+        })
     },
     remove(item) {
       this.$confirm(this.$t('function_message_delete_content'), this.$t('function_message_delete_title'), {
@@ -134,7 +136,7 @@ export default {
         if (!resFlag) {
           return
         }
-        JavascriptFunctionsApi.delete(item.id).then(res => {
+        javascriptFunctionsApi.delete(item.id).then(res => {
           if (res) this.table.fetch()
         })
       })

@@ -182,7 +182,7 @@ import FilterBar from '@/components/filter-bar'
 import { formatMs, handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
-import { ApiMonitorApi } from '@tap/api'
+import { apiMonitorApi } from '@tap/api'
 export default {
   name: 'ApiMonitor',
   components: { Chart, TableList, FilterBar, Detail },
@@ -277,7 +277,8 @@ export default {
     //获取统计数据
     getPreview() {
       this.loadingTotal = true
-      ApiMonitorApi.preview()
+      apiMonitorApi
+        .preview()
         .then(res => {
           this.previewData = res?.data
         })
@@ -287,7 +288,7 @@ export default {
     },
     //获取所有客户端
     getClientName() {
-      ApiMonitorApi.apiClientName().then(res => {
+      apiMonitorApi.apiClientName().then(res => {
         //重组数据
         let data = res?.data
         if (data?.length > 0) {
@@ -346,9 +347,10 @@ export default {
         skip: size * (failRateCurrent - 1)
       }
       this.loadingFailRateList = true
-      ApiMonitorApi.rankLists({
-        filter: JSON.stringify(filter)
-      })
+      apiMonitorApi
+        .rankLists({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
           let data = res?.data?.items.map(item => {
             let abj = {}
@@ -383,9 +385,10 @@ export default {
         skip: size * (consumingTimeCurrent - 1)
       }
       this.loadingTimeList = true
-      ApiMonitorApi.rankLists({
-        filter: JSON.stringify(filter)
-      })
+      apiMonitorApi
+        .rankLists({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
           //map
           let data = res?.data?.items.map(item => {
@@ -431,9 +434,10 @@ export default {
         where
       }
       this.loadingApiList = true
-      ApiMonitorApi.apiList({
-        filter: JSON.stringify(filter)
-      })
+      apiMonitorApi
+        .apiList({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
           let data = res?.data
           this.apiList = data.items

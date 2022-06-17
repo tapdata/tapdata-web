@@ -277,7 +277,7 @@ export default {
   },
   created() {
     let defaultCollection = this.$route.query.collection || this.$route.query['id']
-    this.apiClient = new APIClient(defaultCollection)
+    this.apiClient = new ApiClient(defaultCollection)
     this.initTimezones() // 获取时区下拉值
     this.getApiServer() // 获取API Server下拉值
     this.getCollections() // 获取api下拉值
@@ -380,7 +380,7 @@ export default {
     },
     // 获取API Server下拉值
     getApiServer() {
-      ApiServersApi.get({}).then(res => {
+      apiServersApi.get({}).then(res => {
         if (res) {
           this.apiServersList = res.data?.items
           if (this.apiServersList.length) {
@@ -545,7 +545,7 @@ export default {
           if (col) _this.tableHeader.push(col)
         })
       // 获取当前用户信息
-      UsersApi.get().then(res => {
+      usersApi.get().then(res => {
         if (res) {
           let arrquery = res.data.arrquery
           if (arrquery?.length) {
@@ -572,7 +572,7 @@ export default {
           _id: apiId
         }
       }
-      ModulesApi.get({ filter: JSON.stringify(filter) }).then(res => {
+      modulesApi.get({ filter: JSON.stringify(filter) }).then(res => {
         if (res?.data?.length) {
           let field_alias = {}
           res.data[0].fields.forEach(v => {
@@ -611,7 +611,7 @@ export default {
       })
       this.condition = condition
       this.table.fetch()
-      UsersApi.get().then(res => {
+      usersApi.get().then(res => {
         if (res?.data) {
           let arrquery = res.data.arrquery
           let isproid = 0
@@ -673,7 +673,7 @@ export default {
           where
         }
       }
-      ModulesApi.get(params).then(res => {
+      modulesApi.get(params).then(res => {
         if (res) {
           this.loadOpenAPI(res.data)
         }
@@ -953,19 +953,21 @@ export default {
         },
         where
       }
-      WorkerApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        if (res?.data?.items?.length) {
-          let record = res.data?.items?.[0] || {}
-          let workerStatus = record.workerStatus || record.worker_status || {}
-          if (_this.status !== workerStatus.status) {
-            _this.status = workerStatus.status
+      workerApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res?.data?.items?.length) {
+            let record = res.data?.items?.[0] || {}
+            let workerStatus = record.workerStatus || record.worker_status || {}
+            if (_this.status !== workerStatus.status) {
+              _this.status = workerStatus.status
+            }
+          } else {
+            _this.status = 'stop'
           }
-        } else {
-          _this.status = 'stop'
-        }
-      })
+        })
       _this.intervalId = setTimeout(_this.getWorkers, 5000)
     },
 
@@ -999,7 +1001,7 @@ export default {
       _this.renderTime = 0
       // 获取字段
       if (_this.apiId) {
-        await ModulesApi.getdata({ mondeid: _this.apiId }).then(res => {
+        await modulesApi.getdata({ mondeid: _this.apiId }).then(res => {
           if (res?.data?.fields?.length) {
             fields = res.data.fields
             let obj = {}

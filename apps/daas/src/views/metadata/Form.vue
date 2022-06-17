@@ -190,7 +190,7 @@
   </el-dialog>
 </template>
 <script>
-import { TypeMapping, MetadataInstancesApi } from '@tap/api'
+import { TypeMapping, metadataInstancesApi } from '@tap/api'
 const typeMappingApi = new TypeMapping()
 export default {
   props: {
@@ -568,7 +568,7 @@ export default {
             relation: relation
           }
           if (!falg) {
-            MetadataInstancesApi.patchId(this.metadata.id, params).then(() => {
+            metadataInstancesApi.patchId(this.metadata.id, params).then(() => {
               this.dialogFormVisible = false
               this.$emit('dialogVisible', false)
               this.$message.success(this.$t('metadata.details.success_Release'))

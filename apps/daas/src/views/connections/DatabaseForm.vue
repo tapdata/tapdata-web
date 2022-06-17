@@ -110,7 +110,7 @@ import VIcon from '@/components/VIcon'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 import GitBook from '@/components/GitBook'
-import { ConnectionsApi, DatabaseTypesApi, LogcollectorApi, pdkApi } from '@tap/api'
+import { connectionsApi, databaseTypesApi, logcollectorApi, pdkApi } from '@tap/api'
 
 export default {
   name: 'DatabaseForm',
@@ -169,7 +169,7 @@ export default {
   methods: {
     // 共享挖掘设置
     check() {
-      Promise.all([LogcollectorApi.check(), LogcollectorApi.getSystemConfig()]).then(([check, res]) => {
+      Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(([check, res]) => {
         let verify = check
         let digSettingForm = res
         if (verify && !digSettingForm?.persistenceMongodb_uri_db) {
@@ -258,7 +258,7 @@ export default {
     },
     //保存全局挖掘设置
     saveSetting(digSettingForm) {
-      LogcollectorApi.patchSystemConfig(digSettingForm).then(res => {
+      logcollectorApi.patchSystemConfig(digSettingForm).then(res => {
         if (res) {
           this.settingDialogVisible = false
           this.$message.success('保存全局设置成功')
@@ -331,7 +331,7 @@ export default {
         if (!params.id) {
           params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
         }
-        ConnectionsApi[params.id ? 'patchId' : 'post'](params)
+        connectionsApi[params.id ? 'patchId' : 'post'](params)
           .then(() => {
             this.$message.success(this.$t('message.saveOK'))
             if (this.$route.query.step) {
@@ -407,7 +407,8 @@ export default {
             id: this.model.id,
             submit: true
           }
-          ConnectionsApi.patchId(params)
+          connectionsApi
+            .patchId(params)
             .then(() => {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
@@ -444,7 +445,7 @@ export default {
     },
     getPdkForm() {
       const pdkHash = this.$route.query?.pdkHash
-      DatabaseTypesApi.pdkHash(pdkHash).then(res => {
+      databaseTypesApi.pdkHash(pdkHash).then(res => {
         let id = this.id || this.$route.params.id
         this.pdkOptions = res
         let result = {
@@ -532,7 +533,7 @@ export default {
       })
     },
     getPdkData(id) {
-      ConnectionsApi.getNoSchema(id).then(res => {
+      connectionsApi.getNoSchema(id).then(res => {
         this.model = res
         let { name, connection_type, table_filter } = this.model
         this.schemaFormInstance.setValues({

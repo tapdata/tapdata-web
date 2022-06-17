@@ -31,7 +31,7 @@ import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import dayjs from 'dayjs'
 import ShareMining from './ShareMining'
-import { MeasurementApi, SubTaskApi } from '@tap/api'
+import { measurementApi, subtaskApi } from '@tap/api'
 
 export default {
   name: 'Statistics',
@@ -127,7 +127,8 @@ export default {
       if (!hiddenLoading) {
         this.loading = true
       }
-      SubTaskApi.get([id])
+      subtaskApi
+        .get([id])
         .then(res => {
           if (JSON.stringify(this.formatTask(res)) === JSON.stringify(this.task)) {
             return
@@ -159,7 +160,7 @@ export default {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     infoRemoteMethod(params) {
-      return MeasurementApi.query(params).then(res => {
+      return measurementApi.query(params).then(res => {
         return res
       })
     },

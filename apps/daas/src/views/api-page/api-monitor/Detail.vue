@@ -56,7 +56,7 @@ import FilterBar from '@/components/filter-bar'
 import { Chart } from '@tap/component'
 import { formatTime } from '@/utils/util'
 import { handleUnit, formatMs } from './utils'
-import { ApiMonitorApi } from '@tap/api'
+import { apiMonitorApi } from '@tap/api'
 export default {
   name: 'Detail',
   components: { FilterBar, Chart },
@@ -198,7 +198,8 @@ export default {
       if (!hiddenLoading) {
         this.loadingDetail = true
       }
-      ApiMonitorApi.apiDetail(data)
+      apiMonitorApi
+        .apiDetail(data)
         .then(res => {
           //处理数据
           this.detail = res?.data

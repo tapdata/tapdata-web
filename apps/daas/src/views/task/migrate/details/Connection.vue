@@ -55,7 +55,7 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
 import { getConnectionIcon } from '@/views/connections/util'
-import { ConnectionsApi } from '@tap/api'
+import { connectionsApi } from '@tap/api'
 
 export default {
   name: 'Connection',
@@ -135,18 +135,20 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return ConnectionsApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        let data = res?.items.map(item => {
-          item.connectType = this.connectTypeMap[item.connection_type]
-          return deepCopy(item)
+      return connectionsApi
+        .get({
+          filter: JSON.stringify(filter)
         })
-        return {
-          total: res?.total,
-          data: data
-        }
-      })
+        .then(res => {
+          let data = res?.items.map(item => {
+            item.connectType = this.connectTypeMap[item.connection_type]
+            return deepCopy(item)
+          })
+          return {
+            total: res?.total,
+            data: data
+          }
+        })
     },
     getTableData() {
       return this.$refs.tableList?.getData()
@@ -211,7 +213,7 @@ export default {
       }
       this.loadFieldsStatus = 'loading'
       this.reloadLoading = true
-      ConnectionsApi.patch(row.id, parms).then(res => {
+      connectionsApi.patch(row.id, parms).then(res => {
         if (!this?.$refs?.test) {
           return
         }

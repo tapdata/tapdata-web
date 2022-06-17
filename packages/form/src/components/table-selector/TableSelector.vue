@@ -345,7 +345,6 @@
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import { WorkerAPI } from '@tap/api'
 
 export default {
   components: { RecycleScroller, OverflowTooltip },
@@ -536,7 +535,7 @@ export default {
     },
     //重新加载模型
     async reload() {
-      const workerApi = new WorkerAPI()
+      const workerApi = new workerApi()
       const data = await workerApi.getAvailableAgent()
       if (!data?.result?.length) {
         this.$message.error(this.$t('agent_check_error'))

@@ -90,7 +90,7 @@ import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import Cookie from '@tap/shared/src/cookie'
-import { ApiServersApi } from '@tap/api'
+import { apiServersApi } from '@tap/api'
 
 export default {
   name: 'ApiServers',
@@ -195,7 +195,7 @@ export default {
         if (!resFlag) {
           return
         }
-        ApiServersApi.delete(item.id, item.clientName).then(() => {
+        apiServersApi.delete(item.id, item.clientName).then(() => {
           this.$message.success(this.$t('message_delete_ok'))
           this.table.fetch()
         })
@@ -217,7 +217,7 @@ export default {
       const params = this.createForm
       this.$refs.form.validate(valid => {
         if (valid) {
-          ApiServersApi[method](params).then(res => {
+          apiServersApi[method](params).then(res => {
             if (res) {
               this.table.fetch()
               this.createDialogVisible = false
@@ -257,16 +257,18 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return ApiServersApi.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        if (res) {
-          return {
-            total: res.data?.total || 0,
-            data: res.data?.items || []
+      return apiServersApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res) {
+            return {
+              total: res.data?.total || 0,
+              data: res.data?.items || []
+            }
           }
-        }
-      })
+        })
     },
 
     // 表格排序

@@ -91,7 +91,7 @@ import VIcon from 'web-core/components/VIcon'
 import { uniqueArr } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
-import { UserLogsApi, NotificationApi } from '@tap/api'
+import { userLogsApi, notificationApi } from '@tap/api'
 
 export default {
   components: {
@@ -164,7 +164,7 @@ export default {
       let where = {
         read: false
       }
-      NotificationApi.count({ where: JSON.stringify(where) }).then(res => {
+      notificationApi.count({ where: JSON.stringify(where) }).then(res => {
         if (res) {
           let data = res?.data || res?.data === 0 ? res?.data : res
           // this.unRead = res.data.count
@@ -183,7 +183,7 @@ export default {
         limit: 20,
         skip: 0
       }
-      NotificationApi.get({ filter: JSON.stringify(filter) }).then(res => {
+      notificationApi.get({ filter: JSON.stringify(filter) }).then(res => {
         let { items, total } = res
         this.$store.commit('notification', {
           unRead: total
@@ -196,7 +196,7 @@ export default {
       })
     },
     handleRead(id) {
-      NotificationApi.patch({ read: true, id: id }).then(res => {
+      notificationApi.patch({ read: true, id: id }).then(res => {
         if (res) {
           this.getUnreadData()
           this.$root.$emit('notificationUpdate')
@@ -250,9 +250,10 @@ export default {
           type: 'userOperation'
         }
       }
-      UserLogsApi.get({
-        filter: JSON.stringify(filter)
-      })
+      userLogsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
           this.userOperations =
             res?.items.map(item => {

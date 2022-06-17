@@ -123,7 +123,7 @@ import APIClient from '@tap/api'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 import { VirtualSelect } from '@tap/component'
-import { MetadataInstancesApi, ModulesApi, ApiServersApi, RoleApi, ConnectionsApi } from '@tap/api'
+import { metadataInstancesApi, modulesApi, apiServersApi, roleApi, connectionsApi } from '@tap/api'
 export default {
   name: 'ApiPublishForm',
   components: { CustomerApiForm, SelectClassify, VirtualSelect },
@@ -227,7 +227,7 @@ export default {
           }
         })
       }
-      MetadataInstancesApi.get(params).then(res => {
+      metadataInstancesApi.get(params).then(res => {
         let table = res?.items?.[0]
         this.createForm.fields = this.fields = table.fields
       })
@@ -269,7 +269,7 @@ export default {
     // 获取api数据
     getDetail() {
       let _this = this
-      ModulesApi.get([this.$route.query.id]).then(res => {
+      modulesApi.get([this.$route.query.id]).then(res => {
         if (res) {
           Object.assign(_this.createForm, res)
           // _this.createForm.apiType = res.data.apiType
@@ -295,7 +295,7 @@ export default {
         fields: fields,
         where
       }
-      ConnectionsApi.listAll(params).then(res => {
+      connectionsApi.listAll(params).then(res => {
         let options = res || []
         options = options.map(db => {
           return {
@@ -308,7 +308,8 @@ export default {
     },
     // 获取表数据
     getTableData() {
-      MetadataInstancesApi.getTables(this.createForm.datasource)
+      metadataInstancesApi
+        .getTables(this.createForm.datasource)
         .then(result => {
           let schemas = result || []
           if (schemas?.length) {
@@ -415,7 +416,7 @@ export default {
     // 打开api文档
     openDocument() {
       this.apiClient = new APIClient()
-      ApiServersApi.get({ 'filter[limit]': 1 }).then(res => {
+      apiServersApi.get({ 'filter[limit]': 1 }).then(res => {
         if (res?.length) {
           let apiServer = res[0]
           let apiServerUri = apiServer.clientURI
@@ -441,7 +442,7 @@ export default {
     },
     // 获取角色权限
     getRoles() {
-      RoleApi.get({}).then(res => {
+      roleApi.get({}).then(res => {
         if (res) {
           this.roles = res?.items || []
           this.roles.push({
@@ -532,7 +533,7 @@ export default {
               }
             })
           }
-          ModulesApi[method](this.createForm)
+          modulesApi[method](this.createForm)
             .then(res => {
               if (res) {
                 this.$router.push({

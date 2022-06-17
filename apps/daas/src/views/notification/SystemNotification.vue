@@ -124,7 +124,7 @@
 import { TYPEMAP } from './tyepMap'
 import SelectList from '@/components/SelectList'
 import dayjs from 'dayjs'
-import { NotificationApi } from '@tap/api'
+import { notificationApi } from '@tap/api'
 
 export default {
   components: { SelectList },
@@ -256,7 +256,8 @@ export default {
       }
 
       this.loading = true
-      NotificationApi.get({ filter: JSON.stringify(filter) })
+      notificationApi
+        .get({ filter: JSON.stringify(filter) })
         .then(res => {
           if (res) {
             this.listData = res?.items || []
@@ -293,7 +294,8 @@ export default {
       if (this.searchParams.msg || this.searchParams.msg !== '') {
         where.msg = this.searchParams.msg
       }
-      NotificationApi.count({ where: JSON.stringify(where) })
+      notificationApi
+        .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res) {
             this.total = res?.count
@@ -320,7 +322,7 @@ export default {
     handleRead(item) {
       let read = this.read
       if (!item.read) {
-        NotificationApi.patch({ read: true, id: item.id }).then(res => {
+        notificationApi.patch({ read: true, id: item.id }).then(res => {
           if (res) {
             // this.getUnreadNum() //未读消息数量
             // this.getData()
@@ -351,7 +353,7 @@ export default {
         id
       }
       let read = this.read
-      NotificationApi.pageRead(data).then(res => {
+      notificationApi.pageRead(data).then(res => {
         if (res) {
           // this.getUnreadNum() //未读消息数量
           this.getData()
@@ -375,7 +377,7 @@ export default {
       // }
       where = JSON.stringify(where)
       let read = this.read
-      NotificationApi.readAll(where).then(res => {
+      notificationApi.readAll(where).then(res => {
         if (res) {
           // this.getUnreadNum() //未读消息数量
           this.getData()
