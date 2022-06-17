@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ApiClient } from '@tap/api'
+import { ApiClient, apiServersApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 export default {
   name: 'ApiDocAndTest',
@@ -33,7 +33,7 @@ export default {
   },
   async mounted() {
     try {
-      let apiServers = await this.$api('ApiServer').get({
+      let apiServers = await apiServersApi.get({
         'filter[where][clientName]': 'Default APIServer'
       })
 
