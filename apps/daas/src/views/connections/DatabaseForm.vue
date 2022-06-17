@@ -545,14 +545,15 @@ export default {
         .getNoSchema(id)
         .then(res => {
           this.model = res.data
-          let { name, connection_type, table_filter } = this.model
+          let { name, connection_type, table_filter, shareCdcEnable } = this.model
           this.schemaFormInstance.setValues({
             __TAPDATA_START: {
               name,
               connection_type
             },
             __TAPDATA_END: {
-              table_filter
+              table_filter,
+              shareCdcEnable
             },
             ...this.model?.config
           })
