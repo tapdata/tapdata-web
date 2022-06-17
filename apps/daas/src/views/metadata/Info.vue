@@ -389,6 +389,7 @@ import Pipeline from './Pipeline'
 import Collections from './Collections'
 import VIcon from '@/components/VIcon'
 import dayjs from 'dayjs'
+import { MetadataInstancesApi } from '@tap/api'
 
 export default {
   components: {
@@ -530,8 +531,7 @@ export default {
     getData() {
       let id = this.$route?.params?.id || ''
       this.loading = true
-      return this.$api('MetadataInstances')
-        .findTablesById([id])
+      return MetadataInstancesApi.findTablesById([id])
         .then(res => {
           let data = res.data
           data.createTimeFmt = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
@@ -615,12 +615,10 @@ export default {
           fields: fields,
           relation: relation
         }
-        this.$api('MetadataInstances')
-          .patch(this.metadataDataObj.id, params)
-          .then(() => {
-            this.getData()
-            this.$message.success(this.$t('message.deleteOK'))
-          })
+        MetadataInstancesApi.patch(this.metadataDataObj.id, params).then(() => {
+          this.getData()
+          this.$message.success(this.$t('message.deleteOK'))
+        })
         // .catch(() => {
         //   this.$message.info(this.$t('message.deleteFail'))
         // })
@@ -681,12 +679,10 @@ export default {
         let params = {
           custom_properties: this.metadataDataObj.custom_properties
         }
-        this.$api('MetadataInstances')
-          .patch(this.metadataDataObj.id, params)
-          .then(() => {
-            this.getData()
-            this.$message.success(this.$t('metadata.details.success_Release'))
-          })
+        MetadataInstancesApi.patch(this.metadataDataObj.id, params).then(() => {
+          this.getData()
+          this.$message.success(this.$t('metadata.details.success_Release'))
+        })
         // .catch(() => {
         //   this.$message.error(this.$t('message_save_fail'))
         // })
@@ -703,8 +699,7 @@ export default {
       let params = {
         custom_properties: Object.assign(custom_properties, obj)
       }
-      this.$api('MetadataInstances')
-        .patchId(this.metadataDataObj.id, params)
+      MetadataInstancesApi.patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
@@ -731,8 +726,7 @@ export default {
       }
       // params.alias_name = this.editNameForm.alias_name;
 
-      this.$api('MetadataInstances')
-        .patchId(this.metadataDataObj.id, params)
+      MetadataInstancesApi.patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
@@ -749,8 +743,7 @@ export default {
       let params = {
         comment: this.editCommentForm.comment
       }
-      this.$api('MetadataInstances')
-        .patchId(this.metadataDataObj.id, params)
+      MetadataInstancesApi.patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))

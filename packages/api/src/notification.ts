@@ -1,5 +1,5 @@
 import Http from './http'
-export default class notification extends Http {
+export default class Notification extends Http {
   constructor() {
     super('/api/Messages')
   }
@@ -29,4 +29,4 @@ export default class notification extends Http {
     return this.axios.post(this.url + '/readAll', params)
   }
 }
-export { notification }
+export { Notification }

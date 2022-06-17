@@ -98,7 +98,7 @@
 </template>
 
 <script>
-// import { getImgByType } from '../../utils/util'
+import { MetadataInstancesApi } from '@tap/api'
 export default {
   name: 'Search',
   data() {
@@ -142,16 +142,15 @@ export default {
       let params = this.handleParams(id)
       this.firstSearch = this.firstSearch === 0 ? 1 : this.firstSearch
       this.loading = true
-      this.$api('MetadataInstances')
-        .search(params)
+      MetadataInstancesApi.search(params)
         .then(result => {
-          let data = result.data || []
+          let data = result || []
           this.noMore = false
           if (data.length === 0 || (data.length < data.pageSize && !this.first)) {
             this.noMore = true
             return
           }
-          let resultData = result.data || []
+          let resultData = result || []
           //关键字标记
           this.handleKeywords(resultData || [])
           this.searchData = this.searchData.concat(resultData)

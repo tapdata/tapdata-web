@@ -45,6 +45,21 @@ const UserGroupsApi = new UserGroups()
 import file from './file'
 const fileApi = new file()
 
+import ScheduleTasks from './scheduleTasks'
+const ScheduleTasksApi = new ScheduleTasks()
+
+import PreviewData from './previewData'
+const PreviewDataApi = new PreviewData()
+
+import DataRule from './dataRule'
+const DataRuleApi = new DataRule()
+
+import Notification from './notification'
+const NotificationApi = new Notification()
+
+import Users from './users'
+const UsersApi = new Users()
+
 export {
   ConnectionsApi,
   DatabaseTypesApi,
@@ -60,7 +75,12 @@ export {
   fileApi,
   MetadataInstancesApi,
   MetadataDefinitionsApi,
-  UserGroupsApi
+  UserGroupsApi,
+  ScheduleTasksApi,
+  PreviewDataApi,
+  DataRuleApi,
+  NotificationApi,
+  UsersApi
 }
 export * from './databaseTypes'
 export * from './dataFlows'
@@ -73,7 +93,7 @@ export * from './Cluster'
 export * from './Function'
 export * from './MetadataTransformer'
 export * from './metadataDefinitions'
-export * from './Users'
+export * from './users'
 export * from './Settings'
 export * from './ApiMonitor'
 export * from './ApiCalls'
@@ -85,7 +105,7 @@ export * from './CustomerJobLogs'
 export * from './DataFlowFormSchemas'
 export * from './dataFlowInsights'
 export * from './DataQuality'
-export * from './DataRule'
+export * from './dataRule'
 export * from './DataRules'
 export * from './Dictionary'
 export * from './insights'
@@ -97,7 +117,7 @@ export * from './Licenses'
 export * from './LineageGraphs'
 export * from './logcollector'
 export * from './logs'
-export * from './DataRule'
+export * from './dataRule'
 export * from './measurement'
 export * from './Metrics'
 export * from './modules'
@@ -105,10 +125,10 @@ export * from './nodeConfigs'
 export * from './notification'
 export * from './pdk'
 export * from './Permissions'
-export * from './PreviewData'
+export * from './previewData'
 export * from './role'
 export * from './roleMapping'
-export * from './ScheduleTasks'
+export * from './scheduleTasks'
 export * from './shareCache'
 export * from './subTask'
 export * from './TaskHistories'

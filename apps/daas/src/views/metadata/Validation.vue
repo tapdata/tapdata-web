@@ -244,6 +244,7 @@
 </template>
 
 <script>
+import { DataRuleApi } from '@tap/api'
 export default {
   props: {
     validaData: {
@@ -406,27 +407,24 @@ export default {
       let filter = {
         order: 'name ASC'
       }
-      _this
-        .$api('DataRule')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          let groupData = {}
-          res.data.items.forEach(v => {
-            let key = v.classification || '__ungroup'
-            if (!groupData[key]) {
-              groupData[key] = []
-            }
-            groupData[key].push(v)
-          })
-          for (let [key, value] of Object.entries(groupData)) {
-            if (key === '__ungroup') {
-              key = _this.$t('metadata.details.validation.ungrouped')
-            }
-            _this.rulesArr.push({ label: key, rulesData: value })
+      DataRuleApi.get({
+        filter: JSON.stringify(filter)
+      }).then(res => {
+        let groupData = {}
+        res?.items.forEach(v => {
+          let key = v.classification || '__ungroup'
+          if (!groupData[key]) {
+            groupData[key] = []
           }
+          groupData[key].push(v)
         })
+        for (let [key, value] of Object.entries(groupData)) {
+          if (key === '__ungroup') {
+            key = _this.$t('metadata.details.validation.ungrouped')
+          }
+          _this.rulesArr.push({ label: key, rulesData: value })
+        }
+      })
     },
     // 创建数据校验弹窗
     openCreateDialog() {
