@@ -105,6 +105,9 @@ const inspectResultsApi = new InspectResults()
 import TimeStamp from './TimeStamp'
 const timeStampApi = new TimeStamp()
 
+import RoleMappings from './RoleMapping'
+const roleMappingsApi = new RoleMappings()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -140,7 +143,8 @@ export {
   inspectApi,
   inspectDetailsApi,
   inspectResultsApi,
-  timeStampApi
+  timeStampApi,
+  roleMappingsApi
 }
 export * from './DatabaseTypes'
 export * from './DataFlows'
@@ -187,7 +191,7 @@ export * from './PDK'
 export * from './Permissions'
 export * from './PreviewData'
 export * from './Role'
-export * from './roleMapping'
+export * from './RoleMapping'
 export * from './ScheduleTasks'
 export * from './shareCache'
 export * from './SubTask'

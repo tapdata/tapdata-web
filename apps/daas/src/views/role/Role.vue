@@ -196,8 +196,7 @@
 </template>
 
 <script>
-import factory from '@/api/factory'
-const roleMappingModel = factory('roleMapping')
+import { roleMappingsApi } from '@tap/api'
 
 let pageSort = [
   // { children: [{ name: 'Dashboard_menu' }] },
@@ -475,12 +474,12 @@ export default {
           roleId: this.$route.query.id
         }
       }
-      roleMappingModel
+      roleMappingsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res?.data?.length) {
+          if (res?.length) {
             res.data.forEach(item => {
               if (item.principalType === 'USER') {
                 this.roleusers.push(item.principalId)
@@ -493,7 +492,7 @@ export default {
                 }
               }
             })
-            this.rolemappings = res.data.items
+            this.rolemappings = res?.items
             if (pageData.length) {
               pageData.forEach(item => {
                 if (this.selectRole && this.selectRole.length) {
