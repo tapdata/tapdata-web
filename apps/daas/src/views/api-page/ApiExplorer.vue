@@ -214,8 +214,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
-import { settingsApi, workerApi, usersApi, apiServersApi, modulesApi } from '@tap/api'
-import ApiClient from '@tap/api'
+import { ApiClient, settingsApi, workerApi, usersApi, apiServersApi, modulesApi } from '@tap/api'
 import SelectList from '@/components/SelectList'
 import { JsEditor } from '@tap/component'
 import dayjs from 'dayjs'
@@ -545,9 +544,9 @@ export default {
           if (col) _this.tableHeader.push(col)
         })
       // 获取当前用户信息
-      usersApi.get().then(res => {
-        if (res) {
-          let arrquery = res.data.arrquery
+      usersApi.get().then(data => {
+        if (data) {
+          let arrquery = data.arrquery
           if (arrquery?.length) {
             _this.tableHeader = arrquery.map(item => {
               if (
@@ -1019,7 +1018,8 @@ export default {
         })
       }
       return (
-        Promise.all([await _this.apiClient.find(filter)])
+        _this.apiClient
+          .find(filter)
           .then(res => {
             let typeMap = {
               '[object String]': 'string',
@@ -1033,7 +1033,7 @@ export default {
             oldHeaders.forEach(v => {
               headerMap[v.value] = v
             })
-            let findData = res?.[0]?.data?.data || []
+            let findData = res?.data?.data || []
             if (findData?.length) {
               findData.forEach(record => {
                 Object.keys(record).forEach(v => {
@@ -1092,7 +1092,7 @@ export default {
             this.tableData = tableData
             _this.queryTime = formatTime(new Date().getTime() - time)
             return {
-              total: res[0].data.total.count,
+              total: res.data.total.count,
               data: this.tableData
             }
           })

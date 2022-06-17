@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import APIClient from '@tap/api'
+import { ApiClient } from '@tap/api'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 import { VirtualSelect } from '@tap/component'
@@ -415,7 +415,7 @@ export default {
     // },
     // 打开api文档
     openDocument() {
-      this.apiClient = new APIClient()
+      this.apiClient = new ApiClient()
       apiServersApi.get({ 'filter[limit]': 1 }).then(res => {
         if (res?.length) {
           let apiServer = res[0]
