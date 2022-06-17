@@ -10,7 +10,6 @@ import VIcon from '@/components/VIcon'
 import ConnectionTest from '@/components/ConnectionTest'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
-import { Users, Settings } from '@tap/api'
 
 import '@/plugins/element'
 import '@/plugins/icon'
