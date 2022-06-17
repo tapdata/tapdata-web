@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2017",
     "module": "UMD",
-    "allowJs": true,
     "jsx": "preserve",
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
