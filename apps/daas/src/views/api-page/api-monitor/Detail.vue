@@ -56,6 +56,7 @@ import FilterBar from '@/components/filter-bar'
 import { Chart } from '@tap/component'
 import { formatTime } from '@/utils/util'
 import { handleUnit, formatMs } from './utils'
+import { ApiMonitorApi } from '@tap/api'
 export default {
   name: 'Detail',
   components: { FilterBar, Chart },
@@ -197,13 +198,12 @@ export default {
       if (!hiddenLoading) {
         this.loadingDetail = true
       }
-      this.$api('ApiMonitor')
-        .apiDetail(data)
+      ApiMonitorApi.apiDetail(data)
         .then(res => {
           //处理数据
-          this.detail = res
+          this.detail = res?.data
           this.detail['totalCount'] = (this.detail.visitTotalCount || 0) - (this.detail.errorVisitTotalCount || 0) || 0
-          let data = res
+          let data = res?.data
           // 折线图
           let qpsDataValue = data.value || []
           this.qpsDataTime = data.time || []

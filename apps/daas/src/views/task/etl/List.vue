@@ -661,7 +661,7 @@ export default {
       )
     },
     export(ids) {
-      Task.export(ids)
+      TaskApi.export(ids)
     },
     start(ids) {
       let _this = this

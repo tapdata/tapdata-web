@@ -182,6 +182,7 @@ import FilterBar from '@/components/filter-bar'
 import { formatMs, handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
+import { ApiMonitorApi } from '@tap/api'
 export default {
   name: 'ApiMonitor',
   components: { Chart, TableList, FilterBar, Detail },
@@ -276,10 +277,9 @@ export default {
     //获取统计数据
     getPreview() {
       this.loadingTotal = true
-      this.$api('ApiMonitor')
-        .preview()
+      ApiMonitorApi.preview()
         .then(res => {
-          this.previewData = res
+          this.previewData = res?.data
         })
         .finally(() => {
           this.loadingTotal = false
@@ -287,22 +287,20 @@ export default {
     },
     //获取所有客户端
     getClientName() {
-      this.$api('ApiMonitor')
-        .apiClientName()
-        .then(res => {
-          //重组数据
-          let data = res
-          if (data?.length > 0) {
-            for (let i = 0; i < data.length; i++) {
-              let obj = {
-                label: data[i].name,
-                value: data[i].id
-              }
-              this.clientNameList.push(obj)
+      ApiMonitorApi.apiClientName().then(res => {
+        //重组数据
+        let data = res?.data
+        if (data?.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            let obj = {
+              label: data[i].name,
+              value: data[i].id
             }
+            this.clientNameList.push(obj)
           }
-          this.getFilterItems()
-        })
+        }
+        this.getFilterItems()
+      })
     },
     //图表数据组装
     getPieOption() {
@@ -348,13 +346,11 @@ export default {
         skip: size * (failRateCurrent - 1)
       }
       this.loadingFailRateList = true
-      this.$api('ApiMonitor')
-        .rankLists({
-          filter: JSON.stringify(filter)
-        })
+      ApiMonitorApi.rankLists({
+        filter: JSON.stringify(filter)
+      })
         .then(res => {
-          //map
-          let data = res?.items.map(item => {
+          let data = res?.data?.items.map(item => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -387,13 +383,12 @@ export default {
         skip: size * (consumingTimeCurrent - 1)
       }
       this.loadingTimeList = true
-      this.$api('ApiMonitor')
-        .rankLists({
-          filter: JSON.stringify(filter)
-        })
+      ApiMonitorApi.rankLists({
+        filter: JSON.stringify(filter)
+      })
         .then(res => {
           //map
-          let data = res?.items.map(item => {
+          let data = res?.data?.items.map(item => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -401,7 +396,7 @@ export default {
             }
             return abj
           })
-          this.page.consumingTimeTotal = res?.total
+          this.page.consumingTimeTotal = res?.data?.total
           this.consumingTimeList = data || []
         })
         .finally(() => {
@@ -436,12 +431,11 @@ export default {
         where
       }
       this.loadingApiList = true
-      return this.$api('ApiMonitor')
-        .apiList({
-          filter: JSON.stringify(filter)
-        })
+      ApiMonitorApi.apiList({
+        filter: JSON.stringify(filter)
+      })
         .then(res => {
-          let data = res
+          let data = res?.data
           this.apiList = data.items
           this.page.apiListTotal = data.total
         })

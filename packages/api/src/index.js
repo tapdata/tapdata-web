@@ -60,6 +60,9 @@ const NotificationApi = new Notification()
 import Users from './users'
 const UsersApi = new Users()
 
+import ApiMonitor from './apiMonitor'
+const ApiMonitorApi = new ApiMonitor()
+
 export {
   ConnectionsApi,
   DatabaseTypesApi,
@@ -80,7 +83,8 @@ export {
   PreviewDataApi,
   DataRuleApi,
   NotificationApi,
-  UsersApi
+  UsersApi,
+  ApiMonitorApi
 }
 export * from './databaseTypes'
 export * from './dataFlows'
@@ -95,7 +99,7 @@ export * from './MetadataTransformer'
 export * from './metadataDefinitions'
 export * from './users'
 export * from './Settings'
-export * from './ApiMonitor'
+export * from './apiMonitor'
 export * from './ApiCalls'
 export * from './ApiClient'
 export * from './ApiServer'
