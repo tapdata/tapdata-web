@@ -150,7 +150,7 @@
 <script>
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
-import { sharedCacheApi, MetadataInstancesApi, ConnectionsApi } from '@tap/api'
+import { sharedCacheApi, metadataInstancesApi, connectionsApi } from '@tap/api'
 export default {
   components: { VirtualSelect, FieldSelector },
   data() {
@@ -230,14 +230,15 @@ export default {
           connection_type: { in: ['source', 'source_and_target'] }
         }
       }
-      ConnectionsApi.listAll(filter).then(res => {
+      connectionsApi.listAll(filter).then(res => {
         let options = res?.data || []
         this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
       })
     },
     getTableOptions(connectionId) {
       this.tableOptionsLoading = true
-      MetadataInstancesApi.getTables(connectionId)
+      metadataInstancesApi
+        .getTables(connectionId)
         .then(res => {
           let options = []
           let list = res || []
@@ -268,7 +269,8 @@ export default {
         })
       }
       this.fieldOptionsLoading = true
-      MetadataInstancesApi.get(params)
+      metadataInstancesApi
+        .get(params)
         .then(res => {
           let table = res?.items?.[0]
           if (table) {

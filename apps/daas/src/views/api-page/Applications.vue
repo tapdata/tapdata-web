@@ -141,7 +141,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
-import { RoleApi, applicationApi } from '@tap/api'
+import { roleApi, applicationApi } from '@tap/api'
 
 export default {
   name: 'Applications',
@@ -293,7 +293,7 @@ export default {
     },
     // 获取角色
     getRoles() {
-      RoleApi.get({}).then(res => {
+      roleApi.get({}).then(res => {
         if (res) {
           this.roles = res?.items || []
         }

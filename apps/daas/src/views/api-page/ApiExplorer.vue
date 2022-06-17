@@ -214,8 +214,8 @@
 <script>
 import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
-import { settingsApi, WorkerApi, UsersApi, ApiServersApi, ModulesApi } from '@tap/api'
-import APIClient from '@tap/api'
+import { settingsApi, workerApi, usersApi, apiServersApi, modulesApi } from '@tap/api'
+import ApiClient from '@tap/api'
 import SelectList from '@/components/SelectList'
 import { JsEditor } from '@tap/component'
 import dayjs from 'dayjs'

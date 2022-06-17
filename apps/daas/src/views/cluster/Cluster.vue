@@ -282,7 +282,7 @@
 <script>
 import FilterBar from '@/components/filter-bar'
 import AddServe from './AddServe'
-import { WorkerApi, clusterApi } from '@tap/api'
+import { workerApi, clusterApi } from '@tap/api'
 
 export default {
   components: {
@@ -337,7 +337,7 @@ export default {
           inq: processId
         }
       }
-      WorkerApi.get({ filter: JSON.stringify({ where: where }) }).then(res => {
+      workerApi.get({ filter: JSON.stringify({ where: where }) }).then(res => {
         let data = res?.items
         if (data?.length) {
           let metricValuesData = []
@@ -364,7 +364,7 @@ export default {
             arguments: getFrom.arguments ? getFrom.arguments : ''
           }
           if (getFrom.id === '') {
-            await cluster
+            await clusterApi
               .addMonitor(data)
               .then(() => {
                 this.dialogForm = false
@@ -379,7 +379,7 @@ export default {
               })
           } else {
             data.id = getFrom.id
-            await cluster
+            await clusterApi
               .editMonitor(data)
               .then(() => {
                 this.dialogForm = false
