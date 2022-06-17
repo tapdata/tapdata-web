@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import APIClient from '@tap/api'
+import { ApiClient } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 export default {
   name: 'ApiDocAndTest',
@@ -40,7 +40,7 @@ export default {
       if (apiServers?.data?.items?.length) {
         let defaultCollection = this.$route.query.collection || this.$route.query['id']
 
-        this.apiClient = new APIClient(defaultCollection)
+        this.apiClient = new ApiClient(defaultCollection)
         this.apiClient.setApiServer(apiServers.data.items[0])
 
         let openApi = `${apiServers.data.items[0].clientURI}/openapi.json`
