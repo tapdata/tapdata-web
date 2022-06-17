@@ -244,14 +244,14 @@ export default observer({
                             }
                           }
                         }
+                      },
+                      isAutoInspect: {
+                        title: this.$t('task_list_verify'),
+                        type: 'boolean',
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch'
                       }
-                      // isAutoInspect: {
-                      //   title: '数据校验', //共享挖掘日志过滤
-                      //   type: 'boolean',
-                      //   default: true,
-                      //   'x-decorator': 'FormItem',
-                      //   'x-component': 'Switch'
-                      // },
                     }
                   }
                 }
