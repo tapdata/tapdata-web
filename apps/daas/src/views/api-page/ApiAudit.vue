@@ -59,6 +59,7 @@ import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import dayjs from 'dayjs'
+import { apiCallsApi } from '@tap/api'
 
 export default {
   name: 'ApiAudit',
@@ -138,16 +139,16 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('ApiCalls')
+      return apiCallsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
           if (res) {
             return {
-              total: res.data?.total || 0,
+              total: res?.total || 0,
               data:
-                res.data?.items.map(item => {
+                res?.items.map(item => {
                   item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
                   return item
                 }) || []

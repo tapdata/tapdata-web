@@ -154,6 +154,7 @@ import Drawer from '@/components/Drawer'
 import { toRegExp } from '@/utils/util'
 import { getSubTaskStatus } from '@/utils/util'
 import dayjs from 'dayjs'
+import { sharedCacheApi } from '@tap/api'
 
 export default {
   components: { TablePage, FilterBar, Drawer },
@@ -205,12 +206,12 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('shareCache')
+      return sharedCacheApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let list = res.data?.items || []
+          let list = res?.items || []
           return {
             total: res.data?.total,
             data: list.map(item => {
@@ -259,12 +260,10 @@ export default {
         type: 'warning'
       }).then(flag => {
         if (flag) {
-          this.$api('shareCache')
-            .delete(id)
-            .then(() => {
-              this.$$message.success(this.$t('message_delete_ok'))
-              this.table.fetch()
-            })
+          sharedCacheApi.delete(id).then(() => {
+            this.$$message.success(this.$t('message_delete_ok'))
+            this.table.fetch()
+          })
         }
       })
     },

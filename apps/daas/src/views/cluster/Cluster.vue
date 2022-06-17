@@ -282,11 +282,8 @@
 <script>
 import FilterBar from '@/components/filter-bar'
 import AddServe from './AddServe'
-import factory from '../../api/factory'
-const cluster = factory('cluster')
-// const clusterVersion = factory('clusterVersion');
-// const settings = factory('Setting');
-// const dataFlows = factory('DataFlows');
+import { WorkerApi, clusterApi } from '@tap/api'
+
 export default {
   components: {
     AddServe,
@@ -340,20 +337,18 @@ export default {
           inq: processId
         }
       }
-      this.$api('Workers')
-        .get({ filter: JSON.stringify({ where: where }) })
-        .then(res => {
-          let data = res.data?.items
-          if (data?.length) {
-            let metricValuesData = []
-            data.forEach(item => {
-              if (item.metricValues) {
-                metricValuesData.push(item)
-              }
-            })
-            this.processIdData = metricValuesData
-          }
-        })
+      WorkerApi.get({ filter: JSON.stringify({ where: where }) }).then(res => {
+        let data = res?.items
+        if (data?.length) {
+          let metricValuesData = []
+          data.forEach(item => {
+            if (item.metricValues) {
+              metricValuesData.push(item)
+            }
+          })
+          this.processIdData = metricValuesData
+        }
+      })
     },
     // 提交
     async submitForm() {
@@ -422,7 +417,7 @@ export default {
           if (!resFlag) {
             return
           }
-          cluster.removeMonitor(params).then(() => {
+          clusterApi.removeMonitor(params).then(() => {
             this.getDataApi()
             this.$message.success(this.$t('message_save_ok'))
           })
@@ -542,7 +537,7 @@ export default {
     },
     // 重启---关闭---启动     --版本--更新
     async operationFn(data) {
-      await cluster.updateStatus(data).then(res => {
+      await clusterApi.updateStatus(data).then(res => {
         if (res.status === 200) {
           this.getDataApi()
         }
@@ -579,8 +574,8 @@ export default {
           }
         }
       }
-      cluster.get(params).then(res => {
-        let items = res.data?.items || []
+      clusterApi.get(params).then(res => {
+        let items = res?.items || []
         if (items) {
           let processId = []
           if (items?.length > 0) {
