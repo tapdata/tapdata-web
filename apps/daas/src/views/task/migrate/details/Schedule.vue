@@ -576,7 +576,7 @@ export default {
     //增量同步
     getCdcTableList() {
       subtaskApi.cdcIncrease(this.id).then(res => {
-        this.list = res
+        this.list = res?.data
       })
     },
     handleClear(row) {

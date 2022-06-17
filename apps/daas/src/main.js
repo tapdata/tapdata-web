@@ -3,6 +3,7 @@ import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
 import i18n from './i18n'
 import VueClipboard from 'vue-clipboard2'
+import factory from '@/api/factory'
 import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
 import VIcon from '@/components/VIcon'
@@ -27,7 +28,7 @@ Vue.use(VueClipboard)
 Vue.use(LoadMore)
 Vue.use(TapdataWebCore)
 
-// Vue.prototype.$api = factory
+Vue.prototype.$api = factory
 
 Vue.component(VIcon.name, VIcon)
 Vue.component(ConnectionTest.name, ConnectionTest)
