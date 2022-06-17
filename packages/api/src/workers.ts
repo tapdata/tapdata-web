@@ -1,5 +1,5 @@
 import Http from './http'
-export default class WorkerAPI extends Http {
+export default class Worker extends Http {
   constructor() {
     super('/api/Workers')
   }
@@ -7,4 +7,4 @@ export default class WorkerAPI extends Http {
     return this.axios.get(this.url + '/availableAgent').then(this.useData)
   }
 }
-export { WorkerAPI }
+export { Worker }

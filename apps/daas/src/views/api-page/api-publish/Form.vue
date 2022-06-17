@@ -123,6 +123,7 @@ import APIClient from '@tap/api'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 import { VirtualSelect } from '@tap/component'
+import { metadataInstancesApi, modulesApi, apiServersApi, roleApi, connectionsApi } from '@tap/api'
 export default {
   name: 'ApiPublishForm',
   components: { CustomerApiForm, SelectClassify, VirtualSelect },
@@ -226,12 +227,10 @@ export default {
           }
         })
       }
-      this.$api('MetadataInstances')
-        .get(params)
-        .then(res => {
-          let table = res?.items?.[0]
-          this.createForm.fields = this.fields = table.fields
-        })
+      metadataInstancesApi.get(params).then(res => {
+        let table = res?.items?.[0]
+        this.createForm.fields = this.fields = table.fields
+      })
     },
     // api类型改变
     changeApiType() {
@@ -270,17 +269,15 @@ export default {
     // 获取api数据
     getDetail() {
       let _this = this
-      this.$api('modules')
-        .get([this.$route.query.id])
-        .then(res => {
-          if (res) {
-            Object.assign(_this.createForm, res)
-            // _this.createForm.apiType = res.data.apiType
-            // _this.createForm.datasource = res.data.datasource
-            _this.fields = res?.fields
-            _this.getTableData()
-          }
-        })
+      modulesApi.get([this.$route.query.id]).then(res => {
+        if (res) {
+          Object.assign(_this.createForm, res)
+          // _this.createForm.apiType = res.data.apiType
+          // _this.createForm.datasource = res.data.datasource
+          _this.fields = res?.fields
+          _this.getTableData()
+        }
+      })
     },
     // 获取数据库
     getConnection() {
@@ -298,22 +295,20 @@ export default {
         fields: fields,
         where
       }
-      this.$api('connections')
-        .listAll(params)
-        .then(res => {
-          let options = res || []
-          options = options.map(db => {
-            return {
-              label: db.name,
-              value: db.id
-            }
-          })
-          this.databaseOptions = options
+      connectionsApi.listAll(params).then(res => {
+        let options = res || []
+        options = options.map(db => {
+          return {
+            label: db.name,
+            value: db.id
+          }
         })
+        this.databaseOptions = options
+      })
     },
     // 获取表数据
     getTableData() {
-      this.$api('MetadataInstances')
+      metadataInstancesApi
         .getTables(this.createForm.datasource)
         .then(result => {
           let schemas = result || []
@@ -421,45 +416,41 @@ export default {
     // 打开api文档
     openDocument() {
       this.apiClient = new APIClient()
-      this.$api('ApiServer')
-        .get({ 'filter[limit]': 1 })
-        .then(res => {
-          if (res?.length) {
-            let apiServer = res[0]
-            let apiServerUri = apiServer.clientURI
-            let openApiUri = apiServerUri + '/openapi.json'
-            let api = this.createForm.basePath + '_' + this.createForm.apiVersion
-            let token = this.apiClient.getAPIServerToken()
+      apiServersApi.get({ 'filter[limit]': 1 }).then(res => {
+        if (res?.length) {
+          let apiServer = res[0]
+          let apiServerUri = apiServer.clientURI
+          let openApiUri = apiServerUri + '/openapi.json'
+          let api = this.createForm.basePath + '_' + this.createForm.apiVersion
+          let token = this.apiClient.getAPIServerToken()
 
-            this.$router.push({
-              name: 'apiDocAndTest',
-              query: {
-                id: api,
-                openApi: openApiUri,
-                token: token
-              }
-            })
-          } else {
-            this.$message.error(this.$t('module_form_no_server_preview_api'))
-          }
-        })
+          this.$router.push({
+            name: 'apiDocAndTest',
+            query: {
+              id: api,
+              openApi: openApiUri,
+              token: token
+            }
+          })
+        } else {
+          this.$message.error(this.$t('module_form_no_server_preview_api'))
+        }
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('module_form_get_api_uri_fail'))
       // })
     },
     // 获取角色权限
     getRoles() {
-      this.$api('role')
-        .get({})
-        .then(res => {
-          if (res) {
-            this.roles = res?.items || []
-            this.roles.push({
-              name: this.$t('module_form_public_api'),
-              id: '$everyone'
-            })
-          }
-        })
+      roleApi.get({}).then(res => {
+        if (res) {
+          this.roles = res?.items || []
+          this.roles.push({
+            name: this.$t('module_form_public_api'),
+            id: '$everyone'
+          })
+        }
+      })
       // .catch(e => {
       //   this.$message.error(e.response.msg)
       // })
@@ -542,8 +533,7 @@ export default {
               }
             })
           }
-          this.$api('modules')
-            [method](this.createForm)
+          modulesApi[method](this.createForm)
             .then(res => {
               if (res) {
                 this.$router.push({

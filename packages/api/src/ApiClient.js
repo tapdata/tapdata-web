@@ -14,7 +14,7 @@ let pretreatment = function (doc) {
     })
   }
 }
-export default class {
+export default class ApiClient {
   constructor(collectionName) {
     // 在不提供 open api 时，使用 collectionName 拼接请求地址
     this.url = this.getAPIServerUrl(`/api/v1/${collectionName}`)
@@ -433,3 +433,5 @@ export default class {
     }
   }
 }
+
+export { ApiClient }

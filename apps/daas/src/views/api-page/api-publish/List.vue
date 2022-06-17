@@ -187,6 +187,7 @@ import TablePage from '@/components/TablePage'
 import Upload from '@/components/UploadDialog'
 import { toRegExp } from '@/utils/util'
 import dayjs from 'dayjs'
+import { modulesApi, workerApi } from '@tap/api'
 
 export default {
   name: 'ApiPublish',
@@ -305,7 +306,7 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('modules')
+      return modulesApi
         .get({
           filter: JSON.stringify(filter)
         })
@@ -337,7 +338,7 @@ export default {
         },
         where
       }
-      this.$api('Workers')
+      workerApi
         .get({
           filter: JSON.stringify(filter)
         })
@@ -380,12 +381,10 @@ export default {
         id: this.multipleSelection.map(r => r.id),
         listtags
       }
-      this.$api('modules')
-        .batchUpdateListtags(attributes)
-        .then(() => {
-          this.table.fetch()
-          this.$message.success(this.$t('message_save_ok'))
-        })
+      modulesApi.batchUpdateListtags(attributes).then(() => {
+        this.table.fetch()
+        this.$message.success(this.$t('message_save_ok'))
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('message_save_fail'))
       // })
@@ -420,14 +419,12 @@ export default {
           id: item.id,
           tablename: item.tablename
         }
-        this.$api('modules')
-          .patch(parmas)
-          .then(res => {
-            if (res) {
-              this.$message.success(this.$t('modules_active'))
-              this.table.fetch()
-            }
-          })
+        modulesApi.patch(parmas).then(res => {
+          if (res) {
+            this.$message.success(this.$t('modules_active'))
+            this.table.fetch()
+          }
+        })
         // .catch(() => {
         //   this.$message.error(this.$t('modules_status_deploy_fail'))
         // })
@@ -447,14 +444,12 @@ export default {
           id: item.id,
           tablename: item.tablename
         }
-        this.$api('modules')
-          .patch(parmas)
-          .then(res => {
-            if (res) {
-              this.$message.success(this.$t('modules_pending'))
-              this.table.fetch()
-            }
-          })
+        modulesApi.patch(parmas).then(res => {
+          if (res) {
+            this.$message.success(this.$t('modules_pending'))
+            this.table.fetch()
+          }
+        })
         // .catch(() => {
         //   this.$message.error(this.$t('modules_cancel_failed'))
         // })
@@ -480,12 +475,10 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('modules')
-          .delete(item.id, item.name)
-          .then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
-            this.table.fetch()
-          })
+        modulesApi.delete(item.id, item.name).then(() => {
+          this.$message.success(this.$t('message_delete_ok'))
+          this.table.fetch()
+        })
         // .catch(() => {
         //   this.$message.info(this.$t('message_delete_fail'))
         // })
@@ -523,7 +516,7 @@ export default {
                   id: item.id,
                   status: 'pending'
                 }
-          modulesData.push(this.$api('modules').patch(data))
+          modulesData.push(modulesApi.patch(data))
         })
 
         Promise.all(modulesData).then(res => {
@@ -583,14 +576,12 @@ export default {
         uri: `${item.id}/copy`,
         headers: { 'lconname-name': item.basePath }
       }
-      this.$api('modules')
-        .post(parmas, { 'lconname-name': item.basePath })
-        .then(res => {
-          if (res) {
-            this.$message.success(this.$t('message_copy_success'))
-            this.table.fetch()
-          }
-        })
+      modulesApi.post(parmas, { 'lconname-name': item.basePath }).then(res => {
+        if (res) {
+          this.$message.success(this.$t('message_copy_success'))
+          this.table.fetch()
+        }
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('message_copy_fail'))
       // })

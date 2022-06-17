@@ -63,6 +63,21 @@ const usersApi = new Users()
 import ApiMonitor from './ApiMonitor'
 const apiMonitorApi = new ApiMonitor()
 
+import Modules from './Modules'
+const modulesApi = new Modules()
+
+import ApiServers from './ApiServer'
+const apiServersApi = new ApiServers()
+
+import Role from './Role'
+const roleApi = new Role()
+
+import Worker from './Workers'
+const workerApi = new Worker()
+
+import Settings from './Settings'
+const settingsApi = new Settings()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -84,7 +99,12 @@ export {
   DataRuleApi,
   notificationApi,
   usersApi,
-  apiMonitorApi
+  apiMonitorApi,
+  modulesApi,
+  apiServersApi,
+  roleApi,
+  workerApi,
+  settingsApi
 }
 export * from './DatabaseTypes'
 export * from './DataFlows'
@@ -98,8 +118,8 @@ export * from './Function'
 export * from './MetadataTransformer'
 export * from './MetadataDefinitions'
 export * from './Users'
-export * from './Settings'
 export * from './ApiMonitor'
+export * from './Settings'
 export * from './ApiCalls'
 export * from './ApiClient'
 export * from './ApiServer'
@@ -124,13 +144,13 @@ export * from './logs'
 export * from './DataRule'
 export * from './Measurement'
 export * from './Metrics'
-export * from './modules'
+export * from './Modules'
 export * from './nodeConfigs'
 export * from './Notification'
 export * from './PDK'
 export * from './Permissions'
 export * from './PreviewData'
-export * from './role'
+export * from './Role'
 export * from './roleMapping'
 export * from './ScheduleTasks'
 export * from './shareCache'
@@ -140,7 +160,6 @@ export * from './TimeStamp'
 export * from './UserGroup'
 export * from './UserLogs'
 export * from './validationResults'
-export * from './Workers.ts'
 
 export { CancelToken }
 
