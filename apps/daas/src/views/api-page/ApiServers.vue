@@ -90,6 +90,7 @@ import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import Cookie from '@tap/shared/src/cookie'
+import { ApiServersApi } from '@tap/api'
 
 export default {
   name: 'ApiServers',
@@ -194,12 +195,10 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('ApiServer')
-          .delete(item.id, item.clientName)
-          .then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
-            this.table.fetch()
-          })
+        ApiServersApi.delete(item.id, item.clientName).then(() => {
+          this.$message.success(this.$t('message_delete_ok'))
+          this.table.fetch()
+        })
         // .catch(() => {
         //   this.$message.info(this.$t('message_delete_fail'))
         // })
@@ -218,15 +217,13 @@ export default {
       const params = this.createForm
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.$api('ApiServer')
-            [method](params)
-            .then(res => {
-              if (res) {
-                this.table.fetch()
-                this.createDialogVisible = false
-                this.$message.success(this.$t('message_save_ok'))
-              }
-            })
+          ApiServersApi[method](params).then(res => {
+            if (res) {
+              this.table.fetch()
+              this.createDialogVisible = false
+              this.$message.success(this.$t('message_save_ok'))
+            }
+          })
           // .catch(() => {
           //   this.$message.error(this.$t('message_save_fail'))
           // })
@@ -260,18 +257,16 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('ApiServer')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          if (res) {
-            return {
-              total: res.data?.total || 0,
-              data: res.data?.items || []
-            }
+      return ApiServersApi.get({
+        filter: JSON.stringify(filter)
+      }).then(res => {
+        if (res) {
+          return {
+            total: res.data?.total || 0,
+            data: res.data?.items || []
           }
-        })
+        }
+      })
     },
 
     // 表格排序

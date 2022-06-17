@@ -63,6 +63,21 @@ const UsersApi = new Users()
 import ApiMonitor from './apiMonitor'
 const ApiMonitorApi = new ApiMonitor()
 
+import Modules from './modules'
+const ModulesApi = new Modules()
+
+import ApiServers from './apiServer'
+const ApiServersApi = new ApiServers()
+
+import Role from './role'
+const RoleApi = new Role()
+
+import Worker from './workers'
+const WorkerApi = new Worker()
+
+import Settings from './settings'
+const settingsApi = new Settings()
+
 export {
   ConnectionsApi,
   DatabaseTypesApi,
@@ -84,7 +99,12 @@ export {
   DataRuleApi,
   NotificationApi,
   UsersApi,
-  ApiMonitorApi
+  ApiMonitorApi,
+  ModulesApi,
+  ApiServersApi,
+  RoleApi,
+  WorkerApi,
+  settingsApi
 }
 export * from './databaseTypes'
 export * from './dataFlows'
@@ -98,11 +118,11 @@ export * from './Function'
 export * from './MetadataTransformer'
 export * from './metadataDefinitions'
 export * from './users'
-export * from './Settings'
+export * from './settings'
 export * from './apiMonitor'
 export * from './ApiCalls'
 export * from './ApiClient'
-export * from './ApiServer'
+export * from './apiServer'
 export * from './Application'
 export * from './ConnectionFormSchemas'
 export * from './CustomerJobLogs'
@@ -140,7 +160,6 @@ export * from './TimeStamp'
 export * from './userGroup'
 export * from './userLogs'
 export * from './validationResults'
-export * from './Workers.ts'
 
 export { CancelToken }
 

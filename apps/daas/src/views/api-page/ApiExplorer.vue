@@ -214,7 +214,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
-import APIClient from '@tap/api'
+import { APIClient, settingsApi, WorkerApi, UsersApi } from '@tap/api'
 import SelectList from '@/components/SelectList'
 import { JsEditor } from '@tap/component'
 import dayjs from 'dayjs'
@@ -379,23 +379,21 @@ export default {
     },
     // 获取API Server下拉值
     getApiServer() {
-      this.$api('ApiServer')
-        .get({})
-        .then(res => {
-          if (res) {
-            this.apiServersList = res.data?.items
-            if (this.apiServersList.length) {
-              this.searchParams.api_server_process_id = this.apiServersList[0].processId
-              this.apiClient.setApiServer(this.apiServersList[0])
-              this.serverData = this.apiServersList.map(item => {
-                return {
-                  label: item.clientName,
-                  value: item.processId
-                }
-              })
-            }
+      ApiServersApi.get({}).then(res => {
+        if (res) {
+          this.apiServersList = res.data?.items
+          if (this.apiServersList.length) {
+            this.searchParams.api_server_process_id = this.apiServersList[0].processId
+            this.apiClient.setApiServer(this.apiServersList[0])
+            this.serverData = this.apiServersList.map(item => {
+              return {
+                label: item.clientName,
+                value: item.processId
+              }
+            })
           }
-        })
+        }
+      })
     },
     // 获取api下拉数据
     async loadOpenAPI(tag) {
@@ -546,24 +544,21 @@ export default {
           if (col) _this.tableHeader.push(col)
         })
       // 获取当前用户信息
-      _this
-        .$api('users')
-        .get()
-        .then(res => {
-          if (res) {
-            let arrquery = res.data.arrquery
-            if (arrquery?.length) {
-              _this.tableHeader = arrquery.map(item => {
-                if (
-                  item.apiServer === _this.getApiId('') &&
-                  item.processId === _this.searchParams.api_server_process_id
-                ) {
-                  _this.tableHeader = JSON.parse(item.condition)
-                }
-              })
-            }
+      UsersApi.get().then(res => {
+        if (res) {
+          let arrquery = res.data.arrquery
+          if (arrquery?.length) {
+            _this.tableHeader = arrquery.map(item => {
+              if (
+                item.apiServer === _this.getApiId('') &&
+                item.processId === _this.searchParams.api_server_process_id
+              ) {
+                _this.tableHeader = JSON.parse(item.condition)
+              }
+            })
           }
-        })
+        }
+      })
       _this.enableEdit = selectCollection.type === 'preset'
       _this.apiId = apiId
 
@@ -576,18 +571,16 @@ export default {
           _id: apiId
         }
       }
-      this.$api('modules')
-        .get({ filter: JSON.stringify(filter) })
-        .then(res => {
-          if (res?.data?.length) {
-            let field_alias = {}
-            res.data[0].fields.forEach(v => {
-              field_alias[v.field_name] = v.field_alias || ''
-            })
-            _this.enableTag = _this.enableEdit && field_alias.hasOwnProperty('__tapd8')
-          }
-          _this.table.fetch()
-        })
+      ModulesApi.get({ filter: JSON.stringify(filter) }).then(res => {
+        if (res?.data?.length) {
+          let field_alias = {}
+          res.data[0].fields.forEach(v => {
+            field_alias[v.field_name] = v.field_alias || ''
+          })
+          _this.enableTag = _this.enableEdit && field_alias.hasOwnProperty('__tapd8')
+        }
+        _this.table.fetch()
+      })
     },
     // 获取当前apiId
     getApiId(apiid) {
@@ -617,34 +610,32 @@ export default {
       })
       this.condition = condition
       this.table.fetch()
-      this.$api('users')
-        .get()
-        .then(res => {
-          if (res?.data) {
-            let arrquery = res.data.arrquery
-            let isproid = 0
-            if (arrquery === undefined || arrquery === 'undefined') {
-              this.$api('users').patch({ arrquery: [parmas] })
-            } else {
-              let userData = { arrquery: arrquery }
-              arrquery.forEach(item => {
-                if (item.processId === _this.searchParams.api_server_process_id) {
-                  if (item.apiServer === _this.getApiId(apiId)) {
-                    // parmas.parmas[index].condition = JSON.stringify(_this)
-                  } else {
-                    userData.arrquery.push(parmas)
-                  }
+      UsersApi.get().then(res => {
+        if (res?.data) {
+          let arrquery = res.data.arrquery
+          let isproid = 0
+          if (arrquery === undefined || arrquery === 'undefined') {
+            this.$api('users').patch({ arrquery: [parmas] })
+          } else {
+            let userData = { arrquery: arrquery }
+            arrquery.forEach(item => {
+              if (item.processId === _this.searchParams.api_server_process_id) {
+                if (item.apiServer === _this.getApiId(apiId)) {
+                  // parmas.parmas[index].condition = JSON.stringify(_this)
                 } else {
-                  isproid = 1
+                  userData.arrquery.push(parmas)
                 }
-              })
-              if (isproid === 1) {
-                userData.arrquery.push(parmas)
+              } else {
+                isproid = 1
               }
-              this.$api('users').patch(userData)
+            })
+            if (isproid === 1) {
+              userData.arrquery.push(parmas)
             }
+            this.$api('users').patch(userData)
           }
-        })
+        }
+      })
     },
     // 查询弹窗关闭
     backDialogVisible() {
@@ -681,13 +672,11 @@ export default {
           where
         }
       }
-      this.$api('modules')
-        .get(params)
-        .then(res => {
-          if (res) {
-            this.loadOpenAPI(res.data)
-          }
-        })
+      ModulesApi.get(params).then(res => {
+        if (res) {
+          this.loadOpenAPI(res.data)
+        }
+      })
     },
     // 下载文件
     downloadFile(item) {
@@ -929,18 +918,16 @@ export default {
         'filter[where][id][eq]': '53',
         'filter[limit]': 1
       }
-      this.$api('Setting')
-        .get(parms)
-        .then(res => {
-          if (res) {
-            let baseUrl = res.data[0].value
-            let url = encodeURI(
-              `${baseUrl}?dk_orginal_filename=${item['metadata.file_name']}&dk_filepath=${item['metadata.file_path']}&dk_new_filename=${item['metadata.dk_new_filename']}`
-            )
+      settingsApi.get(parms).then(res => {
+        if (res) {
+          let baseUrl = res.data[0].value
+          let url = encodeURI(
+            `${baseUrl}?dk_orginal_filename=${item['metadata.file_name']}&dk_filepath=${item['metadata.file_path']}&dk_new_filename=${item['metadata.dk_new_filename']}`
+          )
 
-            window.open(url)
-          }
-        })
+          window.open(url)
+        }
+      })
       //
     },
 
@@ -965,22 +952,19 @@ export default {
         },
         where
       }
-      _this
-        .$api('Workers')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          if (res?.data?.items?.length) {
-            let record = res.data?.items?.[0] || {}
-            let workerStatus = record.workerStatus || record.worker_status || {}
-            if (_this.status !== workerStatus.status) {
-              _this.status = workerStatus.status
-            }
-          } else {
-            _this.status = 'stop'
+      WorkerApi.get({
+        filter: JSON.stringify(filter)
+      }).then(res => {
+        if (res?.data?.items?.length) {
+          let record = res.data?.items?.[0] || {}
+          let workerStatus = record.workerStatus || record.worker_status || {}
+          if (_this.status !== workerStatus.status) {
+            _this.status = workerStatus.status
           }
-        })
+        } else {
+          _this.status = 'stop'
+        }
+      })
       _this.intervalId = setTimeout(_this.getWorkers, 5000)
     },
 
@@ -1014,25 +998,22 @@ export default {
       _this.renderTime = 0
       // 获取字段
       if (_this.apiId) {
-        await _this
-          .$api('modules')
-          .getdata({ mondeid: _this.apiId })
-          .then(res => {
-            if (res?.data?.fields?.length) {
-              fields = res.data.fields
-              let obj = {}
-              res.data.fields.forEach(v => {
-                if (v.alias_name) {
-                  obj[v.field_name] = v.alias_name
-                }
-                if (v.primary_key_position) {
-                  this.$set(this, 'pkName', v.field_name)
-                }
-              })
+        await ModulesApi.getdata({ mondeid: _this.apiId }).then(res => {
+          if (res?.data?.fields?.length) {
+            fields = res.data.fields
+            let obj = {}
+            res.data.fields.forEach(v => {
+              if (v.alias_name) {
+                obj[v.field_name] = v.alias_name
+              }
+              if (v.primary_key_position) {
+                this.$set(this, 'pkName', v.field_name)
+              }
+            })
 
-              this.$set(this, 'aliasNameObj', obj)
-            }
-          })
+            this.$set(this, 'aliasNameObj', obj)
+          }
+        })
       }
       return (
         Promise.all([await _this.apiClient.find(filter)])
@@ -1221,12 +1202,10 @@ export default {
         value: String(this.save_timezone)
       }
 
-      this.$api('Setting')
-        .update(where, parmas)
-        .then(() => {
-          this.table.fetch()
-          // this.$message.success(this.$t('message_save_ok'))
-        })
+      settingsApi.update(where, parmas).then(() => {
+        this.table.fetch()
+        // this.$message.success(this.$t('message_save_ok'))
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('message_save_fail'))
       // })
@@ -1267,27 +1246,25 @@ export default {
           id: '84'
         }
       }
-      this.$api('Setting')
-        .get({ filter: JSON.stringify(filter) })
-        .then(res => {
-          if (res.data) {
-            this.save_timezone = res.data[0].value
+      settingsApi.get({ filter: JSON.stringify(filter) }).then(res => {
+        if (res.data) {
+          this.save_timezone = res.data[0].value
 
-            let zone = this.save_timezone * 1
-            if (zone >= -9 && zone <= 9) {
-              this.without_timezone = '0' + Math.abs(zone)
-            } else {
-              this.without_timezone = Math.abs(zone)
-            }
-
-            if (zone < 0) {
-              this.without_timezone = '-' + this.without_timezone
-            } else {
-              this.without_timezone = '+' + this.without_timezone
-            }
-            this.without_timezone += ':00'
+          let zone = this.save_timezone * 1
+          if (zone >= -9 && zone <= 9) {
+            this.without_timezone = '0' + Math.abs(zone)
+          } else {
+            this.without_timezone = Math.abs(zone)
           }
-        })
+
+          if (zone < 0) {
+            this.without_timezone = '-' + this.without_timezone
+          } else {
+            this.without_timezone = '+' + this.without_timezone
+          }
+          this.without_timezone += ':00'
+        }
+      })
     },
 
     // 时区转换
