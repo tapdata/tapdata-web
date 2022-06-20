@@ -13,14 +13,11 @@ const API = new CustomNode()
 export const StudioHeader = observer(
   defineComponent({
     directives: { focusSelect },
-    setup: (props, { refs, root }) => {
+    setup: (props, { root }) => {
       const workbenchRef = useWorkbench()
       const designerRef = useDesigner()
       const customNodeRef = useCustomNode()
       const saving = ref(false)
-      const focusNameInput = () => {
-        refs.nameInput.focus()
-      }
 
       watch(
         () => root.$route,
@@ -42,7 +39,6 @@ export const StudioHeader = observer(
       const save = async () => {
         const customNode = customNodeRef.value
         if (!customNode.name) {
-          focusNameInput()
           root.$message.warning(root.$t('custom_node_name_required'))
           return
         }
