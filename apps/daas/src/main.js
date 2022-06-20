@@ -10,6 +10,7 @@ import VIcon from '@/components/VIcon'
 import ConnectionTest from '@/components/ConnectionTest'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
+import { settingsApi, usersApi } from '@tap/api'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -102,7 +103,6 @@ let init = settings => {
     render: h => h(App)
   })
 }
-import { settingsApi, usersApi } from '@tap/api'
 settingsApi
   .get()
   .then(async data => {

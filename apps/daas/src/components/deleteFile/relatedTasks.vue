@@ -14,9 +14,8 @@
   </div>
 </template>
 <script>
-import factory from '../../api/factory'
+import { dataFlowsApi } from '@tap/api'
 
-const dataFlowApi = factory('DataFlows')
 export default {
   props: {
     taskData: {
@@ -50,7 +49,7 @@ export default {
         connectionID: this.taskData.id,
         tableName: this.taskData.tableName
       }
-      dataFlowApi.relatedDataFlows(params).then(res => {
+      dataFlowsApi.relatedDataFlows(params).then(res => {
         if (res) {
           this.taskList = res
         }

@@ -89,7 +89,7 @@
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import dayjs from 'dayjs'
-import { inspectDetailsApi, inspectApi } from '@tap/api'
+import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
 
 export default {
   components: { ResultTable, ResultView },
@@ -144,7 +144,7 @@ export default {
           let inspectResult = inspect.InspectResult
           inspect.lastStartTime = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
           this.inspect = inspect
-          this.$api('InspectResults')
+          inspectResultsApi
             .get({
               filter: JSON.stringify({
                 where: {

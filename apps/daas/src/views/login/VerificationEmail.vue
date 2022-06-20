@@ -29,9 +29,8 @@
 
 <script>
 import LoginPage from './LoginPage'
-import factory from '@/api/factory'
 import Cookie from '@tap/shared/src/cookie'
-const usersModel = factory('users')
+import { usersApi } from '@tap/api'
 
 export default {
   name: 'SignIn',
@@ -77,7 +76,7 @@ export default {
               this.timer = null
             }
           }, 1000)
-          await usersModel.sendVerifyEmail({
+          await usersApi.sendVerifyEmail({
             email: this.email,
             inviteCode: this.inviteCode
           })
@@ -113,7 +112,7 @@ export default {
             this.timer = null
           }
         }, 1000)
-        await usersModel.reset(this.form)
+        await usersApi.reset(this.form)
       }
     },
 
