@@ -47,7 +47,11 @@
         @add-node="handleAddNode"
         @toggle-expand="handleToggleExpand"
       />
-      <div v-show="!showLeftSider" class="sider-expand-wrap flex justify-center align-center shadow rotate-180">
+      <div
+        v-if="!stateIsReadonly"
+        v-show="!showLeftSider"
+        class="sider-expand-wrap flex justify-center align-center shadow rotate-180"
+      >
         <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
       <!--内容体-->

@@ -11,7 +11,9 @@
       />
       <div ref="shadow" class="text-editable-shadow">{{ value || placeholder }}</div>
     </div>
-    <VIcon @click="handleFocusInput" class="text-editable-icon ml-2 flex-shrink-0" size="14">edit-outline</VIcon>
+    <VIcon v-if="!readonly" @click="handleFocusInput" class="text-editable-icon ml-2 flex-shrink-0" size="14"
+      >edit-outline</VIcon
+    >
   </div>
 </template>
 
