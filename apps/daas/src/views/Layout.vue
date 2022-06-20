@@ -397,7 +397,7 @@ let menuSetting = [
       { name: 'apiExplorer', code: 'API_data_explorer_menu', parent: 'apiExplorer' },
       { name: 'apiDocAndTest', code: 'API_doc_&_test_menu', parent: 'apiDocAndTest' },
       { name: 'apiClient', code: 'API_clients_menu', parent: 'apiClient' },
-      { name: 'apiServers', code: 'API_server_menu', parent: 'apiServers' },
+      { name: 'apiServer', code: 'API_server_menu', parent: 'apiServer' },
       { name: 'apiAuditList', code: 'API_server_menu', parent: 'apiAudit' },
       { name: 'apiMonitor', code: 'API_server_menu', parent: 'apiMonitor' }
     ]

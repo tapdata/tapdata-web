@@ -1,6 +1,6 @@
 import Http from './Http'
 
-export default class ApiServers extends Http {
+export default class ApiServer extends Http {
   constructor() {
     super('/api/ApiServers')
   }
@@ -21,7 +21,7 @@ export default class ApiServers extends Http {
     params = params || {}
     return this.axios.get(this.url, { params })
   }
-  delete(id, name) {
+  deleteClient(id, name) {
     // return axios.delete(`${this.url}/${id}`)
     if (name == '') {
       return this.axios.delete(`${this.url}/${id}`)
@@ -36,4 +36,4 @@ export default class ApiServers extends Http {
     return this.axios.post(this.url, params)
   }
 }
-export { ApiServers }
+export { ApiServer }

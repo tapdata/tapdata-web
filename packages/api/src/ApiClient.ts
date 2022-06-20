@@ -45,7 +45,7 @@ export default class ApiClient {
       return apiToken
     }
 
-    let clientInfo = await this.axios.get('/api/Applications', {
+    let clientInfo = await axios.get('/api/Applications', {
       params: {
         // 'filter[where][clientName]': 'Data Explorer'
         filter: JSON.stringify({

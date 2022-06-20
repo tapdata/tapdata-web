@@ -123,7 +123,7 @@ import { ApiClient } from '@tap/api'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 import { VirtualSelect } from '@tap/component'
-import { metadataInstancesApi, modulesApi, apiServersApi, roleApi, connectionsApi } from '@tap/api'
+import { metadataInstancesApi, modulesApi, apiServerApi, roleApi, connectionsApi } from '@tap/api'
 export default {
   name: 'ApiPublishForm',
   components: { CustomerApiForm, SelectClassify, VirtualSelect },
@@ -416,7 +416,7 @@ export default {
     // 打开api文档
     openDocument() {
       this.apiClient = new ApiClient()
-      apiServersApi.get({ 'filter[limit]': 1 }).then(res => {
+      apiServerApi.get({ 'filter[limit]': 1 }).then(res => {
         if (res?.length) {
           let apiServer = res[0]
           let apiServerUri = apiServer.clientURI

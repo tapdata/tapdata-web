@@ -214,7 +214,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
-import { ApiClient, settingsApi, workerApi, usersApi, apiServersApi, modulesApi } from '@tap/api'
+import { ApiClient, settingsApi, workerApi, usersApi, apiServerApi, modulesApi } from '@tap/api'
 import SelectList from '@/components/SelectList'
 import { JsEditor } from '@tap/component'
 import dayjs from 'dayjs'
@@ -379,7 +379,7 @@ export default {
     },
     // 获取API Server下拉值
     getApiServer() {
-      apiServersApi.get({}).then(res => {
+      apiServerApi.get({}).then(res => {
         if (res) {
           this.apiServersList = res.data?.items
           if (this.apiServersList.length) {

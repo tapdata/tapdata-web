@@ -90,10 +90,10 @@ import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import Cookie from '@tap/shared/src/cookie'
-import { apiServersApi } from '@tap/api'
+import { apiServerApi } from '@tap/api'
 
 export default {
-  name: 'ApiServers',
+  name: 'ApiServer',
   components: {
     TablePage,
     FilterBar
@@ -195,7 +195,7 @@ export default {
         if (!resFlag) {
           return
         }
-        apiServersApi.delete(item.id, item.clientName).then(() => {
+        apiServerApi.deleteClient(item.id, item.clientName).then(() => {
           this.$message.success(this.$t('message_delete_ok'))
           this.table.fetch()
         })
@@ -217,7 +217,7 @@ export default {
       const params = this.createForm
       this.$refs.form.validate(valid => {
         if (valid) {
-          apiServersApi[method](params).then(res => {
+          apiServerApi[method](params).then(res => {
             if (res) {
               this.table.fetch()
               this.createDialogVisible = false
@@ -257,7 +257,7 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return apiServersApi
+      return apiServerApi
         .get({
           filter: JSON.stringify(filter)
         })

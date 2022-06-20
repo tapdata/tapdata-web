@@ -66,8 +66,8 @@ const apiMonitorApi = new ApiMonitor()
 import Modules from './Modules'
 const modulesApi = new Modules()
 
-import ApiServers from './ApiServer'
-const apiServersApi = new ApiServers()
+import ApiServer from './ApiServer'
+const apiServerApi = new ApiServer()
 
 import Role from './Role'
 const roleApi = new Role()
@@ -151,7 +151,7 @@ export {
   usersApi,
   apiMonitorApi,
   modulesApi,
-  apiServersApi,
+  apiServerApi,
   roleApi,
   workerApi,
   settingsApi,
