@@ -179,7 +179,7 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let items = res?.data || []
+          let items = res || []
           let data = items.map(item => {
             item.status = item.status === 'edit' ? 'ready' : item.status
             return deepCopy(item)

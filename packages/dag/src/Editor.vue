@@ -100,7 +100,7 @@ import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
 import { uuid } from '@tap/shared'
-import { Task } from '@tap/api'
+import { taskApi } from '@tap/api'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -121,8 +121,6 @@ import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@tap/business'
-
-const taskApi = new Task()
 
 export default {
   name: 'Editor',

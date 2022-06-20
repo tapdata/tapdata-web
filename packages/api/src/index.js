@@ -108,8 +108,8 @@ const timeStampApi = new TimeStamp()
 import RoleMappings from './RoleMapping'
 const roleMappingsApi = new RoleMappings()
 
-import ConnectionFormSchemas from './ConnectionFormSchemas'
-const connectionFormSchemasApi = new ConnectionFormSchemas()
+import CustomNode from './CustomNode'
+const customNodeApi = new CustomNode()
 
 import CustomerJobLogs from './CustomerJobLogs'
 const customerJobLogsApi = new CustomerJobLogs()
@@ -128,6 +128,10 @@ const dictionariesApi = new Dictionaries()
 
 import MetadataTransformer from './MetadataTransformer'
 const metadataTransformerApi = new MetadataTransformer()
+
+import Function from './Function'
+const functionApi = new Function()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -165,69 +169,16 @@ export {
   inspectResultsApi,
   timeStampApi,
   roleMappingsApi,
-  connectionFormSchemasApi,
+  customNodeApi,
   customerJobLogsApi,
   permissionsApi,
   typeMappingApi,
   logsApi,
   dictionariesApi,
-  metadataTransformerApi
+  metadataTransformerApi,
+  functionApi
 }
 export * from './ApiClient'
-
-export * from './DatabaseTypes'
-export * from './DataFlows'
-export * from './MetadataInstances'
-export * from './Task'
-export * from './Tcm'
-export * from './TypeMapping'
-export * from './CustomNode'
-export * from './Cluster'
-export * from './Function'
-export * from './MetadataTransformer'
-export * from './MetadataDefinitions'
-export * from './Users'
-export * from './ApiMonitor'
-export * from './Settings'
-export * from './ApiCalls'
-export * from './ApiServer'
-export * from './Application'
-export * from './ConnectionFormSchemas'
-export * from './CustomerJobLogs'
-export * from './DataFlowFormSchemas'
-export * from './DataFlowInsights'
-export * from './DataQuality'
-export * from './DataRule'
-export * from './DataRules'
-export * from './Dictionary'
-export * from './insights'
-export * from './InspectDetails'
-export * from './InspectResults'
-export * from './Inspects'
-export * from './JavascriptFunctions'
-export * from './Licenses'
-export * from './LineageGraphs'
-export * from './Logcollector'
-export * from './Logs'
-export * from './DataRule'
-export * from './Measurement'
-export * from './Metrics'
-export * from './Modules'
-export * from './nodeConfigs'
-export * from './Notification'
-export * from './PDK'
-export * from './Permissions'
-export * from './PreviewData'
-export * from './Role'
-export * from './RoleMapping'
-export * from './ScheduleTasks'
-export * from './shareCache'
-export * from './SubTask'
-export * from './TaskHistories'
-export * from './TimeStamp'
-export * from './UserGroup'
-export * from './UserLogs'
-export * from './validationResults'
 
 export { CancelToken }
 

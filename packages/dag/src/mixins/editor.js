@@ -1,6 +1,6 @@
 import { merge } from 'lodash'
 import { connectorActiveStyle } from '../style'
-import { Task } from '@tap/api'
+import { taskApi } from '@tap/api'
 import Mousetrap from 'mousetrap'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@tap/business'
@@ -17,8 +17,6 @@ import {
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
-
-const taskApi = new Task()
 
 export default {
   computed: {

@@ -296,7 +296,7 @@ export default {
     },
     loadRuntimeInfo() {
       subtaskApi.runtimeInfo(this.id).then(res => {
-        this.runtimeInfo = res?.data || {}
+        this.runtimeInfo = res || {}
         this.getStep()
         this.getColumns()
       })
@@ -504,8 +504,8 @@ export default {
         })
         .then(res => {
           return {
-            total: res.data.total,
-            data: res.data.items.map(item => {
+            total: res?.total,
+            data: res?.items.map(item => {
               return Object.assign(item, item.statsData)
             })
           }
@@ -576,7 +576,7 @@ export default {
     //增量同步
     getCdcTableList() {
       subtaskApi.cdcIncrease(this.id).then(res => {
-        this.list = res?.data
+        this.list = res
       })
     },
     handleClear(row) {

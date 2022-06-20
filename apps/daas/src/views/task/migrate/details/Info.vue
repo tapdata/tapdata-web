@@ -632,7 +632,7 @@ export default {
         return
       }
       this.remoteMethod(params).then(res => {
-        let data = res?.data
+        let data = res
         let { samples } = data
         samples.forEach(el => {
           for (let key in el) {

@@ -1,9 +1,7 @@
 import { defineComponent, ref } from 'vue-demi'
-import { MetadataInstances } from '@tap/api'
+import { metadataInstancesApi } from '@tap/api'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import './style.scss'
-
-const api = new MetadataInstances()
 
 export const TableListCard = defineComponent({
   props: ['connectionId'],
@@ -12,7 +10,7 @@ export const TableListCard = defineComponent({
     const list = ref([])
     const loadData = () => {
       loading.value = true
-      api
+      metadataInstancesApi
         .getTables(props.connectionId)
         .then(data => {
           list.value = data

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
-import { Task, CustomNode } from '@tap/api'
+import { taskApi, customNodeApi } from '@tap/api'
 import { debounce } from 'lodash'
 import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
@@ -8,9 +8,6 @@ import { observable } from '@formily/reactive'
 import { setValidateLanguage } from '@formily/core'
 import { CustomProcessor } from './nodes/extends/CustomProcessor'
 import Cookie from '@tap/shared/src/cookie'
-
-const taskApi = new Task()
-const customNodeApi = new CustomNode()
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj

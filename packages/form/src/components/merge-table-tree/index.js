@@ -5,9 +5,7 @@ import { observe } from '@formily/reactive'
 import { Space } from '../space'
 import './style.scss'
 import { getNodeIconSrc } from '@tap/business'
-import { MetadataInstances } from '@tap/api'
-
-const metadataApi = new MetadataInstances()
+import { metadataInstancesApi } from '@tap/api'
 
 export const MergeTableTree = observer(
   defineComponent({
@@ -150,7 +148,7 @@ export const MergeTableTree = observer(
         form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
           loading: true
         })
-        metadataApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
+        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
             loading: false,
             dataSource: fields.map(item => ({

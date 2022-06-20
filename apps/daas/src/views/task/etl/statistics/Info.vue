@@ -132,7 +132,7 @@
           <div class="flex flex-column justify-content-center">
             <div
               class="progress-box flex justify-content-center align-items-center position-relative mt-1"
-              v-if="syncData.progress"
+              v-if="syncData && syncData.progress"
             >
               <ElProgress
                 type="circle"
@@ -571,7 +571,7 @@ export default {
         return
       }
       this.remoteMethod(params).then(res => {
-        let data = res?.data
+        let data = res
         let { samples } = data
         samples.forEach(el => {
           for (let key in el) {

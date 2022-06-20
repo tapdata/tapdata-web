@@ -288,7 +288,7 @@ export default {
     },
     loadRuntimeInfo() {
       subtaskApi.runtimeInfo(this.id).then(res => {
-        this.runtimeInfo = res?.data || {}
+        this.runtimeInfo = res || {}
         this.getStep()
         this.getColumns()
       })
@@ -521,8 +521,8 @@ export default {
     //概览信息
     getSyncOverViewData() {
       subtaskApi.syncOverView(this.id).then(res => {
-        this.syncOverViewData = res
-        this.$emit('sync', res)
+        this.syncOverViewData = res || {}
+        this.$emit('sync', res || {})
         this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
       })
     },
@@ -564,7 +564,7 @@ export default {
     //增量同步
     getCdcTableList() {
       subtaskApi.cdcIncrease(this.id).then(res => {
-        this.list = res?.data
+        this.list = res
       })
     },
     handleClear(row) {

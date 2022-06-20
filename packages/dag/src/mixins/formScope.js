@@ -1,11 +1,8 @@
-import { connectionsApi, MetadataInstances, Cluster } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
 import { merge } from 'lodash'
-
-const metadataApi = new MetadataInstances()
-const clusterApi = new Cluster()
 
 export default {
   data() {
@@ -195,7 +192,7 @@ export default {
             }
           }
 
-          const data = await metadataApi.get({ filter: JSON.stringify(filter) })
+          const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) })
           return data.items.map(item => item.original_name)
         },
 
@@ -274,7 +271,7 @@ export default {
               neq: ''
             }
           }
-          const data = await metadataApi.get({ filter: JSON.stringify(filter) }, config)
+          const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
           return data
         },
@@ -323,7 +320,7 @@ export default {
               }
             })
           }
-          return await metadataApi.get(params)
+          return await metadataInstancesApi.get(params)
         },
 
         /**
@@ -351,7 +348,7 @@ export default {
               }
             })
           }
-          const data = await metadataApi.get(params)
+          const data = await metadataInstancesApi.get(params)
           return data.items[0]?.fields.map(item => item.field_name) || []
           // const tableData = await metadataApi.findOne(params)
           // return tableData.fields.map(item => item.field_name)
@@ -452,7 +449,9 @@ export default {
             fetch = new Promise((resolve, reject) => {
               stopWatch = this.$watch('transformStatus', async v => {
                 if (v === 'finished') {
-                  const result = await Promise.all(sourceArr.map(({ source }) => metadataApi.nodeSchema(source)))
+                  const result = await Promise.all(
+                    sourceArr.map(({ source }) => metadataInstancesApi.nodeSchema(source))
+                  )
                   resolve(result)
                 } else {
                   reject('推演失败')
@@ -460,7 +459,7 @@ export default {
               })
             })
           } else {
-            fetch = Promise.all(sourceArr.map(({ source }) => metadataApi.nodeSchema(source)))
+            fetch = Promise.all(sourceArr.map(({ source }) => metadataInstancesApi.nodeSchema(source)))
           }
 
           try {
@@ -568,7 +567,7 @@ export default {
           nodeId = sourceNode[0].value
 
           try {
-            const data = await metadataApi.nodeSchema(nodeId)
+            const data = await metadataInstancesApi.nodeSchema(nodeId)
             return (data?.[0]?.fields || []).map(item => item.field_name)
           } catch (e) {
             // eslint-disable-next-line no-console
@@ -595,7 +594,7 @@ export default {
         loadNodeFieldsById: async nodeId => {
           if (!nodeId) return []
           try {
-            const data = await metadataApi.nodeSchema(nodeId)
+            const data = await metadataInstancesApi.nodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
             /*fields.sort((a, b) => {
               const aIsPrimaryKey = a.primary_key_position > 0
@@ -618,7 +617,7 @@ export default {
         loadNodeFieldsPrimaryKey: async ({ field }, nodeId) => {
           if (!nodeId) return []
           try {
-            const data = await metadataApi.nodeSchema(nodeId)
+            const data = await metadataInstancesApi.nodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
             const keyMap = {}
             /*fields.sort((a, b) => {
