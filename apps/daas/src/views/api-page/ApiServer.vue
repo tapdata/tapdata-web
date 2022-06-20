@@ -208,7 +208,7 @@ export default {
     // 下载api配置文件
     downloadConfig(item) {
       let token = Cookie.get('token')
-      window.open(apiServersApi.url + '/download/' + item.id + '?access_token=' + token, '_blank')
+      window.open(apiServerApi.url + '/download/' + item.id + '?access_token=' + token, '_blank')
     },
 
     // 保存

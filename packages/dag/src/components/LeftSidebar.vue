@@ -277,7 +277,7 @@ import ConnectionTypeSelector from 'web-core/components/connection-type-selector
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
 import { debounce } from 'lodash'
-import { CancelToken, connectionsApi, MetadataInstances } from '@tap/api'
+import { CancelToken, connectionsApi } from '@tap/api'
 import { Select } from 'element-ui'
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
