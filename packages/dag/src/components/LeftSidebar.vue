@@ -279,13 +279,13 @@ import BaseNode from './BaseNode'
 import { debounce } from 'lodash'
 import { CancelToken, connectionsApi, MetadataInstances } from '@tap/api'
 import { Select } from 'element-ui'
-const metadataApi = new MetadataInstances()
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
+import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
 
 export default {
   name: 'LeftSidebar',
@@ -419,13 +419,11 @@ export default {
       this.connectionDialog = true
     },
     getDatabaseType() {
-      this.$api('DatabaseTypes')
-        .get()
-        .then(res => {
-          if (res.data) {
-            this.getPdkData(res.data)
-          }
-        })
+      databaseTypesApi.get().then(res => {
+        if (res) {
+          this.getPdkData(res)
+        }
+      })
     },
     getPdkData(data) {
       this.database.push(...data)
@@ -573,7 +571,7 @@ export default {
 
       let data
       try {
-        data = await metadataApi.get(this.getTableFilter(), {
+        data = await metadataInstancesApi.get(this.getTableFilter(), {
           cancelToken: this.cancelSource.token
         })
       } catch (e) {

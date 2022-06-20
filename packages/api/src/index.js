@@ -108,6 +108,26 @@ const timeStampApi = new TimeStamp()
 import RoleMappings from './RoleMapping'
 const roleMappingsApi = new RoleMappings()
 
+import ConnectionFormSchemas from './ConnectionFormSchemas'
+const connectionFormSchemasApi = new ConnectionFormSchemas()
+
+import CustomerJobLogs from './CustomerJobLogs'
+const customerJobLogsApi = new CustomerJobLogs()
+
+import Permissions from './Permissions'
+const permissionsApi = new Permissions()
+
+import TypeMapping from './TypeMapping'
+const typeMappingApi = new TypeMapping()
+
+import Logs from './Logs'
+const logsApi = new Logs()
+
+import Dictionaries from './Dictionary'
+const dictionariesApi = new Dictionaries()
+
+import MetadataTransformer from './MetadataTransformer'
+const metadataTransformerApi = new MetadataTransformer()
 export {
   connectionsApi,
   databaseTypesApi,
@@ -144,7 +164,14 @@ export {
   inspectDetailsApi,
   inspectResultsApi,
   timeStampApi,
-  roleMappingsApi
+  roleMappingsApi,
+  connectionFormSchemasApi,
+  customerJobLogsApi,
+  permissionsApi,
+  typeMappingApi,
+  logsApi,
+  dictionariesApi,
+  metadataTransformerApi
 }
 export * from './DatabaseTypes'
 export * from './DataFlows'
@@ -180,7 +207,7 @@ export * from './JavascriptFunctions'
 export * from './Licenses'
 export * from './LineageGraphs'
 export * from './Logcollector'
-export * from './logs'
+export * from './Logs'
 export * from './DataRule'
 export * from './Measurement'
 export * from './Metrics'

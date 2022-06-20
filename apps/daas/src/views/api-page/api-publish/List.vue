@@ -187,7 +187,7 @@ import TablePage from '@/components/TablePage'
 import Upload from '@/components/UploadDialog'
 import { toRegExp } from '@/utils/util'
 import dayjs from 'dayjs'
-import { modulesApi, workerApi } from '@tap/api'
+import { modulesApi, workerApi, metadataInstancesApi } from '@tap/api'
 
 export default {
   name: 'ApiPublish',
@@ -559,7 +559,7 @@ export default {
           in: id
         }
       }
-      this.$api('MetadataInstances').download(where, 'Modules')
+      metadataInstancesApi.download(where, 'Modules')
     },
     // 单个导出
     export(item) {
@@ -568,7 +568,7 @@ export default {
           in: [item.id]
         }
       }
-      this.$api('MetadataInstances').download(where, 'Modules')
+      metadataInstancesApi.download(where, 'Modules')
     },
     // 复制
     copy(item) {

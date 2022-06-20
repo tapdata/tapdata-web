@@ -244,7 +244,7 @@
 </template>
 
 <script>
-import { dataRuleApi } from '@tap/api'
+import { dataRuleApi, metadataInstancesApi } from '@tap/api'
 export default {
   props: {
     validaData: {
@@ -500,7 +500,7 @@ export default {
     },
 
     async doSave() {
-      let result = await this.$api('MetadataInstances').patchId(this.validaData.id, {
+      let result = await metadataInstancesApi.patchId(this.validaData.id, {
         data_rules: { rules: this.validationTableData }
       })
       return result

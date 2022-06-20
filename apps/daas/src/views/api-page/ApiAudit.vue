@@ -169,7 +169,7 @@ export default {
           key: 'method',
           type: 'select-inner',
           items: async () => {
-            let res = await this.$api('ApiCalls').getAllMethod()
+            let res = await apiCallsApi.getAllMethod()
             let data = res?.data || []
             if (data?.length) {
               return data.map(item => {
@@ -189,7 +189,7 @@ export default {
           key: 'code',
           type: 'select-inner',
           items: async () => {
-            let res = await this.$api('ApiCalls').getAllResponseCode()
+            let res = await apiCallsApi.getAllResponseCode()
             let data = res?.data || []
             if (data?.length) {
               return data.map(item => {

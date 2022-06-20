@@ -1,8 +1,8 @@
 import Http from './Http'
 
-export default class LogsAPI extends Http {
+export default class Logs extends Http {
   constructor() {
     super('/api/Logs')
   }
 }
-export { LogsAPI }
+export { Logs }

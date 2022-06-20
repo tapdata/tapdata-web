@@ -39,6 +39,7 @@
 
 <script>
 import { delayTrigger } from '@/utils/util'
+import { customerJobLogsApi } from '@tap/api'
 
 export default {
   name: 'Solutions',
@@ -91,7 +92,7 @@ export default {
       if (this.keyword) {
         params.code = this.keyword
       }
-      this.$api('CustomerJobLogs')
+      customerJobLogsApi
         .solutions(params)
         .then(res => {
           this.list = res.data

@@ -190,8 +190,7 @@
   </el-dialog>
 </template>
 <script>
-import { TypeMapping, metadataInstancesApi } from '@tap/api'
-const typeMappingApi = new TypeMapping()
+import { typeMappingApi, metadataInstancesApi } from '@tap/api'
 export default {
   props: {
     data: {
@@ -282,12 +281,12 @@ export default {
         }
       }
 
-      let resultData = await this.$api('MetadataInstances').get({
+      let resultData = await metadataInstancesApi.get({
         filter: JSON.stringify(params)
       })
 
-      if (resultData.data?.items) {
-        this.getTableData = resultData.data?.items
+      if (resultData?.items) {
+        this.getTableData = resultData?.items
       }
     },
     //获取typeMapping
@@ -354,7 +353,7 @@ export default {
           }
         }
       }
-      let relationName = await _this.$api('MetadataInstances').getId(id, params)
+      let relationName = await metadataInstancesApi.getId(id, params)
       let duplicateName = []
       if (_this.metadata.relation && _this.metadata.relation.length) {
         _this.metadata.relation.forEach(item => {

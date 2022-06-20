@@ -73,6 +73,7 @@
 <script>
 import Header from './Header'
 import Cookie from '@tap/shared/src/cookie'
+import { usersApi } from '@tap/api'
 
 export default {
   name: 'SignIn',
@@ -131,11 +132,9 @@ export default {
 
       this.loading = true
       try {
-        let usersModel = this.$api('users')
-
         Cookie.set('location_origin', window.location.origin)
 
-        let { data } = await usersModel.post(this.form)
+        let { data } = await usersApi.post(this.form)
         if (data.textStatus === 'DISABLE_SIGNUP') {
           this.errorMessage = data.textStatus
           return

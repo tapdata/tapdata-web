@@ -615,7 +615,7 @@ export default {
           let arrquery = res.data.arrquery
           let isproid = 0
           if (arrquery === undefined || arrquery === 'undefined') {
-            this.$api('users').patch({ arrquery: [parmas] })
+            usersApi.patch({ arrquery: [parmas] })
           } else {
             let userData = { arrquery: arrquery }
             arrquery.forEach(item => {
@@ -632,7 +632,7 @@ export default {
             if (isproid === 1) {
               userData.arrquery.push(parmas)
             }
-            this.$api('users').patch(userData)
+            usersApi.patch(userData)
           }
         }
       })

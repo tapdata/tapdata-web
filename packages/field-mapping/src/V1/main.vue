@@ -43,9 +43,8 @@
 
 <script>
 import FieldMappingDialog from './FieldMappingDialog'
-import { Task } from '@tap/api'
+import { taskApi, metadataInstancesApi, typeMappingApi, metadataTransformerApi } from '@tap/api'
 
-const taskApi = new Task()
 export default {
   name: 'FieldMapping',
   components: { FieldMappingDialog },
@@ -134,14 +133,14 @@ export default {
         limit: page.size || 10,
         skip: (page.current - 1) * page.size > 0 ? (page.current - 1) * page.size : 0
       }
-      return this.$api('metadataTransformer')
+      return metadataTransformerApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
           return {
-            total: res?.data?.total,
-            data: res?.data?.items
+            total: res?.total,
+            data: res?.items
           }
         })
     },
@@ -263,9 +262,9 @@ export default {
           target: []
         }
       } //打开弹窗才能请求弹窗列表数据
-      let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
+      let source = await metadataInstancesApi.originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
-      let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
+      let target = await metadataInstancesApi.originalData(row.sinkQulifiedName, '&isTarget=true')
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       // 初始化所有字段都映射 只取顶级字段
       //source = source.filter(field => field.field_name.indexOf('.') === -1)
@@ -426,8 +425,8 @@ export default {
         }
       }
       return Promise.all([
-        this.$api('TypeMapping').pdkDataType(row.sourceDbType),
-        this.$api('TypeMapping').pdkDataType(row.sinkDbType)
+        typeMappingApi.pdkDataType(row.sourceDbType),
+        typeMappingApi.pdkDataType(row.sinkDbType)
       ]).then(res => {
         let sourceData = [],
           targetData = []
@@ -475,11 +474,9 @@ export default {
       let data = {
         fields: target
       }
-      this.$api('MetadataInstances')
-        .update(where, data)
-        .then(() => {
-          callback?.()
-        })
+      metadataInstancesApi.update(where, data).then(() => {
+        callback?.()
+      })
       if (this.transform.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.fieldProcess = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.fieldProcess)

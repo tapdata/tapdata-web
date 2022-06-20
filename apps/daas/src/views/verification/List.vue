@@ -154,7 +154,7 @@ import { toRegExp } from '../../utils/util'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
 import dayjs from 'dayjs'
-import { taskApi, inspectApi } from '@tap/api'
+import { taskApi, inspectApi, metadataInstancesApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -241,7 +241,7 @@ export default {
           in: ids
         }
       }
-      this.$api('MetadataInstances').download(where, 'Inspect')
+      metadataInstancesApi.download(where, 'Inspect')
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
