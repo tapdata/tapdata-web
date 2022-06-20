@@ -613,8 +613,8 @@ export default [
       /* ---------- API服务端  ----------*/
       {
         path: '/api-servers',
-        name: 'apiServers',
-        component: () => import(/* webpackChunkName: "api-server" */ '@/views/api-page/ApiServers'),
+        name: 'apiServer',
+        component: () => import(/* webpackChunkName: "api-server" */ '@/views/api-page/ApiServer'),
         meta: {
           title: 'page_title_api_servers',
           code: 'API_server_menu'
