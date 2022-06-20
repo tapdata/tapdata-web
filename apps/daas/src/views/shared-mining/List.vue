@@ -330,13 +330,13 @@ export default {
     saveSetting() {
       this.$refs.digSettingForm.validate(valid => {
         if (valid) {
-          if (this.digSettingForm === 'Mem') {
+          if (this.digSettingForm?.persistenceMode === 'Mem') {
             this.digSettingForm.persistenceMongodb_uri_db = ''
             this.digSettingForm.persistenceMongodb_collection = ''
             this.digSettingForm.persistenceRocksdb_path = ''
-          } else if (this.digSettingForm === 'MongoDB') {
+          } else if (this.digSettingForm?.persistenceMode === 'MongoDB') {
             this.digSettingForm.persistenceRocksdb_path = ''
-          } else {
+          } else if (this.digSettingForm?.persistenceMode === 'RocksDB') {
             this.digSettingForm.persistenceMongodb_uri_db = ''
             this.digSettingForm.persistenceMongodb_collection = ''
           }
