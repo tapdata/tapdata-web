@@ -146,6 +146,8 @@ export {
   timeStampApi,
   roleMappingsApi
 }
+export * from './ApiClient'
+
 export * from './DatabaseTypes'
 export * from './DataFlows'
 export * from './MetadataInstances'
@@ -161,7 +163,6 @@ export * from './Users'
 export * from './ApiMonitor'
 export * from './Settings'
 export * from './ApiCalls'
-export * from './ApiClient'
 export * from './ApiServer'
 export * from './Application'
 export * from './ConnectionFormSchemas'
