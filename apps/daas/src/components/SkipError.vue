@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import { dataFlowsApi } from '@tap/api'
 export default {
   name: 'SkipError',
   data() {
@@ -51,7 +52,7 @@ export default {
     async checkError(task, callback) {
       let errorEvents = []
       if (!task.status || task.status === 'error') {
-        let res = await this.$api('DataFlows').get([task.id])
+        let res = await dataFlowsApi.get([task.id])
         let data = res ? res.data : {}
         if (data.status === 'error' && data.setting.stopOnError && data.errorEvents && data.errorEvents.length > 0) {
           this.dialogVisible = true

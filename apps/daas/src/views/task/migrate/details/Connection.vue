@@ -170,7 +170,7 @@ export default {
     },
     async test(data, isShowDialog = true) {
       try {
-        await this.$api('connections').patch(data.id, {
+        await connectionsApi.patch(data.id, {
           status: 'testing'
         })
         this.$refs.test.start(data, isShowDialog)

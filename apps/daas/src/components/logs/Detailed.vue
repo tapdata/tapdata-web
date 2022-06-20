@@ -39,6 +39,7 @@
 
 <script>
 import dayjs from 'dayjs'
+import { logsApi } from '@tap/api'
 export default {
   props: {
     id: String
@@ -127,7 +128,7 @@ export default {
           lt: this.logs[0].id
         }
       }
-      this.$api('logs')
+      logsApi
         .get({
           filter: JSON.stringify(filter)
         })

@@ -44,6 +44,7 @@
 <script>
 import Cookie from '@tap/shared/src/cookie'
 import VIcon from '@/components/VIcon'
+import { metadataInstancesApi } from '@tap/api'
 export default {
   name: 'Upload',
   components: {
@@ -112,7 +113,7 @@ export default {
       let filter = {
         where: { or: [{ item_type: this.classifyType }] }
       }
-      this.$api('MetadataDefinitions')
+      metadataInstancesApi
         .get({
           filter: JSON.stringify(filter)
         })

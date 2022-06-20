@@ -357,7 +357,7 @@ import Cookie from '@tap/shared/src/cookie'
 import PageHeader from '@/components/PageHeader'
 import VIcon from 'web-core/components/VIcon'
 import dayjs from 'dayjs'
-import { usersApi } from '@tap/api'
+import { usersApi, timeStampApi, licensesApi } from '@tap/api'
 
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
@@ -626,28 +626,25 @@ export default {
     },
 
     async getLicense() {
-      let timeStamp = this.$api('TimeStamp')
       let stime = ''
-      await timeStamp.get().then(res => {
+      await timeStampApi.get().then(res => {
         if (res) {
           stime = res.data || new Date().getTime()
         }
       })
-      this.$api('Licenses')
-        .expires({})
-        .then(res => {
-          if (res) {
-            let expires_on = res.data.expires_on || ''
-            if (Cookie.get('isAdmin') == 1) {
-              let endTime = expires_on - stime
-              endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
-              let showDay = window.getSettingByKey('licenseNoticeDays') || 0
-              this.licenseExpireVisible = Number(showDay) > endTime
-              this.licenseExpire = endTime
-            }
-            this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
+      licensesApi.expires({}).then(res => {
+        if (res) {
+          let expires_on = res.data.expires_on || ''
+          if (Cookie.get('isAdmin') == 1) {
+            let endTime = expires_on - stime
+            endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
+            let showDay = window.getSettingByKey('licenseNoticeDays') || 0
+            this.licenseExpireVisible = Number(showDay) > endTime
+            this.licenseExpire = endTime
           }
-        })
+          this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
+        }
+      })
     }
   }
 }

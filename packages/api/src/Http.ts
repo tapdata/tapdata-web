@@ -11,15 +11,15 @@ export default class Http {
   }
 
   count(params) {
-    return this.axios.get(this.url + '/count', { params }).then(this.useData)
+    return this.axios.get(this.url + '/count', { params })
   }
 
   patch(params) {
-    return this.axios.patch(this.url, params).then(this.useData)
+    return this.axios.patch(this.url, params)
   }
 
   updateById(id, attributes) {
-    return this.axios.patch(this.url + '/' + id, attributes).then(this.useData)
+    return this.axios.patch(this.url + '/' + id, attributes)
   }
 
   /**
@@ -31,34 +31,30 @@ export default class Http {
   update(where, attributes) {
     if (typeof where === 'object') where = JSON.stringify(where)
 
-    return this.axios.post(this.url + '/update?where=' + encodeURIComponent(where), attributes).then(this.useData)
+    return this.axios.post(this.url + '/update?where=' + encodeURIComponent(where), attributes)
   }
 
   get(params, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
       let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
-      return this.axios.get(this.url + '/' + params.join('/') + qs).then(this.useData)
+      return this.axios.get(this.url + '/' + params.join('/') + qs)
     }
     params = params || {}
-    return this.axios.get(this.url, { params }).then(this.useData)
+    return this.axios.get(this.url, { params })
   }
 
   delete(id) {
-    return this.axios.delete(`${this.url}/${id}`).then(this.useData)
+    return this.axios.delete(`${this.url}/${id}`)
   }
 
   post(params) {
-    return this.axios.post(this.url, params).then(this.useData)
+    return this.axios.post(this.url, params)
   }
 
   findOne(params) {
     params = params || {}
-    return this.axios.get(this.url + '/findOne', { params }).then(this.useData)
-  }
-
-  useData(response) {
-    return response.data
+    return this.axios.get(this.url + '/findOne', { params })
   }
 }
 export { CancelToken }

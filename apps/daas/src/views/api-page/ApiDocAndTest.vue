@@ -49,7 +49,7 @@ export default {
         let openApiObj = await res.json()
 
         if (openApiObj) {
-          this.openapi = openApiObj.data
+          this.openapi = openApiObj
         }
         // let token = this.$route.query.token || '';
         let token = await this.apiClient.getAPIServerToken()

@@ -202,9 +202,9 @@ export default {
         .apiDetail(data)
         .then(res => {
           //处理数据
-          this.detail = res?.data
+          this.detail = res
           this.detail['totalCount'] = (this.detail.visitTotalCount || 0) - (this.detail.errorVisitTotalCount || 0) || 0
-          let data = res?.data
+          let data = res
           // 折线图
           let qpsDataValue = data.value || []
           this.qpsDataTime = data.time || []

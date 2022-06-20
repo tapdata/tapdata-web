@@ -612,24 +612,20 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('cluster')
-          .delete(item.id, item.name)
-          .then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
-            this.getDataApi()
-          })
+        clusterApi.delete(item.id, item.name).then(() => {
+          this.$message.success(this.$t('message_delete_ok'))
+          this.getDataApi()
+        })
         // .catch(() => {
         //   this.$message.info(this.$t('message_delete_fail'))
         // })
       })
     },
     removeNode(id) {
-      this.$api('cluster')
-        .delete(id)
-        .then(() => {
-          this.deleteDialogVisible = false
-          this.$message.success(this.$t('message_delete_ok'))
-        })
+      clusterApi.delete(id).then(() => {
+        this.deleteDialogVisible = false
+        this.$message.success(this.$t('message_delete_ok'))
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('message_delete_fail'))
       // })
@@ -654,12 +650,10 @@ export default {
         custIP: this.custIP,
         agentName: this.agentName
       }
-      this.$api('cluster')
-        .editAgent(this.custId, data)
-        .then(() => {
-          this.editAgentDialog = false
-          this.$message.success(this.$t('message_delete_ok'))
-        })
+      clusterApi.editAgent(this.custId, data).then(() => {
+        this.editAgentDialog = false
+        this.$message.success(this.$t('message_delete_ok'))
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('message_delete_fail'))
       // })

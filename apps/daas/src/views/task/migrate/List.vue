@@ -851,7 +851,7 @@ export default {
     },
     async getPreviewData(id) {
       this.previewLoading = true
-      this.$api('Task')
+      taskApi
         .findTaskDetailById([id])
         .then(res => {
           if (res) {

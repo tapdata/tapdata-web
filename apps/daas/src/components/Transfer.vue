@@ -121,6 +121,7 @@
 let selectKeepArr = []
 import { cloneDeep } from 'lodash'
 import VIcon from '@/components/VIcon'
+import { connectionsApi, metadataInstancesApi } from '@tap/api'
 export default {
   components: { VIcon },
   props: ['transferData', 'isTwoWay'],
@@ -175,7 +176,7 @@ export default {
     //获取左边数据
     getTable(id, bidirectional) {
       this.transferLoading = true
-      this.$api('connections')
+      connectionsApi
         .customQuery([id], { schema: true })
         .then(result => {
           if (result) {
@@ -235,47 +236,45 @@ export default {
           }
         })
       }
-      this.$api('MetadataInstances')
-        .schema(params)
-        .then(res => {
-          if (res) {
-            let fields = res?.records[0]?.schema?.tables[0]?.fields
-            // 初始化所有字段都映射 只取顶级字段
-            fields = fields.filter(field => field.field_name.indexOf('.') === -1)
-            this.sourceFileData = fields.map(field => ({
-              label: field.field_name,
-              key: field.field_name,
-              id: field.id,
-              type: field.javaType,
-              table_name: field.table_name,
-              primary_key_position: field.primary_key_position,
-              showInput: false
-            }))
-            this.selectSourceFileArr = fields.map(field => field.field_name)
-            //初始化已有字段处理
-            let field_process = this.field_process.filter(process => process.table_id === id)
-            if (field_process.length > 0) {
-              this.operations = cloneDeep(field_process[0].operations) || []
-            }
-            //解析operations
-            if (this.operations.length === 0) return
-            this.operations.forEach(operand => {
-              if (operand.op === 'RENAME') {
-                this.sourceFileData.forEach(file => {
-                  if (file.id === operand.id) {
-                    file.label = operand.operand
-                  }
-                })
-              } else {
-                this.selectSourceFileArr.forEach((check, index) => {
-                  if (check === operand.field) {
-                    this.selectSourceFileArr.splice(index, 1)
-                  }
-                })
-              }
-            })
+      metadataInstancesApi.schema(params).then(res => {
+        if (res) {
+          let fields = res?.records[0]?.schema?.tables[0]?.fields
+          // 初始化所有字段都映射 只取顶级字段
+          fields = fields.filter(field => field.field_name.indexOf('.') === -1)
+          this.sourceFileData = fields.map(field => ({
+            label: field.field_name,
+            key: field.field_name,
+            id: field.id,
+            type: field.javaType,
+            table_name: field.table_name,
+            primary_key_position: field.primary_key_position,
+            showInput: false
+          }))
+          this.selectSourceFileArr = fields.map(field => field.field_name)
+          //初始化已有字段处理
+          let field_process = this.field_process.filter(process => process.table_id === id)
+          if (field_process.length > 0) {
+            this.operations = cloneDeep(field_process[0].operations) || []
           }
-        })
+          //解析operations
+          if (this.operations.length === 0) return
+          this.operations.forEach(operand => {
+            if (operand.op === 'RENAME') {
+              this.sourceFileData.forEach(file => {
+                if (file.id === operand.id) {
+                  file.label = operand.operand
+                }
+              })
+            } else {
+              this.selectSourceFileArr.forEach((check, index) => {
+                if (check === operand.field) {
+                  this.selectSourceFileArr.splice(index, 1)
+                }
+              })
+            }
+          })
+        }
+      })
     },
     //字段rename
     rename(option) {

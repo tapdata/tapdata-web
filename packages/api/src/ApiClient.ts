@@ -55,7 +55,7 @@ export default class ApiClient {
         })
       }
     })
-    const clientInfoItem = clientInfo.data?.items[0] || {}
+    const clientInfoItem = clientInfo?.items[0] || {}
     let data =
       'grant_type=client_credentials&client_id=' + clientInfoItem.id + '&client_secret=' + clientInfoItem.clientSecret
 

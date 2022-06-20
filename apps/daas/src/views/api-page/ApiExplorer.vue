@@ -379,17 +379,20 @@ export default {
     },
     // 获取API Server下拉值
     getApiServer() {
-      apiServerApi.get({}).then(data => {
-        this.apiServersList = data?.items
-        if (this.apiServersList.length) {
-          this.searchParams.api_server_process_id = this.apiServersList[0].processId
-          this.apiClient.setApiServer(this.apiServersList[0])
-          this.serverData = this.apiServersList.map(item => {
-            return {
-              label: item.clientName,
-              value: item.processId
-            }
-          })
+      apiServerApi.get({}).then(res => {
+        if (res) {
+          this.apiServersList = res?.items
+          console.log(this.apiServersList)
+          if (this.apiServersList.length) {
+            this.searchParams.api_server_process_id = this.apiServersList[0].processId
+            this.apiClient.setApiServer(this.apiServersList[0])
+            this.serverData = this.apiServersList.map(item => {
+              return {
+                label: item.clientName,
+                value: item.processId
+              }
+            })
+          }
         }
       })
     },
@@ -398,6 +401,7 @@ export default {
       let _this = this
       await this.apiClient.loadOpenAPI().then(res => {
         if (res) {
+          console.log(res)
           this.collectionsList = []
           Object.keys(res.data).forEach(item => {
             let operations = res.data[item].api,
@@ -613,7 +617,7 @@ export default {
           let arrquery = res.data.arrquery
           let isproid = 0
           if (arrquery === undefined || arrquery === 'undefined') {
-            this.$api('users').patch({ arrquery: [parmas] })
+            usersApi.patch({ arrquery: [parmas] })
           } else {
             let userData = { arrquery: arrquery }
             arrquery.forEach(item => {
@@ -630,7 +634,7 @@ export default {
             if (isproid === 1) {
               userData.arrquery.push(parmas)
             }
-            this.$api('users').patch(userData)
+            usersApi.patch(userData)
           }
         }
       })
@@ -672,7 +676,7 @@ export default {
       }
       modulesApi.get(params).then(res => {
         if (res) {
-          this.loadOpenAPI(res.data)
+          this.loadOpenAPI(res)
         }
       })
     },
@@ -894,6 +898,7 @@ export default {
         if (tmp && tmp.length > 0) {
           let openApi = tmp[0].clientURI + '/openapi.json'
           let token = await this.apiClient.getAPIServerToken()
+          console.log(token)
 
           let cols = this.collectionsList.filter(v => v.value === this.searchParams.collection)
           let api = cols && cols.length === 1 ? cols[0].text : ''
