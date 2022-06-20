@@ -379,19 +379,17 @@ export default {
     },
     // 获取API Server下拉值
     getApiServer() {
-      apiServerApi.get({}).then(res => {
-        if (res) {
-          this.apiServersList = res.data?.items
-          if (this.apiServersList.length) {
-            this.searchParams.api_server_process_id = this.apiServersList[0].processId
-            this.apiClient.setApiServer(this.apiServersList[0])
-            this.serverData = this.apiServersList.map(item => {
-              return {
-                label: item.clientName,
-                value: item.processId
-              }
-            })
-          }
+      apiServerApi.get({}).then(data => {
+        this.apiServersList = data?.items
+        if (this.apiServersList.length) {
+          this.searchParams.api_server_process_id = this.apiServersList[0].processId
+          this.apiClient.setApiServer(this.apiServersList[0])
+          this.serverData = this.apiServersList.map(item => {
+            return {
+              label: item.clientName,
+              value: item.processId
+            }
+          })
         }
       })
     },

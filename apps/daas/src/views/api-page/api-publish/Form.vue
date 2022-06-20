@@ -4,7 +4,7 @@
       <div class="module-form">
         <ElForm :model="createForm" ref="form" size="small">
           <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules.datasource" required>
-            <ElSelect v-model="createForm.datasource" size="mini" placeholder="请选择" :disabled="$route.query.id">
+            <ElSelect v-model="createForm.datasource" size="mini" placeholder="请选择" :disabled="!!$route.query.id">
               <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
               </ElOption>
             </ElSelect>
@@ -295,8 +295,8 @@ export default {
         fields: fields,
         where
       }
-      connectionsApi.listAll(params).then(res => {
-        let options = res || []
+      connectionsApi.listAll(params).then(data => {
+        let options = data || []
         options = options.map(db => {
           return {
             label: db.name,
@@ -416,25 +416,22 @@ export default {
     // 打开api文档
     openDocument() {
       this.apiClient = new ApiClient()
-      apiServerApi.get({ 'filter[limit]': 1 }).then(res => {
-        if (res?.length) {
-          let apiServer = res[0]
-          let apiServerUri = apiServer.clientURI
-          let openApiUri = apiServerUri + '/openapi.json'
-          let api = this.createForm.basePath + '_' + this.createForm.apiVersion
-          let token = this.apiClient.getAPIServerToken()
+      apiServerApi.get({ 'filter[limit]': 1 }).then(data => {
+        let servers = data?.items || []
+        let apiServer = servers[0] || {}
+        let apiServerUri = apiServer.clientURI || ''
+        let openApiUri = apiServerUri + '/openapi.json'
+        let api = this.createForm.basePath + '_' + this.createForm.apiVersion
+        let token = this.apiClient.getAPIServerToken()
 
-          this.$router.push({
-            name: 'apiDocAndTest',
-            query: {
-              id: api,
-              openApi: openApiUri,
-              token: token
-            }
-          })
-        } else {
-          this.$message.error(this.$t('module_form_no_server_preview_api'))
-        }
+        this.$router.push({
+          name: 'apiDocAndTest',
+          query: {
+            id: api,
+            openApi: openApiUri,
+            token: token
+          }
+        })
       })
       // .catch(() => {
       //   this.$message.error(this.$t('module_form_get_api_uri_fail'))

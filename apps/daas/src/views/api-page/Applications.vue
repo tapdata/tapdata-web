@@ -220,7 +220,7 @@ export default {
         if (!resFlag) {
           return
         }
-        applicationApi.delete(item.id, item.name).then(() => {
+        applicationApi.delete(item.id).then(() => {
           this.$message.success(this.$t('message_delete_ok'))
           this.table.fetch()
         })

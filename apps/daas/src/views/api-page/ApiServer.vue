@@ -195,7 +195,7 @@ export default {
         if (!resFlag) {
           return
         }
-        apiServerApi.deleteClient(item.id, item.clientName).then(() => {
+        apiServerApi.delete(item.id).then(() => {
           this.$message.success(this.$t('message_delete_ok'))
           this.table.fetch()
         })

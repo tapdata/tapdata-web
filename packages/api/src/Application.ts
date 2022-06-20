@@ -5,15 +5,6 @@ export default class Applications extends Http {
     super('/api/Applications')
   }
 
-  delete(id, name) {
-    // return axios.delete(`${this.url}/${id}`)
-    if (name == '') {
-      return this.axios.delete(`${this.url}/${id}`)
-    } else {
-      return this.axios.delete(`${this.url}/${id}?name=${name}`)
-    }
-  }
-
   findOne(params) {
     params = params || {}
     return this.axios.get(this.url + '/findOne', { params })
