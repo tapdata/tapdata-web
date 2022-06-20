@@ -5,6 +5,7 @@ import routes from './routes'
 import Cookie from '@tap/shared/src/cookie'
 
 Vue.use(Router)
+
 export default i18n => {
   const router = new Router({
     routes: routes
@@ -24,8 +25,8 @@ export default i18n => {
     let token = Cookie.get('token')
     if (token) {
       //若token存在，获取权限
-      let permissions = sessionStorage.getItem('tapdata_permissions')
-      permissions = JSON.parse(permissions)
+      const permissionsStr = sessionStorage.getItem('tapdata_permissions')
+      const permissions: any[] = JSON.parse(permissionsStr)
 
       //判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
       let matched = true

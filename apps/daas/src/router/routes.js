@@ -1,4 +1,4 @@
-import Parent from './Parent.vue'
+import Parent from './Parent'
 const MigrateDetails = () => import(/* webpackChunkName: "task-details" */ '../views/task/migrate/details/Index.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '@/views/connections/DatabaseForm')
 const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
