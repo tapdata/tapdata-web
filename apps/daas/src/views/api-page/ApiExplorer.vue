@@ -381,7 +381,8 @@ export default {
     getApiServer() {
       apiServerApi.get({}).then(res => {
         if (res) {
-          this.apiServersList = res.data?.items
+          this.apiServersList = res?.items
+          console.log(this.apiServersList)
           if (this.apiServersList.length) {
             this.searchParams.api_server_process_id = this.apiServersList[0].processId
             this.apiClient.setApiServer(this.apiServersList[0])
@@ -400,6 +401,7 @@ export default {
       let _this = this
       await this.apiClient.loadOpenAPI().then(res => {
         if (res) {
+          console.log(res)
           this.collectionsList = []
           Object.keys(res.data).forEach(item => {
             let operations = res.data[item].api,
@@ -674,7 +676,7 @@ export default {
       }
       modulesApi.get(params).then(res => {
         if (res) {
-          this.loadOpenAPI(res.data)
+          this.loadOpenAPI(res)
         }
       })
     },
@@ -896,6 +898,7 @@ export default {
         if (tmp && tmp.length > 0) {
           let openApi = tmp[0].clientURI + '/openapi.json'
           let token = await this.apiClient.getAPIServerToken()
+          console.log(token)
 
           let cols = this.collectionsList.filter(v => v.value === this.searchParams.collection)
           let api = cols && cols.length === 1 ? cols[0].text : ''

@@ -115,40 +115,43 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
 }, errorCallback)
 
 axios.interceptors.response.use((response: AxiosResponse): any => {
-  removePending(response.config)
-  let data = response.data
-  if (response?.config?.responseType === 'blob') {
-    return {
-      data: data?.data ?? (data || {}),
-      response: response
+  return new Promise((resolve, reject) => {
+    removePending(response.config)
+    let code = response.data.code
+    let data = response.data
+    if (response?.config?.responseType === 'blob') {
+      return {
+        data: data?.data ?? (data || {}),
+        response: response
+      }
     }
-  }
-  if (data.code === 'ok') {
-    return {
-      // data: (data && data.data) || data || {}, // 这种写法data.data = false 会不通过
-      data: data?.data ?? (data || {}),
-      response: response
-    }
-  } else {
-    switch (data.code) {
-      case 'SystemError':
-        if (data.message === 'System error: null') {
-          Message.error({
-            message: i18n.t('message_request_error').toString()
-          })
-        } else {
+    if (code === 'ok') {
+      return resolve(response.data.data)
+    } else if (code === 'SystemError') {
+      Message.error(response.data.message)
+      reject(response)
+    } else {
+      switch (code) {
+        case 'SystemError':
+          if (data.message === 'System error: null') {
+            Message.error({
+              message: i18n.t('message_request_error').toString()
+            })
+          } else {
+            Message.error({
+              message: data.message
+            })
+          }
+          throw response
+        default:
           Message.error({
             message: data.message
           })
-        }
-        throw response
-      default:
-        Message.error({
-          message: data.message
-        })
-        throw response
+          throw response
+      }
     }
-  }
+    reject(response)
+  })
 }, errorCallback)
 
 export default axios
