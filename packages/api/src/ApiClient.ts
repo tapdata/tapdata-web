@@ -45,7 +45,7 @@ export default class ApiClient {
       return apiToken
     }
 
-    let clientInfo: any = await axios.get('/api/Applications', {
+    const clientInfo: any = await axios.get('/api/Applications', {
       params: {
         // 'filter[where][clientName]': 'Data Explorer'
         filter: JSON.stringify({
@@ -56,7 +56,7 @@ export default class ApiClient {
       }
     })
     const clientInfoItem = clientInfo?.items[0] || {}
-    let data =
+    const data =
       'grant_type=client_credentials&client_id=' + clientInfoItem.id + '&client_secret=' + clientInfoItem.clientSecret
 
     const result = await axios.create().post('/oauth/token', data)
@@ -74,8 +74,8 @@ export default class ApiClient {
   async loadOpenAPI() {
     const token = await this.getAPIServerToken()
     try {
-      let openAPIUrl = this.getAPIServerUrl('/openapi.json?access_token=' + token)
-      let response = await axios.create().get(openAPIUrl)
+      const openAPIUrl = this.getAPIServerUrl('/openapi.json?access_token=' + token)
+      const response = await axios.create().get(openAPIUrl)
       if (response && response.data) {
         this.collections = await this.parseOpenAPI(response.data)
         return {
@@ -108,7 +108,7 @@ export default class ApiClient {
       const paths = Object.keys(openAPI.paths || {})
       const collections = {}
       paths.forEach(path => {
-        let methods = Object.keys(openAPI.paths[path] || {})
+        const methods = Object.keys(openAPI.paths[path] || {})
         methods.forEach(method => {
           const methodDesc = openAPI.paths[path][method]
           const collection = methodDesc.tags ? methodDesc.tags[0] : ''
@@ -137,12 +137,12 @@ export default class ApiClient {
               operationName === 'findPage_post' ||
               (operationName !== 'findPage_post' && operationName.startsWith('findPage_'))
             ) {
-              let $ref =
+              const $ref =
                 methodDesc['responses']['200']['content']['application/json']['schema']['properties']['data']['items'][
                   '$ref'
                 ]
-              let modelPath = $ref.split('/')
-              let model = openAPI['components']['schemas'][modelPath[modelPath.length - 1]]
+              const modelPath = $ref.split('/')
+              const model = openAPI['components']['schemas'][modelPath[modelPath.length - 1]]
               collections[collection]['properties'] = model.properties
             }
           }
@@ -154,10 +154,10 @@ export default class ApiClient {
   }
 
   async getHeaders(collectionName, operationName) {
-    let collection = this.collections[collectionName || this.collection.collection]
-    let properties = collection ? collection['properties'] : {}
+    const collection = this.collections[collectionName || this.collection.collection]
+    const properties = collection ? collection['properties'] : {}
     let headers = []
-    let fields = Object.keys(properties || {})
+    const fields = Object.keys(properties || {})
     if (fields?.length)
       fields.forEach(field => {
         headers.push({
@@ -182,8 +182,8 @@ export default class ApiClient {
     const token = await this.getAPIServerToken()
     params = params || {}
     let url = this.collections[this.collection.collection]['api']['findPage']['url']
-    let fileExp = params.type === 'excel' ? 'xlsx' : params.type || 'json'
-    let queryString = []
+    const fileExp = params.type === 'excel' ? 'xlsx' : params.type || 'json'
+    const queryString = []
     Object.keys(params || {}).forEach(v => {
       queryString.push(v + '=' + params[v])
     })
@@ -266,7 +266,7 @@ export default class ApiClient {
       const request = axios.create({
         headers: { access_token: await this.getAPIServerToken() }
       })
-      let url = this.collections[this.collection.collection]['api']['create']['url']
+      const url = this.collections[this.collection.collection]['api']['create']['url']
       const response = await request.post(url, doc)
       if (response.statusText === 'OK') {
         return {
@@ -386,7 +386,7 @@ export default class ApiClient {
         headers: { access_token: await this.getAPIServerToken() }
       })
       let url = this.collections[this.collection.collection]['api']['updateAll']['url']
-      let querys = []
+      const querys = []
       Object.keys(where).forEach(key => {
         querys.push(`${key}=${where[key]}`)
       })

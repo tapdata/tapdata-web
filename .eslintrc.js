@@ -3,7 +3,7 @@ module.exports = {
   env: {
     node: true
   },
-  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
+  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/typescript/recommended', '@vue/prettier'],
   parserOptions: {
     parser: 'babel-eslint'
   },
@@ -13,6 +13,8 @@ module.exports = {
 
     'no-prototype-builtins': 'off',
     'getter-return': 'off',
+
+    '@typescript-eslint/no-this-alias': 'off', // 不允许给this设置别名，例如 let self = this
 
     'prettier/prettier': [
       'error',

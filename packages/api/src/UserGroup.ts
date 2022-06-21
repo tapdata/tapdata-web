@@ -9,7 +9,7 @@ export default class UserGroups extends Http {
       return this.axios.get(this.url + '/' + params.join('/'))
     }
     if (params.url) {
-      let url = params.url
+      const url = params.url
       delete params.url
       return this.axios.get(url, { params })
     }
