@@ -5,34 +5,34 @@ import { Message } from 'element-ui'
 import i18n from '@/i18n'
 import Qs from 'qs'
 
-let pending = [] //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
+const pending = [] //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
 
 const CancelToken = axios.CancelToken
 
 axios.defaults.baseURL = process.env.BASE_URL || './'
 
 const getPendingKey = (config: AxiosRequestConfig): string => {
-  let { url, method, data, params } = config
-  let headers = {}
+  const { url, method, data, params } = config
+  const headers = {}
   for (const key in config.headers) {
-    let value = config.headers[key]
+    const value = config.headers[key]
     if (Object.prototype.toString.call(value) === '[object String]' && !['Content-Type', 'Accept'].includes(key)) {
       headers[key] = value
     }
   }
-  data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
-  let key = JSON.stringify({
+  config.data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
+  const key = JSON.stringify({
     url,
     method,
-    data,
+    data: config.data,
     params,
     headers
   })
   return key
 }
 const removePending = (config: AxiosRequestConfig): void => {
-  let key = getPendingKey(config)
-  let index = pending.findIndex(it => it === key)
+  const key = getPendingKey(config)
+  const index = pending.findIndex(it => it === key)
   if (index >= 0) {
     pending.splice(index, 1)
   }
@@ -46,7 +46,7 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
   if (error?.config || error?.response?.config) {
     removePending(error.config || error.response.config)
   }
-  let rsp = error.response
+  const rsp = error.response
   if (rsp) {
     if (rsp.data && rsp.data.state === 'EXCEPTION') {
       return Promise.reject(error)
@@ -88,7 +88,7 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
       encoder: str => window.encodeURIComponent(str)
     })
   }
-  let accessToken = Cookie.get('token')
+  const accessToken = Cookie.get('token')
   if (accessToken) {
     if (~config.url.indexOf('?')) {
       if (!~config.url.indexOf('access_token')) {
@@ -100,7 +100,7 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
   }
   config.headers['x-requested-with'] = 'XMLHttpRequest'
 
-  let key = getPendingKey(config)
+  const key = getPendingKey(config)
   let cancelFunc = null
   config.cancelToken = new CancelToken(c => {
     cancelFunc = c
@@ -117,8 +117,8 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
 axios.interceptors.response.use((response: AxiosResponse): any => {
   return new Promise((resolve, reject) => {
     removePending(response.config)
-    let code = response.data.code
-    let data = response.data
+    const code = response.data.code
+    const data = response.data
     if (response?.config?.responseType === 'blob') {
       return resolve(response.data)
     }

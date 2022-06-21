@@ -41,7 +41,7 @@ export default class Task extends Http {
   getId(id, params, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+      const qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
       return this.axios.get(this.url + '/' + id + params.join('/') + qs)
     }
     params = params || {}
@@ -52,7 +52,7 @@ export default class Task extends Http {
   }
 
   export(ids) {
-    let href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('token')}`
+    const href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('token')}`
     window.open(href)
   }
   checkRun(id) {

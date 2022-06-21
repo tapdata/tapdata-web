@@ -33,7 +33,7 @@ export default class DataFlows extends Http {
   getId(id, params, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+      const qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
       return this.axios.get(this.url + '/' + id + params.join('/') + qs)
     }
     params = params || {}

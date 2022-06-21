@@ -6,7 +6,7 @@ export default class Connections extends Http {
   }
   customQuery(id, params) {
     let url = `${this.url}/${id}` + '/customQuery?'
-    for (let item in params) {
+    for (const item in params) {
       url += item + '=' + params[item] + '&'
     }
     return this.axios.get(url)
@@ -24,7 +24,7 @@ export default class Connections extends Http {
     return this.axios.patch(`${this.url}/${id}`, params)
   }
   patchId(params) {
-    let id = params._id || params.id
+    const id = params._id || params.id
     delete params._id
     delete params.id
     return this.axios.patch(`${this.url}/${id}`, params)
@@ -33,7 +33,7 @@ export default class Connections extends Http {
     return this.axios.post(`${this.url}/update?where=` + encodeURIComponent(JSON.stringify({ _id: params.id })), params)
   }
   getNoSchema(id) {
-    let url = `${this.url}/${id}` + '?noSchema=1'
+    const url = `${this.url}/${id}` + '?noSchema=1'
     return this.axios.get(url)
   }
   getAllowDatabaseType() {

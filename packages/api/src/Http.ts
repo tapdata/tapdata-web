@@ -5,12 +5,12 @@ export default class Http {
   url: string
   axios: AxiosInstance
 
-  constructor(url) {
+  constructor(url: string) {
     this.url = url
     this.axios = axios
   }
 
-  count(params) {
+  count(params: unknown) {
     return this.axios.get(this.url + '/count', { params })
   }
 
@@ -37,7 +37,7 @@ export default class Http {
   get(params, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+      const qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
       return this.axios.get(this.url + '/' + params.join('/') + qs)
     }
     params = params || {}
