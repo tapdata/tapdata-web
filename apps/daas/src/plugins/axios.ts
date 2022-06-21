@@ -120,10 +120,7 @@ axios.interceptors.response.use((response: AxiosResponse): any => {
     let code = response.data.code
     let data = response.data
     if (response?.config?.responseType === 'blob') {
-      return {
-        data: data?.data ?? (data || {}),
-        response: response
-      }
+      return resolve(response.data)
     }
     if (code === 'ok') {
       return resolve(response.data.data)

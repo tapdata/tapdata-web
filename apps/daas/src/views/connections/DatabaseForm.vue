@@ -557,7 +557,7 @@ export default {
     getPdkDoc() {
       const { pdkHash } = this.$route.query || {}
       pdkApi.doc(pdkHash).then(res => {
-        this.doc = res?.data
+        this.doc = res
       })
     }
   }
