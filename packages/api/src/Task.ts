@@ -63,51 +63,51 @@ export default class Task extends Http {
     return this.axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
   save(params) {
-    return this.axios.patch(this.url + '/confirm/' + params.id, params).then(this.useData)
+    return this.axios.patch(this.url + '/confirm/' + params.id, params)
   }
 
   saveAndStart(params) {
-    return this.axios.patch(this.url + '/confirmStart/' + params.id, params).then(this.useData)
+    return this.axios.patch(this.url + '/confirmStart/' + params.id, params)
   }
 
   getMetadata(params) {
-    return this.axios.post(this.url + '/metadata', params).then(this.useData)
+    return this.axios.post(this.url + '/metadata', params)
   }
 
   start(id) {
-    return this.axios.put(this.url + `/start/${id}`).then(this.useData)
+    return this.axios.put(this.url + `/start/${id}`)
   }
 
   batchStart(taskIds) {
     return this.axios.put(this.url + `/batchStart?taskIds=` + taskIds.join('&taskIds='))
-    //return this.axios.put(this.url + `/batchStart`, qs.stringify({ taskIds })).then(this.useData)
+    //return this.axios.put(this.url + `/batchStart`, qs.stringify({ taskIds }))
   }
 
   stop(id) {
-    return this.axios.put(this.url + `/stop/${id}`).then(this.useData)
+    return this.axios.put(this.url + `/stop/${id}`)
   }
 
   forceStop(id) {
-    return this.axios.put(this.url + `/stop/${id}?force=true`).then(this.useData)
+    return this.axios.put(this.url + `/stop/${id}?force=true`)
   }
 
   reset(id) {
-    return this.axios.put(this.url + `/renew/${id}`).then(this.useData)
+    return this.axios.put(this.url + `/renew/${id}`)
   }
 
   chart(id) {
     if (id) {
-      return this.axios.get(`${this.url}/chart?user_id=${id}`).then(this.useData)
+      return this.axios.get(`${this.url}/chart?user_id=${id}`)
     } else {
-      return this.axios.get(this.url + '/chart').then(this.useData)
+      return this.axios.get(this.url + '/chart')
     }
   }
 
   checkName(name, id) {
     if (id) {
-      return this.axios.post(this.url + '/checkName?name=' + name + '&id=' + id).then(this.useData)
+      return this.axios.post(this.url + '/checkName?name=' + name + '&id=' + id)
     } else {
-      return this.axios.post(this.url + '/checkName?name=' + name).then(this.useData)
+      return this.axios.post(this.url + '/checkName?name=' + name)
     }
   }
 }
