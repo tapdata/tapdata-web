@@ -455,19 +455,12 @@ export default {
 
     mouseUp(event) {
       off(window, 'mouseup', this.mouseUp)
-      if (
-        [this.$refs.paper, this.$refs.scrollerBg, this.$el].includes(event.target) &&
-        !this.showSelectBox &&
-        !this.$store.getters['dataflow/isPaperMoveInProgress']
-      ) {
-        this.$emit('click-blank')
-      }
-      this.mouseUpMouseSelect()
+      this.mouseUpMouseSelect(event)
       this.mouseUpMovePaper()
       this.removeActiveAction('dragActive')
     },
 
-    mouseUpMouseSelect() {
+    mouseUpMouseSelect(event) {
       if (!this.selectActive) {
         return
       }
@@ -488,7 +481,17 @@ export default {
         boxAttr = { x, y, right, bottom }
       }
 
-      this.$emit('mouse-select', this.showSelectBox, boxAttr)
+      const showSelectBox = this.showSelectBox && this.selectBoxAttr.w > 4 && this.selectBoxAttr.h > 4
+
+      if (
+        [this.$refs.paper, this.$refs.scrollerBg, this.$el].includes(event.target) &&
+        !showSelectBox &&
+        !this.$store.getters['dataflow/isPaperMoveInProgress']
+      ) {
+        this.$emit('click-blank')
+      }
+
+      this.$emit('mouse-select', showSelectBox, boxAttr)
       this.hideSelectBox()
     },
 

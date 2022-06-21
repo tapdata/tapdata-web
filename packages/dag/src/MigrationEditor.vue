@@ -35,18 +35,16 @@
     </TopHeader>
     <section class="layout-wrap layout-has-sider position-relative">
       <!--左侧边栏-->
-      <LeftSider
-        v-show="showLeftSider"
-        v-if="!stateIsReadonly"
-        v-resize.right="{
-          minWidth: 260,
-          maxWidth: 400
-        }"
-        @move-node="handleDragMoveNode"
-        @drop-node="handleAddNodeByDrag"
-        @add-node="handleAddNode"
-        @toggle-expand="handleToggleExpand"
-      />
+      <VExpandXTransition>
+        <LeftSider
+          v-if="!stateIsReadonly"
+          v-show="showLeftSider"
+          @move-node="handleDragMoveNode"
+          @drop-node="handleAddNodeByDrag"
+          @add-node="handleAddNode"
+          @toggle-expand="handleToggleExpand"
+        />
+      </VExpandXTransition>
       <div
         v-if="!stateIsReadonly"
         v-show="!showLeftSider"
@@ -94,10 +92,7 @@
         ></NodePopover>
       </main>
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar"></ConfigPanel>
-      <!--<section class="layout-wrap">
-
-      </section>-->
+      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
     </section>
   </section>
 </template>
@@ -123,6 +118,7 @@ import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
 import VIcon from 'web-core/components/VIcon'
+import { VExpandXTransition } from '@tap/component'
 
 export default {
   name: 'MigrationEditor',
@@ -134,6 +130,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    VExpandXTransition,
     NodePopover,
     EmptyItem,
     ConfigPanel,
