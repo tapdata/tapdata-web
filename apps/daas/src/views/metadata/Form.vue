@@ -190,8 +190,7 @@
   </el-dialog>
 </template>
 <script>
-import { TypeMapping } from '@tap/api'
-const typeMappingApi = new TypeMapping()
+import { typeMappingApi, metadataInstancesApi } from '@tap/api'
 export default {
   props: {
     data: {
@@ -282,12 +281,12 @@ export default {
         }
       }
 
-      let resultData = await this.$api('MetadataInstances').get({
+      let resultData = await metadataInstancesApi.get({
         filter: JSON.stringify(params)
       })
 
-      if (resultData.data?.items) {
-        this.getTableData = resultData.data?.items
+      if (resultData?.items) {
+        this.getTableData = resultData?.items
       }
     },
     //获取typeMapping
@@ -354,7 +353,7 @@ export default {
           }
         }
       }
-      let relationName = await _this.$api('MetadataInstances').getId(id, params)
+      let relationName = await metadataInstancesApi.getId(id, params)
       let duplicateName = []
       if (_this.metadata.relation && _this.metadata.relation.length) {
         _this.metadata.relation.forEach(item => {
@@ -568,13 +567,11 @@ export default {
             relation: relation
           }
           if (!falg) {
-            this.$api('MetadataInstances')
-              .patchId(this.metadata.id, params)
-              .then(() => {
-                this.dialogFormVisible = false
-                this.$emit('dialogVisible', false)
-                this.$message.success(this.$t('metadata.details.success_Release'))
-              })
+            metadataInstancesApi.patchId(this.metadata.id, params).then(() => {
+              this.dialogFormVisible = false
+              this.$emit('dialogVisible', false)
+              this.$message.success(this.$t('metadata.details.success_Release'))
+            })
             // .catch(() => {
             //   this.$message.error(this.$t('message_save_fail'))
             // })

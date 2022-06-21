@@ -90,6 +90,7 @@
 </template>
 <script>
 import TablePage from '@/components/TablePage'
+import { clusterApi, logsApi } from '@tap/api'
 let timeout = null
 export default {
   components: { TablePage },
@@ -135,15 +136,13 @@ export default {
   methods: {
     // 获取ip
     getIpFn() {
-      this.$api('cluster')
-        .get()
-        .then(res => {
-          if (res.data.items) {
-            res.data.items.forEach(item => {
-              this.ipList.push({ value: item.systemInfo.ip })
-            })
-          }
-        })
+      clusterApi.get().then(res => {
+        if (res.data.items) {
+          res.data.items.forEach(item => {
+            this.ipList.push({ value: item.systemInfo.ip })
+          })
+        }
+      })
     },
     // 获取数据
     getDataApi({ page }) {
@@ -162,14 +161,14 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('logs')
+      return logsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
           return {
-            total: res.data.total || 0,
-            data: res.data?.items || []
+            total: res?.total || 0,
+            data: res?.items || []
           }
         })
     },

@@ -39,6 +39,7 @@
 
 <script>
 import dayjs from 'dayjs'
+import { logsApi } from '@tap/api'
 export default {
   props: {
     id: String
@@ -127,12 +128,12 @@ export default {
           lt: this.logs[0].id
         }
       }
-      this.$api('logs')
+      logsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let list = res.data?.items || []
+          let list = res?.items || []
           if (isSearch) {
             this.noMore = false
             this.isScrollBottom = true

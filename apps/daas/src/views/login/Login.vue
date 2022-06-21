@@ -46,7 +46,7 @@
 import cryptoJS from 'crypto-js'
 import LoginPage from './LoginPage'
 import Cookie from '@tap/shared/src/cookie'
-import { Users } from '@tap/api'
+import { usersApi, timeStampApi } from '@tap/api'
 import { configUser } from '@/utils/util'
 
 export default {
@@ -89,21 +89,19 @@ export default {
       }
       this.loading = true
       try {
-        const userApi = new Users()
-        let timeStamp = this.$api('TimeStamp')
         //登陆密码加密
-        let timeStampData = await timeStamp.get()
+        let timeStampData = await timeStampApi.get()
         this.form['stime'] = timeStampData.data
         this.form.password = cryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString()
         let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8'
         this.form['sign'] = cryptoJS.SHA1(Str).toString().toUpperCase()
 
-        let data = await userApi.login(this.form)
-        Cookie.set('token', data.id)
+        let data = await usersApi.login(this.form)
+        Cookie.set('token', data?.data?.id)
         // eslint-disable-next-line
         console.log('登录成功：', data)
 
-        let user = await userApi.getInfo()
+        let user = await usersApi.getInfo()
         configUser(user)
 
         let lastLocationHref = sessionStorage.getItem('lastLocationHref')

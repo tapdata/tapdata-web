@@ -209,11 +209,8 @@
 
 <script>
 import { Chart } from '@tap/component'
-import { Cluster, Task } from '@tap/api'
+import { clusterApi, taskApi } from '@tap/api'
 import { toThousandsUnit } from '@/utils/util'
-
-let clusterApi = new Cluster()
-let taskApi = new Task()
 
 export default {
   components: { Chart },

@@ -36,6 +36,7 @@
 
 <script>
 import TablePage from '@/components/TablePage'
+import { previewDataApi } from '@tap/api'
 export default {
   props: {
     validaData: {
@@ -96,7 +97,7 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return Promise.all([this.$api('PreviewData').post(where)]).then(([res]) => {
+      return Promise.all([previewDataApi.post(where)]).then(([res]) => {
         this.tableHeader = res.data.head
         return {
           total: res.data.total,

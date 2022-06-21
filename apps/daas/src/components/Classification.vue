@@ -85,11 +85,8 @@
 </template>
 
 <script>
-import factory from '../api/factory'
 import VIcon from '@/components/VIcon'
-
-const MetadataDefinitions = factory('MetadataDefinitions')
-const UserGroupModel = factory('UserGroup')
+import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 
 export default {
   components: { VIcon },
@@ -185,38 +182,42 @@ export default {
         where
       }
       if (this.types[0] === 'user') {
-        UserGroupModel.get({
-          filter: JSON.stringify({
-            limit: 999
+        userGroupsApi
+          .get({
+            filter: JSON.stringify({
+              limit: 999
+            })
           })
-        }).then(res => {
-          if (res.data) {
-            let treeData = []
-            if (res.data?.items?.length) {
-              treeData = res.data.items.map(item => ({
-                value: item.name,
-                name: item.name,
-                id: item.id,
-                gid: item.gid,
-                parent_id: item.parent_id,
-                last_updated: item.last_updated,
-                user_id: item.user_id
-              }))
-            }
-            this.treeData = this.formatData(treeData)
+          .then(res => {
+            if (res) {
+              let treeData = []
+              if (res.items?.length) {
+                treeData = res.items.map(item => ({
+                  value: item.name,
+                  name: item.name,
+                  id: item.id,
+                  gid: item.gid,
+                  parent_id: item.parent_id,
+                  last_updated: item.last_updated,
+                  user_id: item.user_id
+                }))
+              }
+              this.treeData = this.formatData(treeData)
 
-            cb && cb(treeData)
-          }
-        })
+              cb && cb(treeData)
+            }
+          })
       } else {
-        MetadataDefinitions.get({
-          filter: JSON.stringify(filter)
-        }).then(res => {
-          if (res.data?.items) {
-            this.treeData = this.formatData(res.data?.items || [])
-            cb && cb(res.data?.items || [])
-          }
-        })
+        metadataDefinitionsApi
+          .get({
+            filter: JSON.stringify(filter)
+          })
+          .then(res => {
+            if (res?.items) {
+              this.treeData = this.formatData(res?.items || [])
+              cb && cb(res?.items || [])
+            }
+          })
       }
     },
     getDataAll(cb) {
@@ -224,32 +225,34 @@ export default {
       //   filter: {}
       // }
       if (this.types[0] === 'user') {
-        UserGroupModel.get({
-          filter: JSON.stringify({
-            limit: 999
+        userGroupsApi
+          .get({
+            filter: JSON.stringify({
+              limit: 999
+            })
           })
-        }).then(res => {
-          if (res.data) {
-            let treeData = []
-            if (res.data?.items?.length) {
-              treeData = res.data.items.map(item => ({
-                value: item.name,
-                id: item.id,
-                gid: item.gid,
-                parent_id: item.parent_id,
-                last_updated: item.last_updated,
-                user_id: item.user_id
-              }))
+          .then(res => {
+            if (res) {
+              let treeData = []
+              if (res?.items?.length) {
+                treeData = res?.items.map(item => ({
+                  value: item.name,
+                  id: item.id,
+                  gid: item.gid,
+                  parent_id: item.parent_id,
+                  last_updated: item.last_updated,
+                  user_id: item.user_id
+                }))
+              }
+              // this.treeData = this.formatData(res.data);
+              cb && cb(treeData)
             }
-            // this.treeData = this.formatData(res.data);
-            cb && cb(treeData)
-          }
-        })
+          })
       } else {
-        MetadataDefinitions.get().then(res => {
-          if (res.data?.items) {
+        metadataDefinitionsApi.get().then(res => {
+          if (res?.items) {
             // this.treeData = this.formatData(res.data);
-            cb && cb(res.data?.items || [])
+            cb && cb(res?.items || [])
           }
         })
       }
@@ -357,7 +360,7 @@ export default {
           params.parent_id = id
           params.parent_gid = gid
         }
-        UserGroupModel[method](params).then(res => {
+        userGroupsApi[method](params).then(res => {
           let self = this
           if (res.data) {
             self.getData(() => {
@@ -379,7 +382,7 @@ export default {
         } else if (id) {
           params.parent_id = id
         }
-        MetadataDefinitions[method](params).then(res => {
+        metadataDefinitionsApi[method](params).then(res => {
           let self = this
           if (res.data) {
             self.getData(() => {
@@ -417,12 +420,12 @@ export default {
               gid: id
             }
           }
-          UserGroupModel.delete(params).then(() => {
+          userGroupsApi.delete(params).then(() => {
             let self = this
             self.getData()
           })
         } else {
-          MetadataDefinitions.delete(id).then(() => {
+          metadataDefinitionsApi.delete(id).then(() => {
             let self = this
             self.getData()
           })

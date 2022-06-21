@@ -1,6 +1,7 @@
-import Http from './http'
+import Http from './Http'
 import { isPlainObj } from '@tap/shared'
-export class MetadataInstances extends Http {
+
+export default class MetadataInstances extends Http {
   constructor() {
     super('/api/MetadataInstances')
   }
@@ -97,4 +98,8 @@ export class MetadataInstances extends Http {
   getMergerNodeParentFields(taskId, nodeId) {
     return this.axios.get(`${this.url}/mergerNode/parent/fields?taskId=${taskId}&nodeId=${nodeId}`).then(this.useData)
   }
+  findTablesById(id) {
+    return this.axios.get(this.url + '/findTablesById/' + id)
+  }
 }
+export { MetadataInstances }

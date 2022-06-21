@@ -189,6 +189,8 @@
 import { uniq, find } from 'lodash'
 import VIcon from '@/components/VIcon'
 import Cookie from '@tap/shared/src/cookie'
+import { licensesApi, settingsApi } from '@tap/api'
+
 export default {
   name: 'Setting',
   components: { VIcon },
@@ -263,63 +265,57 @@ export default {
     getData() {
       let _this = this
       let auth_data = []
-      _this
-        .$api('Licenses')
-        .get({})
-        .then(result => {
-          if (result && result.data) {
-            auth_data = result.data.items || []
-          }
+      licensesApi.get({}).then(result => {
+        if (result) {
+          auth_data = result?.items || []
+        }
+      })
+      settingsApi.get().then(res => {
+        let items = [],
+          itemsCategories = [],
+          cat = []
+        if (res && res.length) {
+          items = res.map(item => item.category)
+        }
+        items = uniq(items)
+        items.sort((a, b) => {
+          return a.sort < b.sort ? -1 : 1
         })
-      _this
-        .$api('Setting')
-        .get()
-        .then(res => {
-          let items = [],
-            itemsCategories = [],
-            cat = []
-          if (res && res.data.length) {
-            items = res.data.map(item => item.category)
-          }
-          items = uniq(items)
-          items.sort((a, b) => {
+        items.map(item => {
+          let values = res.filter(childItem => {
+            return childItem.category === item && childItem.user_visible
+          })
+          values.sort((a, b) => {
             return a.sort < b.sort ? -1 : 1
           })
-          items.map(item => {
-            let values = res.data.filter(childItem => {
-              return childItem.category === item && childItem.user_visible
-            })
-            values.sort((a, b) => {
-              return a.sort < b.sort ? -1 : 1
-            })
-            if (values.length > 0) {
-              itemsCategories.push({ category: item, items: values })
-              cat.push(item)
-            }
-          })
-
-          let sortCategories = cat.map(item => {
-            let values = res.data.filter(childItem => {
-              return childItem.category === item
-            })
-            return {
-              category: item,
-              category_sort: values[0].category_sort
-            }
-          })
-
-          let vals = sortCategories.map(item => {
-            let value = find(itemsCategories, val => {
-              return val.category === item.category
-            })
-            return Object.assign(value, item)
-          })
-          vals.sort((a, b) => {
-            return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
-          })
-
-          _this.formData.items = vals
+          if (values.length > 0) {
+            itemsCategories.push({ category: item, items: values })
+            cat.push(item)
+          }
         })
+
+        let sortCategories = cat.map(item => {
+          let values = res.filter(childItem => {
+            return childItem.category === item
+          })
+          return {
+            category: item,
+            category_sort: values[0].category_sort
+          }
+        })
+
+        let vals = sortCategories.map(item => {
+          let value = find(itemsCategories, val => {
+            return val.category === item.category
+          })
+          return Object.assign(value, item)
+        })
+        vals.sort((a, b) => {
+          return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
+        })
+
+        _this.formData.items = vals
+      })
       let lincenseData = {
         liceseItems: auth_data,
         items: auth_data,
@@ -335,13 +331,11 @@ export default {
           settingData.push(childItem)
         })
       })
-      this.$api('Setting')
-        .save(settingData)
-        .then(res => {
-          if (res) {
-            this.$message.success(this.$t('message_save_ok'))
-          }
-        })
+      settingsApi.save(settingData).then(res => {
+        if (res) {
+          this.$message.success(this.$t('message_save_ok'))
+        }
+      })
       // .catch(e => {
       //   this.$message.error(e.response.msg)
       // })
@@ -361,12 +355,10 @@ export default {
           2
         )
       }
-      this.$api('Setting')
-        .testEmail()
-        .then(() => {
-          localStorage.setItem('Tapdata_settings_email_countdown', now)
-          this.$message.success(this.$t('setting_test_email_success'))
-        })
+      settingsApi.testEmail().then(() => {
+        localStorage.setItem('Tapdata_settings_email_countdown', now)
+        this.$message.success(this.$t('setting_test_email_success'))
+      })
     }
   }
 }

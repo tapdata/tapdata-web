@@ -1,6 +1,6 @@
-import Http from './http'
+import Http from './Http'
 import { isPlainObj } from '@tap/shared'
-export class MetadataTransformer extends Http {
+export default class MetadataTransformer extends Http {
   constructor() {
     super('/api/metadataTransformerItems')
   }
@@ -18,3 +18,4 @@ export class MetadataTransformer extends Http {
     return this.axios.get(this.url, config).then(this.useData)
   }
 }
+export { MetadataTransformer }

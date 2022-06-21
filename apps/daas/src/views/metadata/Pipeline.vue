@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { scheduleTasksApi, metadataInstancesApi } from '@tap/api'
 export default {
   props: {
     pipelineData: {
@@ -109,12 +110,10 @@ export default {
       }
     }
 
-    this.$api('MetadataInstances')
-      .get(params)
-      .then(res => {
-        this.collections = res.data?.items || []
-        this.model.collection = this.collections[0].original_name
-      })
+    metadataInstancesApi.get(params).then(res => {
+      this.collections = res?.items || []
+      this.model.collection = this.collections[0].original_name
+    })
   },
   methods: {
     // 应用
@@ -142,7 +141,7 @@ export default {
       let _this = this
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.$api('ScheduleTasks')
+          scheduleTasksApi
             .post({
               task_name: 'mongodb_apply_pipeline',
               task_type: 'MONGODB_APPLY_PIPELINE',
@@ -160,7 +159,7 @@ export default {
               }
             })
             .then(res => {
-              _this.isApplication = res.data.task_data.isApplication
+              _this.isApplication = res?.task_data.isApplication
               if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
               this.$message.success(this.$t('metadata.details.pipeline.success'))
             })
@@ -173,7 +172,7 @@ export default {
 
     // 保存
     saveSubmit() {
-      this.$api('MetadataInstances')
+      metadataInstancesApi
         .patchId(this.pipelineData.id, {
           pipline: this.model
         })

@@ -3,12 +3,10 @@ import { defineComponent, watch, ref } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { transformToTreeNode } from '../core'
-import { CustomNode } from '@tap/api'
+import { customNodeApi } from '@tap/api'
 import { IconWidget } from './widgets'
 import { observer } from '@formily/reactive-vue'
 import { TextEditable } from '@tap/component'
-
-const API = new CustomNode()
 
 export const StudioHeader = observer(
   defineComponent({
@@ -24,11 +22,11 @@ export const StudioHeader = observer(
         async route => {
           if (route.params?.id) {
             if (route.params.action === 'nodeSave') return
-            const data = await API.get([route.params?.id])
+            const data = await customNodeApi.get([route.params?.id])
             designerRef.value.setCurrentTree(transformToTreeNode(data.formSchema))
             customNodeRef.value.from(data)
 
-            API.checkUsed(route.params.id)
+            customNodeApi.checkUsed(route.params.id)
           } else {
             customNodeRef.value.from({})
           }

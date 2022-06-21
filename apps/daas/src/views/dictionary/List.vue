@@ -231,6 +231,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import { dictionariesApi } from '@tap/api'
 export default {
   components: {
     TablePage
@@ -353,12 +354,10 @@ export default {
         closeOnClickModal: false
       }).then(res => {
         if (res) {
-          this.$api('Dictionary')
-            .delete(item.id, item.name)
-            .then(() => {
-              this.$message.success(this.$t('message.deleteOK'))
-              this.table.fetch()
-            })
+          dictionariesApi.delete(item.id, item.name).then(() => {
+            this.$message.success(this.$t('message.deleteOK'))
+            this.table.fetch()
+          })
           // .catch(() => {
           //   this.$message.info(this.$t('message.deleteFail'))
           // })
@@ -446,8 +445,7 @@ export default {
           delete this.createForm.boolarr
           delete this.createForm.numberarr
           this.createForm.typearr = typearr
-          this.$api('Dictionary')
-            [method](this.createForm)
+          dictionariesApi[method](this.createForm)
             .then(() => {
               this.table.fetch()
               this.$message.success(this.$t('message_save_ok'))

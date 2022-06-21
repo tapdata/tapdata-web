@@ -524,6 +524,7 @@ import { /*VCodeEditor,*/ JsEditor } from '@tap/component'
 
 import { DATA_NODE_TYPES } from '@/const.js'
 import GitBook from '@/components/GitBook'
+import { metadataInstancesApi, taskApi, inspectApi } from '@tap/api'
 
 export default {
   components: { MultiSelection, /*VCodeEditor,*/ JsEditor, GitBook },
@@ -631,7 +632,7 @@ export default {
         },
         syncType: 'migrate'
       }
-      this.$api('Task')
+      taskApi
         .get({
           filter: JSON.stringify({
             where: where,
@@ -645,7 +646,7 @@ export default {
           })
         })
         .then(res => {
-          let data = res.data?.items
+          let data = res?.items
           this.flowOptions = data || []
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
@@ -660,7 +661,7 @@ export default {
     },
     //获取表单数据
     getData(id) {
-      this.$api('Inspects')
+      inspectApi
         .findOne({
           filter: JSON.stringify({
             where: {
@@ -669,7 +670,7 @@ export default {
           })
         })
         .then(res => {
-          let data = res.data
+          let data = res
           if (data) {
             data.tasks = data.tasks.map(t => {
               t.sourceTable = [t.source.connectionId, t.source.table]
@@ -691,10 +692,10 @@ export default {
     },
     getFlowStages() {
       this.loading = true
-      this.$api('Task')
+      taskApi
         .getId(this.form.flowId)
         .then(res => {
-          let data = res.data
+          let data = res
           let flowData = data
           this.flowStages = []
           this.isDbClone = flowData.syncType === 'migrate'
@@ -776,13 +777,13 @@ export default {
         where.original_name = {
           inq: Array.from(new Set(tableNames))
         }
-        this.$api('MetadataInstances')
+        metadataInstancesApi
           .findInspect({
             where,
             fields: META_INSTANCE_FIELDS
           })
           .then(res => {
-            let data = res.data || []
+            let data = res || []
             let tables = data || []
             if (isDB) {
               this.stageMap = {}
@@ -1264,14 +1265,17 @@ export default {
             delete this.form.createTime
             delete this.form.last_updated
           }
-          this.$api('Inspects')
-            [this.form.id ? 'patch' : 'post'](
-              Object.assign({}, this.form, {
-                fullMatchKeep: this.form.keep,
-                status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
-                ping_time: 0,
-                tasks: this.form.tasks.map(
-                  ({
+          inspectApi[this.form.id ? 'patch' : 'post'](
+            Object.assign({}, this.form, {
+              fullMatchKeep: this.form.keep,
+              status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
+              ping_time: 0,
+              tasks: this.form.tasks.map(
+                ({ taskId, source, target, fullMatch, showAdvancedVerification, script, webScript, jsEngineName }) => {
+                  if (webScript && webScript !== '') {
+                    script = 'function validate(sourceRow){' + webScript + '}'
+                  }
+                  return {
                     taskId,
                     source,
                     target,
@@ -1280,35 +1284,20 @@ export default {
                     script,
                     webScript,
                     jsEngineName
-                  }) => {
-                    if (webScript && webScript !== '') {
-                      script = 'function validate(sourceRow){' + webScript + '}'
-                    }
-                    return {
-                      taskId,
-                      source,
-                      target,
-                      fullMatch,
-                      showAdvancedVerification,
-                      script,
-                      webScript,
-                      jsEngineName
-                    }
                   }
-                ),
-                platformInfo: {
-                  agentType: 'private'
-                },
-                byFirstCheckId: '',
-                browserTimezoneOffset: new Date().getTimezoneOffset()
-              })
-            )
-            .then(res => {
-              let data = res.data
-              if (data) {
-                this.$router.back()
-              }
+                }
+              ),
+              platformInfo: {
+                agentType: 'private'
+              },
+              byFirstCheckId: '',
+              browserTimezoneOffset: new Date().getTimezoneOffset()
             })
+          ).then(res => {
+            if (res) {
+              this.$router.back()
+            }
+          })
           // .catch(err => {
           //   let message = err?.data?.message || this.$t('message_operation_error')
           //   this.$message.error(message)

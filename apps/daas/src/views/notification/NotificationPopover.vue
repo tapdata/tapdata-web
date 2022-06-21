@@ -91,6 +91,7 @@ import VIcon from 'web-core/components/VIcon'
 import { uniqueArr } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
+import { userLogsApi, notificationApi } from '@tap/api'
 
 export default {
   components: {
@@ -163,17 +164,15 @@ export default {
       let where = {
         read: false
       }
-      this.$api('notification')
-        .count({ where: JSON.stringify(where) })
-        .then(res => {
-          if (res.data) {
-            let data = res.data.data || res.data.data === 0 ? res.data.data : res.data
-            // this.unRead = res.data.count
-            this.$store.commit('notification', {
-              unRead: data
-            })
-          }
-        })
+      notificationApi.count({ where: JSON.stringify(where) }).then(res => {
+        if (res) {
+          let data = res?.data || res?.data === 0 ? res?.data : res
+          // this.unRead = res.data.count
+          this.$store.commit('notification', {
+            unRead: data
+          })
+        }
+      })
     },
     getUnreadData() {
       let filter = {
@@ -184,29 +183,25 @@ export default {
         limit: 20,
         skip: 0
       }
-      this.$api('notification')
-        .get({ filter: JSON.stringify(filter) })
-        .then(res => {
-          let { items, total } = res.data
-          this.$store.commit('notification', {
-            unRead: total
-          })
-          // this.unRead = total
-          this.listData = items.map(t => {
-            t.createTime = dayjs(t.createTime).format('YYYY-MM-DD HH:mm:ss')
-            return t
-          })
+      notificationApi.get({ filter: JSON.stringify(filter) }).then(res => {
+        let { items, total } = res
+        this.$store.commit('notification', {
+          unRead: total
         })
+        // this.unRead = total
+        this.listData = items.map(t => {
+          t.createTime = dayjs(t.createTime).format('YYYY-MM-DD HH:mm:ss')
+          return t
+        })
+      })
     },
     handleRead(id) {
-      this.$api('notification')
-        .patch({ read: true, id: id })
-        .then(res => {
-          if (res) {
-            this.getUnreadData()
-            this.$root.$emit('notificationUpdate')
-          }
-        })
+      notificationApi.patch({ read: true, id: id }).then(res => {
+        if (res) {
+          this.getUnreadData()
+          this.$root.$emit('notificationUpdate')
+        }
+      })
     },
     handleGo(item) {
       switch (item.system) {
@@ -255,13 +250,13 @@ export default {
           type: 'userOperation'
         }
       }
-      this.$api('UserLogs')
+      userLogsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
           this.userOperations =
-            res.data?.items.map(item => {
+            res?.items.map(item => {
               item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               return item
             }) || []

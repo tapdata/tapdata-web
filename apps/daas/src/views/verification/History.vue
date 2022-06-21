@@ -91,6 +91,7 @@
 <script>
 import VIcon from '@/components/VIcon'
 import dayjs from 'dayjs'
+import { inspectResultsApi } from '@tap/api'
 
 export default {
   components: { VIcon },
@@ -132,12 +133,12 @@ export default {
       if (filter?.where?.parentId?.eq === null) {
         delete filter.where.parentId
       }
-      return this.$api('InspectResults')
+      return inspectResultsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let data = res.data
+          let data = res
           return [{ count: data.total }, data.items]
         })
     },

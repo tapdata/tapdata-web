@@ -51,6 +51,7 @@
 
 <script>
 import QueryBuild from '@/components/QueryBuild'
+import { usersApi } from '@tap/api'
 export default {
   name: 'BrowseQuery',
   components: { QueryBuild },
@@ -150,17 +151,15 @@ export default {
       }).then(res => {
         if (res) {
           let exists = false
-          this.$api('users')
-            .get()
-            .then(res => {
-              if (res) {
-                let collect = res.data.favorites.filter(v => v.meta.title === this.favoriteName)
-                exists = collect.length > 0
-              }
-              if (exists) {
-                this.$message.error('dataExplorer_exists')
-              }
-            })
+          usersApi.get().then(res => {
+            if (res) {
+              let collect = res.favorites.filter(v => v.meta.title === this.favoriteName)
+              exists = collect.length > 0
+            }
+            if (exists) {
+              this.$message.error('dataExplorer_exists')
+            }
+          })
         }
       })
     },

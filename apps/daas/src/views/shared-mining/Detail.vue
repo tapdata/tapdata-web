@@ -115,6 +115,7 @@ import TableList from '@/components/TableList'
 import { formatMs } from '@/utils/util'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import dayjs from 'dayjs'
+import { measurementApi, logcollectorApi } from '@tap/api'
 
 export default {
   name: 'Info',
@@ -280,17 +281,15 @@ export default {
     },
 
     getData(id) {
-      this.$api('logcollector')
-        .getDetail(id)
-        .then(res => {
-          let detailData = res?.data
-          detailData.taskList = detailData.taskList?.map(item => {
-            item.status = item.status === 'edit' ? 'ready' : item.status === 'schedule_failed' ? 'error' : item.status //没有子任务的概念
-            return item
-          })
-          this.detailData = detailData
-          this.getMeasurement()
+      logcollectorApi.getDetail(id).then(res => {
+        let detailData = res
+        detailData.taskList = detailData.taskList?.map(item => {
+          item.status = item.status === 'edit' ? 'ready' : item.status === 'schedule_failed' ? 'error' : item.status //没有子任务的概念
+          return item
         })
+        this.detailData = detailData
+        this.getMeasurement()
+      })
     },
     getTables() {
       this.tableDialogVisible = true
@@ -338,76 +337,74 @@ export default {
       let diff = (end || Date.now()) - start
       params.samples[0].guanluary = this.getGuanluary(diff)
       let guanluaryFormat = this.getGuanluary(diff, true)
-      this.$api('Measurement')
-        .query(params)
-        .then(res => {
-          let data = res?.data
-          let { samples } = data
-          samples.forEach(el => {
-            for (let key in el) {
-              el[key] = el[key].reverse()
-            }
-          })
-          let statistics = data.statistics?.[0] || {}
-          this.replicateLag = statistics.replicateLag || 0
-          // 折线图
-          const qpsData = samples[0] || {}
-          let { inputQPS = [], outputQPS = [] } = qpsData
-          let qpsDataTime = qpsData.time || []
-
-          let xArr = qpsDataTime.map(t => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
-          const xArrLen = xArr.length
-          if (this.lineDataDeep.x.length > 20) {
-            this.lineDataDeep.x.splice(0, xArrLen)
-            this.lineDataDeep.y[0].splice(0, xArrLen)
-            this.lineDataDeep.y[1].splice(0, xArrLen)
+      measurementApi.query(params).then(res => {
+        let data = res
+        let { samples } = data
+        samples.forEach(el => {
+          for (let key in el) {
+            el[key] = el[key].reverse()
           }
-          let inArr = []
-          let outArr = []
-          xArr.forEach((el, i) => {
-            let time = el
-            inArr.push({
-              name: time,
-              value: [time, inputQPS[i]]
-            })
-            outArr.push({
-              name: time,
-              value: [time, outputQPS[i]]
-            })
+        })
+        let statistics = data.statistics?.[0] || {}
+        this.replicateLag = statistics.replicateLag || 0
+        // 折线图
+        const qpsData = samples[0] || {}
+        let { inputQPS = [], outputQPS = [] } = qpsData
+        let qpsDataTime = qpsData.time || []
+
+        let xArr = qpsDataTime.map(t => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+        const xArrLen = xArr.length
+        if (this.lineDataDeep.x.length > 20) {
+          this.lineDataDeep.x.splice(0, xArrLen)
+          this.lineDataDeep.y[0].splice(0, xArrLen)
+          this.lineDataDeep.y[1].splice(0, xArrLen)
+        }
+        let inArr = []
+        let outArr = []
+        xArr.forEach((el, i) => {
+          let time = el
+          inArr.push({
+            name: time,
+            value: [time, inputQPS[i]]
           })
-          // eslint-disable-next-line
-          console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
-          xArr.forEach((el, index) => {
-            if (!this.lineDataDeep.x.includes(el)) {
-              this.lineDataDeep.x.push(el)
-              this.lineDataDeep.y[0].push(inArr[index])
-              this.lineDataDeep.y[1].push(outArr[index])
-            }
-          })
-          this.$nextTick(() => {
-            this.$refs.chart?.chart?.setOption({
-              // Object.assign(this.lineOptions, {
-              //   xAxis: {
-              //     data: xArr
-              //   },
-              xAxis: {
-                axisLabel: {
-                  formatter: val => {
-                    return this.formatTime(val, guanluaryFormat)
-                  }
-                }
-              },
-              series: [
-                {
-                  data: Object.assign([], this.lineDataDeep.y[0])
-                },
-                {
-                  data: Object.assign([], this.lineDataDeep.y[1])
-                }
-              ]
-            })
+          outArr.push({
+            name: time,
+            value: [time, outputQPS[i]]
           })
         })
+        // eslint-disable-next-line
+        console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
+        xArr.forEach((el, index) => {
+          if (!this.lineDataDeep.x.includes(el)) {
+            this.lineDataDeep.x.push(el)
+            this.lineDataDeep.y[0].push(inArr[index])
+            this.lineDataDeep.y[1].push(outArr[index])
+          }
+        })
+        this.$nextTick(() => {
+          this.$refs.chart?.chart?.setOption({
+            // Object.assign(this.lineOptions, {
+            //   xAxis: {
+            //     data: xArr
+            //   },
+            xAxis: {
+              axisLabel: {
+                formatter: val => {
+                  return this.formatTime(val, guanluaryFormat)
+                }
+              }
+            },
+            series: [
+              {
+                data: Object.assign([], this.lineDataDeep.y[0])
+              },
+              {
+                data: Object.assign([], this.lineDataDeep.y[1])
+              }
+            ]
+          })
+        })
+      })
     },
     resetTimer() {
       let ms = 60 * 1000
@@ -477,12 +474,10 @@ export default {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize
       }
-      this.$api('logcollector')
-        .tableNames(this.detailData.id, filter)
-        .then(res => {
-          this.tableNameList = res?.data?.items
-          this.tableNameTotal = res?.data?.total
-        })
+      logcollectorApi.tableNames(this.detailData.id, filter).then(res => {
+        this.tableNameList = res?.items
+        this.tableNameTotal = res?.total
+      })
     }
   }
 }

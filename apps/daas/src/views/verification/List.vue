@@ -154,6 +154,7 @@ import { toRegExp } from '../../utils/util'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
 import dayjs from 'dayjs'
+import { taskApi, inspectApi, metadataInstancesApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -240,7 +241,7 @@ export default {
           in: ids
         }
       }
-      this.$api('MetadataInstances').download(where, 'Inspect')
+      metadataInstancesApi.download(where, 'Inspect')
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -289,14 +290,14 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('Inspects')
+      return inspectApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let list = res.data?.items || []
+          let list = res?.items || []
           return {
-            total: res.data.total,
+            total: res.total,
             data: list.map(item => {
               let result = item.InspectResult
               let sourceTotal = '-'
@@ -337,7 +338,7 @@ export default {
       })
     },
     startTask(id) {
-      this.$api('Inspects')
+      inspectApi
         .update(
           {
             id: id
@@ -359,33 +360,27 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('Inspects')
-          .delete(id)
-          .then(() => {
-            this.$message.success(this.$t('message.deleteOK'))
-            this.table.fetch()
-          })
+        inspectApi.delete(id).then(() => {
+          this.$message.success(this.$t('message.deleteOK'))
+          this.table.fetch()
+        })
       })
     },
     goEdit(id, flowId) {
-      this.$api('Task')
-        .getId(flowId)
-        .then(res => {
-          if (['running', 'stop', 'complete'].includes(res.data.status)) {
-            this.$router.push({
-              name: 'dataVerificationEdit',
-              params: {
-                id: id
-              }
-            })
-          } else {
-            this.$message.info(
-              this.$t('dataVerification.checkStatusPre') +
-                res.data.status +
-                this.$t('dataVerification.checkStatusSuffix')
-            )
-          }
-        })
+      taskApi.getId(flowId).then(res => {
+        if (['running', 'stop', 'complete'].includes(res.status)) {
+          this.$router.push({
+            name: 'dataVerificationEdit',
+            params: {
+              id: id
+            }
+          })
+        } else {
+          this.$message.info(
+            this.$t('dataVerification.checkStatusPre') + res.status + this.$t('dataVerification.checkStatusSuffix')
+          )
+        }
+      })
     },
     getFilterItems() {
       this.filterItems = [

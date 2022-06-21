@@ -52,11 +52,8 @@
 </template>
 
 <script>
-import factory from '../api/factory'
 import Cookie from '@tap/shared/src/cookie'
-
-const MetadataDefinitions = factory('MetadataDefinitions')
-const UserGroupModel = factory('UserGroup')
+import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 
 export default {
   name: 'SelectClassify',
@@ -101,33 +98,37 @@ export default {
       }
 
       if (this.types[0] === 'user') {
-        UserGroupModel.get({
-          filter: JSON.stringify({
-            limit: 999
+        userGroupsApi
+          .get({
+            filter: JSON.stringify({
+              limit: 999
+            })
           })
-        }).then(res => {
-          if (res.data?.items) {
-            let treeData = res.data.items.map(item => ({
-              value: item.name,
-              id: item.id,
-              gid: item.gid,
-              parent_id: item.parent_id,
-              last_updated: item.last_updated,
-              user_id: item.user_id
-            }))
-            this.treeData = this.formatData(treeData)
-            cb && cb(res.data)
-          }
-        })
+          .then(res => {
+            if (res?.items) {
+              let treeData = res?.items.map(item => ({
+                value: item.name,
+                id: item.id,
+                gid: item.gid,
+                parent_id: item.parent_id,
+                last_updated: item.last_updated,
+                user_id: item.user_id
+              }))
+              this.treeData = this.formatData(treeData)
+              cb && cb(res.data)
+            }
+          })
       } else {
-        MetadataDefinitions.get({
-          filter: JSON.stringify(filter)
-        }).then(res => {
-          if (res.data?.items) {
-            this.treeData = this.formatData(res.data?.items || [])
-            cb && cb(res.data?.items || [])
-          }
-        })
+        metadataDefinitionsApi
+          .get({
+            filter: JSON.stringify(filter)
+          })
+          .then(res => {
+            if (res?.items) {
+              this.treeData = this.formatData(res?.items || [])
+              cb && cb(res?.items || [])
+            }
+          })
       }
     },
     //格式化分类数据

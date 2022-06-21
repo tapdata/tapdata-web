@@ -141,6 +141,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import { roleApi, applicationApi } from '@tap/api'
 
 export default {
   name: 'Applications',
@@ -219,12 +220,10 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('Application')
-          .delete(item.id, item.name)
-          .then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
-            this.table.fetch()
-          })
+        applicationApi.delete(item.id).then(() => {
+          this.$message.success(this.$t('message_delete_ok'))
+          this.table.fetch()
+        })
         // .catch(() => {
         //   this.$message.info(this.$t('message_delete_fail'))
         // })
@@ -241,15 +240,13 @@ export default {
 
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.$api('Application')
-            [method](params)
-            .then(res => {
-              if (res) {
-                this.table.fetch()
-                this.createDialogVisible = false
-                this.$message.success(this.$t('message_save_ok'))
-              }
-            })
+          applicationApi[method](params).then(res => {
+            if (res) {
+              this.table.fetch()
+              this.createDialogVisible = false
+              this.$message.success(this.$t('message_save_ok'))
+            }
+          })
           // .catch(() => {
           //   this.$message.error(this.$t('message_save_fail'))
           // })
@@ -283,26 +280,24 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('Application')
+      return applicationApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
           return {
-            total: res.data?.total || 0,
-            data: res.data?.items || []
+            total: res?.total || 0,
+            data: res?.items || []
           }
         })
     },
     // 获取角色
     getRoles() {
-      this.$api('role')
-        .get({})
-        .then(res => {
-          if (res) {
-            this.roles = res.data?.items || []
-          }
-        })
+      roleApi.get({}).then(res => {
+        if (res) {
+          this.roles = res?.items || []
+        }
+      })
     },
 
     // 表格排序

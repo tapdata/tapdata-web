@@ -55,10 +55,12 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
 import { getConnectionIcon } from '@/views/connections/util'
+import { connectionsApi } from '@tap/api'
 
 export default {
   name: 'Connection',
   components: { TableList, VIcon, SchemaProgress },
+  inject: ['checkAgent'],
   props: {
     ids: {
       type: Array,
@@ -133,17 +135,17 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$api('connections')
+      return connectionsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let data = res.data.items.map(item => {
+          let data = res?.items.map(item => {
             item.connectType = this.connectTypeMap[item.connection_type]
             return deepCopy(item)
           })
           return {
-            total: res.data.total,
+            total: res?.total,
             data: data
           }
         })
@@ -162,13 +164,13 @@ export default {
       this.fetchTimer = null
     },
     testConnection(item) {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         this.test(item)
       })
     },
     async test(data, isShowDialog = true) {
       try {
-        await this.$api('connections').patch(data.id, {
+        await connectionsApi.patch(data.id, {
           status: 'testing'
         })
         this.$refs.test.start(data, isShowDialog)
@@ -180,7 +182,7 @@ export default {
       }
     },
     async reload(row) {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         let config = {
           title: this.$t('connection.reloadTittle'),
           Message: this.$t('connection.reloadMsg'),
@@ -211,15 +213,13 @@ export default {
       }
       this.loadFieldsStatus = 'loading'
       this.reloadLoading = true
-      this.$api('connections')
-        .patch(row.id, parms)
-        .then(res => {
-          if (!this?.$refs?.test) {
-            return
-          }
-          this.loadFieldsStatus = res?.data.loadFieldsStatus //同步reload状态
-          this.$refs.test.start(row, false, true)
-        })
+      connectionsApi.patch(row.id, parms).then(res => {
+        if (!this?.$refs?.test) {
+          return
+        }
+        this.loadFieldsStatus = res?.loadFieldsStatus //同步reload状态
+        this.$refs.test.start(row, false, true)
+      })
     },
     getConnectionIcon() {
       return getConnectionIcon(...arguments)

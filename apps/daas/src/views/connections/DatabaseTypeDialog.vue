@@ -18,6 +18,7 @@
 
 <script>
 import { getImgByType } from './util'
+import { databaseTypesApi } from '@tap/api'
 export default {
   name: 'DatasourceDialog',
   props: {
@@ -52,13 +53,11 @@ export default {
       this.$store.commit('createConnection', { item })
     },
     getDatabaseType() {
-      this.$api('DatabaseTypes')
-        .get()
-        .then(res => {
-          if (res.data) {
-            this.database.push(...res.data)
-          }
-        })
+      databaseTypesApi.get().then(res => {
+        if (res) {
+          this.database.push(...res)
+        }
+      })
     }
   }
 }

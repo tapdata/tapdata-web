@@ -282,11 +282,8 @@
 <script>
 import FilterBar from '@/components/filter-bar'
 import AddServe from './AddServe'
-import factory from '../../api/factory'
-const cluster = factory('cluster')
-// const clusterVersion = factory('clusterVersion');
-// const settings = factory('Setting');
-// const dataFlows = factory('DataFlows');
+import { workerApi, clusterApi } from '@tap/api'
+
 export default {
   components: {
     AddServe,
@@ -340,20 +337,18 @@ export default {
           inq: processId
         }
       }
-      this.$api('Workers')
-        .get({ filter: JSON.stringify({ where: where }) })
-        .then(res => {
-          let data = res.data?.items
-          if (data?.length) {
-            let metricValuesData = []
-            data.forEach(item => {
-              if (item.metricValues) {
-                metricValuesData.push(item)
-              }
-            })
-            this.processIdData = metricValuesData
-          }
-        })
+      workerApi.get({ filter: JSON.stringify({ where: where }) }).then(res => {
+        let data = res?.items
+        if (data?.length) {
+          let metricValuesData = []
+          data.forEach(item => {
+            if (item.metricValues) {
+              metricValuesData.push(item)
+            }
+          })
+          this.processIdData = metricValuesData
+        }
+      })
     },
     // 提交
     async submitForm() {
@@ -369,7 +364,7 @@ export default {
             arguments: getFrom.arguments ? getFrom.arguments : ''
           }
           if (getFrom.id === '') {
-            await cluster
+            await clusterApi
               .addMonitor(data)
               .then(() => {
                 this.dialogForm = false
@@ -384,7 +379,7 @@ export default {
               })
           } else {
             data.id = getFrom.id
-            await cluster
+            await clusterApi
               .editMonitor(data)
               .then(() => {
                 this.dialogForm = false
@@ -422,7 +417,7 @@ export default {
           if (!resFlag) {
             return
           }
-          cluster.removeMonitor(params).then(() => {
+          clusterApi.removeMonitor(params).then(() => {
             this.getDataApi()
             this.$message.success(this.$t('message_save_ok'))
           })
@@ -542,7 +537,7 @@ export default {
     },
     // 重启---关闭---启动     --版本--更新
     async operationFn(data) {
-      await cluster.updateStatus(data).then(res => {
+      await clusterApi.updateStatus(data).then(res => {
         if (res.status === 200) {
           this.getDataApi()
         }
@@ -579,8 +574,8 @@ export default {
           }
         }
       }
-      cluster.get(params).then(res => {
-        let items = res.data?.items || []
+      clusterApi.get(params).then(res => {
+        let items = res?.items || []
         if (items) {
           let processId = []
           if (items?.length > 0) {
@@ -617,24 +612,20 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('cluster')
-          .delete(item.id, item.name)
-          .then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
-            this.getDataApi()
-          })
+        clusterApi.delete(item.id, item.name).then(() => {
+          this.$message.success(this.$t('message_delete_ok'))
+          this.getDataApi()
+        })
         // .catch(() => {
         //   this.$message.info(this.$t('message_delete_fail'))
         // })
       })
     },
     removeNode(id) {
-      this.$api('cluster')
-        .delete(id)
-        .then(() => {
-          this.deleteDialogVisible = false
-          this.$message.success(this.$t('message_delete_ok'))
-        })
+      clusterApi.delete(id).then(() => {
+        this.deleteDialogVisible = false
+        this.$message.success(this.$t('message_delete_ok'))
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('message_delete_fail'))
       // })
@@ -659,12 +650,10 @@ export default {
         custIP: this.custIP,
         agentName: this.agentName
       }
-      this.$api('cluster')
-        .editAgent(this.custId, data)
-        .then(() => {
-          this.editAgentDialog = false
-          this.$message.success(this.$t('message_delete_ok'))
-        })
+      clusterApi.editAgent(this.custId, data).then(() => {
+        this.editAgentDialog = false
+        this.$message.success(this.$t('message_delete_ok'))
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('message_delete_fail'))
       // })

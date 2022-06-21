@@ -91,6 +91,7 @@
 import TableList from '@/components/TableList'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
+import { subtaskApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -173,12 +174,12 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$api('SubTask')
+      return subtaskApi
         .byTaskId(taskId, {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let items = res.data
+          let items = res || []
           let data = items.map(item => {
             item.status = item.status === 'edit' ? 'ready' : item.status
             return deepCopy(item)
@@ -190,37 +191,37 @@ export default {
         })
     },
     start(row = {}, resetLoading) {
-      this.$api('SubTask')
+      subtaskApi
         .start(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
     },
     stop(row, resetLoading) {
-      this.$api('SubTask')
+      subtaskApi
         .stop(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
     },
     renew(row, resetLoading) {
-      this.$api('SubTask')
+      subtaskApi
         .renew(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
     },
     pause(row = {}, resetLoading) {
-      this.$api('SubTask')
+      subtaskApi
         .pause(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)

@@ -6,9 +6,8 @@
 
 <script>
 import SchemaToForm from './SchemaToForm'
-import { DatabaseTypes } from '@tap/api'
+import { databaseTypesApi } from '@tap/api'
 import { mapGetters } from 'vuex'
-const databaseTypesApi = new DatabaseTypes()
 
 export default {
   name: 'PdkPane',

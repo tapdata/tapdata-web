@@ -197,6 +197,7 @@ import { Chart } from '@tap/component'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs } from '@/utils/util'
 import { toThousandsUnit } from '@/utils/util'
+import { subtaskApi } from '@tap/api'
 
 export default {
   name: 'Info',
@@ -441,21 +442,19 @@ export default {
     getSyncOverViewData() {
       //调用前 先清掉上一个定时器
       clearTimeout(this.timerOverView)
-      this.$api('SubTask')
-        .syncOverView(this.$route.query?.subId)
-        .then(res => {
-          let data = res?.data
-          this.finishDuration = this.handleTime(data?.finishDuration)
-          this.progress = data?.progress
-          this.endTs = data?.endTs
-          if (data?.progress !== 100 && this.task.status === 'running') {
-            this.timerOverView = setTimeout(() => {
-              if (this && !this._isDestroyed) {
-                this.getSyncOverViewData()
-              }
-            }, 800)
-          }
-        })
+      subtaskApi.syncOverView(this.$route.query?.subId).then(res => {
+        let data = res
+        this.finishDuration = this.handleTime(data?.finishDuration)
+        this.progress = data?.progress
+        this.endTs = data?.endTs
+        if (data?.progress !== 100 && this.task.status === 'running') {
+          this.timerOverView = setTimeout(() => {
+            if (this && !this._isDestroyed) {
+              this.getSyncOverViewData()
+            }
+          }, 800)
+        }
+      })
     },
     handleTime(time) {
       let r = ''
@@ -632,7 +631,8 @@ export default {
       if (!params) {
         return
       }
-      this.remoteMethod(params).then(data => {
+      this.remoteMethod(params).then(res => {
+        let data = res
         let { samples } = data
         samples.forEach(el => {
           for (let key in el) {
@@ -756,19 +756,19 @@ export default {
       return formatMs(ms)
     },
     start(row = {}, resetLoading) {
-      this.$api('SubTask')
+      subtaskApi
         .start(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
     },
     stop(row, resetLoading) {
-      this.$api('SubTask')
+      subtaskApi
         .stop(row.id)
         .then(res => {
-          this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)

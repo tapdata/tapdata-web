@@ -13,9 +13,7 @@
 
 <script>
 import VCodeEditor from './base/VCodeEditor.vue'
-import { Function } from '@tap/api'
-
-const functionApi = new Function()
+import { functionApi } from '@tap/api'
 
 export default {
   name: 'JsEditor',

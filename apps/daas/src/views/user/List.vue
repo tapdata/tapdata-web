@@ -220,6 +220,7 @@ import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import FilterBar from '@/components/filter-bar'
 import dayjs from 'dayjs'
+import { usersApi, roleApi, roleMappingsApi } from '@tap/api'
 
 export default {
   components: {
@@ -422,13 +423,13 @@ export default {
       if (JSON.stringify(where) !== '{}') {
         filter.where = where
       }
-      return this.$api('users')
+      return usersApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
           this.getCount()
-          let list = res.data?.items || []
+          let list = res?.items || []
           return {
             total: res.data?.total,
             data: list.map(item => {
@@ -452,17 +453,17 @@ export default {
     },
     getCount() {
       Promise.all([
-        this.$api('users').count({
+        usersApi.count({
           where: JSON.stringify({
             where: { emailVerified: true, account_status: 2 }
           })
         }),
-        this.$api('users').count({
+        usersApi.count({
           where: JSON.stringify({
             where: { emailVerified: false, account_status: { neq: 0 } }
           })
         }),
-        this.$api('users').count({
+        usersApi.count({
           where: JSON.stringify({
             where: { account_status: 0 }
           })
@@ -475,22 +476,20 @@ export default {
     },
     // 获取角色下拉值
     getDbOptions() {
-      this.$api('role')
-        .get({})
-        .then(res => {
-          if (res.data && res.data?.items.length) {
-            let options = []
-            res.data?.items.forEach(db => {
-              if (db.name !== 'admin') {
-                options.push({
-                  label: db.name,
-                  value: db.id
-                })
-              }
-            })
-            this.createFormConfig.items[3].options = options
-          }
-        })
+      roleApi.get({}).then(res => {
+        if (res && res?.items.length) {
+          let options = []
+          res?.items.forEach(db => {
+            if (db.name !== 'admin') {
+              options.push({
+                label: db.name,
+                value: db.id
+              })
+            }
+          })
+          this.createFormConfig.items[3].options = options
+        }
+      })
     },
     // taps标签页切换
     handleTapClick() {
@@ -527,11 +526,9 @@ export default {
           inq: ids
         }
       }
-      this.$api('users')
-        .update(where, { listTags: listtags })
-        .then(() => {
-          this.table.fetch()
-        })
+      usersApi.update(where, { listTags: listtags }).then(() => {
+        this.table.fetch()
+      })
     },
     // 获取角色关联的用户的数据
     getMappingModel(id) {
@@ -540,14 +537,14 @@ export default {
           principalId: id
         }
       }
-      this.$api('roleMapping')
+      roleMappingsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res && res.data?.items) {
-            this.roleMappding = res.data.items
-            this.createForm.roleusers = res.data.items.map(item => item.roleId)
+          if (res && res?.items) {
+            this.roleMappding = res?.items
+            this.createForm.roleusers = res?.items.map(item => item.roleId)
           }
         })
     },
@@ -562,15 +559,13 @@ export default {
           }
         }
       }
-      this.$api('role')
-        .get(parmas)
-        .then(res => {
-          if (res.data?.items.length) {
-            res.data.items.forEach(item => {
-              roleusers.push(item.id)
-            })
-          }
-        })
+      roleApi.get(parmas).then(res => {
+        if (res?.items.length) {
+          res?.items.forEach(item => {
+            roleusers.push(item.id)
+          })
+        }
+      })
       this.createForm = {
         username: '',
         email: '',
@@ -703,7 +698,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            this.$api('users')
+            usersApi
               .delete(item.id)
               .then(() => {
                 this.$message.success(this.$t('message.deleteOK'))
@@ -770,7 +765,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            this.$api('users')
+            usersApi
               .patch(data)
               .then(() => {
                 this.$message.success(successMsg)
@@ -811,14 +806,12 @@ export default {
           params.emailVerified = true
           break
       }
-      this.$api('users')
-        .update(where, params)
-        .then(res => {
-          if (res) {
-            this.table.fetch()
-            this.$message.success(this.$t('message_operation_succuess'))
-          }
-        })
+      usersApi.update(where, params).then(res => {
+        if (res) {
+          this.table.fetch()
+          this.$message.success(this.$t('message_operation_succuess'))
+        }
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('message_operation_error'))
       // })

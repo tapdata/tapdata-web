@@ -82,7 +82,7 @@
 </template>
 
 <script>
-// import TablePage from '@/components/TablePage'
+import { metadataInstancesApi } from '@tap/api'
 export default {
   // components: {
   //   TablePage
@@ -113,15 +113,13 @@ export default {
   methods: {
     // 获取表格数据
     getData() {
-      this.$api('MetadataInstances')
-        .findTablesById([this.$route.params.id])
-        .then(res => {
-          if (res) {
-            this.collectionTableData = res.data.collections
-            this.pageTotal = this.collectionTableData.length
-            this.setCurrentPageData(res.data.collections || [])
-          }
-        })
+      metadataInstancesApi.findTablesById([this.$route.params.id]).then(res => {
+        if (res) {
+          this.collectionTableData = res?.collections
+          this.pageTotal = this.collectionTableData.length
+          this.setCurrentPageData(res?.collections || [])
+        }
+      })
     },
     openCreateDialog() {
       this.createDialogVisible = true
@@ -160,17 +158,15 @@ export default {
             // eslint-disable-next-line
             .split(/\/|\.|@|\&|:|\?|%|=/)
             .join('_')
-          this.$api('MetadataInstances')
-            .post(params)
-            .then(() => {
-              this.createDialogVisible = false
-              let page = {
-                current: 1,
-                size: 20
-              }
-              this.getData(page)
-              this.$message.success(this.$t('message_save_ok'))
-            })
+          metadataInstancesApi.post(params).then(() => {
+            this.createDialogVisible = false
+            let page = {
+              current: 1,
+              size: 20
+            }
+            this.getData(page)
+            this.$message.success(this.$t('message_save_ok'))
+          })
           // .catch(() => {
           //   this.$message.error(this.$t('message_save_fail'))
           // })
@@ -186,12 +182,10 @@ export default {
         closeOnClickModal: false
       }).then(res => {
         if (res) {
-          this.$api('MetadataInstances')
-            .delete(item.id)
-            .then(() => {
-              this.getData()
-              this.$message.success(this.$t('message.deleteOK'))
-            })
+          metadataInstancesApi.delete(item.id).then(() => {
+            this.getData()
+            this.$message.success(this.$t('message.deleteOK'))
+          })
           // .catch(() => {
           //   this.$message.info(this.$t('message.deleteFail'))
           // })

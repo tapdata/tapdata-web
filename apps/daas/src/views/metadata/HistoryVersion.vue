@@ -245,6 +245,7 @@
   </section>
 </template>
 <script>
+import { metadataInstancesApi } from '@tap/api'
 export default {
   components: {
     // TablePage
@@ -290,31 +291,29 @@ export default {
       let params = {
         historyVersion: this.comparedData.version
       }
-      this.$api('MetadataInstances')
-        .compareHistory([this.comparedData.id], { params: params })
-        .then(res => {
-          this.properties = res.data.properties
-          this.fieldsItems = res.data.fields
+      metadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then(res => {
+        this.properties = res?.properties
+        this.fieldsItems = res?.fields
 
-          this.fieldsItems.forEach(tableItem => {
-            if (tableItem.base_field_name) {
-              tableItem.base_is_nullable = !tableItem.base_is_nullable
-            } else {
-              tableItem.base_is_nullable = false
-            }
+        this.fieldsItems.forEach(tableItem => {
+          if (tableItem.base_field_name) {
+            tableItem.base_is_nullable = !tableItem.base_is_nullable
+          } else {
+            tableItem.base_is_nullable = false
+          }
 
-            if (tableItem.compare_field_name) {
-              tableItem.compare_is_nullable = !tableItem.compare_is_nullable
-            } else {
-              tableItem.compare_is_nullable = false
-            }
+          if (tableItem.compare_field_name) {
+            tableItem.compare_is_nullable = !tableItem.compare_is_nullable
+          } else {
+            tableItem.compare_is_nullable = false
+          }
 
-            if (tableItem.base_primary_key_position > 0) tableItem.base_primary_key_position = true
-            if (tableItem.base_foreign_key_position > 0) tableItem.base_foreign_key_position = true
-            if (tableItem.compare_primary_key_position > 0) tableItem.compare_primary_key_position = true
-            if (tableItem.compare_foreign_key_position > 0) tableItem.compare_foreign_key_position = true
-          })
+          if (tableItem.base_primary_key_position > 0) tableItem.base_primary_key_position = true
+          if (tableItem.base_foreign_key_position > 0) tableItem.base_foreign_key_position = true
+          if (tableItem.compare_primary_key_position > 0) tableItem.compare_primary_key_position = true
+          if (tableItem.compare_foreign_key_position > 0) tableItem.compare_foreign_key_position = true
         })
+      })
     }
   }
 }

@@ -252,7 +252,6 @@
 </template>
 
 <script>
-import factory from '../../../api/factory'
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import TablePage from '@/components/TablePage'
@@ -261,7 +260,7 @@ import Drawer from '@/components/Drawer'
 import Upload from '@/components/UploadDialog'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
-const Task = factory('Task')
+import { taskApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -447,12 +446,12 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('Task')
+      return taskApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let data = res.data
+          let data = res
           let list = data?.items || []
           return {
             total: data.total,
@@ -537,7 +536,7 @@ export default {
         id: ids,
         listtags
       }
-      Task.batchUpdateListtags(attributes).then(() => {
+      taskApi.batchUpdateListtags(attributes).then(() => {
         this.dataFlowId = ''
         this.table.fetch()
       })
@@ -610,7 +609,7 @@ export default {
       )
     },
     export(ids) {
-      Task.export(ids)
+      taskApi.export(ids)
     },
     start(ids) {
       let _this = this
@@ -627,11 +626,13 @@ export default {
         }
       }
 
-      this.$api('Task')
-        .get({ filter: JSON.stringify(filter) })
+      taskApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
           let flag = false
-          let items = res.data?.items || []
+          let items = res?.items || []
           if (items.length) {
             items.forEach(item => {
               if (item?.errorEvents?.length) {
@@ -639,12 +640,10 @@ export default {
               }
             })
           }
-          this.$api('Task')
-            .batchStart(ids)
-            .then(res => {
-              this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
-              this.table.fetch()
-            })
+          taskApi.batchStart(ids).then(res => {
+            this.$message.success(res?.message || this.$t('message_operation_succuess'))
+            this.table.fetch()
+          })
           if (flag) {
             _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {})
           }
@@ -674,12 +673,10 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('Task')
-          .batchStop(ids)
-          .then(res => {
-            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
-            this.table.fetch()
-          })
+        taskApi.batchStop(ids).then(res => {
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+          this.table.fetch()
+        })
       })
     },
     forceStop(ids, item = {}) {
@@ -691,12 +688,10 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('Task')
-          .forceStop(ids)
-          .then(res => {
-            this.$message.success(res.data?.message || this.$t('message_operation_succuess'))
-            this.table.fetch()
-          })
+        taskApi.forceStop(ids).then(res => {
+          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+          this.table.fetch()
+        })
       })
     },
     del(ids, item = {}) {
@@ -708,16 +703,14 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('Task')
-          .batchDelete(ids)
-          .then(res => {
-            if (res) {
-              this.table.fetch()
-              this.responseHandler(res.data, this.$t('message.deleteOK'))
-            } else if (res.data && res.data.fail) {
-              this.$message.info(this.$t('message.deleteFail'))
-            }
-          })
+        taskApi.batchDelete(ids).then(res => {
+          if (res) {
+            this.table.fetch()
+            this.responseHandler(res, this.$t('message.deleteOK'))
+          } else if (res.data && res?.fail) {
+            this.$message.info(this.$t('message.deleteFail'))
+          }
+        })
       })
     },
     initialize(ids, item = {}) {
@@ -729,11 +722,11 @@ export default {
           return
         }
         this.restLoading = true
-        this.$api('Task')
+        taskApi
           .batchRenew(ids)
           .then(res => {
             this.table.fetch()
-            this.responseHandler(res.data, this.$t('message.resetOk'))
+            this.responseHandler(res, this.$t('message.resetOk'))
           })
           // .catch(() => {
           //   this.$message.info(this.$t('message.cancelReset'))
@@ -750,12 +743,10 @@ export default {
       })
     },
     copy(ids, node) {
-      this.$api('Task')
-        .copy(node.id)
-        .then(() => {
-          this.table.fetch()
-          this.$message.success(this.$t('message.copySuccess'))
-        })
+      taskApi.copy(node.id).then(() => {
+        this.table.fetch()
+        this.$message.success(this.$t('message.copySuccess'))
+      })
       // .catch(() => {
       //   this.$message.info(this.$t('message.copyFail'))
       // })
@@ -774,12 +765,10 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      this.$api('Task')
-        .update(where, attributes)
-        .then(res => {
-          this.table.fetch()
-          this.responseHandler(res.data, this.$t('message_operation_succuess'))
-        })
+      taskApi.update(where, attributes).then(res => {
+        this.table.fetch()
+        this.responseHandler(res, this.$t('message_operation_succuess'))
+      })
     },
     skipHandler(id, errorEvents) {
       this.changeStatus([id], { status: 'scheduled', errorEvents })
@@ -823,10 +812,10 @@ export default {
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
-      this.$api('Task')
+      taskApi
         .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
-          if (result && result.data) {
+          if (result) {
             this.$message.success(this.$t('message_save_ok'))
           }
         })
@@ -862,19 +851,19 @@ export default {
     },
     async getPreviewData(id) {
       this.previewLoading = true
-      this.$api('Task')
+      taskApi
         .findTaskDetailById([id])
         .then(res => {
           if (res) {
             let previewData = []
-            this.previewData = res.data
-            for (let item in res.data) {
+            this.previewData = res
+            for (let item in res) {
               if (['type'].includes(item)) {
-                res.data[item] = this.syncType[res.data[item]]
+                res[item] = this.syncType[res[item]]
               }
 
               if (['cdcDelayTime', 'taskLastHour'].includes(item)) {
-                res.data[item] = this.handleTimeConvert(res.data[item])
+                res[item] = this.handleTimeConvert(res[item])
               }
               if (
                 [
@@ -887,13 +876,13 @@ export default {
                   'eventTime'
                 ].includes(item)
               ) {
-                res.data[item] = this.formatTime(res.data[item])
+                res[item] = this.formatTime(res[item])
               }
 
               if (
                 !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
               ) {
-                previewData.push({ label: item, value: res.data[item] || '-' })
+                previewData.push({ label: item, value: res[item] || '-' })
               }
               // this.getSatusImgSrc(res.data.status)
             }

@@ -82,6 +82,7 @@ import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { toRegExp } from '../../utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
+import { userLogsApi, usersApi } from '@tap/api'
 
 export default {
   components: {
@@ -115,17 +116,15 @@ export default {
   },
   methods: {
     getUsers() {
-      this.$api('users')
-        .get()
-        .then(res => {
-          let data = res.data?.items || []
-          this.userOptions = data.map(item => {
-            return {
-              label: item.username,
-              value: item.username
-            }
-          })
+      usersApi.get().then(res => {
+        let data = res?.items || []
+        this.userOptions = data.map(item => {
+          return {
+            label: item.username,
+            value: item.username
+          }
         })
+      })
     },
 
     getData(pageNum) {
@@ -159,17 +158,18 @@ export default {
         skip: (current - 1) * size,
         where: where
       }
-      let UserLogs = this.$api('UserLogs')
-      UserLogs.get({
-        filter: JSON.stringify(filter)
-      })
+
+      userLogsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
-          if (res.data) {
-            this.page.total = res.data.total
+          if (res) {
+            this.page.total = res?.total
           }
           this.page.index = current
           this.list =
-            res.data?.items.map(item => {
+            res?.items.map(item => {
               item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               return item
             }) || []

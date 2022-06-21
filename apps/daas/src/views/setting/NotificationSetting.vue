@@ -111,9 +111,8 @@
 </template>
 
 <script>
-import factory from '../../api/factory'
-const Setting = factory('Setting')
 import { notificationMAP } from '../notification/tyepMap'
+import { settingsApi } from '@tap/api'
 
 export default {
   name: 'list',
@@ -139,10 +138,11 @@ export default {
       //   }
       // }
       this.loading = true
-      Setting.findOne('76')
+      settingsApi
+        .findOne('76')
         .then(res => {
-          if (res.data.value) {
-            let value = JSON.parse(res.data.value)
+          if (res?.data?.value) {
+            let value = JSON.parse(res.data?.value)
             this.runNotification = value.runNotification
             this.systemNotification = value.systemNotification
             this.agentNotification = value.agentNotification
@@ -164,7 +164,8 @@ export default {
       if (!data) {
         return
       }
-      Setting.enterpriseUpdate(where, data)
+      settingsApi
+        .enterpriseUpdate(where, data)
         .then(() => {
           this.$message.success(this.$t('message_save_ok'))
         })

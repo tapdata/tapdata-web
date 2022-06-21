@@ -65,8 +65,7 @@
 </template>
 
 <script>
-// import factory from '@/api/factory'
-// const usersModel = factory('users')
+import { usersApi } from '@tap/api'
 import LoginPage from './LoginPage'
 export default {
   name: 'SignIn',
@@ -164,7 +163,7 @@ export default {
         if (valid) {
           this.loading = true
 
-          this.$api('users')
+          usersApi
             .reset(this.form)
             .then(res => {
               if (res) {
@@ -216,13 +215,11 @@ export default {
       let params = {
         email: this.form.email
       }
-      this.$api('users')
-        .sendValidateCode(params)
-        .then(res => {
-          if (res) {
-            this.$message.success(this.$t('signin_verify_code_success'))
-          }
-        })
+      usersApi.sendValidateCode(params).then(res => {
+        if (res) {
+          this.$message.success(this.$t('signin_verify_code_success'))
+        }
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('signin_verify_code_error'))
       // })

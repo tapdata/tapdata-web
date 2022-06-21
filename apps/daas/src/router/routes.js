@@ -1,4 +1,4 @@
-import Parent from './Parent.vue'
+import Parent from './Parent'
 const MigrateDetails = () => import(/* webpackChunkName: "task-details" */ '../views/task/migrate/details/Index.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '@/views/connections/DatabaseForm')
 const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
@@ -613,8 +613,8 @@ export default [
       /* ---------- API服务端  ----------*/
       {
         path: '/api-servers',
-        name: 'apiServers',
-        component: () => import(/* webpackChunkName: "api-server" */ '@/views/api-page/ApiServers'),
+        name: 'apiServer',
+        component: () => import(/* webpackChunkName: "api-server" */ '@/views/api-page/ApiServer'),
         meta: {
           title: 'page_title_api_servers',
           code: 'API_server_menu'

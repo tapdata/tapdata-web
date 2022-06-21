@@ -83,10 +83,12 @@ import StatusTag from '@/components/StatusTag'
 import Drawer from '@/components/Drawer'
 import { CONFIG_MODEL, getConnectionIcon } from './util'
 import dayjs from 'dayjs'
+import { connectionsApi } from '@tap/api'
 
 export default {
   name: 'DetailsDrawer',
   components: { VIcon, StatusTag, Drawer },
+  inject: ['checkAgent'],
   props: {
     hideOperation: {
       type: Boolean,
@@ -198,9 +200,9 @@ export default {
       })
     },
     async beforeTest() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         //先将管理端状态改为testing
-        this.$api('connections')
+        connectionsApi
           .updateById(this.connection.id, {
             status: 'testing'
           })
@@ -211,7 +213,7 @@ export default {
       })
     },
     async reload() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         let config = {
           title: this.$t('connection.reloadTittle'),
           Message: this.$t('connection.reloadMsg'),
@@ -242,24 +244,22 @@ export default {
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
-      this.$api('connections')
-        .updateById(this.connection.id, parms)
-        .then(result => {
-          let data = result.data
-          if (!this?.$refs?.test) {
-            return
-          }
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          this.$refs.test.start(data, false, true)
-          this.getProgress()
-        })
+      connectionsApi.updateById(this.connection.id, parms).then(result => {
+        let data = result
+        if (!this?.$refs?.test) {
+          return
+        }
+        this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
+        this.$refs.test.start(data, false, true)
+        this.getProgress()
+      })
     },
     getProgress() {
       this.clearInterval()
-      this.$api('connections')
+      connectionsApi
         .getNoSchema(this.connection.id)
         .then(res => {
-          let data = res.data
+          let data = res
           this.connection = this.transformData(data)
           //组装数据
           this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')

@@ -41,18 +41,17 @@
       <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
       <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('connection.dataBaseName')">
         <template slot-scope="scope">
-          <div class="connection-name">
-            <div class="database-img">
-              <img :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
-            </div>
-            <div class="database-text">
-              <!-- @click.stop="preview(scope.row)" -->
-              <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(scope.row)">
-                {{ scope.row.name }}
-              </ElLink>
-              <div class="region-info">{{ scope.row.regionInfo }}</div>
-            </div>
-          </div>
+          <span class="connection-name">
+            <img class="connection-img mr-2" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
+            <ElLink
+              class="ellipsis"
+              type="primary"
+              style="display: block; line-height: 20px"
+              @click.stop="preview(scope.row)"
+            >
+              {{ scope.row.name }}
+            </ElLink>
+          </span>
         </template>
       </ElTableColumn>
       <ElTableColumn show-overflow-tooltip :label="$t('connection.connectionInfo')" min-width="200">
@@ -151,11 +150,13 @@ import FilterBar from '@/components/filter-bar'
 import { getConnectionIcon } from './util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
+import { connectionsApi, databaseTypesApi } from '@tap/api'
 
 let timeout = null
 
 export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
+  inject: ['checkAgent'],
   data() {
     return {
       filterItems: [],
@@ -297,7 +298,6 @@ export default {
     },
 
     getData({ page, tags }) {
-      let region = this.$route.query.region
       let { current, size } = page
       let { keyword, databaseType, databaseModel, status, sourceType } = this.searchParams
       let where = {}
@@ -305,7 +305,6 @@ export default {
       if (keyword && keyword.trim()) {
         where.name = { like: verify(keyword), options: 'i' }
       }
-      region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
       databaseModel && (where.connection_type = databaseModel)
       sourceType && (where.sourceType = sourceType)
@@ -323,17 +322,12 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('connections')
+      return connectionsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let data = (res.data?.items || []).map(item => {
-            let platformInfo = item.platformInfo
-            if (platformInfo && platformInfo.regionName) {
-              item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
-            }
-
+          let data = (res?.items || []).map(item => {
             if (item.config?.uri) {
               const res =
                 /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
@@ -362,7 +356,7 @@ export default {
           this.$refs.preview.sync(data)
 
           return {
-            total: res.data?.total,
+            total: res?.total,
             data
           }
         })
@@ -397,7 +391,7 @@ export default {
     copy(data) {
       let headersName = { 'lconname-name': data.name }
       this.$set(data, 'copyLoading', true)
-      this.$api('connections')
+      connectionsApi
         .copy(
           data.id,
           {
@@ -407,7 +401,7 @@ export default {
           data.name
         )
         .then(res => {
-          if (res && res.data) {
+          if (res) {
             this.table.fetch()
             this.$message.success(this.$t('connection.copyMsg'))
           }
@@ -441,7 +435,7 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('connections')
+        connectionsApi
           .deleteConnection(data.id, data.name)
           .then(res => {
             let jobs = res.jobs || []
@@ -516,12 +510,10 @@ export default {
         id: this.multipleSelection.map(r => r.id),
         listtags
       }
-      this.$api('connections')
-        .batchUpdateListtags(attributes)
-        .then(() => {
-          this.table.fetch()
-          this.$message.success(this.$t('message_save_ok'))
-        })
+      connectionsApi.batchUpdateListtags(attributes).then(() => {
+        this.table.fetch()
+        this.$message.success(this.$t('message_save_ok'))
+      })
     },
     //选择创建类型
     handleDialogDatabaseTypeVisible() {
@@ -541,15 +533,15 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         this.dialogDatabaseTypeVisible = true
       })
     },
     async testConnection(item) {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         let loading = this.$loading()
         this.testData = Object.assign({}, defaultModel['default'], item)
-        this.$api('connections')
+        connectionsApi
           .updateById(
             item.id,
             Object.assign(
@@ -600,8 +592,8 @@ export default {
           type: 'select-inner',
           menuMinWidth: '250px',
           items: async () => {
-            let res = await this.$api('DatabaseTypes').get()
-            let data = res?.data || []
+            let res = await databaseTypesApi.get()
+            let data = res || []
             let databaseTypes = []
             databaseTypes.push(...data)
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
@@ -650,56 +642,8 @@ export default {
     align-items: center;
   }
 
-  .database-img {
-    //border: 1px solid #dedee4;
-    vertical-align: middle;
-    width: 40px;
-    height: 40px;
-    //background: map-get($bgColor, white);
-    border-radius: 3px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    float: left;
-
-    img {
-      width: 24px;
-    }
-  }
-
-  .database-text {
-    width: 70%;
-    white-space: nowrap;
-    word-break: break-word;
-    text-overflow: ellipsis;
-    float: left;
-    margin-left: 4px;
-
-    .name {
-      color: map-get($color, primary);
-      cursor: pointer;
-    }
-
-    .name:hover {
-      text-decoration: underline;
-    }
-
-    div {
-      line-height: 14px;
-    }
-
-    .user {
-      color: map-get($fontColor, slight);
-      white-space: nowrap;
-      word-break: break-word;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .region-info {
-      line-height: 20px;
-      color: map-get($fontColor, light);
-    }
+  .connection-img {
+    width: 18px;
   }
 
   .btn-text {

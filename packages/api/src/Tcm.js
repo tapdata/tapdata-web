@@ -3,9 +3,9 @@
  * @date 3/2/20
  * @description
  */
-import Http from './http'
+import Http from './Http'
 
-export class TCM extends Http {
+export default class TCM extends Http {
   constructor() {
     super('/api/tcm')
   }
@@ -41,3 +41,4 @@ export class TCM extends Http {
     return this.axios.get(this.url + '/ecs/list/' + id, { params })
   }
 }
+export { TCM }

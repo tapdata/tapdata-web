@@ -86,6 +86,7 @@
 <script>
 import { JsEditor } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
+import { javascriptFunctionsApi } from '@tap/api'
 
 const getScriptObj = script => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
@@ -145,7 +146,7 @@ export default {
   methods: {
     getData(id) {
       this.loading = true
-      this.$api('Javascript_functions')
+      javascriptFunctionsApi
         .findOne({
           filter: JSON.stringify({
             where: {
@@ -154,7 +155,7 @@ export default {
           })
         })
         .then(res => {
-          let details = res?.data || {}
+          let details = res || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
             details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
@@ -193,13 +194,12 @@ export default {
               params.format = `${params.function_name}(${params.parameters})`
             }
             this.loading = true
-            this.$api('Javascript_functions')
-              [method](
-                Object.assign({}, this.form, params, {
-                  last_updated: new Date(),
-                  user_id: Cookie.get('user_id')
-                })
-              )
+            javascriptFunctionsApi[method](
+              Object.assign({}, this.form, params, {
+                last_updated: new Date(),
+                user_id: Cookie.get('user_id')
+              })
+            )
               .then(res => {
                 if (res) {
                   this.$message.success(this.$t('message_save_ok'))

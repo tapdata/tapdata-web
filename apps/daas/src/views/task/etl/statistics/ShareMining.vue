@@ -21,6 +21,7 @@
 <script>
 import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
+import { logcollectorApi } from '@tap/api'
 export default {
   name: 'ShareMining',
   components: { TableList, StatusTag },
@@ -57,11 +58,9 @@ export default {
   },
   methods: {
     getData(id) {
-      this.$api('logcollector')
-        .bySubTaskId(id)
-        .then(res => {
-          this.taskList = res?.data || []
-        })
+      logcollectorApi.bySubTaskId(id).then(res => {
+        this.taskList = res || []
+      })
     },
     goShareCdcInfo(id) {
       this.$router.push({

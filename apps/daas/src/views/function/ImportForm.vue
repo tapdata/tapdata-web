@@ -141,6 +141,7 @@
 
 <script>
 import Cookie from '@tap/shared/src/cookie'
+import { javascriptFunctionsApi, fileApi } from '@tap/api'
 
 let timer = null
 export default {
@@ -192,7 +193,7 @@ export default {
         map[name] = true
       })
 
-      this.$api('Javascript_functions')
+      javascriptFunctionsApi
         .get({
           filter: JSON.stringify({
             fields: { function_name: 1 },
@@ -204,7 +205,7 @@ export default {
           })
         })
         .then(res => {
-          let data = res?.data?.items || []
+          let data = res?.items || []
           names = names.concat(data.map(item => item.function_name))
           this.repeatNames = Array.from(new Set(names))
           this.funcList.forEach(item => {
@@ -292,9 +293,7 @@ export default {
     },
     fileRemove() {
       this.fileList = []
-      this.$api('file')
-        .removeFile(this.form.fileId)
-        .then(() => {})
+      fileApi.removeFile(this.form.fileId).then(() => {})
       this.form.fileId = ''
       this.form.fileName = ''
     },
@@ -360,7 +359,7 @@ export default {
               user_id: useId
             }
           })
-          this.$api('Javascript_functions')
+          javascriptFunctionsApi
             .post(params)
             .then(res => {
               if (res) {

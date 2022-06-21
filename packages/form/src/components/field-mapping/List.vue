@@ -231,11 +231,7 @@ import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import noData from 'web-core/assets/images/noData.png'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import { MetadataInstances, MetadataTransformer, Task, TypeMapping } from '@tap/api'
-const typeMappingApi = new TypeMapping()
-const taskApi = new Task()
-const metadataTransformeApi = new MetadataTransformer()
-const metadataInstancesApi = new MetadataInstances()
+import { metadataInstancesApi, metadataTransformerApi, taskApi, typeMappingApi } from '@tap/api'
 
 export default {
   name: 'List',
@@ -402,7 +398,7 @@ export default {
       }
       this.loadingNav = true
       this.loadingTable = true
-      metadataTransformeApi
+      metadataTransformerApi
         .get({
           filter: JSON.stringify(filter)
         })

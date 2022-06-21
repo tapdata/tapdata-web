@@ -169,6 +169,7 @@
 </template>
 
 <script>
+import { scheduleTasksApi } from '@tap/api'
 export default {
   props: {
     indexData: {
@@ -337,13 +338,11 @@ export default {
               uri: _this.indexData.source ? _this.indexData.source.database_uri : ''
             }
           }
-          this.$api('ScheduleTasks')
-            .post(params)
-            .then(() => {
-              this.createDialogVisible = false
-              this.$message.success(this.$t('message_save_ok'))
-              // this.toDetails(res.data);
-            })
+          scheduleTasksApi.post(params).then(() => {
+            this.createDialogVisible = false
+            this.$message.success(this.$t('message_save_ok'))
+            // this.toDetails(res.data);
+          })
           // .catch(() => {
           //   this.$message.error(this.$t('message_save_fail'))
           // })
@@ -360,7 +359,7 @@ export default {
         closeOnClickModal: false
       }).then(res => {
         if (res) {
-          this.$api('ScheduleTasks')
+          scheduleTasksApi
             .post({
               task_name: 'mongodb_drop_index',
               task_type: 'MONGODB_DROP_INDEX',

@@ -244,6 +244,7 @@
 </template>
 
 <script>
+import { dataRuleApi, metadataInstancesApi } from '@tap/api'
 export default {
   props: {
     validaData: {
@@ -406,14 +407,13 @@ export default {
       let filter = {
         order: 'name ASC'
       }
-      _this
-        .$api('DataRule')
+      dataRuleApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
           let groupData = {}
-          res.data.items.forEach(v => {
+          res?.items.forEach(v => {
             let key = v.classification || '__ungroup'
             if (!groupData[key]) {
               groupData[key] = []
@@ -500,7 +500,7 @@ export default {
     },
 
     async doSave() {
-      let result = await this.$api('MetadataInstances').patchId(this.validaData.id, {
+      let result = await metadataInstancesApi.patchId(this.validaData.id, {
         data_rules: { rules: this.validationTableData }
       })
       return result

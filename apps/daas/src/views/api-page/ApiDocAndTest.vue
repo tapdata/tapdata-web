@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import APIClient from '@/api/ApiClient'
+import { ApiClient, apiServerApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 export default {
   name: 'ApiDocAndTest',
@@ -33,23 +33,23 @@ export default {
   },
   async mounted() {
     try {
-      let apiServers = await this.$api('ApiServer').get({
+      let servers = await apiServerApi.get({
         'filter[where][clientName]': 'Default APIServer'
       })
 
-      if (apiServers?.data?.items?.length) {
+      if (servers?.items?.length) {
         let defaultCollection = this.$route.query.collection || this.$route.query['id']
 
-        this.apiClient = new APIClient(defaultCollection)
-        this.apiClient.setApiServer(apiServers.data.items[0])
+        this.apiClient = new ApiClient(defaultCollection)
+        this.apiClient.setApiServer(servers.items[0])
 
-        let openApi = `${apiServers.data.items[0].clientURI}/openapi.json`
+        let openApi = `${servers.items[0].clientURI}/openapi.json`
         // let openApiObj = await axios.get(openApi)
         let res = await fetch(openApi)
         let openApiObj = await res.json()
 
         if (openApiObj) {
-          this.openapi = openApiObj.data
+          this.openapi = openApiObj
         }
         // let token = this.$route.query.token || '';
         let token = await this.apiClient.getAPIServerToken()

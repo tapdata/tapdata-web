@@ -20,6 +20,7 @@
 <script>
 import TableList from '@/components/TableList'
 import dayjs from 'dayjs'
+import { logcollectorApi } from '@tap/api'
 
 export default {
   name: 'Task',
@@ -67,16 +68,16 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$api('logcollector')
+      return logcollectorApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let list = res.data?.items || []
+          let list = res?.items || []
           let pointTime = new Date()
 
           return {
-            total: res.data.total,
+            total: res.total,
             data: list.map(item => {
               this.$set(item, 'pointTime', pointTime)
               if (item.syncTimePoint === 'current') {

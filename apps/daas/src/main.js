@@ -1,16 +1,16 @@
 import Vue from 'vue'
-import App from '@/App.vue'
+import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
 import i18n from './i18n'
 import VueClipboard from 'vue-clipboard2'
-import factory from '@/api/factory'
+// import factory from '@/api/factory'
 import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
 import VIcon from '@/components/VIcon'
 import ConnectionTest from '@/components/ConnectionTest'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
-import { Users, Settings } from '@tap/api'
+import { settingsApi, usersApi } from '@tap/api'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -20,7 +20,7 @@ import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'
 import '@/styles/element-variables.scss'
-import '@/plugins/axios'
+import '@/plugins/axios.ts'
 import { configUser } from '@/utils/util'
 
 Vue.config.productionTip = false
@@ -28,7 +28,7 @@ Vue.use(VueClipboard)
 Vue.use(LoadMore)
 Vue.use(TapdataWebCore)
 
-Vue.prototype.$api = factory
+// Vue.prototype.$api = factory
 
 Vue.component(VIcon.name, VIcon)
 Vue.component(ConnectionTest.name, ConnectionTest)
@@ -103,18 +103,16 @@ let init = settings => {
     render: h => h(App)
   })
 }
-const userApi = new Users()
-const settingsApi = new Settings()
 settingsApi
   .get()
-  .then(async data => {
-    let initData = data || []
+  .then(async res => {
+    let initData = res.data || []
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
     }
     if (token) {
       //无权限，说明是首次进入页面，重新请求后台获取
-      let user = await userApi.getInfo().catch(() => {
+      let user = await usersApi.getInfo().catch(() => {
         init(initData)
       })
       //权限存在则存入缓存并继续向下走

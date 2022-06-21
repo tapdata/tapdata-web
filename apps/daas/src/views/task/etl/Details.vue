@@ -113,6 +113,7 @@ import { Chart } from '@tap/component'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
+import { taskApi, dataFlowsApi } from '@tap/api'
 
 let timeout = null
 export default {
@@ -210,10 +211,10 @@ export default {
       if (!hiddenLoading) {
         this.loading = true
       }
-      this.$api('Task')
+      taskApi
         .get([id])
         .then(res => {
-          this.task = this.formatTask(res.data)
+          this.task = this.formatTask(res)
 
           this.getSubTaskStatusCount()
         })
@@ -283,7 +284,7 @@ export default {
     },
     start(id, resetLoading) {
       // this.changeStatus(id, { status: 'scheduled', finallyEvents: resetLoading })
-      this.$api('Task')
+      taskApi
         .start(id)
         .then(() => {
           this.$message.success(this.$t('message_operation_succuess'))
@@ -310,7 +311,7 @@ export default {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
-          this.$api('Task')
+          taskApi
             .stop(id)
             .then(() => {
               this.$message.success(this.$t('message_operation_succuess'))
@@ -327,11 +328,9 @@ export default {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
-          this.$api('Task')
-            .forceStop([id])
-            .then(() => {
-              this.$message.success(this.$t('message_operation_succuess'))
-            })
+          taskApi.forceStop([id]).then(() => {
+            this.$message.success(this.$t('message_operation_succuess'))
+          })
         }
       })
     },
@@ -378,7 +377,7 @@ export default {
           return
         }
         this.loadingObj.reset = true
-        this.$api('Task')
+        taskApi
           .reset(id)
           .then(data => {
             this.responseHandler(data, this.$t('message.deleteOK'))
@@ -411,7 +410,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      this.$api('DataFlows')
+      dataFlowsApi
         .update(where, attributes)
         .then(data => {
           this.responseHandler(data, this.$t('message.deleteOK'))
@@ -449,7 +448,7 @@ export default {
       }
     },
     updateDesc(val, id) {
-      this.$api('Task')
+      taskApi
         .patchId(id, {
           desc: val
         })

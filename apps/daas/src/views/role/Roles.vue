@@ -157,6 +157,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '@/utils/util'
+import { roleApi, usersApi,roleMappingsApi,permissionsApi } from '@tap/api'
 
 export default {
   components: {
@@ -220,12 +221,12 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('users')
+      return usersApi
         .role({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let data = res.data || {}
+          let data = res || {}
           return {
             total: data.total,
             data: data?.items || []
@@ -272,11 +273,11 @@ export default {
           description: '',
           register_user_default: false
         }
-        this.$api('Permissions')
+        permissionsApi
           .get({})
           .then(res => {
-            if (res && res.data && res.data.length) {
-              this.permissions = res.data
+            if (res && res?.length) {
+              this.permissions = res
             }
           })
         this.table.fetch()
@@ -293,10 +294,10 @@ export default {
         type: 'warning'
       }).then(res => {
         if (res) {
-          this.$api('role')
+          roleApi
             .delete(item.id, item.name)
             .then(res => {
-              if (res && res.data) {
+              if (res) {
                 this.table.fetch()
                 this.$message.success(this.$t('role_list_delete_success'))
               }
@@ -328,26 +329,26 @@ export default {
           }
           let newRoleMappings = []
 
-          this.$api('role')
+          roleApi
             [method](record)
             .then(res => {
-              if (res && res.data) {
+              if (res ) {
                 if (method === 'post') {
                   this.permissions.forEach(selectPermission => {
                     if (selectPermission.type === 'read' && !selectPermission.isMenu)
                       newRoleMappings.push({
                         principalType: 'PERMISSION',
                         principalId: selectPermission.name,
-                        roleId: res.data.id
+                        roleId: res?.id
                       })
                   })
                   self
                     .$api('users')
-                    .deletePermissionRoleMapping(res.data.id, {
+                    .deletePermissionRoleMapping(res?.id, {
                       data: { data: newRoleMappings }
                     })
                     .then(res => {
-                      if (res && res.data) {
+                      if (res) {
                         // roleMappingModel.post(newRoleMappings);
                         this.$message.success(this.$t('message_save_ok'))
                       }
@@ -390,14 +391,14 @@ export default {
         },
         limit: 999
       }
-      await this.$api('roleMapping')
+      await roleMappingsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res?.data?.length) {
-            _this.roleusers = res.data.map(item => item.principalId)
-            _this.oldUser = res.data
+          if (res?.length) {
+            _this.roleusers = res.map(item => item.principalId)
+            _this.oldUser = res
             // res.data?.forEach(roleMapping => {
             //   if (roleMapping.principalType === 'USER' && this.userGroup.find(v => v.id === roleMapping.principalId)) {
             //     _this.roleusers.push(roleMapping.principalId)
@@ -410,15 +411,15 @@ export default {
 
     // 获取用户列表
     async getUserData() {
-      await this.$api('users')
+      await  usersApi,
         .get({
           filter: JSON.stringify({
             limit: 999
           })
         })
         .then(res => {
-          if (res?.data?.items) {
-            res.data.items.forEach(item => {
+          if (res?.items) {
+            res?.items.forEach(item => {
               if (!item.role) {
                 this.userGroup.push(item)
               }
@@ -431,7 +432,7 @@ export default {
     saveUser() {
       let newRoleMappings = []
       this.oldUser.forEach(delRolemapping => {
-        this.$api('roleMapping').delete(delRolemapping.id)
+        roleMappingsApidelete(delRolemapping.id)
       })
       // _this.oldUser
       this.roleusers.forEach(roleuser => {
@@ -443,10 +444,10 @@ export default {
           })
         }
       })
-      this.$api('roleMapping')
+      roleMappingsApi
         .saveAll(newRoleMappings)
         .then(res => {
-          if (res && res.data) {
+          if (res) {
             this.roleusers = []
             res.data.forEach(item => {
               this.roleusers.push(item.principalId)
@@ -476,10 +477,10 @@ export default {
         register_user_default: data.register_user_default
       }
 
-      this.$api('role')
+      roleApi
         .patch(record)
         .then(res => {
-          if (res && res.data) {
+          if (res) {
             this.table.fetch()
           }
         })

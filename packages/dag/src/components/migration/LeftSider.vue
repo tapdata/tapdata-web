@@ -143,9 +143,8 @@ import ConnectionTypeSelector from 'web-core/components/connection-type-selector
 import resize from 'web-core/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
-import { Connections } from '@tap/api'
+import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { Select } from 'element-ui'
-const connections = new Connections()
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
@@ -245,13 +244,11 @@ export default {
       this.connectionDialog = true
     },
     getDatabaseType() {
-      this.$api('DatabaseTypes')
-        .get()
-        .then(res => {
-          if (res.data) {
-            this.getPdkData(res.data)
-          }
-        })
+      databaseTypesApi.get().then(res => {
+        if (res) {
+          this.getPdkData(res)
+        }
+      })
     },
     getPdkData(data) {
       this.database.push(...data)
@@ -327,7 +324,7 @@ export default {
         this.dbTotal = 0
       }
 
-      const data = await connections.get(this.getDbFilter())
+      const data = await connectionsApi.get(this.getDbFilter())
 
       this.dbTotal = data.total
 

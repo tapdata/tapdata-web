@@ -33,10 +33,8 @@
 <script>
 import TablePage from '@/components/TablePage'
 import FilterBar from '../../components/filter-bar/Main'
-import { CustomNode } from '@tap/api'
+import { customNodeApi } from '@tap/api'
 import dayjs from 'dayjs'
-
-const api = new CustomNode()
 
 export default {
   components: { FilterBar, TablePage },
@@ -85,7 +83,7 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return api
+      return customNodeApi
         .get({
           filter: JSON.stringify(filter)
         })
@@ -107,7 +105,7 @@ export default {
         if (!resFlag) {
           return
         }
-        api.delete(item.id).then(() => {
+        customNodeApi.delete(item.id).then(() => {
           this.table.fetch()
         })
       })
@@ -122,7 +120,7 @@ export default {
             }
           }).href
         )
-      const usedData = await api.checkUsed(row.id)
+      const usedData = await customNodeApi.checkUsed(row.id)
       if (usedData?.length) {
         this.$confirm(
           <div class="w-100">

@@ -58,6 +58,7 @@
 
 <script>
 import { JsEditor } from '@tap/component'
+import { javascriptFunctionsApi } from '@tap/api'
 export default {
   components: { JsEditor },
   data() {
@@ -76,20 +77,18 @@ export default {
         system: this.$t('function_type_option_system')
       }
 
-      this.$api('Javascript_functions')
-        .get([this.$route.params.id])
-        .then(res => {
-          let details = res?.data || {}
-          // 处理老数据问题
-          if (details.type === 'custom' && !details.script) {
-            details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
-          }
-          if (details.type === 'jar') {
-            details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
-          }
-          details.typeFmt = typeMap[details.type]
-          this.details = details
-        })
+      javascriptFunctionsApi.get([this.$route.params.id]).then(res => {
+        let details = res || {}
+        // 处理老数据问题
+        if (details.type === 'custom' && !details.script) {
+          details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
+        }
+        if (details.type === 'jar') {
+          details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
+        }
+        details.typeFmt = typeMap[details.type]
+        this.details = details
+      })
     }
   }
 }

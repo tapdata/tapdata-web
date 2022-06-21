@@ -78,6 +78,7 @@
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { delayTrigger, formatTime } from '@/utils/util'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import { customerJobLogsApi } from '@tap/api'
 export default {
   name: 'Normal',
   components: {
@@ -244,10 +245,10 @@ export default {
           this.preLoading = true
         }
       }
-      this.$api('CustomerJobLogs')
+      customerJobLogsApi
         .get({ filter: JSON.stringify(filter) })
         .then(res => {
-          let data = res.data.items.reverse()
+          let data = res?.items.reverse()
           if (!data.length) {
             if (reset) {
               this.list = []

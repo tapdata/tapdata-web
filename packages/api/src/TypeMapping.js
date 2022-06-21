@@ -1,5 +1,5 @@
-import Http from './http'
-export class TypeMapping extends Http {
+import Http from './Http'
+export default class TypeMapping extends Http {
   constructor() {
     super('/api/TypeMappings')
   }
@@ -11,3 +11,4 @@ export class TypeMapping extends Http {
     return this.axios.get(this.url + '/pdk/dataType?databaseType=' + type)
   }
 }
+export { TypeMapping }

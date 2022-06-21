@@ -1,5 +1,5 @@
 // 集群管理
-import Http from './http'
+import Http from './Http'
 
 export class Cluster extends Http {
   constructor() {
@@ -24,3 +24,4 @@ export class Cluster extends Http {
     return this.axios.get(this.url + '/findAccessNodeInfo', { params }).then(this.useData)
   }
 }
+export default Cluster

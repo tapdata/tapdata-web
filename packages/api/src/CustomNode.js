@@ -1,6 +1,6 @@
-import Http from './http'
+import Http from './Http'
 
-export class CustomNode extends Http {
+export default class CustomNode extends Http {
   constructor() {
     super('/api/customNode')
   }
@@ -13,3 +13,4 @@ export class CustomNode extends Http {
     return this.axios.get(`${this.url}/checkUsed/${id}`).then(this.useData)
   }
 }
+export { CustomNode }

@@ -67,6 +67,7 @@
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import dayjs from 'dayjs'
+import { inspectDetailsApi, inspectResultsApi } from '@tap/api'
 
 export default {
   components: { ResultTable, ResultView },
@@ -104,7 +105,7 @@ export default {
   methods: {
     getData() {
       this.loading = true
-      this.$api('InspectResults')
+      inspectResultsApi
         .get({
           filter: JSON.stringify({
             where: {
@@ -113,7 +114,7 @@ export default {
           })
         })
         .then(res => {
-          let result = res.data?.items[0]
+          let result = res?.items[0]
           if (result) {
             this.resultInfo = result
             let stats = result.stats
@@ -154,12 +155,12 @@ export default {
           limit: showAdvancedVerification ? 1 : size,
           skip: (current - 1) * (showAdvancedVerification ? 1 : size)
         }
-        return this.$api('InspectDetails')
+        return inspectDetailsApi
           .get({
             filter: JSON.stringify(filter)
           })
           .then(res => {
-            let data = res.data || {}
+            let data = res || {}
             let resultList = []
             if (data.items) {
               if (showAdvancedVerification) {

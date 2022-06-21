@@ -9,9 +9,7 @@ import { observable } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
-import { Task } from '@tap/api'
-
-const taskApi = new Task()
+import { taskApi } from '@tap/api'
 
 export default observer({
   name: 'SettingPanel',

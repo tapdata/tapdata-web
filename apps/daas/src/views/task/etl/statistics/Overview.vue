@@ -29,11 +29,11 @@ export default {
   },
   computed: {
     totalDataText() {
-      let num = this.info.totalDataNum
+      let num = this.info?.totalDataNum
       return num < 0 ? this.$t('task_info_overView_status') : num || 0
     },
     finishDurationText() {
-      let duration = this.info.finishDuration
+      let duration = this.info?.finishDuration
       return duration < 0 ? this.$t('task_info_overView_status') : duration || 0
     }
   }

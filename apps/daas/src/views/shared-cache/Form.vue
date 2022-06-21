@@ -150,6 +150,7 @@
 <script>
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
+import { sharedCacheApi, metadataInstancesApi, connectionsApi } from '@tap/api'
 export default {
   components: { VirtualSelect, FieldSelector },
   data() {
@@ -198,10 +199,10 @@ export default {
   methods: {
     getData(id) {
       this.loading = true
-      this.$api('shareCache')
+      sharedCacheApi
         .findOne(id)
         .then(res => {
-          let data = res?.data || {}
+          let data = res || {}
           this.form = {
             name: data.name,
             connectionId: data.connectionId,
@@ -229,20 +230,18 @@ export default {
           connection_type: { in: ['source', 'source_and_target'] }
         }
       }
-      this.$api('connections')
-        .listAll(filter)
-        .then(res => {
-          let options = res?.data || []
-          this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
-        })
+      connectionsApi.listAll(filter).then(res => {
+        let options = res?.data || []
+        this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
+      })
     },
     getTableOptions(connectionId) {
       this.tableOptionsLoading = true
-      this.$api('MetadataInstances')
+      metadataInstancesApi
         .getTables(connectionId)
         .then(res => {
           let options = []
-          let list = res?.data || []
+          let list = res || []
           list.forEach(opt => {
             if (opt) {
               options.push({ label: opt, value: opt })
@@ -270,10 +269,10 @@ export default {
         })
       }
       this.fieldOptionsLoading = true
-      this.$api('MetadataInstances')
+      metadataInstancesApi
         .get(params)
         .then(res => {
-          let table = res?.data?.items?.[0]
+          let table = res?.items?.[0]
           if (table) {
             let fields = table.fields || []
             this.fieldOptions = fields.map(opt => opt.field_name)
@@ -328,8 +327,7 @@ export default {
           }
           let method = id ? 'patch' : 'post'
           this.loading = true
-          this.$api('shareCache')
-            [method](params)
+          sharedCacheApi[method](params)
             .then(() => {
               this.$message.success(this.$t('message_save_ok'))
               this.$router.replace({

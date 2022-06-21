@@ -321,6 +321,7 @@ f
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
+import { metadataInstancesApi, connectionsApi } from '@tap/api'
 
 export default {
   components: { RecycleScroller, OverflowTooltip },
@@ -331,6 +332,7 @@ export default {
     },
     value: Array
   },
+  inject: ['checkAgent'],
   data() {
     return {
       stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
@@ -494,10 +496,10 @@ export default {
     // 获取所有表
     getTables() {
       this.loading = true
-      this.$api('MetadataInstances')
+      metadataInstancesApi
         .getTables(this.connectionId)
         .then(res => {
-          let tables = res.data || []
+          let tables = res || []
           tables = tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
           this.table.tables = Object.freeze(tables)
         })
@@ -507,7 +509,7 @@ export default {
     },
     //重新加载模型
     async reload() {
-      this.$root.checkAgent(() => {
+      this.checkAgent(() => {
         let config = {
           title: this.$t('connection_reload_schema_confirm_title'),
           Message: this.$t('connection_reload_schema_confirm_msg')
@@ -531,23 +533,21 @@ export default {
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
-      this.$api('connections')
-        .updateById(this.connectionId, parms)
-        .then(res => {
-          if (this?.$refs?.test) {
-            let data = res?.data
-            this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-            this.$refs.test.start(data, false, true)
-            this.getProgress()
-          }
-        })
+      connectionsApi.updateById(this.connectionId, parms).then(res => {
+        if (this?.$refs?.test) {
+          let data = res
+          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
+          this.$refs.test.start(data, false, true)
+          this.getProgress()
+        }
+      })
     },
     // 获取加载进度
     getProgress() {
-      this.$api('connections')
+      connectionsApi
         .getNoSchema(this.connectionId)
         .then(res => {
-          let data = res?.data
+          let data = res
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100

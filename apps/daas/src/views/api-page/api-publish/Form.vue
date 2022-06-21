@@ -4,7 +4,7 @@
       <div class="module-form">
         <ElForm :model="createForm" ref="form" size="small">
           <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules.datasource" required>
-            <ElSelect v-model="createForm.datasource" size="mini" placeholder="请选择" :disabled="$route.query.id">
+            <ElSelect v-model="createForm.datasource" size="mini" placeholder="请选择" :disabled="!!$route.query.id">
               <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
               </ElOption>
             </ElSelect>
@@ -119,10 +119,11 @@
 </template>
 
 <script>
-import APIClient from '@/api/ApiClient'
+import { ApiClient } from '@tap/api'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
 import { VirtualSelect } from '@tap/component'
+import { metadataInstancesApi, modulesApi, apiServerApi, roleApi, connectionsApi } from '@tap/api'
 export default {
   name: 'ApiPublishForm',
   components: { CustomerApiForm, SelectClassify, VirtualSelect },
@@ -226,12 +227,10 @@ export default {
           }
         })
       }
-      this.$api('MetadataInstances')
-        .get(params)
-        .then(res => {
-          let table = res?.data?.items?.[0]
-          this.createForm.fields = this.fields = table.fields
-        })
+      metadataInstancesApi.get(params).then(res => {
+        let table = res?.items?.[0]
+        this.createForm.fields = this.fields = table.fields
+      })
     },
     // api类型改变
     changeApiType() {
@@ -270,17 +269,15 @@ export default {
     // 获取api数据
     getDetail() {
       let _this = this
-      this.$api('modules')
-        .get([this.$route.query.id])
-        .then(res => {
-          if (res) {
-            Object.assign(_this.createForm, res.data)
-            // _this.createForm.apiType = res.data.apiType
-            // _this.createForm.datasource = res.data.datasource
-            _this.fields = res.data.fields
-            _this.getTableData()
-          }
-        })
+      modulesApi.get([this.$route.query.id]).then(res => {
+        if (res) {
+          Object.assign(_this.createForm, res)
+          // _this.createForm.apiType = res.data.apiType
+          // _this.createForm.datasource = res.data.datasource
+          _this.fields = res?.fields
+          _this.getTableData()
+        }
+      })
     },
     // 获取数据库
     getConnection() {
@@ -298,25 +295,23 @@ export default {
         fields: fields,
         where
       }
-      this.$api('connections')
-        .listAll(params)
-        .then(res => {
-          let options = res?.data || []
-          options = options.map(db => {
-            return {
-              label: db.name,
-              value: db.id
-            }
-          })
-          this.databaseOptions = options
+      connectionsApi.listAll(params).then(data => {
+        let options = data || []
+        options = options.map(db => {
+          return {
+            label: db.name,
+            value: db.id
+          }
         })
+        this.databaseOptions = options
+      })
     },
     // 获取表数据
     getTableData() {
-      this.$api('MetadataInstances')
+      metadataInstancesApi
         .getTables(this.createForm.datasource)
         .then(result => {
-          let schemas = result?.data || []
+          let schemas = result || []
           if (schemas?.length) {
             let tableList = schemas
               .sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
@@ -420,46 +415,39 @@ export default {
     // },
     // 打开api文档
     openDocument() {
-      this.apiClient = new APIClient()
-      this.$api('ApiServer')
-        .get({ 'filter[limit]': 1 })
-        .then(res => {
-          if (res?.data?.length) {
-            let apiServer = res.data[0]
-            let apiServerUri = apiServer.clientURI
-            let openApiUri = apiServerUri + '/openapi.json'
-            let api = this.createForm.basePath + '_' + this.createForm.apiVersion
-            let token = this.apiClient.getAPIServerToken()
+      this.apiClient = new ApiClient()
+      apiServerApi.get({ 'filter[limit]': 1 }).then(data => {
+        let servers = data?.items || []
+        let apiServer = servers[0] || {}
+        let apiServerUri = apiServer.clientURI || ''
+        let openApiUri = apiServerUri + '/openapi.json'
+        let api = this.createForm.basePath + '_' + this.createForm.apiVersion
+        let token = this.apiClient.getAPIServerToken()
 
-            this.$router.push({
-              name: 'apiDocAndTest',
-              query: {
-                id: api,
-                openApi: openApiUri,
-                token: token
-              }
-            })
-          } else {
-            this.$message.error(this.$t('module_form_no_server_preview_api'))
+        this.$router.push({
+          name: 'apiDocAndTest',
+          query: {
+            id: api,
+            openApi: openApiUri,
+            token: token
           }
         })
+      })
       // .catch(() => {
       //   this.$message.error(this.$t('module_form_get_api_uri_fail'))
       // })
     },
     // 获取角色权限
     getRoles() {
-      this.$api('role')
-        .get({})
-        .then(res => {
-          if (res) {
-            this.roles = res?.data?.items || []
-            this.roles.push({
-              name: this.$t('module_form_public_api'),
-              id: '$everyone'
-            })
-          }
-        })
+      roleApi.get({}).then(res => {
+        if (res) {
+          this.roles = res?.items || []
+          this.roles.push({
+            name: this.$t('module_form_public_api'),
+            id: '$everyone'
+          })
+        }
+      })
       // .catch(e => {
       //   this.$message.error(e.response.msg)
       // })
@@ -542,8 +530,7 @@ export default {
               }
             })
           }
-          this.$api('modules')
-            [method](this.createForm)
+          modulesApi[method](this.createForm)
             .then(res => {
               if (res) {
                 this.$router.push({

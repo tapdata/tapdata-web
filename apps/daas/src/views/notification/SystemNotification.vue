@@ -124,6 +124,7 @@
 import { TYPEMAP } from './tyepMap'
 import SelectList from '@/components/SelectList'
 import dayjs from 'dayjs'
+import { notificationApi } from '@tap/api'
 
 export default {
   components: { SelectList },
@@ -255,12 +256,12 @@ export default {
       }
 
       this.loading = true
-      this.$api('notification')
+      notificationApi
         .get({ filter: JSON.stringify(filter) })
         .then(res => {
-          if (res.data) {
-            this.listData = res.data?.items || []
-            this.total = res.data?.total || 0
+          if (res) {
+            this.listData = res?.items || []
+            this.total = res?.total || 0
             //格式化日期
             if (this.listData && this.listData.length > 0) {
               this.listData.map(item => {
@@ -293,11 +294,11 @@ export default {
       if (this.searchParams.msg || this.searchParams.msg !== '') {
         where.msg = this.searchParams.msg
       }
-      this.$api('notification')
+      notificationApi
         .count({ where: JSON.stringify(where) })
         .then(res => {
-          if (res.data) {
-            this.total = res.data.count
+          if (res) {
+            this.total = res?.count
           }
         })
         .finally(() => {
@@ -321,22 +322,20 @@ export default {
     handleRead(item) {
       let read = this.read
       if (!item.read) {
-        this.$api('notification')
-          .patch({ read: true, id: item.id })
-          .then(res => {
-            if (res.data) {
-              // this.getUnreadNum() //未读消息数量
-              // this.getData()
-              this.read = read
-              this.$root.$emit('notificationUpdate')
-              let msg = {
-                type: 'notification'
-              }
-              this.$ws.ready(() => {
-                this.$ws.send(msg)
-              }, true)
+        notificationApi.patch({ read: true, id: item.id }).then(res => {
+          if (res) {
+            // this.getUnreadNum() //未读消息数量
+            // this.getData()
+            this.read = read
+            this.$root.$emit('notificationUpdate')
+            let msg = {
+              type: 'notification'
             }
-          })
+            this.$ws.ready(() => {
+              this.$ws.send(msg)
+            }, true)
+          }
+        })
       }
     },
     // 标记本页已读
@@ -354,22 +353,20 @@ export default {
         id
       }
       let read = this.read
-      this.$api('notification')
-        .pageRead(data)
-        .then(res => {
-          if (res.data) {
-            // this.getUnreadNum() //未读消息数量
-            this.getData()
-            this.read = read
-            this.$root.$emit('notificationUpdate')
-            let msg = {
-              type: 'notification'
-            }
-            this.$ws.ready(() => {
-              this.$ws.send(msg)
-            }, true)
+      notificationApi.pageRead(data).then(res => {
+        if (res) {
+          // this.getUnreadNum() //未读消息数量
+          this.getData()
+          this.read = read
+          this.$root.$emit('notificationUpdate')
+          let msg = {
+            type: 'notification'
           }
-        })
+          this.$ws.ready(() => {
+            this.$ws.send(msg)
+          }, true)
+        }
+      })
     },
 
     // 标记全部已读
@@ -380,22 +377,20 @@ export default {
       // }
       where = JSON.stringify(where)
       let read = this.read
-      this.$api('notification')
-        .readAll(where)
-        .then(res => {
-          if (res.data) {
-            // this.getUnreadNum() //未读消息数量
-            this.getData()
-            this.read = read
-            this.$root.$emit('notificationUpdate')
-            let msg = {
-              type: 'notification'
-            }
-            this.$ws.ready(() => {
-              this.$ws.send(msg)
-            }, true)
+      notificationApi.readAll(where).then(res => {
+        if (res) {
+          // this.getUnreadNum() //未读消息数量
+          this.getData()
+          this.read = read
+          this.$root.$emit('notificationUpdate')
+          let msg = {
+            type: 'notification'
           }
-        })
+          this.$ws.ready(() => {
+            this.$ws.send(msg)
+          }, true)
+        }
+      })
     },
     handleClick(tab) {
       this.currentPage = 1

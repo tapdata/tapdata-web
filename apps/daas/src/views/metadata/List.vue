@@ -178,6 +178,7 @@ import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import dayjs from 'dayjs'
+import { connectionsApi, metadataInstancesApi } from '@tap/api'
 
 export default {
   components: {
@@ -340,15 +341,15 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('MetadataInstances')
+      return metadataInstancesApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
           return {
-            total: res.data.total,
+            total: res?.total,
             data:
-              res.data?.items.map(item => {
+              res?.items.map(item => {
                 item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
                 return item
               }) || []
@@ -368,12 +369,12 @@ export default {
           connection_type: { $in: ['target', 'source_and_target'] }
         }
       }
-      this.$api('connections')
+      connectionsApi
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let dbOptions = res.data?.items || []
+          let dbOptions = res?.items || []
 
           this.dbOptions = dbOptions.map(item => {
             return { label: item.name, value: item.id }
@@ -399,7 +400,7 @@ export default {
       return tagList
     },
     handleOperationClassify(classifications) {
-      this.$api('MetadataInstances')
+      metadataInstancesApi
         .classification({
           metadatas: this.multipleSelection.map(it => {
             return {
@@ -471,15 +472,13 @@ export default {
             comment: ''
           }
           params.fields = model_type === 'collection' ? fields : []
-          this.$api('MetadataInstances')
-            .post(params)
-            .then(res => {
-              if (res) {
-                this.createDialogVisible = false
-                this.$message.success(this.$t('message_save_ok'))
-              }
-              // this.toDetails(res.data);
-            })
+          metadataInstancesApi.post(params).then(res => {
+            if (res) {
+              this.createDialogVisible = false
+              this.$message.success(this.$t('message_save_ok'))
+            }
+            // this.toDetails(res.data);
+          })
           // .catch(() => {
           //   this.$message.success(this.$t('message_save_fail'))
           // })
@@ -490,7 +489,7 @@ export default {
       this.$router.push({ name: 'metadataDetails', params: { id: item.id } })
     },
     saveChangeName() {
-      this.$api('MetadataInstances')
+      metadataInstancesApi
         .updateById(this.changeNameData.id, {
           name: this.changeNameValue
         })
@@ -517,7 +516,7 @@ export default {
       //   if (!resFlag) {
       //     return
       //   }
-      //   this.$api('MetadataInstances')
+      //  metadataInstancesApi
       //     .updateById(item.id, {
       //       name: resFlag.value
       //     })
@@ -544,12 +543,10 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('MetadataInstances')
-          .delete(item.id)
-          .then(() => {
-            this.$message.success(this.$t('message.deleteOK'))
-            this.table.fetch()
-          })
+        metadataInstancesApi.delete(item.id).then(() => {
+          this.$message.success(this.$t('message.deleteOK'))
+          this.table.fetch()
+        })
         // .catch(() => {
         //   this.$message.info(this.$t('message.deleteFail'))
         // })
@@ -590,8 +587,8 @@ export default {
           key: 'dbId',
           type: 'select-inner',
           items: async () => {
-            let data = await this.$api('connections').findAll(filter)
-            let items = data?.data?.length ? data.data : []
+            let data = await connectionsApi.findAll(filter)
+            let items = data || []
             return items.map(item => {
               return {
                 label: item.name,

@@ -34,11 +34,10 @@
 </template>
 
 <script>
-import { MetadataInstances } from '@tap/api'
+import { metadataInstancesApi } from '@tap/api'
 import FieldMapping from '@tap/field-mapping'
 import { mapGetters, mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
-const metadataApi = new MetadataInstances()
 
 export default {
   name: 'MetaPane',
@@ -108,7 +107,7 @@ export default {
       this.loading = true
 
       try {
-        let data = await metadataApi.nodeSchema(this.activeNode.id)
+        let data = await metadataInstancesApi.nodeSchema(this.activeNode.id)
         let fields = data?.[0]?.fields || []
         fields = fields.filter(f => !f.is_deleted)
         /*fields.sort((a, b) => {
