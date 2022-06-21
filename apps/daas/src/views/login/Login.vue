@@ -103,14 +103,17 @@ export default {
 
         let user = await usersApi.getInfo()
         configUser(user)
-
         let lastLocationHref = sessionStorage.getItem('lastLocationHref')
         if (lastLocationHref) {
           location.href = lastLocationHref.includes('login') ? location.href.split('#')[0] : lastLocationHref
+          setTimeout(() => {
+            sessionStorage.removeItem('lastLocationHref')
+          }, 50)
+        } else {
+          this.$router.push({
+            name: 'dashboard'
+          })
         }
-        setTimeout(() => {
-          sessionStorage.removeItem('lastLocationHref')
-        }, 50)
       } catch (e) {
         this.loading = false
         this.form.password = oldPassword
