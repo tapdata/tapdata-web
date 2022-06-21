@@ -6,39 +6,37 @@ export default class MetadataInstances extends Http {
     super('/api/MetadataInstances')
   }
   getId(id, params) {
-    return this.axios.get(this.url + '/' + id, { params }).then(this.useData)
+    return this.axios.get(this.url + '/' + id, { params })
   }
   patch(id, params) {
-    return this.axios.patch(this.url + '/' + id, params).then(this.useData)
+    return this.axios.patch(this.url + '/' + id, params)
   }
   classification(params) {
-    return this.axios.patch(this.url + '/classifications', params).then(this.useData)
+    return this.axios.patch(this.url + '/classifications', params)
   }
   download(where, type) {
     if (typeof where === 'object') where = JSON.stringify(where)
-    window.open(this.url + `/download?where=${encodeURIComponent(where)}&type=${type}`).then(this.useData)
+    window.open(this.url + `/download?where=${encodeURIComponent(where)}&type=${type}`)
     // return this.axios.get(this.url + '/download?where=' + where);
   }
 
   dataMap(params) {
-    return this.axios.get(this.url + '/dataMap', { params }).then(this.useData)
+    return this.axios.get(this.url + '/dataMap', { params })
   }
   schema(params) {
-    return this.axios.get(this.url + '/schema', { params }).then(this.useData)
+    return this.axios.get(this.url + '/schema', { params })
   }
   tableConnection(params) {
-    return this.axios.get(this.url + '/tableConnection', { params }).then(this.useData)
+    return this.axios.get(this.url + '/tableConnection', { params })
   }
   upload(upsert, type, listtags, params) {
-    return this.axios
-      .post(`${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`, params)
-      .then(this.useData)
+    return this.axios.post(`${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`, params)
   }
   search(params) {
-    return this.axios.get(this.url + '/search', { params }).then(this.useData)
+    return this.axios.get(this.url + '/search', { params })
   }
   compareHistory(id, params) {
-    return this.axios.get(this.url + '/compareHistory?id=' + id, params).then(this.useData)
+    return this.axios.get(this.url + '/compareHistory?id=' + id, params)
   }
 
   /**
@@ -48,14 +46,12 @@ export default class MetadataInstances extends Http {
    * @returns {Promise<AxiosResponse<any>>}
    */
   nodeSchema(nodeId, fields = ['fields']) {
-    return this.axios
-      .get(this.url + '/node/schema', {
-        params: {
-          nodeId,
-          fields
-        }
-      })
-      .then(this.useData)
+    return this.axios.get(this.url + '/node/schema', {
+      params: {
+        nodeId,
+        fields
+      }
+    })
   }
 
   /**
@@ -63,30 +59,25 @@ export default class MetadataInstances extends Http {
    */
   originalData(qualified_name, target) {
     if (target) {
-      return this.axios
-        .get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name) + target)
-        .then(this.useData)
-    } else
-      return this.axios
-        .get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
-        .then(this.useData)
+      return this.axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name) + target)
+    } else return this.axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
   }
 
   get(params = {}, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
       let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
-      return this.axios.get(this.url + '/' + params.join('/') + qs).then(this.useData)
+      return this.axios.get(this.url + '/' + params.join('/') + qs)
     }
     const config = { params }
     if (isPlainObj(filter)) {
       Object.assign(config, filter)
     }
-    return this.axios.get(this.url, config).then(this.useData)
+    return this.axios.get(this.url, config)
   }
 
   getTables(connectionId) {
-    return this.axios.get(this.url + '/tables?connectionId=' + connectionId).then(this.useData)
+    return this.axios.get(this.url + '/tables?connectionId=' + connectionId)
   }
 
   /**
@@ -96,7 +87,7 @@ export default class MetadataInstances extends Http {
    * @returns {Promise<AxiosResponse<any>>}
    */
   getMergerNodeParentFields(taskId, nodeId) {
-    return this.axios.get(`${this.url}/mergerNode/parent/fields?taskId=${taskId}&nodeId=${nodeId}`).then(this.useData)
+    return this.axios.get(`${this.url}/mergerNode/parent/fields?taskId=${taskId}&nodeId=${nodeId}`)
   }
   findTablesById(id) {
     return this.axios.get(this.url + '/findTablesById/' + id)
