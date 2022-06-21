@@ -81,7 +81,7 @@ export default class Users extends Http {
     return this.axios.post(this.url + '/sendValidateCode', params)
   }
   getInfo() {
-    return this.axios.get(`${this.url}/byToken`).then(this.useData)
+    return this.axios.get(`${this.url}/byToken`)
   }
 }
 export { Users }

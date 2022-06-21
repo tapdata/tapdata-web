@@ -16,6 +16,13 @@ module.exports = {
 
     '@typescript-eslint/no-this-alias': 'off', // 不允许给this设置别名，例如 let self = this
 
+    'prefer-const': [
+      'off', // 使用const代替let,暂时关闭
+      {
+        ignoreReadBeforeAssign: true //https://eslint.bootcss.com/docs/rules/prefer-const
+      }
+    ],
+
     'prettier/prettier': [
       'error',
       {

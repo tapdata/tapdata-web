@@ -10,7 +10,7 @@
       :aria-label="title || 'dialog'"
     >
       <div class="el-message-box" :class="[customClass, center && 'el-message-box--center']">
-        <div class="el-message-box__header" v-if="title !== null">
+        <div class="el-message-box__header" v-if="title">
           <div class="el-message-box__title flex align-center">
             <VIcon v-if="icon" class="mr-3" :size="iconSize" :color="iconColor" :class="statusClass">{{ icon }}</VIcon>
             <span>{{ title }}</span>
@@ -26,7 +26,7 @@
             <i class="el-message-box__close el-icon-close"></i>
           </button>
         </div>
-        <div class="el-message-box__content">
+        <div class="el-message-box__content" :class="{ 'mt-3': !title }">
           <div class="el-message-box__container">
             <div class="el-message-box__message flex" v-if="message !== ''">
               <VIcon

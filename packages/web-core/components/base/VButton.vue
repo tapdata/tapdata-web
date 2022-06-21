@@ -64,18 +64,6 @@ export default {
 </script>
 <style lang="scss">
 .v-button {
-  &.el-button--mini,
-  &.el-button--mini:focus,
-  &.el-button--mini.is-active,
-  &.el-button--mini:active {
-    min-width: 80px;
-    height: 28px;
-    line-height: 28px;
-    padding: 0 15px;
-    &:hover {
-      border-color: map-get($color, primary);
-    }
-  }
   &.el-button--primary,
   &.el-button--primary:focus,
   &.el-button--primary.is-active,

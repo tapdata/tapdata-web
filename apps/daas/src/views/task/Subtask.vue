@@ -25,27 +25,7 @@
       </template>
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
-          <!--          <VButton-->
-          <!--            v-if="scope.row.status === 'running'"-->
-          <!--            :disabled="!statusBtMap['pause'][scope.row.status]"-->
-          <!--            auto-loading-->
-          <!--            inner-loading-->
-          <!--            type="text"-->
-          <!--            @click="pause(scope.row, arguments[0])"-->
-          <!--          >-->
-          <!--            {{ $t('task_button_pause') }}-->
-          <!--          </VButton>-->
-          <!--          <VButton-->
-          <!--            v-else-if="['pause', 'schedule_failed', 'error'].includes(scope.row.status)"-->
-          <!--            :disabled="!statusBtMap['recover'][scope.row.status]"-->
-          <!--            auto-loading-->
-          <!--            inner-loading-->
-          <!--            type="text"-->
-          <!--            @click="start(scope.row, arguments[0])"-->
-          <!--          >-->
-          <!--            {{ $t('task_button_recover') }}-->
-          <!--          </VButton>-->
-          <ElButton
+          <VButton
             :disabled="!statusBtMap['start'][scope.row.status]"
             auto-loading
             inner-loading
@@ -53,34 +33,31 @@
             @click="start(scope.row, arguments[0])"
           >
             {{ $t('task_button_start') }}
-          </ElButton>
+          </VButton>
           <ElDivider direction="vertical"></ElDivider>
-          <!--          <VButton-->
-          <!--            v-if="scope.row.status === 'stopping'"-->
-          <!--            :disabled="!statusBtMap['task_button_force_stop'][scope.row.status]"-->
-          <!--            class="mr-2"-->
-          <!--            type="text"-->
-          <!--            @click="stop(scope.row, arguments[0])"-->
-          <!--          >-->
-          <!--            {{ $t('task_button_force_stop') }}-->
-          <!--          </VButton>-->
-          <ElButton
+          <VButton
+            auto-loading
+            inner-loading
             :disabled="!statusBtMap['stop'][scope.row.status]"
             type="text"
             @click="stop(scope.row, arguments[0])"
           >
             {{ $t('task_button_stop') }}
-          </ElButton>
+          </VButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton
+          <VButton
+            auto-loading
+            inner-loading
             :disabled="!statusBtMap['reset'][scope.row.status]"
             type="text"
             @click="renew(scope.row, arguments[0])"
           >
             {{ $t('task_button_reset') }}
-          </ElButton>
+          </VButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="toStatistics(scope.row)">{{ $t('page_title_task_stat') }}</ElButton>
+          <VButton auto-loading inner-loading type="text" @click="toStatistics(scope.row)">{{
+            $t('page_title_task_stat')
+          }}</VButton>
         </div>
       </template>
     </TableList>
@@ -238,5 +215,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>

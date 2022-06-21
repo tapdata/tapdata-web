@@ -3,14 +3,14 @@
     <div class="flex flex-column flex-1 min-h-0">
       <div class="connection-tabs flex align-center px-1 border-bottom">
         <div
-          class="connection-tabs-pane flex align-center px-3 font-color-light"
+          class="connection-tabs-pane flex align-center px-3 font-color-light text-nowrap"
           :class="{ active: connectionType === 'source' }"
           @click="toggleConnectionType('source')"
         >
           来源
         </div>
         <div
-          class="connection-tabs-pane flex align-center px-3 font-color-light"
+          class="connection-tabs-pane flex align-center px-3 font-color-light text-nowrap"
           :class="{ active: connectionType === 'target' }"
           @click="toggleConnectionType('target')"
         >
@@ -484,6 +484,7 @@ $hoverBg: #eef3ff;
 
 .layout-sidebar.--left {
   overflow: hidden;
+  will-change: width;
   $headerH: 34px;
 
   .connection-tabs {

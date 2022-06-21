@@ -67,7 +67,9 @@ Vue.prototype.$confirm = (message, title, options) => {
       .catch(() => {
         reject(false)
       })
-  }).catch(() => {})
+  }).catch(() => {
+    return false
+  })
 }
 
 let token = Cookie.get('token')
@@ -106,7 +108,7 @@ let init = settings => {
 settingsApi
   .get()
   .then(async res => {
-    let initData = res.data || []
+    let initData = res || []
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
     }
