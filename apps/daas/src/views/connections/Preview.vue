@@ -296,7 +296,7 @@ export default {
       if (!connection) {
         return
       }
-      return getConnectionIcon(connection)
+      return getConnectionIcon(connection?.pdkHash)
     },
 
     sync(list) {
