@@ -341,11 +341,9 @@ export default {
             this.digSettingForm.persistenceMongodb_uri_db = ''
             this.digSettingForm.persistenceMongodb_collection = ''
           }
-          logcollectorApi.patchSystemConfig(this.digSettingForm).then(res => {
-            if (res) {
-              this.settingDialogVisible = false
-              this.$message.success(this.$t('message_save_ok'))
-            }
+          logcollectorApi.patchSystemConfig(this.digSettingForm).then(() => {
+            this.settingDialogVisible = false
+            this.$message.success(this.$t('message_save_ok'))
           })
         }
       })
