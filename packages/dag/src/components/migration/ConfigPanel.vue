@@ -16,7 +16,7 @@
         />
       </template>
       <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
-        {{ $t('task_stetting_basic_setting') }}
+        {{ t('task_stetting_basic_setting') }}
       </div>
 
       <VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>
@@ -40,6 +40,7 @@ import focusSelect from 'web-core/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import { TextEditable } from '@tap/component'
+import Locale from '../../mixins/locale'
 
 export default {
   name: 'ConfigPanel',
@@ -48,6 +49,8 @@ export default {
     resize,
     focusSelect
   },
+
+  mixins: [Locale],
 
   data() {
     return {
