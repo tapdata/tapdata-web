@@ -45,9 +45,16 @@
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label">{{ temp.label }}:</div>
-
             <ElTooltip
-              v-if="connection[temp.key] && temp.key !== 'mqType' && connection[temp.key].toString()"
+              v-if="connection[temp.key] && temp.options"
+              effect="dark"
+              :content="getOptionLabel(temp, connection)"
+              placement="right-end"
+            >
+              <div class="box-line__value ellipsis">{{ getOptionLabel(temp, connection) }}</div>
+            </ElTooltip>
+            <ElTooltip
+              v-else-if="connection[temp.key] && temp.key !== 'mqType' && connection[temp.key].toString()"
               effect="dark"
               :content="connection[temp.key].toString()"
               placement="right-end"
@@ -294,6 +301,10 @@ export default {
     loadList(type) {
       let whiteList = ['kafka', 'mq']
       this.list = whiteList.includes(type) ? CONFIG_MODEL[type] : CONFIG_MODEL['default']
+    },
+    getOptionLabel(temp, connection) {
+      let findOne = temp.options.find(t => t.value = connection[temp.key])
+      return findOne?.label
     }
   }
 }
