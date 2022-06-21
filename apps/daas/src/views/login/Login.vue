@@ -97,7 +97,7 @@ export default {
         this.form['sign'] = cryptoJS.SHA1(Str).toString().toUpperCase()
 
         let data = await usersApi.login(this.form)
-        Cookie.set('token', data?.data?.id)
+        Cookie.set('token', data?.id)
         // eslint-disable-next-line
         console.log('登录成功：', data)
 
