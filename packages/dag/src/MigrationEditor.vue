@@ -50,7 +50,7 @@
       <div
         v-if="!stateIsReadonly"
         v-show="!showLeftSider"
-        class="sider-expand-wrap flex justify-center align-center shadow rotate-180"
+        class="sider-expand-wrap flex justify-center align-center rotate-180"
       >
         <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
@@ -614,6 +614,7 @@ $sidebarBg: #fff;
   height: 32px;
   border-radius: 50%;
   background: #fff;
+  box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
 
   &:hover .v-icon {
     color: map-get($color, primary);
