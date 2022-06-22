@@ -525,9 +525,8 @@ export default {
       this.loading = true
       metadataInstancesApi
         .getSourceTables(this.connectionId)
-        .then(res => {
-          let tables = res.data || []
-          tables = tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
+        .then((tables = []) => {
+          tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
           this.table.tables = Object.freeze(tables)
         })
         .finally(() => {
