@@ -92,7 +92,7 @@
         ></NodePopover>
       </main>
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
+      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
     </section>
   </section>
 </template>
@@ -119,6 +119,7 @@ import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
 import VIcon from 'web-core/components/VIcon'
 import { VExpandXTransition } from '@tap/component'
+import { observable } from '@formily/reactive'
 
 export default {
   name: 'MigrationEditor',
@@ -142,6 +143,11 @@ export default {
   },
 
   data() {
+    const dataflow = observable({
+      id: '',
+      name: ''
+    })
+
     return {
       NODE_PREFIX,
       status: 'draft',
@@ -163,13 +169,19 @@ export default {
         connectionData: {}
       },
 
-      dataflow: {
-        id: '',
-        name: ''
-      },
+      dataflow,
 
       scale: 1,
       showLeftSider: true
+    }
+  },
+
+  computed: {
+    formScope() {
+      return {
+        ...this.scope,
+        $settings: this.dataflow
+      }
     }
   },
 
