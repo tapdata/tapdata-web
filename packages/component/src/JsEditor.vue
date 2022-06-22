@@ -7,7 +7,7 @@
     :height="height - 24"
     :options="_options"
     @init="init"
-    @input="$emit('input', $event)"
+    v-on="$listeners"
   ></VCodeEditor>
 </template>
 

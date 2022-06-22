@@ -21,7 +21,7 @@ export default observer({
   data() {
     let repeatNameMessage = this.$t('task_form_error_name_duplicate')
     this.getAllNode()
-    let values = observable(this.settings)
+    let values = this.settings
     return {
       scope: {
         checkName: value => {

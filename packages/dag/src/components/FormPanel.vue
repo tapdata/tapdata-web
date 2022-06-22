@@ -692,7 +692,10 @@ export default {
         console.trace(JSON.parse(JSON.stringify(form.values)))
         // eslint-disable-next-line no-console
         console.groupEnd()
-        this.updateNodeProps(form)
+        if (this.node && JSON.stringify(form.values) !== JSON.stringify(this.node)) {
+          console.log('onFormValuesChange---doUpdate', JSON.stringify(form.values), JSON.stringify(this.node)) // eslint-disable-line
+          this.updateNodeProps(form)
+        }
       })
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
