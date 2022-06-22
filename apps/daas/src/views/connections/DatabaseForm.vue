@@ -412,6 +412,12 @@ export default {
             .then(() => {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
+              let { name } = this.model
+              this.schemaFormInstance.setValues({
+                __TAPDATA_START: {
+                  name
+                }
+              })
               this.$refs['renameForm'].clearValidate()
               this.$message.success(this.$t('message_save_ok'))
               this.dialogEditNameVisible = false
