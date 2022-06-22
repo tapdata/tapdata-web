@@ -232,7 +232,7 @@ export class Table extends NodeType {
                   dependencies: ['$outputs'],
                   fulfill: {
                     state: {
-                      visible: '{{$deps[0].length > 0}}'
+                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
                     }
                   }
                 },
@@ -271,7 +271,7 @@ export class Table extends NodeType {
                       dependencies: ['totalReadMethod'],
                       fulfill: {
                         state: {
-                          visible: '{{$deps[0]==="customizeSql"}}'
+                          display: '{{$deps[0]==="customizeSql" ? "visible":"hidden"}}'
                         }
                       }
                     }
@@ -310,7 +310,7 @@ export class Table extends NodeType {
                       dependencies: ['increasePoll'],
                       fulfill: {
                         state: {
-                          visible: '{{$deps[0]==="customizeSql"}}'
+                          display: '{{$deps[0]==="customizeSql" ? "visible":"hidden"}}'
                         }
                       }
                     }
@@ -328,7 +328,7 @@ export class Table extends NodeType {
                       dependencies: ['increasePoll'],
                       fulfill: {
                         state: {
-                          visible: '{{$deps[0]==="customizeSql"}}'
+                          display: '{{$deps[0]==="customizeSql" ? "visible":"hidden"}}'
                         }
                       }
                     }
@@ -388,7 +388,7 @@ export class Table extends NodeType {
                       dependencies: ['databaseType'],
                       fulfill: {
                         state: {
-                          visible: '{{$deps[0]==="oracle"}}'
+                          display: '{{$deps[0]==="oracle" ? "visible":"hidden"}}'
                         }
                       }
                     }
@@ -402,7 +402,7 @@ export class Table extends NodeType {
                   dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      visible: '{{$deps[0].length > 0}}'
+                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
                     }
                   }
                 },
@@ -455,7 +455,7 @@ export class Table extends NodeType {
                         target: 'updateConditionFields',
                         fulfill: {
                           state: {
-                            visible: '{{$self.value!=="appendWrite"}}'
+                            display: '{{$self.value!=="appendWrite" ? "visible":"hidden"}}'
                           }
                         }
                       }
