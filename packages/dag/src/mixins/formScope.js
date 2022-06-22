@@ -18,6 +18,17 @@ export default {
           return this.$store.state.dataflow.NodeMap[id]
         },
 
+        findParentNode: id => {
+          let node = this.scope.findNodeById(id)
+          let parentId = node.$inputs?.[0]
+          let parent
+          while (parentId) {
+            parent = this.scope.findNodeById(parentId)
+            parentId = parent.$inputs?.[0]
+          }
+          return parent
+        },
+
         /**
          * 统一的异步数据源方法
          * @param service

@@ -209,6 +209,12 @@ export default {
 
   methods: {
     async initNodeType() {
+      this.addProcessorNode([
+        {
+          name: '表编辑',
+          type: 'table_processor'
+        }
+      ])
       this.addResourceIns(allResourceIns)
     },
 
