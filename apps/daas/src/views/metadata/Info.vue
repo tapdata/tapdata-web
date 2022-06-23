@@ -534,9 +534,9 @@ export default {
       return metadataInstancesApi
         .findTablesById([id])
         .then(res => {
-          let data = res.data
-          data.createTimeFmt = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
-          data.lastUpdatedFmt = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
+          let data = res
+          data.createTimeFmt = dayjs(data.createTime || data.createAt).format('YYYY-MM-DD HH:mm:ss')
+          data.lastUpdatedFmt = dayjs(data.last_updated || data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')
           this.metadataDataObj = data
           this.pageTotal = data.fields?.length || 0
           this.setCurrentPageData(this.metadataDataObj.fields || [])
