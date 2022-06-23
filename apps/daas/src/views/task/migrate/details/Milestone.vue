@@ -97,7 +97,8 @@ export default {
     checkError(msg) {
       this.$confirm(msg, this.$t('task_info_error'), {
         type: 'warning',
-        width: '850px'
+        width: '850px',
+        customClass: 'milestone-check-error-container'
       })
     },
     toggleFnc() {
@@ -120,5 +121,17 @@ export default {
 }
 .is-fold {
   height: 0 !important;
+}
+</style>
+
+<style lang="scss">
+.milestone-check-error-container {
+  display: inline-flex !important;
+  flex-direction: column;
+  max-height: 80vh;
+  .el-message-box__content {
+    flex: 1;
+    overflow: auto;
+  }
 }
 </style>

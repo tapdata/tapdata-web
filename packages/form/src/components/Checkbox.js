@@ -1,8 +1,10 @@
 import { connect, mapProps } from '@formily/vue'
 import VIcon from '@/components/VIcon'
+import Locale from '../mixins/locale'
 
 const CheckboxOption = {
   props: ['option'],
+  mixins: [Locale],
   render(h) {
     const props = this.$props
     const slots = this.$slots
@@ -22,7 +24,7 @@ const CheckboxOption = {
               reference: () => <VIcon color="#999">tishi</VIcon>
             }}
           >
-            <span>{this.$t(option.tooltip)}</span>
+            <span>{this.t(option.tooltip)}</span>
           </el-popover>
         )
       }

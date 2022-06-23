@@ -8,7 +8,7 @@ export default class MetadataInstances extends Http {
   getId(id, params) {
     return this.axios.get(this.url + '/' + id, { params })
   }
-  patch(id, params) {
+  patchId(id, params) {
     return this.axios.patch(this.url + '/' + id, params)
   }
   classification(params) {

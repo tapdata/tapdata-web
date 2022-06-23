@@ -36,11 +36,18 @@ export default {
   data() {
     return {
       database: [],
-      otherType: []
+      otherType: [],
+      timer: null
     }
   },
   created() {
-    this.getDatabaseType()
+    this.timer && clearInterval(this.timer)
+    this.timer = setInterval(() => {
+      this.getDatabaseType()
+    }, 3000)
+  },
+  beforeDestroy() {
+    this.timer && clearInterval(this.timer)
   },
   methods: {
     getImgByType,
@@ -55,7 +62,11 @@ export default {
     getDatabaseType() {
       databaseTypesApi.get().then(res => {
         if (res) {
-          this.database.push(...res)
+          if (!this.database.length) {
+            return this.database.push(...res)
+          }
+          let data = res?.filter(t => !this.database.some(d => d.pdkHash === t.pdkHash)) || []
+          this.database.push(...data)
         }
       })
     }

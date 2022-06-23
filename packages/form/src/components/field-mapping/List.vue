@@ -51,7 +51,7 @@
                   />
                   <div class="select">
                     {{
-                      `${$t('dag_dialog_field_mapping_selected')} ${
+                      `${t('dag_dialog_field_mapping_selected')} ${
                         position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
                       }/${item.sourceFieldCount}`
                     }}
@@ -61,7 +61,7 @@
             </ul>
             <div class="task-form-left__ul flex flex-column align-items-center" v-else>
               <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
-              <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+              <div class="noData">{{ t('dag_dialog_field_mapping_no_data') }}</div>
             </div>
           </div>
           <ElPagination
@@ -97,7 +97,7 @@
                 <VIcon>refresh</VIcon>
               </ElButton>
               <ElButton v-if="!readOnly" type="text" class="btn-rest" @click="updateMetaData">
-                {{ $t('button_reset') }}
+                {{ t('button_reset') }}
               </ElButton>
             </div>
           </div>
@@ -107,7 +107,7 @@
             :data="viewTableData"
             v-loading="loadingTable"
           >
-            <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_field')" prop="field_name">
+            <ElTableColumn show-overflow-tooltip :label="t('dag_dialog_field_mapping_field')" prop="field_name">
               <template #default="{ row }">
                 <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
                   >{{ row.field_name }}
@@ -116,7 +116,7 @@
                 <span v-else class="item" :show-overflow-tooltip="true">{{ row.field_name }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_type')" prop="data_type">
+            <ElTableColumn :label="t('dag_dialog_field_mapping_type')" prop="data_type">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!row.is_deleted && !readOnly" @click="edit(row, 'data_type')">
                   <span :show-overflow-tooltip="true">{{ row.data_type }}</span>
@@ -128,7 +128,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('meta_table_default')">
+            <ElTableColumn :label="t('meta_table_default')">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!readOnly" @click="edit(row, 'default_value')">
                   <ElTooltip class="item" effect="dark" :content="row.default_value" placement="left">
@@ -141,7 +141,7 @@
             </ElTableColumn>
             <div class="field-mapping-table__empty" slot="empty">
               <div class="table__empty_img" style="margin-left: 30%"><img style="" :src="noData" /></div>
-              <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+              <div class="noData">{{ t('dag_dialog_field_mapping_no_data') }}</div>
             </div>
           </ElTable>
         </div>
@@ -168,7 +168,7 @@
                 item.maxPrecision && currentOperationType === 'precision' && item.minPrecision !== item.maxPrecision
               "
             >
-              <div v-if="index === 0">{{ $t('dag_dialog_field_mapping_range_precision') }}</div>
+              <div v-if="index === 0">{{ t('dag_dialog_field_mapping_range_precision') }}</div>
               <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
@@ -177,7 +177,7 @@
               v-if="item.maxScale && currentOperationType === 'scale' && item.minScale !== item.maxScale"
               style="margin-top: 10px"
             >
-              <div>{{ $t('dag_dialog_field_mapping_range_scale') }}</div>
+              <div>{{ t('dag_dialog_field_mapping_range_scale') }}</div>
               <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
@@ -196,13 +196,13 @@
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-              <div v-if="index === 0">{{ $t('dag_dialog_field_mapping_range_precision') }}</div>
+              <div v-if="index === 0">{{ t('dag_dialog_field_mapping_range_precision') }}</div>
               <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
             </div>
             <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
-              <div>{{ $t('dag_dialog_field_mapping_range_scale') }}</div>
+              <div>{{ t('dag_dialog_field_mapping_range_scale') }}</div>
               <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
@@ -216,8 +216,8 @@
         v-if="['default_value'].includes(currentOperationType)"
       ></ElInput>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="handleClose()">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="editSave()">{{ $t('button_confirm') }}</ElButton>
+        <ElButton @click="handleClose()">{{ t('button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="editSave()">{{ t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
@@ -232,10 +232,12 @@ import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_
 import noData from 'web-core/assets/images/noData.png'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import { metadataInstancesApi, metadataTransformerApi, taskApi, typeMappingApi } from '@tap/api'
+import Locale from '../../mixins/locale'
 
 export default {
   name: 'List',
   components: { VIcon, OverflowTooltip },
+  mixins: [Locale],
   props: ['isMetaData', 'readOnly'],
   data() {
     return {
@@ -271,11 +273,11 @@ export default {
         default_value: ''
       },
       titleType: {
-        field_name: this.$t('dag_dialog_field_mapping_tittle_field_name'),
-        data_type: this.$t('dag_dialog_field_mapping_tittle_data_type'),
-        precision: this.$t('dag_dialog_field_mapping_tittle_precision'),
-        scale: this.$t('dag_dialog_field_mapping_tittle_scale'),
-        default_value: this.$t('dag_dialog_field_mapping_tittle_value')
+        field_name: this.t('dag_dialog_field_mapping_tittle_field_name'),
+        data_type: this.t('dag_dialog_field_mapping_tittle_data_type'),
+        precision: this.t('dag_dialog_field_mapping_tittle_precision'),
+        scale: this.t('dag_dialog_field_mapping_tittle_scale'),
+        default_value: this.t('dag_dialog_field_mapping_tittle_value')
       },
       typeMapping: [],
       dialogVisible: false,
@@ -497,7 +499,7 @@ export default {
         if (isPrecision.length === 0) {
           this.currentTypeRules.forEach(r => {
             if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
-              this.$message.error(this.$t('dag_dialog_field_mapping_error_range'))
+              this.$message.error(this.t('dag_dialog_field_mapping_error_range'))
               verify = false
             }
           })
@@ -506,7 +508,7 @@ export default {
             if (r.minPrecision < r.maxPrecision) {
               if (r.minPrecision > value || value > r.maxPrecision) {
                 verify = false
-                this.$message.error(this.$t('dag_dialog_field_mapping_error_range'))
+                this.$message.error(this.t('dag_dialog_field_mapping_error_range'))
               }
             }
           })
@@ -519,7 +521,7 @@ export default {
         if (isScale.length === 0) {
           this.currentTypeRules.forEach(r => {
             if (r.minScale === r.maxScale && value !== r.maxScale) {
-              this.$message.error(this.$t('dag_dialog_field_mapping_error_range'))
+              this.$message.error(this.t('dag_dialog_field_mapping_error_range'))
               verify = false
             }
           })
@@ -528,7 +530,7 @@ export default {
             if (r.minScale < r.maxScale) {
               if (r.minScale > value || value > r.maxScale) {
                 verify = false
-                this.$message.error(this.$t('dag_dialog_field_mapping_error_range'))
+                this.$message.error(this.t('dag_dialog_field_mapping_error_range'))
               }
             }
           })

@@ -29,7 +29,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ $t('task_preview_status_' + result[0].status) }}
+          {{ t('task_preview_status_' + result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -120,6 +120,7 @@ import NodePopover from './components/NodePopover'
 import VIcon from 'web-core/components/VIcon'
 import { VExpandXTransition } from '@tap/component'
 import { observable } from '@formily/reactive'
+import Locale from './mixins/locale'
 
 export default {
   name: 'MigrationEditor',
@@ -128,7 +129,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
 
   components: {
     VExpandXTransition,
@@ -258,12 +259,12 @@ export default {
     },
 
     async validate() {
-      if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
+      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter(node => node.type === 'database')
       if (tableNode.length < 2) {
-        return this.$t('editor.cell.validate.none_data_node')
+        return this.t('editor_cell_validate_none_data_node')
       }
 
       await this.validateAllNodes()
@@ -411,7 +412,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        // this.$message.success(this.$t('message_save_ok'))
+        // this.$message.success(this.t('message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }

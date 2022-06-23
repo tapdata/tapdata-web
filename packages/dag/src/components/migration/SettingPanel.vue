@@ -10,16 +10,18 @@ import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
 import { taskApi } from '@tap/api'
+import Locale from '../../mixins/locale'
 
 export default observer({
   name: 'SettingPanel',
   components: { FormRender },
+  mixins: [Locale],
   props: {
     settings: Object
   },
 
   data() {
-    let repeatNameMessage = this.$t('task_form_error_name_duplicate')
+    let repeatNameMessage = this.t('task_form_error_name_duplicate')
     this.getAllNode()
     let values = this.settings
     return {
@@ -38,7 +40,7 @@ export default observer({
             type: 'void',
             properties: {
               name: {
-                title: this.$t('task_stetting_name'), //任务名称
+                title: this.t('task_stetting_name'), //任务名称
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
@@ -56,28 +58,28 @@ export default observer({
                   }}}`
               },
               type: {
-                title: this.$t('task_setting_sync_type'),
+                title: this.t('task_setting_sync_type'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
                 default: 'initial_sync+cdc',
                 enum: [
                   {
-                    label: this.$t('task_setting_initial_sync_cdc'), //全量+增量
+                    label: this.t('task_setting_initial_sync_cdc'), //全量+增量
                     value: 'initial_sync+cdc'
                   },
                   {
-                    label: this.$t('task_setting_initial_sync'), //全量
+                    label: this.t('task_setting_initial_sync'), //全量
                     value: 'initial_sync'
                   },
                   {
-                    label: this.$t('task_setting_cdc'), //增量
+                    label: this.t('task_setting_cdc'), //增量
                     value: 'cdc'
                   }
                 ]
               },
               desc: {
-                title: this.$t('task_stetting_desc'), //任务描述
+                title: this.t('task_stetting_desc'), //任务描述
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input.TextArea',
@@ -95,11 +97,11 @@ export default observer({
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: this.$t('task_stetting_most_setting')
+                      title: this.t('task_stetting_most_setting')
                     },
                     properties: {
                       planStartDateFlag: {
-                        title: this.$t('task_setting_plan_start_date'), //计划时间
+                        title: this.t('task_setting_plan_start_date'), //计划时间
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
@@ -136,10 +138,10 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Input.TextArea',
                         'x-component-props': {
-                          placeholder: this.$t('task_setting_cron_expression')
+                          placeholder: this.t('task_setting_cron_expression')
                         },
                         'x-decorator-props': {
-                          tooltip: this.$t('task_setting_cron_tip')
+                          tooltip: this.t('task_setting_cron_tip')
                         },
                         'x-reactions': {
                           dependencies: ['type', 'planStartDateFlag'],
@@ -151,11 +153,11 @@ export default observer({
                         }
                       },
                       syncPoints: {
-                        title: this.$t('task_setting_sync_point'), //增量采集开始时刻
+                        title: this.t('task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',
                         default: [{ type: 'current', date: '' }],
                         'x-decorator-props': {
-                          tooltip: this.$t('task_setting_syncPoint_tip')
+                          tooltip: this.t('task_setting_syncPoint_tip')
                         },
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
@@ -180,15 +182,15 @@ export default observer({
                               default: 'current',
                               enum: [
                                 {
-                                  label: this.$t('dataFlow.SyncInfo.localTZType'),
+                                  label: this.t('dataFlow_SyncInfo_localTZType'),
                                   value: 'localTZ'
                                 },
                                 {
-                                  label: this.$t('dataFlow.SyncInfo.connTZType'),
+                                  label: this.t('dataFlow_SyncInfo_connTZType'),
                                   value: 'connTZ'
                                 },
                                 {
-                                  label: this.$t('dataFlow.SyncInfo.currentType'),
+                                  label: this.t('dataFlow_SyncInfo_currentType'),
                                   value: 'current'
                                 }
                               ]
@@ -215,21 +217,21 @@ export default observer({
                         }
                       },
                       isAutoCreateIndex: {
-                        title: this.$t('task_setting_automatic_index'), //自动创建索引
+                        title: this.t('task_setting_automatic_index'), //自动创建索引
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
                         default: true
                       },
                       isStopOnError: {
-                        title: this.$t('task_setting_stop_on_error'), //遇到错误停止
+                        title: this.t('task_setting_stop_on_error'), //遇到错误停止
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch'
                       },
                       shareCdcEnable: {
-                        title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
+                        title: this.t('connection_form_shared_mining'), //共享挖掘日志过滤
                         type: 'boolean',
                         default: false,
                         'x-decorator': 'FormItem',
@@ -244,7 +246,7 @@ export default observer({
                         }
                       },
                       isAutoInspect: {
-                        title: this.$t('task_list_verify'),
+                        title: this.t('task_list_verify'),
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
