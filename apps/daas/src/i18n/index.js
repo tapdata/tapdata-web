@@ -10,6 +10,7 @@ import zhCN from './langs/zh-CN'
 import zhTW from './langs/zh-TW'
 import Cookie from '@tap/shared/src/cookie'
 import { locale as dagLocale } from '@tap/dag'
+import { locale as fieldMappingLocale } from '@tap/field-mapping'
 
 let eleLangs = {
   'zh-CN': zhLocale,
@@ -40,5 +41,6 @@ Object.values(langMap).forEach(l => {
 const current = i18n.locale
 locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
 dagLocale.use(current)
+fieldMappingLocale.use(current)
 
 export default i18n
