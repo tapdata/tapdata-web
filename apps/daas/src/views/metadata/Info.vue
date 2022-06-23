@@ -616,7 +616,7 @@ export default {
           fields: fields,
           relation: relation
         }
-        metadataInstancesApi.patch(this.metadataDataObj.id, params).then(() => {
+        metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
           this.$message.success(this.$t('message.deleteOK'))
         })
@@ -680,7 +680,7 @@ export default {
         let params = {
           custom_properties: this.metadataDataObj.custom_properties
         }
-        metadataInstancesApi.patch(this.metadataDataObj.id, params).then(() => {
+        metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
         })

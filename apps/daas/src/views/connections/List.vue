@@ -464,7 +464,6 @@ export default {
             // } else {
             //   this.$message.error(msg || this.$t('connection.deleteFail'))
             // }
-            resFlag.closeLoading()
           })
       })
     },
