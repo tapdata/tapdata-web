@@ -242,6 +242,20 @@ export default {
       }
     },
 
+    gotoViewer() {
+      this.$router
+        .push({
+          name: 'DataflowViewer',
+          params: {
+            id: this.dataflow.id,
+            action: 'dataflowViewer'
+          }
+        })
+        .catch(() => {
+          console.log('Current route: DataflowViewer') // eslint-disable-line
+        })
+    },
+
     getDataflowDataToSave() {
       const dag = this.$store.getters['dataflow/dag']
       const editVersion = this.$store.state.dataflow.editVersion
