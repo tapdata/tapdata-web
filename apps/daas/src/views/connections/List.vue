@@ -436,7 +436,7 @@ export default {
           return
         }
         connectionsApi
-          .deleteConnection(data.id, data.name)
+          .delete(data.id)
           .then(res => {
             let jobs = res.jobs || []
             let modules = res.modules || []

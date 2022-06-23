@@ -325,13 +325,15 @@ export default {
           }
           this.saveSetting(digSettingForm)
         }
+        let promise = null
         if (id) {
           params.id = id
-        }
-        if (!params.id) {
+          promise = connectionsApi.updateById(id, params)
+        } else {
           params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
+          promise = connectionsApi.post(params)
         }
-        connectionsApi[params.id ? 'patchId' : 'post'](params)
+        promise
           .then(() => {
             this.$message.success(this.$t('message.saveOK'))
             if (this.$route.query.step) {

@@ -5,7 +5,7 @@ export default class DataFlowsDebugs extends Http {
     super('/api/DataFlowsDebugs')
   }
 
-  getTables(params) {
+  getTables(params: unknown) {
     return this.axios.get(this.url + '/getTables', { params: params })
   }
 }
