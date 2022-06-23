@@ -30,14 +30,16 @@
   },
   "pnpm": {
     "overrides": {
-      "@formily/core": "^2.0.18",
-      "@formily/element": "^2.0.18",
-      "@formily/json-schema": "^2.0.18",
-      "@formily/path": "^2.0.18",
-      "@formily/reactive": "^2.0.18",
-      "@formily/reactive-vue": "^2.0.18",
-      "@formily/shared": "^2.0.18",
-      "@formily/vue": "^2.0.18"
+      "@formily/core": "^2.1.2",
+      "@formily/element": "^2.1.2",
+      "@formily/json-schema": "^2.1.2",
+      "@formily/path": "^2.1.2",
+      "@formily/reactive": "^2.1.2",
+      "@formily/reactive-vue": "^2.1.2",
+      "@formily/shared": "^2.1.2",
+      "@formily/vue": "^2.1.2",
+      "vue-demi": "^0.12.1",
+      "vue": "^2.6.14"
     }
   }
 }
