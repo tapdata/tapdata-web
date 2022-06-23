@@ -18,11 +18,14 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
+import Locale from '../mixins/locale'
 
 export default {
   directives: {
     resize
   },
+
+  mixins: [Locale],
 
   computed: {
     ...mapState('dataflow', ['activeNodeId']),
@@ -731,7 +734,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('message_save_ok'))
+        !needStart && this.$message.success(this.t('message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         return true
@@ -1283,7 +1286,7 @@ export default {
             }
           }
         }
-        // this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
+        // this.$message.error(`${this.t('dag_save_fail')} ${names.join('，')}`)
       }
       // else if (error?.data?.message) {
       //   this.$message.error(error.data.message)
@@ -1347,9 +1350,9 @@ export default {
 
         this.dataflow.disabledData.stop = true
         await taskApi.stop(this.dataflow.id).catch(e => {
-          this.handleError(e, this.$t('message_operation_error'))
+          this.handleError(e, this.t('message_operation_error'))
         })
-        this.$message.success(this.$t('message_operation_succuess'))
+        this.$message.success(this.t('message_operation_succuess'))
       })
     },
 
@@ -1380,9 +1383,9 @@ export default {
         try {
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('message.resetOk'))
+          this.responseHandler(data, this.t('message_resetOk'))
         } catch (e) {
-          this.handleError(e, this.$t('message.resetFailed'))
+          this.handleError(e, this.t('message_resetFailed'))
         }
       })
     },
@@ -1391,7 +1394,7 @@ export default {
       let message = operateStr + '_confirm_message'
 
       const h = this.$createElement
-      let strArr = this.$t('dataFlow.' + message).split('xxx')
+      let strArr = this.t('dataFlow.' + message).split('xxx')
       let msg = h('p', null, [
         strArr[0],
         h(
@@ -1410,10 +1413,10 @@ export default {
       let failList = data?.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: this.$t('dataFlow.multiError.notFound'),
-          6: this.$t('dataFlow.multiError.statusError'),
-          7: this.$t('dataFlow.multiError.otherError'),
-          8: this.$t('dataFlow.multiError.statusError')
+          5: this.t('dataFlow_multiError_notFound'),
+          6: this.t('dataFlow_multiError_statusError'),
+          7: this.t('dataFlow_multiError_otherError'),
+          8: this.t('dataFlow_multiError_statusError')
         }
         let nameMapping = {}
         this.table.list.forEach(item => {
