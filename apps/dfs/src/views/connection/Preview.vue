@@ -303,7 +303,7 @@ export default {
       this.list = whiteList.includes(type) ? CONFIG_MODEL[type] : CONFIG_MODEL['default']
     },
     getOptionLabel(temp, connection) {
-      let findOne = temp.options.find(t => t.value = connection[temp.key])
+      let findOne = temp.options.find(t => t.value === connection[temp.key])
       return findOne?.label
     }
   }
