@@ -9,7 +9,7 @@
       aria-modal="true"
       :aria-label="title || 'dialog'"
     >
-      <div class="el-message-box" :class="[customClass, center && 'el-message-box--center']">
+      <div class="el-message-box" :class="[customClass, center && 'el-message-box--center']" :style="{ width }">
         <div class="el-message-box__header" v-if="title">
           <div class="el-message-box__title flex align-center">
             <VIcon v-if="icon" class="mr-3" :size="iconSize" :color="iconColor" :class="statusClass">{{ icon }}</VIcon>
@@ -94,6 +94,12 @@ export default {
   extends: MsgBox,
 
   components: { VIcon },
+
+  data() {
+    return {
+      width: null
+    }
+  },
 
   computed: {
     icon() {
