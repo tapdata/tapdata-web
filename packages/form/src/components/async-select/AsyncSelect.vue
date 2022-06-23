@@ -202,11 +202,14 @@ import { Select } from 'element-ui'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
 import { CancelToken } from '@tap/api'
+import Locale from '../../mixins/locale'
 
 export default {
   name: 'AsyncSelect',
 
   extends: Select,
+
+  mixins: [Locale],
 
   props: {
     method: {
