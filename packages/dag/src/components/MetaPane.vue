@@ -35,7 +35,7 @@
 
 <script>
 import { metadataInstancesApi } from '@tap/api'
-import FieldMapping from '@tap/field-mapping'
+import { FieldMapping } from '@tap/field-mapping'
 import { mapGetters, mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
 

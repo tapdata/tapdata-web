@@ -5,4 +5,4 @@
  */
 import FieldMapping from './V1/main'
 
-export default FieldMapping
+export { FieldMapping }
