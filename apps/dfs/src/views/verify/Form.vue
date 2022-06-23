@@ -352,7 +352,7 @@
 </style>
 <script>
 import i18n from '@/i18n'
-import AsyncSelect from '@tap/form/src/components/async-select'
+import { AsyncSelect } from '@tap/form'
 
 const TABLE_PARAMS = {
   connectionId: '',
