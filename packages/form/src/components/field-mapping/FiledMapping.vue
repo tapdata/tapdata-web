@@ -7,7 +7,7 @@
       :disabled="stateIsReadonly"
       @click.stop="dialogVisible = true"
     >
-      {{ $t('button_edit') }}
+      {{ t('button_edit') }}
     </ElLink>
     <List :isMetaData="true" :readOnly="true"></List>
     <Dialog v-if="dialogVisible" :visible.sync="dialogVisible"></Dialog>
@@ -17,9 +17,11 @@
 <script>
 import List from './List'
 import Dialog from './Dialog'
+import Locale from '../../mixins/locale'
 
 export default {
   name: 'FieldMapping',
+  mixins: [Locale],
   components: { List, Dialog },
   data() {
     return {

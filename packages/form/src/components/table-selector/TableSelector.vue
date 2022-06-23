@@ -10,7 +10,7 @@
             :indeterminate="!table.isCheckAll && table.checked.length > 0"
             @input="checkAll($event, 'table')"
           ></ElCheckbox>
-          <span class="ml-3">{{ $t('component_table_selector_candidate_label') }}</span>
+          <span class="ml-3">{{ t('component_table_selector_candidate_label') }}</span>
           <span v-if="table.tables.length" class="font-color-light ml-2"
             >({{ table.checked.length }}/{{ table.tables.length }})</span
           >
@@ -21,7 +21,7 @@
         </span>
         <ElLink v-else-if="!disabled" type="primary" :disabled="stateIsReadonly" @click="reload()">
           <div class="flex align-center">
-            <span>{{ $t('button_reload') }}</span>
+            <span>{{ t('button_reload') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
           </div>
         </ElLink>
@@ -34,7 +34,7 @@
             v-model="table.searchKeyword"
             clearable
             suffix-icon="el-icon-search"
-            :placeholder="$t('common_placeholder_search_input')"
+            :placeholder="t('common_placeholder_search_input')"
           ></ElInput>
         </div>
         <ElCheckboxGroup
@@ -55,7 +55,7 @@
           <ElEmpty
             :image-size="111"
             :image="require('@/assets/images/img_empty.png')"
-            :description="$t('component_table_selector_tables_empty') + '~'"
+            :description="t('component_table_selector_tables_empty') + '~'"
           ></ElEmpty>
         </div>
       </div>
@@ -95,15 +95,15 @@
             :indeterminate="!selected.isCheckAll && selected.checked.length > 0"
             @input="checkAll($event, 'selected')"
           ></ElCheckbox>
-          <span class="ml-3">{{ $t('component_table_selector_checked_label') }}</span>
+          <span class="ml-3">{{ t('component_table_selector_checked_label') }}</span>
           <span v-if="selected.tables.length && !isOpenClipMode" class="font-color-light ml-2"
             >({{ selected.checked.length }}/{{ selected.tables.length }})</span
           >
         </div>
         <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
           <div class="flex align-center">
-            <span v-if="!isOpenClipMode">{{ $t('component_table_selector_bulk_name') }}</span>
-            <span v-else>{{ $t('component_table_selector_bulk_pick') }}</span>
+            <span v-if="!isOpenClipMode">{{ t('component_table_selector_bulk_name') }}</span>
+            <span v-else>{{ t('component_table_selector_bulk_pick') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
           </div>
         </ElLink>
@@ -114,7 +114,7 @@
             v-model="selected.searchKeyword"
             clearable
             suffix-icon="el-icon-search"
-            :placeholder="$t('common_placeholder_search_input')"
+            :placeholder="t('common_placeholder_search_input')"
           ></ElInput>
         </div>
         <ElCheckboxGroup
@@ -145,7 +145,7 @@
           <ElEmpty
             :image-size="111"
             :image="require('@/assets/images/img_empty.png')"
-            :description="$t('component_table_selector_not_checked') + '~'"
+            :description="t('component_table_selector_not_checked') + '~'"
           ></ElEmpty>
         </div>
         <div v-if="isOpenClipMode" class="selector-clipboard h-100 flex flex-column">
@@ -172,7 +172,7 @@
               </ElTooltip>
             </template>
             <span v-else class="selector-clipboard__view--empty">{{
-              $t('component_table_selector_clipboard_placeholder')
+              t('component_table_selector_clipboard_placeholder')
             }}</span>
           </div>
           <ElInput
@@ -182,19 +182,19 @@
             class="selector-clipboard__textarea"
             type="textarea"
             resize="none"
-            :placeholder="$t('component_table_selector_clipboard_placeholder')"
+            :placeholder="t('component_table_selector_clipboard_placeholder')"
             @blur="isFocus = false"
           ></ElInput>
         </div>
       </div>
       <div class="selector-panel__footer">
         <div v-if="Object.keys(errorTables).length" class="selector-error flex align-center">
-          <span class="color-danger">*{{ $t('component_table_selector_error') }}</span>
-          <ElLink class="ml-2" type="primary" @click="autofix">{{ $t('component_table_selector_autofix') }}</ElLink>
+          <span class="color-danger">*{{ t('component_table_selector_error') }}</span>
+          <ElLink class="ml-2" type="primary" @click="autofix">{{ t('component_table_selector_autofix') }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
-          <!--          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>-->
-          <ElButton type="primary" @click="submitClipboard">{{ $t('button_confirm') }}</ElButton>
+          <!--          <ElButton @click="changeSeletedMode()">{{ t('button_cancel') }}</ElButton>-->
+          <ElButton type="primary" @click="submitClipboard">{{ t('button_confirm') }}</ElButton>
         </div>
       </div>
     </div>
@@ -346,8 +346,10 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import { metadataInstancesApi, connectionsApi } from '@tap/api'
+import Locale from '../../mixins/locale'
 
 export default {
+  mixins: [Locale],
   components: { RecycleScroller, OverflowTooltip },
   props: {
     connectionId: {
@@ -451,7 +453,7 @@ export default {
         this.$emit('input', this.selected.tables)
         this.$emit('change', this.selected.tables)
       } else {
-        this.$message.warning(this.$t('component_table_selector_not_checked'))
+        this.$message.warning(this.t('component_table_selector_not_checked'))
       }
     },
     remove() {
@@ -466,7 +468,7 @@ export default {
         this.$emit('input', this.selected.tables)
         this.$emit('change', this.selected.tables)
       } else {
-        this.$message.warning(this.$t('component_table_selector_not_checked'))
+        this.$message.warning(this.t('component_table_selector_not_checked'))
       }
     },
     autofix() {
@@ -486,7 +488,7 @@ export default {
       if (!this.loading) {
         tables.forEach(t => {
           if (!allTables.includes(t)) {
-            errorTables[t] = this.$t('component_table_selector_error_not_exit')
+            errorTables[t] = this.t('component_table_selector_error_not_exit')
           }
         })
       }
@@ -538,11 +540,11 @@ export default {
       const workerApi = new workerApi()
       const data = await workerApi.getAvailableAgent()
       if (!data?.result?.length) {
-        this.$message.error(this.$t('agent_check_error'))
+        this.$message.error(this.t('agent_check_error'))
       } else {
         let config = {
-          title: this.$t('connection_reload_schema_confirm_title'),
-          Message: this.$t('connection_reload_schema_confirm_msg')
+          title: this.t('connection_reload_schema_confirm_title'),
+          Message: this.t('connection_reload_schema_confirm_msg')
         }
         this.$confirm(config.Message + '?', config.title, {
           type: 'warning',
@@ -597,7 +599,7 @@ export default {
           }
         })
         .catch(() => {
-          // this.$message.error(this.$t('connection_reload_schema_fail'))
+          // this.$message.error(this.t('connection_reload_schema_fail'))
           this.showProgress = false
           this.progress = 0 //加载完成
         })
