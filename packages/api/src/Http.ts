@@ -14,11 +14,11 @@ export default class Http {
     return this.axios.get(this.url + '/count', { params })
   }
 
-  patch(params) {
+  patch(params: unknown) {
     return this.axios.patch(this.url, params)
   }
 
-  updateById(id, attributes) {
+  updateById(id: string, attributes: unknown) {
     return this.axios.patch(this.url + '/' + id, attributes)
   }
 
@@ -28,31 +28,42 @@ export default class Http {
    * @param attributes	An object of model property name/value pairs
    * @return {Promise<AxiosResponse<T>>}
    */
-  update(where, attributes) {
-    if (typeof where === 'object') where = JSON.stringify(where)
-
-    return this.axios.post(this.url + '/update?where=' + encodeURIComponent(where), attributes)
+  update(where: unknown, attributes: unknown) {
+    let queryStr = ''
+    if (typeof where === 'object') {
+      queryStr = JSON.stringify(where)
+    }
+    if (typeof where === 'string') {
+      queryStr = where
+    }
+    return this.axios.post(this.url + '/update?where=' + encodeURIComponent(queryStr), attributes)
   }
 
-  get(params, filter) {
+  get(params: unknown, filter: unknown) {
     if (Array.isArray(params)) {
+      let queryStr: string = ''
+      if (typeof filter === 'object') {
+        queryStr = JSON.stringify(filter)
+      } else if (typeof filter === 'string') {
+        queryStr = filter
+      }
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-      const qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+      const qs = queryStr ? '?filter=' + encodeURIComponent(queryStr) : ''
       return this.axios.get(this.url + '/' + params.join('/') + qs)
     }
     params = params || {}
     return this.axios.get(this.url, { params })
   }
 
-  delete(id) {
+  delete(id: string) {
     return this.axios.delete(`${this.url}/${id}`)
   }
 
-  post(params) {
+  post(params: unknown) {
     return this.axios.post(this.url, params)
   }
 
-  findOne(params) {
+  findOne(params: unknown) {
     params = params || {}
     return this.axios.get(this.url + '/findOne', { params })
   }

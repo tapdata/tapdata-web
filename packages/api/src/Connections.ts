@@ -4,45 +4,33 @@ export default class Connections extends Http {
   constructor() {
     super('/api/Connections')
   }
-  customQuery(id, params) {
+  customQuery(id: string, params: { [key: string]: unknown }) {
     let url = `${this.url}/${id}` + '/customQuery?'
     for (const item in params) {
       url += item + '=' + params[item] + '&'
     }
     return this.axios.get(url)
   }
-  copy(id, params) {
+  copy(id: string, params: unknown) {
     return this.axios.post(this.url + '/' + id + '/copy', params)
   }
-  deleteConnection(id, name) {
-    return this.axios.delete(`${this.url}/${id}?name=${name}`)
-  }
-  batchUpdateListtags(params) {
+  batchUpdateListtags(params: unknown) {
     return this.axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
-  check(id, params) {
+  check(id: string, params: unknown) {
     return this.axios.patch(`${this.url}/${id}`, params)
   }
-  patchId(params) {
-    const id = params._id || params.id
-    delete params._id
-    delete params.id
-    return this.axios.patch(`${this.url}/${id}`, params)
-  }
-  update(params) {
-    return this.axios.post(`${this.url}/update?where=` + encodeURIComponent(JSON.stringify({ _id: params.id })), params)
-  }
-  getNoSchema(id) {
+  getNoSchema(id: string) {
     const url = `${this.url}/${id}` + '?noSchema=1'
     return this.axios.get(url)
   }
   getAllowDatabaseType() {
     return this.axios.get(`${this.url}/databaseType`)
   }
-  findAll(filter) {
+  findAll(filter: unknown) {
     return this.axios.get(`${this.url}/findAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
   }
-  listAll(filter) {
+  listAll(filter: unknown) {
     return this.axios.get(`${this.url}/listAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
   }
 }

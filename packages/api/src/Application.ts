@@ -5,5 +5,4 @@ export default class Applications extends Http {
     super('/api/Applications')
   }
 }
-
 export { Applications }

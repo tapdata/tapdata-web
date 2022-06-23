@@ -9,7 +9,7 @@ export default class CustomNode extends Http {
    * @param id
    * @returns {Promise<AxiosResponse<any>>}
    */
-  checkUsed(id) {
+  checkUsed(id: string) {
     return this.axios.get(`${this.url}/checkUsed/${id}`)
   }
 }

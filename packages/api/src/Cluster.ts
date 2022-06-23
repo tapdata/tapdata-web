@@ -5,22 +5,22 @@ export class Cluster extends Http {
   constructor() {
     super('/api/clusterStates')
   }
-  updateStatus(params) {
+  updateStatus(params: unknown) {
     return this.axios.post(this.url + '/updataStatus', params)
   }
-  addMonitor(params) {
+  addMonitor(params: unknown) {
     return this.axios.post(this.url + '/addMonitor', params)
   }
-  removeMonitor(params) {
+  removeMonitor(params: unknown) {
     return this.axios.post(this.url + '/removeMonitor', params)
   }
-  editMonitor(params) {
+  editMonitor(params: unknown) {
     return this.axios.post(this.url + '/editMonitor', params)
   }
-  editAgent(id, params) {
+  editAgent(id: string, params: unknown) {
     return this.axios.patch(this.url + '/' + id, params)
   }
-  findAccessNodeInfo(params) {
+  findAccessNodeInfo(params: unknown) {
     return this.axios.get(this.url + '/findAccessNodeInfo', { params })
   }
 }
