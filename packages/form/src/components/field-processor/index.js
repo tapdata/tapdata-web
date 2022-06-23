@@ -4,13 +4,14 @@ import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import { uuid, handleOperation } from './util'
 import './fieldProessor.scss'
+import Locale from '../../mixins/locale'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldProcess = connect(
   observer(
     defineComponent({
       props: ['loading', 'options'],
-
+      mixins: [Locale],
       setup() {
         const formRef = useForm()
         const form = formRef.value
@@ -288,7 +289,7 @@ export const FieldProcess = connect(
               <ElForm>
                 <ElFormItem>
                   <ElInput
-                    placeholder="$t('editor.cell.processor.field.form.expression')"
+                    placeholder="t('editor_cell_processor_field_form_expression')"
                     v-model={this.scriptDialog.script}
                     size="mini"
                   >
@@ -348,7 +349,7 @@ export const FieldProcess = connect(
           //该字段若是已被删除 不可再重命名
           if (!data || data.field_name === '') {
             data.field_name = nativeData.field_name
-            this.$message.error(this.$t('message.exists_name'))
+            this.$message.error(this.t('message_exists_name'))
             return
           }
           let removes = this.operations.filter(v => v.id === data.id && v.op === 'REMOVE')
@@ -430,7 +431,7 @@ export const FieldProcess = connect(
           if (node && node.parent && node.parent.childNodes) {
             let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
             if (parentNode && parentNode.length === 2) {
-              this.$message.error(data.field_name + this.$t('message.exists_name'))
+              this.$message.error(data.field_name + this.t('message_exists_name'))
               exist = true
             }
           }
@@ -565,7 +566,7 @@ export const FieldProcess = connect(
             parentFieldName = this.getParentFieldName(node.parent)
             let parentNode = node.parent.childNodes.filter(v => v.data.field_name === 'newFieldName')
             if (parentNode && parentNode.length > 0) {
-              this.$message.error('newFieldName ' + this.$t('message.exists_name'))
+              this.$message.error('newFieldName ' + this.t('message_exists_name'))
               return
             }
           } else if (action === 'create_child') {
@@ -573,7 +574,7 @@ export const FieldProcess = connect(
             level++
             let parentNode = node.childNodes.filter(v => v.data.field_name === 'newFieldName')
             if (parentNode && parentNode.length > 0) {
-              this.$message.error('newFieldName ' + this.$t('message.exists_name'))
+              this.$message.error('newFieldName ' + this.t('message_exists_name'))
               return
             }
           }
