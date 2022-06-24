@@ -264,9 +264,7 @@ export default {
           this.logs.unshift(...list)
           this.$nextTick(() => {
             let itemEl = this.$refs.logs.querySelector(`li:nth-child(${list.length + 1})`)
-            if (itemEl) {
-              el.scrollTo(0, itemEl.offsetTop)
-            }
+            itemEl && el.scrollTo(0, itemEl.offsetTop)
           })
         })
         .finally(() => {
