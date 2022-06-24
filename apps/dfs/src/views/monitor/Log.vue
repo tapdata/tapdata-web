@@ -27,7 +27,7 @@
       <div v-show="logs && logs.length && noMore" class="font-color-sub text-center pb-4">
         {{ $t('monitor_Log_meiYouGengDuoLe') }}
       </div>
-      <ul v-if="logs">
+      <ul v-if="logs" class="position-relative">
         <li class="log-item px-6" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
           >&nbsp; [<span v-html="log.threadName"></span>]&nbsp; <span v-html="log.loggerName"></span>&nbsp;
@@ -260,12 +260,12 @@ export default {
             return
           }
           let el = this.$refs.logs
-          let itemEl = el.querySelector('li:nth-child(2)')
           list = list.map(this.formatLog)
           this.logs.unshift(...list)
           this.$nextTick(() => {
+            let itemEl = this.$refs.logs.querySelector(`li:nth-child(${list.length + 1})`)
             if (itemEl) {
-              el.scrollTo(0, itemEl.offsetTop - itemEl.clientHeight - 90)
+              el.scrollTo(0, itemEl.offsetTop)
             }
           })
         })
