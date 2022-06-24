@@ -291,9 +291,9 @@ export default {
         this.getMeasurement()
       })
     },
-    getTables() {
+    getTables(id) {
       this.tableDialogVisible = true
-      this.getTableNames()
+      this.getTableNames(id)
     },
     getMeasurement() {
       let params = {
@@ -469,12 +469,12 @@ export default {
       }
       return formatMs(val, 'time')
     },
-    getTableNames() {
+    getTableNames(callSubId) {
       let filter = {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize
       }
-      logcollectorApi.tableNames(this.detailData.id, filter).then(res => {
+      logcollectorApi.newTableNames(this.detailData.id, callSubId, filter).then(res => {
         this.tableNameList = res?.items
         this.tableNameTotal = res?.total
       })
