@@ -96,5 +96,8 @@ export default class MetadataInstances extends Http {
   findTablesById(id) {
     return this.axios.get(this.url + '/findTablesById/' + id)
   }
+  findInspect(data) {
+    return this.axios.post(this.url + '/findInspectPost', data)
+  }
 }
 export { MetadataInstances }
