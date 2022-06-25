@@ -87,7 +87,7 @@
           size="mini"
           label="MongoDB URI"
         >
-          <el-input v-model="digSettingForm.persistenceMongodb_uri_db"></el-input>
+          <el-input type="textarea" v-model="digSettingForm.persistenceMongodb_uri_db"></el-input>
         </el-form-item>
         <el-form-item
           v-if="digSettingForm.persistenceMode === 'MongoDB'"
@@ -103,7 +103,7 @@
           size="mini"
           :label="$t('setting_share_cdc_persistence_rocksdb_path')"
         >
-          <el-input v-model="digSettingForm.persistenceRocksdb_path"></el-input>
+          <el-input type="textarea" v-model="digSettingForm.persistenceRocksdb_path"></el-input>
         </el-form-item>
         <el-form-item
           v-if="['MongoDB', 'RocksDB'].includes(digSettingForm.persistenceMode)"
