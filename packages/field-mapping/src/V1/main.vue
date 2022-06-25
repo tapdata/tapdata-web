@@ -244,7 +244,7 @@ export default {
       }
       let promise = await taskApi.getMetadata(this.dataFlow)
       this.initWSSed() //发送ws 监听schema进度
-      return promise?.data
+      return promise
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
@@ -265,9 +265,9 @@ export default {
         }
       } //打开弹窗才能请求弹窗列表数据
       let source = await metadataInstancesApi.originalData(row.sourceQualifiedName)
-      source = source.data && source.data.length > 0 ? source.data[0].fields : []
+      source = source && source.length > 0 ? source[0].fields : []
       let target = await metadataInstancesApi.originalData(row.sinkQulifiedName, '&isTarget=true')
-      target = target.data && target.data.length > 0 ? target.data[0].fields : []
+      target = target && target.length > 0 ? target[0].fields : []
       // 初始化所有字段都映射 只取顶级字段
       //source = source.filter(field => field.field_name.indexOf('.') === -1)
       //映射关系
@@ -277,7 +277,7 @@ export default {
       source.forEach(item => {
         if (!sourceMapping[item.field_name]) {
           sourceMapping[item.field_name] = item
-        } else if (sourceMapping[item.field_name].is_deleted) {
+        } else if (sourceMapping[item.field_name]?.is_deleted) {
           sourceMapping[item.field_name] = item
         }
       })
@@ -285,7 +285,7 @@ export default {
       target.forEach(item => {
         if (!targetMapping[item.field_name]) {
           targetMapping[item.field_name] = item
-        } else if (targetMapping[item.field_name].is_deleted) {
+        } else if (targetMapping[item.field_name]?.is_deleted) {
           targetMapping[item.field_name] = item
         }
       })
@@ -297,7 +297,7 @@ export default {
           let target = targetMapping[item.targetFieldName]
           let node = {}
           if (!source) {
-            if (!target.is_delete) {
+            if (!target?.is_deleted) {
               node = {
                 id: '',
                 field_name: '',
@@ -311,7 +311,7 @@ export default {
                 t_scale: target.scale,
                 t_precision: target.precision,
                 t_default_value: target?.default_value || '',
-                is_deleted: target.is_deleted, //目标决定这个字段是被删除？
+                is_deleted: target?.is_deleted, //目标决定这个字段是被删除？
                 t_isPrecisionEdit: true, //默认能编辑
                 t_isScaleEdit: true //默认能编辑
               }
@@ -325,7 +325,7 @@ export default {
               t_scale: target.scale,
               t_precision: target.precision,
               t_default_value: target?.default_value || '',
-              is_deleted: target.is_deleted, //目标决定这个字段是被删除？
+              is_deleted: target?.is_deleted, //目标决定这个字段是被删除？
               t_isPrecisionEdit: true, //默认能编辑
               t_isScaleEdit: true //默认能编辑
             }
