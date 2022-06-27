@@ -162,15 +162,15 @@ export class TargetDatabase extends NodeType {
                         'x-decorator-props': {
                           wrapperWidth: 300
                         },
-                        default: 'existUpdateOrNotExistInsert',
+                        default: 'update_on_exists',
                         enum: [
                           {
                             label: '目标存在时更新，不存在时插入',
-                            value: 'existUpdateOrNotExistInsert'
+                            value: 'update_on_exists'
                           },
                           {
                             label: '目标存在时丢弃，不存在时插入',
-                            value: 'existDiscardOrNotExistInsert'
+                            value: 'ignore_on_exists'
                           }
                         ],
                         'x-decorator': 'FormItem'
@@ -199,15 +199,15 @@ export class TargetDatabase extends NodeType {
                         'x-decorator-props': {
                           wrapperWidth: 300
                         },
-                        default: 'existUpdateOrNotExistDiscard',
+                        default: 'ignore_on_nonexists',
                         enum: [
                           {
                             label: '目标存在时更新，不存在时丢弃',
-                            value: 'existUpdateOrNotExistDiscard'
+                            value: 'ignore_on_nonexists'
                           },
                           {
                             label: '目标存在时更新，不存在时插入',
-                            value: 'existUpdateOrNotExistInsert'
+                            value: 'insert_on_nonexists'
                           }
                         ],
                         'x-decorator': 'FormItem'
