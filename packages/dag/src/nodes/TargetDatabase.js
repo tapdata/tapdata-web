@@ -135,17 +135,17 @@ export class TargetDatabase extends NodeType {
                 required: true,
                 'x-component': 'Select'
               },
-              writeEvent: {
+              dmlPolicy: {
                 title: '数据写入策略',
-                type: 'void',
+                type: 'object',
                 'x-decorator': 'FormItem',
                 properties: {
                   grid1: {
                     type: 'void',
                     'x-component': 'Space',
                     properties: {
-                      checkMode: {
-                        type: 'array',
+                      insertEvent: {
+                        type: 'boolean',
                         'x-component': 'Checkbox.Group',
                         'x-decorator': 'FormItem',
                         default: true,
@@ -156,7 +156,7 @@ export class TargetDatabase extends NodeType {
                           }
                         ]
                       },
-                      insertEvent: {
+                      insertPolicy: {
                         type: 'string',
                         'x-component': 'Select',
                         'x-decorator-props': {
@@ -181,8 +181,8 @@ export class TargetDatabase extends NodeType {
                     type: 'void',
                     'x-component': 'Space',
                     properties: {
-                      checkMode: {
-                        type: 'array',
+                      updateEvent: {
+                        type: 'boolean',
                         'x-component': 'Checkbox.Group',
                         'x-decorator': 'FormItem',
                         default: true,
@@ -193,7 +193,7 @@ export class TargetDatabase extends NodeType {
                           }
                         ]
                       },
-                      updateEvent: {
+                      updatePolicy: {
                         type: 'string',
                         'x-component': 'Select',
                         'x-decorator-props': {
@@ -219,7 +219,7 @@ export class TargetDatabase extends NodeType {
                     'x-component': 'Space',
                     properties: {
                       deleteEvent: {
-                        type: 'array',
+                        type: 'boolean',
                         'x-component': 'Checkbox.Group',
                         'x-decorator': 'FormItem',
                         default: true,
@@ -230,8 +230,8 @@ export class TargetDatabase extends NodeType {
                           }
                         ]
                       },
-                      existDataProcess: {
-                        type: 'string',
+                      deletePolicy: {
+                        type: 'void',
                         'x-component': 'PreviewText.Input',
                         'x-component-props': {
                           content: '目标存在时删除，不存在时丢弃',
