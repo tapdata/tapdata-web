@@ -135,114 +135,114 @@ export class TargetDatabase extends NodeType {
                 required: true,
                 'x-component': 'Select'
               },
-              // writeEvent: {
-              //   title: '数据写入策略',
-              //   type: 'void',
-              //   'x-decorator': 'FormItem',
-              //   properties: {
-              //     grid1: {
-              //       type: 'void',
-              //       'x-component': 'Space',
-              //       properties: {
-              //         checkMode: {
-              //           type: 'array',
-              //           'x-component': 'Checkbox.Group',
-              //           'x-decorator': 'FormItem',
-              //           default: true,
-              //           enum: [
-              //             {
-              //               label: '插入事件',
-              //               value: true
-              //             }
-              //           ]
-              //         },
-              //         insertEvent: {
-              //           type: 'string',
-              //           'x-component': 'Select',
-              //           'x-decorator-props': {
-              //             wrapperWidth: 300
-              //           },
-              //           default: 'existUpdateOrNotExistInsert',
-              //           enum: [
-              //             {
-              //               label: '目标存在时更新，不存在时插入',
-              //               value: 'existUpdateOrNotExistInsert'
-              //             },
-              //             {
-              //               label: '目标存在时丢弃，不存在时插入',
-              //               value: 'existDiscardOrNotExistInsert'
-              //             }
-              //           ],
-              //           'x-decorator': 'FormItem'
-              //         }
-              //       }
-              //     },
-              //     grid2: {
-              //       type: 'void',
-              //       'x-component': 'Space',
-              //       properties: {
-              //         checkMode: {
-              //           type: 'array',
-              //           'x-component': 'Checkbox.Group',
-              //           'x-decorator': 'FormItem',
-              //           default: true,
-              //           enum: [
-              //             {
-              //               label: '更新事件',
-              //               value: true
-              //             }
-              //           ]
-              //         },
-              //         updateEvent: {
-              //           type: 'string',
-              //           'x-component': 'Select',
-              //           'x-decorator-props': {
-              //             wrapperWidth: 300
-              //           },
-              //           default: 'existUpdateOrNotExistDiscard',
-              //           enum: [
-              //             {
-              //               label: '目标存在时更新，不存在时丢弃',
-              //               value: 'existUpdateOrNotExistDiscard'
-              //             },
-              //             {
-              //               label: '目标存在时更新，不存在时插入',
-              //               value: 'existUpdateOrNotExistInsert'
-              //             }
-              //           ],
-              //           'x-decorator': 'FormItem'
-              //         }
-              //       }
-              //     },
-              //     grid3: {
-              //       type: 'void',
-              //       'x-component': 'Space',
-              //       properties: {
-              //         deleteEvent: {
-              //           type: 'array',
-              //           'x-component': 'Checkbox.Group',
-              //           'x-decorator': 'FormItem',
-              //           default: true,
-              //           enum: [
-              //             {
-              //               label: '删除事件',
-              //               value: true
-              //             }
-              //           ]
-              //         },
-              //         existDataProcess: {
-              //           type: 'string',
-              //           'x-component': 'PreviewText.Input',
-              //           'x-component-props': {
-              //             content: '目标存在时删除，不存在时丢弃',
-              //             wrapperWidth: 300
-              //           },
-              //           'x-decorator': 'FormItem'
-              //         }
-              //       }
-              //     }
-              //   }
-              // },
+              writeEvent: {
+                title: '数据写入策略',
+                type: 'void',
+                'x-decorator': 'FormItem',
+                properties: {
+                  grid1: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      checkMode: {
+                        type: 'array',
+                        'x-component': 'Checkbox.Group',
+                        'x-decorator': 'FormItem',
+                        default: true,
+                        enum: [
+                          {
+                            label: '插入事件',
+                            value: true
+                          }
+                        ]
+                      },
+                      insertEvent: {
+                        type: 'string',
+                        'x-component': 'Select',
+                        'x-decorator-props': {
+                          wrapperWidth: 300
+                        },
+                        default: 'existUpdateOrNotExistInsert',
+                        enum: [
+                          {
+                            label: '目标存在时更新，不存在时插入',
+                            value: 'existUpdateOrNotExistInsert'
+                          },
+                          {
+                            label: '目标存在时丢弃，不存在时插入',
+                            value: 'existDiscardOrNotExistInsert'
+                          }
+                        ],
+                        'x-decorator': 'FormItem'
+                      }
+                    }
+                  },
+                  grid2: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      checkMode: {
+                        type: 'array',
+                        'x-component': 'Checkbox.Group',
+                        'x-decorator': 'FormItem',
+                        default: true,
+                        enum: [
+                          {
+                            label: '更新事件',
+                            value: true
+                          }
+                        ]
+                      },
+                      updateEvent: {
+                        type: 'string',
+                        'x-component': 'Select',
+                        'x-decorator-props': {
+                          wrapperWidth: 300
+                        },
+                        default: 'existUpdateOrNotExistDiscard',
+                        enum: [
+                          {
+                            label: '目标存在时更新，不存在时丢弃',
+                            value: 'existUpdateOrNotExistDiscard'
+                          },
+                          {
+                            label: '目标存在时更新，不存在时插入',
+                            value: 'existUpdateOrNotExistInsert'
+                          }
+                        ],
+                        'x-decorator': 'FormItem'
+                      }
+                    }
+                  },
+                  grid3: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      deleteEvent: {
+                        type: 'array',
+                        'x-component': 'Checkbox.Group',
+                        'x-decorator': 'FormItem',
+                        default: true,
+                        enum: [
+                          {
+                            label: '删除事件',
+                            value: true
+                          }
+                        ]
+                      },
+                      existDataProcess: {
+                        type: 'string',
+                        'x-component': 'PreviewText.Input',
+                        'x-component-props': {
+                          content: '目标存在时删除，不存在时丢弃',
+                          wrapperWidth: 300
+                        },
+                        'x-decorator': 'FormItem'
+                      }
+                    }
+                  }
+                }
+              },
               writeThreadSize: {
                 title: '目标写入线程数',
                 type: 'number',
