@@ -665,7 +665,8 @@ export default {
 
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
-      if (!this.node) return
+      if (!this.node || form.values.id !== this.node.id) return
+
       const formValues = JSON.parse(JSON.stringify(form.values))
       // const formValues = { ...form.values }
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
@@ -700,7 +701,7 @@ export default {
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
         // eslint-disable-next-line no-console
-        console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values)))
+        console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
         this.updateNodeProps(form)
       })
       onFieldReact('*', field => {
