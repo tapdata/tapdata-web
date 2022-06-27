@@ -11,7 +11,7 @@ export const TableListCard = defineComponent({
     const loadData = () => {
       loading.value = true
       metadataInstancesApi
-        .getTables(props.connectionId)
+        .getSourceTables(props.connectionId)
         .then(data => {
           list.value = data
           emit('change', data)
