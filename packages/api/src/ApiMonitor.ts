@@ -7,15 +7,15 @@ export default class ApiMonitor extends Http {
   preview() {
     return this.axios.get(this.url + '/preview')
   }
-  rankLists(params) {
+  rankLists(params: unknown) {
     params = params || {}
     return this.axios.get(this.url + '/rankLists', { params })
   }
-  apiList(params) {
+  apiList(params: unknown) {
     params = params || {}
     return this.axios.get(this.url + '/apiList', { params })
   }
-  apiDetail(params) {
+  apiDetail(params: unknown) {
     return this.axios.post(this.url + '/apiDetail', params)
   }
   apiClientName() {

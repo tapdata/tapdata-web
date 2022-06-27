@@ -3399,7 +3399,8 @@ const tc = {
     done: '完成',
     querySearch: '輸入表名關鍵字查詢',
     progressInfo: '進度詳情'
-  }
+  },
+  connection_selector_desc: '開發中'
 }
 
 export default Object.assign({}, tc, newTc)

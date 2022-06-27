@@ -15,6 +15,17 @@
             <div class="content">{{ item.name }}</div>
           </ElTooltip>
         </li>
+        <li v-for="item in comingTypes" :key="item.type" class="item--disabled">
+          <div class="img-box position-relative">
+            <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
+            <div class="img-box__mask position-absolute">
+              <span class="mask-text">{{ item.desc }}</span>
+            </div>
+          </div>
+          <ElTooltip class="item" effect="dark" :content="item.name" placement="bottom">
+            <div class="content">{{ item.name }}</div>
+          </ElTooltip>
+        </li>
       </ul>
     </template>
   </div>
@@ -32,19 +43,7 @@ export default {
         return []
       }
     },
-    comingTypes: {
-      value: Array,
-      default: () => {
-        return []
-      }
-    },
     otherTypes: {
-      value: Array,
-      default: () => {
-        return []
-      }
-    },
-    automationType: {
       value: Array,
       default: () => {
         return []
@@ -61,8 +60,43 @@ export default {
     }
   },
   data() {
+    const $t = this.$t.bind(this)
     return {
-      type: 'sourcedata'
+      type: 'sourcedata',
+      comingTypes: [
+        // { name: 'Elasticsearch', type: 'elasticsearch', desc: $t('connection_selector_desc') },
+        // { name: 'Redis', type: 'redis', desc: $t('connection_selector_desc') },
+        // { name: 'PostgreSQL', type: 'postgres', desc: $t('connection_selector_desc') },
+        // { name: 'SQL Server', type: 'sqlserver', desc: $t('connection_selector_desc') },
+        // { name: 'GBase 8s', type: 'gbase-8s', desc: $t('connection_selector_desc') },
+        // { name: 'Sybase ASE', type: 'sybase ase', desc: $t('connection_selector_desc') },
+        // { name: 'GaussDB200', type: 'gaussdb200', desc: $t('connection_selector_desc') },
+        // { name: 'IBM Db2', type: 'db2', desc: $t('connection_selector_desc') },
+        // { name: 'Memory Cache', type: 'mem_cache', desc: $t('connection_selector_desc') },
+        // { name: 'File(s)', type: 'file', desc: $t('connection_selector_desc') },
+        // { name: 'Custom connection', type: 'custom_connection', desc: $t('connection_selector_desc') },
+        // { name: 'REST API', type: 'rest api', desc: $t('connection_selector_desc') },
+        // { name: 'Dummy DB', type: 'dummy db', desc: $t('connection_selector_desc') },
+        // { name: 'GridFS', type: 'gridfs', desc: $t('connection_selector_desc') },
+        // { name: 'Kafka', type: 'kafka', desc: $t('connection_selector_desc') },
+        // { name: 'MariaDB', type: 'mariadb', desc: $t('connection_selector_desc') },
+        // { name: 'MySQL PXC', type: 'mysql pxc', desc: $t('connection_selector_desc') },
+        // { name: 'jira', type: 'jira', desc: $t('connection_selector_desc') },
+        // { name: 'DM DB', type: 'dameng', desc: $t('connection_selector_desc') },
+        // { name: 'Hive', type: 'hive', desc: $t('connection_selector_desc') },
+        // { name: 'TCP/IP', type: 'tcp_udp', desc: $t('connection_selector_desc') },
+        // { name: 'MQ', type: 'mq', desc: $t('connection_selector_desc') },
+        // { name: 'HBase', type: 'hbase', desc: $t('connection_selector_desc') },
+        // { name: 'KUDU', type: 'kudu', desc: $t('connection_selector_desc') },
+        // { name: 'Greenplum', type: 'greenplum', desc: $t('connection_selector_desc') },
+        // { name: 'TiDB', type: 'tidb', desc: $t('connection_selector_desc') },
+        // { name: 'SAP HANA', type: 'hana', desc: $t('connection_selector_desc') },
+        // { name: 'ClickHouse', type: 'clickhouse', desc: $t('connection_selector_desc') },
+        // { name: 'KunDB', type: 'kundb', desc: $t('connection_selector_desc') },
+        // { name: 'ADB MySQL', type: 'adb_mysql', desc: $t('connection_selector_desc') },
+        // { name: 'ADB PostgreSQL', type: 'adb_postgres', desc: $t('connection_selector_desc') },
+        // { name: 'Hazelcast Cloud', type: 'hazelcast_cloud_cluster', desc: $t('connection_selector_desc') }
+      ]
     }
   },
   methods: {
@@ -93,6 +127,14 @@ export default {
       margin-bottom: 32px;
       text-align: center;
     }
+    .item--disabled {
+      .img-box {
+        cursor: default;
+        &:hover {
+          background: #fafafa;
+        }
+      }
+    }
     .img-box {
       width: 78px;
       height: 78px;
@@ -107,7 +149,7 @@ export default {
         background: rgba(0, 0, 0, 0.3);
       }
       .img-box__mask {
-        width: 65px;
+        width: 75px;
         height: 20px;
         top: 5px;
         right: -20px;

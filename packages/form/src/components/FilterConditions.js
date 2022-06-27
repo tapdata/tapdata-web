@@ -3,11 +3,12 @@ import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import { Space } from './space'
 import VIcon from 'web-core/components/VIcon'
+import Locale from '../mixins/locale'
 
 const Conditions = observer(
   defineComponent({
     props: ['conditions', 'options', 'databaseType'],
-
+    mixins: [Locale],
     data() {
       return {
         calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like']
@@ -217,7 +218,7 @@ export const FilterConditions = connect(
       },
 
       render() {
-        const $t = this.$t.bind(this)
+        const t = this.t.bind(this)
         const { conditions } = this
 
         let btns
@@ -239,10 +240,10 @@ export const FilterConditions = connect(
           btns = !conditions.length
             ? [
                 <el-button plain size="mini" icon="el-icon-plus" onClick={() => this.addCond('cond')}>
-                  {$t('queryBuilder.addCond')}
+                  {t('queryBuilder_addCond')}
                 </el-button>,
                 <el-button plain size="mini" icon="el-icon-plus" onClick={() => this.addCond('group')}>
-                  ({$t('queryBuilder.addCond')})
+                  ({t('queryBuilder_addCond')})
                 </el-button>
               ]
             : [

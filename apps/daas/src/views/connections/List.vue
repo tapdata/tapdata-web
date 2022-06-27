@@ -436,7 +436,7 @@ export default {
           return
         }
         connectionsApi
-          .deleteConnection(data.id, data.name)
+          .delete(data.id)
           .then(res => {
             let jobs = res.jobs || []
             let modules = res.modules || []
@@ -464,7 +464,6 @@ export default {
             // } else {
             //   this.$message.error(msg || this.$t('connection.deleteFail'))
             // }
-            resFlag.closeLoading()
           })
       })
     },

@@ -36,10 +36,11 @@ import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
 import { measurementApi, subtaskApi } from '@tap/api'
+import ShareMining from '../../etl/statistics/ShareMining'
 
 export default {
   name: 'Index',
-  components: { Info, Schedule, Log, Connection, History },
+  components: { Info, Schedule, Log, Connection, History, ShareMining },
   data() {
     return {
       timer: null,

@@ -3,8 +3,11 @@ import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
 import { merge } from 'lodash'
+import Locale from './locale'
 
 export default {
+  mixins: [Locale],
+
   data() {
     return {
       scope: {
@@ -149,7 +152,7 @@ export default {
               return {
                 id: item.id,
                 name: item.name,
-                label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
+                label: `${item.name} (${this.t('connection.status.' + item.status) || item.status})`,
                 value: item.id,
                 databaseType: item.database_type,
                 connectionType: item.connection_type
@@ -246,7 +249,7 @@ export default {
               return {
                 id: item.id,
                 name: item.name,
-                label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
+                label: `${item.name} (${this.t('connection.status.' + item.status) || item.status})`,
                 value: item.id,
                 databaseType: item.database_type,
                 connectionType: item.connection_type,
@@ -380,22 +383,22 @@ export default {
         loadWriteModelOptions: field => {
           const options = [
             {
-              label: this.$t('editor.cell.link.writeMode.append'),
+              label: this.t('editor_cell_link_writeMode_append'),
               value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
             },
             {
-              label: this.$t('editor.cell.link.writeMode.upsert'),
+              label: this.t('editor_cell_link_writeMode_upsert'),
               value: 'upsert' // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
             },
             {
-              label: this.$t('editor.cell.link.writeMode.update'),
+              label: this.t('editor_cell_link_writeMode_update'),
               value: 'update' // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
             }
           ]
           if (field.form.values.type !== 'table') {
             // SupportEmbedArray
             options.push({
-              label: this.$t('editor.cell.link.writeMode.merge_embed'),
+              label: this.t('editor_cell_link_writeMode_merge_embed'),
               value: 'merge_embed' // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
             })
           }

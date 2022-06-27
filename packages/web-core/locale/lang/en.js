@@ -3479,7 +3479,8 @@ const en = {
     done: 'Done',
     querySearch: 'Enter table name keyword query',
     progressInfo: 'Progress Details'
-  }
+  },
+  connection_selector_desc: 'Developing'
 }
 
 export default Object.assign({}, en, newEn)

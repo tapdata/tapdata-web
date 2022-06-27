@@ -13,6 +13,6 @@ import Group from './group.vue'
 import Nest from './nest.vue'
 
 const install = function (Vue) {
-  ;[Form, Input, Select, Radio, Switch, File, _Array, Group, Nest].map(c => Vue.component(c.name, c))
+  return [Form, Input, Select, Radio, Switch, File, _Array, Group, Nest].map(c => Vue.component(c.name, c))
 }
 export default { install }

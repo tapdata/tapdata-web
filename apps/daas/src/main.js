@@ -67,7 +67,9 @@ Vue.prototype.$confirm = (message, title, options) => {
       .catch(() => {
         reject(false)
       })
-  }).catch(() => {})
+  }).catch(() => {
+    return false
+  })
 }
 
 let token = Cookie.get('token')

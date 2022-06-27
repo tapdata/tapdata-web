@@ -7,17 +7,19 @@
     :height="height - 24"
     :options="_options"
     @init="init"
-    @input="$emit('input', $event)"
+    v-on="$listeners"
   ></VCodeEditor>
 </template>
 
 <script>
 import VCodeEditor from './base/VCodeEditor.vue'
 import { functionApi } from '@tap/api'
+import Locale from './mixins/locale'
 
 export default {
   name: 'JsEditor',
   components: { VCodeEditor },
+  mixins: [Locale],
   props: {
     value: String,
     theme: String,
@@ -68,9 +70,9 @@ export default {
       this.editor = editor
       this.beautify = beautify
       let typeMapping = {
-        custom: this.$t('function_type_option_custom'),
-        jar: this.$t('function_type_option_jar'),
-        system: this.$t('function_type_option_system')
+        custom: this.t('function_type_option_custom'),
+        jar: this.t('function_type_option_jar'),
+        system: this.t('function_type_option_system')
       }
       functionApi
         .get({

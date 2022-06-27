@@ -3469,7 +3469,8 @@ const cn = {
     done: '完成',
     querySearch: '输入表名关键字查询',
     progressInfo: '进度详情'
-  }
+  },
+  connection_selector_desc: '开发中'
 }
 
 export default Object.assign({}, cn, newCn)

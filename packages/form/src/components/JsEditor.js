@@ -13,23 +13,11 @@ export const JsEditor = {
     }
   },
 
-  data() {
-    return {
-      sql: this.value
-    }
-  },
-
-  watch: {
-    value(v) {
-      this.sql = v
-    }
-  },
-
   methods: {
-    onInput(v) {
-      this.sql = v
-      this.$emit('input', v)
-      this.$emit('change', v)
+    onBlur(val) {
+      if (val !== this.value) {
+        this.$emit('change', val)
+      }
     }
   },
 
@@ -42,10 +30,10 @@ export const JsEditor = {
     return (
       <_JsEditor
         class="border rounded-2"
-        value={this.sql}
+        value={this.value}
         lang="javascript"
         height={this.height}
-        onInput={this.onInput}
+        onBlur={this.onBlur}
         options={options}
       />
     )

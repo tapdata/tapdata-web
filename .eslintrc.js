@@ -3,7 +3,7 @@ module.exports = {
   env: {
     node: true
   },
-  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
+  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/typescript/recommended', '@vue/prettier'],
   parserOptions: {
     parser: 'babel-eslint'
   },
@@ -13,6 +13,15 @@ module.exports = {
 
     'no-prototype-builtins': 'off',
     'getter-return': 'off',
+
+    '@typescript-eslint/no-this-alias': 'off', // 不允许给this设置别名，例如 let self = this
+
+    'prefer-const': [
+      'off', // 使用const代替let,暂时关闭
+      {
+        ignoreReadBeforeAssign: true //https://eslint.bootcss.com/docs/rules/prefer-const
+      }
+    ],
 
     'prettier/prettier': [
       'error',

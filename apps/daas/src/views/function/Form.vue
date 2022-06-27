@@ -175,7 +175,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
-            let params = {}
+            let format = this.form.format
+            let params = {
+              format
+            }
             let method = 'post'
             let id = this.$route.params.id
             if (this.form.type === 'custom') {
@@ -183,7 +186,8 @@ export default {
               params = {
                 function_body: `{${obj.body}}`,
                 function_name: obj.name,
-                parameters: obj.params
+                parameters: obj.params,
+                format
               }
             }
             if (id) {

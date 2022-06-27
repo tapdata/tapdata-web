@@ -534,9 +534,9 @@ export default {
       return metadataInstancesApi
         .findTablesById([id])
         .then(res => {
-          let data = res.data
-          data.createTimeFmt = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
-          data.lastUpdatedFmt = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
+          let data = res
+          data.createTimeFmt = dayjs(data.createTime || data.createAt).format('YYYY-MM-DD HH:mm:ss')
+          data.lastUpdatedFmt = dayjs(data.last_updated || data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')
           this.metadataDataObj = data
           this.pageTotal = data.fields?.length || 0
           this.setCurrentPageData(this.metadataDataObj.fields || [])
@@ -616,7 +616,7 @@ export default {
           fields: fields,
           relation: relation
         }
-        metadataInstancesApi.patch(this.metadataDataObj.id, params).then(() => {
+        metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
           this.$message.success(this.$t('message.deleteOK'))
         })
@@ -680,7 +680,7 @@ export default {
         let params = {
           custom_properties: this.metadataDataObj.custom_properties
         }
-        metadataInstancesApi.patch(this.metadataDataObj.id, params).then(() => {
+        metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
           this.$message.success(this.$t('metadata.details.success_Release'))
         })

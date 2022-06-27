@@ -44,7 +44,6 @@ export const SqlEditor = {
         class="border rounded-2"
         value={this.sql}
         lang="sql"
-        theme="sqlserver"
         height={this.height}
         onInput={this.onInput}
         options={options}

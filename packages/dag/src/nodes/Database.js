@@ -100,7 +100,14 @@ export class Database extends NodeType {
           min: 1,
           max: 100000
         },
-        default: 100
+        default: 100,
+        'x-reactions': {
+          fulfill: {
+            state: {
+              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+            }
+          }
+        }
       },
 
       'attrs.howManyTable': {

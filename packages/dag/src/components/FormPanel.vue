@@ -9,6 +9,7 @@ import { Path } from '@formily/path'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import { debounce } from 'lodash'
 import FormRender from './FormRender'
+import Locale from '../mixins/locale'
 
 const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
@@ -27,6 +28,8 @@ export default {
   },
 
   components: { FormRender },
+
+  mixins: [Locale],
 
   data() {
     return {
@@ -239,18 +242,18 @@ export default {
             },
             properties: {
               flowEngineVersion: {
-                title: this.$t('dataFlow.flowEngineVersion'),
+                title: this.t('dataFlow_flowEngineVersion'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 default: 'Data_Flow_Engine_V1',
                 enum: [
                   {
-                    label: this.$t('dataFlow.flowEngineV1'),
+                    label: this.t('dataFlow_flowEngineV1'),
                     value: 'Data_Flow_Engine_V1'
                   },
                   {
-                    label: this.$t('dataFlow.jetFlowEngineV2'),
+                    label: this.t('dataFlow_jetFlowEngineV2'),
                     value: 'Jet_Flow_Engine_V2'
                   }
                 ]
@@ -350,11 +353,11 @@ export default {
                 'x-component': 'Select',
                 enum: [
                   {
-                    label: this.$t('dataFlow.setting.intellect'),
+                    label: this.t('dataFlow_setting_intellect'),
                     value: 'intellect'
                   },
                   {
-                    label: this.$t('dataFlow.setting.compel'),
+                    label: this.t('dataFlow_setting_compel'),
                     value: 'compel'
                   }
                 ]
@@ -566,15 +569,15 @@ export default {
                             },
                             enum: [
                               {
-                                label: this.$t('dataFlow.SyncInfo.localTZType'),
+                                label: this.t('dataFlow_SyncInfo_localTZType'),
                                 value: 'localTZ'
                               },
                               {
-                                label: this.$t('dataFlow.SyncInfo.connTZType'),
+                                label: this.t('dataFlow_SyncInfo_connTZType'),
                                 value: 'connTZ'
                               },
                               {
-                                label: this.$t('dataFlow.SyncInfo.currentType'),
+                                label: this.t('dataFlow_SyncInfo_currentType'),
                                 value: 'current'
                               }
                             ]
@@ -690,7 +693,10 @@ export default {
         console.trace(JSON.parse(JSON.stringify(form.values)))
         // eslint-disable-next-line no-console
         console.groupEnd()
-        this.updateNodeProps(form)
+        if (this.node && JSON.stringify(form.values) !== JSON.stringify(this.node)) {
+          console.log('onFormValuesChange---doUpdate', JSON.stringify(form.values), JSON.stringify(this.node)) // eslint-disable-line
+          this.updateNodeProps(form)
+        }
       })
       onFormInputChange(form => {
         if (this.stateIsReadonly) return

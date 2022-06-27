@@ -325,13 +325,15 @@ export default {
           }
           this.saveSetting(digSettingForm)
         }
+        let promise = null
         if (id) {
           params.id = id
-        }
-        if (!params.id) {
+          promise = connectionsApi.updateById(id, params)
+        } else {
           params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
+          promise = connectionsApi.post(params)
         }
-        connectionsApi[params.id ? 'patchId' : 'post'](params)
+        promise
           .then(() => {
             this.$message.success(this.$t('message.saveOK'))
             if (this.$route.query.step) {
@@ -412,6 +414,12 @@ export default {
             .then(() => {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
+              let { name } = this.model
+              this.schemaFormInstance.setValues({
+                __TAPDATA_START: {
+                  name
+                }
+              })
               this.$refs['renameForm'].clearValidate()
               this.$message.success(this.$t('message_save_ok'))
               this.dialogEditNameVisible = false
@@ -557,7 +565,7 @@ export default {
     getPdkDoc() {
       const { pdkHash } = this.$route.query || {}
       pdkApi.doc(pdkHash).then(res => {
-        this.doc = res?.data
+        this.doc = res
       })
     }
   }
