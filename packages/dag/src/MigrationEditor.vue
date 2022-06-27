@@ -225,7 +225,7 @@ export default {
       this.addProcessorNode([
         {
           name: '表编辑',
-          type: 'table_processor'
+          type: 'table_rename_processor'
         }
       ])
       this.addResourceIns(allResourceIns)

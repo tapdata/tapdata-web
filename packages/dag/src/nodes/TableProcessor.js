@@ -5,7 +5,7 @@ export class TableProcessor extends NodeType {
     super()
   }
 
-  type = 'table_processor'
+  type = 'table_rename_processor'
 
   maxInputs = 1 // 最大输入个数
 
@@ -18,7 +18,7 @@ export class TableProcessor extends NodeType {
         type: 'array',
         display: 'none'
       },
-      tableNameMap: {
+      tableNames: {
         type: 'object',
         'x-component': 'TableRename',
         'x-component-props': {
