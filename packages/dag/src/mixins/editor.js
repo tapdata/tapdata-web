@@ -921,7 +921,7 @@ export default {
 
     async validateNode(node) {
       try {
-        await validateBySchema(node.__Ctor.formSchema, node, this.scope)
+        await validateBySchema(node.__Ctor.formSchema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (e) {
         // eslint-disable-next-line no-console
