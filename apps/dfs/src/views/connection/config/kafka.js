@@ -63,6 +63,123 @@ export default function (vm) {
         required: true
       },
       {
+        type: 'switch',
+        field: 'krb5',
+        label: vm.$t('dataForm_form_kafka_kerberos_attest'),
+        show: true,
+        tip: vm.$t('dataForm_form_kafka_kerberos_tip')
+      },
+      {
+        type: 'file',
+        field: 'krb5Keytab',
+        fileNameField: 'krb5KeytabName',
+        accept: '.keytab',
+        maxFileSize: 128,
+        base64: true,
+        label: vm.$t('dataForm_form_kafka_kerberos_config_keytab'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ],
+        rules: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error(vm.$t('dataForm_form_kafka_kerberos_none_keytab')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
+      },
+      {
+        type: 'file',
+        field: 'krb5Conf',
+        fileNameField: 'krb5ConfName',
+        accept: '.conf',
+        maxFileSize: 128,
+        base64: true,
+        label: vm.$t('dataForm_form_kafka_kerberos_config_conf'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ],
+        rules: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error(vm.$t('dataForm_form_kafka_kerberos_none_conf')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
+      },
+      {
+        type: 'input', //主体配置
+        field: 'krb5Principal',
+        label: vm.$t('dataForm_form_kafka_kerberos_body_config'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true,
+              required: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input', //服务名
+        field: 'krb5ServiceName',
+        label: vm.$t('dataForm_form_kafka_kerberos_service_name'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true,
+              required: true
+            }
+          }
+        ]
+      },
+      {
         type: 'input',
         field: 'database_username',
         label: vm.$t('dataForm_form_userName'),
@@ -88,6 +205,39 @@ export default function (vm) {
         domType: 'password',
         showPassword: true,
         show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'krb5',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
+      },
+      {
+        type: 'select', //加密方式
+        field: 'kafkaSaslMechanism',
+        label: vm.$t('dataForm_form_kafka_encryption'),
+        show: true,
+        options: [
+          {
+            label: 'PLAIN',
+            value: 'PLAIN'
+          },
+          {
+            label: 'SHA256',
+            value: 'SHA256'
+          },
+          {
+            label: 'SHA512',
+            value: 'SHA512'
+          }
+        ],
         dependOn: [
           {
             triggerOptions: [

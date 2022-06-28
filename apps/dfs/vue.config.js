@@ -55,6 +55,8 @@ module.exports = {
     }
   },
   configureWebpack: config => {
+    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
+
     if (process.env.NODE_ENV === 'production') {
       // gzip
       config.plugins.push(
@@ -161,6 +163,14 @@ module.exports = {
 
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
     config.plugins.delete('prefetch-index')
+
+    // ============ ts处理 ============
+    config.module
+      .rule('compile')
+      .test(/\.(jsx|tsx|ts)$/)
+      .use('babel')
+      .loader('babel-loader')
+      .end()
   },
   css: {
     loaderOptions: {

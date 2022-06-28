@@ -54,8 +54,8 @@
         <div v-if="!filteredData.length" class="flex-1 flex flex-column justify-center">
           <ElEmpty
             :image-size="111"
-            :image="require('@/assets/images/img_empty.png')"
-            :description="t('component_table_selector_tables_empty') + '~'"
+            :image="require('@tap/assets/images/img_empty.png')"
+            :description="$t('component_table_selector_tables_empty') + '~'"
           ></ElEmpty>
         </div>
       </div>
@@ -144,8 +144,8 @@
         <div v-if="!isOpenClipMode && !filterSelectedData.length" class="flex-1 flex flex-column justify-center">
           <ElEmpty
             :image-size="111"
-            :image="require('@/assets/images/img_empty.png')"
-            :description="t('component_table_selector_not_checked') + '~'"
+            :image="require('@tap/assets/images/img_empty.png')"
+            :description="$t('component_table_selector_not_checked') + '~'"
           ></ElEmpty>
         </div>
         <div v-if="isOpenClipMode" class="selector-clipboard h-100 flex flex-column">
