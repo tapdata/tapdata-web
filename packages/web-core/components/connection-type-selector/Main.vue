@@ -69,7 +69,7 @@ export default {
     }
   },
   data() {
-    const $t = this.$t.bind(this)
+    // const $t = this.$t.bind(this)
     return {
       type: 'sourcedata',
       comingDesc1: $t('connection_selector_desc1'),

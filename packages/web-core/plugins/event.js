@@ -136,7 +136,7 @@ export default class EventEmitter {
    *
    * @return {this}
    */
-  on(eventName, callback, context = null, weight = 1) {
+  on(eventName, callback) {
     /* eslint no-unused-vars: 0 */
     const self = internal(this)
 

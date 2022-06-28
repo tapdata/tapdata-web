@@ -42,12 +42,12 @@ export class EventDriver {
   }
 
   // eslint-disable-next-line no-unused-vars
-  attach(container) {
+  attach() {
     // eslint-disable-next-line
     console.error('attach must implement.')
   }
   // eslint-disable-next-line no-unused-vars
-  detach(container) {
+  detach() {
     // eslint-disable-next-line
     console.error('attach must implement.')
   }

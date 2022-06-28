@@ -572,9 +572,9 @@ export default {
         }
       }
       modulesApi.get({ filter: JSON.stringify(filter) }).then(res => {
-        if (res?.data?.length) {
+        if (res?.items?.length) {
           let field_alias = {}
-          res.data[0].fields.forEach(v => {
+          res.items[0].fields.forEach(v => {
             field_alias[v.field_name] = v.field_alias || ''
           })
           _this.enableTag = _this.enableEdit && field_alias.hasOwnProperty('__tapd8')
@@ -610,9 +610,9 @@ export default {
       })
       this.condition = condition
       this.table.fetch()
-      usersApi.get().then(res => {
-        if (res?.data) {
-          let arrquery = res.data.arrquery
+      usersApi.get().then(data => {
+        if (data) {
+          let arrquery = data.arrquery
           let isproid = 0
           if (arrquery === undefined || arrquery === 'undefined') {
             usersApi.patch({ arrquery: [parmas] })
@@ -956,8 +956,8 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res?.data?.items?.length) {
-            let record = res.data?.items?.[0] || {}
+          if (res?.items?.length) {
+            let record = res?.items[0] || {}
             let workerStatus = record.workerStatus || record.worker_status || {}
             if (_this.status !== workerStatus.status) {
               _this.status = workerStatus.status
@@ -1000,10 +1000,9 @@ export default {
       // 获取字段
       if (_this.apiId) {
         await modulesApi.getdata({ mondeid: _this.apiId }).then(res => {
-          if (res?.data?.fields?.length) {
-            fields = res.data.fields
+          if (res.fields?.length) {
             let obj = {}
-            res.data.fields.forEach(v => {
+            res.fields.forEach(v => {
               if (v.alias_name) {
                 obj[v.field_name] = v.alias_name
               }

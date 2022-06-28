@@ -49,7 +49,15 @@ export const DEFAULT_MODEL = {
     kafkaIgnoreInvalidRecord: false,
     kafkaAcks: '',
     kafkaCompressionType: '',
-    kafkaIgnorePushError: false
+    kafkaIgnorePushError: false,
+    krb5: false,
+    krb5Keytab: '',
+    krb5Conf: '',
+    krb5KeytabName: '',
+    krb5ConfName: '',
+    krb5Principal: '',
+    krb5ServiceName: '',
+    kafkaSaslMechanism: 'PLAIN'
   },
   file: {
     name: '',
@@ -326,7 +334,13 @@ export const CONFIG_MODEL = {
         },
         {
           label: i18n.t('connection_form_kafka_ack'),
-          key: 'kafkaAcks'
+          key: 'kafkaAcks',
+          options: [
+            { label: i18n.t('dataForm_form_kafka_kafkaAcks0'), value: '0' },
+            { label: i18n.t('dataForm_form_kafka_kafkaAcks1'), value: '1' },
+            { label: i18n.t('dataForm_form_kafka_kafkaAcks_1'), value: '-1' },
+            { label: i18n.t('dataForm_form_kafka_kafkaAcksAll'), value: 'all' }
+          ]
         },
         {
           label: i18n.t('connection_form_kafka_compression_type'),
