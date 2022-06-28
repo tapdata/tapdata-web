@@ -172,9 +172,9 @@ export const TableRename = observer(
 
           <FormItem.BaseItem label="替换">
             <div class="flex">
-              <ElInput v-model={this.config.replaceBefore} prefixIcon="el-icon-search"></ElInput>
+              <ElInput v-model={this.config.replaceBefore} prefixIcon="el-icon-search" clearable />
               <div class="px-4 text-nowrap">改为</div>
-              <ElInput v-model={this.config.replaceAfter} prefixIcon="el-icon-search"></ElInput>
+              <ElInput v-model={this.config.replaceAfter} prefixIcon="el-icon-search" clearable />
             </div>
           </FormItem.BaseItem>
 
@@ -182,14 +182,14 @@ export const TableRename = observer(
             label="前缀"
             tooltip="以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符，前缀不允许以 system 开头"
           >
-            <ElInput v-model={this.config.prefix}></ElInput>
+            <ElInput v-model={this.config.prefix} clearable />
           </FormItem.BaseItem>
 
           <FormItem.BaseItem
             label="后缀"
             tooltip="以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符"
           >
-            <ElInput v-model={this.config.suffix}></ElInput>
+            <ElInput v-model={this.config.suffix} clearable />
           </FormItem.BaseItem>
 
           <FormItem.BaseItem label="大小写">
