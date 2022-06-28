@@ -69,11 +69,10 @@ export default {
     }
   },
   data() {
-    // const $t = this.$t.bind(this)
     return {
       type: 'sourcedata',
-      comingDesc1: $t('connection_selector_desc1'),
-      comingDesc2: $t('connection_selector_desc2'),
+      comingDesc1: this.$t('connection_selector_desc1'),
+      comingDesc2: this.$t('connection_selector_desc2'),
       comingTypes: [
         { name: 'Oracle', type: 'oracle' },
         { name: 'Elasticsearch', type: 'elasticsearch' },
