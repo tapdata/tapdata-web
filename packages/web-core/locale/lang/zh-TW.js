@@ -3400,7 +3400,8 @@ const tc = {
     querySearch: '輸入表名關鍵字查詢',
     progressInfo: '進度詳情'
   },
-  connection_selector_desc: '開發中'
+  connection_selector_desc1: '試用版暫不支持',
+  connection_selector_desc2: '更多數據源請使用正式版'
 }
 
 export default Object.assign({}, tc, newTc)

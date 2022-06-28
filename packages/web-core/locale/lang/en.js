@@ -3480,7 +3480,8 @@ const en = {
     querySearch: 'Enter table name keyword query',
     progressInfo: 'Progress Details'
   },
-  connection_selector_desc: 'Developing'
+  connection_selector_desc1: 'The trial version is not currently supported',
+  connection_selector_desc2: 'For more data sources, please use the official version'
 }
 
 export default Object.assign({}, en, newEn)
