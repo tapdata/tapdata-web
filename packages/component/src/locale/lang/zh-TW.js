@@ -6,5 +6,5 @@ export default {
   no_data: '無數據',
   function_type_option_custom: '自定義函數',
   function_type_option_jar: '第三方jar包',
-  function_type_option_system: '系統函數',
+  function_type_option_system: '系統函數'
 }

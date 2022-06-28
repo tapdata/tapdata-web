@@ -135,5 +135,5 @@ export default {
   dag_data_setting_day: '日',
   dag_data_setting_month: '月',
   dag_data_setting_week: '星期',
-  dag_data_setting_year: '年',
+  dag_data_setting_year: '年'
 }

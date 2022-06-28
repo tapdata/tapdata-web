@@ -26,10 +26,6 @@
           <VIcon size="12">pause-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_stop') }}</span>
         </VButton>
-        <!--        <VButton :disabled="editDisabled" @click="edit">-->
-        <!--          <VIcon size="12">edit-fill</VIcon>-->
-        <!--          <span class="ml-1">{{ $t('button_edit') }}</span>-->
-        <!--        </VButton>-->
       </div>
     </div>
     <div class="filter-bar flex align-center mt-3">
@@ -457,7 +453,9 @@ export default {
       const { selectedTime, selectedTimeItems } = this
       let startTimeStamp, endTimeStamp
       if (selectedTime) {
-        ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
+        let timeRange = this.getTimeRangeByType(selectedTime, this.timeRange)
+        startTimeStamp = timeRange.startTimeStamp
+        endTimeStamp = timeRange.endTimeStamp
         if (isNaN(startTimeStamp)) {
           startTimeStamp = null
         }
@@ -670,10 +668,6 @@ export default {
       let diff = val / 1000
       let timeType
       let formatRes = ''
-      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
-      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
-      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
-      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
       if (diff <= 1 * 60 * 60) {
         timeType = 'minute'
         formatRes = 'HH:mm:ss'
