@@ -66,7 +66,7 @@
             @click.native="handleAction('cancel')"
             @keydown.enter="handleAction('cancel')"
           >
-            {{ cancelButtonText || $t('el.messagebox.cancel') }}
+            {{ cancelButtonText || cancelButtonTextDefault }}
           </el-button>
           <el-button
             :loading="confirmButtonLoading"
@@ -78,7 +78,7 @@
             @click.native="handleAction('confirm')"
             @keydown.enter="handleAction('confirm')"
           >
-            {{ confirmButtonText || $t('el.messagebox.confirm') }}
+            {{ confirmButtonText || confirmButtonTextDefault }}
           </el-button>
         </div>
       </div>
@@ -89,6 +89,7 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import MsgBox from 'element-ui/packages/message-box/src/main.vue'
+import i18n from '@/i18n'
 
 export default {
   extends: MsgBox,
@@ -97,7 +98,9 @@ export default {
 
   data() {
     return {
-      width: null
+      width: null,
+      cancelButtonTextDefault: i18n.t('el.messagebox.cancel'),
+      confirmButtonTextDefault: i18n.t('el.messagebox.confirm')
     }
   },
 
