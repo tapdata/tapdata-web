@@ -140,106 +140,55 @@ export class TargetDatabase extends NodeType {
                 type: 'object',
                 'x-decorator': 'FormItem',
                 properties: {
-                  grid1: {
-                    type: 'void',
-                    'x-component': 'Space',
-                    properties: {
-                      insertEvent: {
-                        type: 'boolean',
-                        'x-component': 'Checkbox.Group',
-                        'x-decorator': 'FormItem',
-                        default: true,
-                        enum: [
-                          {
-                            label: '插入事件',
-                            value: true
-                          }
-                        ]
+                  insertPolicy: {
+                    title: '插入事件',
+                    type: 'string',
+                    'x-component': 'Select',
+                    'x-decorator-props': {
+                      wrapperWidth: 300
+                    },
+                    default: 'update_on_exists',
+                    enum: [
+                      {
+                        label: '目标存在时更新，不存在时插入',
+                        value: 'update_on_exists'
                       },
-                      insertPolicy: {
-                        type: 'string',
-                        'x-component': 'Select',
-                        'x-decorator-props': {
-                          wrapperWidth: 300
-                        },
-                        default: 'update_on_exists',
-                        enum: [
-                          {
-                            label: '目标存在时更新，不存在时插入',
-                            value: 'update_on_exists'
-                          },
-                          {
-                            label: '目标存在时丢弃，不存在时插入',
-                            value: 'ignore_on_exists'
-                          }
-                        ],
-                        'x-decorator': 'FormItem'
+                      {
+                        label: '目标存在时丢弃，不存在时插入',
+                        value: 'ignore_on_exists'
                       }
-                    }
+                    ],
+                    'x-decorator': 'FormItem'
                   },
-                  grid2: {
-                    type: 'void',
-                    'x-component': 'Space',
-                    properties: {
-                      updateEvent: {
-                        type: 'boolean',
-                        'x-component': 'Checkbox.Group',
-                        'x-decorator': 'FormItem',
-                        default: true,
-                        enum: [
-                          {
-                            label: '更新事件',
-                            value: true
-                          }
-                        ]
+                  updatePolicy: {
+                    title: '更新事件',
+                    type: 'string',
+                    'x-component': 'Select',
+                    'x-decorator-props': {
+                      wrapperWidth: 300
+                    },
+                    default: 'ignore_on_nonexists',
+                    enum: [
+                      {
+                        label: '目标存在时更新，不存在时丢弃',
+                        value: 'ignore_on_nonexists'
                       },
-                      updatePolicy: {
-                        type: 'string',
-                        'x-component': 'Select',
-                        'x-decorator-props': {
-                          wrapperWidth: 300
-                        },
-                        default: 'ignore_on_nonexists',
-                        enum: [
-                          {
-                            label: '目标存在时更新，不存在时丢弃',
-                            value: 'ignore_on_nonexists'
-                          },
-                          {
-                            label: '目标存在时更新，不存在时插入',
-                            value: 'insert_on_nonexists'
-                          }
-                        ],
-                        'x-decorator': 'FormItem'
+                      {
+                        label: '目标存在时更新，不存在时插入',
+                        value: 'insert_on_nonexists'
                       }
-                    }
+                    ],
+                    'x-decorator': 'FormItem'
                   },
-                  grid3: {
+                  deletePolicy: {
+                    title: '删除事件',
                     type: 'void',
-                    'x-component': 'Space',
-                    properties: {
-                      deleteEvent: {
-                        type: 'boolean',
-                        'x-component': 'Checkbox.Group',
-                        'x-decorator': 'FormItem',
-                        default: true,
-                        enum: [
-                          {
-                            label: '删除事件',
-                            value: true
-                          }
-                        ]
-                      },
-                      deletePolicy: {
-                        type: 'void',
-                        'x-component': 'PreviewText.Input',
-                        'x-component-props': {
-                          content: '目标存在时删除，不存在时丢弃',
-                          wrapperWidth: 300
-                        },
-                        'x-decorator': 'FormItem'
-                      }
-                    }
+                    'x-component': 'PreviewText.Input',
+                    'x-component-props': {
+                      content: '目标存在时删除，不存在时丢弃',
+                      wrapperWidth: 300
+                    },
+                    'x-decorator': 'FormItem'
                   }
                 }
               },
