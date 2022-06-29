@@ -90,7 +90,7 @@ export default {
         { name: 'Oracle', type: 'oracle' },
         { name: 'Elasticsearch', type: 'elasticsearch' },
         { name: 'Redis', type: 'redis' },
-        { name: 'PostgreSQL', type: 'postgres' },
+        // { name: 'PostgreSQL', type: 'postgres' },
         { name: 'SQL Server', type: 'sqlserver' },
         { name: 'GBase 8s', type: 'gbase-8s' },
         { name: 'Sybase ASE', type: 'sybase ase' },
@@ -122,6 +122,17 @@ export default {
         { name: 'Hazelcast Cloud', type: 'hazelcast_cloud_cluster' }
       ]
     }
+  },
+  watch: {
+    types: {
+      deep: true,
+      handler() {
+        this.getComingTypes()
+      }
+    }
+  },
+  mounted() {
+    this.getComingTypes()
   },
   methods: {
     changeType(type) {
@@ -178,6 +189,9 @@ export default {
       let row = Math.ceil(typesLen / count) // 支持数据源的行数
       result.top = (row + 1) * height + 'px'
       return result
+    },
+    getComingTypes() {
+      this.comingTypes = this.comingTypes.filter(f => !this.types.some(t => t.pdkId === f.type))
     }
   }
 }
