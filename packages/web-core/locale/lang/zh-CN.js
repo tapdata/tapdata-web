@@ -3470,7 +3470,8 @@ const cn = {
     querySearch: '输入表名关键字查询',
     progressInfo: '进度详情'
   },
-  connection_selector_desc: '开发中'
+  connection_selector_desc1: '试用版暂不支持',
+  connection_selector_desc2: '更多数据源请使用正式版'
 }
 
 export default Object.assign({}, cn, newCn)

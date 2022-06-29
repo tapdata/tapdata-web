@@ -27,6 +27,12 @@ export default class Connections extends Http {
   getAllowDatabaseType() {
     return this.axios.get(`${this.url}/databaseType`)
   }
+  patchId(params) {
+    let id = params._id || params.id
+    delete params._id
+    delete params.id
+    return this.axios.patch(`${this.url}/${id}`, params)
+  }
   findAll(filter: unknown) {
     return this.axios.get(`${this.url}/findAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
   }
