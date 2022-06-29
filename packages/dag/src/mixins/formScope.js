@@ -212,7 +212,10 @@ export default {
                 status: 1,
                 accessNodeType: 1,
                 accessNodeProcessId: 1,
-                accessNodeProcessIdList: 1
+                accessNodeProcessIdList: 1,
+                pdkType: 1,
+                pdkHash: 1,
+                pdkExpansion: 1
               },
               order: ['status DESC', 'name ASC']
             }
