@@ -32,5 +32,6 @@ export * from './create-command'
 export * from './text-file-reader'
 export * from './input-number'
 export * from './table-rename'
+export * from './js-processor'
 
 export * from '@formily/element'

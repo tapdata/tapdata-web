@@ -226,6 +226,10 @@ export default {
         {
           name: '表编辑',
           type: 'table_rename_processor'
+        },
+        {
+          name: 'JS处理',
+          type: 'migrate_js_processor'
         }
       ])
       this.addResourceIns(allResourceIns)
