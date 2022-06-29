@@ -1,4 +1,4 @@
-.node-field-mapping {
+.processor-field-mapping {
   flex: 1;
   height: 100%;
   overflow: hidden;
@@ -52,18 +52,20 @@
   }
   .task-form-body {
     display: flex;
-    height: 60vh;
+    height: 83vh;
     border: 1px solid map-get($borderColor, light);
     border-radius: 4px;
     .task-form-left {
       padding-top: 8px;
       border-right: 1px solid map-get($borderColor, light);
       .table-name {
-        height: 40px;
-        line-height: 42px;
         font-size: 12px;
         color: map-get($fontColor, normal);
         font-weight: 500;
+      }
+      .line-height{
+        height: 40px;
+        line-height: 40px;
       }
     }
     .task-form-left__ul {
