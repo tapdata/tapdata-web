@@ -5,7 +5,11 @@
       <el-radio-button label="other">Other Type</el-radio-button>
     </el-radio-group>
     <template v-if="type === 'sourcedata'">
-      <ul class="database-ul position-relative" :class="[large ? 'customNthChild' : 'primaryNthChild']">
+      <ul
+        v-loading="loading"
+        class="database-ul position-relative"
+        :class="[large ? 'customNthChild' : 'primaryNthChild']"
+      >
         <li v-for="item in types" :key="item.type" @click="$emit('select', item)">
           <div class="img-box">
             <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
@@ -71,6 +75,10 @@ export default {
     },
     hideType: {
       type: Boolean
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
