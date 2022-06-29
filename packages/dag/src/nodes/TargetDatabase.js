@@ -31,7 +31,6 @@ export class TargetDatabase extends NodeType {
 
       layout: {
         type: 'void',
-        title: '节点描述',
         'x-component': 'FormLayout',
         'x-component-props': {
           layout: 'horizontal',
@@ -139,56 +138,70 @@ export class TargetDatabase extends NodeType {
                 title: '数据写入策略',
                 type: 'object',
                 'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  feedbackLayout: 'none'
+                },
+                'x-component': 'FormLayout',
+                'x-component-props': {
+                  layout: 'horizontal',
+                  colon: false,
+                  feedbackLayout: 'none'
+                },
                 properties: {
                   insertPolicy: {
-                    title: '插入事件',
                     type: 'string',
                     'x-component': 'Select',
+                    'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      className: 'font-color-light mb-2',
+                      wrapperWidth: 300,
+                      addonBefore: '插入事件'
                     },
                     default: 'update_on_exists',
                     enum: [
                       {
-                        label: '目标存在时更新，不存在时插入',
+                        label: '目标存在时更新',
                         value: 'update_on_exists'
                       },
                       {
-                        label: '目标存在时丢弃，不存在时插入',
+                        label: '目标存在时丢弃',
                         value: 'ignore_on_exists'
                       }
-                    ],
-                    'x-decorator': 'FormItem'
+                    ]
                   },
                   updatePolicy: {
-                    title: '更新事件',
                     type: 'string',
                     'x-component': 'Select',
+                    'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      className: 'font-color-light mb-2',
+                      wrapperWidth: 300,
+                      addonBefore: '更新事件'
                     },
                     default: 'ignore_on_nonexists',
                     enum: [
                       {
-                        label: '目标存在时更新，不存在时丢弃',
+                        label: '不存在时丢弃',
                         value: 'ignore_on_nonexists'
                       },
                       {
-                        label: '目标存在时更新，不存在时插入',
+                        label: '不存在时插入',
                         value: 'insert_on_nonexists'
                       }
-                    ],
-                    'x-decorator': 'FormItem'
+                    ]
                   },
                   deletePolicy: {
-                    title: '删除事件',
                     type: 'void',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      className: 'font-color-light',
+                      wrapperWidth: 300,
+                      addonBefore: '删除事件'
+                    },
                     'x-component': 'PreviewText.Input',
                     'x-component-props': {
-                      content: '目标存在时删除，不存在时丢弃',
-                      wrapperWidth: 300
-                    },
-                    'x-decorator': 'FormItem'
+                      content: '不存在时丢弃'
+                    }
                   }
                 }
               },
