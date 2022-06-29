@@ -110,7 +110,7 @@ export class Database extends NodeType {
         }
       },
 
-      'attrs.howManyTable': {
+      migrateTableSelectType: {
         title: '选择表',
         type: 'string',
         default: 'all',
@@ -132,7 +132,7 @@ export class Database extends NodeType {
           },
           {
             label: '自定义',
-            value: 'some'
+            value: 'custom'
           }
         ],
         'x-reactions': {
@@ -140,7 +140,7 @@ export class Database extends NodeType {
           effects: ['onFieldInputValueChange'],
           fulfill: {
             state: {
-              value: '{{$self.value === "some" ? [] : $target.value}}'
+              value: '{{$self.value === "custom" ? [] : $target.value}}'
             }
           }
         }
@@ -156,13 +156,13 @@ export class Database extends NodeType {
               connectionId: '{{$values.connectionId}}'
             },
             'x-reactions': {
-              dependencies: ['attrs.howManyTable'],
+              dependencies: ['migrateTableSelectType'],
               fulfill: {
                 state: {
-                  display: '{{$deps[0] !== "some" ? "visible":"hidden"}}'
+                  display: '{{$deps[0] !== "custom" ? "visible":"hidden"}}'
                 },
                 schema: {
-                  required: '{{$deps[0] !== "some"}}'
+                  required: '{{$deps[0] !== "custom"}}'
                 }
               }
             }
@@ -183,13 +183,13 @@ export class Database extends NodeType {
           }
         },
         'x-reactions': {
-          dependencies: ['attrs.howManyTable'],
+          dependencies: ['migrateTableSelectType'],
           fulfill: {
             state: {
-              display: '{{$deps[0] === "some" ? "visible":"hidden"}}'
+              display: '{{$deps[0] === "custom" ? "visible":"hidden"}}'
             },
             schema: {
-              required: '{{$deps[0] === "some"}}'
+              required: '{{$deps[0] === "custom"}}'
             }
           }
         }
