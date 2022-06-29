@@ -1,0 +1,218 @@
+.node-field-mapping {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  .icon-error {
+    color: red;
+  }
+  .icon-color {
+    color: map-get($iconFillColor, normal);
+  }
+  .table__empty_img {
+    width: 80px;
+    height: 80px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .noData {
+    font-size: 12px;
+    color: map-get($bgColor, special);
+  }
+  .page__current {
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    font-weight: 400;
+    color: map-get($color, primary);
+    line-height: 22px;
+    background-color: map-get($bgColor, pageCount);
+  }
+  .task-form__text {
+    display: inline-block;
+    width: 130px;
+    text-align: left;
+  }
+  .btn-rest {
+    height: 28px;
+    width: 28px;
+  }
+  .btn-refresh {
+    padding: 0;
+    height: 28px;
+    width: 28px;
+    min-width: 28px;
+    font-size: 16px;
+    &:hover,
+    &.is-plain:focus:hover {
+      border-color: map-get($color, primary);
+      background-color: map-get($color, white);
+    }
+  }
+  .task-form-body {
+    display: flex;
+    height: 60vh;
+    border: 1px solid map-get($borderColor, light);
+    border-radius: 4px;
+    .task-form-left {
+      padding-top: 8px;
+      border-right: 1px solid map-get($borderColor, light);
+      .table-name {
+        height: 40px;
+        line-height: 42px;
+        font-size: 12px;
+        color: map-get($fontColor, normal);
+        font-weight: 500;
+      }
+    }
+    .task-form-left__ul {
+      flex: 1;
+      max-width: 210px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      li {
+        background: map-get($bgColor, white);
+        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        border-bottom: 1px solid map-get($borderColor, light);
+        display: flex;
+        padding: 16px 0 10px 10px;
+        &:hover {
+          background: map-get($bgColor, disactive);
+          cursor: pointer;
+          border-left: 2px solid map-get($color, primary);
+        }
+        &.active {
+          background: map-get($bgColor, disactive);
+          border-left: 2px solid map-get($color, primary);
+          cursor: pointer;
+        }
+        .task-form__img {
+          width: 20px;
+          height: 42px;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .task-form-text-box {
+          margin-left: 10px;
+          width: 140px;
+          .source {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000000;
+            line-height: 10px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .target {
+            font-size: 12px;
+            font-weight: 400;
+            color: #ef9868;
+            line-height: 20px;
+            margin-top: 17px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .select {
+            font-size: 12px;
+            font-weight: 400;
+            color: #86909c;
+            line-height: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+        }
+      }
+    }
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      flex-direction: column;
+      padding-top: 8px;
+    }
+    .color-darkorange {
+      color: darkorange;
+    }
+    .field-mapping__icon {
+      color: map-get($color, primary);
+    }
+    .field-mapping-table__default_value {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-height: 15px;
+    }
+  }
+  .field-mapping-table {
+    ::v-deep {
+      .el-table {
+        border: none;
+      }
+      .el-table__empty-block {
+        height: 100% !important;
+      }
+      .el-table__header {
+        .el-table__cell {
+          border-right: 0;
+          &.is-leaf {
+            border-bottom: 0;
+          }
+          &:hover {
+            border-right: 1px solid map-get($borderColor, light);
+          }
+        }
+        th {
+          color: map-get($fontColor, normal);
+          font-weight: 500;
+          white-space: nowrap;
+          background-color: map-get($bgColor, normal);
+        }
+      }
+      .el-table__body {
+        td {
+          color: map-get($fontColor, light);
+        }
+      }
+      &:after {
+        width: 0;
+      }
+    }
+  }
+}
+.node-field-mapping {
+  ::v-deep{
+    .table__empty_img {
+      width: 80px;
+      height: 80px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .el-table::before {
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 0;
+    }
+    .field-mapping-data-type {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #999;
+    }
+    .el-pagination button:hover {
+      color: map-get($color, primary);
+    }
+  }
+}

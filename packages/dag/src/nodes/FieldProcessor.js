@@ -18,17 +18,13 @@ export class FieldProcessor extends NodeType {
         type: 'array',
         display: 'none'
       },
-      operations: {
+      fieldsMapping: {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
-        'x-component': 'FieldProcess',
+        'x-component': 'FieldRenameProcessor',
         'x-reactions':
           '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.$inputs[0])}}'
-      },
-      scripts: {
-        type: 'array',
-        display: 'none'
       }
     }
   }
