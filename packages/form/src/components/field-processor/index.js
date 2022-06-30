@@ -6,7 +6,6 @@ import EmptyItem from 'web-core/components/EmptyItem'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import VIcon from 'web-core/components/VIcon'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
-import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import './style.scss'
 
 export const FieldRenameProcessor = defineComponent({
@@ -69,7 +68,7 @@ export const FieldRenameProcessor = defineComponent({
         })
         .finally(() => (config.loadingNav = false))
     }
-
+    //选择左侧table
     const doCheckAllChange = val => {
       config.checkAll = val
       if (val) {
@@ -82,6 +81,7 @@ export const FieldRenameProcessor = defineComponent({
       let checkedCount = value.length
       config.checkAll = checkedCount === list.value.length
     }
+    //选择右侧字段
     const doSelectionField = value => {
       config.checkedFields = value
     }
@@ -116,6 +116,7 @@ export const FieldRenameProcessor = defineComponent({
       config.operationVisible = false
       config.currentFieldRow = ''
     }
+    //批量操作
     const doOperationSave = () => {
       //表级别
       if (config.checkedTables?.length > 0) {
@@ -140,12 +141,43 @@ export const FieldRenameProcessor = defineComponent({
       config.checkedTables = []
       config.checkedFields = []
     }
+    const doShowRow = row => {
+      for (let i = 0; i < tableList.length; i++) {
+        if (tableList[i].sourceFieldName === row.sourceFieldName) {
+          tableList[i]['isShow'] = true
+        }
+      }
+    }
+    const doDeleteRow = row => {
+      for (let i = 0; i < tableList.length; i++) {
+        if (tableList[i].sourceFieldName === row.sourceFieldName) {
+          tableList[i]['isShow'] = false
+        }
+      }
+    }
+    const tableRowClassName = ({ row }) => {
+      if (!row.isShow) {
+        return 'row-deleted'
+      }
+    }
+    //右侧表格slot渲染
     const renderNode = ({ row }) => {
       return (
-        <div onClick={() => doEditName(row)}>
-          <span class="mr-4">{row.targetFieldName}</span>
+        <div class="cursor-pointer" onClick={() => doEditName(row)}>
+          <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">{row.targetFieldName}</span>
           <VIcon>edit</VIcon>
         </div>
+      )
+    }
+    const renderOpNode = ({ row }) => {
+      return row.isShow ? (
+        <span class="text-primary cursor-pointer" onClick={() => doShowRow(row)}>
+          恢复
+        </span>
+      ) : (
+        <span class="text-primary cursor-pointer" onClick={() => doDeleteRow(row)}>
+          屏蔽
+        </span>
       )
     }
     loadData()
@@ -157,7 +189,9 @@ export const FieldRenameProcessor = defineComponent({
       doCheckAllChange,
       doCheckedTablesChange,
       doSelectionField,
+      tableRowClassName,
       renderNode,
+      renderOpNode,
       updateView,
       list,
       tableList,
@@ -181,16 +215,10 @@ export const FieldRenameProcessor = defineComponent({
                 ></ElInput>
               </div>
             </div>
-            <div class="bg-main flex justify-content-between line-height ml-2">
+            <div class="bg-main flex justify-content-between line-height processor-ml-10">
               <span>
                 <el-checkbox v-model={this.config.checkAll} onChange={this.doCheckAllChange}></el-checkbox>
                 <span class="table-name ml-2">表名</span>
-              </span>
-              <span class="mr-4">
-                <i class="el-icon-loading link-primary mx-2"></i>
-                <span class="link-primary">
-                  {0} / {0}
-                </span>
               </span>
             </div>
             <div class="task-form-left__ul flex flex-column" v-loading={this.config.loadingNav}>
@@ -199,18 +227,12 @@ export const FieldRenameProcessor = defineComponent({
                   <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
                     {this.list.map((item, index) => (
                       <li key={index} class={[this.config.position === index ? 'active' : '']}>
-                        <el-checkbox class="mr-2" label={item.sinkQulifiedName}>
+                        <el-checkbox label={item.sinkQulifiedName}>
                           <br />
                         </el-checkbox>
-                        {item.invalid ? (
-                          <div class="task-form__img" onClick={() => this.updateView(index)}>
-                            <img src={fieldMapping_table} alt="" />
-                          </div>
-                        ) : (
-                          <div class="task-form__img" onClick={() => this.updateView(index)}>
-                            <img src={fieldMapping_table_error} alt="" />
-                          </div>
-                        )}
+                        <div class="task-form__img" onClick={() => this.updateView(index)}>
+                          <img src={fieldMapping_table} alt="" />
+                        </div>
                         <div class="task-form-text-box" onClick={() => this.updateView(index)}>
                           <OverflowTooltip
                             class="w-100 text-truncate source"
@@ -289,7 +311,8 @@ export const FieldRenameProcessor = defineComponent({
               class="field-mapping-table table-border"
               height="100%"
               data={this.tableList}
-              selection-change={this.doSelectionField}
+              row-class-name={this.tableRowClassName}
+              cell-mouse-enter={this.doSelectionField}
             >
               <ElTableColumn type="selection" width="55"></ElTableColumn>
               <ElTableColumn show-overflow-tooltip label="字段名" prop="sourceFieldName"></ElTableColumn>
@@ -301,7 +324,15 @@ export const FieldRenameProcessor = defineComponent({
                   default: this.renderNode
                 }}
               ></ElTableColumn>
-              <ElTableColumn show-overflow-tooltip label="操作" prop="field_name"></ElTableColumn>
+              <ElTableColumn
+                show-overflow-tooltip
+                label="操作"
+                prop="isShow"
+                width={'60px'}
+                scopedSlots={{
+                  default: this.renderOpNode
+                }}
+              ></ElTableColumn>
               <div class="field-mapping-table__empty" slot="empty">
                 <EmptyItem></EmptyItem>
               </div>

@@ -8,6 +8,9 @@
   .icon-color {
     color: map-get($iconFillColor, normal);
   }
+  .processor-ml-10{
+    margin-left: 10px;
+  }
   .table__empty_img {
     width: 80px;
     height: 80px;
@@ -52,7 +55,7 @@
   }
   .task-form-body {
     display: flex;
-    height: 83vh;
+    height: 80vh;
     border: 1px solid map-get($borderColor, light);
     border-radius: 4px;
     .task-form-left {
@@ -99,7 +102,7 @@
         }
         .task-form-text-box {
           margin-left: 10px;
-          width: 140px;
+          width: 120px;
           .source {
             font-size: 12px;
             font-weight: 400;
@@ -140,6 +143,12 @@
       overflow: hidden;
       flex-direction: column;
       padding-top: 8px;
+    }
+    .col-new-field-name{
+      max-width: 90px;
+    }
+    .row-deleted{
+      color: map-get($color, disable);
     }
     .color-darkorange {
       color: darkorange;
