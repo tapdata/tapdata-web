@@ -15,7 +15,6 @@ export const FieldRenameProcessor = defineComponent({
     const form = formRef.value
     const list = ref([])
     const tableList = ref([])
-    const fieldMapping = form.fieldsMapping
     const config = reactive({
       visible: false,
       loadingNav: true,
@@ -99,6 +98,42 @@ export const FieldRenameProcessor = defineComponent({
       config.currentFieldRow = row
       config.operationVisible = true
     }
+    let fieldsMapping = form.fieldsMapping || []
+    const mapping = data => {
+      let map = {}
+      if (!data || data?.length === 0) return map
+      data.forEach(t => {
+        if (!map[t.qualifiedName]) {
+          map[t.qualifiedName] = {
+            qualifiedName: t?.qualifiedName,
+            operation: t?.operation,
+            fields: t.fields || []
+          }
+        }
+      })
+      return map
+    }
+    const mappingField = data => {
+      let map = {}
+      if (!data || data?.length === 0) return map
+      data.forEach(t => {
+        if (!map[t.sourceFieldName]) {
+          map[t.sourceFieldName] = {
+            sourceFieldName: t?.sourceFieldName,
+            targetFieldName: t?.targetFieldName,
+            isShow: t.isShow
+          }
+        }
+      })
+      return map
+    }
+    const toList = map => {
+      let list = []
+      for (let key in map) {
+        list.push(map[key])
+      }
+      return list
+    }
     const doEditNameSave = () => {
       //修改名字 生成配置
       let node = {
@@ -118,28 +153,59 @@ export const FieldRenameProcessor = defineComponent({
     }
     //批量操作
     const doOperationSave = () => {
-      //表级别
+      let map = mapping(fieldsMapping)
       if (config.checkedTables?.length > 0) {
+        //表级别
         config.checkedTables.forEach(t => {
-          let node = {
+          map[t] = {
             qualifiedName: t,
             operation: config.operation,
-            fields: []
+            fields: t === map[t]?.qualifiedName ? map[t]?.fields || [] : []
           }
-          fieldMapping.push(node)
         })
       } else if (config.checkedFields?.length > 0) {
+        //字段级别
+        let current = config.selectTableRow?.sinkQulifiedName
+        let fields = mappingField[map[current].fields]
         config.checkedFields.forEach(t => {
-          let node = {
-            qualifiedName: t,
-            operation: config.operation,
-            fields: []
+          let newField = config.operation.prefix + t?.targetFieldName + config.operation.suffix
+          if (config.operation.capitalized) {
+            newField = newField[config.operation.capitalized]()
           }
-          fieldMapping.push(node)
+          fields[t] = {
+            sourceFieldName: t?.sourceFieldName,
+            targetFieldName: newField,
+            isShow: t.isShow
+          }
         })
+        //将字段级别对应的table map -> array
+        map[current].fields = toList(fields)
       }
       config.checkedTables = []
       config.checkedFields = []
+      doVisible('visible', false)
+      fieldsMapping = toList(map)
+      //console.log(fieldsMapping)
+    }
+    const doUpateField = (row, val) => {
+      let map = mapping(fieldsMapping)
+      let current = config.selectTableRow?.sinkQulifiedName
+      if (!map[current]) {
+        map[current] = {
+          qualifiedName: current,
+          operation: config.operation,
+          fields: []
+        }
+      }
+      let fields = mappingField[map[current]?.fields] || {}
+      fields[row.sourceFieldName] = {
+        sourceFieldName: row.sourceFieldName,
+        targetFieldName: row.targetFieldName,
+        isShow: val
+      }
+      map[current].fields = toList(fields)
+      fieldsMapping = toList(map)
+      //console.log(fieldsMapping)
     }
     const doShowRow = row => {
       for (let i = 0; i < tableList.length; i++) {
@@ -147,6 +213,7 @@ export const FieldRenameProcessor = defineComponent({
           tableList[i]['isShow'] = true
         }
       }
+      doUpateField(row, true)
     }
     const doDeleteRow = row => {
       for (let i = 0; i < tableList.length; i++) {
@@ -154,6 +221,7 @@ export const FieldRenameProcessor = defineComponent({
           tableList[i]['isShow'] = false
         }
       }
+      doUpateField(row, false)
     }
     const tableRowClassName = ({ row }) => {
       if (!row.isShow) {
@@ -171,17 +239,20 @@ export const FieldRenameProcessor = defineComponent({
     }
     const renderOpNode = ({ row }) => {
       return row.isShow ? (
-        <span class="text-primary cursor-pointer" onClick={() => doShowRow(row)}>
-          恢复
-        </span>
-      ) : (
         <span class="text-primary cursor-pointer" onClick={() => doDeleteRow(row)}>
           屏蔽
+        </span>
+      ) : (
+        <span class="text-primary cursor-pointer" onClick={() => doShowRow(row)}>
+          恢复
         </span>
       )
     }
     loadData()
     return {
+      list,
+      tableList,
+      config,
       loadData,
       doVisible,
       doEditNameSave,
@@ -192,11 +263,7 @@ export const FieldRenameProcessor = defineComponent({
       tableRowClassName,
       renderNode,
       renderOpNode,
-      updateView,
-      list,
-      tableList,
-      config,
-      fieldsMapping: form.fieldsMapping
+      updateView
     }
   },
   render() {
