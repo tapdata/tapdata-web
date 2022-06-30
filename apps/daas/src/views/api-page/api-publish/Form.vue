@@ -4,7 +4,13 @@
       <div class="module-form">
         <ElForm :model="createForm" ref="form" size="small">
           <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules.datasource" required>
-            <ElSelect v-model="createForm.datasource" size="mini" placeholder="请选择" :disabled="!!$route.query.id">
+            <ElSelect
+              v-model="createForm.datasource"
+              filterable
+              size="mini"
+              placeholder="请选择"
+              :disabled="!!$route.query.id"
+            >
               <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
               </ElOption>
             </ElSelect>
