@@ -1406,7 +1406,6 @@ export default {
   shared_cdc_setting_select_time_tip: '请选择日志保存时长',
   shared_cdc_setting_message_edit_save: '保存成功，重启任务后生效',
   share_list_name: '挖掘名称',
-  share_list_connection: '所属连接',
   share_list_time_excavation: '挖掘所处时间点',
   share_list_creat_time: '创建时间',
   share_list_setting: '挖掘设置',

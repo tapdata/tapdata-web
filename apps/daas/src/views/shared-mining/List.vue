@@ -9,33 +9,39 @@
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column prop="connections" width="250" :label="$t('share_list_connection')">
+      <el-table-column
+        prop="connections"
+        min-width="160"
+        :label="$t('column_connection')"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
-          <div v-for="item in scope.row.connections" :key="item.id">
+          <div v-for="item in scope.row.connections" :key="item.id" class="ellipsis">
             <span v-for="op in item" :key="op">{{ op }}</span>
           </div>
         </template>
       </el-table-column>
-      <el-table-column width="150" :label="$t('share_list_time_excavation')">
+      <el-table-column min-width="150" :label="$t('share_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.pointTime }}
         </template>
       </el-table-column>
-      <el-table-column sortable width="120" :label="$t('share_list_time')"></el-table-column>
-      <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
-      <el-table-column width="120" prop="status" :label="$t('share_list_status')">
+      <el-table-column sortable min-width="120" :label="$t('share_list_time')"></el-table-column>
+      <el-table-column prop="createTime" min-width="150" :label="$t('share_list_creat_time')" sortable>
+      </el-table-column>
+      <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
           <span :class="['status-' + row.statusResult, 'status-block']">
             {{ $t('task_preview_status_' + row.statusResult) }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column width="250" fixed="right" :label="$t('column_operation')">
+      <el-table-column width="210" fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
           <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
             $t('task_list_run')
@@ -51,11 +57,19 @@
           <el-button size="mini" type="text" :disabled="row.disabledData.edit" @click="edit(row)">{{
             $t('button_edit')
           }}</el-button>
-          <el-button size="mini" type="text" :disabled="row.disabledData.reset" @click="rest([row.id])">{{
-            $t('dataFlow.button.reset')
-          }}</el-button>
           <ElDivider direction="vertical"></ElDivider>
-          <el-button size="mini" type="text" @click="detail(row)">{{ $t('button_details') }}</el-button>
+          <el-dropdown size="small" @command="handleCommand($event, row)">
+            <ElLink type="primary" class="rotate-90">
+              <i class="el-icon-more"></i>
+            </ElLink>
+            <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+              <el-dropdown-item command="detail">{{ $t('button_details') }}</el-dropdown-item>
+              <el-dropdown-item :disabled="row.disabledData.reset" command="rest">
+                {{ $t('task_list_reset') }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <Test></Test>
         </template>
       </el-table-column>
     </TablePage>
@@ -482,13 +496,22 @@ export default {
       })
     },
 
-    detail(item) {
+    detail(ids, item) {
       this.$router.push({
         name: 'SharedMiningDetails',
         params: {
           id: item.id
         }
       })
+    },
+    handleCommand(command, node) {
+      let ids = []
+      if (node) {
+        ids = [node.id]
+      } else {
+        ids = this.multipleSelection.map(item => item.id)
+      }
+      this[command](ids, node)
     }
   }
 }

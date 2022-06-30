@@ -373,8 +373,8 @@ let menuSetting = [
       { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
       { name: 'sharedMiningList', code: 'log_collector_menu', parent: 'sharedMining' },
       { name: 'functionList', code: 'SYNC_Function_management', parent: 'function' },
-      { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' }
-      //{ name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
+      { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' },
+      { name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
   {

@@ -120,8 +120,8 @@ export default {
 
   // 表格
   column_operation: 'Operate',
-  column_connection: 'Belonging to the connection',
-  column_table: 'Belonging table',
+  column_connection: 'From connection',
+  column_table: 'From table',
   column_create_time: 'Create time',
   column_creator: 'Creator',
 
@@ -1459,7 +1459,6 @@ export default {
   shared_cdc_setting_select_time_tip: 'Please select the log saving time',
   shared_cdc_setting_message_edit_save: 'Save successfully, it will take effect after restarting the task',
   share_list_name: 'Mining name',
-  share_list_connection: 'Belonging to the connection',
   share_list_time_excavation: 'Excavation time point',
   share_list_creat_time: 'Create time',
   share_list_setting: 'Mining settings',

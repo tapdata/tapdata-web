@@ -9,36 +9,39 @@
           <span> {{ $t('shared_cache_button_create') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn prop="name" :label="$t('shared_cache_name')">
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('shared_cache_name')">
         <template #default="{ row }">
-          <ElLink type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
+          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connectionName" :label="$t('column_connection')"></ElTableColumn>
-      <ElTableColumn prop="tableName" :label="$t('column_table')"></ElTableColumn>
-      <ElTableColumn :label="$t('shared_cache_status')">
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="connectionName"
+        min-width="100"
+        :label="$t('column_connection')"
+      ></ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="tableName" min-width="100" :label="$t('column_table')"></ElTableColumn>
+      <ElTableColumn :label="$t('shared_cache_status')" min-width="70">
         <template #default="{ row }">
           <span :class="['status-' + row.statusResult, 'status-block']">
             {{ $t('task_preview_status_' + row.statusResult) }}
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="createTime" :label="$t('column_create_time')" sortable="createTime">
+      <ElTableColumn prop="createTime" :label="$t('column_create_time')" min-width="100" sortable="createTime">
         <template slot-scope="scope">
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="cacheTimeAt" :label="$t('shared_cache_time')">
+      <ElTableColumn prop="cacheTimeAt" min-width="100" :label="$t('shared_cache_time')">
         <template slot-scope="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('column_operation')">
+      <ElTableColumn min-width="120" :label="$t('column_operation')">
         <template #default="{ row }">
           <!-- <ElLink type="primary" @click="edit(row.id)">{{ $t('button_edit') }}</ElLink> -->
           <!-- <ElDivider direction="vertical"></ElDivider> -->
-          <ElLink type="primary" @click.stop="checkDetails(row)">{{ $t('button_check') }}</ElLink>
-          <ElDivider direction="vertical"></ElDivider>
           <ElLink type="primary" @click="del(row.id)">{{ $t('button_delete') }}</ElLink>
         </template>
       </ElTableColumn>
