@@ -501,6 +501,7 @@ $sidebarBg: #fff;
   }
 }
 .choose-list-wrap {
+  max-width: 450px;
   max-height: 274px;
 }
 .choose-list {

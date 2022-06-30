@@ -340,9 +340,10 @@ export default {
                 item.connectionUrl = item.config.uri
               }
             } else {
-              item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
-                item.config.schema ? `/${item.config.schema}` : ''
-              }`
+              const { host, port, database, schema } = item.config
+              item.connectionUrl = host
+                ? `${host}${port ? `:${port}` : ''}/${database}${schema ? `/${schema}` : ''}`
+                : ''
             }
 
             item.connectionSource = this.sourceTypeMapping[item.sourceType]
