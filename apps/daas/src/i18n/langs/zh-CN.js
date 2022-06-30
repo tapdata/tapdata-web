@@ -187,7 +187,7 @@ export default {
   page_title_setting: '系统设置',
   page_title_license: 'License管理',
   page_title_back_menu: '返回菜单',
-  page_title_custom_node: '自定义处理节点',
+  page_title_custom_node: '自定义节点',
   page_title_account: '个人设置',
 
   // 通用组件
