@@ -1,32 +1,40 @@
 import { defineComponent, ref, reactive } from 'vue-demi'
 import { metadataTransformerApi } from '@tap/api'
+import { FormItem } from '../index'
+import { useForm } from '@formily/vue'
 import EmptyItem from 'web-core/components/EmptyItem'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import VIcon from 'web-core/components/VIcon'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import './style.scss'
-import { FormItem } from '../index'
-import { useForm } from '@formily/vue'
 
 export const FieldRenameProcessor = defineComponent({
-  props: ['listStyle'],
+  props: ['data'],
   setup(props, { emit }) {
     const formRef = useForm()
     const form = formRef.value
     const list = ref([])
     const tableList = ref([])
+    const fieldMapping = form.fieldsMapping
     const config = reactive({
-      prefix: '',
-      suffix: '',
-      transferCase: '',
       visible: false,
       loadingNav: true,
-      selectRow: '',
+      selectTableRow: '',
+      currentFieldRow: '',
       fieldCount: '',
       checkAll: false,
       checkedTables: [],
+      checkedFields: [],
       position: 0,
+      dataFlow: '',
+      operationVisible: false,
+      newFieldName: '',
+      operation: {
+        prefix: '',
+        suffix: '',
+        capitalized: ''
+      },
       page: {
         size: 10,
         current: 1,
@@ -62,7 +70,7 @@ export const FieldRenameProcessor = defineComponent({
         .finally(() => (config.loadingNav = false))
     }
 
-    const handleCheckAllChange = val => {
+    const doCheckAllChange = val => {
       config.checkAll = val
       if (val) {
         config.checkedTables = list.value.map(t => t.sinkQulifiedName)
@@ -70,37 +78,85 @@ export const FieldRenameProcessor = defineComponent({
         config.checkedTables = []
       }
     }
-    const handleCheckedTablesChange = value => {
+    const doCheckedTablesChange = value => {
       let checkedCount = value.length
       config.checkAll = checkedCount === list.value.length
     }
-    const showOperation = () => {
-      config.visible = true
+    const doSelectionField = value => {
+      config.checkedFields = value
     }
-    const closeOperation = () => {
-      config.visible = false
+    const doVisible = (target, val) => {
+      config[target] = val
+    }
+    const updateView = index => {
+      config.position = index
+      config.selectTableRow = list.value[index]
+      tableList.value = config.selectTableRow.fieldsMapping
+      config.fieldCount = config.selectTableRow.sourceFieldCount - config.selectTableRow.userDeletedNum || 0
+    }
+    const doEditName = row => {
+      config.newFieldName = row.targetFieldName
+      config.currentFieldRow = row
+      config.operationVisible = true
+    }
+    const doEditNameSave = () => {
+      //修改名字 生成配置
+      let node = {
+        qualifiedName: config.selectTableRow?.qualifiedName,
+        operation: config.operation,
+        fields: [
+          {
+            sourceFieldName: config.currentFieldRow?.sourceFieldName,
+            targetFieldName: config.currentFieldRow?.targetFieldName,
+            isShow: config.currentFieldRow?.isShow
+          }
+        ]
+      }
+      form.fieldsMapping.push(node)
+      config.operationVisible = false
+      config.currentFieldRow = ''
+    }
+    const doOperationSave = () => {
+      //表级别
+      if (config.checkedTables?.length > 0) {
+        config.checkedTables.forEach(t => {
+          let node = {
+            qualifiedName: t,
+            operation: config.operation,
+            fields: []
+          }
+          fieldMapping.push(node)
+        })
+      } else if (config.checkedFields?.length > 0) {
+        config.checkedFields.forEach(t => {
+          let node = {
+            qualifiedName: t,
+            operation: config.operation,
+            fields: []
+          }
+          fieldMapping.push(node)
+        })
+      }
+      config.checkedTables = []
+      config.checkedFields = []
     }
     const renderNode = ({ row }) => {
       return (
-        <div>
+        <div onClick={() => doEditName(row)}>
           <span class="mr-4">{row.targetFieldName}</span>
           <VIcon>edit</VIcon>
         </div>
       )
     }
-    const updateView = index => {
-      config.position = index
-      config.selectRow = list.value[index]
-      tableList.value = config.selectRow.fieldsMapping
-      config.fieldCount = config.selectRow.sourceFieldCount - config.selectRow.userDeletedNum || 0
-    }
     loadData()
     return {
       loadData,
-      showOperation,
-      closeOperation,
-      handleCheckAllChange,
-      handleCheckedTablesChange,
+      doVisible,
+      doEditNameSave,
+      doOperationSave,
+      doCheckAllChange,
+      doCheckedTablesChange,
+      doSelectionField,
       renderNode,
       updateView,
       list,
@@ -127,7 +183,7 @@ export const FieldRenameProcessor = defineComponent({
             </div>
             <div class="bg-main flex justify-content-between line-height ml-2">
               <span>
-                <el-checkbox v-model={this.config.checkAll} onChange={this.handleCheckAllChange}></el-checkbox>
+                <el-checkbox v-model={this.config.checkAll} onChange={this.doCheckAllChange}></el-checkbox>
                 <span class="table-name ml-2">表名</span>
               </span>
               <span class="mr-4">
@@ -140,7 +196,7 @@ export const FieldRenameProcessor = defineComponent({
             <div class="task-form-left__ul flex flex-column" v-loading={this.config.loadingNav}>
               {this.list.length > 0 ? (
                 <ul>
-                  <el-checkbox-group v-model={this.config.checkedTables} onChange={this.handleCheckedTablesChange}>
+                  <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
                     {this.list.map((item, index) => (
                       <li key={index} class={[this.config.position === index ? 'active' : '']}>
                         <el-checkbox class="mr-2" label={item.sinkQulifiedName}>
@@ -216,7 +272,12 @@ export const FieldRenameProcessor = defineComponent({
                 </ElButton>
               </div>
               <div class="item ml-2">
-                <ElButton type="text" class="btn-operation" onClick={this.showOperation}>
+                <ElButton
+                  type="text"
+                  class="btn-operation"
+                  disabled={this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0}
+                  onClick={() => this.doVisible('visible', true)}
+                >
                   批量操作
                 </ElButton>
                 <ElButton type="text" class="btn-rest">
@@ -224,7 +285,12 @@ export const FieldRenameProcessor = defineComponent({
                 </ElButton>
               </div>
             </div>
-            <ElTable class="field-mapping-table table-border" height="100%" data={this.tableList}>
+            <ElTable
+              class="field-mapping-table table-border"
+              height="100%"
+              data={this.tableList}
+              selection-change={this.doSelectionField}
+            >
               <ElTableColumn type="selection" width="55"></ElTableColumn>
               <ElTableColumn show-overflow-tooltip label="字段名" prop="sourceFieldName"></ElTableColumn>
               <ElTableColumn
@@ -242,23 +308,45 @@ export const FieldRenameProcessor = defineComponent({
             </ElTable>
           </div>
         </div>
-        <ElDialog title="批量操作" visible={this.config.visible} append-to-body before-close={this.closeOperation}>
+        <ElDialog
+          title="修改字段名"
+          width={'30%'}
+          visible={this.config.operationVisible}
+          append-to-body
+          before-close={() => this.doVisible('operationVisible', false)}
+        >
+          <FormItem.BaseItem>
+            <ElInput v-model={this.config.newFieldName} clearable />
+          </FormItem.BaseItem>
+          <span slot="footer" className="dialog-footer">
+            <el-button onClick={() => this.doVisible('operationVisible', false)}>取 消</el-button>
+            <el-button type="primary" onClick={() => this.doEditNameSave()}>
+              确 定
+            </el-button>
+          </span>
+        </ElDialog>
+        <ElDialog
+          title="批量操作"
+          visible={this.config.visible}
+          append-to-body
+          before-close={() => this.doVisible('visible', false)}
+        >
           <div>
             <FormItem.BaseItem
               label="前缀"
               tooltip="以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符，前缀不允许以 system 开头"
             >
-              <ElInput v-model={this.config.prefix} clearable />
+              <ElInput v-model={this.config.operation.prefix} clearable />
             </FormItem.BaseItem>
             <FormItem.BaseItem
               label="后缀"
               tooltip="以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符"
             >
-              <ElInput v-model={this.config.suffix} clearable />
+              <ElInput v-model={this.config.operation.suffix} clearable />
             </FormItem.BaseItem>
 
             <FormItem.BaseItem label="大小写">
-              <ElSelect v-model={this.config.transferCase}>
+              <ElSelect v-model={this.config.operation.capitalized}>
                 <ElOption value="" label="不变" />
                 <ElOption value="toUpperCase" label="大写" />
                 <ElOption value="toLowerCase" label="小写" />
@@ -266,8 +354,10 @@ export const FieldRenameProcessor = defineComponent({
             </FormItem.BaseItem>
           </div>
           <span slot="footer" class="dialog-footer">
-            <el-button onClick={this.closeOperation}>取 消</el-button>
-            <el-button type="primary">确 定</el-button>
+            <el-button onClick={() => this.doVisible('visible', false)}>取 消</el-button>
+            <el-button type="primary" onClick={() => this.doOperationSave()}>
+              确 定
+            </el-button>
           </span>
         </ElDialog>
       </div>
