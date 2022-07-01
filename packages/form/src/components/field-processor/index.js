@@ -53,7 +53,7 @@ export const FieldRenameProcessor = defineComponent({
       let id = getTaskId()
       let where = {
         dataFlowId: id,
-        sinkNodeId: ''
+        sinkNodeId: '7c085cde-2794-4fa0-83f5-88fee16db711'
       }
       let filter = {
         where: where,
@@ -132,6 +132,14 @@ export const FieldRenameProcessor = defineComponent({
       if (target === 'rest' && fields[row.sourceFieldName]?.sourceFieldName === row.sourceFieldName) {
         delete fields[row.sourceFieldName]
       } else {
+        //先生成所有fields
+        tableList.value.forEach(t => {
+          fields[t.sourceFieldName] = {
+            sourceFieldName: t.sourceFieldName,
+            targetFieldName: t.targetFieldName,
+            isShow: t.isShow
+          }
+        })
         fields[row.sourceFieldName] = {
           sourceFieldName: row.sourceFieldName,
           targetFieldName: target === 'rename' ? val : row.targetFieldName,
@@ -142,6 +150,8 @@ export const FieldRenameProcessor = defineComponent({
       map[current].fields = toList(fields)
       fieldsMapping = toList(map)
       // eslint-disable-next-line
+      form.fieldsMapping = fieldsMapping
+      form.setValuesIn('fieldsMapping', fieldsMapping)
       console.log(fieldsMapping)
     }
     //选择左侧table
@@ -204,6 +214,8 @@ export const FieldRenameProcessor = defineComponent({
           doUpateField(t, 'rename', newField)
         })
       }
+      fieldsMapping = toList(map)
+      form.setValuesIn('fieldsMapping', fieldsMapping)
       config.checkedTables = []
       config.checkedFields = []
       config.operation = restOp
