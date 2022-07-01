@@ -7,6 +7,7 @@ import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import VIcon from 'web-core/components/VIcon'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
+import de from 'element-ui/src/locale/lang/de'
 
 export const FieldRenameProcessor = defineComponent({
   props: ['data'],
@@ -67,38 +68,12 @@ export const FieldRenameProcessor = defineComponent({
         })
         .finally(() => (config.loadingNav = false))
     }
-    //选择左侧table
-    const doCheckAllChange = val => {
-      config.checkAll = val
-      if (val) {
-        config.checkedTables = list.value.map(t => t.sinkQulifiedName)
-      } else {
-        config.checkedTables = []
-      }
-    }
-    const doCheckedTablesChange = value => {
-      let checkedCount = value.length
-      config.checkAll = checkedCount === list.value.length
-    }
-    //选择右侧字段
-    const doSelectionField = value => {
-      config.checkedFields = value
-    }
-    const doVisible = (target, val) => {
-      config[target] = val
-    }
-    const updateView = index => {
-      config.position = index
-      config.selectTableRow = list.value[index]
-      tableList.value = config.selectTableRow.fieldsMapping
-      config.fieldCount = config.selectTableRow.sourceFieldCount - config.selectTableRow.userDeletedNum || 0
-    }
-    const doEditName = row => {
-      config.newFieldName = row.targetFieldName
-      config.currentFieldRow = row
-      config.operationVisible = true
-    }
     let fieldsMapping = form.fieldsMapping || []
+    const restOp = {
+      prefix: '',
+      suffix: '',
+      capitalized: ''
+    }
     const mapping = data => {
       let map = {}
       if (!data || data?.length === 0) return map
@@ -134,20 +109,67 @@ export const FieldRenameProcessor = defineComponent({
       }
       return list
     }
+    const doUpateField = (row, target, val) => {
+      let map = mapping(fieldsMapping)
+      let current = config.selectTableRow?.sinkQulifiedName
+      if (!map[current]) {
+        map[current] = {
+          qualifiedName: current,
+          operation: config.operation,
+          fields: []
+        }
+      }
+      let fields = mappingField[map[current]?.fields] || {}
+      if (target === 'rest' && fields[row.sourceFieldName]?.sourceFieldName === row.sourceFieldName) {
+        delete fields[row.sourceFieldName]
+      } else {
+        fields[row.sourceFieldName] = {
+          sourceFieldName: row.sourceFieldName,
+          targetFieldName: target === 'rename' ? val : row.targetFieldName,
+          isShow: target === 'del' ? val : row.isShow
+        }
+      }
+
+      map[current].fields = toList(fields)
+      fieldsMapping = toList(map)
+      // eslint-disable-next-line
+      console.log(fieldsMapping)
+    }
+    //选择左侧table
+    const doCheckAllChange = val => {
+      config.checkAll = val
+      if (val) {
+        config.checkedTables = list.value.map(t => t.sinkQulifiedName)
+      } else {
+        config.checkedTables = []
+      }
+    }
+    const doCheckedTablesChange = value => {
+      let checkedCount = value.length
+      config.checkAll = checkedCount === list.value.length
+    }
+    //选择右侧字段
+    const doSelectionField = value => {
+      config.checkedFields = value
+    }
+    const doVisible = (target, val) => {
+      config[target] = val
+    }
+    const updateView = index => {
+      config.position = index
+      config.selectTableRow = list.value[index]
+      tableList.value = config.selectTableRow.fieldsMapping
+      config.fieldCount = config.selectTableRow.sourceFieldCount - config.selectTableRow.userDeletedNum || 0
+    }
+    //单个修改字段名
+    const doEditName = row => {
+      config.newFieldName = row.targetFieldName
+      config.currentFieldRow = row
+      config.operationVisible = true
+    }
     const doEditNameSave = () => {
       //修改名字 生成配置
-      let node = {
-        qualifiedName: config.selectTableRow?.qualifiedName,
-        operation: config.operation,
-        fields: [
-          {
-            sourceFieldName: config.currentFieldRow?.sourceFieldName,
-            targetFieldName: config.currentFieldRow?.targetFieldName,
-            isShow: config.currentFieldRow?.isShow
-          }
-        ]
-      }
-      form.fieldsMapping.push(node)
+      doUpateField(config.currentFieldRow, 'rename', config.newFieldName)
       config.operationVisible = false
       config.currentFieldRow = ''
     }
@@ -165,55 +187,47 @@ export const FieldRenameProcessor = defineComponent({
         })
       } else if (config.checkedFields?.length > 0) {
         //字段级别
-        let current = config.selectTableRow?.sinkQulifiedName
-        let fields = mappingField[map[current].fields]
         config.checkedFields.forEach(t => {
           let newField = config.operation.prefix + t?.targetFieldName + config.operation.suffix
           if (config.operation.capitalized) {
             newField = newField[config.operation.capitalized]()
           }
-          fields[t] = {
-            sourceFieldName: t?.sourceFieldName,
-            targetFieldName: newField,
-            isShow: t.isShow
-          }
+          doUpateField(t, 'rename', newField)
         })
-        //将字段级别对应的table map -> array
-        map[current].fields = toList(fields)
       }
       config.checkedTables = []
       config.checkedFields = []
+      config.operation = restOp
       doVisible('visible', false)
-      fieldsMapping = toList(map)
-      //console.log(fieldsMapping)
     }
-    const doUpateField = (row, val) => {
+    //重置
+    const doOperationRest = () => {
       let map = mapping(fieldsMapping)
-      let current = config.selectTableRow?.sinkQulifiedName
-      if (!map[current]) {
-        map[current] = {
-          qualifiedName: current,
-          operation: config.operation,
-          fields: []
-        }
+      if (config.checkedTables?.length > 0) {
+        //表级别
+        config.checkedTables.forEach(t => {
+          if (t === map[t]?.qualifiedName) {
+            delete map[t]
+          }
+        })
+      } else if (config.checkedFields?.length > 0) {
+        //字段级别
+        config.checkedFields.forEach(t => {
+          doUpateField(t, 'rest', t.targetFieldName)
+        })
       }
-      let fields = mappingField[map[current]?.fields] || {}
-      fields[row.sourceFieldName] = {
-        sourceFieldName: row.sourceFieldName,
-        targetFieldName: row.targetFieldName,
-        isShow: val
-      }
-      map[current].fields = toList(fields)
       fieldsMapping = toList(map)
-      //console.log(fieldsMapping)
+      // eslint-disable-next-line
+      console.log(fieldsMapping)
     }
+    //单个删除字段
     const doShowRow = row => {
       for (let i = 0; i < tableList.length; i++) {
         if (tableList[i].sourceFieldName === row.sourceFieldName) {
           tableList[i]['isShow'] = true
         }
       }
-      doUpateField(row, true)
+      doUpateField(row, 'del', true)
     }
     const doDeleteRow = row => {
       for (let i = 0; i < tableList.length; i++) {
@@ -221,7 +235,7 @@ export const FieldRenameProcessor = defineComponent({
           tableList[i]['isShow'] = false
         }
       }
-      doUpateField(row, false)
+      doUpateField(row, 'del', false)
     }
     const tableRowClassName = ({ row }) => {
       if (!row.isShow) {
@@ -263,7 +277,8 @@ export const FieldRenameProcessor = defineComponent({
       tableRowClassName,
       renderNode,
       renderOpNode,
-      updateView
+      updateView,
+      doOperationRest
     }
   },
   render() {
@@ -369,7 +384,7 @@ export const FieldRenameProcessor = defineComponent({
                 >
                   批量操作
                 </ElButton>
-                <ElButton type="text" class="btn-rest">
+                <ElButton type="text" class="btn-rest" onClick={this.doOperationRest}>
                   重置
                 </ElButton>
               </div>
@@ -379,7 +394,7 @@ export const FieldRenameProcessor = defineComponent({
               height="100%"
               data={this.tableList}
               row-class-name={this.tableRowClassName}
-              cell-mouse-enter={this.doSelectionField}
+              onSelection-change={this.doSelectionField}
             >
               <ElTableColumn type="selection" width="55"></ElTableColumn>
               <ElTableColumn show-overflow-tooltip label="字段名" prop="sourceFieldName"></ElTableColumn>
