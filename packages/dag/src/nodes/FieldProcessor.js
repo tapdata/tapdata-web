@@ -22,7 +22,8 @@ export class FieldProcessor extends NodeType {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
-        'x-component': 'FieldRenameProcessor'
+        'x-component': 'FieldRenameProcessor',
+        'x-reactions': ['{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}']
       }
     }
   }

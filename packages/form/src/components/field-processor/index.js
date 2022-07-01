@@ -7,15 +7,15 @@ import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import VIcon from 'web-core/components/VIcon'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
-import de from 'element-ui/src/locale/lang/de'
 
 export const FieldRenameProcessor = defineComponent({
-  props: ['data'],
+  props: [''],
   setup(props, { emit }) {
     const formRef = useForm()
     const form = formRef.value
     const list = ref([])
     const tableList = ref([])
+
     const config = reactive({
       visible: false,
       loadingNav: true,
@@ -41,10 +41,16 @@ export const FieldRenameProcessor = defineComponent({
         count: 1
       }
     })
+
+    const getTaskId = () => {
+      let url = window.location.href
+      return url.substring(url.lastIndexOf('/') + 1, url.length)
+    }
+
     const loadData = () => {
       config.loadingNav = true
       let { size, current } = config.page
-      let id = '62b96c293e587246d3eda22d'
+      let id = getTaskId()
       let where = {
         dataFlowId: id,
         sinkNodeId: ''
@@ -56,7 +62,7 @@ export const FieldRenameProcessor = defineComponent({
       }
       metadataTransformerApi
         .get({
-          filter: JSON.stringify({})
+          filter: JSON.stringify(filter)
         })
         .then(res => {
           let { total, items } = res
@@ -68,7 +74,7 @@ export const FieldRenameProcessor = defineComponent({
         })
         .finally(() => (config.loadingNav = false))
     }
-    let fieldsMapping = form.fieldsMapping || []
+    let fieldsMapping = form?.fieldsMapping || []
     const restOp = {
       prefix: '',
       suffix: '',
@@ -81,6 +87,7 @@ export const FieldRenameProcessor = defineComponent({
         if (!map[t.qualifiedName]) {
           map[t.qualifiedName] = {
             qualifiedName: t?.qualifiedName,
+            originTableName: t?.sinkObjectName,
             operation: t?.operation,
             fields: t.fields || []
           }
@@ -112,9 +119,11 @@ export const FieldRenameProcessor = defineComponent({
     const doUpateField = (row, target, val) => {
       let map = mapping(fieldsMapping)
       let current = config.selectTableRow?.sinkQulifiedName
+      let tableName = config.selectTableRow?.sinkObjectName
       if (!map[current]) {
         map[current] = {
           qualifiedName: current,
+          originTableName: tableName,
           operation: config.operation,
           fields: []
         }
@@ -158,8 +167,8 @@ export const FieldRenameProcessor = defineComponent({
     const updateView = index => {
       config.position = index
       config.selectTableRow = list.value[index]
-      tableList.value = config.selectTableRow.fieldsMapping
-      config.fieldCount = config.selectTableRow.sourceFieldCount - config.selectTableRow.userDeletedNum || 0
+      tableList.value = config.selectTableRow?.migrateFieldsMapping || []
+      config.fieldCount = config.selectTableRow?.sourceFieldCount - config.selectTableRow?.userDeletedNum || 0
     }
     //单个修改字段名
     const doEditName = row => {
