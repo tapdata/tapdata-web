@@ -458,7 +458,8 @@ export default {
           connectionType: item.connection_type,
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
-          pdkHash: item.pdkHash
+          pdkHash: item.pdkHash,
+          pdkExpansion: item.pdkExpansion
         }
       }
 
