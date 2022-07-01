@@ -118,7 +118,7 @@
             </ElTableColumn>
             <ElTableColumn :label="t('dag_dialog_field_mapping_type')" prop="data_type">
               <template #default="{ row }">
-                <div class="cursor-pointer" v-if="!row.is_deleted && !readOnly" @click="edit(row, 'data_type')">
+                <div class="cursor-pointer" v-if="!row.is_deleted && !readOnly">
                   <span :show-overflow-tooltip="true">{{ row.data_type }}</span>
                   <i v-if="!row.data_type" class="icon-error el-icon-warning"></i>
                   <i class="field-mapping__icon el-icon-arrow-down"></i>
