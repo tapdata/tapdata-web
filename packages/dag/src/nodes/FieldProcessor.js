@@ -22,7 +22,10 @@ export class FieldProcessor extends NodeType {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
-        'x-component': 'FieldRenameProcessor'
+        'x-component': 'FieldRenameProcessor',
+        'x-component-props': {
+          nodeId: '{{$values.id}}'
+        }
       }
     }
   }

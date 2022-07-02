@@ -1,5 +1,5 @@
 import { defineComponent, ref, reactive } from 'vue-demi'
-import { metadataTransformerApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
 import EmptyItem from 'web-core/components/EmptyItem'
@@ -9,7 +9,7 @@ import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
 
 export const FieldRenameProcessor = defineComponent({
-  props: ['value'],
+  props: ['value', 'nodeId'],
   setup(props, { emit }) {
     const formRef = useForm()
     const form = formRef.value
@@ -27,6 +27,8 @@ export const FieldRenameProcessor = defineComponent({
       checkedFields: [],
       position: 0,
       dataFlow: '',
+      searchTable: '',
+      searchField: '',
       operationVisible: false,
       newFieldName: '',
       operation: {
@@ -47,23 +49,23 @@ export const FieldRenameProcessor = defineComponent({
       return url.substring(url.lastIndexOf('/') + 1, url.length)
     }
 
-    const loadData = () => {
+    const loadData = value => {
       config.loadingNav = true
       let { size, current } = config.page
       let id = getTaskId()
       let where = {
-        dataFlowId: id,
-        sinkNodeId: '7c085cde-2794-4fa0-83f5-88fee16db711'
+        taskId: id,
+        nodeId: props.nodeId,
+        page: current,
+        pageSize: size
       }
-      let filter = {
-        where: where,
-        limit: size || 10,
-        skip: (current - 1) * size > 0 ? (current - 1) * size : 0
+      if (value && current !== value) {
+        where.searchTable = value
+      } else {
+        where.searchTable = ''
       }
-      metadataTransformerApi
-        .get({
-          filter: JSON.stringify(filter)
-        })
+      taskApi
+        .getNodeTableInfo(where)
         .then(res => {
           let { total, items } = res
           list.value = items || []
@@ -73,6 +75,17 @@ export const FieldRenameProcessor = defineComponent({
           emit('change', items)
         })
         .finally(() => (config.loadingNav = false))
+    }
+    const doSearchField = () => {
+      if (config.searchField.trim()) {
+        config.searchField = config.searchField.trim().toString() //去空格
+        config.tableList = config.target.filter(v => {
+          let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
+          return str.indexOf(config.searchField.toLowerCase()) > -1
+        })
+      } else {
+        this.tableList = config.target
+      }
     }
     let fieldsMapping = props.value || []
     const restOp = {
@@ -171,7 +184,8 @@ export const FieldRenameProcessor = defineComponent({
     const updateView = index => {
       config.position = index
       config.selectTableRow = list.value[index]
-      tableList.value = config.selectTableRow?.migrateFieldsMapping || []
+      config.target = config.selectTableRow?.fieldsMapping || []
+      tableList.value = config.target
       config.fieldCount = config.selectTableRow?.sourceFieldCount - config.selectTableRow?.userDeletedNum || 0
     }
     //单个修改字段名
@@ -293,7 +307,8 @@ export const FieldRenameProcessor = defineComponent({
       renderNode,
       renderOpNode,
       updateView,
-      doOperationRest
+      doOperationRest,
+      doSearchField
     }
   },
   render() {
@@ -308,6 +323,7 @@ export const FieldRenameProcessor = defineComponent({
                   placeholder="请输入表名"
                   suffix-icon="el-icon-search"
                   clearable
+                  v-model={this.config.searchTable}
                   onInput={this.loadData}
                 ></ElInput>
               </div>
@@ -385,7 +401,14 @@ export const FieldRenameProcessor = defineComponent({
           <div class="main">
             <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px">
               <div class="flex">
-                <ElInput size="mini" placeholder="请输入字段名" suffix-icon="el-icon-search"></ElInput>
+                <ElInput
+                  size="mini"
+                  placeholder="请输入字段名"
+                  suffix-icon="el-icon-search"
+                  clearable
+                  v-model={this.config.searchField}
+                  onInput={this.doSearchField}
+                ></ElInput>
                 <ElButton plain class="btn-refresh ml-2">
                   <VIcon>refresh</VIcon>
                 </ElButton>
