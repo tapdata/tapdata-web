@@ -229,7 +229,7 @@ export default {
         },
         {
           name: '字段编辑',
-          type: 'field_processor'
+          type: 'migrate_field_rename_processor'
         }
       ])
       this.addResourceIns(allResourceIns)

@@ -9,7 +9,7 @@ import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
 
 export const FieldRenameProcessor = defineComponent({
-  props: [''],
+  props: ['value'],
   setup(props, { emit }) {
     const formRef = useForm()
     const form = formRef.value
@@ -74,7 +74,7 @@ export const FieldRenameProcessor = defineComponent({
         })
         .finally(() => (config.loadingNav = false))
     }
-    let fieldsMapping = form?.fieldsMapping || []
+    let fieldsMapping = props.value || []
     const restOp = {
       prefix: '',
       suffix: '',
@@ -133,17 +133,11 @@ export const FieldRenameProcessor = defineComponent({
         delete fields[row.sourceFieldName]
       } else {
         //先生成所有fields
-        tableList.value.forEach(t => {
-          fields[t.sourceFieldName] = {
-            sourceFieldName: t.sourceFieldName,
-            targetFieldName: t.targetFieldName,
-            isShow: t.isShow
-          }
-        })
         fields[row.sourceFieldName] = {
           sourceFieldName: row.sourceFieldName,
           targetFieldName: target === 'rename' ? val : row.targetFieldName,
-          isShow: target === 'del' ? val : row.isShow
+          isShow: target === 'del' ? val : row.isShow,
+          type: 'custom'
         }
       }
 

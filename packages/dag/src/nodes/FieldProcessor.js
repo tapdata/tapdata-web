@@ -5,7 +5,7 @@ export class FieldProcessor extends NodeType {
     super()
   }
 
-  type = 'field_processor'
+  type = 'migrate_field_rename_processor'
 
   maxInputs = 1 // 最大输入个数
 
@@ -22,8 +22,7 @@ export class FieldProcessor extends NodeType {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
-        'x-component': 'FieldRenameProcessor',
-        'x-reactions': ['{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}']
+        'x-component': 'FieldRenameProcessor'
       }
     }
   }
