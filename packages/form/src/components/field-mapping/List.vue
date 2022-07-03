@@ -176,7 +176,7 @@ export default {
   name: 'List',
   components: { VIcon, OverflowTooltip },
   mixins: [Locale],
-  props: ['isMetaData', 'readOnly'],
+  props: ['isMetaData', 'readOnly', 'updateList'],
   data() {
     return {
       searchTable: '',
@@ -212,6 +212,11 @@ export default {
     this.dataFlow['id'] = this.dataFlow.taskId
     this.dataFlow['nodeId'] = this.dataFlow.activeNodeId
     this.getMetadataTransformer() //不需要推演 直接拿推演结果
+  },
+  watch: {
+    updateList() {
+      this.getMetadataTransformer()
+    }
   },
   methods: {
     getDataFlow() {
@@ -262,9 +267,9 @@ export default {
           let { total, items } = res
           this.page.total = total
           this.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
-          this.navData = items
+          this.navData = items || []
           //请求左侧table数据
-          this.selectRow = this.navData[0] || {}
+          this.selectRow = this.navData?.[0] || {}
           this.target = this.selectRow?.fieldsMapping
           this.viewTableData = this.target
           this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
@@ -340,18 +345,18 @@ export default {
         let field = {
           fieldName: row.sourceFieldName,
           fieldType: row.sourceFieldType,
-          defaultValue: this.editValueType?.default_value || ''
+          defaultValue: this.editDataValue || ''
         }
         this.editFields.push(field)
       } else {
         for (let i = 0; i < this.editFields.length; i++) {
           if (this.editFields[i].sourceFieldName === row.sourceFieldName) {
-            this.editFields[i].defaultValue = this.editValueType?.default_value || ''
+            this.editFields[i].defaultValue = this.editDataValue || ''
           } else {
             let field = {
               fieldName: row.sourceFieldName,
               fieldType: row.sourceFieldType,
-              defaultValue: this.editValueType?.default_value || ''
+              defaultValue: this.editDataValue || ''
             }
             this.editFields.push(field)
           }
@@ -365,7 +370,9 @@ export default {
         tableName: this.selectRow?.sourceObjectName,
         fields: this.editFields || []
       }
-      metadataInstancesApi.saveTable(data)
+      metadataInstancesApi.saveTable(data).then(() => {
+        this.$emit('updateVisible')
+      })
       if (val) {
         this.closeDialog()
       }
