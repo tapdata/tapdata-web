@@ -99,5 +99,13 @@ export default class MetadataInstances extends Http {
   findInspect(data) {
     return this.axios.post(this.url + '/findInspectPost', data)
   }
+  //元数据修改
+  saveTable(params) {
+    return this.axios.post(this.url + '/migrate/saveTable', params)
+  }
+  //元数据修改
+  resetTable(params) {
+    return this.axios.post(this.url + '/migrate/reset', params)
+  }
 }
 export { MetadataInstances }

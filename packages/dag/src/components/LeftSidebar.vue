@@ -48,7 +48,7 @@
                   <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
               </template>
-              <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pt-1">
+              <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pb-2">
                 <div
                   v-for="db in dbList"
                   v-mouse-drag="{
@@ -126,7 +126,7 @@
             </template>
             <!--多加一层div包裹，避免骨架屏出现时，v-infinite-scroll指令dom指向骨架屏-->
             <div>
-              <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pt-1">
+              <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pb-2">
                 <div
                   v-for="tb in tbList"
                   v-mouse-drag="{
@@ -164,7 +164,7 @@
             </span>
           </div>
         </template>
-        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3" :wrap-style="scrollbarWrapStyle">
+        <ElScrollbar ref="processorList" tag="div" wrap-class="px-2 pb-2" :wrap-style="scrollbarWrapStyle">
           <div
             v-for="(n, ni) in processorNodeTypes"
             :key="ni"
@@ -183,35 +183,6 @@
             <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
           </div>
         </ElScrollbar>
-        <!--<ElScrollbar ref="processorList" tag="div" wrap-class="" :wrap-style="scrollbarWrapStyle">
-          <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
-            <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
-              <div
-                v-mouse-drag="{
-                  item: n,
-                  container: '#dfEditorContent',
-                  getDragDom,
-                  onStart: onProcessorStart,
-                  onMove,
-                  onDrop,
-                  onStop
-                }"
-                class="node-item flex flex-column align-center px-1 py-2 grabbable user-select-none"
-              >
-                <div class="node-item-icon flex justify-center align-center mb-2">
-                  <VIcon size="24" color="#2C65FF">{{ n.icon }}</VIcon>
-                </div>
-                <OverflowTooltip
-                  class="node-item-txt text-center w-100"
-                  :text="n.name"
-                  popper-class="df-node-text-tooltip"
-                  placement="top"
-                  :open-delay="400"
-                />
-              </div>
-            </ElCol>
-          </ElRow>
-        </ElScrollbar>-->
       </ElCollapseItem>
     </ElCollapse>
 
@@ -784,7 +755,7 @@ $hoverBg: #eef3ff;
     .db-list-container {
       max-height: 50%;
       .el-collapse-item:last-child {
-        margin-bottom: -2px;
+        margin-bottom: -1px;
       }
     }
 
@@ -868,7 +839,7 @@ $hoverBg: #eef3ff;
         .el-collapse-item:first-child:last-child {
           height: 100%;
           .el-collapse-item__wrap {
-            height: calc(100% - #{$headerH - 1});
+            height: calc(100% - $headerH);
           }
           .el-collapse-item__content {
             height: 100%;

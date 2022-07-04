@@ -188,7 +188,7 @@ import TableList from '@/components/TableList'
 import VStep from '@/components/VStep'
 import Milestone from './Milestone'
 import Overview from '../../etl/statistics/Overview'
-import { formatTime } from '@/utils/util'
+import { formatTime, deepCopy } from '@/utils/util'
 import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
 
 export default {
@@ -534,7 +534,7 @@ export default {
     getSyncOverViewData() {
       subtaskApi.syncOverView(this.id).then(res => {
         this.syncOverViewData = res
-        this.$emit('sync', res)
+        this.$emit('sync', deepCopy(res))
         this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
       })
     },

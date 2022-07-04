@@ -5,7 +5,11 @@
       <el-radio-button label="other">Other Type</el-radio-button>
     </el-radio-group>
     <template v-if="type === 'sourcedata'">
-      <ul class="database-ul position-relative" :class="[large ? 'customNthChild' : 'primaryNthChild']">
+      <ul
+        v-loading="loading"
+        class="database-ul position-relative"
+        :class="[large ? 'customNthChild' : 'primaryNthChild']"
+      >
         <li v-for="item in types" :key="item.type" @click="$emit('select', item)">
           <div class="img-box">
             <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
@@ -71,6 +75,10 @@ export default {
     },
     hideType: {
       type: Boolean
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -82,7 +90,7 @@ export default {
         { name: 'Oracle', type: 'oracle' },
         { name: 'Elasticsearch', type: 'elasticsearch' },
         { name: 'Redis', type: 'redis' },
-        { name: 'PostgreSQL', type: 'postgres' },
+        // { name: 'PostgreSQL', type: 'postgres' },
         { name: 'SQL Server', type: 'sqlserver' },
         { name: 'GBase 8s', type: 'gbase-8s' },
         { name: 'Sybase ASE', type: 'sybase ase' },
@@ -114,6 +122,17 @@ export default {
         { name: 'Hazelcast Cloud', type: 'hazelcast_cloud_cluster' }
       ]
     }
+  },
+  watch: {
+    types: {
+      deep: true,
+      handler() {
+        this.getComingTypes()
+      }
+    }
+  },
+  mounted() {
+    this.getComingTypes()
   },
   methods: {
     changeType(type) {
@@ -170,6 +189,9 @@ export default {
       let row = Math.ceil(typesLen / count) // 支持数据源的行数
       result.top = (row + 1) * height + 'px'
       return result
+    },
+    getComingTypes() {
+      this.comingTypes = this.comingTypes.filter(f => !this.types.some(t => t.pdkId === f.type))
     }
   }
 }
