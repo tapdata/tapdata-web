@@ -230,8 +230,8 @@ export default {
           connection_type: { in: ['source', 'source_and_target'] }
         }
       }
-      connectionsApi.listAll(filter).then(res => {
-        let options = res?.data || []
+      connectionsApi.listAll(filter).then(data => {
+        let options = data || []
         this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
       })
     },
