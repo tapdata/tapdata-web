@@ -11,7 +11,7 @@
                 placeholder="请输入表名"
                 suffix-icon="el-icon-search"
                 clearable
-                @input="getMetadataTransformer(searchTable)"
+                @input="getMetadataTransformer(searchTable, 'search')"
               ></ElInput>
             </div>
           </div>
@@ -244,7 +244,7 @@ export default {
       this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
       this.position = index
     },
-    getMetadataTransformer(value) {
+    getMetadataTransformer(value, type) {
       let { size, current } = this.page
       let id = this.dataFlow?.id || this.dataFlow?.taskId
       let where = {
@@ -258,6 +258,9 @@ export default {
         where.searchTable = value
       } else {
         where.searchTable = ''
+      }
+      if (type === 'search') {
+        where.page = 1
       }
       this.loadingNav = true
       this.loadingTable = true
