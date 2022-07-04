@@ -1,6 +1,7 @@
 <template>
   <div
-    class="paper-scroller hide-scrollbar grabbable"
+    class="paper-scroller hide-scrollbar"
+    :class="{ grabbable: !shiftKeyPressed }"
     tabindex="0"
     @mousedown="mouseDown"
     @wheel="wheelScroll"
@@ -90,7 +91,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['getCtor', 'isActionActive', 'stateIsReadonly']),
-    ...mapState('dataflow', ['spaceKeyPressed']),
+    ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed']),
 
     selectBoxStyle() {
       let attr = this.selectBoxAttr
@@ -187,7 +188,13 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['addNode', 'setActiveType', 'setPaperSpaceKeyPressed', 'removeActiveAction']),
+    ...mapMutations('dataflow', [
+      'addNode',
+      'setActiveType',
+      'setPaperSpaceKeyPressed',
+      'removeActiveAction',
+      'toggleShiftKeyPressed'
+    ]),
 
     /**
      * 获取节点拖放后的坐标
@@ -241,7 +248,7 @@ export default {
         this.zoomTo(1)
       })
       // 画布适应内容区
-      Mousetrap.bind('mod+1', e => {
+      Mousetrap.bind('shift+1', e => {
         e.preventDefault()
         this.centerContent()
       })
@@ -440,13 +447,12 @@ export default {
 
       if (this.isActionActive('dragActive')) return
 
-      !this.selectActive && this.mouseMovePaper(e)
+      !this.selectActive && !this.shiftKeyPressed && this.mouseMovePaper(e)
       this.selectActive && this.mouseMoveSelect(e)
     },
 
     mouseDownMouseSelect(e) {
-      console.log('mouseDownMouseSelect', e) // eslint-disable-line
-      if (!e.shiftKey) return
+      if (!e.shiftKey && !this.shiftKeyPressed) return
 
       if (this.isActionActive('dragActive')) return
 
@@ -494,6 +500,7 @@ export default {
       }
       this.mouseUpMouseSelect(ifMoved)
       this.removeActiveAction('dragActive')
+      this.toggleShiftKeyPressed(false)
     },
 
     mouseUpMouseSelect(ifMoved) {
