@@ -245,6 +245,9 @@ export default {
       this.position = index
     },
     getMetadataTransformer(value, type) {
+      if (type === 'search') {
+        this.page.current = 1
+      }
       let { size, current } = this.page
       let id = this.dataFlow?.id || this.dataFlow?.taskId
       let where = {
@@ -258,9 +261,6 @@ export default {
         where.searchTable = value
       } else {
         where.searchTable = this.searchTable
-      }
-      if (type === 'search') {
-        where.page = 1
       }
       this.loadingNav = true
       this.loadingTable = true
