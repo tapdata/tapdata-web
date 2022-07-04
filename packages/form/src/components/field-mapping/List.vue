@@ -257,7 +257,7 @@ export default {
       if (value && current !== value) {
         where.searchTable = value
       } else {
-        where.searchTable = ''
+        where.searchTable = this.searchTable
       }
       if (type === 'search') {
         where.page = 1
