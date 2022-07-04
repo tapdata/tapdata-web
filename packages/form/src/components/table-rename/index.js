@@ -5,14 +5,16 @@ import { observer } from '@formily/reactive-vue'
 import EmptyItem from 'web-core/components/EmptyItem'
 import VIcon from 'web-core/components/VIcon'
 import './style.scss'
+import { taskApi } from '@tap/api'
 
 export const TableRename = observer(
   defineComponent({
     props: ['findParentNode', 'value', 'listStyle'],
-    setup(props, { emit }) {
+    setup(props, { emit, root }) {
       const formRef = useForm()
       const form = formRef.value
       const tableDataRef = ref([])
+      const loading = ref(false)
       let nameMap = reactive(props.value ? { ...props.value } : {})
       const config = reactive({
         search: '',
@@ -24,15 +26,30 @@ export const TableRename = observer(
       })
 
       const makeTable = () => {
-        let tableData = []
         if (form.values.$inputs?.length) {
-          let parentNode = props.findParentNode(form.values.id)
+          const { taskId } = root.$store.state.dataflow
+          loading.value = true
+          taskApi
+            .getNodeTableInfo({
+              taskId,
+              nodeId: form.values.id,
+              page: 1,
+              pageSize: 10000
+            })
+            .then(res => {
+              tableDataRef.value = res.items.map(item => item.sinkObjectName)
+            })
+            .finally(() => {
+              loading.value = false
+            })
+          /*let parentNode = props.findParentNode(form.values.id)
           if (parentNode.type === 'database') {
             const { tableNames = [] } = parentNode
             tableData = tableNames
-          }
+          }*/
+        } else {
+          tableDataRef.value = []
         }
-        tableDataRef.value = tableData
       }
 
       makeTable()
@@ -110,7 +127,8 @@ export const TableRename = observer(
         doReset,
         emitChange,
         nameMap,
-        tableData: tableDataRef
+        tableData: tableDataRef,
+        loading
       }
     },
 
@@ -121,7 +139,11 @@ export const TableRename = observer(
             <ElInput v-model={this.config.search} prefixIcon="el-icon-search" clearable></ElInput>
           </FormItem.BaseItem>
 
-          <div class="name-list flex flex-column border rounded-2 overflow-hidden mt-4" style={this.listStyle}>
+          <div
+            v-loading={this.loading}
+            class="name-list flex flex-column border rounded-2 overflow-hidden mt-4"
+            style={this.listStyle}
+          >
             <div class="name-list-header flex flex-shrink-0">
               <div class="name-list-title px-4">原表名</div>
               <div class="name-list-title pl-5 pr-4">新表名</div>
