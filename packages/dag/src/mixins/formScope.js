@@ -698,6 +698,33 @@ export default {
               })
             }
           }
+        },
+
+        useDmlPolicy(field) {
+          console.log('useDmlPolicy', field) // eslint-disable-line
+          const capabilities = field.query('attrs.capabilities').get('value')
+          const insertPolicy = capabilities.find(({ id }) => id === 'dml-insert-policy')
+          const updatePolicy = capabilities.find(({ id }) => id === 'dml-update-policy')
+          const insertField = field.query('dmlPolicy.insertPolicy').take()
+          const updateField = field.query('dmlPolicy.insertPolicy').take()
+
+          const func = (policy, policyField) => {
+            if (!policy || !policy.alternatives) {
+              policyField.setPattern('readPretty')
+              policyField.setValue(policyField.initialValue)
+            } else {
+              const alternatives = policy.alternatives
+              if (alternatives.length <= 1) {
+                policyField.setPattern('readPretty')
+                policyField.setValue(alternatives[0] || policyField.initialValue)
+              } else {
+                policyField.setPattern('editable')
+              }
+            }
+          }
+
+          func(insertPolicy, insertField)
+          func(updatePolicy, updateField)
         }
       }
     }

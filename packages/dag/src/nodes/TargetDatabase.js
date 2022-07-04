@@ -225,6 +225,13 @@ export class TargetDatabase extends NodeType {
       'attrs.connectionType': {
         type: 'string',
         'x-display': 'hidden'
+      },
+
+      // 切换连接，保存连接的类型
+      'attrs.capabilities': {
+        type: 'array',
+        'x-display': 'hidden',
+        'x-reactions': '{{useDmlPolicy}}'
       }
     }
   }
