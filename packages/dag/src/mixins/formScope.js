@@ -215,7 +215,7 @@ export default {
                 accessNodeProcessIdList: 1,
                 pdkType: 1,
                 pdkHash: 1,
-                pdkExpansion: 1
+                capabilities: 1
               },
               order: ['status DESC', 'name ASC']
             }
@@ -288,6 +288,11 @@ export default {
           }
         },
 
+        /**
+         * 同步连接上的属性
+         * @param form
+         * @param item
+         */
         handlerSyncDatabaseChange: (form, item) => {
           const field = form.query('grid.leftCell.connectionIdWrap.clipboardButton').take()
           field.setComponentProps({

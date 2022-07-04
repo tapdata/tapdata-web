@@ -302,7 +302,7 @@ export default {
           accessNodeProcessIdList: 1,
           pdkType: 1,
           pdkHash: 1,
-          pdkExpansion: 1,
+          capabilities: 1,
           config: 1
         },
         order: ['status DESC', 'name ASC']
@@ -459,7 +459,7 @@ export default {
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
-          pdkExpansion: item.pdkExpansion
+          capabilities: item.capabilities
         }
       }
 
