@@ -19,6 +19,7 @@ export const FieldRenameProcessor = defineComponent({
     const config = reactive({
       visible: false,
       loadingNav: true,
+      loadingTable: true,
       selectTableRow: '',
       currentFieldRow: '',
       fieldCount: '',
@@ -43,27 +44,27 @@ export const FieldRenameProcessor = defineComponent({
         count: 1
       }
     })
-
     const getTaskId = () => {
       let url = window.location.href
       return url.substring(url.lastIndexOf('/') + 1, url.length)
     }
-
-    const loadData = value => {
+    const loadData = (value, type) => {
       config.loadingNav = true
-      let { size, current } = config.page
       let id = getTaskId()
       let where = {
         taskId: id,
-        nodeId: props.nodeId,
-        page: current,
-        pageSize: size
+        nodeId: props.nodeId
       }
-      if (value && current !== value) {
+      if (type === 'search') {
+        config.page.current = 1
         where.searchTable = value
       } else {
+        config.page.current = value || 1
         where.searchTable = ''
       }
+      let { size, current } = config.page
+      where.pageSize = size
+      where.page = current
       taskApi
         .getNodeTableInfo(where)
         .then(res => {
@@ -74,17 +75,20 @@ export const FieldRenameProcessor = defineComponent({
           updateView(config.position)
           emit('change', items)
         })
-        .finally(() => (config.loadingNav = false))
+        .finally(() => {
+          config.loadingNav = false
+          config.loadingTable = false
+        })
     }
     const doSearchField = () => {
       if (config.searchField.trim()) {
         config.searchField = config.searchField.trim().toString() //去空格
-        config.tableList = config.target.filter(v => {
+        tableList.value = config.target.filter(v => {
           let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
           return str.indexOf(config.searchField.toLowerCase()) > -1
         })
       } else {
-        this.tableList = config.target
+        tableList.value = config.target
       }
     }
     let fieldsMapping = props.value || []
@@ -129,14 +133,13 @@ export const FieldRenameProcessor = defineComponent({
       }
       return list
     }
-    const doUpateField = (row, target, val) => {
+    const doUpdateField = (row, target, val) => {
       let map = mapping(fieldsMapping)
-      let current = config.selectTableRow?.sinkQulifiedName
-      let tableName = config.selectTableRow?.sinkObjectName
+      let current = config.selectTableRow?.sourceObjectName
       if (!map[current]) {
         map[current] = {
           qualifiedName: current,
-          originTableName: tableName,
+          originTableName: current,
           operation: config.operation,
           fields: []
         }
@@ -196,7 +199,8 @@ export const FieldRenameProcessor = defineComponent({
     }
     const doEditNameSave = () => {
       //修改名字 生成配置
-      doUpateField(config.currentFieldRow, 'rename', config.newFieldName)
+      updateFieldViews(config.currentFieldRow?.sourceFieldName, config.newFieldName)
+      doUpdateField(config.currentFieldRow, 'rename', config.newFieldName)
       config.operationVisible = false
       config.currentFieldRow = ''
     }
@@ -219,7 +223,8 @@ export const FieldRenameProcessor = defineComponent({
           if (config.operation.capitalized) {
             newField = newField[config.operation.capitalized]()
           }
-          doUpateField(t, 'rename', newField)
+          updateFieldViews(t?.sourceFieldName, newField)
+          doUpdateField(t, 'rename', newField)
         })
       }
       fieldsMapping = toList(map)
@@ -242,33 +247,43 @@ export const FieldRenameProcessor = defineComponent({
       } else if (config.checkedFields?.length > 0) {
         //字段级别
         config.checkedFields.forEach(t => {
-          doUpateField(t, 'rest', t.targetFieldName)
+          doUpdateField(t, 'rest', t.targetFieldName)
         })
       }
       fieldsMapping = toList(map)
+      //更新整个数据
+      loadData()
       // eslint-disable-next-line
       console.log(fieldsMapping)
     }
     //单个删除字段
     const doShowRow = row => {
-      for (let i = 0; i < tableList.length; i++) {
-        if (tableList[i].sourceFieldName === row.sourceFieldName) {
-          tableList[i]['isShow'] = true
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
+          tableList.value[i]['isShow'] = true
         }
       }
-      doUpateField(row, 'del', true)
+      doUpdateField(row, 'del', true)
     }
     const doDeleteRow = row => {
-      for (let i = 0; i < tableList.length; i++) {
-        if (tableList[i].sourceFieldName === row.sourceFieldName) {
-          tableList[i]['isShow'] = false
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
+          tableList.value[i]['isShow'] = false
         }
       }
-      doUpateField(row, 'del', false)
+      doUpdateField(row, 'del', false)
     }
     const tableRowClassName = ({ row }) => {
       if (!row.isShow) {
         return 'row-deleted'
+      }
+    }
+    //前端读取配置及时反馈
+    const updateFieldViews = (key, value) => {
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === key) {
+          tableList.value[i]['targetFieldName'] = value
+        }
       }
     }
     //右侧表格slot渲染
@@ -324,7 +339,7 @@ export const FieldRenameProcessor = defineComponent({
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchTable}
-                  onInput={this.loadData}
+                  onInput={() => this.loadData(this.config.searchTable, 'search')}
                 ></ElInput>
               </div>
             </div>
@@ -380,10 +395,11 @@ export const FieldRenameProcessor = defineComponent({
               small
               class="flex mt-3 din-font"
               layout="total, prev, slot, next"
+              on={{ ['update:current-page']: this.loadData }}
               current-page={this.config.page.current}
               total={this.config.page.total}
               pager-count={5}
-              current-change={this.loadData}
+              onCurrent-change={this.loadData}
             >
               <div class="text-center">
                 <span class="page__current" style="min-width: 22px">
@@ -409,9 +425,6 @@ export const FieldRenameProcessor = defineComponent({
                   v-model={this.config.searchField}
                   onInput={this.doSearchField}
                 ></ElInput>
-                <ElButton plain class="btn-refresh ml-2">
-                  <VIcon>refresh</VIcon>
-                </ElButton>
               </div>
               <div class="item ml-2">
                 <ElButton
@@ -431,6 +444,7 @@ export const FieldRenameProcessor = defineComponent({
               class="field-mapping-table table-border"
               height="100%"
               data={this.tableList}
+              v-loading={this.config.loadingTable}
               row-class-name={this.tableRowClassName}
               onSelection-change={this.doSelectionField}
             >
