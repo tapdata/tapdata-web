@@ -955,6 +955,7 @@ export default {
   task_list_edit_confirm:
     '已运行过的任务如果编辑时修改了表数量及字段映射提交后若不重置可能导致新配置无法生效，请问您要继续编辑吗?',
   task_list_important_reminder: '重要提醒',
+  task_list_stop_confirm_message: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
 
   task_preview_title: '数据库迁移详情',
   task_preview_createUser: '创建人', //后台数据返回

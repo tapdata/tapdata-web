@@ -23,8 +23,8 @@
       <ElTableColumn show-overflow-tooltip prop="tableName" min-width="100" :label="$t('column_table')"></ElTableColumn>
       <ElTableColumn :label="$t('shared_cache_status')" min-width="70">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResult, 'status-block']">
-            {{ $t('task_preview_status_' + row.statusResult) }}
+          <span :class="['status-' + row.statusResultData, 'status-block']">
+            {{ $t('task_preview_status_' + row.statusResultData) }}
           </span>
         </template>
       </ElTableColumn>
@@ -40,9 +40,7 @@
       </ElTableColumn>
       <ElTableColumn min-width="120" :label="$t('column_operation')">
         <template #default="{ row }">
-          <!-- <ElLink type="primary" @click="edit(row.id)">{{ $t('button_edit') }}</ElLink> -->
-          <!-- <ElDivider direction="vertical"></ElDivider> -->
-          <ElLink type="primary" @click="del(row.id)">{{ $t('button_delete') }}</ElLink>
+          <TaskButtons :task="row" :hide-list="['details']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -51,8 +49,8 @@
         <VIcon class="icon">text</VIcon>
         <div class="flex-fill ml-4">
           <div class="fs-6">{{ details.name }}</div>
-          <span :class="['status-' + details.statusResult, 'status-block', 'mt-2']">
-            {{ $t('task_preview_status_' + details.statusResult) }}
+          <span :class="['status-' + details.statusResultData, 'status-block', 'mt-2']">
+            {{ $t('task_preview_status_' + details.statusResultData) }}
           </span>
         </div>
       </div>
@@ -158,9 +156,10 @@ import { toRegExp } from '@/utils/util'
 import { getSubTaskStatus } from '@/utils/util'
 import dayjs from 'dayjs'
 import { sharedCacheApi } from '@tap/api'
+import TaskButtons from '@/components/TaskButtons'
 
 export default {
-  components: { TablePage, FilterBar, Drawer },
+  components: { TablePage, FilterBar, Drawer, TaskButtons },
   data() {
     return {
       searchParams: {
@@ -222,7 +221,7 @@ export default {
               item.cacheTimeAtFmt = item.cacheTimeAt ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
 
               let statuses = item.statuses
-              item.statusResult = getSubTaskStatus(statuses)[0].status
+              item.statusResultData = getSubTaskStatus(statuses)[0].status
               return item
             })
           }
@@ -249,6 +248,15 @@ export default {
         }
       ]
       this.isShowDetails = true
+    },
+    taskButtonsHandler(event, task) {
+      if (event === 'edit') {
+        this.edit(task.id)
+      } else if (event === 'del') {
+        this.del(task.id)
+      } else {
+        this.table.fetch()
+      }
     },
     edit(id) {
       this.$router.push({

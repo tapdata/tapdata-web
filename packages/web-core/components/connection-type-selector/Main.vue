@@ -17,7 +17,12 @@
             </div>
           </ElTooltip>
         </li>
-        <li v-for="(item, itemIndex) in comingTypes" :key="item.type" class="item--disabled" :style="getComingItemStyle(itemIndex)">
+        <li
+          v-for="(item, itemIndex) in comingTypes"
+          :key="item.type"
+          class="item--disabled"
+          :style="getComingItemStyle(itemIndex)"
+        >
           <div>
             <div class="img-box">
               <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
@@ -123,8 +128,8 @@ export default {
       let result = {}
       let comingLen = this.comingTypes.length
       let typesLen = this.types.length
-      let row = Math.ceil(typesLen/count) // 支持数据源的行数
-      let allRow = Math.ceil((comingLen + typesLen)/count) // 所有数据源的行数
+      let row = Math.ceil(typesLen / count) // 支持数据源的行数
+      let allRow = Math.ceil((comingLen + typesLen) / count) // 所有数据源的行数
       let col = typesLen % count // 支持数据源，多出的列数
       let allCol = (comingLen + typesLen) % count // 所有数据源，多出的列数
       // 第一行，第一个元素
@@ -132,7 +137,7 @@ export default {
         result['border-top-left-radius'] = '8px'
       }
       // 第一行，最后一个元素
-      if ((typesLen + index + 1) === count * (col ? row: (row + 1) )) {
+      if (typesLen + index + 1 === count * (col ? row : row + 1)) {
         result['border-top-right-radius'] = '8px'
       }
       if (col !== 0) {
@@ -162,7 +167,7 @@ export default {
       let count = 9
       let height = 122
       let typesLen = this.types.length
-      let row = Math.ceil(typesLen/count) // 支持数据源的行数
+      let row = Math.ceil(typesLen / count) // 支持数据源的行数
       result.top = (row + 1) * height + 'px'
       return result
     }

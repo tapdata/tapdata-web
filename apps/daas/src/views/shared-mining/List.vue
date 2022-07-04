@@ -36,40 +36,14 @@
       </el-table-column>
       <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResult, 'status-block']">
-            {{ $t('task_preview_status_' + row.statusResult) }}
+          <span :class="['status-' + row.statusResultData, 'status-block']">
+            {{ $t('task_preview_status_' + row.statusResultData) }}
           </span>
         </template>
       </el-table-column>
       <el-table-column width="210" fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
-          <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
-            $t('task_list_run')
-          }}</el-button>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElLink v-if="isShowForceStop(row.statuses)" type="primary" @click="forceStop([row.id])">
-            {{ $t('task_list_force_stop') }}
-          </ElLink>
-          <el-button v-else size="mini" type="text" :disabled="row.disabledData.stop" @click="stop([row.id])">{{
-            $t('task_list_stop')
-          }}</el-button>
-          <ElDivider direction="vertical"></ElDivider>
-          <el-button size="mini" type="text" :disabled="row.disabledData.edit" @click="edit(row)">{{
-            $t('button_edit')
-          }}</el-button>
-          <ElDivider direction="vertical"></ElDivider>
-          <el-dropdown size="small" @command="handleCommand($event, row)">
-            <ElLink type="primary" class="rotate-90">
-              <i class="el-icon-more"></i>
-            </ElLink>
-            <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
-              <el-dropdown-item command="detail">{{ $t('button_details') }}</el-dropdown-item>
-              <el-dropdown-item :disabled="row.disabledData.reset" command="rest">
-                {{ $t('task_list_reset') }}
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          <Test></Test>
+          <TaskButtons :task="row" :hide-list="['del']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
       </el-table-column>
     </TablePage>
@@ -175,13 +149,15 @@ import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
-import { taskApi, logcollectorApi } from '@tap/api'
+import { logcollectorApi } from '@tap/api'
+import TaskButtons from '@/components/TaskButtons'
 
 let timeout = null
 export default {
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
+    TaskButtons
   },
   data() {
     return {
@@ -214,36 +190,14 @@ export default {
         share_cdc_ttl_day: 3
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
-      mongodbList: [],
       editForm: {
         id: '',
         name: '',
         storageTime: 3
       },
       currentForm: {},
-      options: [
-        {
-          label: this.$t('share_form_edit_localTZ_type'),
-          value: 'localTZ'
-        },
-        {
-          label: this.$t('share_form_edit_connTZ_type'),
-          value: 'connTZ'
-        },
-        {
-          label: this.$t('share_form_edit_current_type'),
-          value: 'current'
-        }
-      ],
       logSaveList: ['1', '2', '3', '4', '5', '6', '7'],
-      statusBtMap: {
-        // scheduled, draft, running, stopping, error, pause, force stopping
-        start: { draft: true, error: true, pause: true },
-        stop: { running: true },
-        edit: { edit: true, stop: true, error: true }
-      },
       showEditSettingBtn: false, //禁用
-      //rules
       rules: {
         persistenceMongodb_uri_db: [
           { required: true, message: this.$t('shared_cdc_setting_select_mongodb_tip'), trigger: 'blur' }
@@ -261,7 +215,7 @@ export default {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 30000)
+    }, 10000)
   },
   computed: {
     table() {
@@ -309,7 +263,7 @@ export default {
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               let statuses = item.statuses
               item.disabledData = getTaskBtnDisabled(item)
-              item.statusResult = getSubTaskStatus(statuses)[0].status
+              item.statusResultData = getSubTaskStatus(statuses)[0].status
               return item
             })
           }
@@ -362,84 +316,23 @@ export default {
         }
       })
     },
-    run(ids) {
-      let filter = {
-        where: {
-          id: ids[0]
-        }
-      }
-      taskApi.get({ filter: JSON.stringify(filter) }).then(res => {
-        if (res) {
-          taskApi.batchStart(ids).then(res => {
-            this.$message.success(res?.message || this.$t('message_operation_succuess'))
-            this.table.fetch()
-          })
-        }
-      })
-    },
-    getConfirmMessage(operateStr, isBulk, name) {
-      let title = operateStr + '_confirm_title',
-        message = operateStr + '_confirm_message'
-      if (isBulk) {
-        title = 'bulk_' + title
-        message = 'bulk_' + message
-      }
-      const h = this.$createElement
-      let strArr = this.$t('dataFlow.' + message).split('xxx')
-      let msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary'
-          },
-          name
-        ),
-        strArr[1]
-      ])
-      return {
-        msg,
-        title: this.$t('dataFlow.' + title)
-      }
-    },
-    isShowForceStop(data) {
-      return data?.length && data.every(t => ['stopping'].includes(t.status))
-    },
-    stop(ids) {
-      this.$confirm(this.$t('message.stopInitial_syncMessage'), this.$t('dataFlow.importantReminder'), {
-        type: 'warning'
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        taskApi.batchStop(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
-          this.table.fetch()
+    taskButtonsHandler(event, task) {
+      if (event === 'edit') {
+        this.editDialogVisible = true
+        this.editForm.id = task.id
+        this.editForm.name = task.name
+        this.editForm.storageTime = task.storageTime
+        this.currentForm = JSON.parse(JSON.stringify(this.editForm))
+      } else if (event === 'details') {
+        this.$router.push({
+          name: 'SharedMiningDetails',
+          params: {
+            id: task.id
+          }
         })
-      })
-    },
-    forceStop(ids, item = {}) {
-      let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        taskApi.forceStop(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
-          this.table.fetch()
-        })
-      })
-    },
-    // 编辑
-    edit(item) {
-      this.editDialogVisible = true
-      this.editForm.id = item.id
-      this.editForm.name = item.name
-      this.editForm.storageTime = item.storageTime
-      this.currentForm = JSON.parse(JSON.stringify(this.editForm))
+      } else {
+        this.table.fetch()
+      }
     },
     // 取消编辑
     cancelEdit() {
@@ -458,28 +351,6 @@ export default {
         this.editDialogVisible = false
       })
     },
-    //重置
-    rest(ids, item = {}) {
-      let msgObj = this.getConfirmMessage('initialize', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.restLoading = true
-        taskApi
-          .batchRenew(ids)
-          .then(res => {
-            this.table.fetch()
-            this.$message.success(res?.message || this.$t('message_operation_succuess'))
-          })
-          .finally(() => {
-            this.restLoading = false
-          })
-      })
-    },
-
     // 保存编辑
     saveEdit() {
       this.$refs['editForm'].validate(valid => {
@@ -494,24 +365,6 @@ export default {
           })
         }
       })
-    },
-
-    detail(ids, item) {
-      this.$router.push({
-        name: 'SharedMiningDetails',
-        params: {
-          id: item.id
-        }
-      })
-    },
-    handleCommand(command, node) {
-      let ids = []
-      if (node) {
-        ids = [node.id]
-      } else {
-        ids = this.multipleSelection.map(item => item.id)
-      }
-      this[command](ids, node)
     }
   }
 }

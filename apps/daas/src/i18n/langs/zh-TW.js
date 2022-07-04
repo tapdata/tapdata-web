@@ -947,6 +947,7 @@ export default {
   task_list_edit_confirm:
     '已運行過的任務如果編輯時修改了表數量及字段映射提交後若不重置可能導致新配置無法生效，請問您要繼續編輯嗎?',
   task_list_important_reminder: '重要提醒',
+  task_list_stop_confirm_message: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
 
   task_preview_title: '數據庫遷移詳情',
   task_preview_createUser: '創建人',

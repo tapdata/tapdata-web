@@ -987,6 +987,8 @@ export default {
   task_list_edit_confirm:
     'If the number of tables and field mappings have been modified during editing, the new configuration may not take effect if it is not reset after submission. Do you want to continue editing?',
   task_list_important_reminder: 'Important reminder',
+  task_list_stop_confirm_message:
+    'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 
   task_preview_title: 'Database Migration Details',
   task_preview_createUser: 'Creator',
