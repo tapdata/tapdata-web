@@ -33,7 +33,13 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <SchemaToForm ref="schemaToForm" :schema="schemaData" :colon="true" label-width="160"></SchemaToForm>
+            <SchemaToForm
+              ref="schemaToForm"
+              :schema="schemaData"
+              wrapperWidth="610px"
+              :colon="true"
+              label-width="160"
+            ></SchemaToForm>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
@@ -496,9 +502,56 @@ export default {
                     }
                   ],
                   'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    feedbackLayout: 'none'
+                  },
                   'x-component': 'Radio.Group',
                   'x-component-props': {
                     optionType: 'button'
+                  }
+                },
+                connection_form_source_and_target_tip: {
+                  type: 'void',
+                  title: ' ',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    colon: false
+                  },
+                  'x-component': 'Text',
+                  'x-component-props': { icon: 'info', content: this.$t('connection_form_source_and_target_tip') },
+                  'x-reactions': {
+                    dependencies: ['__TAPDATA_START.connection_type'],
+                    fulfill: {
+                      schema: { 'x-decorator-props.style.display': '{{$deps[0]==="source_and_target" ? null:"none"}}' }
+                    }
+                  }
+                },
+                connection_form_source_tip: {
+                  type: 'void',
+                  title: ' ',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    colon: false
+                  },
+                  'x-component': 'Text',
+                  'x-component-props': { icon: 'info', content: this.$t('connection_form_source_tip') },
+                  'x-reactions': {
+                    dependencies: ['__TAPDATA_START.connection_type'],
+                    fulfill: { schema: { 'x-decorator-props.style.display': '{{$deps[0]==="source" ? null:"none"}}' } }
+                  }
+                },
+                connection_form_target_tip: {
+                  type: 'void',
+                  title: ' ',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    colon: false
+                  },
+                  'x-component': 'Text',
+                  'x-component-props': { icon: 'info', content: this.$t('connection_form_target_tip') },
+                  'x-reactions': {
+                    dependencies: ['__TAPDATA_START.connection_type'],
+                    fulfill: { schema: { 'x-decorator-props.style.display': '{{$deps[0]==="target" ? null:"none"}}' } }
                   }
                 }
               }
@@ -649,9 +702,9 @@ export default {
           width: 100%;
           height: 100%;
           overflow-y: auto;
-          .scheme-to-form {
-            width: 480px;
-          }
+          //.scheme-to-form {
+          //  width: 480px;
+          //}
           .form-builder {
             width: 396px;
             ::v-deep {
