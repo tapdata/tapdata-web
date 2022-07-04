@@ -921,7 +921,7 @@ export default {
 
     async validateNode(node) {
       try {
-        await validateBySchema(node.__Ctor.formSchema, node, this.scope)
+        await validateBySchema(node.__Ctor.formSchema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -1134,17 +1134,17 @@ export default {
       }
     },
 
-    handleMouseSelect(showSelectBox, selectBoxAttr) {
+    handleMouseSelect(ifMoved, showSelectBox, selectBoxAttr) {
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态
       // this.setActiveType(null)
 
-      if (showSelectBox) {
+      if (!ifMoved) {
+        this.setActiveType(null)
+      } else if (showSelectBox) {
         const selectedNodes = this.getNodesInSelection(selectBoxAttr)
         selectedNodes.forEach(node => this.nodeSelected(node))
-      } else {
-        this.setActiveType(null)
       }
     },
 

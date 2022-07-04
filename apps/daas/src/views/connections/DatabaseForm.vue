@@ -33,7 +33,13 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <SchemaToForm ref="schemaToForm" :schema="schemaData" :colon="true" label-width="160"></SchemaToForm>
+            <SchemaToForm
+              ref="schemaToForm"
+              :schema="schemaData"
+              wrapperWidth="610px"
+              :colon="true"
+              label-width="160"
+            ></SchemaToForm>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
@@ -456,6 +462,54 @@ export default {
       databaseTypesApi.pdkHash(pdkHash).then(res => {
         let id = this.id || this.$route.params.id
         this.pdkOptions = res
+        let connectionTypeJson = {
+          type: 'string',
+          title: this.$t('connection_form_connection_type'),
+          required: true,
+          default: this.pdkOptions.connectionType || 'source_and_target',
+          enum: [
+            {
+              label: this.$t('connection_form_source_and_target'),
+              value: 'source_and_target',
+              tip: this.$t('connection_form_source_and_target_tip')
+            },
+            {
+              label: this.$t('connection_form_source'),
+              value: 'source',
+              tip: this.$t('connection_form_source_tip')
+            },
+            {
+              label: this.$t('connection_form_target'),
+              value: 'target',
+              tip: this.$t('connection_form_target_tip')
+            }
+          ],
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            feedbackLayout: 'none'
+          },
+          'x-component': 'Radio.Group',
+          'x-component-props': {
+            optionType: 'button'
+          }
+        }
+        if (this.pdkOptions.connectionType === 'source') {
+          connectionTypeJson.enum = [
+            {
+              label: this.$t('connection_form_source'),
+              value: 'source',
+              tip: this.$t('connection_form_source_tip')
+            }
+          ]
+        } else if (this.pdkOptions.connectionType === 'target') {
+          connectionTypeJson.enum = [
+            {
+              label: this.$t('connection_form_target'),
+              value: 'target',
+              tip: this.$t('connection_form_target_tip')
+            }
+          ]
+        }
         let result = {
           type: 'object',
           'x-component-props': {
@@ -473,32 +527,49 @@ export default {
                   'x-decorator': 'FormItem',
                   'x-component': 'Input'
                 },
-                connection_type: {
-                  type: 'string',
-                  title: this.$t('connection_form_connection_type'),
-                  required: true,
-                  default: 'source_and_target',
-                  enum: [
-                    {
-                      label: this.$t('connection_form_source_and_target'),
-                      value: 'source_and_target',
-                      tip: this.$t('connection_form_source_and_target_tip')
-                    },
-                    {
-                      label: this.$t('connection_form_source'),
-                      value: 'source',
-                      tip: this.$t('connection_form_source_tip')
-                    },
-                    {
-                      label: this.$t('connection_form_target'),
-                      value: 'target',
-                      tip: this.$t('connection_form_target_tip')
-                    }
-                  ],
+                connection_type: connectionTypeJson,
+                connection_form_source_and_target_tip: {
+                  type: 'void',
+                  title: ' ',
                   'x-decorator': 'FormItem',
-                  'x-component': 'Radio.Group',
-                  'x-component-props': {
-                    optionType: 'button'
+                  'x-decorator-props': {
+                    colon: false
+                  },
+                  'x-component': 'Text',
+                  'x-component-props': { icon: 'info', content: this.$t('connection_form_source_and_target_tip') },
+                  'x-reactions': {
+                    dependencies: ['__TAPDATA_START.connection_type'],
+                    fulfill: {
+                      schema: { 'x-decorator-props.style.display': '{{$deps[0]==="source_and_target" ? null:"none"}}' }
+                    }
+                  }
+                },
+                connection_form_source_tip: {
+                  type: 'void',
+                  title: ' ',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    colon: false
+                  },
+                  'x-component': 'Text',
+                  'x-component-props': { icon: 'info', content: this.$t('connection_form_source_tip') },
+                  'x-reactions': {
+                    dependencies: ['__TAPDATA_START.connection_type'],
+                    fulfill: { schema: { 'x-decorator-props.style.display': '{{$deps[0]==="source" ? null:"none"}}' } }
+                  }
+                },
+                connection_form_target_tip: {
+                  type: 'void',
+                  title: ' ',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    colon: false
+                  },
+                  'x-component': 'Text',
+                  'x-component-props': { icon: 'info', content: this.$t('connection_form_target_tip') },
+                  'x-reactions': {
+                    dependencies: ['__TAPDATA_START.connection_type'],
+                    fulfill: { schema: { 'x-decorator-props.style.display': '{{$deps[0]==="target" ? null:"none"}}' } }
                   }
                 }
               }
@@ -649,9 +720,9 @@ export default {
           width: 100%;
           height: 100%;
           overflow-y: auto;
-          .scheme-to-form {
-            width: 480px;
-          }
+          //.scheme-to-form {
+          //  width: 480px;
+          //}
           .form-builder {
             width: 396px;
             ::v-deep {

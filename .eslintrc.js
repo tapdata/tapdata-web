@@ -15,6 +15,7 @@ module.exports = {
     'getter-return': 'off',
 
     '@typescript-eslint/no-this-alias': 'off', // 不允许给this设置别名，例如 let self = this
+    '@typescript-eslint/no-empty-function': 'off',
 
     'prefer-const': [
       'off', // 使用const代替let,暂时关闭

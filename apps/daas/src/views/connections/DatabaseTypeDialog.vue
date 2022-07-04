@@ -8,6 +8,7 @@
     :before-close="handleClose"
   >
     <ConnectionTypeSelector
+      :loading="loading"
       :types="database"
       :otherTypes="otherType"
       :large="true"
@@ -37,7 +38,8 @@ export default {
     return {
       database: [],
       otherType: [],
-      timer: null
+      timer: null,
+      loading: true
     }
   },
   created() {
@@ -60,15 +62,20 @@ export default {
       this.$store.commit('createConnection', { item })
     },
     getDatabaseType() {
-      databaseTypesApi.get().then(res => {
-        if (res) {
-          if (!this.database.length) {
-            return this.database.push(...res)
+      databaseTypesApi
+        .get()
+        .then(res => {
+          if (res) {
+            let data = res?.filter(t => !this.database.length || !this.database.some(d => d.pdkHash === t.pdkHash))
+            if (!data.length) {
+              return
+            }
+            this.database.push(...data)
           }
-          let data = res?.filter(t => !this.database.some(d => d.pdkHash === t.pdkHash)) || []
-          this.database.push(...data)
-        }
-      })
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }

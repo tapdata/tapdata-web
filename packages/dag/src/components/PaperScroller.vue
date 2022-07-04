@@ -1,7 +1,7 @@
 <template>
   <div
     class="paper-scroller hide-scrollbar"
-    :class="scrollerClasses"
+    :class="{ grabbable: !shiftKeyPressed }"
     tabindex="0"
     @mousedown="mouseDown"
     @wheel="wheelScroll"
@@ -91,7 +91,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['getCtor', 'isActionActive', 'stateIsReadonly']),
-    ...mapState('dataflow', ['spaceKeyPressed']),
+    ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed']),
 
     selectBoxStyle() {
       let attr = this.selectBoxAttr
@@ -188,7 +188,13 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['addNode', 'setActiveType', 'setPaperSpaceKeyPressed', 'removeActiveAction']),
+    ...mapMutations('dataflow', [
+      'addNode',
+      'setActiveType',
+      'setPaperSpaceKeyPressed',
+      'removeActiveAction',
+      'toggleShiftKeyPressed'
+    ]),
 
     /**
      * 获取节点拖放后的坐标
@@ -242,7 +248,7 @@ export default {
         this.zoomTo(1)
       })
       // 画布适应内容区
-      Mousetrap.bind('mod+1', e => {
+      Mousetrap.bind('shift+1', e => {
         e.preventDefault()
         this.centerContent()
       })
@@ -405,17 +411,48 @@ export default {
       }
     },
 
+    initState(e) {
+      this.state = {
+        onMouseDownAt: Date.now(),
+        startEvent: e,
+        position: this.getMousePosition(e),
+        inScrollerPosition: this.getMousePositionWithinScroller(e)
+      }
+    },
+
+    checkDistanceChange(e) {
+      const distance = Math.sqrt(
+        Math.pow(e.pageX - this.state.startEvent.pageX, 2) + Math.pow(e.pageY - this.state.startEvent.pageY, 2)
+      )
+      const timeDelta = Date.now() - this.state.onMouseDownAt
+      if (timeDelta > 10 && e !== this.state.startEvent && distance > 4) {
+        return true
+      }
+      return false
+    },
+
     mouseDown(e) {
+      this.initState(e)
+      on(window, 'mousemove', this.mouseMove)
       on(window, 'mouseup', this.mouseUp)
 
       // 鼠标拖选
       this.mouseDownMouseSelect(e)
       // 鼠标移动画布
-      this.mouseDownMovePaper(e)
+      // this.mouseDownMovePaper(e)
+    },
+
+    mouseMove(e) {
+      // console.log('mouseMove', e) // eslint-disable-line
+
+      if (this.isActionActive('dragActive')) return
+
+      !this.selectActive && !this.shiftKeyPressed && this.mouseMovePaper(e)
+      this.selectActive && this.mouseMoveSelect(e)
     },
 
     mouseDownMouseSelect(e) {
-      if (this.spaceKeyPressed) return
+      if (!e.shiftKey && !this.shiftKeyPressed) return
 
       if (this.isActionActive('dragActive')) return
 
@@ -424,13 +461,14 @@ export default {
 
       // this.showSelectBox(e)
 
-      on(document, 'mousemove', this.mouseMoveSelect, {
+      /*on(document, 'mousemove', this.mouseMoveSelect, {
         capture: false,
         passive: false
-      })
+      })*/
     },
 
     mouseMoveSelect(e) {
+      if (!this.selectActive) return
       e.preventDefault() // 防止拖动时文字被选中
 
       if (e.buttons === 0) {
@@ -454,23 +492,21 @@ export default {
     },
 
     mouseUp(event) {
+      off(window, 'mousemove', this.mouseMove)
       off(window, 'mouseup', this.mouseUp)
-      this.mouseUpMouseSelect(event)
-      this.mouseUpMovePaper()
+      const ifMoved = this.checkDistanceChange(event)
+      if (!ifMoved && [this.$refs.paper, this.$refs.scrollerBg, this.$el].includes(event.target)) {
+        this.$emit('click-blank')
+      }
+      this.mouseUpMouseSelect(ifMoved)
       this.removeActiveAction('dragActive')
+      this.toggleShiftKeyPressed(false)
     },
 
-    mouseUpMouseSelect(event) {
-      if (!this.selectActive) {
-        return
-      }
-
-      off(document, 'mousemove', this.mouseMoveSelect)
-
+    mouseUpMouseSelect(ifMoved) {
       let boxAttr // 转换后的拖选框坐标，可直接和节点坐标做比较
-
       // 显示拖选框时，执行判断逻辑
-      if (this.showSelectBox) {
+      if (ifMoved && this.showSelectBox) {
         const scale = this.paperScale
         let { x, y, w, h, bottom, right } = this.selectBoxAttr
 
@@ -481,17 +517,7 @@ export default {
         boxAttr = { x, y, right, bottom }
       }
 
-      const showSelectBox = this.showSelectBox && this.selectBoxAttr.w > 4 && this.selectBoxAttr.h > 4
-
-      if (
-        [this.$refs.paper, this.$refs.scrollerBg, this.$el].includes(event.target) &&
-        !showSelectBox &&
-        !this.$store.getters['dataflow/isPaperMoveInProgress']
-      ) {
-        this.$emit('click-blank')
-      }
-
-      this.$emit('mouse-select', showSelectBox, boxAttr)
+      this.$emit('mouse-select', ifMoved, this.showSelectBox, boxAttr)
       this.hideSelectBox()
     },
 

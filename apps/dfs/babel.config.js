@@ -9,5 +9,8 @@ module.exports = {
       }
     ]
   ],
-  plugins: [['@babel/plugin-transform-arrow-functions', { spec: true }]]
+  plugins: [
+    ['@babel/plugin-transform-arrow-functions', { spec: true }],
+    ['@babel/plugin-transform-typescript', { isTSX: true }]
+  ]
 }

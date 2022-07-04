@@ -159,7 +159,7 @@
             >{{ $t('button_delete') }}</ElButton
           >
           <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
-          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
+          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
             <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
             </ElLink>
@@ -398,11 +398,11 @@ export default {
       this.$router.push({ name: 'apiPublishCreate' })
     },
     // 预览
-    preview(item) {
+    preview(ids, item) {
       this.$router.push({ name: 'apiExplorer', query: { id: item.basePath + '_' + item.apiVersion } })
     },
     // api文档及测试
-    toDocumentTest(item) {
+    toDocumentTest(ids, item) {
       this.$router.push({ name: 'apiDocAndTest', query: { id: item.basePath + '_' + item.apiVersion } })
     },
     // 发布api
@@ -562,7 +562,7 @@ export default {
       metadataInstancesApi.download(where, 'Modules')
     },
     // 单个导出
-    export(item) {
+    export(ids, item) {
       let where = {
         _id: {
           in: [item.id]

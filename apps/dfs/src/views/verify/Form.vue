@@ -210,7 +210,7 @@
       <div class="js-wrap">
         <div class="jsBox">
           <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <CodeEditor class="js-editor" v-model="webScript" lang="javascript"></CodeEditor>
+          <VCodeEditor class="js-editor" v-model="webScript" lang="javascript"></VCodeEditor>
           <div class="js-fixText">}</div>
         </div>
         <div class="markdown-body-wrap example ml-4">
@@ -352,7 +352,7 @@
 </style>
 <script>
 import i18n from '@/i18n'
-import AsyncSelect from '@tap/form/src/components/async-select'
+import { AsyncSelect } from '@tap/form'
 
 const TABLE_PARAMS = {
   connectionId: '',
@@ -375,9 +375,9 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './MultiSelection.vue'
-import CodeEditor from 'web-core/components/CodeEditor.vue'
+import { VCodeEditor } from '@tap/component'
 export default {
-  components: { MultiSelection, CodeEditor, AsyncSelect },
+  components: { MultiSelection, VCodeEditor, AsyncSelect },
   data() {
     let self = this
     let requiredValidator = (msg, isCheckMode) => {

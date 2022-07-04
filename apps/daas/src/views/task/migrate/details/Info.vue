@@ -518,8 +518,10 @@ export default {
       const { selectedTime, selectedTimeItems } = this
       let startTimeStamp, endTimeStamp
       if (selectedTime) {
-        ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
+        let timeRange = this.getTimeRangeByType(selectedTime, this.timeRange)
         if (isNaN(startTimeStamp)) {
+          startTimeStamp = timeRange[0]
+          endTimeStamp = timeRange[1]
           startTimeStamp = null
         }
         if (isNaN(endTimeStamp)) {

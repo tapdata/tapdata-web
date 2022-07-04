@@ -595,7 +595,7 @@ export default {
       return node
     },
 
-    handleMouseSelect(showSelectBox, selectBoxAttr) {
+    /*handleMouseSelect(showSelectBox, selectBoxAttr) {
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态
@@ -605,7 +605,7 @@ export default {
         const selectedNodes = this.getNodesInSelection(selectBoxAttr)
         selectedNodes.forEach(node => this.nodeSelected(node))
       }
-    },
+    },*/
 
     /**
      * 在连线上添加节点

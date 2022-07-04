@@ -247,7 +247,7 @@ export default {
             }
             self.$emit('returnTestData', testData)
           }
-        }, 8000)
+        }, 15000)
       })
     },
     clearInterval() {

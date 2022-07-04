@@ -264,8 +264,8 @@ export default {
         .then(res => {
           if (res) {
             return {
-              total: res.data?.total || 0,
-              data: res.data?.items || []
+              total: res?.total || 0,
+              data: res?.items || []
             }
           }
         })
