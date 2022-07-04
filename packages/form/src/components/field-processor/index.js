@@ -50,6 +50,7 @@ export const FieldRenameProcessor = defineComponent({
     }
     const loadData = (value, type) => {
       config.loadingNav = true
+      config.loadingTable = true
       let id = getTaskId()
       let where = {
         taskId: id,
@@ -129,12 +130,14 @@ export const FieldRenameProcessor = defineComponent({
     const toList = map => {
       let list = []
       for (let key in map) {
-        list.push(map[key])
+        if (key && key !== 'undefined') {
+          list.push(map[key])
+        }
       }
       return list
     }
     const doUpdateField = (row, target, val) => {
-      let map = mapping(fieldsMapping)
+      let map = mapping(fieldsMapping) || {}
       let current = config.selectTableRow?.sourceObjectName
       if (!map[current]) {
         map[current] = {
@@ -153,7 +156,7 @@ export const FieldRenameProcessor = defineComponent({
           sourceFieldName: row.sourceFieldName,
           targetFieldName: target === 'rename' ? val : row.targetFieldName,
           isShow: target === 'del' ? val : row.isShow,
-          type: 'custom'
+          migrateType: 'custom'
         }
       }
 
@@ -162,13 +165,12 @@ export const FieldRenameProcessor = defineComponent({
       // eslint-disable-next-line
       form.fieldsMapping = fieldsMapping
       form.setValuesIn('fieldsMapping', fieldsMapping)
-      console.log(fieldsMapping)
     }
     //选择左侧table
     const doCheckAllChange = val => {
       config.checkAll = val
       if (val) {
-        config.checkedTables = list.value.map(t => t.sinkQulifiedName)
+        config.checkedTables = list.value.map(t => t.sourceObjectName)
       } else {
         config.checkedTables = []
       }
@@ -216,6 +218,9 @@ export const FieldRenameProcessor = defineComponent({
             fields: t === map[t]?.qualifiedName ? map[t]?.fields || [] : []
           }
         })
+        fieldsMapping = toList(map)
+        form.setValuesIn('fieldsMapping', fieldsMapping)
+        loadData()
       } else if (config.checkedFields?.length > 0) {
         //字段级别
         config.checkedFields.forEach(t => {
@@ -227,8 +232,6 @@ export const FieldRenameProcessor = defineComponent({
           doUpdateField(t, 'rename', newField)
         })
       }
-      fieldsMapping = toList(map)
-      form.setValuesIn('fieldsMapping', fieldsMapping)
       config.checkedTables = []
       config.checkedFields = []
       config.operation = restOp
@@ -355,7 +358,7 @@ export const FieldRenameProcessor = defineComponent({
                   <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
                     {this.list.map((item, index) => (
                       <li key={index} class={[this.config.position === index ? 'active' : '']}>
-                        <el-checkbox label={item.sinkQulifiedName}>
+                        <el-checkbox label={item.sourceObjectName}>
                           <br />
                         </el-checkbox>
                         <div class="task-form__img" onClick={() => this.updateView(index)}>
