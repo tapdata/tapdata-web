@@ -164,7 +164,7 @@ export const FieldRenameProcessor = defineComponent({
     const doCheckAllChange = val => {
       config.checkAll = val
       if (val) {
-        config.checkedTables = list.value.map(t => t.sourceQualifiedName)
+        config.checkedTables = list.value
       } else {
         config.checkedTables = []
       }
