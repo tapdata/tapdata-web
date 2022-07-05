@@ -712,7 +712,8 @@ export default {
               policyField.setPattern('readPretty')
               policyField.setValue(policyField.initialValue)
             } else {
-              const alternatives = policy.alternatives
+              const values = policyField.dataSource.map(item => item.value)
+              const alternatives = policy.alternatives.filter(key => values.includes(key))
               if (alternatives.length <= 1) {
                 policyField.setPattern('readPretty')
                 policyField.setValue(alternatives[0] || policyField.initialValue)
