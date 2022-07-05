@@ -32,7 +32,6 @@ export const FieldRenameProcessor = defineComponent({
       searchField: '',
       operationVisible: false,
       newFieldName: '',
-      checkCount: false,
       operation: {
         prefix: '',
         suffix: '',
@@ -133,12 +132,11 @@ export const FieldRenameProcessor = defineComponent({
     }
     const doUpdateField = (row, target, val) => {
       let map = mapping(fieldsMapping) || {}
-      let current = config.selectTableRow?.sourceObjectName
       let qualifiedName = config.selectTableRow?.sourceQualifiedName
       if (!map[qualifiedName]) {
         map[qualifiedName] = {
           qualifiedName: qualifiedName,
-          originTableName: current,
+          originTableName: config.selectTableRow?.sourceObjectName,
           operation: config.operation,
           fields: []
         }
@@ -174,19 +172,23 @@ export const FieldRenameProcessor = defineComponent({
     const doCheckedTablesChange = value => {
       let checkedCount = value.length
       config.checkAll = checkedCount === list.value.length
-      if (checkedCount > 0 && config.checkedFields.length < tableList.value.length) {
-        value.forEach(t => {
-          if (t === config.selectTableRow.sourceQualifiedName) {
-            //联调右侧表格全选
-            config.checkCount = true
-            nextTick(() => {
-              refs.table?.toggleAllSelection()
-            })
-          }
-        })
+      //当前table是否被选中
+      if (checkedCount > 0) {
+        let index = value.findIndex(t => t.sourceQualifiedName === config.selectTableRow.sourceQualifiedName)
+        if (index > -1 && config.checkedFields.length < tableList.value.length) {
+          //联调右侧表格全选
+          nextTick(() => {
+            refs.table?.toggleAllSelection()
+          })
+        }
+        if (index === -1) {
+          //否则全不选
+          nextTick(() => {
+            refs.table?.clearSelection()
+          })
+        }
       } else if (checkedCount === 0) {
         //否则全不选
-        config.checkCount = false
         nextTick(() => {
           refs.table?.clearSelection()
         })
@@ -225,10 +227,14 @@ export const FieldRenameProcessor = defineComponent({
       if (config.checkedTables?.length > 0) {
         //表级别
         config.checkedTables.forEach(t => {
-          map[t] = {
-            qualifiedName: t,
+          map[t?.sourceQualifiedName] = {
+            qualifiedName: t?.sourceQualifiedName,
+            originTableName: t?.sourceObjectName,
             operation: config.operation,
-            fields: t === map[t]?.qualifiedName ? map[t]?.fields || [] : []
+            fields:
+              t?.sourceQualifiedName === map[t?.sourceQualifiedName]?.qualifiedName
+                ? map[t?.sourceQualifiedName]?.fields || []
+                : []
           }
         })
         fieldsMapping = toList(map)
@@ -259,8 +265,8 @@ export const FieldRenameProcessor = defineComponent({
       if (config.checkedTables?.length > 0) {
         //表级别
         config.checkedTables.forEach(t => {
-          if (t === map[t]?.qualifiedName) {
-            delete map[t]
+          if (t?.sourceQualifiedName === map[t?.sourceQualifiedName]?.qualifiedName) {
+            delete map[t?.sourceQualifiedName]
           }
         })
       } else if (config.checkedFields?.length > 0) {
@@ -378,7 +384,7 @@ export const FieldRenameProcessor = defineComponent({
                   <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
                     {this.list.map((item, index) => (
                       <li key={index} class={[this.config.position === index ? 'active' : '']}>
-                        <el-checkbox label={item.sourceQualifiedName}>
+                        <el-checkbox label={item}>
                           <br />
                         </el-checkbox>
                         <div class="task-form__img" onClick={() => this.updateView(index)}>
