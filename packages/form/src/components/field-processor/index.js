@@ -1,4 +1,4 @@
-import { defineComponent, ref, reactive } from 'vue-demi'
+import { defineComponent, ref, reactive, nextTick } from 'vue-demi'
 import { taskApi } from '@tap/api'
 import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
@@ -32,6 +32,7 @@ export const FieldRenameProcessor = defineComponent({
       searchField: '',
       operationVisible: false,
       newFieldName: '',
+      checkCount: false,
       operation: {
         prefix: '',
         suffix: '',
@@ -99,7 +100,7 @@ export const FieldRenameProcessor = defineComponent({
         if (!map[t.qualifiedName]) {
           map[t.qualifiedName] = {
             qualifiedName: t?.qualifiedName,
-            originTableName: t?.sinkObjectName,
+            originTableName: t?.sourceObjectName,
             operation: t?.operation,
             fields: t.fields || []
           }
@@ -173,15 +174,21 @@ export const FieldRenameProcessor = defineComponent({
     const doCheckedTablesChange = value => {
       let checkedCount = value.length
       config.checkAll = checkedCount === list.value.length
-      if (checkedCount > 0) {
+      if (checkedCount > 0 && config.checkedFields.length < tableList.value.length) {
         value.forEach(t => {
           if (t === config.selectTableRow.sourceQualifiedName) {
             //联调右侧表格全选
-            refs.table?.toggleRowSelection(tableList)
-          } else {
-            //否则全不选
-            refs.table?.clearSelection()
+            config.checkCount = true
+            nextTick(() => {
+              refs.table?.toggleAllSelection()
+            })
           }
+        })
+      } else if (checkedCount === 0) {
+        //否则全不选
+        config.checkCount = false
+        nextTick(() => {
+          refs.table?.clearSelection()
         })
       }
     }
