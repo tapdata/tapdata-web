@@ -701,12 +701,11 @@ export default {
         },
 
         useDmlPolicy(field) {
-          console.log('useDmlPolicy', field) // eslint-disable-line
           const capabilities = field.query('attrs.capabilities').get('value')
           const insertPolicy = capabilities.find(({ id }) => id === 'dml-insert-policy')
           const updatePolicy = capabilities.find(({ id }) => id === 'dml-update-policy')
           const insertField = field.query('dmlPolicy.insertPolicy').take()
-          const updateField = field.query('dmlPolicy.insertPolicy').take()
+          const updateField = field.query('dmlPolicy.updatePolicy').take()
 
           const func = (policy, policyField) => {
             if (!policy || !policy.alternatives) {
