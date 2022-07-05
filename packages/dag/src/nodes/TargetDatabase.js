@@ -198,9 +198,11 @@ export class TargetDatabase extends NodeType {
                       wrapperWidth: 300,
                       addonBefore: '删除事件'
                     },
-                    'x-component': 'PreviewText.Input',
+                    'x-component': 'Tag',
+                    'x-content': '不存在时丢弃',
                     'x-component-props': {
-                      content: '不存在时丢弃'
+                      type: 'info',
+                      effect: 'light'
                     }
                   }
                 }

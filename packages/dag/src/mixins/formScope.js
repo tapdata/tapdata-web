@@ -717,8 +717,6 @@ export default {
               if (alternatives.length <= 1) {
                 policyField.setPattern('readPretty')
                 policyField.setValue(alternatives[0] || policyField.initialValue)
-              } else {
-                policyField.setPattern('editable')
               }
             }
           }
