@@ -36,6 +36,7 @@
             <SchemaToForm
               ref="schemaToForm"
               :schema="schemaData"
+              :scope="schemaScope"
               wrapperWidth="610px"
               :colon="true"
               label-width="160"
@@ -116,7 +117,8 @@ import VIcon from '@/components/VIcon'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 import GitBook from '@/components/GitBook'
-import { connectionsApi, databaseTypesApi, logcollectorApi, pdkApi } from '@tap/api'
+import { clusterApi, connectionsApi, databaseTypesApi, logcollectorApi, pdkApi } from '@tap/api'
+import { action } from '@formily/reactive'
 
 export default {
   name: 'DatabaseForm',
@@ -157,6 +159,7 @@ export default {
       },
       pdkOptions: {},
       schemaData: null,
+      schemaScope: null,
       pdkFormModel: {},
       doc: ''
     }
@@ -597,6 +600,33 @@ export default {
                   'x-component-props': {
                     placeholder: this.$t('connection_form_shared_mining_tip')
                   }
+                },
+                accessNodeType: {
+                  type: 'string',
+                  title: this.$t('connection_form_access_node'),
+                  default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Select',
+                  enum: [
+                    { label: this.$t('connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+                    { label: this.$t('connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                  ],
+                  'x-reactions': [
+                    {
+                      target: '__TAPDATA_END.accessNodeProcessId',
+                      fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
+                    }
+                  ]
+                },
+                accessNodeProcessId: {
+                  type: 'string',
+                  title: ' ',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    colon: false
+                  },
+                  'x-component': 'Select',
+                  'x-reactions': '{{useAsyncDataSource(loadAccessNode)}}'
                 }
               }
             }
@@ -607,6 +637,32 @@ export default {
           delete result.properties.__TAPDATA_START.properties.name
         }
         //this.showSystemConfig = true
+        this.schemaScope = {
+          useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+            return field => {
+              field.loading = true
+              service({ field }, ...serviceParams).then(
+                action.bound(data => {
+                  if (fieldName === 'value') {
+                    field.setValue(data)
+                  } else field[fieldName] = data
+                  field.loading = false
+                })
+              )
+            }
+          },
+          loadAccessNode: async () => {
+            const data = await clusterApi.findAccessNodeInfo()
+            return (
+              data?.map(item => {
+                return {
+                  value: item.processId,
+                  label: `${item.hostName}（${item.ip}）`
+                }
+              }) || []
+            )
+          }
+        }
         this.schemaData = result
         this.loadingFrom = false
       })
