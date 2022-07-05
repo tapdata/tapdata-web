@@ -55,26 +55,13 @@
             :placeholder="$t('shared_cache_placeholder_fields')"
           ></FieldSelector>
         </ElFormItem>
-        <ElFormItem prop="maxRows" :label="$t('shared_cache_max_rows') + ':'">
-          <div class="flex align-center">
-            <ElSelect :value="form.maxRows > 0" @input="form.maxRows = $event ? 10000 : 0" style="width: 355px">
-              <ElOption :label="$t('shared_cache_custom_max_record')" :value="true"></ElOption>
-              <ElOption :label="$t('shared_cache_custom_no_limit')" :value="false"></ElOption>
-            </ElSelect>
-            <template v-if="form.maxRows > 0">
-              <ElInputNumber
-                v-model.number="form.maxRows"
-                class="ml-3"
-                style="width: 100px"
-                controls-position="right"
-              ></ElInputNumber>
-              <span class="ml-1">{{ $t('shared_cache_custom_record_unit') }}</span>
-            </template>
-          </div>
-        </ElFormItem>
-        <ElFormItem prop="ttl" :label="$t('shared_cache_ttl') + ':'">
-          <ElInputNumber v-model="form.ttl" style="width: 100px" controls-position="right"></ElInputNumber>
-          <span class="ml-1">{{ $t('shared_cache_ttl_unit') }}</span>
+        <ElFormItem
+          prop="maxMemory"
+          :label="$t('shared_cache_max_memory') + ':'"
+          :placeholder="$t('shared_cache_placeholder_max_memory')"
+        >
+          <ElInputNumber v-model="form.maxMemory" style="width: 200px" controls-position="right"></ElInputNumber>
+          <span class="ml-1">M</span>
         </ElFormItem>
         <ElFormItem :label="$t('shared_cache_code') + ':'"></ElFormItem>
         <div class="example-wrapper overflow-hidden">
@@ -162,8 +149,7 @@ export default {
         tableName: '',
         cacheKeys: '',
         fields: '',
-        maxRows: 10000,
-        ttl: 7
+        maxMemory: 500
       },
       connectionOptions: [],
       tableOptions: [],
@@ -176,8 +162,7 @@ export default {
         tableName: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_table') }],
         cacheKeys: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_keys') }],
         fields: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_fields') }],
-        maxRows: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_rows') }],
-        ttl: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_ttl') }]
+        maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }]
       }
     }
   },
@@ -201,16 +186,15 @@ export default {
       this.loading = true
       sharedCacheApi
         .findOne(id)
-        .then(res => {
-          let data = res || {}
+        .then(data => {
+          data = data || {}
           this.form = {
             name: data.name,
             connectionId: data.connectionId,
             tableName: data.tableName,
             cacheKeys: data.cacheKeys,
             fields: data.fields?.join(',') || '',
-            maxRows: data.maxRows,
-            ttl: data.ttl
+            maxMemory: data.maxMemory
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
@@ -239,9 +223,9 @@ export default {
       this.tableOptionsLoading = true
       metadataInstancesApi
         .getTables(connectionId)
-        .then(res => {
+        .then(data => {
           let options = []
-          let list = res || []
+          let list = data || []
           list.forEach(opt => {
             if (opt) {
               options.push({ label: opt, value: opt })
@@ -271,8 +255,8 @@ export default {
       this.fieldOptionsLoading = true
       metadataInstancesApi
         .get(params)
-        .then(res => {
-          let table = res?.items?.[0]
+        .then(data => {
+          let table = data?.items?.[0]
           if (table) {
             let fields = table.fields || []
             this.fieldOptions = fields.map(opt => opt.field_name)
@@ -300,7 +284,7 @@ export default {
     submit() {
       this.$refs.form.validate(flag => {
         if (flag) {
-          let { name, connectionId, tableName, cacheKeys, fields, maxRows, ttl } = this.form
+          let { name, connectionId, tableName, cacheKeys, fields, maxMemory } = this.form
           let id = this.$route.params.id
           let params = {
             id,
@@ -317,9 +301,8 @@ export default {
                   connectionId: connectionId
                 },
                 {
-                  ttl: ttl,
                   cacheKeys: cacheKeys,
-                  maxRows: maxRows
+                  maxMemory: maxMemory
                 }
               ],
               edges: []

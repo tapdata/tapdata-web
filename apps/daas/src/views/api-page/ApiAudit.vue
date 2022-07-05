@@ -143,16 +143,14 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res) {
-            return {
-              total: res?.total || 0,
-              data:
-                res?.items.map(item => {
-                  item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-                  return item
-                }) || []
-            }
+        .then(data => {
+          return {
+            total: data?.total || 0,
+            data:
+              data?.items.map(item => {
+                item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+                return item
+              }) || []
           }
         })
     },
@@ -169,18 +167,14 @@ export default {
           key: 'method',
           type: 'select-inner',
           items: async () => {
-            let res = await apiCallsApi.getAllMethod()
-            let data = res?.data || []
-            if (data?.length) {
-              return data.map(item => {
-                return {
-                  label: item,
-                  value: item
-                }
-              })
-            } else {
-              return []
-            }
+            let data = await apiCallsApi.getAllMethod()
+            data = data || []
+            return data.map(item => {
+              return {
+                label: item,
+                value: item
+              }
+            })
           },
           selectedWidth: '200px'
         },
@@ -189,18 +183,14 @@ export default {
           key: 'code',
           type: 'select-inner',
           items: async () => {
-            let res = await apiCallsApi.getAllResponseCode()
-            let data = res?.data || []
-            if (data?.length) {
-              return data.map(item => {
-                return {
-                  label: item == 200 ? this.$t('apiaudit_success') : this.$t('apiaudit_fail'),
-                  value: item
-                }
-              })
-            } else {
-              return []
-            }
+            let data = await apiCallsApi.getAllResponseCode()
+            data = data || []
+            return data.map(item => {
+              return {
+                label: item == 200 ? this.$t('apiaudit_success') : this.$t('apiaudit_fail'),
+                value: item
+              }
+            })
           },
           selectedWidth: '200px'
         },

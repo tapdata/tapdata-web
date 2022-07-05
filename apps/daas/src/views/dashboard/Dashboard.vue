@@ -418,8 +418,9 @@ export default {
         type: 'dashboard'
       }
       clusterApi.get(params).then(data => {
-        this.serverProcess.tableData = data?.items
-        this.serverTable = data?.items
+        let items = data?.items || []
+        this.serverProcess.tableData = items
+        this.serverTable = items
       })
     },
     // 获取dataflows数据
@@ -532,9 +533,9 @@ export default {
       let totalFalg = true
       let totalText = this.$t('dashboard_total')
       if (data?.length) {
-        data.forEach(res => {
-          dataName.push(res.name)
-          total += parseFloat(res.value) * 1
+        data.forEach(item => {
+          dataName.push(item.name)
+          total += parseFloat(item.value) * 1
         })
         totalFalg = data.some(item => item.value > 0)
         total = this.toThousandsUnit(total)

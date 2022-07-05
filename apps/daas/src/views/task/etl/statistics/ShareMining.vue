@@ -58,8 +58,8 @@ export default {
   },
   methods: {
     getData(id) {
-      logcollectorApi.bySubTaskId(id).then(res => {
-        this.taskList = res || []
+      logcollectorApi.bySubTaskId(id).then(data => {
+        this.taskList = data || []
       })
     },
     goShareCdcInfo(id) {

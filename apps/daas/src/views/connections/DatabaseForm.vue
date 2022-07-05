@@ -25,7 +25,7 @@
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
             </div>
-            <span class="ml-2">{{ pdkOptions.name }}</span>
+            <span class="ml-2">{{ pdkConfig.name }}</span>
             <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
               {{ $t('connection_form_change') }}
             </el-button>
@@ -155,7 +155,7 @@ export default {
       renameRules: {
         rename: [{ validator: validateRename, trigger: 'blur' }]
       },
-      pdkOptions: {},
+      pdkConfig: {},
       schemaData: null,
       pdkFormModel: {},
       doc: ''
@@ -175,9 +175,9 @@ export default {
   methods: {
     // 共享挖掘设置
     check() {
-      Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(([check, res]) => {
+      Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(([check, data]) => {
         let verify = check
-        let digSettingForm = res
+        let digSettingForm = data
         if (verify && !digSettingForm?.persistenceMongodb_uri_db) {
           this.showSystemConfig = true
           let config = {
@@ -264,11 +264,9 @@ export default {
     },
     //保存全局挖掘设置
     saveSetting(digSettingForm) {
-      logcollectorApi.patchSystemConfig(digSettingForm).then(res => {
-        if (res) {
-          this.settingDialogVisible = false
-          this.$message.success('保存全局设置成功')
-        }
+      logcollectorApi.patchSystemConfig(digSettingForm).then(() => {
+        this.settingDialogVisible = false
+        this.$message.success('保存全局设置成功')
       })
     },
     goBack() {
@@ -295,7 +293,7 @@ export default {
         this.submitBtnLoading = true
         // 保存数据源
         let id = this.$route.params?.id
-        let { pdkOptions } = this
+        let { pdkConfig } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
         let { __TAPDATA_START, __TAPDATA_END } = formValues
         delete formValues['__TAPDATA_START']
@@ -304,8 +302,8 @@ export default {
           {
             ...__TAPDATA_START,
             ...__TAPDATA_END,
-            database_type: pdkOptions.type,
-            pdkHash: pdkOptions.pdkHash
+            database_type: pdkConfig.type,
+            pdkHash: pdkConfig.pdkHash
           },
           {
             status: 'testing',
@@ -459,9 +457,9 @@ export default {
     },
     getPdkForm() {
       const pdkHash = this.$route.query?.pdkHash
-      databaseTypesApi.pdkHash(pdkHash).then(res => {
+      databaseTypesApi.pdkHash(pdkHash).then(data => {
         let id = this.id || this.$route.params.id
-        this.pdkOptions = res
+        this.pdkConfig = data || []
         let result = {
           type: 'object',
           'x-component-props': {
@@ -556,7 +554,7 @@ export default {
                 }
               }
             },
-            ...(res?.properties?.connection?.properties || {}),
+            ...(data?.properties?.connection?.properties || {}),
             __TAPDATA_END: {
               type: 'object',
               'x-index': 1000000,
@@ -617,8 +615,8 @@ export default {
     },
     getPdkDoc() {
       const { pdkHash } = this.$route.query || {}
-      pdkApi.doc(pdkHash).then(res => {
-        this.doc = res
+      pdkApi.doc(pdkHash).then(data => {
+        this.doc = data
       })
     }
   }

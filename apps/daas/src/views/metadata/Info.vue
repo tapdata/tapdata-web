@@ -533,8 +533,7 @@ export default {
       this.loading = true
       return metadataInstancesApi
         .findTablesById([id])
-        .then(res => {
-          let data = res
+        .then(data => {
           data.createTimeFmt = dayjs(data.createTime || data.createAt).format('YYYY-MM-DD HH:mm:ss')
           data.lastUpdatedFmt = dayjs(data.last_updated || data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')
           this.metadataDataObj = data
@@ -668,8 +667,8 @@ export default {
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
-      }).then(res => {
-        if (!res) {
+      }).then(flag => {
+        if (!flag) {
           return
         }
         for (let value in this.metadataDataObj.custom_properties) {

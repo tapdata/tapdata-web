@@ -248,11 +248,11 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res?.items || []
+        .then(data => {
+          let list = data?.items || []
           let pointTime = new Date()
           return {
-            total: res?.total,
+            total: data?.total || 0,
             data: list.map(item => {
               this.$set(item, 'pointTime', pointTime)
               if (item.syncTimePoint === 'current') {
@@ -275,21 +275,19 @@ export default {
       this.loadingConfig = true
       logcollectorApi
         .check()
-        .then(res => {
-          if (res) {
-            this.showEditSettingBtn = res?.data //true是可用，false是禁用
-            this.settingDialogVisible = true
-            logcollectorApi
-              .getSystemConfig()
-              .then(res => {
-                if (res) {
-                  this.digSettingForm = res
-                }
-              })
-              .finally(() => {
-                this.loadingConfig = false
-              })
-          }
+        .then(data => {
+          this.showEditSettingBtn = data //true是可用，false是禁用
+          this.settingDialogVisible = true
+          logcollectorApi
+            .getSystemConfig()
+            .then(data => {
+              if (data) {
+                this.digSettingForm = data
+              }
+            })
+            .finally(() => {
+              this.loadingConfig = false
+            })
         })
         .catch(() => {
           this.loadingConfig = false
@@ -356,12 +354,10 @@ export default {
       this.$refs['editForm'].validate(valid => {
         if (valid) {
           let id = this.editForm?.id
-          logcollectorApi.patch(id, this.editForm).then(res => {
-            if (res) {
-              this.editDialogVisible = false
-              this.table.fetch(1)
-              this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
-            }
+          logcollectorApi.patch(id, this.editForm).then(() => {
+            this.editDialogVisible = false
+            this.table.fetch(1)
+            this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
           })
         }
       })

@@ -427,11 +427,11 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           this.getCount()
-          let list = res?.items || []
+          let list = data?.items || []
           return {
-            total: res.data?.total,
+            total: data?.total,
             data: list.map(item => {
               if (!item.emailVerified) {
                 item.status = 'notVerified'
@@ -469,26 +469,25 @@ export default {
           })
         })
       ]).then(([notActivatedCount, notVerifiedCount, rejectedCount]) => {
-        this.notActivatedCount = notActivatedCount.data.count
-        this.notVerifiedCount = notVerifiedCount.data.count
-        this.rejectedCount = rejectedCount.data.count
+        this.notActivatedCount = notActivatedCount.count
+        this.notVerifiedCount = notVerifiedCount.count
+        this.rejectedCount = rejectedCount.count
       })
     },
     // 获取角色下拉值
     getDbOptions() {
-      roleApi.get({}).then(res => {
-        if (res && res?.items.length) {
-          let options = []
-          res?.items.forEach(db => {
-            if (db.name !== 'admin') {
-              options.push({
-                label: db.name,
-                value: db.id
-              })
-            }
-          })
-          this.createFormConfig.items[3].options = options
-        }
+      roleApi.get({}).then(data => {
+        let items = data?.items || []
+        let options = []
+        items.forEach(db => {
+          if (db.name !== 'admin') {
+            options.push({
+              label: db.name,
+              value: db.id
+            })
+          }
+        })
+        this.createFormConfig.items[3].options = options
       })
     },
     // taps标签页切换
@@ -541,11 +540,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res && res?.items) {
-            this.roleMappding = res?.items
-            this.createForm.roleusers = res?.items.map(item => item.roleId)
-          }
+        .then(data => {
+          let items = data?.items || []
+          this.roleMappding = items
+          this.createForm.roleusers = items.map(item => item.roleId)
         })
     },
     // 创建用户弹窗
@@ -559,12 +557,11 @@ export default {
           }
         }
       }
-      roleApi.get(parmas).then(res => {
-        if (res?.items.length) {
-          res?.items.forEach(item => {
-            roleusers.push(item.id)
-          })
-        }
+      roleApi.get(parmas).then(data => {
+        let items = data?.items || []
+        items.forEach(item => {
+          roleusers.push(item.id)
+        })
       })
       this.createForm = {
         username: '',
@@ -640,11 +637,11 @@ export default {
           that
             .$api('users')
             [that.createForm.id ? 'patch' : 'post'](params)
-            .then(res => {
-              if (res) {
+            .then(data => {
+              if (data) {
                 // 过滤不存在角色
                 let roleIdArr = []
-                if (res.data.roleMappings?.length) {
+                if (data.roleMappings?.length) {
                   that.createFormConfig.items[3].options.filter(item => {
                     if (that.createForm.roleusers.indexOf(item.value) > -1) {
                       roleIdArr.push(item.value)
@@ -663,7 +660,7 @@ export default {
                 roleIdArr.forEach(roleuser => {
                   newRoleMappings.push({
                     principalType: 'USER',
-                    principalId: res.data.id,
+                    principalId: data.id,
                     roleId: roleuser
                   })
                 })
@@ -676,13 +673,6 @@ export default {
                 this.table.fetch()
               }
             })
-            // .catch(e => {
-            //   if (e.response.msg.indexOf('User already exists') !== -1) {
-            //     that.$message.error(this.$t('user_form_already_exists'))
-            //   } else {
-            //     that.$message.error(this.$t('message_save_fail'))
-            //   }
-            // })
             .finally(() => {
               that.createDialogVisible = false
             })
@@ -705,9 +695,6 @@ export default {
                 this.table.fetch()
                 done()
               })
-              // .catch(() => {
-              //   this.$message.info(this.$t('message.deleteFail'))
-              // })
               .finally(() => {
                 instance.confirmButtonLoading = false
               })
@@ -806,15 +793,10 @@ export default {
           params.emailVerified = true
           break
       }
-      usersApi.update(where, params).then(res => {
-        if (res) {
-          this.table.fetch()
-          this.$message.success(this.$t('message_operation_succuess'))
-        }
+      usersApi.update(where, params).then(() => {
+        this.table.fetch()
+        this.$message.success(this.$t('message_operation_succuess'))
       })
-      // .catch(() => {
-      //   this.$message.error(this.$t('message_operation_error'))
-      // })
     },
     // 关联用户
     permissionsmethod(data) {

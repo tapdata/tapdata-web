@@ -113,12 +113,11 @@ export default {
   methods: {
     // 获取表格数据
     getData() {
-      metadataInstancesApi.findTablesById([this.$route.params.id]).then(res => {
-        if (res) {
-          this.collectionTableData = res?.collections
-          this.pageTotal = this.collectionTableData.length
-          this.setCurrentPageData(res?.collections || [])
-        }
+      metadataInstancesApi.findTablesById([this.$route.params.id]).then(data => {
+        let collections = data?.collections || []
+        this.collectionTableData = collections
+        this.pageTotal = this.collectionTableData.length
+        this.setCurrentPageData(collections)
       })
     },
     openCreateDialog() {
@@ -180,16 +179,11 @@ export default {
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
-      }).then(res => {
-        if (res) {
-          metadataInstancesApi.delete(item.id).then(() => {
-            this.getData()
-            this.$message.success(this.$t('message.deleteOK'))
-          })
-          // .catch(() => {
-          //   this.$message.info(this.$t('message.deleteFail'))
-          // })
-        }
+      }).then(() => {
+        metadataInstancesApi.delete(item.id).then(() => {
+          this.getData()
+          this.$message.success(this.$t('message.deleteOK'))
+        })
       })
     },
     // 分页数据处理

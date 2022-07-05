@@ -83,15 +83,15 @@ export default {
       this.loading = true
       apiCallsApi
         .get([id])
-        .then(res => {
-          if (res) {
-            this.auditData = res
-            this.auditData.createAt = res['createAt'] ? dayjs(res['createAt']).format('YYYY-MM-DD HH:mm:ss') : '-'
+        .then(data => {
+          if (data) {
+            this.auditData = data
+            this.auditData.createAt = data['createAt'] ? dayjs(data['createAt']).format('YYYY-MM-DD HH:mm:ss') : '-'
 
             this.list.forEach(item => {
-              for (let el in res) {
+              for (let el in data) {
                 if (item.key === el) {
-                  item.value = res[el]
+                  item.value = data[el]
                 }
               }
             })

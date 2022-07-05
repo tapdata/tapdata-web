@@ -265,24 +265,21 @@ export default {
     getData() {
       let _this = this
       let auth_data = []
-      licensesApi.get({}).then(result => {
-        if (result) {
-          auth_data = result?.items || []
-        }
+      licensesApi.get({}).then(data => {
+        auth_data = data?.items || []
       })
-      settingsApi.get().then(res => {
+      settingsApi.get().then(data => {
         let items = [],
           itemsCategories = [],
           cat = []
-        if (res && res.length) {
-          items = res.map(item => item.category)
-        }
+        data = data || []
+        items = data.map(item => item.category)
         items = uniq(items)
         items.sort((a, b) => {
           return a.sort < b.sort ? -1 : 1
         })
         items.map(item => {
-          let values = res.filter(childItem => {
+          let values = data.filter(childItem => {
             return childItem.category === item && childItem.user_visible
           })
           values.sort((a, b) => {
@@ -295,7 +292,7 @@ export default {
         })
 
         let sortCategories = cat.map(item => {
-          let values = res.filter(childItem => {
+          let values = data.filter(childItem => {
             return childItem.category === item
           })
           return {
@@ -331,10 +328,8 @@ export default {
           settingData.push(childItem)
         })
       })
-      settingsApi.save(settingData).then(res => {
-        if (res) {
-          this.$message.success(this.$t('message_save_ok'))
-        }
+      settingsApi.save(settingData).then(() => {
+        this.$message.success(this.$t('message_save_ok'))
       })
       // .catch(e => {
       //   this.$message.error(e.response.msg)

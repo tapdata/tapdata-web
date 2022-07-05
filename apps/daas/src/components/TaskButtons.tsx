@@ -44,13 +44,11 @@ export default defineComponent({
           id
         }
       }
-      taskApi.get({ filter: JSON.stringify(filter) }).then(res => {
-        if (res) {
-          taskApi.batchStart([id]).then(data => {
-            success(data?.message || $t('message_operation_succuess'))
-            emit('trigger', 'start')
-          })
-        }
+      taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
+        taskApi.batchStart([id]).then(data => {
+          success(data?.message || $t('message_operation_succuess'))
+          emit('trigger', 'start')
+        })
       })
     }
     // 停止任务
@@ -64,8 +62,8 @@ export default defineComponent({
           if (!resFlag) {
             return
           }
-          taskApi.batchStop([id]).then(res => {
-            success(res?.message || $t('message_operation_succuess'))
+          taskApi.batchStop([id]).then(data => {
+            success(data?.message || $t('message_operation_succuess'))
             emit('trigger', 'stop')
           })
         })
@@ -84,8 +82,8 @@ export default defineComponent({
           if (!resFlag) {
             return
           }
-          taskApi.forceStop([id]).then(res => {
-            success(res?.message || $t('message_operation_succuess'))
+          taskApi.forceStop([id]).then(data => {
+            success(data?.message || $t('message_operation_succuess'))
             emit('trigger', 'forceStop')
           })
         })
@@ -107,9 +105,9 @@ export default defineComponent({
           if (!resFlag) {
             return
           }
-          taskApi.batchRenew([id]).then(res => {
+          taskApi.batchRenew([id]).then(data => {
             emit('trigger', 'reset')
-            success(res?.message || $t('message_operation_succuess'))
+            success(data?.message || $t('message_operation_succuess'))
           })
         })
     }

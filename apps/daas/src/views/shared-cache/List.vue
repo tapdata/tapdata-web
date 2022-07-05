@@ -212,10 +212,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res?.items || []
+        .then(data => {
+          let list = data?.items || []
           return {
-            total: res.data?.total,
+            total: data?.total,
             data: list.map(item => {
               item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.cacheTimeAtFmt = item.cacheTimeAt ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
@@ -240,12 +240,7 @@ export default {
         { label: this.$t('column_create_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
         { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
-        { label: this.$t('shared_cache_max_rows'), value: row.maxRows, icon: 'record' },
-        {
-          label: this.$t('shared_cache_ttl'),
-          value: `${row.ttl / 86400}${this.$t('shared_cache_ttl_unit')}`,
-          icon: 'taskLastHour'
-        }
+        { label: this.$t('shared_cache_max_memory'), value: row.maxMemory, icon: 'taskLastHour' }
       ]
       this.isShowDetails = true
     },

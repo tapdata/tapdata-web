@@ -148,9 +148,6 @@ export default {
         if (data) {
           data.createTime = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
           self.listData = uniqueArr([data, ...this.listData])
-          // this.$store.commit('notification', {
-          //   unRead: data.total
-          // })
         }
       })
       this.$ws.ready(() => {
@@ -164,14 +161,10 @@ export default {
       let where = {
         read: false
       }
-      notificationApi.count({ where: JSON.stringify(where) }).then(res => {
-        if (res) {
-          let data = res?.data || res?.data === 0 ? res?.data : res
-          // this.unRead = res.data.count
-          this.$store.commit('notification', {
-            unRead: data
-          })
-        }
+      notificationApi.count({ where: JSON.stringify(where) }).then(data => {
+        this.$store.commit('notification', {
+          unRead: data || 0
+        })
       })
     },
     getUnreadData() {
@@ -183,12 +176,11 @@ export default {
         limit: 20,
         skip: 0
       }
-      notificationApi.get({ filter: JSON.stringify(filter) }).then(res => {
-        let { items, total } = res
+      notificationApi.get({ filter: JSON.stringify(filter) }).then(data => {
+        let { items, total } = data || {}
         this.$store.commit('notification', {
           unRead: total
         })
-        // this.unRead = total
         this.listData = items.map(t => {
           t.createTime = dayjs(t.createTime).format('YYYY-MM-DD HH:mm:ss')
           return t
@@ -196,11 +188,9 @@ export default {
       })
     },
     handleRead(id) {
-      notificationApi.patch({ read: true, id: id }).then(res => {
-        if (res) {
-          this.getUnreadData()
-          this.$root.$emit('notificationUpdate')
-        }
+      notificationApi.patch({ read: true, id: id }).then(() => {
+        this.getUnreadData()
+        this.$root.$emit('notificationUpdate')
       })
     },
     handleGo(item) {
@@ -254,9 +244,9 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           this.userOperations =
-            res?.items.map(item => {
+            data?.items?.map(item => {
               item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               return item
             }) || []

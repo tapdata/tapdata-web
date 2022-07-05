@@ -139,14 +139,14 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let data = res?.items.map(item => {
+        .then(data => {
+          let list = (data?.items || []).map(item => {
             item.connectType = this.connectTypeMap[item.connection_type]
             return deepCopy(item)
           })
           return {
-            total: res?.total,
-            data: data
+            total: data?.total || 0,
+            data: list
           }
         })
     },
@@ -213,11 +213,11 @@ export default {
       }
       this.loadFieldsStatus = 'loading'
       this.reloadLoading = true
-      connectionsApi.patch(row.id, parms).then(res => {
+      connectionsApi.patch(row.id, parms).then(data => {
         if (!this?.$refs?.test) {
           return
         }
-        this.loadFieldsStatus = res?.loadFieldsStatus //同步reload状态
+        this.loadFieldsStatus = data?.loadFieldsStatus //同步reload状态
         this.$refs.test.start(row, false, true)
       })
     },

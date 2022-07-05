@@ -326,15 +326,15 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let data = (res?.items || []).map(item => {
+        .then(data => {
+          let list = (data?.items || []).map(item => {
             if (item.config?.uri) {
-              const res =
+              const regResult =
                 /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
                   item.config.uri
                 )
-              if (res && res.groups && res.groups.password) {
-                const { username, host, database, query } = res.groups
+              if (regResult && regResult.groups && regResult.groups.password) {
+                const { username, host, database, query } = regResult.groups
                 item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
               } else {
                 item.connectionUrl = item.config.uri
@@ -354,11 +354,11 @@ export default {
           })
 
           // 同步抽屉数据
-          this.$refs.preview.sync(data)
+          this.$refs.preview.sync(list)
 
           return {
-            total: res?.total,
-            data
+            total: data?.total,
+            data: list
           }
         })
     },
@@ -401,11 +401,9 @@ export default {
           },
           data.name
         )
-        .then(res => {
-          if (res) {
-            this.table.fetch()
-            this.$message.success(this.$t('connection.copyMsg'))
-          }
+        .then(() => {
+          this.table.fetch()
+          this.$message.success(this.$t('connection.copyMsg'))
         })
       // .catch(err => {
       //   if (err && err.response) {
@@ -436,53 +434,18 @@ export default {
         if (!resFlag) {
           return
         }
-        connectionsApi
-          .delete(data.id)
-          .then(res => {
-            let jobs = res.jobs || []
-            let modules = res.modules || []
-            if (jobs.length > 0 || modules.length > 0) {
-              this.$message.error(this.$t('connection.checkMsg'))
-            } else {
-              this.$message.success(this.$t('message.deleteOK'))
-              this.table.fetch()
-            }
-          })
-          .catch(() => {
-            // let msg = err?.data?.message
-            // if (msg && (msg.jobs || msg.modules)) {
-            //   this.$message.error(this.$t('connection.cannot_delete_remind'))
-            //   // const h = this.$createElement;
-            //   // this.$message.error(
-            //   // 	h('div', {}, [
-            //   // 		h('div', {}, ['数据源 ', h('span', {}, data.name), ' 被以下资源占用']),
-            //   // 		...msg.jobs.map(j => h('div', {}, [])),
-            //   // 		...msg.modules.map(j => h('div', {}, []))
-            //   // 	])
-            //   // );
-            // } else if (err?.data?.code === 'Datasource.LinkJobs') {
-            //   this.$message.error(this.$t('connection_list_delete_link_job'))
-            // } else {
-            //   this.$message.error(msg || this.$t('connection.deleteFail'))
-            // }
-          })
+        connectionsApi.delete(data.id).then(data => {
+          let jobs = data?.jobs || []
+          let modules = data?.modules || []
+          if (jobs.length > 0 || modules.length > 0) {
+            this.$message.error(this.$t('connection.checkMsg'))
+          } else {
+            this.$message.success(this.$t('message.deleteOK'))
+            this.table.fetch()
+          }
+        })
       })
     },
-    // //公用弹窗
-    // confirm(callback, catchCallback, config) {
-    //   this.$confirm(config.Message + config.name + '?', config.title, {
-    //     confirmButtonText: config.confirmButtonText,
-    //     cancelButtonText: config.cancelButtonText,
-    //     type: 'warning',
-    //     closeOnClickModal: false
-    //   }).then(resFlag => {
-    //     if (resFlag) {
-    //       callback()
-    //     } else {
-    //       catchCallback()
-    //     }
-    //   })
-    // },
     //表格数据格式化
     formatterConnectionType(row) {
       switch (row.connection_type) {
@@ -592,8 +555,8 @@ export default {
           type: 'select-inner',
           menuMinWidth: '250px',
           items: async () => {
-            let res = await databaseTypesApi.get()
-            let data = res || []
+            let data = await databaseTypesApi.get()
+            data = data || []
             let databaseTypes = []
             databaseTypes.push(...data)
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>

@@ -81,21 +81,14 @@ export default {
     },
     getData() {
       this.loading = true
-      // let solutions = localStorage.getItem('solutions')
-      // if (solutions) {
-      //   let res = `{"data":[{"code":10000,"message":"message","solutions":["Nancy Jackson","William Jones","Gary Martin","Susan Perez","Christopher Perez","Betty Lee","Elizabeth Martin","Shirley Anderson"]},{"code":10001,"message":"message","solutions":["Melissa Walker","Steven Thomas","Timothy Davis"]},{"code":10002,"message":"message","solutions":["Melissa Johnson","Brian Thomas","Paul Young"]},{"code":10003,"message":"message","solutions":["Laura Perez"]},{"code":10004,"message":"message","solutions":["Susan Johnson","Mark Lewis"]}],"code":"ok","msg":"ok"}`
-      //   this.list = JSON.parse(res).data
-      //   this.loading = false
-      //   return
-      // }
       let params = {}
       if (this.keyword) {
         params.code = this.keyword
       }
       customerJobLogsApi
         .solutions(params)
-        .then(res => {
-          this.list = res.data
+        .then(data => {
+          this.list = data || []
         })
         .finally(() => {
           this.loading = false

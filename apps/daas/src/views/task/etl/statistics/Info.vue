@@ -568,8 +568,7 @@ export default {
       if (!params) {
         return
       }
-      this.remoteMethod(params).then(res => {
-        let data = res
+      this.remoteMethod(params).then(data => {
         let { samples } = data
         samples.forEach(el => {
           for (let key in el) {
@@ -700,8 +699,8 @@ export default {
     start(row = {}, resetLoading) {
       subtaskApi
         .start(row.id)
-        .then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        .then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -709,8 +708,8 @@ export default {
     stop(row, resetLoading) {
       subtaskApi
         .stop(row.id)
-        .then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        .then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
