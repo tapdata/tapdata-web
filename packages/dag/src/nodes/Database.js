@@ -94,6 +94,7 @@ export class Database extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'InputNumber',
         'x-decorator-props': {
+          colon: true,
           tooltip: '全量每批次读取的条数'
         },
         'x-component-props': {
@@ -160,9 +161,6 @@ export class Database extends NodeType {
               fulfill: {
                 state: {
                   display: '{{$deps[0] !== "custom" ? "visible":"hidden"}}'
-                },
-                schema: {
-                  required: '{{$deps[0] !== "custom"}}'
                 }
               }
             }

@@ -1,4 +1,5 @@
 import Http from './Http'
+import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
 
 export default class Task extends Http {
@@ -109,6 +110,14 @@ export default class Task extends Http {
     } else {
       return this.axios.post(this.url + '/checkName?name=' + name)
     }
+  }
+
+  getNodeTableInfo(params = {}) {
+    const config = { params }
+    if (isPlainObj(params)) {
+      Object.assign(config, params)
+    }
+    return this.axios.get(this.url + '/getNodeTableInfo', config)
   }
 }
 export { Task }

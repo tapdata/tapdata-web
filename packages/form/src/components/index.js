@@ -31,5 +31,6 @@ export * from './schema-field-mapping'
 export * from './create-command'
 export * from './text-file-reader'
 export * from './input-number'
+export * from './text'
 
 export * from '@formily/element'
