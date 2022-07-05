@@ -111,7 +111,6 @@ export default class Task extends Http {
       return this.axios.post(this.url + '/checkName?name=' + name)
     }
   }
-
   getNodeTableInfo(params = {}) {
     const config = { params }
     if (isPlainObj(params)) {

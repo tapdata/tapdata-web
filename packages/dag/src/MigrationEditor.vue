@@ -230,6 +230,10 @@ export default {
         {
           name: 'JS处理',
           type: 'migrate_js_processor'
+        },
+        {
+          name: '字段编辑',
+          type: 'migrate_field_rename_processor'
         }
       ])
       this.addResourceIns(allResourceIns)
