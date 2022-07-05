@@ -342,7 +342,7 @@ export default {
             } else {
               const { host, port, database, schema } = item.config
               item.connectionUrl = host
-                ? `${host}${port ? `:${port}` : ''}/${database}${schema ? `/${schema}` : ''}`
+                ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
                 : ''
             }
 
