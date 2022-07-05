@@ -161,9 +161,6 @@ export class Database extends NodeType {
               fulfill: {
                 state: {
                   display: '{{$deps[0] !== "custom" ? "visible":"hidden"}}'
-                },
-                schema: {
-                  required: '{{$deps[0] !== "custom"}}'
                 }
               }
             }
