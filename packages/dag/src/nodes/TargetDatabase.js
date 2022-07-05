@@ -157,15 +157,15 @@ export class TargetDatabase extends NodeType {
                       wrapperWidth: 300,
                       addonBefore: '插入事件'
                     },
-                    default: 'update_on_exists',
+                    default: 'update-on-exists',
                     enum: [
                       {
                         label: '目标存在时更新',
-                        value: 'update_on_exists'
+                        value: 'update-on-exists'
                       },
                       {
                         label: '目标存在时丢弃',
-                        value: 'ignore_on_exists'
+                        value: 'ignore-on-exists'
                       }
                     ]
                   },
@@ -178,15 +178,15 @@ export class TargetDatabase extends NodeType {
                       wrapperWidth: 300,
                       addonBefore: '更新事件'
                     },
-                    default: 'ignore_on_nonexists',
+                    default: 'ignore-on-non-exists',
                     enum: [
                       {
                         label: '不存在时丢弃',
-                        value: 'ignore_on_nonexists'
+                        value: 'ignore-on-non-exists'
                       },
                       {
                         label: '不存在时插入',
-                        value: 'insert_on_nonexists'
+                        value: 'insert-on-non-exists'
                       }
                     ]
                   },
