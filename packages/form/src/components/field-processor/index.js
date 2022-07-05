@@ -10,7 +10,7 @@ import './style.scss'
 
 export const FieldRenameProcessor = defineComponent({
   props: ['value', 'nodeId'],
-  setup(props, { emit }) {
+  setup(props, { emit, refs, root }) {
     const formRef = useForm()
     const form = formRef.value
     const list = ref([])
@@ -44,16 +44,11 @@ export const FieldRenameProcessor = defineComponent({
         count: 1
       }
     })
-    const getTaskId = () => {
-      let url = window.location.href
-      return url.substring(url.lastIndexOf('/') + 1, url.length)
-    }
     const loadData = (value, type) => {
       config.loadingNav = true
       config.loadingTable = true
-      let id = getTaskId()
       let where = {
-        taskId: id,
+        taskId: root.$route.params.id,
         nodeId: props.nodeId
       }
       if (type === 'search') {
@@ -74,7 +69,6 @@ export const FieldRenameProcessor = defineComponent({
           config.page.total = total
           config.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
           updateView(config.position)
-          emit('change', items)
         })
         .finally(() => {
           config.loadingNav = false
@@ -139,15 +133,16 @@ export const FieldRenameProcessor = defineComponent({
     const doUpdateField = (row, target, val) => {
       let map = mapping(fieldsMapping) || {}
       let current = config.selectTableRow?.sourceObjectName
-      if (!map[current]) {
-        map[current] = {
-          qualifiedName: current,
+      let qualifiedName = config.selectTableRow?.sourceQualifiedName
+      if (!map[qualifiedName]) {
+        map[qualifiedName] = {
+          qualifiedName: qualifiedName,
           originTableName: current,
           operation: config.operation,
           fields: []
         }
       }
-      let fields = mappingField[map[current]?.fields] || {}
+      let fields = mappingField(map[qualifiedName]?.fields) || {}
       if (target === 'rest' && fields[row.sourceFieldName]?.sourceFieldName === row.sourceFieldName) {
         delete fields[row.sourceFieldName]
       } else {
@@ -160,17 +155,17 @@ export const FieldRenameProcessor = defineComponent({
         }
       }
 
-      map[current].fields = toList(fields)
+      map[qualifiedName].fields = toList(fields)
       fieldsMapping = toList(map)
       // eslint-disable-next-line
       form.fieldsMapping = fieldsMapping
-      form.setValuesIn('fieldsMapping', fieldsMapping)
+      emit('change', fieldsMapping)
     }
     //选择左侧table
     const doCheckAllChange = val => {
       config.checkAll = val
       if (val) {
-        config.checkedTables = list.value.map(t => t.sourceObjectName)
+        config.checkedTables = list.value.map(t => t.sourceQualifiedName)
       } else {
         config.checkedTables = []
       }
@@ -178,6 +173,17 @@ export const FieldRenameProcessor = defineComponent({
     const doCheckedTablesChange = value => {
       let checkedCount = value.length
       config.checkAll = checkedCount === list.value.length
+      if (checkedCount > 0) {
+        value.forEach(t => {
+          if (t === config.selectTableRow.sourceQualifiedName) {
+            //联调右侧表格全选
+            refs.table?.toggleRowSelection(tableList)
+          } else {
+            //否则全不选
+            refs.table?.clearSelection()
+          }
+        })
+      }
     }
     //选择右侧字段
     const doSelectionField = value => {
@@ -219,8 +225,11 @@ export const FieldRenameProcessor = defineComponent({
           }
         })
         fieldsMapping = toList(map)
-        form.setValuesIn('fieldsMapping', fieldsMapping)
-        loadData()
+        emit('change', fieldsMapping)
+        //更新整个数据
+        setTimeout(() => {
+          loadData()
+        }, 1000)
       } else if (config.checkedFields?.length > 0) {
         //字段级别
         config.checkedFields.forEach(t => {
@@ -252,12 +261,16 @@ export const FieldRenameProcessor = defineComponent({
         config.checkedFields.forEach(t => {
           doUpdateField(t, 'rest', t.targetFieldName)
         })
+      } else {
+        //全局
+        map = {}
       }
       fieldsMapping = toList(map)
+      emit('change', fieldsMapping)
       //更新整个数据
-      loadData()
-      // eslint-disable-next-line
-      console.log(fieldsMapping)
+      setTimeout(() => {
+        loadData()
+      }, 1000)
     }
     //单个删除字段
     const doShowRow = row => {
@@ -358,7 +371,7 @@ export const FieldRenameProcessor = defineComponent({
                   <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
                     {this.list.map((item, index) => (
                       <li key={index} class={[this.config.position === index ? 'active' : '']}>
-                        <el-checkbox label={item.sourceObjectName}>
+                        <el-checkbox label={item.sourceQualifiedName}>
                           <br />
                         </el-checkbox>
                         <div class="task-form__img" onClick={() => this.updateView(index)}>
@@ -446,6 +459,7 @@ export const FieldRenameProcessor = defineComponent({
             <ElTable
               class="field-mapping-table table-border"
               height="100%"
+              ref={'table'}
               data={this.tableList}
               v-loading={this.config.loadingTable}
               row-class-name={this.tableRowClassName}
