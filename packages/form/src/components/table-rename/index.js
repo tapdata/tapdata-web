@@ -37,7 +37,7 @@ export const TableRename = observer(
               pageSize: 10000
             })
             .then(res => {
-              tableDataRef.value = res.items.map(item => item.sinkObjectName)
+              tableDataRef.value = res.items.map(item => item.sourceObjectName)
             })
             .finally(() => {
               loading.value = false
