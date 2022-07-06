@@ -702,8 +702,8 @@ export default {
 
         useDmlPolicy(field) {
           const capabilities = field.query('attrs.capabilities').get('value')
-          const insertPolicy = capabilities.find(({ id }) => id === 'dml-insert-policy')
-          const updatePolicy = capabilities.find(({ id }) => id === 'dml-update-policy')
+          const insertPolicy = capabilities.find(({ id }) => id === 'dml_insert_policy')
+          const updatePolicy = capabilities.find(({ id }) => id === 'dml_update_policy')
           const insertField = field.query('dmlPolicy.insertPolicy').take()
           const updateField = field.query('dmlPolicy.updatePolicy').take()
 
