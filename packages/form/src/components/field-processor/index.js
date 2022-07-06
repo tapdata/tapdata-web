@@ -175,6 +175,10 @@ export const FieldRenameProcessor = defineComponent({
       } else {
         config.checkedTables = []
       }
+      //联调右侧表格全选
+      nextTick(() => {
+        refs.table?.toggleAllSelection()
+      })
     }
     const doCheckedTablesChange = value => {
       let checkedCount = value.length
@@ -246,13 +250,8 @@ export const FieldRenameProcessor = defineComponent({
                 : []
           }
         })
-        fieldsMapping = toList(map)
-        emit('change', fieldsMapping)
-        //更新整个数据
-        setTimeout(() => {
-          loadData()
-        }, 1000)
-      } else if (config.checkedFields?.length > 0) {
+      }
+      if (config.checkedFields?.length > 0) {
         //字段级别
         config.checkedFields.forEach(t => {
           let newField = config.operation.prefix + t?.targetFieldName + config.operation.suffix
@@ -264,8 +263,13 @@ export const FieldRenameProcessor = defineComponent({
         })
       }
       config.checkedTables = []
-      config.checkedFields = []
+      config.checkAll = false
+      nextTick(() => {
+        refs.table?.clearSelection()
+      })
       config.operation = restOp
+      fieldsMapping = toList(map)
+      emit('change', fieldsMapping)
       doVisible('visible', false)
     }
     //重置
@@ -482,7 +486,7 @@ export const FieldRenameProcessor = defineComponent({
                 >
                   批量操作
                 </ElButton>
-                <ElButton type="text" class="btn-rest" disabled={this.disabled} onClick={this.doOperationRest}>
+                <ElButton type="text" class="btn-rest mr-2" disabled={this.disabled} onClick={this.doOperationRest}>
                   重置
                 </ElButton>
               </div>
