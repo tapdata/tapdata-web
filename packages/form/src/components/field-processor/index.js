@@ -7,9 +7,10 @@ import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import VIcon from 'web-core/components/VIcon'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
+import { delayTrigger } from 'web-core/util'
 
 export const FieldRenameProcessor = defineComponent({
-  props: ['value', 'nodeId'],
+  props: ['value', 'nodeId', 'disabled'],
   setup(props, { emit, refs, root }) {
     const formRef = useForm()
     const form = formRef.value
@@ -74,6 +75,11 @@ export const FieldRenameProcessor = defineComponent({
           config.loadingNav = false
           config.loadingTable = false
         })
+    }
+    const doSearchTables = (value, type) => {
+      delayTrigger(() => {
+        loadData(value, type)
+      }, 200)
     }
     const doSearchField = () => {
       if (config.searchField.trim()) {
@@ -286,7 +292,7 @@ export const FieldRenameProcessor = defineComponent({
       //更新整个数据
       setTimeout(() => {
         loadData()
-      }, 1000)
+      }, 1500)
     }
     //单个删除字段
     const doShowRow = row => {
@@ -320,15 +326,19 @@ export const FieldRenameProcessor = defineComponent({
     }
     //右侧表格slot渲染
     const renderNode = ({ row }) => {
-      return (
+      return row.isShow || props.disabled ? (
         <div class="cursor-pointer" onClick={() => doEditName(row)}>
           <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">{row.targetFieldName}</span>
           <VIcon>edit</VIcon>
         </div>
+      ) : (
+        <div class="cursor-pointer">
+          <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">{row.targetFieldName}</span>
+        </div>
       )
     }
     const renderOpNode = ({ row }) => {
-      return row.isShow ? (
+      let show = row.isShow ? (
         <span class="text-primary cursor-pointer" onClick={() => doDeleteRow(row)}>
           屏蔽
         </span>
@@ -337,6 +347,8 @@ export const FieldRenameProcessor = defineComponent({
           恢复
         </span>
       )
+      let disabled = row.isShow ? <span>屏蔽</span> : <span>恢复</span>
+      return props.disabled ? disabled : show
     }
     loadData()
     return {
@@ -355,7 +367,8 @@ export const FieldRenameProcessor = defineComponent({
       renderOpNode,
       updateView,
       doOperationRest,
-      doSearchField
+      doSearchField,
+      doSearchTables
     }
   },
   render() {
@@ -371,7 +384,7 @@ export const FieldRenameProcessor = defineComponent({
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchTable}
-                  onInput={() => this.loadData(this.config.searchTable, 'search')}
+                  onInput={() => this.doSearchTables(this.config.searchTable, 'search')}
                 ></ElInput>
               </div>
             </div>
@@ -462,12 +475,14 @@ export const FieldRenameProcessor = defineComponent({
                 <ElButton
                   type="text"
                   class="btn-operation"
-                  disabled={this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0}
+                  disabled={
+                    (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) || this.disabled
+                  }
                   onClick={() => this.doVisible('visible', true)}
                 >
                   批量操作
                 </ElButton>
-                <ElButton type="text" class="btn-rest" onClick={this.doOperationRest}>
+                <ElButton type="text" class="btn-rest" disabled={this.disabled} onClick={this.doOperationRest}>
                   重置
                 </ElButton>
               </div>

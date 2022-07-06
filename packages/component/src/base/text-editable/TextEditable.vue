@@ -7,6 +7,7 @@
         :readonly="readonly"
         :placeholder="placeholder"
         :style="inputStyle"
+        maxlength="30"
         @input="handleInput"
         @change="handleChange"
       />
