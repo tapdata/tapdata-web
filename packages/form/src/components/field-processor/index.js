@@ -99,7 +99,7 @@ export const FieldRenameProcessor = defineComponent({
         if (!map[t.qualifiedName]) {
           map[t.qualifiedName] = {
             qualifiedName: t?.qualifiedName,
-            originTableName: t?.sourceObjectName,
+            originTableName: t?.originTableName,
             operation: t?.operation,
             fields: t.fields || []
           }
@@ -133,10 +133,11 @@ export const FieldRenameProcessor = defineComponent({
     const doUpdateField = (row, target, val) => {
       let map = mapping(fieldsMapping) || {}
       let qualifiedName = config.selectTableRow?.sourceQualifiedName
+      let sourceObjectName = config.selectTableRow?.sourceObjectName
       if (!map[qualifiedName]) {
         map[qualifiedName] = {
           qualifiedName: qualifiedName,
-          originTableName: config.selectTableRow?.sourceObjectName,
+          originTableName: sourceObjectName,
           operation: config.operation,
           fields: []
         }
