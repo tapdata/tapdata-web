@@ -540,7 +540,7 @@ export default {
         this.resetWorkspace()
         this.initNodeView()
       }
-      if (this.$route.name === 'DataflowViewer') {
+      if (['DataflowViewer', 'MigrationMonitor'].includes(this.$route.name)) {
         await this.openDataflow(id)
         // await this.startLoop()
         this.setStateReadonly(true)

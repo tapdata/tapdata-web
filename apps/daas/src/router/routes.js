@@ -16,6 +16,10 @@ const MigrationEditor = async () => {
   const { MigrationEditor } = await import('@tap/dag')
   return MigrationEditor
 }
+const MigrationMonitor = async () => {
+  const { MigrationMonitor } = await import('@tap/dag')
+  return MigrationMonitor
+}
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
@@ -121,6 +125,15 @@ export default [
     component: MigrationEditor,
     meta: {
       title: 'page_title_task_edit',
+      code: 'Data_SYNC_menu'
+    }
+  },
+  {
+    path: '/migrate/monitor/:id',
+    name: 'MigrationMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
       code: 'Data_SYNC_menu'
     }
   },
