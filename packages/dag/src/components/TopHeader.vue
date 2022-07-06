@@ -230,9 +230,7 @@ export default {
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
-    },
-
-    commandKey() {}
+    }
   },
 
   watch: {
