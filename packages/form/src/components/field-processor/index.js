@@ -165,8 +165,10 @@ export const FieldRenameProcessor = defineComponent({
       fieldsMapping = toList(map)
       // eslint-disable-next-line
       form.fieldsMapping = fieldsMapping
-      form.setValuesIn('fieldsMapping', fieldsMapping)
-      save()
+      emit('change', fieldsMapping)
+      setTimeout(() => {
+        save()
+      }, 300)
     }
     //选择左侧table
     const doCheckAllChange = val => {
@@ -273,8 +275,10 @@ export const FieldRenameProcessor = defineComponent({
       })
       config.operation = restOp
       fieldsMapping = toList(map)
-      form.setValuesIn('fieldsMapping', fieldsMapping)
-      save()
+      emit('fieldsMapping', fieldsMapping)
+      setTimeout(() => {
+        save()
+      }, 300)
       doVisible('visible', false)
     }
     const save = () => {
@@ -299,6 +303,11 @@ export const FieldRenameProcessor = defineComponent({
             delete map[t?.sourceQualifiedName]
           }
         })
+        fieldsMapping = toList(map)
+        emit('fieldsMapping', [])
+        setTimeout(() => {
+          save()
+        }, 300)
       } else if (config.checkedFields?.length > 0) {
         //字段级别
         config.checkedFields.forEach(t => {
@@ -306,11 +315,11 @@ export const FieldRenameProcessor = defineComponent({
         })
       } else {
         //全局
-        map = {}
+        emit('change', [])
+        setTimeout(() => {
+          save()
+        }, 300)
       }
-      fieldsMapping = toList(map)
-      form.setValuesIn('fieldsMapping', fieldsMapping)
-      save()
     }
     //单个删除字段
     const doShowRow = row => {
