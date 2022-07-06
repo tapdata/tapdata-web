@@ -1471,6 +1471,10 @@ export default {
   shared_cache_messge_no_table: '找不对所选表模型',
   shared_cache_max_memory: '缓存最大内存',
   shared_cache_placeholder_max_memory: '请输入缓存最大内存',
+  shared_cache_keys_tooltip: '以该字段作为主键识别数据进行缓存',
+  shared_cache_fields_tooltip: '需要进行缓存的常用字段',
+  shared_cache_max_memory_tooltip: '系统会保存的最大内存量，超过则按调用时间，将最不常用的数据删掉',
+  shared_cache_code_tooltip: '可在JS节点中输入这段代码使用该缓存',
 
   // 设置
   setting_email_template: '邮件模板',

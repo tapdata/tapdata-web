@@ -66,7 +66,7 @@
       <div class="shared-cache--keys">
         <div class="title">{{ $t('shared_cache_keys') }}</div>
         <div class="content">
-          <span v-for="key in details.cacheKeysArr" :key="key">{{ key }}</span>
+          <div v-for="key in details.cacheKeysArr" :key="key">{{ key }}</div>
         </div>
       </div>
       <div class="shared-cache--keys">
@@ -75,6 +75,7 @@
           <div v-for="key in details.fields" :key="key" class="mt-2">{{ key }}</div>
         </div>
       </div>
+      <CodeView class="mt-2" :data="details"></CodeView>
     </Drawer>
   </section>
 </template>
@@ -157,9 +158,10 @@ import { getSubTaskStatus } from '@/utils/util'
 import dayjs from 'dayjs'
 import { sharedCacheApi } from '@tap/api'
 import TaskButtons from '@/components/TaskButtons'
+import CodeView from './CodeView.vue'
 
 export default {
-  components: { TablePage, FilterBar, Drawer, TaskButtons },
+  components: { TablePage, FilterBar, Drawer, TaskButtons, CodeView },
   data() {
     return {
       searchParams: {

@@ -1456,6 +1456,10 @@ export default {
   shared_cache_placeholder_keys: '請選擇緩存鍵',
   shared_cache_placeholder_fields: '請選擇緩存欄位',
   shared_cache_max_memory: '緩存最大內存',
+  shared_cache_keys_tooltip: '以該字段作為主鍵識別數據進行緩存',
+  shared_cache_fields_tooltip: '需要進行緩存的常用字段',
+  shared_cache_max_memory_tooltip: '系統會保存的最大內存量，超過則按調用時間，將最不常用的數據刪掉',
+  shared_cache_code_tooltip: '可在JS節點中輸入這段代碼使用該緩存',
 
   // 设置
   setting_email_template: '郵件模板',

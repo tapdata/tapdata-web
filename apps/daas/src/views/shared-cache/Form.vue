@@ -40,6 +40,13 @@
           />
         </ElFormItem>
         <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys') + ':'">
+          <template slot="label">
+            <span>{{ $t('shared_cache_keys') }}</span>
+            <el-tooltip placement="top" :content="$t('shared_cache_keys_tooltip')">
+              <i class="el-icon-info color-primary ml-1"></i>
+            </el-tooltip>
+            <span>:</span>
+          </template>
           <FieldSelector
             v-model="form.cacheKeys"
             class="form-field-selector"
@@ -48,6 +55,13 @@
           ></FieldSelector>
         </ElFormItem>
         <ElFormItem prop="fields" :label="$t('shared_cache_fields') + ':'">
+          <template slot="label">
+            <span>{{ $t('shared_cache_fields') }}</span>
+            <el-tooltip placement="top" :content="$t('shared_cache_fields_tooltip')">
+              <i class="el-icon-info color-primary ml-1"></i>
+            </el-tooltip>
+            <span>:</span>
+          </template>
           <FieldSelector
             v-model="form.fields"
             class="form-field-selector"
@@ -55,43 +69,33 @@
             :placeholder="$t('shared_cache_placeholder_fields')"
           ></FieldSelector>
         </ElFormItem>
-        <ElFormItem
-          prop="maxMemory"
-          :label="$t('shared_cache_max_memory') + ':'"
-          :placeholder="$t('shared_cache_placeholder_max_memory')"
-        >
-          <ElInputNumber v-model="form.maxMemory" style="width: 200px" controls-position="right"></ElInputNumber>
+        <ElFormItem prop="maxMemory" :placeholder="$t('shared_cache_placeholder_max_memory')">
+          <template slot="label">
+            <span>{{ $t('shared_cache_max_memory') }}</span>
+            <el-tooltip placement="top" :content="$t('shared_cache_max_memory_tooltip')">
+              <i class="el-icon-info color-primary ml-1"></i>
+            </el-tooltip>
+            <span>:</span>
+          </template>
+          <ElInputNumber
+            v-model="form.maxMemory"
+            style="width: 200px"
+            :min="1"
+            :max="999999999"
+            controls-position="right"
+          ></ElInputNumber>
           <span class="ml-1">M</span>
         </ElFormItem>
-        <ElFormItem :label="$t('shared_cache_code') + ':'"></ElFormItem>
-        <div class="example-wrapper overflow-hidden">
-          <div class="code">
-            <span class="color-primary">var</span> cachedRow = CacheService.getCache(
-            <span class="color-danger">'{{ form.name || 'cachename' }}'</span>
-            <template v-if="!form.cacheKeys || !form.cacheKeys.length">
-              ,<span class="bold">record</span>.<span class="color-danger">category_code</span>
-            </template>
-            <span v-for="key in form.cacheKeys.split(',')" :key="key">
-              <template v-if="key">
-                , <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
-              </template>
-            </span>
-            );<br />
-            <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
-          </div>
-          <div class="my-2">OR</div>
-          <div class="code">
-            <span class="bold">record</span>.category_name = CacheService.getCacheItem(
-            <span class="color-danger">'{{ form.name || 'cachename' }}'</span>, <span>'category_name'</span>,
-            defaultValue
-            <span v-for="key in form.cacheKeys.split(',')" :key="key">
-              <template v-if="key">
-                ,<span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
-              </template>
-            </span>
-            );
-          </div>
-        </div>
+        <ElFormItem>
+          <template slot="label">
+            <span>{{ $t('shared_cache_code') }}</span>
+            <el-tooltip placement="top" :content="$t('shared_cache_code_tooltip')">
+              <i class="el-icon-info color-primary ml-1"></i>
+            </el-tooltip>
+            <span>:</span>
+          </template>
+        </ElFormItem>
+        <CodeView :data="form"></CodeView>
       </ElForm>
       <div class="pt-6">
         <ElButton @click="$router.back()">{{ $t('button_back') }}</ElButton>
@@ -114,32 +118,15 @@
   width: 905px;
   max-width: 100%;
 }
-.example-wrapper {
-  padding: 16px;
-  width: 950px;
-  max-width: 100%;
-  background: #3a3d4c;
-  border-radius: 2px;
-  color: #bfd0ff;
-}
-.code {
-  padding: 8px;
-  white-space: nowrap;
-  border-radius: 2px;
-  background: #262838;
-  overflow-x: auto;
-  color: #82b290;
-  .bold {
-    font-weight: bold;
-  }
-}
 </style>
 <script>
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
+import CodeView from './CodeView.vue'
 import { sharedCacheApi, metadataInstancesApi, connectionsApi } from '@tap/api'
+
 export default {
-  components: { VirtualSelect, FieldSelector },
+  components: { VirtualSelect, FieldSelector, CodeView },
   data() {
     return {
       loading: false,
@@ -164,14 +151,6 @@ export default {
         fields: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_fields') }],
         maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }]
       }
-    }
-  },
-  computed: {
-    script() {
-      let cacheKeys = this.form.cacheKeys || ''
-      return `  var cacheRow = CacheService.getCache(${this.form.name || 'cachename'}, ${
-        cacheKeys.length ? 'record.' + cacheKeys.split(',').join(', record.') : 'record.category_code'
-      })\n  record.category_name = cachedRow.category_name`
     }
   },
   created() {
@@ -317,9 +296,6 @@ export default {
                 name: 'sharedCacheList'
               })
             })
-            // .catch(err => {
-            //   this.$message.error(err?.data?.message || this.$t('message_save_fail'))
-            // })
             .finally(() => {
               this.loading = false
             })

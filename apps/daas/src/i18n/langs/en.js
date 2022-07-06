@@ -1523,6 +1523,12 @@ export default {
   shared_cache_placeholder_keys: 'Please select a cache key',
   shared_cache_placeholder_fields: 'Please select a cache field',
   shared_cache_max_memory: 'Maximum memory',
+  shared_cache_keys_tooltip: 'Use this field as the primary key to identify data for caching',
+  shared_cache_fields_tooltip: 'Common fields that need to be cached',
+  shared_cache_max_memory_tooltip:
+    'The maximum amount of memory the system will save, if it exceeds, the least commonly used data will be deleted according to the calling time',
+  shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
+
   // 设置
   setting_email_template: 'Email template',
   setting_connect_and_test: 'Connection test',
