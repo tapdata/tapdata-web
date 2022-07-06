@@ -172,13 +172,17 @@ export const FieldRenameProcessor = defineComponent({
       config.checkAll = val
       if (val) {
         config.checkedTables = list.value
+        nextTick(() => {
+          tableList.value.forEach(row => {
+            refs.table?.toggleAllSelection(row, true)
+          })
+        })
       } else {
         config.checkedTables = []
+        nextTick(() => {
+          refs.table?.clearSelection()
+        })
       }
-      //联调右侧表格全选
-      nextTick(() => {
-        refs.table?.toggleAllSelection()
-      })
     }
     const doCheckedTablesChange = value => {
       let checkedCount = value.length
@@ -186,10 +190,12 @@ export const FieldRenameProcessor = defineComponent({
       //当前table是否被选中
       if (checkedCount > 0) {
         let index = value.findIndex(t => t.sourceQualifiedName === config.selectTableRow.sourceQualifiedName)
-        if (index > -1 && config.checkedFields.length < tableList.value.length) {
+        if (index > -1) {
           //联调右侧表格全选
           nextTick(() => {
-            refs.table?.toggleAllSelection()
+            tableList.value.forEach(row => {
+              refs.table?.toggleRowSelection(row, true)
+            })
           })
         }
         if (index === -1) {
