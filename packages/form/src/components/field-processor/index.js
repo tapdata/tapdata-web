@@ -304,7 +304,7 @@ export const FieldRenameProcessor = defineComponent({
           }
         })
         fieldsMapping = toList(map)
-        emit('fieldsMapping', [])
+        emit('change', fieldsMapping)
         setTimeout(() => {
           save()
         }, 300)
