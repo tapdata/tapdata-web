@@ -1,7 +1,28 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
-      内容
+      <div class="task-info">
+        <div class="task-info__row">
+          <span class="task-info__label">任务ID：</span>
+          <span class="task-info__value">{{ dataflow.id }}</span>
+        </div>
+        <div class="task-info__row">
+          <span class="task-info__label">任务类型：</span>
+          <span class="task-info__value">{{ syncType[dataflow.type] }}</span>
+        </div>
+        <div class="task-info__row">
+          <span class="task-info__label">所属FE：</span>
+          <span class="task-info__value">{{ dataflow.agentName || '-' }}</span>
+        </div>
+        <div class="task-info__row">
+          <span class="task-info__label">运行状态：</span>
+          <span class="task-info__value">
+            <slot name="status" :result="dataflow.statusResult">
+              <StatusItem inline :value="dataflow.statusResult" />
+            </slot>
+          </span>
+        </div>
+      </div>
     </div>
   </aside>
 </template>
@@ -23,30 +44,21 @@ import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
-import VIcon from 'web-core/components/VIcon'
-import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
-import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
-import { Select } from 'element-ui'
-import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
-import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
-import NodeIcon from '../NodeIcon'
+import { StatusItem } from '@tap/business'
 import Locale from '../../mixins/locale'
 
 export default {
   name: 'LeftSider',
   mixins: [Locale],
+  props: {
+    dataflow: Object
+  },
   components: {
-    NodeIcon,
-    EmptyItem,
-    OverflowTooltip,
-    BaseNode,
-    VIcon,
-    ConnectionTypeSelector,
-    ElScrollbar: Select.components.ElScrollbar
+    StatusItem
   },
 
   data() {
@@ -71,7 +83,11 @@ export default {
       dbLoading: true,
       dbLoadingMore: false,
       skeletonThrottle: 0,
-
+      syncType: {
+        initial_sync: '全量',
+        cdc: '增量',
+        'initial_sync+cdc': '全量+增量'
+      },
       database: [],
       comingAllowDatabase: [], // 即将上线
       otherType: [],
@@ -621,5 +637,14 @@ $hoverBg: #eef3ff;
       white-space: nowrap;
     }
   }
+}
+.task-info {
+  padding: 16px;
+  border-bottom: 1px solid #f2f2f2;
+}
+.task-info__row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 </style>

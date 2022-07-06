@@ -11,10 +11,6 @@
       @change="onNameInputChange"
     />
 
-    <slot name="status" :result="dataflow.statusResult">
-      <StatusItem inline :value="dataflow.statusResult" />
-    </slot>
-
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
       <ElTooltip transition="tooltip-fade-in" content="校验">
@@ -134,7 +130,6 @@ import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { TextEditable } from '@tap/component'
-import { StatusItem } from '@tap/business'
 import Locale from '../../mixins/locale'
 
 export default {
@@ -151,7 +146,7 @@ export default {
     scale: Number
   },
 
-  components: { VIcon, TextEditable, StatusItem },
+  components: { VIcon, TextEditable },
 
   data() {
     return {

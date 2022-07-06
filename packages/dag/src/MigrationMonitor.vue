@@ -26,15 +26,22 @@
         </span>
       </template>
     </TopHeader>
-    <section class="layout-wrap layout-has-sider position-relative">
+    <section class="layout-wrap layout-has-sider position-relative font-color-light">
       <!--左侧边栏-->
       <VExpandXTransition>
         <LeftSider
+          :dataflow="dataflow"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
           @toggle-expand="handleToggleExpand"
-        />
+        >
+          <template #status="{ result }">
+            <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
+              {{ t('task_preview_status_' + result[0].status) }}
+            </span>
+          </template>
+        </LeftSider>
       </VExpandXTransition>
       <div
         v-if="!stateIsReadonly"
@@ -462,7 +469,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$sidebarW: 320px;
+$sidebarW: 356px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
