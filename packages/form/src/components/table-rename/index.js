@@ -6,10 +6,11 @@ import EmptyItem from 'web-core/components/EmptyItem'
 import VIcon from 'web-core/components/VIcon'
 import './style.scss'
 import { taskApi } from '@tap/api'
+import { observe } from '@formily/reactive'
 
 export const TableRename = observer(
   defineComponent({
-    props: ['findParentNode', 'value', 'listStyle'],
+    props: ['findParentNode', 'value', 'listStyle', 'disabled'],
     setup(props, { emit, root }) {
       const formRef = useForm()
       const form = formRef.value
@@ -53,6 +54,10 @@ export const TableRename = observer(
       }
 
       makeTable()
+
+      observe(formRef.value.values.$inputs, () => {
+        makeTable()
+      })
 
       const updateName = (val, name) => {
         if (val !== name) {
@@ -114,9 +119,9 @@ export const TableRename = observer(
         emit('change', { ...nameMap })
       }
 
-      watch(nameMap, () => {
-        console.log('watch:nameMap') // eslint-disable-line
-      })
+      // watch(nameMap, () => {
+      //   console.log('watch:nameMap') // eslint-disable-line
+      // })
 
       return {
         config,
@@ -136,7 +141,12 @@ export const TableRename = observer(
       return (
         <div class="table-rename">
           <FormItem.BaseItem label="搜索表名">
-            <ElInput v-model={this.config.search} prefixIcon="el-icon-search" clearable></ElInput>
+            <ElInput
+              v-model={this.config.search}
+              disabled={this.disabled}
+              prefixIcon="el-icon-search"
+              clearable
+            ></ElInput>
           </FormItem.BaseItem>
 
           <div
@@ -148,7 +158,7 @@ export const TableRename = observer(
               <div class="name-list-title px-4">原表名</div>
               <div class="name-list-title pl-5 pr-4">新表名</div>
               <div class="name-list-header-extra px-4">
-                <ElButton onClick={this.resetNames} size="mini" type="text">
+                <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
                   重置
                 </ElButton>
               </div>
@@ -170,6 +180,7 @@ export const TableRename = observer(
                         ]}
                       >
                         <input
+                          readOnly={this.disabled}
                           class="name-list-item-input"
                           value={this.nameMap[name] || name}
                           onChange={event => {
@@ -194,9 +205,19 @@ export const TableRename = observer(
 
           <FormItem.BaseItem label="替换">
             <div class="flex">
-              <ElInput v-model={this.config.replaceBefore} prefixIcon="el-icon-search" clearable />
+              <ElInput
+                v-model={this.config.replaceBefore}
+                disabled={this.disabled}
+                prefixIcon="el-icon-search"
+                clearable
+              />
               <div class="px-4 text-nowrap">改为</div>
-              <ElInput v-model={this.config.replaceAfter} prefixIcon="el-icon-search" clearable />
+              <ElInput
+                v-model={this.config.replaceAfter}
+                disabled={this.disabled}
+                prefixIcon="el-icon-search"
+                clearable
+              />
             </div>
           </FormItem.BaseItem>
 
@@ -204,18 +225,18 @@ export const TableRename = observer(
             label="前缀"
             tooltip="以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符，前缀不允许以 system 开头"
           >
-            <ElInput v-model={this.config.prefix} clearable />
+            <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable />
           </FormItem.BaseItem>
 
           <FormItem.BaseItem
             label="后缀"
             tooltip="以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符"
           >
-            <ElInput v-model={this.config.suffix} clearable />
+            <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable />
           </FormItem.BaseItem>
 
           <FormItem.BaseItem label="大小写">
-            <ElSelect v-model={this.config.transferCase}>
+            <ElSelect v-model={this.config.transferCase} disabled={this.disabled}>
               <ElOption value="" label="不变" />
               <ElOption value="toUpperCase" label="大写" />
               <ElOption value="toLowerCase" label="小写" />
@@ -223,10 +244,10 @@ export const TableRename = observer(
           </FormItem.BaseItem>
 
           <div class="mt-4">
-            <ElButton onClick={this.doModify} size="small" type="primary">
+            <ElButton onClick={this.doModify} disabled={this.disabled} size="small" type="primary">
               修改
             </ElButton>
-            <ElButton onClick={this.doReset} size="small">
+            <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
               重置
             </ElButton>
           </div>
