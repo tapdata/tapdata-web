@@ -45,9 +45,11 @@ export const FieldRenameProcessor = defineComponent({
         count: 1
       }
     })
-    const loadData = (value, type) => {
-      config.loadingNav = true
-      config.loadingTable = true
+    const loadData = (value, type, loading) => {
+      if (!loading) {
+        config.loadingNav = true
+        config.loadingTable = true
+      }
       let where = {
         taskId: root.$route.params.id,
         nodeId: props.nodeId
@@ -276,6 +278,9 @@ export const FieldRenameProcessor = defineComponent({
       config.operation = restOp
       fieldsMapping = toList(map)
       emit('change', fieldsMapping)
+      setTimeout(() => {
+        loadData('', '', true)
+      }, 2000)
       doVisible('visible', false)
     }
     //重置
