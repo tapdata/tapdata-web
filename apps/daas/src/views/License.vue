@@ -54,10 +54,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res?.items || []
+        .then(data => {
+          let list = data?.items || []
           return {
-            total: res.data?.total || 0,
+            total: data?.total || 0,
             data: list.map(item => {
               let expirationDate = dayjs(item.expirationDate)
               let duration = expirationDate.valueOf() - Date.now()
@@ -102,8 +102,8 @@ export default {
         this.copyLoading = true
         licensesApi
           .getSid(ids)
-          .then(res => {
-            let sid = res?.sid
+          .then(data => {
+            let sid = data?.sid
             if (sid) {
               this.$copyText(sid).then(() => {
                 this.$message.success(this.$t('license_copied_clipboard'))

@@ -498,8 +498,8 @@ export default {
       this.loading = true
       metadataInstancesApi
         .getTables(this.connectionId)
-        .then(res => {
-          let tables = res || []
+        .then(data => {
+          let tables = data || []
           tables = tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
           this.table.tables = Object.freeze(tables)
         })
@@ -533,9 +533,8 @@ export default {
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
-      connectionsApi.updateById(this.connectionId, parms).then(res => {
+      connectionsApi.updateById(this.connectionId, parms).then(data => {
         if (this?.$refs?.test) {
-          let data = res
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           this.$refs.test.start(data, false, true)
           this.getProgress()
@@ -546,8 +545,7 @@ export default {
     getProgress() {
       connectionsApi
         .getNoSchema(this.connectionId)
-        .then(res => {
-          let data = res
+        .then(data => {
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100

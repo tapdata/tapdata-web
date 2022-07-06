@@ -341,11 +341,7 @@ export default {
           scheduleTasksApi.post(params).then(() => {
             this.createDialogVisible = false
             this.$message.success(this.$t('message_save_ok'))
-            // this.toDetails(res.data);
           })
-          // .catch(() => {
-          //   this.$message.error(this.$t('message_save_fail'))
-          // })
         }
       })
     },
@@ -357,8 +353,8 @@ export default {
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
-      }).then(res => {
-        if (res) {
+      }).then(flag => {
+        if (flag) {
           scheduleTasksApi
             .post({
               task_name: 'mongodb_drop_index',
@@ -375,9 +371,6 @@ export default {
             .then(() => {
               this.$message.success(this.$t('message.deleting'))
             })
-          // .catch(() => {
-          //   this.$message.info(this.$t('message.deleteFail'))
-          // })
         }
       })
     },

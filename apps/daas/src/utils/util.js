@@ -346,6 +346,11 @@ export function getTaskBtnDisabled(row, or) {
   return result
 }
 
+export function isStopping(task) {
+  const statuses = task.statuses
+  return statuses?.length && statuses.every(t => ['stopping'].includes(t.status))
+}
+
 // 转化单位
 export function toThousandsUnit(val) {
   if ([undefined, null, ''].includes(val)) {

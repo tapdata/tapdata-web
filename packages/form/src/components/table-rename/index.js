@@ -43,11 +43,6 @@ export const TableRename = observer(
             .finally(() => {
               loading.value = false
             })
-          /*let parentNode = props.findParentNode(form.values.id)
-          if (parentNode.type === 'database') {
-            const { tableNames = [] } = parentNode
-            tableData = tableNames
-          }*/
         } else {
           tableDataRef.value = []
         }
@@ -118,10 +113,6 @@ export const TableRename = observer(
       const emitChange = () => {
         emit('change', { ...nameMap })
       }
-
-      // watch(nameMap, () => {
-      //   console.log('watch:nameMap') // eslint-disable-line
-      // })
 
       return {
         config,
@@ -221,17 +212,11 @@ export const TableRename = observer(
             </div>
           </FormItem.BaseItem>
 
-          <FormItem.BaseItem
-            label="前缀"
-            tooltip="以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符，前缀不允许以 system 开头"
-          >
+          <FormItem.BaseItem label="前缀">
             <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable />
           </FormItem.BaseItem>
 
-          <FormItem.BaseItem
-            label="后缀"
-            tooltip="以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符"
-          >
+          <FormItem.BaseItem label="后缀">
             <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable />
           </FormItem.BaseItem>
 

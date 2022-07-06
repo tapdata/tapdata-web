@@ -76,10 +76,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           return {
-            total: res?.total || 0,
-            data: res?.items || []
+            total: data?.total || 0,
+            data: data?.items || []
           }
         })
     }

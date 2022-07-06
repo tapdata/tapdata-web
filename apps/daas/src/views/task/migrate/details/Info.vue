@@ -442,8 +442,7 @@ export default {
     getSyncOverViewData() {
       //调用前 先清掉上一个定时器
       clearTimeout(this.timerOverView)
-      subtaskApi.syncOverView(this.$route.query?.subId).then(res => {
-        let data = res
+      subtaskApi.syncOverView(this.$route.query?.subId).then(data => {
         this.finishDuration = this.handleTime(data?.finishDuration)
         this.progress = data?.progress
         this.endTs = data?.endTs
@@ -633,8 +632,7 @@ export default {
       if (!params) {
         return
       }
-      this.remoteMethod(params).then(res => {
-        let data = res
+      this.remoteMethod(params).then(data => {
         let { samples } = data
         samples.forEach(el => {
           for (let key in el) {
@@ -760,8 +758,8 @@ export default {
     start(row = {}, resetLoading) {
       subtaskApi
         .start(row.id)
-        .then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        .then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -769,8 +767,8 @@ export default {
     stop(row, resetLoading) {
       subtaskApi
         .stop(row.id)
-        .then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        .then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)

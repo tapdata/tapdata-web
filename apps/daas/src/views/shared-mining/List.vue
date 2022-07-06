@@ -9,53 +9,41 @@
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column prop="connections" width="250" :label="$t('share_list_connection')">
+      <el-table-column
+        prop="connections"
+        min-width="160"
+        :label="$t('column_connection')"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
-          <div v-for="item in scope.row.connections" :key="item.id">
+          <div v-for="item in scope.row.connections" :key="item.id" class="ellipsis">
             <span v-for="op in item" :key="op">{{ op }}</span>
           </div>
         </template>
       </el-table-column>
-      <el-table-column width="150" :label="$t('share_list_time_excavation')">
+      <el-table-column min-width="150" :label="$t('share_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.pointTime }}
         </template>
       </el-table-column>
-      <el-table-column sortable width="120" :label="$t('share_list_time')"></el-table-column>
-      <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
-      <el-table-column width="120" prop="status" :label="$t('share_list_status')">
+      <el-table-column sortable min-width="120" :label="$t('share_list_time')"></el-table-column>
+      <el-table-column prop="createTime" min-width="150" :label="$t('share_list_creat_time')" sortable>
+      </el-table-column>
+      <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResult, 'status-block']">
-            {{ $t('task_preview_status_' + row.statusResult) }}
+          <span :class="['status-' + row.statusResultData, 'status-block']">
+            {{ $t('task_preview_status_' + row.statusResultData) }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column width="250" fixed="right" :label="$t('column_operation')">
+      <el-table-column width="210" fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
-          <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
-            $t('task_list_run')
-          }}</el-button>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElLink v-if="isShowForceStop(row.statuses)" type="primary" @click="forceStop([row.id])">
-            {{ $t('task_list_force_stop') }}
-          </ElLink>
-          <el-button v-else size="mini" type="text" :disabled="row.disabledData.stop" @click="stop([row.id])">{{
-            $t('task_list_stop')
-          }}</el-button>
-          <ElDivider direction="vertical"></ElDivider>
-          <el-button size="mini" type="text" :disabled="row.disabledData.edit" @click="edit(row)">{{
-            $t('button_edit')
-          }}</el-button>
-          <el-button size="mini" type="text" :disabled="row.disabledData.reset" @click="rest([row.id])">{{
-            $t('dataFlow.button.reset')
-          }}</el-button>
-          <ElDivider direction="vertical"></ElDivider>
-          <el-button size="mini" type="text" @click="detail(row)">{{ $t('button_details') }}</el-button>
+          <TaskButtons :task="row" :hide-list="['del']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
       </el-table-column>
     </TablePage>
@@ -161,13 +149,15 @@ import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
-import { taskApi, logcollectorApi } from '@tap/api'
+import { logcollectorApi } from '@tap/api'
+import TaskButtons from '@/components/TaskButtons'
 
 let timeout = null
 export default {
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
+    TaskButtons
   },
   data() {
     return {
@@ -200,36 +190,14 @@ export default {
         share_cdc_ttl_day: 3
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
-      mongodbList: [],
       editForm: {
         id: '',
         name: '',
         storageTime: 3
       },
       currentForm: {},
-      options: [
-        {
-          label: this.$t('share_form_edit_localTZ_type'),
-          value: 'localTZ'
-        },
-        {
-          label: this.$t('share_form_edit_connTZ_type'),
-          value: 'connTZ'
-        },
-        {
-          label: this.$t('share_form_edit_current_type'),
-          value: 'current'
-        }
-      ],
       logSaveList: ['1', '2', '3', '4', '5', '6', '7'],
-      statusBtMap: {
-        // scheduled, draft, running, stopping, error, pause, force stopping
-        start: { draft: true, error: true, pause: true },
-        stop: { running: true },
-        edit: { edit: true, stop: true, error: true }
-      },
       showEditSettingBtn: false, //禁用
-      //rules
       rules: {
         persistenceMongodb_uri_db: [
           { required: true, message: this.$t('shared_cdc_setting_select_mongodb_tip'), trigger: 'blur' }
@@ -247,7 +215,7 @@ export default {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 30000)
+    }, 10000)
   },
   computed: {
     table() {
@@ -280,11 +248,11 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res?.items || []
+        .then(data => {
+          let list = data?.items || []
           let pointTime = new Date()
           return {
-            total: res?.total,
+            total: data?.total || 0,
             data: list.map(item => {
               this.$set(item, 'pointTime', pointTime)
               if (item.syncTimePoint === 'current') {
@@ -295,7 +263,7 @@ export default {
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               let statuses = item.statuses
               item.disabledData = getTaskBtnDisabled(item)
-              item.statusResult = getSubTaskStatus(statuses)[0].status
+              item.statusResultData = getSubTaskStatus(statuses)[0].status
               return item
             })
           }
@@ -307,21 +275,19 @@ export default {
       this.loadingConfig = true
       logcollectorApi
         .check()
-        .then(res => {
-          if (res) {
-            this.showEditSettingBtn = res?.data //true是可用，false是禁用
-            this.settingDialogVisible = true
-            logcollectorApi
-              .getSystemConfig()
-              .then(res => {
-                if (res) {
-                  this.digSettingForm = res
-                }
-              })
-              .finally(() => {
-                this.loadingConfig = false
-              })
-          }
+        .then(data => {
+          this.showEditSettingBtn = data //true是可用，false是禁用
+          this.settingDialogVisible = true
+          logcollectorApi
+            .getSystemConfig()
+            .then(data => {
+              if (data) {
+                this.digSettingForm = data
+              }
+            })
+            .finally(() => {
+              this.loadingConfig = false
+            })
         })
         .catch(() => {
           this.loadingConfig = false
@@ -348,84 +314,23 @@ export default {
         }
       })
     },
-    run(ids) {
-      let filter = {
-        where: {
-          id: ids[0]
-        }
-      }
-      taskApi.get({ filter: JSON.stringify(filter) }).then(res => {
-        if (res) {
-          taskApi.batchStart(ids).then(res => {
-            this.$message.success(res?.message || this.$t('message_operation_succuess'))
-            this.table.fetch()
-          })
-        }
-      })
-    },
-    getConfirmMessage(operateStr, isBulk, name) {
-      let title = operateStr + '_confirm_title',
-        message = operateStr + '_confirm_message'
-      if (isBulk) {
-        title = 'bulk_' + title
-        message = 'bulk_' + message
-      }
-      const h = this.$createElement
-      let strArr = this.$t('dataFlow.' + message).split('xxx')
-      let msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary'
-          },
-          name
-        ),
-        strArr[1]
-      ])
-      return {
-        msg,
-        title: this.$t('dataFlow.' + title)
-      }
-    },
-    isShowForceStop(data) {
-      return data?.length && data.every(t => ['stopping'].includes(t.status))
-    },
-    stop(ids) {
-      this.$confirm(this.$t('message.stopInitial_syncMessage'), this.$t('dataFlow.importantReminder'), {
-        type: 'warning'
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        taskApi.batchStop(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
-          this.table.fetch()
+    taskButtonsHandler(event, task) {
+      if (event === 'edit') {
+        this.editDialogVisible = true
+        this.editForm.id = task.id
+        this.editForm.name = task.name
+        this.editForm.storageTime = task.storageTime
+        this.currentForm = JSON.parse(JSON.stringify(this.editForm))
+      } else if (event === 'details') {
+        this.$router.push({
+          name: 'SharedMiningDetails',
+          params: {
+            id: task.id
+          }
         })
-      })
-    },
-    forceStop(ids, item = {}) {
-      let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        taskApi.forceStop(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
-          this.table.fetch()
-        })
-      })
-    },
-    // 编辑
-    edit(item) {
-      this.editDialogVisible = true
-      this.editForm.id = item.id
-      this.editForm.name = item.name
-      this.editForm.storageTime = item.storageTime
-      this.currentForm = JSON.parse(JSON.stringify(this.editForm))
+      } else {
+        this.table.fetch()
+      }
     },
     // 取消编辑
     cancelEdit() {
@@ -444,49 +349,16 @@ export default {
         this.editDialogVisible = false
       })
     },
-    //重置
-    rest(ids, item = {}) {
-      let msgObj = this.getConfirmMessage('initialize', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.restLoading = true
-        taskApi
-          .batchRenew(ids)
-          .then(res => {
-            this.table.fetch()
-            this.$message.success(res?.message || this.$t('message_operation_succuess'))
-          })
-          .finally(() => {
-            this.restLoading = false
-          })
-      })
-    },
-
     // 保存编辑
     saveEdit() {
       this.$refs['editForm'].validate(valid => {
         if (valid) {
           let id = this.editForm?.id
-          logcollectorApi.patch(id, this.editForm).then(res => {
-            if (res) {
-              this.editDialogVisible = false
-              this.table.fetch(1)
-              this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
-            }
+          logcollectorApi.patch(id, this.editForm).then(() => {
+            this.editDialogVisible = false
+            this.table.fetch(1)
+            this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
           })
-        }
-      })
-    },
-
-    detail(item) {
-      this.$router.push({
-        name: 'SharedMiningDetails',
-        params: {
-          id: item.id
         }
       })
     }

@@ -147,8 +147,8 @@ export default {
       this.rules = result
     },
     search(item) {
-      this.$refs.filterForm.validate(res => {
-        if (res) {
+      this.$refs.filterForm.validate(valid => {
+        if (valid) {
           const { delayTrigger } = this.$util
           delayTrigger(() => {
             this.$emit('input', this.getValue())
@@ -162,8 +162,8 @@ export default {
     },
     fetch() {
       this.$emit('input', this.getValue())
-      this.$refs.filterForm.validate(res => {
-        if (res) {
+      this.$refs.filterForm.validate(valid => {
+        if (valid) {
           this.$emit('fetch')
         }
       })

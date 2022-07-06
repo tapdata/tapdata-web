@@ -955,6 +955,7 @@ export default {
   task_list_edit_confirm:
     '已运行过的任务如果编辑时修改了表数量及字段映射提交后若不重置可能导致新配置无法生效，请问您要继续编辑吗?',
   task_list_important_reminder: '重要提醒',
+  task_list_stop_confirm_message: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
 
   task_preview_title: '数据库迁移详情',
   task_preview_createUser: '创建人', //后台数据返回
@@ -1406,7 +1407,6 @@ export default {
   shared_cdc_setting_select_time_tip: '请选择日志保存时长',
   shared_cdc_setting_message_edit_save: '保存成功，重启任务后生效',
   share_list_name: '挖掘名称',
-  share_list_connection: '所属连接',
   share_list_time_excavation: '挖掘所处时间点',
   share_list_creat_time: '创建时间',
   share_list_setting: '挖掘设置',
@@ -1462,21 +1462,19 @@ export default {
   shared_cache_time: '缓存时间',
   shared_cache_keys: '缓存键',
   shared_cache_fields: '缓存字段',
-  shared_cache_max_rows: '缓存最大记录数',
-  shared_cache_ttl: '过期时间',
   shared_cache_code: '应用代码',
-  shared_cache_custom_max_record: '自定义最大记录数',
-  shared_cache_custom_no_limit: '条数不限',
-  shared_cache_custom_record_unit: '条',
-  shared_cache_ttl_unit: '天',
   shared_cache_placeholder_name: '请输入缓存名称',
   shared_cache_placeholder_connection: '请选择连接',
   shared_cache_placeholder_table: '请选择表',
   shared_cache_placeholder_keys: '请选择缓存键',
   shared_cache_placeholder_fields: '请选择缓存字段',
-  shared_cache_placeholder_max_rows: '请输入缓存最大记录数',
-  shared_cache_placeholder_ttl: '请输入过期时间',
   shared_cache_messge_no_table: '找不对所选表模型',
+  shared_cache_max_memory: '缓存最大内存',
+  shared_cache_placeholder_max_memory: '请输入缓存最大内存',
+  shared_cache_keys_tooltip: '以该字段作为主键识别数据进行缓存',
+  shared_cache_fields_tooltip: '需要进行缓存的常用字段',
+  shared_cache_max_memory_tooltip: '系统会保存的最大内存量，超过则按调用时间，将最不常用的数据删掉',
+  shared_cache_code_tooltip: '可在JS节点中输入这段代码使用该缓存',
 
   // 设置
   setting_email_template: '邮件模板',

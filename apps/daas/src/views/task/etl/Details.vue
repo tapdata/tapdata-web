@@ -213,8 +213,8 @@ export default {
       }
       taskApi
         .get([id])
-        .then(res => {
-          this.task = this.formatTask(res)
+        .then(data => {
+          this.task = this.formatTask(data || '{}')
 
           this.getSubTaskStatusCount()
         })
@@ -456,9 +456,6 @@ export default {
           this.task.desc = val
           this.$message.success(this.$t('message_update_success'))
         })
-      // .catch(err => {
-      //   this.$message.error(err.data.message)
-      // })
     },
     // 编辑
     handleEditor(id) {

@@ -137,41 +137,17 @@ export default {
       this.passwordType = this.flag ? 'text' : 'password'
     },
     submit() {
-      // let form = this.form
-      // let message = ''
-      // if (!form.email || !form.email.trim()) {
-      //   message = this.$t('signin_email_require')
-      // } else if (
-      //   // eslint-disable-next-line
-      //   !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
-      // ) {
-      //   message = this.$t('signin_verify_email_invalid')
-      // } else if (!form.newPassword || form.newPassword.length < 5) {
-      //   message = this.$t('signin_verify_password_invalid')
-      //   // eslint-disable-next-line
-      // } else if (/[\s\u4E00-\u9FA5]/.test(form.newPassword)) {
-      //   message = this.$t('signin_verify_password_notCN')
-      // } else if (!form.validateCode) {
-      //   message = this.$t('signin_verify_code_not_empty')
-      // }
-
-      // if (message) {
-      //   this.errorMessage = message
-      //   return
-      // }
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
 
           usersApi
             .reset(this.form)
-            .then(res => {
-              if (res) {
-                this.$router.push({
-                  name: 'verificationEmail',
-                  params: { first: 1, data: this.form, type: 'reset' }
-                })
-              }
+            .then(() => {
+              this.$router.push({
+                name: 'verificationEmail',
+                params: { first: 1, data: this.form, type: 'reset' }
+              })
             })
             .catch(e => {
               if (e?.data?.message) {
@@ -215,14 +191,9 @@ export default {
       let params = {
         email: this.form.email
       }
-      usersApi.sendValidateCode(params).then(res => {
-        if (res) {
-          this.$message.success(this.$t('signin_verify_code_success'))
-        }
+      usersApi.sendValidateCode(params).then(() => {
+        this.$message.success(this.$t('signin_verify_code_success'))
       })
-      // .catch(() => {
-      //   this.$message.error(this.$t('signin_verify_code_error'))
-      // })
     },
 
     // 跳转登录

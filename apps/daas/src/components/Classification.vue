@@ -188,42 +188,37 @@ export default {
               limit: 999
             })
           })
-          .then(res => {
-            if (res) {
-              let treeData = []
-              if (res.items?.length) {
-                treeData = res.items.map(item => ({
-                  value: item.name,
-                  name: item.name,
-                  id: item.id,
-                  gid: item.gid,
-                  parent_id: item.parent_id,
-                  last_updated: item.last_updated,
-                  user_id: item.user_id
-                }))
-              }
-              this.treeData = this.formatData(treeData)
-
-              cb && cb(treeData)
+          .then(data => {
+            let treeData = []
+            let items = data?.items || []
+            if (items.length) {
+              treeData = items.map(item => ({
+                value: item.name,
+                name: item.name,
+                id: item.id,
+                gid: item.gid,
+                parent_id: item.parent_id,
+                last_updated: item.last_updated,
+                user_id: item.user_id
+              }))
             }
+            this.treeData = this.formatData(treeData)
+
+            cb && cb(treeData)
           })
       } else {
         metadataDefinitionsApi
           .get({
             filter: JSON.stringify(filter)
           })
-          .then(res => {
-            if (res?.items) {
-              this.treeData = this.formatData(res?.items || [])
-              cb && cb(res?.items || [])
-            }
+          .then(data => {
+            let items = data?.items || []
+            this.treeData = this.formatData(items)
+            cb && cb(items)
           })
       }
     },
     getDataAll(cb) {
-      // let params = {
-      //   filter: {}
-      // }
       if (this.types[0] === 'user') {
         userGroupsApi
           .get({
@@ -231,29 +226,24 @@ export default {
               limit: 999
             })
           })
-          .then(res => {
-            if (res) {
-              let treeData = []
-              if (res?.items?.length) {
-                treeData = res?.items.map(item => ({
-                  value: item.name,
-                  id: item.id,
-                  gid: item.gid,
-                  parent_id: item.parent_id,
-                  last_updated: item.last_updated,
-                  user_id: item.user_id
-                }))
-              }
-              // this.treeData = this.formatData(res.data);
-              cb && cb(treeData)
+          .then(data => {
+            let items = data?.items || []
+            let treeData = []
+            if (items?.length) {
+              treeData = items.map(item => ({
+                value: item.name,
+                id: item.id,
+                gid: item.gid,
+                parent_id: item.parent_id,
+                last_updated: item.last_updated,
+                user_id: item.user_id
+              }))
             }
+            cb && cb(treeData)
           })
       } else {
-        metadataDefinitionsApi.get().then(res => {
-          if (res?.items) {
-            // this.treeData = this.formatData(res.data);
-            cb && cb(res?.items || [])
-          }
+        metadataDefinitionsApi.get().then(data => {
+          cb && cb(data?.items || [])
         })
       }
     },
@@ -360,16 +350,14 @@ export default {
           params.parent_id = id
           params.parent_gid = gid
         }
-        userGroupsApi[method](params).then(res => {
+        userGroupsApi[method](params).then(() => {
           let self = this
-          if (res.data) {
-            self.getData(() => {
-              this.$nextTick(() => {
-                this.emitCheckedNodes()
-              })
+          self.getData(() => {
+            this.$nextTick(() => {
+              this.emitCheckedNodes()
             })
-            self.hideDialog()
-          }
+          })
+          self.hideDialog()
         })
       } else {
         let params = {
@@ -382,16 +370,14 @@ export default {
         } else if (id) {
           params.parent_id = id
         }
-        metadataDefinitionsApi[method](params).then(res => {
+        metadataDefinitionsApi[method](params).then(() => {
           let self = this
-          if (res.data) {
-            self.getData(() => {
-              this.$nextTick(() => {
-                this.emitCheckedNodes()
-              })
+          self.getData(() => {
+            this.$nextTick(() => {
+              this.emitCheckedNodes()
             })
-            self.hideDialog()
-          }
+          })
+          self.hideDialog()
         })
         // .catch(e => {
         //   if (e.data?.code === 'MetadataDefinition.Value.Exist') {
@@ -470,11 +456,6 @@ export default {
     box-sizing: border-box;
     // background: #eff1f4;
     border: 0;
-    .icon-zhankai2 {
-      // &:hover {
-      //   color: map-get($color, lprimary);
-      // }
-    }
   }
   .no-expand {
     position: absolute;
@@ -499,10 +480,6 @@ export default {
       transform: rotate(180deg);
       .icon {
         font-size: 16px;
-        // color: map-get($color, primary);
-        &:hover {
-          // color: map-get($color, lprimary);
-        }
       }
     }
 

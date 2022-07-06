@@ -12,14 +12,6 @@ export default class Roles extends Http {
     return this.axios.patch(`${this.url}/${params.id}`, params)
   }
 
-  delete(id, name) {
-    if (name == '') {
-      return this.axios.delete(`${this.url}/${id}`)
-    } else {
-      return this.axios.delete(`${this.url}/${id}?name=${name}`)
-    }
-  }
-
   principals(id) {
     return this.axios.delete(`${this.url}/${id}/principals`)
   }

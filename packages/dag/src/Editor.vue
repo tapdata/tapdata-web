@@ -607,36 +607,6 @@ export default {
       }
     },*/
 
-    /**
-     * 在连线上添加节点
-     * @param nodeType
-     * @param position
-     * @param source 连线源节点的id
-     * @param target 连线目标节点的id
-     */
-    addNodeOnConn(nodeType, position, source, target) {
-      const a = this.nodeById(source)
-      const b = this.createNode(position, nodeType)
-      const c = this.nodeById(target)
-
-      if (!this.checkAsTarget(b, true)) return
-      if (!this.checkAsSource(b, true)) return
-      if (!this.checkTargetMaxInputs(b, true)) return
-      if (!this.checkSourceMaxOutputs(b, true)) return
-      if (!this.checkAllowTargetOrSource(a, b, true)) return
-      if (!this.checkAllowTargetOrSource(b, c, true)) return
-
-      this.command.exec(
-        new AddNodeOnConnectionCommand(
-          {
-            source,
-            target
-          },
-          b
-        )
-      )
-    },
-
     handleError(error, msg = '出错了') {
       if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []

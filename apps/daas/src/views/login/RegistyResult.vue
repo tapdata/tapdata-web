@@ -82,10 +82,8 @@ export default {
       this.loading = true
       usersApi
         .newResetPassword(this.queryData.access_token)
-        .then(res => {
-          if (res) {
-            this.result = 'success'
-          }
+        .then(() => {
+          this.result = 'success'
         })
         .catch(() => {
           this.result = 'error'
@@ -99,10 +97,8 @@ export default {
       this.loading = true
       usersApi
         .confirm(uid, token)
-        .then(res => {
-          if (res) {
-            this.result = 'success'
-          }
+        .then(() => {
+          this.result = 'success'
         })
         .catch(() => {
           this.result = 'error'

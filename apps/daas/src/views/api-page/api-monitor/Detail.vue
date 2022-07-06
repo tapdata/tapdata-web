@@ -200,11 +200,10 @@ export default {
       }
       apiMonitorApi
         .apiDetail(data)
-        .then(res => {
+        .then(data => {
           //处理数据
-          this.detail = res
+          this.detail = data
           this.detail['totalCount'] = (this.detail.visitTotalCount || 0) - (this.detail.errorVisitTotalCount || 0) || 0
-          let data = res
           // 折线图
           let qpsDataValue = data.value || []
           this.qpsDataTime = data.time || []
