@@ -148,12 +148,12 @@ export default {
       this.$prompt('', this.$t('dataExplorer_add_favorite_name'), {
         customClass: 'change-name-prompt',
         inputValue: this.favoriteName
-      }).then(res => {
-        if (res) {
+      }).then(flag => {
+        if (flag) {
           let exists = false
-          usersApi.get().then(res => {
-            if (res) {
-              let collect = res.favorites.filter(v => v.meta.title === this.favoriteName)
+          usersApi.get().then(data => {
+            if (data) {
+              let collect = data.favorites.filter(v => v.meta.title === this.favoriteName)
               exists = collect.length > 0
             }
             if (exists) {
@@ -163,10 +163,6 @@ export default {
         }
       })
     },
-    // // 查询
-    // search() {
-    //   this.$emit('backSearch')
-    // },
     // 查询条件
     serializationToRestFilter(key, val) {
       if (typeof val === 'object') {

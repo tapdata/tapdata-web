@@ -26,7 +26,7 @@ export default i18n => {
     if (token) {
       //若token存在，获取权限
       const permissionsStr = sessionStorage.getItem('tapdata_permissions')
-      const permissions: any[] = JSON.parse(permissionsStr)
+      const permissions = JSON.parse(permissionsStr)
 
       //判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
       let matched = true

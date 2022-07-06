@@ -40,6 +40,13 @@
           />
         </ElFormItem>
         <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys') + ':'">
+          <template slot="label">
+            <span>{{ $t('shared_cache_keys') }}</span>
+            <el-tooltip placement="top" :content="$t('shared_cache_keys_tooltip')">
+              <i class="el-icon-info color-primary ml-1"></i>
+            </el-tooltip>
+            <span>:</span>
+          </template>
           <FieldSelector
             v-model="form.cacheKeys"
             class="form-field-selector"
@@ -48,6 +55,13 @@
           ></FieldSelector>
         </ElFormItem>
         <ElFormItem prop="fields" :label="$t('shared_cache_fields') + ':'">
+          <template slot="label">
+            <span>{{ $t('shared_cache_fields') }}</span>
+            <el-tooltip placement="top" :content="$t('shared_cache_fields_tooltip')">
+              <i class="el-icon-info color-primary ml-1"></i>
+            </el-tooltip>
+            <span>:</span>
+          </template>
           <FieldSelector
             v-model="form.fields"
             class="form-field-selector"
@@ -55,56 +69,33 @@
             :placeholder="$t('shared_cache_placeholder_fields')"
           ></FieldSelector>
         </ElFormItem>
-        <ElFormItem prop="maxRows" :label="$t('shared_cache_max_rows') + ':'">
-          <div class="flex align-center">
-            <ElSelect :value="form.maxRows > 0" @input="form.maxRows = $event ? 10000 : 0" style="width: 355px">
-              <ElOption :label="$t('shared_cache_custom_max_record')" :value="true"></ElOption>
-              <ElOption :label="$t('shared_cache_custom_no_limit')" :value="false"></ElOption>
-            </ElSelect>
-            <template v-if="form.maxRows > 0">
-              <ElInputNumber
-                v-model.number="form.maxRows"
-                class="ml-3"
-                style="width: 100px"
-                controls-position="right"
-              ></ElInputNumber>
-              <span class="ml-1">{{ $t('shared_cache_custom_record_unit') }}</span>
-            </template>
-          </div>
+        <ElFormItem prop="maxMemory" :placeholder="$t('shared_cache_placeholder_max_memory')">
+          <template slot="label">
+            <span>{{ $t('shared_cache_max_memory') }}</span>
+            <el-tooltip placement="top" :content="$t('shared_cache_max_memory_tooltip')">
+              <i class="el-icon-info color-primary ml-1"></i>
+            </el-tooltip>
+            <span>:</span>
+          </template>
+          <ElInputNumber
+            v-model="form.maxMemory"
+            style="width: 200px"
+            :min="1"
+            :max="999999999"
+            controls-position="right"
+          ></ElInputNumber>
+          <span class="ml-1">M</span>
         </ElFormItem>
-        <ElFormItem prop="ttl" :label="$t('shared_cache_ttl') + ':'">
-          <ElInputNumber v-model="form.ttl" style="width: 100px" controls-position="right"></ElInputNumber>
-          <span class="ml-1">{{ $t('shared_cache_ttl_unit') }}</span>
+        <ElFormItem>
+          <template slot="label">
+            <span>{{ $t('shared_cache_code') }}</span>
+            <el-tooltip placement="top" :content="$t('shared_cache_code_tooltip')">
+              <i class="el-icon-info color-primary ml-1"></i>
+            </el-tooltip>
+            <span>:</span>
+          </template>
         </ElFormItem>
-        <ElFormItem :label="$t('shared_cache_code') + ':'"></ElFormItem>
-        <div class="example-wrapper overflow-hidden">
-          <div class="code">
-            <span class="color-primary">var</span> cachedRow = CacheService.getCache(
-            <span class="color-danger">'{{ form.name || 'cachename' }}'</span>
-            <template v-if="!form.cacheKeys || !form.cacheKeys.length">
-              ,<span class="bold">record</span>.<span class="color-danger">category_code</span>
-            </template>
-            <span v-for="key in form.cacheKeys.split(',')" :key="key">
-              <template v-if="key">
-                , <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
-              </template>
-            </span>
-            );<br />
-            <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
-          </div>
-          <div class="my-2">OR</div>
-          <div class="code">
-            <span class="bold">record</span>.category_name = CacheService.getCacheItem(
-            <span class="color-danger">'{{ form.name || 'cachename' }}'</span>, <span>'category_name'</span>,
-            defaultValue
-            <span v-for="key in form.cacheKeys.split(',')" :key="key">
-              <template v-if="key">
-                ,<span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
-              </template>
-            </span>
-            );
-          </div>
-        </div>
+        <CodeView :data="form"></CodeView>
       </ElForm>
       <div class="pt-6">
         <ElButton @click="$router.back()">{{ $t('button_back') }}</ElButton>
@@ -127,32 +118,15 @@
   width: 905px;
   max-width: 100%;
 }
-.example-wrapper {
-  padding: 16px;
-  width: 950px;
-  max-width: 100%;
-  background: #3a3d4c;
-  border-radius: 2px;
-  color: #bfd0ff;
-}
-.code {
-  padding: 8px;
-  white-space: nowrap;
-  border-radius: 2px;
-  background: #262838;
-  overflow-x: auto;
-  color: #82b290;
-  .bold {
-    font-weight: bold;
-  }
-}
 </style>
 <script>
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
+import CodeView from './CodeView.vue'
 import { sharedCacheApi, metadataInstancesApi, connectionsApi } from '@tap/api'
+
 export default {
-  components: { VirtualSelect, FieldSelector },
+  components: { VirtualSelect, FieldSelector, CodeView },
   data() {
     return {
       loading: false,
@@ -162,8 +136,7 @@ export default {
         tableName: '',
         cacheKeys: '',
         fields: '',
-        maxRows: 10000,
-        ttl: 7
+        maxMemory: 500
       },
       connectionOptions: [],
       tableOptions: [],
@@ -176,17 +149,8 @@ export default {
         tableName: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_table') }],
         cacheKeys: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_keys') }],
         fields: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_fields') }],
-        maxRows: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_rows') }],
-        ttl: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_ttl') }]
+        maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }]
       }
-    }
-  },
-  computed: {
-    script() {
-      let cacheKeys = this.form.cacheKeys || ''
-      return `  var cacheRow = CacheService.getCache(${this.form.name || 'cachename'}, ${
-        cacheKeys.length ? 'record.' + cacheKeys.split(',').join(', record.') : 'record.category_code'
-      })\n  record.category_name = cachedRow.category_name`
     }
   },
   created() {
@@ -201,16 +165,15 @@ export default {
       this.loading = true
       sharedCacheApi
         .findOne(id)
-        .then(res => {
-          let data = res || {}
+        .then(data => {
+          data = data || {}
           this.form = {
             name: data.name,
             connectionId: data.connectionId,
             tableName: data.tableName,
             cacheKeys: data.cacheKeys,
             fields: data.fields?.join(',') || '',
-            maxRows: data.maxRows,
-            ttl: data.ttl
+            maxMemory: data.maxMemory
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
@@ -230,8 +193,8 @@ export default {
           connection_type: { in: ['source', 'source_and_target'] }
         }
       }
-      connectionsApi.listAll(filter).then(res => {
-        let options = res?.data || []
+      connectionsApi.listAll(filter).then(data => {
+        let options = data || []
         this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
       })
     },
@@ -239,9 +202,9 @@ export default {
       this.tableOptionsLoading = true
       metadataInstancesApi
         .getTables(connectionId)
-        .then(res => {
+        .then(data => {
           let options = []
-          let list = res || []
+          let list = data || []
           list.forEach(opt => {
             if (opt) {
               options.push({ label: opt, value: opt })
@@ -271,8 +234,8 @@ export default {
       this.fieldOptionsLoading = true
       metadataInstancesApi
         .get(params)
-        .then(res => {
-          let table = res?.items?.[0]
+        .then(data => {
+          let table = data?.items?.[0]
           if (table) {
             let fields = table.fields || []
             this.fieldOptions = fields.map(opt => opt.field_name)
@@ -300,7 +263,7 @@ export default {
     submit() {
       this.$refs.form.validate(flag => {
         if (flag) {
-          let { name, connectionId, tableName, cacheKeys, fields, maxRows, ttl } = this.form
+          let { name, connectionId, tableName, cacheKeys, fields, maxMemory } = this.form
           let id = this.$route.params.id
           let params = {
             id,
@@ -317,9 +280,8 @@ export default {
                   connectionId: connectionId
                 },
                 {
-                  ttl: ttl,
                   cacheKeys: cacheKeys,
-                  maxRows: maxRows
+                  maxMemory: maxMemory
                 }
               ],
               edges: []
@@ -334,9 +296,6 @@ export default {
                 name: 'sharedCacheList'
               })
             })
-            // .catch(err => {
-            //   this.$message.error(err?.data?.message || this.$t('message_save_fail'))
-            // })
             .finally(() => {
               this.loading = false
             })

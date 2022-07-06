@@ -72,12 +72,12 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res?.items || []
+        .then(data => {
+          let list = data?.items || []
           let pointTime = new Date()
 
           return {
-            total: res.total,
+            total: data?.total,
             data: list.map(item => {
               this.$set(item, 'pointTime', pointTime)
               if (item.syncTimePoint === 'current') {

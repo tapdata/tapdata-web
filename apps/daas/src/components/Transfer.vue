@@ -236,9 +236,9 @@ export default {
           }
         })
       }
-      metadataInstancesApi.schema(params).then(res => {
-        if (res) {
-          let fields = res?.records[0]?.schema?.tables[0]?.fields
+      metadataInstancesApi.schema(params).then(data => {
+        if (data) {
+          let fields = data?.records[0]?.schema?.tables[0]?.fields
           // 初始化所有字段都映射 只取顶级字段
           fields = fields.filter(field => field.field_name.indexOf('.') === -1)
           this.sourceFileData = fields.map(field => ({

@@ -337,11 +337,11 @@ export default {
           inq: processId
         }
       }
-      workerApi.get({ filter: JSON.stringify({ where: where }) }).then(res => {
-        let data = res?.items
-        if (data?.length) {
+      workerApi.get({ filter: JSON.stringify({ where: where }) }).then(data => {
+        let items = data?.items || []
+        if (items?.length) {
           let metricValuesData = []
-          data.forEach(item => {
+          items.forEach(item => {
             if (item.metricValues) {
               metricValuesData.push(item)
             }
@@ -371,9 +371,6 @@ export default {
                 this.getDataApi()
                 this.$message.success(this.$t('message_save_ok'))
               })
-              // .catch(() => {
-              //   this.$message.error(this.$t('message_save_fail'))
-              // })
               .finally(() => {
                 this.dialogForm = false
               })
@@ -537,10 +534,8 @@ export default {
     },
     // 重启---关闭---启动     --版本--更新
     async operationFn(data) {
-      await clusterApi.updateStatus(data).then(res => {
-        if (res.status === 200) {
-          this.getDataApi()
-        }
+      await clusterApi.updateStatus(data).then(() => {
+        this.getDataApi()
       })
     },
 
@@ -574,23 +569,21 @@ export default {
           }
         }
       }
-      clusterApi.get(params).then(res => {
-        let items = res?.items || []
-        if (items) {
-          let processId = []
-          if (items?.length > 0) {
-            items.forEach(item => {
-              if (item.systemInfo.process_id) {
-                processId.push(item.systemInfo.process_id)
-              }
-            })
-          }
-
-          // 获取最大内存、cpu使用率
-          this.getUsageRate(processId)
-          //自动升级
-          this.getVersion(items)
+      clusterApi.get(params).then(data => {
+        let items = data?.items || []
+        let processId = []
+        if (items?.length > 0) {
+          items.forEach(item => {
+            if (item.systemInfo.process_id) {
+              processId.push(item.systemInfo.process_id)
+            }
+          })
         }
+
+        // 获取最大内存、cpu使用率
+        this.getUsageRate(processId)
+        //自动升级
+        this.getVersion(items)
       })
     },
     // 关闭弹窗并且清空验证

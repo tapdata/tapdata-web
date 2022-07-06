@@ -345,11 +345,11 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           return {
-            total: res?.total,
+            total: data?.total,
             data:
-              res?.items.map(item => {
+              data?.items?.map(item => {
                 item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
                 return item
               }) || []
@@ -373,8 +373,8 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let dbOptions = res?.items || []
+        .then(data => {
+          let dbOptions = data?.items || []
 
           this.dbOptions = dbOptions.map(item => {
             return { label: item.name, value: item.id }
@@ -472,16 +472,10 @@ export default {
             comment: ''
           }
           params.fields = model_type === 'collection' ? fields : []
-          metadataInstancesApi.post(params).then(res => {
-            if (res) {
-              this.createDialogVisible = false
-              this.$message.success(this.$t('message_save_ok'))
-            }
-            // this.toDetails(res.data);
+          metadataInstancesApi.post(params).then(() => {
+            this.createDialogVisible = false
+            this.$message.success(this.$t('message_save_ok'))
           })
-          // .catch(() => {
-          //   this.$message.success(this.$t('message_save_fail'))
-          // })
         }
       })
     },
@@ -506,28 +500,6 @@ export default {
       this.changeNameDialogVisible = true
       this.changeNameData = item
       this.changeNameValue = item.name || item.original_name
-      // this.$prompt('', this.$t('connection.rename'), {
-      //   inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
-      //   inputErrorMessage: this.$t('dialog.placeholderTable'),
-      //   customClass: 'changeName-prompt',
-      //   cancelButtonClass: 'message-button-cancel',
-      //   inputValue: item.name || item.original_name
-      // }).then(resFlag => {
-      //   if (!resFlag) {
-      //     return
-      //   }
-      //  metadataInstancesApi
-      //     .updateById(item.id, {
-      //       name: resFlag.value
-      //     })
-      //     .then(() => {
-      //       this.$message.success(this.$t('message_save_ok'))
-      //       this.table.fetch()
-      //     })
-      //     .catch(() => {
-      //       this.$message.info(this.$t('message_save_fail'))
-      //     })
-      // })
     },
     remove(item) {
       const h = this.$createElement
@@ -547,12 +519,6 @@ export default {
           this.$message.success(this.$t('message.deleteOK'))
           this.table.fetch()
         })
-        // .catch(() => {
-        //   this.$message.info(this.$t('message.deleteFail'))
-        // })
-        // .finally(() => {
-        //   instance.confirmButtonLoading = false
-        // })
       })
     },
     search(debounce) {

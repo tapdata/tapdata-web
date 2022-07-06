@@ -139,8 +139,8 @@ export default {
             }
           })
         })
-        .then(res => {
-          let inspect = res?.items[0]
+        .then(data => {
+          let inspect = data?.items?.[0] || {}
           let inspectResult = inspect.InspectResult
           inspect.lastStartTime = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
           this.inspect = inspect
@@ -152,22 +152,20 @@ export default {
                 }
               })
             })
-            .then(res => {
-              let result = res?.items[0]
+            .then(data => {
+              let result = data?.items?.[0]
               if (result) {
-                if (result) {
-                  this.resultInfo = result
-                  let stats = result.stats
-                  if (stats.length) {
-                    this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                    this.taskId = stats[0].taskId
-                    this.$nextTick(() => {
-                      this.$refs.resultView?.fetch(1)
-                      if (this.type !== 'row_count') {
-                        this.$refs.singleTable?.setCurrentRow(stats[0])
-                      }
-                    })
-                  }
+                this.resultInfo = result
+                let stats = result.stats
+                if (stats.length) {
+                  this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                  this.taskId = stats[0].taskId
+                  this.$nextTick(() => {
+                    this.$refs.resultView?.fetch(1)
+                    if (this.type !== 'row_count') {
+                      this.$refs.singleTable?.setCurrentRow(stats[0])
+                    }
+                  })
                 }
               }
             })
@@ -197,8 +195,7 @@ export default {
           .get({
             filter: JSON.stringify(filter)
           })
-          .then(res => {
-            let data = res
+          .then(data => {
             let resultList = []
             if (data?.items) {
               if (showAdvancedVerification) {

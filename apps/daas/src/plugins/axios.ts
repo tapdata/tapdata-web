@@ -114,7 +114,7 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
   return config
 }, errorCallback)
 
-axios.interceptors.response.use((response: AxiosResponse): any => {
+axios.interceptors.response.use((response: AxiosResponse) => {
   return new Promise((resolve, reject) => {
     removePending(response.config)
     const code = response.data.code

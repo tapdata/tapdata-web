@@ -260,13 +260,12 @@ export default {
     // 获取当前信息
     async handleGetData() {
       this.loading = true
-      let result = await usersApi.get([Cookie.get('user_id')])
-      let items = result.data
-      if (items) {
+      let data = await usersApi.get([Cookie.get('user_id')])
+      if (data) {
         this.infoList.forEach(item => {
-          Object.keys(items).forEach(key => {
+          Object.keys(data).forEach(key => {
             if (item.key === key) {
-              item.value = items[key]
+              item.value = data[key]
             }
           })
         })
@@ -327,10 +326,7 @@ export default {
       }
       this.$refs.form.validate(valid => {
         if (valid) {
-          usersApi.changePassword(parmas).then(res => {
-            if (res.msg === 'Invalid current password') {
-              this.$message.error(this.$t('account.currerPawErrorTip'))
-            }
+          usersApi.changePassword(parmas).then(() => {
             this.$message.success(this.$t('account.pawSaveSuccess'))
             this.passwordDialogFalg = false
             Cookie.remove('token')

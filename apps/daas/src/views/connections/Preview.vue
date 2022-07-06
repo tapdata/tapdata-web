@@ -162,17 +162,17 @@ export default {
       row.additionalString = row.config.extParams || row.config.additionalString
       row.database_datetype_without_timezone = row.config.timezone
       if (row.config.uri && row.config.isUri !== false) {
-        const res =
+        const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
             row.config.uri
           )
-        if (res && res.groups) {
-          const hostArr = res.groups.host.split(':')
+        if (regResult && regResult.groups) {
+          const hostArr = regResult.groups.host.split(':')
           row.database_host = hostArr[0]
           row.database_port = hostArr[1]
-          row.database_name = res.groups.database
-          row.database_username = res.groups.username
-          row.additionalString = res.groups.query
+          row.database_name = regResult.groups.database
+          row.database_username = regResult.groups.username
+          row.additionalString = regResult.groups.query
         }
       }
       return row
@@ -244,8 +244,7 @@ export default {
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
-      connectionsApi.updateById(this.connection.id, parms).then(result => {
-        let data = result
+      connectionsApi.updateById(this.connection.id, parms).then(data => {
         if (!this?.$refs?.test) {
           return
         }
@@ -258,8 +257,7 @@ export default {
       this.clearInterval()
       connectionsApi
         .getNoSchema(this.connection.id)
-        .then(res => {
-          let data = res
+        .then(data => {
           this.connection = this.transformData(data)
           //组装数据
           this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')

@@ -294,10 +294,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res?.items || []
+        .then(data => {
+          let list = data?.items || []
           return {
-            total: res.total,
+            total: data?.total,
             data: list.map(item => {
               let result = item.InspectResult
               let sourceTotal = '-'
@@ -367,8 +367,8 @@ export default {
       })
     },
     goEdit(id, flowId) {
-      taskApi.getId(flowId).then(res => {
-        if (['running', 'stop', 'complete'].includes(res.status)) {
+      taskApi.getId(flowId).then(data => {
+        if (['running', 'stop', 'complete'].includes(data.status)) {
           this.$router.push({
             name: 'dataVerificationEdit',
             params: {
@@ -377,7 +377,7 @@ export default {
           })
         } else {
           this.$message.info(
-            this.$t('dataVerification.checkStatusPre') + res.status + this.$t('dataVerification.checkStatusSuffix')
+            this.$t('dataVerification.checkStatusPre') + data.status + this.$t('dataVerification.checkStatusSuffix')
           )
         }
       })

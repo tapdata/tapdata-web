@@ -117,10 +117,8 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res) {
-            this.classifyList = res?.items || []
-          }
+        .then(data => {
+          this.classifyList = data?.items || []
         })
     },
 

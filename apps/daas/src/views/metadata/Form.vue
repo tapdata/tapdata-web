@@ -291,8 +291,8 @@ export default {
     },
     //获取typeMapping
     getTypeMapping(type) {
-      typeMappingApi.pdkDataType(type).then(res => {
-        let targetObj = JSON.parse(res?.data || '{}')
+      typeMappingApi.pdkDataType(type).then(data => {
+        let targetObj = JSON.parse(data || '{}')
         for (let key in targetObj) {
           this.typeMapping.push({
             dbType: key,
@@ -353,7 +353,7 @@ export default {
           }
         }
       }
-      let relationName = await metadataInstancesApi.getId(id, params)
+      let data = await metadataInstancesApi.getId(id, params)
       let duplicateName = []
       if (_this.metadata.relation && _this.metadata.relation.length) {
         _this.metadata.relation.forEach(item => {
@@ -362,14 +362,13 @@ export default {
           })
         })
       }
-      if (relationName.data) {
-        // this.fieldList = relationName.data.fields;
+      if (data) {
         let fieldsList = []
         for (let i = 0; i < _this.form.relation.length; i++) {
           if (_this.form.relation[i].table_name) {
-            let index = relationName.data.original_name.indexOf(_this.form.relation[i].table_name)
+            let index = data.original_name.indexOf(_this.form.relation[i].table_name)
             if (index > -1) {
-              relationName.data.fields.forEach(field => fieldsList.push(field))
+              data.fields.forEach(field => fieldsList.push(field))
               fieldsList.map(item => {
                 let isname = duplicateName.indexOf(item.field_name)
                 if (isname == -1) {
@@ -378,7 +377,7 @@ export default {
               })
             }
           } else {
-            _this.fieldList = relationName.data.fields
+            _this.fieldList = data.fields
           }
         }
       }

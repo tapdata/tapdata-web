@@ -117,10 +117,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res?.items || []
+        .then(data => {
+          let list = data?.items || []
           return {
-            total: res?.total,
+            total: data?.total,
             data: list.map(item => {
               item.typeFmt = this.typeMapping[item.type]
               item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
@@ -136,8 +136,8 @@ export default {
         if (!resFlag) {
           return
         }
-        javascriptFunctionsApi.delete(item.id).then(res => {
-          if (res) this.table.fetch()
+        javascriptFunctionsApi.delete(item.id).then(() => {
+          this.table.fetch()
         })
       })
     },

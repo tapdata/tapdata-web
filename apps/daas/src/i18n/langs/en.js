@@ -120,8 +120,8 @@ export default {
 
   // 表格
   column_operation: 'Operate',
-  column_connection: 'Belonging to the connection',
-  column_table: 'Belonging table',
+  column_connection: 'From connection',
+  column_table: 'From table',
   column_create_time: 'Create time',
   column_creator: 'Creator',
 
@@ -987,6 +987,8 @@ export default {
   task_list_edit_confirm:
     'If the number of tables and field mappings have been modified during editing, the new configuration may not take effect if it is not reset after submission. Do you want to continue editing?',
   task_list_important_reminder: 'Important reminder',
+  task_list_stop_confirm_message:
+    'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 
   task_preview_title: 'Database Migration Details',
   task_preview_createUser: 'Creator',
@@ -1459,7 +1461,6 @@ export default {
   shared_cdc_setting_select_time_tip: 'Please select the log saving time',
   shared_cdc_setting_message_edit_save: 'Save successfully, it will take effect after restarting the task',
   share_list_name: 'Mining name',
-  share_list_connection: 'Belonging to the connection',
   share_list_time_excavation: 'Excavation time point',
   share_list_creat_time: 'Create time',
   share_list_setting: 'Mining settings',
@@ -1515,20 +1516,18 @@ export default {
   shared_cache_time: 'Cache time',
   shared_cache_keys: 'Cache keys',
   shared_cache_fields: 'Cache fields',
-  shared_cache_max_rows: 'The maximum number of records in the cache',
-  shared_cache_ttl: 'Expiration time',
   shared_cache_code: 'Application code',
-  shared_cache_custom_max_record: 'Custom maximum number of records',
-  shared_cache_custom_no_limit: 'Unlimited number of entries',
-  shared_cache_custom_record_unit: 'article',
-  shared_cache_ttl_unit: 'day',
   shared_cache_placeholder_name: 'Please enter the cache name',
   shared_cache_placeholder_connection: 'Please select a connection',
   shared_cache_placeholder_table: 'Please select a table',
   shared_cache_placeholder_keys: 'Please select a cache key',
   shared_cache_placeholder_fields: 'Please select a cache field',
-  shared_cache_placeholder_max_rows: 'Please enter the maximum number of records in the cache',
-  shared_cache_placeholder_ttl: 'Please enter the expiration time',
+  shared_cache_max_memory: 'Maximum memory',
+  shared_cache_keys_tooltip: 'Use this field as the primary key to identify data for caching',
+  shared_cache_fields_tooltip: 'Common fields that need to be cached',
+  shared_cache_max_memory_tooltip:
+    'The maximum amount of memory the system will save, if it exceeds, the least commonly used data will be deleted according to the calling time',
+  shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
 
   // 设置
   setting_email_template: 'Email template',

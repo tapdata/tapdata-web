@@ -41,7 +41,7 @@ export default class Http {
 
   get(params: unknown, filter: unknown) {
     if (Array.isArray(params)) {
-      let queryStr: string = ''
+      let queryStr = ''
       if (typeof filter === 'object') {
         queryStr = JSON.stringify(filter)
       } else if (typeof filter === 'string') {
