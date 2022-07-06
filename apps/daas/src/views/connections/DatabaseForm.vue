@@ -459,7 +459,55 @@ export default {
       const pdkHash = this.$route.query?.pdkHash
       databaseTypesApi.pdkHash(pdkHash).then(data => {
         let id = this.id || this.$route.params.id
-        this.pdkConfig = data || []
+        this.pdkOptions = data
+        let connectionTypeJson = {
+          type: 'string',
+          title: this.$t('connection_form_connection_type'),
+          required: true,
+          default: this.pdkOptions.connectionType || 'source_and_target',
+          enum: [
+            {
+              label: this.$t('connection_form_source_and_target'),
+              value: 'source_and_target',
+              tip: this.$t('connection_form_source_and_target_tip')
+            },
+            {
+              label: this.$t('connection_form_source'),
+              value: 'source',
+              tip: this.$t('connection_form_source_tip')
+            },
+            {
+              label: this.$t('connection_form_target'),
+              value: 'target',
+              tip: this.$t('connection_form_target_tip')
+            }
+          ],
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            feedbackLayout: 'none'
+          },
+          'x-component': 'Radio.Group',
+          'x-component-props': {
+            optionType: 'button'
+          }
+        }
+        if (this.pdkOptions.connectionType === 'source') {
+          connectionTypeJson.enum = [
+            {
+              label: this.$t('connection_form_source'),
+              value: 'source',
+              tip: this.$t('connection_form_source_tip')
+            }
+          ]
+        } else if (this.pdkOptions.connectionType === 'target') {
+          connectionTypeJson.enum = [
+            {
+              label: this.$t('connection_form_target'),
+              value: 'target',
+              tip: this.$t('connection_form_target_tip')
+            }
+          ]
+        }
         let result = {
           type: 'object',
           'x-component-props': {
@@ -477,37 +525,7 @@ export default {
                   'x-decorator': 'FormItem',
                   'x-component': 'Input'
                 },
-                connection_type: {
-                  type: 'string',
-                  title: this.$t('connection_form_connection_type'),
-                  required: true,
-                  default: 'source_and_target',
-                  enum: [
-                    {
-                      label: this.$t('connection_form_source_and_target'),
-                      value: 'source_and_target',
-                      tip: this.$t('connection_form_source_and_target_tip')
-                    },
-                    {
-                      label: this.$t('connection_form_source'),
-                      value: 'source',
-                      tip: this.$t('connection_form_source_tip')
-                    },
-                    {
-                      label: this.$t('connection_form_target'),
-                      value: 'target',
-                      tip: this.$t('connection_form_target_tip')
-                    }
-                  ],
-                  'x-decorator': 'FormItem',
-                  'x-decorator-props': {
-                    feedbackLayout: 'none'
-                  },
-                  'x-component': 'Radio.Group',
-                  'x-component-props': {
-                    optionType: 'button'
-                  }
-                },
+                connection_type: connectionTypeJson,
                 connection_form_source_and_target_tip: {
                   type: 'void',
                   title: ' ',

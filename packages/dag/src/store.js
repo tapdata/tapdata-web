@@ -51,6 +51,7 @@ const getState = () => ({
   processorNodeTypes: [],
   nodeViewOffsetPosition: [0, 0],
   spaceKeyPressed: false,
+  shiftKeyPressed: false,
   paperMoveInProgress: false,
   ctorTypes: {}, // 所有节点构造类型
   activeNodeId: null, // 当前激活的节点ID
@@ -308,6 +309,10 @@ const mutations = {
 
   setPaperSpaceKeyPressed(state, value) {
     state.spaceKeyPressed = value
+  },
+
+  toggleShiftKeyPressed(state, flag = !state.shiftKeyPressed) {
+    state.shiftKeyPressed = flag
   },
 
   addResourceIns(state, allResourceIns) {

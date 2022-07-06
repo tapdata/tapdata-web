@@ -216,6 +216,7 @@ export default {
     .item--disabled {
       background: rgba(0, 0, 0, 0.2);
       cursor: default;
+      user-select: none;
       &:nth-of-type(1) {
         border-top-left-radius: 8px;
       }
@@ -297,6 +298,7 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    user-select: none;
   }
   .coming-desc__content {
     padding: 16px 32px;
