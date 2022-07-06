@@ -45,9 +45,11 @@ export const FieldRenameProcessor = defineComponent({
         count: 1
       }
     })
-    const loadData = (value, type) => {
-      config.loadingNav = true
-      config.loadingTable = true
+    const loadData = (value, type, loading) => {
+      if (!loading) {
+        config.loadingNav = true
+        config.loadingTable = true
+      }
       let where = {
         taskId: root.$route.params.id,
         nodeId: props.nodeId
@@ -166,9 +168,6 @@ export const FieldRenameProcessor = defineComponent({
       // eslint-disable-next-line
       form.fieldsMapping = fieldsMapping
       emit('change', fieldsMapping)
-      setTimeout(() => {
-        save()
-      }, 300)
     }
     //选择左侧table
     const doCheckAllChange = val => {
@@ -237,6 +236,8 @@ export const FieldRenameProcessor = defineComponent({
       config.operationVisible = true
     }
     const doEditNameSave = () => {
+      //修改名字 生成配置
+      updateFieldViews(config.currentFieldRow?.sourceFieldName, config.newFieldName)
       doUpdateField(config.currentFieldRow, 'rename', config.newFieldName)
       config.operationVisible = false
       config.currentFieldRow = ''
@@ -265,6 +266,7 @@ export const FieldRenameProcessor = defineComponent({
           if (config.operation.capitalized) {
             newField = newField[config.operation.capitalized]()
           }
+          updateFieldViews(t?.sourceFieldName, newField)
           doUpdateField(t, 'rename', newField)
         })
       }
@@ -275,23 +277,11 @@ export const FieldRenameProcessor = defineComponent({
       })
       config.operation = restOp
       fieldsMapping = toList(map)
-      emit('fieldsMapping', fieldsMapping)
+      emit('change', fieldsMapping)
       setTimeout(() => {
-        save()
-      }, 300)
+        loadData('', '', true)
+      }, 2000)
       doVisible('visible', false)
-    }
-    const save = () => {
-      config.loadingNav = true
-      config.loadingTable = true
-      let data = {
-        dag: root.$store.getters['dataflow/dag'],
-        editVersion: root.$store.state.dataflow.editVersion,
-        id: root.$route.params.id
-      }
-      taskApi.patch(data).then(() => {
-        loadData()
-      })
     }
     //重置
     const doOperationRest = () => {
@@ -305,9 +295,10 @@ export const FieldRenameProcessor = defineComponent({
         })
         fieldsMapping = toList(map)
         emit('change', fieldsMapping)
+        //更新整个数据
         setTimeout(() => {
-          save()
-        }, 300)
+          loadData()
+        }, 2000)
       } else if (config.checkedFields?.length > 0) {
         //字段级别
         config.checkedFields.forEach(t => {
@@ -316,21 +307,40 @@ export const FieldRenameProcessor = defineComponent({
       } else {
         //全局
         emit('change', [])
+        //更新整个数据
         setTimeout(() => {
-          save()
-        }, 300)
+          loadData()
+        }, 2000)
       }
     }
     //单个删除字段
     const doShowRow = row => {
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
+          tableList.value[i]['isShow'] = true
+        }
+      }
       doUpdateField(row, 'del', true)
     }
     const doDeleteRow = row => {
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
+          tableList.value[i]['isShow'] = false
+        }
+      }
       doUpdateField(row, 'del', false)
     }
     const tableRowClassName = ({ row }) => {
       if (!row.isShow) {
         return 'row-deleted'
+      }
+    }
+    //前端读取配置及时反馈
+    const updateFieldViews = (key, value) => {
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === key) {
+          tableList.value[i]['targetFieldName'] = value
+        }
       }
     }
     //右侧表格slot渲染
