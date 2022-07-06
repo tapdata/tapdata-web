@@ -1,5 +1,5 @@
 <template>
-  <FormRender :form="form" :schema="schema" :scope="scope" />
+  <FormRender :form="form" :schema="schema" :scope="formScope" />
 </template>
 
 <script>
@@ -17,7 +17,8 @@ export default observer({
   components: { FormRender },
   mixins: [Locale],
   props: {
-    settings: Object
+    settings: Object,
+    scope: Object
   },
 
   data() {
@@ -25,7 +26,7 @@ export default observer({
     this.getAllNode()
     let values = this.settings
     return {
-      scope: {
+      formScope: {
         checkName: value => {
           return new Promise(resolve => {
             this.handleCheckName(resolve, value)
@@ -266,6 +267,15 @@ export default observer({
                           {
                             target: 'accessNodeProcessId',
                             fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
+                          },
+                          {
+                            target: 'accessNodeProcessId',
+                            effects: ['onFieldInputValueChange'],
+                            fulfill: {
+                              state: {
+                                value: '{{$target.value || $target.dataSource[0].value}}'
+                              }
+                            }
                           }
                         ]
                       },
@@ -291,11 +301,11 @@ export default observer({
   },
 
   computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly']),
+    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes']),
 
     accessNodeProcessIdArr() {
       const set = this.allNodes
-        .filter(item => item.type === 'table')
+        .filter(item => item.type === 'database')
         .reduce((set, item) => {
           item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
           return set
@@ -312,34 +322,37 @@ export default observer({
   watch: {
     stateIsReadonly(v) {
       this.form.setState({ disabled: v })
+    },
+
+    accessNodeProcessIdArr: {
+      handler(arr) {
+        const size = arr.length
+        if (size >= 1) {
+          const currentId = this.settings.accessNodeProcessId
+          this.settings.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+          this.settings.accessNodeProcessId = currentId && arr.includes(currentId) ? currentId : arr[0]
+        }
+        this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+          disabled: size === 1
+        })
+      },
+      immediate: true
+    },
+    accessNodeProcessList: {
+      handler(dataSource = []) {
+        this.form.setFieldState('accessNodeProcessId', {
+          dataSource
+        })
+      },
+      immediate: true
     }
   },
 
   created() {
-    // this.initAccessNode()
     this.form.setState({ disabled: this.stateIsReadonly })
   },
 
   methods: {
-    initAccessNode() {
-      this.disabledAccessNode = false
-      const { sourceAccessNodeProcessId, targetAccessNodeProcessId } = this.dataSourceData
-      if (
-        sourceAccessNodeProcessId &&
-        (sourceAccessNodeProcessId === targetAccessNodeProcessId || !targetAccessNodeProcessId)
-      ) {
-        // 源和目标agent一致或只有源有指定agent
-        this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
-        this.settingData.accessNodeProcessId = sourceAccessNodeProcessId
-        this.disabledAccessNode = true
-      } else if (targetAccessNodeProcessId && !sourceAccessNodeProcessId) {
-        // 只有目标有指定agent
-        this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
-        this.settingData.accessNodeProcessId = targetAccessNodeProcessId
-        this.disabledAccessNode = true
-      }
-    },
-
     handleCheckName: debounce(function (resolve, value) {
       taskApi.checkName(value, this.settings.id || '').then(data => {
         resolve(data)
