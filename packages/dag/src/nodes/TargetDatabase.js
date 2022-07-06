@@ -36,6 +36,8 @@ export class TargetDatabase extends NodeType {
         'x-component-props': {
           layout: 'horizontal',
           colon: false,
+          labelAlign: 'left',
+          labelWidth: 80,
           feedbackLayout: 'none'
         },
         properties: {

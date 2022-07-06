@@ -251,6 +251,28 @@ export default observer({
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch'
+                      },
+                      accessNodeType: {
+                        type: 'string',
+                        title: this.$t('connection_form_access_node'),
+                        default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Select',
+                        enum: [
+                          { label: this.$t('connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+                          { label: this.$t('connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                        ],
+                        'x-reactions': [
+                          {
+                            target: 'accessNodeProcessId',
+                            fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
+                          }
+                        ]
+                      },
+                      accessNodeProcessId: {
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Select'
                       }
                     }
                   }
@@ -269,7 +291,22 @@ export default observer({
   },
 
   computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly'])
+    ...mapGetters('dataflow', ['stateIsReadonly']),
+
+    accessNodeProcessIdArr() {
+      const set = this.allNodes
+        .filter(item => item.type === 'table')
+        .reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      return [...set]
+    },
+
+    accessNodeProcessList() {
+      if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
+      return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
+    }
   },
 
   watch: {
@@ -279,10 +316,30 @@ export default observer({
   },
 
   created() {
+    // this.initAccessNode()
     this.form.setState({ disabled: this.stateIsReadonly })
   },
 
   methods: {
+    initAccessNode() {
+      this.disabledAccessNode = false
+      const { sourceAccessNodeProcessId, targetAccessNodeProcessId } = this.dataSourceData
+      if (
+        sourceAccessNodeProcessId &&
+        (sourceAccessNodeProcessId === targetAccessNodeProcessId || !targetAccessNodeProcessId)
+      ) {
+        // 源和目标agent一致或只有源有指定agent
+        this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.settingData.accessNodeProcessId = sourceAccessNodeProcessId
+        this.disabledAccessNode = true
+      } else if (targetAccessNodeProcessId && !sourceAccessNodeProcessId) {
+        // 只有目标有指定agent
+        this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.settingData.accessNodeProcessId = targetAccessNodeProcessId
+        this.disabledAccessNode = true
+      }
+    },
+
     handleCheckName: debounce(function (resolve, value) {
       taskApi.checkName(value, this.settings.id || '').then(data => {
         resolve(data)
