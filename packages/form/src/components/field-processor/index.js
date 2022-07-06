@@ -1,802 +1,589 @@
-import { connect, mapProps, useForm } from '@formily/vue'
-import { observer } from '@formily/reactive-vue'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, ref, reactive, nextTick } from 'vue-demi'
+import { taskApi } from '@tap/api'
+import { FormItem } from '../index'
+import { useForm } from '@formily/vue'
+import EmptyItem from 'web-core/components/EmptyItem'
+import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import VIcon from 'web-core/components/VIcon'
-import { uuid, handleOperation } from './util'
-import './fieldProessor.scss'
-import Locale from '../../mixins/locale'
-// import de from 'element-ui/src/locale/lang/de'
+import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
+import './style.scss'
+import { delayTrigger } from 'web-core/util'
 
-export const FieldProcess = connect(
-  observer(
-    defineComponent({
-      props: ['loading', 'options'],
-      mixins: [Locale],
-      setup() {
-        const formRef = useForm()
-        const form = formRef.value
-        return {
-          databaseType: form.values.databaseType,
-          operations: form.values.operations,
-          scripts: form.values.scripts,
-          form
-        }
+export const FieldRenameProcessor = defineComponent({
+  props: ['value', 'nodeId', 'disabled'],
+  setup(props, { emit, refs, root }) {
+    const formRef = useForm()
+    const form = formRef.value
+    const list = ref([])
+    const tableList = ref([])
+
+    const config = reactive({
+      visible: false,
+      loadingNav: true,
+      loadingTable: true,
+      selectTableRow: '',
+      currentFieldRow: '',
+      fieldCount: '',
+      checkAll: false,
+      checkedTables: [],
+      checkedFields: [],
+      position: 0,
+      dataFlow: '',
+      searchTable: '',
+      searchField: '',
+      operationVisible: false,
+      newFieldName: '',
+      operation: {
+        prefix: '',
+        suffix: '',
+        capitalized: ''
       },
-
-      data() {
-        return {
-          nodeKey: '',
-          selectList: [
-            {
-              label: 'String',
-              value: 'String'
-            },
-            {
-              label: 'Date',
-              value: 'Date'
-            },
-            {
-              label: 'Double',
-              value: 'Double'
-            },
-            {
-              label: 'Float',
-              value: 'Float'
-            },
-            {
-              label: 'BigDecimal',
-              value: 'BigDecimal'
-            },
-            {
-              label: 'Long',
-              value: 'Long'
-            },
-            {
-              label: 'Map',
-              value: 'Map'
-            },
-            {
-              label: 'Array',
-              value: 'Array'
-            }
-          ],
-          originalFields: [],
-          checkAll: false,
-          scriptDialog: {
-            open: false,
-            script: '//Enter you code at here',
-            fieldName: '',
-            fn: function () {}
-          },
-          /*字段处理器支持功能类型*/
-          REMOVE_OPS_TPL: {
-            id: '',
-            op: 'REMOVE',
-            field: ''
-          },
-          RENAME_OPS_TPL: {
-            id: '',
-            op: 'RENAME',
-            field: '',
-            operand: ''
-          },
-          CONVERT_OPS_TPL: {
-            id: '',
-            op: 'CONVERT',
-            field: '',
-            operand: '',
-            originalDataType: ''
-          },
-          CREATE_OPS_TPL: {
-            op: 'CREATE',
-            field: '',
-            tableName: '',
-            data_type: 'String',
-            id: '',
-
-            action: '',
-            triggerFieldId: ''
-          },
-          SCRIPT_TPL: {
-            tableName: '',
-            field: '',
-            scriptType: 'js',
-            script: '',
-            id: ''
-          }
-        }
-      },
-      watch: {
-        operations: {
-          deep: true,
-          handler(v) {
-            this.$emit('change', v)
-            console.log('operations', v) // eslint-disable-line
-          }
-        },
-
-        scripts: {
-          deep: true,
-          handler(v) {
-            this.form.setValuesIn('scripts', v)
-            this.$emit('change', v)
-            console.log('scripts', v) // eslint-disable-line
-          }
-        }
-      },
-
-      render() {
-        // eslint-disable-next-line no-console
-        console.log('🚗 FieldProcessor', this.loading, this.options)
-        let fields = this.options || []
-        this.originalFields = JSON.parse(JSON.stringify(fields))
-        // apply operations to schema
-        //查找是否有被删除的字段且operation有操作
-        let temporary = handleOperation(fields, this.operations)
-        temporary.map(item => {
-          let targetIndex = fields.findIndex(n => n.id === item.id)
-          if (targetIndex === -1 && item.op !== 'CREATE') {
-            // data.operations.splice(index,1); //删除找不到id的数据
-            return
-          }
-          if (item.op === 'CONVERT') {
-            fields[targetIndex].data_type = item.operand
-          } else if (item.op === 'RENAME') {
-            const name = fields[targetIndex].field_name
-            let newName = name.split('.')
-            newName[newName.length - 1] = item.operand
-            const newNameStr = newName.join('.')
-            fields[targetIndex].field_name = newNameStr
-
-            // change children field name
-            fields.forEach(field => {
-              if (field.field_name.startsWith(name + '.')) {
-                field.field_name = newNameStr + field.field_name.substring(name.length)
-              }
-            })
-          } else if (item.op === 'CREATE') {
-            let triggerFieldId = item.triggerFieldId
-            let newField = {
-              id: item.id,
-              field_name: item.field || item.field_name,
-              table_name: item.tableName || item.table_name,
-              original_field_name: item.field || item.field_name,
-              data_type: item.data_type,
-              // data_type: 'STRING',
-              primary_key_position: 0,
-              dataType: 2,
-              is_nullable: true,
-              columnSize: 0,
-              autoincrement: false
-            }
-            if (triggerFieldId) {
-              let triggerFieldIndex = fields.findIndex(f => f.id === triggerFieldId)
-              fields.splice(triggerFieldIndex + 1, 0, newField)
-            } else fields.push(newField)
-          }
-        })
-        // eslint-disable-next-line
-        console.log('FieldProcess.mergeOutputSchema', fields)
-        return (
-          <div class="field-processor-tree-warp bg-body pt-2 pb-5">
-            <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="field-name inline-block">字段名称</span>
-              <span class="field-desc inline-block">字段描述</span>
-              <span class="field-type inline-block">类型</span>
-              <span class="field-ops inline-block">
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllToUpperCase()}>
-                  toUpperCase
-                </VIcon>
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllToLowerCase()}>
-                  toLowerCase
-                </VIcon>
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllDelete()}>
-                  delete
-                </VIcon>
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
-                  revoke
-                </VIcon>
-              </span>
-            </div>
-            <div className="field-processor-tree-warp">
-              <ElTree
-                ref="tree"
-                data={fields}
-                node-key="id"
-                default-expand-all={true}
-                show-checkbox={true}
-                class="field-processor-tree"
-                scopedSlots={{
-                  default: ({ node, data }) => (
-                    <span
-                      class="tree-node flex flex-1 justify-content-center align-items flex-row"
-                      slot-scope="{ node, data }"
-                    >
-                      <span
-                        class={[
-                          'tree-field-input-wrap',
-                          'item',
-                          'inline-block',
-                          'e-label',
-                          this.isRename(data.id) ? 'active__name' : '',
-                          this.isCreate(data.id) ? 'active__name' : ''
-                        ]}
-                      >
-                        <ElInput
-                          class="tree-field-input"
-                          v-model={data.field_name}
-                          disabled={this.isRemove(data.id)}
-                          onChange={() => this.handleRename(node, data)}
-                        />
-                        <VIcon class="title-input-icon" size="14">
-                          edit-outline
-                        </VIcon>
-                      </span>
-                      <span class="e-desc">{data.desc}</span>
-                      <ElSelect
-                        v-model={data.data_type}
-                        size="mini"
-                        disabled={this.isRemove(data.id)}
-                        class={[this.isConvertDataType(data.id) ? 'active__type' : '', 'e-select']}
-                        onChange={() => this.handleDataType(node, data)}
-                      >
-                        {this.selectList.map(op => (
-                          <ElOption label={op.label} value={op.value} key={op.value} />
-                        ))}
-                      </ElSelect>
-                      <span class="e-ops">
-                        <ElButton
-                          type="text"
-                          class="ml-5"
-                          disabled={this.isRemove(data.id)}
-                          onClick={() => this.handleScript(node, data)}
-                        >
-                          <VIcon>js</VIcon>
-                        </ElButton>
-                        <ElButton
-                          type="text"
-                          class="ml-5"
-                          disabled={this.isRemove(data.id)}
-                          onClick={() => this.handleDelete(node, data)}
-                        >
-                          <VIcon> delete</VIcon>
-                        </ElButton>
-                        <ElButton type="text" class="ml-5" onClick={() => this.handleReset(node, data)}>
-                          <VIcon>revoke</VIcon>
-                        </ElButton>
-                        <ElButton
-                          type="text"
-                          class="ml-5"
-                          disabled={this.isRemove(data.id)}
-                          onClick={() => this.handleCreate('create_sibling', node, data)}
-                        >
-                          <VIcon>add</VIcon>
-                        </ElButton>
-                      </span>
-                    </span>
-                  )
-                }}
-              />
-            </div>
-            <ElDialog
-              title={'字段赋值(' + this.scriptDialog.tableName + '[' + this.scriptDialog.fieldName + '])'}
-              visible={this.scriptDialog.open}
-              append-to-body
-              custom-class="scriptDialog"
-              close-on-click-modal={false}
-            >
-              <ElForm>
-                <ElFormItem>
-                  <ElInput
-                    placeholder="t('editor_cell_processor_field_form_expression')"
-                    v-model={this.scriptDialog.script}
-                    size="mini"
-                  >
-                    <template slot="prepend">var result = </template>
-                  </ElInput>
-                </ElFormItem>
-              </ElForm>
-              <div class="example">
-                <div>示例:</div>
-                <div>var result = "a" + "b" // 字符串拼接, result的结果为 "ab"</div>
-                <div>var result = 1 + 2 // 数字计算, result 的结果为 3</div>
-                <div>var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值</div>
-                <div>
-                  var result = record.isTrue ? true : false // 三元表达式,
-                  result的值根据判断表达式（record.isTrue）的结果为 true 或 false
-                </div>
-              </div>
-              <div slot="footer" class="dialog-footer">
-                <ElButton size="mini" onClick={() => (this.scriptDialog.open = false)}>
-                  取消
-                </ElButton>
-                <ElButton type="primary" size="mini" onClick={() => this.scriptDialog.fn()}>
-                  确认
-                </ElButton>
-              </div>
-            </ElDialog>
-          </div>
-        )
-      },
-      methods: {
-        isRemove(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE')
-          return ops && ops.length > 0
-        },
-        isRename(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME')
-          return ops && ops.length > 0
-        },
-        isConvertDataType(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'CONVERT')
-          return ops && ops.length > 0
-        },
-        isScript(id) {
-          let scripts = this.scripts.filter(v => v.id === id)
-          return scripts && scripts.length > 0
-        },
-        isCreate(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'CREATE')
-          return ops && ops.length > 0
-        },
-        /*rename
-         * @node 当前tree
-         * @data 当前数据*/
-        handleRename(node, data) {
-          console.log('fieldProcessor.handleRename', node, data) //eslint-disable-line
-          let nativeData = this.getNativeData(data.id) //查找初始schema
-          //该字段若是已被删除 不可再重命名
-          if (!data || data.field_name === '') {
-            data.field_name = nativeData.field_name
-            this.$message.error(this.t('message_exists_name'))
-            return
-          }
-          let removes = this.operations.filter(v => v.id === data.id && v.op === 'REMOVE')
-          if (removes.length > 0) {
-            data.field_name = nativeData.field_name
-            return
-          }
-          let existsName = this.handleExistsName(node, data)
-          if (existsName) {
-            data.field_name = nativeData.field_name
-            return
-          }
-          let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
-          if (createOps && createOps.length > 0) {
-            let op = createOps[0]
-            let level = op.level
-            let fieldNames = (op.field || op.field_name).split('.')
-            fieldNames[level] = data.field_name
-            op.field = fieldNames.join('.')
-            //同步对js 改名操作
-            if (this.scripts && this.scripts.length && this.scripts.length > 0) {
-              for (let i = 0; i < this.scripts.length; i++) {
-                if (op.id === this.scripts[i].id) {
-                  this.scripts[i].field = op.field
-                  this.scripts[i].label = op.field
-                }
-              }
-            }
-          } else {
-            //eslint-disable-next-line
-            console.log(
-              'fieldProcessor.handlerRename(node,data,nativeData,operations',
-              node,
-              data,
-              nativeData,
-              this.operations
-            )
-            let ops = this.operations.filter(v => v.id === data.id && v.op === 'RENAME')
-            let op
-            if (ops.length === 0) {
-              op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
-                id: data.id,
-                field: nativeData.original_field_name,
-                operand: data.field_name,
-                table_name: data.table_name,
-                type: data.type,
-                primary_key_position: data.primary_key_position,
-                color: data.color,
-                label: data.field_name,
-                field_name: data.field_name
-              })
-              this.operations.push(op)
-            } else {
-              op = ops[0]
-              op.operand = data.field_name
-              op.label = data.field_name
-              op.field_name = data.field_name
-            }
-            //删除 相同字段名称
-            if (this.scripts && this.operations.length && this.operations.length > 0) {
-              for (let i = 0; i < this.operations.length; i++) {
-                let originalFieldName = this.operations[i].field
-                if (originalFieldName.indexOf('.') >= 0) {
-                  originalFieldName = originalFieldName.split('.')
-                  originalFieldName = originalFieldName[originalFieldName.length - 1]
-                }
-                if (originalFieldName === this.operations[i].operand && this.operations[i].op === 'RENAME') {
-                  this.operations.splice(i, 1)
-                  i--
-                }
-              }
-            }
-          }
-          console.log(this.operations) //eslint-disable-line
-        },
-        handleExistsName(node, data) {
-          // 改名前查找同级中是否重名，若有则return且还原改动并提示
-          let exist = false
-          if (node && node.parent && node.parent.childNodes) {
-            let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
-            if (parentNode && parentNode.length === 2) {
-              this.$message.error(data.field_name + this.t('message_exists_name'))
-              exist = true
-            }
-          }
-          return exist
-        },
-        getNativeData(id) {
-          let fields = this.originalFields || []
-          let field = null
-          let fn = function (fields) {
-            if (!fields) {
-              return
-            }
-            for (let i = 0; i < fields.length; i++) {
-              let f = fields[i]
-              if (f.id === id) {
-                field = f
-                break
-              } else if (f.children) {
-                fn(f.children)
-              }
-            }
-          }
-          fn(fields)
-          return field
-        },
-        handleDataType(node, data) {
-          console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
-          let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
-          if (createOps && createOps.length > 0) {
-            let op = createOps[0]
-            op.data_type = data.data_type
-          } else {
-            let nativeData = this.getNativeData(data.id)
-            let ops = this.operations.filter(v => v.id === data.id && v.op === 'CONVERT')
-            let op
-            if (ops.length === 0) {
-              op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
-                id: data.id,
-                field: nativeData.original_field_name,
-                operand: data.data_type,
-                originalDataType: nativeData.originalDataType,
-                table_name: data.table_name,
-                type: data.data_type,
-                primary_key_position: data.primary_key_position,
-                color: data.color,
-                label: data.field_name,
-                field_name: data.field_name
-              })
-              this.operations.push(op)
-            } else {
-              op = ops[0]
-              op.type = data.data_type
-              op.operand = data.data_type
-              op.originalDataType = nativeData.originalDataType
-            }
-          }
-        },
-        handleReset(node, data) {
-          console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
-          let parentId = node.parent.data.id
-          let dataLabel = JSON.parse(JSON.stringify(data.field_name))
-          let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
-          if (parentId && indexId.length !== 0) {
-            return
-          }
-          let self = this
-          let fn = function (node, data) {
-            let nativeData = self.getNativeData(data.id)
-            for (let i = 0; i < node.childNodes.length; i++) {
-              let childNode = node.childNodes[i]
-              fn(childNode, childNode.data)
-            }
-            for (let i = 0; i < self.operations.length; i++) {
-              if (self.operations[i].id === data.id) {
-                let ops = self.operations[i]
-                if (ops.op === 'REMOVE') {
-                  self.operations.splice(i, 1)
-                  i--
-                  continue
-                }
-                if (ops.op === 'CREATE') {
-                  self.operations.splice(i, 1)
-                  i--
-                  self.$refs.tree.remove(node)
-                  continue
-                }
-                if (ops.op === 'RENAME') {
-                  let existsName = self.handleExistsName(node, data)
-                  if (existsName) {
-                    return
-                  }
-                  if (nativeData) node.data.field_name = nativeData.original_field_name
-                  self.operations.splice(i, 1)
-                  i--
-                  continue
-                }
-                if (ops.op === 'CONVERT') {
-                  if (nativeData) node.data.type = nativeData.type
-                  self.operations.splice(i, 1)
-                  i--
-                  continue
-                }
-              }
-            }
-          }
-          fn(node, data)
-          let existsName = this.handleExistsName(node, data)
-          if (existsName) {
-            data.field_name = dataLabel
-          }
-        },
-        getParentFieldName(node) {
-          let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
-          if (node.level > 1 && node.parent && node.parent.data) {
-            let parentFieldName = this.getParentFieldName(node.parent)
-            if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
-          }
-          return fieldName
-        },
-
-        /**
-         *
-         * @param action create_sibling | create_child
-         * @param node
-         * @param data
-         */
-        handleCreate(action, node, data) {
-          console.log('fieldProcessor.handleCreate', action, node, data) //eslint-disable-line
-          let parentFieldName = ''
-          let level = node.level
-          if (action === 'create_sibling') {
-            parentFieldName = this.getParentFieldName(node.parent)
-            let parentNode = node.parent.childNodes.filter(v => v.data.field_name === 'newFieldName')
-            if (parentNode && parentNode.length > 0) {
-              this.$message.error('newFieldName ' + this.t('message_exists_name'))
-              return
-            }
-          } else if (action === 'create_child') {
-            parentFieldName = this.getParentFieldName(node)
-            level++
-            let parentNode = node.childNodes.filter(v => v.data.field_name === 'newFieldName')
-            if (parentNode && parentNode.length > 0) {
-              this.$message.error('newFieldName ' + this.t('message_exists_name'))
-              return
-            }
-          }
-
-          let fieldId = uuid()
-          let newFieldOperation = Object.assign(JSON.parse(JSON.stringify(this.CREATE_OPS_TPL)), {
-            field: parentFieldName ? parentFieldName + '.newFieldName' : 'newFieldName',
-            tableName: data.table_name,
-            data_type: 'String',
-            id: fieldId,
-            action: action,
-            triggerFieldId: node.data.id,
-            level: level - 1
-          })
-          this.operations.push(newFieldOperation)
-
-          let newNodeData = {
-            id: fieldId,
-            label: 'newFieldName',
-            type: 'String',
-            color: data.color,
-            primary_key_position: 0,
-            table_name: data.table_name,
-            field_name: 'newFieldName'
-          }
-          if (action === 'create_sibling') {
-            let parentNode = node.parent
-            let parentData = parentNode.data
-
-            this.$refs.tree.insertAfter(newNodeData, node)
-            if (!['Array', 'Map'].includes(parentData.type)) parentData.type = 'Map'
-          } else if (action === 'create_child') {
-            this.$refs.tree.append(newNodeData, node)
-            if (!['Array', 'Map'].includes(data.type)) data.type = 'Map'
-            this.handleDataType(node, data)
-          }
-        },
-
-        /**
-         *
-         * @param node
-         * @param data
-         */
-        handleScript(node, data) {
-          let self = this
-
-          let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(node))
-          let tableName = (self.scriptDialog.tableName = data.table_name)
-          let id = data.id
-
-          let idx = self.scripts.findIndex(script => script.id === id)
-          let script
-          if (idx !== -1) {
-            script = self.scripts[idx]
-          } else {
-            script = JSON.parse(JSON.stringify(this.SCRIPT_TPL))
-            Object.assign(script, {
-              field: fieldName,
-              type: data.type,
-              primary_key_position: data.primary_key_position,
-              color: data.color,
-              label: data.field_name,
-              field_name: data.field_name,
-              tableName,
-              id
-            })
-          }
-          self.scriptDialog.script = script.script
-          self.scriptDialog.open = true
-          self.$nextTick(() => {
-            self.scriptDialog.open = true
-          })
-
-          self.scriptDialog.fn = function () {
-            script.script = self.scriptDialog.script
-
-            if (idx === -1) {
-              self.scripts.push(script)
-            }
-
-            console.log('fieldProcessor.handleScript', node, data, script, self.scripts) //eslint-disable-line
-            self.$nextTick(() => {
-              self.scriptDialog.open = false
-            })
-            self.scriptDialog.fn = function () {}
-            self.scriptDialog.script = ''
-          }
-        },
-        handleDelete(node, data) {
-          console.log('fieldProcessor.handleDelete', node, data) // eslint-disable-line
-          let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE')
-          if (createOpsIndex >= 0) {
-            let fieldName = this.operations[createOpsIndex].field_name + '.'
-            this.operations.splice(createOpsIndex, 1)
-
-            for (let i = 0; i < this.operations.length; i++) {
-              let op = this.operations[i]
-              let opFieldName = op.field || op.field_name
-              if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
-                this.operations.splice(i, 1)
-                i--
-              }
-            }
-            this.$refs.tree.remove(node)
-          } else {
-            let originalField = this.getNativeData(data.id)
-            let self = this
-            let fn = function (field) {
-              for (let i = 0; i < self.operations.length; i++) {
-                // 删除所有的rename的操作
-                let ops = self.operations[i]
-                if (ops.id === field.id && ops.op === 'RENAME') {
-                  data.field_name = originalField.field_name
-                  self.operations.splice(i, 1)
-                }
-              }
-              for (let i = 0; i < self.operations.length; i++) {
-                // 删除所有的类型改变的操作
-                let ops = self.operations[i]
-                if (ops.id === field.id && ops.op === 'CONVERT') {
-                  data.type = originalField.type
-                  self.operations.splice(i, 1)
-                }
-              }
-              let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
-              let op
-              if (ops.length === 0) {
-                op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
-                  id: field.id,
-                  field: field.original_field_name,
-                  operand: true,
-                  table_name: field.table_name,
-                  type: field.type,
-                  primary_key_position: field.primary_key_position,
-                  color: field.color,
-                  label: field.label,
-                  field_name: field.label
-                })
-                self.operations.push(op)
-              }
-
-              if (field.children) {
-                field.children.forEach(fn)
-              }
-            }
-            if (originalField) fn(originalField)
-          }
-          //删除 对应字段js脚本处理
-          this.scripts = this.delScript(this.operations, this.scripts, data.id)
-        },
-        delScript(operations, scripts, id) {
-          let fieldIds = []
-          if (operations) {
-            fieldIds = operations.map(field => field.id)
-          }
-          if (scripts) {
-            for (let i = 0; i < scripts.length; i++) {
-              if (!fieldIds.includes(scripts[i].id)) {
-                scripts.splice(i, 1)
-                i--
-              } else if (id === scripts[i].id) {
-                scripts.splice(i, 1)
-                i--
-              }
-            }
-          }
-          return scripts
-        },
-        handleAllDelete() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              this.handleDelete(node, node.data)
-            })
-          }
-        },
-        handleAllToUpperCase() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              node.data.field_name = node.data.field_name.toUpperCase()
-              this.handleRename(node, node.data)
-            })
-          }
-        },
-        handleAllToLowerCase() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              node.data.field_name = node.data.field_name.toLowerCase()
-              this.handleRename(node, node.data)
-            })
-          }
-        },
-        handleAllReset() {
-          let ids = this.$refs.tree.getCheckedNodes(false, true)
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              if (node) {
-                this.handleReset(node, node.data)
-              }
-            })
-          }
-        },
-        handleCheckAllChange() {
-          let fields = this.options || []
-          if (!this.checkAll) {
-            this.$refs.tree.setCheckedNodes(fields)
-            this.checkAll = true
-          } else {
-            this.$refs.tree.setCheckedKeys([])
-            this.checkAll = false
-          }
-        }
+      page: {
+        size: 10,
+        current: 1,
+        total: 0,
+        count: 1
       }
     })
-  ),
-  mapProps({ dataSource: 'options', loading: true })
-)
+    const loadData = (value, type) => {
+      config.loadingNav = true
+      config.loadingTable = true
+      let where = {
+        taskId: root.$route.params.id,
+        nodeId: props.nodeId
+      }
+      if (type === 'search') {
+        config.page.current = 1
+        where.searchTable = value
+      } else {
+        config.page.current = value || 1
+        where.searchTable = ''
+      }
+      let { size, current } = config.page
+      where.pageSize = size
+      where.page = current
+      taskApi
+        .getNodeTableInfo(where)
+        .then(res => {
+          let { total, items } = res
+          list.value = items || []
+          config.page.total = total
+          config.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
+          updateView(config.position)
+        })
+        .finally(() => {
+          config.loadingNav = false
+          config.loadingTable = false
+        })
+    }
+    const doSearchTables = (value, type) => {
+      delayTrigger(() => {
+        loadData(value, type)
+      }, 200)
+    }
+    const doSearchField = () => {
+      if (config.searchField.trim()) {
+        config.searchField = config.searchField.trim().toString() //去空格
+        tableList.value = config.target.filter(v => {
+          let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
+          return str.indexOf(config.searchField.toLowerCase()) > -1
+        })
+      } else {
+        tableList.value = config.target
+      }
+    }
+    let fieldsMapping = props.value || []
+    const restOp = {
+      prefix: '',
+      suffix: '',
+      capitalized: ''
+    }
+    const mapping = data => {
+      let map = {}
+      if (!data || data?.length === 0) return map
+      data.forEach(t => {
+        if (!map[t.qualifiedName]) {
+          map[t.qualifiedName] = {
+            qualifiedName: t?.qualifiedName,
+            originTableName: t?.originTableName,
+            operation: t?.operation,
+            fields: t.fields || []
+          }
+        }
+      })
+      return map
+    }
+    const mappingField = data => {
+      let map = {}
+      if (!data || data?.length === 0) return map
+      data.forEach(t => {
+        if (!map[t.sourceFieldName]) {
+          map[t.sourceFieldName] = {
+            sourceFieldName: t?.sourceFieldName,
+            targetFieldName: t?.targetFieldName,
+            isShow: t.isShow
+          }
+        }
+      })
+      return map
+    }
+    const toList = map => {
+      let list = []
+      for (let key in map) {
+        if (key && key !== 'undefined') {
+          list.push(map[key])
+        }
+      }
+      return list
+    }
+    const doUpdateField = (row, target, val) => {
+      let map = mapping(fieldsMapping) || {}
+      let qualifiedName = config.selectTableRow?.sourceQualifiedName
+      let sourceObjectName = config.selectTableRow?.sourceObjectName
+      if (!map[qualifiedName]) {
+        map[qualifiedName] = {
+          qualifiedName: qualifiedName,
+          originTableName: sourceObjectName,
+          operation: config.operation,
+          fields: []
+        }
+      }
+      let fields = mappingField(map[qualifiedName]?.fields) || {}
+      if (target === 'rest' && fields[row.sourceFieldName]?.sourceFieldName === row.sourceFieldName) {
+        delete fields[row.sourceFieldName]
+      } else {
+        //先生成所有fields
+        fields[row.sourceFieldName] = {
+          sourceFieldName: row.sourceFieldName,
+          targetFieldName: target === 'rename' ? val : row.targetFieldName,
+          isShow: target === 'del' ? val : row.isShow,
+          migrateType: 'custom'
+        }
+      }
 
-export default FieldProcess
+      map[qualifiedName].fields = toList(fields)
+      fieldsMapping = toList(map)
+      // eslint-disable-next-line
+      form.fieldsMapping = fieldsMapping
+      emit('change', fieldsMapping)
+    }
+    //选择左侧table
+    const doCheckAllChange = val => {
+      config.checkAll = val
+      if (val) {
+        config.checkedTables = list.value
+        nextTick(() => {
+          tableList.value.forEach(row => {
+            refs.table?.toggleAllSelection(row, true)
+          })
+        })
+      } else {
+        config.checkedTables = []
+        nextTick(() => {
+          refs.table?.clearSelection()
+        })
+      }
+    }
+    const doCheckedTablesChange = value => {
+      let checkedCount = value.length
+      config.checkAll = checkedCount === list.value.length
+      //当前table是否被选中
+      if (checkedCount > 0) {
+        let index = value.findIndex(t => t.sourceQualifiedName === config.selectTableRow.sourceQualifiedName)
+        if (index > -1) {
+          //联调右侧表格全选
+          nextTick(() => {
+            tableList.value.forEach(row => {
+              refs.table?.toggleRowSelection(row, true)
+            })
+          })
+        }
+        if (index === -1) {
+          //否则全不选
+          nextTick(() => {
+            refs.table?.clearSelection()
+          })
+        }
+      } else if (checkedCount === 0) {
+        //否则全不选
+        nextTick(() => {
+          refs.table?.clearSelection()
+        })
+      }
+    }
+    //选择右侧字段
+    const doSelectionField = value => {
+      config.checkedFields = value
+    }
+    const doVisible = (target, val) => {
+      config[target] = val
+    }
+    const updateView = index => {
+      config.position = index
+      config.selectTableRow = list.value[index]
+      config.target = config.selectTableRow?.fieldsMapping || []
+      tableList.value = config.target
+      config.fieldCount = config.selectTableRow?.sourceFieldCount - config.selectTableRow?.userDeletedNum || 0
+      //是否选中右侧表
+      doCheckedTablesChange(config.checkedTables)
+    }
+    //单个修改字段名
+    const doEditName = row => {
+      config.newFieldName = row.targetFieldName
+      config.currentFieldRow = row
+      config.operationVisible = true
+    }
+    const doEditNameSave = () => {
+      //修改名字 生成配置
+      updateFieldViews(config.currentFieldRow?.sourceFieldName, config.newFieldName)
+      doUpdateField(config.currentFieldRow, 'rename', config.newFieldName)
+      config.operationVisible = false
+      config.currentFieldRow = ''
+    }
+    //批量操作
+    const doOperationSave = () => {
+      let map = mapping(fieldsMapping)
+      if (config.checkedTables?.length > 0) {
+        //表级别
+        config.checkedTables.forEach(t => {
+          map[t?.sourceQualifiedName] = {
+            qualifiedName: t?.sourceQualifiedName,
+            originTableName: t?.sourceObjectName,
+            operation: config.operation,
+            fields:
+              t?.sourceQualifiedName === map[t?.sourceQualifiedName]?.qualifiedName
+                ? map[t?.sourceQualifiedName]?.fields || []
+                : []
+          }
+        })
+      }
+      if (config.checkedFields?.length > 0) {
+        //字段级别
+        config.checkedFields.forEach(t => {
+          let newField = config.operation.prefix + t?.targetFieldName + config.operation.suffix
+          if (config.operation.capitalized) {
+            newField = newField[config.operation.capitalized]()
+          }
+          updateFieldViews(t?.sourceFieldName, newField)
+          doUpdateField(t, 'rename', newField)
+        })
+      }
+      config.checkedTables = []
+      config.checkAll = false
+      nextTick(() => {
+        refs.table?.clearSelection()
+      })
+      config.operation = restOp
+      fieldsMapping = toList(map)
+      emit('change', fieldsMapping)
+      doVisible('visible', false)
+    }
+    //重置
+    const doOperationRest = () => {
+      let map = mapping(fieldsMapping)
+      if (config.checkedTables?.length > 0) {
+        //表级别
+        config.checkedTables.forEach(t => {
+          if (t?.sourceQualifiedName === map[t?.sourceQualifiedName]?.qualifiedName) {
+            delete map[t?.sourceQualifiedName]
+          }
+        })
+      } else if (config.checkedFields?.length > 0) {
+        //字段级别
+        config.checkedFields.forEach(t => {
+          doUpdateField(t, 'rest', t.targetFieldName)
+        })
+      } else {
+        //全局
+        map = {}
+      }
+      fieldsMapping = toList(map)
+      emit('change', fieldsMapping)
+      //更新整个数据
+      setTimeout(() => {
+        loadData()
+      }, 1500)
+    }
+    //单个删除字段
+    const doShowRow = row => {
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
+          tableList.value[i]['isShow'] = true
+        }
+      }
+      doUpdateField(row, 'del', true)
+    }
+    const doDeleteRow = row => {
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
+          tableList.value[i]['isShow'] = false
+        }
+      }
+      doUpdateField(row, 'del', false)
+    }
+    const tableRowClassName = ({ row }) => {
+      if (!row.isShow) {
+        return 'row-deleted'
+      }
+    }
+    //前端读取配置及时反馈
+    const updateFieldViews = (key, value) => {
+      for (let i = 0; i < tableList.value.length; i++) {
+        if (tableList.value[i].sourceFieldName === key) {
+          tableList.value[i]['targetFieldName'] = value
+        }
+      }
+    }
+    //右侧表格slot渲染
+    const renderNode = ({ row }) => {
+      return row.isShow || props.disabled ? (
+        <div class="cursor-pointer" onClick={() => doEditName(row)}>
+          <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">{row.targetFieldName}</span>
+          <VIcon>edit</VIcon>
+        </div>
+      ) : (
+        <div class="cursor-pointer">
+          <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">{row.targetFieldName}</span>
+        </div>
+      )
+    }
+    const renderOpNode = ({ row }) => {
+      let show = row.isShow ? (
+        <span class="text-primary cursor-pointer" onClick={() => doDeleteRow(row)}>
+          屏蔽
+        </span>
+      ) : (
+        <span class="text-primary cursor-pointer" onClick={() => doShowRow(row)}>
+          恢复
+        </span>
+      )
+      let disabled = row.isShow ? <span>屏蔽</span> : <span>恢复</span>
+      return props.disabled ? disabled : show
+    }
+    loadData()
+    return {
+      list,
+      tableList,
+      config,
+      loadData,
+      doVisible,
+      doEditNameSave,
+      doOperationSave,
+      doCheckAllChange,
+      doCheckedTablesChange,
+      doSelectionField,
+      tableRowClassName,
+      renderNode,
+      renderOpNode,
+      updateView,
+      doOperationRest,
+      doSearchField,
+      doSearchTables
+    }
+  },
+  render() {
+    return (
+      <div class="processor-field-mapping flex flex-column">
+        <div class="task-form-body" style={this.listStyle}>
+          <div class="task-form-left flex flex-column">
+            <div class="flex mb-2 ml-2 mr-2">
+              <div class="flex">
+                <ElInput
+                  size="mini"
+                  placeholder="请输入表名"
+                  suffix-icon="el-icon-search"
+                  clearable
+                  v-model={this.config.searchTable}
+                  onInput={() => this.doSearchTables(this.config.searchTable, 'search')}
+                ></ElInput>
+              </div>
+            </div>
+            <div class="bg-main flex justify-content-between line-height processor-ml-10">
+              <span>
+                <el-checkbox v-model={this.config.checkAll} onChange={this.doCheckAllChange}></el-checkbox>
+                <span class="table-name ml-2">表名</span>
+              </span>
+            </div>
+            <div class="task-form-left__ul flex flex-column" v-loading={this.config.loadingNav}>
+              {this.list.length > 0 ? (
+                <ul>
+                  <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
+                    {this.list.map((item, index) => (
+                      <li key={index} class={[this.config.position === index ? 'active' : '']}>
+                        <el-checkbox label={item}>
+                          <br />
+                        </el-checkbox>
+                        <div class="task-form__img" onClick={() => this.updateView(index)}>
+                          <img src={fieldMapping_table} alt="" />
+                        </div>
+                        <div class="task-form-text-box" onClick={() => this.updateView(index)}>
+                          <OverflowTooltip
+                            class="w-100 text-truncate source"
+                            text={item.sourceObjectName}
+                            placement="right"
+                            open-delay={400}
+                          />
+                          <OverflowTooltip
+                            class="w-100 text-truncate target"
+                            text={item.sinkObjectName}
+                            placement="right"
+                            open-delay={400}
+                          />
+                          <div class="select" onClick={() => this.updateView(index)}>
+                            <span>
+                              <span>已选中 </span>
+                              {item.sourceFieldCount - item.userDeletedNum} /{item.sourceFieldCount}
+                            </span>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </el-checkbox-group>
+                </ul>
+              ) : (
+                <div class="task-form-left__ul flex flex-column align-items-center">
+                  <EmptyItem></EmptyItem>
+                </div>
+              )}
+            </div>
+            <ElPagination
+              small
+              class="flex mt-3 din-font"
+              layout="total, prev, slot, next"
+              on={{ ['update:current-page']: this.loadData }}
+              current-page={this.config.page.current}
+              total={this.config.page.total}
+              pager-count={5}
+              onCurrent-change={this.loadData}
+            >
+              <div class="text-center">
+                <span class="page__current" style="min-width: 22px">
+                  {this.config.page.current}
+                </span>
+                <span class="icon-color" style="min-width: 22px">
+                  /
+                </span>
+                <span class="icon-color" style="min-width: 22px">
+                  {this.config.page.count}
+                </span>
+              </div>
+            </ElPagination>
+          </div>
+          <div class="main">
+            <div class="flex ml-2 text-start justify-content-between" style="margin-bottom: 8px">
+              <div class="flex">
+                <ElInput
+                  size="mini"
+                  placeholder="请输入字段名"
+                  suffix-icon="el-icon-search"
+                  clearable
+                  v-model={this.config.searchField}
+                  onInput={this.doSearchField}
+                ></ElInput>
+              </div>
+              <div class="item ml-2">
+                <ElButton
+                  type="text"
+                  class="btn-operation"
+                  disabled={
+                    (this.config.checkedTables.length === 0 && this.config.checkedFields.length === 0) || this.disabled
+                  }
+                  onClick={() => this.doVisible('visible', true)}
+                >
+                  批量操作
+                </ElButton>
+                <ElButton type="text" class="btn-rest mr-2" disabled={this.disabled} onClick={this.doOperationRest}>
+                  重置
+                </ElButton>
+              </div>
+            </div>
+            <ElTable
+              class="field-mapping-table table-border"
+              height="100%"
+              ref={'table'}
+              data={this.tableList}
+              v-loading={this.config.loadingTable}
+              row-class-name={this.tableRowClassName}
+              onSelection-change={this.doSelectionField}
+            >
+              <ElTableColumn type="selection" width="55"></ElTableColumn>
+              <ElTableColumn show-overflow-tooltip label="字段名" prop="sourceFieldName"></ElTableColumn>
+              <ElTableColumn
+                show-overflow-tooltip
+                label="新字段名"
+                prop="targetFieldName"
+                scopedSlots={{
+                  default: this.renderNode
+                }}
+              ></ElTableColumn>
+              <ElTableColumn
+                show-overflow-tooltip
+                label="操作"
+                prop="isShow"
+                width={'60px'}
+                scopedSlots={{
+                  default: this.renderOpNode
+                }}
+              ></ElTableColumn>
+              <div class="field-mapping-table__empty" slot="empty">
+                <EmptyItem></EmptyItem>
+              </div>
+            </ElTable>
+          </div>
+        </div>
+        <ElDialog
+          title="修改字段名"
+          width={'30%'}
+          visible={this.config.operationVisible}
+          append-to-body
+          before-close={() => this.doVisible('operationVisible', false)}
+        >
+          <FormItem.BaseItem>
+            <ElInput v-model={this.config.newFieldName} clearable />
+          </FormItem.BaseItem>
+          <span slot="footer" className="dialog-footer">
+            <el-button onClick={() => this.doVisible('operationVisible', false)}>取 消</el-button>
+            <el-button type="primary" onClick={() => this.doEditNameSave()}>
+              确 定
+            </el-button>
+          </span>
+        </ElDialog>
+        <ElDialog
+          title="批量操作"
+          visible={this.config.visible}
+          append-to-body
+          before-close={() => this.doVisible('visible', false)}
+        >
+          <div>
+            <FormItem.BaseItem
+              label="前缀"
+              tooltip="以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符，前缀不允许以 system 开头"
+            >
+              <ElInput v-model={this.config.operation.prefix} clearable />
+            </FormItem.BaseItem>
+            <FormItem.BaseItem
+              label="后缀"
+              tooltip="以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符"
+            >
+              <ElInput v-model={this.config.operation.suffix} clearable />
+            </FormItem.BaseItem>
+
+            <FormItem.BaseItem label="大小写">
+              <ElSelect v-model={this.config.operation.capitalized}>
+                <ElOption value="" label="不变" />
+                <ElOption value="toUpperCase" label="大写" />
+                <ElOption value="toLowerCase" label="小写" />
+              </ElSelect>
+            </FormItem.BaseItem>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <el-button onClick={() => this.doVisible('visible', false)}>取 消</el-button>
+            <el-button type="primary" onClick={() => this.doOperationSave()}>
+              确 定
+            </el-button>
+          </span>
+        </ElDialog>
+      </div>
+    )
+  }
+})

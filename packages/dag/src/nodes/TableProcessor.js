@@ -1,11 +1,11 @@
 import { NodeType } from './extends/NodeType'
 
-export class FieldProcessor extends NodeType {
+export class TableProcessor extends NodeType {
   constructor() {
     super()
   }
 
-  type = 'migrate_field_rename_processor'
+  type = 'table_rename_processor'
 
   maxInputs = 1 // 最大输入个数
 
@@ -18,13 +18,14 @@ export class FieldProcessor extends NodeType {
         type: 'array',
         display: 'none'
       },
-      fieldsMapping: {
-        type: 'array',
-        title: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'FieldRenameProcessor',
+      tableNames: {
+        type: 'object',
+        'x-component': 'TableRename',
         'x-component-props': {
-          nodeId: '{{$values.id}}'
+          findParentNode: '{{findParentNode}}',
+          listStyle: {
+            maxHeight: 'calc(100vh - 120px)'
+          }
         }
       }
     }

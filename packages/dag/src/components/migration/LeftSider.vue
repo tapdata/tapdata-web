@@ -92,6 +92,38 @@
       </ElScrollbar>
     </div>
 
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
+      <ElCollapseItem name="process">
+        <template #title>
+          <div class="flex align-center flex-1">
+            <span class="flex-1 user-select-none">
+              <!--处理节点-->
+              {{ $t('dag_processor_node') }}
+            </span>
+          </div>
+        </template>
+        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3 pb-3" :wrap-style="scrollbarWrapStyle">
+          <div
+            v-for="(n, ni) in processorNodeTypes"
+            :key="ni"
+            v-mouse-drag="{
+              item: n,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart: onProcessorStart,
+              onMove,
+              onDrop,
+              onStop
+            }"
+            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+          >
+            <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
+            <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
+          </div>
+        </ElScrollbar>
+      </ElCollapseItem>
+    </ElCollapse>
+
     <!-- S 节点拖拽元素 -->
     <BaseNode
       v-if="dragStarting"

@@ -33,5 +33,7 @@ export * from './text-file-reader'
 export * from './input-number'
 export * from './text'
 export * from './tag'
+export * from './table-rename'
+export * from './js-processor'
 
 export * from '@formily/element'
