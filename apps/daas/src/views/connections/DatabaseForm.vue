@@ -615,6 +615,15 @@ export default {
                     {
                       target: '__TAPDATA_END.accessNodeProcessId',
                       fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
+                    },
+                    {
+                      target: '__TAPDATA_END.accessNodeProcessId',
+                      effects: ['onFieldInputValueChange'],
+                      fulfill: {
+                        state: {
+                          value: '{{$target.value || $target.dataSource[0].value}}'
+                        }
+                      }
                     }
                   ]
                 },
