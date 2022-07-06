@@ -167,9 +167,9 @@ export default {
           }
           if (result.response_body) {
             let validate_details = result.response_body.validate_details || []
-            let res = validate_details.filter(item => item.status !== 'waiting')
+            let details = validate_details.filter(item => item.status !== 'waiting')
             // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
-            if (res.length === 0) {
+            if (details.length === 0) {
               validate_details = validate_details.map(item => {
                 item.status = 'unTest'
                 return item

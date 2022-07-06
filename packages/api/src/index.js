@@ -87,7 +87,7 @@ const applicationApi = new Application()
 import Cluster from './Cluster'
 const clusterApi = new Cluster()
 
-import SharedCache from './shareCache'
+import SharedCache from './SharedCache'
 const sharedCacheApi = new SharedCache()
 
 import Licenses from './Licenses'

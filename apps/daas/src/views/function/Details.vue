@@ -77,8 +77,8 @@ export default {
         system: this.$t('function_type_option_system')
       }
 
-      javascriptFunctionsApi.get([this.$route.params.id]).then(res => {
-        let details = res || {}
+      javascriptFunctionsApi.get([this.$route.params.id]).then(data => {
+        let details = data || {}
         // 处理老数据问题
         if (details.type === 'custom' && !details.script) {
           details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`

@@ -788,15 +788,6 @@ export default [
         component: () => import('@/views/cluster/DailyRecord')
       },
       {
-        path: '/dictionary',
-        name: 'dictionary',
-        component: () => import('@/views/dictionary/List'),
-        meta: {
-          code: 'dictionary_menu',
-          title: 'tap.dictionary'
-        }
-      },
-      {
         path: '/notification',
         name: 'notification',
         redirect: 'notification/systemNotification',

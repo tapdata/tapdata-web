@@ -291,9 +291,9 @@ export default {
       let params = {
         historyVersion: this.comparedData.version
       }
-      metadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then(res => {
-        this.properties = res?.properties
-        this.fieldsItems = res?.fields
+      metadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then(data => {
+        this.properties = data?.properties
+        this.fieldsItems = data?.fields
 
         this.fieldsItems.forEach(tableItem => {
           if (tableItem.base_field_name) {

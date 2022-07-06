@@ -110,8 +110,8 @@ export default {
       }
     }
 
-    metadataInstancesApi.get(params).then(res => {
-      this.collections = res?.items || []
+    metadataInstancesApi.get(params).then(data => {
+      this.collections = data?.items || []
       this.model.collection = this.collections[0].original_name
     })
   },
@@ -158,14 +158,11 @@ export default {
                 source: this.pipelineData.source._id
               }
             })
-            .then(res => {
-              _this.isApplication = res?.task_data.isApplication
+            .then(data => {
+              _this.isApplication = data?.task_data.isApplication
               if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
               this.$message.success(this.$t('metadata.details.pipeline.success'))
             })
-          // .catch(() => {
-          //   this.$message.error(this.$t('metadata.details.pipeline.failed'))
-          // })
         }
       })
     },
@@ -179,9 +176,6 @@ export default {
         .then(() => {
           this.$message.success(this.$t('message_save_ok'))
         })
-      // .catch(() => {
-      //   this.$message.error(this.$t('message_save_fail'))
-      // })
     }
   }
 }

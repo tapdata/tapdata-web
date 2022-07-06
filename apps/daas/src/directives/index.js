@@ -38,8 +38,8 @@ export function hasPermissionByCode(code) {
 
   // 	}
   // }
-  let res = permissions.filter(resource => _codes.indexOf(resource.code) !== -1)
-  if (res && res.length > 0) {
+  let pList = permissions.filter(resource => _codes.indexOf(resource.code) !== -1)
+  if (pList && pList.length > 0) {
     return true
   }
   return false

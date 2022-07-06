@@ -645,9 +645,9 @@ export default {
             skip: 0
           })
         })
-        .then(res => {
-          let data = res?.items
-          this.flowOptions = data || []
+        .then(data => {
+          let list = data?.items || []
+          this.flowOptions = list
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
@@ -669,8 +669,7 @@ export default {
             }
           })
         })
-        .then(res => {
-          let data = res
+        .then(data => {
           if (data) {
             data.tasks = data.tasks.map(t => {
               t.sourceTable = [t.source.connectionId, t.source.table]
@@ -694,8 +693,7 @@ export default {
       this.loading = true
       taskApi
         .getId(this.form.flowId)
-        .then(res => {
-          let data = res
+        .then(data => {
           let flowData = data
           this.flowStages = []
           this.isDbClone = flowData.syncType === 'migrate'
@@ -782,8 +780,7 @@ export default {
             where,
             fields: META_INSTANCE_FIELDS
           })
-          .then(res => {
-            let data = res || []
+          .then(data => {
             let tables = data || []
             if (isDB) {
               this.stageMap = {}
@@ -1293,10 +1290,8 @@ export default {
               byFirstCheckId: '',
               browserTimezoneOffset: new Date().getTimezoneOffset()
             })
-          ).then(res => {
-            if (res) {
-              this.$router.back()
-            }
+          ).then(() => {
+            this.$router.back()
           })
           // .catch(err => {
           //   let message = err?.data?.message || this.$t('message_operation_error')

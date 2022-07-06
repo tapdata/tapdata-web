@@ -5,14 +5,6 @@ export default class RoleMappings extends Http {
     super('/api/RoleMappings')
   }
 
-  delete(id, name) {
-    // return this.this.axios.delete(`${this.url}/${id}`)
-    if (name == '') {
-      return this.axios.delete(`${this.url}/${id}`)
-    } else {
-      return this.axios.delete(`${this.url}/${id}?name=${name}`)
-    }
-  }
   post(params) {
     return this.axios.post(this.url, params)
   }

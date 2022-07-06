@@ -154,8 +154,8 @@ export default {
             }
           })
         })
-        .then(res => {
-          let details = res || {}
+        .then(data => {
+          let details = data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
             details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
@@ -204,15 +204,10 @@ export default {
                 user_id: Cookie.get('user_id')
               })
             )
-              .then(res => {
-                if (res) {
-                  this.$message.success(this.$t('message_save_ok'))
-                  this.$router.back()
-                }
+              .then(() => {
+                this.$message.success(this.$t('message_save_ok'))
+                this.$router.back()
               })
-              // .catch(err => {
-              //   this.$message.error(err?.data?.message || this.$t('message_save_fail'))
-              // })
               .finally(() => {
                 this.loading = false
               })

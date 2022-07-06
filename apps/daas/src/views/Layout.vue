@@ -373,8 +373,8 @@ let menuSetting = [
       { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
       { name: 'sharedMiningList', code: 'log_collector_menu', parent: 'sharedMining' },
       { name: 'functionList', code: 'SYNC_Function_management', parent: 'function' },
-      { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' }
-      //{ name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
+      { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' },
+      { name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
   {
@@ -627,23 +627,19 @@ export default {
 
     async getLicense() {
       let stime = ''
-      await timeStampApi.get().then(res => {
-        if (res) {
-          stime = res.data || new Date().getTime()
-        }
+      await timeStampApi.get().then(data => {
+        stime = data || new Date().getTime()
       })
-      licensesApi.expires({}).then(res => {
-        if (res) {
-          let expires_on = res.data.expires_on || ''
-          if (Cookie.get('isAdmin') == 1) {
-            let endTime = expires_on - stime
-            endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
-            let showDay = window.getSettingByKey('licenseNoticeDays') || 0
-            this.licenseExpireVisible = Number(showDay) > endTime
-            this.licenseExpire = endTime
-          }
-          this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
+      licensesApi.expires({}).then(data => {
+        let expires_on = data?.expires_on || ''
+        if (Cookie.get('isAdmin') == 1) {
+          let endTime = expires_on - stime
+          endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
+          let showDay = window.getSettingByKey('licenseNoticeDays') || 0
+          this.licenseExpireVisible = Number(showDay) > endTime
+          this.licenseExpire = endTime
         }
+        this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
       })
     }
   }
