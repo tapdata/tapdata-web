@@ -28,6 +28,11 @@ export class TargetDatabase extends NodeType {
         type: 'string',
         'x-display': 'hidden'
       },
+      connectionId: {
+        type: 'object',
+        'x-display': 'hidden',
+        'x-reactions': '{{handleSyncConnection}}'
+      },
 
       layout: {
         type: 'void',

@@ -2,7 +2,7 @@ import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
-import { merge } from 'lodash'
+import { merge, isEqual } from 'lodash'
 import Locale from './locale'
 
 export default {
@@ -723,6 +723,26 @@ export default {
 
           func(insertPolicy, insertField)
           func(updatePolicy, updateField)
+        },
+
+        handleSyncConnection: async field => {
+          const id = field.value
+          const form = field.form
+          const connection = await connectionsApi.findOne({
+            id
+          })
+          const connectionType = form.getValuesIn('attrs.connectionType') || ''
+          const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
+          const connectionName = form.getValuesIn('attrs.connectionName')
+          const capabilities = form.getValuesIn('attrs.capabilities')
+
+          connectionType !== connection.connection_type &&
+            form.setValuesIn('attrs.connectionType', connection.connectionType)
+          accessNodeProcessId !== connection.accessNodeProcessId &&
+            form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
+          connectionName !== connection.name && form.setValuesIn('attrs.connectionName', connection.name)
+          !isEqual(capabilities, connection.capabilities) &&
+            form.setValuesIn('attrs.capabilities', connection.capabilities)
         }
       }
     }
