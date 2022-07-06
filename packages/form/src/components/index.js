@@ -32,5 +32,6 @@ export * from './create-command'
 export * from './text-file-reader'
 export * from './input-number'
 export * from './text'
+export * from './tag'
 
 export * from '@formily/element'

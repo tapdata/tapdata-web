@@ -443,7 +443,7 @@ export default {
           accessNodeProcessIdList: 1,
           pdkType: 1,
           pdkHash: 1,
-          pdkExpansion: 1
+          capabilities: 1
         },
         order: ['status DESC', 'name ASC']
       }
@@ -727,7 +727,7 @@ export default {
           accessNodeProcessId: connection.accessNodeProcessId,
           pdkType: connection.pdkType,
           pdkHash: connection.pdkHash,
-          pdkExpansion: connection.pdkExpansion
+          capabilities: connection.capabilities
         }
       }
     }

@@ -215,7 +215,7 @@ export default {
                 accessNodeProcessIdList: 1,
                 pdkType: 1,
                 pdkHash: 1,
-                pdkExpansion: 1
+                capabilities: 1
               },
               order: ['status DESC', 'name ASC']
             }
@@ -288,6 +288,11 @@ export default {
           }
         },
 
+        /**
+         * 同步连接上的属性
+         * @param form
+         * @param item
+         */
         handlerSyncDatabaseChange: (form, item) => {
           const field = form.query('grid.leftCell.connectionIdWrap.clipboardButton').take()
           field.setComponentProps({
@@ -693,6 +698,31 @@ export default {
               })
             }
           }
+        },
+
+        useDmlPolicy(field) {
+          const capabilities = field.query('attrs.capabilities').get('value')
+          const insertPolicy = capabilities.find(({ id }) => id === 'dml-insert-policy')
+          const updatePolicy = capabilities.find(({ id }) => id === 'dml-update-policy')
+          const insertField = field.query('dmlPolicy.insertPolicy').take()
+          const updateField = field.query('dmlPolicy.updatePolicy').take()
+
+          const func = (policy, policyField) => {
+            if (!policy || !policy.alternatives) {
+              policyField.setPattern('readPretty')
+              policyField.setValue(policyField.initialValue)
+            } else {
+              const values = policyField.dataSource.map(item => item.value)
+              const alternatives = policy.alternatives.filter(key => values.includes(key))
+              if (alternatives.length <= 1) {
+                policyField.setPattern('readPretty')
+                policyField.setValue(alternatives[0] || policyField.initialValue)
+              }
+            }
+          }
+
+          func(insertPolicy, insertField)
+          func(updatePolicy, updateField)
         }
       }
     }
