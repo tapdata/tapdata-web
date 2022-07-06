@@ -113,11 +113,10 @@
                 <span v-else class="item" :show-overflow-tooltip="true">{{ row.targetFieldName }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="t('dag_dialog_field_mapping_type')" prop="data_type">
+            <ElTableColumn :label="t('dag_dialog_field_mapping_type')" prop="sourceFieldType">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!row.is_deleted && !readOnly">
                   <span :show-overflow-tooltip="true">{{ row.sourceFieldType }}</span>
-                  <i v-if="!row.sourceFieldType" class="icon-error el-icon-warning"></i>
                   <i class="field-mapping__icon el-icon-arrow-down"></i>
                 </div>
                 <div v-else>
@@ -127,7 +126,7 @@
             </ElTableColumn>
             <ElTableColumn :label="t('meta_table_default')">
               <template #default="{ row }">
-                <div class="cursor-pointer" v-if="!readOnly" @click="edit(row)">
+                <div class="cursor-pointer" v-if="!readOnly" @click="edit(row, 'defaultValue')">
                   <ElTooltip class="item" effect="dark" :content="row.defaultValue" placement="left">
                     <span class="field-mapping-table__default_value">{{ row.defaultValue }}</span>
                   </ElTooltip>
@@ -145,14 +144,43 @@
       </div>
     </div>
     <ElDialog
-      :title="t('dag_dialog_field_mapping_tittle_value')"
+      :title="titleType[currentOperationType]"
       :visible.sync="dialogVisible"
       width="30%"
       append-to-body
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
-      <ElInput type="textarea" v-model="editDataValue"></ElInput>
+      <div v-if="['sourceFieldType'].includes(currentOperationType)">
+        <ElAutocomplete
+          v-model="editValueType[currentOperationType]"
+          class="inline-input"
+          style="width: 350px"
+          :fetch-suggestions="querySearchPdkType"
+        ></ElAutocomplete>
+        <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
+        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
+          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
+            <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
+              <div v-if="index === 0">{{ t('dag_dialog_field_mapping_range_precision') }}</div>
+              <div>
+                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+              </div>
+            </div>
+            <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
+              <div>{{ t('dag_dialog_field_mapping_range_scale') }}</div>
+              <div>
+                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ElInput
+        type="textarea"
+        v-if="['defaultValue'].includes(currentOperationType)"
+        v-model="editValueType[currentOperationType]"
+      ></ElInput>
       <span slot="footer" class="dialog-footer">
         <ElButton @click="handleClose()">{{ t('button_cancel') }}</ElButton>
         <ElButton type="primary" @click="editSave()">{{ t('button_confirm') }}</ElButton>
@@ -169,7 +197,7 @@ import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import noData from 'web-core/assets/images/noData.png'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import { metadataInstancesApi, taskApi } from '@tap/api'
+import { metadataInstancesApi, taskApi, typeMappingApi } from '@tap/api'
 import Locale from '../../mixins/locale'
 
 export default {
@@ -185,7 +213,6 @@ export default {
       navData: [],
       target: [],
       editFields: [],
-      editDataValue: '',
       viewTableData: [],
       loadingTable: true,
       loadingNav: true,
@@ -194,6 +221,15 @@ export default {
         current: 1,
         total: 0,
         count: 1
+      },
+      currentOperationType: '',
+      editValueType: {
+        sourceFieldType: '',
+        defaultValue: ''
+      },
+      titleType: {
+        sourceFieldType: this.t('dag_dialog_field_mapping_tittle_data_type'),
+        defaultValue: this.t('dag_dialog_field_mapping_tittle_value')
       },
       position: 0,
       selectRow: '',
@@ -276,6 +312,9 @@ export default {
           this.target = this.selectRow?.fieldsMapping
           this.viewTableData = this.target
           this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+          if (!this.readOnly) {
+            this.getTypeMapping(this.selectRow)
+          }
         })
         .finally(() => {
           this.loadingNav = false
@@ -312,17 +351,21 @@ export default {
     //table字段操作区域
     /*字段操作统一弹窗
      * 操作:修改字段名、修改字段长度、修改字段精度、修改字段类型*/
-    edit(row) {
+    edit(row, type) {
       this.dialogVisible = true
-      this.editDataValue = row.defaultValue
+      this.editValueType[type] = row[type]
+      this.currentOperationType = type
       this.currentOperationData = row
+      //初始化
+      this.initDataType(row[`sourceFieldType`])
     },
     editSave() {
       //触发target更新
-      let key = this.currentOperationData.sourceFieldName
-      let value = this.editDataValue
-      this.updateTargetView(key, value)
-      this.updateTarget(this.currentOperationData)
+      let id = this.currentOperationData.sourceFieldName
+      let key = this.currentOperationType === 'sourceFieldType' ? 'sourceFieldType' : 'defaultValue'
+      let value = this.editValueType[this.currentOperationType]
+      this.updateTargetView(id, key, value)
+      this.updateTarget(this.currentOperationData, key)
       this.handleClose()
     },
     //重置
@@ -336,30 +379,35 @@ export default {
         this.getMetadataTransformer() //更新整个数据
       })
     },
-    updateTargetView(key, value) {
+    updateTargetView(id, key, value) {
       this.viewTableData.forEach(field => {
-        if (field.sourceFieldName === key) {
-          field.defaultValue = value
+        if (field.sourceFieldName === id) {
+          field[key] = value
         }
       })
     },
-    updateTarget(row) {
+    updateTarget(row, type) {
       if (this.editFields?.length === 0) {
         let field = {
           fieldName: row.sourceFieldName,
-          fieldType: row.sourceFieldType,
-          defaultValue: this.editDataValue || ''
+          fieldType: type === 'sourceFieldType' ? this.editValueType[this.currentOperationType] : row.sourceFieldType,
+          defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue
         }
         this.editFields.push(field)
       } else {
         for (let i = 0; i < this.editFields.length; i++) {
-          if (this.editFields[i].sourceFieldName === row.sourceFieldName) {
-            this.editFields[i].defaultValue = this.editDataValue || ''
+          if (this.editFields[i].fieldName === row.sourceFieldName) {
+            if (type === 'defaultValue') {
+              this.editFields[i].defaultValue = this.editValueType[this.currentOperationType] || ''
+            } else {
+              this.editFields[i].fieldType = this.editValueType[this.currentOperationType] || ''
+            }
           } else {
             let field = {
               fieldName: row.sourceFieldName,
-              fieldType: row.sourceFieldType,
-              defaultValue: this.editDataValue || ''
+              fieldType:
+                type === 'sourceFieldType' ? this.editValueType[this.currentOperationType] : row.sourceFieldType,
+              defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue
             }
             this.editFields.push(field)
           }
@@ -383,38 +431,38 @@ export default {
     closeDialog() {
       this.searchField = ''
       this.searchTable = ''
-    }
+    },
     /*更新target 数据*/
     //获取typeMapping
-    // getTypeMapping(row) {
-    //   typeMappingApi.pdkDataType(row.sinkDbType).then(res => {
-    //     let targetObj = JSON.parse(res?.data || '{}')
-    //     for (let key in targetObj) {
-    //       this.typeMapping.push({
-    //         dbType: key,
-    //         rules: targetObj[key]
-    //       })
-    //     }
-    //   })
-    // },
-    // initDataType(val) {
-    //   let target = this.typeMapping.filter(type => type.dbType === val)
-    //   if (target?.length > 0) {
-    //     this.currentTypeRules = target[0]?.rules || []
-    //   } else this.currentTypeRules = '' //清除上一个字段范围
-    // },
-    // querySearchPdkType(queryString, cb) {
-    //   let result = this.typeMapping.map(t => {
-    //     return {
-    //       value: t.dbType
-    //     }
-    //   })
-    //   cb(result)
-    // },
-    // getPdkEditValueType() {
-    //   let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
-    //   return findOne?.rules || ''
-    // },
+    getTypeMapping(row) {
+      typeMappingApi.pdkDataType('Mysql').then(res => {
+        let targetObj = JSON.parse(res || '{}')
+        for (let key in targetObj) {
+          this.typeMapping.push({
+            dbType: key,
+            rules: targetObj[key]
+          })
+        }
+      })
+    },
+    initDataType(val) {
+      let target = this.typeMapping.filter(type => type.dbType === val)
+      if (target?.length > 0) {
+        this.currentTypeRules = target[0]?.rules || []
+      } else this.currentTypeRules = '' //清除上一个字段范围
+    },
+    querySearchPdkType(queryString, cb) {
+      let result = this.typeMapping.map(t => {
+        return {
+          value: t.dbType
+        }
+      })
+      cb(result)
+    },
+    getPdkEditValueType() {
+      let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
+      return findOne?.rules || ''
+    }
   }
 }
 </script>
