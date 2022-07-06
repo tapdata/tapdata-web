@@ -107,10 +107,10 @@
             <ElTableColumn show-overflow-tooltip :label="t('dag_dialog_field_mapping_field')" prop="field_name">
               <template #default="{ row }">
                 <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
-                  >{{ row.sourceFieldName }}
+                  >{{ row.targetFieldName }}
                   <VIcon size="12" class="color-darkorange">key</VIcon>
                 </span>
-                <span v-else class="item" :show-overflow-tooltip="true">{{ row.sourceFieldName }}</span>
+                <span v-else class="item" :show-overflow-tooltip="true">{{ row.targetFieldName }}</span>
               </template>
             </ElTableColumn>
             <ElTableColumn :label="t('dag_dialog_field_mapping_type')" prop="data_type">
