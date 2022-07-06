@@ -207,6 +207,8 @@ export const FieldRenameProcessor = defineComponent({
       config.target = config.selectTableRow?.fieldsMapping || []
       tableList.value = config.target
       config.fieldCount = config.selectTableRow?.sourceFieldCount - config.selectTableRow?.userDeletedNum || 0
+      //是否选中右侧表
+      doCheckedTablesChange(config.checkedTables)
     }
     //单个修改字段名
     const doEditName = row => {
