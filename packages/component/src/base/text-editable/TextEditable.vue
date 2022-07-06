@@ -7,7 +7,7 @@
         :readonly="readonly"
         :placeholder="placeholder"
         :style="inputStyle"
-        maxlength="30"
+        :maxlength="maxlength"
         @input="handleInput"
         @change="handleChange"
       />
@@ -37,7 +37,11 @@ export default {
       type: String,
       default: '请输入'
     },
-    hiddenIcon: Boolean
+    hiddenIcon: Boolean,
+    maxlength: {
+      type: Number,
+      default: 30
+    }
   },
 
   computed: {
