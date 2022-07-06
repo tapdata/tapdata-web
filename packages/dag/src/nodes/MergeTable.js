@@ -210,6 +210,6 @@ export class MergeTable extends NodeType {
   }
 
   allowTarget(target) {
-    return !!target.attrs?.capabilities?.find(({ id }) => id === 'master-slave-merge')
+    return !!target.attrs?.capabilities?.find(({ id }) => id === 'master_slave_merge')
   }
 }
