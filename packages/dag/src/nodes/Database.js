@@ -38,6 +38,8 @@ export class Database extends NodeType {
         'x-component-props': {
           layout: 'horizontal',
           colon: false,
+          labelAlign: 'left',
+          labelWidth: 80,
           feedbackLayout: 'none'
         },
         properties: {
@@ -56,9 +58,6 @@ export class Database extends NodeType {
             type: 'string',
             title: '所属agent',
             'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              className: 'form-item-text'
-            },
             'x-component': 'PreviewText.Input',
             'x-component-props': {
               content:

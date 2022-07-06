@@ -1,5 +1,5 @@
 <template>
-  <FormRender :form="form" :schema="schema" :scope="scope" />
+  <FormRender :form="form" :schema="schema" :scope="formScope" />
 </template>
 
 <script>
@@ -17,7 +17,8 @@ export default observer({
   components: { FormRender },
   mixins: [Locale],
   props: {
-    settings: Object
+    settings: Object,
+    scope: Object
   },
 
   data() {
@@ -25,7 +26,7 @@ export default observer({
     this.getAllNode()
     let values = this.settings
     return {
-      scope: {
+      formScope: {
         checkName: value => {
           return new Promise(resolve => {
             this.handleCheckName(resolve, value)
@@ -251,6 +252,37 @@ export default observer({
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch'
+                      },
+                      accessNodeType: {
+                        type: 'string',
+                        title: this.$t('connection_form_access_node'),
+                        default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Select',
+                        enum: [
+                          { label: this.$t('connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+                          { label: this.$t('connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                        ],
+                        'x-reactions': [
+                          {
+                            target: 'accessNodeProcessId',
+                            fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
+                          },
+                          {
+                            target: 'accessNodeProcessId',
+                            effects: ['onFieldInputValueChange'],
+                            fulfill: {
+                              state: {
+                                value: '{{$target.value || $target.dataSource[0].value}}'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      accessNodeProcessId: {
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Select'
                       }
                     }
                   }
@@ -269,12 +301,50 @@ export default observer({
   },
 
   computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly'])
+    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes']),
+
+    accessNodeProcessIdArr() {
+      const set = this.allNodes
+        .filter(item => item.type === 'database')
+        .reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      return [...set]
+    },
+
+    accessNodeProcessList() {
+      if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
+      return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
+    }
   },
 
   watch: {
     stateIsReadonly(v) {
       this.form.setState({ disabled: v })
+    },
+
+    accessNodeProcessIdArr: {
+      handler(arr) {
+        const size = arr.length
+        if (size >= 1) {
+          const currentId = this.settings.accessNodeProcessId
+          this.settings.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+          this.settings.accessNodeProcessId = currentId && arr.includes(currentId) ? currentId : arr[0]
+        }
+        this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+          disabled: size === 1
+        })
+      },
+      immediate: true
+    },
+    accessNodeProcessList: {
+      handler(dataSource = []) {
+        this.form.setFieldState('accessNodeProcessId', {
+          dataSource
+        })
+      },
+      immediate: true
     }
   },
 
