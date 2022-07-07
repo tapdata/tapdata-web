@@ -1,7 +1,7 @@
 import { defineComponent } from '@vue/composition-api'
 
 export const Text = defineComponent({
-  name: 'Text',
+  name: 'FText',
   props: ['content', 'className', 'contentStyle', 'icon', 'iconClass'],
   setup(props) {
     return () => {

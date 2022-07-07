@@ -107,6 +107,7 @@ export const FieldRenameProcessor = defineComponent({
         if (!map[t.qualifiedName]) {
           map[t.qualifiedName] = {
             qualifiedName: t?.qualifiedName,
+            previousTableName: t?.previousTableName,
             originTableName: t?.originTableName,
             operation: t?.operation,
             fields: t.fields || []
@@ -142,9 +143,11 @@ export const FieldRenameProcessor = defineComponent({
       let map = mapping(fieldsMapping) || {}
       let qualifiedName = config.selectTableRow?.sourceQualifiedName
       let sourceObjectName = config.selectTableRow?.sourceObjectName
+      let targetObjectName = config.selectTableRow?.sinkObjectName
       if (!map[qualifiedName]) {
         map[qualifiedName] = {
           qualifiedName: qualifiedName,
+          previousTableName: targetObjectName,
           originTableName: sourceObjectName,
           operation: config.operation,
           fields: []
@@ -251,6 +254,7 @@ export const FieldRenameProcessor = defineComponent({
           map[t?.sourceQualifiedName] = {
             qualifiedName: t?.sourceQualifiedName,
             originTableName: t?.sourceObjectName,
+            previousTableName: t?.sinkObjectName,
             operation: config.operation,
             fields:
               t?.sourceQualifiedName === map[t?.sourceQualifiedName]?.qualifiedName
@@ -564,16 +568,10 @@ export const FieldRenameProcessor = defineComponent({
           before-close={() => this.doVisible('visible', false)}
         >
           <div>
-            <FormItem.BaseItem
-              label="前缀"
-              tooltip="以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符，前缀不允许以 system 开头"
-            >
+            <FormItem.BaseItem label="前缀">
               <ElInput v-model={this.config.operation.prefix} clearable />
             </FormItem.BaseItem>
-            <FormItem.BaseItem
-              label="后缀"
-              tooltip="以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符"
-            >
+            <FormItem.BaseItem label="后缀">
               <ElInput v-model={this.config.operation.suffix} clearable />
             </FormItem.BaseItem>
 
