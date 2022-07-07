@@ -19,7 +19,7 @@ export class TableProcessor extends NodeType {
         display: 'none'
       },
       tableNames: {
-        type: 'object',
+        type: 'array',
         'x-component': 'TableRename',
         'x-component-props': {
           findParentNode: '{{findParentNode}}',
