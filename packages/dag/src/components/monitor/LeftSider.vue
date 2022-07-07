@@ -1,7 +1,7 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
-      <div class="task-info">
+      <div class="info-box">
         <div class="task-info__row">
           <span class="task-info__label">任务ID：</span>
           <span class="task-info__value">{{ dataflow.id }}</span>
@@ -23,14 +23,15 @@
           </span>
         </div>
       </div>
-      <div class="event-info">
-        <div class="font-color-normal">任务事件统计（条）</div>
-        <div class="flex align-items-center">
+      <div class="info-box">
+        <div class="font-color-normal fw-bold mb-2">任务事件统计（条）</div>
+        <div class="flex align-items-center mb-4">
           <div>统计周期</div>
           <ElSelect v-model="period" size="mini" class="ml-2">
-            <ElOption label="本次运行累计" :value="本次运行累计"></ElOption>
+            <ElOption label="本次运行累计" value="now"></ElOption>
           </ElSelect>
         </div>
+        <EventChart></EventChart>
       </div>
     </div>
   </aside>
@@ -58,6 +59,7 @@ import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { StatusItem } from '@tap/business'
+import EventChart from './EventChart'
 import Locale from '../../mixins/locale'
 
 export default {
@@ -67,9 +69,9 @@ export default {
     dataflow: Object
   },
   components: {
-    StatusItem
+    StatusItem,
+    EventChart
   },
-
 
   data() {
     return {
@@ -93,7 +95,7 @@ export default {
       },
       database: [],
       connectionType: 'source',
-      period: ''
+      period: 'now'
     }
   },
 
@@ -639,7 +641,7 @@ $hoverBg: #eef3ff;
     }
   }
 }
-.task-info {
+.info-box {
   padding: 16px;
   border-bottom: 1px solid #f2f2f2;
 }
