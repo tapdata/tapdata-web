@@ -386,10 +386,9 @@ export default {
     // 保存关联用户
     saveUser() {
       let newRoleMappings = []
-      // TODO roleMappingsApidelete方法没了
-      // this.oldUser.forEach(delRolemapping => {
-      //   roleMappingsApidelete(delRolemapping.id)
-      // })
+      this.oldUser.forEach(delRolemapping => {
+        roleMappingsApi.delete(delRolemapping.id)
+      })
       // _this.oldUser
       this.roleusers.forEach(roleuser => {
         if (roleuser) {
