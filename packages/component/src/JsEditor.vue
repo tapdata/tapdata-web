@@ -13,8 +13,9 @@
 
 <script>
 import VCodeEditor from './base/VCodeEditor.vue'
-import { functionApi } from '@tap/api'
 import Locale from './mixins/locale'
+import { functionApi, sharedCacheApi } from '@tap/api'
+import { getCode } from '@tap/business'
 
 export default {
   name: 'JsEditor',
@@ -74,76 +75,89 @@ export default {
         jar: this.t('function_type_option_jar'),
         system: this.t('function_type_option_system')
       }
-      functionApi
-        .get({
+      const formatCache = item => {
+        return {
+          caption: item.name,
+          snippet: getCode(item)[0],
+          type: 'snippet',
+          meta: this.t('shared_cache')
+        }
+      }
+      const formatFunction = item => {
+        let methodName = item.methodName || item.function_name
+        return {
+          caption: methodName,
+          snippet: methodName + '(${1})',
+          meta: typeMapping[item.type],
+          type: 'snippet',
+          format: item.format,
+          parametersDesc: item.parameters_desc,
+          returnDesc: item.return_value,
+          originType: item.type
+        }
+      }
+      Promise.all([
+        sharedCacheApi.get(),
+        functionApi.get({
           filter: JSON.stringify({
             size: 0
           })
         })
-        .then(data => {
-          let items = data?.items || []
-          items.sort((a, b) => {
-            let scoreMap = {
-              custom: 0,
-              jar: 1,
-              system: 2
+      ]).then(([cacheData, functionData]) => {
+        let cacheItems = cacheData?.items || []
+        let functionItems = functionData?.items || []
+        let items = cacheItems.map(formatCache).concat(functionItems.map(formatFunction))
+        items.sort((a, b) => {
+          let scoreMap = {
+            custom: 0,
+            jar: 1,
+            system: 2
+          }
+          let aName = a.caption.toLowerCase()
+          let bName = b.caption.toLowerCase()
+          if (a.originType && b.originType && a.originType !== b.originType) {
+            return scoreMap[a.originType] - scoreMap[b.originType]
+          } else {
+            if (aName < bName) {
+              return -1
             }
-            let aName = a.methodName || a.function_name
-            let bName = b.methodName || b.function_name
-            aName = aName.toLowerCase()
-            bName = bName.toLowerCase()
-            if (a.type !== b.type) {
-              return scoreMap[a.type] - scoreMap[b.type]
-            } else {
-              if (aName < bName) {
-                return -1
-              }
-              if (aName > bName) {
-                return 1
-              }
-              return 0
+            if (aName > bName) {
+              return 1
             }
-          })
-          editor.completers = [
-            {
-              getCompletions: (editor, session, pos, prefix, callback) => {
-                if (prefix.length === 0) {
-                  return callback(null, [])
-                } else {
-                  return callback(
-                    null,
-                    items.map((item, index) => {
-                      let methodName = item.methodName || item.function_name
-                      return {
-                        caption: methodName,
-                        snippet: methodName + '(${1})',
-                        meta: typeMapping[item.type],
-                        type: 'snippet',
-                        score: 1000000 - index,
-                        format: item.format,
-                        parametersDesc: item.parameters_desc,
-                        returnDesc: item.return_value
-                      }
-                    })
-                  )
-                }
-              },
-              getDocTooltip: function (item) {
-                if (item.type == 'snippet') {
-                  let body = item.parametersDesc
-                    ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
-                    : `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
-                  let footer = item.returnDesc
-                    ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
-                    : ''
-                  item.docHTML = `<div class="code-editor-snippet-tips"><div class="code-editor-snippet-tips__header"><span class="panel-title">function</span>${
-                    item.format || item.caption
-                  }</div>${body}${footer}</div>`
-                }
-              }
-            }
-          ]
+            return 0
+          }
         })
+        editor.completers = [
+          {
+            getCompletions: (editor, session, pos, prefix, callback) => {
+              if (prefix.length === 0) {
+                return callback(null, [])
+              } else {
+                return callback(
+                  null,
+                  items.map((item, index) => {
+                    item.score = 1000000 - index
+                    return item
+                  })
+                )
+              }
+            },
+            getDocTooltip: function (item) {
+              if (item.type == 'snippet') {
+                let body = item.parametersDesc
+                  ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
+                  : `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                let footer = item.returnDesc
+                  ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
+                  : ''
+                item.docHTML = `<div class="code-editor-snippet-tips"><div class="code-editor-snippet-tips__header"><span class="panel-title">function</span>${
+                  item.format || item.caption
+                }</div>${body}${footer}</div>`
+              }
+            }
+          }
+        ]
+      })
     }
   }
 }

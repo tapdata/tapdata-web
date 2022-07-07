@@ -6,5 +6,6 @@ export default {
   no_data: '无数据',
   function_type_option_custom: '自定义函数',
   function_type_option_jar: '第三方jar包',
-  function_type_option_system: '系统函数'
+  function_type_option_system: '系统函数',
+  shared_cache: '共享缓存'
 }
