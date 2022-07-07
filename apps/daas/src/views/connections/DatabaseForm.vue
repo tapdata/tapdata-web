@@ -25,7 +25,7 @@
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
             </div>
-            <span class="ml-2">{{ pdkConfig.name }}</span>
+            <span class="ml-2">{{ pdkOptions.name }}</span>
             <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
               {{ $t('connection_form_change') }}
             </el-button>
@@ -157,7 +157,7 @@ export default {
       renameRules: {
         rename: [{ validator: validateRename, trigger: 'blur' }]
       },
-      pdkConfig: {},
+      pdkOptions: {},
       schemaData: null,
       schemaScope: null,
       pdkFormModel: {},
@@ -296,7 +296,7 @@ export default {
         this.submitBtnLoading = true
         // 保存数据源
         let id = this.$route.params?.id
-        let { pdkConfig } = this
+        let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
         let { __TAPDATA_START, __TAPDATA_END } = formValues
         delete formValues['__TAPDATA_START']
@@ -305,8 +305,8 @@ export default {
           {
             ...__TAPDATA_START,
             ...__TAPDATA_END,
-            database_type: pdkConfig.type,
-            pdkHash: pdkConfig.pdkHash
+            database_type: pdkOptions.type,
+            pdkHash: pdkOptions.pdkHash
           },
           {
             status: 'testing',
