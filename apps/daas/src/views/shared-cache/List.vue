@@ -75,6 +75,7 @@
           <div v-for="key in details.fields" :key="key" class="mt-2">{{ key }}</div>
         </div>
       </div>
+      <div class="mt-4">{{ $t('shared_cache_code') }}</div>
       <CodeView class="mt-2" :data="details"></CodeView>
     </Drawer>
   </section>
