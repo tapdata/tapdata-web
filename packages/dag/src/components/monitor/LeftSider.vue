@@ -23,6 +23,15 @@
           </span>
         </div>
       </div>
+      <div class="event-info">
+        <div class="font-color-normal">任务事件统计（条）</div>
+        <div class="flex align-items-center">
+          <div>统计周期</div>
+          <ElSelect v-model="period" size="mini" class="ml-2">
+            <ElOption label="本次运行累计" :value="本次运行累计"></ElOption>
+          </ElSelect>
+        </div>
+      </div>
     </div>
   </aside>
 </template>
@@ -61,14 +70,9 @@ export default {
     StatusItem
   },
 
+
   data() {
     return {
-      collapseMode: 'db',
-      search: '',
-      mapping: this.$route.query,
-      groups: [],
-      activeGroups: ['plugin'],
-      connections: [],
       dbList: [],
       dbPage: 1,
       dbTotal: 0,
@@ -82,17 +86,14 @@ export default {
       databaseType: '',
       dbLoading: true,
       dbLoadingMore: false,
-      skeletonThrottle: 0,
       syncType: {
         initial_sync: '全量',
         cdc: '增量',
         'initial_sync+cdc': '全量+增量'
       },
       database: [],
-      comingAllowDatabase: [], // 即将上线
-      otherType: [],
-      automationType: '', //插件化数据源
-      connectionType: 'source'
+      connectionType: 'source',
+      period: ''
     }
   },
 
