@@ -144,13 +144,17 @@ export default {
             },
             getDocTooltip: function (item) {
               if (item.type == 'snippet') {
+                let type = `<div class="code-editor-snippet-tips__type">${item.meta}</div>`
+                let title = `<span class="panel-title">${item.originType ? 'function' : 'Cache name'}</span>`
                 let body = item.parametersDesc
                   ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
-                  : `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                  : item.originType
+                  ? `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                  : `<pre class="code-editor-snippet-tips__body">${item.snippet}</pre>`
                 let footer = item.returnDesc
                   ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
                   : ''
-                item.docHTML = `<div class="code-editor-snippet-tips"><div class="code-editor-snippet-tips__header"><span class="panel-title">function</span>${
+                item.docHTML = `<div class="code-editor-snippet-tips">${type}<div class="code-editor-snippet-tips__header">${title}${
                   item.format || item.caption
                 }</div>${body}${footer}</div>`
               }
@@ -164,8 +168,8 @@ export default {
 </script>
 <style lang="scss">
 .ace_tooltip.ace_doc-tooltip {
-  background: map-get($bgColor, normal);
-  color: map-get($fontColor, normal);
+  background: #fafafa;
+  color: #333c4a;
 }
 .code-editor-snippet-tips {
   max-height: 400px;
@@ -180,7 +184,11 @@ export default {
 }
 .code-editor-snippet-tips__header {
   white-space: normal;
-  word-break: break-word;
+  word-break: break-all;
+}
+.code-editor-snippet-tips__type {
+  color: #2c65ff;
+  font-size: 14px;
 }
 .code-editor-snippet-tips__body,
 .code-editor-snippet-tips__footer {
@@ -194,11 +202,11 @@ export default {
   }
 }
 .ace-katzenmilch {
-  background-color: map-get($bgColor, disable);
+  background-color: #f7f8fa;
   .ace_gutter {
-    background-color: map-get($bgColor, disable);
+    background-color: #f7f8fa;
     .ace_gutter-active-line {
-      color: map-get($fontColor, light);
+      color: #535f72;
     }
   }
 }
