@@ -15,7 +15,7 @@
         );<br />
         <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
       </div>
-      <ClipButton :value="script1"></ClipButton>
+      <ClipButton :value="script[0]"></ClipButton>
     </div>
     <div class="my-2">OR</div>
     <div class="flex">
@@ -29,13 +29,14 @@
         </span>
         );
       </div>
-      <ClipButton :value="script2"></ClipButton>
+      <ClipButton :value="script[1]"></ClipButton>
     </div>
   </div>
 </template>
 
 <script>
 import ClipButton from '@/components/ClipButton'
+import { getCode } from '@tap/business'
 export default {
   components: {
     ClipButton
@@ -52,19 +53,8 @@ export default {
     cacheKeysArr() {
       return this.data?.cacheKeys?.split(',') || []
     },
-    script1() {
-      let cacheKeys = this.data.cacheKeys || ''
-      return `  var cacheRow = CacheService.getCache('${this.data.name || 'cachename'}', ${
-        cacheKeys.length ? 'record.' + this.cacheKeysArr.join(', record.') : 'record.category_code'
-      })\n  record.category_name = cachedRow.category_name`
-    },
-    script2() {
-      let cacheKeys = this.data.cacheKeys || ''
-      return `record.category_name = CacheService.getCacheItem( '${
-        this.data.name || 'cachename'
-      }', 'category_name', defaultValue, ${
-        cacheKeys.length ? 'record.' + this.cacheKeysArr.join(', record.') : 'record.category_code'
-      })`
+    script() {
+      return getCode(this.data)
     }
   }
 }
