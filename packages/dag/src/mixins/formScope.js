@@ -728,6 +728,8 @@ export default {
               if (alternatives.length <= 1) {
                 policyField.setPattern('readPretty')
                 policyField.setValue(alternatives[0] || policyField.initialValue)
+              } else if (!field.form.disabled) {
+                policyField.setPattern('editable')
               }
             }
           }
@@ -739,9 +741,7 @@ export default {
         handleSyncConnection: async field => {
           const id = field.value
           const form = field.form
-          const connection = await connectionsApi.findOne({
-            id
-          })
+          const connection = await connectionsApi.get(id)
           const connectionType = form.getValuesIn('attrs.connectionType') || ''
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')
