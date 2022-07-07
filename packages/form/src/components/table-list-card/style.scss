@@ -1,36 +1,36 @@
 .table-list-card {
   display: flex;
   flex-direction: column;
+  //height: 100px;
   min-height: 100px;
   max-height: calc(100vh - 120px);
   overflow: hidden;
-  .el-card__header  {
+  .el-card__header {
     padding: 8px 16px;
-    background: #FAFAFA;
-    color: #333C4A;
+    background: #fafafa;
+    color: #333c4a;
     font-weight: 500;
   }
 
   .el-card__body {
+    display: flex;
+    flex-direction: column;
     flex: 1;
-    padding: 8px;
+    height: 0;
+    padding: 0;
     position: relative;
-    overflow: auto;
-    .table-list {
-      &.el-loading-parent--relative {
-        position: static !important;
-      }
-      &-item {
-        height: 32px;
-        line-height: 32px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        &:hover {
-          background-color: #edf1f9;
-        }
+    .el-loading-parent--relative {
+      position: static !important;
+    }
+    .table-list-item {
+      height: 32px;
+      line-height: 32px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      &:hover {
+        background-color: #edf1f9;
       }
     }
   }
-
 }
