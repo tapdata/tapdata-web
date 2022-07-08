@@ -1,5 +1,5 @@
 import { defineComponent, ref, reactive, nextTick } from 'vue-demi'
-import { taskApi } from '@tap/api'
+import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
 import EmptyItem from 'web-core/components/EmptyItem'
@@ -289,33 +289,13 @@ export const FieldRenameProcessor = defineComponent({
     }
     //重置
     const doOperationRest = () => {
-      let map = mapping(fieldsMapping)
-      if (config.checkedTables?.length > 0) {
-        //表级别
-        config.checkedTables.forEach(t => {
-          if (t?.sourceQualifiedName === map[t?.sourceQualifiedName]?.qualifiedName) {
-            delete map[t?.sourceQualifiedName]
-          }
-        })
-        fieldsMapping = toList(map)
-        emit('change', fieldsMapping)
-        //更新整个数据
-        setTimeout(() => {
-          loadData()
-        }, 2000)
-      } else if (config.checkedFields?.length > 0) {
-        //字段级别
-        config.checkedFields.forEach(t => {
-          doUpdateField(t, 'rest', t.targetFieldName)
-        })
-      } else {
-        //全局
-        emit('change', [])
-        //更新整个数据
-        setTimeout(() => {
-          loadData()
-        }, 2000)
+      let where = {
+        taskId: root.$route.params.id,
+        nodeId: props.nodeId
       }
+      metadataInstancesApi.resetTable(where).then(() => {
+        loadData() //更新整个数据
+      })
     }
     //单个删除字段
     const doShowRow = row => {

@@ -50,6 +50,8 @@ export default class Http {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
       const qs = queryStr ? '?filter=' + encodeURIComponent(queryStr) : ''
       return this.axios.get(this.url + '/' + params.join('/') + qs)
+    } else if (typeof params === 'string') {
+      return this.axios.get(this.url + '/' + params)
     }
     params = params || {}
     return this.axios.get(this.url, { params })

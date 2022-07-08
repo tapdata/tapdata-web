@@ -345,7 +345,7 @@
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import { metadataInstancesApi, connectionsApi } from '@tap/api'
+import { metadataInstancesApi, connectionsApi, workerApi } from '@tap/api'
 import Locale from '../../mixins/locale'
 
 export default {
@@ -537,7 +537,6 @@ export default {
     },
     //重新加载模型
     async reload() {
-      const workerApi = new workerApi()
       const data = await workerApi.getAvailableAgent()
       if (!data?.result?.length) {
         this.$message.error(this.t('agent_check_error'))
