@@ -31,7 +31,7 @@ export class TargetDatabase extends NodeType {
       connectionId: {
         type: 'object',
         'x-display': 'hidden',
-        'x-reactions': '{{handleSyncConnection}}'
+        'x-reactions': '{{useSyncConnection}}'
       },
 
       layout: {
