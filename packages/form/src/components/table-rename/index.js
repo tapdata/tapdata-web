@@ -4,9 +4,11 @@ import { FormItem } from '../index'
 import { observer } from '@formily/reactive-vue'
 import EmptyItem from 'web-core/components/EmptyItem'
 import VIcon from 'web-core/components/VIcon'
-import './style.scss'
 import { taskApi } from '@tap/api'
 import { observe } from '@formily/reactive'
+// import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+// import { RecycleScroller } from 'vue-virtual-scroller'
+import './style.scss'
 
 export const TableRename = observer(
   defineComponent({
@@ -16,7 +18,14 @@ export const TableRename = observer(
       const form = formRef.value
       const tableDataRef = ref([])
       const loading = ref(false)
-      let nameMap = reactive(props.value ? { ...props.value } : {})
+      let nameMap = reactive(
+        props.value
+          ? props.value.reduce((obj, item) => {
+              obj[item.previousTableName] = item.currentTableName
+              return obj
+            }, {})
+          : {}
+      )
       const config = reactive({
         search: '',
         replaceBefore: '',
@@ -25,6 +34,8 @@ export const TableRename = observer(
         suffix: '',
         transferCase: ''
       })
+
+      let prevMap = {}
 
       const makeTable = () => {
         if (form.values.$inputs?.length) {
@@ -38,7 +49,11 @@ export const TableRename = observer(
               pageSize: 10000
             })
             .then(res => {
-              tableDataRef.value = res.items.map(item => item.sourceObjectName)
+              prevMap = {}
+              tableDataRef.value = res.items.map(item => {
+                prevMap[item.previousTableName] = item.sourceObjectName
+                return item.previousTableName
+              })
             })
             .finally(() => {
               loading.value = false
@@ -111,7 +126,18 @@ export const TableRename = observer(
       }
 
       const emitChange = () => {
-        emit('change', { ...nameMap })
+        const arr = []
+        Object.entries(nameMap).forEach(([previousTableName, currentTableName]) => {
+          const originTableName = prevMap[previousTableName]
+          if (originTableName) {
+            arr.push({
+              originTableName,
+              previousTableName,
+              currentTableName
+            })
+          }
+        })
+        emit('change', arr)
       }
 
       return {
@@ -156,6 +182,41 @@ export const TableRename = observer(
             </div>
             <div class="name-list-content font-color-light overflow-auto">
               {this.filterNames.length ? (
+                /*<RecycleScroller
+                  items={this.filterNames}
+                  itemSize={38}
+                  buffer={50}
+                  scopedSlots={{
+                    default: ({ item: name }) => (
+                      <div key={name} class="name-list-item flex align-center position-relative">
+                        <div class="flex-1 px-4 text-truncate">
+                          <span title={name}>{name}</span>
+                        </div>
+                        <div
+                          class={[
+                            'flex-1 px-4 text-truncate',
+                            {
+                              'color-primary': !!this.nameMap[name]
+                            }
+                          ]}
+                        >
+                          <input
+                            readOnly={this.disabled}
+                            class="name-list-item-input"
+                            value={this.nameMap[name] || name}
+                            onChange={event => {
+                              this.updateName(event.target.value, name)
+                              this.emitChange()
+                            }}
+                          />
+                        </div>
+                        <VIcon size="12" class="name-list-item-center font-color-light">
+                          left
+                        </VIcon>
+                      </div>
+                    )
+                  }}
+                ></RecycleScroller>*/
                 this.filterNames.map(name => {
                   return (
                     <div key={name} class="name-list-item flex align-center position-relative">
