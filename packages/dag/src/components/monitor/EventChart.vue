@@ -119,10 +119,15 @@ export default {
         yAxis: {
           type: 'category',
           axisLine: {
-            show: false
+            lineStyle: {
+              color: '#E9E9E9'
+            }
           },
           axisTick: {
             show: false
+          },
+          axisLabel: {
+            color: '#535F72'
           },
           data: this.yData
         },
