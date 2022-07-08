@@ -46,9 +46,11 @@
     </TablePage>
     <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
       <div v-if="details.id" class="shared-cache-details--header flex pb-3">
-        <VIcon class="icon">text</VIcon>
-        <div class="flex-fill ml-4">
-          <div class="fs-6">{{ details.name }}</div>
+        <div class="img-box">
+          <VIcon class="icon">text</VIcon>
+        </div>
+        <div class="flex-fill ml-4 overflow-hidden">
+          <div class="fs-6 ellipsis">{{ details.name }}</div>
           <span :class="['status-' + details.statusResultData, 'status-block', 'mt-2']">
             {{ $t('task_preview_status_' + details.statusResultData) }}
           </span>
@@ -243,7 +245,7 @@ export default {
         { label: this.$t('column_create_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
         { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
-        { label: this.$t('shared_cache_max_memory'), value: row.maxMemory, icon: 'taskLastHour' }
+        { label: this.$t('shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
       ]
       this.isShowDetails = true
     },
