@@ -43,11 +43,7 @@
           </template>
         </LeftSider>
       </VExpandXTransition>
-      <div
-        v-if="!stateIsReadonly"
-        v-show="!showLeftSider"
-        class="sider-expand-wrap flex justify-center align-center rotate-180"
-      >
+      <div v-if="!stateIsReadonly" class="sider-expand-wrap flex justify-center align-center rotate-180">
         <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
       <!--内容体-->
@@ -58,7 +54,6 @@
           @add-node="handleAddNodeToPos"
           @mouse-select="handleMouseSelect"
           @change-scale="handleChangeScale"
-          @click-blank="showLeftSider = true"
         >
           <DFNode
             v-for="n in allNodes"
@@ -175,8 +170,7 @@ export default {
 
       dataflow,
 
-      scale: 1,
-      showLeftSider: true
+      scale: 1
     }
   },
 
@@ -187,20 +181,6 @@ export default {
         $settings: this.dataflow
       }
     }
-  },
-
-  watch: {
-    'allNodes.length'(v) {
-      if (v === 0) {
-        this.showLeftSider = true
-      }
-    }
-    // dataflow: {
-    //   deep: true,
-    //   handler(v) {
-    //     console.log('watch-dataflow', v)
-    //   }
-    // }
   },
 
   async created() {

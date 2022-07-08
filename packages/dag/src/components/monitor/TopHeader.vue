@@ -106,6 +106,7 @@
           class="mx-2"
           :disabled="dataflow.disabledData && dataflow.disabledData.stop"
           size="mini"
+          type="danger"
           @click="$emit('forceStop')"
         >
           {{ t('task_list_force_stop') }}
@@ -116,6 +117,7 @@
           class="mx-2"
           :disabled="dataflow.disabledData && dataflow.disabledData.stop"
           size="mini"
+          type="danger"
           @click="$emit('stop')"
         >
           {{ t('task_list_stop') }}
