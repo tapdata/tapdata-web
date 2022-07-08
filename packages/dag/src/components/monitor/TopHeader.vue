@@ -3,6 +3,7 @@
     <button @click="$emit('page-return')" class="icon-btn">
       <VIcon size="18">left</VIcon>
     </button>
+
     <TextEditable
       v-model="name"
       class="mr-3"
@@ -32,7 +33,7 @@
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_edit')">
+      <ElTooltip v-if="!dataflow.disabledData.edit" transition="tooltip-fade-in" :content="t('button_edit')">
         <button @click="$emit('edit')" class="icon-btn">
           <VIcon size="20">edit</VIcon>
         </button>
@@ -165,7 +166,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
+    ...mapGetters('dataflow', ['dataflowId', 'allNodes', 'activeType']),
     ...mapState('dataflow', ['spaceKeyPressed']),
 
     scaleTxt() {

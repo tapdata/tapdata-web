@@ -25,13 +25,12 @@
       </div>
       <div class="info-box">
         <div class="font-color-normal fw-bold mb-2">任务事件统计（条）</div>
-        <div class="flex align-items-center mb-4">
-          <div>统计周期</div>
-          <ElSelect v-model="period" size="mini" class="ml-2">
-            <ElOption label="本次运行累计" value="now"></ElOption>
-          </ElSelect>
-        </div>
+        <TimeSelect></TimeSelect>
         <EventChart></EventChart>
+      </div>
+      <div class="info-box">
+        <div class="font-color-normal fw-bold mb-2">性能指标</div>
+        <TimeSelect :options="performanceOptions"></TimeSelect>
       </div>
     </div>
   </aside>
@@ -61,6 +60,7 @@ import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { StatusItem } from '@tap/business'
 import EventChart from './EventChart'
 import Locale from '../../mixins/locale'
+import TimeSelect from './components/TimeSelect'
 
 export default {
   name: 'LeftSider',
@@ -70,7 +70,8 @@ export default {
   },
   components: {
     StatusItem,
-    EventChart
+    EventChart,
+    TimeSelect
   },
 
   data() {
@@ -95,7 +96,12 @@ export default {
       },
       database: [],
       connectionType: 'source',
-      period: 'now'
+      performanceOptions: [
+        {
+          label: '最近5分钟',
+          value: 'lastmin5'
+        }
+      ]
     }
   },
 

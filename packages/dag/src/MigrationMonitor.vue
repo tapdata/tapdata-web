@@ -184,9 +184,6 @@ export default {
   },
 
   async created() {
-    if (this.$route.name === 'DataflowViewer') {
-      this.setStateReadonly(true)
-    }
     this.setValidateLanguage()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
@@ -215,12 +212,11 @@ export default {
     },
 
     async openDataflow(id) {
-      console.log('openDataflow', 1112)
+      console.log('openDataflow', 1112, this.dataflow)
       const data = await this.loadDataflow(id)
       console.log('openDataflow', data)
       if (data) {
         const { dag } = data
-        this.setStateReadonly(this.$route.name === 'MigrateViewer' ? true : this.dataflow.disabledData.edit)
         this.setTaskId(data.id)
         this.setEdges(dag.edges)
         this.setEditVersion(data.editVersion)
@@ -434,9 +430,7 @@ export default {
     async handleStart() {
       this.isSaving = true
       try {
-        let subId = this.dataflow.statuses[0]?.id || ''
-        const result = await taskApi.start(this.dataflow.id)
-        // this.reformDataflow(result)
+        await taskApi.start(this.dataflow.id)
         this.$message.success(this.t('message_operation_succuess'))
         this.isSaving = false
       } catch (e) {

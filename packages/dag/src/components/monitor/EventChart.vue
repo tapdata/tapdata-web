@@ -1,16 +1,16 @@
 <template>
   <div>
     <div class="flex align-items-center mb-2">
-      <span class="font-color-normal fw-bold fs-3 din-font">{{ total[0].value }}</span>
+      <span class="font-color-normal fw-bold fs-3 din-font">{{ formatNumber(total[0].value) }}</span>
       <span class="ml-2">{{ total[0].label }}</span>
       <ElDivider direction="vertical" class="divider mx-4"></ElDivider>
-      <span class="font-color-normal fw-bold fs-3 din-font">{{ total[1].value }}</span>
+      <span class="font-color-normal fw-bold fs-3 din-font">{{ formatNumber(total[1].value) }}</span>
       <span class="ml-2">{{ total[1].label }}</span>
     </div>
     <div>
       <span class="invisible">{{ total[0].label }}</span>
-      <span class="ml-2">事件统计（条）累计：</span>
-      <span>3,456,789</span>
+      <span class="ml-2">{{ total[2].label }}</span>
+      <span>{{ formatNumber(total[2].value, 'thousands') }}</span>
     </div>
     <Chart type="bar" :extend="barOptions" :style="{ height }"></Chart>
   </div>
@@ -18,6 +18,7 @@
 
 <script>
 import { Chart } from '@tap/component'
+import { formatNumber } from '../../util'
 
 export default {
   name: 'EventChart',
@@ -28,11 +29,15 @@ export default {
       default: () => [
         {
           label: '总输入',
-          value: '70.3K'
+          value: 545454
         },
         {
           label: '总输出',
-          value: '29.7K'
+          value: 123
+        },
+        {
+          label: '事件统计（条）累计：',
+          value: 123456789
         }
       ]
     },
@@ -152,6 +157,9 @@ export default {
         })
       })
       this.barOptions.series = series
+    },
+    formatNumber() {
+      return formatNumber(...arguments)
     }
   }
 }
