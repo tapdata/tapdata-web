@@ -70,8 +70,11 @@ export default {
       let findOne = this.items.find(t => t.value === value)
       if (findOne?.type === 'custom') {
         this.openPicker()
+        return
       }
       this.isTime = !!findOne?.isTime
+      // this.$emit(this.isTime ? 'time' : 'value', findOne.value)
+      this.$emit('change', findOne.value, this.isTime, findOne)
     },
     openPicker() {
       if (this.period && this.period !== 'custom') {
@@ -96,6 +99,8 @@ export default {
         this.isTime = true
       }
       this.period = valJoin
+      // this.$emit('time', valJoin)
+      this.$emit('change', valJoin, true, val)
     },
     blur() {
       if (!this.time?.length) {

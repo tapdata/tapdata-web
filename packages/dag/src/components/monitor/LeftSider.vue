@@ -25,7 +25,7 @@
       </div>
       <div class="info-box">
         <div class="font-color-normal fw-bold mb-2">任务事件统计（条）</div>
-        <TimeSelect></TimeSelect>
+        <TimeSelect @change="eventChangeTime"></TimeSelect>
         <EventChart></EventChart>
       </div>
       <div class="info-box">
@@ -377,6 +377,10 @@ export default {
       }
 
       return props
+    },
+
+    eventChangeTime(val, isTime) {
+      console.log('eventChangeTime', val, isTime)
     }
   }
 }
