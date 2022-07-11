@@ -433,9 +433,11 @@ export class Table extends NodeType {
                     type: 'void',
                     title: 'DDL支持列表',
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      feedbackLayout: 'none'
+                    },
                     'x-component': 'DdlEventList',
                     'x-component-props': {
-                      findParentNode: '{{findParentNode}}',
                       findParentNodes: '{{findParentNodes}}'
                     }
                   },

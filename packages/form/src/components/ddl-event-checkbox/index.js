@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, ref, onMounted } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useForm, useField } from '@formily/vue'
 
@@ -20,17 +20,14 @@ export const DdlEventCheckbox = observer(
   defineComponent({
     props: ['value'],
     setup(props, { emit }) {
-      // attrs.capabilities
       const formRef = useForm()
       const form = formRef.value
-
       const events = ref([])
       const selected = ref([])
       const capabilities = form.values.attrs.capabilities || []
-      events.value = capabilities.filter(item => item.type === 10).map(item => item.id)
-
       const unselected = ref(props.value || [])
 
+      events.value = capabilities.filter(item => item.type === 10).map(item => item.id)
       selected.value = unselected.value.length
         ? events.value.filter(name => !unselected.value.includes(name))
         : [...events.value]
@@ -40,7 +37,6 @@ export const DdlEventCheckbox = observer(
           <ElCheckboxGroup
             value={selected.value}
             onInput={value => {
-              console.log('ElCheckboxGroup.value', value) // eslint-disable-line
               selected.value = value
             }}
           >
@@ -48,7 +44,6 @@ export const DdlEventCheckbox = observer(
               <ElCheckbox
                 label={name}
                 onChange={value => {
-                  console.log('ElCheckbox.chagne', value) // eslint-disable-line
                   const i = unselected.value.indexOf(name)
                   if (value) {
                     ~i && unselected.value.splice(i, 1)
@@ -102,21 +97,26 @@ export const DdlEventList = observer(
         })
       }
 
-      if (!list.value.length) {
-        fieldRef.value.setDisplay('hidden')
-      }
+      onMounted(() => {
+        if (!list.value.length) {
+          fieldRef.value.setDisplay('hidden')
+        }
+      })
 
       return () => {
         return (
           <div>
             {list.value.map(item => {
-              return (
-                <ElCheckboxGroup disabled value={item.events}>
+              return [
+                <div class="font-color-light mb-1 lh-1">来自源连接：{item.source}</div>,
+                <div>
                   {item.events.map(name => (
-                    <ElCheckbox label={name}>{EVENT_MAP[name]}</ElCheckbox>
+                    <ElTag type="info" effect="light">
+                      {EVENT_MAP[name]}
+                    </ElTag>
                   ))}
-                </ElCheckboxGroup>
-              )
+                </div>
+              ]
             })}
           </div>
         )

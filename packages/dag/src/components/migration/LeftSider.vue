@@ -491,19 +491,12 @@ export default {
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
-          capabilities: item.capabilities /*[
-            ...item.capabilities,
+          capabilities: item.capabilities || []
+          /*capabilities: [
+            ...(item.capabilities || []),
             {
-              id: 'alter_field_name_event',
-              type: 10
-            },
-            {
-              id: 'alter_field_attributes_event',
-              type: 10
-            },
-            {
-              id: 'clear_table_event',
-              type: 10
+              id: 'new_field_function',
+              type: 11
             }
           ]*/
         }
