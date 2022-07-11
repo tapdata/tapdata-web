@@ -491,7 +491,7 @@ export default {
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
-          capabilities: [
+          capabilities: item.capabilities /*[
             ...item.capabilities,
             {
               id: 'alter_field_name_event',
@@ -505,7 +505,7 @@ export default {
               id: 'clear_table_event',
               type: 10
             }
-          ]
+          ]*/
         }
       }
 
