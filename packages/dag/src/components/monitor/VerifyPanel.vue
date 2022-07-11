@@ -1,10 +1,10 @@
 <template>
   <section
     v-show="isShow"
-    class="config-panel border-start flex-column"
+    class="verify-panel border-start flex-column"
     :class="{ flex: isShow, 'show-verify': isShow }"
   >
-    <div>数据校验{{ activeType }}</div>
+    <div>数据校验</div>
   </section>
 </template>
 
@@ -355,18 +355,7 @@ export default observer({
 })
 </script>
 <style lang="scss" scoped>
-.attr-panel {
-  ::v-deep {
-    .attr-panel-body {
-      padding-top: 0;
-    }
-    .formily-element-form-item-label label {
-      font-size: 12px;
-    }
-    .el-collapse-item__header {
-      font-size: 14px;
-      font-weight: 500;
-    }
-  }
+.verify-panel {
+  width: 306px;
 }
 </style>

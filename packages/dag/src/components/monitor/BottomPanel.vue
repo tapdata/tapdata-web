@@ -1,5 +1,5 @@
 <template>
-  <section v-show="isShow" class="bottom-panel border-start flex-column">底部</section>
+  <section v-show="isShow" class="bottom-panel border-top flex-column">底部</section>
 </template>
 
 <script>
@@ -130,7 +130,7 @@ $headerHeight: 40px;
 .bottom-panel {
   position: relative;
   z-index: 10;
-  height: 200px;
+  height: 328px;
   //height: 100%;
   overflow: auto;
   background-color: #fff;
