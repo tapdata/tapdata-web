@@ -27,7 +27,7 @@ export const DdlEventCheckbox = observer(
       const events = ref([])
       const selected = ref([])
       const capabilities = form.values.attrs.capabilities || []
-      events.value = capabilities.filter(item => item.type === 10).map(item => item.id)
+      events.value = capabilities.filter(item => item.type === 20).map(item => item.id)
 
       const unselected = ref(props.value || [])
 
@@ -70,19 +70,22 @@ export const DdlEventCheckbox = observer(
 
 export const DdlEventList = observer(
   defineComponent({
-    props: ['value', 'findParentNode'],
+    props: ['value', 'findParentNode', 'findParentNodes'],
     setup(props, { emit }) {
       const formRef = useForm()
       const form = formRef.value
       const list = ref([])
       const parent = props.findParentNode(form.values.id)
+      const parents = props.findParentNodes(form.values.id)
+
+      console.log('parents', parents) // eslint-disable-line
 
       if ((parent.type === 'database' || parent.type === 'table') && parent.enableDDL) {
         const disabledEvents = parent.disabledEvents || []
         const functions = form.values.attrs.capabilities.filter(item => item.type === 11).map(item => item.id)
         let events = parent.attrs.capabilities
           .filter(item => {
-            if (item.type !== 10 || disabledEvents.includes(item.id)) return
+            if (item.type !== 20 || disabledEvents.includes(item.id)) return
             const functionName = item.id.replace(/_event$/, '_function')
             return functions.includes(functionName)
           })

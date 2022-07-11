@@ -727,7 +727,21 @@ export default {
           accessNodeProcessId: connection.accessNodeProcessId,
           pdkType: connection.pdkType,
           pdkHash: connection.pdkHash,
-          capabilities: connection.capabilities
+          // capabilities: connection.capabilities
+          capabilities: [
+            {
+              id: 'alter_field_name_event',
+              type: 10
+            },
+            {
+              id: 'alter_field_attributes_event',
+              type: 10
+            },
+            {
+              id: 'clear_table_event',
+              type: 10
+            }
+          ]
         }
       }
     }

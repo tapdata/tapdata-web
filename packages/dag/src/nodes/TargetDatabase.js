@@ -103,7 +103,8 @@ export class TargetDatabase extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'DdlEventList',
         'x-component-props': {
-          findParentNode: '{{findParentNode}}'
+          findParentNode: '{{findParentNode}}',
+          findParentNodes: '{{findParentNodes}}'
         }
       },
 
