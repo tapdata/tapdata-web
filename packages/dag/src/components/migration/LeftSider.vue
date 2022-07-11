@@ -92,7 +92,7 @@
       </ElScrollbar>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
