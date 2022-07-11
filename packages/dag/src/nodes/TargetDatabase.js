@@ -97,6 +97,16 @@ export class TargetDatabase extends NodeType {
       //   'x-component': 'ClipboardBtn'
       // },
 
+      ddlEvents: {
+        type: 'void',
+        title: 'DDL支持列表',
+        'x-decorator': 'FormItem',
+        'x-component': 'DdlEventList',
+        'x-component-props': {
+          findParentNode: '{{findParentNode}}'
+        }
+      },
+
       name: {
         type: 'string',
         'x-display': 'hidden'

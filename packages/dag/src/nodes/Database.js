@@ -93,7 +93,6 @@ export class Database extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'InputNumber',
         'x-decorator-props': {
-          colon: true,
           tooltip: '全量每批次读取的条数'
         },
         'x-component-props': {
@@ -108,6 +107,27 @@ export class Database extends NodeType {
             }
           }
         }
+      },
+
+      enableDDL: {
+        title: '自动DDL',
+        type: 'boolean',
+        default: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Switch',
+        'x-reactions': {
+          target: 'disabledEvents',
+          fulfill: {
+            state: {
+              display: '{{$self.value ? "visible" :"hidden"}}'
+            }
+          }
+        }
+      },
+
+      disabledEvents: {
+        type: 'array',
+        'x-component': 'DdlEventCheckbox'
       },
 
       migrateTableSelectType: {
