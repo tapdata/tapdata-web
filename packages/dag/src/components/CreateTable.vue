@@ -46,12 +46,14 @@ export default {
       },
       rules: {
         newTable: [
-          {
-            pattern: /^[a-zA-Z][0-9a-zA-Z_.-]*$/,
-            trigger: 'blur',
-            message:
-              this.dialog.type === 'table' ? this.t('dialog_tableValidateTip') : this.t('dialog_collectionValidateTip')
-          }
+          { required: true, trigger: 'blur' }
+          // {
+          //
+          //   pattern: /^[a-zA-Z][0-9a-zA-Z_.-]*$/,
+          //   trigger: 'blur',
+          //   message:
+          //     this.dialog.type === 'table' ? this.t('dialog_tableValidateTip') : this.t('dialog_collectionValidateTip')
+          // }
         ]
       }
     }
