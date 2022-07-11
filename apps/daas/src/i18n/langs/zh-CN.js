@@ -624,7 +624,7 @@ export default {
   connection_list_delete_connection_title: '是否删除该连接？',
   connection_list_all_status: '全部状态',
   connection_list_efficient: '有效',
-  connection_list_invalidation: '失效',
+  connection_list_invalidation: '无效',
   connection_list_testing: '测试中',
   connection_list_desc:
     '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。更多配置说明，请点击',
