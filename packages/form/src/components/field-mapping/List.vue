@@ -115,11 +115,7 @@
             </ElTableColumn>
             <ElTableColumn :label="t('dag_dialog_field_mapping_type')" prop="sourceFieldType">
               <template #default="{ row }">
-                <div class="cursor-pointer" v-if="!row.is_deleted && !readOnly">
-                  <span :show-overflow-tooltip="true">{{ row.sourceFieldType }}</span>
-                  <i class="field-mapping__icon el-icon-arrow-down"></i>
-                </div>
-                <div v-else>
+                <div>
                   <span :show-overflow-tooltip="true">{{ row.sourceFieldType }}</span>
                 </div>
               </template>
