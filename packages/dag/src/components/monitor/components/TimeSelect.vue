@@ -2,7 +2,7 @@
   <div class="time-select">
     <div class="flex align-items-center mb-4">
       <div>{{ title }}</div>
-      <ElSelect v-model="period" size="mini" class="ml-2" @change="changeFnc">
+      <ElSelect v-model="period" :class="{ 'is-time': isTime }" size="mini" class="ml-2" @change="changeFnc">
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
       <VIcon class="color-primary ml-2" @click="openPicker">timer</VIcon>
@@ -19,6 +19,7 @@
       style="height: 0; border: 0"
       class="position-absolute overflow-hidden p-0 m-0"
       @change="changeTime"
+      @blur="blur"
     >
     </ElDatePicker>
   </div>
@@ -46,13 +47,18 @@ export default {
         }
       ]
     },
-    rangeSeparator: String
+    rangeSeparator: String,
+    interval: {
+      type: Number,
+      default: 1000
+    }
   },
   data() {
     return {
       period: '',
       time: [],
-      items: []
+      items: [],
+      isTime: false
     }
   },
   mounted() {
@@ -61,28 +67,42 @@ export default {
   },
   methods: {
     changeFnc(value) {
-      console.log('changeFnc', value, arguments)
       let findOne = this.items.find(t => t.value === value)
-      console.log('findOne', findOne)
       if (findOne?.type === 'custom') {
         this.openPicker()
       }
+      this.isTime = !!findOne?.isTime
     },
     openPicker() {
+      if (this.period && this.period !== 'custom') {
+        this.time = this.period.split(',')
+      }
       this.$refs.datetime.focus()
     },
     changeTime(val) {
       const { rangeSeparator, formatToString } = this.$refs.datetime
       const label = formatToString(val)?.join(rangeSeparator)
-      const valJoin = val.join()
+      const valJoin = val?.join()
+      if (!valJoin) {
+        return
+      }
       const findOne = this.items.find(t => t.value === valJoin)
       if (!findOne) {
         this.items.push({
           label: label,
-          value: valJoin
+          value: valJoin,
+          isTime: true
         })
+        this.isTime = true
       }
       this.period = valJoin
+    },
+    blur() {
+      if (!this.time?.length) {
+        let t = Date.now()
+        this.changeTime([t - this.interval, t])
+      }
+      this.time = []
     }
   }
 }
@@ -94,5 +114,8 @@ export default {
 }
 .datetime {
   position: absolute;
+}
+.is-time {
+  flex: 1;
 }
 </style>
