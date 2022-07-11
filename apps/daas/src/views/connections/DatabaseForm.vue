@@ -596,6 +596,9 @@ export default {
                       type: 'string',
                       title: this.$t('connection_form_table_filter'),
                       'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        tooltip: this.$t('connection_form_table_filter_tips')
+                      },
                       'x-component': 'Input.TextArea',
                       'x-component-props': {
                         placeholder: this.$t('connection_form_database_owner_tip')
@@ -606,6 +609,9 @@ export default {
                       default: false,
                       title: this.$t('connection_form_shared_mining'),
                       'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        tooltip: this.$t('connection_form_shared_mining_tip')
+                      },
                       'x-component': 'Switch',
                       'x-component-props': {
                         placeholder: this.$t('connection_form_shared_mining_tip')
@@ -616,6 +622,9 @@ export default {
                       title: this.$t('connection_form_access_node'),
                       default: 'AUTOMATIC_PLATFORM_ALLOCATION',
                       'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        tooltip: this.$t('connection_form_access_node_tip')
+                      },
                       'x-component': 'Select',
                       enum: [
                         { label: this.$t('connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
