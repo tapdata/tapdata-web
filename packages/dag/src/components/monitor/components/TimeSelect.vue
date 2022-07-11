@@ -16,7 +16,7 @@
       end-placeholder="结束日期"
       format="yyyy-MM-dd HH:mm:ss"
       value-format="timestamp"
-      style="height: 0;border: 0"
+      style="height: 0; border: 0"
       class="position-absolute overflow-hidden p-0 m-0"
       @change="changeTime"
     >
@@ -69,17 +69,20 @@ export default {
       }
     },
     openPicker() {
-      console.log('openPicker')
       this.$refs.datetime.focus()
     },
     changeTime(val) {
-      console.log('changeTime', arguments, this.$refs.datetime.formatToString(val))
-      let label = this.$refs.datetime.formatToString(val)?.join()
-      this.items.push({
-        label: label,
-        value: val.join()
-      })
-      this.period = val.join()
+      const { rangeSeparator, formatToString } = this.$refs.datetime
+      const label = formatToString(val)?.join(rangeSeparator)
+      const valJoin = val.join()
+      const findOne = this.items.find(t => t.value === valJoin)
+      if (!findOne) {
+        this.items.push({
+          label: label,
+          value: valJoin
+        })
+      }
+      this.period = valJoin
     }
   }
 }
