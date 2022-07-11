@@ -1,19 +1,12 @@
 <template>
-  <section v-show="activeType === 'record'" class="bottom-panel border-start flex-column">
-    底部
-  </section>
+  <section v-show="isShow" class="bottom-panel border-start flex-column">底部</section>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
-import FormPanel from '../FormPanel'
-import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
-import NodeIcon from '../NodeIcon'
-import SettingPanel from './VerifyPanel'
-import { TextEditable } from '@tap/component'
 import Locale from '../../mixins/locale'
 
 export default {
@@ -33,10 +26,11 @@ export default {
     }
   },
 
-  components: { TextEditable, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
-
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    isShow() {
+      return this.activeType?.includes('record')
+    }
   },
 
   watch: {

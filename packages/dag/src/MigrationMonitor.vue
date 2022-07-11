@@ -10,6 +10,7 @@
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
+      @handleHide="handleHide"
       @handleShow="handleShow"
       @change-name="handleUpdateName"
       @locate-node="handleLocateNode"
@@ -417,14 +418,25 @@ export default {
       })
     },
 
-    handleShow(type) {
-      console.log('handleShow', type)
-      this.deselectAllNodes()
-      if (this.activeType === type) {
-        this.setActiveType(null)
-      } else {
-        this.setActiveType(type)
+    handleHide(type) {
+      let types = this.activeType?.split(',') || []
+      let index = types.indexOf(type)
+      if (index > -1) {
+        types.splice(index, 1)
+        this.setActiveType(types.join())
       }
+    },
+
+    handleShow(type) {
+      this.deselectAllNodes()
+      let types = this.activeType?.split(',') || []
+      let index = types.indexOf(type)
+      if (index > -1) {
+        types.splice(index, 1)
+      } else {
+        types.push(type)
+      }
+      this.setActiveType(types.join())
     },
 
     async handleStart() {

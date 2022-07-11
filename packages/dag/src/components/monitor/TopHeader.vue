@@ -15,25 +15,37 @@
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
       <ElTooltip transition="tooltip-fade-in" content="校验">
-        <button @click="$emit('handleShow', 'verify')" class="icon-btn" :class="{ active: activeType === 'verify' }">
+        <button
+          @click="$emit('handleHide', 'settings').$emit('handleShow', 'verify')"
+          class="icon-btn"
+          :class="{ active: activeType && activeType.includes('verify') }"
+        >
           <VIcon size="20">verify-list</VIcon>
         </button>
       </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" content="日志">
-        <button @click="$emit('handleShow', 'record')" class="icon-btn" :class="{ active: activeType === 'record' }">
+        <button
+          @click="$emit('handleShow', 'record')"
+          class="icon-btn"
+          :class="{ active: activeType && activeType.includes('record') }"
+        >
           <VIcon size="20">list</VIcon>
         </button>
       </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
         <button
-          @click="$emit('handleShow', 'settings')"
+          @click="$emit('handleHide', 'verify').$emit('handleShow', 'settings')"
           class="icon-btn"
-          :class="{ active: activeType === 'settings' }"
+          :class="{ active: activeType && activeType.includes('settings') }"
         >
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip v-if="!dataflow.disabledData.edit" transition="tooltip-fade-in" :content="t('button_edit')">
+      <ElTooltip
+        v-if="dataflow.disabledData && !dataflow.disabledData.edit"
+        transition="tooltip-fade-in"
+        :content="t('button_edit')"
+      >
         <button @click="$emit('edit')" class="icon-btn">
           <VIcon size="20">edit</VIcon>
         </button>

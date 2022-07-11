@@ -1,8 +1,8 @@
 <template>
   <section
-    v-show="activeType === 'verify'"
+    v-show="isShow"
     class="config-panel border-start flex-column"
-    :class="{ flex: activeType === 'verify', 'show-verify': activeType === 'verify' }"
+    :class="{ flex: isShow, 'show-verify': isShow }"
   >
     <div>数据校验{{ activeType }}</div>
   </section>
@@ -11,7 +11,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { createForm } from '@formily/core'
-// import { observable } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
@@ -276,7 +275,10 @@ export default observer({
 
   computed: {
     // ...mapGetters('dataflow', ['stateIsReadonly'])
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    isShow() {
+      return this.activeType?.includes('verify')
+    }
   },
 
   watch: {
