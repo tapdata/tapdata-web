@@ -700,13 +700,15 @@ export default {
     getPdkData(id) {
       connectionsApi.getNoSchema(id).then(data => {
         this.model = data
-        let { name, connection_type, table_filter, shareCdcEnable } = this.model
+        let { name, connection_type, table_filter, shareCdcEnable, accessNodeType, accessNodeProcessId } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
             name,
             connection_type,
             table_filter,
-            shareCdcEnable
+            shareCdcEnable,
+            accessNodeType,
+            accessNodeProcessId
           },
           ...this.model?.config
         })
