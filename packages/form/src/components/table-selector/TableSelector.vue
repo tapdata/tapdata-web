@@ -7,8 +7,8 @@
           <ElCheckbox
             v-if="table.tables.length"
             v-model="table.isCheckAll"
-            :indeterminate="!table.isCheckAll && table.checked.length > 0"
             @input="checkAll($event, 'table')"
+            :indeterminate="isIndeterminate"
           ></ElCheckbox>
           <span class="ml-3">{{ t('component_table_selector_candidate_label') }}</span>
           <span v-if="table.tables.length" class="font-color-light ml-2"
@@ -92,7 +92,7 @@
           <ElCheckbox
             v-if="selected.tables.length && !isOpenClipMode"
             v-model="selected.isCheckAll"
-            :indeterminate="!selected.isCheckAll && selected.checked.length > 0"
+            :indeterminate="selectedIsIndeterminate"
             @input="checkAll($event, 'selected')"
           ></ElCheckbox>
           <span class="ml-3">{{ t('component_table_selector_checked_label') }}</span>
@@ -410,6 +410,16 @@ export default {
       let value = this.clipboardValue?.replace(/\s+/g, '')
       let tables = value ? value.split(',') : []
       return Array.from(new Set(tables.filter(it => !!it && it.trim())))
+    },
+    isIndeterminate() {
+      const checkedLength = this.table.checked.length
+      const tablesLength = this.table.tables.length
+      return checkedLength > 0 && checkedLength < tablesLength
+    },
+    selectedIsIndeterminate() {
+      const checkedLength = this.selected.checked.length
+      const tablesLength = this.selected.tables.length
+      return checkedLength > 0 && checkedLength < tablesLength
     }
   },
   watch: {
@@ -422,6 +432,12 @@ export default {
     },
     value(v = []) {
       this.selected.tables = v.concat()
+    },
+    'table.checked'() {
+      this.updateAllChecked()
+    },
+    'filteredData.length'() {
+      this.updateAllChecked()
     }
   },
   created() {
@@ -497,9 +513,8 @@ export default {
       return errorTables
     },
     checkAll(flag, name) {
-      let { tables } = this[name]
       if (flag) {
-        this[name].checked = tables
+        this[name].checked = name === 'table' ? this.filteredData : this.filterSelectedData
       } else {
         this[name].checked = []
       }
@@ -602,6 +617,11 @@ export default {
           this.showProgress = false
           this.progress = 0 //加载完成
         })
+    },
+
+    updateAllChecked() {
+      this.table.isCheckAll =
+        this.filteredData.length > 0 && this.filteredData.every(item => this.table.checked.indexOf(item) > -1)
     }
   }
 }
