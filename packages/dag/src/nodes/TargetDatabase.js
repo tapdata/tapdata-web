@@ -29,9 +29,9 @@ export class TargetDatabase extends NodeType {
         'x-display': 'hidden'
       },
       connectionId: {
-        type: 'object',
+        type: 'string',
         'x-display': 'hidden',
-        'x-reactions': '{{handleSyncConnection}}'
+        'x-reactions': '{{useSyncConnection}}'
       },
 
       layout: {
