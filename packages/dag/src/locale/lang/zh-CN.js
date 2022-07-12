@@ -136,5 +136,6 @@ export default {
   dag_data_setting_month: '月',
   dag_data_setting_week: '星期',
   dag_data_setting_year: '年',
-  mouse_selection: '拖选 (Shift + 拖拽)'
+  mouse_selection: '拖选 (Shift + 拖拽)',
+  table_name_search_placeholder: '请输入表名称搜索'
 }

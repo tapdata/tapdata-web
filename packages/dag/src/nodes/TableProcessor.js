@@ -24,7 +24,7 @@ export class TableProcessor extends NodeType {
         'x-component-props': {
           findParentNode: '{{findParentNode}}',
           listStyle: {
-            maxHeight: 'calc(100vh - 120px)'
+            maxHeight: 'calc((100vh - 120px) * 0.618)'
           }
         }
       }

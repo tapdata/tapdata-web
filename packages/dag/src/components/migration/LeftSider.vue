@@ -73,11 +73,18 @@
                   <NodeIcon :node="db" />
                 </div>
                 <div class="flex flex-column justify-center db-item-content">
-                  <OverflowTooltip class="w-100 text-truncate" :text="db.name" placement="right" :open-delay="400" />
                   <OverflowTooltip
                     class="w-100 text-truncate"
-                    :text="db.connectionUrl"
                     placement="right"
+                    :disabled="dragStarting"
+                    :text="db.name"
+                    :open-delay="400"
+                  />
+                  <OverflowTooltip
+                    class="w-100 text-truncate"
+                    placement="right"
+                    :disabled="dragStarting"
+                    :text="db.connectionUrl"
                     :open-delay="400"
                   />
                 </div>
@@ -92,7 +99,7 @@
       </ElScrollbar>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
@@ -118,7 +125,13 @@
             class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
           >
             <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
-            <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
+            <OverflowTooltip
+              :text="n.name"
+              :disabled="dragStarting"
+              popper-class="df-node-text-tooltip"
+              placement="top"
+              :open-delay="400"
+            />
           </div>
         </ElScrollbar>
       </ElCollapseItem>

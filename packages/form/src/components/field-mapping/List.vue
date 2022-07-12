@@ -430,7 +430,7 @@ export default {
     },
     /*更新target 数据*/
     //获取typeMapping
-    getTypeMapping(row) {
+    getTypeMapping() {
       typeMappingApi.pdkDataType('Mysql').then(res => {
         let targetObj = JSON.parse(res || '{}')
         for (let key in targetObj) {
