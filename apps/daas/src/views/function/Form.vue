@@ -91,7 +91,7 @@ import { javascriptFunctionsApi } from '@tap/api'
 const getScriptObj = script => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
   let name = matchArr1?.[0] || ''
-  let matchArr2 = script.match(/(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=\}\s*)/g)
+  let matchArr2 = script.match(/(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=}\s*$)/g)
   let body = matchArr2?.[0] || ''
   let matchArr3 = script.match(/(?<=function\s+\w+\s*\()[\w\s,]*(?=\))/g)
   let params = matchArr3?.[0] || ''
@@ -119,6 +119,7 @@ export default {
       },
       scriptRules: {
         validator: (rule, value, callback) => {
+          console.log('self.$refs.editor.editor', self.$refs.editor.editor) // eslint-disable-line
           let obj = getScriptObj(value)
           if (!value.trim()) {
             callback(new Error(this.$t('function_script_empty')))

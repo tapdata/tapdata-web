@@ -738,7 +738,7 @@ export default {
           func(updatePolicy, updateField)
         },
 
-        handleSyncConnection: async field => {
+        useSyncConnection: async field => {
           const id = field.value
           const form = field.form
           const connection = await connectionsApi.get(id)
