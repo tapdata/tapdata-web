@@ -413,12 +413,12 @@ export default {
     },
     isIndeterminate() {
       const checkedLength = this.table.checked.length
-      const tablesLength = this.table.tables.length
+      const tablesLength = this.filteredData.length
       return checkedLength > 0 && checkedLength < tablesLength
     },
     selectedIsIndeterminate() {
       const checkedLength = this.selected.checked.length
-      const tablesLength = this.selected.tables.length
+      const tablesLength = this.filterSelectedData.length
       return checkedLength > 0 && checkedLength < tablesLength
     }
   },
