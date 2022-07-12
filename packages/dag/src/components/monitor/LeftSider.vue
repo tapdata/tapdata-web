@@ -28,7 +28,7 @@
       </div>
       <div class="info-box">
         <div class="font-color-normal fw-bold mb-2">任务事件统计（条）</div>
-        <EventChart></EventChart>
+        <EventChart :total="eventTotal" :xData="eventData"></EventChart>
       </div>
       <div class="info-box">
         <div class="font-color-normal fw-bold mb-2">性能指标</div>
@@ -97,7 +97,9 @@ export default {
         'initial_sync+cdc': '全量+增量'
       },
       database: [],
-      connectionType: 'source'
+      connectionType: 'source',
+      eventData: [],
+      eventTotal: null
     }
   },
 
@@ -172,6 +174,7 @@ export default {
     },
     async init() {
       await this.loadDatabase()
+      this.loadEventData()
     },
 
     getDbFilter() {
@@ -377,6 +380,52 @@ export default {
 
     eventChangeTime(val, isTime) {
       console.log('eventChangeTime', val, isTime)
+    },
+
+    loadEventData() {
+      let re = [
+        {
+          label: '插入',
+          key: 'inserted'
+        },
+        {
+          label: '更新',
+          key: 'updated'
+        },
+        {
+          label: '删除',
+          key: 'deleted'
+        },
+        {
+          label: 'DDL',
+          key: 'ddl'
+        },
+        {
+          label: '其他',
+          key: 'other'
+        }
+      ]
+      const { input, output } = this.quota.samples?.[0] || {}
+      let inputTotal = 0
+      let outputTotal = 0
+      this.eventData = re.map(t => {
+        inputTotal += input[t.key]
+        outputTotal += output[t.key]
+        return {
+          label: t.label,
+          value: [input[t.key], output[t.key]]
+        }
+      })
+      this.eventTotal = [
+        {
+          label: '总输入',
+          value: inputTotal
+        },
+        {
+          label: '总输出',
+          value: outputTotal
+        }
+      ]
     }
   }
 }

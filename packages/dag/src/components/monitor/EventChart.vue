@@ -7,7 +7,7 @@
       <span class="font-color-normal fw-bold fs-3 din-font">{{ formatNumber(total[1].value) }}</span>
       <span class="ml-2">{{ total[1].label }}</span>
     </div>
-    <div>
+    <div v-if="total[2]">
       <span class="invisible">{{ total[0].label }}</span>
       <span class="ml-2">{{ total[2].label }}</span>
       <span>{{ formatNumber(total[2].value, 'thousands') }}</span>
@@ -49,23 +49,23 @@ export default {
       type: Array,
       default: () => [
         {
-          name: '插入',
+          label: '插入',
           data: [10, 6]
         },
         {
-          name: '更新',
+          label: '更新',
           data: [10, 6]
         },
         {
-          name: '删除',
+          label: '删除',
           data: [10, 6]
         },
         {
-          name: 'DDL',
+          label: 'DDL',
           data: [10, 6]
         },
         {
-          name: '其他',
+          label: '其他',
           data: [10, 6]
         }
       ]
@@ -140,6 +140,14 @@ export default {
       }
     }
   },
+  watch: {
+    xData: {
+      deep: true,
+      handler() {
+        this.init()
+      }
+    }
+  },
   mounted() {
     this.init()
   },
@@ -151,11 +159,12 @@ export default {
           type: 'bar',
           stack: 'total',
           barWidth: 12,
-          name: el.name,
+          name: el.label,
           color: el.color || this.color[index],
-          data: el.data
+          data: el.value
         })
       })
+      console.log('series', series)
       this.barOptions.series = series
     },
     formatNumber() {

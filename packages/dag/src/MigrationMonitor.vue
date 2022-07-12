@@ -204,6 +204,7 @@ export default {
     this.timer = setInterval(() => {
       this.loadQuotaData()
     }, 5000)
+    this.loadQuotaData()
   },
 
   beforeDestroy() {
@@ -469,6 +470,7 @@ export default {
         ]
       }
       this.quota = res
+      console.log('this.quota', this.quota)
     }
   }
 }
