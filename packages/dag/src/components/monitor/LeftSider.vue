@@ -2,6 +2,9 @@
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box">
+        <TimeSelect @change="eventChangeTime"></TimeSelect>
+      </div>
+      <div class="info-box">
         <div class="task-info__row">
           <span class="task-info__label">任务ID：</span>
           <span class="task-info__value">{{ dataflow.id }}</span>
@@ -25,12 +28,10 @@
       </div>
       <div class="info-box">
         <div class="font-color-normal fw-bold mb-2">任务事件统计（条）</div>
-        <TimeSelect @change="eventChangeTime"></TimeSelect>
         <EventChart></EventChart>
       </div>
       <div class="info-box">
         <div class="font-color-normal fw-bold mb-2">性能指标</div>
-        <TimeSelect :options="performanceOptions"></TimeSelect>
       </div>
     </div>
   </aside>
@@ -66,7 +67,8 @@ export default {
   name: 'LeftSider',
   mixins: [Locale],
   props: {
-    dataflow: Object
+    dataflow: Object,
+    quota: Object
   },
   components: {
     StatusItem,
@@ -95,13 +97,7 @@ export default {
         'initial_sync+cdc': '全量+增量'
       },
       database: [],
-      connectionType: 'source',
-      performanceOptions: [
-        {
-          label: '最近5分钟',
-          value: 'lastmin5'
-        }
-      ]
+      connectionType: 'source'
     }
   },
 

@@ -32,6 +32,7 @@
       <VExpandXTransition>
         <LeftSider
           :dataflow="dataflow"
+          :quota="quota"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
@@ -171,7 +172,9 @@ export default {
 
       dataflow,
 
-      scale: 1
+      scale: 1,
+      timer: null,
+      quota: {} // 指标数据
     }
   },
 
@@ -197,6 +200,10 @@ export default {
         console.error(error) // eslint-disable-line
       }
     })
+    this.timer && clearInterval(this.timer)
+    this.timer = setInterval(() => {
+      this.loadQuotaData()
+    }, 5000)
   },
 
   beforeDestroy() {
@@ -229,20 +236,7 @@ export default {
       }
     },
 
-    gotoViewer() {
-      console.log('gotoViewer', this.dataflow.id)
-      // this.$router
-      //   .push({
-      //     name: 'MigrateViewer',
-      //     params: {
-      //       id: this.dataflow.id,
-      //       action: 'dataflowViewer'
-      //     }
-      //   })
-      //   .catch(() => {
-      //     console.log('Current route: DataflowViewer') // eslint-disable-line
-      //   })
-    },
+    gotoViewer() {},
 
     async validate() {
       if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
@@ -449,6 +443,32 @@ export default {
         this.handleError(e)
         this.isSaving = false
       }
+    },
+
+    loadQuotaData() {
+      let res = {
+        samples: [
+          {
+            input: {
+              inserted: 39,
+              updated: 20,
+              deleted: 10,
+              ddl: 12,
+              other: 50,
+              total: 33
+            },
+            output: {
+              inserted: 1,
+              updated: 20,
+              deleted: 10,
+              ddl: 4,
+              other: 6,
+              total: 56
+            }
+          }
+        ]
+      }
+      this.quota = res
     }
   }
 }

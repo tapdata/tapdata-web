@@ -1,6 +1,6 @@
 <template>
   <div class="time-select">
-    <div class="flex align-items-center mb-4">
+    <div class="flex align-items-center">
       <div>{{ title }}</div>
       <ElSelect v-model="period" :class="{ 'is-time': isTime }" size="mini" class="ml-2" @change="changeFnc">
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
