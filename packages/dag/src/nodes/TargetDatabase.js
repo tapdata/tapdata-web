@@ -29,7 +29,7 @@ export class TargetDatabase extends NodeType {
         'x-display': 'hidden'
       },
       connectionId: {
-        type: 'object',
+        type: 'string',
         'x-display': 'hidden',
         'x-reactions': '{{useSyncConnection}}'
       },
@@ -60,9 +60,6 @@ export class TargetDatabase extends NodeType {
             type: 'string',
             title: '所属agent',
             'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              className: 'form-item-text'
-            },
             'x-component': 'PreviewText.Input',
             'x-component-props': {
               content:

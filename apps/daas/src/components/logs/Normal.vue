@@ -250,7 +250,7 @@ export default {
         .then(data => {
           let items = data?.items || []
           items = items.reverse()
-          if (!data.length) {
+          if (!items.length) {
             if (reset) {
               this.list = []
             } else {

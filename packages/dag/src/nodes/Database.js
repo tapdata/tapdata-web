@@ -30,6 +30,11 @@ export class Database extends NodeType {
         type: 'string',
         'x-display': 'hidden'
       },
+      connectionId: {
+        type: 'string',
+        'x-display': 'hidden',
+        'x-reactions': '{{useSyncConnection}}'
+      },
 
       layout: {
         type: 'void',

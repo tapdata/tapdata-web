@@ -291,10 +291,10 @@ export const TableRename = observer(
 
           <div class="mt-4">
             <ElButton onClick={this.doModify} disabled={this.disabled} size="small" type="primary">
-              修改
+              应用
             </ElButton>
             <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
-              重置
+              清空
             </ElButton>
           </div>
         </div>

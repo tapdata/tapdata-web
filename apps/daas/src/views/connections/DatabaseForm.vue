@@ -173,98 +173,8 @@ export default {
     this.id = this.$route.params.id || ''
     this.getPdkForm()
     this.getPdkDoc()
-    this.check()
   },
   methods: {
-    // 共享挖掘设置
-    check() {
-      Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(([check, data]) => {
-        let verify = check
-        let digSettingForm = data
-        if (verify && !digSettingForm?.persistenceMongodb_uri_db) {
-          this.showSystemConfig = true
-          let config = {
-            persistenceMongodb_uri_db: {
-              type: 'string',
-              title: this.$t('share_form_setting_connection_name'),
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-reactions': {
-                dependencies: ['.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            },
-            persistenceMongodb_collection: {
-              type: 'string',
-              title: this.$t('share_form_setting_table_name'),
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-reactions': {
-                dependencies: ['.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            },
-            share_cdc_ttl_day: {
-              type: 'string',
-              title: this.$t('share_form_setting_log_time'),
-              'x-decorator': 'FormItem',
-              enum: [
-                {
-                  label: 1 + this.$t('share_form_edit_day'),
-                  value: 1
-                },
-                {
-                  label: 2 + this.$t('share_form_edit_day'),
-                  value: 2
-                },
-                {
-                  label: 3 + this.$t('share_form_edit_day'),
-                  value: 3
-                },
-                {
-                  label: 4 + this.$t('share_form_edit_day'),
-                  value: 4
-                },
-                {
-                  label: 5 + this.$t('share_form_edit_day'),
-                  value: 5
-                },
-                {
-                  label: 6 + this.$t('share_form_edit_day'),
-                  value: 6
-                },
-                {
-                  label: 7 + this.$t('share_form_edit_day'),
-                  value: 7
-                }
-              ],
-              'x-component': 'Select',
-              'x-reactions': {
-                dependencies: ['.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            }
-          }
-          this.schemaData.properties.__TAPDATA_END.properties = Object.assign(
-            {},
-            this.schemaData.properties.__TAPDATA_END.properties,
-            config
-          )
-        }
-      })
-    },
     //保存全局挖掘设置
     saveSetting(digSettingForm) {
       logcollectorApi.patchSystemConfig(digSettingForm).then(() => {
@@ -298,13 +208,11 @@ export default {
         let id = this.$route.params?.id
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
-        let { __TAPDATA_START, __TAPDATA_END } = formValues
-        delete formValues['__TAPDATA_START']
-        delete formValues['__TAPDATA_END']
+        let { __TAPDATA } = formValues
+        delete formValues['__TAPDATA']
         let params = Object.assign(
           {
-            ...__TAPDATA_START,
-            ...__TAPDATA_END,
+            ...__TAPDATA,
             database_type: pdkOptions.type,
             pdkHash: pdkOptions.pdkHash
           },
@@ -374,10 +282,9 @@ export default {
     },
     startTestPdk() {
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
-      let { __TAPDATA_START, __TAPDATA_END } = formValues
-      Object.assign(this.model, __TAPDATA_START, __TAPDATA_END)
-      delete formValues['__TAPDATA_START']
-      delete formValues['__TAPDATA_END']
+      let { __TAPDATA } = formValues
+      Object.assign(this.model, __TAPDATA)
+      delete formValues['__TAPDATA']
       this.model.config = formValues
       this.model.pdkType = 'pdk'
       this.model.pdkHash = this.$route.query?.pdkHash
@@ -423,7 +330,7 @@ export default {
               this.model.name = this.renameData.rename
               let { name } = this.model
               this.schemaFormInstance.setValues({
-                __TAPDATA_START: {
+                __TAPDATA: {
                   name
                 }
               })
@@ -460,9 +367,9 @@ export default {
     },
     getPdkForm() {
       const pdkHash = this.$route.query?.pdkHash
-      databaseTypesApi.pdkHash(pdkHash).then(data => {
+      databaseTypesApi.pdkHash(pdkHash).then(async data => {
         let id = this.id || this.$route.params.id
-        this.pdkOptions = data
+        this.pdkOptions = data || {}
         let connectionTypeJson = {
           type: 'string',
           title: this.$t('connection_form_connection_type'),
@@ -511,72 +418,11 @@ export default {
             }
           ]
         }
-        let result = {
-          type: 'object',
-          'x-component-props': {
-            width: 500
-          },
+        let END = {
+          type: 'void',
+          'x-index': 1000000,
           properties: {
-            __TAPDATA_START: {
-              type: 'object',
-              'x-index': 0,
-              properties: {
-                name: {
-                  type: 'string',
-                  title: this.$t('connection_form_connection_name'),
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input'
-                },
-                connection_type: connectionTypeJson,
-                connection_form_source_and_target_tip: {
-                  type: 'void',
-                  title: ' ',
-                  'x-decorator': 'FormItem',
-                  'x-decorator-props': {
-                    colon: false
-                  },
-                  'x-component': 'Text',
-                  'x-component-props': { icon: 'info', content: this.$t('connection_form_source_and_target_tip') },
-                  'x-reactions': {
-                    dependencies: ['__TAPDATA_START.connection_type'],
-                    fulfill: {
-                      schema: { 'x-decorator-props.style.display': '{{$deps[0]==="source_and_target" ? null:"none"}}' }
-                    }
-                  }
-                },
-                connection_form_source_tip: {
-                  type: 'void',
-                  title: ' ',
-                  'x-decorator': 'FormItem',
-                  'x-decorator-props': {
-                    colon: false
-                  },
-                  'x-component': 'Text',
-                  'x-component-props': { icon: 'info', content: this.$t('connection_form_source_tip') },
-                  'x-reactions': {
-                    dependencies: ['__TAPDATA_START.connection_type'],
-                    fulfill: { schema: { 'x-decorator-props.style.display': '{{$deps[0]==="source" ? null:"none"}}' } }
-                  }
-                },
-                connection_form_target_tip: {
-                  type: 'void',
-                  title: ' ',
-                  'x-decorator': 'FormItem',
-                  'x-decorator-props': {
-                    colon: false
-                  },
-                  'x-component': 'Text',
-                  'x-component-props': { icon: 'info', content: this.$t('connection_form_target_tip') },
-                  'x-reactions': {
-                    dependencies: ['__TAPDATA_START.connection_type'],
-                    fulfill: { schema: { 'x-decorator-props.style.display': '{{$deps[0]==="target" ? null:"none"}}' } }
-                  }
-                }
-              }
-            },
-            ...(data?.properties?.connection?.properties || {}),
-            __TAPDATA_END: {
+            __TAPDATA: {
               type: 'object',
               'x-index': 1000000,
               properties: {
@@ -584,64 +430,237 @@ export default {
                   type: 'string',
                   title: this.$t('connection_form_table_filter'),
                   'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    tooltip: this.$t('connection_form_table_filter_tips')
+                  },
                   'x-component': 'Input.TextArea',
                   'x-component-props': {
                     placeholder: this.$t('connection_form_database_owner_tip')
                   }
-                },
-                shareCdcEnable: {
-                  type: 'boolean',
-                  default: false,
-                  title: this.$t('connection_form_shared_mining'),
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Switch',
-                  'x-component-props': {
-                    placeholder: this.$t('connection_form_shared_mining_tip')
-                  }
-                },
-                accessNodeType: {
-                  type: 'string',
-                  title: this.$t('connection_form_access_node'),
-                  default: 'AUTOMATIC_PLATFORM_ALLOCATION',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Select',
-                  enum: [
-                    { label: this.$t('connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-                    { label: this.$t('connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
-                  ],
-                  'x-reactions': [
-                    {
-                      target: '__TAPDATA_END.accessNodeProcessId',
-                      fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
-                    },
-                    {
-                      target: '__TAPDATA_END.accessNodeProcessId',
-                      effects: ['onFieldInputValueChange'],
-                      fulfill: {
-                        state: {
-                          value: '{{$target.value || $target.dataSource[0].value}}'
-                        }
-                      }
-                    }
-                  ]
-                },
-                accessNodeProcessId: {
-                  type: 'string',
-                  title: ' ',
-                  'x-decorator': 'FormItem',
-                  'x-decorator-props': {
-                    colon: false
-                  },
-                  'x-component': 'Select',
-                  'x-reactions': '{{useAsyncDataSource(loadAccessNode)}}'
                 }
               }
             }
           }
         }
+        // 是否支持共享挖掘
+        if (this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
+          END.properties.__TAPDATA.properties.shareCdcEnable = {
+            type: 'boolean',
+            default: false,
+            title: this.$t('connection_form_shared_mining'),
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              tooltip: this.$t('connection_form_shared_mining_tip')
+            },
+            'x-component': 'Switch',
+            'x-component-props': {
+              placeholder: this.$t('connection_form_shared_mining_tip')
+            }
+          }
+          // 共享挖掘设置
+          let shareFlag = await Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(
+            ([check, data]) => check && !data?.persistenceMongodb_uri_db
+          )
+          if (shareFlag) {
+            this.showSystemConfig = true
+            let config = {
+              persistenceMongodb_uri_db: {
+                type: 'string',
+                title: this.$t('share_form_setting_connection_name'),
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-reactions': {
+                  dependencies: ['__TAPDATA.shareCdcEnable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
+              persistenceMongodb_collection: {
+                type: 'string',
+                title: this.$t('share_form_setting_table_name'),
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-reactions': {
+                  dependencies: ['__TAPDATA.shareCdcEnable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
+              share_cdc_ttl_day: {
+                type: 'string',
+                title: this.$t('share_form_setting_log_time'),
+                'x-decorator': 'FormItem',
+                enum: [
+                  {
+                    label: 1 + this.$t('share_form_edit_day'),
+                    value: 1
+                  },
+                  {
+                    label: 2 + this.$t('share_form_edit_day'),
+                    value: 2
+                  },
+                  {
+                    label: 3 + this.$t('share_form_edit_day'),
+                    value: 3
+                  },
+                  {
+                    label: 4 + this.$t('share_form_edit_day'),
+                    value: 4
+                  },
+                  {
+                    label: 5 + this.$t('share_form_edit_day'),
+                    value: 5
+                  },
+                  {
+                    label: 6 + this.$t('share_form_edit_day'),
+                    value: 6
+                  },
+                  {
+                    label: 7 + this.$t('share_form_edit_day'),
+                    value: 7
+                  }
+                ],
+                'x-component': 'Select',
+                'x-reactions': {
+                  dependencies: ['__TAPDATA.shareCdcEnable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              }
+            }
+            END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
+          }
+        }
+        END.properties.__TAPDATA.properties.accessNodeType = {
+          type: 'string',
+          title: this.$t('connection_form_access_node'),
+          default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            tooltip: this.$t('connection_form_access_node_tip')
+          },
+          'x-component': 'Select',
+          enum: [
+            { label: this.$t('connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+            { label: this.$t('connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+          ],
+          'x-reactions': [
+            {
+              target: '__TAPDATA.accessNodeProcessId',
+              fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
+            },
+            {
+              target: '__TAPDATA.accessNodeProcessId',
+              effects: ['onFieldInputValueChange'],
+              fulfill: {
+                state: {
+                  value: '{{$target.value || $target.dataSource[0].value}}'
+                }
+              }
+            }
+          ]
+        }
+        END.properties.__TAPDATA.properties.accessNodeProcessId = {
+          type: 'string',
+          title: ' ',
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            colon: false
+          },
+          'x-component': 'Select',
+          'x-reactions': '{{useAsyncDataSource(loadAccessNode)}}'
+        }
+        let result = {
+          type: 'object',
+          'x-component-props': {
+            width: 500
+          },
+          properties: {
+            START: {
+              type: 'void',
+              'x-index': 0,
+              properties: {
+                __TAPDATA: {
+                  type: 'object',
+                  properties: {
+                    name: {
+                      type: 'string',
+                      title: this.$t('connection_form_connection_name'),
+                      required: true,
+                      'x-decorator': 'FormItem',
+                      'x-component': 'Input'
+                    },
+                    connection_type: connectionTypeJson,
+                    connection_form_source_and_target_tip: {
+                      type: 'void',
+                      title: ' ',
+                      'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        colon: false
+                      },
+                      'x-component': 'Text',
+                      'x-component-props': { icon: 'info', content: this.$t('connection_form_source_and_target_tip') },
+                      'x-reactions': {
+                        dependencies: ['__TAPDATA.connection_type'],
+                        fulfill: {
+                          schema: {
+                            'x-decorator-props.style.display': '{{$deps[0]==="source_and_target" ? null:"none"}}'
+                          }
+                        }
+                      }
+                    },
+                    connection_form_source_tip: {
+                      type: 'void',
+                      title: ' ',
+                      'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        colon: false
+                      },
+                      'x-component': 'Text',
+                      'x-component-props': { icon: 'info', content: this.$t('connection_form_source_tip') },
+                      'x-reactions': {
+                        dependencies: ['__TAPDATA.connection_type'],
+                        fulfill: {
+                          schema: { 'x-decorator-props.style.display': '{{$deps[0]==="source" ? null:"none"}}' }
+                        }
+                      }
+                    },
+                    connection_form_target_tip: {
+                      type: 'void',
+                      title: ' ',
+                      'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        colon: false
+                      },
+                      'x-component': 'Text',
+                      'x-component-props': { icon: 'info', content: this.$t('connection_form_target_tip') },
+                      'x-reactions': {
+                        dependencies: ['__TAPDATA.connection_type'],
+                        fulfill: {
+                          schema: { 'x-decorator-props.style.display': '{{$deps[0]==="target" ? null:"none"}}' }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            ...(data?.properties?.connection?.properties || {}),
+            END: END
+          }
+        }
         if (id) {
           this.getPdkData(id)
-          delete result.properties.__TAPDATA_START.properties.name
+          delete result.properties.START.properties.__TAPDATA.properties.name
         }
         //this.showSystemConfig = true
         this.schemaScope = {
@@ -677,15 +696,15 @@ export default {
     getPdkData(id) {
       connectionsApi.getNoSchema(id).then(data => {
         this.model = data
-        let { name, connection_type, table_filter, shareCdcEnable } = this.model
+        let { name, connection_type, table_filter, shareCdcEnable, accessNodeType, accessNodeProcessId } = this.model
         this.schemaFormInstance.setValues({
-          __TAPDATA_START: {
+          __TAPDATA: {
             name,
-            connection_type
-          },
-          __TAPDATA_END: {
+            connection_type,
             table_filter,
-            shareCdcEnable
+            shareCdcEnable,
+            accessNodeType,
+            accessNodeProcessId
           },
           ...this.model?.config
         })
