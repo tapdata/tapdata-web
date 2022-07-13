@@ -31,11 +31,20 @@
         <EventChart :total="eventTotal" :xData="eventData"></EventChart>
       </div>
       <div class="info-box">
-        <div class="flex justify-content-between font-color-normal fw-bold mb-2">
-          <span>性能指标</span>
-        </div>
-        <LineChart title="QPS（Q/S）" style="height: 140px"></LineChart>
-        <LineChart title="增量延迟（ms）" color="#2C65FF" class="mt-4" style="height: 140px"></LineChart>
+        <CollapsePanel>
+          <template #header>
+            <span>性能指标</span>
+          </template>
+          <template #header-right>
+            <VIcon @click.stop="toFullscreen">fullscreen</VIcon>
+          </template>
+          <template #content>
+            <div>
+              <LineChart title="QPS（Q/S）" style="height: 140px"></LineChart>
+              <LineChart title="增量延迟（ms）" color="#2C65FF" class="mt-4" style="height: 140px"></LineChart>
+            </div>
+          </template>
+        </CollapsePanel>
       </div>
     </div>
   </aside>
@@ -63,10 +72,12 @@ import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { StatusItem } from '@tap/business'
+import Locale from '../../mixins/locale'
 import EventChart from './components/EventChart'
 import LineChart from './components/LineChart'
-import Locale from '../../mixins/locale'
 import TimeSelect from './components/TimeSelect'
+import CollapsePanel from './components/CollapsePanel'
+import VIcon from 'web-core/components/VIcon'
 
 export default {
   name: 'LeftSider',
@@ -79,7 +90,9 @@ export default {
     StatusItem,
     EventChart,
     LineChart,
-    TimeSelect
+    TimeSelect,
+    CollapsePanel,
+    VIcon
   },
 
   data() {
@@ -432,7 +445,9 @@ export default {
           value: outputTotal
         }
       ]
-    }
+    },
+
+    toFullscreen() {}
   }
 }
 </script>
