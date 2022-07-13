@@ -579,7 +579,7 @@ export default {
   apiaudit_link: '链接',
   apiaudit_access_records: '访问记录数',
   apiaudit_access_bandwidth: 'API 访问带宽（M)',
-  apiaudit_average_access_rate: 'API 平均访问速率（M/S)',
+  apiaudit_average_access_rate: 'API 平均访问速率',
   apiaudit_access_time: '访问耗时',
   apiaudit_average_response_time: '平均响应时长',
   apiaudit_success: '成功',
