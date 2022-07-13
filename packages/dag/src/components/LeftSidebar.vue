@@ -721,6 +721,8 @@ export default {
         databaseType: connection.database_type,
         connectionId: connection.id,
         tableName,
+        // 节点创建默认属性
+        enableDDL: true,
         attrs: {
           connectionName: connection.name,
           connectionType: connection.connection_type,
