@@ -1,6 +1,6 @@
 <template>
   <div class="pie-chart">
-    <Chart :extend="options"></Chart>
+    <Chart ref="chart" :extend="options"></Chart>
   </div>
 </template>
 
@@ -18,42 +18,20 @@ export default {
       default: '标题'
     },
     data: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {
-          x: [
-            '2000-06-01',
-            '2000-06-02',
-            '2000-06-03',
-            '2000-06-04',
-            '2000-06-05',
-            '2000-06-06',
-            '2000-06-07',
-            '2000-06-08',
-            '2000-06-09',
-            '2000-06-10',
-            '2000-06-11',
-            '2000-06-12',
-            '2000-06-13',
-            '2000-06-14',
-            '2000-06-15',
-            '2000-06-16',
-            '2000-06-17',
-            '2000-06-18',
-            '2000-06-19',
-            '2000-06-20'
-          ],
-          value: [12, 3, 42, 4, 78, 24, 7, 5, 44, 22, 12, 3, 42, 4, 78, 24, 7, 5, 44, 222]
-        }
+        return [
+          { value: 1048, name: 'Search Engine111', color: 'red' },
+          { value: 735, name: 'Direct', color: 'red' },
+          { value: 580, name: 'Email', color: 'red' },
+          { value: 484, name: 'Union Ads', color: 'red' },
+          { value: 300, name: 'Video Ads', color: 'red' }
+        ]
       }
     },
-    color: {
-      type: String,
-      default: '#26CF6C'
-    },
-    limit: {
-      type: Number,
-      default: 10
+    center: {
+      type: Array,
+      default: () => ['50%', '30%']
     }
   },
 
@@ -61,84 +39,30 @@ export default {
     return {
       options: {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'item'
         },
-        grid: {
-          top: '20px',
-          // top: 0,
-          left: 0,
-          right: 0,
-          // bottom: '24px',
+        legend: {
           bottom: 0,
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: this.data?.x,
-          splitLine: {
-            show: true,
-            lineStyle: {
-              type: 'dashed'
-            }
-          },
-          axisTick: {
-            show: false
-          },
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#E9E9E9'
-            }
-          },
-          axisLabel: {
-            color: '#535F72'
-            // showMaxLabel: false,
-            // showMinLabel: false
+          icon: 'circle',
+          orient: 'vertical',
+          itemWidth: 6,
+          itemHeight: 6,
+          formatter: (name, val) => {
+            console.log('formatter', name, val)
+            return `${name}`
           }
         },
-        yAxis: {
-          name: this.title,
-          nameTextStyle: {
-            color: 'rgba(0,0,0,0.6500)',
-            align: 'left',
-            verticalAlign: 'top'
-          },
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#E9E9E9'
-            }
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              type: 'dashed'
-            }
-          },
-          axisLabel: {
-            color: '#535F72'
-            // showMaxLabel: false,
-            // showMinLabel: false
+        series: [
+          {
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: this.center,
+            label: { show: false },
+            labelLine: { show: false },
+            data: [],
+            top: 'top'
           }
-        },
-        series: {
-          // name: this.title,
-          type: 'line',
-          data: [],
-          smooth: true,
-          symbol: 'none',
-          label: {
-            show: false
-          },
-          lineStyle: {
-            color: this.color
-          },
-          areaStyle: {
-            color: this.color,
-            opacity: 0.1
-          }
-        }
+        ]
       }
     }
   },
@@ -154,21 +78,21 @@ export default {
 
   mounted() {
     this.init()
+    console.log('this.chart', this.$refs.chart.chart?.format?.truncateText)
   },
 
   methods: {
     init() {
-      this.options.series.data = this.data.value || []
-      const { limit } = this
-      if (limit) {
-        this.options.dataZoom = [
-          {
-            type: 'inside',
-            zoomLock: true,
-            startValue: this.data.x[this.data.value.length - limit]
+      this.options.series[0].data = this.data.map(t => {
+        console.log('t.color', t.color)
+        return {
+          name: t.name,
+          value: t.value,
+          itemStyle: {
+            color: t.color
           }
-        ]
-      }
+        }
+      })
     }
   }
 }

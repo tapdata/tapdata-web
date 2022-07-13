@@ -54,7 +54,31 @@
           </template>
           <template #content>
             <div>全量完成时间：2022-12-01 12</div>
-            <Chart type="bar" :data="structureBar" style="height: 100px"></Chart>
+            <div class="flex justify-content-between">
+              <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
+              <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
+            </div>
+          </template>
+        </CollapsePanel>
+      </div>
+      <div class="info-box">
+        <CollapsePanel>
+          <template #header>
+            <span class="fw-bold font-color-normal">增量信息</span>
+          </template>
+          <template #content>
+            <div class="flex justify-content-between mb-2">
+              <span>源连接：</span>
+              <span class="font-color-normal">mysql-source</span>
+            </div>
+            <div class="flex justify-content-between mb-2">
+              <span>目标连接：</span>
+              <span class="font-color-normal">mysql-source</span>
+            </div>
+            <div class="flex justify-content-between">
+              <span>增量时间点：</span>
+              <span class="font-color-normal">2022-12-01 12:12:12</span>
+            </div>
           </template>
         </CollapsePanel>
       </div>
@@ -87,10 +111,10 @@ import { StatusItem } from '@tap/business'
 import Locale from '../../mixins/locale'
 import EventChart from './components/EventChart'
 import LineChart from './components/LineChart'
+import PieChart from './components/PieChart'
 import TimeSelect from './components/TimeSelect'
 import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
-import { Chart } from '@tap/component'
 
 export default {
   name: 'LeftSider',
@@ -103,10 +127,10 @@ export default {
     StatusItem,
     EventChart,
     LineChart,
+    PieChart,
     TimeSelect,
     CollapsePanel,
-    VIcon,
-    Chart
+    VIcon
   },
 
   data() {
@@ -136,22 +160,22 @@ export default {
       structureBar: [
         {
           name: '待进行',
-          value: 0,
+          value: 10,
           color: '#F7D762'
         },
         {
           name: '无需创建',
-          value: 0,
+          value: 20,
           color: '#88DBDA'
         },
         {
           name: '已完成',
-          value: 0,
+          value: 30,
           color: '#82C647'
         },
         {
           name: '错误',
-          value: 0,
+          value: 40,
           color: '#EC8181'
         }
       ]
@@ -513,15 +537,15 @@ $hoverBg: #eef3ff;
       height: 40px;
       cursor: pointer;
       &:hover {
-        color: map-get($color, primary);
+        color: #2c65ff;
       }
       &.active {
-        color: map-get($color, primary);
+        color: #2c65ff;
         &:before {
           position: absolute;
           content: '';
           height: 2px;
-          background: map-get($color, primary);
+          background: #2c65ff;
           left: 12px;
           right: 12px;
           bottom: 0;
@@ -557,7 +581,7 @@ $hoverBg: #eef3ff;
       border-radius: 4px;
 
       &:hover {
-        color: map-get($color, primary);
+        color: #2c65ff;
         background: $hoverBg;
       }
     }

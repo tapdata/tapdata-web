@@ -41,6 +41,9 @@ export default {
             background-color: inherit;
           }
         }
+        .el-collapse-item__content {
+          color: #535f72;
+        }
       }
     }
   }

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="flex align-items-center mb-2">
+    <div v-if="total" class="flex align-items-center mb-2">
       <span class="font-color-normal fw-bold fs-3 din-font">{{ formatNumber(total[0].value) }}</span>
       <span class="ml-2">{{ total[0].label }}</span>
       <ElDivider direction="vertical" class="divider mx-4"></ElDivider>
       <span class="font-color-normal fw-bold fs-3 din-font">{{ formatNumber(total[1].value) }}</span>
       <span class="ml-2">{{ total[1].label }}</span>
     </div>
-    <div v-if="total[2]">
+    <div v-if="total && total[2]">
       <span class="invisible">{{ total[0].label }}</span>
       <span class="ml-2">{{ total[2].label }}</span>
       <span>{{ formatNumber(total[2].value, 'thousands') }}</span>
