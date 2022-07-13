@@ -33,16 +33,28 @@
       <div class="info-box">
         <CollapsePanel>
           <template #header>
-            <span>性能指标</span>
+            <span class="fw-bold font-color-normal">性能指标</span>
           </template>
           <template #header-right>
             <VIcon @click.stop="toFullscreen">fullscreen</VIcon>
           </template>
           <template #content>
-            <div>
-              <LineChart title="QPS（Q/S）" style="height: 140px"></LineChart>
-              <LineChart title="增量延迟（ms）" color="#2C65FF" class="mt-4" style="height: 140px"></LineChart>
-            </div>
+            <LineChart title="QPS（Q/S）" style="height: 140px"></LineChart>
+            <LineChart title="增量延迟（ms）" color="#2C65FF" class="mt-4" style="height: 140px"></LineChart>
+          </template>
+        </CollapsePanel>
+      </div>
+      <div class="info-box">
+        <CollapsePanel>
+          <template #header>
+            <span class="fw-bold font-color-normal">全量信息</span>
+          </template>
+          <template #header-right>
+            <VIcon @click.stop="toFullscreen">menu</VIcon>
+          </template>
+          <template #content>
+            <div>全量完成时间：2022-12-01 12</div>
+            <Chart type="bar" :data="structureBar" style="height: 100px"></Chart>
           </template>
         </CollapsePanel>
       </div>
@@ -78,6 +90,7 @@ import LineChart from './components/LineChart'
 import TimeSelect from './components/TimeSelect'
 import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
+import { Chart } from '@tap/component'
 
 export default {
   name: 'LeftSider',
@@ -92,7 +105,8 @@ export default {
     LineChart,
     TimeSelect,
     CollapsePanel,
-    VIcon
+    VIcon,
+    Chart
   },
 
   data() {
@@ -118,7 +132,29 @@ export default {
       database: [],
       connectionType: 'source',
       eventData: [],
-      eventTotal: null
+      eventTotal: null,
+      structureBar: [
+        {
+          name: '待进行',
+          value: 0,
+          color: '#F7D762'
+        },
+        {
+          name: '无需创建',
+          value: 0,
+          color: '#88DBDA'
+        },
+        {
+          name: '已完成',
+          value: 0,
+          color: '#82C647'
+        },
+        {
+          name: '错误',
+          value: 0,
+          color: '#EC8181'
+        }
+      ]
     }
   },
 

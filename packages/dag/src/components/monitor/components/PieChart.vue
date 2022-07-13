@@ -1,5 +1,5 @@
 <template>
-  <div class="line-chart">
+  <div class="pie-chart">
     <Chart :extend="options"></Chart>
   </div>
 </template>
@@ -8,7 +8,7 @@
 import { Chart } from '@tap/component'
 
 export default {
-  name: 'LineChart',
+  name: 'PieChart',
 
   components: { Chart },
 
