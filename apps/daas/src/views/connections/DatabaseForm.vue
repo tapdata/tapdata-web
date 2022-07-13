@@ -464,6 +464,7 @@ export default {
               persistenceMongodb_uri_db: {
                 type: 'string',
                 title: this.$t('share_form_setting_connection_name'),
+                required: true,
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
                 'x-reactions': {
@@ -478,6 +479,7 @@ export default {
               persistenceMongodb_collection: {
                 type: 'string',
                 title: this.$t('share_form_setting_table_name'),
+                required: true,
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
                 'x-reactions': {
@@ -492,7 +494,9 @@ export default {
               share_cdc_ttl_day: {
                 type: 'string',
                 title: this.$t('share_form_setting_log_time'),
+                required: true,
                 'x-decorator': 'FormItem',
+                default: 3,
                 enum: [
                   {
                     label: 1 + this.$t('share_form_edit_day'),
