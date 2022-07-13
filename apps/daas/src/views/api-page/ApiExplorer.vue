@@ -1018,7 +1018,7 @@ export default {
       return (
         _this.apiClient
           .find(filter)
-          .then(data => {
+          .then(({ data }) => {
             let typeMap = {
               '[object String]': 'string',
               '[object Boolean]': 'boolean',
