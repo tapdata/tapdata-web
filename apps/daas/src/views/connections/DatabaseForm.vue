@@ -177,10 +177,7 @@ export default {
   methods: {
     //保存全局挖掘设置
     saveSetting(digSettingForm) {
-      logcollectorApi.patchSystemConfig(digSettingForm).then(() => {
-        this.settingDialogVisible = false
-        this.$message.success('保存全局设置成功')
-      })
+      logcollectorApi.patchSystemConfig(digSettingForm)
     },
     goBack() {
       let msg = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
