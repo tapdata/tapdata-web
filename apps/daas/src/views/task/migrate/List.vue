@@ -197,9 +197,6 @@
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
                   $t('dataVerify.dataVerify')
                 }}</el-dropdown-item>
-                <el-dropdown-item command="monitor" v-readonlybtn="'Data_verify'">{{
-                  $t('task_list_button_monitor')
-                }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -835,21 +832,6 @@ export default {
       })
     },
     toDetail(row) {
-      let subId = row.statuses[0]?.id || ''
-      if (!subId) {
-        this.$message.error('该复制任务没有子任务')
-        return
-      }
-      this.$router.push({
-        name: 'MigrateStatistics',
-        query: {
-          id: row.id,
-          subId: subId
-        }
-      })
-    },
-    monitor(ids, node) {
-      let row = node
       let subId = row.statuses[0]?.id || ''
       this.$router.push({
         name: 'MigrationMonitor',
