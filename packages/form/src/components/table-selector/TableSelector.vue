@@ -438,6 +438,12 @@ export default {
     },
     'filteredData.length'() {
       this.updateAllChecked()
+    },
+    'selected.checked'() {
+      this.updateSelectedAllChecked()
+    },
+    'filterSelectedData.length'() {
+      this.updateSelectedAllChecked()
     }
   },
   created() {
@@ -622,6 +628,12 @@ export default {
     updateAllChecked() {
       this.table.isCheckAll =
         this.filteredData.length > 0 && this.filteredData.every(item => this.table.checked.indexOf(item) > -1)
+    },
+
+    updateSelectedAllChecked() {
+      this.selected.isCheckAll =
+        this.filterSelectedData.length > 0 &&
+        this.filterSelectedData.every(item => this.selected.checked.indexOf(item) > -1)
     }
   }
 }
