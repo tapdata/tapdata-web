@@ -111,7 +111,7 @@ export default {
     // 获取分类
     getClassify() {
       let filter = {
-        where: { or: [{ item_type: this.classifyType }] }
+        where: { or: [{ item_type: this.type }] }
       }
       metadataDefinitionsApi
         .get({

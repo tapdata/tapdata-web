@@ -590,7 +590,7 @@ export default {
   apiaudit_link: 'Link',
   apiaudit_access_records: 'Number of access records',
   apiaudit_access_bandwidth: 'API access bandwidth (M)',
-  apiaudit_average_access_rate: 'API average access rate (M/S)',
+  apiaudit_average_access_rate: 'API average access rate',
   apiaudit_access_time: 'Access time',
   apiaudit_average_response_time: 'Average response time',
   apiaudit_success: 'success',

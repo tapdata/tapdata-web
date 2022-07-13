@@ -36,6 +36,12 @@
             >
               {{ formatDuring(item.value) }}
             </div>
+            <div
+              class="link-primary pt-4 din-font details-box-item-num"
+              v-else-if="item.value > 0 && ['speed'].includes(item.key)"
+            >
+              {{ item.value ? handleUnit(item.value) + '/S' : '0 M/S' }}
+            </div>
             <div v-else class="link-primary pt-4 din-font details-box-item-num">
               {{ item.value }}
             </div>
@@ -55,7 +61,7 @@
 </template>
 
 <script>
-import { formatMs } from '@/utils/util'
+import { formatMs, handleUnit } from '@/utils/util'
 import dayjs from 'dayjs'
 import { apiCallsApi } from '@tap/api'
 
@@ -116,6 +122,9 @@ export default {
     },
     formatMs(ms) {
       return formatMs(ms)
+    },
+    handleUnit(limit) {
+      return handleUnit(limit)
     }
   }
 }

@@ -11,9 +11,12 @@ const createI18n = () => ({
 
 const i18nSymbol = Symbol()
 
+export const I18n = createI18n()
+
 export function provideI18n() {
-  provide(i18nSymbol, createI18n())
+  provide(i18nSymbol, I18n)
 }
+
 export function useI18n() {
   const i18n: { $t: Function } = inject(i18nSymbol)
   return i18n
