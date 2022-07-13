@@ -35,7 +35,7 @@ export default {
       border-bottom: none;
       .el-collapse-item {
         .el-collapse-item__header {
-          padding-left: 0 !important;
+          padding: 0 !important;
           border-bottom: none;
           &:hover {
             background-color: inherit;
