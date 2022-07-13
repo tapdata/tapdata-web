@@ -80,9 +80,9 @@ export const DdlEventList = observer(
       console.log('parents', parents) // eslint-disable-line
 
       if (parents.length) {
-        const disabledEvents = parent.disabledEvents || []
         const functions = form.values.attrs.capabilities.filter(item => item.type === 11).map(item => item.id)
         parents.forEach(parent => {
+          const disabledEvents = parent.disabledEvents || []
           let events = parent.attrs.capabilities
             .filter(item => {
               if (item.type !== 10 || disabledEvents.includes(item.id)) return
