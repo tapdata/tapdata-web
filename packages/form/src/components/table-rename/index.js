@@ -168,7 +168,7 @@ export const TableRename = observer(
 
           <div
             v-loading={this.loading}
-            class="name-list flex flex-column border rounded-2 overflow-hidden mt-4"
+            class="name-list flex flex-column border border-form rounded-2 overflow-hidden mt-4"
             style={this.listStyle}
           >
             <div class="name-list-header flex flex-shrink-0">
@@ -253,49 +253,46 @@ export const TableRename = observer(
             </div>
           </div>
 
-          <div class="font-color-light mt-4">以下操作仅对已搜索出来的表生效</div>
-
-          <FormItem.BaseItem label="替换">
-            <div class="flex">
-              <ElInput
-                v-model={this.config.replaceBefore}
-                disabled={this.disabled}
-                prefixIcon="el-icon-search"
-                clearable
-              />
-              <div class="px-4 text-nowrap">改为</div>
-              <ElInput
-                v-model={this.config.replaceAfter}
-                disabled={this.disabled}
-                prefixIcon="el-icon-search"
-                clearable
-              />
+          <div class="border border-form p-4 mt-4 rounded-2">
+            <div class="font-color-light">以下操作仅对已搜索出来的原表名生效</div>
+            <FormItem.BaseItem label="替换">
+              <div class="flex">
+                <ElInput
+                  v-model={this.config.replaceBefore}
+                  disabled={this.disabled}
+                  prefixIcon="el-icon-search"
+                  clearable
+                />
+                <div class="px-4 text-nowrap">改为</div>
+                <ElInput
+                  v-model={this.config.replaceAfter}
+                  disabled={this.disabled}
+                  prefixIcon="el-icon-search"
+                  clearable
+                />
+              </div>
+            </FormItem.BaseItem>
+            <FormItem.BaseItem label="前缀">
+              <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable />
+            </FormItem.BaseItem>
+            <FormItem.BaseItem label="后缀">
+              <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable />
+            </FormItem.BaseItem>
+            <FormItem.BaseItem label="大小写">
+              <ElSelect v-model={this.config.transferCase} disabled={this.disabled}>
+                <ElOption value="" label="不变" />
+                <ElOption value="toUpperCase" label="大写" />
+                <ElOption value="toLowerCase" label="小写" />
+              </ElSelect>
+            </FormItem.BaseItem>
+            <div class="mt-4">
+              <ElButton onClick={this.doModify} disabled={this.disabled} size="small" type="primary">
+                应用
+              </ElButton>
+              <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
+                清空
+              </ElButton>
             </div>
-          </FormItem.BaseItem>
-
-          <FormItem.BaseItem label="前缀">
-            <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable />
-          </FormItem.BaseItem>
-
-          <FormItem.BaseItem label="后缀">
-            <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable />
-          </FormItem.BaseItem>
-
-          <FormItem.BaseItem label="大小写">
-            <ElSelect v-model={this.config.transferCase} disabled={this.disabled}>
-              <ElOption value="" label="不变" />
-              <ElOption value="toUpperCase" label="大写" />
-              <ElOption value="toLowerCase" label="小写" />
-            </ElSelect>
-          </FormItem.BaseItem>
-
-          <div class="mt-4">
-            <ElButton onClick={this.doModify} disabled={this.disabled} size="small" type="primary">
-              应用
-            </ElButton>
-            <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
-              清空
-            </ElButton>
           </div>
         </div>
       )

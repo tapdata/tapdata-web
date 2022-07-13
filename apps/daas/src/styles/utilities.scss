@@ -536,6 +536,10 @@
   border-color: #fff !important;
 }
 
+.border-form {
+  border-color: map-get($borderColor, form) !important;
+}
+
 .border-1 {
   border-width: 1px !important;
 }
