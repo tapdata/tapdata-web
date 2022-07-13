@@ -12,13 +12,13 @@
       <span class="ml-2">{{ total[2].label }}</span>
       <span>{{ formatNumber(total[2].value, 'thousands') }}</span>
     </div>
-    <Chart type="bar" :extend="barOptions" :style="{ height }"></Chart>
+    <Chart :extend="options" :style="{ height }"></Chart>
   </div>
 </template>
 
 <script>
 import { Chart } from '@tap/component'
-import { formatNumber } from '../../util'
+import { formatNumber } from '../../../util'
 
 export default {
   name: 'EventChart',
@@ -78,7 +78,7 @@ export default {
   data() {
     return {
       color: ['#88DBDA', '#6ACA26', '#FDD746', '#B682CE', '#00A1F1'],
-      barOptions: {
+      options: {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -165,7 +165,7 @@ export default {
         })
       })
       console.log('series', series)
-      this.barOptions.series = series
+      this.options.series = series
     },
     formatNumber() {
       return formatNumber(...arguments)

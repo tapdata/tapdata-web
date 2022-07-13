@@ -31,7 +31,11 @@
         <EventChart :total="eventTotal" :xData="eventData"></EventChart>
       </div>
       <div class="info-box">
-        <div class="font-color-normal fw-bold mb-2">性能指标</div>
+        <div class="flex justify-content-between font-color-normal fw-bold mb-2">
+          <span>性能指标</span>
+        </div>
+        <LineChart title="QPS（Q/S）" style="height: 140px"></LineChart>
+        <LineChart title="增量延迟（ms）" color="#2C65FF" class="mt-4" style="height: 140px"></LineChart>
       </div>
     </div>
   </aside>
@@ -59,7 +63,8 @@ import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { StatusItem } from '@tap/business'
-import EventChart from './EventChart'
+import EventChart from './components/EventChart'
+import LineChart from './components/LineChart'
 import Locale from '../../mixins/locale'
 import TimeSelect from './components/TimeSelect'
 
@@ -73,6 +78,7 @@ export default {
   components: {
     StatusItem,
     EventChart,
+    LineChart,
     TimeSelect
   },
 
@@ -443,7 +449,7 @@ $hoverBg: #eef3ff;
 }
 
 .layout-sidebar.--left {
-  overflow: hidden;
+  overflow: hidden auto;
   will-change: width;
   $headerH: 34px;
 
