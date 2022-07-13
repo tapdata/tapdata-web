@@ -75,6 +75,8 @@ export const DdlEventList = observer(
         .findParentNodes(form.values.id)
         .filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.enableDDL)
 
+      const parentEnable = ref(!!parents.length)
+
       console.log('parents', parents) // eslint-disable-line
 
       if (parents.length) {
@@ -98,26 +100,28 @@ export const DdlEventList = observer(
       }
 
       onMounted(() => {
-        if (!list.value.length) {
+        if (!parentEnable.value) {
           fieldRef.value.setDisplay('hidden')
         }
       })
 
       return () => {
         return (
-          <div>
-            {list.value.map(item => {
-              return [
-                <div class="font-color-light mb-1 lh-1">来自源连接：{item.source}</div>,
-                <div>
-                  {item.events.map(name => (
-                    <ElTag type="info" effect="light">
-                      {EVENT_MAP[name]}
-                    </ElTag>
-                  ))}
-                </div>
-              ]
-            })}
+          <div class="lh-1 font-color-light">
+            {list.value.length
+              ? list.value.map((item, i) => {
+                  return [
+                    <div class={['font-color-light mb-2 lh-1', { 'mt-2': i > 0 }]}>来自源连接：{item.source}</div>,
+                    <div class="flex flex-wrap gap-1">
+                      {item.events.map(name => (
+                        <ElTag type="info" effect="light">
+                          {EVENT_MAP[name]}
+                        </ElTag>
+                      ))}
+                    </div>
+                  ]
+                })
+              : '目标暂不支持DDL'}
           </div>
         )
       }
