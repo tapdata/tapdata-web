@@ -518,9 +518,9 @@ export default {
       let startTimeStamp, endTimeStamp
       if (selectedTime) {
         let timeRange = this.getTimeRangeByType(selectedTime, this.timeRange)
+        startTimeStamp = timeRange[0]
+        endTimeStamp = timeRange[1]
         if (isNaN(startTimeStamp)) {
-          startTimeStamp = timeRange[0]
-          endTimeStamp = timeRange[1]
           startTimeStamp = null
         }
         if (isNaN(endTimeStamp)) {
