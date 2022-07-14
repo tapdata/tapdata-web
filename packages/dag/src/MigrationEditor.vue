@@ -226,6 +226,10 @@ export default {
         {
           name: '表编辑',
           type: 'table_rename_processor'
+        },
+        {
+          name: '字段编辑',
+          type: 'migrate_field_rename_processor'
         } /*,
         {
           name: '字段编辑',
