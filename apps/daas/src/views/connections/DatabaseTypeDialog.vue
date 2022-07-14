@@ -42,14 +42,18 @@ export default {
       loading: true
     }
   },
-  created() {
-    this.timer && clearInterval(this.timer)
-    this.timer = setInterval(() => {
-      this.getDatabaseType()
-    }, 3000)
+  watch: {
+    dialogVisible(v) {
+      this.timer && clearInterval(this.timer)
+      if (v) {
+        this.timer = setInterval(() => {
+          this.getDatabaseType()
+        }, 3000)
+      }
+    }
   },
-  beforeDestroy() {
-    this.timer && clearInterval(this.timer)
+  created() {
+    this.getDatabaseType()
   },
   methods: {
     getImgByType,
