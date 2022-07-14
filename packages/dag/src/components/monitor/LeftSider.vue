@@ -209,7 +209,6 @@ export default {
     },
 
     disabledDBMore() {
-      console.log('disabledDBMore', this.dbLoading, this.noDBMore) // eslint-disable-line
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
     },
 
@@ -241,7 +240,6 @@ export default {
     // qps
     qpsData() {
       const res = this.quota.samples?.[1]
-      console.log('res', res)
       if (!res) {
         return {
           x: [],
