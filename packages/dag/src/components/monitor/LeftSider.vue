@@ -39,8 +39,19 @@
             <VIcon @click.stop="toFullscreen">fullscreen</VIcon>
           </template>
           <template #content>
-            <LineChart title="QPS（Q/S）" style="height: 140px"></LineChart>
-            <LineChart title="增量延迟（ms）" color="#2C65FF" class="mt-4" style="height: 140px"></LineChart>
+            <LineChart
+              :data="qpsData"
+              :color="['#26CF6C', '#2C65FF']"
+              title="QPS（Q/S）"
+              style="height: 140px"
+            ></LineChart>
+            <LineChart
+              :data="delayData"
+              title="增量延迟（ms）"
+              :color="['#2C65FF']"
+              class="mt-4"
+              style="height: 140px"
+            ></LineChart>
           </template>
         </CollapsePanel>
       </div>
@@ -53,7 +64,10 @@
             <VIcon @click.stop="toFullscreen">menu</VIcon>
           </template>
           <template #content>
-            <div>全量完成时间：2022-12-01 12</div>
+            <div>
+              <span>全量完成时间：</span>
+              <span>{{ initialData.time }}</span>
+            </div>
             <div class="flex justify-content-between">
               <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
               <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
@@ -69,15 +83,15 @@
           <template #content>
             <div class="flex justify-content-between mb-2">
               <span>源连接：</span>
-              <span class="font-color-normal">mysql-source</span>
+              <span class="font-color-normal">{{ cdcData.source }}</span>
             </div>
             <div class="flex justify-content-between mb-2">
               <span>目标连接：</span>
-              <span class="font-color-normal">mysql-source</span>
+              <span class="font-color-normal">{{ cdcData.target }}</span>
             </div>
             <div class="flex justify-content-between">
               <span>增量时间点：</span>
-              <span class="font-color-normal">2022-12-01 12:12:12</span>
+              <span class="font-color-normal">{{ cdcData.time }}</span>
             </div>
           </template>
         </CollapsePanel>
@@ -202,6 +216,59 @@ export default {
     scrollbarWrapStyle() {
       let gutter = scrollbarWidth()
       return `height: calc(100% + ${gutter}px);`
+    },
+
+    // 全量信息
+    initialData() {
+      const { initialTime } = this.quota.statistics?.[0] || {}
+      return {
+        time: initialTime
+      }
+    },
+
+    // 增量信息
+    cdcData() {
+      const { task_data_source_Data = {} } = this.dataflow?.attrs || {}
+      const { source_connectionName, target_connectionName } = task_data_source_Data
+      const { cdcTime } = this.quota.statistics?.[0] || {}
+      return {
+        source: source_connectionName,
+        target: target_connectionName,
+        time: cdcTime
+      }
+    },
+
+    // qps
+    qpsData() {
+      const res = this.quota.samples?.[1]
+      console.log('res', res)
+      if (!res) {
+        return {
+          x: [],
+          name: [],
+          value: []
+        }
+      }
+      return {
+        x: res.time,
+        name: ['输入', '输出'],
+        value: [res.inputQPS, res.outputQPS]
+      }
+    },
+
+    // 增量延迟
+    delayData() {
+      const res = this.quota.samples?.[2]
+      if (!res) {
+        return {
+          x: [],
+          value: []
+        }
+      }
+      return {
+        x: res.time,
+        value: res.value
+      }
     }
   },
 

@@ -1,6 +1,6 @@
 <template>
   <div class="line-chart">
-    <Chart :extend="options"></Chart>
+    <Chart :extend="extend"></Chart>
   </div>
 </template>
 
@@ -43,13 +43,14 @@ export default {
             '2000-06-19',
             '2000-06-20'
           ],
+          name: ['标题'],
           value: [12, 3, 42, 4, 78, 24, 7, 5, 44, 22, 12, 3, 42, 4, 78, 24, 7, 5, 44, 222]
         }
       }
     },
     color: {
-      type: String,
-      default: '#26CF6C'
+      type: Array,
+      default: () => ['#26CF6C']
     },
     limit: {
       type: Number,
@@ -59,7 +60,55 @@ export default {
 
   data() {
     return {
-      options: {
+      extend: null
+    }
+  },
+
+  watch: {
+    data: {
+      deep: true,
+      handler() {
+        this.init()
+      }
+    }
+  },
+
+  mounted() {
+    this.init()
+  },
+
+  methods: {
+    init() {
+      const { x, value, name } = this.data
+      const { limit } = this
+      let options = this.getOptions()
+      let series = []
+      if (value?.[0] instanceof Array) {
+        value.forEach((el, index) => {
+          series.push(this.getSeriesItem(el || [], index, name?.[index]))
+        })
+      } else {
+        series.push(this.getSeriesItem(value || []))
+      }
+      options.series = series
+      options.xAxis.data = x
+
+      if (limit && x?.length) {
+        const startValue = x[(value?.[0]?.length || value.length) - limit] + ''
+        options.dataZoom = [
+          {
+            type: 'inside',
+            zoomLock: true,
+            zoomOnMouseWheel: false,
+            moveOnMouseWheel: false,
+            startValue
+          }
+        ]
+      }
+      this.extend = options
+    },
+    getOptions() {
+      return {
         tooltip: {
           trigger: 'axis'
         },
@@ -75,7 +124,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: this.data?.x,
+          data: [],
           splitLine: {
             show: true,
             lineStyle: {
@@ -122,52 +171,26 @@ export default {
             // showMinLabel: false
           }
         },
-        series: {
-          // name: this.title,
-          type: 'line',
-          data: [],
-          smooth: true,
-          symbol: 'none',
-          label: {
-            show: false
-          },
-          lineStyle: {
-            color: this.color
-          },
-          areaStyle: {
-            color: this.color,
-            opacity: 0.1
-          }
+        series: []
+      }
+    },
+    getSeriesItem(data = [], index = 0, name = '') {
+      return {
+        name,
+        type: 'line',
+        data: data,
+        smooth: true,
+        symbol: 'none',
+        label: {
+          show: false
+        },
+        lineStyle: {
+          color: this.color[index]
+        },
+        areaStyle: {
+          color: this.color[index],
+          opacity: 0.1
         }
-      }
-    }
-  },
-
-  watch: {
-    data: {
-      deep: true,
-      handler() {
-        this.init()
-      }
-    }
-  },
-
-  mounted() {
-    this.init()
-  },
-
-  methods: {
-    init() {
-      this.options.series.data = this.data.value || []
-      const { limit } = this
-      if (limit) {
-        this.options.dataZoom = [
-          {
-            type: 'inside',
-            zoomLock: true,
-            startValue: this.data.x[this.data.value.length - limit]
-          }
-        ]
       }
     }
   }

@@ -493,10 +493,8 @@ export default {
           }
         })
       }
-      console.log('reformDataflow', data)
       this.$set(this.dataflow, 'statuses', data.statuses)
       this.$set(this.dataflow, 'statusResult', getSubTaskStatus(data.statuses))
-      console.log('!!!!!', getTaskBtnDisabled(this.dataflow, this.$disabledByPermission('SYNC_job_operation_all_data', data.user_id)))
       this.$set(
         this.dataflow,
         'disabledData',
