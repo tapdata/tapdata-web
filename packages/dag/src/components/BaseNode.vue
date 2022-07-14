@@ -194,8 +194,7 @@ $height: 40px;
     }
   }
 
-  &:hover,
-  &.options-active {
+  &:hover {
     .df-node-options {
       display: flex;
     }

@@ -57,15 +57,17 @@
           @mouse-select="handleMouseSelect"
           @change-scale="handleChangeScale"
         >
-          <DFNode
+          <Node
             v-for="n in allNodes"
             :key="n.id"
             :node-id="n.id"
+            :node="n"
             :id="NODE_PREFIX + n.id"
             :js-plumb-ins="jsPlumbIns"
             :class="{
               'options-active': nodeMenu.typeId === n.id
             }"
+            :task-type="dataflow.type"
             @drag-start="onNodeDragStart"
             @drag-move="onNodeDragMove"
             @drag-stop="onNodeDragStop"
@@ -74,7 +76,7 @@
             @nodeSelected="nodeSelectedById"
             @delete="handleDeleteById"
             @show-node-popover="showNodePopover"
-          ></DFNode>
+          ></Node>
         </PaperScroller>
         <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
           <EmptyItem></EmptyItem>
@@ -99,9 +101,9 @@
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
 import LeftSider from './components/monitor/LeftSider'
-import DFNode from './components/DFNode'
+import Node from './components/monitor/Node'
 import { jsPlumb, config } from './instance'
-import { NODE_PREFIX, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
+import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
@@ -119,6 +121,8 @@ import { VExpandXTransition } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
 import { taskApi } from '@tap/api'
+import dagre from 'dagre'
+import { MoveNodeCommand } from './command'
 
 export default {
   name: 'MigrationMonitor',
@@ -138,7 +142,7 @@ export default {
     BottomPanel,
     PaperScroller,
     TopHeader,
-    DFNode,
+    Node,
     LeftSider,
     VIcon
   },
@@ -234,6 +238,7 @@ export default {
         await this.$nextTick()
         await this.addNodes(dag)
         await this.$nextTick()
+        this.handleAutoLayout()
       }
     },
 
@@ -471,6 +476,64 @@ export default {
       }
       this.quota = res
       console.log('this.quota', this.quota)
+    },
+
+    /**
+     * 自动布局
+     */
+    handleAutoLayout() {
+      const nodes = this.allNodes
+      if (nodes.length < 2) return
+
+      let hasMove = false
+      const nodePositionMap = {}
+      const dg = new dagre.graphlib.Graph()
+      const newProperties = []
+      const oldProperties = []
+
+      dg.setGraph({ nodesep: 300, ranksep: 200, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setDefaultEdgeLabel(function () {
+        return {}
+      })
+
+      nodes.forEach(n => {
+        dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
+        nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
+      })
+      this.jsPlumbIns.getAllConnections().forEach(edge => {
+        dg.setEdge(edge.source.id, edge.target.id)
+      })
+
+      dagre.layout(dg)
+      dg.nodes().forEach(n => {
+        const node = dg.node(n)
+        const top = Math.round(node.y - node.height / 2)
+        const left = Math.round(node.x - node.width / 2)
+
+        if (nodePositionMap[n].join(',') !== `${left},${top}`) {
+          hasMove = true
+          oldProperties.push({
+            id: this.getRealId(n),
+            properties: {
+              attrs: {
+                position: nodePositionMap[n]
+              }
+            }
+          })
+          newProperties.push({
+            id: this.getRealId(n),
+            properties: {
+              attrs: {
+                position: [left, top]
+              }
+            }
+          })
+        }
+      })
+
+      hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      this.$refs.paperScroller.autoResizePaper()
+      this.$refs.paperScroller.centerContent()
     }
   }
 }
