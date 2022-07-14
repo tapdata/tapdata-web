@@ -100,7 +100,7 @@ export default {
         { name: 'KunDB', type: 'kundb' },
         { name: 'Custom connection', type: 'custom_connection' },
         { name: 'REST API', type: 'rest api' },
-        { name: 'Dummy DB', type: 'dummy db' },
+        { name: 'Dummy', type: 'dummy' },
         { name: 'GridFS', type: 'gridfs' },
         { name: 'Kafka', type: 'kafka' },
         { name: 'MariaDB', type: 'mariadb' },
