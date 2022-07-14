@@ -708,7 +708,7 @@ $hoverBg: #eef3ff;
           position: relative;
           padding-left: 16px;
           padding-right: 16px;
-          height: $headerH;
+          //height: $headerH;
           font-size: 14px;
 
           &:hover {

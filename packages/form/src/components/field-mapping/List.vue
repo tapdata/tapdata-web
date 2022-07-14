@@ -15,7 +15,7 @@
               ></ElInput>
             </div>
           </div>
-          <div class="bg-main flex justify-content-between mb-2 ml-2">
+          <div class="flex justify-content-between mb-2 ml-2">
             <span class="table-name ml-1">表名</span>
           </div>
           <div class="task-form-left__ul flex flex-column" v-loading="loadingNav">
