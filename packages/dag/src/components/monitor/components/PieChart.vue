@@ -1,6 +1,6 @@
 <template>
   <div class="pie-chart">
-    <Chart ref="chart" :extend="options"></Chart>
+    <Chart ref="chart" :extend="extend"></Chart>
   </div>
 </template>
 
@@ -37,33 +37,41 @@ export default {
 
   data() {
     return {
-      options: {
-        tooltip: {
-          trigger: 'item'
-        },
-        legend: {
-          bottom: 0,
-          icon: 'circle',
-          orient: 'vertical',
-          itemWidth: 6,
-          itemHeight: 6,
-          formatter: (name, val) => {
-            console.log('formatter', name, val)
-            return `${name}`
-          }
-        },
-        series: [
-          {
-            type: 'pie',
-            radius: ['40%', '70%'],
-            center: this.center,
-            label: { show: false },
-            labelLine: { show: false },
-            data: [],
-            top: 'top'
-          }
-        ]
-      }
+      extend: null
+      // options: {
+      //   tooltip: {
+      //     trigger: 'item'
+      //   },
+      //   legend: {
+      //     bottom: 0,
+      //     icon: 'circle',
+      //     orient: 'vertical',
+      //     itemWidth: 6,
+      //     itemHeight: 6,
+      //     formatter: (name, val) => {
+      //       console.log('formatter', name, val)
+      //       return `${name}这里要接上数据`
+      //     },
+      //     textStyle: {
+      //       rich: {
+      //         widthStyle: {
+      //           width: 90
+      //         }
+      //       }
+      //     }
+      //   },
+      //   series: [
+      //     {
+      //       type: 'pie',
+      //       radius: ['40%', '70%'],
+      //       center: this.center,
+      //       label: { show: false },
+      //       labelLine: { show: false },
+      //       data: [],
+      //       top: 'top'
+      //     }
+      //   ]
+      // }
     }
   },
 
@@ -83,8 +91,8 @@ export default {
 
   methods: {
     init() {
-      this.options.series[0].data = this.data.map(t => {
-        console.log('t.color', t.color)
+      let options = this.getOptions()
+      options.series[0].data = this.data.map(t => {
         return {
           name: t.name,
           value: t.value,
@@ -93,6 +101,47 @@ export default {
           }
         }
       })
+      this.extend = options
+    },
+    getOptions() {
+      return {
+        tooltip: {
+          trigger: 'item'
+        },
+        textStyle: {
+          rich: {
+            orgname: {
+              width: 80
+            },
+            count: {
+              padding: [0, 0, 0, 15]
+            }
+          }
+        },
+        legend: {
+          bottom: 0,
+          icon: 'circle',
+          orient: 'vertical',
+          itemWidth: 6,
+          itemHeight: 6,
+          formatter: (name, val) => {
+            const count = 12345
+            const arr = [`{orgname|${name}}`, `{count|${count}}`]
+            return arr.join('')
+          }
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: this.center,
+            label: { show: false },
+            labelLine: { show: false },
+            data: [],
+            top: 'top'
+          }
+        ]
+      }
     }
   }
 }

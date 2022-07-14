@@ -29,15 +29,15 @@ export default {
       default: () => [
         {
           label: '总输入',
-          value: 545454
+          value: 0
         },
         {
           label: '总输出',
-          value: 123
+          value: 0
         },
         {
           label: '事件统计（条）累计：',
-          value: 123456789
+          value: 0
         }
       ]
     },
@@ -50,23 +50,23 @@ export default {
       default: () => [
         {
           label: '插入',
-          data: [10, 6]
+          data: [0, 0]
         },
         {
           label: '更新',
-          data: [10, 6]
+          data: [0, 0]
         },
         {
           label: '删除',
-          data: [10, 6]
+          data: [0, 0]
         },
         {
           label: 'DDL',
-          data: [10, 6]
+          data: [0, 0]
         },
         {
           label: '其他',
-          data: [10, 6]
+          data: [0, 0]
         }
       ]
     },
@@ -164,7 +164,6 @@ export default {
           data: el.value
         })
       })
-      console.log('series', series)
       this.options.series = series
     },
     formatNumber() {

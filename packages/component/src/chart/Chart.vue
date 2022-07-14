@@ -34,8 +34,7 @@ export default {
   components: { VChart },
   props: {
     type: {
-      type: String,
-      default: 'bar'
+      type: String
     },
     data: {
       type: [Array, Object]
@@ -112,6 +111,9 @@ export default {
         if (JSON.stringify(this.chartOption) !== JSON.stringify(extend)) {
           this.chartOption = extend
         }
+        return
+      }
+      if (!this.type) {
         return
       }
       let obj = this[this.type]?.()

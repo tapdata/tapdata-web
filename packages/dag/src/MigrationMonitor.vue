@@ -123,6 +123,7 @@ import Locale from './mixins/locale'
 import { taskApi } from '@tap/api'
 import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
+import dayjs from 'dayjs'
 
 export default {
   name: 'MigrationMonitor',
@@ -217,6 +218,7 @@ export default {
     this.resetWorkspace()
     this.resetState()
     this.$ws.off('editFlush', this.handleEditFlush)
+    this.timer && clearInterval(this.timer)
   },
 
   methods: {
@@ -225,7 +227,6 @@ export default {
     },
 
     async openDataflow(id) {
-      console.log('openDataflow', 1112, this.dataflow)
       const data = await this.loadDataflow(id)
       console.log('openDataflow', data)
       if (data) {
@@ -454,6 +455,7 @@ export default {
     loadQuotaData() {
       let res = {
         samples: [
+          // 任务事件统计（条）
           {
             input: {
               inserted: 39,
@@ -471,11 +473,50 @@ export default {
               other: 6,
               total: 56
             }
+          },
+          // qps
+          {
+            inputQPS: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1],
+            outputQPS: [2, 3, 1, 2, 3, 5, 1, 2, 3, 1, 2, 3, 1, 2, 3, 5, 1, 2, 3, 1],
+            time: [
+              1657707577896, 1657707582896, 1657707587896, 1657707592896, 1657707597896, 1657707602896, 1657707607896,
+              1657707612896, 1657707617896, 1657707622896, 1657707627896, 1657707632896, 1657707637896, 1657707642896,
+              1657707647896, 1657707652896, 1657707657896, 1657707662896, 1657707667896, 1657707672896
+            ]
+          },
+          // 增量延迟
+          {
+            value: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1],
+            time: [
+              1657707577896, 1657707582896, 1657707587896, 1657707592896, 1657707597896, 1657707602896, 1657707607896,
+              1657707612896, 1657707617896, 1657707622896, 1657707627896, 1657707632896, 1657707637896, 1657707642896,
+              1657707647896, 1657707652896, 1657707657896, 1657707662896, 1657707667896, 1657707672896
+            ]
+          }
+        ],
+        statistics: [
+          {
+            deletedTotal: 0,
+            initialTime: 1657707577896,
+            cdcTime: 1657707577896,
+            initialWrite: 1,
+            inputTotal: 1,
+            insertedTotal: 1,
+            outputTotal: 1,
+            replicateLag: 0,
+            updatedTotal: 0
           }
         ]
       }
+      res.samples[1].time = res.samples[1].time.map(t => this.formatTime(t))
+      res.samples[2].time = res.samples[2].time.map(t => this.formatTime(t))
+      res.statistics[0].initialTime = this.formatTime(res.statistics[0].initialTime)
+      res.statistics[0].cdcTime = this.formatTime(res.statistics[0].cdcTime)
       this.quota = res
-      console.log('this.quota', this.quota)
+    },
+
+    formatTime(date, type = 'YYYY-MM-DD HH:mm:ss') {
+      return dayjs(date).format(type)
     },
 
     /**
