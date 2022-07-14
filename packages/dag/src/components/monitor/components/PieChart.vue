@@ -111,7 +111,7 @@ export default {
         textStyle: {
           rich: {
             orgname: {
-              width: 90
+              width: 80
             },
             count: {
               padding: [0, 0, 0, 15]
@@ -125,7 +125,7 @@ export default {
           itemWidth: 6,
           itemHeight: 6,
           formatter: (name, val) => {
-            const count = 2
+            const count = 12345
             const arr = [`{orgname|${name}}`, `{count|${count}}`]
             return arr.join('')
           }
