@@ -116,9 +116,9 @@ export default {
   },
   methods: {
     getUsers() {
-      usersApi.get().then(res => {
-        let data = res?.items || []
-        this.userOptions = data.map(item => {
+      usersApi.get().then(data => {
+        let items = data?.items || []
+        this.userOptions = items.map(item => {
           return {
             label: item.username,
             value: item.username
@@ -163,16 +163,13 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res) {
-            this.page.total = res?.total
-          }
+        .then(data => {
+          this.page.total = data?.total || 0
           this.page.index = current
-          this.list =
-            res?.items.map(item => {
-              item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              return item
-            }) || []
+          this.list = (data?.items || []).map(item => {
+            item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+            return item
+          })
         })
         .finally(() => {
           this.loading = false

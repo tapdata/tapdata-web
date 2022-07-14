@@ -35,7 +35,7 @@
 }
 .fields-selector--display {
   flex-wrap: wrap;
-  height: 100px;
+  max-height: 100px;
   background: map-get($bgColor, normal);
   border-radius: 4px;
   overflow: auto;

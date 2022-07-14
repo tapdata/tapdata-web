@@ -204,9 +204,9 @@ export default {
             }
           })
         })
-        .then(res => {
-          let data = res?.items || []
-          names = names.concat(data.map(item => item.function_name))
+        .then(data => {
+          let items = data?.items || []
+          names = names.concat(items.map(item => item.function_name))
           this.repeatNames = Array.from(new Set(names))
           this.funcList.forEach(item => {
             item.isRepeat = this.repeatNames.includes(item.function_name)
@@ -361,15 +361,10 @@ export default {
           })
           javascriptFunctionsApi
             .post(params)
-            .then(res => {
-              if (res) {
-                this.$message.success(this.$t('message_save_ok'))
-                this.$router.back()
-              }
+            .then(() => {
+              this.$message.success(this.$t('message_save_ok'))
+              this.$router.back()
             })
-            // .catch(e => {
-            //   this.$message.error(e.response.msg)
-            // })
             .finally(() => {
               loading.close()
             })

@@ -1136,17 +1136,17 @@ export default {
       }
     },
 
-    handleMouseSelect(showSelectBox, selectBoxAttr) {
+    handleMouseSelect(ifMoved, showSelectBox, selectBoxAttr) {
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态
       // this.setActiveType(null)
 
-      if (showSelectBox) {
+      if (!ifMoved) {
+        this.setActiveType(null)
+      } else if (showSelectBox) {
         const selectedNodes = this.getNodesInSelection(selectBoxAttr)
         selectedNodes.forEach(node => this.nodeSelected(node))
-      } else {
-        this.setActiveType(null)
       }
     },
 
@@ -1181,9 +1181,10 @@ export default {
       const position = this.getNewNodePosition(newPosition, movePosition)
       const target = this.createNode(position, nodeType)
 
-      if (target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)) {
-        this.command.exec(new QuickAddTargetCommand(source.id, target))
-      }
+      if (!this.checkAsSource(source, true)) return
+      if (!this.checkSourceMaxOutputs(source, true)) return
+      if (!this.checkAllowTargetOrSource(source, target, true)) return
+      this.command.exec(new QuickAddTargetCommand(source.id, target))
     },
 
     /**
@@ -1197,21 +1198,23 @@ export default {
       const a = this.nodeById(source)
       const b = this.createNode(position, nodeType)
       const c = this.nodeById(target)
-      const aCtor = a.__Ctor
-      const bCtor = b.__Ctor
-      const cCtor = c.__Ctor
 
-      if (bCtor.allowSource(a) && aCtor.allowTarget(b, a) && cCtor.allowSource(b) && bCtor.allowTarget(cCtor, b)) {
-        this.command.exec(
-          new AddNodeOnConnectionCommand(
-            {
-              source,
-              target
-            },
-            b
-          )
+      if (!this.checkAsTarget(b, true)) return
+      if (!this.checkAsSource(b, true)) return
+      if (!this.checkTargetMaxInputs(b, true)) return
+      if (!this.checkSourceMaxOutputs(b, true)) return
+      if (!this.checkAllowTargetOrSource(a, b, true)) return
+      if (!this.checkAllowTargetOrSource(b, c, true)) return
+
+      this.command.exec(
+        new AddNodeOnConnectionCommand(
+          {
+            source,
+            target
+          },
+          b
         )
-      }
+      )
     },
 
     addNodeOnConnByNodeMenu(nodeType) {

@@ -397,30 +397,6 @@ export default {
     formatTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
-    dataflowChange(data) {
-      if (data && data.data && data.data.fullDocument) {
-        let dataflow = data.data.fullDocument
-        if (dataflow.agentId) {
-          let opt = this.agentOptions.find(it => it.value === dataflow.agentId)
-          dataflow.tcm = {
-            agentName: opt?.label
-          }
-        }
-        let list = this.table.list
-        let index = list.findIndex(it => it.name === dataflow.name)
-        if (dataflow.children && !dataflow.children.length) {
-          delete dataflow.children
-        }
-        if (index >= 0) {
-          this.table.$set(list, index, Object.assign(list[index], this.cookRecord(dataflow)))
-          let handleItem = this.cookRecord(dataflow)
-          if (handleItem.children && !handleItem.children.length) {
-            delete handleItem.children
-          }
-          this.table.$set(list, index, Object.assign(list[index], handleItem))
-        }
-      }
-    },
     reset() {
       this.searchParams = {
         keyword: '',
@@ -479,8 +455,7 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let data = res
+        .then(data => {
           let list = data?.items || []
           return {
             total: data.total,
@@ -680,9 +655,9 @@ export default {
         }
       }
 
-      taskApi.get({ filter: JSON.stringify(filter) }).then(res => {
+      taskApi.get({ filter: JSON.stringify(filter) }).then(data => {
         let flag = false
-        let items = res?.items || []
+        let items = data?.items || []
         if (items.length) {
           items.forEach(item => {
             if (item?.errorEvents?.length) {
@@ -690,36 +665,29 @@ export default {
             }
           })
         }
-        taskApi.batchStart(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        taskApi.batchStart(ids).then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
         if (flag) {
-          _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
-            // _this.changeStatus(ids, { status: 'scheduled' })
-          })
-        } else {
-          // _this.changeStatus(ids, { status: 'scheduled' })
+          _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {})
         }
       })
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
-      // let title = msgObj.title
       let list = this.table.list
       for (let i = 0; i < list.length; i++) {
         let node = list[i]
         if (ids.includes(node.id)) {
           if (node.setting && !node.setting.sync_type.includes('cdc')) {
             message = this.$t('message.stopInitial_syncMessage')
-            // title = this.$t('dataFlow.importantReminder')
           }
           if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
             const h = this.$createElement
             let arr = this.$t('message.stopAggregation_message').split('XXX')
             message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-            // title = this.$t('dataFlow.importantReminder')
           }
         }
       }
@@ -730,8 +698,8 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        taskApi.batchStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
       })
@@ -745,8 +713,8 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        taskApi.forceStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
       })
@@ -759,13 +727,9 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then(res => {
-          if (res) {
-            this.table.fetch()
-            this.responseHandler(res, this.$t('message.deleteOK'))
-          } else if (res.data && res?.fail) {
-            this.$message.info(this.$t('message.deleteFail'))
-          }
+        taskApi.batchDelete(ids).then(data => {
+          this.table.fetch()
+          this.responseHandler(data, this.$t('message.deleteOK'))
         })
       })
     },
@@ -780,13 +744,10 @@ export default {
         this.restLoading = true
         taskApi
           .batchRenew(ids)
-          .then(res => {
+          .then(data => {
             this.table.fetch()
-            this.responseHandler(res, this.$t('message.resetOk'))
+            this.responseHandler(data, this.$t('message.resetOk'))
           })
-          // .catch(() => {
-          //   this.$message.info(this.$t('message.cancelReset'))
-          // })
           .finally(() => {
             this.restLoading = false
           })
@@ -803,9 +764,6 @@ export default {
         this.table.fetch()
         this.$message.success(this.$t('message.copySuccess'))
       })
-      // .catch(() => {
-      //   this.$message.info(this.$t('message.copyFail'))
-      // })
     },
     setTag(ids, node) {
       this.dataFlowId = node.id
@@ -821,19 +779,10 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      taskApi.update(where, attributes).then(res => {
+      taskApi.update(where, attributes).then(data => {
         this.table.fetch()
-        this.responseHandler(res, this.$t('message_operation_succuess'))
+        this.responseHandler(data, this.$t('message_operation_succuess'))
       })
-      // .catch(err => {
-      //   if (err.response.msg === 'Metadata transformer error') {
-      //     this.$message.error('任务启动失败，请编辑任务完成映射配置')
-      //   } else if (err.response.msg === 'DataFlow has add or del stages') {
-      //     this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
-      //   } else if (err.response.msg === 'running transformer') {
-      //     this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
-      //   }
-      // })
     },
     skipHandler(id, errorEvents) {
       this.changeStatus([id], { status: 'scheduled', errorEvents })
@@ -888,14 +837,9 @@ export default {
       data.cronExpression = this.formSchedule.cronExpression
       taskApi
         .patchId(this.formSchedule.id, { setting: data })
-        .then(result => {
-          if (result) {
-            this.$message.success(this.$t('message_save_ok'))
-          }
+        .then(() => {
+          this.$message.success(this.$t('message_save_ok'))
         })
-        // .catch(() => {
-        //   this.$message.error(this.$t('message_save_fail'))
-        // })
         .finally(() => {
           this.taskSettingsDialog = false
         })

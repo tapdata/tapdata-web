@@ -137,8 +137,7 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let data = res
+        .then(data => {
           return [{ count: data.total }, data.items]
         })
     },

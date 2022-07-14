@@ -2,7 +2,7 @@ import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
-import { merge } from 'lodash'
+import { merge, isEqual } from 'lodash'
 import Locale from './locale'
 
 export default {
@@ -19,6 +19,17 @@ export default {
 
         findNodeById: id => {
           return this.$store.state.dataflow.NodeMap[id]
+        },
+
+        findParentNode: id => {
+          let node = this.scope.findNodeById(id)
+          let parentId = node.$inputs?.[0]
+          let parent
+          while (parentId) {
+            parent = this.scope.findNodeById(parentId)
+            parentId = parent.$inputs?.[0]
+          }
+          return parent
         },
 
         /**
@@ -212,7 +223,10 @@ export default {
                 status: 1,
                 accessNodeType: 1,
                 accessNodeProcessId: 1,
-                accessNodeProcessIdList: 1
+                accessNodeProcessIdList: 1,
+                pdkType: 1,
+                pdkHash: 1,
+                capabilities: 1
               },
               order: ['status DESC', 'name ASC']
             }
@@ -285,6 +299,11 @@ export default {
           }
         },
 
+        /**
+         * 同步连接上的属性
+         * @param form
+         * @param item
+         */
         handlerSyncDatabaseChange: (form, item) => {
           const field = form.query('grid.leftCell.connectionIdWrap.clipboardButton').take()
           field.setComponentProps({
@@ -690,6 +709,51 @@ export default {
               })
             }
           }
+        },
+
+        useDmlPolicy(field) {
+          const capabilities = field.query('attrs.capabilities').get('value')
+          const insertPolicy = capabilities.find(({ id }) => id === 'dml_insert_policy')
+          const updatePolicy = capabilities.find(({ id }) => id === 'dml_update_policy')
+          const insertField = field.query('dmlPolicy.insertPolicy').take()
+          const updateField = field.query('dmlPolicy.updatePolicy').take()
+
+          const func = (policy, policyField) => {
+            if (!policy || !policy.alternatives) {
+              policyField.setPattern('readPretty')
+              policyField.setValue(policyField.initialValue)
+            } else {
+              const values = policyField.dataSource.map(item => item.value)
+              const alternatives = policy.alternatives.filter(key => values.includes(key))
+              if (alternatives.length <= 1) {
+                policyField.setPattern('readPretty')
+                policyField.setValue(alternatives[0] || policyField.initialValue)
+              } else if (!field.form.disabled) {
+                policyField.setPattern('editable')
+              }
+            }
+          }
+
+          func(insertPolicy, insertField)
+          func(updatePolicy, updateField)
+        },
+
+        useSyncConnection: async field => {
+          const id = field.value
+          const form = field.form
+          const connection = await connectionsApi.get(id)
+          const connectionType = form.getValuesIn('attrs.connectionType') || ''
+          const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
+          const connectionName = form.getValuesIn('attrs.connectionName')
+          const capabilities = form.getValuesIn('attrs.capabilities')
+
+          connectionType !== connection.connection_type &&
+            form.setValuesIn('attrs.connectionType', connection.connectionType)
+          accessNodeProcessId !== connection.accessNodeProcessId &&
+            form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
+          connectionName !== connection.name && form.setValuesIn('attrs.connectionName', connection.name)
+          !isEqual(capabilities, connection.capabilities) &&
+            form.setValuesIn('attrs.capabilities', connection.capabilities)
         }
       }
     }

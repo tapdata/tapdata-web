@@ -6,12 +6,19 @@
         :value="value"
         :readonly="readonly"
         :placeholder="placeholder"
+        :style="inputStyle"
+        :maxlength="maxlength"
         @input="handleInput"
         @change="handleChange"
       />
       <div ref="shadow" class="text-editable-shadow">{{ value || placeholder }}</div>
     </div>
-    <VIcon v-if="!readonly" @click="handleFocusInput" class="text-editable-icon ml-2 flex-shrink-0" size="14"
+    <VIcon
+      v-if="!readonly"
+      v-show="!hiddenIcon"
+      @click="handleFocusInput"
+      class="text-editable-icon ml-2 flex-shrink-0"
+      size="14"
       >edit-outline</VIcon
     >
   </div>
@@ -25,9 +32,15 @@ export default {
     value: String,
     readonly: Boolean,
     maxWidth: [String, Number],
+    inputMinWidth: [String, Number],
     placeholder: {
       type: String,
       default: '请输入'
+    },
+    hiddenIcon: Boolean,
+    maxlength: {
+      type: Number,
+      default: 30
     }
   },
 
@@ -36,6 +49,12 @@ export default {
       const maxWidth = this.maxWidth
       return {
         maxWidth: maxWidth && !isNaN(maxWidth) ? `${maxWidth}px` : maxWidth
+      }
+    },
+    inputStyle() {
+      const width = this.inputMinWidth
+      return {
+        minWidth: width && !isNaN(width) ? `${width}px` : width
       }
     }
   },
@@ -88,6 +107,7 @@ export default {
       max-width: 100%;
       outline: none;
       box-shadow: none;
+      color: inherit;
       background: 0 0;
       line-height: 26px;
       border: none;

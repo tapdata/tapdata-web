@@ -68,13 +68,13 @@ export default {
     getDatabaseType() {
       databaseTypesApi
         .get()
-        .then(res => {
-          if (res) {
-            let data = res?.filter(t => !this.database.length || !this.database.some(d => d.pdkHash === t.pdkHash))
-            if (!data.length) {
+        .then(data => {
+          if (data) {
+            let items = data?.filter(t => !this.database.length || !this.database.some(d => d.pdkHash === t.pdkHash))
+            if (!items.length) {
               return
             }
-            this.database.push(...data)
+            this.database.push(...items)
           }
         })
         .finally(() => {

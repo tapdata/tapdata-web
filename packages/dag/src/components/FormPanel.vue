@@ -1,5 +1,5 @@
 <template>
-  <FormRender :form="form" :schema="schema" :scope="scope" />
+  <FormRender :form="form" :schema="schema" :scope="scope" v-bind="$attrs" />
 </template>
 
 <script>

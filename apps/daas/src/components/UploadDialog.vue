@@ -44,7 +44,7 @@
 <script>
 import Cookie from '@tap/shared/src/cookie'
 import VIcon from '@/components/VIcon'
-import { metadataInstancesApi } from '@tap/api'
+import { metadataDefinitionsApi } from '@tap/api'
 export default {
   name: 'Upload',
   components: {
@@ -111,16 +111,14 @@ export default {
     // 获取分类
     getClassify() {
       let filter = {
-        where: { or: [{ item_type: this.classifyType }] }
+        where: { or: [{ item_type: this.type }] }
       }
-      metadataInstancesApi
+      metadataDefinitionsApi
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res) {
-            this.classifyList = res?.items || []
-          }
+        .then(data => {
+          this.classifyList = data?.items || []
         })
     },
 

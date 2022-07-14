@@ -74,12 +74,12 @@
           </div>
         </ElTabPane>
         <ElTabPane label="高级设置" name="advanced">
-          <!--<div class="setting-panel-box bg-white border-bottom pt-3">
+          <div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               运行设置
               <span class="pl-2">任务在启动和运行时的环境设置</span>
             </div>
-             <div class="px-5">
+            <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem :label="t('connection_form_access_node')">
@@ -108,7 +108,7 @@
                 </ElCol>
               </ElRow>
             </div>
-          </div>-->
+          </div>
           <div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               读写设置

@@ -4,7 +4,13 @@
       <div class="module-form">
         <ElForm :model="createForm" ref="form" size="small">
           <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules.datasource" required>
-            <ElSelect v-model="createForm.datasource" size="mini" placeholder="请选择" :disabled="!!$route.query.id">
+            <ElSelect
+              v-model="createForm.datasource"
+              filterable
+              size="mini"
+              placeholder="请选择"
+              :disabled="!!$route.query.id"
+            >
               <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
               </ElOption>
             </ElSelect>
@@ -227,8 +233,8 @@ export default {
           }
         })
       }
-      metadataInstancesApi.get(params).then(res => {
-        let table = res?.items?.[0]
+      metadataInstancesApi.get(params).then(data => {
+        let table = data?.items?.[0]
         this.createForm.fields = this.fields = table.fields
       })
     },
@@ -269,12 +275,10 @@ export default {
     // 获取api数据
     getDetail() {
       let _this = this
-      modulesApi.get([this.$route.query.id]).then(res => {
-        if (res) {
-          Object.assign(_this.createForm, res)
-          // _this.createForm.apiType = res.data.apiType
-          // _this.createForm.datasource = res.data.datasource
-          _this.fields = res?.fields
+      modulesApi.get([this.$route.query.id]).then(data => {
+        if (data) {
+          Object.assign(_this.createForm, data)
+          _this.fields = data?.fields
           _this.getTableData()
         }
       })
@@ -439,23 +443,14 @@ export default {
     },
     // 获取角色权限
     getRoles() {
-      roleApi.get({}).then(res => {
-        if (res) {
-          this.roles = res?.items || []
-          this.roles.push({
-            name: this.$t('module_form_public_api'),
-            id: '$everyone'
-          })
-        }
+      roleApi.get({}).then(data => {
+        this.roles = data?.items || []
+        this.roles.push({
+          name: this.$t('module_form_public_api'),
+          id: '$everyone'
+        })
       })
-      // .catch(e => {
-      //   this.$message.error(e.response.msg)
-      // })
     },
-    // // 更新权限编辑按钮展示
-    // updateAuthority() {
-    //   this.apiAuthority = this.apiAuthority === 'edit' ? 'security' : 'edit'
-    // },
 
     // 打开数据目录
     handleOpenTag() {
@@ -531,20 +526,12 @@ export default {
             })
           }
           modulesApi[method](this.createForm)
-            .then(res => {
-              if (res) {
-                this.$router.push({
-                  name: 'apiPublish'
-                })
-                this.$message.success(this.$t('message_save_ok'))
-              }
+            .then(() => {
+              this.$router.push({
+                name: 'apiPublish'
+              })
+              this.$message.success(this.$t('message_save_ok'))
             })
-            // .catch(e => {
-            //   if (e?.response?.msg == 'duplication for name') {
-            //     this.$message.error(this.$t('module_form_duplication_name') + ',' + this.$t('message_save_fail'))
-            //   }
-            //   this.$message.error(this.$t('message_save_fail'))
-            // })
             .finally(() => {
               this.loadingFrom = false
             })

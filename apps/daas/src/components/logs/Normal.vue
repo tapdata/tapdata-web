@@ -247,9 +247,10 @@ export default {
       }
       customerJobLogsApi
         .get({ filter: JSON.stringify(filter) })
-        .then(res => {
-          let data = res?.items.reverse()
-          if (!data.length) {
+        .then(data => {
+          let items = data?.items || []
+          items = items.reverse()
+          if (!items.length) {
             if (reset) {
               this.list = []
             } else {
@@ -260,7 +261,7 @@ export default {
             return
           }
           const { keyword } = this
-          data.forEach(el => {
+          items.forEach(el => {
             let { template, params, templateKeys } = el
             let content = template || ''
             if (templateKeys) {
@@ -296,17 +297,17 @@ export default {
           })
           let { list } = this
           if (reset) {
-            this.list = Object.freeze(data)
+            this.list = Object.freeze(items)
             this.scrollToBottom()
             this.firstLogsId = this.list[0]?.id
             this.lastLogsId = this.list[this.list.length - 1]?.id
           } else {
             if (prepend) {
-              this.list = Object.freeze([...data, ...list])
+              this.list = Object.freeze([...items, ...list])
               this.firstLogsId = this.list[0]?.id
-              this.scrollToItem(data.length - 1)
+              this.scrollToItem(items.length - 1)
             } else {
-              this.list = Object.freeze([...list, ...data])
+              this.list = Object.freeze([...list, ...items])
               this.lastLogsId = this.list[this.list.length - 1]?.id
               if (this.isScrollBottom) {
                 this.scrollToBottom()

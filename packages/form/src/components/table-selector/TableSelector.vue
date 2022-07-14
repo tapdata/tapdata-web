@@ -7,8 +7,8 @@
           <ElCheckbox
             v-if="table.tables.length"
             v-model="table.isCheckAll"
-            :indeterminate="!table.isCheckAll && table.checked.length > 0"
             @input="checkAll($event, 'table')"
+            :indeterminate="isIndeterminate"
           ></ElCheckbox>
           <span class="ml-3">{{ t('component_table_selector_candidate_label') }}</span>
           <span v-if="table.tables.length" class="font-color-light ml-2"
@@ -92,7 +92,7 @@
           <ElCheckbox
             v-if="selected.tables.length && !isOpenClipMode"
             v-model="selected.isCheckAll"
-            :indeterminate="!selected.isCheckAll && selected.checked.length > 0"
+            :indeterminate="selectedIsIndeterminate"
             @input="checkAll($event, 'selected')"
           ></ElCheckbox>
           <span class="ml-3">{{ t('component_table_selector_checked_label') }}</span>
@@ -345,7 +345,7 @@
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import { metadataInstancesApi, connectionsApi } from '@tap/api'
+import { metadataInstancesApi, connectionsApi, workerApi } from '@tap/api'
 import Locale from '../../mixins/locale'
 
 export default {
@@ -410,6 +410,16 @@ export default {
       let value = this.clipboardValue?.replace(/\s+/g, '')
       let tables = value ? value.split(',') : []
       return Array.from(new Set(tables.filter(it => !!it && it.trim())))
+    },
+    isIndeterminate() {
+      const checkedLength = this.table.checked.length
+      const tablesLength = this.filteredData.length
+      return checkedLength > 0 && checkedLength < tablesLength
+    },
+    selectedIsIndeterminate() {
+      const checkedLength = this.selected.checked.length
+      const tablesLength = this.filterSelectedData.length
+      return checkedLength > 0 && checkedLength < tablesLength
     }
   },
   watch: {
@@ -422,6 +432,18 @@ export default {
     },
     value(v = []) {
       this.selected.tables = v.concat()
+    },
+    'table.checked'() {
+      this.updateAllChecked()
+    },
+    'filteredData.length'() {
+      this.updateAllChecked()
+    },
+    'selected.checked'() {
+      this.updateSelectedAllChecked()
+    },
+    'filterSelectedData.length'() {
+      this.updateSelectedAllChecked()
     }
   },
   created() {
@@ -497,9 +519,8 @@ export default {
       return errorTables
     },
     checkAll(flag, name) {
-      let { tables } = this[name]
       if (flag) {
-        this[name].checked = tables
+        this[name].checked = name === 'table' ? this.filteredData : this.filterSelectedData
       } else {
         this[name].checked = []
       }
@@ -537,7 +558,6 @@ export default {
     },
     //重新加载模型
     async reload() {
-      const workerApi = new workerApi()
       const data = await workerApi.getAvailableAgent()
       if (!data?.result?.length) {
         this.$message.error(this.t('agent_check_error'))
@@ -603,6 +623,17 @@ export default {
           this.showProgress = false
           this.progress = 0 //加载完成
         })
+    },
+
+    updateAllChecked() {
+      this.table.isCheckAll =
+        this.filteredData.length > 0 && this.filteredData.every(item => this.table.checked.indexOf(item) > -1)
+    },
+
+    updateSelectedAllChecked() {
+      this.selected.isCheckAll =
+        this.filterSelectedData.length > 0 &&
+        this.filterSelectedData.every(item => this.selected.checked.indexOf(item) > -1)
     }
   }
 }

@@ -157,7 +157,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '@/utils/util'
-import { roleApi, usersApi,roleMappingsApi,permissionsApi } from '@tap/api'
+import { roleApi, usersApi, roleMappingsApi, permissionsApi } from '@tap/api'
 
 export default {
   components: {
@@ -225,33 +225,13 @@ export default {
         .role({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let data = res || {}
+        .then(data => {
           return {
-            total: data.total,
+            total: data?.total || 0,
             data: data?.items || []
           }
         })
     },
-    // 获取角色下拉值
-    // getDbOptions() {
-    // 	this.$api('role')
-    // 		.get({})
-    // 		.then(res => {
-    // 			if (res.data && res.data.length) {
-    // 				let options = [];
-    // 				res.data.forEach(db => {
-    // 					if (db.name !== 'admin') {
-    // 						options.push({
-    // 							label: db.name,
-    // 							value: db.id
-    // 						});
-    // 					}
-    // 				});
-    // 				this.createFormConfig.items[3].options = options;
-    // 			}
-    // 		});
-    // },
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
@@ -273,13 +253,11 @@ export default {
           description: '',
           register_user_default: false
         }
-        permissionsApi
-          .get({})
-          .then(res => {
-            if (res && res?.length) {
-              this.permissions = res
-            }
-          })
+        permissionsApi.get({}).then(data => {
+          if (data && data?.length) {
+            this.permissions = data
+          }
+        })
         this.table.fetch()
       }
     },
@@ -292,19 +270,12 @@ export default {
     handleDelete(item) {
       this.$confirm(this.$t('role_list_delete_remind', [item.name]), '', {
         type: 'warning'
-      }).then(res => {
-        if (res) {
-          roleApi
-            .delete(item.id, item.name)
-            .then(res => {
-              if (res) {
-                this.table.fetch()
-                this.$message.success(this.$t('role_list_delete_success'))
-              }
-            })
-          // .catch(() => {
-          //   this.$message.error(this.$t('role_list_delete_error'))
-          // })
+      }).then(flag => {
+        if (flag) {
+          roleApi.delete(item.id, item.name).then(() => {
+            this.table.fetch()
+            this.$message.success(this.$t('role_list_delete_success'))
+          })
         }
       })
     },
@@ -329,26 +300,25 @@ export default {
           }
           let newRoleMappings = []
 
-          roleApi
-            [method](record)
-            .then(res => {
-              if (res ) {
+          roleApi[method](record)
+            .then(data => {
+              if (data) {
                 if (method === 'post') {
                   this.permissions.forEach(selectPermission => {
                     if (selectPermission.type === 'read' && !selectPermission.isMenu)
                       newRoleMappings.push({
                         principalType: 'PERMISSION',
                         principalId: selectPermission.name,
-                        roleId: res?.id
+                        roleId: data?.id
                       })
                   })
                   self
                     .$api('users')
-                    .deletePermissionRoleMapping(res?.id, {
+                    .deletePermissionRoleMapping(data?.id, {
                       data: { data: newRoleMappings }
                     })
-                    .then(res => {
-                      if (res) {
+                    .then(data => {
+                      if (data) {
                         // roleMappingModel.post(newRoleMappings);
                         this.$message.success(this.$t('message_save_ok'))
                       }
@@ -359,15 +329,6 @@ export default {
                 this.table.fetch()
               }
             })
-            // .catch(e => {
-            //   if (e.response && e.response.msg) {
-            //     if (e.response.msg.indexOf('already exists')) {
-            //       this.$message.error(this.$t('role_form_already_exists'))
-            //     } else {
-            //       this.$message.error(`${e.response.msg}`)
-            //     }
-            //   }
-            // })
             .finally(() => {
               self.dialogFormVisible = false
             })
@@ -395,31 +356,25 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res?.length) {
-            _this.roleusers = res.map(item => item.principalId)
-            _this.oldUser = res
-            // res.data?.forEach(roleMapping => {
-            //   if (roleMapping.principalType === 'USER' && this.userGroup.find(v => v.id === roleMapping.principalId)) {
-            //     _this.roleusers.push(roleMapping.principalId)
-            //     _this.oldUser.push(roleMapping)
-            //   }
-            // })
+        .then(data => {
+          if (data?.length) {
+            _this.roleusers = data.map(item => item.principalId)
+            _this.oldUser = data
           }
         })
     },
 
     // 获取用户列表
     async getUserData() {
-      await  usersApi,
+      await usersApi
         .get({
           filter: JSON.stringify({
             limit: 999
           })
         })
-        .then(res => {
-          if (res?.items) {
-            res?.items.forEach(item => {
+        .then(data => {
+          if (data?.items) {
+            data?.items.forEach(item => {
               if (!item.role) {
                 this.userGroup.push(item)
               }
@@ -432,7 +387,7 @@ export default {
     saveUser() {
       let newRoleMappings = []
       this.oldUser.forEach(delRolemapping => {
-        roleMappingsApidelete(delRolemapping.id)
+        roleMappingsApi.delete(delRolemapping.id)
       })
       // _this.oldUser
       this.roleusers.forEach(roleuser => {
@@ -444,19 +399,17 @@ export default {
           })
         }
       })
-      roleMappingsApi
-        .saveAll(newRoleMappings)
-        .then(res => {
-          if (res) {
-            this.roleusers = []
-            res.data.forEach(item => {
-              this.roleusers.push(item.principalId)
-            })
+      roleMappingsApi.saveAll(newRoleMappings).then(data => {
+        if (data) {
+          this.roleusers = []
+          data.forEach(item => {
+            this.roleusers.push(item.principalId)
+          })
 
-            this.table.fetch()
-            this.$message.success(this.$t('message_save_ok'))
-          }
-        })
+          this.table.fetch()
+          this.$message.success(this.$t('message_save_ok'))
+        }
+      })
       // .catch(e => {
       //   if (e.response && e.response.msg) {
       //     if (e.response.msg.indexOf('already exists')) {
@@ -477,13 +430,9 @@ export default {
         register_user_default: data.register_user_default
       }
 
-      roleApi
-        .patch(record)
-        .then(res => {
-          if (res) {
-            this.table.fetch()
-          }
-        })
+      roleApi.patch(record).then(() => {
+        this.table.fetch()
+      })
     },
 
     getFilterItems() {

@@ -159,7 +159,7 @@
             >{{ $t('button_delete') }}</ElButton
           >
           <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
-          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
+          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
             <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
             </ElLink>
@@ -310,11 +310,11 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           return {
-            total: res?.total,
+            total: data?.total,
             data:
-              res?.items.map(item => {
+              data?.items?.map(item => {
                 item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
                 return item
               }) || []
@@ -342,9 +342,9 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res?.items?.length) {
-            let record = res?.items[0] || {}
+        .then(data => {
+          if (data?.items?.length) {
+            let record = data?.items[0] || {}
             let workerStatus = record.workerStatus || record.worker_status || {}
             if (this.status !== workerStatus.status) {
               this.status = workerStatus.status
@@ -398,11 +398,11 @@ export default {
       this.$router.push({ name: 'apiPublishCreate' })
     },
     // 预览
-    preview(item) {
+    preview(ids, item) {
       this.$router.push({ name: 'apiExplorer', query: { id: item.basePath + '_' + item.apiVersion } })
     },
     // api文档及测试
-    toDocumentTest(item) {
+    toDocumentTest(ids, item) {
       this.$router.push({ name: 'apiDocAndTest', query: { id: item.basePath + '_' + item.apiVersion } })
     },
     // 发布api
@@ -419,11 +419,9 @@ export default {
           id: item.id,
           tablename: item.tablename
         }
-        modulesApi.patch(parmas).then(res => {
-          if (res) {
-            this.$message.success(this.$t('modules_active'))
-            this.table.fetch()
-          }
+        modulesApi.patch(parmas).then(() => {
+          this.$message.success(this.$t('modules_active'))
+          this.table.fetch()
         })
         // .catch(() => {
         //   this.$message.error(this.$t('modules_status_deploy_fail'))
@@ -444,11 +442,9 @@ export default {
           id: item.id,
           tablename: item.tablename
         }
-        modulesApi.patch(parmas).then(res => {
-          if (res) {
-            this.$message.success(this.$t('modules_pending'))
-            this.table.fetch()
-          }
+        modulesApi.patch(parmas).then(() => {
+          this.$message.success(this.$t('modules_pending'))
+          this.table.fetch()
         })
         // .catch(() => {
         //   this.$message.error(this.$t('modules_cancel_failed'))
@@ -519,8 +515,8 @@ export default {
           modulesData.push(modulesApi.patch(data))
         })
 
-        Promise.all(modulesData).then(res => {
-          let successResults = res.filter(rs => rs)
+        Promise.all(modulesData).then(data => {
+          let successResults = data?.filter(rs => rs) || []
           if (successResults.length === jobs.length) {
             this.table.fetch()
             this.$message.success(this.$t('message_save_ok'))
@@ -562,7 +558,7 @@ export default {
       metadataInstancesApi.download(where, 'Modules')
     },
     // 单个导出
-    export(item) {
+    export(ids, item) {
       let where = {
         _id: {
           in: [item.id]
@@ -576,11 +572,9 @@ export default {
         uri: `${item.id}/copy`,
         headers: { 'lconname-name': item.basePath }
       }
-      modulesApi.post(parmas, { 'lconname-name': item.basePath }).then(res => {
-        if (res) {
-          this.$message.success(this.$t('message_copy_success'))
-          this.table.fetch()
-        }
+      modulesApi.post(parmas, { 'lconname-name': item.basePath }).then(() => {
+        this.$message.success(this.$t('message_copy_success'))
+        this.table.fetch()
       })
       // .catch(() => {
       //   this.$message.error(this.$t('message_copy_fail'))

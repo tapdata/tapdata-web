@@ -23,7 +23,19 @@
     </div>
 
     <div class="panel-content flex-1">
-      <FormPanel v-show="activeType !== 'settings'" v-on="$listeners" v-bind="$attrs" ref="formPanel"></FormPanel>
+      <FormPanel
+        v-show="activeType !== 'settings'"
+        v-on="$listeners"
+        v-bind="$attrs"
+        ref="formPanel"
+        :formProps="{
+          colon: false,
+          shallow: false,
+          layout: 'vertical',
+          labelWidth: 120,
+          feedbackLayout: 'terse'
+        }"
+      />
 
       <SettingPanel v-bind="$attrs" v-on="$listeners" v-if="activeType === 'settings'" />
     </div>

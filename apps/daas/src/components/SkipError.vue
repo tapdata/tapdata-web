@@ -52,8 +52,8 @@ export default {
     async checkError(task, callback) {
       let errorEvents = []
       if (!task.status || task.status === 'error') {
-        let res = await dataFlowsApi.get([task.id])
-        let data = res ? res.data : {}
+        let data = await dataFlowsApi.get([task.id])
+        data = data || {}
         if (data.status === 'error' && data.setting.stopOnError && data.errorEvents && data.errorEvents.length > 0) {
           this.dialogVisible = true
           this.task = data

@@ -240,16 +240,11 @@ export default {
 
       this.$refs.form.validate(valid => {
         if (valid) {
-          applicationApi[method](params).then(res => {
-            if (res) {
-              this.table.fetch()
-              this.createDialogVisible = false
-              this.$message.success(this.$t('message_save_ok'))
-            }
+          applicationApi[method](params).then(() => {
+            this.table.fetch()
+            this.createDialogVisible = false
+            this.$message.success(this.$t('message_save_ok'))
           })
-          // .catch(() => {
-          //   this.$message.error(this.$t('message_save_fail'))
-          // })
         }
       })
     },
@@ -284,19 +279,17 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           return {
-            total: res?.total || 0,
-            data: res?.items || []
+            total: data?.total || 0,
+            data: data?.items || []
           }
         })
     },
     // 获取角色
     getRoles() {
-      roleApi.get({}).then(res => {
-        if (res) {
-          this.roles = res?.items || []
-        }
+      roleApi.get({}).then(data => {
+        this.roles = data?.items || []
       })
     },
 

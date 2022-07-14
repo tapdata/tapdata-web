@@ -222,6 +222,20 @@ export default {
 
   methods: {
     async initNodeType() {
+      this.addProcessorNode([
+        {
+          name: '表编辑',
+          type: 'table_rename_processor'
+        } /*,
+        {
+          name: '字段编辑',
+          type: 'migrate_field_rename_processor'
+        }*/ /*,
+        {
+          name: 'JS处理',
+          type: 'migrate_js_processor'
+        }*/
+      ])
       this.addResourceIns(allResourceIns)
     },
 

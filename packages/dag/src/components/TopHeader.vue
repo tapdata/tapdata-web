@@ -20,32 +20,35 @@
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
         <!--撤销-->
-        <ElTooltip transition="tooltip-fade-in" :content="t('button_undo')">
+        <ElTooltip transition="tooltip-fade-in" :content="t('button_undo') + `(${commandCode} + Z)`">
           <button @click="$emit('undo')" class="icon-btn">
             <VIcon size="20">undo</VIcon>
           </button>
         </ElTooltip>
         <!--重做-->
-        <ElTooltip transition="tooltip-fade-in" :content="t('button_redo')">
+        <ElTooltip transition="tooltip-fade-in" :content="t('button_redo') + `(${commandCode} + Shift + Z)`">
           <button @click="$emit('redo')" class="icon-btn">
             <VIcon size="20">redo</VIcon>
           </button>
         </ElTooltip>
         <!--删除-->
-        <ElTooltip transition="tooltip-fade-in" :content="t('button_delete')">
+        <ElTooltip transition="tooltip-fade-in" :content="t('button_delete') + '(Del)'">
           <button @click="$emit('delete')" class="icon-btn">
             <VIcon size="20">delete</VIcon>
           </button>
         </ElTooltip>
       </template>
       <!--内容居中-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_center_content')">
+      <ElTooltip transition="tooltip-fade-in" :content="t('button_center_content') + '(Shift + 1)'">
         <button @click="$emit('center-content')" class="icon-btn">
           <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
       <!--自动布局-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_auto_layout')">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="t('button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
+      >
         <button @click="$emit('auto-layout')" class="icon-btn">
           <VIcon size="20">auto-layout</VIcon>
         </button>
@@ -56,9 +59,15 @@
           <VIcon size="20">hand</VIcon>
         </button>
       </ElTooltip>-->
+      <!--拖选画布-->
+      <ElTooltip transition="tooltip-fade-in" :content="t('mouse_selection')">
+        <button @click="toggleShiftKeyPressed()" class="icon-btn" :class="{ active: shiftKeyPressed }">
+          <VIcon size="20">pointer</VIcon>
+        </button>
+      </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--缩小-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_zoom_out')">
+      <ElTooltip transition="tooltip-fade-in" :content="t('button_zoom_out') + `(${commandCode} -)`">
         <button @click="$emit('zoom-out')" class="icon-btn">
           <VIcon size="20">remove-outline</VIcon>
         </button>
@@ -83,7 +92,7 @@
         </ElPopover>
       </div>
       <!--放大-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_zoom_in')">
+      <ElTooltip transition="tooltip-fade-in" :content="t('button_zoom_in') + `(${commandCode} +)`">
         <button @click="$emit('zoom-in')" class="icon-btn">
           <VIcon size="20">add-outline</VIcon>
         </button>
@@ -199,7 +208,10 @@ export default {
   components: { TextEditable, StatusItem, VDivider, VIcon },
 
   data() {
+    const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
+      commandCode: isMacOs ? '⌘' : 'Ctrl',
+      optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
         'initial_sync+cdc': this.t('dataFlow_initial_sync') + '+' + this.t('dataFlow_cdc'),
@@ -214,7 +226,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
-    ...mapState('dataflow', ['spaceKeyPressed']),
+    ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed']),
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
@@ -232,7 +244,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setActiveType', 'setPaperSpaceKeyPressed']),
+    ...mapMutations('dataflow', ['setActiveType', 'toggleShiftKeyPressed']),
 
     isShowForceStop(data) {
       return data?.length && data.every(t => ['stopping'].includes(t.status))
@@ -501,6 +513,7 @@ $sidebarBg: #fff;
   }
 }
 .choose-list-wrap {
+  max-width: 450px;
   max-height: 274px;
 }
 .choose-list {

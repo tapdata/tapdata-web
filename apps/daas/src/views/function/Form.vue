@@ -91,7 +91,7 @@ import { javascriptFunctionsApi } from '@tap/api'
 const getScriptObj = script => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
   let name = matchArr1?.[0] || ''
-  let matchArr2 = script.match(/(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=\}\s*)/g)
+  let matchArr2 = script.match(/(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=}\s*$)/g)
   let body = matchArr2?.[0] || ''
   let matchArr3 = script.match(/(?<=function\s+\w+\s*\()[\w\s,]*(?=\))/g)
   let params = matchArr3?.[0] || ''
@@ -119,6 +119,7 @@ export default {
       },
       scriptRules: {
         validator: (rule, value, callback) => {
+          console.log('self.$refs.editor.editor', self.$refs.editor.editor) // eslint-disable-line
           let obj = getScriptObj(value)
           if (!value.trim()) {
             callback(new Error(this.$t('function_script_empty')))
@@ -154,8 +155,8 @@ export default {
             }
           })
         })
-        .then(res => {
-          let details = res || {}
+        .then(data => {
+          let details = data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
             details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
@@ -204,15 +205,10 @@ export default {
                 user_id: Cookie.get('user_id')
               })
             )
-              .then(res => {
-                if (res) {
-                  this.$message.success(this.$t('message_save_ok'))
-                  this.$router.back()
-                }
+              .then(() => {
+                this.$message.success(this.$t('message_save_ok'))
+                this.$router.back()
               })
-              // .catch(err => {
-              //   this.$message.error(err?.data?.message || this.$t('message_save_fail'))
-              // })
               .finally(() => {
                 this.loading = false
               })

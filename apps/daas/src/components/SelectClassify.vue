@@ -104,30 +104,28 @@ export default {
               limit: 999
             })
           })
-          .then(res => {
-            if (res?.items) {
-              let treeData = res?.items.map(item => ({
-                value: item.name,
-                id: item.id,
-                gid: item.gid,
-                parent_id: item.parent_id,
-                last_updated: item.last_updated,
-                user_id: item.user_id
-              }))
-              this.treeData = this.formatData(treeData)
-              cb && cb(res.data)
-            }
+          .then(data => {
+            let items = data?.items || []
+            let treeData = items.map(item => ({
+              value: item.name,
+              id: item.id,
+              gid: item.gid,
+              parent_id: item.parent_id,
+              last_updated: item.last_updated,
+              user_id: item.user_id
+            }))
+            this.treeData = this.formatData(treeData)
+            cb && cb(data)
           })
       } else {
         metadataDefinitionsApi
           .get({
             filter: JSON.stringify(filter)
           })
-          .then(res => {
-            if (res?.items) {
-              this.treeData = this.formatData(res?.items || [])
-              cb && cb(res?.items || [])
-            }
+          .then(data => {
+            let items = data?.items || []
+            this.treeData = this.formatData(items)
+            cb && cb(items)
           })
       }
     },

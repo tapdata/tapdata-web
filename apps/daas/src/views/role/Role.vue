@@ -407,10 +407,6 @@ let moduleMapping = [
       { name: 'status_log' }
     ]
   },
-  // {
-  //   name: 'agents',
-  //   functional: [{ name: 'agents' }]
-  // },
   {
     name: 'user_management',
     children: [
@@ -460,9 +456,6 @@ export default {
   created() {
     this.roleName = this.$route.query.name ? this.$route.query.name : ''
     this.getPermission()
-    // if (this.$route.params.id) {
-    // 	this.getUserDataApi();
-    // }
   },
 
   methods: {
@@ -478,9 +471,9 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res?.length) {
-            res.data.forEach(item => {
+        .then(data => {
+          if (data?.length) {
+            data.forEach(item => {
               if (item.principalType === 'USER') {
                 this.roleusers.push(item.principalId)
               }
@@ -492,7 +485,7 @@ export default {
                 }
               }
             })
-            this.rolemappings = res?.items
+            this.rolemappings = data?.items
             if (pageData.length) {
               pageData.forEach(item => {
                 if (this.selectRole && this.selectRole.length) {
@@ -516,75 +509,6 @@ export default {
             if (mappingData.length) {
               mappingData.filter(item => {
                 if (this.selectRole && this.selectRole.length) {
-                  // for (var child in item) {
-                  // 	if (
-                  // 		child === 'children' ||
-                  // 		child === 'classification' ||
-                  // 		child === 'functional'
-                  // 	) {
-                  // 		let checkedCount = [],
-                  // 			allCheckedCount = [];
-                  // 		if (item[child] && item[child].length) {
-                  // 			console.log('####', item[child], item[child].length);
-                  // 			item[child].filter(childItem => {
-                  // 				this.$set(
-                  // 					childItem,
-                  // 					'checkAllData',
-                  // 					this.selectRole.includes(childItem.allName)
-                  // 				);
-
-                  // 				this.$set(
-                  // 					childItem,
-                  // 					'checked',
-                  // 					this.selectRole.includes(childItem.name)
-                  // 				);
-                  // 				// this.$set(childItem, 'checked', childItem.type === 'read');
-                  // 				if (childItem.checked) {
-                  // 					checkedCount.push(childItem);
-                  // 				}
-                  // 				if (childItem.checkAllData) {
-                  // 					allCheckedCount.push(childItem);
-                  // 				}
-                  // 			});
-                  // 		}
-                  // 		if (item.children && item.children.length) {
-                  // 			console.log(
-                  // 				'child',
-                  // 				checkedCount.length,
-                  // 				item.children.length,
-                  // 				allCheckedCount.length,
-                  // 				allData.length
-                  // 			);
-                  // 			this.$set(
-                  // 				item,
-                  // 				'checkAll',
-                  // 				checkedCount.length === item.children.length
-                  // 			);
-                  // 			this.$set(
-                  // 				item,
-                  // 				'checkedAllData',
-                  // 				allCheckedCount.length === allData.length
-                  // 			);
-                  // 		}
-
-                  // 		if (item.classification && item.classification.length) {
-                  // 			this.$set(
-                  // 				item,
-                  // 				'classifiyCheckAll',
-                  // 				checkedCount.length === item.classification.length
-                  // 			);
-                  // 		}
-
-                  // 		if (item.functional && item.functional.length) {
-                  // 			this.$set(
-                  // 				item,
-                  // 				'functionCheckAll',
-                  // 				checkedCount.length === item.functional.length
-                  // 			);
-                  // 		}
-                  // 	}
-                  // }
-
                   if (item.children && item.children.length) {
                     let checkedCount = [],
                       allCheckedCount = []
@@ -630,7 +554,7 @@ export default {
               })
             }
           }
-          if (res?.data?.length === 0) {
+          if (data?.length === 0) {
             if (mappingData.length)
               mappingData.filter(item => {
                 if (item.children && item.children.length) {
@@ -653,50 +577,48 @@ export default {
       self
         .$api('Permissions')
         .get({})
-        .then(res => {
-          if (res) {
-            if (res.data && res.data.length) {
-              self.permissionList = res.data
+        .then(data => {
+          if (data && data.length) {
+            self.permissionList = data
 
-              // 页面排序  ---- 开始
-              let pageMap = {}
-              res.data.forEach(item => {
-                pageMap[item.name] = item
+            // 页面排序  ---- 开始
+            let pageMap = {}
+            data.forEach(item => {
+              pageMap[item.name] = item
+            })
+
+            let pageMenu = items => {
+              return items.map(item => {
+                let page = pageMap[item.name]
+                let menu = Object.assign({}, item, page)
+                if (menu.children) {
+                  menu.children = pageMenu(menu.children)
+                }
+                return menu
               })
-
-              let pageMenu = items => {
-                return items.map(item => {
-                  let page = pageMap[item.name]
-                  let menu = Object.assign({}, item, page)
-                  if (menu.children) {
-                    menu.children = pageMenu(menu.children)
-                  }
-                  return menu
-                })
-              }
-
-              let moduleFun = items => {
-                return items.map(item => {
-                  let page = pageMap[item.name]
-                  let menu = Object.assign({}, item, page)
-                  if (menu.children) {
-                    menu.children = moduleFun(menu.children)
-                  }
-                  if (menu.classification) {
-                    menu.classification = moduleFun(menu.classification)
-                  }
-                  if (menu.functional) {
-                    menu.functional = moduleFun(menu.functional)
-                  }
-                  return menu
-                })
-              }
-
-              this.dataList = pageMenu(pageSort)
-              this.moduleList = moduleFun(moduleMapping)
-              // 页面排序  ---- 结束
-              this.getMappingData(this.moduleList, this.dataList)
             }
+
+            let moduleFun = items => {
+              return items.map(item => {
+                let page = pageMap[item.name]
+                let menu = Object.assign({}, item, page)
+                if (menu.children) {
+                  menu.children = moduleFun(menu.children)
+                }
+                if (menu.classification) {
+                  menu.classification = moduleFun(menu.classification)
+                }
+                if (menu.functional) {
+                  menu.functional = moduleFun(menu.functional)
+                }
+                return menu
+              })
+            }
+
+            this.dataList = pageMenu(pageSort)
+            this.moduleList = moduleFun(moduleMapping)
+            // 页面排序  ---- 结束
+            this.getMappingData(this.moduleList, this.dataList)
           }
         })
         .finally(() => {
@@ -818,9 +740,6 @@ export default {
       } else {
         item.checkAllData = event
       }
-      // if (typeof item.checkAllData === 'undefined') {
-      // 	this.$set(item, 'checkAllData', true);
-      // }
       if (children && children.length) {
         for (let i = 0; i < children.length; i++) {
           if (event && children[i].checked) {
@@ -900,21 +819,7 @@ export default {
         .then(() => {
           this.$emit('saveBack')
           this.$message.success(this.$t('message_save_ok'))
-          // roleMappingModel
-          // 	.post(newRoleMappings)
-          // 	.then(() => {
-          // 		this.$message.success(this.$t('message_save_ok'));
-          // 	})
-          // 	.catch(() => {
-          // 		this.$message.success(this.$t('message_save_fail'));
-          // 	})
-          // 	.finally(() => {
-          // 		self.saveloading = false;
-          // 	});
         })
-        // .catch(() => {
-        //   this.$message.success(this.$t('message_save_fail'))
-        // })
         .finally(() => {
           self.saveloading = false
         })

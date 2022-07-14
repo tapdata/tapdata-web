@@ -187,7 +187,7 @@ export default {
   page_title_setting: '系統設置',
   page_title_license: 'License管理',
   page_title_back_menu: '返回菜单',
-  page_title_custom_node: '自定義處理節點',
+  page_title_custom_node: '自定義節點',
   page_title_account: '個人設置',
 
   // 通用組件
@@ -578,7 +578,7 @@ export default {
   apiaudit_link: '鏈接',
   apiaudit_access_records: '訪問記錄數',
   apiaudit_access_bandwidth: 'API 訪問帶寬（M)',
-  apiaudit_average_access_rate: 'API 平均訪問速率（M/S)',
+  apiaudit_average_access_rate: 'API 平均訪問速率',
   apiaudit_access_time: '訪問耗時',
   apiaudit_average_response_time: '平均響應時長',
   apiaudit_success: '成功',
@@ -623,7 +623,7 @@ export default {
   connection_list_delete_connection_title: '是否刪除該連接？ ',
   connection_list_all_status: '全部狀態',
   connection_list_efficient: '有效',
-  connection_list_invalidation: '失效',
+  connection_list_invalidation: '无效',
   connection_list_testing: '測試中',
   connection_list_desc:
     '數據源包括數據庫、結構化文件、應用程序RESTful API、自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。更多配置說明，請點擊',
@@ -947,6 +947,7 @@ export default {
   task_list_edit_confirm:
     '已運行過的任務如果編輯時修改了表數量及字段映射提交後若不重置可能導致新配置無法生效，請問您要繼續編輯嗎?',
   task_list_important_reminder: '重要提醒',
+  task_list_stop_confirm_message: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
 
   task_preview_title: '數據庫遷移詳情',
   task_preview_createUser: '創建人',
@@ -1394,7 +1395,6 @@ export default {
   shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',
   shared_cdc_setting_message_edit_save: '保存成功，重啟任務後生效',
   share_list_name: '挖掘名稱',
-  share_list_connection: '所屬連接',
   share_list_time_excavation: '挖掘所處時間點',
   share_list_time: '挖掘延遲',
   share_list_creat_time: '創建時間',
@@ -1449,20 +1449,17 @@ export default {
   shared_cache_time: '緩存時間',
   shared_cache_keys: '緩存鍵',
   shared_cache_fields: '緩存欄位',
-  shared_cache_max_rows: '緩存最大記錄數',
-  shared_cache_ttl: '過期時間',
   shared_cache_code: '應用代碼',
-  shared_cache_custom_max_record: '自定義最大記錄數',
-  shared_cache_custom_no_limit: '條數不限',
-  shared_cache_custom_record_unit: '條',
-  shared_cache_ttl_unit: '天',
   shared_cache_placeholder_name: '請輸入緩存名稱',
   shared_cache_placeholder_connection: '請選擇連接',
   shared_cache_placeholder_table: '請選擇表',
   shared_cache_placeholder_keys: '請選擇緩存鍵',
   shared_cache_placeholder_fields: '請選擇緩存欄位',
-  shared_cache_placeholder_max_rows: '請輸入緩存最大記錄數',
-  shared_cache_placeholder_ttl: '請輸入過期時間',
+  shared_cache_max_memory: '緩存最大內存',
+  shared_cache_keys_tooltip: '以該字段作為主鍵識別數據進行緩存',
+  shared_cache_fields_tooltip: '需要進行緩存的常用字段',
+  shared_cache_max_memory_tooltip: '系統會保存的最大內存量，超過則按調用時間，將最不常用的數據刪掉',
+  shared_cache_code_tooltip: '可在JS節點中輸入這段代碼使用該緩存',
 
   // 设置
   setting_email_template: '郵件模板',

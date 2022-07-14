@@ -113,8 +113,8 @@ export default {
             }
           })
         })
-        .then(res => {
-          let result = res?.items[0]
+        .then(data => {
+          let result = data?.items?.[0]
           if (result) {
             this.resultInfo = result
             let stats = result.stats
@@ -159,19 +159,17 @@ export default {
           .get({
             filter: JSON.stringify(filter)
           })
-          .then(res => {
-            let data = res || {}
+          .then(data => {
             let resultList = []
-            if (data.items) {
-              if (showAdvancedVerification) {
-                resultList = data.items || []
-              } else {
-                resultList = this.handleOtherVerify(data.items)
-              }
+            let items = data?.items || []
+            if (showAdvancedVerification) {
+              resultList = items
+            } else {
+              resultList = this.handleOtherVerify(items)
             }
             return {
               showAdvancedVerification, // 是否高级校验
-              total: data.total, // 总条数
+              total: data?.total || 0, // 总条数
               statsInfo, // 结果信息
               resultList // 结果详情
             }

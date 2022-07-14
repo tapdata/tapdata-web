@@ -6,5 +6,6 @@ export default {
   no_data: 'No data',
   function_type_option_custom: 'Custom function',
   function_type_option_jar: 'Third-party jar package',
-  function_type_option_system: 'System function'
+  function_type_option_system: 'System function',
+  shared_cache: 'Shared cache'
 }

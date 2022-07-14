@@ -9,7 +9,7 @@
     >
       {{ t('button_edit') }}
     </ElLink>
-    <List :isMetaData="true" :readOnly="true"></List>
+    <List :isMetaData="true" :readOnly="true" :updateList="updateList"></List>
     <Dialog v-if="dialogVisible" :visible.sync="dialogVisible"></Dialog>
   </section>
 </template>
@@ -26,7 +26,13 @@ export default {
   data() {
     return {
       stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
-      dialogVisible: false
+      dialogVisible: false,
+      updateList: false
+    }
+  },
+  watch: {
+    dialogVisible() {
+      this.updateList = !this.dialogVisible
     }
   }
 }

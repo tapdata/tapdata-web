@@ -295,8 +295,8 @@ export default {
       this.getSyncOverViewData() //数据初始化
     },
     loadRuntimeInfo() {
-      subtaskApi.runtimeInfo(this.id).then(res => {
-        this.runtimeInfo = res || {}
+      subtaskApi.runtimeInfo(this.id).then(data => {
+        this.runtimeInfo = data || {}
         this.getStep()
         this.getColumns()
       })
@@ -502,10 +502,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           return {
-            total: res?.total,
-            data: res?.items.map(item => {
+            total: data?.total || 0,
+            data: (data?.items || []).map(item => {
               return Object.assign(item, item.statsData)
             })
           }
@@ -525,16 +525,16 @@ export default {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize
       }
-      subtaskApi.syncTable(this.id, filter).then(res => {
-        this.syncTableList = res?.items
-        this.tableTotal = res?.total
+      subtaskApi.syncTable(this.id, filter).then(data => {
+        this.syncTableList = data?.items || []
+        this.tableTotal = data?.total || 0
       })
     },
     //概览信息
     getSyncOverViewData() {
-      subtaskApi.syncOverView(this.id).then(res => {
-        this.syncOverViewData = res
-        this.$emit('sync', deepCopy(res))
+      subtaskApi.syncOverView(this.id).then(data => {
+        this.syncOverViewData = data || {}
+        this.$emit('sync', deepCopy(data))
         this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
       })
     },
@@ -575,8 +575,8 @@ export default {
     },
     //增量同步
     getCdcTableList() {
-      subtaskApi.cdcIncrease(this.id).then(res => {
-        this.list = res
+      subtaskApi.cdcIncrease(this.id).then(data => {
+        this.list = data || []
       })
     },
     handleClear(row) {
