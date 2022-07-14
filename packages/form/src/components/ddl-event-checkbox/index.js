@@ -18,7 +18,7 @@ const EVENT_MAP = {
 
 export const DdlEventCheckbox = observer(
   defineComponent({
-    props: ['value'],
+    props: ['value', 'disabled'],
     setup(props, { emit }) {
       const formRef = useForm()
       const form = formRef.value
@@ -35,6 +35,7 @@ export const DdlEventCheckbox = observer(
       return () => {
         return (
           <ElCheckboxGroup
+            disabled={props.disabled}
             value={selected.value}
             onInput={value => {
               selected.value = value
