@@ -87,10 +87,12 @@ export default {
       comingDesc1: this.$t('connection_selector_desc1'),
       comingDesc2: this.$t('connection_selector_desc2'),
       comingTypes: [
+        { name: 'MongoDB', type: 'mongodb' },
+        { name: 'MySQL', type: 'mysql' },
         { name: 'Oracle', type: 'oracle' },
         { name: 'Elasticsearch', type: 'elasticsearch' },
         { name: 'Redis', type: 'redis' },
-        // { name: 'PostgreSQL', type: 'postgres' },
+        { name: 'PostgreSQL', type: 'postgres' },
         { name: 'SQL Server', type: 'sqlserver' },
         { name: 'GBase 8s', type: 'gbase-8s' },
         { name: 'Sybase ASE', type: 'sybase ase' },
