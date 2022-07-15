@@ -38,40 +38,6 @@ export default {
   data() {
     return {
       extend: null
-      // options: {
-      //   tooltip: {
-      //     trigger: 'item'
-      //   },
-      //   legend: {
-      //     bottom: 0,
-      //     icon: 'circle',
-      //     orient: 'vertical',
-      //     itemWidth: 6,
-      //     itemHeight: 6,
-      //     formatter: (name, val) => {
-      //       console.log('formatter', name, val)
-      //       return `${name}这里要接上数据`
-      //     },
-      //     textStyle: {
-      //       rich: {
-      //         widthStyle: {
-      //           width: 90
-      //         }
-      //       }
-      //     }
-      //   },
-      //   series: [
-      //     {
-      //       type: 'pie',
-      //       radius: ['40%', '70%'],
-      //       center: this.center,
-      //       label: { show: false },
-      //       labelLine: { show: false },
-      //       data: [],
-      //       top: 'top'
-      //     }
-      //   ]
-      // }
     }
   },
 
@@ -86,7 +52,6 @@ export default {
 
   mounted() {
     this.init()
-    console.log('this.chart', this.$refs.chart.chart?.format?.truncateText)
   },
 
   methods: {

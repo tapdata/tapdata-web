@@ -36,7 +36,9 @@
             <span class="fw-bold font-color-normal">性能指标</span>
           </template>
           <template #header-right>
-            <VIcon @click.stop="toFullscreen">fullscreen</VIcon>
+            <ElTooltip transition="tooltip-fade-in" content="放大">
+              <VIcon @click.stop="toFullscreen">fullscreen</VIcon>
+            </ElTooltip>
           </template>
           <template #content>
             <LineChart
@@ -61,7 +63,9 @@
             <span class="fw-bold font-color-normal">全量信息</span>
           </template>
           <template #header-right>
-            <VIcon @click.stop="toFullscreen">menu</VIcon>
+            <ElTooltip transition="tooltip-fade-in" content="放大">
+              <VIcon @click.stop="toInitialList">menu</VIcon>
+            </ElTooltip>
           </template>
           <template #content>
             <div>
@@ -97,6 +101,32 @@
         </CollapsePanel>
       </div>
     </div>
+
+    <ElDialog
+      title="性能指标"
+      width="774px"
+      :visible.sync="lineChartDialog"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <LineChart
+        :data="qpsData"
+        :color="['#26CF6C', '#2C65FF']"
+        :limit="20"
+        title="QPS（Q/S）"
+        style="height: 200px"
+      ></LineChart>
+      <LineChart
+        :data="delayData"
+        :color="['#2C65FF']"
+        :limit="20"
+        title="增量延迟（ms）"
+        class="mt-8"
+        style="height: 200px"
+      ></LineChart>
+    </ElDialog>
+
+    <InitialList v-model="initialListDialog"></InitialList>
   </aside>
 </template>
 
@@ -129,6 +159,7 @@ import PieChart from './components/PieChart'
 import TimeSelect from './components/TimeSelect'
 import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
+import InitialList from './components/InitialList'
 
 export default {
   name: 'LeftSider',
@@ -144,7 +175,8 @@ export default {
     PieChart,
     TimeSelect,
     CollapsePanel,
-    VIcon
+    VIcon,
+    InitialList
   },
 
   data() {
@@ -192,7 +224,9 @@ export default {
           value: 40,
           color: '#EC8181'
         }
-      ]
+      ],
+      lineChartDialog: false,
+      initialListDialog: false
     }
   },
 
@@ -572,7 +606,13 @@ export default {
       ]
     },
 
-    toFullscreen() {}
+    toFullscreen() {
+      this.lineChartDialog = true
+    },
+
+    toInitialList() {
+      this.initialListDialog = true
+    }
   }
 }
 </script>
