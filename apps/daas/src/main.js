@@ -107,8 +107,8 @@ let init = settings => {
 }
 settingsApi
   .get()
-  .then(async res => {
-    let initData = res || []
+  .then(async data => {
+    let initData = data || []
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
     }

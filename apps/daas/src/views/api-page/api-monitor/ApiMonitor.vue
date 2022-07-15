@@ -279,8 +279,8 @@ export default {
       this.loadingTotal = true
       apiMonitorApi
         .preview()
-        .then(res => {
-          this.previewData = res
+        .then(data => {
+          this.previewData = data
         })
         .finally(() => {
           this.loadingTotal = false
@@ -288,9 +288,8 @@ export default {
     },
     //获取所有客户端
     getClientName() {
-      apiMonitorApi.apiClientName().then(res => {
+      apiMonitorApi.apiClientName().then(data => {
         //重组数据
-        let data = res
         if (data?.length > 0) {
           for (let i = 0; i < data.length; i++) {
             let obj = {
@@ -351,8 +350,8 @@ export default {
         .rankLists({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let data = res?.items.map(item => {
+        .then(data => {
+          let items = data?.items?.map(item => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -360,8 +359,8 @@ export default {
             }
             return abj
           })
-          this.page.failRateTotal = res?.total
-          this.failRateList = data || []
+          this.page.failRateTotal = data?.total
+          this.failRateList = items || []
         })
         .finally(() => {
           this.loadingFailRateList = false
@@ -389,9 +388,9 @@ export default {
         .rankLists({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           //map
-          let data = res?.items.map(item => {
+          let items = data?.items?.map(item => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -399,8 +398,8 @@ export default {
             }
             return abj
           })
-          this.page.consumingTimeTotal = res?.total
-          this.consumingTimeList = data || []
+          this.page.consumingTimeTotal = data?.total
+          this.consumingTimeList = items || []
         })
         .finally(() => {
           this.loadingTimeList = false
@@ -438,8 +437,7 @@ export default {
         .apiList({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let data = res
+        .then(data => {
           this.apiList = data.items
           this.page.apiListTotal = data.total
         })

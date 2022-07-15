@@ -144,5 +144,7 @@ export default {
   dag_data_setting_day: 'day',
   dag_data_setting_month: 'month',
   dag_data_setting_week: 'week',
-  dag_data_setting_year: 'year'
+  dag_data_setting_year: 'year',
+  mouse_selection: 'Mouse selection',
+  table_name_search_placeholder: 'Please enter the table name to search'
 }

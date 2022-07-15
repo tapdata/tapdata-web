@@ -3,8 +3,17 @@ module.exports = {
   env: {
     node: true
   },
+  // extends: [
+  //   'eslint:recommended',
+  //   'plugin:@typescript-eslint/recommended',
+  //   'plugin:vue/essential',
+  //   '@vue/typescript',
+  //   '@vue/prettier',
+  //   'prettier/@typescript-eslint'
+  // ],
   extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/typescript/recommended', '@vue/prettier'],
   parserOptions: {
+    // parser: '@typescript-eslint/parser'
     parser: 'babel-eslint'
   },
   rules: {

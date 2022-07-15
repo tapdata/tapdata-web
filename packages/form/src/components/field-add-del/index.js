@@ -66,6 +66,7 @@ export const FieldAddDel = connect(
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         //fields = this.checkOps(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
+        fields = this.checkOps(fields) || []
         this.fields = fields
         //初始化
         let formValues = { ...this.form.values }
@@ -224,7 +225,8 @@ export const FieldAddDel = connect(
         checkOps(fields) {
           if (this.operations?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
-              if (this.operations[i]?.op === 'CREATE') {
+              let index = fields.findIndex(t => t.id === this.operations[i]?.id)
+              if (this.operations[i]?.op === 'CREATE' && index === -1) {
                 let newField = {
                   id: this.operations[i].id,
                   level: 1,

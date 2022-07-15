@@ -49,9 +49,9 @@ export default {
         connectionID: this.taskData.id,
         tableName: this.taskData.tableName
       }
-      dataFlowsApi.relatedDataFlows(params).then(res => {
-        if (res) {
-          this.taskList = res
+      dataFlowsApi.relatedDataFlows(params).then(data => {
+        if (data) {
+          this.taskList = data
         }
       })
     },

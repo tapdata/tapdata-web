@@ -136,12 +136,11 @@ export default {
   methods: {
     // 获取ip
     getIpFn() {
-      clusterApi.get().then(res => {
-        if (res.data.items) {
-          res.data.items.forEach(item => {
-            this.ipList.push({ value: item.systemInfo.ip })
-          })
-        }
+      clusterApi.get().then(data => {
+        let items = data?.items || []
+        items.forEach(item => {
+          this.ipList.push({ value: item.systemInfo.ip })
+        })
       })
     },
     // 获取数据
@@ -165,10 +164,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           return {
-            total: res?.total || 0,
-            data: res?.items || []
+            total: data?.total || 0,
+            data: data?.items || []
           }
         })
     },

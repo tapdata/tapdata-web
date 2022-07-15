@@ -8,10 +8,10 @@
     :close-on-click-modal="false"
     @close="closeDialog"
   >
-    <List v-if="visible" ref="fieldMappingList" :isMetaData="false" :readOnly="false"></List>
+    <List v-if="visible" ref="fieldMappingList" :readOnly="false" @updateVisible="updateVisible"></List>
     <span slot="footer" class="dialog-footer">
       <el-button @click="closeDialog()">取 消</el-button>
-      <el-button type="primary" @click="save(true)">确 定</el-button>
+      <el-button type="primary" :loading="loadingSave" @click="save(true)">确 定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -26,13 +26,18 @@ export default {
 
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      loadingSave: false
     }
   },
 
   methods: {
     save() {
+      this.loadingSave = true
       this.$refs.fieldMappingList.save(true)
+    },
+    updateVisible() {
+      this.loadingSave = false
       this.$emit('update:visible', false)
     },
     closeDialog() {

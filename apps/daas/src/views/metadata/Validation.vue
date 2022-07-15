@@ -411,9 +411,9 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           let groupData = {}
-          res?.items.forEach(v => {
+          data?.items.forEach(v => {
             let key = v.classification || '__ungroup'
             if (!groupData[key]) {
               groupData[key] = []
@@ -488,13 +488,9 @@ export default {
           }
           _this.validationTableData.push(data)
 
-          let result = this.doSave()
-          if (result) {
-            this.createDialogVisible = false
-            this.$message.success(this.$t('message_save_ok'))
-          } else {
-            this.$message.error(this.$t('message_save_fail'))
-          }
+          this.doSave()
+          this.createDialogVisible = false
+          this.$message.success(this.$t('message_save_ok'))
         }
       })
     },
@@ -584,12 +580,8 @@ export default {
               i++
             })
           _this.validationTableData.splice(idx, 1)
-          let result = this.doSave()
-          if (result) {
-            this.$message.success(this.$t('message.deleteOK'))
-          } else {
-            this.$message.info(this.$t('message.deleteFail'))
-          }
+          this.doSave()
+          this.$message.success(this.$t('message.deleteOK'))
         }
       })
     }

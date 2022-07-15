@@ -379,19 +379,17 @@ export default {
     },
     // 获取API Server下拉值
     getApiServer() {
-      apiServerApi.get({}).then(res => {
-        if (res) {
-          this.apiServersList = res?.items
-          if (this.apiServersList.length) {
-            this.searchParams.api_server_process_id = this.apiServersList[0].processId
-            this.apiClient.setApiServer(this.apiServersList[0])
-            this.serverData = this.apiServersList.map(item => {
-              return {
-                label: item.clientName,
-                value: item.processId
-              }
-            })
-          }
+      apiServerApi.get({}).then(data => {
+        this.apiServersList = data?.items || []
+        if (this.apiServersList.length) {
+          this.searchParams.api_server_process_id = this.apiServersList[0].processId
+          this.apiClient.setApiServer(this.apiServersList[0])
+          this.serverData = this.apiServersList.map(item => {
+            return {
+              label: item.clientName,
+              value: item.processId
+            }
+          })
         }
       })
     },
@@ -571,10 +569,11 @@ export default {
           _id: apiId
         }
       }
-      modulesApi.get({ filter: JSON.stringify(filter) }).then(res => {
-        if (res?.items?.length) {
+      modulesApi.get({ filter: JSON.stringify(filter) }).then(data => {
+        let items = data?.items || []
+        if (items.length) {
           let field_alias = {}
-          res.items[0].fields.forEach(v => {
+          items[0].fields.forEach(v => {
             field_alias[v.field_name] = v.field_alias || ''
           })
           _this.enableTag = _this.enableEdit && field_alias.hasOwnProperty('__tapd8')
@@ -672,9 +671,9 @@ export default {
           where
         }
       }
-      modulesApi.get(params).then(res => {
-        if (res) {
-          this.loadOpenAPI(res)
+      modulesApi.get(params).then(data => {
+        if (data) {
+          this.loadOpenAPI(data)
         }
       })
     },
@@ -917,9 +916,9 @@ export default {
         'filter[where][id][eq]': '53',
         'filter[limit]': 1
       }
-      settingsApi.get(parms).then(res => {
-        if (res) {
-          let baseUrl = res.data[0].value
+      settingsApi.get(parms).then(data => {
+        if (data) {
+          let baseUrl = data[0].value
           let url = encodeURI(
             `${baseUrl}?dk_orginal_filename=${item['metadata.file_name']}&dk_filepath=${item['metadata.file_path']}&dk_new_filename=${item['metadata.dk_new_filename']}`
           )
@@ -955,9 +954,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res?.items?.length) {
-            let record = res?.items[0] || {}
+        .then(data => {
+          let items = data?.items || []
+          if (items.length) {
+            let record = items[0] || {}
             let workerStatus = record.workerStatus || record.worker_status || {}
             if (_this.status !== workerStatus.status) {
               _this.status = workerStatus.status
@@ -999,10 +999,10 @@ export default {
       _this.renderTime = 0
       // 获取字段
       if (_this.apiId) {
-        await modulesApi.getdata({ mondeid: _this.apiId }).then(res => {
-          if (res.fields?.length) {
+        await modulesApi.getdata({ mondeid: _this.apiId }).then(data => {
+          if (data.fields?.length) {
             let obj = {}
-            res.fields.forEach(v => {
+            data.fields.forEach(v => {
               if (v.alias_name) {
                 obj[v.field_name] = v.alias_name
               }
@@ -1018,7 +1018,7 @@ export default {
       return (
         _this.apiClient
           .find(filter)
-          .then(res => {
+          .then(({ data }) => {
             let typeMap = {
               '[object String]': 'string',
               '[object Boolean]': 'boolean',
@@ -1031,7 +1031,7 @@ export default {
             oldHeaders.forEach(v => {
               headerMap[v.value] = v
             })
-            let findData = res?.data?.data || []
+            let findData = data?.data || []
             if (findData?.length) {
               findData.forEach(record => {
                 Object.keys(record).forEach(v => {
@@ -1090,7 +1090,7 @@ export default {
             this.tableData = tableData
             _this.queryTime = formatTime(new Date().getTime() - time)
             return {
-              total: res.data.total.count,
+              total: data.total.count,
               data: this.tableData
             }
           })
@@ -1247,9 +1247,9 @@ export default {
           id: '84'
         }
       }
-      settingsApi.get({ filter: JSON.stringify(filter) }).then(res => {
-        if (res.data) {
-          this.save_timezone = res.data[0].value
+      settingsApi.get({ filter: JSON.stringify(filter) }).then(data => {
+        if (data) {
+          this.save_timezone = data[0].value
 
           let zone = this.save_timezone * 1
           if (zone >= -9 && zone <= 9) {

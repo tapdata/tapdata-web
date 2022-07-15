@@ -1,32 +1,35 @@
 <template>
-  <BaseNode :node="data" :class="nodeClass" :style="nodeStyle" @click="mouseClick">
-    <template #text="{ text }">
-      <OverflowTooltip
-        class="df-node-text"
-        :text="text"
-        popper-class="df-node-text-tooltip"
-        placement="top"
-        :open-delay="400"
-      />
-    </template>
-    <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
-      <div
-        class="node-option"
-        title="添加节点"
-        @click.stop="$emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)"
-      >
-        <VIcon>plus</VIcon>
+  <div class="df-node-wrap position-absolute" :style="nodeStyle">
+    <BaseNode :node="data" :class="nodeClass" @click="mouseClick">
+      <template #text="{ text }">
+        <OverflowTooltip
+          class="df-node-text"
+          :text="text"
+          popper-class="df-node-text-tooltip"
+          placement="top"
+          :open-delay="400"
+        />
+      </template>
+      <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
+        <div
+          class="node-option"
+          title="添加节点"
+          @click.stop="$emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)"
+        >
+          <VIcon>plus</VIcon>
+        </div>
+        <div @click.stop="$emit('delete', data.id)" class="node-option" title="删除节点">
+          <VIcon>close</VIcon>
+        </div>
       </div>
-      <div @click.stop="$emit('delete', data.id)" class="node-option" title="删除节点">
-        <VIcon>close</VIcon>
-      </div>
-    </div>
-    <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
-      <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
-    </ElTooltip>
-    <div class="node-anchor input"></div>
-    <div v-show="allowTarget" class="node-anchor output"></div>
-  </BaseNode>
+      <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
+        <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
+      </ElTooltip>
+      <div class="node-anchor input"></div>
+      <div v-show="allowTarget" class="node-anchor output"></div>
+    </BaseNode>
+    <slot></slot>
+  </div>
 </template>
 
 <script>
@@ -367,6 +370,21 @@ export default {
 
   &:hover .node-anchor.output {
     display: flex;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.df-node-wrap {
+  z-index: 5;
+  .df-node {
+    position: static;
+  }
+
+  &.options-active {
+    .df-node-options {
+      display: flex;
+    }
   }
 }
 </style>

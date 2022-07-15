@@ -281,8 +281,8 @@ export default {
     },
 
     getData(id) {
-      logcollectorApi.getDetail(id).then(res => {
-        let detailData = res
+      logcollectorApi.getDetail(id).then(data => {
+        let detailData = data || {}
         detailData.taskList = detailData.taskList?.map(item => {
           item.status = item.status === 'edit' ? 'ready' : item.status === 'schedule_failed' ? 'error' : item.status //没有子任务的概念
           return item
@@ -337,9 +337,8 @@ export default {
       let diff = (end || Date.now()) - start
       params.samples[0].guanluary = this.getGuanluary(diff)
       let guanluaryFormat = this.getGuanluary(diff, true)
-      measurementApi.query(params).then(res => {
-        let data = res
-        let { samples } = data
+      measurementApi.query(params).then(data => {
+        let { samples } = data || {}
         samples.forEach(el => {
           for (let key in el) {
             el[key] = el[key].reverse()
@@ -348,9 +347,9 @@ export default {
         let statistics = data.statistics?.[0] || {}
         this.replicateLag = statistics.replicateLag || 0
         // 折线图
-        const qpsData = samples[0] || {}
+        const qpsData = samples?.[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
-        let qpsDataTime = qpsData.time || []
+        let qpsDataTime = qpsData?.time || []
 
         let xArr = qpsDataTime.map(t => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
@@ -474,9 +473,9 @@ export default {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize
       }
-      logcollectorApi.newTableNames(this.detailData.id, callSubId, filter).then(res => {
-        this.tableNameList = res?.items
-        this.tableNameTotal = res?.total
+      logcollectorApi.newTableNames(this.detailData.id, callSubId, filter).then(data => {
+        this.tableNameList = data?.items || []
+        this.tableNameTotal = data?.total || 0
       })
     }
   }

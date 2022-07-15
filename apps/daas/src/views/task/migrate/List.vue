@@ -368,30 +368,6 @@ export default {
     formatTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
-    dataflowChange(data) {
-      if (data && data.data && data.data.fullDocument) {
-        let dataflow = data.data.fullDocument
-        if (dataflow.agentId) {
-          let opt = this.agentOptions.find(it => it.value === dataflow.agentId)
-          dataflow.tcm = {
-            agentName: opt?.label
-          }
-        }
-        let list = this.table.list
-        let index = list.findIndex(it => it.name === dataflow.name)
-        if (dataflow.children && !dataflow.children.length) {
-          delete dataflow.children
-        }
-        if (index >= 0) {
-          this.table.$set(list, index, Object.assign(list[index], this.cookRecord(dataflow)))
-          let handleItem = this.cookRecord(dataflow)
-          if (handleItem.children && !handleItem.children.length) {
-            delete handleItem.children
-          }
-          this.table.$set(list, index, Object.assign(list[index], handleItem))
-        }
-      }
-    },
     reset() {
       this.searchParams = {
         keyword: '',
@@ -450,11 +426,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let data = res
+        .then(data => {
           let list = data?.items || []
           return {
-            total: data.total,
+            total: data?.total,
             data: list.map(item => {
               return this.cookRecord(item)
             })
@@ -630,9 +605,9 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
+        .then(data => {
           let flag = false
-          let items = res?.items || []
+          let items = data?.items || []
           if (items.length) {
             items.forEach(item => {
               if (item?.errorEvents?.length) {
@@ -640,8 +615,8 @@ export default {
               }
             })
           }
-          taskApi.batchStart(ids).then(res => {
-            this.$message.success(res?.message || this.$t('message_operation_succuess'))
+          taskApi.batchStart(ids).then(data => {
+            this.$message.success(data?.message || this.$t('message_operation_succuess'))
             this.table.fetch()
           })
           if (flag) {
@@ -673,8 +648,8 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        taskApi.batchStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
       })
@@ -688,8 +663,8 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(res => {
-          this.$message.success(res?.message || this.$t('message_operation_succuess'))
+        taskApi.forceStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
           this.table.fetch()
         })
       })
@@ -703,13 +678,9 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then(res => {
-          if (res) {
-            this.table.fetch()
-            this.responseHandler(res, this.$t('message.deleteOK'))
-          } else if (res.data && res?.fail) {
-            this.$message.info(this.$t('message.deleteFail'))
-          }
+        taskApi.batchDelete(ids).then(data => {
+          this.table.fetch()
+          this.responseHandler(data, this.$t('message.deleteOK'))
         })
       })
     },
@@ -724,9 +695,9 @@ export default {
         this.restLoading = true
         taskApi
           .batchRenew(ids)
-          .then(res => {
+          .then(data => {
             this.table.fetch()
-            this.responseHandler(res, this.$t('message.resetOk'))
+            this.responseHandler(data, this.$t('message.resetOk'))
           })
           // .catch(() => {
           //   this.$message.info(this.$t('message.cancelReset'))
@@ -765,9 +736,9 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      taskApi.update(where, attributes).then(res => {
+      taskApi.update(where, attributes).then(data => {
         this.table.fetch()
-        this.responseHandler(res, this.$t('message_operation_succuess'))
+        this.responseHandler(data, this.$t('message_operation_succuess'))
       })
     },
     skipHandler(id, errorEvents) {
@@ -814,10 +785,8 @@ export default {
       data.cronExpression = this.formSchedule.cronExpression
       taskApi
         .patchId(this.formSchedule.id, { setting: data })
-        .then(result => {
-          if (result) {
-            this.$message.success(this.$t('message_save_ok'))
-          }
+        .then(() => {
+          this.$message.success(this.$t('message_save_ok'))
         })
         // .catch(() => {
         //   this.$message.error(this.$t('message_save_fail'))
@@ -851,42 +820,39 @@ export default {
       this.previewLoading = true
       taskApi
         .findTaskDetailById([id])
-        .then(res => {
-          if (res) {
-            let previewData = []
-            this.previewData = res
-            for (let item in res) {
-              if (['type'].includes(item)) {
-                res[item] = this.syncType[res[item]]
-              }
-
-              if (['cdcDelayTime', 'taskLastHour'].includes(item)) {
-                res[item] = this.handleTimeConvert(res[item])
-              }
-              if (
-                [
-                  'createAt',
-                  'startTime',
-                  'initStartTime',
-                  'cdcStartTime',
-                  'initStartTime',
-                  'taskFinishTime',
-                  'eventTime'
-                ].includes(item)
-              ) {
-                res[item] = this.formatTime(res[item])
-              }
-
-              if (
-                !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
-              ) {
-                previewData.push({ label: item, value: res[item] || '-' })
-              }
-              // this.getSatusImgSrc(res.data.status)
+        .then(data => {
+          let previewData = []
+          this.previewData = data || {}
+          for (let item in data) {
+            if (['type'].includes(item)) {
+              data[item] = this.syncType[data[item]]
             }
 
-            this.previewList = previewData
+            if (['cdcDelayTime', 'taskLastHour'].includes(item)) {
+              data[item] = this.handleTimeConvert(data[item])
+            }
+            if (
+              [
+                'createAt',
+                'startTime',
+                'initStartTime',
+                'cdcStartTime',
+                'initStartTime',
+                'taskFinishTime',
+                'eventTime'
+              ].includes(item)
+            ) {
+              data[item] = this.formatTime(data[item])
+            }
+
+            if (
+              !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
+            ) {
+              previewData.push({ label: item, value: data[item] || '-' })
+            }
           }
+
+          this.previewList = previewData
         })
         .finally(() => {
           this.previewLoading = false

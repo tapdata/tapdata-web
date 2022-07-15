@@ -130,23 +130,14 @@ export default {
   },
   methods: {
     getData() {
-      // let where = {
-      //   filter: {
-      //     where: {
-      //       id: '76'
-      //     }
-      //   }
-      // }
       this.loading = true
       settingsApi
         .findOne('76')
-        .then(res => {
-          if (res?.data?.value) {
-            let value = JSON.parse(res.data?.value)
-            this.runNotification = value.runNotification
-            this.systemNotification = value.systemNotification
-            this.agentNotification = value.agentNotification
-          }
+        .then(data => {
+          let value = JSON.parse(data?.value || '{}')
+          this.runNotification = value.runNotification
+          this.systemNotification = value.systemNotification
+          this.agentNotification = value.agentNotification
         })
         .finally(() => {
           this.loading = false

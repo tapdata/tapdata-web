@@ -73,11 +73,18 @@
                   <NodeIcon :node="db" />
                 </div>
                 <div class="flex flex-column justify-center db-item-content">
-                  <OverflowTooltip class="w-100 text-truncate" :text="db.name" placement="right" :open-delay="400" />
                   <OverflowTooltip
                     class="w-100 text-truncate"
-                    :text="db.connectionUrl"
                     placement="right"
+                    :disabled="dragStarting"
+                    :text="db.name"
+                    :open-delay="400"
+                  />
+                  <OverflowTooltip
+                    class="w-100 text-truncate"
+                    placement="right"
+                    :disabled="dragStarting"
+                    :text="db.connectionUrl"
                     :open-delay="400"
                   />
                 </div>
@@ -91,6 +98,44 @@
         </ElSkeleton>
       </ElScrollbar>
     </div>
+
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
+      <ElCollapseItem name="process">
+        <template #title>
+          <div class="flex align-center flex-1">
+            <span class="flex-1 user-select-none">
+              <!--处理节点-->
+              {{ $t('dag_processor_node') }}
+            </span>
+          </div>
+        </template>
+        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3 pb-3" :wrap-style="scrollbarWrapStyle">
+          <div
+            v-for="(n, ni) in processorNodeTypes"
+            :key="ni"
+            v-mouse-drag="{
+              item: n,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart: onProcessorStart,
+              onMove,
+              onDrop,
+              onStop
+            }"
+            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+          >
+            <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
+            <OverflowTooltip
+              :text="n.name"
+              :disabled="dragStarting"
+              popper-class="df-node-text-tooltip"
+              placement="top"
+              :open-delay="400"
+            />
+          </div>
+        </ElScrollbar>
+      </ElCollapseItem>
+    </ElCollapse>
 
     <!-- S 节点拖拽元素 -->
     <BaseNode
@@ -302,6 +347,7 @@ export default {
           accessNodeProcessIdList: 1,
           pdkType: 1,
           pdkHash: 1,
+          capabilities: 1,
           config: 1
         },
         order: ['status DESC', 'name ASC']
@@ -457,13 +503,16 @@ export default {
           connectionType: item.connection_type,
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
-          pdkHash: item.pdkHash
+          pdkHash: item.pdkHash,
+          capabilities: item.capabilities
         }
       }
 
       if (this.connectionType === 'target') {
         props.existDataProcessMode = 'keepData'
         props.attrs.isTarget = true
+      } else {
+        props.migrateTableSelectType = 'all'
       }
 
       return props
@@ -659,7 +708,7 @@ $hoverBg: #eef3ff;
           position: relative;
           padding-left: 16px;
           padding-right: 16px;
-          height: $headerH;
+          //height: $headerH;
           font-size: 14px;
 
           &:hover {

@@ -30,6 +30,11 @@ export class Database extends NodeType {
         type: 'string',
         'x-display': 'hidden'
       },
+      connectionId: {
+        type: 'string',
+        'x-display': 'hidden',
+        'x-reactions': '{{useSyncConnection}}'
+      },
 
       layout: {
         type: 'void',
@@ -38,6 +43,8 @@ export class Database extends NodeType {
         'x-component-props': {
           layout: 'horizontal',
           colon: false,
+          labelAlign: 'left',
+          labelWidth: 80,
           feedbackLayout: 'none'
         },
         properties: {
@@ -56,9 +63,6 @@ export class Database extends NodeType {
             type: 'string',
             title: '所属agent',
             'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              className: 'form-item-text'
-            },
             'x-component': 'PreviewText.Input',
             'x-component-props': {
               content:
@@ -94,6 +98,7 @@ export class Database extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'InputNumber',
         'x-decorator-props': {
+          colon: true,
           tooltip: '全量每批次读取的条数'
         },
         'x-component-props': {
@@ -160,9 +165,6 @@ export class Database extends NodeType {
               fulfill: {
                 state: {
                   display: '{{$deps[0] !== "custom" ? "visible":"hidden"}}'
-                },
-                schema: {
-                  required: '{{$deps[0] !== "custom"}}'
                 }
               }
             }

@@ -24,16 +24,16 @@ export default {
       const position = this.getMousePosition(e)
       const { $el } = this
 
-      $el.scrollLeft -= position.x - this.moveLastPosition[0]
-      $el.scrollTop -= position.y - this.moveLastPosition[1]
-
-      this.moveLastPosition[0] = position.x
-      this.moveLastPosition[1] = position.y
+      $el.scrollLeft -= position.x - this.state.position.x
+      $el.scrollTop -= position.y - this.state.position.y
+      this.state.position = { ...position }
+      // this.moveLastPosition[0] = position.x
+      // this.moveLastPosition[1] = position.y
     },
 
     mouseDownMovePaper(e) {
-      console.log('spaceKeyPressed', this.spaceKeyPressed) // eslint-disable-line
-      if (!this.spaceKeyPressed) return
+      // console.log('spaceKeyPressed', this.spaceKeyPressed) // eslint-disable-line
+      // if (!this.spaceKeyPressed) return
 
       if (this.isActionActive('dragActive')) return
 

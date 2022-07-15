@@ -97,11 +97,11 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return Promise.all([previewDataApi.post(where)]).then(([res]) => {
-        this.tableHeader = res.data.head
+      return previewDataApi.post(where).then(data => {
+        this.tableHeader = data?.head
         return {
-          total: res.data.total,
-          data: res.data.items
+          total: data?.total,
+          data: data?.items
         }
       })
     },

@@ -9,47 +9,50 @@
           <span> {{ $t('shared_cache_button_create') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn prop="name" :label="$t('shared_cache_name')">
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('shared_cache_name')">
         <template #default="{ row }">
-          <ElLink type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
+          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connectionName" :label="$t('column_connection')"></ElTableColumn>
-      <ElTableColumn prop="tableName" :label="$t('column_table')"></ElTableColumn>
-      <ElTableColumn :label="$t('shared_cache_status')">
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="connectionName"
+        min-width="100"
+        :label="$t('column_connection')"
+      ></ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="tableName" min-width="100" :label="$t('column_table')"></ElTableColumn>
+      <ElTableColumn :label="$t('shared_cache_status')" min-width="70">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResult, 'status-block']">
-            {{ $t('task_preview_status_' + row.statusResult) }}
+          <span :class="['status-' + row.statusResultData, 'status-block']">
+            {{ $t('task_preview_status_' + row.statusResultData) }}
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="createTime" :label="$t('column_create_time')" sortable="createTime">
+      <ElTableColumn prop="createTime" :label="$t('column_create_time')" min-width="100" sortable="createTime">
         <template slot-scope="scope">
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="cacheTimeAt" :label="$t('shared_cache_time')">
+      <ElTableColumn prop="cacheTimeAt" min-width="100" :label="$t('shared_cache_time')">
         <template slot-scope="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('column_operation')">
+      <ElTableColumn min-width="120" :label="$t('column_operation')">
         <template #default="{ row }">
-          <!-- <ElLink type="primary" @click="edit(row.id)">{{ $t('button_edit') }}</ElLink> -->
-          <!-- <ElDivider direction="vertical"></ElDivider> -->
-          <ElLink type="primary" @click.stop="checkDetails(row)">{{ $t('button_check') }}</ElLink>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="del(row.id)">{{ $t('button_delete') }}</ElLink>
+          <TaskButtons :task="row" :hide-list="['details']" @trigger="taskButtonsHandler"></TaskButtons>
         </template>
       </ElTableColumn>
     </TablePage>
     <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
       <div v-if="details.id" class="shared-cache-details--header flex pb-3">
-        <VIcon class="icon">text</VIcon>
-        <div class="flex-fill ml-4">
-          <div class="fs-6">{{ details.name }}</div>
-          <span :class="['status-' + details.statusResult, 'status-block', 'mt-2']">
-            {{ $t('task_preview_status_' + details.statusResult) }}
+        <div class="img-box">
+          <VIcon class="icon">text</VIcon>
+        </div>
+        <div class="flex-fill ml-4 overflow-hidden">
+          <div class="fs-6 ellipsis">{{ details.name }}</div>
+          <span :class="['status-' + details.statusResultData, 'status-block', 'mt-2']">
+            {{ $t('task_preview_status_' + details.statusResultData) }}
           </span>
         </div>
       </div>
@@ -65,7 +68,7 @@
       <div class="shared-cache--keys">
         <div class="title">{{ $t('shared_cache_keys') }}</div>
         <div class="content">
-          <span v-for="key in details.cacheKeysArr" :key="key">{{ key }}</span>
+          <div v-for="key in details.cacheKeysArr" :key="key">{{ key }}</div>
         </div>
       </div>
       <div class="shared-cache--keys">
@@ -74,6 +77,8 @@
           <div v-for="key in details.fields" :key="key" class="mt-2">{{ key }}</div>
         </div>
       </div>
+      <div class="mt-4">{{ $t('shared_cache_code') }}</div>
+      <CodeView class="mt-2" :data="details"></CodeView>
     </Drawer>
   </section>
 </template>
@@ -155,9 +160,11 @@ import { toRegExp } from '@/utils/util'
 import { getSubTaskStatus } from '@/utils/util'
 import dayjs from 'dayjs'
 import { sharedCacheApi } from '@tap/api'
+import TaskButtons from '@/components/TaskButtons'
+import CodeView from './CodeView.vue'
 
 export default {
-  components: { TablePage, FilterBar, Drawer },
+  components: { TablePage, FilterBar, Drawer, TaskButtons, CodeView },
   data() {
     return {
       searchParams: {
@@ -210,16 +217,16 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res?.items || []
+        .then(data => {
+          let list = data?.items || []
           return {
-            total: res.data?.total,
+            total: data?.total,
             data: list.map(item => {
               item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.cacheTimeAtFmt = item.cacheTimeAt ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
 
               let statuses = item.statuses
-              item.statusResult = getSubTaskStatus(statuses)[0].status
+              item.statusResultData = getSubTaskStatus(statuses)[0].status
               return item
             })
           }
@@ -238,14 +245,18 @@ export default {
         { label: this.$t('column_create_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
         { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
-        { label: this.$t('shared_cache_max_rows'), value: row.maxRows, icon: 'record' },
-        {
-          label: this.$t('shared_cache_ttl'),
-          value: `${row.ttl / 86400}${this.$t('shared_cache_ttl_unit')}`,
-          icon: 'taskLastHour'
-        }
+        { label: this.$t('shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
       ]
       this.isShowDetails = true
+    },
+    taskButtonsHandler(event, task) {
+      if (event === 'edit') {
+        this.edit(task.id)
+      } else if (event === 'del') {
+        this.del(task.id)
+      } else {
+        this.table.fetch()
+      }
     },
     edit(id) {
       this.$router.push({

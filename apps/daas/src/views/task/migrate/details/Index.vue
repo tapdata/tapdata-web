@@ -147,11 +147,11 @@ export default {
       let id = this.$route.query?.subId
       subtaskApi
         .get([id])
-        .then(res => {
-          if (JSON.stringify(this.formatTask(res)) === JSON.stringify(this.task)) {
+        .then(data => {
+          if (JSON.stringify(this.formatTask(data)) === JSON.stringify(this.task)) {
             return
           }
-          this.task = this.formatTask(res)
+          this.task = this.formatTask(data)
         })
         .finally(() => {
           this.loading = false
@@ -171,8 +171,8 @@ export default {
       return data
     },
     infoRemoteMethod(params) {
-      return measurementApi.query(params).then(res => {
-        return res
+      return measurementApi.query(params).then(data => {
+        return data
       })
     },
     clearTimer() {

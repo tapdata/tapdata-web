@@ -7,8 +7,9 @@
       :layout="layout"
       :label-align="labelAlign"
       :label-width="labelWidth"
+      v-bind="$attrs"
     >
-      <SchemaField v-if="!!objData" :schema="objData" />
+      <SchemaField v-if="!!objData" :schema="objData" :scope="scope" />
     </Form>
   </div>
 </template>
@@ -39,6 +40,9 @@ export default {
     labelWidth: {
       type: [String, Number],
       default: 120
+    },
+    scope: {
+      type: Object
     }
   },
   data() {
@@ -78,4 +82,12 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.scheme-to-form {
+  ::v-deep {
+    .formily-element-form-item-label-tooltip {
+      margin-left: 0;
+    }
+  }
+}
+</style>

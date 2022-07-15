@@ -217,12 +217,10 @@ export default {
       const params = this.createForm
       this.$refs.form.validate(valid => {
         if (valid) {
-          apiServerApi[method](params).then(res => {
-            if (res) {
-              this.table.fetch()
-              this.createDialogVisible = false
-              this.$message.success(this.$t('message_save_ok'))
-            }
+          apiServerApi[method](params).then(() => {
+            this.table.fetch()
+            this.createDialogVisible = false
+            this.$message.success(this.$t('message_save_ok'))
           })
           // .catch(() => {
           //   this.$message.error(this.$t('message_save_fail'))
@@ -261,12 +259,10 @@ export default {
         .get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          if (res) {
-            return {
-              total: res?.total || 0,
-              data: res?.items || []
-            }
+        .then(data => {
+          return {
+            total: data?.total || 0,
+            data: data?.items || []
           }
         })
     },
