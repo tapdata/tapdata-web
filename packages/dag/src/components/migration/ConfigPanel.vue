@@ -12,6 +12,7 @@
           v-model="name"
           class="flex-1 min-w-0"
           :value="activeNode ? activeNode.name : ''"
+          :readonly="stateIsReadonly"
           @change="handleChangeName"
         />
       </template>
