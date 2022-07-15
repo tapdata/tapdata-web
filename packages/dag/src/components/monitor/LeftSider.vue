@@ -68,13 +68,19 @@
             </ElTooltip>
           </template>
           <template #content>
-            <div>
+            <div class="mb-4">
               <span>全量完成时间：</span>
               <span>{{ initialData.time }}</span>
             </div>
             <div class="flex justify-content-between">
-              <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
-              <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
+              <div>
+                <div class="text-center">表结构同步</div>
+                <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
+              </div>
+              <div>
+                <div class="text-center">表数据状态</div>
+                <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
+              </div>
             </div>
           </template>
         </CollapsePanel>
@@ -810,6 +816,10 @@ $hoverBg: #eef3ff;
           &:hover {
             background-color: rgba(47, 46, 63, 0.05);
           }
+        }
+
+        &__wrap {
+          padding-top: 16px;
         }
 
         &__arrow {

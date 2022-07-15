@@ -37,12 +37,16 @@ export default {
         .el-collapse-item__header {
           padding: 0 !important;
           border-bottom: none;
+          height: inherit;
+          line-height: inherit;
           &:hover {
             background-color: inherit;
           }
         }
         .el-collapse-item__content {
           color: #535f72;
+          font-size: 12px;
+          line-height: inherit;
         }
       }
     }

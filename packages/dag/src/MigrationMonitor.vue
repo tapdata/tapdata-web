@@ -87,7 +87,7 @@
           @click-node="handleClickNodePopover"
           @hide="nodeMenu.typeId = ''"
         ></NodePopover>
-        <BottomPanel class="position-relative" style="height: 200px">底部</BottomPanel>
+        <BottomPanel class="position-relative" style="height: 200px"></BottomPanel>
       </main>
       <!--校验面板-->
       <VerifyPanel ref="verifyPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
