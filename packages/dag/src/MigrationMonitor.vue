@@ -82,11 +82,6 @@
           <EmptyItem></EmptyItem>
         </div>
         <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
-        <NodePopover
-          :popover="nodeMenu"
-          @click-node="handleClickNodePopover"
-          @hide="nodeMenu.typeId = ''"
-        ></NodePopover>
         <BottomPanel class="position-relative" style="height: 200px">底部</BottomPanel>
       </main>
       <!--校验面板-->
@@ -108,7 +103,7 @@ import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
-import ConfigPanel from './components/monitor/ConfigPanel'
+import ConfigPanel from './components/migration/ConfigPanel'
 import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import resize from 'web-core/directives/resize'
