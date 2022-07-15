@@ -185,7 +185,8 @@ export default {
           show: false
         },
         lineStyle: {
-          color: this.color[index]
+          color: this.color[index],
+          width: 1
         },
         areaStyle: {
           color: this.color[index],
