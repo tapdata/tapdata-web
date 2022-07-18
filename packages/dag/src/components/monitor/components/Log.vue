@@ -25,15 +25,16 @@
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElButton type="text" class="ml-4">设置</ElButton>
-        <ElButton type="text" class="ml-4">下载</ElButton>
+        <ElButton type="text" class="ml-4" @click="handleSetting">设置</ElButton>
+        <ElButton type="text" class="ml-4" @click="handleDownload">下载</ElButton>
       </div>
       <div class="level-line ml-4">
         <ElCheckboxGroup v-model="checkList" :min="1" size="mini" class="inline-flex" @change="searchFnc">
+          <ElCheckbox label="DEBUG">DEBUG</ElCheckbox>
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
-          <ElCheckbox label="FATAL">FATAL</ElCheckbox>
+          <!--          <ElCheckbox label="FATAL">FATAL</ElCheckbox>-->
         </ElCheckboxGroup>
       </div>
       <div v-loading="loading" class="log-list p-4 flex-1" style="height: 0">
@@ -82,6 +83,35 @@
         </DynamicScroller>
       </div>
     </div>
+
+    <ElDialog
+      title="日志等级设置"
+      width="774px"
+      :visible.sync="dialog"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <ElForm label-width="120px">
+        <ElFormItem label="日志级别：" prop="level">
+          <ElSelect v-model="form.level" style="width: 275px">
+            <ElOption v-for="item in checkList" :label="item" :value="item" :key="item"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <template v-if="form.level === 'DEBUG'">
+          <ElFormItem label="DEBUG日志参数" prop="param"> </ElFormItem>
+          <ElFormItem label="开启时长（秒）" prop="start">
+            <ElInput v-model="form.start" type="number" style="width: 275px"></ElInput>
+          </ElFormItem>
+          <ElFormItem label="开启时长（秒）" prop="max">
+            <ElInput v-model="form.max" type="number" style="width: 275px"></ElInput>
+          </ElFormItem>
+        </template>
+      </ElForm>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="handleClose">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleSave">{{ $t('button_confirm') }}</ElButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
@@ -110,7 +140,7 @@ export default {
     return {
       active: 'all',
       keyword: '',
-      checkList: ['INFO', 'WARN', 'ERROR', 'FATAL'],
+      checkList: ['DEBUG', 'INFO', 'WARN', 'ERROR'],
       itemSize: 20,
       timer: null,
       loading: false,
@@ -126,7 +156,13 @@ export default {
         size: 20
       },
       isScrollBottom: false,
-      isNoMore: false
+      isNoMore: false,
+      form: {
+        level: '',
+        start: 500,
+        max: 500
+      },
+      dialog: false
     }
   },
 
@@ -388,7 +424,20 @@ export default {
 
     formatTime(date, type = 'YYYY-MM-DD HH:mm:ss') {
       return dayjs(date).format(type)
-    }
+    },
+
+    handleDownload() {
+      console.log('handleDownload')
+    },
+
+    handleSetting() {
+      console.log('handleSetting')
+      this.dialog = true
+    },
+
+    handleClose() {},
+
+    handleSave() {}
   }
 }
 </script>
