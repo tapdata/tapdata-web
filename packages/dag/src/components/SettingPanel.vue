@@ -116,11 +116,12 @@
             </div>
             <div class="px-5">
               <ElRow>
-                <ElCol :span="4">
+                <!--暂不支持-->
+                <!--<ElCol :span="4">
                   <ElFormItem :label="t('task_setting_automatic_index')">
                     <ElSwitch v-model="settings.isAutoCreateIndex"></ElSwitch>
                   </ElFormItem>
-                </ElCol>
+                </ElCol>-->
                 <!--PDK不支持，暂时隐藏-->
                 <!--<ElCol :span="4">
                   <ElFormItem :label="t('task_setting_automatic_ddl')">
