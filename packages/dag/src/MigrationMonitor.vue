@@ -499,7 +499,19 @@ export default {
             insertedTotal: 1,
             outputTotal: 1,
             replicateLag: 0,
-            updatedTotal: 0
+            updatedTotal: 0,
+            structure: {
+              wait: 12,
+              noCreate: 12,
+              finished: 238,
+              error: 23
+            },
+            data: {
+              wait: 23,
+              running: 234,
+              finished: 44,
+              error: 5
+            }
           }
         ]
       }

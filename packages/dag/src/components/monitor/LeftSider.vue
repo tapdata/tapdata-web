@@ -75,11 +75,11 @@
             <div class="flex justify-content-between">
               <div>
                 <div class="text-center">表结构同步</div>
-                <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
+                <Chart :extend="initialStructureBar" style="width: 140px; height: 200px"></Chart>
               </div>
               <div>
                 <div class="text-center">表数据状态</div>
-                <PieChart type="pie" :data="structureBar" style="width: 140px; height: 200px"></PieChart>
+                <Chart ref="chart" :extend="initialDataBar" style="width: 140px; height: 200px"></Chart>
               </div>
             </div>
           </template>
@@ -161,11 +161,11 @@ import { StatusItem } from '@tap/business'
 import Locale from '../../mixins/locale'
 import EventChart from './components/EventChart'
 import LineChart from './components/LineChart'
-import PieChart from './components/PieChart'
 import TimeSelect from './components/TimeSelect'
 import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
 import InitialList from './components/InitialList'
+import { Chart } from '@tap/component'
 
 export default {
   name: 'LeftSider',
@@ -178,7 +178,7 @@ export default {
     StatusItem,
     EventChart,
     LineChart,
-    PieChart,
+    Chart,
     TimeSelect,
     CollapsePanel,
     VIcon,
@@ -209,28 +209,6 @@ export default {
       connectionType: 'source',
       eventData: [],
       eventTotal: null,
-      structureBar: [
-        {
-          name: '待进行',
-          value: 10,
-          color: '#F7D762'
-        },
-        {
-          name: '无需创建',
-          value: 20,
-          color: '#88DBDA'
-        },
-        {
-          name: '已完成',
-          value: 30,
-          color: '#82C647'
-        },
-        {
-          name: '错误',
-          value: 40,
-          color: '#EC8181'
-        }
-      ],
       lineChartDialog: false,
       initialListDialog: false
     }
@@ -263,6 +241,70 @@ export default {
       return {
         time: initialTime
       }
+    },
+
+    // 全量-表结构同步
+    initialStructureBar() {
+      let arr = [
+        {
+          name: '待进行',
+          key: 'wait',
+          value: 0,
+          color: '#F7D762'
+        },
+        {
+          name: '无需创建',
+          key: 'noCreate',
+          value: 0,
+          color: '#88DBDA'
+        },
+        {
+          name: '已完成',
+          key: 'finished',
+          value: 0,
+          color: '#82C647'
+        },
+        {
+          name: '错误',
+          key: 'error',
+          value: 0,
+          color: '#EC8181'
+        }
+      ]
+      const { structure } = this.quota.statistics?.[0] || {}
+      return this.getPieOptions(arr, structure)
+    },
+
+    // 全量-表数据同步
+    initialDataBar() {
+      let arr = [
+        {
+          name: '待进行',
+          key: 'wait',
+          value: 0,
+          color: '#F7D762'
+        },
+        {
+          name: '进行中',
+          key: 'running',
+          value: 0,
+          color: '#88DBDA'
+        },
+        {
+          name: '已完成',
+          key: 'finished',
+          value: 0,
+          color: '#82C647'
+        },
+        {
+          name: '错误',
+          key: 'error',
+          value: 0,
+          color: '#EC8181'
+        }
+      ]
+      const { data } = this.quota.statistics?.[0] || {}
+      return this.getPieOptions(arr, data)
     },
 
     // 增量信息
@@ -618,6 +660,64 @@ export default {
 
     toInitialList() {
       this.initialListDialog = true
+    },
+
+    getPieOptions(items = [], data) {
+      let options = {
+        tooltip: {
+          trigger: 'item'
+        },
+        textStyle: {
+          rich: {
+            orgname: {
+              width: 80
+            },
+            count: {
+              padding: [0, 0, 0, 15]
+            }
+          }
+        },
+        legend: {
+          bottom: 0,
+          icon: 'circle',
+          orient: 'vertical',
+          itemWidth: 6,
+          itemHeight: 6,
+          formatter: name => {
+            const count = 0
+            const arr = [`{orgname|${name}}`, `{count|${count}}`]
+            return arr.join('')
+          }
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['50%', '30%'],
+            label: { show: false },
+            labelLine: { show: false },
+            data: [],
+            top: 'top'
+          }
+        ]
+      }
+      if (items.length && data) {
+        options.series[0].data = items.map(t => {
+          return {
+            name: t.name,
+            value: data[t.key],
+            itemStyle: {
+              color: t.color
+            }
+          }
+        })
+        options.legend.formatter = name => {
+          const count = options.series[0].data?.find(t => t.name === name)?.value || 0
+          const arr = [`{orgname|${name}}`, `{count|${count}}`]
+          return arr.join('')
+        }
+      }
+      return options
     }
   }
 }
