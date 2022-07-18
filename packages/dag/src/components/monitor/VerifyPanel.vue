@@ -277,7 +277,7 @@ export default observer({
     // ...mapGetters('dataflow', ['stateIsReadonly'])
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
     isShow() {
-      return this.activeType?.includes('verify')
+      return this.activeType === 'verify'
     }
   },
 

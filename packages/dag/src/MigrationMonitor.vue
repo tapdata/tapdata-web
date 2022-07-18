@@ -7,12 +7,14 @@
       :dataflow-name="dataflow.name"
       :dataflow="dataflow"
       :scale="scale"
+      :showBottomPanel="showBottomPanel"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
-      @handleHide="handleHide"
-      @handleShow="handleShow"
       @change-name="handleUpdateName"
+      @showSettings="handleShowSettings"
+      @showVerify="handleShowVerify"
+      @showBottomPanel="handleShowBottomPanel"
       @locate-node="handleLocateNode"
       @start="handleStart"
       @stop="handleStop"
@@ -82,12 +84,18 @@
           <EmptyItem></EmptyItem>
         </div>
         <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
-        <BottomPanel class="position-relative" style="height: 200px"></BottomPanel>
+        <BottomPanel v-show="showBottomPanel" class="position-relative" style="height: 200px"></BottomPanel>
       </main>
       <!--校验面板-->
-      <VerifyPanel ref="verifyPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+      <VerifyPanel
+        v-if="activeType === 'verify'"
+        ref="verifyPanel"
+        :settings="dataflow"
+        :scope="formScope"
+        @hide="onHideSidebar"
+      />
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+      <ConfigPanel v-else ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
     </section>
   </section>
 </template>
@@ -110,7 +118,6 @@ import resize from 'web-core/directives/resize'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
-import NodePopover from './components/NodePopover'
 import VIcon from 'web-core/components/VIcon'
 import { VExpandXTransition } from '@tap/component'
 import { observable } from '@formily/reactive'
@@ -131,7 +138,6 @@ export default {
 
   components: {
     VExpandXTransition,
-    NodePopover,
     EmptyItem,
     ConfigPanel,
     VerifyPanel,
@@ -173,6 +179,7 @@ export default {
       dataflow,
 
       scale: 1,
+      showBottomPanel: false,
       timer: null,
       quota: {} // 指标数据
     }
@@ -414,25 +421,17 @@ export default {
       })
     },
 
-    handleHide(type) {
-      let types = this.activeType?.split(',') || []
-      let index = types.indexOf(type)
-      if (index > -1) {
-        types.splice(index, 1)
-        this.setActiveType(types.join())
+    handleShowVerify() {
+      this.deselectAllNodes()
+      if (this.activeType === 'verify') {
+        this.setActiveType(null)
+      } else {
+        this.setActiveType('verify')
       }
     },
 
-    handleShow(type) {
-      this.deselectAllNodes()
-      let types = this.activeType?.split(',') || []
-      let index = types.indexOf(type)
-      if (index > -1) {
-        types.splice(index, 1)
-      } else {
-        types.push(type)
-      }
-      this.setActiveType(types.join())
+    handleShowBottomPanel() {
+      this.showBottomPanel = !this.showBottomPanel
     },
 
     async handleStart() {
@@ -500,12 +499,14 @@ export default {
             outputTotal: 1,
             replicateLag: 0,
             updatedTotal: 0,
+            // 表结构同步
             structure: {
               wait: 12,
               noCreate: 12,
               finished: 238,
               error: 23
             },
+            // 表数据状态
             data: {
               wait: 23,
               running: 234,

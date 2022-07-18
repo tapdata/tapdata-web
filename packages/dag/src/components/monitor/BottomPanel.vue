@@ -1,5 +1,5 @@
 <template>
-  <section v-show="isShow" class="bottom-panel border-top flex-column">底部</section>
+  <section class="bottom-panel border-top flex-column">底部</section>
 </template>
 
 <script>
@@ -28,9 +28,6 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-    isShow() {
-      return this.activeType?.includes('record')
-    }
   },
 
   watch: {
