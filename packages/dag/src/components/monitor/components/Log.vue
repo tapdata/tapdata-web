@@ -36,7 +36,7 @@
           <ElCheckbox label="FATAL">FATAL</ElCheckbox>
         </ElCheckboxGroup>
       </div>
-      <div class="log-list p-4 flex-1" style="height: 0">
+      <div v-loading="loading" class="log-list p-4 flex-1" style="height: 0">
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
@@ -185,7 +185,7 @@ export default {
 
     changeItem(item) {
       this.active = item.value
-      this.resetData()
+      this.init()
     },
 
     changeTime(val, isTime) {
@@ -209,9 +209,9 @@ export default {
     addFilter(filter) {
       const { active, checkList, keyword } = this
       // 选中的节点
-      if (active === 'all') {
-      } else {
-      }
+      // if (active === 'all') {
+      // } else {
+      // }
 
       if (keyword) {
         // filter.where.searchKey = { $regex: keyword, $options: 'i' }
