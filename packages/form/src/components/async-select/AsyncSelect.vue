@@ -203,6 +203,7 @@ import { getValueByPath } from 'element-ui/lib/utils/util'
 import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
 import { CancelToken } from '@tap/api'
 import Locale from '../../mixins/locale'
+import { escapeRegExp } from 'lodash'
 
 export default {
   name: 'AsyncSelect',
@@ -426,7 +427,7 @@ export default {
 
       if (query) {
         merge(filter, {
-          where: { [this.itemQuery || this.itemLabel]: { like: query, options: 'i' } }
+          where: { [this.itemQuery || this.itemLabel]: { like: escapeRegExp(query), options: 'i' } }
         })
         // const cond = { like: query, options: 'i' }
         // filter.where ? (filter.where[this.itemLabel] = cond) : (filter.where = { [this.itemLabel]: cond })

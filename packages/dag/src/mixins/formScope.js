@@ -2,7 +2,7 @@ import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
-import { merge, isEqual } from 'lodash'
+import { merge, isEqual, escapeRegExp } from 'lodash'
 import Locale from './locale'
 
 export default {
@@ -201,7 +201,7 @@ export default {
 
           if (keyword) {
             filter.where.original_name = {
-              like: keyword,
+              like: escapeRegExp(keyword),
               options: 'i'
             }
           }

@@ -258,6 +258,7 @@ import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
 import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
 import Locale from '../mixins/locale'
+import { escapeRegExp } from 'lodash'
 
 export default {
   name: 'LeftSidebar',
@@ -333,19 +334,6 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor']),
-
-    searchFilter() {
-      return this.search.toLowerCase().trim()
-    },
-
-    filteredNodeTypes() {
-      const nodeTypes = this.searchItems
-      const filter = this.searchFilter
-
-      return nodeTypes.filter(item => {
-        return filter && item.name.toLowerCase().includes(filter)
-      })
-    },
 
     noMore() {
       return this.tbPage >= Math.ceil(this.tbTotal / 20)
@@ -448,7 +436,7 @@ export default {
         order: ['status DESC', 'name ASC']
       }
 
-      const txt = this.dbSearchTxt.trim()
+      const txt = escapeRegExp(this.dbSearchTxt.trim())
       if (txt) {
         filter.where.name = { like: txt, options: 'i' }
       }
@@ -516,7 +504,7 @@ export default {
         order: ['original_name ASC']
       }
 
-      const txt = this.tbSearchTxt.trim()
+      const txt = escapeRegExp(this.tbSearchTxt.trim())
       if (txt) {
         filter.where.original_name = { like: txt, options: 'i' }
       } else {
