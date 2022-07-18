@@ -446,7 +446,7 @@ export default {
         }
         //检查该连接是否被已有任务使用
         connectionsApi.checkConnectionTask(data.id).then(data => {
-          if (data?.items?.length === 0) {
+          if (data?.length === 0) {
             connectionsApi.delete(data.id).then(data => {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
@@ -459,7 +459,7 @@ export default {
             })
           } else {
             //展示已使用的任务列表
-            this.connectionTaskList = data?.items
+            this.connectionTaskList = data || []
             this.connectionTaskDialog = true
           }
         })
