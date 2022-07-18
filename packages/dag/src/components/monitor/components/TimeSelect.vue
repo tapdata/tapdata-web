@@ -1,7 +1,7 @@
 <template>
-  <div class="time-select">
+  <div class="time-select__picker">
     <div class="flex align-items-center">
-      <div>{{ title }}</div>
+      <div class="time-select__title">{{ title }}</div>
       <ElSelect v-model="period" :class="{ 'is-time': isTime }" size="mini" class="ml-2" @change="changeFnc">
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
@@ -114,8 +114,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.time-select {
+.time-select__picker {
   position: relative;
+}
+.time-select__title {
+  white-space: nowrap;
 }
 .datetime {
   position: absolute;

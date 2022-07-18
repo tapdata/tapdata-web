@@ -1,5 +1,20 @@
 <template>
-  <section class="bottom-panel border-top flex-column">底部</section>
+  <section class="bottom-panel border-top flex-column">
+    <div class="panel-header flex pr-4 h-100">
+      <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column">
+        <ElTabPane label="日志" name="log">
+          <Log v-bind="$attrs"></Log>
+        </ElTabPane>
+        <ElTabPane label="运行记录" name="record">
+          <div class="setting-panel-box bg-white pt-3">
+            <div class="setting-title fs-7 px-5">运行记录</div>
+          </div>
+        </ElTabPane>
+      </ElTabs>
+
+      <VIcon class="mt-3" size="16" @click="$emit('showBottomPanel')">close</VIcon>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -8,9 +23,12 @@ import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import focusSelect from 'web-core/directives/focusSelect'
 import Locale from '../../mixins/locale'
+import Log from './components/Log'
 
 export default {
   name: 'ConfigPanel',
+
+  components: { Log },
 
   directives: {
     resize,
@@ -21,13 +39,13 @@ export default {
 
   data() {
     return {
-      currentTab: '0',
+      currentTab: 'log',
       name: this.activeNode?.name
     }
   },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
   },
 
   watch: {
@@ -54,10 +72,6 @@ export default {
       }
     },
 
-    handleClosePanel() {
-      this.setActiveType(null)
-    },
-
     async validateForm() {
       await this.$refs.formPanel?.validate()
     }
@@ -65,69 +79,16 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.databaseLinkDialog {
-  .e-row {
-    padding: 0 50px;
-  }
-
-  .text {
-    padding: 0 50px;
-    color: #666;
-  }
-}
-</style>
 <style scoped lang="scss">
 $color: map-get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 
-.title-input-wrap {
-  position: relative;
-  flex: 1;
-  font-size: 14px;
-  min-width: 0;
-  color: map_get($fontColor, normal);
-  &:hover {
-    .title-input {
-      border-color: #dcdfe6;
-    }
-    .v-icon {
-      color: $color;
-    }
-  }
-
-  .title-input {
-    position: relative;
-    padding: 2px 28px 1px 8px;
-    width: 100%;
-    height: 28px;
-    line-height: 28px;
-    outline: none;
-    box-shadow: none;
-    background: 0 0;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    font-size: inherit;
-    transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-
-    &:focus {
-      border-color: #409eff;
-      & + .title-input-icon {
-        color: $color;
-      }
-    }
-  }
-
-  .title-input-icon {
-    height: 28px;
-  }
-}
-
 .bottom-panel {
   position: relative;
   z-index: 10;
   height: 328px;
+  min-height: 328px;
   //height: 100%;
   overflow: auto;
   background-color: #fff;
@@ -141,13 +102,28 @@ $headerHeight: 40px;
   &-close {
   }
 
+  .el-tabs {
+    ::v-deep {
+      .el-tabs__header {
+        margin: 0;
+        padding-left: 16px;
+      }
+      .el-tabs__content {
+        flex: 1;
+      }
+      .el-tab-pane {
+        height: 100%;
+      }
+    }
+  }
+
   .config-tabs-wrap {
     position: relative;
     height: 100%;
   }
 
   .panel-header {
-    height: $headerHeight;
+    //height: $headerHeight;
 
     .el-image {
       width: 20px;

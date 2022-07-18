@@ -84,7 +84,13 @@
           <EmptyItem></EmptyItem>
         </div>
         <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
-        <BottomPanel v-show="showBottomPanel" class="position-relative" style="height: 200px"></BottomPanel>
+        <BottomPanel
+          v-show="showBottomPanel"
+          :dataflow="dataflow"
+          :showBottomPanel="showBottomPanel"
+          class="position-relative"
+          @showBottomPanel="handleShowBottomPanel"
+        ></BottomPanel>
       </main>
       <!--校验面板-->
       <VerifyPanel
