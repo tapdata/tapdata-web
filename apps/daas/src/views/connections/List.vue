@@ -467,7 +467,7 @@ export default {
     },
     //跳转到任务列表
     goTaskList(item) {
-      if (item?.type === 'migrate') {
+      if (item?.syncType === 'migrate') {
         this.$router.push({
           name: 'migrate',
           query: {
