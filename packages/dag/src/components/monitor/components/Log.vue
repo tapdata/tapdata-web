@@ -12,7 +12,7 @@
         <VIcon>arrow-right</VIcon>
       </div>
     </div>
-    <div class="main flex-1 flex flex-column">
+    <div class="main flex-1 flex flex-column pt-5">
       <div class="flex ml-4 mb-4 align-items-center">
         <TimeSelect @change="changeTime"></TimeSelect>
         <ElInput
@@ -444,7 +444,6 @@ export default {
 
 <style lang="scss" scoped>
 .log-container {
-  padding-top: 20px;
   height: inherit;
 }
 .filter-items {
@@ -459,5 +458,8 @@ export default {
   &.active {
     background: rgba(44, 101, 255, 0.05);
   }
+}
+.white-space-nowrap {
+  white-space: nowrap;
 }
 </style>

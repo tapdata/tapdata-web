@@ -9,7 +9,7 @@
   >
     <VTable :remoteMethod="remoteMethod" :columns="columns" ref="table" class="table-list">
       <template slot="progress" slot-scope="scope">
-        <ElProgress color="#2C65FF" :percentage="scope.row.progress" style="font-size: 12px !important;"></ElProgress>
+        <ElProgress color="#2C65FF" :percentage="scope.row.progress" style="font-size: 12px !important"></ElProgress>
       </template>
       <template slot="structureStatus" slot-scope="scope">
         <span v-if="scope.row.structureStatus" :class="['status-' + scope.row.structureStatus.status, 'status-block']">
@@ -32,6 +32,7 @@
 
 <script>
 import { VTable } from '@tap/component'
+import { subtaskApi } from '../../../../../api'
 
 export default {
   name: 'InitialList',
@@ -93,6 +94,17 @@ export default {
   },
 
   methods: {
+    //获取全量同步详情表数据
+    // getSyncTableData() {
+    //   let filter = {
+    //     limit: this.pageSize,
+    //     skip: (this.currentPage - 1) * this.pageSize
+    //   }
+    //   subtaskApi.syncTable(this.id, filter).then(data => {
+    //     this.syncTableList = data?.items || []
+    //     this.tableTotal = data?.total || 0
+    //   })
+    // },
     remoteMethod({ page }) {
       console.log('remoteMethod', arguments)
       let { current, size } = page

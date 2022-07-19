@@ -6,9 +6,7 @@
           <Log v-bind="$attrs"></Log>
         </ElTabPane>
         <ElTabPane label="运行记录" name="record">
-          <div class="setting-panel-box bg-white pt-3">
-            <div class="setting-title fs-7 px-5">运行记录</div>
-          </div>
+          <Record v-bind="$attrs"></Record>
         </ElTabPane>
       </ElTabs>
 
@@ -24,11 +22,12 @@ import resize from 'web-core/directives/resize'
 import focusSelect from 'web-core/directives/focusSelect'
 import Locale from '../../mixins/locale'
 import Log from './components/Log'
+import Record from './components/Record'
 
 export default {
   name: 'ConfigPanel',
 
-  components: { Log },
+  components: { Log, Record },
 
   directives: {
     resize,
