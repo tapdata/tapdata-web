@@ -392,6 +392,28 @@ export class Table extends NodeType {
                         }
                       }
                     }
+                  },
+                  enableDDL: {
+                    title: '自动DDL',
+                    type: 'boolean',
+                    default: true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'Switch',
+                    'x-reactions': {
+                      target: '.disabledEvents',
+                      fulfill: {
+                        state: {
+                          display: '{{$self.value ? "visible" :"hidden"}}'
+                        }
+                      }
+                    }
+                  },
+                  disabledEvents: {
+                    type: 'array',
+                    'x-component': 'DdlEventCheckbox'
                   }
                 }
               },
@@ -407,6 +429,18 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
+                  ddlEvents: {
+                    type: 'void',
+                    title: 'DDL支持列表',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      feedbackLayout: 'none'
+                    },
+                    'x-component': 'DdlEventList',
+                    'x-component-props': {
+                      findParentNodes: '{{findParentNodes}}'
+                    }
+                  },
                   existDataProcessMode: {
                     title: '已有数据处理',
                     type: 'string',
@@ -512,4 +546,9 @@ export class Table extends NodeType {
   }
 
   locales = AllLocales.Table
+
+  /*allowTarget(target, source) {
+    // 不再支持多个表节点串连 A->B->C
+    return !source.$inputs?.length
+  }*/
 }

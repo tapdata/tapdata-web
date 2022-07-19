@@ -2,7 +2,7 @@ import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
-import { merge, isEqual } from 'lodash'
+import { merge, isEqual, escapeRegExp } from 'lodash'
 import Locale from './locale'
 
 export default {
@@ -27,9 +27,55 @@ export default {
           let parent
           while (parentId) {
             parent = this.scope.findNodeById(parentId)
-            parentId = parent.$inputs?.[0]
+            if (!parent) {
+              console.error('留意parent找不到', parentId) // eslint-disable-line
+            }
+            parentId = parent?.$inputs?.[0]
           }
           return parent
+        },
+
+        findParentNodes: (id, ifMyself) => {
+          let node = this.scope.findNodeById(id)
+          const parents = []
+          let parentIds = node.$inputs || []
+          if (ifMyself && !parentIds.length) return [node]
+          parentIds.forEach(pid => {
+            let parent = this.scope.findNodeById(pid)
+            if (parent) {
+              if (parent.$inputs?.length) {
+                parent.$inputs.forEach(ppid => {
+                  parents.push(...this.scope.findParentNodes(ppid, true))
+                })
+              } else {
+                parents.push(parent)
+              }
+            }
+          })
+
+          return parents
+
+          /*let node = this.scope.findNodeById(id)
+          let parentIds = node.$inputs
+          let parent
+          let parents = []
+          if (parentIds.length > 1) {
+            parentIds.forEach(pid => {
+              const result = this.scope.findParentNodes(pid)
+              parents.push(...result)
+            })
+          } else {
+            let parentId = parentIds[0]
+            while (parentId) {
+              parent = this.scope.findNodeById(parentId)
+              if (!parent) {
+                console.error('留意parent找不到', parentId) // eslint-disable-line
+              }
+              parentId = parent?.$inputs?.[0]
+            }
+            if
+            return parent
+          }*/
         },
 
         /**
@@ -201,7 +247,7 @@ export default {
 
           if (keyword) {
             filter.where.original_name = {
-              like: keyword,
+              like: escapeRegExp(keyword),
               options: 'i'
             }
           }

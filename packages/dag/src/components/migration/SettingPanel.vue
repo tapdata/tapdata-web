@@ -217,13 +217,13 @@ export default observer({
                           }
                         }
                       },
-                      isAutoCreateIndex: {
-                        title: this.t('task_setting_automatic_index'), //自动创建索引
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        default: true
-                      },
+                      // isAutoCreateIndexS: {
+                      //   title: this.t('task_setting_automatic_index'), //自动创建索引
+                      //   type: 'boolean',
+                      //   'x-decorator': 'FormItem',
+                      //   'x-component': 'Switch',
+                      //   default: true
+                      // },
                       isStopOnError: {
                         title: this.t('task_setting_stop_on_error'), //遇到错误停止
                         type: 'boolean',

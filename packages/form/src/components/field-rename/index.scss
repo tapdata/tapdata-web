@@ -61,6 +61,11 @@
     .tree-field-input-wrap{
       position: relative;
     }
+    .tree-field-input-primary{
+      input {
+        color: map-get($color, primary);
+      }
+    }
     //.tree-field-input .el-input__inner:hover{
     //  border: 1px solid;
     //  border-color: #eceef1
