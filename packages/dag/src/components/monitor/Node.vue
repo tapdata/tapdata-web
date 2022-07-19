@@ -34,14 +34,14 @@
             </div>
           </div>
 
-          <div v-if="isTarget || isProcessorNode" class="statistic">
+          <div class="statistic">
             <div class="statistic-title">累积输入事件</div>
             <div class="statistic-content">
               <div class="statistic-value">{{ sample.inputEventTotal }}</div>
             </div>
           </div>
 
-          <div v-if="isSource || isProcessorNode" class="statistic">
+          <div class="statistic">
             <div class="statistic-title">累积输出事件</div>
             <div class="statistic-content">
               <div class="statistic-value">{{ sample.outputEventTotal }}</div>
