@@ -136,6 +136,14 @@
       :formData="testData"
       @returnTestData="returnTestData"
     ></Test>
+    <ElDialog title="提示" width="30%" :visible.sync="connectionTaskDialog">
+      <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
+      <ul class="mt-4">
+        <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
+          <el-link type="primary">{{ item.name }}</el-link>
+        </li>
+      </ul>
+    </ElDialog>
   </section>
 </template>
 <script>
@@ -227,7 +235,9 @@ export default {
         dds: 'DDS实例'
       },
       testData: null,
-      dialogTestVisible: false // 连接测试框
+      dialogTestVisible: false, // 连接测试框
+      connectionTaskList: [],
+      connectionTaskDialog: false
     }
   },
   computed: {
@@ -434,17 +444,44 @@ export default {
         if (!resFlag) {
           return
         }
-        connectionsApi.delete(data.id).then(data => {
-          let jobs = data?.jobs || []
-          let modules = data?.modules || []
-          if (jobs.length > 0 || modules.length > 0) {
-            this.$message.error(this.$t('connection.checkMsg'))
+        //检查该连接是否被已有任务使用
+        connectionsApi.checkConnectionTask(data.id).then(data => {
+          if (data?.length === 0) {
+            connectionsApi.delete(data.id).then(data => {
+              let jobs = data?.jobs || []
+              let modules = data?.modules || []
+              if (jobs.length > 0 || modules.length > 0) {
+                this.$message.error(this.$t('connection.checkMsg'))
+              } else {
+                this.$message.success(this.$t('message.deleteOK'))
+                this.table.fetch()
+              }
+            })
           } else {
-            this.$message.success(this.$t('message.deleteOK'))
-            this.table.fetch()
+            //展示已使用的任务列表
+            this.connectionTaskList = data || []
+            this.connectionTaskDialog = true
           }
         })
       })
+    },
+    //跳转到任务列表
+    goTaskList(item) {
+      if (item?.syncType === 'migrate') {
+        this.$router.push({
+          name: 'migrate',
+          query: {
+            keyword: item.name
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflow',
+          query: {
+            keyword: item.name
+          }
+        })
+      }
     },
     //表格数据格式化
     formatterConnectionType(row) {
