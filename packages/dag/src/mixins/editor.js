@@ -93,7 +93,8 @@ export default {
       'deselectAllConnections',
       'setCanBeConnectedNodeIds',
       'setValidateLanguage',
-      'addProcessorNode'
+      'addProcessorNode',
+      'toggleConsole'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -540,7 +541,7 @@ export default {
         this.resetWorkspace()
         this.initNodeView()
       }
-      if (['DataflowViewer', 'MigrationMonitor'].includes(this.$route.name)) {
+      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer'].includes(this.$route.name)) {
         await this.openDataflow(id)
         // await this.startLoop()
         this.setStateReadonly(true)

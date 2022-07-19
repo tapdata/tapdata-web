@@ -76,7 +76,8 @@ const getState = () => ({
   canBeConnectedNodeIds: [],
   LOCALES_STORE: observable.ref({}),
   nodeInputsWatcher: null,
-  nodeOutputsWatcher: null
+  nodeOutputsWatcher: null,
+  showConsole: false
 })
 
 // 初始化 state
@@ -825,6 +826,10 @@ const mutations = {
 
   setNodeOutputsWatcher(state, watcher) {
     state.nodeOutputsWatcher = watcher
+  },
+
+  toggleConsole(state, flag = !state.showConsole) {
+    state.showConsole = flag
   }
 }
 

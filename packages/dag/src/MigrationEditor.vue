@@ -52,45 +52,49 @@
       >
         <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
-      <!--内容体-->
-      <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
-        <PaperScroller
-          ref="paperScroller"
-          :nav-lines="navLines"
-          @add-node="handleAddNodeToPos"
-          @mouse-select="handleMouseSelect"
-          @change-scale="handleChangeScale"
-          @click-blank="showLeftSider = true"
-        >
-          <DFNode
-            v-for="n in allNodes"
-            :key="n.id"
-            :node-id="n.id"
-            :id="NODE_PREFIX + n.id"
-            :js-plumb-ins="jsPlumbIns"
-            :class="{
-              'options-active': nodeMenu.typeId === n.id
-            }"
-            @drag-start="onNodeDragStart"
-            @drag-move="onNodeDragMove"
-            @drag-stop="onNodeDragStop"
-            @deselectAllNodes="deselectAllNodes"
-            @deselectNode="nodeDeselectedById"
-            @nodeSelected="nodeSelectedById"
-            @delete="handleDeleteById"
-            @show-node-popover="showNodePopover"
-          ></DFNode>
-        </PaperScroller>
-        <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-          <EmptyItem></EmptyItem>
-        </div>
-        <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
-        <NodePopover
-          :popover="nodeMenu"
-          @click-node="handleClickNodePopover"
-          @hide="nodeMenu.typeId = ''"
-        ></NodePopover>
-      </main>
+      <section class="layout-wrap flex-1">
+        <!--内容体-->
+        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
+          <PaperScroller
+            ref="paperScroller"
+            :nav-lines="navLines"
+            @add-node="handleAddNodeToPos"
+            @mouse-select="handleMouseSelect"
+            @change-scale="handleChangeScale"
+            @click-blank="showLeftSider = true"
+          >
+            <DFNode
+              v-for="n in allNodes"
+              :key="n.id"
+              :node-id="n.id"
+              :id="NODE_PREFIX + n.id"
+              :js-plumb-ins="jsPlumbIns"
+              :class="{
+                'options-active': nodeMenu.typeId === n.id
+              }"
+              @drag-start="onNodeDragStart"
+              @drag-move="onNodeDragMove"
+              @drag-stop="onNodeDragStop"
+              @deselectAllNodes="deselectAllNodes"
+              @deselectNode="nodeDeselectedById"
+              @nodeSelected="nodeSelectedById"
+              @delete="handleDeleteById"
+              @show-node-popover="showNodePopover"
+            ></DFNode>
+          </PaperScroller>
+          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
+            <EmptyItem></EmptyItem>
+          </div>
+          <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
+          <NodePopover
+            :popover="nodeMenu"
+            @click-node="handleClickNodePopover"
+            @hide="nodeMenu.typeId = ''"
+          ></NodePopover>
+        </main>
+        <ConsolePanel></ConsolePanel>
+      </section>
+
       <!--配置面板-->
       <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
     </section>
@@ -121,6 +125,7 @@ import VIcon from 'web-core/components/VIcon'
 import { VExpandXTransition } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
+import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
   name: 'MigrationEditor',
@@ -132,6 +137,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
 
   components: {
+    ConsolePanel,
     VExpandXTransition,
     NodePopover,
     EmptyItem,
@@ -195,9 +201,6 @@ export default {
   },
 
   async created() {
-    if (this.$route.name === 'DataflowViewer') {
-      this.setStateReadonly(true)
-    }
     this.setValidateLanguage()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
@@ -205,7 +208,11 @@ export default {
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
-        // this.initWS()
+
+        if (this.$route.name === 'MigrateViewer') {
+          this.setActiveType('settings')
+          this.toggleConsole(true)
+        }
       } catch (error) {
         console.error(error) // eslint-disable-line
       }

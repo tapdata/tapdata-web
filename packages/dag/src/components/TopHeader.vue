@@ -98,6 +98,12 @@
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
+      <!--信息输出-->
+      <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
+        <button @click="toggleConsole()" class="icon-btn" :class="{ active: showConsole }">
+          <VIcon size="16">list</VIcon>
+        </button>
+      </ElTooltip>
       <!--设置-->
       <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
@@ -105,9 +111,9 @@
         </button>
       </ElTooltip>
     </div>
-    <div class="flex align-center flex-grow-1">
+    <!--复制dag查看不显示-->
+    <div class="flex align-center flex-grow-1" v-if="$route.name !== 'MigrateViewer'">
       <div class="flex-grow-1"></div>
-
       <ElButton v-if="stateIsReadonly" size="mini" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
@@ -226,7 +232,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
-    ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed']),
+    ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed', 'showConsole']),
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
@@ -244,7 +250,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setActiveType', 'toggleShiftKeyPressed']),
+    ...mapMutations('dataflow', ['setActiveType', 'toggleShiftKeyPressed', 'toggleConsole']),
 
     isShowForceStop(data) {
       return data?.length && data.every(t => ['stopping'].includes(t.status))
