@@ -83,11 +83,9 @@
         <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
           <EmptyItem></EmptyItem>
         </div>
-        <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
         <BottomPanel
-          v-show="showBottomPanel"
+          v-if="showBottomPanel"
           :dataflow="dataflow"
-          :showBottomPanel="showBottomPanel"
           class="position-relative"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
