@@ -118,29 +118,20 @@ export const FieldRename = connect(
                         )}
                       </span>
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
-                        {data.showInput ? (
+                        {data.level === 1 ? (
                           <ElInput
-                            id="renameInput"
-                            class="tree-field-input text__inner"
+                            class={[
+                              'tree-field-input',
+                              'text__inner',
+                              {
+                                'tree-field-input-primary': data.field_name !== data.original_field_name
+                              }
+                            ]}
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
-                            onBlur={() => this.closeInput(node.data)}
-                            onKeydown={() => this.handleKeyDown()}
                           />
                         ) : (
                           <span class="text__inner">{data.field_name}</span>
-                        )}
-                        {!data.showInput && data.level === 1 ? (
-                          <VIcon
-                            class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-3']}
-                            size="12"
-                            disabled={this.disabled}
-                            onClick={() => this.showInput(node.data)}
-                          >
-                            edit-outline
-                          </VIcon>
-                        ) : (
-                          ''
                         )}
                       </span>
                       <span class="e-ops mr-12">
@@ -205,16 +196,6 @@ export const FieldRename = connect(
             }
           }
           return fields
-        },
-        showInput(data) {
-          this.$set(data, 'showInput', true) //打开loading
-          //将输入框自动获取焦点
-          this.$nextTick(() => {
-            document.getElementById('renameInput').focus()
-          })
-        },
-        closeInput(data) {
-          this.$set(data, 'showInput', false) //打开loading
         },
         handleKeyDown(e) {
           if (e.keyCode === 13) {

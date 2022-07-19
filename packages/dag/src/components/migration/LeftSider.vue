@@ -195,6 +195,7 @@ import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import NodeIcon from '../NodeIcon'
 import Locale from '../../mixins/locale'
+import { escapeRegExp } from 'lodash'
 
 export default {
   name: 'LeftSider',
@@ -352,8 +353,8 @@ export default {
         },
         order: ['status DESC', 'name ASC']
       }
+      const txt = escapeRegExp(this.dbSearchTxt.trim())
 
-      const txt = this.dbSearchTxt.trim()
       if (txt) {
         filter.where.name = { like: txt, options: 'i' }
       }
@@ -504,7 +505,14 @@ export default {
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
-          capabilities: item.capabilities
+          capabilities: item.capabilities || []
+          /*capabilities: [
+            ...(item.capabilities || []),
+            {
+              id: 'new_field_function',
+              type: 11
+            }
+          ]*/
         }
       }
 

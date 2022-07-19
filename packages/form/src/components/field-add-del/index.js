@@ -129,14 +129,19 @@ export const FieldAddDel = connect(
                             class={[
                               (data.is_deleted || this.isRemove(data.id)) && !this.isRest(data.id)
                                 ? 'active__delete'
-                                : '',
-                              this.isCreate(data.id) ? 'active__name' : ''
+                                : ''
                             ]}
                           >
-                            {data.showInput ? (
+                            {data.level === 1 ? (
                               <ElInput
                                 id="renameInput"
-                                class="tree-field-input text__inner"
+                                class={[
+                                  'tree-field-input',
+                                  'text__inner',
+                                  {
+                                    'tree-field-input-primary': this.isCreate(data.id)
+                                  }
+                                ]}
                                 v-model={data.field_name}
                                 onChange={() => this.handleRename(node, data)}
                                 onBlur={() => this.closeInput(node.data)}
@@ -144,18 +149,6 @@ export const FieldAddDel = connect(
                               />
                             ) : (
                               <span class="text__inner">{data.field_name}</span>
-                            )}
-                            {!data.showInput ? (
-                              <VIcon
-                                class={['ml-3', 'clickable']}
-                                size="12"
-                                disabled={this.disabled}
-                                onClick={() => this.showInput(node.data)}
-                              >
-                                edit-outline
-                              </VIcon>
-                            ) : (
-                              ''
                             )}
                           </span>
                         ) : (

@@ -12,6 +12,7 @@
           v-model="name"
           class="flex-1 min-w-0"
           :value="activeNode ? activeNode.name : ''"
+          :readonly="stateIsReadonly"
           @change="handleChangeName"
         />
       </template>
@@ -32,7 +33,7 @@
           colon: false,
           shallow: false,
           layout: 'vertical',
-          labelWidth: 120,
+          // labelWidth: 120,
           feedbackLayout: 'terse'
         }"
       />
