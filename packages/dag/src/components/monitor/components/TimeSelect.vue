@@ -37,8 +37,20 @@ export default {
       type: Array,
       default: () => [
         {
-          label: '本次运行累计',
-          value: 'now'
+          label: '最近5分钟',
+          value: 'lastFiveMin'
+        },
+        {
+          label: '最新1小时',
+          value: 'lastOneHour'
+        },
+        {
+          label: '最近1天',
+          value: 'lastOneDay'
+        },
+        {
+          label: '任务全周期',
+          value: 'all'
         },
         {
           label: '自定义时间',
@@ -91,6 +103,7 @@ export default {
       }
       const findOne = this.items.find(t => t.value === valJoin)
       if (!findOne) {
+        this.items = this.items.filter(t => !t.isTime)
         this.items.push({
           label: label,
           value: valJoin,
