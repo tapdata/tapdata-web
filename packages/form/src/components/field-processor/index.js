@@ -4,7 +4,6 @@ import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
 import EmptyItem from 'web-core/components/EmptyItem'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import VIcon from 'web-core/components/VIcon'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
 import { delayTrigger } from 'web-core/util'
@@ -45,6 +44,7 @@ export const FieldRenameProcessor = defineComponent({
         count: 1
       }
     })
+    //数据初始化
     const loadData = (value, type, loading) => {
       if (!loading) {
         config.loadingNav = true
@@ -78,6 +78,7 @@ export const FieldRenameProcessor = defineComponent({
           config.loadingTable = false
         })
     }
+    //搜索
     const doSearchTables = (value, type) => {
       delayTrigger(() => {
         loadData(value, type)
@@ -100,6 +101,7 @@ export const FieldRenameProcessor = defineComponent({
       suffix: '',
       capitalized: ''
     }
+    //转成mapping table级别
     const mapping = data => {
       let map = {}
       if (!data || data?.length === 0) return map
@@ -116,6 +118,7 @@ export const FieldRenameProcessor = defineComponent({
       })
       return map
     }
+    //转成mapping Field级别
     const mappingField = data => {
       let map = {}
       if (!data || data?.length === 0) return map
@@ -130,6 +133,7 @@ export const FieldRenameProcessor = defineComponent({
       })
       return map
     }
+    //map -> array
     const toList = map => {
       let list = []
       for (let key in map) {
@@ -139,6 +143,7 @@ export const FieldRenameProcessor = defineComponent({
       }
       return list
     }
+    //更新字段名 生成配置
     const doUpdateField = (row, target, val) => {
       let map = mapping(fieldsMapping) || {}
       let qualifiedName = config.selectTableRow?.sourceQualifiedName
@@ -233,17 +238,10 @@ export const FieldRenameProcessor = defineComponent({
       doCheckedTablesChange(config.checkedTables)
     }
     //单个修改字段名
-    const doEditName = row => {
-      config.newFieldName = row.targetFieldName
-      config.currentFieldRow = row
-      config.operationVisible = true
-    }
-    const doEditNameSave = () => {
+    const updateName = (row, name) => {
       //修改名字 生成配置
-      updateFieldViews(config.currentFieldRow?.sourceFieldName, config.newFieldName)
-      doUpdateField(config.currentFieldRow, 'rename', config.newFieldName)
-      config.operationVisible = false
-      config.currentFieldRow = ''
+      updateFieldViews(row?.sourceFieldName, name)
+      doUpdateField(row, 'rename', name)
     }
     //批量操作
     const doOperationSave = () => {
@@ -331,9 +329,22 @@ export const FieldRenameProcessor = defineComponent({
     //右侧表格slot渲染
     const renderNode = ({ row }) => {
       return row.isShow || props.disabled ? (
-        <div class="cursor-pointer" onClick={() => doEditName(row)}>
-          <span class="col-new-field-name inline-block ellipsis align-middle  mr-4 ">{row.targetFieldName}</span>
-          <VIcon>edit</VIcon>
+        <div
+          class={[
+            'cursor-pointer',
+            {
+              'color-primary': row.sourceFieldName !== row.targetFieldName
+            }
+          ]}
+        >
+          <input
+            readOnly={props.disabled}
+            class="rename-table-item-input"
+            value={row.targetFieldName}
+            onChange={event => {
+              updateName(row, event.target.value)
+            }}
+          />
         </div>
       ) : (
         <div class="cursor-pointer">
@@ -361,7 +372,6 @@ export const FieldRenameProcessor = defineComponent({
       config,
       loadData,
       doVisible,
-      doEditNameSave,
       doOperationSave,
       doCheckAllChange,
       doCheckedTablesChange,
