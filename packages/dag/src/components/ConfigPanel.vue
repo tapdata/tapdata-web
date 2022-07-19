@@ -13,13 +13,7 @@
     <div class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
         <NodeIcon class="mr-2" :node="activeNode" />
-        <TextEditable
-          ref="nameInput"
-          v-model="name"
-          class="flex-1 min-w-0"
-          :value="activeNode ? activeNode.name : ''"
-          @change="handleChangeName"
-        />
+        <TextEditable ref="nameInput" v-model="name" class="flex-1 min-w-0" @change="handleChangeName" />
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
         <!--属性设置-->
@@ -105,7 +99,8 @@ export default {
             name
           }
         })
-        this.updateDag()
+        this.$refs.formPanel?.form.setValuesIn('name', name)
+        // this.updateDag()
       } else {
         this.name = this.activeNode.name
       }
