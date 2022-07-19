@@ -505,7 +505,14 @@ export default {
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
-          capabilities: item.capabilities
+          capabilities: item.capabilities || []
+          /*capabilities: [
+            ...(item.capabilities || []),
+            {
+              id: 'new_field_function',
+              type: 11
+            }
+          ]*/
         }
       }
 

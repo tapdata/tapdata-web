@@ -709,13 +709,22 @@ export default {
         databaseType: connection.database_type,
         connectionId: connection.id,
         tableName,
+        // 节点创建默认属性
+        enableDDL: true,
         attrs: {
           connectionName: connection.name,
           connectionType: connection.connection_type,
           accessNodeProcessId: connection.accessNodeProcessId,
           pdkType: connection.pdkType,
           pdkHash: connection.pdkHash,
-          capabilities: connection.capabilities
+          capabilities: connection.capabilities || []
+          /*capabilities: [
+            ...(connection.capabilities || []),
+            {
+              id: 'new_field_function',
+              type: 11
+            }
+          ]*/
         }
       }
     }

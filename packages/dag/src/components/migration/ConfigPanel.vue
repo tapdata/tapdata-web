@@ -33,7 +33,7 @@
           colon: false,
           shallow: false,
           layout: 'vertical',
-          labelWidth: 120,
+          // labelWidth: 120,
           feedbackLayout: 'terse'
         }"
       />
