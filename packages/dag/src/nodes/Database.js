@@ -113,6 +113,27 @@ export class Database extends NodeType {
           }
         }
       },
+      enableDynamicTable: {
+        title: '动态新增表',
+        type: 'boolean',
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          tooltip: '开启后任务将会自动处理新增，删除表',
+          feedbackLayout: 'none'
+        },
+        'x-component': 'Switch',
+        'x-reactions': [
+          {
+            dependencies: ['.migrateTableSelectType'],
+            fulfill: {
+              state: {
+                visible:
+                  '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") }}'
+              }
+            }
+          }
+        ]
+      },
 
       enableDDL: {
         title: 'DDL事件采集',
