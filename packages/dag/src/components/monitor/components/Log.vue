@@ -86,7 +86,7 @@
 
     <ElDialog
       title="日志等级设置"
-      width="774px"
+      width="437px"
       :visible.sync="dialog"
       :close-on-click-modal="false"
       :append-to-body="true"
