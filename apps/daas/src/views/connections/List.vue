@@ -423,7 +423,7 @@ export default {
       //   }
       // })
     },
-    remove(data) {
+    remove(row) {
       const h = this.$createElement
       let strArr = this.$t('connection.deteleDatabaseMsg').split('xxx')
       let msg = h('p', null, [
@@ -433,7 +433,7 @@ export default {
           {
             class: 'color-primary'
           },
-          data.name
+          row.name
         ),
         strArr[1]
       ])
@@ -445,9 +445,9 @@ export default {
           return
         }
         //检查该连接是否被已有任务使用
-        connectionsApi.checkConnectionTask(data.id).then(data => {
+        connectionsApi.checkConnectionTask(row.id).then(data => {
           if (data?.length === 0) {
-            connectionsApi.delete(data.id).then(data => {
+            connectionsApi.delete(row.id).then(data => {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
               if (jobs.length > 0 || modules.length > 0) {
