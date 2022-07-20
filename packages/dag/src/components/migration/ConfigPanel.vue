@@ -11,7 +11,6 @@
           ref="nameInput"
           v-model="name"
           class="flex-1 min-w-0"
-          :value="activeNode ? activeNode.name : ''"
           :readonly="stateIsReadonly"
           @change="handleChangeName"
         />
@@ -96,7 +95,7 @@ export default {
             name
           }
         })
-        this.updateDag()
+        this.$refs.formPanel?.form.setValuesIn('name', name)
       } else {
         this.name = this.activeNode.name
       }
