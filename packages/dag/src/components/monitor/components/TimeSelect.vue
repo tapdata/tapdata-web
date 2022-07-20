@@ -9,6 +9,7 @@
     </div>
     <ElDatePicker
       v-model="time"
+      :picker-options="pickerOptions"
       ref="datetime"
       type="datetimerange"
       range-separator="至"
@@ -20,14 +21,20 @@
       class="position-absolute overflow-hidden p-0 m-0"
       @change="changeTime"
       @blur="blur"
-    >
-    </ElDatePicker>
+    ></ElDatePicker>
   </div>
 </template>
 
 <script>
+import dayjs from 'dayjs'
+const DateFormat = 'YYYY-MM-DD'
+const TimeFormat = 'HH:mm:ss'
+const StartTimeFormat = '00:00:00'
+const ENDTimeFormat = '23:59:59'
+
 export default {
   name: 'TimeSelect',
+
   props: {
     title: {
       type: String,
@@ -38,15 +45,15 @@ export default {
       default: () => [
         {
           label: '最近5分钟',
-          value: 'lastFiveMin'
+          value: 5 * 60 * 1000
         },
         {
           label: '最新1小时',
-          value: 'lastOneHour'
+          value: 60 * 60 * 1000
         },
         {
           label: '最近1天',
-          value: 'lastOneDay'
+          value: 24 * 60 * 60 * 1000
         },
         {
           label: '任务全周期',
@@ -63,20 +70,73 @@ export default {
     interval: {
       type: Number,
       default: 1000
+    },
+    range: {
+      type: Array,
+      default: () => ['2022-07-18 23:59:59', '2022-07-21 01:00:00']
     }
   },
+
   data() {
     return {
       period: '',
       time: [],
       items: [],
-      isTime: false
+      isTime: false,
+      pickerOptions: {
+        disabledDate: time => {
+          const [start, end] = this.range
+          const d = new Date(time).getTime()
+          const pickDate = dayjs(time).format(DateFormat)
+          const startDate = dayjs(start).format(DateFormat)
+          const startTime = dayjs(start).format(TimeFormat)
+          const startStamp = new Date(start).getTime()
+          const endStamp = new Date(end).getTime()
+          if (pickDate === startDate && startTime !== ENDTimeFormat) {
+            return false
+          }
+          return d < startStamp || d >= endStamp
+        },
+        onPick: ({ minDate, maxDate }) => {
+          if (!(minDate && maxDate)) {
+            return
+          }
+          const picker = this.$refs.datetime?.picker
+          const { minTimePicker, maxTimePicker } = picker.$refs
+          const [start, end] = this.range
+          const pickStartDate = dayjs(minDate).format(DateFormat)
+          const pickEndDate = dayjs(maxDate).format(DateFormat)
+          const startDate = dayjs(start).format(DateFormat)
+          const startTime = dayjs(start).format(TimeFormat)
+          const endDate = dayjs(end).format(DateFormat)
+          const endTime = dayjs(end).format(TimeFormat)
+          // 开始日期
+          if (pickStartDate === startDate) {
+            minTimePicker.selectableRange = [
+              [new Date(`${startDate} ${startTime}`), new Date(`${startDate} ${ENDTimeFormat}`)]
+            ]
+          } else {
+            minTimePicker.selectableRange = []
+          }
+          // 结束日期
+          if (pickEndDate === endDate) {
+            maxTimePicker.selectableRange = [
+              [new Date(`${endDate} ${StartTimeFormat}`), new Date(`${endDate} ${endTime}`)]
+            ]
+          } else {
+            maxTimePicker.selectableRange = []
+          }
+        }
+      }
     }
   },
+
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
     this.period = this.items[0]?.value
+    this.changeFnc(this.period)
   },
+
   methods: {
     changeFnc(value) {
       let findOne = this.items.find(t => t.value === value)
@@ -85,15 +145,16 @@ export default {
         return
       }
       this.isTime = !!findOne?.isTime
-      // this.$emit(this.isTime ? 'time' : 'value', findOne.value)
       this.$emit('change', findOne.value, this.isTime, findOne)
     },
+
     openPicker() {
-      if (this.period && this.period !== 'custom') {
+      if (this.isTime && this.period && this.period !== 'custom') {
         this.time = this.period.split(',')
       }
       this.$refs.datetime.focus()
     },
+
     changeTime(val) {
       const { rangeSeparator, formatToString } = this.$refs.datetime
       const label = formatToString(val)?.join(rangeSeparator)
@@ -112,9 +173,9 @@ export default {
         this.isTime = true
       }
       this.period = valJoin
-      // this.$emit('time', valJoin)
       this.$emit('change', valJoin, true, val)
     },
+
     blur() {
       if (!this.time?.length) {
         let t = Date.now()

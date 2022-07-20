@@ -2,7 +2,7 @@
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box">
-        <TimeSelect @change="eventChangeTime"></TimeSelect>
+        <TimeSelect @change="changeTimeSelect"></TimeSelect>
       </div>
       <div class="info-box">
         <div class="task-info__row">
@@ -604,8 +604,22 @@ export default {
       return props
     },
 
-    eventChangeTime(val, isTime) {
-      console.log('eventChangeTime', val, isTime)
+    changeTimeSelect(val, isTime, source) {
+      console.log('changeTimeSelect', val, isTime, source)
+      let time = []
+      if (isTime) {
+        time = val
+      } else {
+        if (val === 'all') {
+          // 任务运行时间，至今
+          time = [this.dataflow.last_updated, null]
+        } else {
+          let now = Date.now()
+          time = [now - val, now]
+        }
+      }
+      console.log('time', time)
+      this.$emit('changeTimeSelect', time)
     },
 
     loadEventData() {
