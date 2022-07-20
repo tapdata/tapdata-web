@@ -396,9 +396,9 @@ export class Table extends NodeType {
                   enableDDL: {
                     title: 'DDL事件采集',
                     type: 'boolean',
-                    default: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
+                      tooltip: '开启后任务将会自动采集选中的源端DDL事件',
                       layout: 'horizontal'
                     },
                     'x-component': 'Switch',
@@ -431,7 +431,7 @@ export class Table extends NodeType {
                 properties: {
                   ddlEvents: {
                     type: 'void',
-                    title: 'DDL支持列表',
+                    title: 'DDL事件应用',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       feedbackLayout: 'none'

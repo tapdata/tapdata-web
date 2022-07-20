@@ -117,8 +117,11 @@ export class Database extends NodeType {
       enableDDL: {
         title: 'DDL事件采集',
         type: 'boolean',
-        default: true,
         'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          tooltip: '开启后任务将会自动采集选中的源端DDL事件',
+          feedbackLayout: 'none'
+        },
         'x-component': 'Switch',
         'x-reactions': {
           target: 'disabledEvents',

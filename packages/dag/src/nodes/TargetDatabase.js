@@ -96,9 +96,10 @@ export class TargetDatabase extends NodeType {
 
       ddlEvents: {
         type: 'void',
-        title: 'DDL支持列表',
+        title: 'DDL事件应用',
         'x-decorator': 'FormItem',
         'x-decorator-props': {
+          tooltip: '当前节点支持处理的DDL事件',
           feedbackLayout: 'none'
         },
         'x-component': 'DdlEventList',
