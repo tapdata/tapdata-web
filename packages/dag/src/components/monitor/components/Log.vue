@@ -86,7 +86,7 @@
 
     <ElDialog
       title="日志等级设置"
-      width="774px"
+      width="437px"
       :visible.sync="dialog"
       :close-on-click-modal="false"
       :append-to-body="true"
@@ -166,16 +166,6 @@ export default {
     }
   },
 
-  watch: {
-    '$attrs.showBottomPanel'(v) {
-      if (v) {
-        this.init()
-      } else {
-        this.clearTimer()
-      }
-    }
-  },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
     items() {
@@ -195,6 +185,20 @@ export default {
         })
       ]
     }
+  },
+
+  watch: {
+    '$attrs.currentTab'(v) {
+      if (v === 'log') {
+        this.init()
+      } else {
+        this.clearTimer()
+      }
+    }
+  },
+
+  mounted() {
+    this.init()
   },
 
   destroyed() {

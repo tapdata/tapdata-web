@@ -39,6 +39,7 @@
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
           @toggle-expand="handleToggleExpand"
+          @changeTimeSelect="handleChangeTimeSelect"
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
@@ -83,11 +84,9 @@
         <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
           <EmptyItem></EmptyItem>
         </div>
-        <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
         <BottomPanel
-          v-show="showBottomPanel"
+          v-if="showBottomPanel"
           :dataflow="dataflow"
-          :showBottomPanel="showBottomPanel"
           class="position-relative"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
@@ -187,6 +186,7 @@ export default {
       scale: 1,
       showBottomPanel: false,
       timer: null,
+      quotaTime: [],
       quota: {} // 指标数据
     }
   },
@@ -589,6 +589,10 @@ export default {
       hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
+    },
+
+    handleChangeTimeSelect(val) {
+      this.quotaTime = val
     }
   }
 }
