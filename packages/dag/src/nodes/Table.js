@@ -394,7 +394,7 @@ export class Table extends NodeType {
                     }
                   },
                   enableDDL: {
-                    title: '自动DDL',
+                    title: 'DDL事件采集',
                     type: 'boolean',
                     default: true,
                     'x-decorator': 'FormItem',
