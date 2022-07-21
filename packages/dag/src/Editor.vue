@@ -266,7 +266,7 @@ export default {
       }
     },
 
-    async validate() {
+    /*async validate() {
       if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
@@ -409,7 +409,7 @@ export default {
       if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
 
       return null
-    },
+    },*/
 
     // 循环检查检查链路的末尾节点类型是否是表节点
     isEndOfTable(source, sourceMap, nodeMap) {

@@ -276,14 +276,14 @@ export default {
         })
     },
 
-    async validate() {
+    /*async validate() {
       if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
-      const tableNode = this.allNodes.filter(node => node.type === 'database')
-      if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
-      }
+      const dataNodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
+      // if (dataNodes.length < 2) {
+      //   return this.t('editor_cell_validate_none_data_node')
+      // }
 
       await this.validateAllNodes()
 
@@ -312,7 +312,9 @@ export default {
       this.allNodes.some(node => {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
-        const inputNum = targetMap[id]?.length ?? 0
+        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
+        const inputNum = node.$inputs.length
+        const outputNum = node.$outputs.length
 
         if (!sourceMap[id] && !targetMap[id]) {
           // 存在没有连线的节点
@@ -325,101 +327,35 @@ export default {
           return true
         }
 
+        // 非数据节点至少有一个目标
+        if (outputNum < minOutputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要${minOutputs}个目标节点`
+          return true
+        }
+
         if (this.hasNodeError(id)) {
           someErrorMsg = `「 ${node.name} 」配置异常`
           return true
         }
       })
 
-      const nodeNames = []
-      let typeName = ''
-      // 根据任务类型(全量、增量),检查不支持此类型的节点
-      // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
-      if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = '全量+增量'
-        tableNode.forEach(node => {
-          if (
-            sourceMap[node.id] &&
-            (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
-          ) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'initial_sync') {
-        typeName = '全量'
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'cdc') {
-        typeName = '增量'
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      }
+      if (someErrorMsg) return someErrorMsg
 
-      if (nodeNames.length) {
-        someErrorMsg = `存在不支持${typeName}的节点`
-      }
+      someErrorMsg = this.validateAgent(dataNodes)
 
-      const accessNodeProcessIdArr = [
-        ...tableNode.reduce((set, item) => {
-          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
-          return set
-        }, new Set())
-      ]
+      if (someErrorMsg) return someErrorMsg
 
-      if (accessNodeProcessIdArr.length > 1) {
-        // 所属agent节点冲突
-        const chooseId = this.dataflow.accessNodeProcessId
-
-        if (!chooseId) {
-          // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
-        } else {
-          let isError = false
-          const agent = this.scope.$agentMap[chooseId]
-          tableNode.forEach(node => {
-            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
-              this.setNodeErrorMsg({
-                id: node.id,
-                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
-              })
-              isError = true
-            }
-          })
-          isError && (someErrorMsg = `所属agent节点冲突`)
-        }
-      } else if (accessNodeProcessIdArr.length === 1) {
-        // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
-        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
-      }
+      someErrorMsg = this.validateLink(dataNodes)
 
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
-      const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
-      const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+      // const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
+      // const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
+      // if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
 
       return null
-    },
+    },*/
 
     async saveAsNewDataflow() {
       try {
