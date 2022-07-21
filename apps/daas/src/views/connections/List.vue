@@ -138,10 +138,12 @@
     ></Test>
     <ElDialog title="提示" width="30%" :visible.sync="connectionTaskDialog">
       <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
+      <span>{{ connectionTaskListTotal }}</span>
       <ul class="mt-4">
         <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
           <el-link type="primary">{{ item.name }}</el-link>
         </li>
+        <li v-if="connectionTaskListTotal>20">...</li>
       </ul>
     </ElDialog>
   </section>
@@ -237,6 +239,7 @@ export default {
       testData: null,
       dialogTestVisible: false, // 连接测试框
       connectionTaskList: [],
+      connectionTaskListTotal: 0,
       connectionTaskDialog: false
     }
   },
@@ -446,7 +449,7 @@ export default {
         }
         //检查该连接是否被已有任务使用
         connectionsApi.checkConnectionTask(row.id).then(data => {
-          if (data?.length === 0) {
+          if (data?items?.length === 0) {
             connectionsApi.delete(row.id).then(data => {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
@@ -459,7 +462,8 @@ export default {
             })
           } else {
             //展示已使用的任务列表
-            this.connectionTaskList = data || []
+            this.connectionTaskList = data ?.items|| []
+            this.connectionTaskListTotal = data?.total|| 0
             this.connectionTaskDialog = true
           }
         })
