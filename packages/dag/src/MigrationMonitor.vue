@@ -79,6 +79,7 @@
             @nodeSelected="nodeSelectedById"
             @delete="handleDeleteById"
             @show-node-popover="showNodePopover"
+            @open-detail="handleOpenDetail(n)"
           ></Node>
         </PaperScroller>
         <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
@@ -101,6 +102,9 @@
       />
       <!--配置面板-->
       <ConfigPanel v-else ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+
+      <!--   节点详情   -->
+      <NodeDetailDialog v-model="nodeDetailDialog" :node-id="nodeDetailDialogId"></NodeDetailDialog>
     </section>
   </section>
 </template>
@@ -131,6 +135,11 @@ import { taskApi } from '@tap/api'
 import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
 import dayjs from 'dayjs'
+import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
+
+function getRandom() {
+  return Math.ceil(Math.random() * 100)
+}
 
 export default {
   name: 'MigrationMonitor',
@@ -151,7 +160,8 @@ export default {
     TopHeader,
     Node,
     LeftSider,
-    VIcon
+    VIcon,
+    NodeDetailDialog
   },
 
   data() {
@@ -187,7 +197,9 @@ export default {
       showBottomPanel: false,
       timer: null,
       quotaTime: [],
-      quota: {} // 指标数据
+      quota: {}, // 指标数据
+      nodeDetailDialog: false,
+      nodeDetailDialogId: ''
     }
   },
 
@@ -458,26 +470,68 @@ export default {
           // 任务事件统计（条）
           {
             input: {
-              inserted: 39,
-              updated: 20,
-              deleted: 10,
-              ddl: 12,
-              other: 50,
-              total: 33
+              inserted: getRandom(),
+              updated: getRandom(),
+              deleted: getRandom(),
+              ddl: getRandom(),
+              other: getRandom(),
+              total: getRandom()
             },
             output: {
-              inserted: 1,
-              updated: 20,
-              deleted: 10,
-              ddl: 4,
-              other: 6,
-              total: 56
+              inserted: getRandom(),
+              updated: getRandom(),
+              deleted: getRandom(),
+              ddl: getRandom(),
+              other: getRandom(),
+              total: getRandom()
             }
           },
           // qps
           {
-            inputQPS: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1],
-            outputQPS: [2, 3, 1, 2, 3, 5, 1, 2, 3, 1, 2, 3, 1, 2, 3, 5, 1, 2, 3, 1],
+            inputQPS: [
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom()
+            ],
+            outputQPS: [
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom()
+            ],
             time: [
               1657707577896, 1657707582896, 1657707587896, 1657707592896, 1657707597896, 1657707602896, 1657707607896,
               1657707612896, 1657707617896, 1657707622896, 1657707627896, 1657707632896, 1657707637896, 1657707642896,
@@ -486,7 +540,28 @@ export default {
           },
           // 增量延迟
           {
-            value: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1],
+            value: [
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom(),
+              getRandom()
+            ],
             time: [
               1657707577896, 1657707582896, 1657707587896, 1657707592896, 1657707597896, 1657707602896, 1657707607896,
               1657707612896, 1657707617896, 1657707622896, 1657707627896, 1657707632896, 1657707637896, 1657707642896,
@@ -496,28 +571,28 @@ export default {
         ],
         statistics: [
           {
-            deletedTotal: 0,
+            deletedTotal: getRandom(),
             initialTime: 1657707577896,
             cdcTime: 1657707577896,
-            initialWrite: 1,
-            inputTotal: 1,
-            insertedTotal: 1,
-            outputTotal: 1,
-            replicateLag: 0,
-            updatedTotal: 0,
+            initialWrite: getRandom(),
+            inputTotal: getRandom(),
+            insertedTotal: getRandom(),
+            outputTotal: getRandom(),
+            replicateLag: getRandom(),
+            updatedTotal: getRandom(),
             // 表结构同步
             structure: {
-              wait: 12,
-              noCreate: 12,
-              finished: 238,
-              error: 23
+              wait: getRandom(),
+              noCreate: getRandom(),
+              finished: getRandom(),
+              error: getRandom()
             },
             // 表数据状态
             data: {
-              wait: 23,
-              running: 234,
-              finished: 44,
-              error: 5
+              wait: getRandom(),
+              running: getRandom(),
+              finished: getRandom(),
+              error: getRandom()
             }
           }
         ]
@@ -593,6 +668,12 @@ export default {
 
     handleChangeTimeSelect(val) {
       this.quotaTime = val
+    },
+
+    handleOpenDetail(node) {
+      console.log('handleOpenDetail', node)
+      this.nodeDetailDialogId = node.id
+      this.nodeDetailDialog = true
     }
   }
 }

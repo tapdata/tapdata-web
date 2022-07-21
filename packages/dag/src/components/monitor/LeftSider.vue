@@ -75,11 +75,11 @@
             <div class="flex justify-content-between">
               <div>
                 <div class="text-center">表结构同步</div>
-                <Chart :extend="initialStructureBar" style="width: 140px; height: 200px"></Chart>
+                <Chart :extend="initialStructureOptions" style="width: 140px; height: 200px"></Chart>
               </div>
               <div>
                 <div class="text-center">表数据状态</div>
-                <Chart ref="chart" :extend="initialDataBar" style="width: 140px; height: 200px"></Chart>
+                <Chart ref="chart" :extend="initialDataOptions" style="width: 140px; height: 200px"></Chart>
               </div>
             </div>
           </template>
@@ -244,7 +244,7 @@ export default {
     },
 
     // 全量-表结构同步
-    initialStructureBar() {
+    initialStructureOptions() {
       let arr = [
         {
           name: '待进行',
@@ -276,7 +276,7 @@ export default {
     },
 
     // 全量-表数据同步
-    initialDataBar() {
+    initialDataOptions() {
       let arr = [
         {
           name: '待进行',

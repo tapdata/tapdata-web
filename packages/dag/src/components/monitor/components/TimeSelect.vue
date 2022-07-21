@@ -5,7 +5,7 @@
       <ElSelect v-model="period" :class="{ 'is-time': isTime }" size="mini" class="ml-2" @change="changeFnc">
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
-      <VIcon class="color-primary ml-2" @click="openPicker">timer</VIcon>
+      <VIcon class="color-primary ml-1" @click="openPicker">timer</VIcon>
     </div>
     <ElDatePicker
       v-model="time"
@@ -15,7 +15,7 @@
       range-separator="至"
       start-placeholder="开始日期"
       end-placeholder="结束日期"
-      format="yyyy-MM-dd HH:mm:ss"
+      format="yyyy-MM-dd HH:mm"
       value-format="timestamp"
       style="height: 0; border: 0"
       class="position-absolute overflow-hidden p-0 m-0"
@@ -73,7 +73,7 @@ export default {
     },
     range: {
       type: Array,
-      default: () => ['2022-07-18 23:59:59', '2022-07-21 01:00:00']
+      default: () => ['2022-07-18 23:59:50', '2022-07-21 01:00:00']
     }
   },
 
