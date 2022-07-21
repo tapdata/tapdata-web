@@ -4,355 +4,138 @@
     class="verify-panel border-start flex-column"
     :class="{ flex: isShow, 'show-verify': isShow }"
   >
-    <div>数据校验</div>
+    <div class="flex justify-content-between align-items-center p-4">
+      <span class="font-color-normal fw-bold fs-7">数据校验</span>
+      <VIcon size="16" @click="$emit('showBottomPanel')">close</VIcon>
+    </div>
+    <div class="px-4 pb-4 border-bottom">
+      <Chart ref="chart" :extend="pieOptions" style="width: 240px; height: 90px"></Chart>
+    </div>
   </section>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { createForm } from '@formily/core'
-import { observer } from '@formily/reactive-vue'
-import FormRender from '../FormRender'
-import { debounce } from 'lodash'
-import { taskApi } from '@tap/api'
+import { Chart } from '@tap/component'
 import Locale from '../../mixins/locale'
+import { mapGetters } from 'vuex'
 
-export default observer({
+export default {
   name: 'VerifyPanel',
-  components: { FormRender },
+  components: { Chart },
   mixins: [Locale],
   props: {
-    settings: Object
+    settings: Object,
+    samples: {
+      type: Object,
+      default: () => {
+        return {
+          passed: 12,
+          diff: 456,
+          notSupport: 234
+        }
+      }
+    }
   },
 
   data() {
-    let repeatNameMessage = this.t('task_form_error_name_duplicate')
-    this.getAllNode()
-    let values = this.settings
-    return {
-      scope: {
-        checkName: value => {
-          return new Promise(resolve => {
-            this.handleCheckName(resolve, value)
-          })
-        }
-      },
-
-      schema: {
-        type: 'object',
-        properties: {
-          layout: {
-            type: 'void',
-            properties: {
-              name: {
-                title: this.t('task_stetting_name'), //任务名称
-                type: 'string',
-                required: 'true',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input',
-                'x-validator': `{{(value) => {
-                    return new Promise((resolve) => {
-                      checkName(value).then(data => {
-                        if(data === true) {
-                          resolve('${repeatNameMessage}')
-                        } else {
-                          resolve()
-                        }
-                      })
-                    })
-                  }}}`
-              },
-              type: {
-                title: this.t('task_setting_sync_type'),
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Radio.Group',
-                default: 'initial_sync+cdc',
-                enum: [
-                  {
-                    label: this.t('task_setting_initial_sync_cdc'), //全量+增量
-                    value: 'initial_sync+cdc'
-                  },
-                  {
-                    label: this.t('task_setting_initial_sync'), //全量
-                    value: 'initial_sync'
-                  },
-                  {
-                    label: this.t('task_setting_cdc'), //增量
-                    value: 'cdc'
-                  }
-                ]
-              },
-              desc: {
-                title: this.t('task_stetting_desc'), //任务描述
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input.TextArea',
-                'x-component-props': {
-                  min: 1,
-                  max: 100
-                }
-              },
-              collapse: {
-                type: 'void',
-                'x-decorator': 'FormItem',
-                'x-component': 'FormCollapse',
-                properties: {
-                  tab1: {
-                    type: 'void',
-                    'x-component': 'FormCollapse.Item',
-                    'x-component-props': {
-                      title: this.t('task_stetting_most_setting')
-                    },
-                    properties: {
-                      planStartDateFlag: {
-                        title: this.t('task_setting_plan_start_date'), //计划时间
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        default: false,
-                        target: '*(crontabExpression,syncPoints)',
-                        fulfill: {
-                          state: {
-                            visible: '{{$self.value}}'
-                          }
-                        }
-                      },
-                      planStartDate: {
-                        type: 'string',
-                        required: 'true',
-                        'x-component': 'DatePicker',
-                        'x-component-props': {
-                          type: 'datetime',
-                          format: 'yyyy-MM-dd HH:mm:ss',
-                          valueFormat: 'timestamp'
-                        },
-                        'x-reactions': {
-                          dependencies: ['planStartDateFlag'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      crontabExpression: {
-                        //调度表达式
-                        title: '重复策略', //定期调度任务
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input.TextArea',
-                        'x-component-props': {
-                          placeholder: this.t('task_setting_cron_expression')
-                        },
-                        'x-decorator-props': {
-                          tooltip: this.t('task_setting_cron_tip')
-                        },
-                        'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      syncPoints: {
-                        title: this.t('task_setting_sync_point'), //增量采集开始时刻
-                        type: 'array',
-                        default: [{ type: 'current', date: '' }],
-                        'x-decorator-props': {
-                          tooltip: this.t('task_setting_syncPoint_tip')
-                        },
-                        'x-component': 'ArrayItems',
-                        'x-decorator': 'FormItem',
-                        'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        },
-                        items: {
-                          type: 'object',
-                          properties: {
-                            pointType: {
-                              type: 'string',
-                              'x-component': 'Select',
-                              'x-component-props': {
-                                placeholder: '请选择',
-                                style: 'margin-bottom:10px'
-                              },
-                              default: 'current',
-                              enum: [
-                                {
-                                  label: this.t('dataFlow_SyncInfo_localTZType'),
-                                  value: 'localTZ'
-                                },
-                                {
-                                  label: this.t('dataFlow_SyncInfo_connTZType'),
-                                  value: 'connTZ'
-                                },
-                                {
-                                  label: this.t('dataFlow_SyncInfo_currentType'),
-                                  value: 'current'
-                                }
-                              ]
-                            },
-                            dateTime: {
-                              type: 'string',
-                              required: 'true',
-                              'x-component': 'DatePicker',
-                              'x-component-props': {
-                                type: 'datetime',
-                                format: 'yyyy-MM-dd HH:mm:ss',
-                                valueFormat: 'timestamp'
-                              },
-                              'x-reactions': {
-                                dependencies: ['.pointType'],
-                                fulfill: {
-                                  state: {
-                                    visible: '{{$deps[0] !== "current"}}'
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      },
-                      isAutoCreateIndex: {
-                        title: this.t('task_setting_automatic_index'), //自动创建索引
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        default: true
-                      },
-                      isStopOnError: {
-                        title: this.t('task_setting_stop_on_error'), //遇到错误停止
-                        type: 'boolean',
-                        default: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      },
-                      shareCdcEnable: {
-                        title: this.t('connection_form_shared_mining'), //共享挖掘日志过滤
-                        type: 'boolean',
-                        default: false,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          dependencies: ['type'],
-                          fulfill: {
-                            state: {
-                              visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
-                            }
-                          }
-                        }
-                      },
-                      isAutoInspect: {
-                        title: this.t('task_list_verify'),
-                        type: 'boolean',
-                        default: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-
-      form: createForm({
-        disabled: this.stateIsReadonly,
-        values
-      })
-    }
+    return {}
   },
 
   computed: {
-    // ...mapGetters('dataflow', ['stateIsReadonly'])
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapGetters('dataflow', ['activeType']),
+
     isShow() {
       return this.activeType === 'verify'
-    }
-  },
+    },
 
-  watch: {
-    stateIsReadonly(v) {
-      this.form.setState({ disabled: v })
+    pieOptions() {
+      let arr = [
+        {
+          name: '校验一致',
+          key: 'passed',
+          value: 0,
+          color: '#82C647'
+        },
+        {
+          name: '校验不一致',
+          key: 'diff',
+          value: 0,
+          color: '#F7D762'
+        },
+        {
+          name: '不支持校验',
+          key: 'notSupport',
+          value: 0,
+          color: '#88DBDA'
+        }
+      ]
+      return this.getPieOptions(arr, this.samples)
     }
-  },
-
-  created() {
-    this.form.setState({ disabled: this.stateIsReadonly })
   },
 
   methods: {
-    handleCheckName: debounce(function (resolve, value) {
-      taskApi.checkName(value, this.settings.id || '').then(data => {
-        resolve(data)
-      })
-    }, 500),
-    // 获取所有节点
-    getAllNode() {
-      let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
+    getPieOptions(items = [], data) {
+      let options = {
+        tooltip: {
+          trigger: 'item'
+        },
+        textStyle: {
+          rich: {
+            orgname: {
+              width: 80,
+              color: '#535F72'
+            },
+            count: {
+              padding: [0, 0, 0, 15],
+              color: '#333C4A'
+            }
+          }
+        },
+        legend: {
+          top: 'center',
+          right: 0,
+          icon: 'circle',
+          orient: 'vertical',
+          itemWidth: 6,
+          itemHeight: 6,
+          formatter: name => {
+            const count = 0
+            const arr = [`{orgname|${name}}`, `{count|${count}}`]
+            return arr.join('')
+          }
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: ['50%', '90%'],
+            center: ['20%', '50%'],
+            label: { show: false },
+            labelLine: { show: false },
+            data: [],
+            top: 'top'
+          }
+        ]
       }
-      const allNodes = this.$store.getters['dataflow/allNodes']
-      const allSource = this.$store.getters['dataflow/allEdges'].map(item => item.source)
-      // 根据节点id查询源节点数据
-      let sourceConnectionIds = []
-      const sourceNodes = allNodes.filter(item => {
-        if (allSource.includes(item.id)) {
-          sourceConnectionIds.push(item.connectionId)
-          return item
-        }
-      })
-      // 过滤重复数据源
-      let map = {}
-      let filterSourceNodes = () => {
-        sourceNodes.forEach(item => {
-          if (!map[item.connectionId]) {
-            //是否已有保存数据
-            this.settings.syncPoints = this.settings.syncPoints || []
-            let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
-            if (oldPoint?.length > 0) {
-              map[item.connectionId] = {
-                connectionId: item.connectionId,
-                pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: oldPoint[0].dateTime || '',
-                timeZone: systemTimeZone,
-                connectionName: item.name
-              }
-            } else {
-              map[item.connectionId] = {
-                connectionId: item.connectionId,
-                pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: '',
-                timeZone: systemTimeZone,
-                connectionName: item.name
-              }
+      if (items.length && data) {
+        options.series[0].data = items.map(t => {
+          return {
+            name: t.name,
+            value: data[t.key],
+            itemStyle: {
+              color: t.color
             }
           }
         })
-        return map
+        options.legend.formatter = name => {
+          const count = options.series[0].data?.find(t => t.name === name)?.value || 0
+          const arr = [`{orgname|${name}}`, `{count|${count}}`]
+          return arr.join('')
+        }
       }
-      this.settings.syncPoints = Object.values(filterSourceNodes())
-      //this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
-      // let arr = filterSourceNodes()
-      // eslint-disable-next-line
-      console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())
+      return options
     }
   }
-})
+}
 </script>
 <style lang="scss" scoped>
 .verify-panel {
