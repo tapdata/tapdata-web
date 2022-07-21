@@ -4,358 +4,402 @@
     class="verify-panel border-start flex-column"
     :class="{ flex: isShow, 'show-verify': isShow }"
   >
-    <div>数据校验</div>
+    <div class="flex justify-content-between align-items-center p-4">
+      <span class="font-color-normal fw-bold fs-7">数据校验</span>
+      <VIcon size="16">close</VIcon>
+    </div>
+    <div class="px-4 pb-4 border-bottom">
+      <Chart ref="chart" :extend="pieOptions" style="width: 240px; height: 90px"></Chart>
+    </div>
+    <div class="flex justify-content-between align-items-center px-4 pt-4">
+      <span class="font-color-normal fw-bold fs-7">问题表清单</span>
+      <VIcon size="16">menu</VIcon>
+    </div>
+    <div class="px-4 py-3">
+      <ElInput
+        v-model="dbSearchTxt"
+        ref="dbInput"
+        placeholder="请输入搜索内容"
+        size="mini"
+        clearable
+        @keydown.native.stop
+        @keyup.native.stop
+        @click.native.stop
+        @input="handleDBInput"
+      >
+        <template #prefix>
+          <VIcon size="14" class="ml-1 h-100" style="margin-top: 6px">magnify</VIcon>
+        </template>
+      </ElInput>
+    </div>
+    <ElScrollbar ref="dbList" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
+      <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
+        <template #template>
+          <div v-for="i in 5" :key="i" class="flex p-4 align-center">
+            <ElSkeletonItem
+              class="mr-3 flex-shrink-0"
+              style="width: 20px; height: 20px"
+              variant="rect"
+            ></ElSkeletonItem>
+            <ElSkeletonItem variant="text"></ElSkeletonItem>
+          </div>
+        </template>
+        <div>
+          <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore">
+            <div v-for="db in dbList" :key="db.id" class="db-item px-4 py-2 user-select-none border-bottom">
+              <div class="flex justify-content-between mb-2">
+                <span>连接名：</span>
+                <span>{{ db.connection }}</span>
+              </div>
+              <div class="flex justify-content-between mb-2">
+                <span>表名：</span>
+                <span>{{ db.table }}</span>
+              </div>
+              <div class="flex justify-content-between mb-2">
+                <span>异常数据（行）：</span>
+                <span>{{ db.diff }}</span>
+              </div>
+              <div class="flex justify-content-between mb-2">
+                <span>准确性：</span>
+                <span>{{ db.progress }}%</span>
+              </div>
+            </div>
+            <EmptyItem v-if="!dbList.length"></EmptyItem>
+            <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+              {{ t('loading') }}<span class="dotting"></span>
+            </div>
+          </div>
+        </div>
+      </ElSkeleton>
+    </ElScrollbar>
   </section>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { createForm } from '@formily/core'
-import { observer } from '@formily/reactive-vue'
-import FormRender from '../FormRender'
-import { debounce } from 'lodash'
-import { taskApi } from '@tap/api'
+import { Chart } from '@tap/component'
+import { calcUnit } from '@tap/shared'
 import Locale from '../../mixins/locale'
+import { mapGetters } from 'vuex'
+import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import { debounce, escapeRegExp } from 'lodash'
+import { Select } from 'element-ui'
+import { connectionsApi } from '../../../../api'
 
-export default observer({
+function getRandom() {
+  return Math.ceil(Math.random() * 100)
+}
+
+export default {
   name: 'VerifyPanel',
-  components: { FormRender },
+  components: { Chart, ElScrollbar: Select.components.ElScrollbar },
   mixins: [Locale],
   props: {
-    settings: Object
+    settings: Object,
+    samples: {
+      type: Object,
+      default: () => {
+        return {
+          passed: 10232,
+          diff: 456,
+          notSupport: 231114
+        }
+      }
+    }
   },
 
   data() {
-    let repeatNameMessage = this.t('task_form_error_name_duplicate')
-    this.getAllNode()
-    let values = this.settings
     return {
-      scope: {
-        checkName: value => {
-          return new Promise(resolve => {
-            this.handleCheckName(resolve, value)
-          })
-        }
-      },
-
-      schema: {
-        type: 'object',
-        properties: {
-          layout: {
-            type: 'void',
-            properties: {
-              name: {
-                title: this.t('task_stetting_name'), //任务名称
-                type: 'string',
-                required: 'true',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input',
-                'x-validator': `{{(value) => {
-                    return new Promise((resolve) => {
-                      checkName(value).then(data => {
-                        if(data === true) {
-                          resolve('${repeatNameMessage}')
-                        } else {
-                          resolve()
-                        }
-                      })
-                    })
-                  }}}`
-              },
-              type: {
-                title: this.t('task_setting_sync_type'),
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Radio.Group',
-                default: 'initial_sync+cdc',
-                enum: [
-                  {
-                    label: this.t('task_setting_initial_sync_cdc'), //全量+增量
-                    value: 'initial_sync+cdc'
-                  },
-                  {
-                    label: this.t('task_setting_initial_sync'), //全量
-                    value: 'initial_sync'
-                  },
-                  {
-                    label: this.t('task_setting_cdc'), //增量
-                    value: 'cdc'
-                  }
-                ]
-              },
-              desc: {
-                title: this.t('task_stetting_desc'), //任务描述
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input.TextArea',
-                'x-component-props': {
-                  min: 1,
-                  max: 100
-                }
-              },
-              collapse: {
-                type: 'void',
-                'x-decorator': 'FormItem',
-                'x-component': 'FormCollapse',
-                properties: {
-                  tab1: {
-                    type: 'void',
-                    'x-component': 'FormCollapse.Item',
-                    'x-component-props': {
-                      title: this.t('task_stetting_most_setting')
-                    },
-                    properties: {
-                      planStartDateFlag: {
-                        title: this.t('task_setting_plan_start_date'), //计划时间
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        default: false,
-                        target: '*(crontabExpression,syncPoints)',
-                        fulfill: {
-                          state: {
-                            visible: '{{$self.value}}'
-                          }
-                        }
-                      },
-                      planStartDate: {
-                        type: 'string',
-                        required: 'true',
-                        'x-component': 'DatePicker',
-                        'x-component-props': {
-                          type: 'datetime',
-                          format: 'yyyy-MM-dd HH:mm:ss',
-                          valueFormat: 'timestamp'
-                        },
-                        'x-reactions': {
-                          dependencies: ['planStartDateFlag'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      crontabExpression: {
-                        //调度表达式
-                        title: '重复策略', //定期调度任务
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input.TextArea',
-                        'x-component-props': {
-                          placeholder: this.t('task_setting_cron_expression')
-                        },
-                        'x-decorator-props': {
-                          tooltip: this.t('task_setting_cron_tip')
-                        },
-                        'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        }
-                      },
-                      syncPoints: {
-                        title: this.t('task_setting_sync_point'), //增量采集开始时刻
-                        type: 'array',
-                        default: [{ type: 'current', date: '' }],
-                        'x-decorator-props': {
-                          tooltip: this.t('task_setting_syncPoint_tip')
-                        },
-                        'x-component': 'ArrayItems',
-                        'x-decorator': 'FormItem',
-                        'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        },
-                        items: {
-                          type: 'object',
-                          properties: {
-                            pointType: {
-                              type: 'string',
-                              'x-component': 'Select',
-                              'x-component-props': {
-                                placeholder: '请选择',
-                                style: 'margin-bottom:10px'
-                              },
-                              default: 'current',
-                              enum: [
-                                {
-                                  label: this.t('dataFlow_SyncInfo_localTZType'),
-                                  value: 'localTZ'
-                                },
-                                {
-                                  label: this.t('dataFlow_SyncInfo_connTZType'),
-                                  value: 'connTZ'
-                                },
-                                {
-                                  label: this.t('dataFlow_SyncInfo_currentType'),
-                                  value: 'current'
-                                }
-                              ]
-                            },
-                            dateTime: {
-                              type: 'string',
-                              required: 'true',
-                              'x-component': 'DatePicker',
-                              'x-component-props': {
-                                type: 'datetime',
-                                format: 'yyyy-MM-dd HH:mm:ss',
-                                valueFormat: 'timestamp'
-                              },
-                              'x-reactions': {
-                                dependencies: ['.pointType'],
-                                fulfill: {
-                                  state: {
-                                    visible: '{{$deps[0] !== "current"}}'
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      },
-                      isAutoCreateIndex: {
-                        title: this.t('task_setting_automatic_index'), //自动创建索引
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        default: true
-                      },
-                      isStopOnError: {
-                        title: this.t('task_setting_stop_on_error'), //遇到错误停止
-                        type: 'boolean',
-                        default: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      },
-                      shareCdcEnable: {
-                        title: this.t('connection_form_shared_mining'), //共享挖掘日志过滤
-                        type: 'boolean',
-                        default: false,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          dependencies: ['type'],
-                          fulfill: {
-                            state: {
-                              visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
-                            }
-                          }
-                        }
-                      },
-                      isAutoInspect: {
-                        title: this.t('task_list_verify'),
-                        type: 'boolean',
-                        default: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-
-      form: createForm({
-        disabled: this.stateIsReadonly,
-        values
-      })
+      dbSearchTxt: '',
+      dbLoading: true,
+      dbLoadingMore: false,
+      skeletonThrottle: 0,
+      dbList: [],
+      dbPage: 1,
+      dbTotal: 0,
+      dbIdMap: {}
     }
   },
 
   computed: {
-    // ...mapGetters('dataflow', ['stateIsReadonly'])
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapGetters('dataflow', ['activeType']),
+
     isShow() {
       return this.activeType === 'verify'
+    },
+
+    pieOptions() {
+      let arr = [
+        {
+          name: '校验一致',
+          key: 'passed',
+          value: 0,
+          color: '#82C647'
+        },
+        {
+          name: '校验不一致',
+          key: 'diff',
+          value: 0,
+          color: '#F7D762'
+        },
+        {
+          name: '不支持校验',
+          key: 'notSupport',
+          value: 0,
+          color: '#88DBDA'
+        }
+      ]
+      return this.getPieOptions(arr, this.samples)
+    },
+
+    scrollbarWrapStyle() {
+      let gutter = scrollbarWidth()
+      return `height: calc(100% + ${gutter}px);`
+    },
+
+    disabledDBMore() {
+      console.log('disabledDBMore', this.dbLoading, this.noDBMore) // eslint-disable-line
+      return this.dbLoading || this.noDBMore || this.dbLoadingMore
+    },
+
+    noDBMore() {
+      return this.dbPage >= Math.ceil(this.dbTotal / 20)
     }
   },
 
-  watch: {
-    stateIsReadonly(v) {
-      this.form.setState({ disabled: v })
-    }
-  },
-
-  created() {
-    this.form.setState({ disabled: this.stateIsReadonly })
+  mounted() {
+    this.init()
   },
 
   methods: {
-    handleCheckName: debounce(function (resolve, value) {
-      taskApi.checkName(value, this.settings.id || '').then(data => {
-        resolve(data)
-      })
-    }, 500),
-    // 获取所有节点
-    getAllNode() {
-      let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
+    init() {
+      this.loadDatabase()
+    },
+
+    getPieOptions(items = [], data) {
+      const total = eval(Object.values(data).join('+'))
+      const totalText = '总计'
+      let options = {
+        tooltip: {
+          trigger: 'item'
+        },
+        textStyle: {
+          rich: {
+            orgname: {
+              width: 80,
+              color: '#535F72'
+            },
+            count: {
+              padding: [0, 0, 0, 15],
+              color: '#333C4A'
+            }
+          }
+        },
+        legend: {
+          top: 'center',
+          right: 0,
+          icon: 'circle',
+          orient: 'vertical',
+          itemWidth: 6,
+          itemHeight: 6,
+          formatter: name => {
+            const count = 0
+            const arr = [`{orgname|${name}}`, `{count|${count}}`]
+            return arr.join('')
+          }
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: ['55%', '90%'],
+            center: ['20%', '50%'],
+            label: {
+              show: true,
+              position: 'center',
+              fontWeight: 'bold',
+              // backgroundColor: '#fff',
+              formatter: `{name|${calcUnit(total)}}\n{value|${totalText}}`,
+              rich: {
+                name: {
+                  lineHeight: 24,
+                  color: 'rgba(0, 0, 0, 0.85)',
+                  fontSize: 14,
+                  fontWeight: '400'
+                },
+                value: {
+                  color: 'rgba(0, 0, 0, 0.43)',
+                  fontSize: 12,
+                  fontWeight: '400'
+                }
+              }
+            },
+            labelLine: { show: false },
+            data: [],
+            top: 'top'
+          }
+        ]
       }
-      const allNodes = this.$store.getters['dataflow/allNodes']
-      const allSource = this.$store.getters['dataflow/allEdges'].map(item => item.source)
-      // 根据节点id查询源节点数据
-      let sourceConnectionIds = []
-      const sourceNodes = allNodes.filter(item => {
-        if (allSource.includes(item.id)) {
-          sourceConnectionIds.push(item.connectionId)
-          return item
-        }
-      })
-      // 过滤重复数据源
-      let map = {}
-      let filterSourceNodes = () => {
-        sourceNodes.forEach(item => {
-          if (!map[item.connectionId]) {
-            //是否已有保存数据
-            this.settings.syncPoints = this.settings.syncPoints || []
-            let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
-            if (oldPoint?.length > 0) {
-              map[item.connectionId] = {
-                connectionId: item.connectionId,
-                pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: oldPoint[0].dateTime || '',
-                timeZone: systemTimeZone,
-                connectionName: item.name
-              }
-            } else {
-              map[item.connectionId] = {
-                connectionId: item.connectionId,
-                pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: '',
-                timeZone: systemTimeZone,
-                connectionName: item.name
-              }
+      if (items.length && data) {
+        options.series[0].data = items.map(t => {
+          return {
+            name: t.name,
+            value: data[t.key],
+            itemStyle: {
+              color: t.color
             }
           }
         })
-        return map
+        options.legend.formatter = name => {
+          const count = options.series[0].data?.find(t => t.name === name)?.value || 0
+          const arr = [`{orgname|${name}}`, `{count|${count}}`]
+          return arr.join('')
+        }
       }
-      this.settings.syncPoints = Object.values(filterSourceNodes())
-      //this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
-      // let arr = filterSourceNodes()
-      // eslint-disable-next-line
-      console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())
+      return options
+    },
+
+    handleDBInput: debounce(function () {
+      this.loadDatabase()
+    }, 100),
+
+    loadMoreDB() {
+      console.log('this.disabledDBMore', this.disabledDBMore)
+      if (this.disabledDBMore) return
+      this.loadDatabase(true)
+    },
+
+    getDbFilter() {
+      const filter = {
+        page: this.dbPage,
+        size: 20,
+        where: {
+          // database_type: {
+          //   $in: this.database
+          // },
+          connection_type: {
+            like: this.connectionType,
+            options: 'i'
+          }
+        },
+        fields: {
+          name: 1,
+          id: 1,
+          database_type: 1,
+          database_owner: 1,
+          database_name: 1,
+          database_username: 1,
+          database_host: 1,
+          database_port: 1,
+          database_uri: 1,
+          connection_name: 1,
+          brokerURL: 1,
+          mqType: 1,
+          kafkaBootstrapServers: 1,
+          connection_type: 1,
+          status: 1,
+          accessNodeType: 1,
+          accessNodeProcessId: 1,
+          accessNodeProcessIdList: 1,
+          pdkType: 1,
+          pdkHash: 1,
+          capabilities: 1,
+          config: 1
+        },
+        order: ['status DESC', 'name ASC']
+      }
+      const txt = escapeRegExp(this.dbSearchTxt.trim())
+
+      if (txt) {
+        filter.where.name = { like: txt, options: 'i' }
+      }
+
+      return { filter: JSON.stringify(filter) }
+    },
+
+    async loadDatabase(loadMore) {
+      if (loadMore) {
+        this.dbPage++
+        this.dbLoadingMore = true
+      } else {
+        this.dbLoading = true
+        this.dbPage = 1
+        this.dbTotal = 0
+      }
+      // this.dbList = Array(10)
+      //   .fill()
+      //   .map((t, i) => {
+      //     return {
+      //       id: i,
+      //       connection: '连接名称' + getRandom(),
+      //       table: '表名' + getRandom(),
+      //       diff: getRandom(),
+      //       progress: getRandom()
+      //     }
+      //   })
+      // this.dbTotal = getRandom()
+
+      console.log('this.dbList', this.dbList)
+
+      const data = await connectionsApi.get(this.getDbFilter())
+
+      this.dbTotal = data.total
+      const dbList = Array(10)
+        .fill()
+        .map((t, i) => {
+          return {
+            id: i,
+            connection: '连接名称' + getRandom(),
+            table: '表名' + getRandom(),
+            diff: (getRandom() * 1000).toLocaleString(),
+            progress: getRandom()
+          }
+        })
+      // const dbList = data.items.map(item => {
+      //   let connectionUrl = ''
+      //
+      //   if (item.config) {
+      //     if (item.config.uri) {
+      //       connectionUrl = item.config.uri
+      //     } else {
+      //       connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
+      //         item.config.schema ? `/${item.config.schema}` : ''
+      //       }`
+      //     }
+      //   }
+      //
+      //   item.connectionUrl = connectionUrl
+      //   item.databaseType = item.database_type
+      //   return item
+      // })
+      //
+      if (loadMore) {
+        // 防止重复push
+        dbList.forEach(item => {
+          if (!this.dbIdMap[item.id]) {
+            this.dbList.push(item)
+            this.dbIdMap[item.id] = true
+          }
+        })
+        this.dbLoadingMore = false
+      } else {
+        this.scrollTopOfDBList()
+        this.dbList = dbList
+        this.dbLoading = false
+        // 缓存所有dbId
+        this.dbIdMap = dbList.reduce((map, item) => ((map[item.id] = true), map), {})
+      }
+      return this.dbList
+    },
+
+    scrollTopOfDBList() {
+      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
     }
   }
-})
+}
 </script>
 <style lang="scss" scoped>
 .verify-panel {
   width: 306px;
+}
+.db-item {
 }
 </style>
