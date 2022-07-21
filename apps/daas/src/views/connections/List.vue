@@ -138,12 +138,12 @@
     ></Test>
     <ElDialog title="提示" width="30%" :visible.sync="connectionTaskDialog">
       <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
-      <span>{{ connectionTaskListTotal }}</span>
+      <div class="color-primary">任务总数: {{ connectionTaskListTotal }}</div>
       <ul class="mt-4">
         <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
           <el-link type="primary">{{ item.name }}</el-link>
         </li>
-        <li v-if="connectionTaskListTotal>20">...</li>
+        <li v-if="connectionTaskListTotal>10">...</li>
       </ul>
     </ElDialog>
   </section>
@@ -462,7 +462,7 @@ export default {
             })
           } else {
             //展示已使用的任务列表
-            this.connectionTaskList = data ?.items|| []
+            this.connectionTaskList = data?.items|| []
             this.connectionTaskListTotal = data?.total|| 0
             this.connectionTaskDialog = true
           }
