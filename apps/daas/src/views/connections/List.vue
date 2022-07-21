@@ -136,12 +136,14 @@
       :formData="testData"
       @returnTestData="returnTestData"
     ></Test>
-    <ElDialog title="提示" width="30%" :visible.sync="connectionTaskDialog">
+    <ElDialog title="提示" width="40%" :visible.sync="connectionTaskDialog">
       <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
       <div class="color-primary">任务总数: {{ connectionTaskListTotal }}</div>
       <ul class="mt-4">
         <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
-          <el-link type="primary">{{ item.name }}</el-link>
+         <el-tooltip :content="item.name" placement="right-start">
+           <el-link type="primary">{{ item.name }}</el-link>
+         </el-tooltip>
         </li>
         <li v-if="connectionTaskListTotal>10">...</li>
       </ul>
