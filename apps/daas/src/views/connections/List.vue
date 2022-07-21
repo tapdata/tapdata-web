@@ -449,7 +449,7 @@ export default {
         }
         //检查该连接是否被已有任务使用
         connectionsApi.checkConnectionTask(row.id).then(data => {
-          if (data?items?.length === 0) {
+          if (data?.items?.length === 0) {
             connectionsApi.delete(row.id).then(data => {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
