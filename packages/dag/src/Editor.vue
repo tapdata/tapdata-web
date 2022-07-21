@@ -186,10 +186,10 @@ export default {
           name: 'JavaScript',
           type: 'js_processor'
         },
-        /*{
+        {
           name: '聚合',
           type: 'aggregation_processor'
-        },*/
+        },
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
