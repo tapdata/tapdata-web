@@ -200,7 +200,7 @@ export default {
       const { allowSource } = target.__Ctor
       const { allowTarget } = source.__Ctor
 
-      if (typeof allowSource === 'function' && !allowSource(source)) {
+      if (typeof allowSource === 'function' && !allowSource(source, target)) {
         showMsg && this.$message.error(`该节点「${target.name}」不支持「${source.name}」作为源`)
         return false
       }
@@ -872,7 +872,7 @@ export default {
     nodeELIsConnected(s, t) {
       const connections = this.jsPlumbIns.getConnections('*')
       // eslint-disable-next-line
-      console.log('connections', connections)
+      // console.log('connections', connections)
       return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
@@ -940,6 +940,190 @@ export default {
           }
         })
       )
+    },
+
+    /**
+     * 校验agent设置
+     * @returns {*}
+     */
+    validateAgent() {
+      let someErrorMsg
+      const nodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
+      const accessNodeProcessIdArr = [
+        ...nodes.reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      ]
+
+      if (accessNodeProcessIdArr.length > 1) {
+        // 所属agent节点冲突
+        const chooseId = this.dataflow.accessNodeProcessId
+
+        if (!chooseId) {
+          // someErrorMsg = `请配置任务运行agent`
+          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
+        } else {
+          let isError = false
+          const agent = this.scope.$agentMap[chooseId]
+          nodes.forEach(node => {
+            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
+              })
+              isError = true
+            }
+          })
+          isError && (someErrorMsg = `所属agent节点冲突`)
+        }
+      } else if (accessNodeProcessIdArr.length === 1) {
+        // 如果画布上仅有一个所属agent，自动设置为任务的agent
+        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
+        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
+      }
+      return someErrorMsg
+    },
+
+    loadLeafNode(node) {
+      let arr = []
+      if (node.$outputs.length) {
+        node.$outputs.forEach(id => {
+          console.log('this.loadLeafNode(this.nodeById(id))', this.loadLeafNode(this.nodeById(id))) // eslint-disable-line
+          arr.push(...this.loadLeafNode(this.nodeById(id)))
+        })
+      } else {
+        arr.push(node.id)
+      }
+      return arr
+    },
+
+    validateLink() {
+      const rootNodes = this.allNodes.filter(node => !node.$inputs.length)
+      const leafNodesMap = rootNodes.reduce((obj, node) => {
+        obj[node.id] = this.loadLeafNode(node)
+        console.log('obj[node.id]', obj[node.id], Array.isArray(obj[node.id])) // eslint-disable-line
+        return obj
+      }, {})
+
+      for (let key in leafNodesMap) {
+        const value = leafNodesMap[key]
+        let flag = false
+        for (let innerKey in leafNodesMap) {
+          if (key === innerKey) continue
+          const innerValue = leafNodesMap[innerKey]
+
+          if (new Set([...value, ...innerValue]).size !== innerValue.length + value.length) {
+            flag = true
+            break
+          }
+        }
+        if (!flag) {
+          return '存在没有交集的链路'
+        }
+      }
+
+      return null
+      /*const leafNodesMap = rootNodes.reduce((obj, node) => {
+        obj[node.id] = this.loadLeafNode(node)
+        console.log('obj[node.id]', obj[node.id], Array.isArray(obj[node.id])) // eslint-disable-line
+        return obj
+      }, {})*/
+
+      // const rootLeafNodes = Object.values(LeafNodes)
+      // const rootLeafNodes = rootNodes.map(node => this.loadLeafNode([], node))
+
+      /*for (let key of leafNodesMap) {
+        const value = leafNodesMap[key]
+        let flag = false
+        for (let innerKey in leafNodesMap) {
+          if (key === innerKey) continue
+          const innerValue = leafNodesMap[innerKey]
+
+          if (new Set([...value, ...innerValue]).size !== innerValue.length + value.length) {
+            flag = true
+            break
+          }
+        }
+        if (!flag) {
+          return '存在没有交集的链路'
+        }
+      }*/
+    },
+
+    async validate() {
+      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+
+      await this.validateAllNodes()
+
+      const sourceMap = {},
+        targetMap = {},
+        edges = this.allEdges
+      edges.forEach(item => {
+        let _source = sourceMap[item.source]
+        let _target = targetMap[item.target]
+
+        if (!_source) {
+          sourceMap[item.source] = [item]
+        } else {
+          _source.push(item)
+        }
+
+        if (!_target) {
+          targetMap[item.target] = [item]
+        } else {
+          _target.push(item)
+        }
+      })
+
+      let someErrorMsg = ''
+      // 检查每个节点的源节点个数、连线个数、节点的错误状态
+      this.allNodes.some(node => {
+        const { id } = node
+        const minInputs = node.__Ctor.minInputs ?? 1
+        // 非数据节点至少有一个目标
+        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
+        const inputNum = node.$inputs.length
+        const outputNum = node.$outputs.length
+
+        if (this.hasNodeError(id)) {
+          someErrorMsg = `「 ${node.name} 」配置异常`
+          return true
+        }
+
+        if (inputNum < minInputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
+          return true
+        }
+
+        if (outputNum < minOutputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要${minOutputs}个目标节点`
+          return true
+        }
+
+        if (!inputNum && !outputNum) {
+          // 存在没有连线的节点
+          someErrorMsg = `「 ${node.name} 」没有任何连线`
+          return true
+        }
+      })
+
+      if (someErrorMsg) return someErrorMsg
+
+      someErrorMsg = this.validateAgent()
+
+      if (someErrorMsg) return someErrorMsg
+
+      // someErrorMsg = this.validateLink()
+
+      // if (someErrorMsg) return someErrorMsg
+
+      // 检查链路的末尾节点类型是否是表节点
+      // const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
+      // const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
+      // if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+
+      return null
     },
 
     /**

@@ -547,8 +547,13 @@ export class Table extends NodeType {
 
   locales = AllLocales.Table
 
-  /*allowTarget(target, source) {
-    // 不再支持多个表节点串连 A->B->C
-    return !source.$inputs?.length
-  }*/
+  allowTarget(target, source) {
+    // 不再支持既是源又是目标的节点
+    return !source.$inputs?.length && (target.type !== 'table' || !target.$outputs?.length)
+  }
+
+  allowSource(source, target) {
+    // 不再支持既是源又是目标的节点
+    return !target.$outputs?.length
+  }
 }
