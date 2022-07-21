@@ -28,7 +28,7 @@ export default {
   mixins: [Locale],
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId']),
+    ...mapState('dataflow', ['activeNodeId', 'showConsole']),
     ...mapGetters('dataflow', [
       'allNodes',
       'allEdges',
@@ -731,6 +731,7 @@ export default {
       }
 
       const data = this.getDataflowDataToSave()
+      let isOk = false
 
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
@@ -738,12 +739,23 @@ export default {
         !needStart && this.$message.success(this.t('message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
-        return true
+        isOk = true
       } catch (e) {
         this.handleError(e)
-        this.isSaving = false
-        return false
       }
+      this.isSaving = false
+      this.openConsole(needStart)
+      return isOk
+    },
+
+    openConsole(ifStart) {
+      if (ifStart) {
+        this.$refs.console?.loadData()
+      } else if (this.showConsole) {
+        this.$refs.console?.loadData()
+      }
+
+      this.toggleConsole(true)
     },
 
     handleUndo() {

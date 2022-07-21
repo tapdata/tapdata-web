@@ -1,57 +1,50 @@
 <template>
   <section
-    v-if="showConsole"
     v-resize.top="{
       minHeight: 40
     }"
-    class="console-panel border-top flex"
+    class="console-panel border-top"
+    :class="showConsole ? 'flex' : 'none'"
   >
-    <div class="console-panel-side border-end">
-      <div class="console-panel-header p-4">信息输出</div>
+    <div class="console-panel-side border-end overflow-auto py-2">
+      <!--<div class="console-panel-header p-4">日志</div>-->
       <div class="step-list px-2">
         <div
-          class="step-list-header step-item px-2 mb-2 flex align-center"
-          :class="{ active: !currentType }"
-          @click="currentType = ''"
+          class="step-list-header step-item px-2 mb-1 flex align-center"
+          :class="{ active: !nodeId }"
+          @click="toggleNode()"
         >
-          <!--<div class="step-expand-icon">
-            <VIcon>arrow-right</VIcon>
-          </div>-->
-          <VIcon size="20">folder</VIcon>任务
+          <VIcon size="20" class="mr-1">folder</VIcon>全部日志
         </div>
         <div
-          class="step-item px-2 mb-2 pl-6"
-          s
-          :class="{ active: currentType === 'settings' }"
-          @click="currentType = 'settings'"
+          v-for="node in nodeList"
+          :key="node.id"
+          class="step-item px-2 mb-1 flex align-center"
+          :class="{ active: nodeId === node.id }"
+          @click="toggleNode(node.id)"
         >
-          任务设置检测
-        </div>
-        <div
-          class="step-item px-2 mb-2 pl-6"
-          :class="{ active: currentType === 'sourceNodes' }"
-          @click="currentType = 'sourceNodes'"
-        >
-          源节点设置检测
-        </div>
-        <div
-          class="step-item px-2 mb-2 pl-6"
-          :class="{ active: currentType === 'targetNodes' }"
-          @click="currentType = 'targetNodes'"
-        >
-          目标节点设置检测
+          <NodeIcon :node="node" :size="20" />
+          <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
         </div>
       </div>
     </div>
-    <div class="flex-1 p-4">
-      <ElCheckboxGroup v-model="levels" :min="1" size="mini" class="inline-flex">
-        <ElCheckbox label="INFO">INFO</ElCheckbox>
-        <ElCheckbox label="WARN">WARN</ElCheckbox>
-        <ElCheckbox label="ERROR">ERROR</ElCheckbox>
-      </ElCheckboxGroup>
-      <div class="log-list-wrap">
-        <code class="log-list rounded-2">
-          <pre class="log-list-item"><span class="log-list-item-level">[INFO]</span></pre>
+    <div class="flex-1 flex flex-column">
+      <div class="flex justify-content-between p-2">
+        <ElCheckboxGroup v-model="levels" :min="1" size="mini" class="inline-flex">
+          <ElCheckbox label="INFO">INFO</ElCheckbox>
+          <ElCheckbox label="WARN">WARN</ElCheckbox>
+          <ElCheckbox label="ERROR">ERROR</ElCheckbox>
+        </ElCheckboxGroup>
+
+        <VIcon class="ml-3" size="16" @click="toggleConsole(false)">close</VIcon>
+      </div>
+      <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
+        <code class="log-list block h-100 overflow-auto py-1 rounded-2" v-loading="loading">
+          <pre
+            v-for="(item, i) in logList"
+            :key="i"
+            class="log-list-item m-0 px-1"
+          ><span class="log-list-item-level">[{{item.grade}}]</span><span>{{item.log}}</span></pre>
         </code>
       </div>
     </div>
@@ -64,6 +57,8 @@ import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import Locale from '../../mixins/locale'
 import VIcon from 'web-core/components/VIcon'
+import { taskApi } from '@tap/api'
+import NodeIcon from '../NodeIcon'
 
 export default {
   name: 'ConsolePanel',
@@ -74,68 +69,106 @@ export default {
 
   mixins: [Locale],
 
-  components: { VIcon },
+  components: { NodeIcon, VIcon },
 
   data() {
     return {
-      currentType: '',
-      levels: ['INFO', 'WARN', 'ERROR']
+      levels: ['INFO', 'WARN', 'ERROR'],
+      logList: [],
+      nodeList: [],
+      nodeId: '',
+      loading: false
     }
   },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-    ...mapState('dataflow', ['editVersion', 'showConsole']),
-
-    icon() {
-      return this.getIcon(this.activeNode)
-    }
+    ...mapState('dataflow', ['editVersion', 'showConsole', 'taskId'])
   },
 
   watch: {
-    'activeNode.name'(v) {
-      this.name = v
+    showConsole(v) {
+      if (v) {
+        this.loadData()
+      }
     }
   },
 
   methods: {
-    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
+    ...mapMutations('dataflow', [
+      'updateNodeProperties',
+      'setNodeError',
+      'clearNodeError',
+      'setActiveType',
+      'toggleConsole'
+    ]),
     ...mapActions('dataflow', ['updateDag']),
-
-    handleChangeName(name) {
-      if (name) {
-        this.updateNodeProperties({
-          id: this.activeNode.id,
-          properties: {
-            name
+    async loadData() {
+      const { taskId, nodeId } = this
+      /*const data = {
+        nodes: {
+          'df32e751-a4da-4c3c-bd5f-b49b06a4df8f': 'local-mongo-demo',
+          'ceb55392-af9b-4985-b70a-cd2e43a93e31': 'local-mongo-test'
+        },
+        list: [
+          {
+            id: '62d7db94481422320337c173',
+            grade: 'INFO',
+            log: '2022-07-20 18:40:20 【新任务@12:35:51】【任务设置检测】：任务{新任务@12:35:51}检测通过'
+          },
+          {
+            id: '62d7db94481422320337c174',
+            grade: 'INFO',
+            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【源节点设置检测】：节点{local-mongo-demo}检测通过'
+          },
+          {
+            id: '62d7db94481422320337c175',
+            grade: 'INFO',
+            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【目标节点设置检测】：节点{local-mongo-test}检测通过'
+          },
+          {
+            id: '62d7db94481422320337c177',
+            grade: 'INFO',
+            log: '2022-07-20 18:40:20 【新任务@12:35:51】【任务设置检测】：任务{新任务@12:35:51}检测通过'
+          },
+          {
+            id: '62d7db94481422320337c178',
+            grade: 'INFO',
+            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【源节点设置检测】：节点{local-mongo-demo}检测通过'
+          },
+          {
+            id: '62d7db94481422320337c179',
+            grade: 'INFO',
+            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【目标节点设置检测】：节点{local-mongo-test}检测通过'
+          },
+          {
+            id: '62d7db94481422320337c17a',
+            grade: 'INFO',
+            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【源连接检测】：连接XXX检测通过'
           }
-        })
-        this.updateDag()
-      } else {
-        this.name = this.activeNode.name
-      }
-    },
-
-    focusNameInput() {
-      this.$refs.nameInput.focus()
-    },
-
-    handleClosePanel() {
-      this.setActiveType(null)
-    },
-
-    async validateForm() {
-      await this.$refs.formPanel?.validate()
-    },
-
-    handleLoadMeta() {
-      let watcher = this.$watch('editVersion', () => {
-        watcher()
-        const metaPane = this.$refs.metaPane
-        if (metaPane && this.currentTab === '1') {
-          metaPane.loadFields()
-        }
+        ],
+        total: 8,
+        offset: '62d7db94481422320337c17a'
+      }*/
+      this.loading = true
+      const data = await taskApi.getConsole({
+        taskId,
+        nodeId,
+        grade: this.levels.join(',')
       })
+      this.loading = false
+      this.logList = data.list
+      const nodeList = []
+      this.nodeList = Object.keys(data.nodes).forEach(id => {
+        let node = this.nodeById(id)
+        node && nodeList.push(node)
+      })
+      this.nodeList = nodeList
+    },
+
+    toggleNode(nodeId) {
+      this.nodeId = nodeId
+      this.loadData()
     }
   }
 }
@@ -232,6 +265,11 @@ $headerHeight: 40px;
   .log-list-wrap {
     .log-list {
       background-color: rgba(229, 236, 255, 0.22);
+
+      &-item {
+        white-space: pre-wrap;
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      }
     }
   }
 

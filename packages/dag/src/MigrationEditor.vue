@@ -92,7 +92,7 @@
             @hide="nodeMenu.typeId = ''"
           ></NodePopover>
         </main>
-        <ConsolePanel></ConsolePanel>
+        <ConsolePanel ref="console"></ConsolePanel>
       </section>
 
       <!--配置面板-->

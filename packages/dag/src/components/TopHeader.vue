@@ -99,7 +99,7 @@
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--信息输出-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
+      <ElTooltip transition="tooltip-fade-in" :content="'日志'">
         <button @click="toggleConsole()" class="icon-btn" :class="{ active: showConsole }">
           <VIcon size="16">list</VIcon>
         </button>
