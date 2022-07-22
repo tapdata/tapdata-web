@@ -494,6 +494,7 @@ export default {
           }
         })
       }
+      this.$set(this.dataflow, 'status', data.status)
       this.$set(this.dataflow, 'statuses', data.statuses)
       this.$set(this.dataflow, 'statusResult', getSubTaskStatus(data.statuses))
       this.$set(
@@ -718,7 +719,6 @@ export default {
 
     async save(needStart) {
       this.isSaving = true
-
       const errorMsg = await this.validate()
       if (errorMsg) {
         this.$message.error(errorMsg)
@@ -729,6 +729,9 @@ export default {
       if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }
+
+      this.toggleConsole(true)
+      this.$refs.console?.autoLoad() // 信息输出自动加载
 
       const data = this.getDataflowDataToSave()
       let isOk = false
@@ -744,18 +747,8 @@ export default {
         this.handleError(e)
       }
       this.isSaving = false
-      this.openConsole(needStart)
+      if (!needStart) this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
       return isOk
-    },
-
-    openConsole(ifStart) {
-      if (ifStart) {
-        this.$refs.console?.loadData()
-      } else if (this.showConsole) {
-        this.$refs.console?.loadData()
-      }
-
-      this.toggleConsole(true)
     },
 
     handleUndo() {
@@ -1343,8 +1336,6 @@ export default {
     async handleStart() {
       const flag = await this.save(true)
       if (flag) {
-        this.startAt = Date.now()
-        console.log('handleStart', this.startAt) // eslint-disable-line
         this.dataflow.disabledData.edit = true
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true

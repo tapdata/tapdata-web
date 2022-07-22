@@ -225,6 +225,8 @@ export default {
     this.resetWorkspace()
     this.resetState()
     this.$ws.off('editFlush', this.handleEditFlush)
+
+    this.unWatchStatus?.()
   },
 
   methods: {
@@ -270,7 +272,17 @@ export default {
     },
 
     gotoViewer() {
-      this.$router
+      let subId = this.dataflow.statuses[0]?.id || ''
+      this.$router.push({
+        name: 'MigrationMonitor',
+        params: {
+          id: this.dataflow.id
+        },
+        query: {
+          subId: subId
+        }
+      })
+      /*this.$router
         .push({
           name: 'MigrateViewer',
           params: {
@@ -280,7 +292,7 @@ export default {
         })
         .catch(() => {
           console.log('Current route: DataflowViewer') // eslint-disable-line
-        })
+        })*/
     },
 
     async validate() {
@@ -496,6 +508,71 @@ export default {
           subId: subId
         }
       })
+    },
+
+    async save(needStart) {
+      this.isSaving = true
+      const errorMsg = await this.validate()
+      if (errorMsg) {
+        this.$message.error(errorMsg)
+        this.isSaving = false
+        return
+      }
+
+      if (!this.dataflow.id) {
+        return this.saveAsNewDataflow()
+      }
+
+      this.toggleConsole(true)
+      this.$refs.console?.startAuto() // 信息输出自动加载
+
+      const data = this.getDataflowDataToSave()
+      let isOk = false
+
+      try {
+        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        this.reformDataflow(result)
+        !needStart && this.$message.success(this.t('message_save_ok'))
+        this.setEditVersion(result.editVersion)
+        this.isSaving = false
+        isOk = true
+      } catch (e) {
+        this.handleError(e)
+      }
+      this.isSaving = false
+      if (!needStart) {
+        this.$refs.console?.stopAuto() // 再load一下信息输出，并且停掉计时器
+        this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
+      }
+      return isOk
+    },
+
+    async handleStart() {
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
+        console.log('状态监听', v) // eslint-disable-line
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+          this.$refs.console?.stopAuto()
+          if (v === 'running') {
+            this.$router.push({
+              name: 'MigrationMonitor',
+              params: {
+                id: this.dataflow.id
+              },
+              query: {
+                subId: this.dataflow.statuses[0]?.id
+              }
+            })
+          }
+        }
+      })
+      const flag = await this.save(true)
+      if (flag) {
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        // this.gotoViewer()
+      }
     }
   }
 }

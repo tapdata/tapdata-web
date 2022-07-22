@@ -29,8 +29,8 @@
       </div>
     </div>
     <div class="flex-1 flex flex-column">
-      <div class="flex justify-content-between p-2">
-        <ElCheckboxGroup v-model="levels" :min="1" size="mini" class="inline-flex">
+      <div class="flex p-2">
+        <ElCheckboxGroup v-model="levels" :min="1" size="mini" class="inline-flex flex-1">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -39,12 +39,20 @@
         <VIcon class="ml-3" size="16" @click="toggleConsole(false)">close</VIcon>
       </div>
       <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
-        <code class="log-list block h-100 overflow-auto py-1 rounded-2" v-loading="loading">
+        <code class="log-list block h-100 overflow-auto py-1 rounded-2">
           <pre
             v-for="(item, i) in logList"
             :key="i"
             class="log-list-item m-0 px-1"
-          ><span class="log-list-item-level">[{{item.grade}}]</span><span>{{item.log}}</span></pre>
+          ><span class="log-list-item-level" :class="`log-${item.grade}`">[{{item.grade}}]</span><span>{{item.log}}</span></pre>
+
+          <pre
+            class="justify-content-center align-center m-0 p-1"
+            :class="loading ? 'flex' : 'none'"
+          ><svg viewBox="25 25 50 50" class="circular">
+              <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+            </svg><span class="ml-1 font-color-light">加载中</span>
+          </pre>
         </code>
       </div>
     </div>
@@ -89,9 +97,13 @@ export default {
   watch: {
     showConsole(v) {
       if (v) {
-        this.loadData()
+        // this.loadData()
       }
     }
+  },
+
+  beforeDestroy() {
+    this.stopAuto()
   },
 
   methods: {
@@ -103,9 +115,20 @@ export default {
       'toggleConsole'
     ]),
     ...mapActions('dataflow', ['updateDag']),
+
+    sleep(time) {
+      return new Promise(resolve => {
+        setTimeout(() => resolve(), time)
+      })
+    },
+
     async loadData() {
+      clearTimeout(this.timerId)
       const { taskId, nodeId } = this
-      /*const data = {
+      this.loading = true
+      console.log('加载数据', this.timerId) // eslint-disable-line
+      /*await this.sleep(1000)
+      const data = {
         nodes: {
           'df32e751-a4da-4c3c-bd5f-b49b06a4df8f': 'local-mongo-demo',
           'ceb55392-af9b-4985-b70a-cd2e43a93e31': 'local-mongo-test'
@@ -150,20 +173,40 @@ export default {
         total: 8,
         offset: '62d7db94481422320337c17a'
       }*/
-      this.loading = true
+
       const data = await taskApi.getConsole({
         taskId,
         nodeId,
         grade: this.levels.join(',')
       })
       this.loading = false
-      this.logList = data.list
+      this.logList = data.list?.concat(data?.modelList || []) || []
       const nodeList = []
       this.nodeList = Object.keys(data.nodes).forEach(id => {
         let node = this.nodeById(id)
         node && nodeList.push(node)
       })
       this.nodeList = nodeList
+    },
+
+    async autoLoad() {
+      console.log('autoLoad') // eslint-disable-line
+      await this.loadData()
+      if (this.ifAuto) {
+        this.timerId = setTimeout(() => {
+          this.autoLoad()
+        }, 3000)
+      }
+    },
+
+    startAuto() {
+      this.ifAuto = true
+      this.autoLoad()
+    },
+
+    stopAuto() {
+      this.ifAuto = false
+      clearTimeout(this.timerId)
     },
 
     toggleNode(nodeId) {
@@ -187,53 +230,6 @@ export default {
 }
 </style>
 <style scoped lang="scss">
-$color: map-get($color, primary);
-$tabsHeaderWidth: 220px;
-$headerHeight: 40px;
-
-.title-input-wrap {
-  position: relative;
-  flex: 1;
-  font-size: 14px;
-
-  &:hover {
-    .title-input {
-      border-color: #dcdfe6;
-    }
-    .title-input-icon {
-      color: $color;
-    }
-  }
-
-  .title-input {
-    position: relative;
-    padding: 2px 28px 1px 8px;
-    width: 100%;
-    height: 28px;
-    line-height: 28px;
-    outline: none;
-    box-shadow: none;
-    background: 0 0;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    font-size: inherit;
-    transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-
-    &:focus {
-      border-color: #409eff;
-      & + .title-input-icon {
-        color: $color;
-      }
-    }
-  }
-
-  .title-input-icon {
-    position: absolute;
-    right: 8px;
-    height: 28px;
-  }
-}
-
 .console-panel {
   position: relative;
   z-index: 10;
@@ -270,92 +266,31 @@ $headerHeight: 40px;
         white-space: pre-wrap;
         font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
       }
-    }
-  }
 
-  &-close {
-    position: absolute;
-    z-index: 11;
-    top: 12px;
-    right: 16px;
-  }
-
-  .config-tabs-wrap {
-    position: relative;
-    height: 100%;
-  }
-
-  .tabs-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: $tabsHeaderWidth;
-    height: $headerHeight;
-
-    .el-image {
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  .panel-header {
-    height: $headerHeight;
-  }
-
-  .header-icon {
-    color: $color;
-    font-size: 18px;
-  }
-
-  .setting-panel-wrap {
-    position: absolute;
-    z-index: 10;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background: #fff;
-  }
-
-  ::v-deep {
-    .config-tabs.el-tabs {
-      height: 100%;
-
-      > .el-tabs__header {
-        margin: 0;
-        .el-tabs__nav-wrap {
-          padding-left: $tabsHeaderWidth;
-          padding-right: 16px;
-
-          &::after {
-            height: 1px;
-          }
-        }
-        .el-tabs__active-bar {
-          background-color: $color;
-        }
-
-        .el-tabs__item {
-          font-weight: 400;
-
-          &.is-active,
-          &:hover {
-            color: $color;
-          }
-        }
+      .log-ERROR {
+        color: map-get($color, danger);
       }
-
-      > .el-tabs__content {
-        height: calc(100% - 40px);
-        .el-tab-pane {
-          height: 100%;
-        }
+      .log-WARN {
+        color: map-get($color, warning);
+      }
+      .log-INFO {
+        color: map-get($fontColor, dark);
       }
     }
+  }
 
-    .resize-trigger {
-      background: 0 0 !important;
+  .circular {
+    height: 16px;
+    width: 16px;
+    animation: loading-rotate 2s linear infinite;
+
+    .path {
+      animation: loading-dash 1.5s ease-in-out infinite;
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: 0;
+      stroke-width: 2;
+      stroke: map-get($color, primary);
+      stroke-linecap: round;
     }
   }
 }
