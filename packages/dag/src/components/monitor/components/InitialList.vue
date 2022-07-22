@@ -106,7 +106,6 @@ export default {
     //   })
     // },
     remoteMethod({ page }) {
-      console.log('remoteMethod', arguments)
       let { current, size } = page
       let where = {}
       let filter = {

@@ -169,7 +169,6 @@ export default {
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
     items() {
-      console.log('items', this.allNodes)
       return [
         {
           label: '全部日志',
@@ -267,7 +266,6 @@ export default {
     },
 
     loadOld() {
-      console.log('loadOld')
       if (this.isNoMore) {
         return
       }
@@ -338,7 +336,6 @@ export default {
       customerJobLogsApi
         .get({ filter: JSON.stringify(filter) })
         .then(data => {
-          console.log('customerJobLogsApi', data)
           let items = data?.items || []
           items = items.reverse()
           if (!items.length) {
@@ -435,7 +432,6 @@ export default {
     },
 
     handleSetting() {
-      console.log('handleSetting')
       this.dialog = true
     },
 

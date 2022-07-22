@@ -28,7 +28,7 @@
       </div>
       <div class="info-box">
         <div class="font-color-normal fw-bold mb-2">任务事件统计（条）</div>
-        <EventChart :total="eventTotal" :xData="eventData"></EventChart>
+        <EventChart :samples="eventDataAll"></EventChart>
       </div>
       <div class="info-box">
         <CollapsePanel>
@@ -207,8 +207,6 @@ export default {
       },
       database: [],
       connectionType: 'source',
-      eventData: [],
-      eventTotal: null,
       lineChartDialog: false,
       initialListDialog: false
     }
@@ -233,6 +231,42 @@ export default {
     scrollbarWrapStyle() {
       let gutter = scrollbarWidth()
       return `height: calc(100% + ${gutter}px);`
+    },
+
+    eventDataAll() {
+      return this.quota.samples?.[0] || {}
+    },
+
+    // qps
+    qpsData() {
+      const res = this.quota.samples?.[1]
+      if (!res) {
+        return {
+          x: [],
+          name: [],
+          value: []
+        }
+      }
+      return {
+        x: res.time,
+        name: ['输入', '输出'],
+        value: [res.inputQPS, res.outputQPS]
+      }
+    },
+
+    // 增量延迟
+    delayData() {
+      const res = this.quota.samples?.[2]
+      if (!res) {
+        return {
+          x: [],
+          value: []
+        }
+      }
+      return {
+        x: res.time,
+        value: res.value
+      }
     },
 
     // 全量信息
@@ -317,38 +351,6 @@ export default {
         target: target_connectionName,
         time: cdcTime
       }
-    },
-
-    // qps
-    qpsData() {
-      const res = this.quota.samples?.[1]
-      if (!res) {
-        return {
-          x: [],
-          name: [],
-          value: []
-        }
-      }
-      return {
-        x: res.time,
-        name: ['输入', '输出'],
-        value: [res.inputQPS, res.outputQPS]
-      }
-    },
-
-    // 增量延迟
-    delayData() {
-      const res = this.quota.samples?.[2]
-      if (!res) {
-        return {
-          x: [],
-          value: []
-        }
-      }
-      return {
-        x: res.time,
-        value: res.value
-      }
     }
   },
 
@@ -400,7 +402,6 @@ export default {
     },
     async init() {
       await this.loadDatabase()
-      this.loadEventData()
     },
 
     getDbFilter() {
@@ -502,7 +503,6 @@ export default {
     },
 
     loadMoreDB() {
-      console.log('loadMoreDB') // eslint-disable-line
       if (this.disabledDBMore) return
       this.loadDatabase(true)
     },
@@ -605,7 +605,6 @@ export default {
     },
 
     changeTimeSelect(val, isTime, source) {
-      console.log('changeTimeSelect', val, isTime, source)
       let time = []
       if (isTime) {
         time = val
@@ -618,54 +617,7 @@ export default {
           time = [now - val, now]
         }
       }
-      console.log('time', time)
       this.$emit('changeTimeSelect', time)
-    },
-
-    loadEventData() {
-      let re = [
-        {
-          label: '插入',
-          key: 'inserted'
-        },
-        {
-          label: '更新',
-          key: 'updated'
-        },
-        {
-          label: '删除',
-          key: 'deleted'
-        },
-        {
-          label: 'DDL',
-          key: 'ddl'
-        },
-        {
-          label: '其他',
-          key: 'other'
-        }
-      ]
-      const { input, output } = this.quota.samples?.[0] || {}
-      let inputTotal = 0
-      let outputTotal = 0
-      this.eventData = re.map(t => {
-        inputTotal += input[t.key]
-        outputTotal += output[t.key]
-        return {
-          label: t.label,
-          value: [input[t.key], output[t.key]]
-        }
-      })
-      this.eventTotal = [
-        {
-          label: '总输入',
-          value: inputTotal
-        },
-        {
-          label: '总输出',
-          value: outputTotal
-        }
-      ]
     },
 
     toFullscreen() {

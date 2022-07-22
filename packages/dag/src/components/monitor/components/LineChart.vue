@@ -6,6 +6,7 @@
 
 <script>
 import { Chart } from '@tap/component'
+import { calcUnit } from '@tap/shared'
 
 export default {
   name: 'LineChart',
@@ -166,7 +167,10 @@ export default {
             }
           },
           axisLabel: {
-            color: '#535F72'
+            color: '#535F72',
+            formatter: val => {
+              return calcUnit(val)
+            }
             // showMaxLabel: false,
             // showMinLabel: false
           }

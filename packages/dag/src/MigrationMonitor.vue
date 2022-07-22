@@ -137,8 +137,8 @@ import { MoveNodeCommand } from './command'
 import dayjs from 'dayjs'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 
-function getRandom() {
-  return Math.ceil(Math.random() * 100)
+function getRandom(num = 1) {
+  return Math.ceil(Math.random() * 100 * num)
 }
 
 export default {
@@ -227,7 +227,7 @@ export default {
     })
     this.timer && clearInterval(this.timer)
     this.timer = setInterval(() => {
-      this.loadQuotaData()
+      !this.nodeDetailDialog && this.loadQuotaData()
     }, 5000)
     this.loadQuotaData()
   },
@@ -248,7 +248,6 @@ export default {
 
     async openDataflow(id) {
       const data = await this.loadDataflow(id)
-      console.log('openDataflow', data)
       if (data) {
         const { dag } = data
         this.setTaskId(data.id)
@@ -470,20 +469,20 @@ export default {
           // 任务事件统计（条）
           {
             input: {
-              inserted: getRandom(),
-              updated: getRandom(),
-              deleted: getRandom(),
-              ddl: getRandom(),
-              other: getRandom(),
-              total: getRandom()
+              inserted: getRandom(100),
+              updated: getRandom(100),
+              deleted: getRandom(100),
+              ddl: getRandom(100),
+              other: getRandom(100),
+              total: getRandom(100)
             },
             output: {
-              inserted: getRandom(),
-              updated: getRandom(),
-              deleted: getRandom(),
-              ddl: getRandom(),
-              other: getRandom(),
-              total: getRandom()
+              inserted: getRandom(100),
+              updated: getRandom(100),
+              deleted: getRandom(100),
+              ddl: getRandom(100),
+              other: getRandom(100),
+              total: getRandom(100)
             }
           },
           // qps
@@ -671,7 +670,6 @@ export default {
     },
 
     handleOpenDetail(node) {
-      console.log('handleOpenDetail', node)
       this.nodeDetailDialogId = node.id
       this.nodeDetailDialog = true
     }
