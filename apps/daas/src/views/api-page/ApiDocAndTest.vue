@@ -57,7 +57,7 @@ export default {
         let resOpenApiAll = await fetch(openapiAll)
         let openapiAllObj = await resOpenApiAll.json()
         if (openapiAllObj) {
-          this.openapiAll = openApiObj
+          this.openapiAll = openapiAllObj
         }
 
         // let token = this.$route.query.token || '';
