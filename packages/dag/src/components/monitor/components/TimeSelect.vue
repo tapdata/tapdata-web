@@ -44,6 +44,10 @@ export default {
       type: Array,
       default: () => [
         {
+          label: '任务全周期',
+          value: 'all'
+        },
+        {
           label: '最近5分钟',
           value: 5 * 60 * 1000
         },
@@ -54,10 +58,6 @@ export default {
         {
           label: '最近1天',
           value: 24 * 60 * 60 * 1000
-        },
-        {
-          label: '任务全周期',
-          value: 'all'
         },
         {
           label: '自定义时间',

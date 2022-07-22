@@ -9,7 +9,7 @@
       <VIcon size="16">close</VIcon>
     </div>
     <div class="px-4 pb-4 border-bottom">
-      <Chart ref="chart" :extend="pieOptions" style="width: 240px; height: 90px"></Chart>
+      <Chart ref="chart" :extend="pieOptions" style="width: 270px; height: 90px"></Chart>
     </div>
     <div class="flex justify-content-between align-items-center px-4 pt-4">
       <span class="font-color-normal fw-bold fs-7">问题表清单</span>
@@ -157,7 +157,6 @@ export default {
     },
 
     disabledDBMore() {
-      console.log('disabledDBMore', this.dbLoading, this.noDBMore) // eslint-disable-line
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
     },
 
@@ -262,7 +261,6 @@ export default {
     }, 100),
 
     loadMoreDB() {
-      console.log('this.disabledDBMore', this.disabledDBMore)
       if (this.disabledDBMore) return
       this.loadDatabase(true)
     },
@@ -337,11 +335,9 @@ export default {
       //   })
       // this.dbTotal = getRandom()
 
-      console.log('this.dbList', this.dbList)
+      // const data = await connectionsApi.get(this.getDbFilter())
 
-      const data = await connectionsApi.get(this.getDbFilter())
-
-      this.dbTotal = data.total
+      this.dbTotal = getRandom()
       const dbList = Array(10)
         .fill()
         .map((t, i) => {

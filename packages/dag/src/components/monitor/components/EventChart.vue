@@ -1,16 +1,11 @@
 <template>
-  <div>
-    <div v-if="total" class="flex align-items-center mb-2">
-      <span class="font-color-normal fw-bold fs-3 din-font">{{ formatNumber(total[0].value) }}</span>
-      <span class="ml-2">{{ total[0].label }}</span>
+  <div class="event-chart">
+    <div v-if="total" class="total-line flex align-items-center">
+      <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.input) }}</span>
+      <span class="ml-2">总输入</span>
       <ElDivider direction="vertical" class="divider mx-4"></ElDivider>
-      <span class="font-color-normal fw-bold fs-3 din-font">{{ formatNumber(total[1].value) }}</span>
-      <span class="ml-2">{{ total[1].label }}</span>
-    </div>
-    <div v-if="total && total[2]">
-      <span class="invisible">{{ total[0].label }}</span>
-      <span class="ml-2">{{ total[2].label }}</span>
-      <span>{{ formatNumber(total[2].value, 'thousands') }}</span>
+      <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.output) }}</span>
+      <span class="ml-2">总输出</span>
     </div>
     <Chart :extend="options" :style="{ height }"></Chart>
   </div>
@@ -18,57 +13,19 @@
 
 <script>
 import { Chart } from '@tap/component'
-import { formatNumber } from '../../../util'
+import { calcUnit } from '@tap/shared'
 
 export default {
   name: 'EventChart',
   components: { Chart },
   props: {
-    total: {
-      type: Array,
-      default: () => [
-        {
-          label: '总输入',
-          value: 0
-        },
-        {
-          label: '总输出',
-          value: 0
-        },
-        {
-          label: '事件统计（条）累计：',
-          value: 0
-        }
-      ]
+    samples: {
+      type: Object,
+      required: true
     },
     yData: {
       type: Array,
       default: () => ['总输入', '总输出']
-    },
-    xData: {
-      type: Array,
-      default: () => [
-        {
-          label: '插入',
-          data: [0, 0]
-        },
-        {
-          label: '更新',
-          data: [0, 0]
-        },
-        {
-          label: '删除',
-          data: [0, 0]
-        },
-        {
-          label: 'DDL',
-          data: [0, 0]
-        },
-        {
-          label: '其他',
-          data: [0, 0]
-        }
-      ]
     },
     height: {
       type: String,
@@ -78,6 +35,10 @@ export default {
   data() {
     return {
       color: ['#88DBDA', '#6ACA26', '#FDD746', '#B682CE', '#00A1F1'],
+      total: {
+        input: 0,
+        output: 0
+      },
       options: {
         tooltip: {
           trigger: 'axis',
@@ -107,7 +68,10 @@ export default {
           axisLabel: {
             color: '#535F72',
             showMaxLabel: false,
-            showMinLabel: false
+            showMinLabel: false,
+            formatter: val => {
+              return calcUnit(val)
+            }
           },
           axisLine: {
             show: true,
@@ -141,7 +105,7 @@ export default {
     }
   },
   watch: {
-    xData: {
+    samples: {
       deep: true,
       handler() {
         this.init()
@@ -153,24 +117,61 @@ export default {
   },
   methods: {
     init() {
-      let series = []
-      this.xData.forEach((el, index) => {
-        series.push({
+      const { input, output } = this.samples || {}
+      if (!(input && output)) {
+        return
+      }
+      this.total.input = eval(Object.values(input).join('+'))
+      this.total.output = eval(Object.values(output).join('+'))
+      let arr = [
+        {
+          label: '插入',
+          key: 'inserted',
+          color: '#88DBDA'
+        },
+        {
+          label: '更新',
+          key: 'updated',
+          color: '#6ACA26'
+        },
+        {
+          label: '删除',
+          key: 'deleted',
+          color: '#FDD746'
+        },
+        {
+          label: 'DDL',
+          key: 'ddl',
+          color: '#B682CE'
+        },
+        {
+          label: '其他',
+          key: 'other',
+          color: '#00A1F1'
+        }
+      ]
+      let series = arr.map(t => {
+        return {
           type: 'bar',
           stack: 'total',
           barWidth: 12,
-          name: el.label,
-          color: el.color || this.color[index],
-          data: el.value
-        })
+          name: t.label,
+          color: t.color,
+          data: [input[t.key], output[t.key]]
+        }
       })
       this.options.series = series
     },
-    formatNumber() {
-      return formatNumber(...arguments)
+
+    calcUnit() {
+      return calcUnit(...arguments)
     }
   }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.total-line {
+  margin-bottom: 8px;
+}
+</style>
