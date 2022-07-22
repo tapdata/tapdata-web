@@ -9,7 +9,7 @@
   >
     <div class="mb-4">
       <span>节点</span>
-      <ElSelect v-model="selectNode" class="ml-2" @change="init">
+      <ElSelect v-model="selected" class="ml-2" @change="init">
         <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
     </div>
@@ -20,12 +20,15 @@
           <EventChart :samples="eventDataAll"></EventChart>
         </div>
       </div>
-      <div class="chart-box rounded-2">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">事件统计</div>
-        <div class="chart-box__content p-4">
-          <!--          <EventChart :samples="samples"></EventChart>-->
-        </div>
+      <div v-if="isSource" class="chart-box rounded-2">
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
+        <div class="chart-box__content p-4"></div>
       </div>
+      <div v-else-if="isTarget" class="chart-box rounded-2">
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">连接状态</div>
+        <div class="chart-box__content p-4"></div>
+      </div>
+      <div v-else class="chart-box border-0"></div>
     </div>
     <div class="my-4">性能指标</div>
     <div class="flex justify-content-between">
@@ -80,7 +83,7 @@ export default {
   data() {
     return {
       visible: false,
-      selectNode: '',
+      selected: '',
       quota: {}
     }
   },
@@ -133,6 +136,20 @@ export default {
         x: res.time,
         value: res.value
       }
+    },
+
+    node() {
+      return this.allNodes.find(t => this.selected === t.id) || {}
+    },
+
+    isSource() {
+      const { type, $inputs } = this.node
+      return (type === 'database' || type === 'table') && !$inputs.length
+    },
+
+    isTarget() {
+      const { type, $outputs } = this.node
+      return (type === 'database' || type === 'table') && !$outputs.length
     }
   },
 
@@ -142,7 +159,7 @@ export default {
     },
 
     nodeId(v) {
-      this.selectNode = v
+      this.selected = v
       this.init()
     }
   },
@@ -304,6 +321,9 @@ export default {
   width: 355px;
   height: 266px;
   border: 1px solid #c9cdd4;
+  &.disabled {
+    border: none;
+  }
 }
 .chart-box__title {
   //color: #333c4a;
