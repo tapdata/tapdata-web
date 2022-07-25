@@ -28,7 +28,7 @@ export default {
   mixins: [Locale],
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId']),
+    ...mapState('dataflow', ['activeNodeId', 'showConsole']),
     ...mapGetters('dataflow', [
       'allNodes',
       'allEdges',
@@ -93,7 +93,8 @@ export default {
       'deselectAllConnections',
       'setCanBeConnectedNodeIds',
       'setValidateLanguage',
-      'addProcessorNode'
+      'addProcessorNode',
+      'toggleConsole'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -493,6 +494,7 @@ export default {
           }
         })
       }
+      this.$set(this.dataflow, 'status', data.status)
       this.$set(this.dataflow, 'statuses', data.statuses)
       this.$set(this.dataflow, 'statusResult', getSubTaskStatus(data.statuses))
       this.$set(
@@ -540,7 +542,7 @@ export default {
         this.resetWorkspace()
         this.initNodeView()
       }
-      if (this.$route.name === 'DataflowViewer') {
+      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer'].includes(this.$route.name)) {
         await this.openDataflow(id)
         // await this.startLoop()
         this.setStateReadonly(true)
@@ -717,7 +719,6 @@ export default {
 
     async save(needStart) {
       this.isSaving = true
-
       const errorMsg = await this.validate()
       if (errorMsg) {
         this.$message.error(errorMsg)

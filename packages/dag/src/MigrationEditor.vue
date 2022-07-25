@@ -52,45 +52,49 @@
       >
         <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
-      <!--内容体-->
-      <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
-        <PaperScroller
-          ref="paperScroller"
-          :nav-lines="navLines"
-          @add-node="handleAddNodeToPos"
-          @mouse-select="handleMouseSelect"
-          @change-scale="handleChangeScale"
-          @click-blank="showLeftSider = true"
-        >
-          <DFNode
-            v-for="n in allNodes"
-            :key="n.id"
-            :node-id="n.id"
-            :id="NODE_PREFIX + n.id"
-            :js-plumb-ins="jsPlumbIns"
-            :class="{
-              'options-active': nodeMenu.typeId === n.id
-            }"
-            @drag-start="onNodeDragStart"
-            @drag-move="onNodeDragMove"
-            @drag-stop="onNodeDragStop"
-            @deselectAllNodes="deselectAllNodes"
-            @deselectNode="nodeDeselectedById"
-            @nodeSelected="nodeSelectedById"
-            @delete="handleDeleteById"
-            @show-node-popover="showNodePopover"
-          ></DFNode>
-        </PaperScroller>
-        <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-          <EmptyItem></EmptyItem>
-        </div>
-        <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
-        <NodePopover
-          :popover="nodeMenu"
-          @click-node="handleClickNodePopover"
-          @hide="nodeMenu.typeId = ''"
-        ></NodePopover>
-      </main>
+      <section class="layout-wrap flex-1">
+        <!--内容体-->
+        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
+          <PaperScroller
+            ref="paperScroller"
+            :nav-lines="navLines"
+            @add-node="handleAddNodeToPos"
+            @mouse-select="handleMouseSelect"
+            @change-scale="handleChangeScale"
+            @click-blank="showLeftSider = true"
+          >
+            <DFNode
+              v-for="n in allNodes"
+              :key="n.id"
+              :node-id="n.id"
+              :id="NODE_PREFIX + n.id"
+              :js-plumb-ins="jsPlumbIns"
+              :class="{
+                'options-active': nodeMenu.typeId === n.id
+              }"
+              @drag-start="onNodeDragStart"
+              @drag-move="onNodeDragMove"
+              @drag-stop="onNodeDragStop"
+              @deselectAllNodes="deselectAllNodes"
+              @deselectNode="nodeDeselectedById"
+              @nodeSelected="nodeSelectedById"
+              @delete="handleDeleteById"
+              @show-node-popover="showNodePopover"
+            ></DFNode>
+          </PaperScroller>
+          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
+            <EmptyItem></EmptyItem>
+          </div>
+          <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
+          <NodePopover
+            :popover="nodeMenu"
+            @click-node="handleClickNodePopover"
+            @hide="nodeMenu.typeId = ''"
+          ></NodePopover>
+        </main>
+        <ConsolePanel ref="console"></ConsolePanel>
+      </section>
+
       <!--配置面板-->
       <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
     </section>
@@ -121,6 +125,7 @@ import VIcon from 'web-core/components/VIcon'
 import { VExpandXTransition } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
+import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
   name: 'MigrationEditor',
@@ -132,6 +137,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
 
   components: {
+    ConsolePanel,
     VExpandXTransition,
     NodePopover,
     EmptyItem,
@@ -191,13 +197,23 @@ export default {
       if (v === 0) {
         this.showLeftSider = true
       }
+    },
+
+    'dataflow.status'(v) {
+      console.log('状态监听', v) // eslint-disable-line
+      if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+        this.$refs.console?.stopAuto()
+        if (v === 'running') {
+          this.setStateReadonly(true)
+          this.gotoViewer(true)
+        } else {
+          this.setStateReadonly(false)
+        }
+      }
     }
   },
 
   async created() {
-    if (this.$route.name === 'DataflowViewer') {
-      this.setStateReadonly(true)
-    }
     this.setValidateLanguage()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
@@ -218,6 +234,8 @@ export default {
     this.resetWorkspace()
     this.resetState()
     this.$ws.off('editFlush', this.handleEditFlush)
+
+    this.unWatchStatus?.()
   },
 
   methods: {
@@ -262,18 +280,36 @@ export default {
       }
     },
 
-    gotoViewer() {
-      this.$router
-        .push({
-          name: 'MigrateViewer',
-          params: {
+    gotoViewer(newTab) {
+      let subId = this.dataflow.statuses[0]?.id || ''
+      /*this.$router.push({
+        name: 'MigrationMonitor',
+        params: {
+          id: this.dataflow.id
+        },
+        query: {
+          subId: subId
+        }
+      })*/
+      if (newTab) {
+        window.open(
+          this.$router.resolve({
+            name: 'MigrateStatistics',
+            query: {
+              id: this.dataflow.id,
+              subId: subId
+            }
+          }).href
+        )
+      } else {
+        this.$router.push({
+          name: 'MigrateStatistics',
+          query: {
             id: this.dataflow.id,
-            action: 'dataflowViewer'
+            subId: subId
           }
         })
-        .catch(() => {
-          console.log('Current route: DataflowViewer') // eslint-disable-line
-        })
+      }
     },
 
     /*async validate() {
@@ -425,6 +461,76 @@ export default {
           subId: subId
         }
       })
+    },
+
+    async save(needStart) {
+      this.isSaving = true
+      const errorMsg = await this.validate()
+      if (errorMsg) {
+        this.$message.error(errorMsg)
+        this.isSaving = false
+        return
+      }
+
+      if (!this.dataflow.id) {
+        return this.saveAsNewDataflow()
+      }
+
+      this.toggleConsole(true)
+      this.$refs.console?.startAuto() // 信息输出自动加载
+
+      const data = this.getDataflowDataToSave()
+      let isOk = false
+
+      try {
+        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        this.reformDataflow(result)
+        !needStart && this.$message.success(this.t('message_save_ok'))
+        this.setEditVersion(result.editVersion)
+        this.isSaving = false
+        isOk = true
+      } catch (e) {
+        this.handleError(e)
+      }
+      this.isSaving = false
+      if (!needStart) {
+        // this.$refs.console?.stopAuto() // 再load一下信息输出，并且停掉计时器
+        // this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
+      }
+      return isOk
+    },
+
+    async handleStart() {
+      /*this.unWatchStatus = this.$watch('dataflow.status', v => {
+        console.log('状态监听', v) // eslint-disable-line
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+          this.$refs.console?.stopAuto()
+          if (v === 'running') {
+            this.setStateReadonly(true)
+            this.gotoViewer(true)
+          } else {
+            this.setStateReadonly(false)
+          }
+        }
+      })*/
+      const flag = await this.save(true)
+      if (flag) {
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        // this.gotoViewer()
+      }
+    },
+
+    checkGotoViewer() {
+      if (this.dataflow.disabledData.edit) {
+        // 不可编辑
+        // this.gotoViewer()
+        this.setStateReadonly(true)
+      } else {
+        this.setStateReadonly(false)
+      }
     }
   }
 }
