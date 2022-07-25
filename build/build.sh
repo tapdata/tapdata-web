@@ -1,7 +1,8 @@
 #!/bin/bash
 
+base=$(cd `dirname $0`/.. && pwd)
 app='daas'
-dist=$(cd `dirname $0`/.. && pwd)/dist
+dist=$base/dist
 
 usage() {
   echo "usage: deploy.sh [-p daas|dfs] [-o <path>]"
@@ -15,5 +16,7 @@ while getopts 'o:p:' OPT; do
   ?) usage ;;
   esac
 done
+
+sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/src/main.js
 
 pnpm i && pnpm build:$app --dest $dist
