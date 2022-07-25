@@ -212,9 +212,9 @@ export default {
     }
   },
 
-  async created() {
+  mounted() {
     this.setValidateLanguage()
-    await this.initNodeType()
+    this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -242,7 +242,7 @@ export default {
   },
 
   methods: {
-    async initNodeType() {
+    initNodeType() {
       this.addResourceIns(allResourceIns)
     },
 
