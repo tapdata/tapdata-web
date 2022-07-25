@@ -26,7 +26,18 @@
       </div>
       <div v-else-if="isTarget" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">连接状态</div>
-        <div class="chart-box__content p-4"></div>
+        <div class="chart-box__content p-4">
+          <div class="flex align-items-center justify-content-around" style="height: 180px">
+            <div>
+              <div class="font-color-normal fw-bold mb-1">{{ formatTime(targetData.tcpping, 'HH:mm:ss.ms') }}</div>
+              <div>TCP连接耗时</div>
+            </div>
+            <div>
+              <div class="font-color-normal fw-bold mb-1">{{ formatTime(targetData.connectionping, 'HH:mm:ss.ms') }}</div>
+              <div>协议连接耗时</div>
+            </div>
+          </div>
+        </div>
       </div>
       <div v-else class="chart-box border-0"></div>
     </div>
@@ -38,6 +49,8 @@
           <LineChart
             :data="qpsData"
             :color="['#26CF6C', '#2C65FF']"
+            :limit="20"
+            :time-format="timeFormat"
             title="QPS（Q/S）"
             style="height: 200px"
           ></LineChart>
@@ -46,7 +59,14 @@
       <div class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">处理耗时</div>
         <div class="chart-box__content p-4">
-          <LineChart :data="delayData" title="增量延迟（ms）" :color="['#2C65FF']" style="height: 200px"></LineChart>
+          <LineChart
+            :data="delayData"
+            :limit="20"
+            :time-format="timeFormat"
+            :color="['#2C65FF']"
+            title="增量延迟（ms）"
+            style="height: 200px"
+          ></LineChart>
         </div>
       </div>
     </div>
@@ -63,6 +83,21 @@ function getRandom(num = 1) {
   return Math.ceil(Math.random() * 100 * num)
 }
 
+function getRandomArray(count = 20, num = 1) {
+  return Array(count)
+    .fill()
+    .map(() => getRandom(num))
+}
+
+function getRandomTimeArray(count = 20, ms = 5000) {
+  return Array(count)
+    .fill()
+    .map((t, i) => Date.now() + i * ms)
+}
+
+const TIME_LIST = getRandomTimeArray(100000)
+const VALUE_LIST = getRandomArray(100000)
+
 export default {
   name: 'NodeDetailDialog',
 
@@ -77,14 +112,17 @@ export default {
     nodeId: {
       type: String,
       required: true
-    }
+    },
+    timeFormat: String
   },
 
   data() {
     return {
       visible: false,
       selected: '',
-      quota: {}
+      quota: {},
+      refresh: false, // 刷新数据还是初始化数据
+      count: 0
     }
   },
 
@@ -138,6 +176,19 @@ export default {
       }
     },
 
+    // 源节点-同步状态
+    sourceData() {
+      return {}
+    },
+
+    // 目标节点-连接状态
+    targetData() {
+      return {
+        tcpping: 123456,
+        connectionping: 128383
+      }
+    },
+
     node() {
       return this.allNodes.find(t => this.selected === t.id) || {}
     },
@@ -156,20 +207,34 @@ export default {
   watch: {
     value(v) {
       this.visible = !!v
-    },
-
-    nodeId(v) {
-      this.selected = v
-      this.init()
+      if (v) {
+        this.init()
+      } else {
+        this.timer && clearInterval(this.timer)
+        this.selected = ''
+      }
     }
   },
 
   methods: {
     init() {
+      if (!this.selected) {
+        this.selected = this.nodeId
+      }
+      this.timer && clearInterval(this.timer)
+      this.timer = setInterval(() => {
+        this.loadQuotaData()
+      }, 5000)
       this.loadQuotaData()
     },
 
     loadQuotaData() {
+      const { refresh } = this
+      if (refresh) {
+        this.count = 0
+      }
+      this.count++
+      const { count } = this
       let res = {
         samples: [
           // 任务事件统计（条）
@@ -193,85 +258,14 @@ export default {
           },
           // qps
           {
-            inputQPS: [
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom()
-            ],
-            outputQPS: [
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom()
-            ],
-            time: [
-              1657707577896, 1657707582896, 1657707587896, 1657707592896, 1657707597896, 1657707602896, 1657707607896,
-              1657707612896, 1657707617896, 1657707622896, 1657707627896, 1657707632896, 1657707637896, 1657707642896,
-              1657707647896, 1657707652896, 1657707657896, 1657707662896, 1657707667896, 1657707672896
-            ]
+            inputQPS: VALUE_LIST.slice(count, count + 60),
+            outputQPS: VALUE_LIST.slice(count + 10, count + 60 + 10),
+            time: TIME_LIST.slice(count, count + 60)
           },
           // 增量延迟
           {
-            value: [
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom(),
-              getRandom()
-            ],
-            time: [
-              1657707577896, 1657707582896, 1657707587896, 1657707592896, 1657707597896, 1657707602896, 1657707607896,
-              1657707612896, 1657707617896, 1657707622896, 1657707627896, 1657707632896, 1657707637896, 1657707642896,
-              1657707647896, 1657707652896, 1657707657896, 1657707662896, 1657707667896, 1657707672896
-            ]
+            value: VALUE_LIST.slice(count, count + 60),
+            time: TIME_LIST.slice(count, count + 60)
           }
         ],
         statistics: [

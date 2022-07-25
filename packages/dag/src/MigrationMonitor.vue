@@ -105,7 +105,11 @@
       <ConfigPanel v-else ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
 
       <!--   节点详情   -->
-      <NodeDetailDialog v-model="nodeDetailDialog" :node-id="nodeDetailDialogId"></NodeDetailDialog>
+      <NodeDetailDialog
+        v-model="nodeDetailDialog"
+        :node-id="nodeDetailDialogId"
+        :timeFormat="timeFormat"
+      ></NodeDetailDialog>
     </section>
   </section>
 </template>
@@ -156,7 +160,6 @@ function getRandomTimeArray(count = 20, ms = 5000) {
 
 const TIME_LIST = getRandomTimeArray(100000)
 const VALUE_LIST = getRandomArray(100000)
-let count = 0
 
 export default {
   name: 'MigrationMonitor',
@@ -216,6 +219,7 @@ export default {
       quotaTimeType: '',
       quotaTime: [],
       refresh: false, // 刷新数据还是初始化数据
+      count: 0,
       quota: {}, // 指标数据
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
@@ -488,9 +492,10 @@ export default {
     loadQuotaData() {
       const { refresh } = this
       if (refresh) {
-        count = 0
+        this.count = 0
       }
-      count++
+      this.count++
+      const { count } = this
       let res = {
         samples: [
           // 任务事件统计（条）
