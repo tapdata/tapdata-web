@@ -232,9 +232,9 @@ export default {
     }
   },
 
-  async created() {
+  mounted() {
     this.setValidateLanguage()
-    await this.initNodeType()
+    this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -264,7 +264,7 @@ export default {
       }, 5000)
       this.loadQuotaData()
     },
-    async initNodeType() {
+    initNodeType() {
       this.addResourceIns(allResourceIns)
     },
 

@@ -182,7 +182,7 @@ export default {
       this.loading = false
       this.logList = data.list?.concat(data?.modelList || []) || []
       const nodeList = []
-      this.nodeList = Object.keys(data.nodes).forEach(id => {
+      Object.keys(data.nodes).forEach(id => {
         let node = this.nodeById(id)
         node && nodeList.push(node)
       })
@@ -211,7 +211,7 @@ export default {
 
     toggleNode(nodeId) {
       this.nodeId = nodeId
-      this.loadData()
+      this.autoLoad()
     }
   }
 }
@@ -260,7 +260,7 @@ export default {
 
   .log-list-wrap {
     .log-list {
-      background-color: rgba(229, 236, 255, 0.22);
+      background-color: rgba(229, 236, 255, 0.3);
 
       &-item {
         white-space: pre-wrap;
