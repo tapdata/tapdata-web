@@ -45,19 +45,19 @@ export default {
       default: () => [
         {
           label: '任务全周期',
-          value: 'all'
+          value: 'full'
         },
         {
           label: '最近5分钟',
-          value: 5 * 60 * 1000
+          value: '5m'
         },
         {
           label: '最新1小时',
-          value: 60 * 60 * 1000
+          value: '1h'
         },
         {
           label: '最近1天',
-          value: 24 * 60 * 60 * 1000
+          value: '1d'
         },
         {
           label: '自定义时间',

@@ -45,12 +45,16 @@
               :data="qpsData"
               :color="['#26CF6C', '#2C65FF']"
               title="QPS（Q/S）"
+              :time-format="timeFormat"
+              :limit="20"
               style="height: 140px"
             ></LineChart>
             <LineChart
               :data="delayData"
               title="增量延迟（ms）"
               :color="['#2C65FF']"
+              :time-format="timeFormat"
+              :limit="20"
               class="mt-4"
               style="height: 140px"
             ></LineChart>
@@ -120,12 +124,14 @@
         :color="['#26CF6C', '#2C65FF']"
         :limit="20"
         title="QPS（Q/S）"
+        :time-format="timeFormat"
         style="height: 200px"
       ></LineChart>
       <LineChart
         :data="delayData"
         :color="['#2C65FF']"
         :limit="20"
+        :time-format="timeFormat"
         title="增量延迟（ms）"
         class="mt-8"
         style="height: 200px"
@@ -172,7 +178,8 @@ export default {
   mixins: [Locale],
   props: {
     dataflow: Object,
-    quota: Object
+    quota: Object,
+    timeFormat: String
   },
   components: {
     StatusItem,
@@ -605,19 +612,7 @@ export default {
     },
 
     changeTimeSelect(val, isTime, source) {
-      let time = []
-      if (isTime) {
-        time = val
-      } else {
-        if (val === 'all') {
-          // 任务运行时间，至今
-          time = [this.dataflow.last_updated, null]
-        } else {
-          let now = Date.now()
-          time = [now - val, now]
-        }
-      }
-      this.$emit('changeTimeSelect', time)
+      this.$emit('changeTimeSelect', val, isTime, source)
     },
 
     toFullscreen() {

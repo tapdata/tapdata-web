@@ -7,6 +7,7 @@
 <script>
 import { Chart } from '@tap/component'
 import { calcUnit } from '@tap/shared'
+import dayjs from 'dayjs'
 
 export default {
   name: 'LineChart',
@@ -56,6 +57,10 @@ export default {
     limit: {
       type: Number,
       default: 10
+    },
+    timeFormat: {
+      type: String,
+      default: 'YYYY-MM-DD HH:mm:ss'
     }
   },
 
@@ -142,9 +147,10 @@ export default {
             }
           },
           axisLabel: {
-            color: '#535F72'
-            // showMaxLabel: false,
-            // showMinLabel: false
+            color: '#535F72',
+            formatter: val => {
+              return dayjs(val).format(this.timeFormat)
+            }
           }
         },
         yAxis: {
