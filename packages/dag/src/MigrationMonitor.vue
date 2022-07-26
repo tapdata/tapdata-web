@@ -36,6 +36,8 @@
           :dataflow="dataflow"
           :quota="quota"
           :timeFormat="timeFormat"
+          :start-time="firstStartTime"
+          :end-time="lastStopTime"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
@@ -100,6 +102,7 @@
         :settings="dataflow"
         :scope="formScope"
         @hide="onHideSidebar"
+        @verifyDetails="handleVerifyDetails"
       />
       <!--配置面板-->
       <ConfigPanel v-else ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
@@ -223,7 +226,15 @@ export default {
       quota: {}, // 指标数据
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
-      timeFormat: ''
+      timeFormat: '',
+      firstStartTime: Date.now() - 5 * 24 * 60 * 60 * 1000, // 任务第一次启动时间，先写死时间，后面通过运行记录来获取
+      lastStopTime: Date.now(), // 任务最近一次停止时间，先写死时间，后面通过运行记录来获取
+      timeFormatMap: {
+        s: 'mm.ss',
+        m: 'HH:mm',
+        h: 'MM-DD HH:00',
+        d: 'MM-DD'
+      }
     }
   },
 
@@ -232,6 +243,16 @@ export default {
       return {
         ...this.scope,
         $settings: this.dataflow
+      }
+    },
+
+    endTimestamp() {
+      const { status } = this.dataflow || {}
+      // 运行中
+      if (status === 'running') {
+        return Date.now()
+      } else {
+        return this.lastStopTime
       }
     }
   },
@@ -627,50 +648,39 @@ export default {
     },
 
     handleChangeTimeSelect(val, isTime, source) {
+      this.refresh = this.quotaTimeType === val
+      this.quotaTimeType = val
+      const nowTime = Date.now()
       if (isTime) {
         this.quotaTime = val
+      } else {
+        switch (val) {
+          case '5m':
+            this.quotaTime = [nowTime - 5 * 60 * 1000, this.endTimestamp]
+            break
+          case '1h':
+            this.quotaTime = [nowTime - 60 * 60 * 1000, this.endTimestamp]
+            break
+          case '1d':
+            this.quotaTime = [nowTime - 24 * 60 * 60 * 1000, this.endTimestamp]
+            break
+          case 'full':
+            this.quotaTime = [this.firstStartTime, this.endTimestamp]
+            break
+          default:
+            this.quotaTime = [nowTime - 5 * 60 * 1000, this.endTimestamp]
+            break
+        }
       }
-      this.refresh = this.quotaTimeType === source.value
-      this.quotaTimeType = source.value
-      this.timeFormat = this.getTimeFormat()
+
+      const granularity = this.getTimeGranularity(...this.quotaTime)
+      this.timeFormat = this.timeFormatMap[granularity]
       this.init()
     },
 
     handleOpenDetail(node) {
       this.nodeDetailDialogId = node.id
       this.nodeDetailDialog = true
-    },
-
-    getTimeFormat() {
-      let result = 'YYYY-MM-DD HH:mm:ss'
-      let map = {
-        s: 'mm:ss',
-        m: 'HH:mm',
-        h: 'MM:DD HH:00',
-        d: 'MM:DD'
-      }
-      let granularity = ''
-      if (this.quotaTimeType === 'full') {
-        granularity = this.getTimeGranularity(this.dataflow.last_updated, new Date())
-        return map[granularity]
-      } else if (this.quotaTimeType === 'custom') {
-        granularity = this.getTimeGranularity(...this.quotaTime)
-        return map[granularity]
-      } else {
-        switch (this.quotaTimeType) {
-          case '5m':
-          case '1h':
-            result = map.s
-            break
-          case '1d':
-            result = map.m
-            break
-          default:
-            result = map.h
-            break
-        }
-        return result
-      }
     },
 
     getTimeGranularity(start, end) {
@@ -692,6 +702,13 @@ export default {
         result = 'd'
       }
       return result
+    },
+
+    handleVerifyDetails(query) {
+      this.$router.push({
+        name: 'VerifyDetails',
+        query
+      })
     }
   }
 }

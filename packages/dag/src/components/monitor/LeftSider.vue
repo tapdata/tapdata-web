@@ -2,7 +2,7 @@
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box">
-        <TimeSelect @change="changeTimeSelect"></TimeSelect>
+        <TimeSelect v-bind="$attrs" @change="changeTimeSelect"></TimeSelect>
       </div>
       <div class="info-box">
         <div class="task-info__row">

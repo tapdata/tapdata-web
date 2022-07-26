@@ -13,7 +13,7 @@
     </div>
     <div class="flex justify-content-between align-items-center px-4 pt-4">
       <span class="font-color-normal fw-bold fs-7">问题表清单</span>
-      <VIcon size="16">menu</VIcon>
+      <VIcon size="16" class="cursor-pointer" @click="$emit('verifyDetails')">menu</VIcon>
     </div>
     <div class="px-4 py-3">
       <ElInput

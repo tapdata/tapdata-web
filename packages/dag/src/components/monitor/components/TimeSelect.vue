@@ -44,10 +44,6 @@ export default {
       type: Array,
       default: () => [
         {
-          label: '任务全周期',
-          value: 'full'
-        },
-        {
           label: '最近5分钟',
           value: '5m'
         },
@@ -58,6 +54,10 @@ export default {
         {
           label: '最近1天',
           value: '1d'
+        },
+        {
+          label: '任务全周期',
+          value: 'full'
         },
         {
           label: '自定义时间',
@@ -71,10 +71,8 @@ export default {
       type: Number,
       default: 1000
     },
-    range: {
-      type: Array,
-      default: () => ['2022-07-18 23:59:50', '2022-07-21 01:00:00']
-    }
+    startTime: [String, Number, Date],
+    endTime: [String, Number, Date]
   },
 
   data() {
@@ -128,6 +126,16 @@ export default {
           }
         }
       }
+    }
+  },
+
+  computed: {
+    range() {
+      const { startTime, endTime } = this
+      if (startTime && endTime) {
+        return [startTime, endTime]
+      }
+      return ['2022-07-18 23:59:50', '2022-07-21 01:00:00']
     }
   },
 
