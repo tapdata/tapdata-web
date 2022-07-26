@@ -705,7 +705,7 @@ export default {
     },
 
     handleVerifyDetails(table) {
-      this.$router.push({
+      let routeUrl = this.$router.resolve({
         name: 'VerifyDetails',
         params: {
           id: this.dataflow?.id
@@ -714,6 +714,7 @@ export default {
           table
         }
       })
+      window.open(routeUrl.href)
     }
   }
 }

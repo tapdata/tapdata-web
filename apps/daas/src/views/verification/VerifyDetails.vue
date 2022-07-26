@@ -69,14 +69,35 @@
             </ElRow>
           </div>
           <div class="table__body flex-fill">
-            <ElRow v-for="(item, index) in resultList" :key="index" class="table__row py-2 px-4 border-top">
+            <ElRow
+              v-for="(item, index) in resultList"
+              :key="index"
+              class="table__row py-2 px-4"
+              :class="{ 'border-top': index !== 0 }"
+            >
               <ElCol :span="12">
-                <span>ID：</span>
-                <span>{{ item.sourceId }}</span>
+                <div class="disable-color">
+                  <span class="row__label">ID:</span>
+                  <span class="row__value">{{ item.id }}</span>
+                </div>
+                <div v-for="(sItem, sIndex) in item.source" :key="sIndex" class="mt-2">
+                  <span class="row__label">{{ sItem.label }}:</span>
+                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.diff }">{{
+                    sItem.value
+                  }}</span>
+                </div>
               </ElCol>
               <ElCol :span="12">
-                <span>ID：</span>
-                <span>{{ item.targetId }}</span>
+                <div class="disable-color">
+                  <span class="row__label">ID:</span>
+                  <span class="row__value">{{ item.id }}</span>
+                </div>
+                <div v-for="(sItem, sIndex) in item.target" :key="sIndex" class="mt-2">
+                  <span class="row__label">{{ sItem.label }}:</span>
+                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.diff }">{{
+                    sItem.value
+                  }}</span>
+                </div>
               </ElCol>
             </ElRow>
           </div>
@@ -178,16 +199,51 @@ export default {
     },
 
     fetch() {
-      this.resultList = Array(10)
+      let arr = Array(20)
         .fill()
         .map((t, index) => {
           return {
-            sourceId: 'PC_0000000372' + index,
-            targetId: 'PC_0000000372' + index,
-            sourceSigninTime: '2022-06-10 18:00:11',
-            targetSigninTime: '2022-06-10 18:00:11'
+            id: 'id_' + index,
+            source: {
+              name: '小丽',
+              age: 10,
+              sex: '女',
+              phone: '13800138000'
+            },
+            target: {
+              name: '小丽123',
+              age: 10,
+              sex: '男',
+              phone: '13800138000'
+            }
           }
         })
+      let result = []
+      arr.forEach(el => {
+        const { source, target } = el
+        let obj = {
+          id: el.id,
+          source: [],
+          target: []
+        }
+        for (let key in source) {
+          const sVal = source[key]
+          const tVal = target[key]
+          const diff = sVal !== tVal
+          obj.source.push({
+            label: key,
+            value: sVal,
+            diff
+          })
+          obj.target.push({
+            label: key,
+            value: tVal,
+            diff
+          })
+        }
+        result.push(obj)
+      })
+      this.resultList = result
     }
   }
 }
@@ -205,6 +261,17 @@ export default {
 .verify-result {
 }
 .line__label {
+  display: inline-block;
+  width: 100px;
+}
+.disable-color {
+  color: #86909c;
+}
+.table__body {
+  height: 0;
+  overflow-y: auto;
+}
+.row__label {
   display: inline-block;
   width: 100px;
 }
