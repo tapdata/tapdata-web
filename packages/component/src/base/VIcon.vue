@@ -1,5 +1,5 @@
 <script>
-import bindsAttrs from '@/mixins/bindsAttrs'
+import bindsAttrs from '../mixins/bindsAttrs'
 
 const SIZE_MAP = {
   xSmall: '12px',
@@ -88,28 +88,52 @@ const VIcon = {
 
     getSvgWrapperData() {
       const fontSize = this.getSize()
-      const wrapperData = {
-        ...this.getDefaultData(),
-        style: fontSize
-          ? {
-              fontSize,
-              height: fontSize,
-              width: fontSize,
-              color: this.color
-            }
-          : { color: this.color }
-      }
+      const sizeData = fontSize
+        ? {
+            fontSize,
+            height: fontSize,
+            width: fontSize
+          }
+        : {}
 
-      return wrapperData
+      return {
+        ...this.getDefaultData(),
+        staticClass: 'v-icon',
+        style: {
+          ...sizeData,
+          color: this.color,
+          'caret-color': this.color
+        }
+      }
     },
 
     renderSvgIcon(icon, h) {
-      return h('svg', this.getSvgWrapperData(), [
-        h('use', {
-          attrs: {
-            'xlink:href': `#${icon}`
-          }
-        })
+      const svgData = {
+        class: 'v-icon__svg',
+        attrs: {
+          xmlns: 'http://www.w3.org/2000/svg',
+          viewBox: '0 0 24 24',
+          role: 'img',
+          'aria-hidden': true
+        }
+      }
+
+      const size = this.getSize()
+      if (size) {
+        svgData.style = {
+          fontSize: size,
+          height: size,
+          width: size
+        }
+      }
+      return h('span', this.getSvgWrapperData(), [
+        h('svg', svgData, [
+          h('use', {
+            attrs: {
+              'xlink:href': `#${icon}`
+            }
+          })
+        ])
       ])
     }
   },
@@ -147,7 +171,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .iconfont {
   font-family: 'iconfont', sans-serif;
   font-size: 16px;
@@ -163,6 +187,28 @@ svg.iconfont {
   fill: currentColor;
   overflow: hidden;
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+}
+.v-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 1em;
+  height: 1em;
+  font-feature-settings: 'liga';
+  font-size: 1em;
+  justify-content: center;
+  letter-spacing: normal;
+  line-height: 1;
+  text-indent: 0;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+  vertical-align: middle;
+  user-select: none;
+
+  &__svg {
+    fill: currentColor;
+    width: 1em;
+    height: 1em;
+  }
 }
 .v-icon--link {
   cursor: pointer;
