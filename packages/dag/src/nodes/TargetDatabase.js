@@ -171,7 +171,7 @@ export class TargetDatabase extends NodeType {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      className: 'font-color-light mb-2',
+                      className: 'font-color-dark mb-2',
                       wrapperWidth: 300,
                       addonBefore: '插入事件'
                     },
@@ -192,7 +192,7 @@ export class TargetDatabase extends NodeType {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      className: 'font-color-light mb-2',
+                      className: 'font-color-dark mb-2',
                       wrapperWidth: 300,
                       addonBefore: '更新事件'
                     },
@@ -212,7 +212,7 @@ export class TargetDatabase extends NodeType {
                     type: 'void',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      className: 'font-color-light',
+                      className: 'font-color-dark',
                       wrapperWidth: 300,
                       addonBefore: '删除事件'
                     },
