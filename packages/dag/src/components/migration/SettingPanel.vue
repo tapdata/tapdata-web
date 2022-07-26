@@ -116,10 +116,12 @@ export default observer({
                       },
                       planStartDate: {
                         type: 'string',
+                        'x-decorator': 'FormItem',
                         required: 'true',
                         'x-component': 'DatePicker',
                         'x-component-props': {
                           type: 'datetime',
+                          align: 'right',
                           format: 'yyyy-MM-dd HH:mm:ss',
                           valueFormat: 'timestamp'
                         },
