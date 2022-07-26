@@ -170,10 +170,10 @@
 import i18n from '@/i18n'
 
 import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
-import StatusTag from '../../components/StatusTag'
 import { SchemaProgress } from '@tap/business'
 import Preview from './Preview.vue'
 import { VIcon, FilterBar } from '@tap/component'
+import { StatusTag } from '@tap/business'
 import { getDatabaseTypes, buried } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 

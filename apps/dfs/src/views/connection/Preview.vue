@@ -85,7 +85,7 @@
 import i18n from '@/i18n'
 
 import { VIcon } from '@tap/component'
-import StatusTag from '@/components/StatusTag'
+import { StatusTag } from '@tap/business'
 import { CONFIG_MODEL } from './const'
 import timeFunction from '@/mixins/timeFunction'
 

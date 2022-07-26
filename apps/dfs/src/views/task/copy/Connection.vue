@@ -62,8 +62,7 @@
 
 <script>
 import TableList from '@/components/TableList'
-import StatusTag from '@/components/StatusTag'
-import { SchemaProgress } from '@tap/business'
+import { SchemaProgress, StatusTag } from '@tap/business'
 import { VIcon } from '@tap/component'
 import Preview from '@/views/connection/Preview'
 import { deepCopy } from '@/util'

@@ -24,9 +24,8 @@ import {
   MILESTONE_STATUS_MAP,
   ETL_STATUS_MAP,
   ETL_SUB_STATUS_MAP,
-  MIGRATE_STATUS_MAP,
   SHARECDC_MAP
-} from '../const'
+} from '../shared/const'
 export default {
   name: 'StatusTag',
   components: { VIcon },
@@ -66,8 +65,7 @@ export default {
           connection: CONNECTION_STATUS_MAP,
           milestone: MILESTONE_STATUS_MAP,
           etl: ETL_STATUS_MAP,
-          etlSub: ETL_SUB_STATUS_MAP,
-          migrate: MIGRATE_STATUS_MAP
+          etlSub: ETL_SUB_STATUS_MAP
         }[this.target]
       )
     },
