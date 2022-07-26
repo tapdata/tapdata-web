@@ -172,6 +172,7 @@ import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
 import InitialList from './components/InitialList'
 import { Chart } from '@tap/component'
+import { getPieOptions } from './util'
 
 export default {
   name: 'LeftSider',
@@ -313,7 +314,13 @@ export default {
         }
       ]
       const { structure } = this.quota.statistics?.[0] || {}
-      return this.getPieOptions(arr, structure)
+      return getPieOptions(
+        arr.map(t =>
+          Object.assign({}, t, {
+            value: structure?.[t.key] ?? 0
+          })
+        )
+      )
     },
 
     // 全量-表数据同步
@@ -345,7 +352,13 @@ export default {
         }
       ]
       const { data } = this.quota.statistics?.[0] || {}
-      return this.getPieOptions(arr, data)
+      return getPieOptions(
+        arr.map(t =>
+          Object.assign({}, t, {
+            value: data?.[t.key] ?? 0
+          })
+        )
+      )
     },
 
     // 增量信息
@@ -621,64 +634,6 @@ export default {
 
     toInitialList() {
       this.initialListDialog = true
-    },
-
-    getPieOptions(items = [], data) {
-      let options = {
-        tooltip: {
-          trigger: 'item'
-        },
-        textStyle: {
-          rich: {
-            orgname: {
-              width: 80
-            },
-            count: {
-              padding: [0, 0, 0, 15]
-            }
-          }
-        },
-        legend: {
-          bottom: 0,
-          icon: 'circle',
-          orient: 'vertical',
-          itemWidth: 6,
-          itemHeight: 6,
-          formatter: name => {
-            const count = 0
-            const arr = [`{orgname|${name}}`, `{count|${count}}`]
-            return arr.join('')
-          }
-        },
-        series: [
-          {
-            type: 'pie',
-            radius: ['40%', '70%'],
-            center: ['50%', '30%'],
-            label: { show: false },
-            labelLine: { show: false },
-            data: [],
-            top: 'top'
-          }
-        ]
-      }
-      if (items.length && data) {
-        options.series[0].data = items.map(t => {
-          return {
-            name: t.name,
-            value: data[t.key],
-            itemStyle: {
-              color: t.color
-            }
-          }
-        })
-        options.legend.formatter = name => {
-          const count = options.series[0].data?.find(t => t.name === name)?.value || 0
-          const arr = [`{orgname|${name}}`, `{count|${count}}`]
-          return arr.join('')
-        }
-      }
-      return options
     }
   }
 }

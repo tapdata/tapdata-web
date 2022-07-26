@@ -22,7 +22,36 @@
       </div>
       <div v-if="isSource" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
-        <div class="chart-box__content p-4"></div>
+        <div class="chart-box__content p-4">
+          <div class="flex align-items-center justify-content-around">
+            <div>
+              <div class="font-color-normal fw-bold mb-1">{{ formatTime(sourceData.tcpping, 'HH:mm:ss.ms') }}</div>
+              <div>TCP连接耗时</div>
+            </div>
+            <div>
+              <div class="font-color-normal fw-bold mb-1">
+                {{ formatTime(sourceData.connectionping, 'HH:mm:ss.ms') }}
+              </div>
+              <div>协议连接耗时</div>
+            </div>
+            <div>
+              <div class="font-color-normal fw-bold mb-1">
+                {{ formatTime(sourceData.connectionping, 'HH:mm:ss.ms') }}
+              </div>
+              <div>增量时间点</div>
+            </div>
+          </div>
+          <div class="flex justify-content-around pt-7">
+            <div>
+              <div class="text-center mb-1">全量同步状态</div>
+              <Chart :extend="cdcOptions" style="width: 90px; height: 90px"></Chart>
+            </div>
+            <div>
+              <div class="text-center mb-1">增量同步状态</div>
+              <Chart ref="chart" :extend="initialOptions" style="width: 90px; height: 90px"></Chart>
+            </div>
+          </div>
+        </div>
       </div>
       <div v-else-if="isTarget" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">连接状态</div>
@@ -33,7 +62,9 @@
               <div>TCP连接耗时</div>
             </div>
             <div>
-              <div class="font-color-normal fw-bold mb-1">{{ formatTime(targetData.connectionping, 'HH:mm:ss.ms') }}</div>
+              <div class="font-color-normal fw-bold mb-1">
+                {{ formatTime(targetData.connectionping, 'HH:mm:ss.ms') }}
+              </div>
               <div>协议连接耗时</div>
             </div>
           </div>
@@ -76,7 +107,9 @@
 <script>
 import EventChart from './EventChart'
 import LineChart from './LineChart'
+import { Chart } from '@tap/component'
 import { mapGetters } from 'vuex'
+import { getPieOptions } from '../util'
 import dayjs from 'dayjs'
 
 function getRandom(num = 1) {
@@ -101,7 +134,7 @@ const VALUE_LIST = getRandomArray(100000)
 export default {
   name: 'NodeDetailDialog',
 
-  components: { EventChart, LineChart },
+  components: { EventChart, LineChart, Chart },
 
   props: {
     value: {
@@ -178,7 +211,11 @@ export default {
 
     // 源节点-同步状态
     sourceData() {
-      return {}
+      return {
+        tcpping: 123456,
+        connectionping: 128383,
+        cdcTime: 1273123
+      }
     },
 
     // 目标节点-连接状态
@@ -201,6 +238,102 @@ export default {
     isTarget() {
       const { type, $outputs } = this.node
       return (type === 'database' || type === 'table') && !$outputs.length
+    },
+
+    // 全量同步状态
+    cdcOptions() {
+      let arr = [
+        {
+          name: '待进行',
+          key: 'wait',
+          value: 0,
+          color: '#F7D762'
+        },
+        {
+          name: '无需创建',
+          key: 'noCreate',
+          value: 0,
+          color: '#88DBDA'
+        },
+        {
+          name: '已完成',
+          key: 'finished',
+          value: 0,
+          color: '#82C647'
+        },
+        {
+          name: '错误',
+          key: 'error',
+          value: 0,
+          color: '#EC8181'
+        }
+      ]
+      const { structure } = this.quota.statistics?.[0] || {}
+      const values = arr.map(t =>
+        Object.assign({}, t, {
+          value: structure?.[t.key] ?? 0
+        })
+      )
+      const options = {
+        legend: {
+          show: false
+        },
+        series: [
+          {
+            radius: ['55%', '90%'],
+            center: ['50%', '50%']
+          }
+        ]
+      }
+      return getPieOptions(values, options)
+    },
+
+    // 增量同步状态
+    initialOptions() {
+      let arr = [
+        {
+          name: '待进行',
+          key: 'wait',
+          value: 0,
+          color: '#F7D762'
+        },
+        {
+          name: '进行中',
+          key: 'running',
+          value: 0,
+          color: '#88DBDA'
+        },
+        {
+          name: '已完成',
+          key: 'finished',
+          value: 0,
+          color: '#82C647'
+        },
+        {
+          name: '错误',
+          key: 'error',
+          value: 0,
+          color: '#EC8181'
+        }
+      ]
+      const { data } = this.quota.statistics?.[0] || {}
+      const values = arr.map(t =>
+        Object.assign({}, t, {
+          value: data?.[t.key] ?? 0
+        })
+      )
+      const options = {
+        legend: {
+          show: false
+        },
+        series: [
+          {
+            radius: ['55%', '90%'],
+            center: ['50%', '50%']
+          }
+        ]
+      }
+      return getPieOptions(values, options)
     }
   },
 

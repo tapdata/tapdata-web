@@ -83,7 +83,6 @@ import { mapGetters } from 'vuex'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { debounce, escapeRegExp } from 'lodash'
 import { Select } from 'element-ui'
-import { connectionsApi } from '../../../../api'
 
 function getRandom() {
   return Math.ceil(Math.random() * 100)
@@ -148,7 +147,12 @@ export default {
           color: '#88DBDA'
         }
       ]
-      return this.getPieOptions(arr, this.samples)
+      const values = arr.map(t =>
+        Object.assign({}, t, {
+          value: this.samples?.[t.key] ?? 0
+        })
+      )
+      return this.getPieOptions(values)
     },
 
     scrollbarWrapStyle() {
@@ -174,8 +178,8 @@ export default {
       this.loadDatabase()
     },
 
-    getPieOptions(items = [], data) {
-      const total = eval(Object.values(data).join('+'))
+    getPieOptions(data) {
+      const total = eval(data.map(t => t.value).join('+'))
       const totalText = '总计'
       let options = {
         tooltip: {
@@ -237,11 +241,11 @@ export default {
           }
         ]
       }
-      if (items.length && data) {
-        options.series[0].data = items.map(t => {
+      if (data?.length) {
+        options.series[0].data = data.map(t => {
           return {
             name: t.name,
-            value: data[t.key],
+            value: t.value,
             itemStyle: {
               color: t.color
             }
