@@ -202,7 +202,7 @@ export default {
     'dataflow.status'(v) {
       console.log('状态监听', v) // eslint-disable-line
       if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
-        this.$refs.console?.loadData()
+        // this.$refs.console?.loadData()
         if (v === 'running') {
           this.setStateReadonly(true)
           this.gotoViewer(true)
@@ -502,18 +502,13 @@ export default {
     },
 
     async handleStart() {
-      /*this.unWatchStatus = this.$watch('dataflow.status', v => {
-        console.log('状态监听', v) // eslint-disable-line
+      this.unWatchStatus?.()
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
-          this.$refs.console?.stopAuto()
-          if (v === 'running') {
-            this.setStateReadonly(true)
-            this.gotoViewer(true)
-          } else {
-            this.setStateReadonly(false)
-          }
+          this.$refs.console?.loadData()
+          this.unWatchStatus()
         }
-      })*/
+      })
       const flag = await this.save(true)
       if (flag) {
         this.dataflow.disabledData.edit = true
