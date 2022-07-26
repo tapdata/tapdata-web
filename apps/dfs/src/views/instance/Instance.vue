@@ -276,15 +276,14 @@
 
 <script>
 import i18n from '@/i18n'
-
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
-import VIcon from '../../components/VIcon'
 import Details from './Details'
-import FilterBar from '@/components/filter-bar'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/util'
+import { VIcon, FilterBar } from '@tap/component'
+
 let timer = null
 
 export default {

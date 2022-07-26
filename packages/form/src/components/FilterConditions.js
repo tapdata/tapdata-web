@@ -2,7 +2,7 @@ import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import { Space } from './space'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import Locale from '../mixins/locale'
 
 const Conditions = observer(

@@ -77,8 +77,7 @@
 </template>
 <script>
 import UserOperation from './UserOperation'
-import SelectList from '@/components/SelectList'
-import DatetimeRange from '@/components/filter-bar/DatetimeRange'
+import { DatetimeRange, SelectList } from '@tap/component'
 import { toRegExp } from '../../utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'

@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import error from 'web-core/assets/icons/svg/error.svg'
 import info from 'web-core/assets/icons/svg/info.svg'
 import success from 'web-core/assets/icons/svg/success.svg'

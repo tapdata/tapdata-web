@@ -67,7 +67,7 @@ export const DdlEventCheckbox = observer(
 export const DdlEventList = observer(
   defineComponent({
     props: ['value', 'findParentNode', 'findParentNodes'],
-    setup(props, { emit }) {
+    setup(props) {
       const formRef = useForm()
       const fieldRef = useField()
       const form = formRef.value

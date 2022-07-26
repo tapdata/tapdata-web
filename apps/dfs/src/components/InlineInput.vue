@@ -59,7 +59,7 @@
 <script>
 import i18n from '@/i18n'
 
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 export default {
   components: { VIcon },
   props: {

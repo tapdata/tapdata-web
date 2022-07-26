@@ -43,7 +43,7 @@
 </template>
 <script>
 import Cookie from '@tap/shared/src/cookie'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi } from '@tap/api'
 export default {
   name: 'Upload',

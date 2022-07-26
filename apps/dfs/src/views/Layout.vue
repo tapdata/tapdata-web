@@ -3,12 +3,33 @@
     <TheHeader ref="theHeader"></TheHeader>
     <ElAside class="left-aside" width="200px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
-        <ElMenuItem v-for="m in menus" :key="m.name" :index="m.path">
+        <!-- <ElMenuItem v-for="m in menus" :key="m.name" :index="m.path">
           <span class="mr-4" slot v-if="m.icon"
             ><VIcon class="v-icon" size="12">{{ m.icon }}</VIcon></span
           >
           <span slot="title">{{ m.title }}</span>
-        </ElMenuItem>
+        </ElMenuItem> -->
+        <template v-for="menu in menus">
+          <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
+            <template slot="title">
+              <span class="mr-4" slot v-if="menu.icon"
+                ><VIcon class="v-icon" size="12">{{ menu.icon }}</VIcon></span
+              >
+              <span slot="title">{{ menu.title }}</span>
+            </template>
+            <template v-for="cMenu in menu.children">
+              <ElMenuItem :key="cMenu.title" :index="cMenu.path">
+                <div class="submenu-item">{{ cMenu.title }}</div>
+              </ElMenuItem>
+            </template>
+          </ElSubmenu>
+          <ElMenuItem v-else :key="menu.title" :index="menu.path">
+            <span class="mr-4" slot v-if="menu.icon"
+              ><VIcon class="v-icon" size="12">{{ menu.icon }}</VIcon></span
+            >
+            <span slot="title">{{ menu.title }}</span>
+          </ElMenuItem>
+        </template>
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical">
@@ -34,7 +55,7 @@
 
 <script>
 import TheHeader from '@/components/the-header'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import BindPhone from '@/views/user/components/BindPhone'
@@ -67,13 +88,16 @@ export default {
         {
           name: 'Connection',
           title: $t('connection_manage'),
-          link: './tm/#/connections',
           icon: 'connection'
         },
         {
           name: 'Task',
           title: $t('task_manage'),
-          icon: 'task'
+          icon: 'task',
+          children: [
+            { name: 'Etl', title: $t('task_manage_etl') },
+            { name: 'Migrate', title: $t('task_manage_migrate') }
+          ]
         },
         {
           name: 'Verify',
@@ -99,9 +123,18 @@ export default {
   created() {
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
+    const findRoute = name => {
+      return children.find(item => item.name === name)
+    }
     this.menus = this.sortMenus.map(el => {
-      let findOne = children.find(item => item.name === el.name)
-      el.path = findOne.path
+      if (el.children?.length) {
+        el.children.forEach((cMenu, idx) => {
+          el.children[idx].path = findRoute(cMenu.name).path
+        })
+      } else {
+        let findOne = findRoute(el.name)
+        el.path = findOne.path
+      }
       return el
     })
     this.getBreadcrumb(this.$route)
@@ -221,6 +254,16 @@ export default {
         ::v-deep .v-icon {
           color: map-get($color, primary);
         }
+      }
+    }
+    .el-submenu {
+      ::v-deep {
+        .el-submenu__title {
+          font-size: 12px;
+        }
+      }
+      .submenu-item {
+        padding-left: 8px;
       }
     }
     .product-name {

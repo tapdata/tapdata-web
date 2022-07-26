@@ -84,7 +84,7 @@
 <script>
 import i18n from '@/i18n'
 
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import StatusTag from '@/components/StatusTag'
 import { CONFIG_MODEL } from './const'
 import timeFunction from '@/mixins/timeFunction'

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 
 export default {
   name: 'PanelHeader',

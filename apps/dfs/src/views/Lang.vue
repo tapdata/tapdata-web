@@ -76,7 +76,7 @@
 <script>
 import i18n from '@/i18n'
 
-import FilterBar from '@/components/filter-bar'
+import { FilterBar } from '@tap/component'
 import TableList from '@/components/TableList'
 import zhCN from '@/i18n/langs/zh-CN'
 import enSource from '@/i18n/langs/en'

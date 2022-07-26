@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import axios from 'axios'
 import './plugins/element'
 import './plugins/axios'
 import App from './App.vue'
@@ -173,7 +172,7 @@ export default ({ routes }) => {
         }
       })
   }
-  axios.get('config/config.json').then(res => {
+  window.axios.get('config/config.json').then(res => {
     window.__config__ = res.data
     getData()
   })

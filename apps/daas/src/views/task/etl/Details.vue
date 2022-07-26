@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import InlineInput from '@/components/InlineInput'
 import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'

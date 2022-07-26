@@ -108,7 +108,7 @@
 <script>
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {

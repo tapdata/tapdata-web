@@ -387,7 +387,7 @@ import Validation from './Validation'
 import Preview from './Preview'
 import Pipeline from './Pipeline'
 import Collections from './Collections'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import { metadataInstancesApi } from '@tap/api'
 

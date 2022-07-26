@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { setDatabaseTypes } from '@/util'
 
 export default {
