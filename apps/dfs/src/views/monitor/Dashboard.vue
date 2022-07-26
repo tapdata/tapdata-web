@@ -205,7 +205,7 @@
 <script>
 import i18n from '@/i18n'
 
-import StatusTag from '@/components/StatusTag'
+import { StatusTag } from '@tap/business'
 import TaskProgress from './TaskProgress'
 
 import FieldMapping from '@/components/field-mapping/main'

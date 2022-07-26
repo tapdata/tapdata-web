@@ -90,8 +90,8 @@
 <script>
 import i18n from '@/i18n'
 
-import StatusTag from '@/components/StatusTag'
 import { VIcon } from '@tap/component'
+import { StatusTag } from '@tap/business'
 import { Chart } from '@tap/component'
 import { isEmpty, formatTimeByTime } from '@/util'
 import timeFunction from '@/mixins/timeFunction'

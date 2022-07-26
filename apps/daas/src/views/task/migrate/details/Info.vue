@@ -190,8 +190,8 @@
 </template>
 
 <script>
-import StatusTag from '@/components/StatusTag'
 import { VIcon, SelectList } from '@tap/component'
+import { StatusTag } from '@tap/business'
 import { Chart, DatetimeRange } from '@tap/component'
 import { formatTime, formatMs } from '@/utils/util'
 import { toThousandsUnit } from '@/utils/util'

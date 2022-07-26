@@ -33,9 +33,9 @@
 </template>
 
 <script>
-import StatusTag from '@/components/StatusTag'
 import TableList from '@/components/TableList'
 import { VIcon } from '@tap/component'
+import { StatusTag } from '@tap/business'
 
 export default {
   name: 'Milestone',
