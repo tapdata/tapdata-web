@@ -1,0 +1,39 @@
+name: Trigger Enterprise CICD
+
+on:
+  push:
+    branches: [ "master", "release-v*.*.*", "develop-v*.*.0" ]
+  pull_request:
+    branches: [ "master", "release-v*.*.*", "develop-v*.*.0" ]
+    
+env:
+  REGISTRY: ghcr.io
+  MVN_SETTINGS: ${{ secrets.MVN_SETTINGS }}
+
+jobs:
+
+  Set-Env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: set env if push
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "ENTERPRISE_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "OPENSOURCE_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "CURRENT_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+      - name: set env if pull_request
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "ENTERPRISE_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+          echo "OPENSOURCE_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+          echo "CURRENT_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+      - name: set env if workflow_dispatch
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "ENTERPRISE_BRANCH=${{ inputs.ENTERPRISE_BRANCH }}" >> $GITHUB_ENV
+          echo "OPENSOURCE_BRANCH=${{ inputs.OPENSOURCE_BRANCH }}" >> $GITHUB_ENV
+          echo "CURRENT_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+
+  Call-Enterprise-CICD:
+    uses: tapdata/tapdata-enterprise/.github/workflows/build.yml@${{ env.ENTERPRISE_BRANCH }}
+      
