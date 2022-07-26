@@ -205,7 +205,7 @@ export default {
         // this.$refs.console?.loadData()
         if (v === 'running') {
           this.setStateReadonly(true)
-          this.gotoViewer(true)
+          // this.gotoViewer(true)
         } else {
           this.setStateReadonly(false)
         }
@@ -508,6 +508,8 @@ export default {
           this.$refs.console?.loadData()
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
+          } else {
+            this.gotoViewer(true)
           }
           // this.unWatchStatus()
         }
