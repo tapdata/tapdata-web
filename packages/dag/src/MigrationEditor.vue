@@ -506,7 +506,10 @@ export default {
       this.unWatchStatus = this.$watch('dataflow.status', v => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
           this.$refs.console?.loadData()
-          this.unWatchStatus()
+          if (v !== 'running') {
+            this.$refs.console?.stopAuto()
+          }
+          // this.unWatchStatus()
         }
       })
       const flag = await this.save(true)

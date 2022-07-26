@@ -1441,27 +1441,30 @@ export default {
     },
 
     handleError(error, msg = '出错了') {
-      if (error?.data.code === 'Task.ListWarnMessage') {
+      error = error.data
+      if (error?.code === 'Task.ListWarnMessage') {
         let names = []
-        if (error.data.data) {
-          const keys = Object.keys(error.data.data)
+        if (error.data) {
+          const keys = Object.keys(error.data)
           keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: error.data.data[key][0].msg
+                msg: error.data[key][0].msg
               })
             }
           })
-          if (!names.length && keys.length && msg) {
+          if (!names.length && keys.length) {
             // 兼容错误信息id不是节点id的情况
-            const msg = error.data.data[keys[0]][0]?.msg
-            if (msg) {
-              this.$message.error(msg)
+            const nodeMsg = error.data[keys[0]][0]?.msg
+            if (nodeMsg) {
+              this.$message.error(nodeMsg)
               return
             }
+          } else if (msg) {
+            this.$message.error(msg)
           }
         }
         // this.$message.error(`${this.t('dag_save_fail')} ${names.join('，')}`)
