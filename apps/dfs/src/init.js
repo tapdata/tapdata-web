@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import './plugins/element'
 import './plugins/axios'
+import './directive'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import 'github-markdown-css'

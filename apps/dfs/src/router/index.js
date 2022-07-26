@@ -6,7 +6,8 @@ import i18n from '@/i18n'
 import Lang from '../views/Lang.vue'
 
 // const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
-const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
+const ConnectionForm = () =>
+  import(/* webpackChunkName: "connection-form" */ '@tap/business/src/views/connections/DatabaseForm.vue')
 // const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
 const DagEditor = async () => {
@@ -83,7 +84,8 @@ const routes = [
         path: '/connection',
         name: 'Connection',
         // component: Iframe,
-        component: () => import(/* webpackChunkName: "connection-list" */ '../views/connection/List.vue'),
+        component: () =>
+          import(/* webpackChunkName: "connection-list" */ '@tap/business/src/views/connections/List.vue'),
         meta: {
           title: i18n.t('tap_connection_management'),
           icon: 'connection'
