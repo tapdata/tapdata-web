@@ -30,8 +30,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
-import SelectList from '@/components/SelectList'
+import { VIcon, SelectList } from '@tap/component'
 import PopInput from './PopInput'
 import DatetimeRange from './DatetimeRange'
 import Datetime from './Datetime'

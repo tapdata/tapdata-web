@@ -149,10 +149,9 @@
 </template>
 
 <script>
-import TablePage from '@/components/TablePage'
+import { TablePage, FilterBar } from '@tap/component'
 import { toRegExp } from '../../utils/util'
-import VIcon from '@/components/VIcon'
-import FilterBar from '@/components/filter-bar'
+import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import { taskApi, inspectApi, metadataInstancesApi } from '@tap/api'
 

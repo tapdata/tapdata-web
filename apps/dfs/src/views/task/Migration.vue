@@ -1,5 +1,5 @@
 <template>
-  <section class="migration-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Task'">
+  <section class="migration-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Migrate'">
     <!--    <div class="main">-->
     <div class="migration-operation">
       <div class="migration-operation-left">
@@ -259,8 +259,7 @@ import i18n from '@/i18n'
 
 import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
-import VIcon from '@/components/VIcon'
-import FilterBar from '@/components/filter-bar'
+import { VIcon, FilterBar } from '@tap/component'
 import ErrorLogDialog from './components/ErrorLogDialog'
 import { isFinished } from './copy/util'
 import timeFunction from '@/mixins/timeFunction'

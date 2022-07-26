@@ -122,7 +122,7 @@
 
 <script>
 import { TYPEMAP } from './tyepMap'
-import SelectList from '@/components/SelectList'
+import { SelectList } from '@tap/component'
 import dayjs from 'dayjs'
 import { notificationApi } from '@tap/api'
 

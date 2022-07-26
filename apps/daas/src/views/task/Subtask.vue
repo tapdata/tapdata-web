@@ -66,7 +66,7 @@
 
 <script>
 import TableList from '@/components/TableList'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { deepCopy } from '@/utils/util'
 import { subtaskApi } from '@tap/api'
 

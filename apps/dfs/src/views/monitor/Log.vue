@@ -94,7 +94,7 @@
 <script>
 import i18n from '@/i18n'
 
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { downloadBlob } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 

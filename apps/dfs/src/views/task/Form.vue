@@ -606,7 +606,7 @@
 import formConfig from '../task/config'
 import Transfer from './Transfer'
 import FieldMapping from '@/components/field-mapping/main'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from '../task/const'
 import { uniqueArr, getDatabaseTypes, buried } from '@/util'
 import timeFunction from '@/mixins/timeFunction'

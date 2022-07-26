@@ -37,7 +37,7 @@
 import { metadataInstancesApi } from '@tap/api'
 import { FieldMapping } from '@tap/field-mapping'
 import { mapGetters, mapState } from 'vuex'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import Locale from '../mixins/locale'
 
 export default {

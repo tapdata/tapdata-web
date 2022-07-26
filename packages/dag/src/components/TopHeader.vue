@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'

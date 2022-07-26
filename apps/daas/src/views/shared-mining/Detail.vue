@@ -110,10 +110,9 @@
 </template>
 
 <script>
-import { Chart } from '@tap/component'
+import { Chart, DatetimeRange } from '@tap/component'
 import TableList from '@/components/TableList'
 import { formatMs } from '@/utils/util'
-import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import dayjs from 'dayjs'
 import { measurementApi, logcollectorApi } from '@tap/api'
 

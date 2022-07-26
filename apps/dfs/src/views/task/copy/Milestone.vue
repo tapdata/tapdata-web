@@ -35,7 +35,7 @@
 <script>
 import StatusTag from '@/components/StatusTag'
 import TableList from '@/components/TableList'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 
 export default {
   name: 'Milestone',

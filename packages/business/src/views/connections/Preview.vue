@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import StatusTag from '@/components/StatusTag'
 import Drawer from '@/components/Drawer'
 import { CONFIG_MODEL, getConnectionIcon } from './util'
