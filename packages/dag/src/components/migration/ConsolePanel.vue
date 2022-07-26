@@ -123,57 +123,9 @@ export default {
     },
 
     async loadData() {
-      clearTimeout(this.timerId)
+      // clearTimeout(this.timerId)
       const { taskId, nodeId } = this
       this.loading = true
-      console.log('加载数据', this.timerId) // eslint-disable-line
-      /*await this.sleep(1000)
-      const data = {
-        nodes: {
-          'df32e751-a4da-4c3c-bd5f-b49b06a4df8f': 'local-mongo-demo',
-          'ceb55392-af9b-4985-b70a-cd2e43a93e31': 'local-mongo-test'
-        },
-        list: [
-          {
-            id: '62d7db94481422320337c173',
-            grade: 'INFO',
-            log: '2022-07-20 18:40:20 【新任务@12:35:51】【任务设置检测】：任务{新任务@12:35:51}检测通过'
-          },
-          {
-            id: '62d7db94481422320337c174',
-            grade: 'INFO',
-            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【源节点设置检测】：节点{local-mongo-demo}检测通过'
-          },
-          {
-            id: '62d7db94481422320337c175',
-            grade: 'INFO',
-            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【目标节点设置检测】：节点{local-mongo-test}检测通过'
-          },
-          {
-            id: '62d7db94481422320337c177',
-            grade: 'INFO',
-            log: '2022-07-20 18:40:20 【新任务@12:35:51】【任务设置检测】：任务{新任务@12:35:51}检测通过'
-          },
-          {
-            id: '62d7db94481422320337c178',
-            grade: 'INFO',
-            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【源节点设置检测】：节点{local-mongo-demo}检测通过'
-          },
-          {
-            id: '62d7db94481422320337c179',
-            grade: 'INFO',
-            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【目标节点设置检测】：节点{local-mongo-test}检测通过'
-          },
-          {
-            id: '62d7db94481422320337c17a',
-            grade: 'INFO',
-            log: ' 2022-07-20 18:40:20 【新任务@12:35:51】【源连接检测】：连接XXX检测通过'
-          }
-        ],
-        total: 8,
-        offset: '62d7db94481422320337c17a'
-      }*/
-
       const data = await taskApi.getConsole({
         taskId,
         nodeId,
@@ -187,10 +139,12 @@ export default {
         node && nodeList.push(node)
       })
       this.nodeList = nodeList
+      if (data.over) this.stopAuto()
     },
 
     async autoLoad() {
       console.log('autoLoad') // eslint-disable-line
+      clearTimeout(this.timerId)
       await this.loadData()
       if (this.ifAuto) {
         this.timerId = setTimeout(() => {
@@ -205,6 +159,7 @@ export default {
     },
 
     stopAuto() {
+      console.log('stopAuto') // eslint-disable-line
       this.ifAuto = false
       clearTimeout(this.timerId)
     },

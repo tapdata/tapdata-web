@@ -202,7 +202,7 @@ export default {
     'dataflow.status'(v) {
       console.log('状态监听', v) // eslint-disable-line
       if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
-        this.$refs.console?.stopAuto()
+        this.$refs.console?.loadData()
         if (v === 'running') {
           this.setStateReadonly(true)
           this.gotoViewer(true)
@@ -299,7 +299,8 @@ export default {
               id: this.dataflow.id,
               subId: subId
             }
-          }).href
+          }).href,
+          `MigrateStatistics_${this.dataflow.id}`
         )
       } else {
         this.$router.push({
