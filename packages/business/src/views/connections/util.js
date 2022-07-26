@@ -1,4 +1,5 @@
 import Cookie from '@tap/shared/src/cookie'
+import axios from 'axios'
 
 /**
  * @author lg<lirufei0808@gmail.com>
@@ -147,5 +148,6 @@ export const CONFIG_MODEL = {
 // 数据源图标
 export const getConnectionIcon = pdkHash => {
   const token = Cookie.get('token')
-  return `/api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`
+  let baseUrl = axios.defaults.baseURL
+  return baseUrl + `/api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`
 }

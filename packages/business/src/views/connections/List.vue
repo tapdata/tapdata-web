@@ -197,7 +197,7 @@ export default {
       ],
       databaseStatusOptions: [
         {
-          label: this.$t('connection_list_all_status'),
+          label: this.$t('select_option_all'),
           value: ''
         },
         {
@@ -222,7 +222,6 @@ export default {
         panelFlag: true,
         sourceType: ''
       },
-      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE'),
       sourceTypeOptions: [
         { label: 'RDS实例', value: 'rds' },
         { label: '云外自建数据库', value: 'selfDB' },
@@ -351,7 +350,7 @@ export default {
               } else {
                 item.connectionUrl = item.config.uri
               }
-            } else {
+            } else if (item.config) {
               const { host, port, database, schema } = item.config
               item.connectionUrl = host
                 ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
@@ -367,7 +366,6 @@ export default {
 
           // 同步抽屉数据
           this.$refs.preview.sync(list)
-
           return {
             total: data?.total,
             data: list
