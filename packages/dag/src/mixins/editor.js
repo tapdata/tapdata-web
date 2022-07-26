@@ -999,83 +999,78 @@ export default {
       return arr
     },
 
-    validateLink() {
-      const rootNodes = this.allNodes.filter(node => !node.$inputs.length)
-      const leafNodesMap = rootNodes.reduce((obj, node) => {
-        obj[node.id] = this.loadLeafNode(node)
-        console.log('obj[node.id]', obj[node.id], Array.isArray(obj[node.id])) // eslint-disable-line
-        return obj
-      }, {})
-
-      for (let key in leafNodesMap) {
-        const value = leafNodesMap[key]
-        let flag = false
-        for (let innerKey in leafNodesMap) {
-          if (key === innerKey) continue
-          const innerValue = leafNodesMap[innerKey]
-
-          if (new Set([...value, ...innerValue]).size !== innerValue.length + value.length) {
-            flag = true
-            break
+    eachOutputs(node) {
+      this.eachMap[node.id] = true
+      const size = node.$outputs.length
+      if (size > 0) {
+        node.$outputs.forEach(id => {
+          if (this.eachMap[id]) return
+          const output = this.nodeById(id)
+          if (output.$inputs.length > 1) {
+            this.eachInputsByFilter(output, node.id)
           }
-        }
-        if (!flag) {
-          return '存在没有交集的链路'
-        }
+          this.eachOutputs(output)
+        })
       }
+    },
 
-      return null
-      /*const leafNodesMap = rootNodes.reduce((obj, node) => {
-        obj[node.id] = this.loadLeafNode(node)
-        console.log('obj[node.id]', obj[node.id], Array.isArray(obj[node.id])) // eslint-disable-line
-        return obj
-      }, {})*/
-
-      // const rootLeafNodes = Object.values(LeafNodes)
-      // const rootLeafNodes = rootNodes.map(node => this.loadLeafNode([], node))
-
-      /*for (let key of leafNodesMap) {
-        const value = leafNodesMap[key]
-        let flag = false
-        for (let innerKey in leafNodesMap) {
-          if (key === innerKey) continue
-          const innerValue = leafNodesMap[innerKey]
-
-          if (new Set([...value, ...innerValue]).size !== innerValue.length + value.length) {
-            flag = true
-            break
+    eachInputsByFilter(node, filterId) {
+      this.eachMap[node.id] = true
+      node.$inputs.forEach(id => {
+        if (id !== filterId && !this.eachMap[id]) {
+          const input = this.nodeById(id)
+          this.eachInputs(input)
+          if (input.$outputs.length > 1) {
+            this.eachOutputsByFilter(input, node.id)
           }
         }
-        if (!flag) {
-          return '存在没有交集的链路'
+      })
+    },
+
+    eachOutputsByFilter(node, filterId) {
+      this.eachMap[node.id] = true
+      node.$outputs.forEach(id => {
+        if (id !== filterId && !this.eachMap[id]) {
+          const output = this.nodeById(id)
+          this.eachOutputs(output)
+          if (output.$inputs.length > 1) {
+            this.eachInputsByFilter(output, node.id)
+          }
         }
-      }*/
+      })
+    },
+
+    eachInputs(node) {
+      this.eachMap[node.id] = true
+      const size = node.$inputs.length
+      if (size > 0) {
+        node.$inputs.forEach(id => {
+          if (this.eachMap[id]) return
+          const input = this.nodeById(id)
+          if (input.$outputs.length > 1) {
+            this.eachOutputsByFilter(input, node.id)
+          }
+          this.eachInputs(input)
+        })
+      }
+    },
+
+    validateLink() {
+      const firstSourceNode = this.allNodes.find(node => !node.$inputs.length)
+      this.eachMap = {}
+      this.eachOutputs(firstSourceNode)
+      // console.log('this.eachMap', this.eachMap) // eslint-disable-line
+
+      if (this.allNodes.some(node => !this.eachMap[node.id])) {
+        return '不支持多条链路，请编辑后重试'
+      }
+      return null
     },
 
     async validate() {
       if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
 
       await this.validateAllNodes()
-
-      const sourceMap = {},
-        targetMap = {},
-        edges = this.allEdges
-      edges.forEach(item => {
-        let _source = sourceMap[item.source]
-        let _target = targetMap[item.target]
-
-        if (!_source) {
-          sourceMap[item.source] = [item]
-        } else {
-          _source.push(item)
-        }
-
-        if (!_target) {
-          targetMap[item.target] = [item]
-        } else {
-          _target.push(item)
-        }
-      })
 
       let someErrorMsg = ''
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
@@ -1115,14 +1110,9 @@ export default {
 
       if (someErrorMsg) return someErrorMsg
 
-      // someErrorMsg = this.validateLink()
+      someErrorMsg = this.validateLink()
 
-      // if (someErrorMsg) return someErrorMsg
-
-      // 检查链路的末尾节点类型是否是表节点
-      // const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
-      // const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      // if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+      if (someErrorMsg) return someErrorMsg
 
       return null
     },
