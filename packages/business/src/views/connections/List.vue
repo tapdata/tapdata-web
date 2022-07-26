@@ -1,7 +1,5 @@
 <template>
   <section class="connection-list-wrap classify-wrap">
-    <!-- :title="$t('connection.databaseTittle')"
-      :desc="description" -->
     <TablePage
       ref="table"
       row-key="id"
@@ -151,18 +149,17 @@
   </section>
 </template>
 <script>
-import SchemaProgress from 'web-core/components/SchemaProgress'
-import TablePage from '@/components/TablePage'
-import VIcon from '@/components/VIcon'
+import dayjs from 'dayjs'
+import { VIcon, TablePage, FilterBar } from '@tap/component'
+import { connectionsApi, databaseTypesApi } from '@tap/api'
+import Cookie from '@tap/shared/src/cookie'
+
+import SchemaProgress from '../../components/SchemaProgress.vue'
+
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
-import { defaultModel, verify } from './util'
 import Test from './Test'
-import FilterBar from '@/components/filter-bar'
-import { getConnectionIcon } from './util'
-import Cookie from '@tap/shared/src/cookie'
-import dayjs from 'dayjs'
-import { connectionsApi, databaseTypesApi } from '@tap/api'
+import { defaultModel, verify, getConnectionIcon } from './util'
 
 let timeout = null
 

@@ -280,7 +280,7 @@
   </section>
 </template>
 <script>
-import FilterBar from '@/components/filter-bar'
+import { FilterBar } from '@tap/component'
 import AddServe from './AddServe'
 import { workerApi, clusterApi } from '@tap/api'
 

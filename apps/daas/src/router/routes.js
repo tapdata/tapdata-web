@@ -1,6 +1,7 @@
 import Parent from './Parent'
 const MigrateDetails = () => import(/* webpackChunkName: "task-details" */ '../views/task/migrate/details/Index.vue')
-const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '@/views/connections/DatabaseForm')
+const ConnectionForm = () =>
+  import(/* webpackChunkName: "connection-form" */ '@tap/business/src/views/connections/DatabaseForm')
 const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
 const VerificationHistory = () => import(/* webpackChunkName: "verification-history" */ '@/views/verification/History')
 const VerificationResult = () => import(/* webpackChunkName: "verification-result" */ '@/views/verification/Result')
@@ -151,7 +152,8 @@ export default [
           {
             path: '',
             name: 'connectionsList',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connections/List'),
+            component: () =>
+              import(/* webpackChunkName: "connection-list" */ '@tap/business/src/views/connections/List'),
             meta: {
               title: 'page_title_connections',
               code: 'datasource_menu'

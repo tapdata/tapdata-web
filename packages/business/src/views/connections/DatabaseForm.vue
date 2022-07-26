@@ -110,15 +110,16 @@
 </template>
 
 <script>
+import { action } from '@formily/reactive'
+
+import { clusterApi, connectionsApi, databaseTypesApi, logcollectorApi, pdkApi } from '@tap/api'
+import { VIcon, GitBook } from '@tap/component'
+import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
-import VIcon from '@/components/VIcon'
-import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
-import { checkConnectionName } from '@/utils/util'
-import GitBook from '@/components/GitBook'
-import { clusterApi, connectionsApi, databaseTypesApi, logcollectorApi, pdkApi } from '@tap/api'
-import { action } from '@formily/reactive'
+
+import { checkConnectionName } from '@tap/shared'
 
 export default {
   name: 'DatabaseForm',

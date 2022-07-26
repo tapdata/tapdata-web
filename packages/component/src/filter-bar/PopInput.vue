@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import VIcon from '../base/VIcon.vue'
 
 export default {
   name: 'PopInput',

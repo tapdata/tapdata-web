@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
-import SelectList from '@/components/SelectList'
+import VIcon from '../base/VIcon.vue'
+import SelectList from '../SelectList'
 import PopInput from './PopInput'
 import DatetimeRange from './DatetimeRange'
 import Datetime from './Datetime'

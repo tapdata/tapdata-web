@@ -447,6 +447,8 @@ export default {
   connection_preview_isr_partition: 'Write all ISR partitions',
   connection_preview_operation_success: 'Operation successful',
   task_manage: 'Task',
+  task_manage_etl: 'Data development',
+  task_manage_migrate: 'Data copy',
   task_name: 'Task name',
   task_status: 'Status',
   task_sync_type: 'Synchronization type',

@@ -120,7 +120,7 @@
 <script>
 let selectKeepArr = []
 import { cloneDeep } from 'lodash'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 export default {
   components: { VIcon },

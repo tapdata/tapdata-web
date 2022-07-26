@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import i18n from '@/i18n'
 
 export default {

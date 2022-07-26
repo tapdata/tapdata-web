@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import {
   CONNECTION_STATUS_MAP,
   TASK_STATUS_MAP,

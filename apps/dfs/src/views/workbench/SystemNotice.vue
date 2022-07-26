@@ -85,7 +85,7 @@
 <script>
 import { TYPEMAP } from './tyepMap'
 import Setting from './components/Setting'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {

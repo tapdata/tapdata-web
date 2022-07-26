@@ -254,8 +254,7 @@
 <script>
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
-import TablePage from '@/components/TablePage'
-import FilterBar from '@/components/filter-bar'
+import { TablePage, FilterBar } from '@tap/component'
 import Drawer from '@/components/Drawer'
 import Upload from '@/components/UploadDialog'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'

@@ -355,7 +355,7 @@ import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import PageHeader from '@/components/PageHeader'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import { usersApi, timeStampApi, licensesApi } from '@tap/api'
 

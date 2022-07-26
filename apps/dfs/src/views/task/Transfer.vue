@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { VirtualTransfer } from '@tap/component'
 import { MqTransfer } from '@tap/component'
 

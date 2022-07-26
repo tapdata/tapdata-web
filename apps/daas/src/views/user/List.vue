@@ -216,9 +216,8 @@
 </template>
 
 <script>
-import TablePage from '@/components/TablePage'
+import { TablePage, FilterBar } from '@tap/component'
 import { toRegExp } from '../../utils/util'
-import FilterBar from '@/components/filter-bar'
 import dayjs from 'dayjs'
 import { usersApi, roleApi, roleMappingsApi } from '@tap/api'
 

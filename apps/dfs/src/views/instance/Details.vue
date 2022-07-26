@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import StatusTag from '@/components/StatusTag'
 import timeFunction from '@/mixins/timeFunction'
 

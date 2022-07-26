@@ -2,7 +2,7 @@ import { defineComponent } from 'vue-demi'
 import { Select } from '../select'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { PreviewText } from '@formily/element'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 
 const DefineFieldSelect = defineComponent({
   setup: (props, { attrs, listeners }) => {

@@ -1,7 +1,7 @@
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import '../field-rename/index.scss'
 import { convertSchemaToTreeData } from '../field-rename/util'
 import Locale from '../../mixins/locale'

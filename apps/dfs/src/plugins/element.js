@@ -61,6 +61,7 @@ import {
   CheckboxGroup,
   Skeleton,
   SkeletonItem,
+  Submenu,
   InfiniteScroll
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -136,4 +137,5 @@ Vue.use(Tree)
 Vue.use(CheckboxGroup)
 Vue.use(Skeleton)
 Vue.use(SkeletonItem)
+Vue.use(Submenu)
 Vue.use(InfiniteScroll)

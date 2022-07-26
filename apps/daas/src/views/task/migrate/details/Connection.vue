@@ -51,10 +51,10 @@
 
 <script>
 import TableList from '@/components/TableList'
-import SchemaProgress from 'web-core/components/SchemaProgress'
-import VIcon from '@/components/VIcon'
+import { SchemaProgress } from '@tap/business'
+import { VIcon } from '@tap/component'
 import { deepCopy } from '@/utils/util'
-import { getConnectionIcon } from '@/views/connections/util'
+import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import { connectionsApi } from '@tap/api'
 
 export default {

@@ -1,12 +1,11 @@
 import { defineComponent, ref } from 'vue-demi'
-import { FormLayout, FormItem, JsEditor } from '../index'
+import { FormItem, JsEditor } from '../index'
 import { VCodeEditor } from '@tap/component'
 
 export const JsProcessor = defineComponent({
   props: ['value'],
   setup(props, { emit }) {
     const inputRef = ref(JSON.stringify({ table: {} }), null, 2)
-    const outputRef = ref('')
     return () => {
       return (
         <div class="js-processor">

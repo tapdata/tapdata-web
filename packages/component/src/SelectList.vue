@@ -170,11 +170,11 @@
 </template>
 
 <script>
-import { deepCopy, uniqueArr } from '@/utils/util'
+import { deepCopy, uniqueArr } from '@tap/shared'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import VIcon from '@/components/VIcon'
+import VIcon from './base/VIcon.vue'
 
 export default {
   name: 'SelectList',

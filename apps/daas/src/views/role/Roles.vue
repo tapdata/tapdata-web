@@ -154,8 +154,7 @@
 </template>
 
 <script>
-import FilterBar from '@/components/filter-bar'
-import TablePage from '@/components/TablePage'
+import { TablePage, FilterBar } from '@tap/component'
 import { toRegExp } from '@/utils/util'
 import { roleApi, usersApi, roleMappingsApi, permissionsApi } from '@tap/api'
 
