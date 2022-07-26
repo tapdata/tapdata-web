@@ -18,6 +18,9 @@
         <VTable
           :remoteMethod="remoteMethod"
           :columns="columns"
+          :pageOptions="{
+            layout: 'total, prev, pager, next, sizes'
+          }"
           ref="table"
           class="table-list"
           hide-on-single-page
