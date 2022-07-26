@@ -12,7 +12,7 @@ env:
 
 jobs:
 
-  Call-Enterprise-CICD:
+  Set-Env:
     runs-on: ubuntu-latest
     steps:
       - name: set env if push
@@ -33,5 +33,7 @@ jobs:
           echo "ENTERPRISE_BRANCH=${{ inputs.ENTERPRISE_BRANCH }}" >> $GITHUB_ENV
           echo "OPENSOURCE_BRANCH=${{ inputs.OPENSOURCE_BRANCH }}" >> $GITHUB_ENV
           echo "CURRENT_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-      - uses: tapdata/tapdata-enterprise/.github/workflows/build.yml@${{ env.ENTERPRISE_BRANCH }}
+
+  Call-Enterprise-CICD:
+    uses: tapdata/tapdata-enterprise/.github/workflows/build.yml@${{ env.ENTERPRISE_BRANCH }}
       
