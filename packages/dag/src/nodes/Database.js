@@ -128,7 +128,7 @@ export class Database extends NodeType {
             fulfill: {
               state: {
                 visible:
-                  '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") }}'
+                  '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}'
               }
             }
           }
