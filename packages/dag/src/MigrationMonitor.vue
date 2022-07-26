@@ -704,10 +704,15 @@ export default {
       return result
     },
 
-    handleVerifyDetails(query) {
+    handleVerifyDetails(table) {
       this.$router.push({
         name: 'VerifyDetails',
-        query
+        params: {
+          id: this.dataflow?.id
+        },
+        query: {
+          table
+        }
       })
     }
   }

@@ -146,6 +146,7 @@ export default {
   page_title_run_monitor: '運行監控',
   page_title_data_develop: '數據開發',
   page_title_data_verification: '數據校驗',
+  page_title_data_verify_details: '校驗詳情',
   page_title_data_verification_history: '任務校驗歷史',
   page_title_diff_verification_history: '差異校驗歷史',
   page_title_diff_verification_details: '差異校驗詳情',

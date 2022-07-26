@@ -49,11 +49,11 @@
             <div v-for="db in dbList" :key="db.id" class="db-item px-4 py-2 user-select-none border-bottom">
               <div class="flex justify-content-between mb-2">
                 <span>连接名：</span>
-                <span>{{ db.connection }}</span>
+                <ElLink type="primary" @click="$emit('toConnection', db.connection)">{{ db.connection }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>表名：</span>
-                <span>{{ db.table }}</span>
+                <ElLink type="primary" @click="$emit('verifyDetails', db.table)">{{ db.table }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>异常数据（行）：</span>

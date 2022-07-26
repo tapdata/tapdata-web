@@ -148,6 +148,7 @@ export default {
   page_title_run_monitor: 'Run Monitor',
   page_title_data_develop: 'Data Development',
   page_title_data_verification: 'Data verification',
+  page_title_data_verify_details: 'Verify details',
   page_title_data_verification_history: 'Task verification history',
   page_title_diff_verification_history: 'Diff Verification History',
   page_title_diff_verification_details: 'Diff Verification Details',
