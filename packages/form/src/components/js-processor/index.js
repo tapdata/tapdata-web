@@ -33,7 +33,7 @@ export const JsProcessor = observer(
             page: 1,
             pageSize: 10000
           })
-          .then(({ items }) => {
+          .then(({ items = [] }) => {
             tableList.value = items.map(item => ({
               label: item.previousTableName,
               value: item.previousTableName
@@ -139,11 +139,11 @@ export const JsProcessor = observer(
 
             <div class="flex" v-loading={running.value}>
               <FormItem.BaseItem class="flex-1 mr-4" label="调试输入">
-                <VCodeEditor value={inputRef.value} lang="json" height={450}></VCodeEditor>
+                <VCodeEditor class="border rounded-2" value={inputRef.value} lang="json" height={450}></VCodeEditor>
               </FormItem.BaseItem>
 
               <FormItem.BaseItem class="flex-1" label="结果输出">
-                <VCodeEditor value={outputRef.value} lang="json" height={450}></VCodeEditor>
+                <VCodeEditor class="border rounded-2" value={outputRef.value} lang="json" height={450}></VCodeEditor>
               </FormItem.BaseItem>
             </div>
           </div>

@@ -663,9 +663,20 @@ export default {
       }
     },
 
+    updateNodePropsDebounce(form) {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = setTimeout(() => {
+        this.updateNodeProps(form)
+      }, 60)
+    },
+
     // 更新节点属性
-    updateNodeProps: debounce(function (form) {
-      if (!this.node || form.values.id !== this.node.id) return
+    updateNodeProps(form) {
+      clearTimeout(this.updateTimer)
+      /*if (!this.node || form.values.id !== this.node.id) {
+        console.log('节点已经切换', form.values.name, '->', this.node.name) // eslint-disable-line
+        return
+      }*/
 
       const formValues = JSON.parse(JSON.stringify(form.values))
       // const formValues = { ...form.values }
@@ -676,33 +687,37 @@ export default {
 
       console.log('updateNodeProps', formValues) // eslint-disable-line
       this.updateNodeProperties({
-        id: this.node.id,
+        id: form.values.id,
         properties: JSON.parse(JSON.stringify(formValues))
       })
       this.updateDag()
       this.confirmNodeHasError()
-    }, 100),
+    },
 
     // 绑定表单事件
     useEffects() {
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
-
         // eslint-disable-next-line no-console
         // console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`)
         // eslint-disable-next-line no-console
         // console.trace(JSON.parse(JSON.stringify(form.values)))
         // eslint-disable-next-line no-console
         // console.groupEnd()
-        if (this.node && JSON.stringify(form.values) !== JSON.stringify(this.node)) {
-          // console.log('onFormValuesChange---doUpdate', JSON.stringify(form.values), JSON.stringify(this.node)) // eslint-disable-line
-          this.updateNodeProps(form)
+        // if (!this.node || form.values.id !== this.node.id) {
+        //   console.log('节点已经切换', form.values.name, '->', this.node.name) // eslint-disable-line
+        // }
+        const node = this.nodeById(form.values.id)
+        console.log(`🚗onFormValuesChange`, JSON.parse(JSON.stringify(form.values)))
+        if (node && JSON.stringify(form.values) !== JSON.stringify(node)) {
+          this.updateNodePropsDebounce(form)
         }
       })
+
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
         // eslint-disable-next-line no-console
-        // console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
+        console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
         this.updateNodeProps(form)
       })
       onFieldReact('*', field => {
