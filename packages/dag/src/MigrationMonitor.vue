@@ -519,7 +519,26 @@ export default {
       const { count } = this
       let res = {
         samples: [
-          // 任务事件统计（条）
+          // 任务事件统计（条）-任务累计
+          {
+            input: {
+              inserted: getRandom(100),
+              updated: getRandom(100),
+              deleted: getRandom(100),
+              ddl: getRandom(100),
+              other: getRandom(100),
+              total: getRandom(100)
+            },
+            output: {
+              inserted: getRandom(100),
+              updated: getRandom(100),
+              deleted: getRandom(100),
+              ddl: getRandom(100),
+              other: getRandom(100),
+              total: getRandom(100)
+            }
+          },
+          // 任务事件统计（条）-所选周期累计
           {
             input: {
               inserted: getRandom(100),
@@ -578,8 +597,8 @@ export default {
           }
         ]
       }
-      res.samples[1].time = res.samples[1].time.map(t => this.formatTime(t))
       res.samples[2].time = res.samples[2].time.map(t => this.formatTime(t))
+      res.samples[3].time = res.samples[3].time.map(t => this.formatTime(t))
       res.statistics[0].initialTime = this.formatTime(res.statistics[0].initialTime)
       res.statistics[0].cdcTime = this.formatTime(res.statistics[0].cdcTime)
       this.quota = res

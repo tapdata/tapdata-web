@@ -1,5 +1,9 @@
 <template>
   <div class="event-chart">
+    <ElRadioGroup v-if="showAll" v-model="dataType" size="mini" class="event-chart__radio" @change="loadBarData">
+      <ElRadioButton :label="0">任务运行累计</ElRadioButton>
+      <ElRadioButton :label="1">所选周期累计</ElRadioButton>
+    </ElRadioGroup>
     <div v-if="total" class="total-line flex align-items-center">
       <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.input) }}</span>
       <span class="ml-2">总输入</span>
@@ -20,7 +24,7 @@ export default {
   components: { Chart },
   props: {
     samples: {
-      type: Object,
+      type: Array,
       required: true
     },
     yData: {
@@ -30,11 +34,15 @@ export default {
     height: {
       type: String,
       default: '140px'
+    },
+    showAll: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
-      color: ['#88DBDA', '#6ACA26', '#FDD746', '#B682CE', '#00A1F1'],
+      dataType: 0,
       total: {
         input: 0,
         output: 0
@@ -117,7 +125,11 @@ export default {
   },
   methods: {
     init() {
-      const { input, output } = this.samples || {}
+      this.loadBarData()
+    },
+
+    loadBarData() {
+      const { input, output } = this.samples?.[this.dataType] || {}
       if (!(input && output)) {
         return
       }
@@ -173,5 +185,8 @@ export default {
 <style lang="scss" scoped>
 .total-line {
   margin-bottom: 8px;
+}
+.event-chart__radio {
+  margin: 8px 0;
 }
 </style>

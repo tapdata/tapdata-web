@@ -28,7 +28,7 @@
       </div>
       <div class="info-box">
         <div class="font-color-normal fw-bold mb-2">任务事件统计（条）</div>
-        <EventChart :samples="eventDataAll"></EventChart>
+        <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
       </div>
       <div class="info-box">
         <CollapsePanel>
@@ -241,13 +241,19 @@ export default {
       return `height: calc(100% + ${gutter}px);`
     },
 
+    // 任务事件统计（条）-任务累计
     eventDataAll() {
       return this.quota.samples?.[0] || {}
     },
 
+    // 任务事件统计（条）-所选周期累计
+    eventDataPeriod() {
+      return this.quota.samples?.[1] || {}
+    },
+
     // qps
     qpsData() {
-      const res = this.quota.samples?.[1]
+      const res = this.quota.samples?.[2]
       if (!res) {
         return {
           x: [],
@@ -264,7 +270,7 @@ export default {
 
     // 增量延迟
     delayData() {
-      const res = this.quota.samples?.[2]
+      const res = this.quota.samples?.[3]
       if (!res) {
         return {
           x: [],

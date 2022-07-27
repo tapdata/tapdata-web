@@ -16,8 +16,8 @@
     <div class="flex justify-content-between">
       <div class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">事件统计</div>
-        <div class="chart-box__content p-4">
-          <EventChart :samples="eventDataAll"></EventChart>
+        <div class="chart-box__content px-4 pb-2">
+          <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
       <div v-if="isSource" class="chart-box rounded-2">
@@ -83,7 +83,6 @@
             :limit="20"
             :time-format="timeFormat"
             title="QPS（Q/S）"
-            style="height: 200px"
           ></LineChart>
         </div>
       </div>
@@ -96,7 +95,6 @@
             :time-format="timeFormat"
             :color="['#2C65FF']"
             title="增量延迟（ms）"
-            style="height: 200px"
           ></LineChart>
         </div>
       </div>
@@ -173,13 +171,19 @@ export default {
       )
     },
 
+    // 任务事件统计（条）-任务累计
     eventDataAll() {
       return this.quota.samples?.[0] || {}
     },
 
+    // 任务事件统计（条）-所选周期累计
+    eventDataPeriod() {
+      return this.quota.samples?.[1] || {}
+    },
+
     // qps
     qpsData() {
-      const res = this.quota.samples?.[1]
+      const res = this.quota.samples?.[2]
       if (!res) {
         return {
           x: [],
@@ -196,7 +200,7 @@ export default {
 
     // 增量延迟
     delayData() {
-      const res = this.quota.samples?.[2]
+      const res = this.quota.samples?.[3]
       if (!res) {
         return {
           x: [],
@@ -370,7 +374,26 @@ export default {
       const { count } = this
       let res = {
         samples: [
-          // 任务事件统计（条）
+          // 任务事件统计（条）-任务累计
+          {
+            input: {
+              inserted: getRandom(100),
+              updated: getRandom(100),
+              deleted: getRandom(100),
+              ddl: getRandom(100),
+              other: getRandom(100),
+              total: getRandom(100)
+            },
+            output: {
+              inserted: getRandom(100),
+              updated: getRandom(100),
+              deleted: getRandom(100),
+              ddl: getRandom(100),
+              other: getRandom(100),
+              total: getRandom(100)
+            }
+          },
+          // 任务事件统计（条）-所选周期累计
           {
             input: {
               inserted: getRandom(100),
@@ -429,8 +452,8 @@ export default {
           }
         ]
       }
-      res.samples[1].time = res.samples[1].time.map(t => this.formatTime(t))
       res.samples[2].time = res.samples[2].time.map(t => this.formatTime(t))
+      res.samples[3].time = res.samples[3].time.map(t => this.formatTime(t))
       res.statistics[0].initialTime = this.formatTime(res.statistics[0].initialTime)
       res.statistics[0].cdcTime = this.formatTime(res.statistics[0].cdcTime)
       this.quota = res
@@ -446,7 +469,7 @@ export default {
 <style lang="scss" scoped>
 .chart-box {
   width: 355px;
-  height: 266px;
+  height: 286px;
   border: 1px solid #c9cdd4;
   &.disabled {
     border: none;
@@ -454,12 +477,22 @@ export default {
 }
 .chart-box__title {
   //color: #333c4a;
+  height: 38px;
   background: #fafafa;
+}
+.line-chart {
+  height: 200px;
 }
 .event-chart {
   ::v-deep {
+    .event-chart__radio {
+      //position: absolute;
+      //top: 4px;
+      //right: 0;
+      //margin-top: 0;
+    }
     .total-line {
-      margin-bottom: 24px !important;
+      margin-bottom: 20px !important;
     }
   }
 }
