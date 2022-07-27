@@ -92,7 +92,7 @@ const routes = [
         children: [
           {
             path: 'create',
-            name: 'ConnectionCreate',
+            name: 'connectionCreate',
             component: ConnectionForm,
             //component: Iframe,
             meta: {

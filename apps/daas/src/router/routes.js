@@ -160,7 +160,7 @@ export default [
           },
           {
             path: 'create',
-            name: 'connectionsCreate',
+            name: 'connectionCreate',
             component: ConnectionForm,
             meta: {
               title: 'page_title_connections_create',

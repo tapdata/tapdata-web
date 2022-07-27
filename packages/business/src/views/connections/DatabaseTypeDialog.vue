@@ -63,7 +63,6 @@ export default {
     },
     databaseType(item) {
       this.$emit('databaseType', item)
-      this.$store.commit('createConnection', { item })
     },
     getDatabaseType() {
       databaseTypesApi

@@ -534,7 +534,7 @@ export default {
         pdkHash
       }
       this.$router.push({
-        name: 'connectionsCreate',
+        name: 'connectionCreate',
         query
       })
     },

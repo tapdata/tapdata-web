@@ -306,7 +306,7 @@ export default {
       this.databaseType = item.type
       const { pdkHash } = item
       this.$router.push({
-        name: 'connectionsCreate',
+        name: 'connectionCreate',
         query: { pdkHash }
       })
     },
