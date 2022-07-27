@@ -83,7 +83,7 @@ export const JsProcessor = defineComponent({
 
     return () => {
       return (
-        <div class="js-processor">
+        <div class="js-processor font-color-light">
           <FormItem.BaseItem label="脚本">
             <JsEditor
               value={props.value}
@@ -95,9 +95,8 @@ export const JsProcessor = defineComponent({
             ></JsEditor>
           </FormItem.BaseItem>
 
-          <div class="flex align-center mb-2">
-            <div class="flex align-center mr-4 text-nowrap">
-              <span class="mr-2">选择表</span>
+          <div class="flex align-center">
+            <FormItem.BaseItem class="flex-1 mr-4" label="选择表" layout="horizontal" feedbackLayout="none">
               <VirtualSelect
                 value={params.tableName}
                 filterable
@@ -109,36 +108,32 @@ export const JsProcessor = defineComponent({
                   params.tableName = val
                 }}
               />
+            </FormItem.BaseItem>
+            <div class="flex-1 flex justify-content-between">
+              <FormItem.BaseItem label="数据行数" layout="horizontal" feedbackLayout="none">
+                <ElInputNumber
+                  style="width: 100px;"
+                  value={params.rows}
+                  onInput={val => {
+                    params.rows = val
+                  }}
+                  controls-position="right"
+                ></ElInputNumber>
+              </FormItem.BaseItem>
+              <ElButton loading={running.value || tableLoading.value} onClick={handleRun} type="primary" size="small">
+                试运行
+              </ElButton>
             </div>
-            <div class="flex align-center text-nowrap">
-              <span class="mr-2">数据行数</span>
-              <ElInputNumber
-                value={params.rows}
-                onInput={val => {
-                  params.rows = val
-                }}
-                class="mx-4"
-                controls-position="right"
-              ></ElInputNumber>
-            </div>
-            <ElButton loading={running.value || tableLoading.value} onClick={handleRun} type="primary" size="small">
-              试运行
-            </ElButton>
           </div>
 
-          <div class="flex align-center mb-2">
-            <div class="flex align-center flex-1 mr-4">
-              <div>调试输入</div>
-            </div>
-            <div class="flex-1">结果输出</div>
-          </div>
-          <div class="flex align-center" v-loading={running.value}>
-            <div class="flex-1 mr-4">
+          <div class="flex">
+            <FormItem.BaseItem class="flex-1 mr-4" label="调试输入">
               <VCodeEditor value={inputRef.value} lang="json" height={450}></VCodeEditor>
-            </div>
-            <div class="flex-1">
+            </FormItem.BaseItem>
+
+            <FormItem.BaseItem class="flex-1" label="结果输出">
               <VCodeEditor value={outputRef.value} lang="json" height={450}></VCodeEditor>
-            </div>
+            </FormItem.BaseItem>
           </div>
         </div>
       )
