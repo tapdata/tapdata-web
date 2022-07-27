@@ -62,7 +62,7 @@ export function getPieOptions(data, op) {
     })
     options.legend.formatter = name => {
       const count = options.series[0].data?.find(t => t.name === name)?.value || 0
-      const arr = [`{orgname|${name}}`, `{count|${count}}`]
+      const arr = [`{orgname|${name}}`, `{count|${count.toLocaleString()}}`]
       return arr.join('')
     }
   }

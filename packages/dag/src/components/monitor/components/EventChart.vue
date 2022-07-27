@@ -133,43 +133,50 @@ export default {
       if (!(input && output)) {
         return
       }
-      this.total.input = eval(Object.values(input).join('+'))
-      this.total.output = eval(Object.values(output).join('+'))
+      let inData = {}
+      let outData = {}
+      for (let key in input) {
+        inData[key.toLowerCase()] = input[key]
+        outData[key.toLowerCase()] = output[key]
+      }
+      this.total.input = eval(Object.values(inData).join('+'))
+      this.total.output = eval(Object.values(outData).join('+'))
       let arr = [
         {
           label: '插入',
-          key: 'inserted',
+          key: 'InsertTotal',
           color: '#88DBDA'
         },
         {
           label: '更新',
-          key: 'updated',
+          key: 'UpdateTotal',
           color: '#6ACA26'
         },
         {
           label: '删除',
-          key: 'deleted',
+          key: 'DeleteTotal',
           color: '#FDD746'
         },
         {
           label: 'DDL',
-          key: 'ddl',
+          key: 'DdlTotal',
           color: '#B682CE'
         },
         {
           label: '其他',
-          key: 'other',
+          key: 'OthersTotal',
           color: '#00A1F1'
         }
       ]
       let series = arr.map(t => {
+        const k = t.key.toLowerCase()
         return {
           type: 'bar',
           stack: 'total',
           barWidth: 12,
           name: t.label,
           color: t.color,
-          data: [input[t.key], output[t.key]]
+          data: [inData[k], outData[k]]
         }
       })
       this.options.series = series

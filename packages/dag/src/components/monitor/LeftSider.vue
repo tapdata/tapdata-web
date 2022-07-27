@@ -173,6 +173,7 @@ import VIcon from 'web-core/components/VIcon'
 import InitialList from './components/InitialList'
 import { Chart } from '@tap/component'
 import { getPieOptions } from './util'
+import dayjs from 'dayjs'
 
 export default {
   name: 'LeftSider',
@@ -243,18 +244,26 @@ export default {
 
     // 任务事件统计（条）-任务累计
     eventDataAll() {
-      return this.quota.samples?.[0] || {}
+      const data = this.quota.samples?.totalData?.[0]
+      if (!data) {
+        return
+      }
+      return this.getInputOutput(data)
     },
 
     // 任务事件统计（条）-所选周期累计
     eventDataPeriod() {
-      return this.quota.samples?.[1] || {}
+      const data = this.quota.samples?.barChartData?.[0]
+      if (!data) {
+        return
+      }
+      return this.getInputOutput(data)
     },
 
     // qps
     qpsData() {
-      const res = this.quota.samples?.[2]
-      if (!res) {
+      const data = this.quota.samples?.lineChartData?.[0]
+      if (!data) {
         return {
           x: [],
           name: [],
@@ -262,33 +271,40 @@ export default {
         }
       }
       return {
-        x: res.time,
+        x: data.time,
         name: ['输入', '输出'],
-        value: [res.inputQPS, res.outputQPS]
+        value: [data.inputQps, data.outputQps]
       }
     },
 
     // 增量延迟
     delayData() {
-      const res = this.quota.samples?.[3]
-      if (!res) {
+      const data = this.quota.samples?.lineChartData?.[0]
+      if (!data) {
         return {
           x: [],
           value: []
         }
       }
       return {
-        x: res.time,
-        value: res.value
+        x: data.time,
+        value: data.timeCostAvg
       }
     },
 
     // 全量信息
     initialData() {
-      const { initialTime } = this.quota.statistics?.[0] || {}
+      const data = this.quota.samples?.totalData?.[0]
+      const initialCompleteTime = data?.initialCompleteTime
+        ? dayjs(data?.initialCompleteTime).format('YYYY-MM-DD HH:mm:ss')
+        : '-'
       return {
-        time: initialTime
+        initialCompleteTime
       }
+      // const { initialTime } = this.quota.statistics?.[0] || {}
+      // return {
+      //   time: initialTime
+      // }
     },
 
     // 全量-表结构同步
@@ -300,30 +316,37 @@ export default {
           value: 0,
           color: '#F7D762'
         },
-        {
-          name: '无需创建',
-          key: 'noCreate',
-          value: 0,
-          color: '#88DBDA'
-        },
+        // {
+        //   name: '无需创建',
+        //   key: 'noCreate',
+        //   value: 0,
+        //   color: '#88DBDA'
+        // },
         {
           name: '已完成',
           key: 'finished',
           value: 0,
           color: '#82C647'
-        },
-        {
-          name: '错误',
-          key: 'error',
-          value: 0,
-          color: '#EC8181'
         }
+        // {
+        //   name: '错误',
+        //   key: 'error',
+        //   value: 0,
+        //   color: '#EC8181'
+        // }
       ]
-      const { structure } = this.quota.statistics?.[0] || {}
+      const data = this.quota.samples?.totalData?.[0] || {}
+      const { tableTotal = 0, createTableTotal = 0 } = data
+      let result = {
+        wait: 0,
+        finished: createTableTotal
+      }
+      result.wait = tableTotal - result.finished
+      // const { structure } = this.quota.statistics?.[0] || {}
       return getPieOptions(
         arr.map(t =>
           Object.assign({}, t, {
-            value: structure?.[t.key] ?? 0
+            value: result[t.key] ?? 0
           })
         )
       )
@@ -338,30 +361,37 @@ export default {
           value: 0,
           color: '#F7D762'
         },
-        {
-          name: '进行中',
-          key: 'running',
-          value: 0,
-          color: '#88DBDA'
-        },
+        // {
+        //   name: '进行中',
+        //   key: 'running',
+        //   value: 0,
+        //   color: '#88DBDA'
+        // },
         {
           name: '已完成',
           key: 'finished',
           value: 0,
           color: '#82C647'
-        },
-        {
-          name: '错误',
-          key: 'error',
-          value: 0,
-          color: '#EC8181'
         }
+        // {
+        //   name: '错误',
+        //   key: 'error',
+        //   value: 0,
+        //   color: '#EC8181'
+        // }
       ]
-      const { data } = this.quota.statistics?.[0] || {}
+      // const { data } = this.quota.statistics?.[0] || {}
+      const data = this.quota.samples?.totalData?.[0] || {}
+      const { tableTotal = 0, snapshotTableTotal = 0 } = data
+      let result = {
+        wait: 0,
+        finished: snapshotTableTotal
+      }
+      result.wait = tableTotal - result.finished
       return getPieOptions(
         arr.map(t =>
           Object.assign({}, t, {
-            value: data?.[t.key] ?? 0
+            value: result?.[t.key] ?? 0
           })
         )
       )
@@ -371,11 +401,14 @@ export default {
     cdcData() {
       const { task_data_source_Data = {} } = this.dataflow?.attrs || {}
       const { source_connectionName, target_connectionName } = task_data_source_Data
-      const { cdcTime } = this.quota.statistics?.[0] || {}
+      // const { cdcTime } = this.quota.statistics?.[0] || {}
+      const data = this.quota.samples?.totalData?.[0] || {}
+      const { cdcTime } = data
+      const time = cdcTime ? dayjs(cdcTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       return {
         source: source_connectionName,
         target: target_connectionName,
-        time: cdcTime
+        time
       }
     }
   },
@@ -640,6 +673,34 @@ export default {
 
     toInitialList() {
       this.initialListDialog = true
+    },
+
+    getInputOutput(data) {
+      let keyArr = [
+        'inputInsertTotal',
+        'inputUpdateTotal',
+        'inputDeleteTotal',
+        'inputDdlTotal',
+        'inputOthersTotal',
+        'outputInsertTotal',
+        'outputUpdateTotal',
+        'outputDeleteTotal',
+        'outputDdlTotal',
+        'outputOthersTotal'
+      ]
+      let result = {
+        input: {},
+        output: {}
+      }
+      keyArr.forEach(el => {
+        for (let key in result) {
+          let item = result[key]
+          if (el.includes(key)) {
+            item[el.replace(key, '')] = data[el] || 0
+          }
+        }
+      })
+      return result
     }
   }
 }

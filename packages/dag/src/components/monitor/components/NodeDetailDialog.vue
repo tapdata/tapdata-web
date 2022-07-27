@@ -110,7 +110,7 @@ import { mapGetters } from 'vuex'
 import { getPieOptions } from '../util'
 import dayjs from 'dayjs'
 
-function getRandom(num = 1) {
+function getRandom(num = 100) {
   return Math.ceil(Math.random() * 100 * num)
 }
 
@@ -173,18 +173,26 @@ export default {
 
     // 任务事件统计（条）-任务累计
     eventDataAll() {
-      return this.quota.samples?.[0] || {}
+      const data = this.quota.samples?.totalData?.[0]
+      if (!data) {
+        return
+      }
+      return this.getInputOutput(data)
     },
 
     // 任务事件统计（条）-所选周期累计
     eventDataPeriod() {
-      return this.quota.samples?.[1] || {}
+      const data = this.quota.samples?.barChartData?.[0]
+      if (!data) {
+        return
+      }
+      return this.getInputOutput(data)
     },
 
     // qps
     qpsData() {
-      const res = this.quota.samples?.[2]
-      if (!res) {
+      const data = this.quota.samples?.lineChartData?.[0]
+      if (!data) {
         return {
           x: [],
           name: [],
@@ -192,24 +200,24 @@ export default {
         }
       }
       return {
-        x: res.time,
+        x: data.time,
         name: ['输入', '输出'],
-        value: [res.inputQPS, res.outputQPS]
+        value: [data.inputQps, data.outputQps]
       }
     },
 
     // 增量延迟
     delayData() {
-      const res = this.quota.samples?.[3]
-      if (!res) {
+      const data = this.quota.samples?.lineChartData?.[0]
+      if (!data) {
         return {
           x: [],
           value: []
         }
       }
       return {
-        x: res.time,
-        value: res.value
+        x: data.time,
+        value: data.timeCostAvg
       }
     },
 
@@ -365,6 +373,81 @@ export default {
       this.loadQuotaData()
     },
 
+    getFilter() {
+      const taskId = this.dataflow?.id
+      const nodeId = this.selected
+      let params = {
+        starAt: 1658491200000,
+        endAt: 1658494800000,
+        samples: {
+          // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
+          totalData: {
+            tags: {
+              type: 'node',
+              taskId,
+              nodeId
+            },
+            endAt: '', // 停止时间 || 当前时间
+            fields: ['insertTotal', 'updateTotal', 'deleteTotal', 'ddlTotal', 'othersTotal', 'tcpPing', 'connectPing'],
+            type: 'instant' // 瞬时值
+          },
+          // 任务事件统计（条）-所选周期累计
+          barChartData: {
+            tags: {
+              type: 'task',
+              taskId
+            },
+            fields: [
+              'insertTotal',
+              'updateTotal',
+              'deleteTotal',
+              'ddlTotal',
+              'othersTotal'
+              // 'qps',
+              // 'timeCostAvg',
+              // 'currentEventTimestamp',
+              // 'tcpPing',
+              // 'connectPing'
+            ],
+            type: 'difference'
+          },
+          // qps + 增量延迟
+          lineChartData: {
+            tags: {
+              type: 'task',
+              taskId
+            },
+            fields: ['inputQps', 'outputQps', 'timeCostAvg'],
+            type: 'continuous' // 连续数据
+          },
+          // dag数据
+          dagData: {
+            tags: {
+              type: 'node',
+              taskId: ''
+            },
+            fields: [
+              'insertTotal',
+              'updateTotal',
+              'deleteTotal',
+              'ddlTotal',
+              'othersTotal',
+              'qps',
+              'timeCostAvg',
+              'currentEventTimestamp',
+              'tcpPing',
+              'connectPing',
+              'inputTotal',
+              'outputTotal',
+              'inputQps',
+              'outputQps'
+            ]
+          }
+        }
+      }
+      return params
+    },
+
     loadQuotaData() {
       const { refresh } = this
       if (refresh) {
@@ -373,94 +456,72 @@ export default {
       this.count++
       const { count } = this
       let res = {
-        samples: [
-          // 任务事件统计（条）-任务累计
-          {
-            input: {
-              inserted: getRandom(100),
-              updated: getRandom(100),
-              deleted: getRandom(100),
-              ddl: getRandom(100),
-              other: getRandom(100),
-              total: getRandom(100)
-            },
-            output: {
-              inserted: getRandom(100),
-              updated: getRandom(100),
-              deleted: getRandom(100),
-              ddl: getRandom(100),
-              other: getRandom(100),
-              total: getRandom(100)
+        samples: {
+          totalData: [
+            {
+              insertTotal: getRandom(),
+              updateTotal: getRandom(),
+              deleteTotal: getRandom(),
+              ddlTotal: getRandom(),
+              othersTotal: getRandom()
             }
-          },
-          // 任务事件统计（条）-所选周期累计
-          {
-            input: {
-              inserted: getRandom(100),
-              updated: getRandom(100),
-              deleted: getRandom(100),
-              ddl: getRandom(100),
-              other: getRandom(100),
-              total: getRandom(100)
-            },
-            output: {
-              inserted: getRandom(100),
-              updated: getRandom(100),
-              deleted: getRandom(100),
-              ddl: getRandom(100),
-              other: getRandom(100),
-              total: getRandom(100)
+          ],
+          barChartData: [
+            {
+              insertTotal: getRandom(),
+              updateTotal: getRandom(),
+              deleteTotal: getRandom(),
+              ddlTotal: getRandom(),
+              othersTotal: getRandom()
             }
-          },
-          // qps
-          {
-            inputQPS: VALUE_LIST.slice(count, count + 60),
-            outputQPS: VALUE_LIST.slice(count + 10, count + 60 + 10),
-            time: TIME_LIST.slice(count, count + 60)
-          },
-          // 增量延迟
-          {
-            value: VALUE_LIST.slice(count, count + 60),
-            time: TIME_LIST.slice(count, count + 60)
-          }
-        ],
-        statistics: [
-          {
-            deletedTotal: getRandom(),
-            initialTime: 1657707577896,
-            cdcTime: 1657707577896,
-            initialWrite: getRandom(),
-            inputTotal: getRandom(),
-            insertedTotal: getRandom(),
-            outputTotal: getRandom(),
-            replicateLag: getRandom(),
-            updatedTotal: getRandom(),
-            // 表结构同步
-            structure: {
-              wait: getRandom(),
-              noCreate: getRandom(),
-              finished: getRandom(),
-              error: getRandom()
-            },
-            // 表数据状态
-            data: {
-              wait: getRandom(),
-              running: getRandom(),
-              finished: getRandom(),
-              error: getRandom()
+          ],
+          lineChartData: [
+            {
+              inputQps: VALUE_LIST.slice(count, count + 60),
+              outputQps: VALUE_LIST.slice(count + 10, count + 60 + 10),
+              timeCostAvg: VALUE_LIST.slice(count + 10, count + 60 + 10),
+              time: TIME_LIST.slice(count, count + 60)
             }
-          }
-        ]
+          ],
+          dagData: [
+            {
+              insertTotal: getRandom(),
+              updateTotal: getRandom(),
+              deleteTotal: getRandom(),
+              ddlTotal: getRandom(),
+              othersTotal: getRandom(),
+              qps: getRandom(),
+              timeCostAvg: getRandom(),
+              currentEventTimestamp: getRandom(),
+              tcpPing: getRandom(),
+              connectPing: getRandom(),
+              inputTotal: getRandom(),
+              outputTotal: getRandom(),
+              inputQps: getRandom(),
+              outputQps: getRandom()
+            }
+          ]
+        }
       }
-      res.samples[2].time = res.samples[2].time.map(t => this.formatTime(t))
-      res.samples[3].time = res.samples[3].time.map(t => this.formatTime(t))
-      res.statistics[0].initialTime = this.formatTime(res.statistics[0].initialTime)
-      res.statistics[0].cdcTime = this.formatTime(res.statistics[0].cdcTime)
       this.quota = res
     },
 
     formatTime(date, type = 'YYYY-MM-DD HH:mm:ss') {
       return dayjs(date).format(type)
+    },
+
+    getInputOutput(data) {
+      let keyArr = ['insertTotal', 'updateTotal', 'deleteTotal', 'ddlTotal', 'othersTotal']
+      let result = {
+        input: {},
+        output: {}
+      }
+      keyArr.forEach(el => {
+        for (let key in result) {
+          result[key][el] = data[el] || 0
+        }
+      })
+      return result
     }
   }
 }
