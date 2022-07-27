@@ -248,15 +248,11 @@ export default {
         {
           name: '字段编辑',
           type: 'migrate_field_rename_processor'
-        } /*,
-        {
-          name: '字段编辑',
-          type: 'migrate_field_rename_processor'
-        }*/ /*,
+        },
         {
           name: 'JS处理',
           type: 'migrate_js_processor'
-        }*/
+        }
       ])
       this.addResourceIns(allResourceIns)
     },
