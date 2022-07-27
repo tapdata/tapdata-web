@@ -83,8 +83,14 @@
     "apps/daas/src/**/*.vue",
     "apps/daas/tests/**/*.ts",
     "apps/daas/tests/**/*.tsx",
-    "packages/api/src/*.ts",
-    "apps/daas/types/**/*.ts"
+    "apps/daas/types/**/*.ts",
+    "apps/dfs/src/**/*.ts",
+    "apps/dfs/src/**/*.tsx",
+    "apps/dfs/src/**/*.vue",
+    "apps/dfs/tests/**/*.ts",
+    "apps/dfs/tests/**/*.tsx",
+    "apps/dfs/types/**/*.ts",
+    "packages/api/src/*.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -84,8 +84,7 @@ const routes = [
         path: '/connection',
         name: 'Connection',
         // component: Iframe,
-        component: () =>
-          import(/* webpackChunkName: "connection-list" */ '@tap/business/src/views/connections/List.vue'),
+        component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connection/List.tsx'),
         meta: {
           title: i18n.t('tap_connection_management'),
           icon: 'connection'

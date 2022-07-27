@@ -152,8 +152,7 @@ export default [
           {
             path: '',
             name: 'connectionsList',
-            component: () =>
-              import(/* webpackChunkName: "connection-list" */ '@tap/business/src/views/connections/List'),
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connection/List.tsx'),
             meta: {
               title: 'page_title_connections',
               code: 'datasource_menu'

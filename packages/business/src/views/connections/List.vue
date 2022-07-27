@@ -3,10 +3,14 @@
     <TablePage
       ref="table"
       row-key="id"
-      :classify="{
-        authority: 'datasource_catalog_management',
-        types: ['database']
-      }"
+      :classify="
+        claasify
+          ? {
+              authority: 'datasource_catalog_management',
+              types: ['database']
+            }
+          : null
+      "
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
@@ -166,6 +170,9 @@ let timeout = null
 export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   inject: ['checkAgent'],
+  props: {
+    claasify: Boolean
+  },
   data() {
     return {
       filterItems: [],
