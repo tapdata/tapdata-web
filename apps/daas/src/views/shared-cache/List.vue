@@ -153,8 +153,7 @@
 }
 </style>
 <script>
-import { TablePage, FilterBar } from '@tap/component'
-import Drawer from '@/components/Drawer'
+import { TablePage, FilterBar, Drawer } from '@tap/component'
 import { toRegExp } from '@/utils/util'
 import { getSubTaskStatus } from '@/utils/util'
 import dayjs from 'dayjs'

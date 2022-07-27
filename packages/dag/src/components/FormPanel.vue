@@ -674,6 +674,7 @@ export default {
         Path.setIn(formValues, path, undefined)
       })
 
+      console.log('updateNodeProps', formValues) // eslint-disable-line
       this.updateNodeProperties({
         id: this.node.id,
         properties: JSON.parse(JSON.stringify(formValues))
@@ -688,20 +689,20 @@ export default {
         if (this.stateIsReadonly) return
 
         // eslint-disable-next-line no-console
-        console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`)
+        // console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`)
         // eslint-disable-next-line no-console
-        console.trace(JSON.parse(JSON.stringify(form.values)))
+        // console.trace(JSON.parse(JSON.stringify(form.values)))
         // eslint-disable-next-line no-console
-        console.groupEnd()
+        // console.groupEnd()
         if (this.node && JSON.stringify(form.values) !== JSON.stringify(this.node)) {
-          console.log('onFormValuesChange---doUpdate', JSON.stringify(form.values), JSON.stringify(this.node)) // eslint-disable-line
+          // console.log('onFormValuesChange---doUpdate', JSON.stringify(form.values), JSON.stringify(this.node)) // eslint-disable-line
           this.updateNodeProps(form)
         }
       })
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
         // eslint-disable-next-line no-console
-        console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
+        // console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
         this.updateNodeProps(form)
       })
       onFieldReact('*', field => {

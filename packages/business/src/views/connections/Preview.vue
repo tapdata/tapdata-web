@@ -78,16 +78,15 @@
 </template>
 
 <script>
-import { VIcon } from '@tap/component'
-import StatusTag from '@/components/StatusTag'
-import Drawer from '@/components/Drawer'
+import { VIcon, Drawer } from '@tap/component'
+import { StatusTag } from '@tap/business'
 import { CONFIG_MODEL, getConnectionIcon } from './util'
 import dayjs from 'dayjs'
 import { connectionsApi } from '@tap/api'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, StatusTag, Drawer },
+  components: { VIcon, Drawer, StatusTag },
   inject: ['checkAgent'],
   props: {
     hideOperation: {

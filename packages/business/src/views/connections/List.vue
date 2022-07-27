@@ -379,7 +379,7 @@ export default {
       //   type = 'default'
       // }
       type = 'default'
-      return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)
+      return require(`@tap/assets/images/databaseType/${type.toLowerCase()}.png`)
     },
     //列表全选
     handleSelectionChange(val) {

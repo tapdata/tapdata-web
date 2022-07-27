@@ -40,7 +40,7 @@
 
 <script>
 import { VIcon } from '@tap/component'
-import StatusTag from '@/components/StatusTag'
+import { StatusTag } from '@tap/business'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {

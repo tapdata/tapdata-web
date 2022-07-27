@@ -258,8 +258,8 @@
 import i18n from '@/i18n'
 
 import { TASK_STATUS_MAP } from '../../const'
-import StatusTag from '../../components/StatusTag'
 import { VIcon, FilterBar } from '@tap/component'
+import { StatusTag } from '@tap/business'
 import ErrorLogDialog from './components/ErrorLogDialog'
 import { isFinished } from './copy/util'
 import timeFunction from '@/mixins/timeFunction'

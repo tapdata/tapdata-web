@@ -14,6 +14,7 @@ import FilterBar from './filter-bar'
 import DatetimeRange from './filter-bar/DatetimeRange.vue'
 import SelectList from './SelectList.vue'
 import GitBook from './GitBook.vue'
+import Drawer from './Drawer.vue'
 
 // business
 import Chart from './chart'
@@ -36,7 +37,8 @@ export {
   FilterBar,
   DatetimeRange,
   SelectList,
-  GitBook
+  GitBook,
+  Drawer
 }
 
 export * from './base'
