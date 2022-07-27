@@ -1,4 +1,4 @@
-import { defineComponent, ref, reactive } from 'vue-demi'
+import { defineComponent, ref, reactive, onUnmounted } from 'vue-demi'
 import { FormItem, JsEditor } from '../index'
 import { VCodeEditor, VirtualSelect } from '@tap/component'
 import { taskApi } from '@tap/api'
@@ -55,8 +55,8 @@ export const JsProcessor = defineComponent({
           jsNodeId: form.values.id
         })
         .then(res => {
-          inputRef.value = JSON.stringify(res.before, null, 2)
-          outputRef.value = JSON.stringify(res.after, null, 2)
+          inputRef.value = res.before ? JSON.stringify(res.before, null, 2) : ''
+          outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
           return res.over
         })
     }
@@ -80,6 +80,10 @@ export const JsProcessor = defineComponent({
         handleAutoQuery()
       })
     }
+
+    onUnmounted(() => {
+      clearTimeout(timer)
+    })
 
     return () => {
       return (
@@ -126,7 +130,7 @@ export const JsProcessor = defineComponent({
             </div>
           </div>
 
-          <div class="flex">
+          <div class="flex" v-loading={running.value}>
             <FormItem.BaseItem class="flex-1 mr-4" label="调试输入">
               <VCodeEditor value={inputRef.value} lang="json" height={450}></VCodeEditor>
             </FormItem.BaseItem>
