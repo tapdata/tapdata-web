@@ -1,6 +1,7 @@
 <template>
   <section class="bottom-panel border-top flex-column">
-    <div class="panel-header flex pr-4 h-100">
+    <Log v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab"></Log>
+    <div v-else class="panel-header flex pr-4 h-100">
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column">
         <ElTabPane label="日志" name="log">
           <Log v-bind="$attrs" :currentTab="currentTab"></Log>
@@ -35,6 +36,13 @@ export default {
   },
 
   mixins: [Locale],
+
+  props: {
+    onlyLog: {
+      type: Boolean,
+      default: false
+    }
+  },
 
   data() {
     return {
