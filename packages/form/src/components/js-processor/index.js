@@ -55,14 +55,19 @@ export const JsProcessor = observer(
       const outputRef = ref('')
 
       let timer
+      let version
 
       const handleQuery = () => {
+        let lastVersion = version
         return taskApi
           .getRunJsResult({
+            version,
             taskId,
             jsNodeId: form.values.id
           })
           .then(res => {
+            // 版本号不一致
+            if (lastVersion !== version) return true
             inputRef.value = res.before ? JSON.stringify(res.before, null, 2) : ''
             outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
             return res.over
@@ -85,7 +90,8 @@ export const JsProcessor = observer(
 
       const handleRun = () => {
         clearTimeout(timer)
-        taskApi.testRunJs({ ...params, script: props.value }).then(handleAutoQuery)
+        version = Date.now()
+        taskApi.testRunJs({ ...params, version, script: props.value }).then(handleAutoQuery)
       }
 
       onUnmounted(() => {
