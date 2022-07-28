@@ -86,7 +86,7 @@ export default {
           icon: 'agent'
         },
         {
-          name: 'Connection',
+          name: 'connections',
           title: $t('connection_manage'),
           icon: 'connection'
         },
@@ -95,8 +95,8 @@ export default {
           title: $t('task_manage'),
           icon: 'task',
           children: [
-            { name: 'Etl', title: $t('task_manage_etl') },
-            { name: 'Migrate', title: $t('task_manage_migrate') }
+            { name: 'Migrate', title: $t('task_manage_migrate') },
+            { name: 'Etl', title: $t('task_manage_etl') }
           ]
         },
         {

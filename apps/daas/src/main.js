@@ -18,8 +18,8 @@ import '@/directives'
 import 'github-markdown-css'
 import LoadMore from '@/utils/loadMore'
 
-import '@/styles/app.scss'
 import '@/styles/element-variables.scss'
+import '@/styles/app.scss'
 import '@/plugins/axios.ts'
 import { configUser } from '@/utils/util'
 

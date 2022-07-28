@@ -235,10 +235,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-form-item {
-  margin-bottom: 0;
-  margin-right: 8px;
-}
 .btn-refresh {
   padding: 0;
   height: 32px;
@@ -256,6 +252,10 @@ export default {
         font-size: 12px;
       }
     }
+  }
+  .el-form-item {
+    margin-bottom: 0;
+    margin-right: 8px;
   }
 }
 .filter-el-input {

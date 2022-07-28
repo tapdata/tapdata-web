@@ -636,6 +636,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .connection-list-wrap {
+  height: 100%;
   overflow: hidden;
   ::v-deep {
     .el-select-dropdown__item {

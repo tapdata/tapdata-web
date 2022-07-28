@@ -81,8 +81,8 @@ const routes = [
         ]
       },
       {
-        path: '/connection',
-        name: 'Connection',
+        path: '/connections',
+        name: 'connections',
         // component: Iframe,
         component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connection/List.tsx'),
         meta: {
@@ -101,7 +101,7 @@ const routes = [
           },
           {
             path: ':id',
-            name: 'ConnectionEdit',
+            name: 'connectionsEdit',
             component: ConnectionForm,
             //component: Iframe,
             meta: {
