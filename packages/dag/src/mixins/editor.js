@@ -201,7 +201,7 @@ export default {
       const { allowSource } = target.__Ctor
       const { allowTarget } = source.__Ctor
 
-      if (typeof allowSource === 'function' && !allowSource(source)) {
+      if (typeof allowSource === 'function' && !allowSource(source, target)) {
         showMsg && this.$message.error(`该节点「${target.name}」不支持「${source.name}」作为源`)
         return false
       }
@@ -876,9 +876,9 @@ export default {
     },
 
     nodeELIsConnected(s, t) {
-      const connections = this.jsPlumbIns.getConnections('*')
+      // const connections = this.jsPlumbIns.getConnections('*')
       // eslint-disable-next-line
-      console.log('connections', connections)
+      // console.log('connections', connections)
       return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
@@ -946,6 +946,180 @@ export default {
           }
         })
       )
+    },
+
+    /**
+     * 校验agent设置
+     * @returns {*}
+     */
+    validateAgent() {
+      let someErrorMsg
+      const nodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
+      const accessNodeProcessIdArr = [
+        ...nodes.reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      ]
+
+      if (accessNodeProcessIdArr.length > 1) {
+        // 所属agent节点冲突
+        const chooseId = this.dataflow.accessNodeProcessId
+
+        if (!chooseId) {
+          // someErrorMsg = `请配置任务运行agent`
+          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
+        } else {
+          let isError = false
+          const agent = this.scope.$agentMap[chooseId]
+          nodes.forEach(node => {
+            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
+              })
+              isError = true
+            }
+          })
+          isError && (someErrorMsg = `所属agent节点冲突`)
+        }
+      } else if (accessNodeProcessIdArr.length === 1) {
+        // 如果画布上仅有一个所属agent，自动设置为任务的agent
+        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
+        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
+      }
+      return someErrorMsg
+    },
+
+    loadLeafNode(node) {
+      let arr = []
+      if (node.$outputs.length) {
+        node.$outputs.forEach(id => {
+          console.log('this.loadLeafNode(this.nodeById(id))', this.loadLeafNode(this.nodeById(id))) // eslint-disable-line
+          arr.push(...this.loadLeafNode(this.nodeById(id)))
+        })
+      } else {
+        arr.push(node.id)
+      }
+      return arr
+    },
+
+    eachOutputs(node) {
+      this.eachMap[node.id] = true
+      const size = node.$outputs.length
+      if (size > 0) {
+        node.$outputs.forEach(id => {
+          if (this.eachMap[id]) return
+          const output = this.nodeById(id)
+          if (output.$inputs.length > 1) {
+            this.eachInputsByFilter(output, node.id)
+          }
+          this.eachOutputs(output)
+        })
+      }
+    },
+
+    eachInputsByFilter(node, filterId) {
+      this.eachMap[node.id] = true
+      node.$inputs.forEach(id => {
+        if (id !== filterId && !this.eachMap[id]) {
+          const input = this.nodeById(id)
+          this.eachInputs(input)
+          if (input.$outputs.length > 1) {
+            this.eachOutputsByFilter(input, node.id)
+          }
+        }
+      })
+    },
+
+    eachOutputsByFilter(node, filterId) {
+      this.eachMap[node.id] = true
+      node.$outputs.forEach(id => {
+        if (id !== filterId && !this.eachMap[id]) {
+          const output = this.nodeById(id)
+          this.eachOutputs(output)
+          if (output.$inputs.length > 1) {
+            this.eachInputsByFilter(output, node.id)
+          }
+        }
+      })
+    },
+
+    eachInputs(node) {
+      this.eachMap[node.id] = true
+      const size = node.$inputs.length
+      if (size > 0) {
+        node.$inputs.forEach(id => {
+          if (this.eachMap[id]) return
+          const input = this.nodeById(id)
+          if (input.$outputs.length > 1) {
+            this.eachOutputsByFilter(input, node.id)
+          }
+          this.eachInputs(input)
+        })
+      }
+    },
+
+    validateLink() {
+      const firstSourceNode = this.allNodes.find(node => !node.$inputs.length)
+      this.eachMap = {}
+      this.eachOutputs(firstSourceNode)
+      // console.log('this.eachMap', this.eachMap) // eslint-disable-line
+
+      if (this.allNodes.some(node => !this.eachMap[node.id])) {
+        return '不支持多条链路，请编辑后重试'
+      }
+      return null
+    },
+
+    async validate() {
+      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+
+      await this.validateAllNodes()
+
+      let someErrorMsg = ''
+      // 检查每个节点的源节点个数、连线个数、节点的错误状态
+      this.allNodes.some(node => {
+        const { id } = node
+        const minInputs = node.__Ctor.minInputs ?? 1
+        // 非数据节点至少有一个目标
+        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
+        const inputNum = node.$inputs.length
+        const outputNum = node.$outputs.length
+
+        if (this.hasNodeError(id)) {
+          someErrorMsg = `「 ${node.name} 」配置异常`
+          return true
+        }
+
+        if (inputNum < minInputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
+          return true
+        }
+
+        if (outputNum < minOutputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要${minOutputs}个目标节点`
+          return true
+        }
+
+        if (!inputNum && !outputNum) {
+          // 存在没有连线的节点
+          someErrorMsg = `「 ${node.name} 」没有任何连线`
+          return true
+        }
+      })
+
+      if (someErrorMsg) return someErrorMsg
+
+      someErrorMsg = this.validateAgent()
+
+      if (someErrorMsg) return someErrorMsg
+
+      someErrorMsg = this.validateLink()
+
+      if (someErrorMsg) return someErrorMsg
+
+      return null
     },
 
     /**
@@ -1272,27 +1446,30 @@ export default {
     },
 
     handleError(error, msg = '出错了') {
-      if (error?.data.code === 'Task.ListWarnMessage') {
+      error = error.data
+      if (error?.code === 'Task.ListWarnMessage') {
         let names = []
-        if (error.data.data) {
-          const keys = Object.keys(error.data.data)
+        if (error.data) {
+          const keys = Object.keys(error.data)
           keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: error.data.data[key][0].msg
+                msg: error.data[key][0].msg
               })
             }
           })
-          if (!names.length && keys.length && msg) {
+          if (!names.length && keys.length) {
             // 兼容错误信息id不是节点id的情况
-            const msg = error.data.data[keys[0]][0]?.msg
-            if (msg) {
-              this.$message.error(msg)
+            const nodeMsg = error.data[keys[0]][0]?.msg
+            if (nodeMsg) {
+              this.$message.error(nodeMsg)
               return
             }
+          } else if (msg) {
+            this.$message.error(msg)
           }
         }
         // this.$message.error(`${this.t('dag_save_fail')} ${names.join('，')}`)

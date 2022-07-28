@@ -10,7 +10,8 @@ export const SqlEditor = {
     options: {
       type: Object,
       default: () => ({})
-    }
+    },
+    disabled: Boolean
   },
 
   data() {
@@ -37,7 +38,8 @@ export const SqlEditor = {
     const options = {
       enableBasicAutocompletion: true,
       enableLiveAutocompletion: true,
-      ...this.options
+      ...this.options,
+      readOnly: this.disabled
     }
     return (
       <VCodeEditor

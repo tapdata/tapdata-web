@@ -110,15 +110,16 @@
 </template>
 
 <script>
+import { action } from '@formily/reactive'
+
+import { clusterApi, connectionsApi, databaseTypesApi, logcollectorApi, pdkApi } from '@tap/api'
+import { VIcon, GitBook } from '@tap/component'
+import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
-import VIcon from '@/components/VIcon'
-import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
-import { checkConnectionName } from '@/utils/util'
-import GitBook from '@/components/GitBook'
-import { clusterApi, connectionsApi, databaseTypesApi, logcollectorApi, pdkApi } from '@tap/api'
-import { action } from '@formily/reactive'
+
+import { checkConnectionName } from '@tap/shared'
 
 export default {
   name: 'DatabaseForm',
@@ -422,20 +423,7 @@ export default {
             __TAPDATA: {
               type: 'object',
               'x-index': 1000000,
-              properties: {
-                table_filter: {
-                  type: 'string',
-                  title: this.$t('connection_form_table_filter'),
-                  'x-decorator': 'FormItem',
-                  'x-decorator-props': {
-                    tooltip: this.$t('connection_form_table_filter_tips')
-                  },
-                  'x-component': 'Input.TextArea',
-                  'x-component-props': {
-                    placeholder: this.$t('connection_form_database_owner_tip')
-                  }
-                }
-              }
+              properties: {}
             }
           }
         }
@@ -540,6 +528,25 @@ export default {
             }
             END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
           }
+        }
+
+        // 是否支持包含表
+        if (this.pdkOptions.capabilities?.some(t => t.id === 'get_table_names_function')) {
+          let config = {
+            table_filter: {
+              type: 'string',
+              title: this.$t('connection_form_table_filter'),
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                tooltip: this.$t('connection_form_table_filter_tips')
+              },
+              'x-component': 'Input.TextArea',
+              'x-component-props': {
+                placeholder: this.$t('connection_form_database_owner_tip')
+              }
+            }
+          }
+          END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
         }
         END.properties.__TAPDATA.properties.accessNodeType = {
           type: 'string',

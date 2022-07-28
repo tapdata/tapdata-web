@@ -87,7 +87,7 @@
 import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import { uniqueArr } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'

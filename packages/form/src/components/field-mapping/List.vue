@@ -15,7 +15,7 @@
               ></ElInput>
             </div>
           </div>
-          <div class="flex justify-content-between mb-2 ml-2">
+          <div class="flex bg-main justify-content-between mb-2 pl-2">
             <span class="table-name ml-1">表名</span>
           </div>
           <div class="task-form-left__ul flex flex-column" v-loading="loadingNav">
@@ -186,7 +186,7 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
@@ -304,7 +304,7 @@ export default {
           this.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
           this.navData = items || []
           //请求左侧table数据
-          this.selectRow = this.navData?.[0] || {}
+          this.selectRow = this.navData?.[this.position] || {}
           this.target = this.selectRow?.fieldsMapping
           this.viewTableData = this.target
           this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0

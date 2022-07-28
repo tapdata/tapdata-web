@@ -12,14 +12,8 @@
     </div>
     <div class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
-        <NodeIcon class="mr-2" :node="activeNode" />
-        <TextEditable
-          ref="nameInput"
-          v-model="name"
-          class="flex-1 min-w-0"
-          :value="activeNode ? activeNode.name : ''"
-          @change="handleChangeName"
-        />
+        <NodeIcon v-if="activeNode" class="mr-2" :node="activeNode" />
+        <TextEditable ref="nameInput" v-model="name" class="flex-1 min-w-0" @change="handleChangeName" />
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
         <!--属性设置-->
@@ -53,7 +47,7 @@ import resize from 'web-core/directives/resize'
 import FormPanel from './FormPanel'
 import SettingPanel from './SettingPanel'
 import MetaPane from './MetaPane'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import focusSelect from 'web-core/directives/focusSelect'
 import NodeIcon from './NodeIcon'
 import { TextEditable } from '@tap/component'
@@ -105,7 +99,8 @@ export default {
             name
           }
         })
-        this.updateDag()
+        this.$refs.formPanel?.form.setValuesIn('name', name)
+        // this.updateDag()
       } else {
         this.name = this.activeNode.name
       }

@@ -9,9 +9,18 @@ import { errorConfirmFnc } from '@/util'
 // axios.defaults.baseURL = process.env.baseURL ||  '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.headers.common['x-requested-with'] = 'XMLHttpRequest'
+const headers = {
+  'x-requested-with': 'XMLHttpRequest'
+}
+axios.defaults.headers.common['x-requested-with'] = headers['x-requested-with']
+axios.defaults.baseURL = './tm'
 const pending = []
 const CancelToken = axios.CancelToken
+
+const _axios = axios.create({
+  baseURL: './',
+  headers: headers
+})
 
 const getPendingKey = config => {
   let { url, method, params } = config
@@ -53,8 +62,7 @@ const errorCallback = error => {
   console.error('请求报错：' + error) // eslint-disable-line
   return Promise.reject(error)
 }
-// 请求发起拦截器
-axios.interceptors.request.use(function (config) {
+const requestInterceptor = config => {
   // 本地开发使用header中加__token的方式绕过网关登录
   const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
   if (ACCESS_TOKEN) {
@@ -86,10 +94,8 @@ axios.interceptors.request.use(function (config) {
     pending.push(key)
   }
   return config
-}, errorCallback)
-
-// 请求返回拦截器
-axios.interceptors.response.use(function (response) {
+}
+const responseInterceptor = response => {
   return new Promise((resolve, reject) => {
     // 从请求池清除掉错误请求
     removePending(response.config)
@@ -120,26 +126,35 @@ axios.interceptors.response.use(function (response) {
         return resolve(response)
       }
       let msg = data?.message || data?.msg || ''
+      // eslint-disable-next-line
       console.log(`${code}： ${msg}`)
       Message.error(msg)
       return reject(Object.assign(response))
     }
   })
-}, errorCallback)
+}
+// 请求发起拦截器
+axios.interceptors.request.use(requestInterceptor, errorCallback)
+axios.interceptors.response.use(responseInterceptor, errorCallback)
+
+_axios.interceptors.request.use(requestInterceptor, errorCallback)
+
+// 请求返回拦截器
+_axios.interceptors.response.use(responseInterceptor, errorCallback)
 
 const Plugin = {}
 Plugin.install = function (Vue) {
-  Vue.axios = axios
-  window.axios = axios
+  Vue.axios = _axios
+  window.axios = _axios
   Object.defineProperties(Vue.prototype, {
     axios: {
       get() {
-        return axios
+        return _axios
       }
     },
     $axios: {
       get() {
-        return axios
+        return _axios
       }
     }
   })

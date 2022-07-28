@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import { inspectResultsApi } from '@tap/api'
 

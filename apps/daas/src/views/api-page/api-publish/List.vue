@@ -182,8 +182,7 @@
 </template>
 
 <script>
-import FilterBar from '@/components/filter-bar'
-import TablePage from '@/components/TablePage'
+import { TablePage, FilterBar } from '@tap/component'
 import Upload from '@/components/UploadDialog'
 import { toRegExp } from '@/utils/util'
 import dayjs from 'dayjs'

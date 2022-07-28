@@ -38,7 +38,7 @@ import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { sourceEndpoint, targetEndpoint } from '../style'
 import { NODE_PREFIX } from '../constants'
 import BaseNode from './BaseNode'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 
 export default {

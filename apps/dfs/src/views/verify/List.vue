@@ -164,9 +164,8 @@
 <script>
 import i18n from '@/i18n'
 
-import VIcon from '@/components/VIcon'
-import StatusTag from '@/components/StatusTag'
-import FilterBar from '@/components/filter-bar'
+import { VIcon, FilterBar } from '@tap/component'
+import { StatusTag } from '@tap/business'
 import timeFunction from '@/mixins/timeFunction'
 
 let timer = null

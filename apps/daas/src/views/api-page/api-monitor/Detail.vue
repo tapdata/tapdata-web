@@ -52,8 +52,7 @@
 </template>
 
 <script>
-import FilterBar from '@/components/filter-bar'
-import { Chart } from '@tap/component'
+import { Chart, FilterBar } from '@tap/component'
 import { formatTime } from '@/utils/util'
 import { handleUnit, formatMs } from './utils'
 import { apiMonitorApi } from '@tap/api'

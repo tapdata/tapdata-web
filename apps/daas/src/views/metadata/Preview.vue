@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import TablePage from '@/components/TablePage'
+import { TablePage } from '@tap/component'
 import { previewDataApi } from '@tap/api'
 export default {
   props: {

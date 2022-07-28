@@ -459,6 +459,8 @@ export default {
 
   // 任务
   task_manage: '任务管理',
+  task_manage_etl: '数据开发',
+  task_manage_migrate: '数据复制',
   task_name: '任务名称',
   task_status: '任务状态',
   task_sync_type: '同步类型',

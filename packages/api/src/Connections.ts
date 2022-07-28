@@ -40,7 +40,7 @@ export default class Connections extends Http {
     return this.axios.get(`${this.url}/listAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
   }
   checkConnectionTask(id: string) {
-    return this.axios.get(`${this.url}/task/` + id)
+    return this.axios.get(`${this.url}/task/` + id + '/10')
   }
 }
 

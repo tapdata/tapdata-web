@@ -31,7 +31,7 @@
         <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
           <el-image
             style="width: 20px; height: 20px; vertical-align: bottom"
-            :src="require('@/assets/icons/loading-drs.gif')"
+            :src="require('@tap/assets/images/loading.gif')"
           ></el-image>
           <span v-if="testData.testLogs.length === 0">{{ $t('dataForm.primaryTest') }}</span>
           <span v-else>{{ $t('dataForm.testing') }}</span>
@@ -61,7 +61,7 @@
           <span v-else-if="scope.row.status === 'unTest'" :style="`color: ${colorMap[scope.row.status]};`">
             <el-image
               style="width: 20px; height: 20px; vertical-align: bottom"
-              :src="require('@/assets/icons/loading-drs.gif')"
+              :src="require('@tap/assets/images/loading.gif')"
             ></el-image>
             {{ statusMap[scope.row.status] }}
           </span>
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 export default {
   name: 'Test',
   components: { VIcon },

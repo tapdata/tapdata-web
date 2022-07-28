@@ -1,5 +1,5 @@
 import { connect, mapProps } from '@formily/vue'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import Locale from '../mixins/locale'
 
 const CheckboxOption = {

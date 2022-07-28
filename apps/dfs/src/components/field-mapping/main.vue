@@ -281,7 +281,8 @@ export default {
       //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
-        ;(target || []).forEach(field => {
+        let list = target || []
+        list.forEach(field => {
           //先检查是否被改过名
           let node = {
             t_id: field.id,

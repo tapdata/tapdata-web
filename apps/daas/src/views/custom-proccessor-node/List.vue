@@ -31,8 +31,7 @@
 </template>
 
 <script>
-import TablePage from '@/components/TablePage'
-import FilterBar from '../../components/filter-bar/Main'
+import { TablePage, FilterBar } from '@tap/component'
 import { customNodeApi } from '@tap/api'
 import dayjs from 'dayjs'
 

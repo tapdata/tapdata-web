@@ -6,7 +6,6 @@
           {{ title }}
           <span v-if="desc" class="page-header-desc" v-html="desc"></span>
         </div>
-        <!-- <div v-if="desc" class="page-header-desc" v-html="desc"></div> -->
       </slot>
     </div>
 
@@ -79,10 +78,8 @@
 </template>
 
 <script>
-import Classification from '@/components/Classification'
-import SelectClassify from '@/components/SelectClassify'
-import { delayTrigger } from '../utils/util'
-import VIcon from '@/components/VIcon'
+import { delayTrigger } from '@tap/shared'
+import { VIcon, Classification, SelectClassify } from '@tap/component'
 
 export default {
   components: {
@@ -127,16 +124,6 @@ export default {
   mounted() {
     this.fetch(1)
   },
-  // created() {
-  //   this.fetch(1)
-  // },
-  // watch: {
-  //   classify: function (_new, _old) {
-  //     if (_new.toString() !== _old.toString()) {
-  //       this.tags = []
-  //     }
-  //   }
-  // },
   methods: {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
       let timer = null

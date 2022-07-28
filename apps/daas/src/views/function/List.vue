@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import TablePage from '@/components/TablePage'
+import { TablePage } from '@tap/component'
 import dayjs from 'dayjs'
 import { javascriptFunctionsApi } from '@tap/api'
 

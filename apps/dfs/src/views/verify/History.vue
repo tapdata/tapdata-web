@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {

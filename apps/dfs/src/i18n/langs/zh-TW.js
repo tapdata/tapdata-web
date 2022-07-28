@@ -416,6 +416,8 @@ export default {
   connection_preview_isr_partition: '寫入所有ISR分區',
   connection_preview_operation_success: '操作成功',
   task_manage: '任務管理',
+  task_manage_etl: '數據開發',
+  task_manage_migrate: '數據複製',
   task_name: '任務名稱',
   task_status: '任務狀態',
   task_sync_type: '同步類型',

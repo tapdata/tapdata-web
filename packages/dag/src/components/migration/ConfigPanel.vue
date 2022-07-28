@@ -6,12 +6,11 @@
   >
     <div class="panel-header flex align-center px-4 border-bottom">
       <template v-if="activeType !== 'settings'">
-        <NodeIcon class="mr-2" :node="activeNode" />
+        <NodeIcon v-if="activeNode" class="mr-2" :node="activeNode" />
         <TextEditable
           ref="nameInput"
           v-model="name"
           class="flex-1 min-w-0"
-          :value="activeNode ? activeNode.name : ''"
           :readonly="stateIsReadonly"
           @change="handleChangeName"
         />
@@ -48,7 +47,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from '../FormPanel'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import focusSelect from 'web-core/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
@@ -96,7 +95,7 @@ export default {
             name
           }
         })
-        this.updateDag()
+        this.$refs.formPanel?.form.setValuesIn('name', name)
       } else {
         this.name = this.activeNode.name
       }

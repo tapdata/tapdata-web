@@ -322,7 +322,7 @@ $margin: 10px;
 </style>
 <script>
 import JsonViewer from 'vue-json-viewer'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 export default {
   components: {
     JsonViewer,

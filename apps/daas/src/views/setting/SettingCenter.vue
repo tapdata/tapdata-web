@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 export default {
   components: { VIcon },
   data() {

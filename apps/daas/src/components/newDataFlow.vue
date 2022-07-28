@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import DatabaseTypeDialog from '@/views/connections/DatabaseTypeDialog'
+import DatabaseTypeDialog from '@tap/business/src/views/connections/DatabaseTypeDialog'
 import Cookie from '@tap/shared/src/cookie'
 export default {
   name: 'newDataFlow',

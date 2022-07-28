@@ -1,7 +1,5 @@
 <template>
   <section class="connection-list-wrap classify-wrap">
-    <!-- :title="$t('connection.databaseTittle')"
-      :desc="description" -->
     <TablePage
       ref="table"
       row-key="id"
@@ -136,29 +134,32 @@
       :formData="testData"
       @returnTestData="returnTestData"
     ></Test>
-    <ElDialog title="提示" width="30%" :visible.sync="connectionTaskDialog">
+    <ElDialog title="提示" width="40%" :visible.sync="connectionTaskDialog">
       <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
+      <div class="color-primary mt-2">任务总数: {{ connectionTaskListTotal }}</div>
       <ul class="mt-4">
         <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
-          <el-link type="primary">{{ item.name }}</el-link>
+          <el-tooltip :content="item.name" placement="right-start">
+            <el-link type="primary">{{ item.name }}</el-link>
+          </el-tooltip>
         </li>
+        <li v-if="connectionTaskListTotal > 10">...</li>
       </ul>
     </ElDialog>
   </section>
 </template>
 <script>
-import SchemaProgress from 'web-core/components/SchemaProgress'
-import TablePage from '@/components/TablePage'
-import VIcon from '@/components/VIcon'
+import dayjs from 'dayjs'
+import { VIcon, TablePage, FilterBar } from '@tap/component'
+import { connectionsApi, databaseTypesApi } from '@tap/api'
+import Cookie from '@tap/shared/src/cookie'
+
+import SchemaProgress from '../../components/SchemaProgress.vue'
+
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
-import { defaultModel, verify } from './util'
 import Test from './Test'
-import FilterBar from '@/components/filter-bar'
-import { getConnectionIcon } from './util'
-import Cookie from '@tap/shared/src/cookie'
-import dayjs from 'dayjs'
-import { connectionsApi, databaseTypesApi } from '@tap/api'
+import { defaultModel, verify, getConnectionIcon } from './util'
 
 let timeout = null
 
@@ -237,6 +238,7 @@ export default {
       testData: null,
       dialogTestVisible: false, // 连接测试框
       connectionTaskList: [],
+      connectionTaskListTotal: 0,
       connectionTaskDialog: false
     }
   },
@@ -377,7 +379,7 @@ export default {
       //   type = 'default'
       // }
       type = 'default'
-      return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)
+      return require(`@tap/assets/images/databaseType/${type.toLowerCase()}.png`)
     },
     //列表全选
     handleSelectionChange(val) {
@@ -423,7 +425,7 @@ export default {
       //   }
       // })
     },
-    remove(data) {
+    remove(row) {
       const h = this.$createElement
       let strArr = this.$t('connection.deteleDatabaseMsg').split('xxx')
       let msg = h('p', null, [
@@ -433,7 +435,7 @@ export default {
           {
             class: 'color-primary'
           },
-          data.name
+          row.name
         ),
         strArr[1]
       ])
@@ -445,9 +447,9 @@ export default {
           return
         }
         //检查该连接是否被已有任务使用
-        connectionsApi.checkConnectionTask(data.id).then(data => {
-          if (data?.length === 0) {
-            connectionsApi.delete(data.id).then(data => {
+        connectionsApi.checkConnectionTask(row.id).then(data => {
+          if (data?.items?.length === 0) {
+            connectionsApi.delete(row.id).then(data => {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
               if (jobs.length > 0 || modules.length > 0) {
@@ -459,7 +461,8 @@ export default {
             })
           } else {
             //展示已使用的任务列表
-            this.connectionTaskList = data || []
+            this.connectionTaskList = data?.items || []
+            this.connectionTaskListTotal = data?.total || 0
             this.connectionTaskDialog = true
           }
         })
