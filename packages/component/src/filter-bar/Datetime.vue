@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import VIcon from '../base/VIcon'
 
 export default {
   name: 'Datetime',

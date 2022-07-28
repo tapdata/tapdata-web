@@ -212,11 +212,9 @@
 </template>
 
 <script>
-import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
 import { ApiClient, settingsApi, workerApi, usersApi, apiServerApi, modulesApi } from '@tap/api'
-import SelectList from '@/components/SelectList'
-import { JsEditor } from '@tap/component'
+import { JsEditor, TablePage, SelectList } from '@tap/component'
 import dayjs from 'dayjs'
 
 let time = 0

@@ -20,7 +20,7 @@
 
 <script>
 import TableList from '@/components/TableList'
-import StatusTag from '@/components/StatusTag'
+import { StatusTag } from '@tap/business'
 import { logcollectorApi } from '@tap/api'
 export default {
   name: 'ShareMining',

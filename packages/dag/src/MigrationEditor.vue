@@ -107,7 +107,7 @@ import TopHeader from './components/TopHeader'
 import LeftSider from './components/migration/LeftSider'
 import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
-import { NODE_PREFIX, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
+import { NODE_PREFIX } from './constants'
 import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
@@ -121,7 +121,7 @@ import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import { VExpandXTransition } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
@@ -197,6 +197,19 @@ export default {
       if (v === 0) {
         this.showLeftSider = true
       }
+    },
+
+    'dataflow.status'(v) {
+      console.log('状态监听', v) // eslint-disable-line
+      if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+        // this.$refs.console?.loadData()
+        if (v === 'running') {
+          this.setStateReadonly(true)
+          // this.gotoViewer(true)
+        } else {
+          this.setStateReadonly(false)
+        }
+      }
     }
   },
 
@@ -208,11 +221,7 @@ export default {
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
-
-        if (this.$route.name === 'MigrateViewer') {
-          this.setActiveType('settings')
-          this.toggleConsole(true)
-        }
+        // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
       }
@@ -239,15 +248,11 @@ export default {
         {
           name: '字段编辑',
           type: 'migrate_field_rename_processor'
-        } /*,
-        {
-          name: '字段编辑',
-          type: 'migrate_field_rename_processor'
-        }*/ /*,
+        },
         {
           name: 'JS处理',
           type: 'migrate_js_processor'
-        }*/
+        }
       ])
       this.addResourceIns(allResourceIns)
     },
@@ -271,9 +276,9 @@ export default {
       }
     },
 
-    gotoViewer() {
+    gotoViewer(newTab) {
       let subId = this.dataflow.statuses[0]?.id || ''
-      this.$router.push({
+      /*this.$router.push({
         name: 'MigrationMonitor',
         params: {
           id: this.dataflow.id
@@ -281,28 +286,37 @@ export default {
         query: {
           subId: subId
         }
-      })
-      /*this.$router
-        .push({
-          name: 'MigrateViewer',
-          params: {
+      })*/
+      if (newTab) {
+        window.open(
+          this.$router.resolve({
+            name: 'MigrateStatistics',
+            query: {
+              id: this.dataflow.id,
+              subId: subId
+            }
+          }).href,
+          `MigrateStatistics_${this.dataflow.id}`
+        )
+      } else {
+        this.$router.push({
+          name: 'MigrateStatistics',
+          query: {
             id: this.dataflow.id,
-            action: 'dataflowViewer'
+            subId: subId
           }
         })
-        .catch(() => {
-          console.log('Current route: DataflowViewer') // eslint-disable-line
-        })*/
+      }
     },
 
-    async validate() {
+    /*async validate() {
       if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
-      const tableNode = this.allNodes.filter(node => node.type === 'database')
-      if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
-      }
+      const dataNodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
+      // if (dataNodes.length < 2) {
+      //   return this.t('editor_cell_validate_none_data_node')
+      // }
 
       await this.validateAllNodes()
 
@@ -331,7 +345,9 @@ export default {
       this.allNodes.some(node => {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
-        const inputNum = targetMap[id]?.length ?? 0
+        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
+        const inputNum = node.$inputs.length
+        const outputNum = node.$outputs.length
 
         if (!sourceMap[id] && !targetMap[id]) {
           // 存在没有连线的节点
@@ -344,108 +360,41 @@ export default {
           return true
         }
 
+        // 非数据节点至少有一个目标
+        if (outputNum < minOutputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要${minOutputs}个目标节点`
+          return true
+        }
+
         if (this.hasNodeError(id)) {
           someErrorMsg = `「 ${node.name} 」配置异常`
           return true
         }
       })
 
-      const nodeNames = []
-      let typeName = ''
-      // 根据任务类型(全量、增量),检查不支持此类型的节点
-      // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
-      if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = '全量+增量'
-        tableNode.forEach(node => {
-          if (
-            sourceMap[node.id] &&
-            (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
-          ) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'initial_sync') {
-        typeName = '全量'
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'cdc') {
-        typeName = '增量'
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      }
+      if (someErrorMsg) return someErrorMsg
 
-      if (nodeNames.length) {
-        someErrorMsg = `存在不支持${typeName}的节点`
-      }
+      someErrorMsg = this.validateAgent(dataNodes)
 
-      const accessNodeProcessIdArr = [
-        ...tableNode.reduce((set, item) => {
-          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
-          return set
-        }, new Set())
-      ]
+      if (someErrorMsg) return someErrorMsg
 
-      if (accessNodeProcessIdArr.length > 1) {
-        // 所属agent节点冲突
-        const chooseId = this.dataflow.accessNodeProcessId
-
-        if (!chooseId) {
-          // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
-        } else {
-          let isError = false
-          const agent = this.scope.$agentMap[chooseId]
-          tableNode.forEach(node => {
-            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
-              this.setNodeErrorMsg({
-                id: node.id,
-                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
-              })
-              isError = true
-            }
-          })
-          isError && (someErrorMsg = `所属agent节点冲突`)
-        }
-      } else if (accessNodeProcessIdArr.length === 1) {
-        // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
-        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
-      }
+      someErrorMsg = this.validateLink(dataNodes)
 
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
-      const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
-      const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+      // const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
+      // const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
+      // if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
 
       return null
-    },
+    },*/
 
     async saveAsNewDataflow() {
+      this.isSaving = true
       try {
-        this.isSaving = true
         const data = this.getDataflowDataToSave()
         const dataflow = await taskApi.post(data)
-        this.isSaving = false
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
@@ -455,11 +404,11 @@ export default {
           params: { id: dataflow.id, action: 'dataflowEdit' }
         })
       } catch (e) {
-        // this.$showError(e, '任务保存出错', '出现的问题:')
         // eslint-disable-next-line no-console
         console.error('任务保存出错', e)
         this.handleError(e)
       }
+      this.isSaving = false
     },
 
     createNode(position, item) {
@@ -541,28 +490,23 @@ export default {
       }
       this.isSaving = false
       if (!needStart) {
-        this.$refs.console?.stopAuto() // 再load一下信息输出，并且停掉计时器
-        this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
+        // this.$refs.console?.stopAuto() // 再load一下信息输出，并且停掉计时器
+        // this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
       }
       return isOk
     },
 
     async handleStart() {
+      this.unWatchStatus?.()
       this.unWatchStatus = this.$watch('dataflow.status', v => {
-        console.log('状态监听', v) // eslint-disable-line
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
-          this.$refs.console?.stopAuto()
-          if (v === 'running') {
-            this.$router.push({
-              name: 'MigrationMonitor',
-              params: {
-                id: this.dataflow.id
-              },
-              query: {
-                subId: this.dataflow.statuses[0]?.id
-              }
-            })
+          this.$refs.console?.loadData()
+          if (v !== 'running') {
+            this.$refs.console?.stopAuto()
+          } else {
+            this.gotoViewer(true)
           }
+          // this.unWatchStatus()
         }
       })
       const flag = await this.save(true)
@@ -572,6 +516,16 @@ export default {
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
         // this.gotoViewer()
+      }
+    },
+
+    checkGotoViewer() {
+      if (this.dataflow.disabledData.edit) {
+        // 不可编辑
+        // this.gotoViewer()
+        this.setStateReadonly(true)
+      } else {
+        this.setStateReadonly(false)
       }
     }
   }

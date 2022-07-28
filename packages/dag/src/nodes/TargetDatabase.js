@@ -96,9 +96,10 @@ export class TargetDatabase extends NodeType {
 
       ddlEvents: {
         type: 'void',
-        title: 'DDL支持列表',
+        title: 'DDL事件应用',
         'x-decorator': 'FormItem',
         'x-decorator-props': {
+          tooltip: '当前节点支持处理的DDL事件',
           feedbackLayout: 'none'
         },
         'x-component': 'DdlEventList',
@@ -170,7 +171,7 @@ export class TargetDatabase extends NodeType {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      className: 'font-color-light mb-2',
+                      className: 'font-color-dark mb-2',
                       wrapperWidth: 300,
                       addonBefore: '插入事件'
                     },
@@ -191,7 +192,7 @@ export class TargetDatabase extends NodeType {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      className: 'font-color-light mb-2',
+                      className: 'font-color-dark mb-2',
                       wrapperWidth: 300,
                       addonBefore: '更新事件'
                     },
@@ -211,7 +212,7 @@ export class TargetDatabase extends NodeType {
                     type: 'void',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      className: 'font-color-light',
+                      className: 'font-color-dark',
                       wrapperWidth: 300,
                       addonBefore: '删除事件'
                     },

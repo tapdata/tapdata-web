@@ -10,7 +10,7 @@
 
 <script>
 import TableList from '@/components/TableList'
-import StatusTag from '@/components/StatusTag'
+import { StatusTag } from '@tap/business'
 
 export default {
   name: 'History',

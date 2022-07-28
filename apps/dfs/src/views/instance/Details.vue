@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
-import StatusTag from '@/components/StatusTag'
+import { VIcon } from '@tap/component'
+import { StatusTag } from '@tap/business'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {

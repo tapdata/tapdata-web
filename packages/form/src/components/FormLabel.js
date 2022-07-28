@@ -1,4 +1,4 @@
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import Locale from '../mixins/locale'
 
 export const FormLabel = {

@@ -19,6 +19,7 @@ export default {
   data() {
     return {
       openapi: {},
+      openapiAll: {},
       token: ''
     }
   },
@@ -43,7 +44,7 @@ export default {
         this.apiClient = new ApiClient(defaultCollection)
         this.apiClient.setApiServer(servers.items[0])
 
-        let openApi = `${servers.items[0].clientURI}/openapi.json`
+        let openApi = `${servers.items[0].clientURI}/openapi-readOnly.json`
         // let openApiObj = await axios.get(openApi)
         let res = await fetch(openApi)
         let openApiObj = await res.json()
@@ -51,6 +52,14 @@ export default {
         if (openApiObj) {
           this.openapi = openApiObj
         }
+        //全局open
+        let openapiAll = `${servers.items[0].clientURI}/openapi.json`
+        let resOpenApiAll = await fetch(openapiAll)
+        let openapiAllObj = await resOpenApiAll.json()
+        if (openapiAllObj) {
+          this.openapiAll = openapiAllObj
+        }
+
         // let token = this.$route.query.token || '';
         let token = await this.apiClient.getAPIServerToken()
         this.token = token
@@ -73,7 +82,7 @@ export default {
   },
   methods: {
     exportJson() {
-      let obj = this.openapi
+      let obj = this.openapiAll
       let tokenField = {
         in: 'header',
         name: 'access_token',

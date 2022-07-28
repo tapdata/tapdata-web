@@ -145,8 +145,7 @@
 </template>
 
 <script>
-import TablePage from '@/components/TablePage'
-import FilterBar from '@/components/filter-bar'
+import { TablePage, FilterBar } from '@tap/component'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
 import { logcollectorApi } from '@tap/api'

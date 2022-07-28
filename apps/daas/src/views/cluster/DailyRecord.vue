@@ -89,7 +89,7 @@
   </section>
 </template>
 <script>
-import TablePage from '@/components/TablePage'
+import { TablePage } from '@tap/component'
 import { clusterApi, logsApi } from '@tap/api'
 let timeout = null
 export default {

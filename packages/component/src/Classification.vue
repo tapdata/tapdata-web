@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 
 export default {
@@ -379,13 +379,6 @@ export default {
           })
           self.hideDialog()
         })
-        // .catch(e => {
-        //   if (e.data?.code === 'MetadataDefinition.Value.Exist') {
-        //     this.$message.error(this.$t('classification_name_already_exists'))
-        //   } else {
-        //     this.$message.error('MetadataInstances error' + e)
-        //   }
-        // })
       }
     },
     deleteNode(id) {

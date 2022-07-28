@@ -86,8 +86,7 @@
 </template>
 
 <script>
-import FilterBar from '@/components/filter-bar'
-import TablePage from '@/components/TablePage'
+import { TablePage, FilterBar } from '@tap/component'
 import { toRegExp } from '../../utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import { apiServerApi } from '@tap/api'

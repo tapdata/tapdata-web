@@ -187,7 +187,7 @@
 </template>
 <script>
 import { uniq, find } from 'lodash'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import { licensesApi, settingsApi } from '@tap/api'
 

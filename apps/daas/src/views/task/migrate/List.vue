@@ -110,8 +110,8 @@
       <el-table-column prop="status" :label="$t('task_list_status')" min-width="120">
         <template #default="{ row }">
           <!--调度失败任务 统一归类为error-->
-          <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
-            {{ $t('task_preview_status_' + row.statusResult[0].status) }}
+          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
+            {{ $t('task_preview_status_' + row.status) }}
           </span>
           <!--产品测暂时决定隐藏-->
           <!--<span v-if="row.transformStatus && row.transformStatus === 'running'">
@@ -254,9 +254,7 @@
 <script>
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
-import TablePage from '@/components/TablePage'
-import FilterBar from '@/components/filter-bar'
-import Drawer from '@/components/Drawer'
+import { TablePage, FilterBar, Drawer } from '@tap/component'
 import Upload from '@/components/UploadDialog'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'

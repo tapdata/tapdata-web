@@ -141,7 +141,7 @@
 <script>
 import TableList from '@/components/TableList'
 import Milestone from './Milestone'
-import StatusTag from '@/components/StatusTag'
+import { StatusTag } from '@tap/business'
 import { getOverviewData, isFinished } from './util'
 import timeFunction from '@/mixins/timeFunction'
 

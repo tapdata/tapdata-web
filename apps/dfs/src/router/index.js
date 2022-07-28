@@ -5,9 +5,9 @@ import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import i18n from '@/i18n'
 import Lang from '../views/Lang.vue'
 
-const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
+// const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
-const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
+// const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
 const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
@@ -109,48 +109,66 @@ const routes = [
           }
         ]
       },
+      // {
+      //   path: '/task',
+      //   name: 'Task',
+      //   component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/Migration.vue'),
+      //   meta: {
+      //     title: i18n.t('tap_task_management'),
+      //     icon: 'task'
+      //   },
+      //   children: [
+      //     {
+      //       path: 'create',
+      //       name: 'DataflowCreate',
+      //       component: TaskForm,
+      //       meta: {
+      //         title: i18n.t('tap_create_task')
+      //       }
+      //     },
+      //     {
+      //       path: ':id',
+      //       name: 'DataflowEdit',
+      //       component: TaskForm,
+      //       meta: {
+      //         title: i18n.t('tap_edit_task')
+      //       }
+      //     },
+      //     {
+      //       path: ':id/monitor',
+      //       name: 'Monitor',
+      //       component: () => import(/* webpackChunkName: "task-monitor" */ '../views/monitor/Dashboard.vue'),
+      //       meta: {
+      //         title: i18n.t('tap_monitor')
+      //       }
+      //     },
+      //     {
+      //       path: ':id/statistics',
+      //       name: 'DataflowDetails',
+      //       component: DataflowDetails,
+      //       meta: {
+      //         title: i18n.t('tap_task_details')
+      //       }
+      //     }
+      //   ]
+      // },
       {
-        path: '/task',
-        name: 'Task',
+        path: '/etl',
+        name: 'Etl',
+        component: () => import(/* webpackChunkName: "task-etl" */ '../views/task/Migration.vue'),
+        meta: {
+          title: i18n.t('task_manage_etl'),
+          icon: 'task'
+        }
+      },
+      {
+        path: '/migrate',
+        name: 'Migrate',
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/Migration.vue'),
         meta: {
-          title: i18n.t('tap_task_management'),
+          title: i18n.t('task_manage_migrate'),
           icon: 'task'
-        },
-        children: [
-          {
-            path: 'create',
-            name: 'DataflowCreate',
-            component: TaskForm,
-            meta: {
-              title: i18n.t('tap_create_task')
-            }
-          },
-          {
-            path: ':id',
-            name: 'DataflowEdit',
-            component: TaskForm,
-            meta: {
-              title: i18n.t('tap_edit_task')
-            }
-          },
-          {
-            path: ':id/monitor',
-            name: 'Monitor',
-            component: () => import(/* webpackChunkName: "task-monitor" */ '../views/monitor/Dashboard.vue'),
-            meta: {
-              title: i18n.t('tap_monitor')
-            }
-          },
-          {
-            path: ':id/statistics',
-            name: 'DataflowDetails',
-            component: DataflowDetails,
-            meta: {
-              title: i18n.t('tap_task_details')
-            }
-          }
-        ]
+        }
       },
       {
         path: '/verify',

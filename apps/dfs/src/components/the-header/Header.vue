@@ -50,7 +50,7 @@
 <script>
 import Cookie from '@tap/shared/src/cookie'
 import NotificationPopover from '@/views/workbench/NotificationPopover'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 
 export default {
   components: { VIcon, NotificationPopover },

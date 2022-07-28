@@ -185,24 +185,24 @@ export class Aggregate extends NodeType {
                       }
                     }
                   }
-                },
-                properties: {
-                  addition: {
-                    type: 'void',
-                    title: '添加聚合',
-                    'x-component': 'ArrayCards.Addition',
-                    'x-component-props': {
-                      plain: true,
-                      defaultValue: {
-                        filterPredicate: '',
-                        aggFunction: 'COUNT',
-                        // name: '',
-                        aggExpression: '',
-                        groupByExpression: []
-                      }
-                    }
-                  }
                 }
+                // properties: {
+                //   addition: {
+                //     type: 'void',
+                //     title: '添加聚合',
+                //     'x-component': 'ArrayCards.Addition',
+                //     'x-component-props': {
+                //       plain: true,
+                //       defaultValue: {
+                //         filterPredicate: '',
+                //         aggFunction: 'COUNT',
+                //         // name: '',
+                //         aggExpression: '',
+                //         groupByExpression: []
+                //       }
+                //     }
+                //   }
+                // }
               }
             }
           },

@@ -10,7 +10,7 @@ export const getImgByType = function (type) {
   if (!type || type === 'jira') {
     type = 'default'
   }
-  return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)
+  return require(`@tap/assets/images/databaseType/${type.toLowerCase()}.png`)
 }
 
 export const verify = function (value) {

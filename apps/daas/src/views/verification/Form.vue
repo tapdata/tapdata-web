@@ -520,10 +520,9 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './MultiSelection.vue'
-import { /*VCodeEditor,*/ JsEditor } from '@tap/component'
+import { /*VCodeEditor,*/ JsEditor, GitBook } from '@tap/component'
 
 import { DATA_NODE_TYPES } from '@/const.js'
-import GitBook from '@/components/GitBook'
 import { metadataInstancesApi, taskApi, inspectApi } from '@tap/api'
 
 export default {

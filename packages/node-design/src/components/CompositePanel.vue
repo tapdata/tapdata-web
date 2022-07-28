@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import 'web-core/assets/icons/svg/component.svg'
 import 'web-core/assets/icons/svg/outline.svg'
 import 'web-core/assets/icons/svg/history.svg'

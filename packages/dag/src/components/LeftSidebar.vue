@@ -243,7 +243,7 @@ import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
@@ -709,8 +709,6 @@ export default {
         databaseType: connection.database_type,
         connectionId: connection.id,
         tableName,
-        // 节点创建默认属性
-        enableDDL: true,
         attrs: {
           connectionName: connection.name,
           connectionType: connection.connection_type,

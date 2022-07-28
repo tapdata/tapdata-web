@@ -394,11 +394,11 @@ export class Table extends NodeType {
                     }
                   },
                   enableDDL: {
-                    title: '自动DDL',
+                    title: 'DDL事件采集',
                     type: 'boolean',
-                    default: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
+                      tooltip: '开启后任务将会自动采集选中的源端DDL事件',
                       layout: 'horizontal'
                     },
                     'x-component': 'Switch',
@@ -431,7 +431,7 @@ export class Table extends NodeType {
                 properties: {
                   ddlEvents: {
                     type: 'void',
-                    title: 'DDL支持列表',
+                    title: 'DDL事件应用',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       feedbackLayout: 'none'
@@ -523,6 +523,77 @@ export class Table extends NodeType {
                         }
                       }
                     ]
+                  },
+
+                  initialConcurrentSpace: {
+                    title: '全量多线程写入',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      initialConcurrent: {
+                        type: 'boolean',
+                        default: true,
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.initialConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      initialConcurrentWriteNum: {
+                        type: 'number',
+                        default: 8,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
+                  },
+                  cdcConcurrentSpace: {
+                    type: 'void',
+                    title: '增量多线程写入',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      cdcConcurrent: {
+                        type: 'boolean',
+                        default: true,
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.cdcConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      cdcConcurrentWriteNum: {
+                        type: 'number',
+                        default: 4,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -547,8 +618,13 @@ export class Table extends NodeType {
 
   locales = AllLocales.Table
 
-  /*allowTarget(target, source) {
-    // 不再支持多个表节点串连 A->B->C
-    return !source.$inputs?.length
-  }*/
+  allowTarget(target, source) {
+    // 不再支持既是源又是目标的节点
+    return !source.$inputs?.length && (target.type !== 'table' || !target.$outputs?.length)
+  }
+
+  allowSource(source, target) {
+    // 不再支持既是源又是目标的节点
+    return !target.$outputs?.length
+  }
 }

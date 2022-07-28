@@ -49,8 +49,7 @@
 <script>
 import i18n from '@/i18n'
 
-import VIcon from '@/components/VIcon'
-import FilterBar from '@/components/filter-bar'
+import { VIcon, FilterBar } from '@tap/component'
 import TableList from '@/components/TableList'
 import { isEmpty } from '@/util'
 

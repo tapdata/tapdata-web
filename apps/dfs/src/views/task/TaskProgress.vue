@@ -86,7 +86,7 @@
 </template>
 <script>
 import i18n from '@/i18n'
-import StatusTag from '@/components/StatusTag'
+import { StatusTag } from '@tap/business'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {

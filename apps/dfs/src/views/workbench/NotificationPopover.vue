@@ -45,7 +45,7 @@
 
 <script>
 import { TYPEMAP } from './tyepMap'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 import { uniqueArr } from '@/util'
 import Setting from './components/Setting'
 import timeFunction from '@/mixins/timeFunction'

@@ -15,6 +15,11 @@ export class JavaScript extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      // 组件内需要监听$inputs的响应
+      $inputs: {
+        type: 'array',
+        display: 'none'
+      },
       script: {
         type: 'string',
         required: true,

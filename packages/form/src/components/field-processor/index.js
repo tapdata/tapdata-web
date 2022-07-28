@@ -260,6 +260,11 @@ export const FieldRenameProcessor = defineComponent({
                 : []
           }
         })
+        fieldsMapping = toList(map)
+        emit('change', fieldsMapping)
+        setTimeout(() => {
+          loadData('', '', true)
+        }, 2000)
       }
       if (config.checkedFields?.length > 0) {
         //字段级别
@@ -272,17 +277,12 @@ export const FieldRenameProcessor = defineComponent({
           doUpdateField(t, 'rename', newField)
         })
       }
-      config.checkedTables = []
-      config.checkAll = false
       nextTick(() => {
         refs.table?.clearSelection()
+        config.checkedTables = []
+        config.checkAll = false
+        config.operation = restOp
       })
-      config.operation = restOp
-      fieldsMapping = toList(map)
-      emit('change', fieldsMapping)
-      setTimeout(() => {
-        loadData('', '', true)
-      }, 2000)
       doVisible('visible', false)
     }
     //重置

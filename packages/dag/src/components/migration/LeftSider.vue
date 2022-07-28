@@ -183,7 +183,7 @@ import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
 import BaseNode from '../BaseNode'
@@ -383,9 +383,10 @@ export default {
           if (item.config.uri) {
             connectionUrl = item.config.uri
           } else {
-            connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
-              item.config.schema ? `/${item.config.schema}` : ''
-            }`
+            const { host, port, database, schema } = item.config
+            connectionUrl = host
+              ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+              : ''
           }
         }
 

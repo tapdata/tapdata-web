@@ -99,7 +99,7 @@
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--信息输出-->
-      <ElTooltip transition="tooltip-fade-in" :content="'日志'">
+      <ElTooltip transition="tooltip-fade-in" :content="'日志'" v-if="$route.name === 'MigrateEditor'">
         <button @click="toggleConsole()" class="icon-btn" :class="{ active: showConsole }">
           <VIcon size="16">list</VIcon>
         </button>
@@ -126,6 +126,7 @@
       </ElButton>
       <template v-else>
         <ElButton
+          v-if="$route.name !== 'MigrateEditor'"
           key="edit"
           size="mini"
           class="mx-1 btn--text"
@@ -188,7 +189,7 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'

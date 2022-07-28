@@ -176,7 +176,7 @@ import { deepCopy, uniqueArr } from '@/util'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 
 export default {
   name: 'SelectList',

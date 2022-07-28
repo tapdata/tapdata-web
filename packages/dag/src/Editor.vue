@@ -90,7 +90,7 @@ import TopHeader from './components/TopHeader'
 import LeftSidebar from './components/LeftSidebar'
 import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
-import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
+import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
 import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
@@ -98,7 +98,7 @@ import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
 import { uuid } from '@tap/shared'
 import { taskApi } from '@tap/api'
-import { AddNodeOnConnectionCommand, MoveNodeCommand } from './command'
+import { MoveNodeCommand } from './command'
 import dagre from 'dagre'
 import { merge } from 'lodash'
 import EmptyItem from './components/EmptyItem'
@@ -186,10 +186,10 @@ export default {
           name: 'JavaScript',
           type: 'js_processor'
         },
-        /*{
+        {
           name: '聚合',
           type: 'aggregation_processor'
-        },*/
+        },
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
@@ -266,7 +266,7 @@ export default {
       }
     },
 
-    async validate() {
+    /*async validate() {
       if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
@@ -409,7 +409,7 @@ export default {
       if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
 
       return null
-    },
+    },*/
 
     // 循环检查检查链路的末尾节点类型是否是表节点
     isEndOfTable(source, sourceMap, nodeMap) {
@@ -458,11 +458,10 @@ export default {
     },
 
     async saveAsNewDataflow() {
+      this.isSaving = true
       try {
-        this.isSaving = true
         const data = this.getDataflowDataToSave()
         const dataflow = await taskApi.post(data)
-        this.isSaving = false
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
@@ -472,11 +471,11 @@ export default {
           params: { id: dataflow.id, action: 'dataflowEdit' }
         })
       } catch (e) {
-        // this.$showError(e, '任务保存出错', '出现的问题:')
         // eslint-disable-next-line no-console
         console.error('任务保存出错', e)
         this.handleError(e)
       }
+      this.isSaving = false
     },
 
     /**

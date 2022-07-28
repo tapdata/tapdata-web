@@ -39,7 +39,7 @@
 
 <script>
 import TableList from '@/components/TableList'
-import VIcon from '@/components/VIcon'
+import { VIcon } from '@tap/component'
 
 export default {
   name: 'Milestone',
