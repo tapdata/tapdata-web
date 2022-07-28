@@ -502,9 +502,10 @@ export const FieldRenameProcessor = defineComponent({
               </div>
             </div>
             <ElTable
-              class="field-mapping-table table-border"
+              class="field-mapping-table"
               height="100%"
               ref={'table'}
+              border
               data={this.tableList}
               v-loading={this.config.loadingTable}
               row-class-name={this.tableRowClassName}
