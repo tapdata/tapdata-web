@@ -943,6 +943,41 @@ export default {
       )
     },
 
+    validateDag() {
+      let someErrorMsg = ''
+      // 检查每个节点的源节点个数、连线个数、节点的错误状态
+      this.allNodes.some(node => {
+        const { id } = node
+        const minInputs = node.__Ctor.minInputs ?? 1
+        // 非数据节点至少有一个目标
+        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
+        const inputNum = node.$inputs.length
+        const outputNum = node.$outputs.length
+
+        if (this.hasNodeError(id)) {
+          someErrorMsg = `「 ${node.name} 」配置异常`
+          return true
+        }
+
+        if (inputNum < minInputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
+          return true
+        }
+
+        if (outputNum < minOutputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要${minOutputs}个目标节点`
+          return true
+        }
+
+        if (!inputNum && !outputNum) {
+          // 存在没有连线的节点
+          someErrorMsg = `「 ${node.name} 」没有任何连线`
+          return true
+        }
+      })
+      return someErrorMsg
+    },
+
     /**
      * 校验agent设置
      * @returns {*}
@@ -1059,12 +1094,42 @@ export default {
       const firstSourceNode = this.allNodes.find(node => !node.$inputs.length)
       this.eachMap = {}
       this.eachOutputs(firstSourceNode)
-      // console.log('this.eachMap', this.eachMap) // eslint-disable-line
 
       if (this.allNodes.some(node => !this.eachMap[node.id])) {
         return '不支持多条链路，请编辑后重试'
       }
-      return null
+    },
+
+    validateDDL() {
+      let hasEnableDDL
+      let hasEnableDDLAndIncreasesql
+      let hasJsNode
+      this.allNodes.forEach(node => {
+        if (node.enableDDL) {
+          hasEnableDDL = true
+          if (node.increasePoll === 'customizeSql') {
+            hasEnableDDLAndIncreasesql = true
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: `该节点不支持DDL，请关闭`
+            })
+          }
+        }
+        if (node.type === 'js_processor' || node.type === 'custom_processor' || node.type === 'migrate_js_processor') {
+          hasJsNode = true
+        }
+      })
+      if ((hasEnableDDL && hasJsNode) || hasEnableDDLAndIncreasesql) {
+        return '任务中含有JS节点、自定义节点、或节点设置增量自定义SQL，暂不支持DDL，请手动关闭'
+      }
+      // 任务中没有JS节点、自定义节点、并开关闭增量自定义SQL 时DDL按钮才会开放
+    },
+
+    eachValidate(...fns) {
+      for (let fn of fns) {
+        let result = fn()
+        if (result) return result
+      }
     },
 
     async validate() {
@@ -1072,49 +1137,7 @@ export default {
 
       await this.validateAllNodes()
 
-      let someErrorMsg = ''
-      // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some(node => {
-        const { id } = node
-        const minInputs = node.__Ctor.minInputs ?? 1
-        // 非数据节点至少有一个目标
-        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
-        const inputNum = node.$inputs.length
-        const outputNum = node.$outputs.length
-
-        if (this.hasNodeError(id)) {
-          someErrorMsg = `「 ${node.name} 」配置异常`
-          return true
-        }
-
-        if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
-          return true
-        }
-
-        if (outputNum < minOutputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minOutputs}个目标节点`
-          return true
-        }
-
-        if (!inputNum && !outputNum) {
-          // 存在没有连线的节点
-          someErrorMsg = `「 ${node.name} 」没有任何连线`
-          return true
-        }
-      })
-
-      if (someErrorMsg) return someErrorMsg
-
-      someErrorMsg = this.validateAgent()
-
-      if (someErrorMsg) return someErrorMsg
-
-      someErrorMsg = this.validateLink()
-
-      if (someErrorMsg) return someErrorMsg
-
-      return null
+      return this.eachValidate(this.validateDag, this.validateAgent, this.validateLink, this.validateDDL)
     },
 
     /**
