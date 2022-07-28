@@ -149,7 +149,7 @@ export default {
           axisLabel: {
             color: '#535F72',
             formatter: val => {
-              return dayjs(val).format(this.timeFormat)
+              return dayjs(Number(val)).format(this.timeFormat)
             }
           }
         },

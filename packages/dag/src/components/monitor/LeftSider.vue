@@ -157,12 +157,6 @@ import 'web-core/assets/icons/svg/field_calc.svg'
 import 'web-core/assets/icons/svg/field_add_del.svg'
 import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
-import { mapGetters } from 'vuex'
-import mouseDrag from 'web-core/directives/mousedrag'
-import resize from 'web-core/directives/resize'
-import { debounce } from 'lodash'
-import { connectionsApi, databaseTypesApi } from '@tap/api'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { StatusItem } from '@tap/business'
 import Locale from '../../mixins/locale'
 import EventChart from './components/EventChart'
@@ -196,52 +190,17 @@ export default {
 
   data() {
     return {
-      dbList: [],
-      dbPage: 1,
-      dbTotal: 0,
-      dbSearchTxt: '',
-      showDBInput: false,
-      dragStarting: false,
-      dragMoving: false,
-      dragNode: null,
-      connectionDialog: false,
-      connectionFormDialog: false,
-      databaseType: '',
-      dbLoading: true,
-      dbLoadingMore: false,
       syncType: {
         initial_sync: '全量',
         cdc: '增量',
         'initial_sync+cdc': '全量+增量'
       },
-      database: [],
-      connectionType: 'source',
       lineChartDialog: false,
       initialListDialog: false
     }
   },
 
-  directives: {
-    mouseDrag,
-    resize
-  },
-
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor']),
-
-    noDBMore() {
-      return this.dbPage >= Math.ceil(this.dbTotal / 20)
-    },
-
-    disabledDBMore() {
-      return this.dbLoading || this.noDBMore || this.dbLoadingMore
-    },
-
-    scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
-      return `height: calc(100% + ${gutter}px);`
-    },
-
     // 任务事件统计（条）-任务累计
     eventDataAll() {
       const data = this.quota.samples?.totalData?.[0]
@@ -270,8 +229,9 @@ export default {
           value: []
         }
       }
+      const { time = [] } = this.quota
       return {
-        x: data.time,
+        x: time,
         name: ['输入', '输出'],
         value: [data.inputQps, data.outputQps]
       }
@@ -280,6 +240,7 @@ export default {
     // 增量延迟
     delayData() {
       const data = this.quota.samples?.lineChartData?.[0]
+      const { time = [] } = this.quota
       if (!data) {
         return {
           x: [],
@@ -287,7 +248,7 @@ export default {
         }
       }
       return {
-        x: data.time,
+        x: time,
         value: data.timeCostAvg
       }
     },
@@ -413,256 +374,7 @@ export default {
     }
   },
 
-  created() {
-    this.getDatabaseType()
-
-    this.init()
-  },
-
-  mounted() {
-    // addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
-  },
-
-  beforeDestroy() {
-    // removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
-  },
-
   methods: {
-    toggleConnectionType(type) {
-      if (this.connectionType !== type) {
-        this.connectionType = type
-        this.loadDatabase()
-      }
-    },
-
-    // 创建连接
-    creat() {
-      this.connectionDialog = true
-    },
-    getDatabaseType() {
-      databaseTypesApi.get().then(res => {
-        if (res) {
-          this.getPdkData(res)
-        }
-      })
-    },
-    getPdkData(data) {
-      this.database.push(...data)
-    },
-    createConnection(item) {
-      this.connectionDialog = false
-      // this.connectionFormDialog = true
-      this.databaseType = item.type
-      const { pdkHash } = item
-      this.$router.push({
-        name: 'connectionsCreate',
-        query: { pdkHash }
-      })
-    },
-    async init() {
-      await this.loadDatabase()
-    },
-
-    getDbFilter() {
-      const filter = {
-        page: this.dbPage,
-        size: 20,
-        where: {
-          // database_type: {
-          //   $in: this.database
-          // },
-          connection_type: {
-            like: this.connectionType,
-            options: 'i'
-          }
-        },
-        fields: {
-          name: 1,
-          id: 1,
-          database_type: 1,
-          database_owner: 1,
-          database_name: 1,
-          database_username: 1,
-          database_host: 1,
-          database_port: 1,
-          database_uri: 1,
-          connection_name: 1,
-          brokerURL: 1,
-          mqType: 1,
-          kafkaBootstrapServers: 1,
-          connection_type: 1,
-          status: 1,
-          accessNodeType: 1,
-          accessNodeProcessId: 1,
-          accessNodeProcessIdList: 1,
-          pdkType: 1,
-          pdkHash: 1,
-          config: 1
-        },
-        order: ['status DESC', 'name ASC']
-      }
-
-      const txt = this.dbSearchTxt.trim()
-      if (txt) {
-        filter.where.name = { like: txt, options: 'i' }
-      }
-
-      return { filter: JSON.stringify(filter) }
-    },
-
-    async loadDatabase(loadMore) {
-      if (loadMore) {
-        this.dbPage++
-        this.dbLoadingMore = true
-      } else {
-        this.dbLoading = true
-        this.dbPage = 1
-        this.dbTotal = 0
-      }
-
-      const data = await connectionsApi.get(this.getDbFilter())
-
-      this.dbTotal = data.total
-
-      const dbList = data.items.map(item => {
-        let connectionUrl = ''
-
-        if (item.config) {
-          if (item.config.uri) {
-            connectionUrl = item.config.uri
-          } else {
-            connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
-              item.config.schema ? `/${item.config.schema}` : ''
-            }`
-          }
-        }
-
-        item.connectionUrl = connectionUrl
-        item.databaseType = item.database_type
-        return item
-      })
-
-      if (loadMore) {
-        // 防止重复push
-        dbList.forEach(item => {
-          if (!this.dbIdMap[item.id]) {
-            this.dbList.push(item)
-            this.dbIdMap[item.id] = true
-          }
-        })
-        this.dbLoadingMore = false
-      } else {
-        this.scrollTopOfDBList()
-        this.dbList = dbList
-        this.dbLoading = false
-        // 缓存所有dbId
-        this.dbIdMap = dbList.reduce((map, item) => ((map[item.id] = true), map), {})
-      }
-      return this.dbList
-    },
-
-    loadMoreDB() {
-      if (this.disabledDBMore) return
-      this.loadDatabase(true)
-    },
-
-    // 新增数据源保存
-    saveConnection() {
-      this.connectionFormDialog = false
-      this.init()
-    },
-
-    genIconSrc(item) {
-      return require(`web-core/assets/icons/node/${item.databaseType}.svg`)
-    },
-
-    async getDragDom() {
-      await this.$nextTick()
-      return document.getElementById('dragNode')
-    },
-
-    onStart(item) {
-      const node = this.getNodeProps(item)
-      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
-      const ins = getResourceIns(node)
-      Object.defineProperty(node, '__Ctor', {
-        value: ins,
-        enumerable: false
-      })
-      this.dragNode = node
-      this.dragStarting = true
-      this.dragMoving = false
-    },
-
-    onProcessorStart(item) {
-      const node = item
-      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
-      if (!item.__Ctor) {
-        const ins = getResourceIns(node)
-        // 设置属性__Ctor不可枚举
-        Object.defineProperty(node, '__Ctor', {
-          value: ins,
-          enumerable: false
-        })
-      }
-      this.dragNode = node
-      this.dragStarting = true
-      this.dragMoving = false
-    },
-
-    onMove() {
-      this.dragMoving = true
-      this.$emit('move-node', ...arguments)
-    },
-
-    onDrop(item, position, rect) {
-      this.$emit('drop-node', this.dragNode, position, rect)
-    },
-
-    onStop() {
-      this.dragStarting = false
-      this.dragMoving = false
-    },
-
-    scrollTopOfDBList() {
-      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
-    },
-
-    handleDBInput: debounce(function () {
-      this.loadDatabase()
-    }, 100),
-
-    updateDBScrollbar() {
-      setTimeout(this.$refs.dbList.update, 350)
-    },
-
-    updateProcessorScrollbar() {
-      setTimeout(this.$refs.processorList.update, 350)
-    },
-
-    getNodeProps(item) {
-      const props = {
-        name: item.name,
-        type: 'database',
-        databaseType: item.database_type,
-        connectionId: item.id,
-        attrs: {
-          connectionName: item.name,
-          connectionType: item.connection_type,
-          accessNodeProcessId: item.accessNodeProcessId,
-          pdkType: item.pdkType,
-          pdkHash: item.pdkHash
-        }
-      }
-
-      if (this.connectionType === 'target') {
-        props.existDataProcessMode = 'keepData'
-        props.attrs.isTarget = true
-      }
-
-      return props
-    },
-
     changeTimeSelect(val, isTime, source) {
       this.$emit('changeTimeSelect', val, isTime, source)
     },

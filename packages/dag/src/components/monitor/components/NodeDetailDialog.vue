@@ -23,7 +23,7 @@
       <div v-if="isSource" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
         <div class="chart-box__content p-4">
-          <div class="flex align-items-center justify-content-around">
+          <div class="flex align-items-center justify-content-around text-center">
             <div>
               <div class="font-color-normal fw-bold mb-1">{{ formatTime(sourceData.tcpping, 'HH:mm:ss.ms') }}</div>
               <div>TCP连接耗时</div>
@@ -36,7 +36,7 @@
             </div>
             <div>
               <div class="font-color-normal fw-bold mb-1">
-                {{ formatTime(sourceData.connectionping, 'HH:mm:ss.ms') }}
+                {{ formatTime(sourceData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss') }}
               </div>
               <div>增量时间点</div>
             </div>
@@ -53,10 +53,10 @@
           </div>
         </div>
       </div>
-      <div v-else-if="isTarget" class="chart-box rounded-2">
+      <div v-else-if="isTarget" class="chart-box rounded-2 flex flex-column">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">连接状态</div>
-        <div class="chart-box__content p-4">
-          <div class="flex align-items-center justify-content-around" style="height: 180px">
+        <div class="chart-box__content p-4 flex-fill flex align-items-center">
+          <div class="flex align-items-center justify-content-around text-center pb-10 w-100">
             <div>
               <div class="font-color-normal fw-bold mb-1">{{ formatTime(targetData.tcpping, 'HH:mm:ss.ms') }}</div>
               <div>TCP连接耗时</div>
@@ -107,8 +107,9 @@ import EventChart from './EventChart'
 import LineChart from './LineChart'
 import { Chart } from '@tap/component'
 import { mapGetters } from 'vuex'
-import { getPieOptions } from '../util'
+import { getPieOptions, TIMEFORMATMAP, getTimeGranularity } from '../util'
 import dayjs from 'dayjs'
+import { measurementApi } from '@tap/api'
 
 function getRandom(num = 100) {
   return Math.ceil(Math.random() * 100 * num)
@@ -143,8 +144,7 @@ export default {
     nodeId: {
       type: String,
       required: true
-    },
-    timeFormat: String
+    }
   },
 
   data() {
@@ -153,7 +153,8 @@ export default {
       selected: '',
       quota: {},
       refresh: false, // 刷新数据还是初始化数据
-      count: 0
+      count: 0,
+      timeFormat: ''
     }
   },
 
@@ -199,10 +200,12 @@ export default {
           value: []
         }
       }
+      const { qps, inputQps = [], outputQps = [] } = data
+      const { time = [] } = this.quota
       return {
-        x: data.time,
+        x: time,
         name: ['输入', '输出'],
-        value: [data.inputQps, data.outputQps]
+        value: [qps || inputQps, qps || outputQps]
       }
     },
 
@@ -215,18 +218,24 @@ export default {
           value: []
         }
       }
+      const { time = [] } = this.quota
       return {
-        x: data.time,
+        x: time,
         value: data.timeCostAvg
       }
     },
 
     // 源节点-同步状态
     sourceData() {
+      const data = this.quota.samples?.totalData?.[0]
+      if (!data) {
+        return {}
+      }
+      const { tcpping, connectionping, currentEventTimestamp } = data
       return {
-        tcpping: 123456,
-        connectionping: 128383,
-        cdcTime: 1273123
+        tcpping,
+        connectionping,
+        currentEventTimestamp
       }
     },
 
@@ -374,11 +383,13 @@ export default {
     },
 
     getFilter() {
-      const taskId = this.dataflow?.id
+      const taskId = '62e2374c6d695d72fd1bc610' || this.dataflow?.id
       const nodeId = this.selected
+      const startAt = 1658992500000
+      const endAt = 1658993700000
       let params = {
-        starAt: 1658491200000,
-        endAt: 1658494800000,
+        startAt,
+        endAt,
         samples: {
           // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
           totalData: {
@@ -387,15 +398,26 @@ export default {
               taskId,
               nodeId
             },
-            endAt: '', // 停止时间 || 当前时间
-            fields: ['insertTotal', 'updateTotal', 'deleteTotal', 'ddlTotal', 'othersTotal', 'tcpPing', 'connectPing'],
+            endAt: Date.now(), // 停止时间 || 当前时间
+            fields: [
+              'insertTotal',
+              'updateTotal',
+              'deleteTotal',
+              'ddlTotal',
+              'othersTotal',
+              'tcpPing',
+              'connectPing',
+              'currentEventTimestamp'
+            ],
+            //
             type: 'instant' // 瞬时值
           },
           // 任务事件统计（条）-所选周期累计
           barChartData: {
             tags: {
-              type: 'task',
-              taskId
+              type: 'node',
+              taskId,
+              nodeId
             },
             fields: [
               'insertTotal',
@@ -414,35 +436,37 @@ export default {
           // qps + 增量延迟
           lineChartData: {
             tags: {
-              type: 'task',
-              taskId
-            },
-            fields: ['inputQps', 'outputQps', 'timeCostAvg'],
-            type: 'continuous' // 连续数据
-          },
-          // dag数据
-          dagData: {
-            tags: {
               type: 'node',
-              taskId: ''
+              taskId,
+              nodeId
             },
-            fields: [
-              'insertTotal',
-              'updateTotal',
-              'deleteTotal',
-              'ddlTotal',
-              'othersTotal',
-              'qps',
-              'timeCostAvg',
-              'currentEventTimestamp',
-              'tcpPing',
-              'connectPing',
-              'inputTotal',
-              'outputTotal',
-              'inputQps',
-              'outputQps'
-            ]
+            fields: ['qps', 'inputQps', 'outputQps', 'timeCostAvg'],
+            type: 'continuous' // 连续数据
           }
+          // dag数据
+          // dagData: {
+          //   tags: {
+          //     type: 'node',
+          //     taskId,
+          //     nodeId
+          //   },
+          //   fields: [
+          //     'insertTotal',
+          //     'updateTotal',
+          //     'deleteTotal',
+          //     'ddlTotal',
+          //     'othersTotal',
+          //     'qps',
+          //     'timeCostAvg',
+          //     'currentEventTimestamp',
+          //     'tcpPing',
+          //     'connectPing',
+          //     'inputTotal',
+          //     'outputTotal',
+          //     'inputQps',
+          //     'outputQps'
+          //   ]
+          // }
         }
       }
       return params
@@ -503,11 +527,17 @@ export default {
           ]
         }
       }
-      this.quota = res
+      // this.quota = res
+      measurementApi.queryV2(this.getFilter()).then(data => {
+        console.log('data', data)
+        this.quota = data
+        const granularity = getTimeGranularity(data.interval)
+        this.timeFormat = TIMEFORMATMAP[granularity]
+      })
     },
 
     formatTime(date, type = 'YYYY-MM-DD HH:mm:ss') {
-      return dayjs(date).format(type)
+      return date ? dayjs(date).format(type) : '-'
     },
 
     getInputOutput(data) {

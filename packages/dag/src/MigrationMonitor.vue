@@ -139,11 +139,12 @@ import VIcon from 'web-core/components/VIcon'
 import { VExpandXTransition } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
-import { taskApi } from '@tap/api'
+import { measurementApi, taskApi } from '@tap/api'
 import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
 import dayjs from 'dayjs'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
+import { TIMEFORMATMAP, getTimeGranularity } from './components/monitor/util'
 
 function getRandom(num = 100) {
   return Math.ceil(Math.random() * 100 * num)
@@ -228,13 +229,7 @@ export default {
       nodeDetailDialogId: '',
       timeFormat: '',
       firstStartTime: Date.now() - 5 * 24 * 60 * 60 * 1000, // 任务第一次启动时间，先写死时间，后面通过运行记录来获取
-      lastStopTime: Date.now(), // 任务最近一次停止时间，先写死时间，后面通过运行记录来获取
-      timeFormatMap: {
-        s: 'mm.ss',
-        m: 'HH:mm',
-        h: 'MM-DD HH:00',
-        d: 'MM-DD'
-      }
+      lastStopTime: Date.now() // 任务最近一次停止时间，先写死时间，后面通过运行记录来获取
     }
   },
 
@@ -285,7 +280,7 @@ export default {
     init() {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        !this.nodeDetailDialog && this.loadQuotaData()
+        this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.loadQuotaData()
       }, 5000)
       this.loadQuotaData()
     },
@@ -511,10 +506,13 @@ export default {
     },
 
     getFilter() {
-      const taskId = this.dataflow?.id
+      const taskId = '62e2374c6d695d72fd1bc610' || this.dataflow?.id
+      const startAt = 1658992500000
+      const endAt = 1658993700000
+      // 开始时间和结束时间，取自this.quotaTime
       let params = {
-        starAt: 1658491200000,
-        endAt: 1658494800000,
+        startAt,
+        endAt,
         samples: {
           // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
           totalData: {
@@ -522,7 +520,7 @@ export default {
               type: 'task',
               taskId
             },
-            endAt: '', // 停止时间 || 当前时间
+            endAt: Date.now(), // 停止时间 || 当前时间
             fields: [
               'inputInsertTotal',
               'inputUpdateTotal',
@@ -572,30 +570,30 @@ export default {
             },
             fields: ['inputQps', 'outputQps', 'timeCostAvg'],
             type: 'continuous' // 连续数据
-          },
-          // dag数据
-          dagData: {
-            tags: {
-              type: 'node',
-              taskId: ''
-            },
-            fields: [
-              'insertTotal',
-              'updateTotal',
-              'deleteTotal',
-              'ddlTotal',
-              'othersTotal',
-              'qps',
-              'timeCostAvg',
-              'currentEventTimestamp',
-              'tcpPing',
-              'connectPing',
-              'inputTotal',
-              'outputTotal',
-              'inputQps',
-              'outputQps'
-            ]
           }
+          // dag数据
+          // dagData: {
+          //   tags: {
+          //     type: 'node',
+          //     taskId
+          //   },
+          //   fields: [
+          //     'insertTotal',
+          //     'updateTotal',
+          //     'deleteTotal',
+          //     'ddlTotal',
+          //     'othersTotal',
+          //     'qps',
+          //     'timeCostAvg',
+          //     'currentEventTimestamp',
+          //     'tcpPing',
+          //     'connectPing',
+          //     'inputTotal',
+          //     'outputTotal',
+          //     'inputQps',
+          //     'outputQps'
+          //   ]
+          // }
         }
       }
       return params
@@ -673,11 +671,12 @@ export default {
           ]
         }
       }
-      this.quota = res
-    },
-
-    formatTime(date, type = 'YYYY-MM-DD HH:mm:ss') {
-      return dayjs(date).format(type)
+      // this.quota = res
+      measurementApi.queryV2(this.getFilter()).then(data => {
+        this.quota = data
+        const granularity = getTimeGranularity(data.interval)
+        this.timeFormat = TIMEFORMATMAP[granularity]
+      })
     },
 
     /**
@@ -740,7 +739,8 @@ export default {
 
     handleChangeTimeSelect(val, isTime, source) {
       this.refresh = this.quotaTimeType === val
-      this.quotaTimeType = val
+      this.quotaTimeType = source?.type ?? val
+      console.log('this.quotaTimeType', this.quotaTimeType)
       const nowTime = Date.now()
       if (isTime) {
         this.quotaTime = val
@@ -764,35 +764,12 @@ export default {
         }
       }
 
-      const granularity = this.getTimeGranularity(...this.quotaTime)
-      this.timeFormat = this.timeFormatMap[granularity]
       this.init()
     },
 
     handleOpenDetail(node) {
       this.nodeDetailDialogId = node.id
       this.nodeDetailDialog = true
-    },
-
-    getTimeGranularity(start, end) {
-      /*
-      - 间隔在1小时以内，粒度为5秒
-      - 间隔在1个小时-1天，粒度为1分钟
-      - 间隔超过1天小于30天，展示粒度按1小时
-      - 间隔超过30天，展示粒度按照1天
-      * */
-      const spacing = new Date(end).getTime() - new Date(start).getTime()
-      let result = ''
-      if (spacing <= 1 * 60 * 60 * 1000) {
-        result = 's'
-      } else if (spacing <= 24 * 60 * 60 * 1000) {
-        result = 'm'
-      } else if (spacing <= 30 * 24 * 60 * 60 * 1000) {
-        result = 'h'
-      } else {
-        result = 'd'
-      }
-      return result
     },
 
     handleVerifyDetails(table) {

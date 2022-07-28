@@ -181,7 +181,18 @@ export default {
         this.isTime = true
       }
       this.period = valJoin
-      this.$emit('change', valJoin, true, val)
+      this.$emit(
+        'change',
+        valJoin,
+        true,
+        Object.assign(
+          {},
+          this.items.find(t => t.type === 'custom'),
+          {
+            value: val
+          }
+        )
+      )
     },
 
     blur() {

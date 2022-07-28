@@ -68,3 +68,31 @@ export function getPieOptions(data, op) {
   }
   return options
 }
+
+export const TIMEFORMATMAP = {
+  s: 'mm:ss',
+  m: 'HH:mm',
+  h: 'MM-DD HH:00',
+  d: 'MM-DD'
+}
+
+/*
+  - 间隔在1小时以内，粒度为5秒
+  - 间隔在1个小时-1天，粒度为1分钟
+  - 间隔超过1天小于30天，展示粒度按1小时
+  - 间隔超过30天，展示粒度按照1天
+  * */
+export function getTimeGranularity(ms = 5000) {
+  const spacing = ms
+  let result = ''
+  if (spacing <= 60 * 1000) {
+    result = 's'
+  } else if (spacing <= 60 * 60 * 1000) {
+    result = 'm'
+  } else if (spacing <= 24 * 60 * 60 * 1000) {
+    result = 'h'
+  } else {
+    result = 'd'
+  }
+  return result
+}
