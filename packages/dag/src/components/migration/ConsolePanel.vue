@@ -123,7 +123,6 @@ export default {
     },
 
     async loadData() {
-      // clearTimeout(this.timerId)
       const { taskId, nodeId } = this
       this.loading = true
       const data = await taskApi.getConsole({
@@ -139,17 +138,17 @@ export default {
         node && nodeList.push(node)
       })
       this.nodeList = nodeList
+      this.timeout = this.logList.length ? 3000 : 1000
       if (data.over) this.stopAuto()
     },
 
     async autoLoad() {
-      console.log('autoLoad') // eslint-disable-line
       clearTimeout(this.timerId)
       await this.loadData()
       if (this.ifAuto) {
         this.timerId = setTimeout(() => {
           this.autoLoad()
-        }, 3000)
+        }, this.timeout || 3000)
       }
     },
 
@@ -159,7 +158,6 @@ export default {
     },
 
     stopAuto() {
-      console.log('stopAuto') // eslint-disable-line
       this.ifAuto = false
       clearTimeout(this.timerId)
     },
