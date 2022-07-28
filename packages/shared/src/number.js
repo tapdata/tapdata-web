@@ -41,7 +41,6 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
   const f = Math.pow(10, fix)
   while (num > 1 && i < list.length) {
     let m = num / (sp[i] ?? sp[0])
-    util = list[i]
     if (m < 1) {
       if (fix < 0) {
         res.unshift(num + util)
@@ -55,6 +54,7 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
       num = Math.round(m * f) / f
     }
     i++
+    util = list[i]
   }
   if (res.length) {
     return res.join('')
