@@ -8,7 +8,7 @@ import { observe } from '@formily/reactive'
 
 export const JsProcessor = observer(
   defineComponent({
-    props: ['value'],
+    props: ['value', 'disabled'],
     setup(props, { emit, root }) {
       const { taskId } = root.$store.state.dataflow
       const formRef = useForm()
@@ -102,7 +102,7 @@ export const JsProcessor = observer(
                   emit('change', val)
                 }}
                 height={350}
-                options={{ showPrintMargin: false, useWrapMode: true }}
+                options={{ showPrintMargin: false, useWrapMode: true, readOnly: props.disabled }}
               ></JsEditor>
             </FormItem.BaseItem>
 
@@ -139,11 +139,23 @@ export const JsProcessor = observer(
 
             <div class="flex" v-loading={running.value}>
               <FormItem.BaseItem class="flex-1 mr-4" label="调试输入">
-                <VCodeEditor class="border rounded-2" value={inputRef.value} lang="json" height={450}></VCodeEditor>
+                <VCodeEditor
+                  class="border rounded-2"
+                  value={inputRef.value}
+                  lang="json"
+                  options={{ readOnly: true }}
+                  style="height: calc((100vh - 120px);"
+                ></VCodeEditor>
               </FormItem.BaseItem>
 
               <FormItem.BaseItem class="flex-1" label="结果输出">
-                <VCodeEditor class="border rounded-2" value={outputRef.value} lang="json" height={450}></VCodeEditor>
+                <VCodeEditor
+                  class="border rounded-2"
+                  value={outputRef.value}
+                  lang="json"
+                  options={{ readOnly: true }}
+                  style="height: calc((100vh - 120px);"
+                ></VCodeEditor>
               </FormItem.BaseItem>
             </div>
           </div>

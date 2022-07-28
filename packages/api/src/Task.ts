@@ -124,7 +124,7 @@ export default class Task extends Http {
   }
 
   testRunJs(params) {
-    return this.axios.get('/api/task/migrate-js/test-run', { params })
+    return this.axios.post('/api/task/migrate-js/test-run', params)
   }
 
   getRunJsResult(params) {
