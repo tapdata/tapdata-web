@@ -383,9 +383,10 @@ export default {
           if (item.config.uri) {
             connectionUrl = item.config.uri
           } else {
-            connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
-              item.config.schema ? `/${item.config.schema}` : ''
-            }`
+            const { host, port, database, schema } = item.config
+            connectionUrl = host
+              ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+              : ''
           }
         }
 
