@@ -391,11 +391,10 @@ export default {
     },*/
 
     async saveAsNewDataflow() {
+      this.isSaving = true
       try {
-        this.isSaving = true
         const data = this.getDataflowDataToSave()
         const dataflow = await taskApi.post(data)
-        this.isSaving = false
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
@@ -405,11 +404,11 @@ export default {
           params: { id: dataflow.id, action: 'dataflowEdit' }
         })
       } catch (e) {
-        // this.$showError(e, '任务保存出错', '出现的问题:')
         // eslint-disable-next-line no-console
         console.error('任务保存出错', e)
         this.handleError(e)
       }
+      this.isSaving = false
     },
 
     createNode(position, item) {
