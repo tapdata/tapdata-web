@@ -154,7 +154,7 @@ export default {
       quota: {},
       refresh: false, // 刷新数据还是初始化数据
       count: 0,
-      timeFormat: ''
+      timeFormat: 'HH:mm:ss'
     }
   },
 
@@ -479,61 +479,66 @@ export default {
       }
       this.count++
       const { count } = this
-      let res = {
-        samples: {
-          totalData: [
-            {
-              insertTotal: getRandom(),
-              updateTotal: getRandom(),
-              deleteTotal: getRandom(),
-              ddlTotal: getRandom(),
-              othersTotal: getRandom()
+
+      measurementApi
+        .queryV2(this.getFilter())
+        .then(data => {
+          console.log('data', data)
+          this.quota = data
+          const granularity = getTimeGranularity(data.interval)
+          this.timeFormat = TIMEFORMATMAP[granularity]
+        })
+        .catch(() => {
+          let res = {
+            time: TIME_LIST.slice(count, count + 60),
+            samples: {
+              totalData: [
+                {
+                  insertTotal: getRandom(),
+                  updateTotal: getRandom(),
+                  deleteTotal: getRandom(),
+                  ddlTotal: getRandom(),
+                  othersTotal: getRandom()
+                }
+              ],
+              barChartData: [
+                {
+                  insertTotal: getRandom(),
+                  updateTotal: getRandom(),
+                  deleteTotal: getRandom(),
+                  ddlTotal: getRandom(),
+                  othersTotal: getRandom()
+                }
+              ],
+              lineChartData: [
+                {
+                  inputQps: VALUE_LIST.slice(count, count + 60),
+                  outputQps: VALUE_LIST.slice(count + 10, count + 60 + 10),
+                  timeCostAvg: VALUE_LIST.slice(count + 10, count + 60 + 10)
+                }
+              ],
+              dagData: [
+                {
+                  insertTotal: getRandom(),
+                  updateTotal: getRandom(),
+                  deleteTotal: getRandom(),
+                  ddlTotal: getRandom(),
+                  othersTotal: getRandom(),
+                  qps: getRandom(),
+                  timeCostAvg: getRandom(),
+                  currentEventTimestamp: getRandom(),
+                  tcpPing: getRandom(),
+                  connectPing: getRandom(),
+                  inputTotal: getRandom(),
+                  outputTotal: getRandom(),
+                  inputQps: getRandom(),
+                  outputQps: getRandom()
+                }
+              ]
             }
-          ],
-          barChartData: [
-            {
-              insertTotal: getRandom(),
-              updateTotal: getRandom(),
-              deleteTotal: getRandom(),
-              ddlTotal: getRandom(),
-              othersTotal: getRandom()
-            }
-          ],
-          lineChartData: [
-            {
-              inputQps: VALUE_LIST.slice(count, count + 60),
-              outputQps: VALUE_LIST.slice(count + 10, count + 60 + 10),
-              timeCostAvg: VALUE_LIST.slice(count + 10, count + 60 + 10),
-              time: TIME_LIST.slice(count, count + 60)
-            }
-          ],
-          dagData: [
-            {
-              insertTotal: getRandom(),
-              updateTotal: getRandom(),
-              deleteTotal: getRandom(),
-              ddlTotal: getRandom(),
-              othersTotal: getRandom(),
-              qps: getRandom(),
-              timeCostAvg: getRandom(),
-              currentEventTimestamp: getRandom(),
-              tcpPing: getRandom(),
-              connectPing: getRandom(),
-              inputTotal: getRandom(),
-              outputTotal: getRandom(),
-              inputQps: getRandom(),
-              outputQps: getRandom()
-            }
-          ]
-        }
-      }
-      // this.quota = res
-      measurementApi.queryV2(this.getFilter()).then(data => {
-        console.log('data', data)
-        this.quota = data
-        const granularity = getTimeGranularity(data.interval)
-        this.timeFormat = TIMEFORMATMAP[granularity]
-      })
+          }
+          this.quota = res
+        })
     },
 
     formatTime(date, type = 'YYYY-MM-DD HH:mm:ss') {

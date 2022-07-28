@@ -227,7 +227,7 @@ export default {
       quota: {}, // 指标数据
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
-      timeFormat: '',
+      timeFormat: 'HH:mm:ss',
       firstStartTime: Date.now() - 5 * 24 * 60 * 60 * 1000, // 任务第一次启动时间，先写死时间，后面通过运行记录来获取
       lastStopTime: Date.now() // 任务最近一次停止时间，先写死时间，后面通过运行记录来获取
     }
@@ -606,77 +606,82 @@ export default {
       }
       this.count++
       const { count } = this
-      let res = {
-        samples: {
-          totalData: [
-            {
-              inputInsertTotal: getRandom(),
-              inputUpdateTotal: getRandom(),
-              inputDeleteTotal: getRandom(),
-              inputDdlTotal: getRandom(),
-              inputOthersTotal: getRandom(),
-              outputInsertTotal: getRandom(),
-              outputUpdateTotal: getRandom(),
-              outputDeleteTotal: getRandom(),
-              outputDdlTotal: getRandom(),
-              outputOthersTotal: getRandom(),
-              tableTotal: getRandom(),
-              createTableTotal: getRandom(),
-              snapshotTableTotal: getRandom(),
-              initialCompleteTime: 1657707577896, // 全量完成时间
-              sourceConnection: 'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
-              targetConnection: 'targetConnection',
-              cdcTime: 1657707577896
+
+      measurementApi
+        .queryV2(this.getFilter())
+        .then(data => {
+          this.quota = data
+          const granularity = getTimeGranularity(data.interval)
+          this.timeFormat = TIMEFORMATMAP[granularity]
+        })
+        .catch(() => {
+          let res = {
+            time: TIME_LIST.slice(count, count + 60),
+            samples: {
+              totalData: [
+                {
+                  inputInsertTotal: getRandom(),
+                  inputUpdateTotal: getRandom(),
+                  inputDeleteTotal: getRandom(),
+                  inputDdlTotal: getRandom(),
+                  inputOthersTotal: getRandom(),
+                  outputInsertTotal: getRandom(),
+                  outputUpdateTotal: getRandom(),
+                  outputDeleteTotal: getRandom(),
+                  outputDdlTotal: getRandom(),
+                  outputOthersTotal: getRandom(),
+                  tableTotal: getRandom(),
+                  createTableTotal: getRandom(),
+                  snapshotTableTotal: getRandom(),
+                  initialCompleteTime: 1657707577896, // 全量完成时间
+                  sourceConnection: 'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
+                  targetConnection: 'targetConnection',
+                  cdcTime: 1657707577896
+                }
+              ],
+              barChartData: [
+                {
+                  inputInsertTotal: getRandom(),
+                  inputUpdateTotal: getRandom(),
+                  inputDeleteTotal: getRandom(),
+                  inputDdlTotal: getRandom(),
+                  inputOthersTotal: getRandom(),
+                  outputInsertTotal: getRandom(),
+                  outputUpdateTotal: getRandom(),
+                  outputDeleteTotal: getRandom(),
+                  outputDdlTotal: getRandom(),
+                  outputOthersTotal: getRandom()
+                }
+              ],
+              lineChartData: [
+                {
+                  inputQps: VALUE_LIST.slice(count, count + 60),
+                  outputQps: VALUE_LIST.slice(count + 10, count + 60 + 10),
+                  timeCostAvg: VALUE_LIST.slice(count + 10, count + 60 + 10)
+                }
+              ],
+              dagData: [
+                {
+                  insertTotal: getRandom(),
+                  updateTotal: getRandom(),
+                  deleteTotal: getRandom(),
+                  ddlTotal: getRandom(),
+                  othersTotal: getRandom(),
+                  qps: getRandom(),
+                  timeCostAvg: getRandom(),
+                  currentEventTimestamp: getRandom(),
+                  tcpPing: getRandom(),
+                  connectPing: getRandom(),
+                  inputTotal: getRandom(),
+                  outputTotal: getRandom(),
+                  inputQps: getRandom(),
+                  outputQps: getRandom()
+                }
+              ]
             }
-          ],
-          barChartData: [
-            {
-              inputInsertTotal: getRandom(),
-              inputUpdateTotal: getRandom(),
-              inputDeleteTotal: getRandom(),
-              inputDdlTotal: getRandom(),
-              inputOthersTotal: getRandom(),
-              outputInsertTotal: getRandom(),
-              outputUpdateTotal: getRandom(),
-              outputDeleteTotal: getRandom(),
-              outputDdlTotal: getRandom(),
-              outputOthersTotal: getRandom()
-            }
-          ],
-          lineChartData: [
-            {
-              inputQps: VALUE_LIST.slice(count, count + 60),
-              outputQps: VALUE_LIST.slice(count + 10, count + 60 + 10),
-              timeCostAvg: VALUE_LIST.slice(count + 10, count + 60 + 10),
-              time: TIME_LIST.slice(count, count + 60)
-            }
-          ],
-          dagData: [
-            {
-              insertTotal: getRandom(),
-              updateTotal: getRandom(),
-              deleteTotal: getRandom(),
-              ddlTotal: getRandom(),
-              othersTotal: getRandom(),
-              qps: getRandom(),
-              timeCostAvg: getRandom(),
-              currentEventTimestamp: getRandom(),
-              tcpPing: getRandom(),
-              connectPing: getRandom(),
-              inputTotal: getRandom(),
-              outputTotal: getRandom(),
-              inputQps: getRandom(),
-              outputQps: getRandom()
-            }
-          ]
-        }
-      }
-      // this.quota = res
-      measurementApi.queryV2(this.getFilter()).then(data => {
-        this.quota = data
-        const granularity = getTimeGranularity(data.interval)
-        this.timeFormat = TIMEFORMATMAP[granularity]
-      })
+          }
+          this.quota = res
+        })
     },
 
     /**
