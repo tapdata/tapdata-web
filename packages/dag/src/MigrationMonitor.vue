@@ -103,6 +103,7 @@
         :scope="formScope"
         @hide="onHideSidebar"
         @verifyDetails="handleVerifyDetails"
+        @connectionList="handleConnectionList"
       />
       <!--配置面板-->
       <ConfigPanel v-else ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
@@ -788,6 +789,16 @@ export default {
         }
       })
       window.open(routeUrl.href)
+    },
+
+    handleConnectionList(keyword) {
+      let routeUrl = this.$router.resolve({
+        name: 'connectionsList',
+        query: {
+          keyword
+        }
+      })
+      window.open(routeUrl.href)
     }
   }
 }
@@ -822,6 +833,11 @@ $sidebarBg: #fff;
   min-height: 0;
   &.layout-has-sider {
     flex-direction: row;
+  }
+  ::v-deep {
+    .border-bottom {
+      border-bottom: 1px solid #f2f2f2 !important;
+    }
   }
 }
 

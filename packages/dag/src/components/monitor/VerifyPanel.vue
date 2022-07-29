@@ -20,6 +20,7 @@
         v-model="dbSearchTxt"
         ref="dbInput"
         placeholder="请输入搜索内容"
+        prefix-icon="el-icon-search"
         size="mini"
         clearable
         @keydown.native.stop
@@ -27,9 +28,6 @@
         @click.native.stop
         @input="handleDBInput"
       >
-        <template #prefix>
-          <VIcon size="14" class="ml-1 h-100" style="margin-top: 6px">magnify</VIcon>
-        </template>
       </ElInput>
     </div>
     <ElScrollbar ref="dbList" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
@@ -49,7 +47,7 @@
             <div v-for="db in dbList" :key="db.id" class="db-item px-4 py-2 user-select-none border-bottom">
               <div class="flex justify-content-between mb-2">
                 <span>连接名：</span>
-                <ElLink type="primary" @click="$emit('toConnection', db.connection)">{{ db.connection }}</ElLink>
+                <ElLink type="primary" @click="$emit('connectionList', db.connection)">{{ db.connection }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>表名：</span>

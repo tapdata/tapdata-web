@@ -483,7 +483,6 @@ export default {
       measurementApi
         .queryV2(this.getFilter())
         .then(data => {
-          console.log('data', data)
           this.quota = data
           const granularity = getTimeGranularity(data.interval)
           this.timeFormat = TIMEFORMATMAP[granularity]
