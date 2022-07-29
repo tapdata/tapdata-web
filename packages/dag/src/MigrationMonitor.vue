@@ -37,7 +37,7 @@
           :quota="quota"
           :timeFormat="timeFormat"
           :start-time="firstStartTime"
-          :end-time="lastStopTime"
+          :end-time="lastStopTime || Date.now()"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
@@ -221,16 +221,14 @@ export default {
       scale: 1,
       showBottomPanel: false,
       timer: null,
-      quotaTimeType: '',
+      quotaTimeType: '5m',
       quotaTime: [],
       refresh: false, // 刷新数据还是初始化数据
       count: 0,
       quota: {}, // 指标数据
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
-      timeFormat: 'HH:mm:ss',
-      firstStartTime: Date.now() - 5 * 24 * 60 * 60 * 1000, // 任务第一次启动时间，先写死时间，后面通过运行记录来获取
-      lastStopTime: Date.now() // 任务最近一次停止时间，先写死时间，后面通过运行记录来获取
+      timeFormat: 'HH:mm:ss'
     }
   },
 
@@ -242,14 +240,20 @@ export default {
       }
     },
 
-    endTimestamp() {
-      const { status } = this.dataflow || {}
-      // 运行中
-      if (status === 'running') {
-        return Date.now()
-      } else {
-        return this.lastStopTime
-      }
+    firstStartTime() {
+      const { startTime } = this.dataflow || {}
+      return startTime ? new Date(startTime).getTime() : null
+    },
+
+    lastStopTime() {
+      const { stopTime } = this.dataflow || {}
+      return stopTime ? new Date(stopTime).getTime() : null
+    }
+  },
+
+  watch: {
+    'dataflow.type'(v) {
+      v && this.init()
     }
   },
 
@@ -285,6 +289,7 @@ export default {
       }, 5000)
       this.loadQuotaData()
     },
+
     initNodeType() {
       this.addResourceIns(allResourceIns)
     },
@@ -507,9 +512,8 @@ export default {
     },
 
     getFilter() {
-      const taskId = '62e2374c6d695d72fd1bc610' || this.dataflow?.id
-      const startAt = 1658992500000
-      const endAt = 1658993700000
+      const taskId = this.dataflow?.id
+      const [startAt, endAt] = this.quotaTime
       // 开始时间和结束时间，取自this.quotaTime
       let params = {
         startAt,
@@ -601,13 +605,18 @@ export default {
     },
 
     loadQuotaData() {
+      if (!this.dataflow?.id) {
+        return
+      }
       const { refresh } = this
       if (refresh) {
         this.count = 0
       }
       this.count++
       const { count } = this
-
+      if (this.quotaTimeType !== 'custom') {
+        this.quotaTime = this.getTimeRange(this.quotaTimeType)
+      }
       measurementApi
         .queryV2(this.getFilter())
         .then(data => {
@@ -746,31 +755,35 @@ export default {
     handleChangeTimeSelect(val, isTime, source) {
       this.refresh = this.quotaTimeType === val
       this.quotaTimeType = source?.type ?? val
-      console.log('this.quotaTimeType', this.quotaTimeType)
-      const nowTime = Date.now()
-      if (isTime) {
-        this.quotaTime = val
-      } else {
-        switch (val) {
-          case '5m':
-            this.quotaTime = [nowTime - 5 * 60 * 1000, this.endTimestamp]
-            break
-          case '1h':
-            this.quotaTime = [nowTime - 60 * 60 * 1000, this.endTimestamp]
-            break
-          case '1d':
-            this.quotaTime = [nowTime - 24 * 60 * 60 * 1000, this.endTimestamp]
-            break
-          case 'full':
-            this.quotaTime = [this.firstStartTime, this.endTimestamp]
-            break
-          default:
-            this.quotaTime = [nowTime - 5 * 60 * 1000, this.endTimestamp]
-            break
-        }
-      }
-
+      this.quotaTime = isTime ? val : this.getTimeRange(val)
       this.init()
+    },
+
+    getTimeRange(type) {
+      let result
+      const { status } = this.dataflow || {}
+      let endTimestamp = this.lastStopTime
+      if (status === 'running') {
+        endTimestamp = Date.now()
+      }
+      switch (type) {
+        case '5m':
+          result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
+          break
+        case '1h':
+          result = [endTimestamp - 60 * 60 * 1000, endTimestamp]
+          break
+        case '1d':
+          result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
+          break
+        case 'full':
+          result = [this.firstStartTime, endTimestamp]
+          break
+        default:
+          result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
+          break
+      }
+      return result
     },
 
     handleOpenDetail(node) {

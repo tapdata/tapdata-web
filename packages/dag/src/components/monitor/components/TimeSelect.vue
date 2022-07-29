@@ -26,8 +26,7 @@
       end-placeholder="结束日期"
       format="yyyy-MM-dd HH:mm"
       value-format="timestamp"
-      style="height: 0; border: 0"
-      class="position-absolute overflow-hidden p-0 m-0"
+      class="el-date-picker position-absolute overflow-hidden p-0 m-0"
       @change="changeTime"
       @blur="blur"
     ></ElDatePicker>
@@ -151,7 +150,7 @@ export default {
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
     this.period = this.items[0]?.value
-    this.changeFnc(this.period)
+    // this.changeFnc(this.period)
   },
 
   methods: {
@@ -242,6 +241,12 @@ export default {
           content: '\e78f';
         }
       }
+    }
+    .el-date-picker {
+      height: 0;
+      border: 0;
+      bottom: 0;
+      left: 0;
     }
   }
 }
