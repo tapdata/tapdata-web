@@ -1,13 +1,14 @@
 <template>
   <div class="line-chart">
-    <Chart :extend="extend"></Chart>
+    <Chart ref="chart" :extend="extend"></Chart>
   </div>
 </template>
 
 <script>
+import { debounce } from 'lodash'
+import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
 import { calcUnit } from '@tap/shared'
-import dayjs from 'dayjs'
 
 export default {
   name: 'LineChart',
@@ -66,7 +67,8 @@ export default {
 
   data() {
     return {
-      extend: null
+      extend: null,
+      end: 100
     }
   },
 
@@ -100,18 +102,28 @@ export default {
       options.xAxis.data = x
 
       if (limit && x?.length) {
-        const startValue = x[(value?.[0]?.length || value.length) - limit] + ''
+        const len = value?.[0]?.length || value.length
         options.dataZoom = [
           {
             type: 'inside',
             zoomLock: true,
             zoomOnMouseWheel: false,
             moveOnMouseWheel: false,
-            startValue
+            startValue: x[len - 1 - limit] + '',
+            endValue: x[len - 1] + ''
           }
         ]
       }
-      this.extend = options
+      this.$refs.chart.chart?.chart.on(
+        'datazoom',
+        debounce(params => {
+          const { end } = params?.batch?.[0] || {}
+          this.end = end
+        }, 100)
+      )
+      if (this.end === 100) {
+        this.extend = options
+      }
     },
     getOptions() {
       return {
