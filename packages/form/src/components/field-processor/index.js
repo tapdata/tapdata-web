@@ -6,6 +6,7 @@ import EmptyItem from 'web-core/components/EmptyItem'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
+import { VIcon } from '@tap/component'
 import { delayTrigger } from 'web-core/util'
 
 export const FieldRenameProcessor = defineComponent({
@@ -327,6 +328,20 @@ export const FieldRenameProcessor = defineComponent({
       }
     }
     //右侧表格slot渲染
+    const renderSourceNode = ({ row }) => {
+      let show = row?.primary_key_position ? (
+        <span>
+          {row.sourceFieldName}
+          <VIcon size="12" class="color-darkorange">
+            key
+          </VIcon>
+        </span>
+      ) : (
+        <span>{row.sourceFieldName}</span>
+      )
+      let disabled = row.isShow ? <span>屏蔽</span> : <span>恢复</span>
+      return props.disabled ? disabled : show
+    }
     const renderNode = ({ row }) => {
       return row.isShow || props.disabled ? (
         <div
@@ -378,6 +393,7 @@ export const FieldRenameProcessor = defineComponent({
       doSelectionField,
       tableRowClassName,
       renderNode,
+      renderSourceNode,
       renderOpNode,
       updateView,
       doOperationRest,
@@ -511,7 +527,14 @@ export const FieldRenameProcessor = defineComponent({
               onSelection-change={this.doSelectionField}
             >
               <ElTableColumn type="selection" width="55"></ElTableColumn>
-              <ElTableColumn show-overflow-tooltip label="字段名" prop="sourceFieldName"></ElTableColumn>
+              <ElTableColumn
+                show-overflow-tooltip
+                label="字段名"
+                prop="sourceFieldName"
+                scopedSlots={{
+                  default: this.renderSourceNode
+                }}
+              ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
                 label="新字段名"
