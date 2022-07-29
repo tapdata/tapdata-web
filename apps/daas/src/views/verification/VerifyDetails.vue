@@ -4,7 +4,7 @@
       <div class="verify-list flex flex-column p-6">
         <div class="verify-list__header flex justify-content-between">
           <ElInput
-            class="search-input ml-4"
+            class="search-input"
             v-model="keyword"
             prefix-icon="el-icon-search"
             placeholder="请输入日志内容…"
@@ -164,6 +164,8 @@ export default {
 
   methods: {
     init() {
+      const { table } = this.$route.query
+      this.keyword = table
       this.rowClick()
     },
 
@@ -254,6 +256,17 @@ export default {
   border-radius: 4px;
   background-color: #fff;
   box-sizing: border-box;
+  ::v-deep {
+    .border-top {
+      border-top: 1px solid #f2f2f2 !important;
+    }
+    .border-bottom {
+      border-bottom: 1px solid #f2f2f2 !important;
+    }
+    .border-start {
+      border-left: 1px solid #f2f2f2 !important;
+    }
+  }
 }
 .verify-list {
   width: 534px;

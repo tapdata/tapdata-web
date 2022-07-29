@@ -1,8 +1,16 @@
 <template>
   <div class="time-select__picker">
-    <div class="flex align-items-center">
+    <div class="picker__item inline-flex align-items-center">
       <div class="time-select__title">{{ title }}</div>
-      <ElSelect v-model="period" :class="{ 'is-time': isTime }" size="mini" class="ml-2" @change="changeFnc">
+      <ElSelect
+        v-model="period"
+        :class="{ 'is-time': isTime }"
+        :popper-append-to-body="false"
+        popper-class="time-select__popper"
+        class="ml-2 dark"
+        size="mini"
+        @change="changeFnc"
+      >
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
       <VIcon class="color-primary ml-1" @click="openPicker">timer</VIcon>
@@ -209,6 +217,12 @@ export default {
 <style lang="scss" scoped>
 .time-select__picker {
   position: relative;
+  ::v-deep {
+    .time-select__popper {
+      width: 270px;
+      transform: translateX(-40px);
+    }
+  }
 }
 .time-select__title {
   white-space: nowrap;
@@ -217,6 +231,25 @@ export default {
   position: absolute;
 }
 .is-time {
-  flex: 1;
+  //flex: 1;
+  width: 260px;
+}
+.picker__item {
+  padding: 0 4px;
+  &:hover {
+    background: #eef3ff;
+  }
+}
+// 灰色风格下拉框
+.el-select {
+  &.dark {
+    .el-input__inner {
+      border: none;
+      background-color: inherit;
+    }
+    .el-icon-arrow-up:before {
+      content: '\e78f';
+    }
+  }
 }
 </style>
