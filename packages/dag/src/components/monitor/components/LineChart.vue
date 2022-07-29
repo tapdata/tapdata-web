@@ -102,7 +102,7 @@ export default {
       options.xAxis.data = x
 
       if (limit && x?.length) {
-        const len = value?.[0]?.length || value.length
+        const len = x?.[0]?.length || x.length
         options.dataZoom = [
           {
             type: 'inside',
@@ -128,7 +128,23 @@ export default {
     getOptions() {
       return {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          backgroundColor: '#364252',
+          textStyle: {
+            color: '#fff',
+            fontSize: 12
+          },
+          formatter: params => {
+            let result = ''
+            params.forEach((item, index) => {
+              const { axisValue, marker, seriesName, data } = item
+              if (!index) {
+                result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
+              }
+              result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div>${data}</div></div>`
+            })
+            return result
+          }
         },
         grid: {
           top: '20px',
