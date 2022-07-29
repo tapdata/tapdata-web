@@ -191,9 +191,6 @@
       .el-table {
         border: none;
       }
-      .el-table--group, .el-table--border{
-        border: 1px solid map-get($borderColor, light);
-      }
       .el-table__empty-block {
         height: 100% !important;
       }

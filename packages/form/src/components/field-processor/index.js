@@ -505,7 +505,6 @@ export const FieldRenameProcessor = defineComponent({
               class="field-mapping-table"
               height="100%"
               ref={'table'}
-              border
               data={this.tableList}
               v-loading={this.config.loadingTable}
               row-class-name={this.tableRowClassName}
