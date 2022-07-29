@@ -101,7 +101,7 @@ export const JsProcessor = observer(
       return () => {
         return (
           <div class="js-processor font-color-light">
-            <FormItem.BaseItem label="脚本">
+            <FormItem.BaseItem asterisk label="脚本">
               <JsEditor
                 value={props.value}
                 onChange={val => {
@@ -113,7 +113,7 @@ export const JsProcessor = observer(
             </FormItem.BaseItem>
 
             <div class="flex align-center">
-              <FormItem.BaseItem class="flex-1 mr-4" label="选择表" layout="horizontal" feedbackLayout="none">
+              <FormItem.BaseItem asterisk class="flex-1 mr-4" label="选择表" layout="horizontal" feedbackLayout="none">
                 <VirtualSelect
                   value={params.tableName}
                   filterable
@@ -131,13 +131,20 @@ export const JsProcessor = observer(
                   <ElInputNumber
                     style="width: 100px;"
                     value={params.rows}
+                    max={10}
                     onInput={val => {
                       params.rows = val
                     }}
                     controls-position="right"
                   ></ElInputNumber>
                 </FormItem.BaseItem>
-                <ElButton loading={running.value || tableLoading.value} onClick={handleRun} type="primary" size="small">
+                <ElButton
+                  disabled={!params.tableName}
+                  loading={running.value || tableLoading.value}
+                  onClick={handleRun}
+                  type="primary"
+                  size="small"
+                >
                   试运行
                 </ElButton>
               </div>

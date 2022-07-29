@@ -229,7 +229,7 @@ export class Database extends NodeType {
           style: {
             height: 'unset',
             minHeight: 0,
-            maxHeight: 'calc(100vh - 120px)'
+            maxHeight: 'calc((100vh - 120px) * 0.618)'
           }
         },
         'x-reactions': {

@@ -3,7 +3,7 @@
   flex-direction: column;
   //height: 100px;
   min-height: 100px;
-  max-height: calc(100vh - 120px);
+  max-height: calc((100vh - 120px) * 0.618);
   overflow: hidden;
   .el-card__header {
     padding: 8px 16px;
