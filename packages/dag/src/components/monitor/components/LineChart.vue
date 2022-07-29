@@ -141,7 +141,9 @@ export default {
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
-              result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div>${data}</div></div>`
+              result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${calcUnit(
+                data
+              )}</div></div>`
             })
             return result
           }

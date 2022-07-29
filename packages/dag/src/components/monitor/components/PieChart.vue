@@ -6,6 +6,8 @@
 
 <script>
 import { Chart } from '@tap/component'
+import dayjs from 'dayjs'
+import { calcUnit } from '../../../../../shared'
 
 export default {
   name: 'PieChart',
@@ -71,7 +73,25 @@ export default {
     getOptions() {
       return {
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          backgroundColor: '#364252',
+          textStyle: {
+            color: '#fff',
+            fontSize: 12
+          },
+          formatter: params => {
+            let result = ''
+            params.forEach((item, index) => {
+              const { axisValue, marker, seriesName, data } = item
+              if (!index) {
+                result += axisValue
+              }
+              result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${calcUnit(
+                data
+              )}</div></div>`
+            })
+            return result
+          }
         },
         textStyle: {
           rich: {

@@ -144,7 +144,13 @@ export default {
     nodeId: {
       type: String,
       required: true
-    }
+    },
+
+    dataflow: Object,
+
+    quotaTimeType: String,
+
+    quotaTime: Array
   },
 
   data() {
@@ -377,16 +383,15 @@ export default {
       }
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.loadQuotaData()
+        this.quotaTimeType !== 'custom' && this.loadQuotaData()
       }, 5000)
       this.loadQuotaData()
     },
 
     getFilter() {
-      const taskId = '62e2374c6d695d72fd1bc610' || this.dataflow?.id
+      const taskId = this.dataflow?.id
       const nodeId = this.selected
-      const startAt = 1658992500000
-      const endAt = 1658993700000
+      const [startAt, endAt] = this.quotaTime
       let params = {
         startAt,
         endAt,
@@ -419,18 +424,7 @@ export default {
               taskId,
               nodeId
             },
-            fields: [
-              'insertTotal',
-              'updateTotal',
-              'deleteTotal',
-              'ddlTotal',
-              'othersTotal'
-              // 'qps',
-              // 'timeCostAvg',
-              // 'currentEventTimestamp',
-              // 'tcpPing',
-              // 'connectPing'
-            ],
+            fields: ['insertTotal', 'updateTotal', 'deleteTotal', 'ddlTotal', 'othersTotal'],
             type: 'difference'
           },
           // qps + 增量延迟
@@ -443,30 +437,6 @@ export default {
             fields: ['qps', 'inputQps', 'outputQps', 'timeCostAvg'],
             type: 'continuous' // 连续数据
           }
-          // dag数据
-          // dagData: {
-          //   tags: {
-          //     type: 'node',
-          //     taskId,
-          //     nodeId
-          //   },
-          //   fields: [
-          //     'insertTotal',
-          //     'updateTotal',
-          //     'deleteTotal',
-          //     'ddlTotal',
-          //     'othersTotal',
-          //     'qps',
-          //     'timeCostAvg',
-          //     'currentEventTimestamp',
-          //     'tcpPing',
-          //     'connectPing',
-          //     'inputTotal',
-          //     'outputTotal',
-          //     'inputQps',
-          //     'outputQps'
-          //   ]
-          // }
         }
       }
       return params
@@ -479,7 +449,6 @@ export default {
       }
       this.count++
       const { count } = this
-
       measurementApi
         .queryV2(this.getFilter())
         .then(data => {

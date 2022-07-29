@@ -111,8 +111,11 @@
       <!--   节点详情   -->
       <NodeDetailDialog
         v-model="nodeDetailDialog"
+        :dataflow="dataflow"
         :node-id="nodeDetailDialogId"
         :timeFormat="timeFormat"
+        :quotaTime="quotaTime"
+        :quotaTimeType="quotaTimeType"
       ></NodeDetailDialog>
     </section>
   </section>
@@ -285,8 +288,16 @@ export default {
     init() {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.loadQuotaData()
+        this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.startLoadQuotaData()
       }, 5000)
+      this.startLoadQuotaData()
+    },
+
+    startLoadQuotaData() {
+      // 根据周期类型，计算时间范围
+      if (this.quotaTimeType !== 'custom') {
+        this.quotaTime = this.getTimeRange(this.quotaTimeType)
+      }
       this.loadQuotaData()
     },
 
@@ -514,7 +525,6 @@ export default {
     getFilter() {
       const taskId = this.dataflow?.id
       const [startAt, endAt] = this.quotaTime
-      // 开始时间和结束时间，取自this.quotaTime
       let params = {
         startAt,
         endAt,
@@ -575,30 +585,31 @@ export default {
             },
             fields: ['inputQps', 'outputQps', 'timeCostAvg'],
             type: 'continuous' // 连续数据
-          }
+          },
           // dag数据
-          // dagData: {
-          //   tags: {
-          //     type: 'node',
-          //     taskId
-          //   },
-          //   fields: [
-          //     'insertTotal',
-          //     'updateTotal',
-          //     'deleteTotal',
-          //     'ddlTotal',
-          //     'othersTotal',
-          //     'qps',
-          //     'timeCostAvg',
-          //     'currentEventTimestamp',
-          //     'tcpPing',
-          //     'connectPing',
-          //     'inputTotal',
-          //     'outputTotal',
-          //     'inputQps',
-          //     'outputQps'
-          //   ]
-          // }
+          dagData: {
+            tags: {
+              type: 'node',
+              taskId
+            },
+            fields: [
+              'insertTotal',
+              'updateTotal',
+              'deleteTotal',
+              'ddlTotal',
+              'othersTotal',
+              'qps',
+              'timeCostAvg',
+              'currentEventTimestamp',
+              'tcpPing',
+              'connectPing',
+              'inputTotal',
+              'outputTotal',
+              'inputQps',
+              'outputQps'
+            ],
+            type: 'instant' // 瞬时值
+          }
         }
       }
       return params
@@ -614,9 +625,6 @@ export default {
       }
       this.count++
       const { count } = this
-      if (this.quotaTimeType !== 'custom') {
-        this.quotaTime = this.getTimeRange(this.quotaTimeType)
-      }
       measurementApi
         .queryV2(this.getFilter())
         .then(data => {
