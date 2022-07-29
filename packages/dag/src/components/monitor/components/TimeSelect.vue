@@ -1,6 +1,6 @@
 <template>
   <div class="time-select__picker">
-    <div class="picker__item inline-flex align-items-center">
+    <div class="picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
         v-model="period"
@@ -9,6 +9,7 @@
         popper-class="time-select__popper"
         class="ml-2 dark"
         size="mini"
+        ref="select"
         @change="changeFnc"
       >
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
@@ -209,6 +210,14 @@ export default {
         this.changeTime([t - this.interval, t])
       }
       this.time = []
+    },
+
+    openSelect() {
+      if (this.isTime) {
+        this.$refs.datetime.focus()
+      } else {
+        this.$refs.select?.$el?.click()
+      }
     }
   }
 }
@@ -221,6 +230,18 @@ export default {
     .time-select__popper {
       width: 270px;
       transform: translateX(-40px);
+    }
+    // 灰色风格下拉框
+    .el-select {
+      &.dark {
+        .el-input__inner {
+          border: none;
+          background-color: inherit;
+        }
+        .el-icon-arrow-up:before {
+          content: '\e78f';
+        }
+      }
     }
   }
 }
@@ -238,18 +259,6 @@ export default {
   padding: 0 4px;
   &:hover {
     background: #eef3ff;
-  }
-}
-// 灰色风格下拉框
-.el-select {
-  &.dark {
-    .el-input__inner {
-      border: none;
-      background-color: inherit;
-    }
-    .el-icon-arrow-up:before {
-      content: '\e78f';
-    }
   }
 }
 </style>
