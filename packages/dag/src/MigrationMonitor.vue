@@ -693,7 +693,60 @@ export default {
                   inputTotal: getRandom(),
                   outputTotal: getRandom(),
                   inputQps: getRandom(),
-                  outputQps: getRandom()
+                  outputQps: getRandom(),
+                  tags: {
+                    nodeType: 'table_rename_processor',
+                    type: 'node',
+                    nodeId: '3a619752-50c5-4128-ac10-75a6fa14c672',
+                    subTaskId: '62e38b65290b4b01b05cec8b',
+                    taskId: '62e38b26290b4b01b05ce5cf'
+                  }
+                },
+                {
+                  insertTotal: getRandom(),
+                  updateTotal: getRandom(),
+                  deleteTotal: getRandom(),
+                  ddlTotal: getRandom(),
+                  othersTotal: getRandom(),
+                  qps: getRandom(),
+                  timeCostAvg: getRandom(),
+                  currentEventTimestamp: getRandom(),
+                  tcpPing: getRandom(),
+                  connectPing: getRandom(),
+                  inputTotal: getRandom(),
+                  outputTotal: getRandom(),
+                  inputQps: getRandom(),
+                  outputQps: getRandom(),
+                  tags: {
+                    nodeType: 'database',
+                    type: 'node',
+                    nodeId: '96f22ecc-6eb4-4f08-bc2a-2eab35ee9989',
+                    subTaskId: '62e38b65290b4b01b05cec8b',
+                    taskId: '62e38b26290b4b01b05ce5cf'
+                  }
+                },
+                {
+                  insertTotal: getRandom(),
+                  updateTotal: getRandom(),
+                  deleteTotal: getRandom(),
+                  ddlTotal: getRandom(),
+                  othersTotal: getRandom(),
+                  qps: getRandom(),
+                  timeCostAvg: getRandom(),
+                  currentEventTimestamp: getRandom(),
+                  tcpPing: getRandom(),
+                  connectPing: getRandom(),
+                  inputTotal: getRandom(),
+                  outputTotal: getRandom(),
+                  inputQps: getRandom(),
+                  outputQps: getRandom(),
+                  tags: {
+                    nodeType: 'database',
+                    type: 'node',
+                    nodeId: '439e6178-9f39-498b-8a4d-5c5d4f5b014c',
+                    subTaskId: '62e38b65290b4b01b05cec8b',
+                    taskId: '62e38b26290b4b01b05ce5cf'
+                  }
                 }
               ]
             }

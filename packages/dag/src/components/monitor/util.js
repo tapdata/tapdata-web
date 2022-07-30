@@ -1,7 +1,18 @@
 export function getPieOptions(data, op) {
   let options = {
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      backgroundColor: '#364252',
+      borderColor: '#364252',
+      textStyle: {
+        color: '#fff',
+        fontSize: 12
+      },
+      formatter: params => {
+        const { marker, name, value } = params || {}
+        let result = `<div class="text-end"><div style="width: 60px">${marker}<span class="pl-2">${name}</span></div><div class="din-font">${value.toLocaleString()}</div></div>`
+        return result
+      }
     },
     textStyle: {
       rich: {
