@@ -247,9 +247,14 @@ export default {
 
     // 目标节点-连接状态
     targetData() {
+      const data = this.quota.samples?.totalData?.[0]
+      if (!data) {
+        return {}
+      }
+      const { tcpping, connectionping } = data
       return {
-        tcpping: 123456,
-        connectionping: 128383
+        tcpping,
+        connectionping
       }
     },
 
@@ -276,29 +281,35 @@ export default {
           value: 0,
           color: '#F7D762'
         },
-        {
-          name: '无需创建',
-          key: 'noCreate',
-          value: 0,
-          color: '#88DBDA'
-        },
+        // {
+        //   name: '无需创建',
+        //   key: 'noCreate',
+        //   value: 0,
+        //   color: '#88DBDA'
+        // },
         {
           name: '已完成',
           key: 'finished',
           value: 0,
           color: '#82C647'
-        },
-        {
-          name: '错误',
-          key: 'error',
-          value: 0,
-          color: '#EC8181'
         }
+        // {
+        //   name: '错误',
+        //   key: 'error',
+        //   value: 0,
+        //   color: '#EC8181'
+        // }
       ]
-      const { structure } = this.quota.statistics?.[0] || {}
+      // const { structure } = this.quota.statistics?.[0] || {}
+      const { snapshotTableTotal = 0, tableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
+      let result = {
+        wait: 0,
+        finished: snapshotTableTotal
+      }
+      result.wait = tableTotal - result.finished
       const values = arr.map(t =>
         Object.assign({}, t, {
-          value: structure?.[t.key] ?? 0
+          value: result?.[t.key] ?? 0
         })
       )
       const options = {
@@ -318,35 +329,39 @@ export default {
     // 增量同步状态
     initialOptions() {
       let arr = [
-        {
-          name: '待进行',
-          key: 'wait',
-          value: 0,
-          color: '#F7D762'
-        },
+        // {
+        //   name: '待进行',
+        //   key: 'wait',
+        //   value: 0,
+        //   color: '#F7D762'
+        // },
         {
           name: '进行中',
           key: 'running',
           value: 0,
           color: '#88DBDA'
         },
-        {
-          name: '已完成',
-          key: 'finished',
-          value: 0,
-          color: '#82C647'
-        },
-        {
-          name: '错误',
-          key: 'error',
-          value: 0,
-          color: '#EC8181'
-        }
+        // {
+        //   name: '已完成',
+        //   key: 'finished',
+        //   value: 0,
+        //   color: '#82C647'
+        // },
+        // {
+        //   name: '错误',
+        //   key: 'error',
+        //   value: 0,
+        //   color: '#EC8181'
+        // }
       ]
-      const { data } = this.quota.statistics?.[0] || {}
+      // const { data } = this.quota.statistics?.[0] || {}
+      const { tableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
+      let result = {
+        running: tableTotal
+      }
       const values = arr.map(t =>
         Object.assign({}, t, {
-          value: data?.[t.key] ?? 0
+          value: result?.[t.key] ?? 0
         })
       )
       const options = {
@@ -412,7 +427,21 @@ export default {
               'othersTotal',
               'tcpPing',
               'connectPing',
-              'currentEventTimestamp'
+              'currentEventTimestamp',
+              'inputInsertTotal',
+              'inputUpdateTotal',
+              'inputDeleteTotal',
+              'inputDdlTotal',
+              'inputOthersTotal',
+              'outputInsertTotal',
+              'outputUpdateTotal',
+              'outputDeleteTotal',
+              'outputDdlTotal',
+              'outputOthersTotal',
+              'tableTotal',
+              'snapshotTableTotal',
+              'snapshotTotal',
+              'snapshotInsertTotal'
             ],
             //
             type: 'instant' // 瞬时值
@@ -424,7 +453,23 @@ export default {
               taskId,
               nodeId
             },
-            fields: ['insertTotal', 'updateTotal', 'deleteTotal', 'ddlTotal', 'othersTotal'],
+            fields: [
+              'insertTotal',
+              'updateTotal',
+              'deleteTotal',
+              'ddlTotal',
+              'othersTotal',
+              'inputInsertTotal',
+              'inputUpdateTotal',
+              'inputDeleteTotal',
+              'inputDdlTotal',
+              'inputOthersTotal',
+              'outputInsertTotal',
+              'outputUpdateTotal',
+              'outputDeleteTotal',
+              'outputDdlTotal',
+              'outputOthersTotal'
+            ],
             type: 'difference'
           },
           // qps + 增量延迟
@@ -513,15 +558,19 @@ export default {
       return date ? dayjs(date).format(type) : '-'
     },
 
-    getInputOutput(data) {
+    getInputOutput(data = {}) {
       let keyArr = ['insertTotal', 'updateTotal', 'deleteTotal', 'ddlTotal', 'othersTotal']
       let result = {
         input: {},
         output: {}
       }
+      let newData = {}
+      for (let key in data) {
+        newData[key.toLowerCase()] = data[key]
+      }
       keyArr.forEach(el => {
         for (let key in result) {
-          result[key][el] = data[el] || 0
+          result[key][el] = newData[key + el.toLowerCase()] || newData[el.toLowerCase()] || 0
         }
       })
       return result

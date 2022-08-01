@@ -607,7 +607,9 @@ export default {
               'inputTotal',
               'outputTotal',
               'inputQps',
-              'outputQps'
+              'outputQps',
+              'snapshotTotal',
+              'snapshotInsertTotal'
             ],
             type: 'instant' // 瞬时值
           }
@@ -696,6 +698,8 @@ export default {
                   outputTotal: getRandom(),
                   inputQps: getRandom(),
                   outputQps: getRandom(),
+                  snapshotTotal: getRandom(),
+                  snapshotInsertTotal: getRandom(),
                   tags: {
                     nodeType: 'table_rename_processor',
                     type: 'node',
