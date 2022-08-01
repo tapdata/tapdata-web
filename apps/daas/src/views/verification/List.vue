@@ -149,11 +149,12 @@
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
-import { toRegExp } from '../../utils/util'
-import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import { taskApi, inspectApi, metadataInstancesApi } from '@tap/api'
+import { VIcon, FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
+
+import { toRegExp } from '../../utils/util'
 
 let timeout = null
 export default {

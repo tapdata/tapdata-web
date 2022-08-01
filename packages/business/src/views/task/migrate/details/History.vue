@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import TableList from '@/components/TableList'
 import { userLogsApi } from '@tap/api'
+import { TableList } from '@tap/component'
 
 export default {
   name: 'History',

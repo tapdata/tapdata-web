@@ -75,10 +75,12 @@
   </div>
 </template>
 <script>
+import dayjs from 'dayjs'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { delayTrigger, formatTime } from '@/utils/util'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
 import { customerJobLogsApi } from '@tap/api'
+import { delayTrigger } from '@tap/shared'
 export default {
   name: 'Normal',
   components: {
@@ -99,7 +101,7 @@ export default {
       timer: null,
       loading: false,
       preLoading: false,
-      imageUrl: require('@/assets/images/noData.svg'),
+      imageUrl: require('@tap/assets/images/noData.svg'),
       list: [],
       colorMap: {
         FATAL: 'color-red',
@@ -329,7 +331,7 @@ export default {
       }, debounce)
     },
     formatTime(date) {
-      return formatTime(date)
+      return date ? dayjs(date).format('YYYY-MM-DD HH:mm:ss') : ''
     },
     scrollToBottom() {
       this.$nextTick(() => {

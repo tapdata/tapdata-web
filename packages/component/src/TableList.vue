@@ -17,8 +17,7 @@
 </template>
 
 <script>
-import { VTable } from '@tap/component'
-import { VIcon } from '@tap/component'
+import { VIcon, VTable } from '@tap/component'
 export default {
   name: 'TableList',
   components: { VTable, VIcon },

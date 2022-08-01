@@ -50,12 +50,11 @@
 </template>
 
 <script>
-import TableList from '@/components/TableList'
-import { SchemaProgress } from '@tap/business'
-import { VIcon } from '@tap/component'
-import { deepCopy } from '@/utils/util'
-import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import { connectionsApi } from '@tap/api'
+import { SchemaProgress } from '@tap/business'
+import { VIcon, TableList } from '@tap/component'
+import { deepCopy } from '@tap/shared'
+import { getConnectionIcon } from '../../../connections/util'
 
 export default {
   name: 'Connection',

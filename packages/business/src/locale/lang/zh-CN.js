@@ -33,5 +33,11 @@ export default {
 
   task_status_running: '已运行',
   task_status_not_running: '未运行',
-  task_status_error: '错误'
+  task_status_error: '错误',
+
+  task_info_ms: '毫秒',
+  task_info_s: '秒',
+  task_info_m: '分钟',
+  task_info_h: '小时',
+  task_info_d: '天'
 }

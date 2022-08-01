@@ -4,7 +4,7 @@
       ref="table"
       row-key="id"
       :classify="
-        claasify
+        classify
           ? {
               authority: 'datasource_catalog_management',
               types: ['database']
@@ -21,6 +21,7 @@
       </template>
       <div slot="operation">
         <ElButton
+          v-if="classify"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
@@ -40,7 +41,7 @@
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
+      <ElTableColumn v-if="classify" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
       <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('connection.dataBaseName')">
         <template slot-scope="scope">
           <span class="connection-name">
@@ -154,12 +155,13 @@
 </template>
 <script>
 import dayjs from 'dayjs'
-import { VIcon, TablePage, FilterBar } from '@tap/component'
+
 import { connectionsApi, databaseTypesApi } from '@tap/api'
+import { VIcon, FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
 import Cookie from '@tap/shared/src/cookie'
 
 import SchemaProgress from '../../components/SchemaProgress.vue'
-
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
@@ -171,7 +173,7 @@ export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   inject: ['checkAgent'],
   props: {
-    claasify: Boolean
+    classify: Boolean
   },
   data() {
     return {

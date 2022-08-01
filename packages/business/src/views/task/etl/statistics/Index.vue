@@ -1,50 +1,46 @@
 <template>
-  <div v-loading="loading" class="statistics-container font-color-slight section-wrap">
-    <Info
-      :task="task"
-      :syncData="syncData"
-      class="card-box card-box__info"
-      :remote-method="infoRemoteMethod"
-      @reload="loadTask"
-    ></Info>
-    <div class="card-box__content card-box px-6 py-2 mt-6">
-      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-        <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
-          <Schedule :task="task" @sync="getSyncData"></Schedule>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
-          <Log :id="task.id" style="max-height: 450px"></Log>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
-          <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
-          <History :ids="[task.parentId]" :operations="operations"></History>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
-          <ShareMining :id="task.id"></ShareMining>
-        </ElTabPane>
-      </ElTabs>
+  <div class="statistics-container flex flex-column font-color-slight h-100 section-wrap">
+    <div class="statistics-container-box">
+      <Info
+        :task="task"
+        class="card-box card-box__info"
+        :syncData="syncData"
+        :remote-method="infoRemoteMethod"
+        @reload="loadTask"
+      ></Info>
+      <div class="flex-1 mt-6 pb-12 section-wrap-box">
+        <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
+          <ElTabPane :label="$t('task_monitor_progress')" name="schedule" lazy>
+            <Schedule :task="task" @sync="getSyncData"></Schedule>
+          </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
+            <Log :id="task.id"></Log>
+          </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
+            <ShareMining :id="task.id"></ShareMining>
+          </ElTabPane>
+        </ElTabs>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import dayjs from 'dayjs'
+
+import { measurementApi, subtaskApi } from '@tap/api'
+import { Log } from '@tap/business'
+
 import Info from './Info'
 import Schedule from './Schedule'
-import Log from '@/components/logs/Index'
-import Connection from './Connection'
-import History from './History'
-import { measurementApi, subtaskApi } from '@tap/api'
-import ShareMining from '../../etl/statistics/ShareMining'
+import ShareMining from './ShareMining'
 
 export default {
-  name: 'Index',
-  components: { Info, Schedule, Log, Connection, History, ShareMining },
+  name: 'Statistics',
+  components: { Info, Schedule, Log, ShareMining },
   data() {
     return {
       timer: null,
-      loading: true,
       task: {},
       selectFlow: 'flow_', // 选中节点
       dataOverviewAll: 'flow',
@@ -53,7 +49,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('task_info_data_screening'),
+          title: this.$t('dataFlow.dataScreening'),
           loading: false
         },
         body: {
@@ -69,8 +65,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'second',
-          title: this.$t('task_info_input_output'),
-          tip: this.$t('task_info_throughputpop'),
+          title: this.$t('dataFlow.inputOutput'),
+          tip: this.$t('dataFlow.throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           loading: false
@@ -80,19 +76,7 @@ export default {
         output: 0
       },
       activeTab: 'schedule',
-      showContent: false,
-      field_process: [],
-      operations: ['start', 'stop', 'forceStop'],
       syncData: {}
-    }
-  },
-  computed: {
-    connectionIds() {
-      return (
-        this.task?.dag?.nodes?.map(item => {
-          return item.connectionId
-        }) || []
-      )
     }
   },
   created() {
@@ -101,7 +85,7 @@ export default {
       type: 'watch',
       collection: 'DataFlows',
       filter: {
-        where: { 'fullDocument._id': { $in: [this.$route.query.id] } }, //查询条件
+        where: { 'fullDocument._id': { $in: [this.$route.params.subId] } }, //查询条件
         fields: {
           'fullDocument.id': true,
           'fullDocument._id': true,
@@ -141,10 +125,10 @@ export default {
       this.loadTask()
     },
     async loadTask(hiddenLoading) {
+      let id = this.$route.params?.subId
       if (!hiddenLoading) {
         this.loading = true
       }
-      let id = this.$route.query?.subId
       subtaskApi
         .get([id])
         .then(data => {
@@ -168,7 +152,14 @@ export default {
       data.totalInput = data.stats?.input?.rows || 0
       data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
       data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
+      let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
+      data.startTimeFmt = this.formatTime(data.startTime)
+      data.endTimeFmt = this.formatTime(data.finishTime)
+      data.cdcTimeFmt = this.formatTime(cdcTime)
       return data
+    },
+    formatTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     infoRemoteMethod(params) {
       return measurementApi.query(params).then(data => {
@@ -189,42 +180,28 @@ export default {
 <style lang="scss" scoped>
 .statistics-container {
   font-size: 12px;
-  overflow: auto !important;
+  overflow-y: auto;
+  .statistics-container-box {
+    // overflow-y: auto;
+    ::v-deep {
+      .scroller {
+        min-height: 50px;
+        overflow-y: auto;
+      }
+    }
+  }
 }
 .card-box {
   background-color: map-get($bgColor, white);
   border-radius: 4px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {
-    // .table-list {
-    //height: 300px;
-    // }
-    .el-tab-pane {
-      height: 100%;
-      min-height: 400px;
-    }
-    .field-mapping {
-      min-height: 400px;
-      .task-form-body {
-        max-height: 350px;
-      }
+    .table-list {
+      height: 300px;
     }
   }
 }
 .card-box__info {
   border-bottom: 1px solid #e4e7ed;
-}
-.card-box__content {
-  flex: 1;
-  ::v-deep {
-    .el-tabs__content {
-      flex: 1;
-      height: calc(100% - 70px);
-      overflow-y: auto;
-    }
-    .el-tab-pane {
-      height: 100%;
-    }
-  }
 }
 </style>

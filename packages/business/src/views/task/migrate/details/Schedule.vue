@@ -184,12 +184,14 @@
 </template>
 
 <script>
-import TableList from '@/components/TableList'
-import VStep from '@/components/VStep'
+import dayjs from 'dayjs'
+
+import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
+import { VStep, TableList } from '@tap/component'
+import { deepCopy } from '@tap/shared'
+
 import Milestone from './Milestone'
 import Overview from '../../etl/statistics/Overview'
-import { formatTime, deepCopy } from '@/utils/util'
-import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
 
 export default {
   name: 'Schedule',
@@ -312,7 +314,7 @@ export default {
         if (el.group && el.group !== item?.group) {
           stepsData.push({
             label: groupMap[el.group],
-            desc: formatTime(el.start) || formatTime(el.end),
+            desc: this.formatTime(el.start) || this.formatTime(el.end),
             group: el.group
           })
         }
@@ -336,7 +338,7 @@ export default {
         .filter(item => item.group === this.currentStep.group)
         .map(m => {
           // let time = m.status === 'running' ? formatTime(m.start) : formatTime(m.end)
-          let time = formatTime(m.start)
+          let time = this.formatTime(m.start)
           return {
             label: this.$t(`milestone_label_${m.code.toLowerCase()}`),
             status: m.status,
@@ -442,7 +444,10 @@ export default {
       this.$refs.initialTableList?.fetch?.()
     },
     getTime(time) {
-      return formatTime(parseInt(time))
+      return this.formatTime(parseInt(time))
+    },
+    formatTime(date, format = 'YYYY-MM-DD HH:mm:ss') {
+      return date ? dayjs(date).format(format) : '-'
     },
     getMilestoneStatus(status) {
       let result = status

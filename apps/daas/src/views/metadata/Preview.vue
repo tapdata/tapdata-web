@@ -35,8 +35,9 @@
 </template>
 
 <script>
-import { TablePage } from '@tap/component'
 import { previewDataApi } from '@tap/api'
+import { TablePage } from '@tap/business'
+
 export default {
   props: {
     validaData: {

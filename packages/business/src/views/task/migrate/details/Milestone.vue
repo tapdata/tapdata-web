@@ -38,8 +38,7 @@
 </template>
 
 <script>
-import TableList from '@/components/TableList'
-import { VIcon } from '@tap/component'
+import { VIcon, TableList } from '@tap/component'
 
 export default {
   name: 'Milestone',

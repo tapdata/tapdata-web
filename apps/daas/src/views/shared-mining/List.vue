@@ -145,11 +145,13 @@
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
-import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
 import { logcollectorApi } from '@tap/api'
+import { FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
+
 import TaskButtons from '@/components/TaskButtons'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 
 let timeout = null
 export default {

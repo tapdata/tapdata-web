@@ -216,10 +216,13 @@
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
-import { toRegExp } from '../../utils/util'
 import dayjs from 'dayjs'
+
 import { usersApi, roleApi, roleMappingsApi } from '@tap/api'
+import { FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
+
+import { toRegExp } from '../../utils/util'
 
 export default {
   components: {

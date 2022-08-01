@@ -65,10 +65,9 @@
 </template>
 
 <script>
-import TableList from '@/components/TableList'
-import { VIcon } from '@tap/component'
-import { deepCopy } from '@/utils/util'
 import { subtaskApi } from '@tap/api'
+import { VIcon, TableList } from '@tap/component'
+import { deepCopy } from '@tap/shared'
 
 let timeout = null
 export default {

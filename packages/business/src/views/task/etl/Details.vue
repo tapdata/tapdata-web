@@ -3,7 +3,7 @@
     <div class="task-info flex justify-content-between bg-white p-6">
       <div class="task-info__left flex align-items-center">
         <div class="task-info__img flex justify-center align-items-center mr-8">
-          <img src="../../../assets/images/task/task.png" alt="" />
+          <img src="@tap/assets/images/task.png" alt="" />
         </div>
         <div class="flex-1 overflow-hidden pr-4">
           <div class="flex align-items-center">
@@ -104,16 +104,15 @@
 </template>
 
 <script>
-import { VIcon } from '@tap/component'
-import InlineInput from '@/components/InlineInput'
+import dayjs from 'dayjs'
+
+import { taskApi, dataFlowsApi } from '@tap/api'
+import { VIcon, Chart, InlineInput } from '@tap/component'
+
+import { ETL_SUB_STATUS_MAP, getSubTaskStatus, getTaskBtnDisabled } from '../../../shared'
 import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'
 import Subtask from '../Subtask'
-import { Chart } from '@tap/component'
-import { ETL_SUB_STATUS_MAP } from '@/const'
-import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
-import dayjs from 'dayjs'
-import { taskApi, dataFlowsApi } from '@tap/api'
 
 let timeout = null
 export default {

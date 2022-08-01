@@ -19,9 +19,10 @@
 </template>
 
 <script>
-import TableList from '@/components/TableList'
-import { StatusTag } from '@tap/business'
 import { logcollectorApi } from '@tap/api'
+import { TableList } from '@tap/component'
+import { StatusTag } from '@tap/business'
+
 export default {
   name: 'ShareMining',
   components: { TableList, StatusTag },

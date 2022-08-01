@@ -79,7 +79,8 @@
 
 <script>
 import { delayTrigger } from '@tap/shared'
-import { VIcon, Classification, SelectClassify } from '@tap/component'
+import { VIcon, Classification } from '@tap/component'
+import { SelectClassify } from '@tap/business'
 
 export default {
   components: {

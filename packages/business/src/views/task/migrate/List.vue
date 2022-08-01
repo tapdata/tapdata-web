@@ -4,7 +4,7 @@
       ref="table"
       row-key="id"
       class="data-flow-list"
-      :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
+      :classify="classify ? { authority: 'SYNC_category_management', types: ['dataflow'] } : null"
       :remoteMethod="getData"
       :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="
@@ -20,10 +20,11 @@
       </template>
       <div class="buttons" slot="operation">
         <el-button
+          v-if="classify"
+          v-show="multipleSelection.length > 0"
+          v-readonlybtn="'SYNC_category_application'"
           size="mini"
           class="btn message-button-cancel"
-          v-readonlybtn="'SYNC_category_application'"
-          v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
@@ -57,6 +58,7 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
+          v-if="classify"
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
           class="btn message-button-cancel"
@@ -80,6 +82,7 @@
         reserve-selection
         type="selection"
         width="45"
+        align="center"
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
       >
       </el-table-column>
@@ -247,23 +250,29 @@
       </div>
     </Drawer>
     <!-- 导入 -->
-    <Upload :type="'dataflow'" ref="upload"></Upload>
+    <Upload v-if="classify" :type="'dataflow'" ref="upload"></Upload>
   </section>
 </template>
 
 <script>
-import { toRegExp } from '../../../utils/util'
-import SkipError from '../../../components/SkipError'
-import { TablePage, FilterBar, Drawer } from '@tap/component'
-import Upload from '@/components/UploadDialog'
-import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 import dayjs from 'dayjs'
+
 import { taskApi } from '@tap/api'
+import { VIcon, FilterBar, Drawer } from '@tap/component'
+import { TablePage } from '@tap/business'
+import { toRegExp } from '@tap/shared'
+
+import { getSubTaskStatus, getTaskBtnDisabled } from '../../../shared'
+import SkipError from '../SkipError'
+import Upload from '../../../components/UploadDialog.vue'
 
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, SkipError, Drawer, Upload },
+  components: { VIcon, FilterBar, TablePage, SkipError, Drawer, Upload },
+  props: {
+    classify: Boolean
+  },
   data() {
     return {
       previewData: null,

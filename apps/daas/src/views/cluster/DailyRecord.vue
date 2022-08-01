@@ -89,8 +89,8 @@
   </section>
 </template>
 <script>
-import { TablePage } from '@tap/component'
 import { clusterApi, logsApi } from '@tap/api'
+import { TablePage } from '@tap/business'
 let timeout = null
 export default {
   components: { TablePage },

@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { TablePage } from '@tap/component'
+import { TablePage } from '@tap/business'
 import dayjs from 'dayjs'
 import { licensesApi } from '@tap/api'
 

@@ -18,9 +18,10 @@
 </template>
 
 <script>
-import TableList from '@/components/TableList'
 import dayjs from 'dayjs'
+
 import { logcollectorApi } from '@tap/api'
+import { TableList } from '@tap/component'
 
 export default {
   name: 'Task',

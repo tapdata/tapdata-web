@@ -91,13 +91,9 @@ export default {
           icon: 'connection'
         },
         {
-          name: 'Task',
-          title: $t('task_manage'),
-          icon: 'task',
-          children: [
-            { name: 'Migrate', title: $t('task_manage_migrate') },
-            { name: 'Etl', title: $t('task_manage_etl') }
-          ]
+          name: 'migrate',
+          title: $t('task_manage_migrate'),
+          icon: 'task'
         },
         {
           name: 'Verify',

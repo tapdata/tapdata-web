@@ -14,6 +14,10 @@ const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
   return Editor
 }
+const MigrationEditor = async () => {
+  const { MigrationEditor } = await import('@tap/dag')
+  return MigrationEditor
+}
 
 const routes = [
   {
@@ -154,18 +158,9 @@ const routes = [
       //   ]
       // },
       {
-        path: '/etl',
-        name: 'Etl',
-        component: () => import(/* webpackChunkName: "task-etl" */ '../views/task/Migration.vue'),
-        meta: {
-          title: i18n.t('task_manage_etl'),
-          icon: 'task'
-        }
-      },
-      {
         path: '/migrate',
-        name: 'Migrate',
-        component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/Migration.vue'),
+        name: 'migrate',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/MigrationList.tsx'),
         meta: {
           title: i18n.t('task_manage_migrate'),
           icon: 'task'
@@ -302,6 +297,30 @@ const routes = [
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
     component: DagEditor
+  },
+  {
+    path: '/migrate/editor',
+    name: 'MigrateCreate',
+    component: MigrationEditor,
+    meta: {
+      title: 'tap_edit_task'
+    }
+  },
+  {
+    path: '/migrate/editor/:id',
+    name: 'MigrateEditor',
+    component: MigrationEditor,
+    meta: {
+      title: 'tap_edit_task'
+    }
+  },
+  {
+    path: '/migrate/viewer/:id',
+    name: 'MigrateViewer',
+    component: MigrationEditor,
+    meta: {
+      title: 'tap_edit_task'
+    }
   }
 ]
 if (process.env.NODE_ENV === 'development') {

@@ -2,10 +2,8 @@
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
       <div class="info-line flex align-items-center">
-        <ElTooltip v-if="task.parentTask" class="item" effect="dark" :content="task.parentTask.name" placement="top">
-          <span v-if="task.parentTask" class="mr-4 fs-6 flex-1 font-color-dark ellipsis info-name fw-sub">{{
-            task.parentTask.name
-          }}</span>
+        <ElTooltip v-if="task" class="item" effect="dark" :content="task.name" placement="top">
+          <span class="mr-4 fs-6 flex-1 font-color-dark ellipsis info-name">{{ task.name }}</span>
         </ElTooltip>
         <StatusTag
           type="text"
@@ -13,25 +11,21 @@
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
         <span class="ml-6 font-color-light">
-          {{ $t('task_monitor_founder') }}：<span class="font-color-dark">{{ task.creator }}</span>
+          {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
         <span class="mx-6 font-color-light">
-          {{ $t('task_info_start_time') }}：<span class="font-color-dark">{{ formatTime(task.startTime) || '-' }}</span>
+          {{ $t('task_info_start_time') }}： <span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
       <div class="operation">
-        <ElButton type="primary" :disabled="startDisabled" @click="start(task, arguments[0])">
+        <VButton type="primary" :disabled="startDisabled" @click="start(task, arguments[0])">
           <VIcon size="12">start-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_start') }}</span>
-        </ElButton>
-        <ElButton type="danger" :disabled="stopDisabled" @click="stop(task, arguments[0])">
+        </VButton>
+        <VButton type="danger" :disabled="stopDisabled" @click="stop(task, arguments[0])">
           <VIcon size="12">pause-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_stop') }}</span>
-        </ElButton>
-        <!--        <ElButton :disabled="editDisabled" @click="edit">-->
-        <!--          <VIcon size="12">edit-fill</VIcon>-->
-        <!--          <span class="ml-1">{{ $t('button_edit') }}</span>-->
-        <!--        </ElButton>-->
+        </VButton>
       </div>
     </div>
     <div class="filter-bar flex align-center mt-3">
@@ -125,7 +119,7 @@
       <div class="flex flex-column flex-fill ml-4" v-loading="!lineDataDeep.x.length">
         <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
       </div>
-      <div class="ml-3 flex flex-column text-center" style="min-width: 278px">
+      <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div
           v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background justify-content-center"
@@ -133,8 +127,8 @@
           <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_full_progress') }}</div>
           <div class="flex flex-column justify-content-center">
             <div
-              v-if="syncData.progress"
               class="progress-box flex justify-content-center align-items-center position-relative mt-1"
+              v-if="syncData && syncData.progress"
             >
               <ElProgress
                 type="circle"
@@ -158,7 +152,7 @@
               {{
                 $t('task_monitor_full_completion_time') +
                 '：' +
-                (handleTime(syncData.finishDuration) || $t('task_info_calculating'))
+                (syncData.finishDuration || $t('task_info_calculating'))
               }}
             </div>
           </div>
@@ -174,7 +168,7 @@
               class="color-primary fw-bolder fs-5 mt-1"
               style="height: 48px; line-height: 48px"
             >
-              {{ formatMs(writeData.replicateLag) }}
+              {{ getReplicateLagTime(writeData.replicateLag) }}
             </div>
             <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_latency_statistics_yet') }}
@@ -190,12 +184,11 @@
 </template>
 
 <script>
-import { VIcon, SelectList } from '@tap/component'
-import { StatusTag } from '@tap/business'
-import { Chart, DatetimeRange } from '@tap/component'
-import { formatTime, formatMs } from '@/utils/util'
-import { toThousandsUnit } from '@/utils/util'
+import dayjs from 'dayjs'
+
 import { subtaskApi } from '@tap/api'
+import { VIcon, SelectList, Chart, DatetimeRange } from '@tap/component'
+import { formatMs, toThousandsUnit, StatusTag } from '@tap/business'
 
 export default {
   name: 'Info',
@@ -208,24 +201,24 @@ export default {
     },
     syncData: {
       type: Object,
-      required: true,
       default: () => {}
     },
     remoteMethod: Function
   },
   data() {
     return {
-      timer: null, //cdcTime 定时器
-      timerOverView: null,
       finishDuration: 0,
       progress: 0,
+      timer: null, //cdcTime 定时器
+      timerOverView: null,
       selectTime: 'second',
       statusBtMap: {
         start: {
           edit: true,
           stop: true,
           complete: true,
-          error: true
+          error: true,
+          schedule_failed: true
         },
         pause: {
           running: true
@@ -244,15 +237,17 @@ export default {
         edit: {
           edit: true,
           pause: true
+        },
+        reset: {
+          stop: true,
+          error: true,
+          complete: true,
+          schedule_failed: true
         }
       },
       selectedStage: '', // 选中的节点
       selectedTime: 'default',
       selectedRate: 'second',
-      lineData: {
-        x: [],
-        y: [[], []]
-      },
       guanluaryFormat: '',
       lineDataDeep: {
         x: [],
@@ -419,75 +414,15 @@ export default {
       return result || []
     }
   },
-  watch: {
-    task: {
-      deep: true,
-      handler() {
-        this.init()
-      }
-    }
-  },
   beforeDestroy() {
     this.timer && clearInterval(this.timer)
     this.timerOverView && clearTimeout(this.timerOverView)
   },
   mounted() {
-    this.getSyncOverViewData()
+    this.init()
   },
   methods: {
     toThousandsUnit,
-    //概览信息
-    getSyncOverViewData() {
-      //调用前 先清掉上一个定时器
-      clearTimeout(this.timerOverView)
-      subtaskApi.syncOverView(this.$route.query?.subId).then(data => {
-        this.finishDuration = this.handleTime(data?.finishDuration)
-        this.progress = data?.progress
-        this.endTs = data?.endTs
-        if (data?.progress !== 100 && this.task.status === 'running') {
-          this.timerOverView = setTimeout(() => {
-            if (this && !this._isDestroyed) {
-              this.getSyncOverViewData()
-            }
-          }, 800)
-        }
-      })
-    },
-    handleTime(time) {
-      let r = ''
-      if (time) {
-        let s = time,
-          m = 0,
-          h = 0,
-          d = 0
-        if (s > 60) {
-          m = parseInt(s / 60)
-          s = parseInt(s % 60)
-          if (m > 60) {
-            h = parseInt(m / 60)
-            m = parseInt(m % 60)
-            if (h > 24) {
-              d = parseInt(h / 24)
-              h = parseInt(h % 24)
-            }
-          }
-        }
-        if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-          r = 1 + this.$t('taskProgress.m')
-        }
-        // r = parseInt(s) + i18n.t('timeToLive.s')
-        if (m > 0) {
-          r = parseInt(m) + this.$t('taskProgress.m')
-        }
-        if (h > 0) {
-          r = parseInt(h) + this.$t('taskProgress.h') + r
-        }
-        if (d > 0) {
-          r = parseInt(d) + this.$t('taskProgress.d') + r
-        }
-        return r
-      }
-    },
     init() {
       this.getMeasurement()
       this.resetTimer()
@@ -539,7 +474,7 @@ export default {
       let guanluary = this.getGuanluary(diff)
       // 维度需要展示的格式
       this.guanluaryFormat = this.getGuanluary(diff, true)
-      let subTaskId = this.$route.query?.subId
+      let subTaskId = this.$route.params?.subId
       let tags = {
         subTaskId: subTaskId,
         type: 'subTask'
@@ -667,7 +602,7 @@ export default {
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
         let qpsDataTime = qpsData.time || []
-        let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+        let xArr = qpsDataTime.map(t => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
         if (this.lineDataDeep.x.length > 20) {
           this.lineDataDeep.x.splice(0, xArrLen)
@@ -694,7 +629,11 @@ export default {
         } else {
           xArr.forEach((el, index) => {
             // 过滤重复的时间点
-            if (!this.lineDataDeep.x.includes(el)) {
+            let findIndex = this.lineDataDeep.x.indexOf(el)
+            if (findIndex > -1) {
+              this.lineDataDeep.y[0][findIndex] = inArr[index]
+              this.lineDataDeep.y[1][findIndex] = outArr[index]
+            } else {
               this.lineDataDeep.x.push(el)
               this.lineDataDeep.y[0].push(inArr[index])
               this.lineDataDeep.y[1].push(outArr[index])
@@ -706,7 +645,7 @@ export default {
           xAxis: {
             axisLabel: {
               formatter: val => {
-                return formatTime(val, this.guanluaryFormat)
+                return this.formatTime(val, this.guanluaryFormat)
               }
             }
           },
@@ -725,10 +664,6 @@ export default {
       let diff = val / 1000
       let timeType
       let formatRes = ''
-      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
-      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
-      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
-      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
       if (diff <= 1 * 60 * 60) {
         timeType = 'minute'
         formatRes = 'HH:mm:ss'
@@ -747,11 +682,16 @@ export default {
       }
       return timeType
     },
-    formatTime(date) {
-      return formatTime(date)
+    formatTime(date, format = 'YYYY-MM-DD HH:mm:ss') {
+      return date ? dayjs(date).format(format) : '-'
     },
-    formatMs(ms) {
-      return formatMs(ms)
+    getReplicateLagTime(val) {
+      if (val < 1000) {
+        return '<1' + this.$t('task_info_s')
+      } else if (val > 24 * 60 * 60 * 1000) {
+        return '>1' + this.$t('task_info_d')
+      }
+      return formatMs(val, 'time')
     },
     start(row = {}, resetLoading) {
       subtaskApi
@@ -772,6 +712,10 @@ export default {
         .finally(resetLoading)
     },
     edit() {
+      let row = this.task || {}
+      this.handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
+    },
+    reset() {
       let row = this.task || {}
       this.handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
     },
@@ -873,9 +817,6 @@ export default {
 .info-name {
   display: inline-block;
 }
-.operation {
-  white-space: nowrap;
-}
 .grey-background {
   background-color: map-get($bgColor, normal);
 }
@@ -901,6 +842,9 @@ export default {
       font-size: 12px;
     }
   }
+}
+.operation {
+  white-space: nowrap;
 }
 .filter-bar {
   line-height: 32px;
