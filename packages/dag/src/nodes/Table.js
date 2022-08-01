@@ -42,7 +42,8 @@ export class Table extends NodeType {
           dependencies: ['$inputs', '$outputs'],
           fulfill: {
             schema: {
-              'x-component-props.filterIndex': '{{$deps[0]?.length || $deps[1]?.length ? [] : [1]}}'
+              'x-component-props.filterIndex':
+                '{{$deps[0]?.length || $deps[1]?.length ? !!getPdkProperties($values) ? []:[2] : !!getPdkProperties($values) ? [1]:[1,2]}}'
             }
           }
         },
@@ -596,6 +597,10 @@ export class Table extends NodeType {
                 }
               }
             }
+          },
+          nodeConfig: {
+            type: 'object',
+            'x-component': 'PdkProperties'
           }
         }
       },

@@ -808,6 +808,11 @@ export default {
           connectionName !== connection.name && form.setValuesIn('attrs.connectionName', connection.name)
           !isEqual(capabilities, connection.capabilities) &&
             form.setValuesIn('attrs.capabilities', connection.capabilities)
+        },
+
+        getPdkProperties: node => {
+          const { pdkHash } = node.attrs
+          return this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
         }
       }
     }
