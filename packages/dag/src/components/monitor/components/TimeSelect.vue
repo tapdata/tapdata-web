@@ -35,10 +35,6 @@
 
 <script>
 import dayjs from 'dayjs'
-const DateFormat = 'YYYY-MM-DD'
-const TimeFormat = 'HH:mm:ss'
-const StartTimeFormat = '00:00:00'
-const ENDTimeFormat = '23:59:59'
 
 export default {
   name: 'TimeSelect',
@@ -77,7 +73,7 @@ export default {
     rangeSeparator: String,
     interval: {
       type: Number,
-      default: 1000
+      default: 60 * 1000
     },
     startTime: [String, Number, Date],
     endTime: [String, Number, Date]
@@ -93,46 +89,23 @@ export default {
         disabledDate: time => {
           const [start, end] = this.range
           const d = new Date(time).getTime()
-          const pickDate = dayjs(time).format(DateFormat)
-          const startDate = dayjs(start).format(DateFormat)
-          const startTime = dayjs(start).format(TimeFormat)
+          const pickDate = dayjs(time).format(this.timeFormat.date)
+          const startDate = dayjs(start).format(this.timeFormat.date)
+          const startTime = dayjs(start).format(this.timeFormat.time)
           const startStamp = new Date(start).getTime()
           const endStamp = new Date(end).getTime()
-          if (pickDate === startDate && startTime !== ENDTimeFormat) {
+          if (pickDate === startDate && startTime !== this.timeFormat.endTime) {
             return false
           }
           return d < startStamp || d >= endStamp
         },
-        onPick: ({ minDate, maxDate }) => {
-          if (!(minDate && maxDate)) {
-            return
-          }
-          const picker = this.$refs.datetime?.picker
-          const { minTimePicker, maxTimePicker } = picker.$refs
-          const [start, end] = this.range
-          const pickStartDate = dayjs(minDate).format(DateFormat)
-          const pickEndDate = dayjs(maxDate).format(DateFormat)
-          const startDate = dayjs(start).format(DateFormat)
-          const startTime = dayjs(start).format(TimeFormat)
-          const endDate = dayjs(end).format(DateFormat)
-          const endTime = dayjs(end).format(TimeFormat)
-          // 开始日期
-          if (pickStartDate === startDate) {
-            minTimePicker.selectableRange = [
-              [new Date(`${startDate} ${startTime}`), new Date(`${startDate} ${ENDTimeFormat}`)]
-            ]
-          } else {
-            minTimePicker.selectableRange = []
-          }
-          // 结束日期
-          if (pickEndDate === endDate) {
-            maxTimePicker.selectableRange = [
-              [new Date(`${endDate} ${StartTimeFormat}`), new Date(`${endDate} ${endTime}`)]
-            ]
-          } else {
-            maxTimePicker.selectableRange = []
-          }
-        }
+        onPick: this.handleTimeRangeDisabled
+      },
+      timeFormat: {
+        date: 'YYYY-MM-DD',
+        time: 'HH:mm:ss',
+        startTime: '00:00:00',
+        endTime: '23:59:59'
       }
     }
   },
@@ -141,9 +114,11 @@ export default {
     range() {
       const { startTime, endTime } = this
       if (startTime && endTime) {
-        return [startTime, endTime]
+        const start = new Date(startTime).getTime()
+        const end = new Date(endTime).getTime()
+        return [Math.min(start, end), Math.max(start, end)]
       }
-      return ['2022-07-18 23:59:50', '2022-07-21 01:00:00']
+      return []
     }
   },
 
@@ -151,6 +126,18 @@ export default {
     this.items = JSON.parse(JSON.stringify(this.options))
     this.period = this.items[0]?.value
     // this.changeFnc(this.period)
+    this.$once('setMinAndMaxTime', () => {
+      const picker = this.$refs.datetime?.picker
+      const { startTime, endTime } = this
+      picker.minDate = new Date(startTime)
+      picker.maxDate = new Date(endTime)
+      const minDate = this.formatTime(startTime, this.timeFormat.date)
+      const maxDate = this.formatTime(endTime, this.timeFormat.date)
+      this.handleTimeRangeDisabled({
+        minDate,
+        maxDate
+      })
+    })
   },
 
   methods: {
@@ -169,12 +156,15 @@ export default {
         this.time = this.period.split(',')
       }
       this.$refs.datetime.focus()
+      this.$nextTick(() => {
+        this.$emit('setMinAndMaxTime')
+      })
     },
 
     changeTime(val) {
       const { rangeSeparator, formatToString } = this.$refs.datetime
       const label = formatToString(val)?.join(rangeSeparator)
-      const valJoin = val?.join()
+      const valJoin = val?.map(t => new Date(t).getTime()).join()
       if (!valJoin) {
         return
       }
@@ -205,8 +195,7 @@ export default {
 
     blur() {
       if (!this.time?.length) {
-        let t = Date.now()
-        this.changeTime([t - this.interval, t])
+        this.changeTime(this.range)
       }
       this.time = []
     },
@@ -217,6 +206,47 @@ export default {
       } else {
         this.$refs.select?.$el?.click()
       }
+    },
+
+    handleTimeRangeDisabled({ minDate, maxDate }) {
+      if (!(minDate && maxDate)) {
+        return
+      }
+      const picker = this.$refs.datetime?.picker
+      const { minTimePicker, maxTimePicker } = picker.$refs
+      const [start, end] = this.range
+      const pickStartDate = dayjs(minDate).format(this.timeFormat.date)
+      const pickEndDate = dayjs(maxDate).format(this.timeFormat.date)
+      const startDate = dayjs(start).format(this.timeFormat.date)
+      const startTime = dayjs(start).format(this.timeFormat.time)
+      const endDate = dayjs(end).format(this.timeFormat.date)
+      const endTime = dayjs(end).format(this.timeFormat.time)
+      // 控件日期、开始日期、结束日期，都是同一天
+      if (pickStartDate === startDate && startDate === endDate) {
+        minTimePicker.selectableRange = [[new Date(`${startDate} ${startTime}`), new Date(`${endDate} ${endTime}`)]]
+        maxTimePicker.selectableRange = [[new Date(`${startDate} ${startTime}`), new Date(`${endDate} ${endTime}`)]]
+      } else {
+        // 控件日期 等于 开始日期
+        if (pickStartDate === startDate) {
+          minTimePicker.selectableRange = [
+            [new Date(`${startDate} ${startTime}`), new Date(`${startDate} ${this.timeFormat.endTime}`)]
+          ]
+        } else {
+          minTimePicker.selectableRange = []
+        }
+        // 控件日期 等于 结束日期
+        if (pickEndDate === endDate) {
+          maxTimePicker.selectableRange = [
+            [new Date(`${endDate} ${this.timeFormat.startTime}`), new Date(`${endDate} ${endTime}`)]
+          ]
+        } else {
+          maxTimePicker.selectableRange = []
+        }
+      }
+    },
+
+    formatTime(date, format) {
+      return dayjs(date).format(format)
     }
   }
 }

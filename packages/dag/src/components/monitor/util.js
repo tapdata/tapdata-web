@@ -80,7 +80,7 @@ export function getPieOptions(data, op) {
   return options
 }
 
-export const TIMEFORMATMAP = {
+export const TIME_FORMAT_MAP = {
   s: 'HH:mm:ss',
   m: 'HH:mm:ss',
   h: 'MM-DD HH:00',

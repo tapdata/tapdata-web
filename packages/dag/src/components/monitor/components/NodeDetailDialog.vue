@@ -107,7 +107,7 @@ import EventChart from './EventChart'
 import LineChart from './LineChart'
 import { Chart } from '@tap/component'
 import { mapGetters } from 'vuex'
-import { getPieOptions, TIMEFORMATMAP, getTimeGranularity } from '../util'
+import { getPieOptions, TIME_FORMAT_MAP, getTimeGranularity } from '../util'
 import dayjs from 'dayjs'
 import { measurementApi } from '@tap/api'
 
@@ -499,7 +499,7 @@ export default {
         .then(data => {
           this.quota = data
           const granularity = getTimeGranularity(data.interval)
-          this.timeFormat = TIMEFORMATMAP[granularity]
+          this.timeFormat = TIME_FORMAT_MAP[granularity]
         })
         .catch(() => {
           let res = {

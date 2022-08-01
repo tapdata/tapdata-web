@@ -146,9 +146,8 @@ import Locale from './mixins/locale'
 import { measurementApi, taskApi } from '@tap/api'
 import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
-import dayjs from 'dayjs'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
-import { TIMEFORMATMAP, getTimeGranularity } from './components/monitor/util'
+import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 
 function getRandom(num = 100) {
   return Math.ceil(Math.random() * 100 * num)
@@ -633,7 +632,7 @@ export default {
         .then(data => {
           this.quota = data
           const granularity = getTimeGranularity(data.interval)
-          this.timeFormat = TIMEFORMATMAP[granularity]
+          this.timeFormat = TIME_FORMAT_MAP[granularity]
           this.dagData = this.getDagData(this.quota.samples.dagData)
         })
         .catch(() => {
@@ -829,7 +828,7 @@ export default {
     handleChangeTimeSelect(val, isTime, source) {
       this.refresh = this.quotaTimeType === val
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val : this.getTimeRange(val)
+      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
       this.init()
     },
 
