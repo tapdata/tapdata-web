@@ -61,7 +61,7 @@
           </template>
         </CollapsePanel>
       </div>
-      <div class="info-box">
+      <div v-if="dataflow.type !== 'cdc'" class="info-box">
         <CollapsePanel>
           <template #header>
             <span class="fw-bold font-color-normal">全量信息</span>
@@ -89,7 +89,7 @@
           </template>
         </CollapsePanel>
       </div>
-      <div class="info-box">
+      <div v-if="dataflow.type !== 'initial_sync'" class="info-box">
         <CollapsePanel>
           <template #header>
             <span class="fw-bold font-color-normal">增量信息</span>
