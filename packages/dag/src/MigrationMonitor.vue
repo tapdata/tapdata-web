@@ -231,7 +231,8 @@ export default {
       quota: {}, // 指标数据
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
-      timeFormat: 'HH:mm:ss'
+      timeFormat: 'HH:mm:ss',
+      dagData: null
     }
   },
 
@@ -631,6 +632,7 @@ export default {
           this.quota = data
           const granularity = getTimeGranularity(data.interval)
           this.timeFormat = TIMEFORMATMAP[granularity]
+          this.dagData = this.getDagData(this.quota.samples.dagData)
         })
         .catch(() => {
           let res = {
@@ -752,7 +754,14 @@ export default {
             }
           }
           this.quota = res
+          this.dagData = this.getDagData(this.quota.samples.dagData)
         })
+    },
+
+    getDagData(data = []) {
+      return data.reduce((pre, current) => {
+        return { ...pre, [current.tags.nodeId]: current }
+      }, {})
     },
 
     /**
