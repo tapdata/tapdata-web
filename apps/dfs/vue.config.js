@@ -5,7 +5,7 @@ const crypto = require('crypto')
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
-  test: 'http://192.168.1.182:80'
+  test: 'http://dev.cloud.tapdata.net'
 }
 let origin
 const { argv } = process

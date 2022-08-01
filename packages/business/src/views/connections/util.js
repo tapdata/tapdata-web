@@ -147,7 +147,11 @@ export const CONFIG_MODEL = {
 }
 // 数据源图标
 export const getConnectionIcon = pdkHash => {
-  const token = Cookie.get('token')
-  let baseUrl = axios.defaults.baseURL
-  return baseUrl + `/api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`
+  if (pdkHash) {
+    const token = Cookie.get('token')
+    let baseUrl = axios.defaults.baseURL
+    return baseUrl + `/api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`
+  } else {
+    return ''
+  }
 }

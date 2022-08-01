@@ -244,7 +244,6 @@ import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
 import { VIcon } from '@tap/component'
-import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
 import { debounce } from 'lodash'
@@ -259,6 +258,7 @@ import NodeIcon from './NodeIcon'
 import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
 import Locale from '../mixins/locale'
 import { escapeRegExp } from 'lodash'
+import { ConnectionTypeSelector } from '@tap/business'
 
 export default {
   name: 'LeftSidebar',

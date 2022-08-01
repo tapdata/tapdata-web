@@ -50,6 +50,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
@@ -142,7 +144,8 @@ export default {
     },
     getPdkIcon(item) {
       const token = Cookie.get('token')
-      return `/api/pdk/icon?access_token=${token}&pdkHash=${item.pdkHash}`
+      let baseUrl = axios.defaults.baseURL
+      return baseUrl + `/api/pdk/icon?access_token=${token}&pdkHash=${item.pdkHash}`
     },
     getComingItemStyle(index) {
       let count = 9

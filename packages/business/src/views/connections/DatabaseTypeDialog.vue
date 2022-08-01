@@ -18,10 +18,16 @@
 </template>
 
 <script>
-import { getImgByType } from './util'
 import { databaseTypesApi } from '@tap/api'
+import { ConnectionTypeSelector } from '@tap/business'
+
+import { getImgByType } from './util'
+
 export default {
   name: 'DatasourceDialog',
+  components: {
+    ConnectionTypeSelector
+  },
   props: {
     dialogVisible: {
       required: true,
