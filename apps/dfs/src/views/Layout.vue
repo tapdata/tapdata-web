@@ -91,7 +91,7 @@ export default {
           icon: 'connection'
         },
         {
-          name: 'migrate',
+          name: 'migrateList',
           title: $t('task_manage_migrate'),
           icon: 'task'
         },

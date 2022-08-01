@@ -159,7 +159,7 @@ const routes = [
       // },
       {
         path: '/migrate',
-        name: 'migrate',
+        name: 'migrateList',
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/MigrationList.tsx'),
         meta: {
           title: i18n.t('task_manage_migrate'),
