@@ -74,6 +74,7 @@
               'options-active': nodeMenu.typeId === n.id
             }"
             :task-type="dataflow.type"
+            :sample="dagData ? dagData[n.id] : {}"
             @drag-start="onNodeDragStart"
             @drag-move="onNodeDragMove"
             @drag-stop="onNodeDragStop"
@@ -638,6 +639,7 @@ export default {
           const granularity = getTimeGranularity(data.interval)
           this.timeFormat = TIME_FORMAT_MAP[granularity]
           this.dagData = this.getDagData(this.quota.samples.dagData)
+          console.log('this.dagData', this.dagData) // eslint-disable-line
         })
         .catch(() => {
           let res = {

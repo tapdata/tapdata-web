@@ -10,16 +10,23 @@
             </div>
           </div>
 
-          <div v-if="taskType !== 'initial_sync' && isSource" class="statistic">
-            <!--增量耗时-->
+          <div class="statistic">
             <div class="statistic-title">耗时</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ sample.incrementalDelay }}ms</div>
+              <div class="statistic-value">{{ sample.timeCostAvg }}</div>
+            </div>
+          </div>
+
+          <!--<div v-if="taskType !== 'initial_sync' && isSource" class="statistic">
+            &lt;!&ndash;增量耗时&ndash;&gt;
+            <div class="statistic-title">耗时</div>
+            <div class="statistic-content">
+              <div class="statistic-value">{{ sample.timeCostAvg }}s</div>
             </div>
           </div>
 
           <div v-if="isTarget" class="statistic">
-            <!--写入-->
+            &lt;!&ndash;写入&ndash;&gt;
             <div class="statistic-title">耗时</div>
             <div class="statistic-content">
               <div class="statistic-value">{{ sample.writeDelay }}ms</div>
@@ -27,12 +34,12 @@
           </div>
 
           <div v-if="isProcessorNode" class="statistic">
-            <!--处理-->
+            &lt;!&ndash;处理&ndash;&gt;
             <div class="statistic-title">耗时</div>
             <div class="statistic-content">
               <div class="statistic-value">{{ sample.processDelay }}ms</div>
             </div>
-          </div>
+          </div>-->
 
           <div class="statistic">
             <div class="statistic-title">累积输入事件</div>
@@ -51,7 +58,7 @@
           <div class="statistic">
             <div class="statistic-title">QPS</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ sample.qps }}</div>
+              <div class="statistic-value">{{ sample.outputQps }}</div>
             </div>
           </div>
         </div>
@@ -102,13 +109,13 @@ export default {
     sample: {
       type: Object,
       default: () => ({
-        cdcEventStartTime: 1658117353136,
+        currentEventTimestamp: 1658117353136,
         inputEventTotal: 996,
         outputEventTotal: 996,
-        incrementalDelay: 600,
+        timeCostAvg: 600,
         writeDelay: 700,
         processDelay: 500,
-        qps: 888,
+        outputQps: 888,
         initialSyncState: {
           wait: 60,
           process: 100,
@@ -188,17 +195,18 @@ export default {
     },
 
     cdcEventStartTime() {
-      return dayjs(this.sample.cdcEventStartTime).format('YYYY-MM-DD HH:mm:ss')
+      const val = this.sample.currentEventTimestamp
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
 
     initialSyncProcess() {
-      const { milestone } = this.sample
-      return Math.round((milestone.finish / milestone.total) * 100)
+      const { snapshotInsertRowTotal, snapshotRowTotal } = this.sample
+      return Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100)
     },
 
     initialSyncProcessTip() {
-      const { milestone } = this.sample
-      return ` ${milestone.finish}/${milestone.total} | 预计全量完成还需 ${milestone.planTime}ms`
+      const { snapshotInsertRowTotal, snapshotRowTotal } = this.sample
+      return ` ${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 1万年`
     }
   },
 
