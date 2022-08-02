@@ -143,7 +143,6 @@
       :title="titleType[currentOperationType]"
       :visible.sync="dialogVisible"
       width="30%"
-      append-to-body
       :close-on-click-modal="false"
       :before-close="handleClose"
     >

@@ -108,7 +108,7 @@
           </div>
         </ElLink>
       </div>
-      <div class="selector-panel__body">
+      <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">
           <ElInput
             v-model="selected.searchKeyword"
@@ -148,7 +148,7 @@
             :description="$t('component_table_selector_not_checked') + '~'"
           ></ElEmpty>
         </div>
-        <div v-if="isOpenClipMode" class="selector-clipboard h-100 flex flex-column">
+        <div v-if="isOpenClipMode" class="selector-clipboard flex flex-column">
           <div
             v-show="!isFocus"
             class="selector-clipboard__view"
@@ -178,6 +178,7 @@
           <ElInput
             v-show="isFocus"
             v-model="clipboardValue"
+            autosize
             ref="textarea"
             class="selector-clipboard__textarea"
             type="textarea"
@@ -224,7 +225,8 @@
   background: #f7f8fa;
   line-height: 40px;
   color: map-get($fontColor, normal);
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
 }
 .selector-panel__body {
   padding: 16px 0;
@@ -232,6 +234,11 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  &.isOpenClipMode {
+    flex: unset;
+    overflow: auto;
+  }
 }
 .selector-panel__search {
   padding: 0 16px;
@@ -310,12 +317,13 @@
 }
 .selector-clipboard__view {
   flex: 1;
-  overflow: auto;
+  //overflow: auto;
   cursor: text;
+  white-space: pre-wrap;
   > span {
     display: inline-block;
     line-height: 20px;
-    height: 20px;
+    //height: 20px;
     font-size: 12px;
     color: map-get($fontColor, normal);
     word-break: break-word;

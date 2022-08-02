@@ -759,20 +759,28 @@ export default {
 
         useDmlPolicy(field) {
           const capabilities = field.query('attrs.capabilities').get('value')
-          const insertPolicy = capabilities.find(({ id }) => id === 'dml_insert_policy')
-          const updatePolicy = capabilities.find(({ id }) => id === 'dml_update_policy')
+          let insertPolicy
+          let updatePolicy
+          if (capabilities) {
+            insertPolicy = capabilities.find(({ id }) => id === 'dml_insert_policy')
+            updatePolicy = capabilities.find(({ id }) => id === 'dml_update_policy')
+          }
           const insertField = field.query('dmlPolicy.insertPolicy').take()
           const updateField = field.query('dmlPolicy.updatePolicy').take()
 
           const func = (policy, policyField) => {
             if (!policy || !policy.alternatives) {
-              policyField.setPattern('readPretty')
+              setTimeout(() => {
+                policyField.setPattern('readPretty')
+              }, 50)
               policyField.setValue(policyField.initialValue)
             } else {
               const values = policyField.dataSource.map(item => item.value)
               const alternatives = policy.alternatives.filter(key => values.includes(key))
               if (alternatives.length <= 1) {
-                policyField.setPattern('readPretty')
+                setTimeout(() => {
+                  policyField.setPattern('readPretty')
+                }, 50)
                 policyField.setValue(alternatives[0] || policyField.initialValue)
               } else if (!field.form.disabled) {
                 policyField.setPattern('editable')

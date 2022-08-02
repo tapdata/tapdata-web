@@ -110,8 +110,8 @@
       <el-table-column prop="status" :label="$t('task_list_status')" min-width="120">
         <template #default="{ row }">
           <!--调度失败任务 统一归类为error-->
-          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
-            {{ $t('task_preview_status_' + row.status) }}
+          <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
+            {{ $t('task_preview_status_' + row.statusResult[0].status) }}
           </span>
           <!--产品测暂时决定隐藏-->
           <!--<span v-if="row.transformStatus && row.transformStatus === 'running'">
