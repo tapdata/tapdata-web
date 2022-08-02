@@ -170,7 +170,7 @@ export default {
     },
     async test(data, isShowDialog = true) {
       try {
-        await connectionsApi.patch(data.id, {
+        await connectionsApi.updateById(data.id, {
           status: 'testing'
         })
         this.$refs.test.start(data, isShowDialog)
@@ -213,7 +213,7 @@ export default {
       }
       this.loadFieldsStatus = 'loading'
       this.reloadLoading = true
-      connectionsApi.patch(row.id, parms).then(data => {
+      connectionsApi.updateById(row.id, parms).then(data => {
         if (!this?.$refs?.test) {
           return
         }
