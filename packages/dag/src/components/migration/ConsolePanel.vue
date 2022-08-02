@@ -40,6 +40,7 @@
       </div>
       <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
         <code class="log-list block h-100 overflow-auto py-1 rounded-2">
+          <EmptyItem v-if="!logList.length && !loading"></EmptyItem>
           <pre
             v-for="(item, i) in logList"
             :key="i"
@@ -67,6 +68,7 @@ import Locale from '../../mixins/locale'
 import VIcon from 'web-core/components/VIcon'
 import { taskApi } from '@tap/api'
 import NodeIcon from '../NodeIcon'
+import EmptyItem from '../EmptyItem'
 
 export default {
   name: 'ConsolePanel',
@@ -77,7 +79,7 @@ export default {
 
   mixins: [Locale],
 
-  components: { NodeIcon, VIcon },
+  components: { EmptyItem, NodeIcon, VIcon },
 
   data() {
     return {
@@ -123,7 +125,6 @@ export default {
     },
 
     async loadData() {
-      // clearTimeout(this.timerId)
       const { taskId, nodeId } = this
       this.loading = true
       const data = await taskApi.getConsole({
@@ -139,17 +140,17 @@ export default {
         node && nodeList.push(node)
       })
       this.nodeList = nodeList
+      this.timeout = this.logList.length ? 3000 : 1000
       if (data.over) this.stopAuto()
     },
 
     async autoLoad() {
-      console.log('autoLoad') // eslint-disable-line
       clearTimeout(this.timerId)
       await this.loadData()
       if (this.ifAuto) {
         this.timerId = setTimeout(() => {
           this.autoLoad()
-        }, 3000)
+        }, this.timeout || 3000)
       }
     },
 
@@ -159,7 +160,6 @@ export default {
     },
 
     stopAuto() {
-      console.log('stopAuto') // eslint-disable-line
       this.ifAuto = false
       clearTimeout(this.timerId)
     },

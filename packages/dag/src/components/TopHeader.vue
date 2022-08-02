@@ -62,7 +62,7 @@
       <!--拖选画布-->
       <ElTooltip transition="tooltip-fade-in" :content="t('mouse_selection')">
         <button @click="toggleShiftKeyPressed()" class="icon-btn" :class="{ active: shiftKeyPressed }">
-          <VIcon size="20">pointer</VIcon>
+          <VIcon size="20">kuangxuan</VIcon>
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>

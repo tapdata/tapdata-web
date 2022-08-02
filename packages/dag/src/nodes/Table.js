@@ -252,9 +252,6 @@ export class Table extends NodeType {
                       }
                     ],
                     'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      wrapperWidth: 300
-                    },
                     'x-component': 'Radio.Group'
                   },
                   totalsql: {
@@ -292,9 +289,20 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      className: 'font-color-slight',
+                      wrapperStyle: {
+                        width: 'auto'
+                      }
                     },
-                    'x-component': 'Radio.Group'
+                    'x-component': 'Radio.Group',
+                    'x-reactions': {
+                      fulfill: {
+                        schema: {
+                          'x-decorator-props.addonAfter':
+                            '{{$self.value==="customizeSql" ? "使用增量自定义SQL时暂不支持开启DDL事件采集":""}}'
+                        }
+                      }
+                    }
                   },
                   increasesql: {
                     type: 'string',
