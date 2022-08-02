@@ -25,12 +25,12 @@
         <div class="chart-box__content p-4">
           <div class="flex align-items-center justify-content-around text-center">
             <div>
-              <div class="font-color-normal fw-bold mb-1">{{ formatTime(sourceData.tcpping, 'HH:mm:ss.ms') }}</div>
+              <div class="font-color-normal fw-bold mb-1">{{ formatTime(sourceData.tcpping, 'HH:mm:ss.SSS') }}</div>
               <div>TCP连接耗时</div>
             </div>
             <div>
               <div class="font-color-normal fw-bold mb-1">
-                {{ formatTime(sourceData.connectionping, 'HH:mm:ss.ms') }}
+                {{ formatTime(sourceData.connectionping, 'HH:mm:ss.SSS') }}
               </div>
               <div>协议连接耗时</div>
             </div>
@@ -58,14 +58,20 @@
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <div class="flex align-items-center justify-content-around text-center pb-10 w-100">
             <div>
-              <div class="font-color-normal fw-bold mb-1">{{ formatTime(targetData.tcpping, 'HH:mm:ss.ms') }}</div>
+              <div class="font-color-normal fw-bold mb-1">{{ formatTime(targetData.tcpping, 'HH:mm:ss.SSS') }}</div>
               <div>TCP连接耗时</div>
             </div>
             <div>
               <div class="font-color-normal fw-bold mb-1">
-                {{ formatTime(targetData.connectionping, 'HH:mm:ss.ms') }}
+                {{ formatTime(targetData.connectionping, 'HH:mm:ss.SSS') }}
               </div>
               <div>协议连接耗时</div>
+            </div>
+            <div>
+              <div class="font-color-normal fw-bold mb-1">
+                {{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss') }}
+              </div>
+              <div>增量时间点</div>
             </div>
           </div>
         </div>
@@ -251,10 +257,11 @@ export default {
       if (!data) {
         return {}
       }
-      const { tcpping, connectionping } = data
+      const { tcpping, connectionping, currentEventTimestamp } = data
       return {
         tcpping,
-        connectionping
+        connectionping,
+        currentEventTimestamp
       }
     },
 
@@ -340,7 +347,7 @@ export default {
           key: 'running',
           value: 0,
           color: '#88DBDA'
-        },
+        }
         // {
         //   name: '已完成',
         //   key: 'finished',

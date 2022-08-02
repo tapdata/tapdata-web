@@ -557,7 +557,10 @@ export default {
               'initialCompleteTime', // 全量完成时间
               'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
               'targetConnection',
-              'cdcTime'
+              'snapshotDoneAt',
+              'snapshotTotal',
+              'snapshotInsertTotal',
+              'outputQps'
             ],
             type: 'instant' // 瞬时值
           },
@@ -661,7 +664,10 @@ export default {
                   initialCompleteTime: 1657707577896, // 全量完成时间
                   sourceConnection: 'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
                   targetConnection: 'targetConnection',
-                  cdcTime: 1657707577896
+                  snapshotDoneAt: 1657707577896,
+                  snapshotTotal: getRandom(),
+                  snapshotInsertTotal: getRandom(),
+                  outputQps: getRandom()
                 }
               ],
               barChartData: [
