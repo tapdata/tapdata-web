@@ -582,7 +582,6 @@ export class Table extends NodeType {
                     properties: {
                       cdcConcurrent: {
                         type: 'boolean',
-                        default: true,
                         'x-component': 'Switch',
                         'x-reactions': {
                           target: '.cdcConcurrentWriteNum',
