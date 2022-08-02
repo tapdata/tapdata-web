@@ -141,9 +141,11 @@ export default {
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
-              result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${calcUnit(
-                data
-              )}</div></div>`
+              const val = (data || 0).toLocaleString('zh', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })
+              result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
           }

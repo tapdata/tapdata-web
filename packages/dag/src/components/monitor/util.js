@@ -8,9 +8,15 @@ export function getPieOptions(data, op) {
         color: '#fff',
         fontSize: 12
       },
+      position: 'top',
       formatter: params => {
-        const { marker, name, value } = params || {}
-        let result = `<div class="text-end"><div>${marker}<span class="pl-1">${name}</span></div><div class="din-font">${value.toLocaleString()}</div></div>`
+        const { marker, name, value, seriesName } = params || {}
+        let result = `<div>`
+        if (seriesName) {
+          result += `<div class="text-center">${seriesName}</div>`
+        }
+        result += `<span>${marker}</span><span class="pl-2">${name}</span><span class="din-font inline-block text-end" style="width: 60px">${value.toLocaleString()}</span>`
+        result += `</div>`
         return result
       }
     },
@@ -40,6 +46,7 @@ export function getPieOptions(data, op) {
     },
     series: [
       {
+        name: '',
         type: 'pie',
         radius: ['40%', '70%'],
         center: ['50%', '30%'],

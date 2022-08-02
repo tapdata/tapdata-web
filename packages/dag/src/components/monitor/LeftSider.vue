@@ -72,9 +72,13 @@
             </ElTooltip>
           </template>
           <template #content>
-            <div class="mb-4">
+            <div v-if="initialData.snapshotDoneAt" class="mb-4">
               <span>全量完成时间：</span>
-              <span>{{ initialData.time }}</span>
+              <span>{{ initialData.snapshotDoneAt }}</span>
+            </div>
+            <div v-else class="mb-4">
+              <span>预计全量完成还需：</span>
+              <span>{{ initialData.finishDuration }}</span>
             </div>
             <div class="flex justify-content-between">
               <div>
@@ -85,27 +89,6 @@
                 <div class="text-center">表数据状态</div>
                 <Chart ref="chart" :extend="initialDataOptions" style="width: 140px; height: 200px"></Chart>
               </div>
-            </div>
-          </template>
-        </CollapsePanel>
-      </div>
-      <div v-if="dataflow.type !== 'initial_sync'" class="info-box">
-        <CollapsePanel>
-          <template #header>
-            <span class="fw-bold font-color-normal">增量信息</span>
-          </template>
-          <template #content>
-            <div class="flex justify-content-between mb-2">
-              <span>源连接：</span>
-              <span class="font-color-normal">{{ cdcData.source }}</span>
-            </div>
-            <div class="flex justify-content-between mb-2">
-              <span>目标连接：</span>
-              <span class="font-color-normal">{{ cdcData.target }}</span>
-            </div>
-            <div class="flex justify-content-between">
-              <span>增量时间点：</span>
-              <span class="font-color-normal">{{ cdcData.time }}</span>
             </div>
           </template>
         </CollapsePanel>
@@ -167,6 +150,7 @@ import InitialList from './components/InitialList'
 import { Chart } from '@tap/component'
 import { getPieOptions } from './util'
 import dayjs from 'dayjs'
+import { calcUnit } from '@tap/shared'
 
 export default {
   name: 'LeftSider',
@@ -253,17 +237,13 @@ export default {
 
     // 全量信息
     initialData() {
-      const data = this.quota.samples?.totalData?.[0]
-      const initialCompleteTime = data?.initialCompleteTime
-        ? dayjs(data?.initialCompleteTime).format('YYYY-MM-DD HH:mm:ss')
-        : '-'
+      const data = this.quota.samples?.totalData?.[0] || {}
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, outputQps = 0, snapshotDoneAt } = data
+      const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
       return {
-        initialCompleteTime
+        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss') : '',
+        finishDuration: calcUnit(time, 2) // ? dayjs(time).format('HH:mm:ss.SSS') : '-'
       }
-      // const { initialTime } = this.quota.statistics?.[0] || {}
-      // return {
-      //   time: initialTime
-      // }
     },
 
     // 全量-表结构同步
@@ -307,7 +287,14 @@ export default {
           Object.assign({}, t, {
             value: result[t.key] ?? 0
           })
-        )
+        ),
+        {
+          series: [
+            {
+              name: '表结构同步'
+            }
+          ]
+        }
       )
     },
 
@@ -352,23 +339,15 @@ export default {
           Object.assign({}, t, {
             value: result?.[t.key] ?? 0
           })
-        )
+        ),
+        {
+          series: [
+            {
+              name: '表数据同步'
+            }
+          ]
+        }
       )
-    },
-
-    // 增量信息
-    cdcData() {
-      const { task_data_source_Data = {} } = this.dataflow?.attrs || {}
-      const { source_connectionName, target_connectionName } = task_data_source_Data
-      // const { cdcTime } = this.quota.statistics?.[0] || {}
-      const data = this.quota.samples?.totalData?.[0] || {}
-      const { cdcTime } = data
-      const time = cdcTime ? dayjs(cdcTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-      return {
-        source: source_connectionName,
-        target: target_connectionName,
-        time
-      }
     }
   },
 
