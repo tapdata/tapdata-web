@@ -44,14 +44,14 @@
           <div class="statistic">
             <div class="statistic-title">累积输入事件</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ sample.inputEventTotal }}</div>
+              <div class="statistic-value">{{ inputTotal }}</div>
             </div>
           </div>
 
           <div class="statistic">
             <div class="statistic-title">累积输出事件</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ sample.outputEventTotal }}</div>
+              <div class="statistic-value">{{ outputTotal }}</div>
             </div>
           </div>
 
@@ -205,20 +205,60 @@ export default {
     },
 
     initialSyncProcessTip() {
-      const { snapshotInsertRowTotal, snapshotRowTotal } = this.sample
-      return ` ${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 1万年`
+      const { snapshotInsertRowTotal, snapshotRowTotal, outputQps } = this.sample
+      return snapshotInsertRowTotal === snapshotRowTotal
+        ? '已完成'
+        : `${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 ${
+            outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0
+          }s`
+    },
+
+    inputTotal() {
+      return ['inputDdlTotal', 'inputDeleteTotal', 'inputInsertTotal', 'inputOthersTotal', 'inputUpdateTotal'].reduce(
+        (total, key) => {
+          return total + this.sample[key]
+        },
+        0
+      )
+    },
+
+    outputTotal() {
+      return [
+        'outputDdlTotal',
+        'outputDeleteTotal',
+        'outputInsertTotal',
+        'outputOthersTotal',
+        'outputUpdateTotal'
+      ].reduce((total, key) => {
+        return total + this.sample[key]
+      }, 0)
+    },
+
+    initialPieData() {
+      const { snapshotTableTotal, tableTotal } = this.sample
+      return {
+        success: snapshotTableTotal,
+        wait: tableTotal - snapshotTableTotal
+      }
+    },
+
+    cdcPieData() {
+      const { tableTotal } = this.sample
+      return {
+        process: tableTotal
+      }
     }
   },
 
   watch: {
-    'sample.initialSyncState': {
+    initialPieData: {
       immediate: true,
       handler(v) {
         this.seriesHandler(this.initialSyncOption, v)
       }
     },
 
-    'sample.cdcState': {
+    cdcPieData: {
       immediate: true,
       handler(v) {
         this.seriesHandler(this.cdcOption, v)

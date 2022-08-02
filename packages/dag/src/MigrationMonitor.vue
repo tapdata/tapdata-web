@@ -621,7 +621,9 @@ export default {
               'inputQps',
               'outputQps',
               'snapshotRowTotal',
-              'snapshotInsertRowTotal'
+              'snapshotInsertRowTotal',
+              'snapshotTableTotal',
+              'tableTotal'
             ],
             type: 'instant' // 瞬时值
           }
