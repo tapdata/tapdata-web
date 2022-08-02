@@ -75,8 +75,10 @@ export default {
       type: Number,
       default: 60 * 1000
     },
-    startTime: [String, Number, Date],
-    endTime: [String, Number, Date]
+    range: {
+      type: Array,
+      default: () => []
+    }
   },
 
   data() {
@@ -110,25 +112,13 @@ export default {
     }
   },
 
-  computed: {
-    range() {
-      const { startTime, endTime } = this
-      if (startTime && endTime) {
-        const start = new Date(startTime).getTime()
-        const end = new Date(endTime).getTime()
-        return [Math.min(start, end), Math.max(start, end)]
-      }
-      return []
-    }
-  },
-
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
     this.period = this.items[0]?.value
     // this.changeFnc(this.period)
     this.$once('setMinAndMaxTime', () => {
       const picker = this.$refs.datetime?.picker
-      const { startTime, endTime } = this
+      const [startTime, endTime] = this.range
       picker.minDate = new Date(startTime)
       picker.maxDate = new Date(endTime)
       const minDate = this.formatTime(startTime, this.timeFormat.date)
