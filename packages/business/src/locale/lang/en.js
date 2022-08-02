@@ -1,13 +1,9 @@
 export default {
-  transfer_titles: ['List 1', 'List 2'],
-  filter_placeholder: 'Please enter the search content',
-  loading: 'Loading',
-  no_match: 'No matching data',
-  no_data: 'No data',
-  function_type_option_custom: 'Custom function',
-  function_type_option_jar: 'Third-party jar package',
-  function_type_option_system: 'System function',
-  shared_cache: 'Shared cache',
+  connection_list_efficient: 'Effective',
+  connection_list_invalidation: 'Invalid',
+  connection_list_testing: 'Testing',
+
+  connection_column_name: 'Connection name',
 
   status_running: 'Running',
   status_paused: 'Paused',
@@ -30,6 +26,8 @@ export default {
   milestone_list_status_waiting: 'Waiting',
   milestone_list_status_running: 'Running',
   milestone_list_status_paused: 'Paused',
+  milestone_list_status_stopping: 'Stopping',
+  milestone_list_status_progressing: 'In progress',
 
   task_status_running: 'Running',
   task_status_not_running: 'Not running',

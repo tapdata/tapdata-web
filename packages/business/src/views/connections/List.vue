@@ -42,7 +42,7 @@
         </ElButton>
       </div>
       <ElTableColumn v-if="classify" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('connection.dataBaseName')">
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="columns['name'].label">
         <template slot-scope="scope">
           <span class="connection-name">
             <img class="connection-img mr-2" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
@@ -165,6 +165,7 @@ import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
+import locale from '../../locale'
 
 let timeout = null
 
@@ -230,23 +231,12 @@ export default {
         panelFlag: true,
         sourceType: ''
       },
-      sourceTypeOptions: [
-        { label: 'RDS实例', value: 'rds' },
-        { label: '云外自建数据库', value: 'selfDB' },
-        { label: 'DDS实例', value: 'dds' },
-        { label: 'ECS自建库', value: 'ecs' }
-      ],
-      sourceTypeMapping: {
-        rds: 'RDS实例',
-        selfDB: '云外自建数据库',
-        ecs: 'ECS自建库',
-        dds: 'DDS实例'
-      },
       testData: null,
       dialogTestVisible: false, // 连接测试框
       connectionTaskList: [],
       connectionTaskListTotal: 0,
-      connectionTaskDialog: false
+      connectionTaskDialog: false,
+      columns: { name: { label: locale.t('connection_column_name') } }
     }
   },
   computed: {
@@ -365,7 +355,6 @@ export default {
                 : ''
             }
 
-            item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = item.last_updated = item.last_updated
               ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               : '-'

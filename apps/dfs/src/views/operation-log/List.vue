@@ -47,10 +47,10 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
-
 import { VIcon, FilterBar } from '@tap/component'
+
 import TableList from '@/components/TableList'
+import i18n from '@/i18n'
 import { isEmpty } from '@/util'
 
 export default {
@@ -436,7 +436,7 @@ export default {
         // 任务
         case 'migration':
           this.$router.push({
-            name: 'Task',
+            name: 'migrateList',
             query: {
               status: '',
               syncType: '',
@@ -448,7 +448,7 @@ export default {
         // 连接
         case 'connection':
           this.$router.push({
-            name: 'Connection',
+            name: 'connections',
             query: {
               status: '',
               keyword: parameter1

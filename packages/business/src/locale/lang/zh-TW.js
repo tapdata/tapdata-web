@@ -1,13 +1,9 @@
 export default {
-  transfer_titles: ['列表 1', '列表 2'],
-  filter_placeholder: '請輸入搜索內容',
-  loading: '加載中',
-  no_match: '無匹配數據',
-  no_data: '無數據',
-  function_type_option_custom: '自定義函數',
-  function_type_option_jar: '第三方jar包',
-  function_type_option_system: '系統函數',
-  shared_cache: '共享緩存',
+  connection_list_efficient: '有效',
+  connection_list_invalidation: '無效',
+  connection_list_testing: '測試中',
+
+  connection_column_name: '連接名稱',
 
   status_running: '運行中',
   status_paused: '待啟動',
@@ -30,6 +26,8 @@ export default {
   milestone_list_status_waiting: '待執行',
   milestone_list_status_running: '運行中',
   milestone_list_status_paused: '已暫停',
+  milestone_list_status_stopping: '停止中',
+  milestone_list_status_progressing: '進行中',
 
   task_status_running: '已運行',
   task_status_not_running: '未運行',

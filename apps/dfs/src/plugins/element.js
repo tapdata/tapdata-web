@@ -39,6 +39,7 @@ import {
   Row,
   Col,
   DatePicker,
+  TimePicker,
   Progress,
   Footer,
   Switch,
@@ -116,6 +117,7 @@ Vue.use(Dialog)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(DatePicker)
+Vue.use(TimePicker)
 Vue.use(Progress)
 Vue.use(Footer)
 Vue.use(Switch)

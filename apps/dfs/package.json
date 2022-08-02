@@ -36,7 +36,7 @@
     "dayjs": "^1.11.2",
     "default-passive-events": "^2.0.0",
     "echarts": "^5.0.2",
-    "element-ui": "^2.15.1",
+    "element-ui": "2.15.7",
     "github-markdown-css": "^4.0.0",
     "highlight.js": "^11.0.1",
     "jsonwebtoken": "^8.5.1",
