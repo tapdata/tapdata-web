@@ -447,8 +447,8 @@ export default {
               'outputOthersTotal',
               'tableTotal',
               'snapshotTableTotal',
-              'snapshotTotal',
-              'snapshotInsertTotal'
+              'snapshotRowTotal',
+              'snapshotInsertRowTotal'
             ],
             //
             type: 'instant' // 瞬时值

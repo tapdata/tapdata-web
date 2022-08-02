@@ -150,6 +150,7 @@ import InitialList from './components/InitialList'
 import { Chart } from '@tap/component'
 import { getPieOptions } from './util'
 import dayjs from 'dayjs'
+import { calcUnit } from '@tap/shared'
 
 export default {
   name: 'LeftSider',
@@ -237,11 +238,11 @@ export default {
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const { snapshotTotal = 0, snapshotInsertTotal = 0, outputQps = 0, snapshotDoneAt } = data
-      const time = outputQps ? Math.ceil(((snapshotTotal - snapshotInsertTotal) * 1000) / outputQps) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, outputQps = 0, snapshotDoneAt } = data
+      const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss') : '',
-        finishDuration: dayjs(time).format('HH:mm:ss.SSS')
+        finishDuration: calcUnit(time, 2) // ? dayjs(time).format('HH:mm:ss.SSS') : '-'
       }
     },
 
@@ -286,7 +287,14 @@ export default {
           Object.assign({}, t, {
             value: result[t.key] ?? 0
           })
-        )
+        ),
+        {
+          series: [
+            {
+              name: '表结构同步'
+            }
+          ]
+        }
       )
     },
 
@@ -331,7 +339,14 @@ export default {
           Object.assign({}, t, {
             value: result?.[t.key] ?? 0
           })
-        )
+        ),
+        {
+          series: [
+            {
+              name: '表数据同步'
+            }
+          ]
+        }
       )
     }
   },

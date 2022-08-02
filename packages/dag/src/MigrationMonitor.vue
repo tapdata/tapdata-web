@@ -558,8 +558,8 @@ export default {
               'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
               'targetConnection',
               'snapshotDoneAt',
-              'snapshotTotal',
-              'snapshotInsertTotal',
+              'snapshotRowTotal',
+              'snapshotInsertRowTotal',
               'outputQps'
             ],
             type: 'instant' // 瞬时值
@@ -600,11 +600,16 @@ export default {
               taskId
             },
             fields: [
-              'insertTotal',
-              'updateTotal',
-              'deleteTotal',
-              'ddlTotal',
-              'othersTotal',
+              'inputInsertTotal',
+              'inputUpdateTotal',
+              'inputDeleteTotal',
+              'inputDdlTotal',
+              'inputOthersTotal',
+              'outputInsertTotal',
+              'outputUpdateTotal',
+              'outputDeleteTotal',
+              'outputDdlTotal',
+              'outputOthersTotal',
               'qps',
               'timeCostAvg',
               'currentEventTimestamp',
@@ -614,8 +619,8 @@ export default {
               'outputTotal',
               'inputQps',
               'outputQps',
-              'snapshotTotal',
-              'snapshotInsertTotal'
+              'snapshotRowTotal',
+              'snapshotInsertRowTotal'
             ],
             type: 'instant' // 瞬时值
           }
@@ -665,8 +670,8 @@ export default {
                   sourceConnection: 'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
                   targetConnection: 'targetConnection',
                   snapshotDoneAt: 1657707577896,
-                  snapshotTotal: getRandom(),
-                  snapshotInsertTotal: getRandom(),
+                  snapshotRowTotal: getRandom(),
+                  snapshotInsertRowTotal: getRandom(),
                   outputQps: getRandom()
                 }
               ],
@@ -693,11 +698,16 @@ export default {
               ],
               dagData: [
                 {
-                  insertTotal: getRandom(),
-                  updateTotal: getRandom(),
-                  deleteTotal: getRandom(),
-                  ddlTotal: getRandom(),
-                  othersTotal: getRandom(),
+                  inputInsertTotal: getRandom(),
+                  inputUpdateTotal: getRandom(),
+                  inputDeleteTotal: getRandom(),
+                  inputDdlTotal: getRandom(),
+                  inputOthersTotal: getRandom(),
+                  outputInsertTotal: getRandom(),
+                  outputUpdateTotal: getRandom(),
+                  outputDeleteTotal: getRandom(),
+                  outputDdlTotal: getRandom(),
+                  outputOthersTotal: getRandom(),
                   qps: getRandom(),
                   timeCostAvg: getRandom(),
                   currentEventTimestamp: getRandom(),
@@ -707,8 +717,8 @@ export default {
                   outputTotal: getRandom(),
                   inputQps: getRandom(),
                   outputQps: getRandom(),
-                  snapshotTotal: getRandom(),
-                  snapshotInsertTotal: getRandom(),
+                  snapshotRowTotal: getRandom(),
+                  snapshotInsertRowTotal: getRandom(),
                   tags: {
                     nodeType: 'table_rename_processor',
                     type: 'node',
