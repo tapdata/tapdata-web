@@ -13,7 +13,7 @@
           <div class="statistic">
             <div class="statistic-title">耗时</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ sample.timeCostAvg }}</div>
+              <div class="statistic-value">{{ sample.timeCostAvg || '-' }}</div>
             </div>
           </div>
 
@@ -109,30 +109,11 @@ export default {
     sample: {
       type: Object,
       default: () => ({
-        currentEventTimestamp: 1658117353136,
-        inputEventTotal: 996,
-        outputEventTotal: 996,
-        timeCostAvg: 600,
-        writeDelay: 700,
-        processDelay: 500,
-        outputQps: 888,
-        initialSyncState: {
-          wait: 60,
-          process: 100,
-          success: 120,
-          error: 15
-        },
-        cdcState: {
-          wait: 160,
-          process: 100,
-          success: 120,
-          error: 15
-        },
-        milestone: {
-          finish: 10,
-          total: 100,
-          planTime: 100
-        }
+        snapshotInsertRowTotal: 0,
+        snapshotRowTotal: 0,
+        outputQps: 0,
+        snapshotTableTotal: 0,
+        tableTotal: 0
       })
     },
     taskType: String
@@ -200,23 +181,25 @@ export default {
     },
 
     initialSyncProcess() {
-      const { snapshotInsertRowTotal, snapshotRowTotal } = this.sample
-      return Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100)
+      const { snapshotInsertRowTotal = 0, snapshotRowTotal = 0 } = this.sample
+      return snapshotRowTotal ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100) : 0
     },
 
     initialSyncProcessTip() {
       const { snapshotInsertRowTotal, snapshotRowTotal, outputQps } = this.sample
-      return snapshotInsertRowTotal === snapshotRowTotal
-        ? '已完成'
-        : `${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 ${
-            outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0
-          }s`
+      return snapshotRowTotal
+        ? snapshotInsertRowTotal === snapshotRowTotal
+          ? '已完成'
+          : `${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 ${
+              outputQps ? Math.ceil((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) : 0
+            }s`
+        : '-'
     },
 
     inputTotal() {
       return ['inputDdlTotal', 'inputDeleteTotal', 'inputInsertTotal', 'inputOthersTotal', 'inputUpdateTotal'].reduce(
         (total, key) => {
-          return total + this.sample[key]
+          return total + this.sample[key] || 0
         },
         0
       )
@@ -230,7 +213,7 @@ export default {
         'outputOthersTotal',
         'outputUpdateTotal'
       ].reduce((total, key) => {
-        return total + this.sample[key]
+        return total + this.sample[key] || 0
       }, 0)
     },
 
