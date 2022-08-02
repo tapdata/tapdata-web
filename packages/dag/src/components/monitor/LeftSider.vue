@@ -20,9 +20,9 @@
         <div class="task-info__row">
           <span class="task-info__label">运行状态：</span>
           <span class="task-info__value">
-            <slot name="status" :result="dataflow.statusResult">
-              <StatusItem inline :value="dataflow.statusResult" />
-            </slot>
+            <span :class="['status-' + dataflow.status, 'status-block']">
+              {{ $t('task_preview_status_' + dataflow.status) }}
+            </span>
           </span>
         </div>
       </div>
@@ -157,7 +157,6 @@ import 'web-core/assets/icons/svg/field_calc.svg'
 import 'web-core/assets/icons/svg/field_add_del.svg'
 import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
-import { StatusItem } from '@tap/business'
 import Locale from '../../mixins/locale'
 import EventChart from './components/EventChart'
 import LineChart from './components/LineChart'
@@ -178,7 +177,6 @@ export default {
     timeFormat: String
   },
   components: {
-    StatusItem,
     EventChart,
     LineChart,
     Chart,

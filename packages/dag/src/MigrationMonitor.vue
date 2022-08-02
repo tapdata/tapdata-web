@@ -251,6 +251,10 @@ export default {
     lastStopTime() {
       const { stopTime } = this.dataflow || {}
       return stopTime ? new Date(stopTime).getTime() : null
+    },
+
+    isEnterTimer() {
+      return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
     }
   },
 
@@ -288,7 +292,7 @@ export default {
     init() {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.startLoadQuotaData()
+        this.isEnterTimer && this.startLoadQuotaData()
       }, 5000)
       this.startLoadQuotaData()
     },
