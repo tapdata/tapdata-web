@@ -177,7 +177,7 @@ module.exports = {
     },
     loaderOptions: {
       scss: {
-        additionalData: `@use "~@/styles/var.scss" as *;`
+        additionalData: `@use "~@tap/assets/styles/var.scss" as *;`
       }
     }
   }

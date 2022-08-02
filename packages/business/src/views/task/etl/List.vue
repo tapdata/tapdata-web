@@ -290,12 +290,12 @@ import dayjs from 'dayjs'
 
 import { taskApi } from '@tap/api'
 import { FilterBar, Drawer } from '@tap/component'
-import { TablePage } from '@tap/business'
 import { toRegExp } from '@tap/shared'
 
 import SkipError from '../SkipError'
 import Upload from '../../../components/UploadDialog.vue'
 import StatusItem from '../StatusItem'
+import { TablePage } from '../../../components'
 import { ETL_STATUS_MAP } from '../../../shared/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '../../../shared'
 

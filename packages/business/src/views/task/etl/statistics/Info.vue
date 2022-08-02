@@ -188,7 +188,9 @@ import dayjs from 'dayjs'
 
 import { subtaskApi } from '@tap/api'
 import { VIcon, SelectList, Chart, DatetimeRange } from '@tap/component'
-import { formatMs, toThousandsUnit, StatusTag } from '@tap/business'
+
+import { formatMs, toThousandsUnit } from '../../../../shared'
+import { StatusTag } from '../../../../components'
 
 export default {
   name: 'Info',

@@ -18,6 +18,8 @@ const MigrationEditor = async () => {
   const { MigrationEditor } = await import('@tap/dag')
   return MigrationEditor
 }
+const MigrateDetails = () =>
+  import(/* webpackChunkName: "task-details" */ '@tap/business/src/views/task/migrate/details/Index.vue')
 
 const routes = [
   {
@@ -164,7 +166,17 @@ const routes = [
         meta: {
           title: i18n.t('task_manage_migrate'),
           icon: 'task'
-        }
+        },
+        children: [
+          {
+            path: 'Statistics',
+            name: 'MigrateStatistics',
+            component: MigrateDetails,
+            meta: {
+              title: i18n.t('tap_task_details')
+            }
+          }
+        ]
       },
       {
         path: '/verify',

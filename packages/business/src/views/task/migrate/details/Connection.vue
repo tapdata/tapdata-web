@@ -51,9 +51,10 @@
 
 <script>
 import { connectionsApi } from '@tap/api'
-import { SchemaProgress } from '@tap/business'
 import { VIcon, TableList } from '@tap/component'
 import { deepCopy } from '@tap/shared'
+
+import { SchemaProgress } from '../../../../components'
 import { getConnectionIcon } from '../../../connections/util'
 
 export default {

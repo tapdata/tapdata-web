@@ -65,6 +65,7 @@ importers:
       '@formily/core': ^2.1.2
       '@formily/reactive': ^2.1.2
       '@tap/api': workspace:^1.0.0
+      '@tap/assets': workspace:^1.0.0
       '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/dag': workspace:^1.0.0
@@ -124,6 +125,7 @@ importers:
       '@formily/core': registry.npmmirror.com/@formily/core/2.1.9
       '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.9
       '@tap/api': link:../../packages/api
+      '@tap/assets': link:../../packages/assets
       '@tap/business': link:../../packages/business
       '@tap/component': link:../../packages/component
       '@tap/dag': link:../../packages/dag
@@ -191,6 +193,7 @@ importers:
       '@formily/shared': ^2.1.2
       '@formily/vue': ^2.1.2
       '@tap/api': workspace:^1.0.0
+      '@tap/assets': workspace:^1.0.0
       '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/dag': workspace:^1.0.0
@@ -253,6 +256,7 @@ importers:
       '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.9
       '@formily/vue': registry.npmmirror.com/@formily/vue/2.1.9_6fywhegardq2xsbixl3beuj4ua
       '@tap/api': link:../../packages/api
+      '@tap/assets': link:../../packages/assets
       '@tap/business': link:../../packages/business
       '@tap/component': link:../../packages/component
       '@tap/dag': link:../../packages/dag

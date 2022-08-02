@@ -19,8 +19,8 @@
 
 <script>
 import { databaseTypesApi } from '@tap/api'
-import { ConnectionTypeSelector } from '@tap/business'
 
+import { ConnectionTypeSelector } from '../../components'
 import { getImgByType } from './util'
 
 export default {
@@ -44,17 +44,13 @@ export default {
     return {
       database: [],
       otherType: [],
-      timer: null,
       loading: true
     }
   },
   watch: {
     dialogVisible(v) {
-      this.timer && clearInterval(this.timer)
       if (v) {
-        this.timer = setInterval(() => {
-          this.getDatabaseType()
-        }, 3000)
+        this.getDatabaseType()
       }
     }
   },

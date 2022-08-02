@@ -40,7 +40,7 @@
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
+            <el-dropdown-item v-if="canImport" command="export" v-readonlybtn="'SYNC_job_export'">{{
               $t('dataFlow.bulkExport')
             }}</el-dropdown-item>
             <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
@@ -58,7 +58,7 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
-          v-if="classify"
+          v-if="canImport"
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
           class="btn message-button-cancel"
@@ -177,7 +177,7 @@
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
-                <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
+                <el-dropdown-item v-if="canImport" command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('task_list_export')
                 }}</el-dropdown-item>
                 <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
@@ -259,9 +259,9 @@ import dayjs from 'dayjs'
 
 import { taskApi } from '@tap/api'
 import { VIcon, FilterBar, Drawer } from '@tap/component'
-import { TablePage } from '@tap/business'
 import { toRegExp } from '@tap/shared'
 
+import { TablePage } from '../../../components'
 import { getSubTaskStatus, getTaskBtnDisabled } from '../../../shared'
 import SkipError from '../SkipError'
 import Upload from '../../../components/UploadDialog.vue'
@@ -271,6 +271,7 @@ export default {
   name: 'TaskList',
   components: { VIcon, FilterBar, TablePage, SkipError, Drawer, Upload },
   props: {
+    canImport: Boolean,
     classify: Boolean
   },
   data() {

@@ -1,3 +1,4 @@
+@import '~@tap/assets/styles/var';
 @import '~web-core/styles/utilities';
 @import 'overrides';
 @import '~@/assets/fonts/DIN/index.css';
@@ -46,4 +47,9 @@
 .el-dialog__body {
   word-wrap: break-word;
   word-break: break-word;
+}
+
+.route-page-container {
+  background: map-get($bgColor, white);
+  padding: 20px;
 }

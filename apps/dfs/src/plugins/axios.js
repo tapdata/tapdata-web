@@ -80,7 +80,6 @@ const requestInterceptor = config => {
   // headers里面注入用户token，并开启鉴权
   let user = window.__USER_INFO__
   if (user) {
-    config.headers['X-Token'] = user.token
     if (process.env.NODE_ENV === 'development') {
       config.headers['user_id'] = user.id
     }

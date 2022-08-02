@@ -21,7 +21,8 @@
 <script>
 import { logcollectorApi } from '@tap/api'
 import { TableList } from '@tap/component'
-import { StatusTag } from '@tap/business'
+
+import { StatusTag } from '../../../../components'
 
 export default {
   name: 'ShareMining',

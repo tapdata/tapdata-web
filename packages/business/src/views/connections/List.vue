@@ -158,10 +158,9 @@ import dayjs from 'dayjs'
 
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
 import Cookie from '@tap/shared/src/cookie'
 
-import SchemaProgress from '../../components/SchemaProgress.vue'
+import { TablePage, SchemaProgress } from '../../components'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'

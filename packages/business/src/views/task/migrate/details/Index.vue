@@ -31,8 +31,8 @@
 
 <script>
 import { measurementApi, subtaskApi } from '@tap/api'
-import { Log } from '@tap/business'
 
+import { Log } from '../../../../components'
 import Info from './Info'
 import Schedule from './Schedule'
 import Connection from './Connection'

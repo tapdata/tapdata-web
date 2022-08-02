@@ -1,3 +1,5 @@
+@import '~@tap/assets/styles/var';
+
 // 变量
 // 会在每个style元素以及scss文件中注入，因此不允许写具体选择器样式
 $borderRadiusBtn: 4px;
@@ -37,5 +39,5 @@ $fontFamily: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Ari
 $codeFontFamily: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
 $iconFillColor: (
-  normal: #4E5969,
+  normal: #4e5969
 );
