@@ -6,7 +6,7 @@
   >
     <div class="panel-header flex align-center px-4 border-bottom">
       <template v-if="activeType !== 'settings'">
-        <NodeIcon class="mr-2" :node="activeNode" />
+        <NodeIcon v-if="activeNode" class="mr-2" :node="activeNode" />
         <TextEditable
           ref="nameInput"
           v-model="name"

@@ -263,7 +263,7 @@ export const TableRename = observer(
                   prefixIcon="el-icon-search"
                   clearable
                 />
-                <div class="px-4 text-nowrap">改为</div>
+                <div class="px-4 text-nowrap font-color-light">改为</div>
                 <ElInput
                   v-model={this.config.replaceAfter}
                   disabled={this.disabled}

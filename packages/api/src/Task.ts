@@ -118,5 +118,17 @@ export default class Task extends Http {
     }
     return this.axios.get(this.url + '/getNodeTableInfo', config)
   }
+
+  getConsole(params) {
+    return this.axios.get('/api/task-console', { params })
+  }
+
+  testRunJs(params) {
+    return this.axios.post('/api/task/migrate-js/test-run', params)
+  }
+
+  getRunJsResult(params) {
+    return this.axios.get('/api/task/migrate-js/get-result', { params })
+  }
 }
 export { Task }

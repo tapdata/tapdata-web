@@ -143,7 +143,6 @@
       :title="titleType[currentOperationType]"
       :visible.sync="dialogVisible"
       width="30%"
-      append-to-body
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
@@ -304,7 +303,7 @@ export default {
           this.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
           this.navData = items || []
           //请求左侧table数据
-          this.selectRow = this.navData?.[0] || {}
+          this.selectRow = this.navData?.[this.position] || {}
           this.target = this.selectRow?.fieldsMapping
           this.viewTableData = this.target
           this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0

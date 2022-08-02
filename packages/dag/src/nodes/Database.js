@@ -128,7 +128,7 @@ export class Database extends NodeType {
             fulfill: {
               state: {
                 visible:
-                  '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") }}'
+                  '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}'
               }
             }
           }
@@ -140,8 +140,12 @@ export class Database extends NodeType {
         type: 'boolean',
         'x-decorator': 'FormItem',
         'x-decorator-props': {
+          // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
           tooltip: '开启后任务将会自动采集选中的源端DDL事件',
           feedbackLayout: 'none'
+          // wrapperStyle: {
+          //   width: 'auto'
+          // }
         },
         'x-component': 'Switch',
         'x-reactions': {
@@ -225,7 +229,7 @@ export class Database extends NodeType {
           style: {
             height: 'unset',
             minHeight: 0,
-            maxHeight: 'calc(100vh - 120px)'
+            maxHeight: 'calc((100vh - 120px) * 0.618)'
           }
         },
         'x-reactions': {

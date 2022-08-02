@@ -9,7 +9,7 @@ export const TYPEMAP = {
   paused: i18n.t('notify_list_paused'),
   edited: i18n.t('notify_list_edited'),
   deleted: i18n.t('notify_list_deleted'),
-  abnormallyStopped: i18n.t('notify_list_abnormallyStopped'),
+  abnormallyStopped: i18n.t('notify_abnormally_stopped'),
   stoppedByError: i18n.t('notify_list_stopped_by_error'),
   startupFailed: i18n.t('notify_list_startup_failed'),
   stopFailed: i18n.t('notify_list_stop_failed'),

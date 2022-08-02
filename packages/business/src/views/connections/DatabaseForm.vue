@@ -451,10 +451,13 @@ export default {
             let config = {
               persistenceMongodb_uri_db: {
                 type: 'string',
-                title: this.$t('share_form_setting_connection_name'),
+                title: this.$t('MongoDB URI'),
                 required: true,
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
+                'x-component-props': {
+                  type: 'textarea'
+                },
                 'x-reactions': {
                   dependencies: ['__TAPDATA.shareCdcEnable'],
                   fulfill: {

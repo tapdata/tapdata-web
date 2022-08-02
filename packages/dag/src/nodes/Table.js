@@ -252,9 +252,6 @@ export class Table extends NodeType {
                       }
                     ],
                     'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      wrapperWidth: 300
-                    },
                     'x-component': 'Radio.Group'
                   },
                   totalsql: {
@@ -292,9 +289,20 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      className: 'font-color-slight',
+                      wrapperStyle: {
+                        width: 'auto'
+                      }
                     },
-                    'x-component': 'Radio.Group'
+                    'x-component': 'Radio.Group',
+                    'x-reactions': {
+                      fulfill: {
+                        schema: {
+                          'x-decorator-props.addonAfter':
+                            '{{$self.value==="customizeSql" ? "使用增量自定义SQL时暂不支持开启DDL事件采集":""}}'
+                        }
+                      }
+                    }
                   },
                   increasesql: {
                     type: 'string',
@@ -523,6 +531,77 @@ export class Table extends NodeType {
                         }
                       }
                     ]
+                  },
+
+                  initialConcurrentSpace: {
+                    title: '全量多线程写入',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      initialConcurrent: {
+                        type: 'boolean',
+                        default: true,
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.initialConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      initialConcurrentWriteNum: {
+                        type: 'number',
+                        default: 8,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
+                  },
+                  cdcConcurrentSpace: {
+                    type: 'void',
+                    title: '增量多线程写入',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      cdcConcurrent: {
+                        type: 'boolean',
+                        default: true,
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          target: '.cdcConcurrentWriteNum',
+                          fulfill: {
+                            state: {
+                              visible: '{{!!$self.value}}'
+                            }
+                          }
+                        }
+                      },
+                      cdcConcurrentWriteNum: {
+                        type: 'number',
+                        default: 4,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        }
+                      }
+                    }
                   }
                 }
               }
