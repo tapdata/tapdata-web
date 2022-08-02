@@ -124,10 +124,12 @@ export default {
     scrollerBgStyle() {
       const paper = this.paperStyle
       const scale = this.paperScale
-
+      const girdSize = scale * 10
+      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="v-4" width="100%" height="100%"><defs id="v-3"><pattern id="pattern_0" patternUnits="userSpaceOnUse" x="0" y="0" width="${girdSize}" height="${girdSize}"><rect id="v-5" width="${scale}" height="${scale}" fill="rgb(170 170 170 / 80%)"/></pattern></defs><rect id="v-7" width="100%" height="100%" fill="url(#pattern_0)"/></svg>`
       return {
         width: parseInt(paper.left) * 2 + parseInt(paper.width) * scale + 'px',
-        height: parseInt(paper.top) * 2 + parseInt(paper.height) * scale + 'px'
+        height: parseInt(paper.top) * 2 + parseInt(paper.height) * scale + 'px',
+        backgroundImage: `url("data:image/svg+xml;base64,${window.btoa(svgStr)}")`
       }
     },
     paperOffset() {
@@ -392,7 +394,9 @@ export default {
       if (typeof e.which !== 'number') {
         e.which = e.keyCode
       }
-
+      if (e.shiftKey) {
+        this.toggleShiftKeyPressed(true)
+      }
       if (e.which === 32) {
         // this.spaceKeyPressed = true
         this.setPaperSpaceKeyPressed(true)
@@ -404,7 +408,9 @@ export default {
       if (typeof e.which !== 'number') {
         e.which = e.keyCode
       }
-
+      if (!e.shiftKey) {
+        this.toggleShiftKeyPressed(false)
+      }
       if (e.which === 32) {
         // this.spaceKeyPressed = false
         this.setPaperSpaceKeyPressed(false)
@@ -691,10 +697,9 @@ export default {
   outline: none;
   .paper-scroller-background {
     position: relative;
+    background-color: rgba(245, 248, 254, 1);
     .paper {
       position: absolute;
-      //background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTc2IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcyBpZD0idi03NSI+PHBhdHRlcm4gaWQ9InBhdHRlcm5fMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cmVjdCBpZD0idi03NyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNzkiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==);
-      //background-color: #f6f6f6;
       transform-origin: 0 0;
     }
   }
