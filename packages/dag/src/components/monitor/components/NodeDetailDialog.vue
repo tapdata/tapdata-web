@@ -9,7 +9,7 @@
   >
     <div class="mb-4">
       <span>节点</span>
-      <ElSelect v-model="selected" class="ml-2" @change="init">
+      <ElSelect v-model="selected" class="ml-2" filterable @change="init">
         <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
     </div>
@@ -22,13 +22,23 @@
       </div>
       <div v-if="isSource" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
-        <div class="chart-box__content p-4">
-          <div class="flex align-items-center justify-content-around text-center">
+        <div class="chart-box__content p-4 flex justify-content-between">
+          <div class="pl-6">
             <div>
+              <div class="text-center mb-2">全量同步状态</div>
+              <Chart :extend="cdcOptions" class="pie-chart"></Chart>
+            </div>
+            <div class="mt-4">
+              <div class="text-center mb-2">增量同步状态</div>
+              <Chart :extend="initialOptions" class="pie-chart"></Chart>
+            </div>
+          </div>
+          <div class="pt-7 pr-6">
+            <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1">{{ formatTime(sourceData.tcpping, 'HH:mm:ss.SSS') }}</div>
               <div>TCP连接耗时</div>
             </div>
-            <div>
+            <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1">
                 {{ formatTime(sourceData.connectionping, 'HH:mm:ss.SSS') }}
               </div>
@@ -39,16 +49,6 @@
                 {{ formatTime(sourceData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss') }}
               </div>
               <div>增量时间点</div>
-            </div>
-          </div>
-          <div class="flex justify-content-around pt-7">
-            <div>
-              <div class="text-center mb-1">全量同步状态</div>
-              <Chart :extend="cdcOptions" style="width: 90px; height: 90px"></Chart>
-            </div>
-            <div>
-              <div class="text-center mb-1">增量同步状态</div>
-              <Chart ref="chart" :extend="initialOptions" style="width: 90px; height: 90px"></Chart>
             </div>
           </div>
         </div>
@@ -325,7 +325,8 @@ export default {
         },
         series: [
           {
-            radius: ['55%', '90%'],
+            name: '全量同步状态',
+            radius: ['55%', '85%'],
             center: ['50%', '50%']
           }
         ]
@@ -377,7 +378,8 @@ export default {
         },
         series: [
           {
-            radius: ['55%', '90%'],
+            name: '增量同步状态',
+            radius: ['55%', '85%'],
             center: ['50%', '50%']
           }
         ]
@@ -615,5 +617,10 @@ export default {
       margin-bottom: 20px !important;
     }
   }
+}
+.pie-chart {
+  margin: 0 auto;
+  width: 70px;
+  height: 70px;
 }
 </style>
