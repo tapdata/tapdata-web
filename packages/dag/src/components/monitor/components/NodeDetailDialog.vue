@@ -398,7 +398,7 @@ export default {
       }
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.quotaTimeType !== 'custom' && this.loadQuotaData()
+        this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running' && this.loadQuotaData()
       }, 5000)
       this.loadQuotaData()
     },
