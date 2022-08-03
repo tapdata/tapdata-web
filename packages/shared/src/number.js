@@ -40,6 +40,7 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
   let res = []
   const f = Math.pow(10, fix)
   while (num > 1 && i < list.length) {
+    util = list[i]
     let m = num / (sp[i] ?? sp[0])
     if (m < 1) {
       if (fix < 0) {
@@ -54,10 +55,44 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
       num = Math.round(m * f) / f
     }
     i++
-    util = list[i]
   }
   if (res.length) {
     return res.join('')
   }
   return num + util
+}
+
+/**
+ * @desc 时间差换算： 毫秒转年月日时分秒
+ * @val Number 需要处理的毫秒
+ * @fix Number 需要保留几个单位
+ * @return string
+ * */
+export function calcTimeUnit(val, fix = 1) {
+  const sp = [1000, 60, 60, 24, 30, 12]
+  const list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
+  let result = []
+  let num = val
+  for (let i = 0; i < list.length; i++) {
+    let util = list[i]
+    let m = num / sp[i]
+    if (m < 1) {
+      result.unshift({
+        value: num,
+        util
+      })
+      break
+    }
+    result.unshift({
+      value: num % sp[i],
+      util
+    })
+    num = Math.round(m)
+  }
+  const arr = fix < 0 ? result : result.slice(0, fix)
+  return arr
+    .filter(t => t.value)
+    .reduce((pre, current) => {
+      return pre + current.value + current.util
+    }, '')
 }

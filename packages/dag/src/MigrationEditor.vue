@@ -290,7 +290,7 @@ export default {
       if (newTab) {
         window.open(
           this.$router.resolve({
-            name: 'MigrateStatistics',
+            name: 'MigrationMonitor',
             query: {
               id: this.dataflow.id,
               subId: subId
@@ -300,7 +300,7 @@ export default {
         )
       } else {
         this.$router.push({
-          name: 'MigrateStatistics',
+          name: 'MigrationMonitor',
           query: {
             id: this.dataflow.id,
             subId: subId

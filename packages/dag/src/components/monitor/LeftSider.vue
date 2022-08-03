@@ -82,7 +82,7 @@
             <div v-else class="mb-4">
               <span>预计全量完成还需：</span>
               <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-                <span>{{ calcUnit(initialData.finishDuration, 2) }}</span>
+                <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
               </ElTooltip>
             </div>
             <div class="flex justify-content-between">
@@ -155,7 +155,7 @@ import InitialList from './components/InitialList'
 import { Chart } from '@tap/component'
 import { getPieOptions } from './util'
 import dayjs from 'dayjs'
-import { calcUnit } from '@tap/shared'
+import { calcTimeUnit } from '@tap/shared'
 
 export default {
   name: 'LeftSider',
@@ -397,8 +397,8 @@ export default {
       return result
     },
 
-    calcUnit() {
-      return calcUnit(...arguments)
+    calcTimeUnit() {
+      return calcTimeUnit(...arguments)
     }
   }
 }
