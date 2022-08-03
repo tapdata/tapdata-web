@@ -36,19 +36,19 @@
               <Chart :extend="initialOptions" class="pie-chart"></Chart>
             </div>
           </div>
-          <div class="pt-7 pr-6">
+          <div class="pt-7 pr-6" style="width: 160px">
             <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1">{{ calcTimeUnit(sourceData.tcpping, 2) }}</div>
+              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(sourceData.tcpping, 2) }}</div>
               <div>TCP连接耗时</div>
             </div>
             <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1">
+              <div class="font-color-normal fw-bold mb-1 din-font">
                 {{ calcTimeUnit(sourceData.connectionping, 2) }}
               </div>
               <div>协议连接耗时</div>
             </div>
             <div>
-              <div class="font-color-normal fw-bold mb-1">
+              <div class="font-color-normal fw-bold mb-1 din-font">
                 {{ formatTime(sourceData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss') }}
               </div>
               <div>增量时间点</div>
@@ -59,13 +59,13 @@
       <div v-else-if="isTarget" class="chart-box rounded-2 flex flex-column">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">连接状态</div>
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
-          <div class="flex align-items-center justify-content-around text-center pb-10 w-100">
-            <div>
-              <div class="font-color-normal fw-bold mb-1">{{ calcTimeUnit(targetData.tcpping, 2) }}</div>
+          <div class="text-center pb-10 w-100">
+            <div class="mb-4">
+              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(targetData.tcpping, 2) }}</div>
               <div>TCP连接耗时</div>
             </div>
-            <div>
-              <div class="font-color-normal fw-bold mb-1">
+            <div class="mb-4">
+              <div class="font-color-normal fw-bold mb-1 din-font">
                 {{ calcTimeUnit(targetData.connectionping, 2) }}
               </div>
               <div>协议连接耗时</div>
