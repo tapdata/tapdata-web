@@ -2,7 +2,7 @@
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box">
-        <TimeSelect :range="[$attrs.startTime, $attrs.endTime]" @change="changeTimeSelect"></TimeSelect>
+        <TimeSelect :range="$attrs.range" @change="changeTimeSelect"></TimeSelect>
       </div>
       <div class="info-box">
         <div class="task-info__row">

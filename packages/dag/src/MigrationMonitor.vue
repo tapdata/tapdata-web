@@ -36,8 +36,7 @@
           :dataflow="dataflow"
           :quota="quota"
           :timeFormat="timeFormat"
-          :start-time="firstStartTime"
-          :end-time="lastStopTime || Date.now()"
+          :range="[firstStartTime, lastStopTime || Date.now()]"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
@@ -115,8 +114,11 @@
         :dataflow="dataflow"
         :node-id="nodeDetailDialogId"
         :timeFormat="timeFormat"
+        :range="[firstStartTime, lastStopTime || Date.now()]"
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
+        :getTimeRange="getTimeRange"
+        ref="nodeDetailDialog"
       ></NodeDetailDialog>
     </section>
   </section>
@@ -885,6 +887,9 @@ export default {
 
     handleOpenDetail(node) {
       this.nodeDetailDialogId = node.id
+      // 设置弹窗的周期
+      this.$refs.nodeDetailDialog.quotaTime = this.quotaTime
+      this.$refs.nodeDetailDialog.quotaTimeType = this.quotaTimeType
       this.nodeDetailDialog = true
     },
 

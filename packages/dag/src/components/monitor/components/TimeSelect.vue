@@ -40,6 +40,7 @@ export default {
   name: 'TimeSelect',
 
   props: {
+    value: String,
     title: {
       type: String,
       default: '周期'
@@ -77,7 +78,7 @@ export default {
     },
     range: {
       type: Array,
-      default: () => []
+      default: () => [Date.now() - this.interval, Date.now()]
     }
   },
 
@@ -89,7 +90,7 @@ export default {
       isTime: false,
       pickerOptions: {
         disabledDate: time => {
-          const [start, end] = this.range
+          const [start, end] = this.getRangeTime()
           const d = new Date(time).getTime()
           const pickDate = dayjs(time).format(this.timeFormat.date)
           const startDate = dayjs(start).format(this.timeFormat.date)
@@ -112,13 +113,19 @@ export default {
     }
   },
 
+  watch: {
+    value(v) {
+      this.setPeriod(v)
+    }
+  },
+
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
-    this.period = this.items[0]?.value
+    this.setPeriod(this.value || this.items[0]?.value)
     // this.changeFnc(this.period)
     this.$once('setMinAndMaxTime', () => {
       const picker = this.$refs.datetime?.picker
-      const [startTime, endTime] = this.range
+      const [startTime, endTime] = this.getRangeTime()
       picker.minDate = new Date(startTime)
       picker.maxDate = new Date(endTime)
       const minDate = this.formatTime(startTime, this.timeFormat.date)
@@ -204,7 +211,7 @@ export default {
       }
       const picker = this.$refs.datetime?.picker
       const { minTimePicker, maxTimePicker } = picker.$refs
-      const [start, end] = this.range
+      const [start, end] = this.getRangeTime()
       const pickStartDate = dayjs(minDate).format(this.timeFormat.date)
       const pickEndDate = dayjs(maxDate).format(this.timeFormat.date)
       const startDate = dayjs(start).format(this.timeFormat.date)
@@ -237,6 +244,19 @@ export default {
 
     formatTime(date, format) {
       return dayjs(date).format(format)
+    },
+
+    getRangeTime() {
+      return this.range.map(t => t || Date.now())
+    },
+
+    setPeriod(value) {
+      let findOne = this.items.find(t => t.value === value)
+      if (!findOne) {
+        this.changeTime(value.split(',').map(t => Number(t)))
+        return
+      }
+      this.period = value
     }
   }
 }

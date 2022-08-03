@@ -7,11 +7,12 @@
     :append-to-body="true"
     @close="$emit('input', false)"
   >
-    <div class="mb-4">
+    <div class="flex align-items-center mb-4">
       <span>节点</span>
       <ElSelect v-model="selected" class="ml-2" filterable @change="init">
         <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
+      <TimeSelect :value="period" :range="$attrs.range" @change="changeTimeSelect"></TimeSelect>
     </div>
     <div class="flex justify-content-between">
       <div class="chart-box rounded-2">
@@ -109,13 +110,16 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
+import { mapGetters } from 'vuex'
+
+import { measurementApi } from '@tap/api'
+import { Chart } from '@tap/component'
+
 import EventChart from './EventChart'
 import LineChart from './LineChart'
-import { Chart } from '@tap/component'
-import { mapGetters } from 'vuex'
+import TimeSelect from './TimeSelect'
 import { getPieOptions, TIME_FORMAT_MAP, getTimeGranularity } from '../util'
-import dayjs from 'dayjs'
-import { measurementApi } from '@tap/api'
 
 function getRandom(num = 100) {
   return Math.ceil(Math.random() * 100 * num)
@@ -139,7 +143,7 @@ const VALUE_LIST = getRandomArray(100000)
 export default {
   name: 'NodeDetailDialog',
 
-  components: { EventChart, LineChart, Chart },
+  components: { EventChart, LineChart, Chart, TimeSelect },
 
   props: {
     value: {
@@ -154,19 +158,20 @@ export default {
 
     dataflow: Object,
 
-    quotaTimeType: String,
-
-    quotaTime: Array
+    getTimeRange: Function
   },
 
   data() {
     return {
+      period: '',
       visible: false,
       selected: '',
       quota: {},
       refresh: false, // 刷新数据还是初始化数据
       count: 0,
-      timeFormat: 'HH:mm:ss'
+      timeFormat: 'HH:mm:ss',
+      quotaTime: [],
+      quotaTimeType: '5m'
     }
   },
 
@@ -405,11 +410,20 @@ export default {
       if (!this.selected) {
         this.selected = this.nodeId
       }
+      this.setPeriod()
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
         this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running' && this.loadQuotaData()
       }, 5000)
       this.loadQuotaData()
+    },
+
+    setPeriod() {
+      if (this.quotaTimeType === 'custom') {
+        this.period = this.quotaTime.join()
+      } else {
+        this.period = this.quotaTimeType
+      }
     },
 
     getFilter() {
@@ -583,6 +597,12 @@ export default {
         }
       })
       return result
+    },
+
+    changeTimeSelect(val, isTime, source) {
+      this.quotaTimeType = source?.type ?? val
+      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.init()
     }
   }
 }
