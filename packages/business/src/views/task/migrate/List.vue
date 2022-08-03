@@ -194,7 +194,7 @@
                 <el-dropdown-item command="del" :disabled="row.disabledData.delete" v-readonlybtn="'SYNC_job_delete'">
                   {{ $t('task_list_delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">
+                <el-dropdown-item v-if="classify" command="setTag" v-readonlybtn="'SYNC_category_application'">
                   {{ $t('dataFlow.addTag') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
@@ -760,7 +760,7 @@ export default {
       this.table.fetch(1)
     },
     responseHandler(data, msg) {
-      let failList = data.fail || []
+      let failList = data?.fail || []
       if (failList.length) {
         let msgMapping = {
           5: this.$t('dataFlow.multiError.notFound'),
