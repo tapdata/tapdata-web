@@ -42,16 +42,20 @@
           </div>-->
 
           <div class="statistic">
-            <div class="statistic-title">累积输入事件</div>
+            <div class="statistic-title">累计输入事件</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ inputTotal }}</div>
+              <ElTooltip transition="tooltip-fade-in" :content="inputTotal.toLocaleString()">
+                <div class="statistic-value">{{ calcUnit(inputTotal) }}</div>
+              </ElTooltip>
             </div>
           </div>
 
           <div class="statistic">
-            <div class="statistic-title">累积输出事件</div>
+            <div class="statistic-title">累计输出事件</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ outputTotal }}</div>
+              <ElTooltip transition="tooltip-fade-in" :content="outputTotal.toLocaleString()">
+                <div class="statistic-value">{{ calcUnit(outputTotal) }}</div>
+              </ElTooltip>
             </div>
           </div>
 
@@ -91,11 +95,13 @@
 </template>
 
 <script>
-import DFNode from '../DFNode'
-import { Chart } from '@tap/component'
-import { calcTimeUnit } from '@tap/shared'
 import VIcon from 'web-core/components/VIcon'
 import dayjs from 'dayjs'
+
+import { Chart } from '@tap/component'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
+
+import DFNode from '../DFNode'
 
 export default {
   name: 'Node',
@@ -291,6 +297,10 @@ export default {
           }
         }
       })
+    },
+
+    calcUnit() {
+      return calcUnit(...arguments)
     }
   }
 }
