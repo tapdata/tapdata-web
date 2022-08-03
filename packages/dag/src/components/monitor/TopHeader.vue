@@ -16,12 +16,12 @@
       <div class="flex-grow-1"></div>
       <ElTooltip transition="tooltip-fade-in" content="校验">
         <button :class="{ active: activeType === 'verify' }" class="icon-btn" @click="$emit('showVerify')">
-          <VIcon size="20">verify-list</VIcon>
+          <VIcon size="18">verify-list</VIcon>
         </button>
       </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" content="日志">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
-          <VIcon size="20">list</VIcon>
+          <VIcon size="18">list</VIcon>
         </button>
       </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
@@ -34,8 +34,8 @@
         transition="tooltip-fade-in"
         :content="t('button_edit')"
       >
-        <button @click="$emit('edit')" class="icon-btn">
-          <VIcon size="20">edit</VIcon>
+        <button @click="$emit('edit')" class="icon-btn edit rounded-circle">
+          <VIcon size="14" class="color-primary">edit</VIcon>
         </button>
       </ElTooltip>
 
@@ -347,9 +347,9 @@ $sidebarBg: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30px;
-    height: 30px;
-    padding: 5px;
+    width: 21px;
+    height: 21px;
+    //padding: 5px;
     color: #4e5969;
     background: #fff;
     outline: none;
@@ -363,11 +363,20 @@ $sidebarBg: #fff;
       color: map-get($color, primary);
       background: $hoverBg;
     }
+    &.edit {
+      background: #eeeff1;
+      width: 27px;
+      height: 27px;
+    }
   }
 
-  .icon-btn + .icon-btn {
-    margin-left: 12px;
+  .icon-btn {
+    margin-right: 18px;
   }
+
+  //.icon-btn + .icon-btn {
+  //  margin-left: 18px;
+  //}
 
   .btn-setting {
     padding: 0;

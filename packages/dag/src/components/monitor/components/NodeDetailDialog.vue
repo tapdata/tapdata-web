@@ -7,12 +7,14 @@
     :append-to-body="true"
     @close="$emit('input', false)"
   >
-    <div class="flex align-items-center mb-4">
-      <span>节点</span>
-      <ElSelect v-model="selected" class="ml-2" filterable @change="init">
-        <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value"></ElOption>
-      </ElSelect>
-      <TimeSelect :value="period" :range="$attrs.range" @change="changeTimeSelect"></TimeSelect>
+    <div class="flex mb-4 align-items-center">
+      <div class="select__row flex align-items-center" @click.stop="handleSelect">
+        <span>节点</span>
+        <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init">
+          <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value"></ElOption>
+        </ElSelect>
+      </div>
+      <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
     </div>
     <div class="flex justify-content-between">
       <div class="chart-box rounded-2">
@@ -603,6 +605,10 @@ export default {
       this.quotaTimeType = source?.type ?? val
       this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
       this.init()
+    },
+
+    handleSelect() {
+      this.$refs.nodeSelect?.focus()
     }
   }
 }
@@ -642,5 +648,26 @@ export default {
   margin: 0 auto;
   width: 70px;
   height: 70px;
+}
+.select__row {
+  padding: 0 4px 0 0;
+  height: 28px;
+  cursor: pointer;
+  &:hover {
+    background: #eef3ff;
+  }
+  ::v-deep {
+    .el-select {
+      &.dark {
+        .el-input__inner {
+          border: none;
+          background-color: inherit;
+        }
+        .el-icon-arrow-up:before {
+          content: '\e78f';
+        }
+      }
+    }
+  }
 }
 </style>
