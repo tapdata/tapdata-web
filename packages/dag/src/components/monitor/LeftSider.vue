@@ -33,7 +33,10 @@
       <div class="info-box">
         <CollapsePanel>
           <template #header>
-            <span class="fw-bold font-color-normal">性能指标</span>
+            <div class="flex align-items-center fw-bold font-color-normal">
+              <span>性能指标</span>
+              <VIcon class="color-primary ml-2">timer</VIcon>
+            </div>
           </template>
           <template #header-right>
             <ElTooltip transition="tooltip-fade-in" content="放大">
@@ -78,7 +81,9 @@
             </div>
             <div v-else class="mb-4">
               <span>预计全量完成还需：</span>
-              <span>{{ initialData.finishDuration }}</span>
+              <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
+                <span>{{ calcUnit(initialData.finishDuration, 2) }}</span>
+              </ElTooltip>
             </div>
             <div class="flex justify-content-between">
               <div>
@@ -242,7 +247,7 @@ export default {
       const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss') : '',
-        finishDuration: calcUnit(time, 2) // ? dayjs(time).format('HH:mm:ss.SSS') : '-'
+        finishDuration: time
       }
     },
 
@@ -390,6 +395,10 @@ export default {
         }
       })
       return result
+    },
+
+    calcUnit() {
+      return calcUnit(...arguments)
     }
   }
 }

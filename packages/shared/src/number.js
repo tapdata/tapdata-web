@@ -25,7 +25,7 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
       // 时间
       case 2:
         sp = [1000, 60, 60, 24, 30, 12]
-        list = ['ms', 's', 'm', 'h', 'd', 'M', 'Y']
+        list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
         break
       // 数量
       default:
