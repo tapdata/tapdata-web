@@ -179,6 +179,27 @@ export default [
           }
         ]
       },
+      /* ---------- 数据发现  ----------*/
+      {
+        path: '/dataDiscovery',
+        name: 'dataDiscovery',
+        component: Parent,
+        redirect: 'dataDiscovery',
+        meta: {
+          title: '数据对象'
+        },
+        children: [
+          {
+            path: '',
+            name: 'dataDiscovery',
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/List'),
+            meta: {
+              title: '数据对象',
+              code: 'datasource_menu'
+            }
+          }
+        ]
+      },
       /* ---------- 数据复制  ----------*/
       {
         path: '/migrate',
