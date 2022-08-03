@@ -68,7 +68,7 @@
         @change="changeRateFnc"
       ></SelectList>
     </div>
-    <div class="flex justify-content-between mt-6" style="height: 247px">
+    <div class="chart-wrap flex justify-content-between mt-6" style="height: 247px">
       <div class="px-4 py-6 grey-background" style="min-width: 220px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
@@ -849,5 +849,9 @@ export default {
 }
 .filter-bar {
   line-height: 32px;
+}
+.chart-wrap {
+  position: relative;
+  z-index: 1;
 }
 </style>
