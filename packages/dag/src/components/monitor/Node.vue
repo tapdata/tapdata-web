@@ -3,7 +3,7 @@
     <div class="node-card rounded-lg px-2 pt-6 mt-n3">
       <div class="node-card-content p-2">
         <div class="grid statistic-list">
-          <div v-if="taskType !== 'initial_sync' && isSource" class="statistic">
+          <div v-if="taskType !== 'initial_sync'" class="statistic">
             <div class="statistic-title">增量时间点</div>
             <div class="statistic-content">
               <div class="statistic-value">{{ cdcEventStartTime }}</div>
@@ -58,7 +58,7 @@
           <div class="statistic">
             <div class="statistic-title">QPS</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ sample.outputQps }}</div>
+              <div class="statistic-value">{{ outputQps }}</div>
             </div>
           </div>
         </div>
@@ -241,6 +241,14 @@ export default {
       // const duration = dayjs.duration(timeCostAvg)
       // console.log('duration', duration) // eslint-disable-line
       // return duration.format('d天h小时m分钟s秒')
+    },
+
+    outputQps() {
+      const { outputQps = 0 } = this.sample
+      return outputQps.toLocaleString('zh', {
+        maximumFractionDigits: 3,
+        useGrouping: false
+      })
     }
   },
 
