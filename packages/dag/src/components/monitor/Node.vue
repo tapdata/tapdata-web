@@ -13,7 +13,7 @@
           <div class="statistic">
             <div class="statistic-title">耗时</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ sample.timeCostAvg || '-' }}</div>
+              <div class="statistic-value">{{ timeCostAvg }}</div>
             </div>
           </div>
 
@@ -93,6 +93,7 @@
 <script>
 import DFNode from '../DFNode'
 import { Chart } from '@tap/component'
+import { calcTimeUnit } from '@tap/shared'
 import VIcon from 'web-core/components/VIcon'
 import dayjs from 'dayjs'
 
@@ -191,8 +192,8 @@ export default {
         ? snapshotInsertRowTotal === snapshotRowTotal
           ? '已完成'
           : `${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 ${
-              outputQps ? Math.ceil((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) : 0
-            }s`
+              outputQps ? calcTimeUnit(Math.ceil((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0
+            }`
         : '-'
     },
 
@@ -230,6 +231,16 @@ export default {
       return {
         process: tableTotal
       }
+    },
+
+    timeCostAvg() {
+      const { timeCostAvg } = this.sample
+      if (!timeCostAvg) return '-'
+      return calcTimeUnit(timeCostAvg * 1000)
+      // if (!timeCostAvg) return '-'
+      // const duration = dayjs.duration(timeCostAvg)
+      // console.log('duration', duration) // eslint-disable-line
+      // return duration.format('d天h小时m分钟s秒')
     }
   },
 
