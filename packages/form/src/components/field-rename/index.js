@@ -197,11 +197,6 @@ export const FieldRename = connect(
           }
           return fields
         },
-        handleKeyDown(e) {
-          if (e.keyCode === 13) {
-            this.$set(data, 'showInput', false) //eslint-disable-line
-          }
-        },
         /*rename
          * @node 当前tree
          * @data 当前数据*/
@@ -227,7 +222,7 @@ export const FieldRename = connect(
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
               field: nativeData.original_field_name,
-              operand: this.fieldsNameTransforms !== '' ? nativeData.original_field_name : data.field_name,
+              operand: first ? nativeData.original_field_name : data.field_name,
               table_name: data.table_name,
               type: data.type,
               primary_key_position: data.primary_key_position,
