@@ -38,12 +38,12 @@
           </div>
           <div class="pt-7 pr-6">
             <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1">{{ formatTime(sourceData.tcpping, 'HH:mm:ss.SSS') }}</div>
+              <div class="font-color-normal fw-bold mb-1">{{ calcTimeUnit(sourceData.tcpping, 2) }}</div>
               <div>TCP连接耗时</div>
             </div>
             <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1">
-                {{ formatTime(sourceData.connectionping, 'HH:mm:ss.SSS') }}
+                {{ calcTimeUnit(sourceData.connectionping, 2) }}
               </div>
               <div>协议连接耗时</div>
             </div>
@@ -61,12 +61,12 @@
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <div class="flex align-items-center justify-content-around text-center pb-10 w-100">
             <div>
-              <div class="font-color-normal fw-bold mb-1">{{ formatTime(targetData.tcpping, 'HH:mm:ss.SSS') }}</div>
+              <div class="font-color-normal fw-bold mb-1">{{ calcTimeUnit(targetData.tcpping, 2) }}</div>
               <div>TCP连接耗时</div>
             </div>
             <div>
               <div class="font-color-normal fw-bold mb-1">
-                {{ formatTime(targetData.connectionping, 'HH:mm:ss.SSS') }}
+                {{ calcTimeUnit(targetData.connectionping, 2) }}
               </div>
               <div>协议连接耗时</div>
             </div>
@@ -117,6 +117,7 @@ import { mapGetters } from 'vuex'
 
 import { measurementApi } from '@tap/api'
 import { Chart } from '@tap/component'
+import { calcTimeUnit } from '@tap/shared'
 
 import EventChart from './EventChart'
 import LineChart from './LineChart'
@@ -609,6 +610,10 @@ export default {
 
     handleSelect() {
       this.$refs.nodeSelect?.focus()
+    },
+
+    calcTimeUnit() {
+      return calcTimeUnit(...arguments) || '-'
     }
   }
 }
