@@ -34,12 +34,11 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
     }
   }
 
-  let i = 0
   let num = val
   let util = ''
   let res = []
   const f = Math.pow(10, fix)
-  while (num > 1 && i < list.length) {
+  for (let i = 0; i < list.length; i++) {
     util = list[i]
     let m = num / (sp[i] ?? sp[0])
     if (m < 1) {
@@ -54,7 +53,6 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
     } else {
       num = Math.round(m * f) / f
     }
-    i++
   }
   if (res.length) {
     return res.join('')
@@ -72,7 +70,7 @@ export function calcTimeUnit(val, fix = 1) {
   const sp = [1000, 60, 60, 24, 30, 12]
   const list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
   let result = []
-  let num = val
+  let num = Math.round(val)
   for (let i = 0; i < list.length; i++) {
     let util = list[i]
     let m = num / sp[i]

@@ -632,6 +632,8 @@ export default {
   //color: #333c4a;
   height: 38px;
   background: #fafafa;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 .line-chart {
   height: 200px;
