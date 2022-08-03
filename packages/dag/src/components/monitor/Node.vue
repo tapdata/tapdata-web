@@ -193,7 +193,7 @@ export default {
           ? '已完成'
           : `${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 ${
               outputQps ? calcTimeUnit(Math.ceil((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0
-            }s`
+            }`
         : '-'
     },
 
