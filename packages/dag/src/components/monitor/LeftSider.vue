@@ -73,7 +73,7 @@
           </template>
           <template #header-right>
             <ElTooltip transition="tooltip-fade-in" content="放大">
-              <VIcon @click.stop="toInitialList">menu</VIcon>
+              <VIcon @click.stop="toInitialList">menu-left</VIcon>
             </ElTooltip>
           </template>
           <template #content>
@@ -414,180 +414,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$hoverBg: #eef3ff;
-
-.drag-node {
-  position: fixed !important;
-  z-index: 1000;
-  pointer-events: none;
-  opacity: 0;
-  transform-origin: center center;
-}
-
 .layout-sidebar.--left {
   overflow: hidden auto;
   will-change: width;
   $headerH: 34px;
 
-  .connection-tabs {
-    position: relative;
-    font-size: 0.875rem;
-
-    &-pane {
-      position: relative;
-      height: 40px;
-      cursor: pointer;
-      &:hover {
-        color: #2c65ff;
-      }
-      &.active {
-        color: #2c65ff;
-        &:before {
-          position: absolute;
-          content: '';
-          height: 2px;
-          background: #2c65ff;
-          left: 12px;
-          right: 12px;
-          bottom: 0;
-        }
-      }
-    }
-  }
-
   ::v-deep {
-    .type-tabs {
-      .el-tabs__header {
-        margin-bottom: 0;
-      }
-      .el-tabs__nav-wrap {
-        padding: 0 4px;
-      }
-      .el-tabs__item {
-        padding: 0 12px;
-      }
-    }
-
-    .db-list-container {
-      max-height: 50%;
-      .el-collapse-item:last-child {
-        margin-bottom: -2px;
-      }
-    }
-
-    .click-btn {
-      width: 24px !important;
-      height: 24px !important;
-      z-index: 2;
-      border-radius: 4px;
-
-      &:hover {
-        color: #2c65ff;
-        background: $hoverBg;
-      }
-    }
-
-    .badge {
-      display: inline-block;
-      margin-left: 4px;
-      padding: 2px 6px;
-      border-radius: 18px;
-      background: #f2f4f6;
-      color: rgba(0, 0, 0, 0.4);
-      font-size: 12px;
-      font-weight: 500;
-      line-height: 1;
-      vertical-align: baseline;
-    }
-
-    .tb-header {
-      position: relative;
-      height: $headerH;
-      font-size: 14px;
-      font-weight: 500;
-      border-bottom: 1px solid transparent;
-      &-icon {
-        flex-shrink: 0;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .db-item,
-    .node-item {
-      height: 42px;
-      margin-bottom: 4px;
-      font-size: 12px;
-      &.active {
-        background-color: #eef3ff;
-      }
-
-      &:not(.active):hover {
-        background-color: #edf1f9;
-      }
-
-      .el-image {
-        width: 20px;
-        height: 20px;
-        vertical-align: middle;
-      }
-
-      &-icon {
-        padding: 4px;
-        border: 1px solid #f2f2f2;
-        border-radius: 50%;
-      }
-
-      &-content {
-        overflow: hidden;
-        > :not(:last-child) {
-          margin-bottom: 4px;
-          font-size: 13px;
-        }
-
-        > :last-child {
-          color: rgb(83 95 114 / 70%);
-        }
-      }
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
-
-    .node-item {
-      height: 30px;
-
-      .el-image {
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .tb-item-icon {
-      width: 20px;
-      height: 20px;
-      background-color: #6236ff;
-      text-align: center;
-      border-radius: 100%;
-    }
-
     .el-collapse {
       border-top: 0;
-      &.processor-collapse {
-        max-height: 30%;
-      }
-      &.collapse-fill {
-        .el-collapse-item:first-child:last-child {
-          height: 100%;
-          .el-collapse-item__wrap {
-            height: calc(100% - #{$headerH - 1});
-          }
-          .el-collapse-item__content {
-            height: 100%;
-          }
-        }
-      }
 
       &-item {
         &.is-active [role='tab'] {
@@ -629,59 +463,12 @@ $hoverBg: #eef3ff;
       height: 100%;
     }
 
-    .header__input {
-      position: absolute;
-      z-index: 3;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      margin-bottom: -1px;
-
-      input {
-        width: 100%;
-        height: 100%;
-        border-width: 0 0 1px;
-        border-radius: 0;
-      }
-
-      input,
-      .v-icon,
-      .el-input__icon {
-        vertical-align: top;
-      }
-
-      input,
-      .el-input__icon {
-        line-height: $headerH;
-      }
+    .resize-trigger {
+      background: 0 0 !important;
     }
   }
 }
 
-.node-list {
-  .node-item {
-    border-radius: 4px;
-
-    &:hover {
-      background-color: #eef3ff;
-    }
-
-    &-icon {
-      width: 32px;
-      height: 32px;
-      background: rgba(44, 101, 255, 0.07);
-      border-radius: 4px;
-      border: 1px solid #2c65ff;
-    }
-
-    &-txt {
-      font-size: 12px;
-      line-height: 1;
-      white-space: nowrap;
-    }
-  }
-}
 .info-box {
   padding: 16px;
   border-bottom: 1px solid #f2f2f2;

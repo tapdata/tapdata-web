@@ -63,7 +63,7 @@
         </ElTooltip>
 
         <button @click="$emit('open-detail')" class="icon-btn">
-          <VIcon size="16">menu</VIcon>
+          <VIcon size="16">menu-left</VIcon>
         </button>
       </div>
     </div>

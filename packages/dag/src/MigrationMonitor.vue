@@ -33,6 +33,10 @@
       <!--左侧边栏-->
       <VExpandXTransition>
         <LeftSider
+          v-resize.right="{
+            minWidth: 356,
+            maxWidth: 550
+          }"
           :dataflow="dataflow"
           :quota="quota"
           :timeFormat="timeFormat"
