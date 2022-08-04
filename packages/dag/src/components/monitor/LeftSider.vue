@@ -90,11 +90,11 @@
             <div class="flex justify-content-between">
               <div>
                 <div class="text-center">表结构同步</div>
-                <Chart :extend="initialStructureOptions" style="width: 140px; height: 200px"></Chart>
+                <Chart :extend="initialStructureOptions" style="width: 140px; height: 170px"></Chart>
               </div>
               <div>
                 <div class="text-center">表数据状态</div>
-                <Chart ref="chart" :extend="initialDataOptions" style="width: 140px; height: 200px"></Chart>
+                <Chart ref="chart" :extend="initialDataOptions" style="width: 140px; height: 170px"></Chart>
               </div>
             </div>
           </template>

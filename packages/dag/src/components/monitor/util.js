@@ -49,7 +49,7 @@ export function getPieOptions(data, op) {
         name: '',
         type: 'pie',
         radius: ['40%', '70%'],
-        center: ['50%', '30%'],
+        center: ['50%', '40%'],
         label: { show: false },
         labelLine: { show: false },
         data: [],
