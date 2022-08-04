@@ -47,9 +47,9 @@ jobs:
               "frontend_branch": "${{ env.CURRENT_BRANCH }}",
               "opensource_branch": "${{ env.OPENSOURCE_BRANCH }}",
               "current_branch": "${{ env.ENTERPRISE_BRANCH }}",
-              "commit_author": ''$author'',
-              "commit_message": ''$message'',
-              "commit_time": ''$time'',
-              "commit_author_email": ''$author_email'',
+              "commit_author": "'"${author}"'",
+              "commit_message": "'"${message}"'",
+              "commit_time": "'"${time}"'",
+              "commit_author_email": "'"${author_email}"'",
             }
           }'
