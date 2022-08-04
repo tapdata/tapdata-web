@@ -5,12 +5,12 @@
       <ElRadioButton :label="1">所选周期累计</ElRadioButton>
     </ElRadioGroup>
     <div v-if="total" class="total-line flex align-items-center">
-      <ElTooltip transition="tooltip-fade-in" :content="total.input.toLocaleString() + 'ms'">
+      <ElTooltip transition="tooltip-fade-in" :content="total.input.toLocaleString()">
         <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.input) }}</span>
       </ElTooltip>
       <span class="ml-2">总输入</span>
       <ElDivider direction="vertical" class="divider mx-4"></ElDivider>
-      <ElTooltip transition="tooltip-fade-in" :content="total.output.toLocaleString() + 'ms'">
+      <ElTooltip transition="tooltip-fade-in" :content="total.output.toLocaleString()">
         <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.output) }}</span>
       </ElTooltip>
       <span class="ml-2">总输出</span>
