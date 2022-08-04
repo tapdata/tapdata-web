@@ -160,7 +160,7 @@ export default {
 
     cdcEventStartTime() {
       const val = this.sample.currentEventTimestamp
-      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.sss') : '-'
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : '-'
     },
 
     initialSyncProcess() {
