@@ -38,12 +38,12 @@
           </div>
           <div class="pt-7 pr-6" style="width: 160px">
             <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(sourceData.tcpping, 2) }}</div>
+              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(sourceData.tcpPing, 2) }}</div>
               <div>TCP连接耗时</div>
             </div>
             <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ calcTimeUnit(sourceData.connectionping, 2) }}
+                {{ calcTimeUnit(sourceData.connectPing, 2) }}
               </div>
               <div>协议连接耗时</div>
             </div>
@@ -61,12 +61,12 @@
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <div class="text-center pb-10 w-100">
             <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(targetData.tcpping, 2) }}</div>
+              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(targetData.tcpPing, 2) }}</div>
               <div>TCP连接耗时</div>
             </div>
             <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ calcTimeUnit(targetData.connectionping, 2) }}
+                {{ calcTimeUnit(targetData.connectPing, 2) }}
               </div>
               <div>协议连接耗时</div>
             </div>
@@ -251,10 +251,10 @@ export default {
       if (!data) {
         return {}
       }
-      const { tcpping, connectionping, currentEventTimestamp } = data
+      const { tcpPing, connectPing, currentEventTimestamp } = data
       return {
-        tcpping,
-        connectionping,
+        tcpPing,
+        connectPing,
         currentEventTimestamp
       }
     },
@@ -265,10 +265,10 @@ export default {
       if (!data) {
         return {}
       }
-      const { tcpping, connectionping, currentEventTimestamp } = data
+      const { tcpPing, connectPing, currentEventTimestamp } = data
       return {
-        tcpping,
-        connectionping,
+        tcpPing,
+        connectPing,
         currentEventTimestamp
       }
     },
