@@ -1,32 +1,85 @@
 <template>
-  <section class="share-list-wrap section-wrap">
+  <section class="object-list-wrap section-wrap">
     <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
-      <el-table-column
-        min-width="250"
-        :label="$t('object_list_name')"
-        prop="name"
-        :show-overflow-tooltip="true"
-      ></el-table-column>
+      <el-table-column min-width="250" :label="$t('object_list_name')" prop="name" :show-overflow-tooltip="true">
+        <template #default="{ row }">
+          <span class="cursor-pointer" @click.stop="handlePreview">{{ row.name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="120" :label="$t('object_list_classification')"></el-table-column>
       <el-table-column min-width="150" :label="$t('object_list_type')"> </el-table-column>
       <el-table-column min-width="110" :label="$t('object_list_source_type')"></el-table-column>
       <el-table-column min-width="210" :label="$t('object_list_source_information')"> </el-table-column>
     </TablePage>
+    <Drawer :width="'800px'" :visible.sync="isShowDetails">
+      <div class="flex align-items-center ml-4">
+        <header class="font-weight-bold mr-4">
+          <span class="drawer__header_text inline-block">对象详情</span>
+        </header>
+        <el-tabs v-model="activeName" type="card">
+          <el-tab-pane label="概览" name="first"></el-tab-pane>
+          <el-tab-pane label="预览" name="second"></el-tab-pane>
+        </el-tabs>
+      </div>
+      <div class="ml-4" v-if="activeName === 'first'">
+        <div class="user">
+          <span class="mr-4">管理员</span>
+          <el-select v-model="activeUser">
+            <el-option label="admin" value="admin"></el-option>
+          </el-select>
+        </div>
+        <div class="details_data_info mt-4 p-5">
+          <el-row>
+            <el-col
+              ><span class="drawer__header_text inline-block">数据表</span><span class="ml-2">Personinfo</span></el-col
+            >
+          </el-row>
+          <el-row>
+            <el-col :span="8"><span class="w-30">创建时间</span><span class="ml-2">2022-06-08</span></el-col>
+            <el-col :span="8"><span class="w-30">变更时间</span><span class="ml-2">2022-06-08</span></el-col>
+            <el-col :span="8"><span class="w-30">数据项</span><span class="ml-2">7</span></el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8"><span class="w-30">数据量</span><span class="ml-2">1000</span></el-col>
+            <el-col :span="8"><span class="w-30">来源信息</span><span class="ml-2">无</span></el-col>
+            <el-col :span="8"><span class="w-30">来源类型</span><span class="ml-2">数据连接</span></el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8"><span class="w-30">连接名</span><span class="ml-2">fannie_test</span></el-col>
+            <el-col :span="8"><span class="w-30">连接类型</span><span class="ml-2">Orcale</span></el-col>
+            <el-col :span="8"><span class="w-30">连接描述</span><span class="ml-2">地址、端口</span></el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8"><span class="w-30">业务名称</span><span class="ml-2">1234</span></el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8"><span class="w-30">业务描述</span><span class="ml-2">3456</span></el-col>
+          </el-row>
+        </div>
+        <div class="mt-4">
+          <span class="drawer__header_text inline-block">数据项</span>
+          <TableList :columns="columns" :hide-on-single-page="true"> </TableList>
+        </div>
+      </div>
+    </Drawer>
   </section>
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
+import { TablePage, FilterBar, Drawer } from '@tap/component'
+import TableList from '@/components/TableList'
 import { logcollectorApi } from '@tap/api'
 
 let timeout = null
 export default {
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
+    Drawer,
+    TableList
   },
   data() {
     return {
@@ -34,6 +87,9 @@ export default {
         taskName: '',
         connectionName: ''
       },
+      activeName: 'first',
+      activeUser: 'admin',
+      isShowDetails: false,
       filterItems: [
         {
           label: '对象分类',
@@ -65,6 +121,26 @@ export default {
           key: 'connectionName',
           type: 'input'
         }
+      ],
+      columns: [
+        {
+          label: this.$t('task_name'),
+          prop: 'parameter1'
+        },
+        {
+          label: this.$t('task_info_running_time'),
+          prop: 'createTime',
+          dataType: 'time'
+        },
+        {
+          label: this.$t('task_info_operator'),
+          prop: 'username'
+        },
+        {
+          label: this.$t('task_info_operator_content'),
+          prop: 'desc',
+          slotName: 'desc'
+        }
       ]
     }
   },
@@ -72,7 +148,7 @@ export default {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 10000)
+    }, 10000000)
   },
   computed: {
     table() {
@@ -83,6 +159,9 @@ export default {
     '$route.query'() {
       this.table.fetch(1)
     }
+  },
+  beforeDestroy() {
+    clearInterval(timeout)
   },
   methods: {
     // 获取列表数据
@@ -113,77 +192,25 @@ export default {
             ]
           }
         })
+    },
+    handlePreview() {
+      this.isShowDetails = true
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.share-list-wrap {
+.object-list-wrap {
   height: 100%;
-  .refresh {
-    color: map-get($color, primary);
-    font-weight: normal;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .share-list {
-    .search-bar {
-      display: flex;
-      li + li {
-        margin-left: 10px;
-      }
-    }
-    .btn + .btn {
-      margin-left: 5px;
-    }
-    .btn {
-      i.iconfont {
-        font-size: 12px;
-      }
-      &.btn-dropdowm {
-        margin-left: 5px;
-      }
-      &.btn-create {
-        margin-left: 5px;
-      }
-    }
-    .metadata-name {
-      .name {
-        color: map-get($color, primary);
-        a {
-          color: inherit;
-          cursor: pointer;
-        }
-      }
-      .name:hover {
-        text-decoration: underline;
-      }
-      .tag {
-        margin-left: 5px;
-        color: map-get($fontColor, slight);
-        background: map-get($bgColor, main);
-        border: 1px solid #dedee4;
-      }
-      .parent {
-        color: map-get($fontColor, slight);
-      }
-    }
-  }
-  ::v-deep {
-    .el-dialog__body {
-      padding: 10px 20px;
-      .el-form {
-        .el-form-item {
-          .el-form-item__label {
-            font-size: 12px;
-          }
-          .el-select,
-          .el-date-editor {
-            width: 100%;
-          }
-        }
-      }
-    }
-  }
+}
+.drawer__header_text {
+  height: 22px;
+  font-size: 14px;
+  line-height: 7px;
+  font-weight: 500;
+}
+.details_data_info {
+  background: #fafafa;
+  border-radius: 4px;
 }
 </style>
