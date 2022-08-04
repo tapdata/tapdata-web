@@ -62,6 +62,9 @@ export default {
     timeFormat: {
       type: String,
       default: 'YYYY-MM-DD HH:mm:ss'
+    },
+    options: {
+      type: Object
     }
   },
 
@@ -126,7 +129,7 @@ export default {
       }
     },
     getOptions() {
-      return {
+      let result = {
         tooltip: {
           trigger: 'axis',
           backgroundColor: '#364252',
@@ -215,6 +218,19 @@ export default {
         },
         series: []
       }
+      const op = this.options
+      if (op) {
+        for (let key in op) {
+          if (key === 'series') {
+            result[key].forEach((el, index) => {
+              Object.assign(el, op[key][index])
+            })
+          } else {
+            Object.assign(result[key], op[key])
+          }
+        }
+      }
+      return result
     },
     getSeriesItem(data = [], index = 0, name = '') {
       return {

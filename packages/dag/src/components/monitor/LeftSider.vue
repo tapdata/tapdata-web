@@ -61,6 +61,7 @@
               :limit="20"
               class="mt-4"
               style="height: 140px"
+              :options="delayChartOptions"
             ></LineChart>
           </template>
         </CollapsePanel>
@@ -121,6 +122,7 @@
         :color="['#2C65FF']"
         :limit="20"
         :time-format="timeFormat"
+        :options="delayChartOptions"
         title="增量延迟（ms）"
         class="mt-8"
         style="height: 200px"
@@ -185,7 +187,17 @@ export default {
       },
       lineChartDialog: false,
       initialListDialog: false,
-      timeSelectLabel: ''
+      timeSelectLabel: '',
+      delayChartOptions: {
+        yAxis: {
+          axisLabel: {
+            color: '#535F72',
+            formatter: val => {
+              return calcTimeUnit(val)
+            }
+          }
+        }
+      }
     }
   },
 
