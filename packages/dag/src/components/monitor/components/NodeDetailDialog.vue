@@ -103,8 +103,8 @@
             :limit="20"
             :time-format="timeFormat"
             :color="['#2C65FF']"
-            :options="delayChartOptions"
-            title="增量延迟（ms）"
+            time-value
+            title="增量延迟"
           ></LineChart>
         </div>
       </div>
@@ -175,17 +175,7 @@ export default {
       count: 0,
       timeFormat: 'HH:mm:ss',
       quotaTime: [],
-      quotaTimeType: '5m',
-      delayChartOptions: {
-        yAxis: {
-          axisLabel: {
-            color: '#535F72',
-            formatter: val => {
-              return calcTimeUnit(val)
-            }
-          }
-        }
-      }
+      quotaTimeType: '5m'
     }
   },
 

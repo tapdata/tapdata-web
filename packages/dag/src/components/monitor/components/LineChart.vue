@@ -8,7 +8,7 @@
 import { debounce } from 'lodash'
 import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
-import { calcUnit } from '@tap/shared'
+import { calcUnit, calcTimeUnit } from '@tap/shared'
 
 export default {
   name: 'LineChart',
@@ -65,6 +65,10 @@ export default {
     },
     options: {
       type: Object
+    },
+    timeValue: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -144,10 +148,15 @@ export default {
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
-              const val = (data || 0).toLocaleString('zh', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })
+              let val
+              if (this.timeValue) {
+                val = calcTimeUnit(data || 0, 2)
+              } else {
+                val = (data || 0).toLocaleString('zh', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })
+              }
               result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
@@ -210,7 +219,7 @@ export default {
           axisLabel: {
             color: '#535F72',
             formatter: val => {
-              return calcUnit(val)
+              return this.timeValue ? calcTimeUnit(val) : calcUnit(val)
             }
             // showMaxLabel: false,
             // showMinLabel: false
