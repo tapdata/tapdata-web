@@ -64,7 +64,7 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
  * @desc 时间差换算： 毫秒转年月日时分秒
  * @val Number 需要处理的毫秒
  * @fix Number 需要保留几个单位
- * @digits Number 保留几位小数，处理ms
+ * @digits Number 只有ms单位时，保留几位小数；多个单位默认取整
  * @return string
  * */
 export function calcTimeUnit(val, fix = 1, digits = 3) {
@@ -72,19 +72,20 @@ export function calcTimeUnit(val, fix = 1, digits = 3) {
   const list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
   let result = []
   const power = Math.pow(10, digits)
-  let num = Math.round(val * power) / power
+  let num = val
+  const isMs = num / sp[0] < 1
   for (let i = 0; i < list.length; i++) {
     let util = list[i]
     let m = num / sp[i]
     if (m < 1) {
       result.unshift({
-        value: num,
+        value: isMs ? Math.round(num * power) / power : num,
         util
       })
       break
     }
     result.unshift({
-      value: num % sp[i],
+      value: Math.round(num % sp[i]),
       util
     })
     num = Math.round(m)
