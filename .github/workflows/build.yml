@@ -31,7 +31,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Trigger by RestApi
-        runs: |
+        run: |
           author=`git log -1 --pretty=format:'%an'`
           message=`git log -1 --pretty=%B`
           curl \
