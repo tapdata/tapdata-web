@@ -38,53 +38,6 @@
           <VIcon size="14" class="color-primary">edit</VIcon>
         </button>
       </ElTooltip>
-
-      <!--      <template>-->
-      <!--        <ElButton-->
-      <!--          key="edit"-->
-      <!--          size="mini"-->
-      <!--          class="mx-1 btn&#45;&#45;text"-->
-      <!--          :disabled="dataflow.disabledData && dataflow.disabledData.edit"-->
-      <!--          @click="$emit('edit')"-->
-      <!--        >-->
-      <!--          <VIcon>edit</VIcon>-->
-      <!--          &lt;!&ndash;编辑&ndash;&gt;-->
-      <!--          {{ t('button_edit') }}-->
-      <!--        </ElButton>-->
-
-      <!--              <ElButton-->
-      <!--                key="forceStop"-->
-      <!--                v-if="isShowForceStop(dataflow.statuses)"-->
-      <!--                class="mx-1 btn&#45;&#45;text"-->
-      <!--                :disabled="dataflow.disabledData && dataflow.disabledData.stop"-->
-      <!--                size="mini"-->
-      <!--                @click="$emit('forceStop')"-->
-      <!--              >-->
-      <!--                <VIcon>stop</VIcon>-->
-      <!--                {{ t('task_list_force_stop') }}-->
-      <!--              </ElButton>-->
-      <!--              <ElButton-->
-      <!--                key="stop"-->
-      <!--                v-else-->
-      <!--                class="mx-1 btn&#45;&#45;text"-->
-      <!--                :disabled="dataflow.disabledData && dataflow.disabledData.stop"-->
-      <!--                size="mini"-->
-      <!--                @click="$emit('stop')"-->
-      <!--              >-->
-      <!--                <VIcon>stop</VIcon>-->
-      <!--                {{ t('task_list_stop') }}-->
-      <!--              </ElButton>-->
-      <!--        <ElButton-->
-      <!--          key="reset"-->
-      <!--          class="mx-1 btn&#45;&#45;text"-->
-      <!--          :disabled="dataflow.disabledData && dataflow.disabledData.reset"-->
-      <!--          size="mini"-->
-      <!--          @click="$emit('reset')"-->
-      <!--        >-->
-      <!--          <VIcon>reset</VIcon>-->
-      <!--          {{ t('dataFlow_button_reset') }}-->
-      <!--        </ElButton>-->
-      <!--      </template>-->
       <ElButton v-if="isShowReset(dataflow.statuses)" size="mini" class="mx-2" @click="$emit('reset')">
         {{ t('dataFlow_button_reset') }}
       </ElButton>

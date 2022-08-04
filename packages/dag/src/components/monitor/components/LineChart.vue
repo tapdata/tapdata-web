@@ -8,7 +8,7 @@
 import { debounce } from 'lodash'
 import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
-import { calcUnit } from '@tap/shared'
+import { calcUnit, calcTimeUnit } from '@tap/shared'
 
 export default {
   name: 'LineChart',
@@ -62,6 +62,13 @@ export default {
     timeFormat: {
       type: String,
       default: 'YYYY-MM-DD HH:mm:ss'
+    },
+    options: {
+      type: Object
+    },
+    timeValue: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -126,7 +133,7 @@ export default {
       }
     },
     getOptions() {
-      return {
+      let result = {
         tooltip: {
           trigger: 'axis',
           backgroundColor: '#364252',
@@ -141,10 +148,15 @@ export default {
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
-              const val = (data || 0).toLocaleString('zh', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })
+              let val
+              if (this.timeValue) {
+                val = calcTimeUnit(data || 0, 2)
+              } else {
+                val = (data || 0).toLocaleString('zh', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })
+              }
               result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
@@ -207,7 +219,7 @@ export default {
           axisLabel: {
             color: '#535F72',
             formatter: val => {
-              return calcUnit(val)
+              return this.timeValue ? calcTimeUnit(val) : calcUnit(val)
             }
             // showMaxLabel: false,
             // showMinLabel: false
@@ -215,6 +227,19 @@ export default {
         },
         series: []
       }
+      const op = this.options
+      if (op) {
+        for (let key in op) {
+          if (key === 'series') {
+            result[key].forEach((el, index) => {
+              Object.assign(el, op[key][index])
+            })
+          } else {
+            Object.assign(result[key], op[key])
+          }
+        }
+      }
+      return result
     },
     getSeriesItem(data = [], index = 0, name = '') {
       return {
