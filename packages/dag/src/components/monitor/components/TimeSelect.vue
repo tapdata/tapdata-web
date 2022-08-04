@@ -257,6 +257,10 @@ export default {
         return
       }
       this.period = value
+    },
+
+    getPeriod(value) {
+      return this.items.find(t => t.value === (value || this.period))
     }
   }
 }

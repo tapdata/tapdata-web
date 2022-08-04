@@ -2,7 +2,7 @@
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box">
-        <TimeSelect :range="$attrs.range" @change="changeTimeSelect"></TimeSelect>
+        <TimeSelect :range="$attrs.range" ref="timeSelect" @change="changeTimeSelect"></TimeSelect>
       </div>
       <div class="info-box">
         <div class="task-info__row">
@@ -35,7 +35,8 @@
           <template #header>
             <div class="flex align-items-center fw-bold font-color-normal">
               <span>性能指标</span>
-              <VIcon class="color-primary ml-2">timer</VIcon>
+              <!--              <span class="fs-8 font-color-sslight ml-1">{{ timeSelectLabel }}</span>-->
+              <!--              <VIcon class="color-primary ml-2">timer</VIcon>-->
             </div>
           </template>
           <template #header-right>
@@ -183,7 +184,8 @@ export default {
         'initial_sync+cdc': '全量+增量'
       },
       lineChartDialog: false,
-      initialListDialog: false
+      initialListDialog: false,
+      timeSelectLabel: ''
     }
   },
 
@@ -356,9 +358,14 @@ export default {
     }
   },
 
+  mounted() {
+    this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
+  },
+
   methods: {
     changeTimeSelect(val, isTime, source) {
       this.$emit('changeTimeSelect', val, isTime, source)
+      this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
     },
 
     toFullscreen() {
