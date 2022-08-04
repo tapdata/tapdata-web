@@ -68,18 +68,22 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
  * @return string
  * */
 export function calcTimeUnit(val, fix = 1, digits = 3) {
-  const sp = [1000, 60, 60, 24, 30, 12]
   const list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
+  const sp = [1000, 60, 60, 24, 30, 12]
   let result = []
   const power = Math.pow(10, digits)
   let num = val
   const isMs = num / sp[0] < 1
+  const ms = Math.round(num * power) / power
+  if (!ms) {
+    return ms + list[0]
+  }
   for (let i = 0; i < list.length; i++) {
     let util = list[i]
     let m = num / sp[i]
     if (m < 1) {
       result.unshift({
-        value: isMs ? Math.round(num * power) / power : num,
+        value: isMs ? ms : num,
         util
       })
       break
