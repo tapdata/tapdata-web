@@ -10,7 +10,7 @@
           <div class="flex align-items-center">
             <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
               {{ $t('verify_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
-              <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
+              <ElLink class="ml-5" type="primary" :underline="false" @click="toDiffHistory">{{
                 $t('verify_button_diff_task_history')
               }}</ElLink>
             </div>
@@ -37,7 +37,7 @@
         <VIcon class="color-danger">error</VIcon>
         <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
         <span>
-          <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
+          <ElLink type="danger" :underline="false" @click="expandErrorMessage = !expandErrorMessage">{{
             expandErrorMessage ? '收起' : '展开'
           }}</ElLink>
           <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>

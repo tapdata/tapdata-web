@@ -11,7 +11,9 @@
       </div>
       <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('shared_cache_name')">
         <template #default="{ row }">
-          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
+          <ElLink style="display: inline" type="primary" :underline="false" @click.stop="checkDetails(row)">{{
+            row.name
+          }}</ElLink>
         </template>
       </ElTableColumn>
       <ElTableColumn

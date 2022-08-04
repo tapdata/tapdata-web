@@ -16,7 +16,7 @@
       <div class="fields-selector--display flex p-2 mt-2">
         <div class="fields-selector--item mr-2" v-for="(field, index) in values" :key="field">
           <span>{{ field }}</span>
-          <ElLink @click="remove(index)"><i class="el-icon-close"></i></ElLink>
+          <ElLink :underline="false" @click="remove(index)"><i class="el-icon-close"></i></ElLink>
         </div>
       </div>
       <ClipButton class="fields-selector--clip" :value="value"></ClipButton>

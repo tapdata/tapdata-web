@@ -86,6 +86,7 @@
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
+              :underline="false"
               @click.stop="handlePreview(row)"
               >{{ row.name }}</ElLink
             >
@@ -117,18 +118,20 @@
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
-              :disabled="row.disabledData.start"
               type="primary"
+              :disabled="row.disabledData.start"
+              :underline="false"
               @click="start([row.id])"
             >
               {{ $t('task_list_run') }}
             </ElLink>
-            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
             <ElLink
               v-if="isShowForceStop(row.statuses)"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+              :underline="false"
               @click="forceStop([row.id])"
             >
               {{ $t('task_list_force_stop') }}
@@ -138,50 +141,52 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.disabledData.stop"
+              :underline="false"
               @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
-            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.disabledData.edit"
+              :underline="false"
               @click="handleEditor(row.id)"
             >
               {{ $t('button_edit') }}
             </ElLink>
-            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" :underline="false" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
-            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
-              <ElLink type="primary" class="rotate-90">
+              <ElLink type="primary" class="rotate-90" :underline="false">
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
-                <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
+                <el-dropdown-item v-readonlybtn="'SYNC_job_export'" command="export">{{
                   $t('dataFlow.dataFlowExport')
                 }}</el-dropdown-item>
-                <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
+                <el-dropdown-item v-readonlybtn="'SYNC_job_creation'" command="copy"
                   >{{ $t('dataFlow.copy') }}
                 </el-dropdown-item>
 
                 <el-dropdown-item
-                  :disabled="row.disabledData.reset"
-                  command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
+                  command="initialize"
+                  :disabled="row.disabledData.reset"
                 >
                   {{ $t('dataFlow.button.reset') }}
                 </el-dropdown-item>
-                <el-dropdown-item command="del" :disabled="row.disabledData.delete" v-readonlybtn="'SYNC_job_delete'">
+                <el-dropdown-item v-readonlybtn="'SYNC_job_delete'" command="del" :disabled="row.disabledData.delete">
                   {{ $t('button.delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">
+                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
                   {{ $t('dataFlow.addTag') }}
                 </el-dropdown-item>
-                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
+                <el-dropdown-item v-readonlybtn="'Data_verify'" command="validate">{{
                   $t('dataVerify.dataVerify')
                 }}</el-dropdown-item>
               </el-dropdown-menu>
@@ -191,11 +196,11 @@
       </el-table-column>
     </TablePage>
     <el-dialog
+      custom-class="jobSeceduleDialog"
+      width="50%"
       :title="$t('dialog.jobSchedule.jobSecheduleSetting')"
       :close-on-click-modal="false"
       :visible.sync="taskSettingsDialog"
-      custom-class="jobSeceduleDialog"
-      width="50%"
     >
       <el-form :model="formSchedule" label-width="100px">
         <el-form-item :label="$t('dialog.jobSchedule.job')">
@@ -204,7 +209,7 @@
         <el-form-item :label="$t('dialog.jobSchedule.sync')">
           <el-switch v-model="formSchedule.isSchedule"> </el-switch>
         </el-form-item>
-        <el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="formSchedule.isSchedule">
+        <el-form-item v-if="formSchedule.isSchedule" :label="$t('dialog.jobSchedule.expression')">
           <el-input v-model="formSchedule.cronExpression" :placeholder="$t('dialog.jobSchedule.expressionPlaceholder')">
           </el-input>
         </el-form-item>
@@ -229,7 +234,7 @@
     </el-dialog>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <Drawer class="task-drawer" :visible.sync="isShowDetails">
-      <div class="task-drawer-wrap" v-loading="previewLoading">
+      <div v-loading="previewLoading" class="task-drawer-wrap">
         <header class="header mb-3">
           <div class="tab pb-3">
             <div class="img-box">
@@ -238,7 +243,7 @@
             </div>
             <div class="content" v-if="previewData">
               <div class="name fs-6">
-                <el-tooltip class="item" effect="dark" :content="previewData.name" placement="top-start">
+                <el-tooltip class="item" effect="dark" placement="top-start" :content="previewData.name">
                   <span> {{ previewData.name }}</span>
                 </el-tooltip>
               </div>

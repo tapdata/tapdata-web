@@ -68,7 +68,7 @@
         <el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
         <el-table-column :label="$t('dataFlow.operate')" width="60px">
           <template slot-scope="scope">
-            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('button.details') }}</ElLink>
+            <ElLink type="primary" :underline="false" @click="rowClick(scope.row)">{{ $t('button.details') }}</ElLink>
           </template>
         </el-table-column>
       </el-table>

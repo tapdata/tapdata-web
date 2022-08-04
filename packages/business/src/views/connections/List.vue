@@ -145,7 +145,7 @@
       <ul class="mt-4">
         <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
           <el-tooltip :content="item.name" placement="right-start">
-            <el-link type="primary">{{ item.name }}</el-link>
+            <el-link type="primary" :underline="false">{{ item.name }}</el-link>
           </el-tooltip>
         </li>
         <li v-if="connectionTaskListTotal > 10">...</li>

@@ -48,14 +48,19 @@
       <!-- 元数据管理详情 头部信息 end -->
       <el-main class="matadata-main mt-4">
         <!-- 元数据管理详情 左侧信息 start -->
-        <div class="aside" v-if="!asideFalg">
-          <ElLink @click="asideFalg = true" class="iconfont icon-indent"></ElLink>
+        <div v-if="!asideFalg" class="aside">
+          <ElLink class="iconfont icon-indent" type="primary" :underline="false" @click="asideFalg = true"></ElLink>
         </div>
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
               <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
-              <ElLink type="primary" @click.stop="asideFalg = false" class="iconfont icon-outdent"></ElLink>
+              <ElLink
+                type="primary"
+                :underline="false"
+                @click.stop="asideFalg = false"
+                class="iconfont icon-outdent"
+              ></ElLink>
             </div>
             <ul class="metadata-aside-main pt-4">
               <li>
@@ -105,14 +110,14 @@
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
               <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
-              <ElLink type="primary" size="mini" @click.stop="creatBusiness"
+              <ElLink type="primary" size="mini" :underline="false" @click.stop="creatBusiness"
                 >+ {{ $t('metadata.details.creat') }}</ElLink
               >
             </div>
             <ul class="metadata-aside-main pt-4">
               <li class="business" v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
                 <span>{{ key }} : {{ item }}</span>
-                <ElLink type="primary" class="delete" @click="delBusiness(item, key, index)">{{
+                <ElLink type="primary" class="delete" :underline="false" @click="delBusiness(item, key, index)">{{
                   $t('button_delete')
                 }}</ElLink>
               </li>

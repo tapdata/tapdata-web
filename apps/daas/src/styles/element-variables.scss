@@ -1,3 +1,5 @@
+@import '~@tap/assets/styles/var';
+
 // 改变主题色变量
 
 // 改变icon字体路径变量
@@ -15,25 +17,16 @@ $--color-transition-base: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) !defau
 $--color-white: #ffffff !default;
 $--color-black: #000000 !default;
 
-
-$--color-primary:  map-get($color, primary)!default;  // #2c65ff
+$--color-primary: map-get($color, primary) !default; // #2c65ff
 $--color-success: map-get($color, success) !default; // #2c65ff
 $--color-warning: map-get($color, warning) !default; // #FF7D00
 $--color-danger: map-get($color, danger) !default; // #D44D4D
 $--color-info: map-get($color, info) !default; // #75849b
 
-$--color-text-primary:  map-get($fontColor, normal)!default; //#333c4a
+$--color-text-primary: map-get($fontColor, normal) !default; //#333c4a
 $--color-text-regular: map-get($fontColor, light) !default; //#535f72
 $--color-text-secondary: #909399 !default;
 $--color-text-placeholder: map-get($fontColor, slight) !default; // #c9cdd4
-
-/* Link
--------------------------- */
-// $--link-color: $--color-primary-light-2 !default;
-// $--link-hover-color: $--color-primary !default;
-$--link-color: $--color-primary  !default;
-$--link-hover-color: $--color-primary !default;
-$--link-disabled-font-color: $--color-text-placeholder;
 
 /* Background
 -------------------------- */
@@ -64,8 +57,6 @@ $--color-primary-light-7: mix($--color-white, $--color-primary, 70%) !default; /
 $--color-primary-light-8: mix($--color-white, $--color-primary, 80%) !default; /* d9ecff */
 $--color-primary-light-9: mix($--color-white, $--color-primary, 90%) !default; /* ecf5ff */
 
-
-
 $--color-success-light: mix($--color-white, $--color-success, 80%) !default;
 $--color-warning-light: mix($--color-white, $--color-warning, 80%) !default;
 $--color-danger-light: mix($--color-white, $--color-danger, 80%) !default;
@@ -75,7 +66,6 @@ $--color-success-lighter: mix($--color-white, $--color-success, 90%) !default;
 $--color-warning-lighter: mix($--color-white, $--color-warning, 90%) !default;
 $--color-danger-lighter: mix($--color-white, $--color-danger, 90%) !default;
 $--color-info-lighter: mix($--color-white, $--color-info, 90%) !default;
-
 
 /* Box-shadow
 -------------------------- */
@@ -112,6 +102,15 @@ $--index-popper: 2000 !default;
 $--disabled-fill-base: $--background-color-base !default;
 $--disabled-color-base: $--color-text-placeholder !default;
 $--disabled-border-base: $--border-color-light !default;
+
+/* Link
+-------------------------- */
+// $--link-color: $--color-primary-light-2 !default;
+// $--link-hover-color: $--color-primary !default;
+$--link-color: $--color-primary !default;
+$--link-hover-color: $--color-primary !default;
+$--link-disabled-font-color: $--color-text-placeholder;
+$--link-font-weight: $--font-weight-normal !default;
 
 /* Icon
 -------------------------- */
@@ -230,7 +229,7 @@ $--select-multiple-input-color: #666 !default;
 $--select-input-focus-background: $--color-primary !default;
 $--select-input-font-size: 14px !default;
 
-$--select-option-color: $--color-text-regular !default;
+$--select-option-color: $--color-text-primary !default;
 $--select-option-disabled-color: $--color-text-placeholder !default;
 $--select-option-disabled-background: $--color-white !default;
 // $--select-option-height: 34px !default;
@@ -409,7 +408,7 @@ $--tabs-item-color: $--color-text-regular !default;
 /* Button
 -------------------------- */
 $--button-font-size: 12px !default;
-$--button-font-weight: $--font-weight-primary !default;
+$--button-font-weight: $--font-weight-normal !default;
 $--button-border-radius: $--border-radius-base !default;
 $--button-padding-vertical: 12px !default;
 $--button-padding-horizontal: 20px !default;
@@ -437,6 +436,7 @@ $--button-default-background-color: $--border-color-background !default;
 $--button-disabled-color: $--color-text-placeholder !default;
 $--button-disabled-fill: $--color-white !default;
 $--button-disabled-border: $--border-color-lighter !default;
+$--button-disabled-font-color: map-get($fontColor, disable) !default;
 
 $--button-primary-border: $--color-primary !default;
 $--button-primary-color: $--color-white !default;
@@ -532,7 +532,7 @@ $--tooltip-color: $--color-white !default;
 $--tooltip-font-size: 12px !default;
 $--tooltip-border-color: $--color-text-primary !default;
 $--tooltip-arrow-size: 6px !default;
-$--tooltip-padding: 10px !default;
+$--tooltip-padding: 5px 10px !default;
 
 /* Tag
 -------------------------- */
@@ -690,3 +690,74 @@ $--transfer-filter-height: 32px !default;
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 @import '~element-ui/packages/theme-chalk/src/index';
+
+/* Button
+--------------------------*/
+.el-button {
+  min-width: 80px;
+}
+.el-button--text {
+  min-width: auto;
+  border: none;
+}
+.el-button.is-disabled {
+  cursor: default !important;
+}
+
+/* Select
+--------------------------*/
+.el-select-dropdown.el-popper {
+  .popper__arrow,
+  .popper__arrow::after {
+    display: none;
+  }
+}
+
+/* Radio
+--------------------------*/
+.el-radio__inner::after {
+  width: 8px;
+  height: 8px;
+}
+.el-radio-button__inner {
+  background: map-get($bgColor, white);
+}
+
+/* Link
+--------------------------*/
+.el-link.is-disabled {
+  color: map-get($color, disable) !important;
+  cursor: default !important;
+}
+
+/* Tooltip
+--------------------------*/
+.el-tooltip__popper {
+  line-height: 20px;
+  max-width: 400px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Tooltip
+--------------------------*/
+.el-table {
+  th.el-table__cell {
+    padding: 0;
+    height: 40px;
+  }
+}
+
+/* Breadcrumb
+--------------------------*/
+.el-breadcrumb__inner a,
+.el-breadcrumb__inner.is-link {
+  font-size: 12px;
+  font-weight: normal;
+}
+.el-breadcrumb__item:last-child .el-breadcrumb__inner,
+.el-breadcrumb__item:last-child .el-breadcrumb__inner a,
+.el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
+.el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
+  color: map-get($fontColor, normal) !important;
+}

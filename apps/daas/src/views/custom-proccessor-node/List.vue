@@ -21,9 +21,9 @@
 
       <ElTableColumn width="150" :label="$t('column_operation')">
         <template #default="{ row }">
-          <ElLink type="primary" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
+          <ElLink type="primary" :underline="false" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(row)">{{ $t('button.delete') }}</ElLink>
+          <ElLink type="primary" :underline="false" @click="remove(row)">{{ $t('button.delete') }}</ElLink>
         </template>
       </ElTableColumn>
     </TablePage>

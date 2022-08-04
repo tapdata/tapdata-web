@@ -156,7 +156,7 @@
             <span>{{ $t('verify_form_joint_table_header') }}</span>
             <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
           </div>
-          <ElLink type="primary" :disabled="!form.tasks.length" @click="clear">{{
+          <ElLink type="primary" :disabled="!form.tasks.length" :underline="false" @click="clear">{{
             $t('verify_button_joint_table_clear')
           }}</ElLink>
         </div>
@@ -291,8 +291,12 @@
                   $t('verify_button_add_script')
                 }}</ElButton>
                 <template v-else>
-                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
-                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
+                  <ElLink type="primary" class="ml-4" :underline="false" @click="editScript(index)">{{
+                    $t('button_edit')
+                  }}</ElLink>
+                  <ElLink type="primary" class="ml-4" :underline="false" @click="removeScript(index)">{{
+                    $t('button_delete')
+                  }}</ElLink>
                 </template>
               </div>
               <div

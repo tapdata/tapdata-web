@@ -133,18 +133,20 @@
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
-              :disabled="row.disabledData.start"
               type="primary"
+              :disabled="row.disabledData.start"
+              :underline="false"
               @click="start([row.id])"
             >
               {{ $t('task_list_run') }}
             </ElLink>
-            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
             <ElLink
               v-if="row.status === 'stopping'"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+              :underline="false"
               @click="forceStop([row.id], row)"
             >
               {{ $t('task_list_force_stop') }}
@@ -154,25 +156,27 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.disabledData.stop"
+              :underline="false"
               @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
-            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.disabledData.edit"
+              :underline="false"
               @click="handleEditor(row.id)"
             >
               {{ $t('task_list_edit') }}
             </ElLink>
-            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" :underline="false" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
-            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
-              <ElLink type="primary" class="rotate-90">
+              <ElLink type="primary" class="rotate-90" :underline="false">
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">

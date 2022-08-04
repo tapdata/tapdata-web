@@ -21,7 +21,7 @@ f
           <i class="el-icon-loading mx-2"></i>
           <span>{{ progress }}%</span>
         </span>
-        <ElLink v-else type="primary" :disabled="stateIsReadonly" @click="reload()">
+        <ElLink v-else type="primary" :disabled="stateIsReadonly" :underline="false" @click="reload()">
           <div class="flex align-center">
             <span>{{ $t('button_reload') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>

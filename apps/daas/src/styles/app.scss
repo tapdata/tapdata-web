@@ -55,14 +55,6 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-input::-webkit-input-placeholder {
-  color: rgba(0, 0, 0, 0.25);
-  font-weight: 500;
-} /* 使用webkit内核的浏览器 */
-textarea::-webkit-input-placeholder {
-  color: rgba(0, 0, 0, 0.25);
-  font-weight: 500;
-} /* 使用webkit内核的浏览器 */
 
 .status-block {
   display: inline-block;

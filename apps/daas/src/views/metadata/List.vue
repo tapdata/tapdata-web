@@ -43,7 +43,7 @@
         <template slot-scope="scope">
           <div class="metadata-name">
             <div class="name ellipsis">
-              <ElLink type="primary" @click="toDetails(scope.row)">
+              <ElLink type="primary" :underline="false" @click="toDetails(scope.row)">
                 {{ scope.row.name || scope.row.original_name }}
               </ElLink>
               <el-tag

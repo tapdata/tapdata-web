@@ -135,6 +135,16 @@ export default {
         // Agent
         {
           label: this.$t('operation_log_agent_rename'),
+          value: 'agent&&create',
+          desc: this.$t('operation_log_agent_rename_tip')
+        },
+        {
+          label: this.$t('operation_log_agent_rename'),
+          value: 'agent&&delete',
+          desc: this.$t('operation_log_agent_rename_tip')
+        },
+        {
+          label: this.$t('operation_log_agent_rename'),
           value: 'agent&&rename',
           desc: this.$t('operation_log_agent_rename_tip')
         },
