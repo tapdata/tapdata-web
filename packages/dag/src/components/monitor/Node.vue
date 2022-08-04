@@ -218,7 +218,7 @@ export default {
     timeCostAvg() {
       const { timeCostAvg } = this.sample
       if (!timeCostAvg) return '-'
-      return calcTimeUnit(timeCostAvg * 1000)
+      return calcTimeUnit(timeCostAvg)
       // if (!timeCostAvg) return '-'
       // const duration = dayjs.duration(timeCostAvg)
       // console.log('duration', duration) // eslint-disable-line
@@ -312,7 +312,7 @@ export default {
 
   .statistic {
     display: inline-block;
-    color: map-get($fontColor, light);
+    color: map-get($fontColor, sslight);
     &-title {
       font-size: 12px;
       line-height: 1.5;
@@ -320,7 +320,7 @@ export default {
 
     &-value {
       color: map-get($fontColor, dark);
-      font-weight: 500;
+      font-weight: 700;
       font-size: 14px;
       font-family: DIN;
       white-space: nowrap;
