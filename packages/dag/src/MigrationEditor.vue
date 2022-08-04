@@ -213,7 +213,7 @@ export default {
     }
   },
 
-  async created() {
+  async mounted() {
     this.setValidateLanguage()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
