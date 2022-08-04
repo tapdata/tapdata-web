@@ -41,7 +41,7 @@
           </template>
           <template #header-right>
             <ElTooltip transition="tooltip-fade-in" content="放大">
-              <VIcon @click.stop="toFullscreen">fullscreen</VIcon>
+              <VIcon @click.stop="toFullscreen">enlarge</VIcon>
             </ElTooltip>
           </template>
           <template #content>
@@ -404,8 +404,8 @@ export default {
       return result
     },
 
-    calcTimeUnit() {
-      return calcTimeUnit(...arguments)
+    calcTimeUnit(val, fix) {
+      return val ? calcTimeUnit(val, fix) : '-'
     }
   }
 }
