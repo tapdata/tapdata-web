@@ -39,7 +39,7 @@ jobs:
           curl \
           -X POST \
           -H "Accept: application/vnd.github+json" \
-          -H "Authorization: token ${{ secrets.TAPDATA_ENT_CICD_TOKEN }}" \
+          -H "Authorization: token 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" \
           https://api.github.com/repos/tapdata/tapdata-enterprise/dispatches \
           -d '{
             "event_type": "frontend commit trigger",
