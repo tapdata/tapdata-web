@@ -50,6 +50,6 @@ jobs:
               "commit_author": "'"${author}"'",
               "commit_message": "'"${message}"'",
               "commit_time": "'"${time}"'",
-              "commit_author_email": "'"${author_email}"'",
+              "commit_author_email": "'"${author_email}"'"
             }
           }'
