@@ -612,8 +612,8 @@ export default {
       this.$refs.nodeSelect?.focus()
     },
 
-    calcTimeUnit() {
-      return calcTimeUnit(...arguments) || '-'
+    calcTimeUnit(val, fix) {
+      return val ? calcTimeUnit(val, fix) : '-'
     }
   }
 }
