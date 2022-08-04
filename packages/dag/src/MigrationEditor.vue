@@ -294,6 +294,9 @@ export default {
             query: {
               id: this.dataflow.id,
               subId: subId
+            },
+            params: {
+              id: this.dataflow.id
             }
           }).href,
           `MigrateStatistics_${this.dataflow.id}`
@@ -304,6 +307,9 @@ export default {
           query: {
             id: this.dataflow.id,
             subId: subId
+          },
+          params: {
+            id: this.dataflow.id
           }
         })
       }
@@ -451,10 +457,13 @@ export default {
       }
 
       this.$router.push({
-        name: 'MigrateStatistics',
+        name: 'MigrationMonitor',
         query: {
           id: this.dataflow.id,
           subId: subId
+        },
+        params: {
+          id: this.dataflow.id
         }
       })
     },
