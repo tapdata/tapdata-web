@@ -3,7 +3,7 @@
     <div class="node-card rounded-lg px-2 pt-6 mt-n3">
       <div class="node-card-content p-2">
         <div class="grid statistic-list">
-          <div v-if="taskType !== 'initial_sync'" class="statistic">
+          <div v-if="taskType !== 'initial_sync'" class="statistic span-2">
             <div class="statistic-title">增量时间点</div>
             <div class="statistic-content">
               <div class="statistic-value">{{ cdcEventStartTime }}</div>
@@ -17,29 +17,12 @@
             </div>
           </div>
 
-          <!--<div v-if="taskType !== 'initial_sync' && isSource" class="statistic">
-            &lt;!&ndash;增量耗时&ndash;&gt;
-            <div class="statistic-title">耗时</div>
+          <div class="statistic">
+            <div class="statistic-title">QPS</div>
             <div class="statistic-content">
-              <div class="statistic-value">{{ sample.timeCostAvg }}s</div>
+              <div class="statistic-value">{{ outputQps }}</div>
             </div>
           </div>
-
-          <div v-if="isTarget" class="statistic">
-            &lt;!&ndash;写入&ndash;&gt;
-            <div class="statistic-title">耗时</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{{ sample.writeDelay }}ms</div>
-            </div>
-          </div>
-
-          <div v-if="isProcessorNode" class="statistic">
-            &lt;!&ndash;处理&ndash;&gt;
-            <div class="statistic-title">耗时</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{{ sample.processDelay }}ms</div>
-            </div>
-          </div>-->
 
           <div class="statistic">
             <div class="statistic-title">累计输入事件</div>
@@ -56,13 +39,6 @@
               <ElTooltip transition="tooltip-fade-in" :content="outputTotal.toLocaleString()">
                 <div class="statistic-value">{{ calcUnit(outputTotal) }}</div>
               </ElTooltip>
-            </div>
-          </div>
-
-          <div class="statistic">
-            <div class="statistic-title">QPS</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{{ outputQps }}</div>
             </div>
           </div>
         </div>
@@ -184,7 +160,7 @@ export default {
 
     cdcEventStartTime() {
       const val = this.sample.currentEventTimestamp
-      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.sss') : '-'
     },
 
     initialSyncProcess() {
@@ -371,5 +347,8 @@ export default {
     color: map-get($color, primary);
     background: #eef3ff;
   }
+}
+.span-2 {
+  grid-column: span 2 / auto;
 }
 </style>
