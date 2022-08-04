@@ -34,6 +34,8 @@ jobs:
         run: |
           author=`git log -1 --pretty=format:'%an'`
           message=`git log -1 --pretty=%B`
+          time=`git log -1 --date=format:"%Y/%m/%d %T" --format="%ad"`
+          author_email=`git log -1 --format='%ae'`
           curl \
           -X POST \
           -H "Accept: application/vnd.github+json" \
@@ -45,6 +47,9 @@ jobs:
               "frontend_branch": "${{ env.CURRENT_BRANCH }}",
               "opensource_branch": "${{ env.OPENSOURCE_BRANCH }}",
               "current_branch": "${{ env.ENTERPRISE_BRANCH }}",
-              "author": "'"$author"'",
-              "message": "'"$message"'"}
-            }'
+              "commit_author": ''$author'',
+              "commit_message": ''$message'',
+              "commit_time": ''$time'',
+              "commit_author_email": ''$author_email'',
+            }
+          }'
