@@ -52,12 +52,7 @@ export class Database extends NodeType {
             type: 'string',
             title: '连接名称',
             'x-decorator': 'FormItem',
-            'x-component': 'PreviewText.Input',
-            'x-component-props': {
-              style: {
-                color: '#535F72'
-              }
-            }
+            'x-component': 'PreviewText.Input'
           },
           'attrs.accessNodeProcessId': {
             type: 'string',
@@ -66,10 +61,7 @@ export class Database extends NodeType {
             'x-component': 'PreviewText.Input',
             'x-component-props': {
               content:
-                '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
-              style: {
-                color: '#535F72'
-              }
+                '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}'
             },
             'x-reactions': {
               fulfill: {
