@@ -35,7 +35,7 @@
         <LeftSider
           v-resize.right="{
             minWidth: 356,
-            maxWidth: 550
+            maxWidth: 750
           }"
           :dataflow="dataflow"
           :quota="quota"

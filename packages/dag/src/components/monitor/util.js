@@ -23,7 +23,7 @@ export function getPieOptions(data, op) {
     textStyle: {
       rich: {
         orgname: {
-          width: 80,
+          width: 75,
           color: '#535F72'
         },
         count: {
