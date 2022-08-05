@@ -16,12 +16,12 @@
       <div class="flex-grow-1"></div>
       <ElTooltip transition="tooltip-fade-in" content="校验">
         <button :class="{ active: activeType === 'verify' }" class="icon-btn" @click="$emit('showVerify')">
-          <VIcon size="18">verify-list</VIcon>
+          <VIcon size="16">verify-list</VIcon>
         </button>
       </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" content="日志">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
-          <VIcon size="18">list</VIcon>
+          <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
