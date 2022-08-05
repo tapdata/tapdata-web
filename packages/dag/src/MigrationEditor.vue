@@ -83,7 +83,7 @@
             ></DFNode>
           </PaperScroller>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-            <EmptyItem></EmptyItem>
+            <VEmpty large />
           </div>
           <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
           <NodePopover
@@ -117,11 +117,10 @@ import { uuid } from '@tap/shared'
 import { taskApi } from '@tap/api'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
-import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
-import { VIcon } from '@tap/component'
+import { VIcon, VEmpty } from '@tap/component'
 import { VExpandXTransition } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
@@ -140,7 +139,7 @@ export default {
     ConsolePanel,
     VExpandXTransition,
     NodePopover,
-    EmptyItem,
+    VEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,

@@ -40,7 +40,7 @@
       </div>
       <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
         <code class="log-list block h-100 overflow-auto py-1 rounded-2">
-          <EmptyItem v-if="!logList.length && !loading" large />
+          <VEmpty v-if="!logList.length && !loading" large />
           <pre
             v-for="(item, i) in logList"
             :key="i"
@@ -67,8 +67,8 @@ import resize from 'web-core/directives/resize'
 import Locale from '../../mixins/locale'
 import VIcon from 'web-core/components/VIcon'
 import { taskApi } from '@tap/api'
+import { VEmpty } from '@tap/component'
 import NodeIcon from '../NodeIcon'
-import EmptyItem from '../EmptyItem'
 
 export default {
   name: 'ConsolePanel',
@@ -79,7 +79,7 @@ export default {
 
   mixins: [Locale],
 
-  components: { EmptyItem, NodeIcon, VIcon },
+  components: { VEmpty, NodeIcon, VIcon },
 
   data() {
     return {

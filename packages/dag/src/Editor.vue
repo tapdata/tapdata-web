@@ -69,7 +69,7 @@
             ></DFNode>
           </PaperScroller>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-            <EmptyItem></EmptyItem>
+            <VEmpty large />
           </div>
           <NodePopover
             :popover="nodeMenu"
@@ -98,10 +98,10 @@ import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
 import { uuid } from '@tap/shared'
 import { taskApi } from '@tap/api'
+import { VEmpty } from '@tap/component'
 import { MoveNodeCommand } from './command'
 import dagre from 'dagre'
 import { merge } from 'lodash'
-import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import editor from './mixins/editor'
@@ -114,7 +114,7 @@ export default {
 
   components: {
     NodePopover,
-    EmptyItem,
+    VEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,
