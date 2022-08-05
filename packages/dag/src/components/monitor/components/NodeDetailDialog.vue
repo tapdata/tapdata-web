@@ -92,6 +92,7 @@
             :limit="20"
             :time-format="timeFormat"
             title="QPS（Q/S）"
+            ref="qpsLineChart"
           ></LineChart>
         </div>
       </div>
@@ -105,6 +106,7 @@
             :color="['#2C65FF']"
             time-value
             title="增量延迟"
+            ref="delayLineChart"
           ></LineChart>
         </div>
       </div>
@@ -420,6 +422,10 @@ export default {
         this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running' && this.loadQuotaData()
       }, 5000)
       this.loadQuotaData()
+      this.$nextTick(() => {
+        this.$refs.qpsLineChart?.reset?.()
+        this.$refs.delayLineChart?.reset?.()
+      })
     },
 
     setPeriod() {

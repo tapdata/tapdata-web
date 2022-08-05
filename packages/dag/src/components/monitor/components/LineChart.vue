@@ -260,6 +260,9 @@ export default {
           opacity: 0.1
         }
       }
+    },
+    reset() {
+      this.end = 100
     }
   }
 }
