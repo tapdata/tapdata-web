@@ -44,13 +44,13 @@
         </div>
         <div v-if="isSource" class="grid statistic-list mt-2">
           <div v-if="taskType !== 'cdc'" class="statistic">
-            <div class="statistic-title">全量</div>
+            <div class="statistic-title">全量状态</div>
             <div class="statistic-content">
               <Chart ref="chart" :extend="initialSyncOption" style="width: 80px; height: 80px"></Chart>
             </div>
           </div>
           <div v-if="taskType !== 'initial_sync'" class="statistic">
-            <div class="statistic-title">增量</div>
+            <div class="statistic-title">增量状态</div>
             <div class="statistic-content">
               <Chart ref="chart" :extend="cdcOption" style="width: 80px; height: 80px"></Chart>
             </div>
@@ -238,14 +238,14 @@ export default {
     initialPieData: {
       immediate: true,
       handler(v) {
-        this.seriesHandler(this.initialSyncOption, v)
+        this.seriesHandler(this.initialSyncOption, v, '全量状态')
       }
     },
 
     cdcPieData: {
       immediate: true,
       handler(v) {
-        this.seriesHandler(this.cdcOption, v)
+        this.seriesHandler(this.cdcOption, v, '增量状态')
       }
     }
   },
@@ -253,7 +253,26 @@ export default {
   methods: {
     getPieOption() {
       return {
-        tooltip: {},
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: '#364252',
+          borderColor: '#364252',
+          textStyle: {
+            color: '#fff',
+            fontSize: 12
+          },
+          position: 'top',
+          formatter: params => {
+            const { marker, name, value, seriesName } = params || {}
+            let result = `<div>`
+            if (seriesName) {
+              result += `<div class="text-center">${seriesName}</div>`
+            }
+            result += `<span>${marker}</span><span class="pl-2">${name}</span><span class="din-font inline-block text-end" style="width: 60px">${value.toLocaleString()}</span>`
+            result += `</div>`
+            return result
+          }
+        },
         legend: {
           show: false
         },
@@ -270,8 +289,9 @@ export default {
       }
     },
 
-    seriesHandler(option, data) {
+    seriesHandler(option, data, name) {
       const { seriesItemMap } = this
+      option.series[0].name = name
       option.series[0].data = Object.entries(data).map(([key, value]) => {
         return {
           value,
@@ -319,6 +339,7 @@ export default {
     }
 
     &-value {
+      display: inline-block;
       color: map-get($fontColor, dark);
       font-weight: 700;
       font-size: 14px;
