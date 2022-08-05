@@ -281,6 +281,8 @@ $--msgbox-info-color: $--color-info !default;
 $--msgbox-warning-color: $--color-warning !default;
 $--msgbox-danger-color: $--color-danger !default;
 
+$--messagebox-content-color: map-get($fontColor, normal) !default;
+
 /* Message
 -------------------------- */
 // $--message-shadow: $--box-shadow-base !default;
@@ -760,4 +762,14 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
   color: map-get($fontColor, normal) !important;
+}
+
+/* Message
+--------------------------*/
+.el-message .el-message__content {
+  color: map-get($fontColor, dark);
+}
+.el-message-box__message {
+  overflow: hidden;
+  word-break: break-all;
 }

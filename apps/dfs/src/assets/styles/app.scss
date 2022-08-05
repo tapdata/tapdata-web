@@ -53,3 +53,92 @@
   background: map-get($bgColor, white);
   padding: 20px;
 }
+
+.status-block {
+  display: inline-block;
+  min-width: 60px;
+  padding: 3px 10px;
+  text-align: center;
+  font-weight: 500;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.status-running {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.status-complete,
+.status-finish,
+.status-finished {
+  color: #008b58;
+  background-color: #b4edd8;
+}
+.status-error,
+.status-rejected,
+.status-stopped {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+.status-paused {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+.status-edit {
+  color: #0083c7;
+  background-color: #d1eefd;
+}
+.status-pending,
+.status-notActivated {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+.status-active,
+.status-activated {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.status-edit {
+  color: #0083c7;
+  background-color: #d1eefd;
+}
+.status-scheduled,
+.status-scheduling,
+.status-wait_run,
+.status-pause {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+
+.status-waiting {
+  color: #c39700;
+  background-color: #fdf1c8;
+}
+.status-pausing {
+  color: #6350d2;
+  background-color: #dcd6ff;
+}
+.status-stop {
+  color: #c88500;
+  background-color: #ffe4ae;
+}
+.status-stopping,
+.status-notVerified {
+  color: #c39700;
+  background-color: #fdf1c8;
+}
+.status-ready {
+  color: #c39700;
+  background-color: #fdf1c8;
+}
+.status-connection-ready {
+  color: #2b8a6a;
+  background-color: #ccf4d2;
+}
+.status-connection-testing {
+  color: #d78120;
+  background-color: #feecd6;
+}
+.status-connection-invalid {
+  color: #d5575a;
+  background-color: #feeeef;
+}
