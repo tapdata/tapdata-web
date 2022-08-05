@@ -40,7 +40,7 @@
       </div>
       <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
         <code class="log-list block h-100 overflow-auto py-1 rounded-2">
-          <EmptyItem v-if="!logList.length && !loading"></EmptyItem>
+          <EmptyItem v-if="!logList.length && !loading" large />
           <pre
             v-for="(item, i) in logList"
             :key="i"

@@ -2,21 +2,66 @@
   <div
     class="empty-wrap"
     :class="{
-      'empty-small': props.small
+      'empty-small': props.small,
+      'empty-large': props.large
     }"
   >
     <div class="empty-image">
-      <svg class="empty-img-simple" width="64" height="41" viewBox="0 0 64 41" xmlns="http://www.w3.org/2000/svg">
-        <g transform="translate(0 1)" fill="none" fill-rule="evenodd">
-          <ellipse class="empty-img-simple-ellipse" cx="32" cy="33" rx="32" ry="7"></ellipse>
-          <g class="empty-img-simple-g" fill-rule="nonzero">
-            <path
-              d="M55 12.76L44.854 1.258C44.367.474 43.656 0 42.907 0H21.093c-.749 0-1.46.474-1.947 1.257L9 12.761V22h46v-9.24z"
-            ></path>
-            <path
-              d="M41.613 15.931c0-1.605.994-2.93 2.227-2.931H55v18.137C55 33.26 53.68 35 52.05 35h-40.1C10.32 35 9 33.259 9 31.137V13h11.16c1.233 0 2.227 1.323 2.227 2.928v.022c0 1.605 1.005 2.901 2.237 2.901h14.752c1.232 0 2.237-1.308 2.237-2.913v-.007z"
-              class="empty-img-simple-path"
-            ></path>
+      <svg width="111" height="92" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111 92">
+        <defs>
+          <linearGradient x1="52.045%" y1="100%" x2="52.045%" y2="-7.865%" id="a">
+            <stop stop-color="#F3F4F6" stop-opacity="0" offset="0%" />
+            <stop stop-color="#E4E6E9" offset="100%" />
+          </linearGradient>
+          <linearGradient x1="19.146%" y1="25.168%" x2="62.242%" y2="84.261%" id="b">
+            <stop stop-color="#ECECEC" offset="0%" />
+            <stop stop-color="#E4E6E9" offset="100%" />
+          </linearGradient>
+          <linearGradient x1="63.824%" y1="23.66%" x2="50%" y2="81.252%" id="c">
+            <stop stop-color="#F3F3F3" offset="0%" />
+            <stop stop-color="#DCDDDE" offset="100%" />
+          </linearGradient>
+          <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="d">
+            <stop stop-color="#EEE" offset="0%" />
+            <stop stop-color="#D8D8D8" offset="100%" />
+          </linearGradient>
+        </defs>
+        <g fill="none" fill-rule="evenodd">
+          <ellipse fill="url(#a)" fill-rule="nonzero" cx="55.5" cy="68.5" rx="55.5" ry="23.5" />
+          <path fill="#D8D8D8" fill-rule="nonzero" d="m27.084 38.938 24.065-6.423L84 35.549l-26.937 5.65z" />
+          <path
+            fill="url(#b)"
+            fill-rule="nonzero"
+            d="m6.825 51.337.549 16.207 29.43 6.064V41.199L6.825 38.938z"
+            transform="translate(20.259)"
+          />
+          <path
+            fill="url(#c)"
+            fill-rule="nonzero"
+            d="M36.804 73.608 62.767 66l-.302-30.63-25.661 5.829"
+            transform="translate(20.259)"
+          />
+          <path
+            fill="url(#d)"
+            fill-rule="nonzero"
+            d="M30.89 32.515v11.181L6.825 38.938z"
+            transform="translate(20.259)"
+          />
+          <path
+            d="M30.294 15.56c8.182 14.033 15.354 19.7 21.517 17.001 9.245-4.048-7.898-13.144-8.443-.72.566 7.086 16.793 6.266 19.483 9.251 1.445 1.24 2.397 2.356 2.855 3.348"
+            stroke="#B9BBC0"
+            stroke-width=".784"
+            stroke-dasharray=".784"
+          />
+          <path
+            fill="#F6F7F8"
+            fill-rule="nonzero"
+            d="m57.063 41.199 9.165 15.62L91.6 47.357 82.724 35.37zM26.155 38.938l-5.896 10.367 30.398 6.471 6.406-14.577z"
+          />
+          <g fill-rule="nonzero">
+            <path fill="#E4E6E9" d="m24 1.636 5.475 4.869L51 0zM32.439 9.195 51 0l-8.307 18z" />
+            <path fill="#D7D8DA" d="m29.475 6.505-.44 7.479 3.48-4.815L51 0z" />
+            <path fill="#DEE0E4" d="m29.035 13.984 6.161-2.513-2.775-2.279z" />
           </g>
         </g>
       </svg>
@@ -29,7 +74,8 @@
 export default {
   name: 'EmptyItem',
   props: {
-    small: Boolean
+    small: Boolean,
+    large: Boolean
   }
 }
 </script>
@@ -37,7 +83,7 @@ export default {
 <style lang="scss" scoped>
 .empty-wrap {
   margin: 32px 0;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.5715;
   text-align: center;
   color: rgba(0, 0, 0, 0.25);
@@ -47,12 +93,20 @@ export default {
     font-size: 12px;
 
     .empty-image {
-      height: 35px;
+      height: 40px;
+    }
+  }
+
+  &.empty-large {
+    font-size: 14px;
+    .empty-image {
+      height: 64px;
+      margin-bottom: 16px;
     }
   }
 
   .empty-image {
-    height: 40px;
+    height: 48px;
     margin-bottom: 8px;
     svg {
       height: 100%;
