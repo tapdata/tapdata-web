@@ -11,16 +11,18 @@
         </ElTabPane>
       </ElTabs>
 
-      <VIcon class="mt-3" size="16" @click="$emit('showBottomPanel')">close</VIcon>
+      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
     </div>
   </section>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import focusSelect from 'web-core/directives/focusSelect'
+
 import Locale from '../../mixins/locale'
 import Log from './components/Log'
 import Record from './components/Record'
@@ -95,12 +97,13 @@ $headerHeight: 40px;
   position: relative;
   z-index: 10;
   height: 328px;
-  min-height: 328px;
+  //min-height: 328px;
   //height: 100%;
   overflow: auto;
   background-color: #fff;
   //transition: height 0.24s;
   will-change: width;
+  box-sizing: border-box;
 
   &.show-record {
     width: 320px;
@@ -198,5 +201,10 @@ $headerHeight: 40px;
       background: 0 0 !important;
     }
   }
+}
+.close-icon {
+  position: absolute;
+  right: 16px;
+  top: 12px;
 }
 </style>

@@ -58,53 +58,58 @@
         <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
       <!--内容体-->
-      <main id="dfEditorContent" ref="layoutContent" class="layout-content flex flex-column flex-1 overflow-hidden">
-        <PaperScroller
-          ref="paperScroller"
-          :nav-lines="navLines"
-          @add-node="handleAddNodeToPos"
-          @mouse-select="handleMouseSelect"
-          @change-scale="handleChangeScale"
-        >
-          <Node
-            v-for="n in allNodes"
-            :key="n.id"
-            :node-id="n.id"
-            :node="n"
-            :id="NODE_PREFIX + n.id"
-            :js-plumb-ins="jsPlumbIns"
-            :class="{
-              'options-active': nodeMenu.typeId === n.id
-            }"
-            :task-type="dataflow.type"
-            :sample="dagData ? dagData[n.id] : {}"
-            @drag-start="onNodeDragStart"
-            @drag-move="onNodeDragMove"
-            @drag-stop="onNodeDragStop"
-            @deselectAllNodes="deselectAllNodes"
-            @deselectNode="nodeDeselectedById"
-            @nodeSelected="nodeSelectedById"
-            @delete="handleDeleteById"
-            @show-node-popover="showNodePopover"
-            @open-detail="handleOpenDetail(n)"
-          ></Node>
-        </PaperScroller>
-        <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-          <EmptyItem></EmptyItem>
-        </div>
+      <section class="layout-wrap flex-1">
+        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex flex-column flex-1 overflow-hidden">
+          <PaperScroller
+            ref="paperScroller"
+            :nav-lines="navLines"
+            @add-node="handleAddNodeToPos"
+            @mouse-select="handleMouseSelect"
+            @change-scale="handleChangeScale"
+          >
+            <Node
+              v-for="n in allNodes"
+              :key="n.id"
+              :node-id="n.id"
+              :node="n"
+              :id="NODE_PREFIX + n.id"
+              :js-plumb-ins="jsPlumbIns"
+              :class="{
+                'options-active': nodeMenu.typeId === n.id
+              }"
+              :task-type="dataflow.type"
+              :sample="dagData ? dagData[n.id] : {}"
+              @drag-start="onNodeDragStart"
+              @drag-move="onNodeDragMove"
+              @drag-stop="onNodeDragStop"
+              @deselectAllNodes="deselectAllNodes"
+              @deselectNode="nodeDeselectedById"
+              @nodeSelected="nodeSelectedById"
+              @delete="handleDeleteById"
+              @show-node-popover="showNodePopover"
+              @open-detail="handleOpenDetail(n)"
+            ></Node>
+          </PaperScroller>
+          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
+            <EmptyItem></EmptyItem>
+          </div>
+        </main>
         <BottomPanel
           v-if="showBottomPanel"
+          v-resize.top="{
+            minHeight: 328
+          }"
           :dataflow="dataflow"
-          class="position-relative"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
-      </main>
+      </section>
       <!--校验面板-->
       <VerifyPanel
         v-if="activeType === 'verify'"
         ref="verifyPanel"
         :settings="dataflow"
         :scope="formScope"
+        @showVerify="handleShowVerify"
         @hide="onHideSidebar"
         @verifyDetails="handleVerifyDetails"
         @connectionList="handleConnectionList"

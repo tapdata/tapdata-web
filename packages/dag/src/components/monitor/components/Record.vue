@@ -1,8 +1,11 @@
 <template>
-  <div class="p-6 h-100">
+  <div class="py-6 pl-6 h-100">
     <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"
+      :page-options="{
+        layout: 'total, ->, prev, pager, next, sizes, jumper'
+      }"
       ref="table"
       height="100"
       class="table-list"

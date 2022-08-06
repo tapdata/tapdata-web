@@ -6,7 +6,7 @@
   >
     <div class="flex justify-content-between align-items-center p-4">
       <span class="font-color-normal fw-bold fs-7">任务校验</span>
-      <VIcon size="16">close</VIcon>
+      <VIcon size="16" class="cursor-pointer" @click="$emit('showVerify')">close</VIcon>
     </div>
     <div class="px-4 pb-4 border-bottom">
       <Chart ref="chart" :extend="pieOptions" style="width: 270px; height: 90px"></Chart>
