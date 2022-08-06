@@ -78,7 +78,7 @@ export default {
     },
     range: {
       type: Array,
-      default: () => [Date.now() - this.interval, Date.now()]
+      default: () => [Date.now() - 5 * 60 * 1000, Date.now()]
     }
   },
 
