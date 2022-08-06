@@ -1,6 +1,13 @@
 <template>
-  <div class="p-6">
-    <VTable :remoteMethod="remoteMethod" :columns="columns" ref="table" class="table-list" hide-on-single-page>
+  <div class="p-6 h-100">
+    <VTable
+      :remoteMethod="remoteMethod"
+      :columns="columns"
+      ref="table"
+      height="100"
+      class="table-list"
+      hide-on-single-page
+    >
       <template slot="status" slot-scope="scope">
         <span v-if="scope.row.status" :class="['status-' + getStatusItem(scope.row.status).type, 'status-block']">
           {{ getStatusItem(scope.row.status).label }}
@@ -17,7 +24,6 @@
 
 <script>
 import { VTable } from '@tap/component'
-import { userLogsApi } from '@tap/api'
 
 export default {
   name: 'Record',
@@ -28,7 +34,7 @@ export default {
     return {
       statusMap: {
         finish: {
-          type: 'finish',
+          type: 'edit',
           label: '已完成'
         },
         error: {
@@ -43,11 +49,13 @@ export default {
       columns: [
         {
           label: '运行开始时间',
-          prop: 'createTime'
+          prop: 'startTime',
+          dataType: 'time'
         },
         {
           label: '运行结束时间',
-          prop: 'last_updated'
+          prop: 'stopTime',
+          dataType: 'time'
         },
         {
           label: '操作人',
@@ -60,11 +68,13 @@ export default {
         },
         {
           label: '同步数据量',
-          prop: 'count'
+          prop: 'count',
+          dataType: 'number'
         },
         {
           label: '差异数据（行）',
-          prop: 'diff'
+          prop: 'diff',
+          dataType: 'number'
         },
         {
           label: '操作',
@@ -93,22 +103,25 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return userLogsApi
-        .get({
-          filter: JSON.stringify(filter)
+      return new Promise((resolve, rejust) => {
+        let list = Array(20)
+          .fill()
+          .map((t, index) => {
+            return {
+              id: Date.now() + index,
+              startTime: Date.now(),
+              stopTime: Date.now(),
+              username: 'kennen',
+              status: ['finish', 'running', 'error'][index] || 'error',
+              count: Math.ceil(Math.random() * 10000),
+              diff: Math.ceil(Math.random() * 10000)
+            }
+          })
+        resolve({
+          total: 10000,
+          data: list
         })
-        .then(data => {
-          return {
-            total: data?.total || 0,
-            data: (data?.items || []).map(t =>
-              Object.assign({}, t, {
-                status: 'finish',
-                count: 12,
-                diff: 23
-              })
-            )
-          }
-        })
+      })
     },
 
     getStatusItem(status) {
