@@ -5,7 +5,7 @@
     :class="{ flex: isShow, 'show-verify': isShow }"
   >
     <div class="flex justify-content-between align-items-center p-4">
-      <span class="font-color-normal fw-bold fs-7">数据校验</span>
+      <span class="font-color-normal fw-bold fs-7">任务校验</span>
       <VIcon size="16">close</VIcon>
     </div>
     <div class="px-4 pb-4 border-bottom">
@@ -198,9 +198,15 @@ export default {
             color: '#fff',
             fontSize: 12
           },
+          position: 'top',
           formatter: params => {
-            const { marker, name, value } = params || {}
-            let result = `<div class="text-end"><div>${marker}<span class="pl-1">${name}</span></div><div class="din-font">${value.toLocaleString()}</div></div>`
+            const { marker, name, value, seriesName } = params || {}
+            let result = `<div>`
+            if (seriesName) {
+              result += `<div class="text-center">${seriesName}</div>`
+            }
+            result += `<span>${marker}</span><span class="pl-2">${name}</span><span class="din-font inline-block text-end" style="width: 60px">${value.toLocaleString()}</span>`
+            result += `</div>`
             return result
           }
         },
@@ -231,6 +237,7 @@ export default {
         },
         series: [
           {
+            name: '任务校验',
             type: 'pie',
             radius: ['55%', '90%'],
             center: ['20%', '50%'],
@@ -360,7 +367,7 @@ export default {
       // this.dbTotal = getRandom()
 
       // const data = await connectionsApi.get(this.getDbFilter())
-
+      const startStamp = Date.now()
       this.dbTotal = 10000
       const dbList = Array(10)
         .fill()
@@ -400,14 +407,20 @@ export default {
             this.dbIdMap[item.id] = true
           }
         })
-        // this.dbLoadingMore = false
       } else {
         this.scrollTopOfDBList()
         this.dbList = dbList
-        this.dbLoading = false
+        // this.dbLoading = false
         // 缓存所有dbId
         this.dbIdMap = dbList.reduce((map, item) => ((map[item.id] = true), map), {})
       }
+      setTimeout(
+        () => {
+          this.dbLoadingMore = false
+          this.dbLoading = false
+        },
+        Date.now() - startStamp < 1000 ? 2000 : 0
+      )
       return this.dbList
     },
 
