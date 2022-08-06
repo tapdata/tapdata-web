@@ -25,8 +25,8 @@
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElButton type="text" class="ml-4" @click="handleSetting">设置</ElButton>
-        <ElButton type="text" class="ml-4" @click="handleDownload">下载</ElButton>
+        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>
+        <ElButton type="text" size="mini" class="ml-4" @click="handleDownload">下载</ElButton>
       </div>
       <div class="level-line ml-4">
         <ElCheckboxGroup v-model="checkList" :min="1" size="mini" class="inline-flex" @change="searchFnc">
@@ -37,13 +37,13 @@
           <!--          <ElCheckbox label="FATAL">FATAL</ElCheckbox>-->
         </ElCheckboxGroup>
       </div>
-      <div v-loading="loading" class="log-list p-4 flex-1" style="height: 0">
+      <div v-loading="loading" class="log-list my-4 ml-4 pl-4 flex-1" style="height: 0">
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
           key-field="id"
           :min-item-size="30"
-          class="scroller h-100"
+          class="scroller py-4 h-100"
           @scroll.native="scrollFnc"
         >
           <template #before>
@@ -333,6 +333,7 @@ export default {
           this.preLoading = true
         }
       }
+      const start = Date.now()
       customerJobLogsApi
         .get({ filter: JSON.stringify(filter) })
         .then(data => {
@@ -404,8 +405,13 @@ export default {
           }
         })
         .finally(() => {
-          this.loading = false
-          this.preLoading = false
+          setTimeout(
+            () => {
+              this.loading = false
+              this.preLoading = false
+            },
+            Date.now() - start < 1000 ? 2000 : 0
+          )
         })
     },
 
@@ -461,5 +467,10 @@ export default {
 }
 .white-space-nowrap {
   white-space: nowrap;
+}
+
+.log-list {
+  border-radius: 1px;
+  background-color: rgba(229, 236, 255, 0.22);
 }
 </style>

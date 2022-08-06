@@ -15,7 +15,7 @@
       <span class="font-color-normal fw-bold fs-7">问题表清单</span>
       <VIcon size="16" class="cursor-pointer" @click="$emit('verifyDetails')">menu-left</VIcon>
     </div>
-    <div class="px-4 py-3">
+    <div class="px-4 py-2">
       <ElInput
         v-model="dbSearchTxt"
         ref="dbInput"
@@ -30,57 +30,69 @@
       >
       </ElInput>
     </div>
-    <ElScrollbar ref="dbList" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
-      <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
-        <template #template>
-          <div v-for="i in 5" :key="i" class="flex p-4 align-center">
-            <ElSkeletonItem
-              class="mr-3 flex-shrink-0"
-              style="width: 20px; height: 20px"
-              variant="rect"
-            ></ElSkeletonItem>
-            <ElSkeletonItem variant="text"></ElSkeletonItem>
+
+    <div v-loading="dbLoading" class="flex-1" style="height: 0">
+      <DynamicScroller
+        ref="virtualScroller"
+        :items="dbList"
+        key-field="id"
+        :min-item-size="30"
+        class="scroller h-100"
+        v-infinite-scroll="loadMoreDB"
+      >
+        <template #after>
+          <div v-if="dbSearchTxt" class="before-scroll-content text-center font-color-light pb-2">
+            <div>{{ $t('customer_logs_no_search_data') }}</div>
+          </div>
+          <div v-else class="before-scroll-content text-center font-color-light pb-2">
+            <div v-if="noDBMore">{{ $t('customer_logs_no_more_data') }}</div>
+            <div v-else-if="!dbList.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+            <div v-show="dbLoadingMore">
+              <i class="el-icon-loading"></i>
+            </div>
           </div>
         </template>
-        <div>
-          <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore">
-            <div v-for="db in dbList" :key="db.id" class="db-item px-4 py-2 user-select-none border-bottom">
+        <template #default="{ item, index, active }">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :data-index="index"
+            :size-dependencies="[item.id, item.connection]"
+          >
+            <div class="db-item px-4 py-2 user-select-none border-bottom">
               <div class="flex justify-content-between mb-2">
                 <span>连接名：</span>
-                <ElLink type="primary" @click="$emit('connectionList', db.connection)">{{ db.connection }}</ElLink>
+                <ElLink type="primary" @click="$emit('connectionList', item.connection)">{{ item.connection }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>表名：</span>
-                <ElLink type="primary" @click="$emit('verifyDetails', db.table)">{{ db.table }}</ElLink>
+                <ElLink type="primary" @click="$emit('verifyDetails', item.table)">{{ item.table }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>异常数据（行）：</span>
-                <span>{{ db.diff }}</span>
+                <span>{{ item.diff }}</span>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>准确性：</span>
-                <span>{{ db.progress }}%</span>
+                <span>{{ item.progress }}%</span>
               </div>
             </div>
-            <EmptyItem v-if="!dbList.length"></EmptyItem>
-            <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-              {{ t('loading') }}<span class="dotting"></span>
-            </div>
-          </div>
-        </div>
-      </ElSkeleton>
-    </ElScrollbar>
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
+    </div>
   </section>
 </template>
 
 <script>
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { mapGetters } from 'vuex'
+import { debounce, escapeRegExp } from 'lodash'
+
 import { Chart } from '@tap/component'
 import { calcUnit } from '@tap/shared'
+
 import Locale from '../../mixins/locale'
-import { mapGetters } from 'vuex'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
-import { debounce, escapeRegExp } from 'lodash'
-import { Select } from 'element-ui'
 
 function getRandom() {
   return Math.ceil(Math.random() * 100)
@@ -88,8 +100,11 @@ function getRandom() {
 
 export default {
   name: 'VerifyPanel',
-  components: { Chart, ElScrollbar: Select.components.ElScrollbar },
+
+  components: { Chart, DynamicScroller, DynamicScrollerItem },
+
   mixins: [Locale],
+
   props: {
     settings: Object,
     samples: {
@@ -151,11 +166,6 @@ export default {
         })
       )
       return this.getPieOptions(values)
-    },
-
-    scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
-      return `height: calc(100% + ${gutter}px);`
     },
 
     disabledDBMore() {
@@ -274,6 +284,7 @@ export default {
     }, 100),
 
     loadMoreDB() {
+      console.log('loadMoreDB')
       if (this.disabledDBMore) return
       this.loadDatabase(true)
     },
@@ -326,7 +337,7 @@ export default {
       return { filter: JSON.stringify(filter) }
     },
 
-    async loadDatabase(loadMore) {
+    loadDatabase(loadMore) {
       if (loadMore) {
         this.dbPage++
         this.dbLoadingMore = true
@@ -350,18 +361,19 @@ export default {
 
       // const data = await connectionsApi.get(this.getDbFilter())
 
-      this.dbTotal = getRandom()
+      this.dbTotal = 10000
       const dbList = Array(10)
         .fill()
         .map((t, i) => {
           return {
-            id: i,
+            id: Date.now() + i,
             connection: '连接名称' + getRandom(),
             table: '表名' + getRandom(),
             diff: (getRandom() * 1000).toLocaleString(),
             progress: getRandom()
           }
         })
+        .filter(t => (t.connection + t.table).indexOf(this.dbSearchTxt) > -1)
       // const dbList = data.items.map(item => {
       //   let connectionUrl = ''
       //
@@ -388,7 +400,7 @@ export default {
             this.dbIdMap[item.id] = true
           }
         })
-        this.dbLoadingMore = false
+        // this.dbLoadingMore = false
       } else {
         this.scrollTopOfDBList()
         this.dbList = dbList

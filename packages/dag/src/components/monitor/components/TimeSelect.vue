@@ -296,6 +296,7 @@ export default {
 }
 .time-select__title {
   white-space: nowrap;
+  line-height: 1.5;
 }
 .datetime {
   position: absolute;
