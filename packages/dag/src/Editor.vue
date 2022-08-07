@@ -673,6 +673,7 @@ export default {
       const databaseItems = await databaseTypesApi.get({
         filter: JSON.stringify({
           fields: {
+            messages: true,
             pdkHash: true,
             properties: true
           }
