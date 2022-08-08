@@ -2,6 +2,9 @@
 
 > Data as a service
 
+## Last Release Branch
+release-v2.7
+
 ## 快速开始
 
 1. **安装 [pnpm](https://pnpm.io/zh/motivation)**
