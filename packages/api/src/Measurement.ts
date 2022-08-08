@@ -10,5 +10,8 @@ export default class Measurement extends Http {
   queryTransmitTotal() {
     return this.axios.get(this.url + '/queryTransmitTotal')
   }
+  queryV2(params) {
+    return this.axios.post(this.url + '/query/v2', params)
+  }
 }
 export { Measurement }

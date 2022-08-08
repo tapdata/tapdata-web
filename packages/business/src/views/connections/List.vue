@@ -262,12 +262,15 @@ export default {
     this.getFilterItems()
   },
   mounted() {
-    let query = this.$route.query
-    if (query.step) {
+    const { step, action, keyword } = this.$route.query || {}
+    if (step) {
       this.handleGuide()
     }
-    if (query?.action === 'create') {
+    if (action === 'create') {
       this.checkTestConnectionAvailable()
+    }
+    if (keyword) {
+      this.searchParams.keyword = keyword
     }
   },
   destroyed() {

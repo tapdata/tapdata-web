@@ -371,6 +371,7 @@ importers:
       '@tap/locale': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
       dagre: ^0.8.5
+      dayjs: ^1.11.2
       jsplumb: ^2.15.6
       mousetrap: ^1.6.5
       vuex: ^3.6.2
@@ -388,6 +389,7 @@ importers:
       '@tap/locale': link:../locale
       '@tap/shared': link:../shared
       dagre: registry.npmmirror.com/dagre/0.8.5
+      dayjs: registry.npmmirror.com/dayjs/1.11.3
       jsplumb: registry.npmmirror.com/jsplumb/2.15.6
       mousetrap: registry.npmmirror.com/mousetrap/1.6.5
       vuex: registry.npmmirror.com/vuex/3.6.2
@@ -6797,7 +6799,7 @@ packages:
     dev: true
 
   registry.npmmirror.com/dayjs/1.11.3:
-    resolution: {integrity: sha512-xxwlswWOlGhzgQ4TKzASQkUhqERI3egRNqgV4ScR8wlANA/A9tZ7miXa44vTTKEq5l7vWoL5G57bG3zA+Kow0A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/dayjs/-/dayjs-1.11.3.tgz}
+    resolution: {integrity: sha512-xxwlswWOlGhzgQ4TKzASQkUhqERI3egRNqgV4ScR8wlANA/A9tZ7miXa44vTTKEq5l7vWoL5G57bG3zA+Kow0A==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/dayjs/-/dayjs-1.11.3.tgz}
     name: dayjs
     version: 1.11.3
     dev: false

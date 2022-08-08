@@ -212,7 +212,7 @@ export default {
     }
   },
 
-  async created() {
+  async mounted() {
     this.setValidateLanguage()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
@@ -289,20 +289,26 @@ export default {
       if (newTab) {
         window.open(
           this.$router.resolve({
-            name: 'MigrateStatistics',
+            name: 'MigrationMonitor',
             query: {
               id: this.dataflow.id,
               subId: subId
+            },
+            params: {
+              id: this.dataflow.id
             }
           }).href,
           `MigrateStatistics_${this.dataflow.id}`
         )
       } else {
         this.$router.push({
-          name: 'MigrateStatistics',
+          name: 'MigrationMonitor',
           query: {
             id: this.dataflow.id,
             subId: subId
+          },
+          params: {
+            id: this.dataflow.id
           }
         })
       }
@@ -450,10 +456,13 @@ export default {
       }
 
       this.$router.push({
-        name: 'MigrateStatistics',
+        name: 'MigrationMonitor',
         query: {
           id: this.dataflow.id,
           subId: subId
+        },
+        params: {
+          id: this.dataflow.id
         }
       })
     },

@@ -8,11 +8,8 @@
     <template v-if="!children && item.slotName" v-slot="scope">
       <slot :name="item.slotName" :row="scope.row" :prop="item.prop"></slot>
     </template>
-    <template v-else-if="!children && item.dataType === 'time'" v-slot="scope">
-      <div>{{ getValue(formatTime(scope.row[item.prop], item.fmt), item.default) }}</div>
-    </template>
     <template v-else-if="!children" v-slot="scope">
-      {{ getValue(scope.row[item.prop], item.default) }}
+      {{ getValue(scope.row, item) }}
     </template>
     <!--  多表头  -->
     <template v-for="temp in children">
@@ -44,8 +41,22 @@ export default {
     formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
       return time ? dayjs(time).format(fmt) : ''
     },
-    getValue(val, d) {
-      return val ?? d
+    formatNumber(val) {
+      return val ? val.toLocaleString() : ''
+    },
+    getValue(row, item) {
+      const val = row[item.prop]
+      if ([undefined, null].includes(val)) {
+        return item.default
+      }
+      const map = {
+        time: this.formatTime,
+        number: this.formatNumber
+      }
+      if (map[item.dataType]) {
+        return map[item.dataType]?.(val)
+      }
+      return val
     }
   }
 }

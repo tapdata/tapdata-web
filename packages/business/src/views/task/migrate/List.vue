@@ -167,7 +167,12 @@
               {{ $t('task_list_edit') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.disabledData.monitor"
+              @click="toDetail(row)"
+            >
               {{ $t('task_list_button_monitor') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
@@ -810,14 +815,12 @@ export default {
     },
     toDetail(row) {
       let subId = row.statuses[0]?.id || ''
-      if (!subId) {
-        this.$message.error('该复制任务没有子任务')
-        return
-      }
       this.$router.push({
-        name: 'MigrateStatistics',
+        name: 'MigrationMonitor',
+        params: {
+          id: row.id
+        },
         query: {
-          id: row.id,
           subId: subId
         }
       })
