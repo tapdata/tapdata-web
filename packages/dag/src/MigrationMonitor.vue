@@ -91,7 +91,7 @@
             ></Node>
           </PaperScroller>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-            <EmptyItem></EmptyItem>
+            <VEmpty large></VEmpty>
           </div>
         </main>
         <BottomPanel
@@ -148,11 +148,10 @@ import ConfigPanel from './components/migration/ConfigPanel'
 import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import resize from 'web-core/directives/resize'
-import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import VIcon from 'web-core/components/VIcon'
-import { VExpandXTransition } from '@tap/component'
+import { VExpandXTransition, VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
 import { measurementApi, taskApi } from '@tap/api'
@@ -191,7 +190,7 @@ export default {
 
   components: {
     VExpandXTransition,
-    EmptyItem,
+    VEmpty,
     ConfigPanel,
     VerifyPanel,
     BottomPanel,
