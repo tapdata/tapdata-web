@@ -945,11 +945,6 @@ export default {
       }
     }
   }
-  .table-page-main {
-    .table-page-body {
-      padding: 15px 0 20px !important;
-    }
-  }
 }
 .creatDialog {
   .el-dialog__body {

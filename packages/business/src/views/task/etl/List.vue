@@ -86,7 +86,6 @@
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
-              :underline="false"
               @click.stop="handlePreview(row)"
               >{{ row.name }}</ElLink
             >
@@ -120,7 +119,6 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.disabledData.start"
-              :underline="false"
               @click="start([row.id])"
             >
               {{ $t('task_list_run') }}
@@ -131,7 +129,6 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
-              :underline="false"
               @click="forceStop([row.id])"
             >
               {{ $t('task_list_force_stop') }}
@@ -141,7 +138,6 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.disabledData.stop"
-              :underline="false"
               @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
@@ -150,18 +146,17 @@
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.disabledData.edit"
-              :underline="false"
               @click="handleEditor(row.id)"
             >
               {{ $t('button_edit') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" :underline="false" @click="toDetail(row)">
+            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
-              <ElLink type="primary" class="rotate-90" :underline="false">
+              <ElLink type="primary" class="rotate-90">
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">

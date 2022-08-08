@@ -151,7 +151,7 @@ export default defineComponent({
           </el-button>
           <el-divider direction="vertical"></el-divider>
           <el-dropdown onCommand={dropdownHandler}>
-            <el-link type="primary" class="rotate-90" underline={false}>
+            <el-link type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
             </el-link>
             <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">

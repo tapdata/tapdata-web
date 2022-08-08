@@ -14,7 +14,7 @@
               style="font-size: 12px"
             >
               {{ $t('verify_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
-              <ElLink class="ml-5" type="primary" :underline="false" @click="toDiffHistory">{{
+              <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
                 $t('verify_button_diff_task_history')
               }}</ElLink>
             </div>
@@ -24,9 +24,7 @@
       <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
         <VIcon class="color-danger">error</VIcon>
         <span>
-          <ElLink type="danger" :underline="false" @click="showErrorMessage">{{
-            this.$t('verify_see_details')
-          }}</ElLink>
+          <ElLink type="danger" @click="showErrorMessage">{{ this.$t('verify_see_details') }}</ElLink>
           <VIcon class="ml-2 color-info" size="12">close</VIcon>
         </span>
       </div>

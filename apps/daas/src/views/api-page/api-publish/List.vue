@@ -160,7 +160,7 @@
           >
           <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
           <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
-            <ElLink type="primary" class="rotate-90" :underline="false">
+            <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
             </ElLink>
             <ElDropdownMenu class="dataflow-table-more-dropdown-menu" slot="dropdown">

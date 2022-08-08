@@ -110,35 +110,24 @@
               $disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
               ['running', 'scheduling'].includes(scope.row.status)
             "
-            :underline="false"
             @click="startTask(scope.row.id)"
             >{{ $t('verify_executeVerifyTip') }}</ElLink
           >
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-          <ElLink
-            type="primary"
-            :disabled="!scope.row.InspectResult"
-            :underline="false"
-            @click="toTableInfo(scope.row.id)"
-            >{{ $t('verify_detailTip') }}</ElLink
-          >
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
+            $t('verify_detailTip')
+          }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
-            :underline="false"
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('verify_configurationTip') }}</ElLink
           >
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-          <ElDropdown
-            v-show="moreAuthority"
-            size="small"
-            :underline="false"
-            @command="handleCommand($event, scope.row)"
-          >
-            <ElLink type="primary" class="rotate-90" :underline="false">
+          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
+            <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
             </ElLink>
             <ElDropdownMenu class="dataflow-table-more-dropdown-menu" slot="dropdown">

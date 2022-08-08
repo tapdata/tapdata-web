@@ -53,16 +53,10 @@
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
             <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
-            <ElLink v-if="item.msg === 'deleted'" :underline="false">
+            <ElLink v-if="item.msg === 'deleted'">
               {{ `${item.serverName} ` }}
             </ElLink>
-            <ElLink
-              type="primary"
-              v-else
-              class="link-primary cursor-pointer"
-              :underline="false"
-              @click="handleGo(item)"
-            >
+            <ElLink type="primary" v-else class="link-primary cursor-pointer" @click="handleGo(item)">
               {{ `${item.serverName} , ` }}
             </ElLink>
 
@@ -92,7 +86,7 @@
             <span v-if="item.msg === 'deleted'">
               {{ `${item.serverName} ` }}
             </span>
-            <ElLink v-else type="primary" class="cursor-pointer px-1" :underline="false" @click="handleGo(item)">
+            <ElLink v-else type="primary" class="cursor-pointer px-1" @click="handleGo(item)">
               {{ item.serverName }}
             </ElLink>
             <span>{{ typeMap[item.msg] }}</span>

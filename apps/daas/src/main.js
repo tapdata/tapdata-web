@@ -1,3 +1,5 @@
+import '@/styles/app.scss'
+
 import Vue from 'vue'
 import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
@@ -15,11 +17,8 @@ import { settingsApi, usersApi } from '@tap/api'
 import '@/plugins/element'
 import '@/plugins/icon'
 import '@/directives'
-import 'github-markdown-css'
 import LoadMore from '@/utils/loadMore'
 
-import '@/styles/app.scss'
-import '@/styles/element-variables.scss'
 import '@/plugins/axios.ts'
 import { configUser } from '@/utils/util'
 

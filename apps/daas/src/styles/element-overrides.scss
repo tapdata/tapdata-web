@@ -731,6 +731,9 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   color: map-get($color, disable) !important;
   cursor: default !important;
 }
+.el-link.is-underline::after {
+  display: none;
+}
 
 /* Tooltip
 --------------------------*/
@@ -772,4 +775,47 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 .el-message-box__message {
   overflow: hidden;
   word-break: break-all;
+}
+
+/* Upload
+--------------------------*/
+.el-upload-list__item-name {
+  background-color: map-get($bgColor, disable);
+}
+
+/* Tabs
+--------------------------*/
+.el-tabs__item {
+  user-select: none;
+}
+.el-tabs__nav-wrap::after {
+  height: 1px;
+}
+
+/* Collapse
+--------------------------*/
+.el-collapse-item {
+  &:last-child > .el-collapse-item__wrap {
+    border-bottom: none;
+  }
+}
+
+/* Dialog
+--------------------------*/
+.el-dialog__title {
+  font-size: 14px;
+  font-weight: 500;
+  color: map-get($fontColor, dark);
+}
+.el-dialog__close {
+  color: map-get($color, primary);
+}
+
+/* Icon
+--------------------------*/
+.el-icon-success {
+  color: map-get($color, success);
+}
+.el-icon-error {
+  color: map-get($color, danger);
 }

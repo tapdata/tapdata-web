@@ -60,17 +60,14 @@
           <ElLink
             size="mini"
             type="primary"
-            :underline="false"
             @click="$router.push({ name: 'FunctionDetails', params: { id: row.id } })"
             >{{ $t('button_check') }}</ElLink
           >
           <template v-if="row.type !== 'system'">
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" :underline="false" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
+            <ElLink type="primary" size="mini" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" :underline="false" @click="remove(row)">{{
-              $t('button.delete')
-            }}</ElLink>
+            <ElLink type="primary" size="mini" @click="remove(row)">{{ $t('button.delete') }}</ElLink>
           </template>
         </template>
       </ElTableColumn>

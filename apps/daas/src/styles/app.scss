@@ -1,9 +1,12 @@
+/* 请注意样式排序导致的优先级问题
+-----------------------------*/
 @import '~@tap/assets/styles/var';
 @import 'reboot';
 @import 'overrides';
 @import 'utilities';
 @import '~@/styles/font/iconfont.css';
 @import '~@/assets/fonts/DIN/index.css';
+@import 'github-markdown-css';
 
 #app {
   width: 100%;
