@@ -104,7 +104,9 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('task_list_status')" min-width="110">
         <template #default="{ row }">
-          <StatusItem :value="row.statusResult"></StatusItem>
+          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
+            {{ $t('task_preview_status_' + row.status) }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column prop="createTime" :label="$t('column_create_time')" min-width="160" sortable="custom">
