@@ -283,7 +283,7 @@ export default [
             }
           },
           {
-            path: 'statistics/:subId',
+            path: 'statistics/:id',
             name: 'dataflowStatistics',
             component: () =>
               import(/* webpackChunkName: "etl-statistics" */ '@tap/business/src/views/task/etl/statistics/Index'),

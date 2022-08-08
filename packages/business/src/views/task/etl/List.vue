@@ -853,12 +853,10 @@ export default {
       })
     },
     toDetail(row) {
-      let subId = row.statuses[0]?.id || ''
       this.$router.push({
         name: 'dataflowStatistics',
         params: {
-          id: row.id,
-          subId: subId
+          id: row.id
         }
       })
     },

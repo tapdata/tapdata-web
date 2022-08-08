@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     getData(id) {
-      logcollectorApi.bySubTaskId(id).then(data => {
+      logcollectorApi.byTaskId(id).then(data => {
         this.taskList = data || []
       })
     },

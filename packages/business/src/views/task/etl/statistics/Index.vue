@@ -125,7 +125,7 @@ export default {
       this.loadTask()
     },
     async loadTask(hiddenLoading) {
-      let id = this.$route.params?.subId
+      let id = this.$route.params?.id
       if (!hiddenLoading) {
         this.loading = true
       }
