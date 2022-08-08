@@ -264,7 +264,7 @@ export default {
     toConnection() {
       this.closeModal()
       this.$router.push({
-        name: 'Connection'
+        name: 'connections'
       })
     },
     toWorkbench() {

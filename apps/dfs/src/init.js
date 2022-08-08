@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import './plugins/element'
 import './plugins/axios'
+import './directive'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import 'github-markdown-css'
@@ -125,7 +126,7 @@ export default ({ routes }) => {
       wsUrl = 'wss://'
     }
     let preUrl = settings.DFS_TM_API_PRE_URL || ''
-    let queryString = `X-Token=${window.__USER_INFO__?.token}`
+    let queryString = ``
     if (process.env.NODE_ENV === 'development') {
       queryString = `__token=${process.env.VUE_APP_ACCESS_TOKEN}`
     }

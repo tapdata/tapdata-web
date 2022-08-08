@@ -86,10 +86,12 @@
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
-import { toRegExp } from '../../utils/util'
-import Cookie from '@tap/shared/src/cookie'
 import { apiServerApi } from '@tap/api'
+import { FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
+import Cookie from '@tap/shared/src/cookie'
+
+import { toRegExp } from '../../utils/util'
 
 export default {
   name: 'ApiServer',

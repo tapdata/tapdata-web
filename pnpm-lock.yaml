@@ -65,6 +65,7 @@ importers:
       '@formily/core': ^2.1.2
       '@formily/reactive': ^2.1.2
       '@tap/api': workspace:^1.0.0
+      '@tap/assets': workspace:^1.0.0
       '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/dag': workspace:^1.0.0
@@ -124,6 +125,7 @@ importers:
       '@formily/core': registry.npmmirror.com/@formily/core/2.1.9
       '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.9
       '@tap/api': link:../../packages/api
+      '@tap/assets': link:../../packages/assets
       '@tap/business': link:../../packages/business
       '@tap/component': link:../../packages/component
       '@tap/dag': link:../../packages/dag
@@ -191,6 +193,7 @@ importers:
       '@formily/shared': ^2.1.2
       '@formily/vue': ^2.1.2
       '@tap/api': workspace:^1.0.0
+      '@tap/assets': workspace:^1.0.0
       '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/dag': workspace:^1.0.0
@@ -215,7 +218,7 @@ importers:
       dayjs: ^1.11.2
       default-passive-events: ^2.0.0
       echarts: ^5.0.2
-      element-ui: ^2.15.1
+      element-ui: 2.15.7
       eslint: ^6.7.2
       eslint-plugin-prettier: ^3.3.1
       eslint-plugin-vue: ^6.2.2
@@ -231,6 +234,7 @@ importers:
       mousetrap: ^1.6.5
       nodemon: ^2.0.12
       prettier: ^2.2.1
+      qs: ^6.10.3
       svg-sprite-loader: ^6.0.2
       svgo-loader: ^3.0.0
       vue: ^2.6.14
@@ -252,6 +256,7 @@ importers:
       '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.9
       '@formily/vue': registry.npmmirror.com/@formily/vue/2.1.9_6fywhegardq2xsbixl3beuj4ua
       '@tap/api': link:../../packages/api
+      '@tap/assets': link:../../packages/assets
       '@tap/business': link:../../packages/business
       '@tap/component': link:../../packages/component
       '@tap/dag': link:../../packages/dag
@@ -265,12 +270,13 @@ importers:
       dayjs: registry.npmmirror.com/dayjs/1.11.3
       default-passive-events: registry.npmmirror.com/default-passive-events/2.0.0
       echarts: registry.npmmirror.com/echarts/5.3.3
-      element-ui: registry.npmmirror.com/element-ui/2.15.9_vue@2.6.14
+      element-ui: registry.npmmirror.com/element-ui/2.15.7_vue@2.6.14
       github-markdown-css: registry.npmmirror.com/github-markdown-css/4.0.0
       highlight.js: registry.npmmirror.com/highlight.js/11.5.1
       jsonwebtoken: registry.npmmirror.com/jsonwebtoken/8.5.1
       jsplumb: registry.npmmirror.com/jsplumb/2.15.6
       mousetrap: registry.npmmirror.com/mousetrap/1.6.5
+      qs: registry.npmmirror.com/qs/6.11.0
       vue: registry.npmmirror.com/vue/2.6.14
       vue-clipboard2: registry.npmmirror.com/vue-clipboard2/0.3.3
       vue-cookies: registry.npmmirror.com/vue-cookies/1.8.1
@@ -6397,7 +6403,7 @@ packages:
     resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/core-js/-/core-js-2.6.12.tgz}
     name: core-js
     version: 2.6.12
-    deprecated: core-js@<3.4 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Please, upgrade your dependencies to the actual version of core-js.
+    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
     requiresBuild: true
     dev: false
 
@@ -7402,23 +7408,6 @@ packages:
     id: registry.npmmirror.com/element-ui/2.15.7
     name: element-ui
     version: 2.15.7
-    peerDependencies:
-      vue: ^2.5.17
-    dependencies:
-      async-validator: registry.npmmirror.com/async-validator/1.8.5
-      babel-helper-vue-jsx-merge-props: registry.npmmirror.com/babel-helper-vue-jsx-merge-props/2.0.3
-      deepmerge: registry.npmmirror.com/deepmerge/1.5.2
-      normalize-wheel: registry.npmmirror.com/normalize-wheel/1.0.1
-      resize-observer-polyfill: registry.npmmirror.com/resize-observer-polyfill/1.5.1
-      throttle-debounce: registry.npmmirror.com/throttle-debounce/1.1.0
-      vue: registry.npmmirror.com/vue/2.6.14
-    dev: false
-
-  registry.npmmirror.com/element-ui/2.15.9_vue@2.6.14:
-    resolution: {integrity: sha512-dx45nQLt4Hn87/Z9eRr3ex6KFZbxlFAwEU3QoW3wA5EsYftvHTyL9Pq7VnXXD7hu1Eiaup2jcs6kp+/VSFmXuA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/element-ui/-/element-ui-2.15.9.tgz}
-    id: registry.npmmirror.com/element-ui/2.15.9
-    name: element-ui
-    version: 2.15.9
     peerDependencies:
       vue: ^2.5.17
     dependencies:

@@ -684,7 +684,7 @@ export default {
     },
     toDataFlow(id) {
       this.$router.push({
-        name: 'Task',
+        name: 'migrateList',
         query: {
           agentId: id,
           status: 'running'

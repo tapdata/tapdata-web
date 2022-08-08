@@ -6,7 +6,12 @@
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  provide: {
+    checkAgent(cb) {
+      cb && cb()
+    }
+  }
 }
 </script>
 

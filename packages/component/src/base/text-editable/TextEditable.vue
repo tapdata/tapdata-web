@@ -25,8 +25,14 @@
 </template>
 
 <script>
+import { VIcon } from '@tap/component'
+
 export default {
   name: 'TextEditable',
+
+  components: {
+    VIcon
+  },
 
   props: {
     value: String,

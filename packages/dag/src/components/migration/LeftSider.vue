@@ -184,7 +184,7 @@ import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
-import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
+import { ConnectionTypeSelector } from '@tap/business'
 import resize from 'web-core/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
@@ -305,7 +305,7 @@ export default {
       this.databaseType = item.type
       const { pdkHash } = item
       this.$router.push({
-        name: 'connectionsCreate',
+        name: 'connectionCreate',
         query: { pdkHash }
       })
     },

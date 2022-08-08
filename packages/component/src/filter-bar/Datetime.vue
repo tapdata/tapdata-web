@@ -49,7 +49,6 @@ export default {
       }
     }
   },
-  mounted() {},
   methods: {
     mouseEnterFnc() {
       if (this.time && this.clearable) {

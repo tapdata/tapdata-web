@@ -1,11 +1,9 @@
 export default {
-  common_all: '全部',
   connection_list_efficient: '有效',
   connection_list_invalidation: '无效',
   connection_list_testing: '测试中',
-  connection_list_source: '源头',
-  connection_list_target: '目标',
-  connection_list_source_and_target: '源头和目标',
+
+  connection_column_name: '连接名称',
 
   status_running: '运行中',
   status_paused: '待启动',
@@ -33,5 +31,11 @@ export default {
 
   task_status_running: '已运行',
   task_status_not_running: '未运行',
-  task_status_error: '错误'
+  task_status_error: '错误',
+
+  task_info_ms: '毫秒',
+  task_info_s: '秒',
+  task_info_m: '分钟',
+  task_info_h: '小时',
+  task_info_d: '天'
 }

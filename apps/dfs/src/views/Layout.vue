@@ -1,6 +1,6 @@
 <template>
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
-    <TheHeader ref="theHeader"></TheHeader>
+    <TheHeader ref="theHeader" class="layout-header"></TheHeader>
     <ElAside class="left-aside" width="200px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
         <!-- <ElMenuItem v-for="m in menus" :key="m.name" :index="m.path">
@@ -32,7 +32,7 @@
         </template>
       </ElMenu>
     </ElAside>
-    <ElContainer direction="vertical">
+    <ElContainer direction="vertical" class="layout-main position-relative">
       <div v-if="!hideBreadcrumb" class="header">
         <ElBreadcrumb
           :class="['breadcrumb', { 'one-breadcrumb': breadcrumbData.length === 1 }]"
@@ -86,18 +86,14 @@ export default {
           icon: 'agent'
         },
         {
-          name: 'Connection',
+          name: 'connections',
           title: $t('connection_manage'),
           icon: 'connection'
         },
         {
-          name: 'Task',
-          title: $t('task_manage'),
-          icon: 'task',
-          children: [
-            { name: 'Etl', title: $t('task_manage_etl') },
-            { name: 'Migrate', title: $t('task_manage_migrate') }
-          ]
+          name: 'migrateList',
+          title: $t('task_manage_migrate'),
+          icon: 'task'
         },
         {
           name: 'Verify',

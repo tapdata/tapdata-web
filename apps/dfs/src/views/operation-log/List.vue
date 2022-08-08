@@ -47,10 +47,10 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
-
 import { VIcon, FilterBar } from '@tap/component'
+
 import TableList from '@/components/TableList'
+import i18n from '@/i18n'
 import { isEmpty } from '@/util'
 
 export default {
@@ -133,6 +133,16 @@ export default {
           desc: this.$t('operation_log_migration_forceStop_tip')
         },
         // Agent
+        {
+          label: this.$t('operation_log_agent_create'),
+          value: 'agent&&create',
+          desc: this.$t('operation_log_agent_create_tip')
+        },
+        {
+          label: this.$t('operation_log_agent_delete'),
+          value: 'agent&&delete',
+          desc: this.$t('operation_log_agent_delete_tip')
+        },
         {
           label: this.$t('operation_log_agent_rename'),
           value: 'agent&&rename',
@@ -436,7 +446,7 @@ export default {
         // 任务
         case 'migration':
           this.$router.push({
-            name: 'Task',
+            name: 'migrateList',
             query: {
               status: '',
               syncType: '',
@@ -448,7 +458,7 @@ export default {
         // 连接
         case 'connection':
           this.$router.push({
-            name: 'Connection',
+            name: 'connections',
             query: {
               status: '',
               keyword: parameter1

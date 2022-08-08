@@ -6,13 +6,20 @@ import i18n from '@/i18n'
 import Lang from '../views/Lang.vue'
 
 // const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
-const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
+const ConnectionForm = () =>
+  import(/* webpackChunkName: "connection-form" */ '@tap/business/src/views/connections/DatabaseForm.vue')
 // const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
 const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
   return Editor
 }
+const MigrationEditor = async () => {
+  const { MigrationEditor } = await import('@tap/dag')
+  return MigrationEditor
+}
+const MigrateDetails = () =>
+  import(/* webpackChunkName: "task-details" */ '@tap/business/src/views/task/migrate/details/Index.vue')
 
 const routes = [
   {
@@ -80,10 +87,10 @@ const routes = [
         ]
       },
       {
-        path: '/connection',
-        name: 'Connection',
+        path: '/connections',
+        name: 'connections',
         // component: Iframe,
-        component: () => import(/* webpackChunkName: "connection-list" */ '../views/connection/List.vue'),
+        component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connection/List.tsx'),
         meta: {
           title: i18n.t('tap_connection_management'),
           icon: 'connection'
@@ -91,7 +98,7 @@ const routes = [
         children: [
           {
             path: 'create',
-            name: 'ConnectionCreate',
+            name: 'connectionCreate',
             component: ConnectionForm,
             //component: Iframe,
             meta: {
@@ -100,7 +107,7 @@ const routes = [
           },
           {
             path: ':id',
-            name: 'ConnectionEdit',
+            name: 'connectionsEdit',
             component: ConnectionForm,
             //component: Iframe,
             meta: {
@@ -153,22 +160,23 @@ const routes = [
       //   ]
       // },
       {
-        path: '/etl',
-        name: 'Etl',
-        component: () => import(/* webpackChunkName: "task-etl" */ '../views/task/Migration.vue'),
-        meta: {
-          title: i18n.t('task_manage_etl'),
-          icon: 'task'
-        }
-      },
-      {
         path: '/migrate',
-        name: 'Migrate',
-        component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/Migration.vue'),
+        name: 'migrateList',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/MigrationList.tsx'),
         meta: {
           title: i18n.t('task_manage_migrate'),
           icon: 'task'
-        }
+        },
+        children: [
+          {
+            path: 'Statistics',
+            name: 'MigrateStatistics',
+            component: MigrateDetails,
+            meta: {
+              title: i18n.t('tap_task_details')
+            }
+          }
+        ]
       },
       {
         path: '/verify',
@@ -301,6 +309,30 @@ const routes = [
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
     component: DagEditor
+  },
+  {
+    path: '/migrate/editor',
+    name: 'MigrateCreate',
+    component: MigrationEditor,
+    meta: {
+      title: 'tap_edit_task'
+    }
+  },
+  {
+    path: '/migrate/editor/:id',
+    name: 'MigrateEditor',
+    component: MigrationEditor,
+    meta: {
+      title: 'tap_edit_task'
+    }
+  },
+  {
+    path: '/migrate/viewer/:id',
+    name: 'MigrateViewer',
+    component: MigrationEditor,
+    meta: {
+      title: 'tap_edit_task'
+    }
   }
 ]
 if (process.env.NODE_ENV === 'development') {

@@ -48,8 +48,8 @@
       <!-- 元数据管理详情 头部信息 end -->
       <el-main class="matadata-main mt-4">
         <!-- 元数据管理详情 左侧信息 start -->
-        <div class="aside" v-if="!asideFalg">
-          <ElLink @click="asideFalg = true" class="iconfont icon-indent"></ElLink>
+        <div v-if="!asideFalg" class="aside">
+          <ElLink class="iconfont icon-indent" type="primary" @click="asideFalg = true"></ElLink>
         </div>
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">

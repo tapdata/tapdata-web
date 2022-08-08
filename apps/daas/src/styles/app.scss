@@ -1,9 +1,12 @@
-@import 'var';
+/* 请注意样式排序导致的优先级问题
+-----------------------------*/
+@import '~@tap/assets/styles/var';
 @import 'reboot';
 @import 'overrides';
 @import 'utilities';
 @import '~@/styles/font/iconfont.css';
 @import '~@/assets/fonts/DIN/index.css';
+@import 'github-markdown-css';
 
 #app {
   width: 100%;
@@ -55,14 +58,6 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-input::-webkit-input-placeholder {
-  color: rgba(0, 0, 0, 0.25);
-  font-weight: 500;
-} /* 使用webkit内核的浏览器 */
-textarea::-webkit-input-placeholder {
-  color: rgba(0, 0, 0, 0.25);
-  font-weight: 500;
-} /* 使用webkit内核的浏览器 */
 
 .status-block {
   display: inline-block;

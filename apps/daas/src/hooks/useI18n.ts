@@ -18,6 +18,6 @@ export function provideI18n() {
 }
 
 export function useI18n() {
-  const i18n: { $t: Function } = inject(i18nSymbol)
+  const i18n: { $t: () => string } = inject(i18nSymbol)
   return i18n
 }

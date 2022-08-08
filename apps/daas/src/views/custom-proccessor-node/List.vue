@@ -31,9 +31,10 @@
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
-import { customNodeApi } from '@tap/api'
 import dayjs from 'dayjs'
+import { customNodeApi } from '@tap/api'
+import { FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
 
 export default {
   components: { FilterBar, TablePage },

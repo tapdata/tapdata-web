@@ -76,9 +76,9 @@
 </template>
 
 <script>
-import { TablePage } from '@tap/component'
 import dayjs from 'dayjs'
 import { javascriptFunctionsApi } from '@tap/api'
+import { TablePage } from '@tap/business'
 
 export default {
   components: { TablePage },

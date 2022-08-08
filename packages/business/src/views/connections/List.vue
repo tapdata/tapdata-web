@@ -3,10 +3,14 @@
     <TablePage
       ref="table"
       row-key="id"
-      :classify="{
-        authority: 'datasource_catalog_management',
-        types: ['database']
-      }"
+      :classify="
+        classify
+          ? {
+              authority: 'datasource_catalog_management',
+              types: ['database']
+            }
+          : null
+      "
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
@@ -17,6 +21,7 @@
       </template>
       <div slot="operation">
         <ElButton
+          v-if="classify"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
@@ -36,8 +41,8 @@
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('connection.dataBaseName')">
+      <ElTableColumn v-if="classify" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="columns['name'].label">
         <template slot-scope="scope">
           <span class="connection-name">
             <img class="connection-img mr-2" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
@@ -150,22 +155,26 @@
 </template>
 <script>
 import dayjs from 'dayjs'
-import { VIcon, TablePage, FilterBar } from '@tap/component'
+
 import { connectionsApi, databaseTypesApi } from '@tap/api'
+import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 
-import SchemaProgress from '../../components/SchemaProgress.vue'
-
+import { TablePage, SchemaProgress } from '../../components'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
+import locale from '../../locale'
 
 let timeout = null
 
 export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   inject: ['checkAgent'],
+  props: {
+    classify: Boolean
+  },
   data() {
     return {
       filterItems: [],
@@ -197,7 +206,7 @@ export default {
       ],
       databaseStatusOptions: [
         {
-          label: this.$t('connection_list_all_status'),
+          label: this.$t('select_option_all'),
           value: ''
         },
         {
@@ -222,24 +231,12 @@ export default {
         panelFlag: true,
         sourceType: ''
       },
-      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE'),
-      sourceTypeOptions: [
-        { label: 'RDS实例', value: 'rds' },
-        { label: '云外自建数据库', value: 'selfDB' },
-        { label: 'DDS实例', value: 'dds' },
-        { label: 'ECS自建库', value: 'ecs' }
-      ],
-      sourceTypeMapping: {
-        rds: 'RDS实例',
-        selfDB: '云外自建数据库',
-        ecs: 'ECS自建库',
-        dds: 'DDS实例'
-      },
       testData: null,
       dialogTestVisible: false, // 连接测试框
       connectionTaskList: [],
       connectionTaskListTotal: 0,
-      connectionTaskDialog: false
+      connectionTaskDialog: false,
+      columns: { name: { label: locale.t('connection_column_name') } }
     }
   },
   computed: {
@@ -351,14 +348,13 @@ export default {
               } else {
                 item.connectionUrl = item.config.uri
               }
-            } else {
+            } else if (item.config) {
               const { host, port, database, schema } = item.config
               item.connectionUrl = host
                 ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
                 : ''
             }
 
-            item.connectionSource = this.sourceTypeMapping[item.sourceType]
             item.lastUpdateTime = item.last_updated = item.last_updated
               ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               : '-'
@@ -367,7 +363,6 @@ export default {
 
           // 同步抽屉数据
           this.$refs.preview.sync(list)
-
           return {
             total: data?.total,
             data: list
@@ -529,7 +524,7 @@ export default {
         pdkHash
       }
       this.$router.push({
-        name: 'connectionsCreate',
+        name: 'connectionCreate',
         query
       })
     },
@@ -631,6 +626,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .connection-list-wrap {
+  height: 100%;
   overflow: hidden;
   ::v-deep {
     .el-select-dropdown__item {
