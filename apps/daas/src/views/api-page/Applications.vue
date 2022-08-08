@@ -138,9 +138,11 @@
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
-import { toRegExp } from '../../utils/util'
 import { roleApi, applicationApi } from '@tap/api'
+import { FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
+
+import { toRegExp } from '../../utils/util'
 
 export default {
   name: 'Applications',

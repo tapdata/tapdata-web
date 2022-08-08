@@ -176,8 +176,7 @@
 </template>
 
 <script>
-import { Chart, FilterBar } from '@tap/component'
-import TableList from '@/components/TableList'
+import { Chart, FilterBar, TableList } from '@tap/component'
 import { formatMs, handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'

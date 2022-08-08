@@ -12088,6 +12088,9 @@
 .font-color-slight {
   color: map-get($fontColor, slight);
 }
+.font-color-sslight {
+  color: map-get($fontColor, sslight);
+}
 
 // 背景颜色
 .bg-color-primary {

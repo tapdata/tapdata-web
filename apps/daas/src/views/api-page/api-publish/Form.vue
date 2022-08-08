@@ -127,7 +127,8 @@
 <script>
 import { ApiClient } from '@tap/api'
 import CustomerApiForm from './CustomerApiForm'
-import { VirtualSelect, SelectClassify } from '@tap/component'
+import { VirtualSelect } from '@tap/component'
+import { SelectClassify } from '@tap/business'
 import { metadataInstancesApi, modulesApi, apiServerApi, roleApi, connectionsApi } from '@tap/api'
 export default {
   name: 'ApiPublishForm',

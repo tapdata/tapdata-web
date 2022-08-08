@@ -78,11 +78,12 @@
 </template>
 
 <script>
-import { VIcon, Drawer } from '@tap/component'
-import { StatusTag } from '@tap/business'
-import { CONFIG_MODEL, getConnectionIcon } from './util'
 import dayjs from 'dayjs'
 import { connectionsApi } from '@tap/api'
+import { VIcon, Drawer } from '@tap/component'
+
+import { StatusTag } from '../../components'
+import { CONFIG_MODEL, getConnectionIcon } from './util'
 
 export default {
   name: 'DetailsDrawer',

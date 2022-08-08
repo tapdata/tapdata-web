@@ -212,10 +212,13 @@
 </template>
 
 <script>
-import BrowseQuery from './BrowseQuery'
-import { ApiClient, settingsApi, workerApi, usersApi, apiServerApi, modulesApi } from '@tap/api'
-import { JsEditor, TablePage, SelectList } from '@tap/component'
 import dayjs from 'dayjs'
+
+import { ApiClient, settingsApi, workerApi, usersApi, apiServerApi, modulesApi } from '@tap/api'
+import { JsEditor, SelectList } from '@tap/component'
+import { TablePage } from '@tap/business'
+
+import BrowseQuery from './BrowseQuery'
 
 let time = 0
 export default {

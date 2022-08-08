@@ -182,18 +182,20 @@
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
-import Upload from '@/components/UploadDialog'
-import { toRegExp } from '@/utils/util'
 import dayjs from 'dayjs'
+
 import { modulesApi, workerApi, metadataInstancesApi } from '@tap/api'
+import { FilterBar } from '@tap/component'
+import { TablePage, UploadDialog } from '@tap/business'
+
+import { toRegExp } from '@/utils/util'
 
 export default {
   name: 'ApiPublish',
   components: {
     TablePage,
     FilterBar,
-    Upload
+    Upload: UploadDialog
   },
   data() {
     return {

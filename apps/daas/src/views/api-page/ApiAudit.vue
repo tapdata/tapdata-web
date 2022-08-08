@@ -55,7 +55,8 @@
 </template>
 
 <script>
-import { TablePage, FilterBar } from '@tap/component'
+import { FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
 import { toRegExp } from '../../utils/util'
 import dayjs from 'dayjs'
 import { apiCallsApi } from '@tap/api'

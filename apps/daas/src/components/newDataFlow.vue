@@ -227,7 +227,7 @@ export default {
       const { pdkHash } = item
       let query = { pdkHash }
       this.$router.push({
-        name: 'connectionsCreate',
+        name: 'connectionCreate',
         query
       })
     }

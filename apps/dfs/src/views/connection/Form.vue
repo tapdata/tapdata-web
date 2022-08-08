@@ -195,8 +195,7 @@ export default {
   },
   methods: {
     init() {
-      this.databaseType =
-        this.$route.query.databaseType || this.$store?.state?.createConnection?.databaseType || this.databaseTypeText
+      this.databaseType = this.$route.query.databaseType || this.databaseTypeText
       this.model = Object.assign({}, DEFAULT_MODEL['default'])
       let type = this.databaseType
       if (type === 'rest api') {

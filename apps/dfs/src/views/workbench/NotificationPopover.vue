@@ -106,12 +106,10 @@ export default {
     },
     // 获取未读的消息数量
     getUnReadNum() {
-      let filter = {
-        where: {
-          read: false
-        }
+      let where = {
+        read: false
       }
-      return this.$axios.get('tm/api/Messages/count?filter=' + encodeURIComponent(JSON.stringify(filter))).then(res => {
+      return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
         this.unRead = res
       })
     },

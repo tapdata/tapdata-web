@@ -7,8 +7,9 @@ const measurement = require('./measurement.js')
 const subtask = require('./subtask.js')
 const sharedCache = require('./sharedCache.js')
 const task = require('./task.js')
+const cluster = require('./cluster.js')
 
-module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, task, {
+module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, task, cluster, {
   '/api/Connections': {
     code: 'ok',
     msg: 'ok',
@@ -3206,7 +3207,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
       shareCdcEnable: false,
       statuses: [{ id: '6257da1ff8ec1f1996db1eda', status: 'edit' }],
       status: 'edit',
-      type: 'initial_sync+cdc',
+      'type|1': ['initial_sync+cdc', 'cdc', 'initial_sync'],
       writeThreadSize: 8,
       editVersion: '1649924558103',
       syncPoints: [{ connectionId: '6242cbc7d98eb841aa855669', pointType: 'current' }],

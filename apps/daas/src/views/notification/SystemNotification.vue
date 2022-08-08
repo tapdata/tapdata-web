@@ -86,7 +86,7 @@
             <span v-if="item.msg === 'deleted'">
               {{ `${item.serverName} ` }}
             </span>
-            <ElLink type="primary" v-else class="cursor-pointer px-1" @click="handleGo(item)">
+            <ElLink v-else type="primary" class="cursor-pointer px-1" @click="handleGo(item)">
               {{ item.serverName }}
             </ElLink>
             <span>{{ typeMap[item.msg] }}</span>

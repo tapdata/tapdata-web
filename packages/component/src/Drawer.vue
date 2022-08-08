@@ -60,5 +60,6 @@ export default {
   background-color: map-get($bgColor, white);
   box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 14%), 0 6px 30px 5px rgb(0 0 0 / 12%);
   overflow: auto;
+  box-sizing: border-box;
 }
 </style>

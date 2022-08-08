@@ -1,0 +1,59 @@
+// 变量
+// 会在每个style元素以及scss文件中注入，因此不允许写具体选择器样式
+$borderRadiusBtn: 4px;
+$borderRadius: 4px;
+$fontFamily: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans',
+  sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+$codeFontFamily: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+$color: (
+  // primary: #337dff,
+  primary: #2c65ff,
+  dprimary: #0e42d2,
+  lprimary: #4080ff,
+  disprimary: #94bfff,
+  success: #10c038,
+  lsuccess: #dbefd1,
+  danger: #d44d4d,
+  warning: #ff7d00,
+  info: #75849b,
+  linfo: #e9edf2,
+  disable: #c9cdd4,
+  white: #fff
+);
+
+$fontColor: (
+  dark: #1d2129,
+  normal: #333c4a,
+  light: #535f72,
+  slight: #c9cdd4,
+  sslight: #86909c,
+  white: #fff
+);
+
+$bgColor: (
+  disable: #f7f8fa,
+  active: #ecf5ff,
+  hover: #e5e6eb,
+  main: #f2f3f5,
+  normal: #fafafa,
+  form: rgba(239, 241, 244, 0.2),
+  stopping: #c39700,
+  complete: #008b58,
+  special: #c9cdd4,
+  white: #fff,
+  pageCount: rgba(44, 101, 255, 0.08),
+  disactive: rgba(106, 161, 255, 0.1)
+);
+
+$borderColor: (
+  disable: #d9d9d9,
+  normal: #ddd,
+  slight: #f6f7f7,
+  light: #f2f2f2,
+  form: rgba(221, 221, 221, 0.4)
+);
+
+$iconFillColor: (
+  normal: #4e5969
+);

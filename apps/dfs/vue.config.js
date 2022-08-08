@@ -5,7 +5,7 @@ const crypto = require('crypto')
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
-  test: 'http://test.cloud.tapdata.net'
+  test: 'http://v3.test.cloud.tapdata.net'
 }
 let origin
 const { argv } = process
@@ -22,7 +22,7 @@ const proxy = {
 }
 
 //sass变量
-let varUrl = '~@/assets/styles/var.scss'
+let varUrl = '~@tap/assets/styles/var.scss'
 let pages = {
   index: {
     entry: 'src/pages/main.js',

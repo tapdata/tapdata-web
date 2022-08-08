@@ -1,5 +1,6 @@
 import Parent from './Parent'
-const MigrateDetails = () => import(/* webpackChunkName: "task-details" */ '../views/task/migrate/details/Index.vue')
+const MigrateDetails = () =>
+  import(/* webpackChunkName: "task-details" */ '@tap/business/src/views/task/migrate/details/Index.vue')
 const ConnectionForm = () =>
   import(/* webpackChunkName: "connection-form" */ '@tap/business/src/views/connections/DatabaseForm')
 const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
@@ -16,6 +17,10 @@ const DagEditor = async () => {
 const MigrationEditor = async () => {
   const { MigrationEditor } = await import('@tap/dag')
   return MigrationEditor
+}
+const MigrationMonitor = async () => {
+  const { MigrationMonitor } = await import('@tap/dag')
+  return MigrationMonitor
 }
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
@@ -125,6 +130,36 @@ export default [
       code: 'Data_SYNC_menu'
     }
   },
+  {
+    path: '/migrate/monitor/:id',
+    name: 'MigrationMonitor',
+    component: MigrationMonitor,
+    // component: Parent,
+    // children: [
+    //   {
+    //     path: '',
+    //     name: 'migrateList',
+    //     component: MigrationMonitor,
+    //     meta: {
+    //       title: 'page_title_run_monitor',
+    //       code: 'Data_SYNC_menu'
+    //     }
+    //   },
+    //   {
+    //     path: 'verifyDetails',
+    //     name: 'VerifyDetails',
+    //     component: () => import(/* webpackChunkName: "etl-list" */ '@/views/verification/VerifyDetails'),
+    //     meta: {
+    //       title: 'page_title_data_verification',
+    //       code: 'Data_verify_menu'
+    //     }
+    //   }
+    // ],
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'Data_SYNC_menu'
+    }
+  },
 
   {
     path: '/',
@@ -152,8 +187,7 @@ export default [
           {
             path: '',
             name: 'connectionsList',
-            component: () =>
-              import(/* webpackChunkName: "connection-list" */ '@tap/business/src/views/connections/List'),
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connection/List.tsx'),
             meta: {
               title: 'page_title_connections',
               code: 'datasource_menu'
@@ -161,7 +195,7 @@ export default [
           },
           {
             path: 'create',
-            name: 'connectionsCreate',
+            name: 'connectionCreate',
             component: ConnectionForm,
             meta: {
               title: 'page_title_connections_create',
@@ -213,7 +247,7 @@ export default [
           {
             path: '',
             name: 'migrateList',
-            component: () => import(/* webpackChunkName: "migrate-list" */ '@/views/task/migrate/List'),
+            component: () => import(/* webpackChunkName: "migrate-list" */ '@/views/task/MigrationList.tsx'),
             meta: {
               title: 'page_title_data_copy',
               code: 'Data_SYNC_menu'
@@ -252,7 +286,7 @@ export default [
           {
             path: '',
             name: 'dataflowList',
-            component: () => import(/* webpackChunkName: "etl-list" */ '@/views/task/etl/List'),
+            component: () => import(/* webpackChunkName: "etl-list" */ '@tap/business/src/views/task/etl/List'),
             meta: {
               title: 'page_title_data_develop',
               code: 'Data_SYNC_menu'
@@ -271,7 +305,8 @@ export default [
               {
                 path: '',
                 name: 'dataflowDetails',
-                component: () => import(/* webpackChunkName: "etl-details" */ '@/views/task/etl/Details'),
+                component: () =>
+                  import(/* webpackChunkName: "etl-details" */ '@tap/business/src/views/task/etl/Details'),
                 meta: {
                   title: 'page_title_run_monitor',
                   code: 'Data_SYNC_menu'
@@ -280,7 +315,8 @@ export default [
               {
                 path: 'statistics/:subId',
                 name: 'dataflowStatistics',
-                component: () => import(/* webpackChunkName: "etl-statistics" */ '@/views/task/etl/statistics/Index'),
+                component: () =>
+                  import(/* webpackChunkName: "etl-statistics" */ '@tap/business/src/views/task/etl/statistics/Index'),
                 meta: {
                   title: 'page_title_task_stat',
                   code: 'Data_SYNC_menu'
@@ -370,6 +406,16 @@ export default [
             meta: {
               title: 'page_title_data_verification_result',
               code: 'Data_verify'
+            }
+          },
+          {
+            path: ':id/verifyDetails',
+            name: 'VerifyDetails',
+            component: () => import(/* webpackChunkName: "etl-list" */ '@/views/verification/VerifyDetails'),
+            meta: {
+              title: 'page_title_data_verify_details',
+              code: 'Data_verify',
+              isNotAside: true
             }
           }
         ]

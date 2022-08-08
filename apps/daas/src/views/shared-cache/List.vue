@@ -153,12 +153,14 @@
 }
 </style>
 <script>
-import { TablePage, FilterBar, Drawer } from '@tap/component'
-import { toRegExp } from '@/utils/util'
-import { getSubTaskStatus } from '@/utils/util'
 import dayjs from 'dayjs'
 import { sharedCacheApi } from '@tap/api'
+import { FilterBar, Drawer } from '@tap/component'
+import { TablePage } from '@tap/business'
+
+import { getSubTaskStatus, toRegExp } from '@/utils/util'
 import TaskButtons from '@/components/TaskButtons'
+
 import CodeView from './CodeView.vue'
 
 export default {

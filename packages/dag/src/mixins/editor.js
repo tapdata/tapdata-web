@@ -730,7 +730,11 @@ export default {
         return this.saveAsNewDataflow()
       }
 
+      this.toggleConsole(true)
+      this.$refs.console?.autoLoad() // 信息输出自动加载
+
       const data = this.getDataflowDataToSave()
+      let isOk = false
 
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
@@ -738,12 +742,13 @@ export default {
         !needStart && this.$message.success(this.t('message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
-        return true
+        isOk = true
       } catch (e) {
         this.handleError(e)
-        this.isSaving = false
-        return false
       }
+      this.isSaving = false
+      if (!needStart) this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
+      return isOk
     },
 
     handleUndo() {
@@ -1531,8 +1536,6 @@ export default {
     async handleStart() {
       const flag = await this.save(true)
       if (flag) {
-        this.startAt = Date.now()
-        console.log('handleStart', this.startAt) // eslint-disable-line
         this.dataflow.disabledData.edit = true
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true

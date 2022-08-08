@@ -68,7 +68,7 @@
                   <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
                   <div class="db-item-txt text-truncate">{{ db.name }}</div>
                 </div>
-                <EmptyItem v-if="!dbList.length"></EmptyItem>
+                <VEmpty v-if="!dbList.length" />
                 <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
                   {{ t('loading') }}<span class="dotting"></span>
                 </div>
@@ -143,7 +143,7 @@
                 >
                   <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
                 </div>
-                <EmptyItem v-if="!tbList.length"></EmptyItem>
+                <VEmpty v-if="!tbList.length" />
                 <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
                   {{ t('loading') }}<span class="dotting"></span>
                 </div>
@@ -243,8 +243,8 @@ import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
-import { VIcon } from '@tap/component'
-import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
+import { ConnectionTypeSelector } from '@tap/business'
+import { VIcon, VEmpty } from '@tap/component'
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
 import { debounce } from 'lodash'
@@ -252,7 +252,6 @@ import { CancelToken, connectionsApi } from '@tap/api'
 import { Select } from 'element-ui'
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
-import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
@@ -266,7 +265,7 @@ export default {
   components: {
     NodeIcon,
     CreateTable,
-    EmptyItem,
+    VEmpty,
     OverflowTooltip,
     BaseNode,
     VIcon,
@@ -397,7 +396,7 @@ export default {
         pdkHash
       }
       this.$router.push({
-        name: 'connectionsCreate',
+        name: 'connectionCreate',
         query
       })
     },

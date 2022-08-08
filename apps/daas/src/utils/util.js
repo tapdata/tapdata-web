@@ -302,7 +302,8 @@ export function getTaskBtnDisabled(row, or) {
     stop: false,
     edit: false,
     reset: false,
-    delete: false
+    delete: false,
+    monitor: false
   }
   let statusResult = []
   if (row.statusResult) {
@@ -318,17 +319,20 @@ export function getTaskBtnDisabled(row, or) {
     // 编辑禁用：运行中
     // 重置禁用：运行中
     // 删除禁用：运行中
+    // 运行监控禁用：编辑中、待启动、启动中
     result.start = filterArr.every(t => ['running'].includes(t.status))
     result.stop = filterArr.every(t => ['not_running', 'error'].includes(t.status))
     result.edit = filterArr.every(t => ['running'].includes(t.status))
     result.reset = filterArr.every(t => ['running'].includes(t.status))
     result.delete = filterArr.every(t => ['running'].includes(t.status))
+    result.monitor = filterArr.every(t => ['edit', 'ready'].includes(t.status))
   } else {
     // 启动可用：待启动、已完成、错误、调度失败、已停止
     // 停止可用：运行中、停止中
     // 编辑可用：编辑中、待启动、已完成、错误、调度失败、已停止 或者 未运行状态
     // 重置可用：已完成、错误、调度失败、已停止
     // 删除可用：编辑中、待启动、已完成、错误、调度失败、已停止
+    // 运行监控可用：运行中、已完成、错误、停止中、强制停止中、已停止
     result.start = !filterArr.every(t => ['ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
     result.stop = !filterArr.every(t => ['running', 'stopping'].includes(t.status))
     result.edit = !filterArr.every(t =>
@@ -337,6 +341,9 @@ export function getTaskBtnDisabled(row, or) {
     result.reset = !filterArr.every(t => ['complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
     result.delete = !filterArr.every(t =>
       ['edit', 'ready', 'complete', 'error', 'stop', 'schedule_failed'].includes(t.status)
+    )
+    result.monitor = !filterArr.every(t =>
+      ['running', 'complete', 'error', 'stopping', 'force_stopping', 'stop'].includes(t.status)
     )
   }
   if (or) {

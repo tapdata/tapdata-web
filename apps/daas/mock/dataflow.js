@@ -491,5 +491,31 @@ module.exports = {
     },
     code: 'ok',
     msg: 'ok'
+  },
+  '/api/CustomerJobLogs': {
+    reqId: 'f45ba408-0249-432c-94d5-f587e0115d21',
+    ts: 1658138223581,
+    code: 'ok',
+    data: {
+      total: 100,
+      'items|1-20': [
+        {
+          id: '@id',
+          'level|1': ['INFO', 'WARN', 'ERROR', 'FATAL'],
+          timestamp: 1658112574487,
+          date: '@date',
+          dataFlowId: '@cuid',
+          params: {
+            dataFlowName: '@name',
+            dataFlowId: '62b17f9c6f8b70210f28683f',
+            dataFlowType: '@name',
+            errorCode: 'TM_NO_AVAILABLE_AGENT',
+            errorMessage: 'TM_NO_AVAILABLE_AGENT',
+            level: '致命错误'
+          },
+          template: '{dataFlowType}{dataFlowName}没有可用的Agent'
+        }
+      ]
+    }
   }
 }

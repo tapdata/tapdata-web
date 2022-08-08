@@ -89,7 +89,7 @@
                   />
                 </div>
               </div>
-              <EmptyItem v-if="!dbList.length"></EmptyItem>
+              <VEmpty v-if="!dbList.length" />
               <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
                 {{ t('loading') }}<span class="dotting"></span>
               </div>
@@ -183,15 +183,14 @@ import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
-import { VIcon } from '@tap/component'
-import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
+import { VIcon, VEmpty } from '@tap/component'
+import { ConnectionTypeSelector } from '@tap/business'
 import resize from 'web-core/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { Select } from 'element-ui'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
-import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import NodeIcon from '../NodeIcon'
 import Locale from '../../mixins/locale'
@@ -202,7 +201,7 @@ export default {
   mixins: [Locale],
   components: {
     NodeIcon,
-    EmptyItem,
+    VEmpty,
     OverflowTooltip,
     BaseNode,
     VIcon,
@@ -306,7 +305,7 @@ export default {
       this.databaseType = item.type
       const { pdkHash } = item
       this.$router.push({
-        name: 'connectionsCreate',
+        name: 'connectionCreate',
         query: { pdkHash }
       })
     },

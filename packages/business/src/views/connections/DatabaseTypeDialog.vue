@@ -18,10 +18,16 @@
 </template>
 
 <script>
-import { getImgByType } from './util'
 import { databaseTypesApi } from '@tap/api'
+
+import { ConnectionTypeSelector } from '../../components'
+import { getImgByType } from './util'
+
 export default {
   name: 'DatasourceDialog',
+  components: {
+    ConnectionTypeSelector
+  },
   props: {
     dialogVisible: {
       required: true,
@@ -38,17 +44,13 @@ export default {
     return {
       database: [],
       otherType: [],
-      timer: null,
       loading: true
     }
   },
   watch: {
     dialogVisible(v) {
-      this.timer && clearInterval(this.timer)
       if (v) {
-        this.timer = setInterval(() => {
-          this.getDatabaseType()
-        }, 3000)
+        this.getDatabaseType()
       }
     }
   },
@@ -63,7 +65,6 @@ export default {
     },
     databaseType(item) {
       this.$emit('databaseType', item)
-      this.$store.commit('createConnection', { item })
     },
     getDatabaseType() {
       databaseTypesApi

@@ -2,6 +2,7 @@
 
 import Vue from 'vue'
 import axios from 'axios'
+import Qs from 'qs'
 import { Message } from 'element-ui'
 import { errorConfirmFnc } from '@/util'
 
@@ -63,6 +64,12 @@ const errorCallback = error => {
   return Promise.reject(error)
 }
 const requestInterceptor = config => {
+  config.paramsSerializer = params => {
+    return Qs.stringify(params, {
+      arrayFormat: 'brackets',
+      encoder: str => window.encodeURIComponent(str)
+    })
+  }
   // 本地开发使用header中加__token的方式绕过网关登录
   const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
   if (ACCESS_TOKEN) {
@@ -73,7 +80,6 @@ const requestInterceptor = config => {
   // headers里面注入用户token，并开启鉴权
   let user = window.__USER_INFO__
   if (user) {
-    config.headers['X-Token'] = user.token
     if (process.env.NODE_ENV === 'development') {
       config.headers['user_id'] = user.id
     }
@@ -99,6 +105,10 @@ const responseInterceptor = response => {
   return new Promise((resolve, reject) => {
     // 从请求池清除掉错误请求
     removePending(response.config)
+
+    if (response?.config?.responseType === 'blob') {
+      return resolve(response.data)
+    }
 
     let data = response?.data
     let code = data?.code

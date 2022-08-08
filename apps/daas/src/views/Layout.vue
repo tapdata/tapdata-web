@@ -217,6 +217,7 @@
 
       overflow-y: auto;
       user-select: none;
+      border-right: none;
       .menu-icon {
         font-size: 12px;
       }
@@ -339,11 +340,6 @@
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
     line-height: 17px;
-  }
-}
-.no-triangle {
-  .popper__arrow {
-    display: none;
   }
 }
 </style>
