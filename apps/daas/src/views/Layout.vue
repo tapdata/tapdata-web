@@ -415,7 +415,8 @@ let menuSetting = [
     icon: 'system',
     code: 'system_management',
     children: [
-      { name: 'dataDiscovery', code: 'datasource_menu' }
+      { name: 'dataDiscovery', code: 'datasource_menu' },
+      { name: 'catalogue', code: 'datasource_menu' }
       // { name: 'users', code: 'user_management_menu', parent: 'migrate' },
       // { name: 'roleList', code: 'role_management_menu', parent: 'migrate' }
     ]

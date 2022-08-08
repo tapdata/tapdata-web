@@ -231,6 +231,15 @@ export default [
               title: '数据对象',
               code: 'datasource_menu'
             }
+          },
+          {
+            path: '/catalogue',
+            name: 'catalogue',
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/Catalogue.tsx'),
+            meta: {
+              title: '数据目录',
+              code: ''
+            }
           }
         ]
       },

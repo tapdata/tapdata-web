@@ -141,8 +141,8 @@
 </template>
 
 <script>
-import { TablePage, FilterBar, Drawer } from '@tap/component'
-import TableList from '@/components/TableList'
+import { FilterBar, Drawer, TableList } from '@tap/component'
+import { TablePage } from '@tap/business'
 import { logcollectorApi } from '@tap/api'
 
 let timeout = null
