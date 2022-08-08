@@ -275,33 +275,22 @@ export default [
           {
             path: 'details/:id',
             name: 'dataflowDetailsContainer',
-            component: Parent,
-            redirect: 'details/:id/',
+            component: () =>
+              import(/* webpackChunkName: "etl-statistics" */ '@tap/business/src/views/task/etl/statistics/Index'),
             meta: {
-              title: 'page_title_run_monitor'
-            },
-            children: [
-              {
-                path: '',
-                name: 'dataflowDetails',
-                component: () =>
-                  import(/* webpackChunkName: "etl-details" */ '@tap/business/src/views/task/etl/Details'),
-                meta: {
-                  title: 'page_title_run_monitor',
-                  code: 'Data_SYNC_menu'
-                }
-              },
-              {
-                path: 'statistics/:subId',
-                name: 'dataflowStatistics',
-                component: () =>
-                  import(/* webpackChunkName: "etl-statistics" */ '@tap/business/src/views/task/etl/statistics/Index'),
-                meta: {
-                  title: 'page_title_task_stat',
-                  code: 'Data_SYNC_menu'
-                }
-              }
-            ]
+              title: 'page_title_task_details',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
+            path: 'statistics/:subId',
+            name: 'dataflowStatistics',
+            component: () =>
+              import(/* webpackChunkName: "etl-statistics" */ '@tap/business/src/views/task/etl/statistics/Index'),
+            meta: {
+              title: 'page_title_task_stat',
+              code: 'Data_SYNC_menu'
+            }
           }
         ]
       },
