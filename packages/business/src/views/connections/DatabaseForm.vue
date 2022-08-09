@@ -75,12 +75,7 @@
       </main>
       <GitBook :value="doc"></GitBook>
     </div>
-    <Test
-      ref="test"
-      :dialogTestVisible.sync="dialogTestVisible"
-      :formData="model"
-      @returnTestData="returnTestData"
-    ></Test>
+    <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <DatabaseTypeDialog
       :dialogVisible.sync="dialogDatabaseTypeVisible"
       @databaseType="handleDatabaseType"

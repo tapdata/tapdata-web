@@ -133,12 +133,7 @@
       @dialogVisible="handleDialogDatabaseTypeVisible"
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
-    <Test
-      ref="test"
-      :dialogTestVisible.sync="dialogTestVisible"
-      :formData="testData"
-      @returnTestData="returnTestData"
-    ></Test>
+    <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <ElDialog title="提示" width="40%" :visible.sync="connectionTaskDialog">
       <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
       <div class="color-primary mt-2">任务总数: {{ connectionTaskListTotal }}</div>

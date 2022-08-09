@@ -53,12 +53,11 @@
 </template>
 
 <script>
-import { VIcon } from '@tap/component'
-import { VirtualTransfer } from '@tap/component'
-import { MqTransfer } from '@tap/component'
+import { VIcon, VirtualTransfer, MqTransfer } from '@tap/component'
+import { ConnectionTest } from '@tap/business'
 
 export default {
-  components: { VIcon, MqTransfer, VirtualTransfer },
+  components: { VIcon, MqTransfer, VirtualTransfer, ConnectionTest },
 
   props: ['transferData', 'isTwoWay', 'mqTransferFlag', 'dataSourceModel'],
 

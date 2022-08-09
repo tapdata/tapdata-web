@@ -62,14 +62,15 @@
 
 <script>
 import TableList from '@/components/TableList'
-import { SchemaProgress, StatusTag } from '@tap/business'
+import { SchemaProgress, StatusTag, ConnectionTest } from '@tap/business'
+
 import { VIcon } from '@tap/component'
 import Preview from '@/views/connection/Preview'
 import { deepCopy } from '@/util'
 
 export default {
   name: 'Connection',
-  components: { TableList, StatusTag, VIcon, SchemaProgress, Preview },
+  components: { TableList, StatusTag, VIcon, SchemaProgress, Preview, ConnectionTest },
   props: {
     ids: {
       type: Array,

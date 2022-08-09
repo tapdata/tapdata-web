@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     class="connection-test-dialog"
-    :visible="dialogTestVisible"
+    :visible="visible"
     width="770px"
     :show-close="false"
     append-to-body
@@ -87,7 +87,7 @@ export default {
   name: 'Test',
   components: { VIcon },
   props: {
-    dialogTestVisible: {
+    visible: {
       required: true,
       value: Boolean
     },
@@ -151,7 +151,7 @@ export default {
       return row.status === 'waiting' ? { background: '#fff' } : ''
     },
     handleClose() {
-      this.$emit('update:dialogTestVisible', false)
+      this.$emit('update:visible', false)
       this.clearInterval()
     },
     handleWS() {

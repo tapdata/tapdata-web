@@ -651,7 +651,6 @@ export default {
         queueData: []
       },
       taskType: 'cluster-clone',
-      dialogTestVisible: false,
       status: '',
       mdHtml: '',
       platformInfoZone: '',

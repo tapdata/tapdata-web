@@ -83,11 +83,12 @@ import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 
 import { StatusTag } from '../../components'
+import ConnectionTest from '../connections/Test.vue'
 import { getConnectionIcon } from './util'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, Drawer, StatusTag },
+  components: { VIcon, Drawer, StatusTag, ConnectionTest },
   inject: ['checkAgent'],
   props: {
     hideOperation: {

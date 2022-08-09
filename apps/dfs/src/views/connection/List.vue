@@ -170,7 +170,7 @@
 import i18n from '@/i18n'
 
 import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
-import { SchemaProgress } from '@tap/business'
+import { SchemaProgress, ConnectionTest } from '@tap/business'
 import Preview from './Preview.vue'
 import { VIcon, FilterBar } from '@tap/component'
 import { StatusTag } from '@tap/business'
@@ -179,7 +179,7 @@ import timeFunction from '@/mixins/timeFunction'
 
 let timer = null
 export default {
-  components: { StatusTag, Preview, VIcon, SchemaProgress, FilterBar },
+  components: { StatusTag, Preview, VIcon, SchemaProgress, FilterBar, ConnectionTest },
   mixins: [timeFunction],
   data() {
     return {
