@@ -841,7 +841,7 @@ export default {
   operation_log_migration_start_tip: 'Task started [@{parameter1}]',
   operation_log_migration_update: 'Edit task',
   operation_log_migration_update_tip: 'Edited the configuration information of task [@{parameter1}]',
-  operation_log_migration_copy: 'Copy connection',
+  operation_log_migration_copy: 'Copy task',
   operation_log_migration_copy_tip: 'The task [${parameter2}] was copied as [@{parameter1}]',
   operation_log_migration_reset: 'Reset task',
   operation_log_migration_reset_tip: 'The task was reset [@{parameter1}]',

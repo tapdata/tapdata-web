@@ -433,16 +433,7 @@ export const FieldRenameProcessor = defineComponent({
                         <el-checkbox label={item}>
                           <br />
                         </el-checkbox>
-                        <div class="task-form__img" onClick={() => this.updateView(index)}>
-                          <img src={fieldMapping_table} alt="" />
-                        </div>
                         <div class="task-form-text-box" onClick={() => this.updateView(index)}>
-                          <OverflowTooltip
-                            class="w-100 text-truncate source"
-                            text={item.sourceObjectName}
-                            placement="right"
-                            open-delay={400}
-                          />
                           <OverflowTooltip
                             class="w-100 text-truncate target"
                             text={item.sinkObjectName}
@@ -527,6 +518,7 @@ export const FieldRenameProcessor = defineComponent({
               onSelection-change={this.doSelectionField}
             >
               <ElTableColumn type="selection" width="55"></ElTableColumn>
+              <ElTableColumn type="index" width="55" label="序号"></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
                 label="字段名"

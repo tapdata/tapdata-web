@@ -1,15 +1,10 @@
 import Parent from './Parent'
-const MigrateDetails = () =>
-  import(/* webpackChunkName: "task-details" */ '@tap/business/src/views/task/migrate/details/Index.vue')
-const ConnectionForm = () =>
-  import(/* webpackChunkName: "connection-form" */ '@tap/business/src/views/connections/DatabaseForm')
 const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
 const VerificationHistory = () => import(/* webpackChunkName: "verification-history" */ '@/views/verification/History')
 const VerificationResult = () => import(/* webpackChunkName: "verification-result" */ '@/views/verification/Result')
 const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
 const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
 const ApiPublishForm = () => import(/* webpackChunkName: "api-publish-form" */ '@/views/api-page/api-publish/Form')
-// const RoleDetails = () => import(/* webpackChunkName: "role-details" */ '@/views/role/Role')
 const DagEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
   return Editor
@@ -26,6 +21,35 @@ const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
 }
+const ConnectionForm = async () => {
+  const { ConnectionForm } = await import('@tap/business')
+  return ConnectionForm
+}
+const EtlList = async () => {
+  const { EtlList } = await import('@tap/business')
+  return EtlList
+}
+const EtlDetails = async () => {
+  const { EtlDetails } = await import('@tap/business')
+  return EtlDetails
+}
+const EtlStatistics = async () => {
+  const { EtlStatistics } = await import('@tap/business')
+  return EtlStatistics
+}
+const ConnectionList = async () => {
+  const { ConnectionList } = await import('@tap/business')
+  return ConnectionList
+}
+const MigrateList = async () => {
+  const { MigrateList } = await import('@tap/business')
+  return MigrateList
+}
+const MigrateDetails = async () => {
+  const { MigrateDetails } = await import('@tap/business')
+  return MigrateDetails
+}
+
 export default [
   {
     path: '/login',
@@ -187,7 +211,7 @@ export default [
           {
             path: '',
             name: 'connectionsList',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connection/List.tsx'),
+            component: ConnectionList,
             meta: {
               title: 'page_title_connections',
               code: 'datasource_menu'
@@ -226,7 +250,7 @@ export default [
           {
             path: '',
             name: 'migrateList',
-            component: () => import(/* webpackChunkName: "migrate-list" */ '@/views/task/MigrationList.tsx'),
+            component: MigrateList,
             meta: {
               title: 'page_title_data_copy',
               code: 'Data_SYNC_menu'
@@ -265,7 +289,7 @@ export default [
           {
             path: '',
             name: 'dataflowList',
-            component: () => import(/* webpackChunkName: "etl-list" */ '@tap/business/src/views/task/etl/List'),
+            component: EtlList,
             meta: {
               title: 'page_title_data_develop',
               code: 'Data_SYNC_menu'
@@ -275,22 +299,31 @@ export default [
           {
             path: 'details/:id',
             name: 'dataflowDetailsContainer',
-            component: () =>
-              import(/* webpackChunkName: "etl-statistics" */ '@tap/business/src/views/task/etl/statistics/Index'),
+            component: Parent,
+            redirect: 'details/:id/',
             meta: {
-              title: 'page_title_task_details',
-              code: 'Data_SYNC_menu'
-            }
-          },
-          {
-            path: 'statistics/:id',
-            name: 'dataflowStatistics',
-            component: () =>
-              import(/* webpackChunkName: "etl-statistics" */ '@tap/business/src/views/task/etl/statistics/Index'),
-            meta: {
-              title: 'page_title_task_stat',
-              code: 'Data_SYNC_menu'
-            }
+              title: 'page_title_run_monitor'
+            },
+            children: [
+              {
+                path: '',
+                name: 'dataflowDetails',
+                component: EtlDetails,
+                meta: {
+                  title: 'page_title_run_monitor',
+                  code: 'Data_SYNC_menu'
+                }
+              },
+              {
+                path: 'statistics/:subId',
+                name: 'dataflowStatistics',
+                component: EtlStatistics,
+                meta: {
+                  title: 'page_title_task_stat',
+                  code: 'Data_SYNC_menu'
+                }
+              }
+            ]
           }
         ]
       },
