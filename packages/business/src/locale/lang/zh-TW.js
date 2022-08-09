@@ -16,7 +16,7 @@ export default {
   status_wait_run: '啟動中',
   status_scheduled: '啟動中',
   status_scheduling: '啟動中',
-  status_complete: '完成',
+  status_complete: '已完成',
   status_stop: '已停止',
   status_stopping: '停止中',
   status_finished: '已完成',

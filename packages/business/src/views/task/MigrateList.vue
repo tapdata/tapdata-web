@@ -220,9 +220,7 @@
                 {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
               </div>
               <div class="status">
-                <span :class="['status-' + previewData.status, 'status-block']">
-                  {{ $t('task_preview_status_' + previewData.status) }}
-                </span>
+                <TaskStatus :task="previewData" />
               </div>
             </div>
           </div>
@@ -725,9 +723,9 @@ export default {
       this.previewLoading = true
       taskApi
         .findTaskDetailById([id])
-        .then(data => {
-          let previewData = []
-          this.previewData = data || {}
+        .then((data = {}) => {
+          let previewList = []
+          this.previewData = makeStatusAndDisabled(data)
           for (let item in data) {
             if (['type'].includes(item)) {
               data[item] = this.syncType[data[item]]
@@ -751,13 +749,23 @@ export default {
             }
 
             if (
-              !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
+              ![
+                'customId',
+                'lastUpdAt',
+                'userId',
+                'lastUpdBy',
+                'lastUpdBy',
+                'status',
+                'desc',
+                'name',
+                'btnDisabled'
+              ].includes(item)
             ) {
-              previewData.push({ label: item, value: data[item] || '-' })
+              previewList.push({ label: item, value: data[item] || '-' })
             }
           }
 
-          this.previewList = previewData
+          this.previewList = previewList
         })
         .finally(() => {
           this.previewLoading = false

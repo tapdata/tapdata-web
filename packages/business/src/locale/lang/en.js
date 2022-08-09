@@ -16,7 +16,7 @@ export default {
   status_wait_run: 'Wait run',
   status_scheduled: 'Scheduled',
   status_scheduling: 'Scheduling',
-  status_complete: 'Complete',
+  status_complete: 'Completed',
   status_stop: 'Stop',
   status_stopping: 'Stopping',
   status_finished: 'Finished',

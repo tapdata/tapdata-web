@@ -16,7 +16,7 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
         <el-button
@@ -86,7 +86,7 @@
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
-              @click.stop="handlePreview(row)"
+              @click.stop="handlePreview(row.id)"
               >{{ row.name }}</ElLink
             >
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
@@ -104,9 +104,7 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('task_list_status')" min-width="110">
         <template #default="{ row }">
-          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
-            {{ $t('task_preview_status_' + row.status) }}
-          </span>
+          <TaskStatus :task="row" />
         </template>
       </el-table-column>
       <el-table-column prop="createTime" :label="$t('column_create_time')" min-width="160" sortable="custom">
@@ -120,17 +118,17 @@
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="row.disabledData.start"
+              :disabled="row.btnDisabled.start"
               @click="start([row.id])"
             >
               {{ $t('task_list_run') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
             <ElLink
-              v-if="isShowForceStop(row.statuses)"
+              v-if="row.status === 'stopping'"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+              :disabled="row.btnDisabled.forceStop"
               @click="forceStop([row.id])"
             >
               {{ $t('task_list_force_stop') }}
@@ -139,7 +137,7 @@
               v-else
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="row.disabledData.stop"
+              :disabled="row.btnDisabled.stop"
               @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
@@ -147,7 +145,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.disabledData.edit"
+              :disabled="row.btnDisabled.edit"
               @click="handleEditor(row.id)"
             >
               {{ $t('button_edit') }}
@@ -173,11 +171,11 @@
                 <el-dropdown-item
                   v-readonlybtn="'SYNC_job_operation'"
                   command="initialize"
-                  :disabled="row.disabledData.reset"
+                  :disabled="row.btnDisabled.reset"
                 >
                   {{ $t('dataFlow.button.reset') }}
                 </el-dropdown-item>
-                <el-dropdown-item v-readonlybtn="'SYNC_job_delete'" command="del" :disabled="row.disabledData.delete">
+                <el-dropdown-item v-readonlybtn="'SYNC_job_delete'" command="del" :disabled="row.btnDisabled.delete">
                   {{ $t('button.delete') }}
                 </el-dropdown-item>
                 <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
@@ -192,43 +190,6 @@
         </template>
       </el-table-column>
     </TablePage>
-    <el-dialog
-      custom-class="jobSeceduleDialog"
-      width="50%"
-      :title="$t('dialog.jobSchedule.jobSecheduleSetting')"
-      :close-on-click-modal="false"
-      :visible.sync="taskSettingsDialog"
-    >
-      <el-form :model="formSchedule" label-width="100px">
-        <el-form-item :label="$t('dialog.jobSchedule.job')">
-          <div>{{ formSchedule.name }}</div>
-        </el-form-item>
-        <el-form-item :label="$t('dialog.jobSchedule.sync')">
-          <el-switch v-model="formSchedule.isSchedule"> </el-switch>
-        </el-form-item>
-        <el-form-item v-if="formSchedule.isSchedule" :label="$t('dialog.jobSchedule.expression')">
-          <el-input v-model="formSchedule.cronExpression" :placeholder="$t('dialog.jobSchedule.expressionPlaceholder')">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div v-if="formSchedule.isSchedule" class="text">
-        <p>{{ $t('dialog.jobSchedule.explanation') }}</p>
-        <p>{{ $t('dialog.jobSchedule.grammar') }}</p>
-        <ul>
-          <li v-for="item in timeTextArr" :key="item">
-            <p>{{ $t('dialog.jobSchedule.' + item) }}</p>
-            <span>*</span>
-          </li>
-        </ul>
-        <p>{{ $t('dialog.jobSchedule.example') }}</p>
-        <p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
-        <p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
-      </span>
-    </el-dialog>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <Drawer class="task-drawer" :visible.sync="isShowDetails">
       <div v-loading="previewLoading" class="task-drawer-wrap">
@@ -236,7 +197,6 @@
           <div class="tab pb-3">
             <div class="img-box">
               <VIcon class="icon">text</VIcon>
-              <!-- <img src="../../../assets/images/migrate/headImage.png" /> -->
             </div>
             <div class="content" v-if="previewData">
               <div class="name fs-6">
@@ -247,18 +207,8 @@
               <div class="fs-8 mt-2 mb-2 desc">
                 {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
               </div>
-              <div class="status bg-main rounded-1 py-3 px-2">
-                <span class="mr-2" v-for="item in previewData.statusResult" :key="item.status">
-                  <span class="din-font fs-6 font-color-light">{{ item.count }}</span>
-                  <span class="pl-1 fs-8 font-color-slight">{{ item.text }} </span>
-                </span>
-                <div class="proportion">
-                  <span
-                    v-for="item in proportionData"
-                    :key="item.label"
-                    :style="{ background: item.color, width: item.value + '%' }"
-                  ></span>
-                </div>
+              <div class="status">
+                <TaskStatus :task="previewData" />
               </div>
             </div>
           </div>
@@ -294,19 +244,20 @@ import { taskApi } from '@tap/api'
 import { FilterBar, Drawer } from '@tap/component'
 import { toRegExp } from '@tap/shared'
 
-import SkipError from '../SkipError'
-import Upload from '../../../components/UploadDialog.vue'
-import StatusItem from '../StatusItem'
-import { TablePage } from '../../../components'
-import { ETL_STATUS_MAP } from '../../../shared/const'
-import { getSubTaskStatus, getTaskBtnDisabled } from '../../../shared'
+import SkipError from './SkipError'
+import Upload from '../../components/UploadDialog.vue'
+import { TablePage, TaskStatus } from '../../components'
+import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
+import locale from '../../mixins/locale'
 
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, SkipError, StatusItem, Drawer, Upload },
+  components: { FilterBar, TablePage, SkipError, Drawer, Upload, TaskStatus },
+  mixins: [locale],
   data() {
     return {
+      STATUS_MAP,
       proportionData: [],
       isShowDetails: false,
       previewLoading: false,
@@ -339,8 +290,6 @@ export default {
 
       multipleSelection: [],
 
-      taskSettingsDialog: false, //任务调度设置弹窗开关
-
       syncType: {
         initial_sync: this.$t('task_info_initial_sync'),
         cdc: this.$t('task_info_initial_cdc'),
@@ -369,13 +318,15 @@ export default {
     table() {
       return this.$refs.table
     },
+
     statusOptions() {
-      let options = [{ label: this.$t('task_list_status_all'), value: '' }]
-      let map = ETL_STATUS_MAP
-      for (const key in map) {
-        const item = map[key]
-        options.push({ label: item.text, value: key })
-      }
+      const options = Object.entries(this.STATUS_MAP).map(([status, item]) => {
+        return {
+          label: this.t(item.i18n),
+          value: item.in ? item.in.join(',') : status
+        }
+      })
+      options.unshift({ label: this.$t('task_list_status_all'), value: '' })
       return options
     }
   },
@@ -462,61 +413,11 @@ export default {
           let list = data?.items || []
           return {
             total: data.total,
-            data: list.map(item => {
-              return this.cookRecord(item)
-            })
+            data: list.map(makeStatusAndDisabled)
           }
         })
     },
 
-    cookRecord(item) {
-      let getLag = lag => {
-        let r = ''
-        if (lag) {
-          let s = parseInt(lag),
-            m = 0,
-            h = 0,
-            d = 0
-          if (s > 60) {
-            m = parseInt(s / 60)
-            s = parseInt(s % 60)
-            if (m > 60) {
-              h = parseInt(m / 60)
-              m = parseInt(m % 60)
-              if (h > 24) {
-                d = parseInt(h / 24)
-                h = parseInt(h % 24)
-              }
-            }
-          }
-          r = parseInt(s) + this.$t('timeToLive.s')
-          if (m > 0) {
-            r = parseInt(m) + this.$t('timeToLive.m') + r
-          }
-          if (h > 0) {
-            r = parseInt(h) + this.$t('timeToLive.h') + r
-          }
-          if (d > 0) {
-            r = parseInt(d) + this.$t('timeToLive.d') + r
-          }
-        }
-        return r
-      }
-      item['lag'] = '-'
-      if (item.stats) {
-        //企业版增加增量lag
-        if (item.stats.replicationLag && item.stats.replicationLag !== 0) {
-          item['lag'] = getLag(item.stats.replicationLag)
-        }
-      }
-      let statuses = item.statuses
-      item.disabledData = getTaskBtnDisabled(
-        item,
-        this.$disabledByPermission('SYNC_job_operation_all_data', item.user_id)
-      )
-      item.statusResult = getSubTaskStatus(statuses)
-      return item
-    },
     handleSelectTag() {
       let tagList = {}
       this.multipleSelection.forEach(row => {
@@ -680,20 +581,6 @@ export default {
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
-      let list = this.table.list
-      for (let i = 0; i < list.length; i++) {
-        let node = list[i]
-        if (ids.includes(node.id)) {
-          if (node.setting && !node.setting.sync_type.includes('cdc')) {
-            message = this.$t('message.stopInitial_syncMessage')
-          }
-          if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-            const h = this.$createElement
-            let arr = this.$t('message.stopAggregation_message').split('XXX')
-            message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-          }
-        }
-      }
       this.$confirm(message, '', {
         type: 'warning',
         showClose: false
@@ -824,29 +711,6 @@ export default {
         this.$message.success(msg)
       }
     },
-    // 任务调度设置
-    handleTaskscheduling(id, data) {
-      this.taskSettingsDialog = true
-      this.formSchedule.id = id
-      this.formSchedule.name = data.name
-      this.formSchedule.isSchedule = data.isSchedule
-      this.formSchedule.cronExpression = data.cronExpression
-      this.formSchedule.taskData = data
-    },
-    // 任务调度设置保存
-    saveTaskSetting() {
-      let data = this.formSchedule.taskData.setting || {}
-      data.isSchedule = this.formSchedule.isSchedule
-      data.cronExpression = this.formSchedule.cronExpression
-      taskApi
-        .patchId(this.formSchedule.id, { setting: data })
-        .then(() => {
-          this.$message.success(this.$t('message_save_ok'))
-        })
-        .finally(() => {
-          this.taskSettingsDialog = false
-        })
-    },
     handleGoFunction() {
       this.$router.push({
         name: 'function'
@@ -863,41 +727,97 @@ export default {
     isShowForceStop(data) {
       return data?.length && data.every(t => ['stopping'].includes(t.status))
     },
-    // 打开预览
-    handlePreview(data) {
-      let previewList = [{ label: 'subtasks', value: data.statuses.length }]
-      let statusResult = data.statusResult || []
-      let colorMap = {
-        error: '#F64E3E',
-        running: '#2CD36F',
-        not_running: '#FFBF00',
-        stop: '#FF7D00',
-        edit: '#2C65FF'
-      }
-      let total = statusResult.reduce((prev, cur) => {
-        return cur.count + prev
-      }, 0)
-      let proportionData = statusResult.map(item => {
-        return {
-          label: item.status,
-          key: item.count,
-          value: (item.count / total) * 100,
-          color: colorMap[item.status]
-        }
-      })
-      this.proportionData = proportionData
-
+    handlePreview(id) {
       this.isShowDetails = true
-      this.previewData = data
-      for (let item in data) {
-        if (['type', 'createTime'].includes(item)) {
-          if (['createTime'].includes(item)) {
-            data[item] = this.formatTime(data[item])
+      this.getPreviewData(id)
+    },
+    async getPreviewData(id) {
+      this.previewLoading = true
+      taskApi
+        .findTaskDetailById([id])
+        .then((data = {}) => {
+          let previewList = []
+          this.previewData = makeStatusAndDisabled(data)
+          for (let item in data) {
+            if (['type'].includes(item)) {
+              data[item] = this.syncType[data[item]]
+            }
+
+            if (['cdcDelayTime', 'taskLastHour'].includes(item)) {
+              data[item] = this.handleTimeConvert(data[item])
+            }
+            if (
+              [
+                'createAt',
+                'startTime',
+                'initStartTime',
+                'cdcStartTime',
+                'initStartTime',
+                'taskFinishTime',
+                'eventTime'
+              ].includes(item)
+            ) {
+              data[item] = this.formatTime(data[item])
+            }
+
+            if (
+              ![
+                'customId',
+                'lastUpdAt',
+                'userId',
+                'lastUpdBy',
+                'lastUpdBy',
+                'status',
+                'desc',
+                'name',
+                'btnDisabled'
+              ].includes(item)
+            ) {
+              previewList.push({ label: item, value: data[item] || '-' })
+            }
           }
-          previewList.push({ label: item, value: data[item] || '-' })
+
+          this.previewList = previewList
+        })
+        .finally(() => {
+          this.previewLoading = false
+        })
+    },
+    // 毫秒转时间
+    handleTimeConvert(time) {
+      let r = ''
+      if (time) {
+        let s = time,
+          m = 0,
+          h = 0,
+          d = 0
+        if (s > 60) {
+          m = parseInt(s / 60)
+          s = parseInt(s % 60)
+          if (m > 60) {
+            h = parseInt(m / 60)
+            m = parseInt(m % 60)
+            if (h > 24) {
+              d = parseInt(h / 24)
+              h = parseInt(h % 24)
+            }
+          }
+        }
+        if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
+          r = 1 + this.$t('task_info_m')
+        }
+        // r = parseInt(s) + this.$t('timeToLive.s')
+        if (m > 0) {
+          r = parseInt(m) + this.$t('task_info_m')
+        }
+        if (h > 0) {
+          r = parseInt(h) + this.$t('task_info_h') + r
+        }
+        if (d > 0) {
+          r = parseInt(d) + this.$t('task_info_d') + r
         }
       }
-      this.previewList = previewList
+      return r
     },
 
     getFilterItems() {
