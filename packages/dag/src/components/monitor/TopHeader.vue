@@ -14,7 +14,7 @@
 
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElTooltip transition="tooltip-fade-in" content="校验">
+      <ElTooltip v-if="!hideMenus.includes('verify')" transition="tooltip-fade-in" content="校验">
         <button :class="{ active: activeType === 'verify' }" class="icon-btn" @click="$emit('showVerify')">
           <VIcon size="16">verify-list</VIcon>
         </button>
@@ -29,53 +29,55 @@
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip
-        v-if="dataflow.disabledData && !dataflow.disabledData.edit"
-        transition="tooltip-fade-in"
-        :content="t('button_edit')"
-      >
-        <button @click="$emit('edit')" class="icon-btn edit rounded-circle">
-          <VIcon size="14" class="color-primary">edit</VIcon>
-        </button>
-      </ElTooltip>
-      <ElButton v-if="isShowReset(dataflow.statuses)" size="mini" class="mx-2" @click="$emit('reset')">
-        {{ t('dataFlow_button_reset') }}
-      </ElButton>
-      <ElButton
-        v-if="isShowStart(dataflow.statuses)"
-        :disabled="
-          dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses && dataflow.statuses.length > 0
-        "
-        size="mini"
-        class="mx-2"
-        type="primary"
-        @click="$emit('start')"
-      >
-        {{ t('task_list_run') }}
-      </ElButton>
-      <template v-else>
-        <ElButton
-          v-if="isShowForceStop(dataflow.statuses)"
-          key="forceStop"
-          class="mx-2"
-          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
-          size="mini"
-          type="danger"
-          @click="$emit('forceStop')"
+      <template v-if="!hideMenus.includes('operation')">
+        <ElTooltip
+          v-if="dataflow.disabledData && !dataflow.disabledData.edit"
+          transition="tooltip-fade-in"
+          :content="t('button_edit')"
         >
-          {{ t('task_list_force_stop') }}
+          <button @click="$emit('edit')" class="icon-btn edit rounded-circle">
+            <VIcon size="14" class="color-primary">edit</VIcon>
+          </button>
+        </ElTooltip>
+        <ElButton v-if="isShowReset(dataflow.statuses)" size="mini" class="mx-2" @click="$emit('reset')">
+          {{ t('dataFlow_button_reset') }}
         </ElButton>
         <ElButton
-          key="stop"
-          v-else
-          class="mx-2"
-          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+          v-if="isShowStart(dataflow.statuses)"
+          :disabled="
+            dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses && dataflow.statuses.length > 0
+          "
           size="mini"
-          type="danger"
-          @click="$emit('stop')"
+          class="mx-2"
+          type="primary"
+          @click="$emit('start')"
         >
-          {{ t('task_list_stop') }}
+          {{ t('task_list_run') }}
         </ElButton>
+        <template v-else>
+          <ElButton
+            v-if="isShowForceStop(dataflow.statuses)"
+            key="forceStop"
+            class="mx-2"
+            :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+            size="mini"
+            type="danger"
+            @click="$emit('forceStop')"
+          >
+            {{ t('task_list_force_stop') }}
+          </ElButton>
+          <ElButton
+            key="stop"
+            v-else
+            class="mx-2"
+            :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+            size="mini"
+            type="danger"
+            @click="$emit('stop')"
+          >
+            {{ t('task_list_stop') }}
+          </ElButton>
+        </template>
       </template>
     </div>
   </header>
@@ -100,7 +102,11 @@ export default {
     dataflowName: String,
     dataflow: Object,
     scale: Number,
-    showBottomPanel: Boolean
+    showBottomPanel: Boolean,
+    hideMenus: {
+      type: Array,
+      default: () => []
+    }
   },
 
   components: { VIcon, TextEditable },

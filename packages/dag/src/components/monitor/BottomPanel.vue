@@ -207,4 +207,11 @@ $headerHeight: 40px;
   right: 16px;
   top: 12px;
 }
+.tabs-header__hidden {
+  ::v-deep {
+    .el-tabs__header {
+      display: none;
+    }
+  }
+}
 </style>
