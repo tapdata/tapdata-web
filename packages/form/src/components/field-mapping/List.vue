@@ -29,29 +29,13 @@
                 <div class="task-form__img" v-if="item.invalid">
                   <img :src="fieldMapping_table_error" alt="" />
                 </div>
-                <div class="task-form__img" v-else>
-                  <img :src="fieldMapping_table" alt="" />
-                </div>
                 <div class="task-form-text-box">
-                  <OverflowTooltip
-                    class="w-100 text-truncate source"
-                    :text="item.sourceObjectName"
-                    placement="right"
-                    :open-delay="400"
-                  />
                   <OverflowTooltip
                     class="w-100 text-truncate target"
                     :text="item.sinkObjectName"
                     placement="right"
                     :open-delay="400"
                   />
-                  <div class="select">
-                    {{
-                      `${t('dag_dialog_field_mapping_selected')} ${
-                        position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
-                      }/${item.sourceFieldCount}`
-                    }}
-                  </div>
                 </div>
               </li>
             </ul>
@@ -104,6 +88,7 @@
             :data="viewTableData"
             v-loading="loadingTable"
           >
+            <ElTableColumn type="index" width="55" label="序号"></ElTableColumn>
             <ElTableColumn show-overflow-tooltip :label="t('dag_dialog_field_mapping_field')" prop="field_name">
               <template #default="{ row }">
                 <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
@@ -559,7 +544,7 @@ export default {
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         border-bottom: 1px solid map-get($borderColor, light);
         display: flex;
-        padding: 16px 0 10px 10px;
+        padding: 10px 0 10px 10px;
         &:hover {
           background: map-get($bgColor, disactive);
           cursor: pointer;
@@ -570,47 +555,18 @@ export default {
           border-left: 2px solid map-get($color, primary);
           cursor: pointer;
         }
-        .task-form__img {
-          width: 20px;
-          height: 42px;
-          img {
-            width: 100%;
-            height: 100%;
-          }
-        }
         .task-form-text-box {
           margin-left: 10px;
           width: 140px;
-          .source {
-            font-size: 12px;
-            font-weight: 400;
-            color: #000000;
-            line-height: 10px;
-            text-align: left;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
           .target {
             font-size: 12px;
             font-weight: 400;
-            color: #ef9868;
+            color: map-get($color, normal);
             line-height: 20px;
-            margin-top: 17px;
             text-align: left;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-          }
-          .select {
-            font-size: 12px;
-            font-weight: 400;
-            color: #86909c;
-            line-height: 5px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
           }
         }
       }
