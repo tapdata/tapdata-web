@@ -1,11 +1,11 @@
 import { defineComponent } from '@vue/composition-api'
-import List from '@tap/business/src/views/connections/List'
+import { ConnectionList } from '@tap/business'
 
 export default defineComponent({
   setup(props, { root }) {
     return () => {
       return root.$route.name === 'connections' ? (
-        <List class="route-page-container"></List>
+        <ConnectionList class="route-page-container"></ConnectionList>
       ) : (
         <router-view></router-view>
       )

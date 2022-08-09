@@ -1,12 +1,7 @@
-import Cookie from '@tap/shared/src/cookie'
 import axios from 'axios'
 
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 2020/12/9
- * @description
- */
-import i18n from '@/i18n'
+import Cookie from '@tap/shared/src/cookie'
+
 export const getImgByType = function (type) {
   if (!type || type === 'jira') {
     type = 'default'
@@ -51,100 +46,7 @@ export const defaultModel = {
     table_filter: ''
   }
 }
-export const CONFIG_MODEL = {
-  default: [
-    {
-      icon: 'time',
-      items: [
-        {
-          label: i18n.t('connection_preview_load_schema'),
-          key: 'last_updated'
-        }
-      ]
-    },
-    {
-      icon: 'database',
-      items: [
-        {
-          label: i18n.t('connection_form_database_address'),
-          key: 'database_host'
-        }
-      ]
-    },
-    {
-      icon: 'port',
-      items: [
-        {
-          label: i18n.t('connection_form_port'),
-          key: 'database_port'
-        }
-      ]
-    },
-    {
-      icon: 'name',
-      items: [
-        {
-          label: i18n.t('connection_form_database_name'),
-          key: 'database_name'
-        }
-      ]
-    },
-    {
-      icon: 'database-user-name',
-      items: [
-        {
-          label: i18n.t('connection_form_database_username'),
-          key: 'database_username'
-        }
-      ]
-    },
-    {
-      icon: 'connect_schema',
-      items: [
-        {
-          label: i18n.t('dataForm.form.databaseOwner'),
-          key: 'database_owner'
-        }
-      ]
-    },
-    {
-      icon: 'additional-string',
-      items: [
-        {
-          label: i18n.t('connection_form_additional_string'),
-          key: 'additionalString'
-        }
-      ]
-    },
-    {
-      icon: 'origin-time',
-      items: [
-        {
-          label: i18n.t('connection_form_timezone'),
-          key: 'database_datetype_without_timezone'
-        }
-      ]
-    }
-    // {
-    //   icon: 'connect_shared_mining',
-    //   items: [
-    //     {
-    //       label: i18n.t('connection_form_shared_mining'),
-    //       key: 'shareCdcEnable'
-    //     }
-    //   ]
-    // },
-    // {
-    //   icon: 'connect_journal',
-    //   items: [
-    //     {
-    //       label: i18n.t('connection_form_oracle_redoLog_parser'),
-    //       key: 'redoLogParserEnable'
-    //     }
-    //   ]
-    // }
-  ]
-}
+
 // 数据源图标
 export const getConnectionIcon = pdkHash => {
   if (pdkHash) {
