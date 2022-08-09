@@ -295,6 +295,15 @@ export default [
               code: 'Data_SYNC_menu'
             }
           },
+          {
+            path: 'statistics/:id',
+            name: 'dataflowStatistics',
+            component: EtlStatistics,
+            meta: {
+              title: 'page_title_task_stat',
+              code: 'Data_SYNC_menu'
+            }
+          },
           /* ---------- 数据开发任务详情  ----------*/
           {
             path: 'details/:id',
@@ -311,15 +320,6 @@ export default [
                 component: EtlDetails,
                 meta: {
                   title: 'page_title_run_monitor',
-                  code: 'Data_SYNC_menu'
-                }
-              },
-              {
-                path: 'statistics/:subId',
-                name: 'dataflowStatistics',
-                component: EtlStatistics,
-                meta: {
-                  title: 'page_title_task_stat',
                   code: 'Data_SYNC_menu'
                 }
               }

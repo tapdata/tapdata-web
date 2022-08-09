@@ -85,7 +85,7 @@ export default {
       type: 'watch',
       collection: 'DataFlows',
       filter: {
-        where: { 'fullDocument._id': { $in: [this.$route.params.subId] } }, //查询条件
+        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
         fields: {
           'fullDocument.id': true,
           'fullDocument._id': true,
