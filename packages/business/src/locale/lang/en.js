@@ -9,6 +9,8 @@ export default {
   status_paused: 'Paused',
   status_draft: 'Draft',
   status_ready: 'Ready',
+  status_wait_start: 'Wait start',
+  status_starting: 'Starting',
   status_edit: 'Edit',
   status_error: 'Error',
   status_wait_run: 'Wait run',

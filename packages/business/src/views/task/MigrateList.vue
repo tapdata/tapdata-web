@@ -16,7 +16,7 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
         <el-button
@@ -112,17 +112,9 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('task_list_status')" min-width="120">
         <template #default="{ row }">
-          <!--调度失败任务 统一归类为error-->
-          <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
-            {{ $t('task_preview_status_' + row.statusResult[0].status) }}
-          </span>
-          <!--产品测暂时决定隐藏-->
-          <!--<span v-if="row.transformStatus && row.transformStatus === 'running'">
-            <span v-if="row.transformProcess && row.transformProcess !== 1">{{ row.transformProcess * 100 }} %</span>
-          </span>-->
+          <TaskStatus :task="row" />
         </template>
       </el-table-column>
-
       <el-table-column prop="createTime" :label="$t('column_create_time')" min-width="160" sortable="createTime">
         <template #default="{ row }">
           {{ formatTime(row.createTime) }}
@@ -134,7 +126,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="row.disabledData.start"
+              :disabled="row.btnDisabled.start"
               @click="start([row.id])"
             >
               {{ $t('task_list_run') }}
@@ -144,7 +136,7 @@
               v-if="row.status === 'stopping'"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+              :disabled="row.btnDisabled.forceStop"
               @click="forceStop([row.id], row)"
             >
               {{ $t('task_list_force_stop') }}
@@ -153,7 +145,7 @@
               v-else
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="row.disabledData.stop"
+              :disabled="row.btnDisabled.stop"
               @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
@@ -161,7 +153,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.disabledData.edit"
+              :disabled="row.btnDisabled.edit"
               @click="handleEditor(row.id)"
             >
               {{ $t('task_list_edit') }}
@@ -170,7 +162,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.disabledData.monitor"
+              :disabled="row.btnDisabled.monitor"
               @click="toDetail(row)"
             >
               {{ $t('task_list_button_monitor') }}
@@ -181,7 +173,6 @@
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
-                <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
                 <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('task_list_export')
                 }}</el-dropdown-item>
@@ -190,13 +181,13 @@
                 </el-dropdown-item>
 
                 <el-dropdown-item
-                  :disabled="row.disabledData.reset"
+                  :disabled="row.btnDisabled.reset"
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
                 >
                   {{ $t('task_list_reset') }}
                 </el-dropdown-item>
-                <el-dropdown-item command="del" :disabled="row.disabledData.delete" v-readonlybtn="'SYNC_job_delete'">
+                <el-dropdown-item command="del" :disabled="row.btnDisabled.delete" v-readonlybtn="'SYNC_job_delete'">
                   {{ $t('task_list_delete') }}
                 </el-dropdown-item>
                 <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">
@@ -266,19 +257,21 @@ import { taskApi } from '@tap/api'
 import { VIcon, FilterBar, Drawer } from '@tap/component'
 import { toRegExp } from '@tap/shared'
 
-import { TablePage } from '../../../components'
-import { getSubTaskStatus, getTaskBtnDisabled } from '../../../shared'
-import SkipError from '../SkipError'
-import Upload from '../../../components/UploadDialog.vue'
+import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
+import locale from '../../mixins/locale'
+import { TablePage, TaskStatus } from '../../components'
+import SkipError from './SkipError'
+import Upload from '../../components/UploadDialog'
 
 let timeout = null
 export default {
-  name: 'TaskList',
-  components: { VIcon, FilterBar, TablePage, SkipError, Drawer, Upload },
+  name: 'MigrateList',
+  components: { VIcon, FilterBar, TablePage, SkipError, Drawer, Upload, TaskStatus },
+  mixins: [locale],
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-
+      STATUS_MAP,
       previewData: null,
       previewList: [],
       data: {},
@@ -340,22 +333,23 @@ export default {
         this.$has('SYNC_job_operation') ||
         this.$has('SYNC_category_application'),
       bulkOperation: this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
-      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
-      statusOptions: [
-        { label: this.$t('task_list_status_all'), value: '' },
-        { label: this.$t('task_preview_status_running'), value: 'running' },
-        { label: this.$t('task_preview_status_stop'), value: 'stop' },
-        { label: this.$t('task_preview_status_edit'), value: 'edit' },
-        { label: this.$t('task_preview_status_ready'), value: 'ready' },
-        { label: this.$t('task_preview_status_wait_run'), value: 'wait_run' },
-        { label: this.$t('task_preview_status_error'), value: 'error' },
-        { label: this.$t('task_preview_status_complete'), value: 'complete' }
-      ]
+      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
     }
   },
   computed: {
     table() {
       return this.$refs.table
+    },
+
+    statusOptions() {
+      const options = Object.entries(this.STATUS_MAP).map(([status, item]) => {
+        return {
+          label: this.t(item.i18n),
+          value: item.in ? item.in.join(',') : status
+        }
+      })
+      options.unshift({ label: this.$t('task_list_status_all'), value: '' })
+      return options
     }
   },
   watch: {
@@ -378,16 +372,6 @@ export default {
   methods: {
     formatTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
-    },
-    reset() {
-      this.searchParams = {
-        keyword: '',
-        status: '',
-        type: ''
-      }
-
-      this.multipleSelection = []
-      this.table.fetch(1)
     },
     getData({ page, tags }) {
       let { current, size } = page
@@ -441,64 +425,9 @@ export default {
           let list = data?.items || []
           return {
             total: data?.total,
-            data: list.map(item => {
-              return this.cookRecord(item)
-            })
+            data: list.map(makeStatusAndDisabled)
           }
         })
-    },
-
-    cookRecord(item) {
-      let platformInfo = item.platformInfo
-      if (platformInfo && platformInfo.regionName) {
-        item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
-      }
-      let getLag = lag => {
-        let r = ''
-        if (lag) {
-          let s = parseInt(lag),
-            m = 0,
-            h = 0,
-            d = 0
-          if (s > 60) {
-            m = parseInt(s / 60)
-            s = parseInt(s % 60)
-            if (m > 60) {
-              h = parseInt(m / 60)
-              m = parseInt(m % 60)
-              if (h > 24) {
-                d = parseInt(h / 24)
-                h = parseInt(h % 24)
-              }
-            }
-          }
-          r = parseInt(s) + this.$t('timeToLive.s')
-          if (m > 0) {
-            r = parseInt(m) + this.$t('timeToLive.m') + r
-          }
-          if (h > 0) {
-            r = parseInt(h) + this.$t('timeToLive.h') + r
-          }
-          if (d > 0) {
-            r = parseInt(d) + this.$t('timeToLive.d') + r
-          }
-        }
-        return r
-      }
-      item['lag'] = '-'
-      if (item.stats) {
-        //企业版增加增量lag
-        if (item.stats.replicationLag && item.stats.replicationLag !== 0) {
-          item['lag'] = getLag(item.stats.replicationLag)
-        }
-      }
-      let statuses = item.statuses
-      item.statusResult = getSubTaskStatus(statuses)
-      item.disabledData = getTaskBtnDisabled(
-        item,
-        this.$disabledByPermission('SYNC_job_operation_all_data', item.user_id)
-      )
-      return item
     },
     handleSelectTag() {
       let tagList = {}
@@ -583,17 +512,6 @@ export default {
       }
       this[command](ids, node)
     },
-    toView([id]) {
-      window.open(
-        this.$router.resolve({
-          name: 'MigrateViewer',
-          params: {
-            id
-          }
-        }).href,
-        'viewer_' + id
-      )
-    },
     export(ids) {
       taskApi.export(ids)
     },
@@ -638,20 +556,6 @@ export default {
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
-      let list = this.table.list
-      for (let i = 0; i < list.length; i++) {
-        let node = list[i]
-        if (ids.includes(node.id)) {
-          if (node.setting && !node.setting.sync_type.includes('cdc')) {
-            message = this.$t('message.stopInitial_syncMessage')
-          }
-          if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-            const h = this.$createElement
-            let arr = this.$t('message.stopAggregation_message').split('XXX')
-            message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-          }
-        }
-      }
       this.$confirm(message, '', {
         type: 'warning',
         showClose: false
@@ -710,9 +614,6 @@ export default {
             this.table.fetch()
             this.responseHandler(data, this.$t('message.resetOk'))
           })
-          // .catch(() => {
-          //   this.$message.info(this.$t('message.cancelReset'))
-          // })
           .finally(() => {
             this.restLoading = false
           })
@@ -729,9 +630,6 @@ export default {
         this.table.fetch()
         this.$message.success(this.$t('message.copySuccess'))
       })
-      // .catch(() => {
-      //   this.$message.info(this.$t('message.copyFail'))
-      // })
     },
     setTag(ids, node) {
       this.dataFlowId = node.id
@@ -811,15 +709,11 @@ export default {
         name: 'function'
       })
     },
-    toDetail(row) {
-      let subId = row.statuses[0]?.id || ''
+    toDetail({ id }) {
       this.$router.push({
         name: 'MigrationMonitor',
         params: {
-          id: row.id
-        },
-        query: {
-          subId: subId
+          id
         }
       })
     },

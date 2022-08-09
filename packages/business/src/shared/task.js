@@ -62,7 +62,7 @@ export function getTaskBtnDisabled(row, or) {
   // 编辑可用：编辑中、待启动、已完成、错误、调度失败、已停止 或者 未运行状态
   // 重置可用：已完成、错误、调度失败、已停止
   // 删除可用：编辑中、待启动、已完成、错误、调度失败、已停止
-  result.start = !['ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
+  result.start = ['wait_run', 'complete', 'error', 'stop'].includes(row.status)
   result.stop = !['running', 'stopping'].includes(row.status)
   result.edit = !['edit', 'ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
   result.reset = !['complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
@@ -86,4 +86,78 @@ export function getNodeIconSrc(node) {
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
   return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+}
+
+export const STATUS_MAP = {
+  edit: {
+    i18n: 'status_edit'
+  },
+  wait_start: {
+    i18n: 'status_wait_start'
+  },
+  starting: {
+    i18n: 'status_starting',
+    in: ['preparing', 'scheduling', 'wait_run']
+  },
+  running: {
+    i18n: 'status_running'
+  },
+  complete: {
+    i18n: 'status_complete'
+  },
+  stopping: {
+    i18n: 'status_stopping'
+  },
+  stop: {
+    i18n: 'status_stop'
+  },
+  error: {
+    i18n: 'status_error'
+  }
+}
+
+const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
+  if (value.in) {
+    value.in.reduce((res, val) => ((res[val] = key), res), merge)
+  }
+  return merge
+}, {})
+
+const BUTTON_WITH_STATUS = {
+  start: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  edit: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  delete: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  stop: ['running'],
+  forceStop: ['stopping'],
+  reset: ['complete', 'error', 'stop'],
+  monitor: ['running', 'complete', 'error', 'stop', 'stopping']
+}
+
+console.log('STATUS_MERGE', STATUS_MERGE) // eslint-disable-line
+
+/*{
+  preparing: 'starting',
+  scheduling: 'starting',
+  wait_run: 'starting'
+}*/
+
+export function makeStatusAndDisabled(item) {
+  let { status } = item
+  const mergeStatus = STATUS_MERGE[status]
+
+  if (mergeStatus) {
+    item.status = status = mergeStatus
+  }
+
+  if (!(status in STATUS_MAP)) {
+    console.error(`未识别的任务状态：${status}`, '已经置为[error]') // eslint-disable-line
+    item.status = status = 'error'
+  }
+
+  item.btnDisabled = Object.entries(BUTTON_WITH_STATUS).reduce((map, [key, value]) => {
+    map[key] = !value.includes(status)
+    return map
+  }, {})
+
+  return item
 }

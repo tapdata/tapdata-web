@@ -9,6 +9,8 @@ export default {
   status_paused: '待启动',
   status_draft: '待启动',
   status_ready: '待启动',
+  status_wait_start: '待启动',
+  status_starting: '启动中',
   status_edit: '编辑中',
   status_error: '错误',
   status_wait_run: '启动中',
