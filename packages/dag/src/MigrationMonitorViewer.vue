@@ -8,7 +8,7 @@
       :dataflow="dataflow"
       :scale="scale"
       :showBottomPanel="showBottomPanel"
-      :hide-icon="['verify', 'operation']"
+      :hide-menus="['verify', 'operation']"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
