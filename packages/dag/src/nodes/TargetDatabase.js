@@ -217,15 +217,74 @@ export class TargetDatabase extends NodeType {
                   }
                 }
               },
-              writeThreadSize: {
-                title: '目标写入线程数',
-                type: 'number',
-                default: 8,
+
+              initialConcurrentSpace: {
+                title: '全量多线程写入',
                 'x-decorator': 'FormItem',
-                'x-component': 'InputNumber',
+                'x-decorator-props': {
+                  layout: 'horizontal'
+                },
+                type: 'void',
+                'x-component': 'Space',
                 'x-component-props': {
-                  min: 1,
-                  max: 99
+                  size: 'middle'
+                },
+                properties: {
+                  initialConcurrent: {
+                    type: 'boolean',
+                    default: true,
+                    'x-component': 'Switch',
+                    'x-reactions': {
+                      target: '.initialConcurrentWriteNum',
+                      fulfill: {
+                        state: {
+                          visible: '{{!!$self.value}}'
+                        }
+                      }
+                    }
+                  },
+                  initialConcurrentWriteNum: {
+                    type: 'number',
+                    default: 8,
+                    'x-component': 'InputNumber',
+                    'x-component-props': {
+                      min: 0
+                    }
+                  }
+                }
+              },
+              cdcConcurrentSpace: {
+                type: 'void',
+                title: '增量多线程写入',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  layout: 'horizontal'
+                },
+                'x-component': 'Space',
+                'x-component-props': {
+                  size: 'middle'
+                },
+                properties: {
+                  cdcConcurrent: {
+                    type: 'boolean',
+                    'x-component': 'Switch',
+                    'x-reactions': {
+                      target: '.cdcConcurrentWriteNum',
+                      fulfill: {
+                        state: {
+                          visible: '{{!!$self.value}}'
+                        }
+                      }
+                    }
+                  },
+                  cdcConcurrentWriteNum: {
+                    type: 'number',
+                    default: 4,
+                    'x-component': 'InputNumber',
+                    'x-component-props': {
+                      min: 0
+                    }
+                  }
                 }
               }
             }
