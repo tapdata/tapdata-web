@@ -374,13 +374,13 @@ let menuSetting = [
     ]
   },
   {
-    name: 'dataDiscovery',
-    label: 'page_title_data_discovery',
-    icon: 'shujuzhili',
-    code: 'data_government',
+    name: 'discovery',
+    label: '数据发现',
+    icon: 'system',
+    code: 'system_management',
     children: [
-      { name: 'metadataList', code: 'data_catalog_menu', parent: 'metadata' },
-      { name: 'search', code: 'data_search_menu', parent: 'search' }
+      { name: 'dataDiscovery', code: 'datasource_menu' },
+      { name: 'catalogue', code: 'datasource_menu' }
     ]
   },
   {
@@ -405,18 +405,6 @@ let menuSetting = [
     code: 'system_management',
     children: [
       { name: 'clusterManagement', code: 'Cluster_management_menu' }
-      // { name: 'users', code: 'user_management_menu', parent: 'migrate' },
-      // { name: 'roleList', code: 'role_management_menu', parent: 'migrate' }
-    ]
-  },
-  {
-    name: 'discovery',
-    label: '数据发现',
-    icon: 'system',
-    code: 'system_management',
-    children: [
-      { name: 'dataDiscovery', code: 'datasource_menu' },
-      { name: 'catalogue', code: 'datasource_menu' }
       // { name: 'users', code: 'user_management_menu', parent: 'migrate' },
       // { name: 'roleList', code: 'role_management_menu', parent: 'migrate' }
     ]

@@ -226,7 +226,7 @@ export default [
           {
             path: '',
             name: 'dataDiscovery',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/List'),
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/ObjectList.tsx'),
             meta: {
               title: '数据对象',
               code: 'datasource_menu'
@@ -576,48 +576,6 @@ export default [
             }
           }
         ]
-      },
-      /* ---------- 数据目录  ----------*/
-      {
-        path: '/catalogue',
-        name: 'metadata',
-        component: Parent,
-        redirect: 'catalogue/',
-        meta: {
-          title: 'page_title_data_catalogue'
-        },
-        children: [
-          {
-            path: '',
-            name: 'metadataList',
-            component: () => import(/* webpackChunkName: "metadata" */ '@/views/metadata/List'),
-            meta: {
-              title: 'page_title_data_catalogue',
-              code: 'data_catalog_menu',
-              types: ['table', 'view', 'collection']
-              // 'mongo_view'
-            }
-          },
-          {
-            path: ':id/details',
-            name: 'metadataDetails',
-            component: () => import(/* webpackChunkName: "metadata-details" */ '@/views/metadata/Info'),
-            meta: {
-              code: 'data_catalog_menu',
-              title: 'page_title_data_catalogue_info'
-            }
-          }
-        ]
-      },
-      /* ---------- 数据搜索  ----------*/
-      {
-        path: '/search',
-        name: 'search',
-        component: () => import(/* webpackChunkName: "metadata-search" */ '@/views/metadata/Search'),
-        meta: {
-          title: 'page_title_data_search',
-          code: 'data_search_menu'
-        }
       },
       /* ---------- API发布  ----------*/
       {
