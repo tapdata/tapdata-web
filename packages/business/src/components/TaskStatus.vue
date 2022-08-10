@@ -1,5 +1,5 @@
 <template>
-  <span class="status-block" :class="['status-' + task.status]">
+  <span v-if="show" class="status-block" :class="['status-' + task.status]">
     {{ t(STATUS_MAP[task.status].i18n) }}
   </span>
 </template>
@@ -14,20 +14,14 @@ export default {
     task: Object
   },
   mixins: [locale],
-  computed: {
-    showCount() {
-      return this.value.length > 1
-    },
-    comList() {
-      if (!this.showAll) {
-        return this.value.filter(t => t.count > 0)
-      }
-      return this.value
-    }
-  },
   data() {
     return {
       STATUS_MAP
+    }
+  },
+  computed: {
+    show() {
+      return this.task.status in this.STATUS_MAP
     }
   }
 }
@@ -67,6 +61,7 @@ export default {
   color: #c88500;
   background-color: #ffe4ae;
 }
+.status-wait_start,
 .status-stopping {
   color: #c39700;
   background-color: #fdf1c8;

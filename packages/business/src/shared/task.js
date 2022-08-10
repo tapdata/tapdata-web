@@ -133,14 +133,6 @@ const BUTTON_WITH_STATUS = {
   monitor: ['running', 'complete', 'error', 'stop', 'stopping']
 }
 
-console.log('STATUS_MERGE', STATUS_MERGE) // eslint-disable-line
-
-/*{
-  preparing: 'starting',
-  scheduling: 'starting',
-  wait_run: 'starting'
-}*/
-
 export function makeStatusAndDisabled(item) {
   let { status } = item
   const mergeStatus = STATUS_MERGE[status]
