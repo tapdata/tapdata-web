@@ -20,9 +20,7 @@
         <div class="task-info__row">
           <span class="task-info__label">运行状态：</span>
           <span class="task-info__value">
-            <span :class="['status-' + dataflow.status, 'status-block']">
-              {{ $t('task_preview_status_' + dataflow.status) }}
-            </span>
+            <TaskStatus :task="dataflow" />
           </span>
         </div>
       </div>
@@ -160,6 +158,7 @@ import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
 import InitialList from './components/InitialList'
 import { Chart } from '@tap/component'
+import { TaskStatus } from '@tap/business'
 import { getPieOptions } from './util'
 import dayjs from 'dayjs'
 import { calcTimeUnit } from '@tap/shared'
@@ -179,7 +178,8 @@ export default {
     TimeSelect,
     CollapsePanel,
     VIcon,
-    InitialList
+    InitialList,
+    TaskStatus
   },
 
   data() {
