@@ -1,15 +1,25 @@
-import { defineComponent, reactive } from '@vue/composition-api'
+import { defineComponent, reactive, ref } from '@vue/composition-api'
 import { TableList } from '@tap/component'
+import { discoveryApi } from '@tap/api'
 import './object.scss'
 
 export default defineComponent({
   setup() {
+    const details = ref('')
     const data = reactive({
       activeName: 'first',
-      activeUser: 'admin'
+      activeUser: 'admin',
+      currentRow: ''
     })
+    const loadData = row => {
+      data.currentRow = row
+      discoveryApi.overView(row.id).then(res => {
+        details.value = res || ''
+      })
+    }
     return {
-      data
+      data,
+      loadData
     }
   },
   render() {

@@ -1,12 +1,13 @@
 import { defineComponent, reactive, ref } from '@vue/composition-api'
-import { TableList, FilterBar, Drawer } from '@tap/component'
+import { FilterBar, Drawer } from '@tap/component'
 import DrawerContent from './PreviewDrawer'
 import { useI18n, useMessage } from '@/hooks'
 import { discoveryApi } from '@tap/api'
 import './object.scss'
 
 export default defineComponent({
-  setup() {
+  props: [''],
+  setup(props, { refs }) {
     const { $t } = useI18n()
     const { success } = useMessage()
     const list = ref([])
@@ -66,6 +67,7 @@ export default defineComponent({
     }
     const handlePreview = row => {
       data.isShowDetails = true
+      refs.drawerContent.loadData(row)
     }
     const closeDrawer = val => {
       data.isShowDetails = val
@@ -103,7 +105,7 @@ export default defineComponent({
           <div class="object-page-right">
             <div class="object-page-topbar">
               <div class="object-page-search-bar">
-                <FilterBar items={this.data.filterItems} on={{ ['update:fetch']: this.loadData }}></FilterBar>
+                <FilterBar items={this.data.filterItems} {...{ on: { fetch: this.loadData } }}></FilterBar>
               </div>
               <div class="object-page-operation-bar">
                 <el-button size="mini">
@@ -143,7 +145,7 @@ export default defineComponent({
               visible={this.data.isShowDetails}
               on={{ ['update:visible']: this.closeDrawer }}
             >
-              <DrawerContent ref="drawerContent"></DrawerContent>
+              <DrawerContent ref={'drawerContent'}></DrawerContent>
             </Drawer>
           </div>
         </div>

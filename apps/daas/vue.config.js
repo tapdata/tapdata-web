@@ -6,7 +6,7 @@ const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://localhost:3000', // TM端本地默认地址
   jet: 'http://jet.devops.tapdata.net:31613',
-  test: 'http://192.168.1.181:31321' // v2.0
+  test: 'http://36.134.131.197:8082/' // v2.0
 }
 let origin
 const { argv } = process
