@@ -132,6 +132,9 @@ const metadataTransformerApi = new MetadataTransformer()
 import Function from './Function'
 const functionApi = new Function()
 
+import MonitoringLogs from './MonitoringLogs'
+const monitoringLogsApi = new MonitoringLogs()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -176,7 +179,8 @@ export {
   logsApi,
   dictionariesApi,
   metadataTransformerApi,
-  functionApi
+  functionApi,
+  monitoringLogsApi
 }
 export * from './ApiClient'
 
