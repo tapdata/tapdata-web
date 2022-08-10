@@ -76,10 +76,10 @@
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="120">
-        <div slot="header">
-          {{ $t('connection_list_column_schema_status') }}
-          <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
+      <ElTableColumn min-width="140">
+        <div slot="header" class="flex align-center">
+          <span>{{ $t('connection_list_column_schema_status') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('connection_list_column_schema_status_tips')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>

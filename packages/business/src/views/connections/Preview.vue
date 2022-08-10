@@ -73,7 +73,7 @@
         </div>
       </div>
     </div>
-    <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
+    <Test ref="test" @receive="receiveTestData"></Test>
   </Drawer>
 </template>
 
@@ -83,12 +83,12 @@ import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 
 import { StatusTag } from '../../components'
-import ConnectionTest from '../connections/Test.vue'
+import Test from '../connections/Test.vue'
 import { getConnectionIcon } from './util'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, Drawer, StatusTag, ConnectionTest },
+  components: { VIcon, Drawer, StatusTag, Test },
   inject: ['checkAgent'],
   props: {
     hideOperation: {

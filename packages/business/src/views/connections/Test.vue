@@ -88,11 +88,9 @@ export default {
   components: { VIcon },
   props: {
     visible: {
-      required: true,
       value: Boolean
     },
     formData: {
-      required: true,
       value: Object
     }
   },
