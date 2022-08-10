@@ -151,7 +151,12 @@
               {{ $t('button_edit') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.monitor"
+              @click="toDetail(row)"
+            >
               {{ $t('task_list_button_monitor') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
