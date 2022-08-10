@@ -160,25 +160,6 @@ import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 
-function getRandom(num = 100) {
-  return Math.ceil(Math.random() * 100 * num)
-}
-
-function getRandomArray(count = 20, num = 1) {
-  return Array(count)
-    .fill()
-    .map(() => getRandom(num))
-}
-
-function getRandomTimeArray(count = 20, ms = 5000) {
-  return Array(count)
-    .fill()
-    .map((t, i) => Date.now() + i * ms)
-}
-
-const TIME_LIST = getRandomTimeArray(100000)
-const VALUE_LIST = getRandomArray(100000)
-
 export default {
   name: 'MigrationMonitor',
 
