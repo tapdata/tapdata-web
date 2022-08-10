@@ -1,10 +1,12 @@
 import { defineComponent, reactive } from '@vue/composition-api'
-import { Classification, TableList, FilterBar } from '@tap/component'
+import { Classification, TableList, FilterBar, Drawer } from '@tap/component'
+import ObjectTable from '@/views/dataDiscovery/ObjectTable'
 import './catalogue.scss'
 
 export default defineComponent({
   setup() {
     const data = reactive({
+      isShowDetails: false,
       searchParams: '',
       desc: '',
       columns: [
@@ -52,7 +54,7 @@ export default defineComponent({
               <span class="ml-2 mr-2">目录</span>
               <span class="mr-2"> FDM </span>
               <span>
-                <ElInput class="border-0" size="mini" v-model={this.data.desc} clearable></ElInput>
+                <el-input class="border-0" size="mini" v-model={this.data.desc} clearable></el-input>
               </span>
             </div>
             <div class="catalogue-page-topbar">
@@ -60,19 +62,23 @@ export default defineComponent({
                 <FilterBar items={this.data.filterItems}></FilterBar>
               </div>
               <div class="catalogue-page-operation-bar">
-                <ElButton size="mini">
+                <el-button size="mini">
                   <span>资源解绑</span>
-                </ElButton>
-                <ElButton type="primary" size="mini">
+                </el-button>
+                <el-button type="primary" size="mini">
                   <span>资源绑定</span>
-                </ElButton>
+                </el-button>
               </div>
             </div>
-            <TableList columns={this.data.columns}>
-              <template slot="select" slot-scope="scope">
-                <span></span>
-              </template>
-            </TableList>
+            <TableList columns={this.data.columns}></TableList>
+            <Drawer
+              class="object-drawer-wrap"
+              width={'800px'}
+              visible={this.data.isShowDetails}
+              {...{ on: { 'update:visible': this.data.isShowDetails } }}
+            >
+              <ObjectTable></ObjectTable>
+            </Drawer>
           </div>
         </div>
       </div>

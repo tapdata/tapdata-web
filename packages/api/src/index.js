@@ -132,6 +132,9 @@ const metadataTransformerApi = new MetadataTransformer()
 import Function from './Function'
 const functionApi = new Function()
 
+import Discovery from './Discovery'
+const discoveryApi = new Discovery()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -176,7 +179,8 @@ export {
   logsApi,
   dictionariesApi,
   metadataTransformerApi,
-  functionApi
+  functionApi,
+  discoveryApi
 }
 export * from './ApiClient'
 

@@ -1,0 +1,47 @@
+.object-page-main-box{
+  display: flex;
+  flex: 1;
+  width: 100%;
+  border-radius: 4px;
+  background-color: map-get($bgColor, white);
+}
+
+.object-page-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 4px;
+  padding: 20px;
+}
+.object-page-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap-reverse;
+  .object-page-search-bar {
+    margin: 0 5px 15px 0;
+  }
+  .object-page-operation-bar {
+    margin-bottom: 10px;
+    text-align: right;
+  }
+}
+.object-drawer-wrap {
+  .drawer__header_text {
+    height: 22px;
+    font-size: 14px;
+    line-height: 7px;
+    font-weight: 500;
+  }
+  .max-label {
+    width: 50px;
+  }
+  .details_data_info {
+    background: #fafafa;
+    border-radius: 4px;
+  }
+}
+.table-page-pagination {
+  margin-top: 5px;
+}
