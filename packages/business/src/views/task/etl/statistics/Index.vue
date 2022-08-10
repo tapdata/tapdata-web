@@ -34,6 +34,7 @@ import { Log } from '../../../../components'
 import Info from './Info'
 import Schedule from './Schedule'
 import ShareMining from './ShareMining'
+import { makeStatusAndDisabled } from '../../../../shared'
 
 export default {
   name: 'Statistics',
@@ -156,6 +157,7 @@ export default {
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = this.formatTime(data.finishTime)
       data.cdcTimeFmt = this.formatTime(cdcTime)
+      makeStatusAndDisabled(data)
       return data
     },
     formatTime(time) {
