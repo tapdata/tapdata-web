@@ -182,7 +182,10 @@ export class Join extends NodeType {
                           display: 'none'
                         }
                       },
-                      'x-component': 'FieldSelect'
+                      'x-component': 'FieldSelect',
+                      'x-component-props': {
+                        filterable: true
+                      }
                     },
                     right: {
                       title: '右侧',
@@ -194,7 +197,10 @@ export class Join extends NodeType {
                           display: 'none'
                         }
                       },
-                      'x-component': 'FieldSelect'
+                      'x-component': 'FieldSelect',
+                      'x-component-props': {
+                        filterable: true
+                      }
                     }
                   }
                 },
