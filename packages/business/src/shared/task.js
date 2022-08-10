@@ -112,7 +112,8 @@ export const STATUS_MAP = {
     i18n: 'status_stop'
   },
   error: {
-    i18n: 'status_error'
+    i18n: 'status_error',
+    in: ['schedule_failed', 'error']
   }
 }
 
