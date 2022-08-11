@@ -373,15 +373,6 @@ export class Table extends NodeType {
                           min: 1
                         }
                       }
-                      /*processorThreadNum: {
-                        title: '处理器线程数',
-                        type: 'number',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 1
-                        }
-                      }*/
                     }
                   },
                   maxTransactionDuration: {
