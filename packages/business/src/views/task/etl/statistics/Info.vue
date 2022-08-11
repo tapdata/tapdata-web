@@ -5,7 +5,7 @@
         <ElTooltip v-if="task" class="item" effect="dark" :content="task.name" placement="top">
           <span class="mr-4 fs-6 font-color-dark ellipsis info-name">{{ task.name }}</span>
         </ElTooltip>
-        <TaskStatus :task="task" />
+        <TaskStatus class="py-0" :task="task" />
         <div class="flex-grow-1"></div>
         <span class="ml-6 font-color-light text-nowrap">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
