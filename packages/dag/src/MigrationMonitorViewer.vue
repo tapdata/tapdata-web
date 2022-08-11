@@ -8,6 +8,7 @@
       :dataflow="dataflow"
       :scale="scale"
       :showBottomPanel="showBottomPanel"
+      :hide-menus="['verify', 'operation']"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -30,33 +31,6 @@
       </template>
     </TopHeader>
     <section class="layout-wrap layout-has-sider position-relative font-color-light">
-      <!--左侧边栏-->
-      <VExpandXTransition>
-        <LeftSider
-          v-resize.right="{
-            minWidth: 356,
-            maxWidth: 750
-          }"
-          :dataflow="dataflow"
-          :quota="quota"
-          :timeFormat="timeFormat"
-          :range="[firstStartTime, lastStopTime || Date.now()]"
-          @move-node="handleDragMoveNode"
-          @drop-node="handleAddNodeByDrag"
-          @add-node="handleAddNode"
-          @toggle-expand="handleToggleExpand"
-          @changeTimeSelect="handleChangeTimeSelect"
-        >
-          <template #status="{ result }">
-            <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ t('task_preview_status_' + result[0].status) }}
-            </span>
-          </template>
-        </LeftSider>
-      </VExpandXTransition>
-      <div v-if="!stateIsReadonly" class="sider-expand-wrap flex justify-center align-center rotate-180">
-        <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
-      </div>
       <!--内容体-->
       <section class="layout-wrap flex-1">
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex flex-column flex-1 overflow-hidden">
@@ -100,22 +74,12 @@
             minHeight: 328
           }"
           :dataflow="dataflow"
+          class="tabs-header__hidden"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
       </section>
-      <!--校验面板-->
-      <VerifyPanel
-        v-if="activeType === 'verify'"
-        ref="verifyPanel"
-        :settings="dataflow"
-        :scope="formScope"
-        @showVerify="handleShowVerify"
-        @hide="onHideSidebar"
-        @verifyDetails="handleVerifyDetails"
-        @connectionList="handleConnectionList"
-      />
       <!--配置面板-->
-      <ConfigPanel v-else ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
 
       <!--   节点详情   -->
       <NodeDetailDialog
@@ -136,7 +100,6 @@
 <script>
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
-import LeftSider from './components/monitor/LeftSider'
 import Node from './components/monitor/Node'
 import { jsPlumb, config } from './instance'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
@@ -145,13 +108,11 @@ import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
-import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import resize from 'web-core/directives/resize'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
-import VIcon from 'web-core/components/VIcon'
-import { VExpandXTransition, VEmpty } from '@tap/component'
+import { VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
 import { measurementApi, taskApi } from '@tap/api'
@@ -161,7 +122,7 @@ import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 
 export default {
-  name: 'MigrationMonitor',
+  name: 'MigrationMonitorViewer',
 
   directives: {
     resize
@@ -170,16 +131,12 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
 
   components: {
-    VExpandXTransition,
     VEmpty,
     ConfigPanel,
-    VerifyPanel,
     BottomPanel,
     PaperScroller,
     TopHeader,
     Node,
-    LeftSider,
-    VIcon,
     NodeDetailDialog
   },
 
@@ -213,11 +170,10 @@ export default {
       dataflow,
 
       scale: 1,
-      showBottomPanel: false,
+      showBottomPanel: true,
       timer: null,
       quotaTimeType: '5m',
       quotaTime: [],
-      refresh: false, // 刷新数据还是初始化数据
       count: 0,
       quota: {}, // 指标数据
       nodeDetailDialog: false,
@@ -639,12 +595,6 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      const { refresh } = this
-      if (refresh) {
-        this.count = 0
-      }
-      this.count++
-      const { count } = this
       measurementApi.batch(this.getParams()).then(data => {
         const map = {
           quota: this.loadQuotaData
@@ -732,7 +682,6 @@ export default {
     },
 
     handleChangeTimeSelect(val, isTime, source) {
-      this.refresh = this.quotaTimeType === val
       this.quotaTimeType = source?.type ?? val
       this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
       this.init()

@@ -119,6 +119,7 @@ import { makeStatusAndDisabled, TaskStatus } from '@tap/business'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
 import ConsolePanel from './components/migration/ConsolePanel'
+import { DEFAULT_SETTINGS } from './constants'
 
 export default {
   name: 'MigrationEditor',
@@ -145,6 +146,7 @@ export default {
 
   data() {
     const dataflow = observable({
+      ...DEFAULT_SETTINGS,
       id: '',
       name: ''
     })
