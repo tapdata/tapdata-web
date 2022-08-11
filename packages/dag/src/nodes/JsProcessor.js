@@ -20,6 +20,20 @@ export class JavaScript extends NodeType {
         type: 'array',
         display: 'none'
       },
+      declareScript: {
+        title: 'Declare 脚本',
+        type: 'string',
+        required: true,
+        default: '',
+        'x-decorator': 'FormItem',
+        'x-component': 'JsEditor',
+        'x-component-props': {
+          height: 300,
+          options: { showPrintMargin: false, useWrapMode: true },
+          before: 'function declare(tapTable) {',
+          after: '}'
+        }
+      },
       script: {
         type: 'string',
         required: true,
