@@ -8,8 +8,9 @@ const subtask = require('./subtask.js')
 const sharedCache = require('./sharedCache.js')
 const task = require('./task.js')
 const cluster = require('./cluster.js')
+const monitoringLogs = require('./monitoringLogs.js')
 
-module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, task, cluster, {
+module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, task, cluster, monitoringLogs, {
   '/api/Connections': {
     code: 'ok',
     msg: 'ok',

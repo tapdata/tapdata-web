@@ -7,5 +7,10 @@ export default class Measurement extends Http {
   query(params) {
     return this.axios.post(this.url + '/query', params)
   }
+  export(params) {
+    return this.axios.post(this.url + '/export', params, {
+      responseType: 'blob'
+    })
+  }
 }
 export { Measurement }
