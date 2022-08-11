@@ -29,8 +29,10 @@
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleDownload">下载</ElButton>
+        <!--        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>-->
+        <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload"
+          >下载</ElButton
+        >
       </div>
       <div class="level-line ml-4">
         <ElCheckboxGroup
@@ -41,11 +43,7 @@
           class="inline-flex"
           @change="searchFnc"
         >
-          <ElCheckbox label="debug">DEBUG</ElCheckbox>
-          <ElCheckbox label="info">INFO</ElCheckbox>
-          <ElCheckbox label="warn">WARN</ElCheckbox>
-          <ElCheckbox label="error">ERROR</ElCheckbox>
-          <!--          <ElCheckbox label="FATAL">FATAL</ElCheckbox>-->
+          <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
         </ElCheckboxGroup>
       </div>
       <div v-loading="loading" class="log-list my-4 ml-4 pl-4 flex-1" style="height: 0">
@@ -77,11 +75,11 @@
               :size-dependencies="[item.id, item.message]"
             >
               <div class="py-1 font-color-light">
-                <span :class="['level', 'inline-block', colorMap[item.level]]">[{{ item.level }}]</span>
+                <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
                 <span class="white-space-nowrap ml-1">{{ formatTime(item.timestamp) }}</span>
-                <span v-if="item.taskName">[{{ item.taskName }}]</span>
-                <span v-if="item.nodeName">[{{ item.nodeName }}]</span>
-                <span v-for="(temp, tIndex) in item.logTags || []" :key="tIndex">[{{ temp }}]</span>
+                <span v-if="item.taskName" v-html="item.taskName" class="ml-1"></span>
+                <span v-if="item.nodeName" v-html="item.nodeName" class="ml-1"></span>
+                <span v-for="(temp, tIndex) in item.logTags || []" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
               </div>
             </DynamicScrollerItem>
@@ -126,7 +124,7 @@ import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
-import { delayTrigger, uniqueArr } from '@tap/shared'
+import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
 import VIcon from 'web-core/components/VIcon'
 
 import TimeSelect from './TimeSelect'
@@ -158,7 +156,26 @@ export default {
       activeNodeId: 'all',
       keyword: '',
       checkList: ['debug', 'info', 'warn', 'error'],
+      checkItems: [
+        // {
+        //   label: 'debug',
+        //   text: 'DEBUG'
+        // },
+        {
+          label: 'info',
+          text: 'INFO'
+        },
+        {
+          label: 'warn',
+          text: 'WARN'
+        },
+        {
+          label: 'error',
+          text: 'ERROR'
+        }
+      ],
       timer: null,
+      downloadLoading: false,
       loading: false,
       preLoading: false,
       resetDataTime: null,
@@ -288,10 +305,6 @@ export default {
       }
     },
 
-    loadData(filter) {
-      monitoringLogsApi.query({ filter: JSON.stringify(filter) }).then(data => {})
-    },
-
     clearTimer() {
       this.timer && clearInterval(this.timer)
       this.timer = null
@@ -338,6 +351,10 @@ export default {
         return
       }
       let filter = this.getOldFilter()
+      if (!filter.start || !filter.end) {
+        return
+      }
+      filter.page++
       if (this.list.length) {
         this.preLoading = true
       } else {
@@ -346,14 +363,13 @@ export default {
       monitoringLogsApi
         .query(filter)
         .then(data => {
-          const items = data.items.reverse()
+          const items = this.getFormatRow(data.items.reverse())
           this.oldPageObj.total = data.total || 0
+          this.oldPageObj.page = filter.page
           if (this.list.length) {
-            this.oldPageObj.page++
             this.list = Object.freeze(uniqueArr([...items, ...this.list]))
             this.scrollToItem(items.length - 1)
           } else {
-            this.oldPageObj.page = 1
             this.list = Object.freeze(items)
             this.scrollToBottom()
           }
@@ -378,8 +394,11 @@ export default {
           page: this.newFilter.page
         })
       }
+      if (!filter.start || !filter.end) {
+        return
+      }
       monitoringLogsApi.query(filter).then(data => {
-        const items = data.items
+        const items = this.getFormatRow(data.items)
         this.newPageObj.total = data.total || 0
         const arr = uniqueArr([...this.list, ...items])
         if (arr.length === this.list.length) {
@@ -394,12 +413,39 @@ export default {
       })
     },
 
+    getFormatRow(data) {
+      let result = deepCopy(data)
+      const arr = ['taskName', 'nodeName', 'message']
+      result.forEach(row => {
+        if (!row.logTags) {
+          row.logTags = []
+        }
+        row.levelText = `[${row.level}]`
+        row.logTags.forEach((el, i) => {
+          row.logTags[i] = `[${this.getHighlightSpan(el)}]`
+        })
+        arr.forEach(el => {
+          row[el] = `[${this.getHighlightSpan(row[el])}]`
+        })
+      })
+      return result
+    },
+
+    getHighlightSpan(str) {
+      const { keyword } = this
+      if (!keyword) {
+        return str
+      }
+      const reg = new RegExp(keyword.toLowerCase(), 'ig')
+      return str.replace(reg, `<span class="highlight-bg-color">$&</span>`)
+    },
+
     getOldFilter() {
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
       let params = {
         start,
         end,
-        page: this.oldPageObj.page || 1,
+        page: this.oldPageObj.page,
         pageSize: this.oldPageObj.pageSize,
         order: 'desc',
         taskId: this.dataflow.id,
@@ -447,7 +493,24 @@ export default {
     },
 
     handleDownload() {
-      console.log('handleDownload')
+      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      let filter = {
+        start,
+        end,
+        taskId: this.dataflow.id
+      }
+      this.downloadLoading = true
+      monitoringLogsApi
+        .export(filter)
+        .then(data => {
+          downloadBlob(data)
+        })
+        .catch(() => {
+          this.$message.error('下载失败')
+        })
+        .finally(() => {
+          this.downloadLoading = false
+        })
     },
 
     handleSetting() {
@@ -512,8 +575,10 @@ export default {
 .log-list {
   border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
-}
-.level {
-  width: 48px;
+  ::v-deep {
+    .highlight-bg-color {
+      background-color: #ff0;
+    }
+  }
 }
 </style>
