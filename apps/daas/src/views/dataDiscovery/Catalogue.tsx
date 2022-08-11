@@ -97,9 +97,6 @@ export default defineComponent({
             <div class="flex flex-row align-items-center mb-2">
               <span class="ml-2 mr-2">目录</span>
               <span class="mr-2"> FDM </span>
-              <span>
-                <el-input class="border-0" size="mini" v-model={this.data.desc} clearable></el-input>
-              </span>
             </div>
             <div class="catalogue-page-topbar">
               <div class="catalogue-page-search-bar">

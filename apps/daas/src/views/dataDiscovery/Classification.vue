@@ -26,7 +26,6 @@
       <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly
-        show-checkbox
         class="classification-tree"
         ref="tree"
         node-key="id"
@@ -43,16 +42,18 @@
           <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <span class="table-label">{{ data.value }}</span>
-          <ElDropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)">
-            <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
-            <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="add">
-                {{ $t('classification.addChildernNode') }}
-              </ElDropdownItem>
-              <ElDropdownItem command="edit">{{ $t('classification.editNode') }}</ElDropdownItem>
-              <ElDropdownItem command="delete">{{ $t('classification.deleteNode') }}</ElDropdownItem>
-            </ElDropdownMenu>
-          </ElDropdown>
+          <span class="btn-menu">
+            <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
+              ><VIcon size="12" class="color-primary">add</VIcon></ElButton
+            >
+            <ElDropdown size="mini" @command="handleRowCommand($event, node)">
+              <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
+              <ElDropdownMenu slot="dropdown">
+                <ElDropdownItem command="edit">{{ $t('classification.editNode') }}</ElDropdownItem>
+                <ElDropdownItem command="delete">{{ $t('classification.deleteNode') }}</ElDropdownItem>
+              </ElDropdownMenu>
+            </ElDropdown>
+          </span>
         </span>
       </ElTree>
       <ElButton v-if="treeData && treeData.length === 0 && isExpand" type="text" @click="showDialog()" class="create">
