@@ -107,14 +107,6 @@ export default defineComponent({
               <div class="object-page-search-bar">
                 <FilterBar items={this.data.filterItems} {...{ on: { fetch: this.loadData } }}></FilterBar>
               </div>
-              <div class="object-page-operation-bar">
-                <el-button size="mini">
-                  <span>删除</span>
-                </el-button>
-                <el-button type="primary" size="mini">
-                  <span>资源绑定</span>
-                </el-button>
-              </div>
             </div>
             <el-table data={this.list}>
               <el-table-column type="selection" width="55"></el-table-column>
