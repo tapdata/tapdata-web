@@ -14,12 +14,21 @@
           {{ $t('task_info_start_time') }}： <span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
-      <div class="operation">
-        <VButton type="primary" :disabled="startDisabled" @click="start(task, arguments[0])">
+      <div v-if="task" class="operation">
+        <VButton type="primary" :disabled="task.btnDisabled.start" @click="start(task, arguments[0])">
           <VIcon size="12">start-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_start') }}</span>
         </VButton>
-        <VButton type="danger" :disabled="stopDisabled" @click="stop(task, arguments[0])">
+        <VButton
+          v-if="task.status === 'stopping'"
+          type="danger"
+          :disabled="task.btnDisabled.forceStop"
+          @click="forceStop(task, arguments[0])"
+        >
+          <VIcon size="12">pause-fill</VIcon>
+          <span class="ml-1">{{ $t('task_button_force_stop') }}</span>
+        </VButton>
+        <VButton v-else type="danger" :disabled="task.btnDisabled.stop" @click="stop(task, arguments[0])">
           <VIcon size="12">pause-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_stop') }}</span>
         </VButton>
@@ -183,11 +192,10 @@
 <script>
 import dayjs from 'dayjs'
 
-import { subtaskApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 import { VIcon, SelectList, Chart, DatetimeRange } from '@tap/component'
 
 import { formatMs, toThousandsUnit } from '../../../../shared'
-import { StatusTag } from '../../../../components'
 import TaskStatus from '../../../../components/TaskStatus'
 
 export default {
@@ -694,20 +702,29 @@ export default {
       return formatMs(val, 'time')
     },
     start(row = {}, resetLoading) {
-      subtaskApi
+      taskApi
         .start(row.id)
         .then(data => {
           this.$message.success(data?.message || this.$t('message_operation_succuess'))
-          this.table.fetch()
+          this.$emit('reload')
         })
         .finally(resetLoading)
     },
     stop(row, resetLoading) {
-      subtaskApi
+      taskApi
         .stop(row.id)
         .then(data => {
           this.$message.success(data?.message || this.$t('message_operation_succuess'))
-          this.table.fetch()
+          this.$emit('reload')
+        })
+        .finally(resetLoading)
+    },
+    forceStop(row, resetLoading) {
+      taskApi
+        .forceStop(row.id)
+        .then(data => {
+          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$emit('reload')
         })
         .finally(resetLoading)
     },
