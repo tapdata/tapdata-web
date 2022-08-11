@@ -1,13 +1,9 @@
 @import '~@tap/assets/styles/var';
+@import '~@tap/assets/styles/reboot';
 @import '~@tap/assets/styles/utilities';
-@import 'overrides';
-@import '~@/assets/fonts/DIN/index.css';
+@import '~@tap/assets//fonts/DIN/index.css';
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+@import 'overrides';
 
 .g-panel-container {
   background: #fff;

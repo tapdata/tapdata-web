@@ -354,6 +354,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 
 import { metadataInstancesApi, connectionsApi, workerApi } from '@tap/api'
+import { VIcon } from '@tap/component'
 import { ConnectionTest } from '@tap/business'
 
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
@@ -361,7 +362,7 @@ import Locale from '../../mixins/locale'
 
 export default {
   mixins: [Locale],
-  components: { RecycleScroller, OverflowTooltip, ConnectionTest },
+  components: { RecycleScroller, OverflowTooltip, ConnectionTest, VIcon },
   props: {
     connectionId: {
       type: String,

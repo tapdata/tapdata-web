@@ -1,12 +1,15 @@
 /* 请注意样式排序导致的优先级问题
 -----------------------------*/
 @import '~@tap/assets/styles/var';
-@import 'reboot';
-@import 'overrides';
+@import '~@tap/assets/styles/reboot';
 @import '~@tap/assets/styles/utilities';
+@import '~@tap/assets//fonts/DIN/index.css';
+
 @import '~@/styles/font/iconfont.css';
-@import '~@/assets/fonts/DIN/index.css';
+
 @import 'github-markdown-css';
+
+@import 'overrides';
 
 #app {
   width: 100%;
