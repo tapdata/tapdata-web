@@ -79,6 +79,7 @@
                 <span class="white-space-nowrap ml-1">{{ formatTime(item.timestamp) }}</span>
                 <span v-if="item.taskName" v-html="item.taskName" class="ml-1"></span>
                 <span v-if="item.nodeName" v-html="item.nodeName" class="ml-1"></span>
+                <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>
                 <span v-for="(temp, tIndex) in item.logTags || []" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
               </div>
@@ -415,7 +416,7 @@ export default {
 
     getFormatRow(data) {
       let result = deepCopy(data)
-      const arr = ['taskName', 'nodeName', 'message']
+      const arr = ['taskName', 'nodeName', 'message', 'errorStack']
       result.forEach(row => {
         if (!row.logTags) {
           row.logTags = []
