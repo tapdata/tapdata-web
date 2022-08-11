@@ -10,7 +10,7 @@ export default class Discovery extends Http {
     return this.axios.get('https://mock.apifox.cn/m1/1293445-0-default/api/discovery/storage/overview/' + id)
   }
   preview(id: string) {
-    return this.axios.get(this.url + '/storage/preview/' + id)
+    return this.axios.get('https://mock.apifox.cn/m1/1293445-0-default/api/discovery/storage/preview/' + id)
   }
 }
 export { Discovery }

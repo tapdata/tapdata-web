@@ -47,7 +47,7 @@ export default defineComponent({
       <div class="classify-wrap">
         <div class="catalogue-page-main-box flex">
           <div class="page-left">
-            <Classification v-model={this.data.searchParams} ref="classify" types=""></Classification>
+            <Classification v-model={this.data.searchParams} ref="classify"></Classification>
           </div>
           <div class="page-right">
             <div class="flex flex-row align-items-center mb-2">
@@ -62,9 +62,6 @@ export default defineComponent({
                 <FilterBar items={this.data.filterItems}></FilterBar>
               </div>
               <div class="catalogue-page-operation-bar">
-                <el-button size="mini">
-                  <span>资源解绑</span>
-                </el-button>
                 <el-button type="primary" size="mini">
                   <span>资源绑定</span>
                 </el-button>
