@@ -1,13 +1,21 @@
-import { defineComponent, reactive } from '@vue/composition-api'
-import { TablePage, FilterBar } from '@tap/component'
-import './catalogue.scss'
+import { defineComponent, reactive, ref } from '@vue/composition-api'
+import { FilterBar } from '@tap/component'
+import { discoveryApi } from '@tap/api'
+import './object.scss'
 
 export default defineComponent({
   setup() {
+    const list = ref([])
     const data = reactive({
       isShowDetails: false,
       searchParams: '',
       desc: '',
+      page: {
+        size: 10,
+        current: 1,
+        total: 0,
+        count: 1
+      },
       filterItems: [
         {
           label: '对象分类',
@@ -41,27 +49,44 @@ export default defineComponent({
         }
       ]
     })
-    const getData = () => {
-      console.log('1234')
+    const loadData = () => {
+      discoveryApi.list().then(res => {
+        let { total, items } = res
+        list.value = items || []
+        data.page.total = total
+      })
     }
     return {
       data,
-      getData
+      loadData
     }
   },
   render() {
     return (
-      <TablePage ref="table" row-key="id+indexName" class="share-list" remoteMethod={this.getData}>
-        <template slot="search">
-          <FilterBar v-model={this.data.searchParams} items="filterItems" fetch="table.fetch(1)"></FilterBar>
-        </template>
-        <el-table-column width="55" type="selection"></el-table-column>
-        <el-table-column min-width="250" label={this.$t('object_list_name')} prop="name"></el-table-column>
-        <el-table-column min-width="120" label={this.$t('object_list_classification')}></el-table-column>
-        <el-table-column min-width="150" label={this.$t('object_list_type')}></el-table-column>
-        <el-table-column min-width="110" label={this.$t('object_list_source_type')}></el-table-column>
-        <el-table-column min-width="210" label={this.$t('object_list_source_information')}></el-table-column>
-      </TablePage>
+      <div class="object-page-main-box flex-column pl-4 pr-4">
+        <div class="object-page-topbar">
+          <div class="object-page-search-bar">
+            <FilterBar items={this.data.filterItems} {...{ on: { fetch: this.loadData } }}></FilterBar>
+          </div>
+        </div>
+        <el-table data={this.list}>
+          <el-table-column width="55" type="selection"></el-table-column>
+          <el-table-column label={this.$t('object_list_name')} prop="name"></el-table-column>
+          <el-table-column label={this.$t('object_list_classification')}></el-table-column>
+          <el-table-column label={this.$t('object_list_type')}></el-table-column>
+          <el-table-column label={this.$t('object_list_source_type')}></el-table-column>
+          <el-table-column label={this.$t('object_list_source_information')}></el-table-column>
+        </el-table>
+        <el-pagination
+          background
+          class="table-page-pagination mt-3"
+          layout="->,total, sizes,  prev, pager, next, jumper"
+          on={{ ['update:current-page']: this.loadData }}
+          current-page={this.data.page.current}
+          total={this.data.page.total}
+          onCurrent-change={this.loadData}
+        ></el-pagination>
+      </div>
     )
   }
 })

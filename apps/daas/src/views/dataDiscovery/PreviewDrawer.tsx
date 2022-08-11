@@ -115,49 +115,49 @@ export default defineComponent({
                 </el-col>
               </el-row>
               <el-row class="mt-2">
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">创建时间</span>
                   <span class="ml-2">{this.preview.createAt}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">变更时间</span>
                   <span class="ml-2">{this.preview.lastUpdAt}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">数据项</span>
                   <span class="ml-2">{this.preview.fieldNum}</span>
                 </el-col>
               </el-row>
               <el-row class="mt-2">
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">数据量</span>
                   <span class="ml-2">{this.preview.rowNum}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">来源信息</span>
                   <span class="ml-2">{this.preview.sourceInfo}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">来源类型</span>
                   <span class="ml-2">{this.preview.sourceType}</span>
                 </el-col>
               </el-row>
               <el-row class="mt-2">
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">连接名</span>
                   <span class="ml-2">{this.preview.connectionName}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">连接类型</span>
                   <span class="ml-2">{this.preview.connectionType}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">连接描述</span>
                   <span class="ml-2">{this.preview.connectionDesc}</span>
                 </el-col>
               </el-row>
               <el-row class="mt-2">
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span class="max-label inline-block">业务名称</span>
                   <span class="ml-2">{this.preview.businessName}</span>
                 </el-col>
@@ -184,49 +184,49 @@ export default defineComponent({
                 </el-col>
               </el-row>
               <el-row className="mt-2">
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">创建时间</span>
                   <span className="ml-2">{this.overview.createAt}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">变更时间</span>
                   <span className="ml-2">{this.overview.lastUpdAt}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">数据项</span>
                   <span className="ml-2">{this.overview.fieldNum}</span>
                 </el-col>
               </el-row>
               <el-row className="mt-2">
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">数据量</span>
                   <span className="ml-2">{this.overview.rowNum}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">来源信息</span>
                   <span className="ml-2">{this.overview.sourceInfo}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">来源类型</span>
                   <span className="ml-2">{this.overview.sourceType}</span>
                 </el-col>
               </el-row>
               <el-row className="mt-2">
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">连接名</span>
                   <span className="ml-2">{this.overview.connectionName}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">连接类型</span>
                   <span className="ml-2">{this.overview.connectionType}</span>
                 </el-col>
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">连接描述</span>
                   <span className="ml-2">{this.overview.connectionDesc}</span>
                 </el-col>
               </el-row>
               <el-row className="mt-2">
-                <el-col span={'8'}>
+                <el-col span="8">
                   <span className="max-label inline-block">业务名称</span>
                   <span className="ml-2">{this.overview.businessName}</span>
                 </el-col>
