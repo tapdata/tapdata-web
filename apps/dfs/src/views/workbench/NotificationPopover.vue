@@ -137,11 +137,9 @@ export default {
       let where = {
         id: { inq: [id] }
       }
-      this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        if (res) {
-          this.getUnreadData()
-          this.$root.$emit('notificationUpdate')
-        }
+      this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(() => {
+        this.getUnreadData()
+        this.$root.$emit('notificationUpdate')
       })
     },
     // 跳转消息详情

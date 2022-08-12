@@ -83,10 +83,11 @@
 </template>
 
 <script>
-import { TYPEMAP } from './tyepMap'
-import Setting from './components/Setting'
 import { VIcon } from '@tap/component'
+
 import timeFunction from '@/mixins/timeFunction'
+import Setting from './components/Setting'
+import { TYPEMAP } from './tyepMap'
 
 export default {
   components: { Setting, VIcon },
@@ -277,18 +278,14 @@ export default {
         where.id = { inq: ids }
       }
 
-      this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        if (res) {
-          this.fetch()
-        }
+      this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(() => {
+        this.fetch()
       })
     },
     // 全部已读
     handleReadNoticeAll() {
-      this.$axios.post('tm/api/Messages/readAll').then(res => {
-        if (res) {
-          this.fetch()
-        }
+      this.$axios.post('tm/api/Messages/readAll').then(() => {
+        this.fetch()
       })
     }
   }
