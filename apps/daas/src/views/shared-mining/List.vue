@@ -36,9 +36,7 @@
       </el-table-column>
       <el-table-column min-width="110" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResultData, 'status-block']">
-            {{ $t('task_preview_status_' + row.statusResultData) }}
-          </span>
+          <TaskStatus :task="row" />
         </template>
       </el-table-column>
       <el-table-column width="210" fixed="right" :label="$t('column_operation')">
@@ -148,7 +146,7 @@
 import dayjs from 'dayjs'
 import { logcollectorApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
+import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import TaskButtons from '@/components/TaskButtons'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
@@ -158,7 +156,8 @@ export default {
   components: {
     TablePage,
     FilterBar,
-    TaskButtons
+    TaskButtons,
+    TaskStatus
   },
   data() {
     return {
@@ -262,9 +261,7 @@ export default {
                 item.pointTime = item.syncTimeZone
               }
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              let statuses = item.statuses
-              item.disabledData = getTaskBtnDisabled(item)
-              item.statusResultData = getSubTaskStatus(statuses)[0].status
+              makeStatusAndDisabled(item)
               return item
             })
           }

@@ -4,7 +4,7 @@
       ref="table"
       row-key="id"
       :classify="
-        classify
+        isDaas
           ? {
               authority: 'datasource_catalog_management',
               types: ['database']
@@ -21,7 +21,7 @@
       </template>
       <div slot="operation">
         <ElButton
-          v-if="classify"
+          v-if="isDaas"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
@@ -41,8 +41,8 @@
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn v-if="classify" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="columns['name'].label">
+      <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="t('connection_column_name')">
         <template slot-scope="scope">
           <span class="connection-name">
             <img class="connection-img mr-2" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
@@ -76,10 +76,10 @@
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="120">
-        <div slot="header">
-          {{ $t('connection_list_column_schema_status') }}
-          <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
+      <ElTableColumn min-width="140">
+        <div slot="header" class="flex align-center">
+          <span>{{ $t('connection_list_column_schema_status') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('connection_list_column_schema_status_tips')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -133,12 +133,7 @@
       @dialogVisible="handleDialogDatabaseTypeVisible"
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
-    <Test
-      ref="test"
-      :dialogTestVisible.sync="dialogTestVisible"
-      :formData="testData"
-      @returnTestData="returnTestData"
-    ></Test>
+    <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <ElDialog title="提示" width="40%" :visible.sync="connectionTaskDialog">
       <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
       <div class="color-primary mt-2">任务总数: {{ connectionTaskListTotal }}</div>
@@ -165,18 +160,18 @@ import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
-import locale from '../../locale'
+import Locale from '../../mixins/locale'
 
 let timeout = null
 
 export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   inject: ['checkAgent'],
-  props: {
-    classify: Boolean
-  },
+  mixins: [Locale],
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+
       filterItems: [],
       user_id: Cookie.get('user_id'),
       dialogDatabaseTypeVisible: false,
@@ -235,8 +230,7 @@ export default {
       dialogTestVisible: false, // 连接测试框
       connectionTaskList: [],
       connectionTaskListTotal: 0,
-      connectionTaskDialog: false,
-      columns: { name: { label: locale.t('connection_column_name') } }
+      connectionTaskDialog: false
     }
   },
   computed: {

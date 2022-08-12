@@ -5,5 +5,15 @@ import MigrateDetails from './task/migrate/details/Index.vue'
 import EtlList from './task/TaskList'
 import EtlDetails from './task/etl/Details.vue'
 import EtlStatistics from './task/etl/statistics/Index.vue'
+import ConnectionTest from './connections/Test.vue'
 
-export { ConnectionList, MigrateList, ConnectionForm, MigrateDetails, EtlList, EtlDetails, EtlStatistics }
+export {
+  ConnectionForm,
+  ConnectionList,
+  ConnectionTest,
+  MigrateDetails,
+  MigrateList,
+  EtlDetails,
+  EtlList,
+  EtlStatistics
+}

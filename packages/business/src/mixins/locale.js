@@ -1,4 +1,4 @@
-import { locale } from '../index'
+import locale from '../locale'
 
 export default {
   methods: {

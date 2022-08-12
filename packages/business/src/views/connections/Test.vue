@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     class="connection-test-dialog"
-    :visible="dialogTestVisible"
+    :visible="visible"
     width="770px"
     :show-close="false"
     append-to-body
@@ -87,12 +87,10 @@ export default {
   name: 'Test',
   components: { VIcon },
   props: {
-    dialogTestVisible: {
-      required: true,
+    visible: {
       value: Boolean
     },
     formData: {
-      required: true,
       value: Object
     }
   },
@@ -151,7 +149,7 @@ export default {
       return row.status === 'waiting' ? { background: '#fff' } : ''
     },
     handleClose() {
-      this.$emit('update:dialogTestVisible', false)
+      this.$emit('update:visible', false)
       this.clearInterval()
     },
     handleWS() {
@@ -162,6 +160,8 @@ export default {
           let result = data.result || []
           this.wsError = data.status
           this.wsErrorMsg = data.error
+          clearTimeout(this.timer)
+          this.timer = null
           let testData = {
             wsError: data.status
           }
@@ -234,19 +234,16 @@ export default {
       if (editTest) {
         msg.data['editTest'] = editTest //是否编辑测试
       }
-      let self = this
-      this.isTimeout = true //重置
       this.$ws.ready(() => {
         this.$ws.send(msg)
-        self.timer = setTimeout(() => {
-          if (self.isTimeout) {
-            self.wsError = 'ERROR'
-            self.wsErrorMsg = self.wsErrorMsg ? self.wsErrorMsg : self.$t('dataForm.test.retryTest')
-            let testData = {
-              wsError: 'ERROR'
-            }
-            self.$emit('returnTestData', testData)
+        this.timer = setTimeout(() => {
+          this.isTimeout = true //重置
+          self.wsError = 'ERROR'
+          self.wsErrorMsg = self.wsErrorMsg ? self.wsErrorMsg : self.$t('dataForm.test.retryTest')
+          let testData = {
+            wsError: 'ERROR'
           }
+          self.$emit('returnTestData', testData)
         }, 15000)
       })
     },

@@ -22,7 +22,10 @@ export const Table = {
       title: '数据写入模式',
       dataSource: ['追加写入', '更新已存在或者插入新数据']
     },
-    updateConditionFields: '更新条件字段'
+    updateConditionFields: '更新条件字段',
+    initialConcurrentSpace: '全量多线程写入',
+    cdcConcurrentSpace: '增量多线程写入',
+    attrs: { accessNodeProcessId: '所属agent' }
   },
   'zh-tw': {
     connectionIdWrap: '數據庫',
@@ -47,7 +50,10 @@ export const Table = {
       title: '數據寫入模式',
       dataSource: ['追加寫入', '更新已存在或者插入新數據']
     },
-    updateConditionFields: '更新條件字段'
+    updateConditionFields: '更新條件字段',
+    initialConcurrentSpace: '全量多線程寫入',
+    cdcConcurrentSpace: '增量多線程寫入',
+    attrs: { accessNodeProcessId: '所屬agent' }
   },
   'en-us': {
     connectionIdWrap: 'Database',
@@ -72,6 +78,9 @@ export const Table = {
       title: 'Write Strategy',
       dataSource: ['Append Write', 'Update Or Insert']
     },
-    updateConditionFields: 'Update Condition Fields'
+    updateConditionFields: 'Update Condition Fields',
+    initialConcurrentSpace: 'Initial concurrent',
+    cdcConcurrentSpace: 'CDC concurrent',
+    attrs: { accessNodeProcessId: 'Agent' }
   }
 }

@@ -22,6 +22,10 @@ const ConnectionForm = async () => {
   const { ConnectionForm } = await import('@tap/business')
   return ConnectionForm
 }
+const MigrationMonitor = async () => {
+  const { MigrationMonitor } = await import('@tap/dag')
+  return MigrationMonitor
+}
 
 const routes = [
   {
@@ -265,6 +269,14 @@ const routes = [
         }
       }
     ]
+  },
+  {
+    path: '/migrate/monitor/:id',
+    name: 'MigrationMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor'
+    }
   },
   {
     path: '/fastDownload',
