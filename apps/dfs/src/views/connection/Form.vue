@@ -98,6 +98,8 @@
 </template>
 
 <script>
+import { ConnectionTest } from '@tap/business'
+
 import i18n from '@/i18n'
 
 import { DEFAULT_MODEL } from './const'
@@ -110,7 +112,7 @@ import { getDatabaseTypes, buried } from '@/util'
 
 let defaultConfig = []
 export default {
-  components: { GitBook, StatusTag, MqQueueOrTopic },
+  components: { GitBook, StatusTag, MqQueueOrTopic, ConnectionTest },
   props: {
     databaseTypeText: {
       type: String

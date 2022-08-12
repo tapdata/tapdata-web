@@ -2,6 +2,11 @@
 * Bootstrap Utility API
 * https://getbootstrap.com/docs/5.0/utilities/api/
 */
+@import './var';
+
+.din-font {
+  font-family: DIN;
+}
 .clearfix::after {
   display: block;
   clear: both;
@@ -9,12 +14,15 @@
 }
 
 .link-primary {
-  color: #0d6efd;
+  // color: #0d6efd;
+  color: map-get($color, primary);
 }
 
-.link-primary:hover,
+.link-primary:hover {
+  color: map-get($color, lprimary);
+}
 .link-primary:focus {
-  color: #0a58ca;
+  color: map-get($color, dprimary);
 }
 
 .link-secondary {
@@ -54,12 +62,14 @@
 }
 
 .link-danger {
-  color: #dc3545;
+  color: #d44d4d;
 }
 
-.link-danger:hover,
+.link-danger:hover {
+  color: #f76560;
+}
 .link-danger:focus {
-  color: #b02a37;
+  color: #cb2634;
 }
 
 .link-light {
@@ -528,6 +538,10 @@
   border-color: #fff !important;
 }
 
+.border-form {
+  border-color: map-get($borderColor, form) !important;
+}
+
 .border-1 {
   border-width: 1px !important;
 }
@@ -602,6 +616,10 @@
 
 .mh-100 {
   max-height: 100% !important;
+}
+
+.min-w-0 {
+  min-width: 0 !important;
 }
 
 .min-h-0 {
@@ -2451,7 +2469,9 @@
 .fw-normal {
   font-weight: 400 !important;
 }
-
+.fw-sub {
+  font-weight: 500 !important;
+}
 .fw-bold {
   font-weight: 700 !important;
 }
@@ -2528,7 +2548,8 @@
 
 /* rtl:end:remove */
 .text-primary {
-  color: #0d6efd !important;
+  // color: #0d6efd !important;
+  color: map-get($color, primary) !important;
 }
 
 .text-secondary {
@@ -2560,7 +2581,7 @@
 }
 
 .text-white {
-  color: #fff !important;
+  color: map-get($fontColor, white) !important;
 }
 
 .text-body {
@@ -2583,8 +2604,12 @@
   color: inherit !important;
 }
 
+.bg-main {
+  background-color: #fafafa !important;
+}
+
 .bg-primary {
-  background-color: #0d6efd !important;
+  background-color: map-get($color, primary) !important;
 }
 
 .bg-secondary {
@@ -2715,6 +2740,10 @@
 
 .rounded-xxl {
   border-radius: 1.5rem !important;
+}
+
+.rounded-md {
+  border-radius: 4px !important;
 }
 
 .visible {
@@ -12048,6 +12077,23 @@
   color: map-get($color, disable) !important;
 }
 
+// 字体颜色
+.font-color-dark {
+  color: map-get($fontColor, dark);
+}
+.font-color-normal {
+  color: map-get($fontColor, normal);
+}
+.font-color-light {
+  color: map-get($fontColor, light);
+}
+.font-color-slight {
+  color: map-get($fontColor, slight);
+}
+.font-color-sslight {
+  color: map-get($fontColor, sslight);
+}
+
 // 背景颜色
 .bg-color-primary {
   background-color: map-get($color, primary) !important;
@@ -12067,6 +12113,13 @@
 
 .bg-color-disable {
   background-color: map-get($color, disable) !important;
+}
+
+.bg-color-main {
+  background-color: map-get($bgColor, main) !important;
+}
+.bg-color-white {
+  background-color: map-get($bgColor, white) !important;
 }
 
 /*
@@ -12184,6 +12237,25 @@
 .tooltip-fade-in-leave-active {
   opacity: 0;
 }
+
 /*.tooltip-fade-in-leave-active {
   transition: opacity 0 linear;
 }*/
+
+.clean:after {
+  content: '';
+  display: block;
+  line-height: 0;
+  height: 0;
+  visibility: hidden;
+  clear: both;
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.cursor-p {
+  cursor: pointer;
+}

@@ -1,7 +1,9 @@
 @import '~@tap/assets/styles/var';
-@import '~web-core/styles/utilities';
+@import '~@tap/assets/styles/reboot';
+@import '~@tap/assets/styles/utilities';
+@import '~@tap/assets//fonts/DIN/index.css';
+
 @import 'overrides';
-@import '~@/assets/fonts/DIN/index.css';
 
 .g-panel-container {
   background: #fff;

@@ -36,8 +36,12 @@
 <script>
 import dayjs from 'dayjs'
 
+import { VIcon } from '@tap/component'
+
 export default {
   name: 'TimeSelect',
+
+  components: { VIcon },
 
   props: {
     value: String,

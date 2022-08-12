@@ -1,0 +1,28 @@
+.form-js-editor-wrap {
+  .code-before,
+  .code-after{
+    .hljs {
+      padding: 0 8px;
+      background: #ebebeb;
+      line-height: 24px;
+      font-size: 12px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    }
+  }
+
+  .code-before {
+    .hljs {
+      border-radius: 4px 4px 0 0;
+    }
+  }
+
+  .code-after {
+    .hljs {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+
+  .form-js-editor-wrap {
+    background: #fff;
+  }
+}

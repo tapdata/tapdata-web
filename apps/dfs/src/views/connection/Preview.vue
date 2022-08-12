@@ -85,13 +85,13 @@
 import i18n from '@/i18n'
 
 import { VIcon } from '@tap/component'
-import { StatusTag } from '@tap/business'
+import { StatusTag, ConnectionTest } from '@tap/business'
 import { CONFIG_MODEL } from './const'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, StatusTag },
+  components: { VIcon, StatusTag, ConnectionTest },
   mixins: [timeFunction],
   props: {
     hideOperation: {

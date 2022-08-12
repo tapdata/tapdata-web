@@ -322,9 +322,10 @@ f
 import { RecycleScroller } from 'vue-virtual-scroller'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import { metadataInstancesApi, connectionsApi } from '@tap/api'
+import { ConnectionTest } from '@tap/business'
 
 export default {
-  components: { RecycleScroller, OverflowTooltip },
+  components: { RecycleScroller, OverflowTooltip, ConnectionTest },
   props: {
     connectionId: {
       type: String,

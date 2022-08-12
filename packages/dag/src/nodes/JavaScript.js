@@ -15,19 +15,48 @@ export class JavaScript extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      script: {
-        title: '脚本',
-        type: 'string',
-        required: true,
-        default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
-        'x-decorator': 'FormItem',
-        'x-component': 'JsEditor',
-        'x-decorator-props': {
-          wrapperWidth: 800
-        },
+      grid: {
+        type: 'void',
+        'x-component': 'FormGrid',
         'x-component-props': {
-          height: 500,
-          options: { showPrintMargin: false, useWrapMode: true }
+          columnGap: 16,
+          minColumns: 3,
+          maxColumns: 3
+        },
+        properties: {
+          script: {
+            title: '脚本',
+            type: 'string',
+            required: true,
+            default: 'function process(record){\n\t// Enter you code at here\n\treturn record;\n}',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': { gridSpan: 2 },
+            'x-component': 'JsEditor',
+            'x-component-props': {
+              height: 500,
+              options: { showPrintMargin: false, wrap: false },
+              includeBeforeAndAfter: true,
+              before: 'function process(record){',
+              beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
+              afterRegexp: '}[^]*$',
+              after: '}'
+            }
+          },
+          declareScript: {
+            title: '模型声明',
+            type: 'string',
+            required: true,
+            default: '',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': { gridSpan: 1 },
+            'x-component': 'JsEditor',
+            'x-component-props': {
+              height: 500,
+              options: { showPrintMargin: false, wrap: false },
+              before: 'function declare(tapTable) {',
+              after: `  return tapTable\n}`
+            }
+          }
         }
       }
     }

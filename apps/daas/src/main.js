@@ -9,7 +9,6 @@ import VueClipboard from 'vue-clipboard2'
 import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
-import ConnectionTest from '@/components/ConnectionTest'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
 import { settingsApi, usersApi } from '@tap/api'
@@ -30,7 +29,6 @@ Vue.use(TapdataWebCore)
 // Vue.prototype.$api = factory
 
 Vue.component(VIcon.name, VIcon)
-Vue.component(ConnectionTest.name, ConnectionTest)
 
 window._TAPDATA_OPTIONS_ = {
   logoUrl: require('@/assets/images/logo.png'),
