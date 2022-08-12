@@ -61,7 +61,7 @@
             </div>
             <div v-else class="before-scroll-content text-center font-color-light pb-2">
               <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
-<!--              <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>-->
+              <!--              <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>-->
               <VEmpty v-else-if="!list.length" large />
               <div v-show="preLoading">
                 <i class="el-icon-loading"></i>
@@ -80,7 +80,7 @@
                 <span class="white-space-nowrap ml-1">{{ formatTime(item.timestamp) }}</span>
                 <span v-if="item.taskName" v-html="item.taskName" class="ml-1"></span>
                 <span v-if="item.nodeName" v-html="item.nodeName" class="ml-1"></span>
-                <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>
+                <!--                <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>-->
                 <span v-for="(temp, tIndex) in item.logTags || []" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
               </div>
@@ -418,7 +418,7 @@ export default {
 
     getFormatRow(data) {
       let result = deepCopy(data)
-      const arr = ['taskName', 'nodeName', 'message', 'errorStack']
+      const arr = ['taskName', 'nodeName']
       result.forEach(row => {
         if (!row.logTags) {
           row.logTags = []
@@ -445,15 +445,16 @@ export default {
 
     getOldFilter() {
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       let params = {
         start,
         end,
         page: this.oldPageObj.page,
         pageSize: this.oldPageObj.pageSize,
         order: 'desc',
-        taskId: this.dataflow.id,
+        taskId,
+        taskRecordId,
         nodeId: this.activeNodeId === 'all' ? null : this.activeNodeId,
-        taskRecordId: '',
         search: this.keyword,
         levels: this.checkList
       }
@@ -462,15 +463,16 @@ export default {
 
     getNewFilter() {
       const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Date.now()]
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       let params = {
         start,
         end,
         page: this.newPageObj.page,
         pageSize: this.newPageObj.pageSize,
         order: 'asc',
-        taskId: this.dataflow.id,
+        taskId,
+        taskRecordId,
         nodeId: this.activeNodeId === 'all' ? null : this.activeNodeId,
-        taskRecordId: '',
         search: this.keyword,
         levels: this.checkList
       }
@@ -497,10 +499,12 @@ export default {
 
     handleDownload() {
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       let filter = {
         start,
         end,
-        taskId: this.dataflow.id
+        taskId,
+        taskRecordId
       }
       this.downloadLoading = true
       monitoringLogsApi
