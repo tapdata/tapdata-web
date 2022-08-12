@@ -61,7 +61,8 @@
             </div>
             <div v-else class="before-scroll-content text-center font-color-light pb-2">
               <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
-              <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+<!--              <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>-->
+              <VEmpty v-else-if="!list.length" large />
               <div v-show="preLoading">
                 <i class="el-icon-loading"></i>
               </div>
@@ -125,16 +126,17 @@ import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
-import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
 import VIcon from 'web-core/components/VIcon'
+import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
+import { VEmpty } from '@tap/component'
+import { monitoringLogsApi } from '@tap/api'
 
 import TimeSelect from './TimeSelect'
-import { monitoringLogsApi } from '@tap/api'
 
 export default {
   name: 'Log',
 
-  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem },
+  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty },
 
   props: {
     dataflow: {
