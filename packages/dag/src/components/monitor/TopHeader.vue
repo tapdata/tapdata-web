@@ -315,7 +315,6 @@ $sidebarBg: #fff;
       background: $hoverBg;
     }
     &.edit {
-      background: #eeeff1;
       width: 27px;
       height: 27px;
     }
