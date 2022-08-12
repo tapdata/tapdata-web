@@ -199,18 +199,12 @@ export default {
     // 任务事件统计（条）-任务累计
     eventDataAll() {
       const data = this.quota.samples?.totalData?.[0]
-      if (!data) {
-        return
-      }
       return this.getInputOutput(data)
     },
 
     // 任务事件统计（条）-所选周期累计
     eventDataPeriod() {
       const data = this.quota.samples?.barChartData?.[0]
-      if (!data) {
-        return
-      }
       return this.getInputOutput(data)
     },
 
@@ -403,7 +397,7 @@ export default {
         for (let key in result) {
           let item = result[key]
           if (el.includes(key)) {
-            item[el.replace(key, '')] = data[el] || 0
+            item[el.replace(key, '')] = data?.[el] || 0
           }
         }
       })
