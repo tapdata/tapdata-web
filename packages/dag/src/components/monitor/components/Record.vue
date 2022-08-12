@@ -27,6 +27,7 @@
 
 <script>
 import { VTable } from '@tap/component'
+import { taskApi } from '@tap/api'
 
 export default {
   name: 'Record',
@@ -52,17 +53,17 @@ export default {
       columns: [
         {
           label: '运行开始时间',
-          prop: 'startTime',
+          prop: 'startDate',
           dataType: 'time'
         },
         {
           label: '运行结束时间',
-          prop: 'stopTime',
+          prop: 'endDate',
           dataType: 'time'
         },
         {
           label: '操作人',
-          prop: 'username'
+          prop: 'operator'
         },
         {
           label: '运行结果',
@@ -71,12 +72,12 @@ export default {
         },
         {
           label: '同步数据量',
-          prop: 'count',
+          prop: 'syncNum',
           dataType: 'number'
         },
         {
           label: '差异数据（行）',
-          prop: 'diff',
+          prop: 'diffNum',
           dataType: 'number'
         },
         {
@@ -87,43 +88,22 @@ export default {
     }
   },
 
+  mounted() {},
+
   methods: {
     remoteMethod({ page }) {
-      let { current, size } = page
-      let ids = [this.$attrs.dataflow?.id]
-      let operations = ['start', 'stop', 'forceStop']
-      let where = {
-        sourceId: {
-          inq: ids
-        },
-        modular: 'migration',
-        operation: {
-          inq: operations
-        }
-      }
+      const { current, size } = page
+      const { taskId } = this.$attrs.dataflow || {}
       let filter = {
-        where: where,
+        taskId,
         limit: size,
         skip: size * (current - 1)
       }
-      return new Promise((resolve, rejust) => {
-        let list = Array(20)
-          .fill()
-          .map((t, index) => {
-            return {
-              id: Date.now() + index,
-              startTime: Date.now(),
-              stopTime: Date.now(),
-              username: 'kennen',
-              status: ['finish', 'running', 'error'][index] || 'error',
-              count: Math.ceil(Math.random() * 10000),
-              diff: Math.ceil(Math.random() * 10000)
-            }
-          })
-        resolve({
-          total: 10000,
-          data: list
-        })
+      return taskApi.records(filter).then(data => {
+        return {
+          total: data.total,
+          data: data.items || []
+        }
       })
     },
 
@@ -131,11 +111,15 @@ export default {
       return this.statusMap[status] || {}
     },
 
-    handleDetail(row) {
+    handleDetail(row = {}) {
+      const { taskId, taskRecordId } = row
       this.$router.push({
         name: 'MigrationMonitorViewer',
         params: {
-          id: row.id
+          id: taskId
+        },
+        query: {
+          taskRecordId
         }
       })
     }

@@ -23,7 +23,7 @@
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
-      <div v-if="isSource" class="chart-box rounded-2">
+      <div v-if="isSource" :class="{ 'w-100': !isSource && !isTarget }" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
         <div class="chart-box__content p-4 flex justify-content-between">
           <div class="pl-6">
@@ -56,7 +56,11 @@
           </div>
         </div>
       </div>
-      <div v-else-if="isTarget" class="chart-box rounded-2 flex flex-column">
+      <div
+        v-else-if="isTarget"
+        :class="{ 'w-100': !isSource && !isTarget }"
+        class="chart-box rounded-2 flex flex-column"
+      >
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">连接状态</div>
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <div class="text-center pb-10 w-100">
