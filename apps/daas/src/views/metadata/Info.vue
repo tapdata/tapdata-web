@@ -987,7 +987,7 @@ export default {
               .el-tabs__nav-scroll,
               .el-tabs__nav {
                 height: 60px;
-                line-height: 6ppx;
+                line-height: 6px;
               }
               .el-tabs__item {
                 height: 60px;
