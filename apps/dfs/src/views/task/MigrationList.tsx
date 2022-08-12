@@ -1,11 +1,11 @@
 import { defineComponent } from '@vue/composition-api'
-import List from '@tap/business/src/views/task/migrate/List'
+import { MigrateList } from '@tap/business'
 
 export default defineComponent({
   setup(props, { root }) {
     return () => {
       return root.$route.name === 'migrateList' ? (
-        <List class="route-page-container"></List>
+        <MigrateList class="route-page-container"></MigrateList>
       ) : (
         <router-view></router-view>
       )
