@@ -7,8 +7,8 @@
     :has-pagination="false"
     ref="tableList"
   >
-    <template slot="status" slot-scope="scope">
-      <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
+    <template #status="{ row }">
+      <TaskStatus :task="row" />
     </template>
     <template slot="operation" slot-scope="scope">
       <div class="operate-columns">
@@ -22,11 +22,12 @@
 import { logcollectorApi } from '@tap/api'
 import { TableList } from '@tap/component'
 
-import { StatusTag } from '../../../../components'
+import { makeStatusAndDisabled } from '../../../../shared'
+import { TaskStatus } from '../../../../components'
 
 export default {
   name: 'ShareMining',
-  components: { TableList, StatusTag },
+  components: { TableList, TaskStatus },
   props: {
     id: String
   },
@@ -61,7 +62,7 @@ export default {
   methods: {
     getData(id) {
       logcollectorApi.byTaskId(id).then(data => {
-        this.taskList = data || []
+        this.taskList = (data || []).map(makeStatusAndDisabled)
       })
     },
     goShareCdcInfo(id) {
