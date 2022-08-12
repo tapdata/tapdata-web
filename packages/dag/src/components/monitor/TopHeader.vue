@@ -36,7 +36,7 @@
           :content="t('button_edit')"
         >
           <button @click="$emit('edit')" class="icon-btn edit rounded-circle">
-            <VIcon size="14" class="color-primary">edit</VIcon>
+            <img :src="editSvg" />
           </button>
         </ElTooltip>
         <ElButton
@@ -123,7 +123,8 @@ export default {
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
-      nodeSearchInput: ''
+      nodeSearchInput: '',
+      editSvg: require('@tap/assets/images/edit-fill.svg')
     }
   },
 
