@@ -1,5 +1,5 @@
 <template>
-  <div ref="drawer" class="drawer-wrapper" :style="{ width: width || '304px' }" v-show="visible">
+  <div ref="drawer" class="drawer-wrapper" :style="{ width: width }" v-show="visible">
     <slot></slot>
   </div>
 </template>
@@ -9,7 +9,12 @@ export default {
   name: 'Drawer',
   props: {
     visible: Boolean,
-    width: String
+    width: {
+      type: String,
+      default: () => {
+        return '304px'
+      }
+    }
   },
   watch: {
     visible() {

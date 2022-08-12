@@ -11,6 +11,7 @@ export default defineComponent({
       activeName: 'first',
       activeUser: 'admin',
       currentRow: '',
+      loading: false,
       columns: [
         {
           label: '名称',
@@ -71,13 +72,15 @@ export default defineComponent({
     const loadData = row => {
       data.currentRow = row
       if (data.activeName === 'first') {
-        discoveryApi.overView(row.id).then(res => {
-          preview.value = res || ''
-        })
-      } else if (data.activeName === 'second') {
-        discoveryApi.preview(row.id).then(res => {
-          overview.value = res || ''
-        })
+        data.loading = true
+        discoveryApi
+          .overView(row.id)
+          .then(res => {
+            preview.value = res || ''
+          })
+          .finally(() => {
+            data.loading = false
+          })
       }
     }
     return {
@@ -89,14 +92,14 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="drawer-content">
+      <div class="drawer-content" loading={this.data.loading}>
         <div class="flex align-items-center ml-4">
           <header class="font-weight-bold mr-4">
             <span class="drawer__header_text inline-block">对象详情</span>
           </header>
           <el-tabs v-model={this.data.activeName} type="card">
             <el-tab-pane label="概览" name="first"></el-tab-pane>
-            <el-tab-pane label="预览" name="second"></el-tab-pane>
+            {/*<el-tab-pane label="预览" name="second"></el-tab-pane>*/}
           </el-tabs>
         </div>
         {this.preview ? (
@@ -163,17 +166,21 @@ export default defineComponent({
                 </el-col>
               </el-row>
             </div>
-            {this.data.activeName === 'first' ? (
-              <div className="mt-4">
-                <span className="drawer__header_text inline-block">数据项</span>
-                <TableList columns={this.data.columns} data={this.preview.fields}></TableList>
-              </div>
-            ) : (
-              <div className="mt-4">
-                <span className="drawer__header_text inline-block">数据预览</span>
-                <TableList columns={this.data.overviewColumns} data={this.overview.fields}></TableList>
-              </div>
-            )}
+            <div className="mt-4">
+              <span className="drawer__header_text inline-block">数据项</span>
+              <TableList columns={this.data.columns} data={this.preview.fields}></TableList>
+            </div>
+            {/*{this.data.activeName === 'first' ? (*/}
+            {/*  <div className="mt-4">*/}
+            {/*    <span className="drawer__header_text inline-block">数据项</span>*/}
+            {/*    <TableList columns={this.data.columns} data={this.preview.fields}></TableList>*/}
+            {/*  </div>*/}
+            {/*) : (*/}
+            {/*  <div className="mt-4">*/}
+            {/*    <span className="drawer__header_text inline-block">数据预览</span>*/}
+            {/*    <TableList columns={this.data.overviewColumns} data={this.overview.fields}></TableList>*/}
+            {/*  </div>*/}
+            {/*)}*/}
           </div>
         ) : (
           ''

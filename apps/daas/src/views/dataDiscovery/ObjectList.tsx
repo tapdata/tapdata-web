@@ -109,7 +109,6 @@ export default defineComponent({
               </div>
             </div>
             <el-table data={this.list}>
-              <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column
                 label={this.$t('object_list_name')}
                 prop="name"

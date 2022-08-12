@@ -1,6 +1,6 @@
 import { defineComponent, reactive, ref } from '@vue/composition-api'
 import { FilterBar, Drawer } from '@tap/component'
-import Classification from './Classification.vue'
+import Classification from '@/views/dataDiscovery/Classification.vue'
 import DrawerContent from '@/views/dataDiscovery/PreviewDrawer'
 import ObjectTable from '@/views/dataDiscovery/ObjectTable'
 import './catalogue.scss'
@@ -20,6 +20,7 @@ export default defineComponent({
         total: 0,
         count: 1
       },
+      currentNode: '',
       filterItems: [
         {
           label: '资源类型',
@@ -60,6 +61,9 @@ export default defineComponent({
     const closeSourceDrawer = val => {
       data.isShowSourceDrawer = val
     }
+    const getNodeChecked = node => {
+      data.currentNode = node
+    }
     const renderNode = ({ row }) => {
       return (
         <div class="cursor-pointer">
@@ -83,6 +87,7 @@ export default defineComponent({
       closeSourceDrawer,
       handleSourceDrawer,
       renderNode,
+      getNodeChecked,
       loadData
     }
   },
@@ -91,12 +96,16 @@ export default defineComponent({
       <div class="classify-wrap">
         <div class="catalogue-page-main-box flex">
           <div class="page-left">
-            <Classification v-model={this.data.searchParams} ref="classify"></Classification>
+            <Classification
+              v-model={this.data.searchParams}
+              ref="classify"
+              {...{ on: { nodeChecked: this.getNodeChecked } }}
+            ></Classification>
           </div>
           <div class="page-right">
             <div class="flex flex-row align-items-center mb-2">
               <span class="ml-2 mr-2">目录</span>
-              <span class="mr-2"> FDM </span>
+              <span class="mr-2"> {this.data.currentNode.value} </span>
             </div>
             <div class="catalogue-page-topbar">
               <div class="catalogue-page-search-bar">

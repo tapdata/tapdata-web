@@ -160,11 +160,10 @@ export default {
     nodeClickHandler(data, node) {
       this.clear()
       node.checked = !node.checked
-      this.emitCheckedNodes()
+      this.emitCheckedNodes(node)
     },
-    emitCheckedNodes() {
-      let checkedNodes = this.$refs.tree.getCheckedKeys() || []
-      this.$emit('nodeChecked', checkedNodes)
+    emitCheckedNodes(node) {
+      this.$emit('nodeChecked', node?.data)
     },
     getData(cb) {
       let where = {}
