@@ -54,12 +54,13 @@ import { connectionsApi } from '@tap/api'
 import { VIcon, TableList } from '@tap/component'
 import { deepCopy } from '@tap/shared'
 
+import ConnectionTest from '../../../connections/Test.vue'
 import { SchemaProgress } from '../../../../components'
 import { getConnectionIcon } from '../../../connections/util'
 
 export default {
   name: 'Connection',
-  components: { TableList, VIcon, SchemaProgress },
+  components: { TableList, VIcon, SchemaProgress, ConnectionTest },
   inject: ['checkAgent'],
   props: {
     ids: {

@@ -5,10 +5,6 @@ import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import i18n from '@/i18n'
 import Lang from '../views/Lang.vue'
 
-// const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
-const ConnectionForm = () =>
-  import(/* webpackChunkName: "connection-form" */ '@tap/business/src/views/connections/DatabaseForm.vue')
-// const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
 const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
@@ -18,8 +14,18 @@ const MigrationEditor = async () => {
   const { MigrationEditor } = await import('@tap/dag')
   return MigrationEditor
 }
-const MigrateDetails = () =>
-  import(/* webpackChunkName: "task-details" */ '@tap/business/src/views/task/migrate/details/Index.vue')
+const MigrateDetails = async () => {
+  const { MigrateDetails } = await import('@tap/business')
+  return MigrateDetails
+}
+const ConnectionForm = async () => {
+  const { ConnectionForm } = await import('@tap/business')
+  return ConnectionForm
+}
+const MigrationMonitor = async () => {
+  const { MigrationMonitor } = await import('@tap/dag')
+  return MigrationMonitor
+}
 
 const routes = [
   {
@@ -263,6 +269,14 @@ const routes = [
         }
       }
     ]
+  },
+  {
+    path: '/migrate/monitor/:id',
+    name: 'MigrationMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor'
+    }
   },
   {
     path: '/fastDownload',

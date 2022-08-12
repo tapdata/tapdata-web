@@ -90,7 +90,8 @@
     "apps/dfs/tests/**/*.ts",
     "apps/dfs/tests/**/*.tsx",
     "apps/dfs/types/**/*.ts",
-    "packages/api/src/*.ts"
+    "packages/api/src/*.ts",
+    "types/*.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -96,7 +96,7 @@ export default {
         { name: 'Redis', type: 'redis' },
         { name: 'PostgreSQL', type: 'postgres' },
         { name: 'SQL Server', type: 'sqlserver' },
-        { name: 'GBase 8s', type: 'gbase-8s' },
+        // { name: 'GBase 8s', type: 'gbase-8s' },
         { name: 'Sybase ASE', type: 'sybase ase' },
         { name: 'GaussDB200', type: 'gaussdb200' },
         { name: 'IBM Db2', type: 'db2' },
@@ -113,7 +113,7 @@ export default {
         { name: 'DM DB', type: 'dameng' },
         { name: 'Hive', type: 'hive' },
         { name: 'TCP/IP', type: 'tcp_udp' },
-        { name: 'MQ', type: 'mq' },
+        // { name: 'MQ', type: 'mq' },
         { name: 'HBase', type: 'hbase' },
         { name: 'KUDU', type: 'kudu' },
         { name: 'Greenplum', type: 'greenplum' },
@@ -245,7 +245,7 @@ export default {
       justify-content: center;
       align-items: center;
       &:hover {
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(201, 205, 212, 0.3);
       }
       .img-box__mask {
         width: 75px;

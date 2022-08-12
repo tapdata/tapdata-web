@@ -1097,11 +1097,12 @@ export default {
 
     validateLink() {
       const firstSourceNode = this.allNodes.find(node => !node.$inputs.length)
+      if (!firstSourceNode) return '任务链路不完整'
       this.eachMap = {}
       this.eachOutputs(firstSourceNode)
 
       if (this.allNodes.some(node => !this.eachMap[node.id])) {
-        return '不支持多条链路，请编辑后重试'
+        return '不支持多条链路，请重新编辑任务链路'
       }
     },
 
@@ -1139,6 +1140,7 @@ export default {
 
     async validate() {
       if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.allNodes.length) return this.t('editor_cell_validate_none_data_node')
 
       await this.validateAllNodes()
 

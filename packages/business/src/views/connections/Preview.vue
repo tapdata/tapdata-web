@@ -73,7 +73,7 @@
         </div>
       </div>
     </div>
-    <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
+    <Test ref="test" @receive="receiveTestData"></Test>
   </Drawer>
 </template>
 
@@ -83,11 +83,12 @@ import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 
 import { StatusTag } from '../../components'
-import { CONFIG_MODEL, getConnectionIcon } from './util'
+import Test from '../connections/Test.vue'
+import { getConnectionIcon } from './util'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, Drawer, StatusTag },
+  components: { VIcon, Drawer, StatusTag, Test },
   inject: ['checkAgent'],
   props: {
     hideOperation: {
@@ -122,6 +123,100 @@ export default {
         0: 'ActiveMQ',
         1: 'RabbitMQ',
         2: 'RocketMQ'
+      },
+      configModel: {
+        default: [
+          {
+            icon: 'time',
+            items: [
+              {
+                label: this.$t('connection_preview_load_schema'),
+                key: 'last_updated'
+              }
+            ]
+          },
+          {
+            icon: 'database',
+            items: [
+              {
+                label: this.$t('connection_form_database_address'),
+                key: 'database_host'
+              }
+            ]
+          },
+          {
+            icon: 'port',
+            items: [
+              {
+                label: this.$t('connection_form_port'),
+                key: 'database_port'
+              }
+            ]
+          },
+          {
+            icon: 'name',
+            items: [
+              {
+                label: this.$t('connection_form_database_name'),
+                key: 'database_name'
+              }
+            ]
+          },
+          {
+            icon: 'database-user-name',
+            items: [
+              {
+                label: this.$t('connection_form_database_username'),
+                key: 'database_username'
+              }
+            ]
+          },
+          {
+            icon: 'connect_schema',
+            items: [
+              {
+                label: this.$t('dataForm.form.databaseOwner'),
+                key: 'database_owner'
+              }
+            ]
+          },
+          {
+            icon: 'additional-string',
+            items: [
+              {
+                label: this.$t('connection_form_additional_string'),
+                key: 'additionalString'
+              }
+            ]
+          },
+          {
+            icon: 'origin-time',
+            items: [
+              {
+                label: this.$t('connection_form_timezone'),
+                key: 'database_datetype_without_timezone'
+              }
+            ]
+          }
+          // {
+          //   icon: 'connect_shared_mining',
+          //   items: [
+          //     {
+          //       label: this.$t('connection_form_shared_mining'),
+          //       key: 'shareCdcEnable'
+          //     }
+          //   ]
+          // },
+          // {
+          //   icon: 'connect_journal',
+          //   items: [
+          //     {
+          //       label: this.$t('connection_form_oracle_redoLog_parser'),
+          //       key: 'redoLogParserEnable'
+          //     }
+          //   ]
+          // }
+        ]
       }
     }
   },
@@ -287,7 +382,7 @@ export default {
       this.status = data.status
     },
     loadList() {
-      this.list = CONFIG_MODEL['default']
+      this.list = this.configModel['default']
     },
     getConnectionIcon() {
       const { connection } = this

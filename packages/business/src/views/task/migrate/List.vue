@@ -4,7 +4,7 @@
       ref="table"
       row-key="id"
       class="data-flow-list"
-      :classify="classify ? { authority: 'SYNC_category_management', types: ['dataflow'] } : null"
+      :classify="isDaas ? { authority: 'SYNC_category_management', types: ['dataflow'] } : null"
       :remoteMethod="getData"
       :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="
@@ -20,7 +20,7 @@
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="classify"
+          v-if="isDaas"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'SYNC_category_application'"
           size="mini"
@@ -40,7 +40,7 @@
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-if="canImport" command="export" v-readonlybtn="'SYNC_job_export'">{{
+            <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
               $t('dataFlow.bulkExport')
             }}</el-dropdown-item>
             <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
@@ -58,7 +58,7 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
-          v-if="canImport"
+          v-if="isDaas"
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
           class="btn message-button-cancel"
@@ -182,7 +182,7 @@
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
-                <el-dropdown-item v-if="canImport" command="export" v-readonlybtn="'SYNC_job_export'">{{
+                <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('task_list_export')
                 }}</el-dropdown-item>
                 <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
@@ -199,7 +199,7 @@
                 <el-dropdown-item command="del" :disabled="row.disabledData.delete" v-readonlybtn="'SYNC_job_delete'">
                   {{ $t('task_list_delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item v-if="classify" command="setTag" v-readonlybtn="'SYNC_category_application'">
+                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">
                   {{ $t('dataFlow.addTag') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
@@ -255,7 +255,7 @@
       </div>
     </Drawer>
     <!-- 导入 -->
-    <Upload v-if="classify" :type="'dataflow'" ref="upload"></Upload>
+    <Upload v-if="isDaas" :type="'dataflow'" ref="upload"></Upload>
   </section>
 </template>
 
@@ -275,12 +275,10 @@ let timeout = null
 export default {
   name: 'TaskList',
   components: { VIcon, FilterBar, TablePage, SkipError, Drawer, Upload },
-  props: {
-    canImport: Boolean,
-    classify: Boolean
-  },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+
       previewData: null,
       previewList: [],
       data: {},
