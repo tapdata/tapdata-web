@@ -39,14 +39,16 @@
             <VIcon size="14" class="color-primary">edit</VIcon>
           </button>
         </ElTooltip>
-        <ElButton v-if="isShowReset(dataflow.statuses)" size="mini" class="mx-2" @click="$emit('reset')">
+        <ElButton
+          v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
+          size="mini"
+          class="mx-2"
+          @click="$emit('reset')"
+        >
           {{ t('dataFlow_button_reset') }}
         </ElButton>
         <ElButton
-          v-if="isShowStart(dataflow.statuses)"
-          :disabled="
-            dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses && dataflow.statuses.length > 0
-          "
+          v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
           size="mini"
           class="mx-2"
           type="primary"
@@ -56,10 +58,10 @@
         </ElButton>
         <template v-else>
           <ElButton
-            v-if="isShowForceStop(dataflow.statuses)"
+            v-if="isShowForceStop(dataflow)"
+            :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
             key="forceStop"
             class="mx-2"
-            :disabled="dataflow.disabledData && dataflow.disabledData.stop"
             size="mini"
             type="danger"
             @click="$emit('forceStop')"
@@ -67,12 +69,12 @@
             {{ t('task_list_force_stop') }}
           </ElButton>
           <ElButton
-            key="stop"
             v-else
-            class="mx-2"
             :disabled="dataflow.disabledData && dataflow.disabledData.stop"
-            size="mini"
+            key="stop"
             type="danger"
+            size="mini"
+            class="mx-2"
             @click="$emit('stop')"
           >
             {{ t('task_list_stop') }}
@@ -147,19 +149,8 @@ export default {
   methods: {
     ...mapMutations('dataflow', ['setActiveType', 'setPaperSpaceKeyPressed']),
 
-    isShowStart(data) {
-      return (
-        !data?.length ||
-        data?.some(t => ['ready', 'complete', 'error', 'schedule_failed', 'stop', 'edit'].includes(t.status))
-      )
-    },
-
-    isShowReset(data) {
-      return data?.length && data.some(t => ['complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
-    },
-
-    isShowForceStop(data) {
-      return data?.length && data.every(t => ['stopping'].includes(t.status))
+    isShowForceStop(dataflow) {
+      return ['stopping'].includes(dataflow.status)
     },
 
     onNameInputChange() {
