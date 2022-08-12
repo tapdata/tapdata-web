@@ -36,5 +36,6 @@ export * from './tag'
 export * from './table-rename'
 export * from './js-processor'
 export * from './ddl-event-checkbox'
+export * from './highlight-code'
 
 export * from '@formily/element'
