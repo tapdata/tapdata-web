@@ -45,7 +45,6 @@ export class JavaScript extends NodeType {
           declareScript: {
             title: '模型声明',
             type: 'string',
-            required: true,
             default: '',
             'x-decorator': 'FormItem',
             'x-decorator-props': { gridSpan: 1 },
