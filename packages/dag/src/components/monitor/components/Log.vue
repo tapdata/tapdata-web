@@ -56,16 +56,17 @@
           @scroll.native="scrollFnc"
         >
           <template #before>
-            <div v-if="keyword" class="before-scroll-content text-center font-color-light pb-2">
-              <div>{{ $t('customer_logs_no_search_data') }}</div>
-            </div>
-            <div v-else class="before-scroll-content text-center font-color-light pb-2">
-              <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
-              <!--              <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>-->
-              <VEmpty v-else-if="!list.length" large />
+            <div class="before-scroll-content text-center font-color-light pb-2">
               <div v-show="preLoading">
                 <i class="el-icon-loading"></i>
               </div>
+              <ElAlert
+                v-show="showNoMore"
+                :title="$t('customer_logs_no_more_data')"
+                type="info"
+                class="no-more__alert position-absolute py-1 px-2"
+              ></ElAlert>
+              <VEmpty v-if="!list.length" :description="keyword ? $t('customer_logs_no_search_data') : ''" large />
             </div>
           </template>
           <template #default="{ item, index, active }">
@@ -78,10 +79,9 @@
               <div class="py-1 font-color-light">
                 <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
                 <span class="white-space-nowrap ml-1">{{ formatTime(item.timestamp) }}</span>
-                <span v-if="item.taskName" v-html="item.taskName" class="ml-1"></span>
-                <span v-if="item.nodeName" v-html="item.nodeName" class="ml-1"></span>
-                <!--                <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>-->
-                <span v-for="(temp, tIndex) in item.logTags || []" :key="tIndex" v-html="temp" class="ml-1"></span>
+                <span v-if="item.taskName" v-html="item.taskNameText" class="ml-1"></span>
+                <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
+                <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
               </div>
             </DynamicScrollerItem>
@@ -158,7 +158,7 @@ export default {
     return {
       activeNodeId: 'all',
       keyword: '',
-      checkList: ['debug', 'info', 'warn', 'error'],
+      checkList: ['info', 'warn', 'error'],
       checkItems: [
         // {
         //   label: 'debug',
@@ -230,7 +230,8 @@ export default {
       ],
       quotaTimeType: 'full',
       quotaTime: [],
-      newFilter: {}
+      newFilter: {},
+      showNoMore: false
     }
   },
 
@@ -381,6 +382,12 @@ export default {
           this.preLoading = false
           this.loading = false
           callback?.()
+          this.showNoMore = this.oldPageObj.page > 1 ? this.isNoMore : false
+          if (this.showNoMore) {
+            setTimeout(() => {
+              this.showNoMore = false
+            }, 3000)
+          }
         })
     },
 
@@ -420,15 +427,10 @@ export default {
       let result = deepCopy(data)
       const arr = ['taskName', 'nodeName']
       result.forEach(row => {
-        if (!row.logTags) {
-          row.logTags = []
-        }
         row.levelText = `[${row.level}]`
-        row.logTags.forEach((el, i) => {
-          row.logTags[i] = `[${this.getHighlightSpan(el)}]`
-        })
+        row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
         arr.forEach(el => {
-          row[el] = `[${this.getHighlightSpan(row[el])}]`
+          row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
         })
       })
       return result
@@ -585,6 +587,17 @@ export default {
   ::v-deep {
     .highlight-bg-color {
       background-color: #ff0;
+    }
+  }
+}
+.no-more__alert {
+  margin-left: -70px;
+  top: 4px;
+  left: 50%;
+  width: 140px;
+  ::v-deep {
+    .el-alert__closebtn {
+      top: 7px;
     }
   }
 }
