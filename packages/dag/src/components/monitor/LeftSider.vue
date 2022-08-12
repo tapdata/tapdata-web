@@ -20,9 +20,7 @@
         <div class="task-info__row">
           <span class="task-info__label">运行状态：</span>
           <span class="task-info__value">
-            <span :class="['status-' + dataflow.status, 'status-block']">
-              {{ $t('task_preview_status_' + dataflow.status) }}
-            </span>
+            <TaskStatus :task="dataflow" />
           </span>
         </div>
       </div>
@@ -160,6 +158,7 @@ import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
 import InitialList from './components/InitialList'
 import { Chart } from '@tap/component'
+import { TaskStatus } from '@tap/business'
 import { getPieOptions } from './util'
 import dayjs from 'dayjs'
 import { calcTimeUnit } from '@tap/shared'
@@ -179,7 +178,8 @@ export default {
     TimeSelect,
     CollapsePanel,
     VIcon,
-    InitialList
+    InitialList,
+    TaskStatus
   },
 
   data() {
@@ -199,18 +199,12 @@ export default {
     // 任务事件统计（条）-任务累计
     eventDataAll() {
       const data = this.quota.samples?.totalData?.[0]
-      if (!data) {
-        return
-      }
       return this.getInputOutput(data)
     },
 
     // 任务事件统计（条）-所选周期累计
     eventDataPeriod() {
       const data = this.quota.samples?.barChartData?.[0]
-      if (!data) {
-        return
-      }
       return this.getInputOutput(data)
     },
 
@@ -403,7 +397,7 @@ export default {
         for (let key in result) {
           let item = result[key]
           if (el.includes(key)) {
-            item[el.replace(key, '')] = data[el] || 0
+            item[el.replace(key, '')] = data?.[el] || 0
           }
         }
       })

@@ -14,7 +14,7 @@
     />
 
     <slot name="status" :result="dataflow.statusResult">
-      <StatusItem inline :value="dataflow.statusResult" />
+      <TaskStatus :task="dataflow" />
     </slot>
 
     <div class="operation-center flex align-center">
@@ -120,7 +120,14 @@
         {{ t('task_list_button_monitor') }}
       </ElButton>
 
-      <ElButton v-if="!stateIsReadonly" :loading="isSaving" size="mini" class="mx-2" @click="$emit('save')">
+      <ElButton
+        v-if="!stateIsReadonly"
+        :loading="isSaving"
+        :disabled="dataflow.disabledData && dataflow.disabledData.edit"
+        size="mini"
+        class="mx-2"
+        @click="$emit('save')"
+      >
         <!--保存-->
         {{ t('button_save') }}
       </ElButton>
@@ -140,9 +147,9 @@
 
         <ElButton
           key="forceStop"
-          v-if="isShowForceStop(dataflow.statuses)"
+          v-if="dataflow.status === 'stoping'"
           class="mx-1 btn--text"
-          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+          :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
           size="mini"
           @click="$emit('forceStop')"
         >
@@ -173,10 +180,7 @@
       </template>
 
       <ElButton
-        :disabled="
-          isSaving ||
-          (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses && dataflow.statuses.length > 0)
-        "
+        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start)"
         size="mini"
         class="mx-2"
         type="primary"
@@ -189,12 +193,11 @@
 </template>
 
 <script>
-import { VIcon } from '@tap/component'
-import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
+import { VIcon, TextEditable } from '@tap/component'
+import { TaskStatus } from '@tap/business'
+import focusSelect from 'web-core/directives/focusSelect'
 import VDivider from 'web-core/components/VDivider'
-import { StatusItem } from '@tap/business'
-import { TextEditable } from '@tap/component'
 import Locale from '../mixins/locale'
 
 export default {
@@ -212,7 +215,7 @@ export default {
     scale: Number
   },
 
-  components: { TextEditable, StatusItem, VDivider, VIcon },
+  components: { TextEditable, TaskStatus, VDivider, VIcon },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)

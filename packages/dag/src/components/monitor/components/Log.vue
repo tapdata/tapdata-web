@@ -4,7 +4,7 @@
       <div
         v-for="(item, index) in items"
         :key="index"
-        :class="[{ active: active === item.value }]"
+        :class="[{ active: activeNodeId === item.value }]"
         class="filter-items__item flex justify-content-between align-items-center"
         @click="changeItem(item)"
       >
@@ -12,9 +12,13 @@
         <VIcon>arrow-right</VIcon>
       </div>
     </div>
-    <div class="main flex-1 flex flex-column pt-5">
+    <div class="main flex-fill flex flex-column pt-5">
       <div class="flex ml-4 mb-4 align-items-center">
-        <TimeSelect @change="changeTime"></TimeSelect>
+        <TimeSelect
+          :options="timeOptions"
+          :range="[firstStartTime, lastStopTime || Date.now()]"
+          @change="changeTime"
+        ></TimeSelect>
         <ElInput
           class="search-input ml-4"
           v-model="keyword"
@@ -25,16 +29,21 @@
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleDownload">下载</ElButton>
+        <!--        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>-->
+        <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload"
+          >下载</ElButton
+        >
       </div>
       <div class="level-line ml-4">
-        <ElCheckboxGroup v-model="checkList" :min="1" size="mini" class="inline-flex" @change="searchFnc">
-          <ElCheckbox label="DEBUG">DEBUG</ElCheckbox>
-          <ElCheckbox label="INFO">INFO</ElCheckbox>
-          <ElCheckbox label="WARN">WARN</ElCheckbox>
-          <ElCheckbox label="ERROR">ERROR</ElCheckbox>
-          <!--          <ElCheckbox label="FATAL">FATAL</ElCheckbox>-->
+        <ElCheckboxGroup
+          v-model="checkList"
+          :disabled="loading"
+          :min="1"
+          size="mini"
+          class="inline-flex"
+          @change="searchFnc"
+        >
+          <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
         </ElCheckboxGroup>
       </div>
       <div v-loading="loading" class="log-list my-4 ml-4 pl-4 flex-1" style="height: 0">
@@ -47,15 +56,17 @@
           @scroll.native="scrollFnc"
         >
           <template #before>
-            <div v-if="keyword" class="before-scroll-content text-center font-color-light pb-2">
-              <div>{{ $t('customer_logs_no_search_data') }}</div>
-            </div>
-            <div v-else class="before-scroll-content text-center font-color-light pb-2">
-              <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
-              <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+            <div class="before-scroll-content text-center font-color-light pb-2">
               <div v-show="preLoading">
                 <i class="el-icon-loading"></i>
               </div>
+              <ElAlert
+                v-show="showNoMore"
+                :title="$t('customer_logs_no_more_data')"
+                type="info"
+                class="no-more__alert position-absolute py-1 px-2"
+              ></ElAlert>
+              <VEmpty v-if="!list.length" :description="keyword ? $t('customer_logs_no_search_data') : ''" large />
             </div>
           </template>
           <template #default="{ item, index, active }">
@@ -63,20 +74,15 @@
               :item="item"
               :active="active"
               :data-index="index"
-              :size-dependencies="[item.id, item.content]"
+              :size-dependencies="[item.id, item.message]"
             >
-              <div class="flex py-1 font-color-light">
-                <div class="mr-2 white-space-nowrap">
-                  [<span :class="['level', colorMap[item.level]]">{{ item.params.level || item.level }}</span
-                  >]
-                  <span>{{ formatTime(item.timestamp) }}</span>
-                </div>
-                <div>
-                  <span v-html="item.content"></span>
-                  <span v-if="item.link" class="color-primary ml-2 cursor-pointer" @click="toLink(item.link)">{{
-                    $t('customer_logs_to_link')
-                  }}</span>
-                </div>
+              <div class="py-1 font-color-light">
+                <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
+                <span class="white-space-nowrap ml-1">{{ formatTime(item.timestamp) }}</span>
+                <span v-if="item.taskName" v-html="item.taskNameText" class="ml-1"></span>
+                <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
+                <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
+                <span v-html="item.message" class="ml-1"></span>
               </div>
             </DynamicScrollerItem>
           </template>
@@ -116,58 +122,122 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
-import TimeSelect from './TimeSelect'
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { delayTrigger } from '@tap/shared'
-import { customerJobLogsApi } from '../../../../../api'
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+
+import VIcon from 'web-core/components/VIcon'
+import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
+import { VEmpty } from '@tap/component'
+import { monitoringLogsApi } from '@tap/api'
+
+import TimeSelect from './TimeSelect'
 
 export default {
   name: 'Log',
 
-  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem },
+  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty },
 
   props: {
-    // nodes: {
-    //   type: Array,
-    //   default: () => []
-    // }
+    dataflow: {
+      type: Object,
+      default: () => {}
+    },
+    logsData: {
+      type: Object,
+      default: () => {
+        return {
+          total: 0,
+          items: []
+        }
+      }
+    }
   },
 
   data() {
     return {
-      active: 'all',
+      activeNodeId: 'all',
       keyword: '',
-      checkList: ['DEBUG', 'INFO', 'WARN', 'ERROR'],
-      itemSize: 20,
+      checkList: ['info', 'warn', 'error'],
+      checkItems: [
+        // {
+        //   label: 'debug',
+        //   text: 'DEBUG'
+        // },
+        {
+          label: 'info',
+          text: 'INFO'
+        },
+        {
+          label: 'warn',
+          text: 'WARN'
+        },
+        {
+          label: 'error',
+          text: 'ERROR'
+        }
+      ],
       timer: null,
+      downloadLoading: false,
       loading: false,
       preLoading: false,
+      resetDataTime: null,
       list: [],
       colorMap: {
-        FATAL: 'color-red',
+        FATAL: 'color-danger',
         ERROR: 'color-danger',
         WARN: 'color-warning'
       },
-      pageObj: {
-        page: 1,
-        size: 20
+      newPageObj: {
+        page: 0,
+        pageSize: 20,
+        total: 0
+      },
+      oldPageObj: {
+        page: 0,
+        pageSize: 20,
+        total: 0
       },
       isScrollBottom: false,
-      isNoMore: false,
       form: {
         level: '',
         start: 500,
         max: 500
       },
-      dialog: false
+      dialog: false,
+      timeOptions: [
+        {
+          label: '全部',
+          value: 'full'
+        },
+        {
+          label: '最近6个小时',
+          value: '6h'
+        },
+        {
+          label: '最新1天',
+          value: '1d'
+        },
+        {
+          label: '最近3天',
+          value: '3d'
+        },
+        {
+          label: '自定义时间',
+          type: 'custom',
+          value: 'custom'
+        }
+      ],
+      quotaTimeType: 'full',
+      quotaTime: [],
+      newFilter: {},
+      showNoMore: false
     }
   },
 
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
+
     items() {
       return [
         {
@@ -183,16 +253,22 @@ export default {
           }
         })
       ]
-    }
-  },
+    },
 
-  watch: {
-    '$attrs.currentTab'(v) {
-      if (v === 'log') {
-        this.init()
-      } else {
-        this.clearTimer()
-      }
+    firstStartTime() {
+      const { startTime } = this.dataflow || {}
+      return startTime ? new Date(startTime).getTime() : null
+    },
+
+    lastStopTime() {
+      const { stopTime } = this.dataflow || {}
+      return stopTime ? new Date(stopTime).getTime() : null
+    },
+
+    isNoMore() {
+      const { page, pageSize, total } = this.oldPageObj
+      if (!page) return false
+      return page * pageSize > total
     }
   },
 
@@ -206,8 +282,31 @@ export default {
 
   methods: {
     init() {
-      this.pollingData()
       this.resetData()
+    },
+
+    resetData() {
+      this.preLoading = false
+      this.list = []
+      this.resetOldPage()
+      this.resetDataTime = Date.now()
+      this.loadOld(this.pollingData)
+    },
+
+    resetOldPage() {
+      this.oldPageObj = {
+        page: 0,
+        pageSize: 20,
+        total: 0
+      }
+    },
+
+    resetNewPage() {
+      this.newPageObj = {
+        page: 0,
+        pageSize: 20,
+        total: 0
+      }
     },
 
     clearTimer() {
@@ -220,204 +319,173 @@ export default {
       this.timer = setInterval(() => {
         this.loadNew()
       }, 5000)
+      this.loadNew()
     },
 
     changeItem(item) {
-      this.active = item.value
+      if (this.activeNodeId === item.value) {
+        return
+      }
+      this.activeNodeId = item.value
       this.init()
     },
 
-    changeTime(val, isTime) {
-      console.log('eventChangeTime', val, isTime)
+    changeTime(val, isTime, source) {
+      this.quotaTimeType = source?.type ?? val
+      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.init()
     },
 
     searchFnc(debounce) {
       delayTrigger(() => {
-        console.log('searchFnc')
+        this.init()
       }, debounce)
     },
 
     scrollFnc(ev) {
       const target = ev.target
-      if (target.scrollTop <= 0) {
+      if (this.list.length && target.scrollTop <= 0) {
         this.loadOld()
       }
       this.isScrollBottom = target.scrollHeight - target.scrollTop <= target.clientHeight
     },
 
-    addFilter(filter) {
-      const { active, checkList, keyword } = this
-      // 选中的节点
-      // if (active === 'all') {
-      // } else {
-      // }
-
-      if (keyword) {
-        // filter.where.searchKey = { $regex: keyword, $options: 'i' }
-        filter.where.$or = [{ searchKey: { $regex: keyword, $options: 'i' } }, { key: keyword }]
-      }
-
-      if (checkList.length) {
-        filter.where.level = {
-          in: checkList
-        }
-      }
-      return filter
-    },
-
-    loadOld() {
-      if (this.isNoMore) {
+    loadOld(callback) {
+      if (this.isNoMore || this.loading) {
         return
       }
-      let filter = {
-        where: {
-          dataFlowId: this.id
-        },
-        order: 'id DESC',
-        limit: 20
+      let filter = this.getOldFilter()
+      if (!filter.start || !filter.end) {
+        return
       }
-      if (this.firstLogsId) {
-        filter.where.id = {
-          lt: this.firstLogsId
-        }
-      }
-      this.addFilter(filter)
-      this.getLogsData(filter, false, true)
-    },
-
-    loadNew() {
-      // this.lastLogsId = ''
-      let filter = {
-        where: {
-          dataFlowId: this.id
-        },
-        order: 'id DESC',
-        limit: 20
-      }
-      if (this.lastLogsId) {
-        filter.where.id = {
-          gt: this.lastLogsId
-        }
-      }
-      this.addFilter(filter)
-
-      this.getLogsData(filter, false, false)
-    },
-
-    resetData() {
-      this.firstLogsId = ''
-      this.lastLogsId = ''
-      this.isNoMore = false
-      this.preLoading = false
-      let filter = {
-        where: {
-          dataFlowId: this.id
-        },
-        order: 'id DESC',
-        limit: 20
-      }
-      this.addFilter(filter)
-
-      this.getLogsData(filter, true, false)
-    },
-
-    getLogsData(filter, reset = false, prepend = false) {
-      // 获取日志
-
-      if (this.loading) return
-
-      if (reset) {
-        this.loading = true
+      filter.page++
+      if (this.list.length) {
+        this.preLoading = true
       } else {
-        if (prepend) {
-          this.preLoading = true
-        }
+        this.loading = true
       }
-      const start = Date.now()
-      customerJobLogsApi
-        .get({ filter: JSON.stringify(filter) })
+      monitoringLogsApi
+        .query(filter)
         .then(data => {
-          let items = data?.items || []
-          items = items.reverse()
-          if (!items.length) {
-            if (reset) {
-              this.list = []
-            } else {
-              if (prepend) {
-                this.isNoMore = true
-              }
-            }
-            return
-          }
-          const { keyword } = this
-          items.forEach(el => {
-            let { template, params, templateKeys } = el
-            let content = template || ''
-            if (templateKeys) {
-              templateKeys.forEach(t => {
-                for (let key in params) {
-                  let re = new RegExp(`{${key}}`, 'ig')
-                  params[t] = params[t].replace(re, params[key])
-                }
-              })
-            }
-            for (let key in params) {
-              let re = new RegExp(`{${key}}`, 'ig')
-              content = content.replace(re, params[key])
-            }
-            // dataSourceErrorMessage
-            if (params.dataSourceErrorMessage) {
-              content += `<span class="ml-2">${params.dataSourceErrorMessage}</span>`
-            }
-
-            el.content = content
-              .replace(/\r\n/g, '<br/>')
-              .replace(/\n/g, '<br/>')
-              .replace(/\t/g, '<span class="tap-span"></span>')
-              .replace(/[\b\f\n\r\t]/g, '')
-            // 高亮处理
-            if (keyword && new RegExp(keyword, 'ig').test(el.content)) {
-              const reg = new RegExp(keyword, 'ig')
-              // 高亮关键字
-              el.content = el.content.replace(reg, function (val) {
-                return `<span class="keyword">${val}</span>`
-              })
-            }
-          })
-          let { list } = this
-          if (reset) {
+          const items = this.getFormatRow(data.items.reverse())
+          this.oldPageObj.total = data.total || 0
+          this.oldPageObj.page = filter.page
+          if (this.list.length) {
+            this.list = Object.freeze(uniqueArr([...items, ...this.list]))
+            this.scrollToItem(items.length - 1)
+          } else {
             this.list = Object.freeze(items)
             this.scrollToBottom()
-            this.firstLogsId = this.list[0]?.id
-            this.lastLogsId = this.list[this.list.length - 1]?.id
-          } else {
-            if (prepend) {
-              this.list = Object.freeze([...items, ...list])
-              this.firstLogsId = this.list[0]?.id
-              this.scrollToItem(items.length - 1)
-            } else {
-              this.list = Object.freeze([...list, ...items])
-              this.lastLogsId = this.list[this.list.length - 1]?.id
-              if (this.isScrollBottom) {
-                this.scrollToBottom()
-              }
-            }
           }
         })
         .finally(() => {
-          setTimeout(
-            () => {
-              this.loading = false
-              this.preLoading = false
-            },
-            Date.now() - start < 1000 ? 2000 : 0
-          )
+          this.preLoading = false
+          this.loading = false
+          callback?.()
+          this.showNoMore = this.oldPageObj.page > 1 ? this.isNoMore : false
+          if (this.showNoMore) {
+            setTimeout(() => {
+              this.showNoMore = false
+            }, 3000)
+          }
         })
+    },
+
+    loadNew() {
+      let filter
+      const { page, pageSize, total } = this.newPageObj
+      if (page === 0 || page * pageSize > total) {
+        this.resetNewPage()
+        filter = this.getNewFilter()
+        filter.page++
+      } else {
+        this.newFilter.page++
+        filter = Object.assign({}, this.newFilter, {
+          page: this.newFilter.page
+        })
+      }
+      if (!filter.start || !filter.end) {
+        return
+      }
+      monitoringLogsApi.query(filter).then(data => {
+        const items = this.getFormatRow(data.items)
+        this.newPageObj.total = data.total || 0
+        const arr = uniqueArr([...this.list, ...items])
+        if (arr.length === this.list.length) {
+          this.resetNewPage()
+          return
+        }
+        this.newPageObj.page = filter.page
+        this.list = Object.freeze(arr)
+        if (this.isScrollBottom) {
+          this.scrollToBottom()
+        }
+      })
+    },
+
+    getFormatRow(data) {
+      let result = deepCopy(data)
+      const arr = ['taskName', 'nodeName']
+      result.forEach(row => {
+        row.levelText = `[${row.level}]`
+        row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
+        arr.forEach(el => {
+          row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
+        })
+      })
+      return result
+    },
+
+    getHighlightSpan(str) {
+      const { keyword } = this
+      if (!keyword) {
+        return str
+      }
+      const reg = new RegExp(keyword.toLowerCase(), 'ig')
+      return str.replace(reg, `<span class="highlight-bg-color">$&</span>`)
+    },
+
+    getOldFilter() {
+      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let params = {
+        start,
+        end,
+        page: this.oldPageObj.page,
+        pageSize: this.oldPageObj.pageSize,
+        order: 'desc',
+        taskId,
+        taskRecordId,
+        nodeId: this.activeNodeId === 'all' ? null : this.activeNodeId,
+        search: this.keyword,
+        levels: this.checkList
+      }
+      return params
+    },
+
+    getNewFilter() {
+      const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Date.now()]
+      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let params = {
+        start,
+        end,
+        page: this.newPageObj.page,
+        pageSize: this.newPageObj.pageSize,
+        order: 'asc',
+        taskId,
+        taskRecordId,
+        nodeId: this.activeNodeId === 'all' ? null : this.activeNodeId,
+        search: this.keyword,
+        levels: this.checkList
+      }
+      this.newFilter = params
+      return params
     },
 
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.virtualScroller?.scrollToBottom?.()
+        this.isScrollBottom = true
       })
     },
 
@@ -427,14 +495,31 @@ export default {
       })
     },
 
-    toLink(link) {},
-
-    formatTime(date, type = 'YYYY-MM-DD HH:mm:ss') {
+    formatTime(date, type = 'YYYY-MM-DD HH:mm:ss.SSS') {
       return dayjs(date).format(type)
     },
 
     handleDownload() {
-      console.log('handleDownload')
+      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let filter = {
+        start,
+        end,
+        taskId,
+        taskRecordId
+      }
+      this.downloadLoading = true
+      monitoringLogsApi
+        .export(filter)
+        .then(data => {
+          downloadBlob(data)
+        })
+        .catch(() => {
+          this.$message.error('下载失败')
+        })
+        .finally(() => {
+          this.downloadLoading = false
+        })
     },
 
     handleSetting() {
@@ -443,7 +528,34 @@ export default {
 
     handleClose() {},
 
-    handleSave() {}
+    handleSave() {},
+
+    getTimeRange(type) {
+      let result
+      const { status } = this.dataflow || {}
+      let endTimestamp = this.lastStopTime || Date.now()
+      if (status === 'running') {
+        endTimestamp = Date.now()
+      }
+      switch (type) {
+        case '6h':
+          result = [endTimestamp - 6 * 60 * 60 * 1000, endTimestamp]
+          break
+        case '1d':
+          result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
+          break
+        case '3d':
+          result = [endTimestamp - 3 * 24 * 60 * 60 * 1000, endTimestamp]
+          break
+        case 'full':
+          result = [this.firstStartTime, endTimestamp]
+          break
+        default:
+          result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
+          break
+      }
+      return result
+    }
   }
 }
 </script>
@@ -472,5 +584,21 @@ export default {
 .log-list {
   border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
+  ::v-deep {
+    .highlight-bg-color {
+      background-color: #ff0;
+    }
+  }
+}
+.no-more__alert {
+  margin-left: -70px;
+  top: 4px;
+  left: 50%;
+  width: 140px;
+  ::v-deep {
+    .el-alert__closebtn {
+      top: 7px;
+    }
+  }
 }
 </style>

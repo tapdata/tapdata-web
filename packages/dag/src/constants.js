@@ -19,7 +19,8 @@ export const DEFAULT_SETTINGS = {
   shareCdcEnable: false, //开启共享挖掘
   isSchedule: false,
   cronExpression: ' ',
-  accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION'
+  accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+  isAutoInspect: true
 
   // readBatchSize: 100,
   // notificationWindow: 0,

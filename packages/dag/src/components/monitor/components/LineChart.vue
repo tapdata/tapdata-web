@@ -106,7 +106,17 @@ export default {
         series.push(this.getSeriesItem(value || []))
       }
       options.series = series
-      options.xAxis.data = x
+      const seriesNoData = series.every(t => !t.data.length)
+      options.yAxis.max = seriesNoData ? 1 : null
+      options.yAxis.min = seriesNoData ? 0 : null
+      if (x.length) {
+        options.xAxis.data = x
+      } else {
+        const now = Date.now()
+        options.xAxis.data = Array(this.limit)
+          .fill()
+          .map((t, index) => now - (this.limit - index - 1) * 5000)
+      }
 
       if (limit && x?.length) {
         const len = x?.[0]?.length || x.length

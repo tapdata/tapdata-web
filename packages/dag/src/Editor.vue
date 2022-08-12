@@ -106,6 +106,7 @@ import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import editor from './mixins/editor'
 import Locale from './mixins/locale'
+import { DEFAULT_SETTINGS } from './constants'
 
 export default {
   name: 'Editor',
@@ -145,6 +146,7 @@ export default {
       },
 
       dataflow: {
+        ...DEFAULT_SETTINGS,
         id: '',
         name: ''
       },
@@ -656,7 +658,7 @@ export default {
 
     handleDetail() {
       this.$router.push({
-        name: 'dataflowDetails',
+        name: 'dataflowStatistics',
         params: {
           id: this.dataflow.id
         }

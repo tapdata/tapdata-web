@@ -1,7 +1,7 @@
 import Http from './Http'
 export default class SubTask extends Http {
   constructor() {
-    super('/api/SubTask')
+    super('/api/Task')
   }
   byTaskId(taskId, params) {
     return this.axios.get(this.url + `/byTaskId/${taskId}`, { params })

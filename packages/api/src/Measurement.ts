@@ -13,5 +13,8 @@ export default class Measurement extends Http {
   queryV2(params) {
     return this.axios.post(this.url + '/query/v2', params)
   }
+  batch(params) {
+    return this.axios.post(this.url + '/batch', params)
+  }
 }
 export { Measurement }

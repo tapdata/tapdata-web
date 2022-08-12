@@ -57,41 +57,16 @@ export function getTaskBtnDisabled(row, or) {
     reset: false,
     delete: false
   }
-  let statusResult = []
-  if (row.statusResult) {
-    statusResult = row.statusResult
-  } else {
-    statusResult = getSubTaskStatus(row.statuses)
-  }
-  let filterArr = statusResult.filter(t => t.count > 0)
-  // 统计出3种状态：运行中running、未运行not_running、错误error
-  if (statusResult.length > 1) {
-    // 启动禁用：运行中
-    // 停止禁用：未运行、错误
-    // 编辑禁用：运行中
-    // 重置禁用：运行中
-    // 删除禁用：运行中
-    result.start = filterArr.every(t => ['running'].includes(t.status))
-    result.stop = filterArr.every(t => ['not_running', 'error'].includes(t.status))
-    result.edit = filterArr.every(t => ['running'].includes(t.status))
-    result.reset = filterArr.every(t => ['running'].includes(t.status))
-    result.delete = filterArr.every(t => ['running'].includes(t.status))
-  } else {
-    // 启动可用：待启动、已完成、错误、调度失败、已停止
-    // 停止可用：运行中、停止中
-    // 编辑可用：编辑中、待启动、已完成、错误、调度失败、已停止 或者 未运行状态
-    // 重置可用：已完成、错误、调度失败、已停止
-    // 删除可用：编辑中、待启动、已完成、错误、调度失败、已停止
-    result.start = !filterArr.every(t => ['ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
-    result.stop = !filterArr.every(t => ['running', 'stopping'].includes(t.status))
-    result.edit = !filterArr.every(t =>
-      ['edit', 'ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(t.status)
-    )
-    result.reset = !filterArr.every(t => ['complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
-    result.delete = !filterArr.every(t =>
-      ['edit', 'ready', 'complete', 'error', 'stop', 'schedule_failed'].includes(t.status)
-    )
-  }
+  // 启动可用：待启动、已完成、错误、调度失败、已停止
+  // 停止可用：运行中、停止中
+  // 编辑可用：编辑中、待启动、已完成、错误、调度失败、已停止 或者 未运行状态
+  // 重置可用：已完成、错误、调度失败、已停止
+  // 删除可用：编辑中、待启动、已完成、错误、调度失败、已停止
+  result.start = ['wait_run', 'complete', 'error', 'stop'].includes(row.status)
+  result.stop = !['running', 'stopping'].includes(row.status)
+  result.edit = !['edit', 'ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
+  result.reset = !['complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
+  result.delete = !['edit', 'ready', 'complete', 'error', 'stop', 'schedule_failed'].includes(row.status)
   if (or) {
     for (let key in result) {
       result[key] = or || result[key]
@@ -111,4 +86,71 @@ export function getNodeIconSrc(node) {
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
   return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+}
+
+export const STATUS_MAP = {
+  edit: {
+    i18n: 'status_edit'
+  },
+  wait_start: {
+    i18n: 'status_wait_start'
+  },
+  starting: {
+    i18n: 'status_starting',
+    in: ['preparing', 'scheduling', 'wait_run']
+  },
+  running: {
+    i18n: 'status_running'
+  },
+  complete: {
+    i18n: 'status_complete'
+  },
+  stopping: {
+    i18n: 'status_stopping'
+  },
+  stop: {
+    i18n: 'status_stop'
+  },
+  error: {
+    i18n: 'status_error',
+    in: ['schedule_failed', 'error']
+  }
+}
+
+const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
+  if (value.in) {
+    value.in.reduce((res, val) => ((res[val] = key), res), merge)
+  }
+  return merge
+}, {})
+
+const BUTTON_WITH_STATUS = {
+  start: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  edit: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  delete: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  stop: ['running'],
+  forceStop: ['stopping'],
+  reset: ['complete', 'error', 'stop'],
+  monitor: ['running', 'complete', 'error', 'stop', 'stopping']
+}
+
+export function makeStatusAndDisabled(item) {
+  let { status } = item
+  const mergeStatus = STATUS_MERGE[status]
+
+  if (mergeStatus) {
+    item.status = status = mergeStatus
+  }
+
+  if (!(status in STATUS_MAP)) {
+    console.error(`未识别的任务状态：${status}`, '已经置为[error]') // eslint-disable-line
+    item.status = status = 'error'
+  }
+
+  item.btnDisabled = Object.entries(BUTTON_WITH_STATUS).reduce((map, [key, value]) => {
+    map[key] = !value.includes(status)
+    return map
+  }, {})
+
+  return item
 }

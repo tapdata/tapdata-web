@@ -370,49 +370,35 @@ export default observer({
         systemTimeZone = '+' + -timeZone
       }
       const allNodes = this.$store.getters['dataflow/allNodes']
-      const allSource = this.$store.getters['dataflow/allEdges'].map(item => item.source)
-      // 根据节点id查询源节点数据
-      let sourceConnectionIds = []
-      const sourceNodes = allNodes.filter(item => {
-        if (allSource.includes(item.id)) {
-          sourceConnectionIds.push(item.connectionId)
-          return item
-        }
-      })
-      // 过滤重复数据源
-      let map = {}
-      let filterSourceNodes = () => {
-        sourceNodes.forEach(item => {
-          if (!map[item.connectionId]) {
-            //是否已有保存数据
-            this.settings.syncPoints = this.settings.syncPoints || []
-            let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
-            if (oldPoint?.length > 0) {
-              map[item.connectionId] = {
-                connectionId: item.connectionId,
-                pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: oldPoint[0].dateTime || '',
-                timeZone: systemTimeZone,
-                connectionName: item.name
-              }
-            } else {
-              map[item.connectionId] = {
-                connectionId: item.connectionId,
-                pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: '',
-                timeZone: systemTimeZone,
-                connectionName: item.name
-              }
-            }
+      const oldPoints = this.settings.syncPoints
+      const oldPointsMap = oldPoints?.length
+        ? oldPoints.reduce((map, point) => {
+            if (point.connectionId) map[point.connectionId] = point
+            return map
+          }, {})
+        : {}
+      const connectionMap = allNodes
+        .filter(node => node.$outputs.length && !node.$inputs.length)
+        .reduce((map, node) => {
+          const { connectionId } = node
+          const item = (map[connectionId] = {
+            connectionId,
+            connectionName: node.attrs.connectionName,
+            pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+            dateTime: '',
+            timeZone: systemTimeZone
+          })
+          if (oldPointsMap[connectionId]) {
+            const old = oldPointsMap[connectionId]
+            Object.assign(item, {
+              pointType: old.pointType,
+              dateTime: old.dateTime
+            })
           }
-        })
-        return map
-      }
-      this.settings.syncPoints = Object.values(filterSourceNodes())
-      //this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
-      // let arr = filterSourceNodes()
-      // eslint-disable-next-line
-      console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())
+          return map
+        }, {})
+
+      this.settings.syncPoints = Object.values(connectionMap)
     }
   }
 })

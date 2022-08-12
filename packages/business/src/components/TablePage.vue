@@ -42,6 +42,7 @@
             :default-sort="defaultSort"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sort-change', $event)"
+            v-on="$listeners"
           >
             <slot></slot>
             <div slot="empty" class="empty">
