@@ -431,7 +431,7 @@ export default {
     },
 
     getFilter() {
-      const taskId = this.dataflow?.id
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       const nodeId = this.selected
       const [startAt, endAt] = this.quotaTime
       let params = {
@@ -443,6 +443,7 @@ export default {
             tags: {
               type: 'node',
               taskId,
+              taskRecordId,
               nodeId
             },
             endAt: Date.now(), // 停止时间 || 当前时间
@@ -478,6 +479,7 @@ export default {
             tags: {
               type: 'node',
               taskId,
+              taskRecordId,
               nodeId
             },
             fields: [
@@ -504,6 +506,7 @@ export default {
             tags: {
               type: 'node',
               taskId,
+              taskRecordId,
               nodeId
             },
             fields: ['qps', 'inputQps', 'outputQps', 'timeCostAvg'],

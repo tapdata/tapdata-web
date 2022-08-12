@@ -521,7 +521,7 @@ export default {
     },
 
     getQuotaFilter() {
-      const taskId = this.dataflow?.id
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       const [startAt, endAt] = this.quotaTime
       let params = {
         startAt,
@@ -531,7 +531,8 @@ export default {
           totalData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
+              taskRecordId
             },
             endAt: Date.now(), // 停止时间 || 当前时间
             fields: [
@@ -562,7 +563,8 @@ export default {
           barChartData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
+              taskRecordId
             },
             fields: [
               'inputInsertTotal',
@@ -582,7 +584,8 @@ export default {
           lineChartData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
+              taskRecordId
             },
             fields: ['inputQps', 'outputQps', 'timeCostAvg'],
             type: 'continuous' // 连续数据
@@ -591,7 +594,8 @@ export default {
           dagData: {
             tags: {
               type: 'node',
-              taskId
+              taskId,
+              taskRecordId
             },
             fields: [
               'inputInsertTotal',
