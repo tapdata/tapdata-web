@@ -238,12 +238,12 @@ export default {
         this.$ws.send(msg)
         this.timer = setTimeout(() => {
           this.isTimeout = true //重置
-          self.wsError = 'ERROR'
-          self.wsErrorMsg = self.wsErrorMsg ? self.wsErrorMsg : self.$t('dataForm.test.retryTest')
+          this.wsError = 'ERROR'
+          this.wsErrorMsg = this.wsErrorMsg ? this.wsErrorMsg : this.$t('dataForm.test.retryTest')
           let testData = {
             wsError: 'ERROR'
           }
-          self.$emit('returnTestData', testData)
+          this.$emit('returnTestData', testData)
         }, 15000)
       })
     },
