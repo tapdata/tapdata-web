@@ -20,9 +20,10 @@
 export default {
   name: 'CollapsePanel',
 
-  data() {
-    return {
-      active: '1'
+  props: {
+    active: {
+      type: String,
+      default: '1'
     }
   }
 }
