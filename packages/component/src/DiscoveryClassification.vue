@@ -1,17 +1,11 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <ElButton type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
-      <VIcon size="16" class="icon">expand-list</VIcon>
-    </ElButton>
-    <div class="classification-header" v-else>
-      <ElButton type="text" class="btn-expand" size="mini" @click="toggle()">
-        <VIcon size="16" class="icon">expand-list</VIcon>
-      </ElButton>
+    <div class="classification-header">
       <ElButton class="btn-addIcon" size="mini" type="text" @click="showDialog()">
-        {{ $t('button_button') }}
+        <VIcon size="12">add</VIcon>
       </ElButton>
       <div class="title">
-        <span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
+        <span>所有目录</span>
       </div>
       <!-- v-if="searchFalg" -->
       <div class="search-box">
@@ -39,7 +33,6 @@
         @check="checkHandler"
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <span class="table-label">{{ data.value }}</span>
           <span class="btn-menu">
@@ -62,13 +55,32 @@
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
-      <ElInput
-        size="mini"
-        v-model="dialogConfig.label"
-        :placeholder="$t('classification.nodeName')"
-        maxlength="50"
-        show-word-limit
-      ></ElInput>
+      <ElForm ref="form" :model="dialogConfig" label-width="80px">
+        <ElFormItem label="目录名称">
+          <ElInput
+            size="mini"
+            v-model="dialogConfig.label"
+            :placeholder="$t('classification.nodeName')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem label="目录分类" v-if="dialogConfig.isParent">
+          <ElSelect v-model="dialogConfig.itemType">
+            <el-option label="对象" value="object"> </el-option>
+            <el-option label="表" value="table"> </el-option>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem label="目录描述">
+          <ElInput
+            type="textarea"
+            v-model="dialogConfig.desc"
+            placeholder="请输入目录名称"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+      </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="hideDialog()">{{ $t('button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="dialogSubmit()">
@@ -115,6 +127,8 @@ export default {
         gid: '',
         label: '',
         title: '',
+        itemType: 'Object',
+        desc: '',
         visible: false
       },
 
@@ -303,6 +317,7 @@ export default {
         id: node ? node.key : '',
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
+        isParent: type === 'add' && !node,
         title:
           type === 'add'
             ? node
@@ -321,7 +336,7 @@ export default {
       let value = config.label
       let id = config.id
       let gid = config.gid
-      let itemType = config.itemType
+      let itemType = [config.itemType]
       let method = 'post'
 
       if (!value || value.trim() === '') {
@@ -524,9 +539,10 @@ export default {
     .title {
       display: flex;
       align-items: center;
+      font-weight: 500;
+      font-size: 14px;
       justify-content: space-between;
-      padding: 0 8px 0 46px;
-      color: map-get($fontColor, light);
+      color: map-get($fontColor, dark);
       // background-color: #eff1f4;
     }
 
@@ -586,6 +602,8 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 120px;
+      font-weight: 400;
+      color: map-get($fontColor, normal);
     }
     .btn-menu {
       display: none;

@@ -11,6 +11,10 @@ export default defineComponent({
     const { $t } = useI18n()
     const { success } = useMessage()
     const list = ref([])
+    const objType = ref([])
+    const objCategory = ref([])
+    const sourceCategory = ref([])
+    const sourceType = ref([])
     const data = reactive({
       searchParams: {
         taskName: '',
@@ -28,45 +32,64 @@ export default defineComponent({
       filterItems: [
         {
           label: '对象分类',
-          key: 'status',
+          key: 'category',
           type: 'select-inner',
-          items: [],
+          items: objCategory.value,
           selectedWidth: '200px'
         },
         {
           label: '对象类型',
           key: 'type',
           type: 'select-inner',
-          items: []
+          items: objType.value
         },
         {
           label: '来源类型',
-          key: 'type',
+          key: 'sourceType',
           type: 'select-inner',
-          items: []
+          items: sourceCategory.value
         },
         {
           label: '来源分类',
-          key: 'type',
+          key: 'sourceCategory',
           type: 'select-inner',
-          items: []
+          items: sourceType.value
         },
         {
           placeholder: '对象名/来源名',
-          key: 'connectionName',
+          key: 'queryKey',
           type: 'input'
         }
       ]
     })
     const loadData = () => {
-      discoveryApi.list().then(res => {
+      // @ts-ignore
+      let { category, type, sourceCategory, sourceType, queryKey } = data.searchParams
+      let where = {}
+      category && (where['category'] = category)
+      type && (where['type'] = type)
+      sourceType && (where['sourceType'] = sourceType)
+      sourceCategory && (where['sourceCategory'] = sourceCategory)
+      queryKey && (where['queryKey'] = queryKey)
+
+      discoveryApi.list(where).then(res => {
         let { total, items } = res
         list.value = items || []
         data.page.total = total
       })
     }
+    const loadFilterList = () => {
+      discoveryApi.filterList().then(res => {
+        let { objCategory, objType, sourceCategory, sourceType } = res
+        objCategory.value = objCategory ? objCategory : []
+        objType.value = objType || []
+        sourceCategory.value = sourceCategory || []
+        sourceType.value = sourceType || []
+      })
+    }
     const handlePreview = row => {
       data.isShowDetails = true
+      // @ts-ignore
       refs.drawerContent.loadData(row)
     }
     const closeDrawer = val => {
@@ -88,10 +111,15 @@ export default defineComponent({
       )
     }
     loadData()
+    loadFilterList()
     return {
       data,
       list,
       success,
+      objCategory,
+      objType,
+      sourceCategory,
+      sourceType,
       $t,
       loadData,
       renderNode,

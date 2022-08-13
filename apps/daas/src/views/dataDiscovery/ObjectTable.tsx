@@ -58,6 +58,7 @@ export default defineComponent({
     }
     return {
       data,
+      list,
       loadData
     }
   },
@@ -72,10 +73,10 @@ export default defineComponent({
         <el-table data={this.list}>
           <el-table-column width="55" type="selection"></el-table-column>
           <el-table-column label={this.$t('object_list_name')} prop="name"></el-table-column>
-          <el-table-column label={this.$t('object_list_classification')}></el-table-column>
-          <el-table-column label={this.$t('object_list_type')}></el-table-column>
-          <el-table-column label={this.$t('object_list_source_type')}></el-table-column>
-          <el-table-column label={this.$t('object_list_source_information')}></el-table-column>
+          <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
+          <el-table-column label={this.$t('object_list_type')} prop="type"></el-table-column>
+          <el-table-column label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
+          <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
         </el-table>
         <el-pagination
           background
@@ -86,6 +87,9 @@ export default defineComponent({
           total={this.data.page.total}
           onCurrent-change={this.loadData}
         ></el-pagination>
+        <el-button type="primary" size="mini" style={'width:30px;float:right'}>
+          确认
+        </el-button>
       </div>
     )
   }

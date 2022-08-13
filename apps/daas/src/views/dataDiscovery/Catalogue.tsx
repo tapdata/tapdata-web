@@ -1,6 +1,6 @@
 import { defineComponent, reactive, ref } from '@vue/composition-api'
-import { FilterBar, Drawer } from '@tap/component'
-import Classification from '@/views/dataDiscovery/Classification.vue'
+import { FilterBar, Drawer, DiscoveryClassification } from '@tap/component'
+import { discoveryApi } from '@tap/api'
 import DrawerContent from '@/views/dataDiscovery/PreviewDrawer'
 import ObjectTable from '@/views/dataDiscovery/ObjectTable'
 import './catalogue.scss'
@@ -37,18 +37,15 @@ export default defineComponent({
       ]
     })
     const loadData = () => {
-      list.value = [
-        {
-          id: 78,
-          name: '测试',
-          type: '123',
-          desc: '234'
-        }
-      ]
-      data.page.total = 1
+      discoveryApi.discoveryList().then(res => {
+        // let { total, items } = res
+        list.value = res || []
+        //data.page.total = total
+      })
     }
     const handlePreview = row => {
       data.isShowDetails = true
+      // @ts-ignore
       refs.drawerContent.loadData(row)
     }
     const closeDrawer = val => {
@@ -56,6 +53,7 @@ export default defineComponent({
     }
     const handleSourceDrawer = () => {
       data.isShowSourceDrawer = true
+      // @ts-ignore
       refs.objectTable.loadData()
     }
     const closeSourceDrawer = val => {
@@ -96,11 +94,11 @@ export default defineComponent({
       <div class="classify-wrap">
         <div class="catalogue-page-main-box flex">
           <div class="page-left">
-            <Classification
+            <DiscoveryClassification
               v-model={this.data.searchParams}
               ref="classify"
               {...{ on: { nodeChecked: this.getNodeChecked } }}
-            ></Classification>
+            ></DiscoveryClassification>
           </div>
           <div class="page-right">
             <div class="flex flex-row align-items-center mb-2">
@@ -153,7 +151,7 @@ export default defineComponent({
             </Drawer>
             <el-drawer
               class="object-drawer-wrap"
-              size="50%"
+              size="56%"
               title="资源绑定"
               visible={this.data.isShowSourceDrawer}
               on={{ ['update:visible']: this.closeSourceDrawer }}
