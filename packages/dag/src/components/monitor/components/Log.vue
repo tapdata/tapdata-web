@@ -66,7 +66,10 @@
                 type="info"
                 class="no-more__alert position-absolute py-1 px-2"
               ></ElAlert>
-              <VEmpty v-if="!list.length" :description="keyword ? $t('customer_logs_no_search_data') : ''" large />
+              <VEmpty
+                v-if="!list.length"
+                :description="keyword ? $t('customer_logs_no_search_data') : $t('dag_dialog_field_mapping_no_data')"
+              />
             </div>
           </template>
           <template #default="{ item, index, active }">
@@ -587,6 +590,9 @@ export default {
   ::v-deep {
     .highlight-bg-color {
       background-color: #ff0;
+    }
+    .empty-wrap {
+      margin: 24px 0;
     }
   }
 }

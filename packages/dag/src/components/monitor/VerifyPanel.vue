@@ -9,16 +9,22 @@
       <VIcon size="16" class="cursor-pointer" @click="$emit('showVerify')">close</VIcon>
     </div>
     <div class="px-4 pb-4 border-bottom">
-      <Chart ref="chart" :extend="pieOptions" style="width: 270px; height: 90px"></Chart>
+      <Chart :extend="pieOptions" class="chart"></Chart>
     </div>
     <div class="flex justify-content-between align-items-center px-4 pt-4">
-      <span class="font-color-normal fw-bold fs-7">问题表清单</span>
-      <VIcon size="16" class="cursor-pointer" @click="$emit('verifyDetails')">menu-left</VIcon>
+      <div class="flex align-items-center font-color-normal fw-bold fs-7">
+        <span>问题表清单</span>
+        <ElTooltip transition="tooltip-fade-in" content="刷新">
+          <VIcon class="ml-2 color-primary cursor-pointer" size="9" @click="search">icon_table_selector_load</VIcon>
+        </ElTooltip>
+      </div>
+      <ElTooltip transition="tooltip-fade-in" content="列表">
+        <VIcon size="16" class="cursor-pointer" @click="$emit('verifyDetails')">menu-left</VIcon>
+      </ElTooltip>
     </div>
     <div class="px-4 py-2">
       <ElInput
-        v-model="dbSearchTxt"
-        ref="dbInput"
+        v-model="keyword"
         placeholder="请输入搜索内容"
         prefix-icon="el-icon-search"
         size="mini"
@@ -26,30 +32,30 @@
         @keydown.native.stop
         @keyup.native.stop
         @click.native.stop
-        @input="handleDBInput"
+        @input="search"
       >
       </ElInput>
     </div>
 
-    <div v-loading="dbLoading" class="flex-1" style="height: 0">
+    <div v-loading="loading" class="flex-1" style="height: 0">
       <DynamicScroller
         ref="virtualScroller"
-        :items="dbList"
+        :items="list"
         key-field="id"
         :min-item-size="30"
         class="scroller h-100"
         v-infinite-scroll="loadMoreDB"
       >
         <template #after>
-          <div v-if="dbSearchTxt" class="before-scroll-content text-center font-color-light pb-2">
-            <div>{{ $t('customer_logs_no_search_data') }}</div>
-          </div>
-          <div v-else class="before-scroll-content text-center font-color-light pb-2">
-            <div v-if="noDBMore">{{ $t('customer_logs_no_more_data') }}</div>
-            <div v-else-if="!dbList.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
-            <div v-show="dbLoadingMore">
+          <div class="before-scroll-content text-center font-color-light py-1">
+            <VEmpty
+              v-if="!list.length"
+              :description="keyword ? $t('customer_logs_no_search_data') : $t('dag_dialog_field_mapping_no_data')"
+            />
+            <div v-show="moreLoading">
               <i class="el-icon-loading"></i>
             </div>
+            <div v-show="!moreLoading && noMore">{{ $t('customer_logs_no_more_data') }}</div>
           </div>
         </template>
         <template #default="{ item, index, active }">
@@ -57,16 +63,18 @@
             :item="item"
             :active="active"
             :data-index="index"
-            :size-dependencies="[item.id, item.connection]"
+            :size-dependencies="[item.id, item.connectionName]"
           >
-            <div class="db-item px-4 py-2 user-select-none border-bottom">
+            <div class="px-4 py-2 user-select-none border-bottom">
               <div class="flex justify-content-between mb-2">
                 <span>连接名：</span>
-                <ElLink type="primary" @click="$emit('connectionList', item.connection)">{{ item.connection }}</ElLink>
+                <ElLink type="primary" @click="$emit('connectionList', item.connectionName)">{{
+                  item.connectionName
+                }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>表名：</span>
-                <ElLink type="primary" @click="$emit('verifyDetails', item.table)">{{ item.table }}</ElLink>
+                <ElLink type="primary" @click="$emit('verifyDetails', item.tableName)">{{ item.tableName }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>异常数据（行）：</span>
@@ -87,21 +95,19 @@
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
-import { debounce, escapeRegExp } from 'lodash'
+import { debounce } from 'lodash'
 
 import { Chart } from '@tap/component'
 import { calcUnit } from '@tap/shared'
+import { verifyApi } from '@tap/api'
+import { VEmpty } from '@tap/component'
 
 import Locale from '../../mixins/locale'
-
-function getRandom() {
-  return Math.ceil(Math.random() * 100)
-}
 
 export default {
   name: 'VerifyPanel',
 
-  components: { Chart, DynamicScroller, DynamicScrollerItem },
+  components: { Chart, DynamicScroller, DynamicScrollerItem, VEmpty },
 
   mixins: [Locale],
 
@@ -116,19 +122,29 @@ export default {
           notSupport: 231114
         }
       }
+    },
+    data: {
+      type: Object,
+      default: () => {
+        return {
+          total: 0,
+          item: []
+        }
+      }
     }
   },
 
   data() {
     return {
-      dbSearchTxt: '',
-      dbLoading: true,
-      dbLoadingMore: false,
+      keyword: '',
+      loading: true,
+      moreLoading: false,
       skeletonThrottle: 0,
-      dbList: [],
-      dbPage: 1,
-      dbTotal: 0,
-      dbIdMap: {}
+      list: [],
+      pageSize: 20,
+      page: 1,
+      total: 0,
+      idMap: {}
     }
   },
 
@@ -169,11 +185,11 @@ export default {
     },
 
     disabledDBMore() {
-      return this.dbLoading || this.noDBMore || this.dbLoadingMore
+      return this.loading || this.noMore || this.moreLoading
     },
 
-    noDBMore() {
-      return this.dbPage >= Math.ceil(this.dbTotal / 20)
+    noMore() {
+      return this.page !== 1 && this.page >= Math.ceil(this.total / this.pageSize)
     }
   },
 
@@ -183,7 +199,58 @@ export default {
 
   methods: {
     init() {
-      this.loadDatabase()
+      this.loadData()
+    },
+
+    resetPage() {
+      this.page = 1
+      this.total = 0
+    },
+
+    getFilter() {
+      const { pageSize, page } = this
+      let filter = {
+        limit: pageSize,
+        skip: pageSize * (page - 1)
+      }
+      return filter
+    },
+
+    loadData(loadMore = false) {
+      const startStamp = Date.now()
+      verifyApi
+        .get({
+          filter: JSON.stringify(this.getFilter())
+        })
+        .then(data => {
+          this.total = data.total
+          let items = data.items.map(t => {
+            t.diff = t.diff.toLocaleString()
+            return t
+          })
+          if (loadMore) {
+            // 防止重复push
+            items.forEach(item => {
+              if (!this.idMap[item.id]) {
+                this.list.push(item)
+                this.idMap[item.id] = true
+              }
+            })
+          } else {
+            this.scrollTopOfDBList()
+            this.list = items
+            this.idMap = items.reduce((map, item) => ((map[item.id] = true), map), {})
+          }
+        })
+        .finally(() => {
+          setTimeout(
+            () => {
+              this.moreLoading = false
+              this.loading = false
+            },
+            Date.now() - startStamp < 1000 ? 1500 : 0
+          )
+        })
     },
 
     getPieOptions(data) {
@@ -286,146 +353,21 @@ export default {
       return options
     },
 
-    handleDBInput: debounce(function () {
-      this.loadDatabase()
-    }, 100),
+    search: debounce(function () {
+      this.resetPage()
+      this.loading = true
+      this.loadData()
+    }, 300),
 
     loadMoreDB() {
-      console.log('loadMoreDB')
       if (this.disabledDBMore) return
-      this.loadDatabase(true)
-    },
-
-    getDbFilter() {
-      const filter = {
-        page: this.dbPage,
-        size: 20,
-        where: {
-          // database_type: {
-          //   $in: this.database
-          // },
-          connection_type: {
-            like: this.connectionType,
-            options: 'i'
-          }
-        },
-        fields: {
-          name: 1,
-          id: 1,
-          database_type: 1,
-          database_owner: 1,
-          database_name: 1,
-          database_username: 1,
-          database_host: 1,
-          database_port: 1,
-          database_uri: 1,
-          connection_name: 1,
-          brokerURL: 1,
-          mqType: 1,
-          kafkaBootstrapServers: 1,
-          connection_type: 1,
-          status: 1,
-          accessNodeType: 1,
-          accessNodeProcessId: 1,
-          accessNodeProcessIdList: 1,
-          pdkType: 1,
-          pdkHash: 1,
-          capabilities: 1,
-          config: 1
-        },
-        order: ['status DESC', 'name ASC']
-      }
-      const txt = escapeRegExp(this.dbSearchTxt.trim())
-
-      if (txt) {
-        filter.where.name = { like: txt, options: 'i' }
-      }
-
-      return { filter: JSON.stringify(filter) }
-    },
-
-    loadDatabase(loadMore) {
-      if (loadMore) {
-        this.dbPage++
-        this.dbLoadingMore = true
-      } else {
-        this.dbLoading = true
-        this.dbPage = 1
-        this.dbTotal = 0
-      }
-      // this.dbList = Array(10)
-      //   .fill()
-      //   .map((t, i) => {
-      //     return {
-      //       id: i,
-      //       connection: '连接名称' + getRandom(),
-      //       table: '表名' + getRandom(),
-      //       diff: getRandom(),
-      //       progress: getRandom()
-      //     }
-      //   })
-      // this.dbTotal = getRandom()
-
-      // const data = await connectionsApi.get(this.getDbFilter())
-      const startStamp = Date.now()
-      this.dbTotal = 10000
-      const dbList = Array(10)
-        .fill()
-        .map((t, i) => {
-          return {
-            id: Date.now() + i,
-            connection: '连接名称' + getRandom(),
-            table: '表名' + getRandom(),
-            diff: (getRandom() * 1000).toLocaleString(),
-            progress: getRandom()
-          }
-        })
-        .filter(t => (t.connection + t.table).indexOf(this.dbSearchTxt) > -1)
-      // const dbList = data.items.map(item => {
-      //   let connectionUrl = ''
-      //
-      //   if (item.config) {
-      //     if (item.config.uri) {
-      //       connectionUrl = item.config.uri
-      //     } else {
-      //       connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
-      //         item.config.schema ? `/${item.config.schema}` : ''
-      //       }`
-      //     }
-      //   }
-      //
-      //   item.connectionUrl = connectionUrl
-      //   item.databaseType = item.database_type
-      //   return item
-      // })
-      //
-      if (loadMore) {
-        // 防止重复push
-        dbList.forEach(item => {
-          if (!this.dbIdMap[item.id]) {
-            this.dbList.push(item)
-            this.dbIdMap[item.id] = true
-          }
-        })
-      } else {
-        this.scrollTopOfDBList()
-        this.dbList = dbList
-        // this.dbLoading = false
-        // 缓存所有dbId
-        this.dbIdMap = dbList.reduce((map, item) => ((map[item.id] = true), map), {})
-      }
-      setTimeout(
-        () => {
-          this.dbLoadingMore = false
-          this.dbLoading = false
-        },
-        Date.now() - startStamp < 1000 ? 2000 : 0
-      )
-      return this.dbList
+      this.page++
+      this.moreLoading = true
+      this.loadData(true)
     },
 
     scrollTopOfDBList() {
-      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
+      if (this.$refs.virtualScroller) this.$refs.virtualScroller.scrollToItem(0)
     }
   }
 }
@@ -434,6 +376,8 @@ export default {
 .verify-panel {
   width: 306px;
 }
-.db-item {
+.chart {
+  width: 270px;
+  height: 90px;
 }
 </style>
