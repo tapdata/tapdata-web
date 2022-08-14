@@ -109,6 +109,7 @@
         ref="verifyPanel"
         :settings="dataflow"
         :scope="formScope"
+        :data="verifyData"
         @showVerify="handleShowVerify"
         @hide="onHideSidebar"
         @verifyDetails="handleVerifyDetails"
@@ -217,13 +218,12 @@ export default {
       timer: null,
       quotaTimeType: '5m',
       quotaTime: [],
-      refresh: false, // 刷新数据还是初始化数据
-      count: 0,
       quota: {}, // 指标数据
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
       timeFormat: 'HH:mm:ss',
-      dagData: null
+      dagData: null,
+      verifyData: null
     }
   },
 
@@ -636,6 +636,10 @@ export default {
           param: this.getQuotaFilter()
         }
       }
+      const $verifyPanel = this.$refs.verifyPanel
+      if ($verifyPanel) {
+        params.verify = $verifyPanel.getFilter(1)
+      }
       return params
     },
 
@@ -643,15 +647,10 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      const { refresh } = this
-      if (refresh) {
-        this.count = 0
-      }
-      this.count++
-      const { count } = this
       measurementApi.batch(this.getParams()).then(data => {
         const map = {
-          quota: this.loadQuotaData
+          quota: this.loadQuotaData,
+          verify: this.loadVerifyData
         }
         for (let key in data) {
           const item = data[key]
@@ -669,6 +668,10 @@ export default {
       const granularity = getTimeGranularity(data.interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
+    },
+
+    loadVerifyData(data) {
+      this.verifyData = data
     },
 
     getDagData(data = []) {
@@ -736,7 +739,6 @@ export default {
     },
 
     handleChangeTimeSelect(val, isTime, source) {
-      this.refresh = this.quotaTimeType === val
       this.quotaTimeType = source?.type ?? val
       this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
       this.init()

@@ -53,7 +53,7 @@ module.exports = {
     ts: '@time',
     code: 'ok',
     data: {
-      total: 30,
+      total: 20,
       'items|20': [
         {
           tableName: '@name',

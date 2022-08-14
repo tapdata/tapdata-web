@@ -14,7 +14,7 @@
     <div class="flex justify-content-between align-items-center px-4 pt-4">
       <div class="flex align-items-center font-color-normal fw-bold fs-7">
         <span>问题表清单</span>
-        <ElTooltip transition="tooltip-fade-in" content="刷新">
+        <ElTooltip :value="hasNew" transition="tooltip-fade-in" :content="hasNew ? '检测到新数据，请点击刷新' : '刷新'">
           <VIcon class="ml-2 color-primary cursor-pointer" size="9" @click="search">icon_table_selector_load</VIcon>
         </ElTooltip>
       </div>
@@ -128,7 +128,7 @@ export default {
       default: () => {
         return {
           total: 0,
-          item: []
+          items: []
         }
       }
     }
@@ -144,7 +144,8 @@ export default {
       pageSize: 20,
       page: 1,
       total: 0,
-      idMap: {}
+      idMap: {},
+      hasNew: false // 出现新数据
     }
   },
 
@@ -193,6 +194,15 @@ export default {
     }
   },
 
+  watch: {
+    data: {
+      deep: true,
+      handler() {
+        this.updateList()
+      }
+    }
+  },
+
   mounted() {
     this.init()
   },
@@ -207,11 +217,14 @@ export default {
       this.total = 0
     },
 
-    getFilter() {
-      const { pageSize, page } = this
+    getFilter(page) {
+      const { pageSize } = this
+      page = page || this.page
       let filter = {
         limit: pageSize,
         skip: pageSize * (page - 1)
+        // order: 'desc',
+        // sort: 'progress'
       }
       return filter
     },
@@ -355,6 +368,7 @@ export default {
 
     search: debounce(function () {
       this.resetPage()
+      this.hasNew = false
       this.loading = true
       this.loadData()
     }, 300),
@@ -364,6 +378,23 @@ export default {
       this.page++
       this.moreLoading = true
       this.loadData(true)
+    },
+
+    updateList() {
+      const { items, total } = this.data
+      const len = items.length
+      const flag =
+        len === this.list.length &&
+        items.map(t => t.id + '_' + t.diff).join() === this.list.map(t => t.id + '_' + t.diff).join() // id、差异都相同
+      // 只有第一页数据时，自动更新列表
+      if (this.page === 1 && (!items.length || !flag)) {
+        this.scrollTopOfDBList()
+        this.list = items
+        this.total = total
+        return
+      }
+      // 检查是否有新数据
+      this.hasNew = !flag || total !== this.total
     },
 
     scrollTopOfDBList() {
