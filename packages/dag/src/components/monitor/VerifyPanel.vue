@@ -98,7 +98,7 @@ import { mapGetters } from 'vuex'
 import { debounce } from 'lodash'
 
 import { Chart } from '@tap/component'
-import { calcUnit } from '@tap/shared'
+import { calcUnit, deepCopy } from '@tap/shared'
 import { verifyApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 
@@ -197,7 +197,10 @@ export default {
   watch: {
     data: {
       deep: true,
-      handler() {
+      handler(v1, v2) {
+        if (JSON.stringify(v1) === JSON.stringify(v2)) {
+          return
+        }
         this.updateList()
       }
     }
@@ -389,7 +392,10 @@ export default {
       // 只有第一页数据时，自动更新列表
       if (this.page === 1 && (!items.length || !flag)) {
         this.scrollTopOfDBList()
-        this.list = items
+        this.list = deepCopy(items).map(t => {
+          t.diff = t.diff.toLocaleString()
+          return t
+        })
         this.total = total
         return
       }
