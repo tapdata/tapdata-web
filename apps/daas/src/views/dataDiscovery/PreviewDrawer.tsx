@@ -156,17 +156,6 @@ export default defineComponent({
               <span class="drawer__header_text inline-block">数据项</span>
               <TableList columns={this.data.columns} data={this.preview.fields} has-pagination={false}></TableList>
             </div>
-            {/*{this.data.activeName === 'first' ? (*/}
-            {/*  <div className="mt-4">*/}
-            {/*    <span className="drawer__header_text inline-block">数据项</span>*/}
-            {/*    <TableList columns={this.data.columns} data={this.preview.fields}></TableList>*/}
-            {/*  </div>*/}
-            {/*) : (*/}
-            {/*  <div className="mt-4">*/}
-            {/*    <span className="drawer__header_text inline-block">数据预览</span>*/}
-            {/*    <TableList columns={this.data.overviewColumns} data={this.overview.fields}></TableList>*/}
-            {/*  </div>*/}
-            {/*)}*/}
           </div>
         ) : (
           ''

@@ -66,8 +66,8 @@ export default defineComponent({
     return (
       <div class="object-page-main-box flex-column pl-4 pr-4 min-h">
         <div class="flex-1">
-          <div className="object-page-topbar">
-            <div className="object-page-search-bar">
+          <div class="object-page-topbar mt-2">
+            <div class="object-page-search-bar">
               <FilterBar items={this.data.filterItems} {...{ on: { fetch: this.loadData } }}></FilterBar>
             </div>
           </div>
