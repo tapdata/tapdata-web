@@ -44,6 +44,10 @@ export const FieldRenameProcessor = defineComponent({
         count: 1
       }
     })
+    const updateDeletedNum = item => {
+      item.userDeletedNum = item.fieldsMapping.filter(field => !field.isShow).length
+      return item
+    }
     //数据初始化
     const loadData = (value, type, loading) => {
       if (!loading) {
@@ -67,8 +71,8 @@ export const FieldRenameProcessor = defineComponent({
       taskApi
         .getNodeTableInfo(where)
         .then(res => {
-          let { total, items } = res
-          list.value = items || []
+          let { total, items = [] } = res
+          list.value = items.map(updateDeletedNum)
           config.page.total = total
           config.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
           updateView(config.position)
@@ -303,6 +307,7 @@ export const FieldRenameProcessor = defineComponent({
           tableList.value[i]['isShow'] = true
         }
       }
+      updateDeletedNum(config.selectTableRow)
       doUpdateField(row, 'del', true)
     }
     const doDeleteRow = row => {
@@ -312,6 +317,7 @@ export const FieldRenameProcessor = defineComponent({
         }
       }
       doUpdateField(row, 'del', false)
+      updateDeletedNum(config.selectTableRow)
     }
     const tableRowClassName = ({ row }) => {
       if (!row.isShow) {
