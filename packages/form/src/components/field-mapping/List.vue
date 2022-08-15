@@ -108,11 +108,13 @@
             <ElTableColumn :label="t('meta_table_default')">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!readOnly">
-                  <span class="field-mapping-table__default_value" :class="{ default_value_disabled: !row.description }"
+                  <span
+                    class="field-mapping-table__default_value"
+                    :class="{ default_value_disabled: !row.useDefaultValue }"
                     >{{ row.defaultValue }}
                     <span
                       class="operation-btn cursor-pointer color-primary ml-2"
-                      v-if="row.description"
+                      v-if="row.useDefaultValue"
                       @click="handleDefaultValue(row, false)"
                       >禁用</span
                     ><span
@@ -287,7 +289,7 @@ export default {
     },
     handleDefaultValue(row, val) {
       //触发target更新
-      this.updateTargetView(row.sourceFieldName, 'description', val)
+      this.updateTargetView(row.sourceFieldName, 'useDefaultValue', val)
       this.updateTarget(row, 'useDefaultValue')
     },
     rest() {
@@ -323,18 +325,18 @@ export default {
         let field = {
           fieldName: row.sourceFieldName,
           fieldType: row.sourceFieldType,
-          useDefaultValue: row.description
+          useDefaultValue: row.useDefaultValue
         }
         this.editFields.push(field)
       } else {
         for (let i = 0; i < this.editFields.length; i++) {
           if (this.editFields[i].fieldName === row.sourceFieldName) {
-            this.editFields[i].defaultValue = row.description
+            this.editFields[i].defaultValue = row.useDefaultValue
           } else {
             let field = {
               fieldName: row.sourceFieldName,
               fieldType: row.sourceFieldType,
-              useDefaultValue: row.description
+              useDefaultValue: row.useDefaultValue
             }
             this.editFields.push(field)
           }
