@@ -26,7 +26,8 @@ export const JsEditor = connect(
         default: () => ({})
       },
       disabled: Boolean,
-      includeBeforeAndAfter: Boolean
+      includeBeforeAndAfter: Boolean,
+      handleAddCompleter: Function
     },
 
     computed: {
