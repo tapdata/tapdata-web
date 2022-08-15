@@ -1,5 +1,5 @@
 <template>
-  <section class="function-details-wrapper section-wrap">
+  <section class="function-details-wrapper">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
         {{ $t('function_details') }}
@@ -46,7 +46,7 @@
           <JsEditor v-model="details.script" height="200" :options="{ readOnly: true }"></JsEditor>
         </div>
       </div>
-      <div class="footer pt-6 pb-4">
+      <div class="footer pt-6">
         <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
       </div>
     </div>

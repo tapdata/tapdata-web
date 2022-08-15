@@ -107,7 +107,9 @@
       <ElMain class="layout-main">
         <div class="layout-main-body">
           <PageHeader></PageHeader>
-          <RouterView class="flex-fill" />
+          <div class="flex-fill px-5 pb-5 overflow-auto">
+            <RouterView />
+          </div>
         </div>
       </ElMain>
     </ElContainer>
@@ -322,7 +324,7 @@
     position: relative;
     height: 100%;
     padding: 0;
-    background: map-get($bgColor, white);
+    background: #eff1f4;
     box-sizing: border-box;
     overflow-y: hidden;
     overflow-x: auto;

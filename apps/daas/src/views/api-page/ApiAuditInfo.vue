@@ -1,5 +1,5 @@
 <template>
-  <section v-loading="loading" class="apiaudit-info-wrap section-wrap">
+  <section v-loading="loading" class="apiaudit-info-wrap">
     <div class="details-box bg-white p-6 rounded-2">
       <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_log_info') }}</div>
       <ElRow class="pt-4" v-if="auditData">

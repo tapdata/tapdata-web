@@ -1,5 +1,5 @@
 <template>
-  <section class="verify-result-wrap section-wrap" v-loading="loading">
+  <section class="verify-result-wrap h-100" v-loading="loading">
     <div class="section-wrap-box">
       <div class="verify-result-header" v-if="inspect">
         <div>
@@ -22,7 +22,7 @@
         </div>
       </div>
       <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
-        <VIcon class="color-danger">error</VIcon>
+        <VIcon class="color-danger mt-1">error</VIcon>
         <span>
           <ElLink type="danger" @click="showErrorMessage">{{ this.$t('verify_see_details') }}</ElLink>
           <VIcon class="ml-2 color-info" size="12">close</VIcon>

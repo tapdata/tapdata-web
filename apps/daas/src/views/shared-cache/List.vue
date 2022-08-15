@@ -1,5 +1,5 @@
 <template>
-  <section class="shared-cache-list-wrap section-wrap">
+  <section class="shared-cache-list-wrap h-100">
     <TablePage ref="table" row-key="id" :remoteMethod="getData" @sort-change="handleSortTable">
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>

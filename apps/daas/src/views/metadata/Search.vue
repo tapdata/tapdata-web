@@ -1,6 +1,6 @@
 <template>
-  <section class="metadata-search-wrap section-wrap" :class="{ 'metadata-change-background': !showNoSearch }">
-    <div class="section-wrap-box">
+  <section class="metadata-search-wrap h-100" :class="{ 'metadata-change-background': !showNoSearch }">
+    <div class="section-wrap-box h-100">
       <div class="no-search-box-wrap" v-show="showNoSearch">
         <div class="no-search-box">
           <header class="metadata-search-title link-primary">

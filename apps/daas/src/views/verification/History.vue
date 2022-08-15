@@ -1,6 +1,6 @@
 <template>
-  <section class="data-verify-history-wrap section-wrap" v-loading="loading">
-    <div class="panel-main section-wrap-box">
+  <section class="data-verify-history-wrap h-100" v-loading="loading">
+    <div class="panel-main section-wrap-box h-100">
       <el-table :data="page.data" height="100%">
         <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
           <template slot-scope="scope">

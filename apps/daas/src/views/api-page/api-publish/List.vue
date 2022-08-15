@@ -1,5 +1,5 @@
 <template>
-  <section class="modules-list-wrap classify-wrap">
+  <section class="modules-list-wrap">
     <TablePage
       ref="table"
       row-key="id"

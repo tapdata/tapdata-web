@@ -1,5 +1,5 @@
 <template>
-  <section class="user-list-wrap classify-wrap">
+  <section class="user-list-wrap h-100">
     <TablePage
       ref="table"
       row-key="id"

@@ -1,5 +1,5 @@
 <template>
-  <section class="module-warp section-wrap" v-loading="loadingFrom">
+  <section class="module-warp" v-loading="loadingFrom">
     <div class="module-warp-box section-wrap-box">
       <div class="module-form">
         <ElForm :model="createForm" ref="form" size="small">

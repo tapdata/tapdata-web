@@ -1,5 +1,5 @@
 <template>
-  <section class="applications-wrap section-wrap">
+  <section class="applications-wrap h-100">
     <!-- api客户端 -->
     <TablePage
       ref="table"

@@ -1,5 +1,5 @@
 <template>
-  <section class="apiaudit-wrap section-wrap">
+  <section class="apiaudit-wrap h-100">
     <!-- api审计 -->
     <TablePage ref="table" row-key="id" class="apiaudit-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search" class="search-bar">

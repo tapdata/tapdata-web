@@ -1,5 +1,5 @@
 <template>
-  <section class="apiserver-wrap section-wrap">
+  <section class="apiserver-wrap">
     <!-- api服务器 -->
     <TablePage ref="table" row-key="id" class="apiserver-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search" class="search-bar">

@@ -1,5 +1,5 @@
 <template>
-  <section class="apiserver-wrap classify-wrap">
+  <section class="apiserver-wrap h-100">
     <TablePage
       ref="table"
       row-key="id"
