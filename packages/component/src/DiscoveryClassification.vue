@@ -67,8 +67,8 @@
         </ElFormItem>
         <ElFormItem label="目录分类" v-if="dialogConfig.isParent">
           <ElSelect v-model="dialogConfig.itemType">
-            <el-option label="对象" value="object"> </el-option>
-            <el-option label="表" value="table"> </el-option>
+            <el-option label="资源目录" value="object"> </el-option>
+            <el-option label="任务目录" value="task"> </el-option>
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="目录描述">
