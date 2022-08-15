@@ -59,30 +59,23 @@
           </div>
         </template>
         <template #default="{ item, index, active }">
-          <DynamicScrollerItem
-            :item="item"
-            :active="active"
-            :data-index="index"
-            :size-dependencies="[item.id, item.connectionName]"
-          >
+          <DynamicScrollerItem :item="item" :active="active" :data-index="index" :size-dependencies="[item.id]">
             <div class="px-4 py-2 user-select-none border-bottom">
               <div class="flex justify-content-between mb-2">
                 <span>连接名：</span>
-                <ElLink type="primary" @click="$emit('connectionList', item.connectionName)">{{
-                  item.connectionName
+                <ElLink type="primary" @click="$emit('connectionList', item.sourceConnName)">{{
+                  item.sourceConnName
                 }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>表名：</span>
-                <ElLink type="primary" @click="$emit('verifyDetails', item.tableName)">{{ item.tableName }}</ElLink>
+                <ElLink type="primary" @click="$emit('verifyDetails', item.originalTableName)">{{
+                  item.originalTableName
+                }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span>异常数据（行）：</span>
-                <span>{{ item.diff }}</span>
-              </div>
-              <div class="flex justify-content-between mb-2">
-                <span>准确性：</span>
-                <span>{{ item.progress }}%</span>
+                <span>{{ item.counts }}</span>
               </div>
             </div>
           </DynamicScrollerItem>
@@ -99,7 +92,7 @@ import { debounce } from 'lodash'
 
 import { Chart } from '@tap/component'
 import { calcUnit, deepCopy } from '@tap/shared'
-import { verifyApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 
 import Locale from '../../mixins/locale'
@@ -112,6 +105,7 @@ export default {
   mixins: [Locale],
 
   props: {
+    dataflow: Object,
     settings: Object,
     samples: {
       type: Object,
@@ -141,7 +135,7 @@ export default {
       moreLoading: false,
       skeletonThrottle: 0,
       list: [],
-      pageSize: 20,
+      pageSize: 10,
       page: 1,
       total: 0,
       idMap: {},
@@ -221,27 +215,28 @@ export default {
     },
 
     getFilter(page) {
-      const { pageSize } = this
+      const { pageSize, keyword } = this
       page = page || this.page
       let filter = {
         limit: pageSize,
-        skip: pageSize * (page - 1)
-        // order: 'desc',
-        // sort: 'progress'
+        skip: pageSize * (page - 1),
+        tableName: keyword
       }
       return filter
     },
 
     loadData(loadMore = false) {
       const startStamp = Date.now()
-      verifyApi
-        .get({
+      taskApi
+        .autoInspectResultsGroupByTable('taskid' || this.dataflow.id, {
           filter: JSON.stringify(this.getFilter())
         })
         .then(data => {
           this.total = data.total
-          let items = data.items.map(t => {
-            t.diff = t.diff.toLocaleString()
+          const lastId = this.list.at(-1)?.id || 0
+          let items = data.items.map((t, i) => {
+            t.id = lastId + i + 1
+            t.counts = t.counts.toLocaleString()
             return t
           })
           if (loadMore) {
@@ -388,15 +383,16 @@ export default {
       const len = items.length
       const flag =
         len === this.list.length &&
-        items.map(t => t.id + '_' + t.diff).join() === this.list.map(t => t.id + '_' + t.diff).join() // id、差异都相同
+        items.map(t => t.id + '_' + t.counts).join() === this.list.map(t => t.id + '_' + t.counts).join() // id、差异都相同
+      this.total = total
       // 只有第一页数据时，自动更新列表
       if (this.page === 1 && (!items.length || !flag)) {
         this.scrollTopOfDBList()
-        this.list = deepCopy(items).map(t => {
-          t.diff = t.diff.toLocaleString()
+        this.list = deepCopy(items).map((t, i) => {
+          t.id = i + 1
+          t.counts = t.counts.toLocaleString()
           return t
         })
-        this.total = total
         return
       }
       // 检查是否有新数据

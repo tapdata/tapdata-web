@@ -110,6 +110,7 @@
         :settings="dataflow"
         :scope="formScope"
         :data="verifyData"
+        :dataflow="dataflow"
         @showVerify="handleShowVerify"
         @hide="onHideSidebar"
         @verifyDetails="handleVerifyDetails"

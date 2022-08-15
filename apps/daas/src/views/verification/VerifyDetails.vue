@@ -1,21 +1,22 @@
 <template>
   <section class="verify-details section-wrap setting-warp">
-    <div class="verify-details__wrap flex font-color-light flex-fill">
-      <div class="verify-list flex flex-column p-6">
-        <div class="verify-list__header flex justify-content-between">
+    <div class="verify-details__wrap flex font-color-light h-100">
+      <div class="verify-list flex flex-column p-6" :class="{ 'w-100': !row }">
+        <div class="verify-list__header flex justify-content-between mb-2">
           <ElInput
             class="search-input"
             v-model="keyword"
             prefix-icon="el-icon-search"
-            placeholder="请输入日志内容…"
+            placeholder="请输入表名…"
             size="mini"
             clearable
             style="width: 240px"
             @input="searchFnc(800)"
           ></ElInput>
-          <ElButton type="primary">校验</ElButton>
+          <ElButton type="primary" size="mini">校验</ElButton>
         </div>
         <VTable
+          v-model="selection"
           :remoteMethod="remoteMethod"
           :columns="columns"
           :pageOptions="{
@@ -24,37 +25,41 @@
           ref="table"
           class="table-list"
           hide-on-single-page
-          @row-click="rowClick"
+          highlight-current-row
+          @row-click="handleRow"
+          @selection-change="handleSelectionChange"
         >
-          <template slot="diff" slot-scope="scope">
-            {{ scope.row.diff > 50 ? '校验中' : scope.row.diff }}
+          <template slot="counts" slot-scope="scope">
+            {{ scope.row.counts > 50 ? '校验中' : scope.row.counts }}
           </template>
         </VTable>
       </div>
-      <div class="verify-result flex flex-column flex-fit border-start">
+      <div v-if="row" class="verify-result flex flex-column flex-fit border-start">
         <div class="verify-result__title pt-6 px-4 fs-7 fw-bold font-color-dark">校验结果</div>
         <div class="px-4 pb-4 border-bottom">
           <div class="verify-result__line mt-2">
             <span class="line__label">源表：</span>
-            <span class="font-color-dark">CAR_CLAIM / auto_tes</span>
+            <span class="font-color-dark">{{
+              (row.originalTableName || '-') + '/' + (row.sourceConnName || '-')
+            }}</span>
           </div>
           <div class="verify-result__line mt-2">
             <span class="line__label">目标表：</span>
-            <span class="font-color-dark">CAR_CLAIM / auto_tes</span>
+            <span class="font-color-dark">{{ (row.targetTableName || '-') + '/' + (row.targetConnName || '-') }}</span>
           </div>
           <div class="verify-result__line mt-2">
-            <span class="line__label">校验结果：</span>
-            <span class="font-color-dark">passed</span>
+            <span class="line__label">异常数据（行）：</span>
+            <span class="font-color-dark">{{ row.counts || 0 }}</span>
           </div>
         </div>
         <div class="flex justify-content-between pt-4 px-4">
-          <ElRadioGroup v-model="radio">
+          <ElRadioGroup v-model="showType" :disabled="detailLoading" @change="fetch(page.current)">
             <ElRadio label="diff">仅显示差异字段</ElRadio>
             <ElRadio label="all">显示完整字段</ElRadio>
           </ElRadioGroup>
           <ElButton type="primary">导出</ElButton>
         </div>
-        <div class="verify-result__list flex-fill flex flex-column px-4 pb-6">
+        <div v-loading="detailLoading" class="verify-result__list flex-fill flex flex-column px-4 pb-6">
           <div class="table__header">
             <ElRow
               class="table__header flex align-items-center p-4"
@@ -76,25 +81,35 @@
               :class="{ 'border-top': index !== 0 }"
             >
               <ElCol :span="12">
-                <div class="disable-color">
-                  <span class="row__label">ID:</span>
-                  <span class="row__value">{{ item.id }}</span>
+                <div
+                  v-for="(pValue, pKey, pIndex) in item.originalKeymap"
+                  :key="pKey"
+                  class="disable-color"
+                  :class="{ 'mt-2': pIndex !== 0 }"
+                >
+                  <span class="row__label">{{ pKey + ':' }}</span>
+                  <span class="row__value">{{ pValue }}</span>
                 </div>
-                <div v-for="(sItem, sIndex) in item.source" :key="sIndex" class="mt-2">
+                <div v-for="(sItem, sIndex) in item.sourceData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
-                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.diff }">{{
+                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
                     sItem.value
                   }}</span>
                 </div>
               </ElCol>
               <ElCol :span="12">
-                <div class="disable-color">
-                  <span class="row__label">ID:</span>
-                  <span class="row__value">{{ item.id }}</span>
+                <div
+                  v-for="(pValue, pKey, pIndex) in item.originalKeymap"
+                  :key="pKey"
+                  class="disable-color"
+                  :class="{ 'mt-2': pIndex !== 0 }"
+                >
+                  <span class="row__label">{{ pKey + ':' }}</span>
+                  <span class="row__value">{{ pValue }}</span>
                 </div>
-                <div v-for="(sItem, sIndex) in item.target" :key="sIndex" class="mt-2">
+                <div v-for="(sItem, sIndex) in item.targetData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
-                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.diff }">{{
+                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
                     sItem.value
                   }}</span>
                 </div>
@@ -121,8 +136,9 @@
 </template>
 
 <script>
-import { delayTrigger } from '@tap/shared'
+import { delayTrigger, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
+import { taskApi } from '@tap/api'
 
 export default {
   name: 'VerifyDetails',
@@ -132,29 +148,36 @@ export default {
   data() {
     return {
       keyword: '',
+      selection: [],
       columns: [
         {
+          type: 'selection'
+        },
+        {
           label: '源表名',
-          prop: 'sourceTable'
+          prop: 'originalTableName'
         },
         {
           label: '目标表名',
-          prop: 'targetTable'
+          prop: 'targetTableName',
+          default: '-'
         },
         {
           label: '异常数据',
-          prop: 'diff',
-          slotName: 'diff'
+          prop: 'counts',
+          slotName: 'counts'
         }
       ],
-      radio: 'diff',
+      showType: 'diff',
       resultList: [],
       page: {
         current: 1,
         size: 20,
         total: 0
       },
-      showAdvancedVerification: false
+      showAdvancedVerification: false,
+      row: null,
+      detailLoading: false
     }
   },
 
@@ -166,86 +189,109 @@ export default {
     init() {
       const { table } = this.$route.query
       this.keyword = table
-      this.rowClick()
     },
 
     searchFnc(debounce) {
       delayTrigger(() => {
-        console.log('searchFnc')
+        this.$refs.table.fetch?.()
       }, debounce)
     },
 
     remoteMethod({ page }) {
-      console.log('remoteMethod')
       let { current, size } = page
-      let arr = Array(10)
-        .fill()
-        .map((t, index) => {
+      let filter = {
+        limit: size,
+        skip: size * (current - 1),
+        tableName: this.keyword
+      }
+      return taskApi
+        .autoInspectResultsGroupByTable('taskid' || this.$route.params.id, {
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          const list = data.items.map(t => {
+            t.counts = t.counts.toLocaleString()
+            return t
+          })
+          if (!this.row || !list.find(t => JSON.stringify(this.row) === JSON.stringify(t))) {
+            this.handleRow(list[0])
+          }
           return {
-            sourceTable: 'source_table' + index,
-            targetTable: 'target_table' + index,
-            diff: Math.ceil(Math.random() * 100)
+            total: data.total,
+            data: list
           }
         })
-      return new Promise((resolve, reject) => {
-        resolve({
-          total: 100,
-          data: arr
-        })
-      })
     },
 
-    rowClick() {
-      console.log('rowClick')
+    handleRow(row) {
+      this.row = row
+      this.$refs.table.table?.setCurrentRow?.(row)
       this.fetch()
     },
 
-    fetch() {
-      let arr = Array(20)
-        .fill()
-        .map((t, index) => {
-          return {
-            id: 'id_' + index,
-            source: {
-              name: '小丽',
-              age: 10,
-              sex: '女',
-              phone: '13800138000'
-            },
-            target: {
-              name: '小丽123',
-              age: 10,
-              sex: '男',
-              phone: '13800138000'
-            }
-          }
+    handleSelectionChange(val) {
+      this.selection = val
+    },
+
+    fetch(page = 1) {
+      this.page.current = page
+      const { size, current } = this.page
+      let filter = {
+        limit: size,
+        skip: size * (current - 1)
+      }
+      this.detailLoading = true
+      const startStamp = Date.now()
+      taskApi
+        .autoInspectResults('taskid' || this.$route.params.id, {
+          filter: JSON.stringify(filter)
         })
-      let result = []
-      arr.forEach(el => {
-        const { source, target } = el
-        let obj = {
-          id: el.id,
-          source: [],
-          target: []
-        }
-        for (let key in source) {
-          const sVal = source[key]
-          const tVal = target[key]
-          const diff = sVal !== tVal
-          obj.source.push({
-            label: key,
-            value: sVal,
-            diff
+        .then(data => {
+          let result = []
+          let items = data.items || []
+          this.page.total = data.total || 0
+          items.forEach(el => {
+            const { sourceData, targetData, originalKeymap } = el
+            let obj = {
+              id: el.id,
+              originalKeymap,
+              sourceData: [],
+              targetData: []
+            }
+            const notPrimaryKeyFields = uniqueArr([...Object.keys(sourceData), ...Object.keys(targetData)]).filter(
+              t => !Object.keys(originalKeymap).includes(t)
+            )
+            for (let i = 0; i < notPrimaryKeyFields.length; i++) {
+              const key = notPrimaryKeyFields[i]
+              const sVal = sourceData[key]
+              const tVal = targetData[key]
+              const isDiff = sVal !== tVal
+              if (this.showType === 'diff' && !isDiff) {
+                continue
+              }
+              obj.sourceData.push({
+                label: key,
+                value: sVal,
+                isDiff
+              })
+              obj.targetData.push({
+                label: key,
+                value: tVal,
+                isDiff
+              })
+            }
+            result.push(obj)
           })
-          obj.target.push({
-            label: key,
-            value: tVal,
-            diff
-          })
-        }
-        result.push(obj)
-      })
-      this.resultList = result
+          this.resultList = result
+        })
+        .finally(() => {
+          setTimeout(
+            () => {
+              this.detailLoading = false
+            },
+            Date.now() - startStamp < 1000 ? 1500 : 0
+          )
+        })
     }
   }
 }
