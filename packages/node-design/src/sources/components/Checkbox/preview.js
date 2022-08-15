@@ -11,7 +11,7 @@ Checkbox.Behavior = createBehavior({
   extends: ['Field'],
   selector: node => node.props['x-component'] === 'Checkbox.Group',
   designerProps: {
-    propsSchema: createFieldSchema(AllSchemas.Checkbox.Group)
+    propsSchema: createFieldSchema(AllSchemas.Checkbox.Group, null, true)
   },
   designerLocales: AllLocales.CheckboxGroup
 })
