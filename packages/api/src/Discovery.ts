@@ -9,27 +9,23 @@ export default class Discovery extends Http {
     if (isPlainObj(params)) {
       Object.assign(config, params)
     }
-    return this.axios.get('https://mock.apifox.cn/m1/1293445-0-default/api/discovery', config)
+    return this.axios.get(this.url, config)
   }
   overView(id: string) {
-    return this.axios.get('https://mock.apifox.cn/m1/1293445-0-default/api/discovery/storage/overview/' + id)
+    return this.axios.get(`${this.url}/storage/overview/${id}`)
   }
   preview(id: string) {
-    return this.axios.get('https://mock.apifox.cn/m1/1293445-0-default/api/discovery/storage/preview/' + id)
+    return this.axios.get(`${this.url}/storage/preview/${id}`)
   }
-  filterList(params) {
-    const config = { params }
-    if (isPlainObj(params)) {
-      Object.assign(config, params)
-    }
-    return this.axios.get('https://mock.apifox.cn/m1/1293445-0-default/api/discovery/filterList', config)
+  filterList(filterType) {
+    return this.axios.get(`${this.url}/filterList?filterType=${filterType}`)
   }
   discoveryList(params) {
     const config = { params }
     if (isPlainObj(params)) {
       Object.assign(config, params)
     }
-    return this.axios.get('https://mock.apifox.cn/m1/1293445-0-default/api/discovery/directory/data', config)
+    return this.axios.get(`${this.url}/directory/data`, config)
   }
 }
 export { Discovery }

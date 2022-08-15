@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref } from '@vue/composition-api'
+import { defineComponent, reactive, ref, watch } from '@vue/composition-api'
 import { FilterBar, Drawer, DiscoveryClassification } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import DrawerContent from '@/views/dataDiscovery/PreviewDrawer'
@@ -7,40 +7,75 @@ import './catalogue.scss'
 
 export default defineComponent({
   props: [''],
-  setup(props, { refs }) {
+  setup(props, { refs, root }) {
     const list = ref([])
+    const { sourceType, queryKey } = root.$route.query || {}
     const data = reactive({
       isShowDetails: false,
       isShowSourceDrawer: false, //资源绑定
-      searchParams: '',
-      desc: '',
+      tableLoading: false,
+      searchParams: {
+        sourceType: sourceType || '',
+        queryKey: queryKey || ''
+      },
       page: {
-        size: 10,
+        size: 20,
         current: 1,
         total: 0,
         count: 1
       },
       currentNode: '',
-      filterItems: [
-        {
-          label: '资源类型',
-          key: 'type',
-          type: 'select-inner',
-          items: [],
-          selectedWidth: '200px'
-        },
-        {
-          placeholder: '连接对象名',
-          key: 'connectionName',
-          type: 'input'
-        }
-      ]
+      filterItems: []
     })
-    const loadData = () => {
-      discoveryApi.discoveryList().then(res => {
-        // let { total, items } = res
-        list.value = res || []
-        //data.page.total = total
+    const loadData = val => {
+      let { sourceType, queryKey } = data.searchParams
+      data.page.current = val
+      let { size, current } = data.page
+      let where = {
+        page: current,
+        pageSize: size
+      }
+      sourceType && (where['sourceType'] = sourceType)
+      queryKey && (where['queryKey'] = queryKey)
+      data.tableLoading = true
+      discoveryApi
+        .discoveryList(where)
+        .then(res => {
+          let { total, items } = res
+          list.value = items || []
+          data.page.total = total
+        })
+        .finally(() => {
+          data.tableLoading = false
+        })
+    }
+    const loadFilterList = () => {
+      let filterType = ['sourceType']
+      discoveryApi.filterList(filterType).then(res => {
+        let { sourceType } = res
+        data.filterItems = [
+          {
+            label: '资源类型',
+            key: 'type',
+            type: 'select-inner',
+            items: dataAssembly(sourceType),
+            selectedWidth: '200px'
+          },
+          {
+            placeholder: '连接对象名',
+            key: 'connectionName',
+            type: 'input'
+          }
+        ]
+      })
+    }
+    const dataAssembly = data => {
+      if (data?.length === 0) return
+      return data.map(item => {
+        return {
+          label: item,
+          value: item
+        }
       })
     }
     const handlePreview = row => {
@@ -77,7 +112,14 @@ export default defineComponent({
         </div>
       )
     }
-    loadData()
+    loadData(1)
+    loadFilterList()
+    watch(
+      () => root.$route.query,
+      val => {
+        loadData(1)
+      }
+    )
     return {
       list,
       data,
@@ -107,7 +149,11 @@ export default defineComponent({
             </div>
             <div class="catalogue-page-topbar">
               <div class="catalogue-page-search-bar">
-                <FilterBar items={this.data.filterItems} {...{ on: { fetch: this.loadData } }}></FilterBar>
+                <FilterBar
+                  v-model={this.data.searchParams}
+                  items={this.data.filterItems}
+                  {...{ on: { fetch: this.loadData } }}
+                ></FilterBar>
               </div>
               <div class="catalogue-page-operation-bar">
                 <el-button type="primary" size="mini">
@@ -121,7 +167,7 @@ export default defineComponent({
                 </el-button>
               </div>
             </div>
-            <el-table data={this.list}>
+            <el-table data={this.list} v-loading={this.data.tableLoading}>
               <el-table-column
                 label="名称"
                 prop="name"

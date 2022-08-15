@@ -2,6 +2,7 @@ import { defineComponent, reactive, ref } from '@vue/composition-api'
 import { TableList } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import './object.scss'
+import dayjs from 'dayjs'
 
 export default defineComponent({
   setup() {
@@ -106,11 +107,11 @@ export default defineComponent({
               <el-row class="mt-2">
                 <el-col span="8">
                   <span class="max-label inline-block">创建时间</span>
-                  <span class="ml-2">{this.preview.createAt}</span>
+                  <span class="ml-2">{dayjs(this.preview.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                 </el-col>
                 <el-col span="8">
                   <span class="max-label inline-block">变更时间</span>
-                  <span class="ml-2">{this.preview.lastUpdAt}</span>
+                  <span class="ml-2">{dayjs(this.preview.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                 </el-col>
                 <el-col span="8">
                   <span class="max-label inline-block">数据项</span>
