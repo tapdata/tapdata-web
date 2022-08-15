@@ -109,7 +109,7 @@
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!readOnly">
                   <span class="field-mapping-table__default_value" :class="{ default_value_disabled: !row.description }"
-                    >{{ row.defaultValue }} 测试数据
+                    >{{ row.defaultValue }}
                     <span
                       class="operation-btn cursor-pointer color-primary ml-2"
                       v-if="row.description"
