@@ -5,6 +5,7 @@
       row-key="id"
       class="data-flow-list"
       :remoteMethod="getData"
+      :classify="isDaas ? { authority: 'SYNC_category_management', types: ['dataflow'] } : null"
       :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="
         val => {
@@ -17,6 +18,17 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
+        <el-button
+          v-if="isDaas"
+          v-show="multipleSelection.length > 0"
+          v-readonlybtn="'SYNC_category_application'"
+          size="mini"
+          class="btn message-button-cancel"
+          @click="$refs.table.showClassify(handleSelectTag())"
+        >
+          <i class="iconfont icon-biaoqian back-btn-icon"></i>
+          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+        </el-button>
         <el-dropdown
           class="btn"
           @command="handleCommand($event)"
@@ -176,9 +188,9 @@
                 <el-dropdown-item command="del" :disabled="row.btnDisabled.delete" v-readonlybtn="'SYNC_job_delete'">
                   {{ $t('task_list_delete') }}
                 </el-dropdown-item>
-                <!--                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">-->
-                <!--                  {{ $t('dataFlow.addTag') }}-->
-                <!--                </el-dropdown-item>-->
+                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">
+                  {{ $t('dataFlow.addTag') }}
+                </el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
                   $t('dataVerify.dataVerify')
                 }}</el-dropdown-item>
@@ -590,6 +602,17 @@ export default {
         this.table.fetch()
         this.$message.success(this.$t('message.copySuccess'))
       })
+    },
+    handleSelectTag() {
+      let tagList = {}
+      this.multipleSelection.forEach(row => {
+        if (row.listTagId) {
+          tagList[row.listTagId] = {
+            value: row.listTagValue
+          }
+        }
+      })
+      return tagList
     },
     setTag(ids, node) {
       this.dataFlowId = node.id

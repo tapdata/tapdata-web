@@ -12,11 +12,11 @@
         <el-radio v-model="importForm.upsert" :label="1">{{ $t('modules_dialog_overwrite_data') }}</el-radio>
         <el-radio v-model="importForm.upsert" :label="0">{{ $t('modules_dialog_skip_data') }}</el-radio>
       </ElFormItem>
-      <!--      <ElFormItem :label="$t('modules_dialog_group') + ':'">-->
-      <!--        <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">-->
-      <!--          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>-->
-      <!--        </ElSelect>-->
-      <!--      </ElFormItem>-->
+      <ElFormItem :label="$t('modules_dialog_group') + ':'">
+        <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">
+          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
+        </ElSelect>
+      </ElFormItem>
       <ElFormItem :label="$t('modules_dialog_file') + ':'">
         <ElUpload
           class="upload-demo"
