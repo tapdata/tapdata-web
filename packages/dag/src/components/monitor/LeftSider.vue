@@ -131,7 +131,7 @@
       ></LineChart>
     </ElDialog>
 
-    <InitialList v-model="initialListDialog"></InitialList>
+    <InitialList v-model="initialListDialog" :dataflow="dataflow"></InitialList>
   </aside>
 </template>
 
