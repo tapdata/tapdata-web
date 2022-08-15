@@ -1,6 +1,6 @@
 <template>
   <section class="dashboard-wrap px-5 mx-n5">
-    <div v-loading="true" class="dashboard-main">
+    <div v-loading="loading" class="dashboard-main">
       <template v-if="noPermission">
         <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
           <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
