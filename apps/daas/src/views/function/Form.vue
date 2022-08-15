@@ -1,5 +1,5 @@
 <template>
-  <section v-loading="loading" class="custom-form-wrapper section-wrap">
+  <section v-loading="loading" class="custom-form-wrapper">
     <div class="section-wrap-box overflow-auto">
       <ElForm
         v-if="!$route.params.id || details.id"

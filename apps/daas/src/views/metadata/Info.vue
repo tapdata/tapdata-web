@@ -1,6 +1,6 @@
 <template>
-  <section class="metadata-info section-wrap" v-loading="loading">
-    <el-container class="metadata-content">
+  <section class="metadata-info h-100" v-loading="loading">
+    <el-container class="metadata-content h-100">
       <!-- 元数据管理详情 头部信息 start -->
       <el-header class="matadata-head">
         <div class="img-box">

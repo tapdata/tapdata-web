@@ -739,7 +739,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0 20px 20px 20px;
   overflow: hidden;
   background-color: #eff1f4;
   .connection-from-body {

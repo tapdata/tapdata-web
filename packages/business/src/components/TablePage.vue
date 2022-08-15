@@ -248,6 +248,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    padding: 20px;
     // background-color: map-get($bgColor, white);
     border-radius: 4px;
     .el-table--border {

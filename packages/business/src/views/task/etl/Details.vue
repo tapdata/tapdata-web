@@ -1,5 +1,5 @@
 <template>
-  <ElContainer v-loading="loading" class="task-details-container section-wrap">
+  <ElContainer v-loading="loading" class="task-details-container h-100 flex flex-column">
     <div class="task-info flex justify-content-between bg-white p-6">
       <div class="task-info__left flex align-items-center">
         <div class="task-info__img flex justify-center align-items-center mr-8">

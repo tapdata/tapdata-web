@@ -1,5 +1,5 @@
 <template>
-  <section class="notification-wrap section-wrap">
+  <section class="notification-wrap">
     <div class="notification-wrap-box">
       <div class="left-panel pt-5">
         <ul class="menu">
@@ -79,8 +79,6 @@ export default {
 <style lang="scss" scoped>
 $unreadColor: #ee5353;
 .notification-wrap {
-  display: flex;
-  justify-content: space-between;
   height: 100%;
   overflow: hidden;
   .notification-wrap-box {

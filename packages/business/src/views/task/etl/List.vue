@@ -1,5 +1,5 @@
 <template>
-  <section class="data-flow-wrap classify-wrap" v-loading="restLoading">
+  <section class="data-flow-wrap" v-loading="restLoading">
     <TablePage
       ref="table"
       row-key="id"

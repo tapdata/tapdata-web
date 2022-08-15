@@ -1,5 +1,5 @@
 <template>
-  <section class="clusterManagement-container section-wrap">
+  <section class="clusterManagement-container">
     <div class="section-wrap-box">
       <div class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>

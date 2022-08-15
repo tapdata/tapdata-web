@@ -1,5 +1,5 @@
 <template>
-  <section class="import-form-wrapper section-wrap">
+  <section class="import-form-wrapper">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
         {{ $t('function_button_import_jar') }}

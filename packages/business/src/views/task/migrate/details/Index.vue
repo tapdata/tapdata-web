@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" class="statistics-container font-color-slight section-wrap">
+  <div v-loading="loading" class="statistics-container font-color-slight">
     <Info
       :task="task"
       :syncData="syncData"

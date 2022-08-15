@@ -1,5 +1,5 @@
 <template>
-  <div class="api-doc section-wrap">
+  <div class="api-doc">
     <div class="section-wrap-box">
       <div class="api-doc-box">
         <el-button title="导出到postman" size="mini" @click="exportJson">

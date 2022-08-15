@@ -151,45 +151,17 @@
   background-color: #feeeef;
 }
 
-// 无分类列表/详情页面/表单页面
-.section-wrap {
+.section-wrap-box {
   display: flex;
-  flex-direction: column !important;
-  height: 100%;
-  padding: 0 20px 20px 20px;
-  background-color: #eff1f4;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px;
+  border-radius: 4px;
+  background-color: map-get($bgColor, white);
   box-sizing: border-box;
   overflow: hidden;
-  .section-wrap-box {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: 20px;
-    border-radius: 4px;
-    background-color: map-get($bgColor, white);
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-  .table-page-main-box {
-    padding: 20px;
-    border-radius: 4px;
-  }
 }
-// 有分类列表
-.classify-wrap {
-  display: flex;
-  flex: 1;
-  padding: 0 20px 20px 20px;
-  background-color: #eff1f4;
-  overflow: hidden;
-  .table-page-container {
-    .table-page-main {
-      .table-page-body {
-        padding: 20px;
-      }
-    }
-  }
-}
+
 .message-button-cancel {
   color: map-get($fontColor, normal);
   border-color: #f2f3f5;

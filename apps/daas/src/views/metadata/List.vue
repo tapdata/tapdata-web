@@ -1,5 +1,5 @@
 <template>
-  <section class="metadata-list-wrap classify-wrap">
+  <section class="metadata-list-wrap">
     <TablePage
       ref="table"
       row-key="id"
