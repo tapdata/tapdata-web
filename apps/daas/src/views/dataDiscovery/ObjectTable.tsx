@@ -64,32 +64,36 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="object-page-main-box flex-column pl-4 pr-4">
-        <div class="object-page-topbar">
-          <div class="object-page-search-bar">
-            <FilterBar items={this.data.filterItems} {...{ on: { fetch: this.loadData } }}></FilterBar>
+      <div class="object-page-main-box flex-column pl-4 pr-4 min-h">
+        <div class="flex-1">
+          <div className="object-page-topbar">
+            <div className="object-page-search-bar">
+              <FilterBar items={this.data.filterItems} {...{ on: { fetch: this.loadData } }}></FilterBar>
+            </div>
           </div>
+          <el-table data={this.list}>
+            <el-table-column width="55" type="selection"></el-table-column>
+            <el-table-column label={this.$t('object_list_name')} prop="name"></el-table-column>
+            <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
+            <el-table-column label={this.$t('object_list_type')} prop="type"></el-table-column>
+            <el-table-column label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
+            <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
+          </el-table>
         </div>
-        <el-table data={this.list}>
-          <el-table-column width="55" type="selection"></el-table-column>
-          <el-table-column label={this.$t('object_list_name')} prop="name"></el-table-column>
-          <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
-          <el-table-column label={this.$t('object_list_type')} prop="type"></el-table-column>
-          <el-table-column label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
-          <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
-        </el-table>
-        <el-pagination
-          background
-          class="table-page-pagination mt-3"
-          layout="->,total, sizes,  prev, pager, next, jumper"
-          on={{ ['update:current-page']: this.loadData }}
-          current-page={this.data.page.current}
-          total={this.data.page.total}
-          onCurrent-change={this.loadData}
-        ></el-pagination>
-        <el-button type="primary" size="mini" style={'width:30px;float:right'}>
-          确认
-        </el-button>
+        <footer>
+          <el-pagination
+            background
+            class="table-page-pagination mt-3"
+            layout="->,total, sizes,  prev, pager, next, jumper"
+            on={{ ['update:current-page']: this.loadData }}
+            current-page={this.data.page.current}
+            total={this.data.page.total}
+            onCurrent-change={this.loadData}
+          ></el-pagination>
+          <el-button class="mt-4" type="primary" size="mini" style={'width:30px;float:right'}>
+            确认
+          </el-button>
+        </footer>
       </div>
     )
   }

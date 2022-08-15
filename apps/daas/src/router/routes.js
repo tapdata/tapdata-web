@@ -237,27 +237,39 @@ export default [
           }
         ]
       },
-      /* ---------- 数据发现  ----------*/
+      /* ---------- 数据发现-数据对象  ----------*/
       {
-        path: '/dataDiscovery',
-        name: 'dataDiscovery',
+        path: '/objectList',
+        name: 'objectList',
         component: Parent,
-        redirect: 'dataDiscovery',
+        redirect: 'objectList',
         meta: {
           title: '数据对象'
         },
         children: [
           {
             path: '',
-            name: 'dataDiscovery',
+            name: 'objectList',
             component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/ObjectList.tsx'),
             meta: {
               title: '数据对象',
               code: 'datasource_menu'
             }
-          },
+          }
+        ]
+      },
+      /* ---------- 数据发现-数据目录  ----------*/
+      {
+        path: '/catalogue',
+        name: 'catalogue',
+        component: Parent,
+        redirect: 'catalogue',
+        meta: {
+          title: '数据目录'
+        },
+        children: [
           {
-            path: '/catalogue',
+            path: '',
             name: 'catalogue',
             component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/Catalogue.tsx'),
             meta: {

@@ -134,7 +134,7 @@ export default defineComponent({
             </el-table>
             <el-pagination
               background
-              className="table-page-pagination mt-3"
+              class="table-page-pagination mt-3"
               layout="->,total, sizes,  prev, pager, next, jumper"
               on={{ ['update:current-page']: this.loadData }}
               current-page={this.data.page.current}

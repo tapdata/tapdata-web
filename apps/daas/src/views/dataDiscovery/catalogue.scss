@@ -29,3 +29,14 @@
     text-align: right;
   }
 }
+.object-drawer-wrap{
+  .el-drawer__header{
+    height: 62px;
+    color: map-get($fontColor, dark);
+    border-bottom: 1px solid map-get($borderColor, light);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom:20px;
+    padding-bottom: 10px;
+  }
+}

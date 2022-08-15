@@ -53,20 +53,6 @@ export default defineComponent({
           label: '业务描述',
           prop: 'businessDesc'
         }
-      ],
-      overviewColumns: [
-        {
-          label: 'id：身份证',
-          prop: 'businessDesc'
-        },
-        {
-          label: 'name：姓名',
-          prop: 'businessDesc'
-        },
-        {
-          label: 'contact：联系方式',
-          prop: 'businessDesc'
-        }
       ]
     })
     const loadData = row => {
@@ -114,7 +100,7 @@ export default defineComponent({
               <el-row class="mt-2">
                 <el-col>
                   <span class="drawer__header_text inline-block">数据表</span>
-                  <span class="ml-2">Personinfo</span>
+                  <span class="ml-2">{this.preview.name}</span>
                 </el-col>
               </el-row>
               <el-row class="mt-2">
@@ -166,9 +152,9 @@ export default defineComponent({
                 </el-col>
               </el-row>
             </div>
-            <div className="mt-4">
-              <span className="drawer__header_text inline-block">数据项</span>
-              <TableList columns={this.data.columns} data={this.preview.fields}></TableList>
+            <div class="mt-4">
+              <span class="drawer__header_text inline-block">数据项</span>
+              <TableList columns={this.data.columns} data={this.preview.fields} has-pagination={false}></TableList>
             </div>
             {/*{this.data.activeName === 'first' ? (*/}
             {/*  <div className="mt-4">*/}
