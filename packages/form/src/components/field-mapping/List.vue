@@ -111,7 +111,7 @@
                   <span
                     class="field-mapping-table__default_value"
                     :class="{ default_value_disabled: !row.useDefaultValue }"
-                    >{{ row.defaultValue }}cshih
+                    >{{ row.defaultValue }}
                     <span
                       class="operation-btn cursor-pointer color-primary ml-2"
                       v-if="row.useDefaultValue"
