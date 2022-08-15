@@ -4,7 +4,6 @@
       ref="table"
       row-key="id"
       class="data-flow-list"
-      :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="
@@ -19,16 +18,6 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div class="buttons" slot="operation">
-        <el-button
-          v-readonlybtn="'SYNC_category_application'"
-          size="mini"
-          class="btn"
-          v-show="multipleSelection.length > 0"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </el-button>
         <el-dropdown
           class="btn"
           @command="handleCommand($event)"
@@ -514,17 +503,6 @@ export default {
       )
       item.statusResult = getSubTaskStatus(statuses)
       return item
-    },
-    handleSelectTag() {
-      let tagList = {}
-      this.multipleSelection.forEach(row => {
-        if (row.listTagId) {
-          tagList[row.listTagId] = {
-            value: row.listTagValue
-          }
-        }
-      })
-      return tagList
     },
     handleOperationClassify(listtags) {
       let ids = []

@@ -4,10 +4,6 @@
       ref="table"
       row-key="id"
       class="modules-list"
-      :classify="{
-        authority: 'API_category_management',
-        types: ['api']
-      }"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
@@ -30,16 +26,6 @@
         }}</ElButton>
         <ElButton size="mini" @click.native="exportFile">{{ $t('modules_export') }}</ElButton>
         <ElButton size="mini" @click.native="importFile">{{ $t('modules_import') }}</ElButton>
-        <ElButton
-          v-show="multipleSelection.length > 0"
-          v-readonlybtn="'data_catalog_category_application'"
-          size="mini"
-          class="btn"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </ElButton>
         <ElButton
           v-readonlybtn="'API_creation'"
           class="btn btn-create"
@@ -363,18 +349,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-    },
-    // 选中分类
-    handleSelectTag() {
-      let tagList = {}
-      this.multipleSelection.forEach(row => {
-        if (row.classifications && row.classifications.length > 0) {
-          tagList[row.classifications[0].id] = {
-            value: row.classifications[0].value
-          }
-        }
-      })
-      return tagList
     },
     // 数据分类查询数据
     handleOperationClassify(listtags) {
