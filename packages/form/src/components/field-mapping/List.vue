@@ -107,11 +107,14 @@
             </ElTableColumn>
             <ElTableColumn :label="t('meta_table_default')">
               <template #default="{ row }">
-                <div class="cursor-pointer" v-if="!readOnly" @click="edit(row, 'defaultValue')">
-                  <ElTooltip class="item" effect="dark" :content="row.defaultValue" placement="left">
-                    <span class="field-mapping-table__default_value">{{ row.defaultValue }}</span>
-                  </ElTooltip>
-                  <i class="field-mapping__icon el-icon-edit-outline"></i>
+                <div class="cursor-pointer" v-if="!readOnly">
+                  <span class="field-mapping-table__default_value"
+                    >{{ row.defaultValue }} 测试数据
+                    <span class="operation-btn cursor-pointer color-primary ml-2" @click="handleDefaultValue">禁用</span
+                    ><span class="operation-btn cursor-pointer color-primary ml-2" @click="handleDefaultValue"
+                      >启用</span
+                    ></span
+                  >
                 </div>
                 <div v-else>{{ row.defaultValue }}</div>
               </template>
@@ -156,11 +159,6 @@
           </div>
         </div>
       </div>
-      <ElInput
-        type="textarea"
-        v-if="['defaultValue'].includes(currentOperationType)"
-        v-model="editValueType[currentOperationType]"
-      ></ElInput>
       <span slot="footer" class="dialog-footer">
         <ElButton @click="handleClose()">{{ t('button_cancel') }}</ElButton>
         <ElButton type="primary" @click="editSave()">{{ t('button_confirm') }}</ElButton>
@@ -317,6 +315,7 @@ export default {
         }, 100)
       })
     },
+    handleDefaultValue() {},
     rest() {
       this.searchField = ''
       this.searchTable = ''
@@ -591,6 +590,14 @@ export default {
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       line-height: 15px;
+      .operation-btn {
+        display: none;
+      }
+      &:hover {
+        .operation-btn {
+          display: inline-block;
+        }
+      }
     }
   }
   .field-mapping-table {
