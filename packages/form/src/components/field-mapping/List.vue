@@ -111,7 +111,7 @@
                   <span
                     class="field-mapping-table__default_value"
                     :class="{ default_value_disabled: !row.useDefaultValue }"
-                    >{{ row.defaultValue }}
+                    >{{ row.defaultValue }}cshih
                     <span
                       class="operation-btn cursor-pointer color-primary ml-2"
                       v-if="row.useDefaultValue"
@@ -550,7 +550,7 @@ export default {
       }
     }
     .default_value_disabled {
-      color: map-get($color, disabled);
+      color: map-get($color, disable);
     }
   }
   .field-mapping-table {
