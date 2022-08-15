@@ -261,11 +261,19 @@ export default {
 
     firstStartTime() {
       const { startTime } = this.dataflow || {}
+      const { taskRecordId, start } = this.$route.query || {}
+      if (taskRecordId) {
+        return Number(start)
+      }
       return startTime ? new Date(startTime).getTime() : null
     },
 
     lastStopTime() {
       const { stopTime } = this.dataflow || {}
+      const { taskRecordId, end } = this.$route.query || {}
+      if (taskRecordId) {
+        return Number(end)
+      }
       return stopTime ? new Date(stopTime).getTime() : null
     },
 
@@ -452,7 +460,12 @@ export default {
 
     getOldFilter() {
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let { id: taskId, taskRecordId } = this.dataflow || {}
+      const { query } = this.$route
+      if (query?.taskRecordId) {
+        taskRecordId = query?.taskRecordId
+        taskId = this.$route.params?.id
+      }
       let params = {
         start,
         end,
@@ -470,7 +483,12 @@ export default {
 
     getNewFilter() {
       const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Date.now()]
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let { id: taskId, taskRecordId } = this.dataflow || {}
+      const { query } = this.$route
+      if (query?.taskRecordId) {
+        taskRecordId = query?.taskRecordId
+        taskId = this.$route.params?.id
+      }
       let params = {
         start,
         end,
@@ -506,7 +524,12 @@ export default {
 
     handleDownload() {
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let { id: taskId, taskRecordId } = this.dataflow || {}
+      const { query } = this.$route
+      if (query?.taskRecordId) {
+        taskRecordId = query?.taskRecordId
+        taskId = this.$route.params?.id
+      }
       let filter = {
         start,
         end,

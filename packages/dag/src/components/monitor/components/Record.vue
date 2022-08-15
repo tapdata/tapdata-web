@@ -71,12 +71,12 @@ export default {
           slotName: 'status'
         },
         {
-          label: '总输入',
+          label: '输入事件总量',
           prop: 'inputTotal',
           dataType: 'number'
         },
         {
-          label: '总输出',
+          label: '输出事件总量',
           prop: 'outputTotal',
           dataType: 'number'
         },
@@ -110,14 +110,18 @@ export default {
     },
 
     handleDetail(row = {}) {
-      const { taskId, taskRecordId } = row
+      const { taskId, taskRecordId, startDate, endDate } = row
+      const start = new Date(startDate).getTime()
+      const end = new Date(endDate).getTime()
       this.$router.push({
         name: 'MigrationMonitorViewer',
         params: {
           id: taskId
         },
         query: {
-          taskRecordId
+          taskRecordId,
+          start,
+          end
         }
       })
     }
