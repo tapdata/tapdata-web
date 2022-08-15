@@ -71,13 +71,13 @@ export default {
           slotName: 'status'
         },
         {
-          label: '同步数据量',
-          prop: 'syncNum',
+          label: '总输入',
+          prop: 'inputTotal',
           dataType: 'number'
         },
         {
-          label: '差异数据（行）',
-          prop: 'diffNum',
+          label: '总输出',
+          prop: 'outputTotal',
           dataType: 'number'
         },
         {
@@ -88,18 +88,16 @@ export default {
     }
   },
 
-  mounted() {},
-
   methods: {
     remoteMethod({ page }) {
       const { current, size } = page
-      const { taskId } = this.$attrs.dataflow || {}
+      const { id: taskId } = this.$attrs.dataflow || {}
       let filter = {
-        taskId,
+        // taskId,
         limit: size,
         skip: size * (current - 1)
       }
-      return taskApi.records(filter).then(data => {
+      return taskApi.records(taskId, filter).then(data => {
         return {
           total: data.total,
           data: data.items || []

@@ -131,8 +131,8 @@ export default class Task extends Http {
     return this.axios.get('/api/task/migrate-js/get-result', { params })
   }
 
-  records(params) {
-    return this.axios.get(this.url + '/record', { params })
+  records(id, params) {
+    return this.axios.get(this.url + `/records/${id}`, { params })
   }
 }
 export { Task }
