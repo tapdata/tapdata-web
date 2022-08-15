@@ -135,9 +135,6 @@ const functionApi = new Function()
 import MonitoringLogs from './MonitoringLogs'
 const monitoringLogsApi = new MonitoringLogs()
 
-import Verify from './Verify'
-const verifyApi = new Verify()
-
 export {
   connectionsApi,
   databaseTypesApi,
@@ -183,8 +180,7 @@ export {
   dictionariesApi,
   metadataTransformerApi,
   functionApi,
-  monitoringLogsApi,
-  verifyApi
+  monitoringLogsApi
 }
 export * from './ApiClient'
 
