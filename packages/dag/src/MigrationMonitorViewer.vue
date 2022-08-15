@@ -216,8 +216,6 @@ export default {
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
-        // 显示连线动画
-        this.jsPlumbIns.select().addClass('running')
         // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
@@ -256,7 +254,9 @@ export default {
     },
 
     async openDataflow(id) {
-      const data = await this.loadDataflow(id)
+      const data = await this.loadDataflow(id, {
+        taskRecordId: this.$route.query?.taskRecordId
+      })
       if (data) {
         const { dag } = data
         this.setTaskId(data.id)
