@@ -1642,10 +1642,10 @@ export default {
       }
     },
 
-    async loadDataflow(id) {
+    async loadDataflow(id, params) {
       this.loading = true
       try {
-        const data = await taskApi.get([id])
+        const data = await taskApi.get(id, params)
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
         return data
