@@ -41,18 +41,15 @@
             @mouse-select="handleMouseSelect"
             @change-scale="handleChangeScale"
           >
-            <Node
+            <DFNode
               v-for="n in allNodes"
               :key="n.id"
               :node-id="n.id"
-              :node="n"
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
                 'options-active': nodeMenu.typeId === n.id
               }"
-              :task-type="dataflow.type"
-              :sample="dagData ? dagData[n.id] : {}"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -61,8 +58,7 @@
               @nodeSelected="nodeSelectedById"
               @delete="handleDeleteById"
               @show-node-popover="showNodePopover"
-              @open-detail="handleOpenDetail(n)"
-            ></Node>
+            ></DFNode>
           </PaperScroller>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large></VEmpty>
@@ -100,7 +96,7 @@
 <script>
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
-import Node from './components/monitor/Node'
+import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { allResourceIns } from './nodes/loader'
@@ -136,7 +132,7 @@ export default {
     BottomPanel,
     PaperScroller,
     TopHeader,
-    Node,
+    DFNode,
     NodeDetailDialog
   },
 
