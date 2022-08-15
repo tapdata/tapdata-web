@@ -119,7 +119,7 @@ export const JsProcessor = observer(
               />
             </FormItem.BaseItem>
 
-            <FormItem.BaseItem asterisk label="模型声明">
+            <FormItem.BaseItem label="模型声明">
               <JsEditor
                 value={form.values.declareScript}
                 onChange={val => {
@@ -129,6 +129,7 @@ export const JsProcessor = observer(
                 options={editorProps.options}
                 before="function declare(schemaApplyResultList) {"
                 after={`  return schemaApplyResultList\n}`}
+                handleAddCompleter={editorProps.handleAddCompleter}
               />
             </FormItem.BaseItem>
 

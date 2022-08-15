@@ -9,6 +9,84 @@ export default {
   mixins: [Locale],
 
   data() {
+    function addDeclaredCompleter(tools, params1) {
+      const tapType = [
+        'TapNumber',
+        'TapString',
+        'TapBoolean',
+        'TapBinary',
+        'TapDate',
+        'TapDateTime',
+        'TapTime',
+        'TapYear',
+        'TapRaw',
+        'TapArray',
+        'TapMap'
+      ]
+      const fieldMethods = ['addField', 'removeField', 'updateField', 'upsertField']
+      const CompleterList = [
+        ...tapType.map(type => ({
+          name: type,
+          value: type,
+          meta: 'TapType'
+        })),
+        ...fieldMethods.map(method => ({
+          caption: `TapModelDeclare.${method}`,
+          snippet: `TapModelDeclare.${method}(${params1}, '\${1}', '\${2}')`,
+          parametersDesc: `${params1}, fieldName: String, type: TapType`,
+          meta: 'function',
+          type: 'snippet',
+          originType: true
+        })),
+        {
+          caption: `TapModelDeclare.addIndex`,
+          snippet: `TapModelDeclare.addIndex(${params1}, '\${1}')`,
+          parametersDesc: `${params1}, fieldName: String`,
+          meta: 'function',
+          type: 'snippet',
+          originType: true
+        },
+        {
+          caption: `TapModelDeclare.removeIndex`,
+          snippet: `TapModelDeclare.removeIndex(${params1}, '\${1}')`,
+          parametersDesc: `${params1}, fieldName: String`,
+          meta: 'function',
+          type: 'snippet',
+          originType: true
+        },
+        {
+          caption: `TapModelDeclare.setPk`,
+          snippet: `TapModelDeclare.setPk(${params1}, '\${1}')`,
+          parametersDesc: `${params1}, fieldName: String`,
+          meta: 'function',
+          type: 'snippet',
+          originType: true
+        },
+        {
+          caption: `TapModelDeclare.setPk`,
+          snippet: `TapModelDeclare.setPk(${params1}, '\${1}')`,
+          parametersDesc: `${params1}, fieldName: String`,
+          meta: 'function',
+          type: 'snippet',
+          originType: true
+        },
+        {
+          name: params1,
+          value: params1,
+          meta: 'local'
+        }
+      ]
+      tools.addCompleter({
+        getCompletions: (editor, session, pos, prefix, callback) => {
+          if (prefix.length === 0) {
+            return callback(null, [])
+          } else {
+            return callback(null, CompleterList)
+          }
+        }
+      })
+    }
+
     return {
       scope: {
         $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
@@ -813,6 +891,14 @@ export default {
         getPdkProperties: node => {
           const { pdkHash } = node.attrs
           return this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
+        },
+
+        addDeclaredCompleterForMigrate: tools => {
+          addDeclaredCompleter(tools, 'schemaApplyResultList')
+        },
+
+        addDeclaredCompleterForSync: tools => {
+          addDeclaredCompleter(tools, 'tapTable')
         }
       }
     }

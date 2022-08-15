@@ -53,7 +53,8 @@ export class JavaScript extends NodeType {
               height: 500,
               options: { showPrintMargin: false, wrap: false },
               before: 'function declare(tapTable) {',
-              after: `  return tapTable\n}`
+              after: `  return tapTable\n}`,
+              handleAddCompleter: '{{addDeclaredCompleterForSync}}'
             }
           }
         }

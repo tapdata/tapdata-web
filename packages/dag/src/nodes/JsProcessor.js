@@ -46,7 +46,8 @@ export class JavaScript extends NodeType {
           before: 'function process(record){',
           beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
           afterRegexp: '}[^]*$',
-          after: '}'
+          after: '}',
+          handleAddCompleter: '{{addDeclaredCompleterForMigrate}}'
         }
       }
     }
