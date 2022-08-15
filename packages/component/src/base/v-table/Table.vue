@@ -135,6 +135,9 @@ export default {
         return this.hasPagination && !this.nonePage
       }
       return this.hasPagination
+    },
+    table() {
+      return this.$refs?.table
     }
   },
   watch: {
