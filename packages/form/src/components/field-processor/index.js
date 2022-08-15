@@ -4,7 +4,6 @@ import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
 import EmptyItem from 'web-core/components/EmptyItem'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
 import { VIcon } from '@tap/component'
 import { delayTrigger } from 'web-core/util'
@@ -354,7 +353,7 @@ export const FieldRenameProcessor = defineComponent({
         >
           <input
             readOnly={props.disabled}
-            class="rename-table-item-input"
+            class="rename-table-item-input px-2"
             value={row.targetFieldName}
             onChange={event => {
               updateName(row, event.target.value)
