@@ -108,10 +108,17 @@
             <ElTableColumn :label="t('meta_table_default')">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!readOnly">
-                  <span class="field-mapping-table__default_value"
+                  <span class="field-mapping-table__default_value" :class="{ default_value_disabled: !row.description }"
                     >{{ row.defaultValue }} 测试数据
-                    <span class="operation-btn cursor-pointer color-primary ml-2" @click="handleDefaultValue">禁用</span
-                    ><span class="operation-btn cursor-pointer color-primary ml-2" @click="handleDefaultValue"
+                    <span
+                      class="operation-btn cursor-pointer color-primary ml-2"
+                      v-if="row.description"
+                      @click="handleDefaultValue(row, false)"
+                      >禁用</span
+                    ><span
+                      class="operation-btn cursor-pointer color-primary ml-2"
+                      v-else
+                      @click="handleDefaultValue(row, true)"
                       >启用</span
                     ></span
                   >
@@ -127,43 +134,6 @@
         </div>
       </div>
     </div>
-    <ElDialog
-      :title="titleType[currentOperationType]"
-      :visible.sync="dialogVisible"
-      width="30%"
-      :close-on-click-modal="false"
-      :before-close="handleClose"
-    >
-      <div v-if="['sourceFieldType'].includes(currentOperationType)">
-        <ElAutocomplete
-          v-model="editValueType[currentOperationType]"
-          class="inline-input"
-          style="width: 350px"
-          :fetch-suggestions="querySearchPdkType"
-        ></ElAutocomplete>
-        <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
-        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
-          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
-            <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-              <div v-if="index === 0">{{ t('dag_dialog_field_mapping_range_precision') }}</div>
-              <div>
-                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
-              </div>
-            </div>
-            <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
-              <div>{{ t('dag_dialog_field_mapping_range_scale') }}</div>
-              <div>
-                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <ElButton @click="handleClose()">{{ t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="editSave()">{{ t('button_confirm') }}</ElButton>
-      </span>
-    </ElDialog>
   </section>
 </template>
 
@@ -315,38 +285,21 @@ export default {
         }, 100)
       })
     },
-    handleDefaultValue() {},
+    handleDefaultValue(row, val) {
+      //触发target更新
+      this.updateTargetView(row.sourceFieldName, 'description', val)
+      this.updateTarget(row, 'useDefaultValue')
+    },
     rest() {
       this.searchField = ''
       this.searchTable = ''
       this.position = 0
       this.getMetadataTransformer()
     },
-    handleClose() {
-      this.dialogVisible = false
-      this.currentOperationData = ''
-      this.editDataValue = ''
-    },
     //table字段操作区域
     /*字段操作统一弹窗
      * 操作:修改字段名、修改字段长度、修改字段精度、修改字段类型*/
-    edit(row, type) {
-      this.dialogVisible = true
-      this.editValueType[type] = row[type]
-      this.currentOperationType = type
-      this.currentOperationData = row
-      //初始化
-      this.initDataType(row[`sourceFieldType`])
-    },
-    editSave() {
-      //触发target更新
-      let id = this.currentOperationData.sourceFieldName
-      let key = this.currentOperationType === 'sourceFieldType' ? 'sourceFieldType' : 'defaultValue'
-      let value = this.editValueType[this.currentOperationType]
-      this.updateTargetView(id, key, value)
-      this.updateTarget(this.currentOperationData, key)
-      this.handleClose()
-    },
+
     //重置
     updateMetaData() {
       let id = this.dataFlow?.id || this.dataFlow?.taskId
@@ -365,28 +318,23 @@ export default {
         }
       })
     },
-    updateTarget(row, type) {
+    updateTarget(row) {
       if (this.editFields?.length === 0) {
         let field = {
           fieldName: row.sourceFieldName,
-          fieldType: type === 'sourceFieldType' ? this.editValueType[this.currentOperationType] : row.sourceFieldType,
-          defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue
+          fieldType: row.sourceFieldType,
+          useDefaultValue: row.description
         }
         this.editFields.push(field)
       } else {
         for (let i = 0; i < this.editFields.length; i++) {
           if (this.editFields[i].fieldName === row.sourceFieldName) {
-            if (type === 'defaultValue') {
-              this.editFields[i].defaultValue = this.editValueType[this.currentOperationType] || ''
-            } else {
-              this.editFields[i].fieldType = this.editValueType[this.currentOperationType] || ''
-            }
+            this.editFields[i].defaultValue = row.description
           } else {
             let field = {
               fieldName: row.sourceFieldName,
-              fieldType:
-                type === 'sourceFieldType' ? this.editValueType[this.currentOperationType] : row.sourceFieldType,
-              defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue
+              fieldType: row.sourceFieldType,
+              useDefaultValue: row.description
             }
             this.editFields.push(field)
           }
@@ -598,6 +546,9 @@ export default {
           display: inline-block;
         }
       }
+    }
+    .default_value_disabled {
+      color: map-get($color, disabled);
     }
   }
   .field-mapping-table {
