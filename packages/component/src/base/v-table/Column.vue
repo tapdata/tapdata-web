@@ -8,7 +8,7 @@
     <template v-if="!children && item.slotName" v-slot="scope">
       <slot :name="item.slotName" :row="scope.row" :prop="item.prop"></slot>
     </template>
-    <template v-else-if="!children" v-slot="scope">
+    <template v-else-if="!children && !item.type" v-slot="scope">
       {{ getValue(scope.row, item) }}
     </template>
     <!--  多表头  -->
