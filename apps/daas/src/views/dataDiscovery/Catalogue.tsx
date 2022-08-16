@@ -198,7 +198,7 @@ export default defineComponent({
             ></el-pagination>
             <Drawer
               class="object-drawer-wrap"
-              width="'1200px'"
+              width="800px"
               visible={this.data.isShowDetails}
               on={{ ['update:visible']: this.closeDrawer }}
             >
