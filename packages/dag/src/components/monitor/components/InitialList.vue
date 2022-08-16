@@ -113,8 +113,8 @@ export default {
       let { current, size } = page
       let filter = {
         taskRecordId: this.dataflow?.taskRecordId,
-        limit: size,
-        skip: size * (current - 1)
+        size,
+        page: current
       }
       return measurementApi.fullStatistics(filter).then(data => {
         return {
