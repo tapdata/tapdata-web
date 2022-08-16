@@ -1,7 +1,7 @@
 import { defineComponent, reactive, ref } from '@vue/composition-api'
 import { TableList } from '@tap/component'
 import { discoveryApi } from '@tap/api'
-import './object.scss'
+import './index.scss'
 import dayjs from 'dayjs'
 
 export default defineComponent({
@@ -79,7 +79,7 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="drawer-content" loading={this.data.loading}>
+      <div class="drawer-content" v-loading={this.data.loading}>
         <div class="flex align-items-center ml-4">
           <header class="font-weight-bold mr-4">
             <span class="drawer__header_text inline-block">对象详情</span>

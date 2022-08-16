@@ -1,9 +1,9 @@
-import { defineComponent, reactive, ref, watch } from '@vue/composition-api'
+import { defineComponent, reactive, ref, watch, nextTick } from '@vue/composition-api'
 import { FilterBar, Drawer, DiscoveryClassification } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import DrawerContent from '@/views/dataDiscovery/PreviewDrawer'
 import ObjectTable from '@/views/dataDiscovery/ObjectTable'
-import './catalogue.scss'
+import './index.scss'
 
 export default defineComponent({
   props: [''],
@@ -80,16 +80,22 @@ export default defineComponent({
     }
     const handlePreview = row => {
       data.isShowDetails = true
-      // @ts-ignore
-      refs.drawerContent.loadData(row)
+      nextTick(() => {
+        // @ts-ignore
+        refs?.drawerContent?.loadData(row)
+      })
     }
     const closeDrawer = val => {
       data.isShowDetails = val
     }
     const handleSourceDrawer = () => {
       data.isShowSourceDrawer = true
-      // @ts-ignore
-      refs.objectTable.loadData()
+      nextTick(() => {
+        // @ts-ignore
+        refs?.objectTable?.loadFilterList()
+        // @ts-ignore
+        refs?.objectTable?.loadTableData()
+      })
     }
     const closeSourceDrawer = val => {
       data.isShowSourceDrawer = val
@@ -133,8 +139,8 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="classify-wrap">
-        <div class="catalogue-page-main-box flex">
+      <section class="discovery-page-wrap">
+        <div class="discovery-page-main-box flex-row">
           <div class="page-left">
             <DiscoveryClassification
               v-model={this.data.searchParams}
@@ -142,7 +148,7 @@ export default defineComponent({
               {...{ on: { nodeChecked: this.getNodeChecked } }}
             ></DiscoveryClassification>
           </div>
-          <div class="page-right">
+          <div class="discovery-page-right">
             <div class="flex flex-row align-items-center mb-2">
               <span class="ml-2 mr-2">目录</span>
               <span class="mr-2"> {this.data.currentNode.value} </span>
@@ -167,7 +173,7 @@ export default defineComponent({
                 </el-button>
               </div>
             </div>
-            <el-table data={this.list} v-loading={this.data.tableLoading}>
+            <el-table class="discovery-page-table" data={this.list} v-loading={this.data.tableLoading}>
               <el-table-column
                 label="名称"
                 prop="name"
@@ -206,7 +212,7 @@ export default defineComponent({
             </el-drawer>
           </div>
         </div>
-      </div>
+      </section>
     )
   }
 })

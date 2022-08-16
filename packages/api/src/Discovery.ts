@@ -27,5 +27,11 @@ export default class Discovery extends Http {
     }
     return this.axios.get(`${this.url}/directory/data`, config)
   }
+  saveTags(id: string) {
+    return this.axios.post(`${this.url}/tags/${id}`)
+  }
+  updateTags(id: string) {
+    return this.axios.patch(`${this.url}/tags/${id}`)
+  }
 }
 export { Discovery }

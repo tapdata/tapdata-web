@@ -3,7 +3,7 @@ import { FilterBar, Drawer } from '@tap/component'
 import DrawerContent from './PreviewDrawer'
 import { useI18n, useMessage } from '@/hooks'
 import { discoveryApi } from '@tap/api'
-import './object.scss'
+import './index.scss'
 
 export default defineComponent({
   props: [''],
@@ -147,9 +147,9 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="classify-wrap">
-        <div class="object-page-main-box flex">
-          <div class="object-page-right">
+      <section class="discovery-page-wrap">
+        <div class="discovery-page-main-box">
+          <div class="discovery-page-right">
             <div class="object-page-topbar">
               <div class="object-page-search-bar">
                 <FilterBar
@@ -159,7 +159,7 @@ export default defineComponent({
                 ></FilterBar>
               </div>
             </div>
-            <el-table data={this.list} v-loading={this.data.tableLoading}>
+            <el-table class="discovery-page-table" data={this.list} v-loading={this.data.tableLoading}>
               <el-table-column
                 label={this.$t('object_list_name')}
                 prop="name"
@@ -191,7 +191,7 @@ export default defineComponent({
             </Drawer>
           </div>
         </div>
-      </div>
+      </section>
     )
   }
 })
