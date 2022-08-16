@@ -847,6 +847,8 @@ export default {
   operation_log_migration_forceStop_tip: 'The task was forcibly stopped [@{parameter1}]',
   operation_log_agent_create: 'Create agent',
   operation_log_agent_create_tip: 'Create a agent [@{parameter1}]',
+  operation_log_agent_stop: 'Stop agent',
+  operation_log_agent_stop_tip: 'The agent【 has been stopped【@{parameter1}】',
   operation_log_agent_delete: 'Delete agent',
   operation_log_agent_delete_tip: 'Delete a Agent [${parameter1}]',
   operation_log_agent_rename: 'Modify Agent name',

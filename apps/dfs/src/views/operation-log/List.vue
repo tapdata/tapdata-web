@@ -144,6 +144,11 @@ export default {
           desc: this.$t('operation_log_agent_delete_tip')
         },
         {
+          label: this.$t('operation_log_agent_stop'),
+          value: 'agent&&stop',
+          desc: this.$t('operation_log_agent_stop_tip')
+        },
+        {
           label: this.$t('operation_log_agent_rename'),
           value: 'agent&&rename',
           desc: this.$t('operation_log_agent_rename_tip')

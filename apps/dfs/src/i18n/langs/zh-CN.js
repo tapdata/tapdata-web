@@ -829,6 +829,8 @@ export default {
   operation_log_migration_forceStop_tip: '强制停止了任务【@{parameter1}】',
   operation_log_agent_create: '创建Agent',
   operation_log_agent_create_tip: '创建了Agent【@{parameter1}】',
+  operation_log_agent_stop: '停止Agent',
+  operation_log_agent_stop_tip: '停止了Agent【@{parameter1}】',
   operation_log_agent_delete: '删除Agent',
   operation_log_agent_delete_tip: '删除了Agent【${parameter1}】',
   operation_log_agent_rename: '修改Agent名称',
