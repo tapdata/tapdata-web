@@ -256,6 +256,11 @@ export default {
   watch: {
     'dataflow.type'(v) {
       v && this.init()
+    },
+    'dataflow.status'(v1, v2) {
+      if (v1 !== v2) {
+        this.init()
+      }
     }
   },
 
@@ -517,6 +522,7 @@ export default {
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.t('message_operation_succuess'))
         this.isSaving = false
+        this.loadDataflow(this.dataflow?.id)
       } catch (e) {
         this.handleError(e)
         this.isSaving = false
@@ -803,6 +809,26 @@ export default {
         }
       })
       window.open(routeUrl.href)
+    },
+
+    handleReset() {
+      let msg = this.getConfirmMessage('initialize')
+      this.$confirm(msg, '', {
+        type: 'warning'
+      }).then(async resFlag => {
+        if (!resFlag) {
+          return
+        }
+        try {
+          this.dataflow.disabledData.reset = true
+          const data = await taskApi.reset(this.dataflow.id)
+          this.responseHandler(data, this.t('message_resetOk'))
+          // this.init()
+          this.loadDataflow(this.dataflow?.id)
+        } catch (e) {
+          this.handleError(e, this.t('message_resetFailed'))
+        }
+      })
     }
   }
 }
