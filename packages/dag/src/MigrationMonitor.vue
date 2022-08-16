@@ -41,7 +41,6 @@
           :quota="quota"
           :timeFormat="timeFormat"
           :range="[firstStartTime, lastStopTime || Date.now()]"
-          ref="leftSider"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
@@ -250,12 +249,7 @@ export default {
     },
 
     isEnterTimer() {
-      return (
-        this.quotaTimeType !== 'custom' &&
-        !this.nodeDetailDialog &&
-        !this.$refs.leftSider?.initialList?.visible &&
-        this.dataflow?.status === 'running'
-      )
+      return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
     }
   },
 

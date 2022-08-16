@@ -98,12 +98,7 @@ export default {
         //   slotName: 'operation',
         //   width: 60
         // }
-      ],
-      pageObj: {
-        current: 1,
-        size: 20
-      },
-      timer: null
+      ]
     }
   },
 
@@ -112,27 +107,21 @@ export default {
       this.visible = !!v
       if (this.visible) {
         this.init()
-      } else {
-        this.timer && clearInterval(this.timer)
       }
     }
   },
 
   methods: {
     init() {
-      this.timer && clearInterval(this.timer)
-      this.timer = setInterval(() => {
-        this.startLoadData()
-      }, 5000)
       this.startLoadData()
     },
 
     startLoadData() {
-      this.$refs.table.fetch?.(this.pageObj.current, 0, true)
+      this.$refs.table.fetch?.()
     },
 
     getFilter(pageObj = {}) {
-      let { current = 1, size = 20 } = pageObj || this.pageObj
+      let { current = 1, size = 20 } = pageObj
       let filter = {
         taskRecordId: this.dataflow?.taskRecordId,
         size,
