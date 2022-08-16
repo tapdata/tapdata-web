@@ -313,7 +313,7 @@ export default {
       let type = dialogType || 'add'
       let itemType = this.types
       if (node && node.data && node.data.item_type) {
-        itemType = node.data.item_type
+        itemType = node.data.item_type?.join('')
       }
       this.dialogConfig = {
         itemType: itemType,
@@ -322,7 +322,7 @@ export default {
         id: node ? node.key : '',
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
-        isParent: type === 'add' && !node,
+        isParent: (type === 'add' && !node) || node?.level === 1,
         title:
           type === 'add'
             ? node
