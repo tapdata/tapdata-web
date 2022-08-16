@@ -376,13 +376,13 @@ let menuSetting = [
     ]
   },
   {
-    name: 'dataDiscovery',
-    label: 'page_title_data_discovery',
-    icon: 'shujuzhili',
-    code: 'data_government',
+    name: 'discovery',
+    label: '数据发现',
+    icon: 'system',
+    code: 'system_management',
     children: [
-      { name: 'metadataList', code: 'data_catalog_menu', parent: 'metadata' },
-      { name: 'search', code: 'data_search_menu', parent: 'search' }
+      { name: 'objectList', code: 'datasource_menu' },
+      { name: 'catalogue', code: 'datasource_menu' }
     ]
   },
   {
