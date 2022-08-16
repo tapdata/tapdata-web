@@ -381,8 +381,8 @@ let menuSetting = [
     icon: 'system',
     code: 'system_management',
     children: [
-      { name: 'objectList', code: 'datasource_menu' },
-      { name: 'catalogue', code: 'datasource_menu' }
+      { name: 'objectList', code: 'datasource_menu', parent: 'discovery' },
+      { name: 'catalogue', code: 'datasource_menu', parent: 'discovery' }
     ]
   },
   {
