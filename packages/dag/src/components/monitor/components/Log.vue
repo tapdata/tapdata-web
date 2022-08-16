@@ -66,7 +66,10 @@
                 type="info"
                 class="no-more__alert position-absolute py-1 px-2"
               ></ElAlert>
-              <VEmpty v-if="!list.length" :description="keyword ? $t('customer_logs_no_search_data') : ''" large />
+              <VEmpty
+                v-if="!list.length"
+                :description="keyword ? $t('customer_logs_no_search_data') : $t('dag_dialog_field_mapping_no_data')"
+              />
             </div>
           </template>
           <template #default="{ item, index, active }">
@@ -83,6 +86,7 @@
                 <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
                 <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
+                <span v-if="item.data" v-html="item.dataText"></span>
               </div>
             </DynamicScrollerItem>
           </template>
@@ -160,10 +164,10 @@ export default {
       keyword: '',
       checkList: ['info', 'warn', 'error'],
       checkItems: [
-        // {
-        //   label: 'debug',
-        //   text: 'DEBUG'
-        // },
+        {
+          label: 'debug',
+          text: 'DEBUG'
+        },
         {
           label: 'info',
           text: 'INFO'
@@ -257,11 +261,19 @@ export default {
 
     firstStartTime() {
       const { startTime } = this.dataflow || {}
+      const { taskRecordId, start } = this.$route.query || {}
+      if (taskRecordId) {
+        return Number(start)
+      }
       return startTime ? new Date(startTime).getTime() : null
     },
 
     lastStopTime() {
       const { stopTime } = this.dataflow || {}
+      const { taskRecordId, end } = this.$route.query || {}
+      if (taskRecordId) {
+        return Number(end)
+      }
       return stopTime ? new Date(stopTime).getTime() : null
     },
 
@@ -429,6 +441,7 @@ export default {
       result.forEach(row => {
         row.levelText = `[${row.level}]`
         row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
+        row.dataText = JSON.stringify(row.data || {})
         arr.forEach(el => {
           row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
         })
@@ -447,7 +460,12 @@ export default {
 
     getOldFilter() {
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let { id: taskId, taskRecordId } = this.dataflow || {}
+      const { query } = this.$route
+      if (query?.taskRecordId) {
+        taskRecordId = query?.taskRecordId
+        taskId = this.$route.params?.id
+      }
       let params = {
         start,
         end,
@@ -465,7 +483,12 @@ export default {
 
     getNewFilter() {
       const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Date.now()]
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let { id: taskId, taskRecordId } = this.dataflow || {}
+      const { query } = this.$route
+      if (query?.taskRecordId) {
+        taskRecordId = query?.taskRecordId
+        taskId = this.$route.params?.id
+      }
       let params = {
         start,
         end,
@@ -501,7 +524,12 @@ export default {
 
     handleDownload() {
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      let { id: taskId, taskRecordId } = this.dataflow || {}
+      const { query } = this.$route
+      if (query?.taskRecordId) {
+        taskRecordId = query?.taskRecordId
+        taskId = this.$route.params?.id
+      }
       let filter = {
         start,
         end,
@@ -587,6 +615,9 @@ export default {
   ::v-deep {
     .highlight-bg-color {
       background-color: #ff0;
+    }
+    .empty-wrap {
+      margin: 24px 0;
     }
   }
 }

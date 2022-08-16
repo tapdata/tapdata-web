@@ -130,5 +130,17 @@ export default class Task extends Http {
   getRunJsResult(params) {
     return this.axios.get('/api/task/migrate-js/get-result', { params })
   }
+
+  records(id, params) {
+    return this.axios.get(this.url + `/records/${id}`, { params })
+  }
+
+  autoInspectResultsGroupByTable(taskId, params) {
+    return this.axios.get(this.url + `/${taskId}/auto-inspect-results-group-by-table`, { params })
+  }
+
+  autoInspectResults(taskId, params) {
+    return this.axios.get(this.url + `/${taskId}/auto-inspect-results`, { params })
+  }
 }
 export { Task }

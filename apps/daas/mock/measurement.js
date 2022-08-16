@@ -279,6 +279,24 @@ module.exports = {
             ]
           }
         }
+      },
+      verify: {
+        reqId: '@id',
+        ts: '@time',
+        code: 'ok',
+        data: {
+          total: 30,
+          'items|20': [
+            {
+              tableName: '@name',
+              connectionId: '@cuid',
+              diff: '@integer(1000, 5500)',
+              id: '@id',
+              progress: '@integer(0, 100)',
+              connectionName: '@name'
+            }
+          ]
+        }
       }
     }
   },

@@ -109,6 +109,8 @@
         ref="verifyPanel"
         :settings="dataflow"
         :scope="formScope"
+        :data="verifyData"
+        :dataflow="dataflow"
         @showVerify="handleShowVerify"
         @hide="onHideSidebar"
         @verifyDetails="handleVerifyDetails"
@@ -134,6 +136,17 @@
 </template>
 
 <script>
+import dagre from 'dagre'
+import { observable } from '@formily/reactive'
+
+import { VExpandXTransition, VEmpty } from '@tap/component'
+import { measurementApi, taskApi } from '@tap/api'
+import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
+import { titleChange } from 'web-core/mixins/titleChange'
+import { showMessage } from 'web-core/mixins/showMessage'
+import resize from 'web-core/directives/resize'
+import VIcon from 'web-core/components/VIcon'
+
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
 import LeftSider from './components/monitor/LeftSider'
@@ -141,21 +154,12 @@ import Node from './components/monitor/Node'
 import { jsPlumb, config } from './instance'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { allResourceIns } from './nodes/loader'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { titleChange } from 'web-core/mixins/titleChange'
-import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
 import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
-import resize from 'web-core/directives/resize'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
-import VIcon from 'web-core/components/VIcon'
-import { VExpandXTransition, VEmpty } from '@tap/component'
-import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
-import { measurementApi, taskApi } from '@tap/api'
-import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
@@ -217,13 +221,12 @@ export default {
       timer: null,
       quotaTimeType: '5m',
       quotaTime: [],
-      refresh: false, // 刷新数据还是初始化数据
-      count: 0,
       quota: {}, // 指标数据
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
       timeFormat: 'HH:mm:ss',
-      dagData: null
+      dagData: null,
+      verifyData: null
     }
   },
 
@@ -253,6 +256,11 @@ export default {
   watch: {
     'dataflow.type'(v) {
       v && this.init()
+    },
+    'dataflow.status'(v1, v2) {
+      if (v1 !== v2) {
+        this.init()
+      }
     }
   },
 
@@ -514,6 +522,7 @@ export default {
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.t('message_operation_succuess'))
         this.isSaving = false
+        this.loadDataflow(this.dataflow?.id)
       } catch (e) {
         this.handleError(e)
         this.isSaving = false
@@ -636,6 +645,10 @@ export default {
           param: this.getQuotaFilter()
         }
       }
+      const $verifyPanel = this.$refs.verifyPanel
+      if ($verifyPanel) {
+        params.verify = $verifyPanel.getFilter(1)
+      }
       return params
     },
 
@@ -643,15 +656,10 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      const { refresh } = this
-      if (refresh) {
-        this.count = 0
-      }
-      this.count++
-      const { count } = this
       measurementApi.batch(this.getParams()).then(data => {
         const map = {
-          quota: this.loadQuotaData
+          quota: this.loadQuotaData,
+          verify: this.loadVerifyData
         }
         for (let key in data) {
           const item = data[key]
@@ -669,6 +677,10 @@ export default {
       const granularity = getTimeGranularity(data.interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
+    },
+
+    loadVerifyData(data) {
+      this.verifyData = data
     },
 
     getDagData(data = []) {
@@ -736,7 +748,6 @@ export default {
     },
 
     handleChangeTimeSelect(val, isTime, source) {
-      this.refresh = this.quotaTimeType === val
       this.quotaTimeType = source?.type ?? val
       this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
       this.init()
@@ -798,6 +809,26 @@ export default {
         }
       })
       window.open(routeUrl.href)
+    },
+
+    handleReset() {
+      let msg = this.getConfirmMessage('initialize')
+      this.$confirm(msg, '', {
+        type: 'warning'
+      }).then(async resFlag => {
+        if (!resFlag) {
+          return
+        }
+        try {
+          this.dataflow.disabledData.reset = true
+          const data = await taskApi.reset(this.dataflow.id)
+          this.responseHandler(data, this.t('message_resetOk'))
+          // this.init()
+          this.loadDataflow(this.dataflow?.id)
+        } catch (e) {
+          this.handleError(e, this.t('message_resetFailed'))
+        }
+      })
     }
   }
 }

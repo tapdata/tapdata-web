@@ -65,12 +65,12 @@
         </CollapsePanel>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box">
-        <CollapsePanel>
+        <CollapsePanel :active="initialData.snapshotDoneAt || initialData.finishDuration ? '1' : null">
           <template #header>
             <span class="fw-bold font-color-normal">全量信息</span>
           </template>
           <template #header-right>
-            <ElTooltip transition="tooltip-fade-in" content="放大">
+            <ElTooltip transition="tooltip-fade-in" content="列表">
               <VIcon @click.stop="toInitialList">menu-left</VIcon>
             </ElTooltip>
           </template>
@@ -131,7 +131,7 @@
       ></LineChart>
     </ElDialog>
 
-    <InitialList v-model="initialListDialog"></InitialList>
+    <InitialList v-model="initialListDialog" :dataflow="dataflow"></InitialList>
   </aside>
 </template>
 

@@ -12,9 +12,7 @@
       hide-on-single-page
     >
       <template slot="status" slot-scope="scope">
-        <span v-if="scope.row.status" :class="['status-' + getStatusItem(scope.row.status).type, 'status-block']">
-          {{ getStatusItem(scope.row.status).label }}
-        </span>
+        <TaskStatus :task="scope.row" />
       </template>
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
@@ -27,42 +25,30 @@
 
 <script>
 import { VTable } from '@tap/component'
+import { taskApi } from '@tap/api'
+import { TaskStatus } from '@tap/business'
 
 export default {
   name: 'Record',
 
-  components: { VTable },
+  components: { VTable, TaskStatus },
 
   data() {
     return {
-      statusMap: {
-        finish: {
-          type: 'edit',
-          label: '已完成'
-        },
-        error: {
-          type: 'error',
-          label: '错误'
-        },
-        running: {
-          type: 'running',
-          label: '运行中'
-        }
-      },
       columns: [
         {
           label: '运行开始时间',
-          prop: 'startTime',
+          prop: 'startDate',
           dataType: 'time'
         },
         {
           label: '运行结束时间',
-          prop: 'stopTime',
+          prop: 'endDate',
           dataType: 'time'
         },
         {
           label: '操作人',
-          prop: 'username'
+          prop: 'operator'
         },
         {
           label: '运行结果',
@@ -70,13 +56,13 @@ export default {
           slotName: 'status'
         },
         {
-          label: '同步数据量',
-          prop: 'count',
+          label: '输入事件总量',
+          prop: 'inputTotal',
           dataType: 'number'
         },
         {
-          label: '差异数据（行）',
-          prop: 'diff',
+          label: '输出事件总量',
+          prop: 'outputTotal',
           dataType: 'number'
         },
         {
@@ -89,53 +75,34 @@ export default {
 
   methods: {
     remoteMethod({ page }) {
-      let { current, size } = page
-      let ids = [this.$attrs.dataflow?.id]
-      let operations = ['start', 'stop', 'forceStop']
-      let where = {
-        sourceId: {
-          inq: ids
-        },
-        modular: 'migration',
-        operation: {
-          inq: operations
-        }
-      }
+      const { current, size } = page
+      const { id: taskId } = this.$attrs.dataflow || {}
       let filter = {
-        where: where,
+        // taskId,
         limit: size,
         skip: size * (current - 1)
       }
-      return new Promise((resolve, rejust) => {
-        let list = Array(20)
-          .fill()
-          .map((t, index) => {
-            return {
-              id: Date.now() + index,
-              startTime: Date.now(),
-              stopTime: Date.now(),
-              username: 'kennen',
-              status: ['finish', 'running', 'error'][index] || 'error',
-              count: Math.ceil(Math.random() * 10000),
-              diff: Math.ceil(Math.random() * 10000)
-            }
-          })
-        resolve({
-          total: 10000,
-          data: list
-        })
+      return taskApi.records(taskId, filter).then(data => {
+        return {
+          total: data.total,
+          data: data.items || []
+        }
       })
     },
 
-    getStatusItem(status) {
-      return this.statusMap[status] || {}
-    },
-
-    handleDetail(row) {
+    handleDetail(row = {}) {
+      const { taskId, taskRecordId, startDate, endDate } = row
+      const start = new Date(startDate).getTime()
+      const end = new Date(endDate).getTime()
       this.$router.push({
         name: 'MigrationMonitorViewer',
         params: {
-          id: row.id
+          id: taskId
+        },
+        query: {
+          taskRecordId,
+          start,
+          end
         }
       })
     }

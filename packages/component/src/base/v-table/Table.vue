@@ -7,7 +7,6 @@
       :data="list"
       ref="table"
       class="table-container__table"
-      @selection-change="handleSelectionChange"
     >
       <ColumnItem v-for="(item, index) in columns" :item="item" :key="index">
         <template v-for="(key, slot) of $scopedSlots" v-slot:[slot]="scope">
@@ -136,6 +135,9 @@ export default {
         return this.hasPagination && !this.nonePage
       }
       return this.hasPagination
+    },
+    table() {
+      return this.$refs?.table
     }
   },
   watch: {
@@ -204,10 +206,6 @@ export default {
     },
     getData() {
       return this.list
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-      this.$emit('selection-change', val)
     }
   }
 }

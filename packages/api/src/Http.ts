@@ -50,7 +50,7 @@ export default class Http {
       const qs = queryStr ? '?filter=' + encodeURIComponent(queryStr) : ''
       return this.axios.get(this.url + '/' + params.join('/') + qs)
     } else if (typeof params === 'string') {
-      return this.axios.get(this.url + '/' + params)
+      return this.axios.get(this.url + '/' + params, { params: filter })
     }
     params = params || {}
     return this.axios.get(this.url, { params })
