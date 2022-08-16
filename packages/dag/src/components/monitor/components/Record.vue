@@ -132,7 +132,12 @@ export default {
     },
 
     handleDetail(row) {
-      console.log('handleDetail', row)
+      this.$router.push({
+        name: 'MigrationMonitorViewer',
+        params: {
+          id: row.id
+        }
+      })
     }
   }
 }

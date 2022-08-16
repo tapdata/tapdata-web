@@ -1,5 +1,5 @@
 <template>
-  <div class="role section-wrap" v-loading="loading">
+  <div class="role" v-loading="loading">
     <div class="section-wrap-box">
       <head class="head">
         <i class="iconfont icon-left-circle back-btn-icon link-primary cursor-pointer" @click="back"></i>

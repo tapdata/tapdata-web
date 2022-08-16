@@ -42,6 +42,7 @@
             :default-sort="defaultSort"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sort-change', $event)"
+            v-on="$listeners"
           >
             <slot></slot>
             <div slot="empty" class="empty">
@@ -248,6 +249,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    padding: 20px;
     // background-color: map-get($bgColor, white);
     border-radius: 4px;
     .el-table--border {

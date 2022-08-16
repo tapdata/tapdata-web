@@ -1,6 +1,6 @@
 <template>
-  <section class="metadata-info section-wrap" v-loading="loading">
-    <el-container class="metadata-content">
+  <section class="metadata-info h-100" v-loading="loading">
+    <el-container class="metadata-content h-100">
       <!-- 元数据管理详情 头部信息 start -->
       <el-header class="matadata-head">
         <div class="img-box">
@@ -987,7 +987,7 @@ export default {
               .el-tabs__nav-scroll,
               .el-tabs__nav {
                 height: 60px;
-                line-height: 6ppx;
+                line-height: 6px;
               }
               .el-tabs__item {
                 height: 60px;

@@ -122,49 +122,6 @@ const routes = [
           }
         ]
       },
-      // {
-      //   path: '/task',
-      //   name: 'Task',
-      //   component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/Migration.vue'),
-      //   meta: {
-      //     title: i18n.t('tap_task_management'),
-      //     icon: 'task'
-      //   },
-      //   children: [
-      //     {
-      //       path: 'create',
-      //       name: 'DataflowCreate',
-      //       component: TaskForm,
-      //       meta: {
-      //         title: i18n.t('tap_create_task')
-      //       }
-      //     },
-      //     {
-      //       path: ':id',
-      //       name: 'DataflowEdit',
-      //       component: TaskForm,
-      //       meta: {
-      //         title: i18n.t('tap_edit_task')
-      //       }
-      //     },
-      //     {
-      //       path: ':id/monitor',
-      //       name: 'Monitor',
-      //       component: () => import(/* webpackChunkName: "task-monitor" */ '../views/monitor/Dashboard.vue'),
-      //       meta: {
-      //         title: i18n.t('tap_monitor')
-      //       }
-      //     },
-      //     {
-      //       path: ':id/statistics',
-      //       name: 'DataflowDetails',
-      //       component: DataflowDetails,
-      //       meta: {
-      //         title: i18n.t('tap_task_details')
-      //       }
-      //     }
-      //   ]
-      // },
       {
         path: '/migrate',
         name: 'migrateList',

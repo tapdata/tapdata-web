@@ -1,5 +1,5 @@
 <template>
-  <section class="shared-cache-form section-wrap" v-loading="loading">
+  <section class="shared-cache-form" v-loading="loading">
     <div class="section-wrap-box flex">
       <div class="title mb-6">
         {{ $t($route.params.id ? 'page_title_shared_cache_edit' : 'page_title_shared_cache_create') }}

@@ -132,6 +132,9 @@ const metadataTransformerApi = new MetadataTransformer()
 import Function from './Function'
 const functionApi = new Function()
 
+import MonitoringLogs from './MonitoringLogs'
+const monitoringLogsApi = new MonitoringLogs()
+
 import Discovery from './Discovery'
 const discoveryApi = new Discovery()
 
@@ -180,6 +183,7 @@ export {
   dictionariesApi,
   metadataTransformerApi,
   functionApi,
+  monitoringLogsApi
   discoveryApi
 }
 export * from './ApiClient'

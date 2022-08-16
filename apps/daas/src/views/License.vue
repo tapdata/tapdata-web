@@ -1,5 +1,5 @@
 <template>
-  <section class="license-wrapper section-wrap">
+  <section class="license-wrapper h-100">
     <TablePage ref="table" row-key="id" :remoteMethod="getData">
       <div slot="operation">
         <ElButton :loading="copyLoading" class="btn" size="mini" @click="copySid">{{ $t('button_copy') }}</ElButton>

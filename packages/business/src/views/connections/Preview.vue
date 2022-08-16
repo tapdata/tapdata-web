@@ -73,7 +73,7 @@
         </div>
       </div>
     </div>
-    <Test ref="test" @receive="receiveTestData"></Test>
+    <Test ref="test" :formData="connection" @receive="receiveTestData"></Test>
   </Drawer>
 </template>
 
@@ -302,8 +302,8 @@ export default {
             status: 'testing'
           })
           .then(() => {
-            let testData = JSON.parse(JSON.stringify(this.connection))
-            this.$refs.test.start(testData)
+            // let testData = JSON.parse(JSON.stringify(this.connection))
+            this.$refs.test.start(true)
           })
       })
     },
@@ -344,7 +344,7 @@ export default {
           return
         }
         this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-        this.$refs.test.start(data, false, true)
+        this.$refs.test.start(true, false, true)
         this.getProgress()
       })
     },

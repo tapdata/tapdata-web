@@ -1,5 +1,5 @@
 <template>
-  <section class="verify-details section-wrap setting-warp">
+  <section class="verify-details">
     <div class="verify-details__wrap flex font-color-light flex-fill">
       <div class="verify-list flex flex-column p-6">
         <div class="verify-list__header flex justify-content-between">

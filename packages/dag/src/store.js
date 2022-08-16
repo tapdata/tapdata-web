@@ -77,7 +77,8 @@ const getState = () => ({
   LOCALES_STORE: observable.ref({}),
   nodeInputsWatcher: null,
   nodeOutputsWatcher: null,
-  showConsole: false
+  showConsole: false,
+  pdkPropertiesMap: {}
 })
 
 // 初始化 state
@@ -830,6 +831,10 @@ const mutations = {
 
   toggleConsole(state, flag = !state.showConsole) {
     state.showConsole = flag
+  },
+
+  setPdkPropertiesMap(state, map) {
+    Vue.set(state, 'pdkPropertiesMap', map)
   }
 }
 

@@ -6,5 +6,16 @@ import UploadDialog from './UploadDialog'
 import Log from './logs/Index.vue'
 import TablePage from './TablePage.vue'
 import ConnectionTypeSelector from './ConnectionTypeSelector.vue'
+import TaskStatus from './TaskStatus'
 
-export { StatusItem, SchemaProgress, StatusTag, SelectClassify, UploadDialog, Log, TablePage, ConnectionTypeSelector }
+export {
+  StatusItem,
+  SchemaProgress,
+  StatusTag,
+  SelectClassify,
+  UploadDialog,
+  Log,
+  TablePage,
+  ConnectionTypeSelector,
+  TaskStatus
+}

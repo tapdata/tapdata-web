@@ -17,6 +17,10 @@ const MigrationMonitor = async () => {
   const { MigrationMonitor } = await import('@tap/dag')
   return MigrationMonitor
 }
+const MigrationMonitorViewer = async () => {
+  const { MigrationMonitorViewer } = await import('@tap/dag')
+  return MigrationMonitorViewer
+}
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
@@ -158,33 +162,20 @@ export default [
     path: '/migrate/monitor/:id',
     name: 'MigrationMonitor',
     component: MigrationMonitor,
-    // component: Parent,
-    // children: [
-    //   {
-    //     path: '',
-    //     name: 'migrateList',
-    //     component: MigrationMonitor,
-    //     meta: {
-    //       title: 'page_title_run_monitor',
-    //       code: 'Data_SYNC_menu'
-    //     }
-    //   },
-    //   {
-    //     path: 'verifyDetails',
-    //     name: 'VerifyDetails',
-    //     component: () => import(/* webpackChunkName: "etl-list" */ '@/views/verification/VerifyDetails'),
-    //     meta: {
-    //       title: 'page_title_data_verification',
-    //       code: 'Data_verify_menu'
-    //     }
-    //   }
-    // ],
     meta: {
       title: 'page_title_run_monitor',
       code: 'Data_SYNC_menu'
     }
   },
-
+  {
+    path: '/migrate/monitorRecord/:id',
+    name: 'MigrationMonitorViewer',
+    component: MigrationMonitorViewer,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'Data_SYNC_menu'
+    }
+  },
   {
     path: '/',
     name: 'layout',
@@ -337,6 +328,15 @@ export default [
               code: 'Data_SYNC_menu'
             }
           },
+          {
+            path: 'statistics/:id',
+            name: 'dataflowStatistics',
+            component: EtlStatistics,
+            meta: {
+              title: 'page_title_task_stat',
+              code: 'Data_SYNC_menu'
+            }
+          },
           /* ---------- 数据开发任务详情  ----------*/
           {
             path: 'details/:id',
@@ -353,15 +353,6 @@ export default [
                 component: EtlDetails,
                 meta: {
                   title: 'page_title_run_monitor',
-                  code: 'Data_SYNC_menu'
-                }
-              },
-              {
-                path: 'statistics/:subId',
-                name: 'dataflowStatistics',
-                component: EtlStatistics,
-                meta: {
-                  title: 'page_title_task_stat',
                   code: 'Data_SYNC_menu'
                 }
               }

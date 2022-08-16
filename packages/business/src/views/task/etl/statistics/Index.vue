@@ -1,5 +1,5 @@
 <template>
-  <div class="statistics-container flex flex-column font-color-slight h-100 section-wrap">
+  <div class="statistics-container flex flex-column font-color-slight">
     <div class="statistics-container-box">
       <Info
         :task="task"
@@ -8,7 +8,7 @@
         :remote-method="infoRemoteMethod"
         @reload="loadTask"
       ></Info>
-      <div class="flex-1 mt-6 pb-12 section-wrap-box">
+      <div class="flex-1 mt-6 px-5 pb-12 bg-white">
         <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
           <ElTabPane :label="$t('task_monitor_progress')" name="schedule" lazy>
             <Schedule :task="task" @sync="getSyncData"></Schedule>
@@ -34,6 +34,7 @@ import { Log } from '../../../../components'
 import Info from './Info'
 import Schedule from './Schedule'
 import ShareMining from './ShareMining'
+import { makeStatusAndDisabled } from '../../../../shared'
 
 export default {
   name: 'Statistics',
@@ -85,7 +86,7 @@ export default {
       type: 'watch',
       collection: 'DataFlows',
       filter: {
-        where: { 'fullDocument._id': { $in: [this.$route.params.subId] } }, //查询条件
+        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
         fields: {
           'fullDocument.id': true,
           'fullDocument._id': true,
@@ -125,7 +126,7 @@ export default {
       this.loadTask()
     },
     async loadTask(hiddenLoading) {
-      let id = this.$route.params?.subId
+      let id = this.$route.params?.id
       if (!hiddenLoading) {
         this.loading = true
       }
@@ -156,6 +157,7 @@ export default {
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = this.formatTime(data.finishTime)
       data.cdcTimeFmt = this.formatTime(cdcTime)
+      makeStatusAndDisabled(data)
       return data
     },
     formatTime(time) {

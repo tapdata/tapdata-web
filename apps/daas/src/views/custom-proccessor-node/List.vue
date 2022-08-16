@@ -1,5 +1,5 @@
 <template>
-  <section class="function-list-wrapper section-wrap">
+  <section class="function-list-wrapper h-100">
     <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>

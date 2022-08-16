@@ -1,5 +1,5 @@
 <template>
-  <section class="connection-list-wrap classify-wrap">
+  <section class="connection-list-wrap">
     <TablePage
       ref="table"
       row-key="id"

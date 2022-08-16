@@ -1,5 +1,5 @@
 <template>
-  <div class="share-detail section-wrap">
+  <div class="share-detail h-100 flex flex-column">
     <div class="share-detail-box share-detail-head flex justify-content-between fs-8">
       <div class="share-detail-head-left py-6 px-4">
         <div class="flex align-items-center">
@@ -48,8 +48,9 @@
         </div>
       </div>
     </div>
-    <div class="share-detail-box share-detail-main mt-5 p-5">
+    <div class="share-detail-box share-detail-main mt-5 p-5 overflow-hidden">
       <TableList
+        v-if="detailData"
         :data="detailData.taskList"
         :columns="columns"
         :remote-data="id"
@@ -482,9 +483,6 @@ export default {
 
 <style lang="scss" scoped>
 .share-detail {
-  width: 100%;
-  padding: 0 20px 20px;
-  background-color: #eff1f4;
   .share-detail-box {
     // &.share-detail-head {
     //   height: 300px;

@@ -1,5 +1,5 @@
 <template>
-  <section class="data-verify-wrap section-wrap">
+  <section class="data-verify-wrap h-100">
     <TablePage
       ref="table"
       row-key="id"

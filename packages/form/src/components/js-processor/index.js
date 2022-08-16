@@ -9,7 +9,7 @@ import { observe } from '@formily/reactive'
 export const JsProcessor = observer(
   defineComponent({
     props: ['value', 'disabled'],
-    setup(props, { emit, root }) {
+    setup(props, { emit, root, attrs }) {
       const { taskId } = root.$store.state.dataflow
       const formRef = useForm()
       const form = formRef.value
@@ -99,6 +99,8 @@ export const JsProcessor = observer(
       })
 
       return () => {
+        const editorProps = { ...attrs }
+        editorProps.options.readOnly = props.disabled
         return (
           <div class="js-processor font-color-light">
             <FormItem.BaseItem asterisk label="脚本">
@@ -108,8 +110,27 @@ export const JsProcessor = observer(
                   emit('change', val)
                 }}
                 height={350}
-                options={{ showPrintMargin: false, useWrapMode: true, readOnly: props.disabled }}
-              ></JsEditor>
+                options={editorProps.options}
+                includeBeforeAndAfter={editorProps.includeBeforeAndAfter}
+                before={editorProps.before}
+                beforeRegexp={editorProps.beforeRegexp}
+                afterRegexp={editorProps.afterRegexp}
+                after={editorProps.after}
+              />
+            </FormItem.BaseItem>
+
+            <FormItem.BaseItem label="模型声明">
+              <JsEditor
+                value={form.values.declareScript}
+                onChange={val => {
+                  form.setValuesIn('declareScript', val)
+                }}
+                height={240}
+                options={editorProps.options}
+                before="function declare(schemaApplyResultList) {"
+                after={`  return schemaApplyResultList\n}`}
+                handleAddCompleter={editorProps.handleAddCompleter}
+              />
             </FormItem.BaseItem>
 
             <div class="flex align-center">
@@ -153,20 +174,22 @@ export const JsProcessor = observer(
             <div class="flex" v-loading={running.value}>
               <FormItem.BaseItem class="flex-1 mr-4" label="调试输入">
                 <VCodeEditor
-                  class="border rounded-2"
+                  class="border rounded-2 py-0"
                   value={inputRef.value}
                   lang="json"
                   options={{ readOnly: true }}
+                  theme="chrome"
                   style="height: calc((100vh - 120px);"
                 ></VCodeEditor>
               </FormItem.BaseItem>
 
               <FormItem.BaseItem class="flex-1" label="结果输出">
                 <VCodeEditor
-                  class="border rounded-2"
+                  class="border rounded-2 py-0"
                   value={outputRef.value}
                   lang="json"
                   options={{ readOnly: true }}
+                  theme="chrome"
                   style="height: calc((100vh - 120px);"
                 ></VCodeEditor>
               </FormItem.BaseItem>

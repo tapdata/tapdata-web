@@ -160,25 +160,6 @@ import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 
-function getRandom(num = 100) {
-  return Math.ceil(Math.random() * 100 * num)
-}
-
-function getRandomArray(count = 20, num = 1) {
-  return Array(count)
-    .fill()
-    .map(() => getRandom(num))
-}
-
-function getRandomTimeArray(count = 20, ms = 5000) {
-  return Array(count)
-    .fill()
-    .map((t, i) => Date.now() + i * ms)
-}
-
-const TIME_LIST = getRandomTimeArray(100000)
-const VALUE_LIST = getRandomArray(100000)
-
 export default {
   name: 'MigrationMonitor',
 
@@ -305,17 +286,17 @@ export default {
     init() {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.isEnterTimer && this.startLoadQuotaData()
+        this.isEnterTimer && this.startLoadData()
       }, 5000)
-      this.startLoadQuotaData()
+      this.startLoadData()
     },
 
-    startLoadQuotaData() {
+    startLoadData() {
       // 根据周期类型，计算时间范围
       if (this.quotaTimeType !== 'custom') {
         this.quotaTime = this.getTimeRange(this.quotaTimeType)
       }
-      this.loadQuotaData()
+      this.loadData()
     },
 
     initNodeType() {
@@ -539,8 +520,8 @@ export default {
       }
     },
 
-    getFilter() {
-      const taskId = this.dataflow?.id
+    getQuotaFilter() {
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       const [startAt, endAt] = this.quotaTime
       let params = {
         startAt,
@@ -550,7 +531,8 @@ export default {
           totalData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
+              taskRecordId
             },
             endAt: Date.now(), // 停止时间 || 当前时间
             fields: [
@@ -581,7 +563,8 @@ export default {
           barChartData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
+              taskRecordId
             },
             fields: [
               'inputInsertTotal',
@@ -601,7 +584,8 @@ export default {
           lineChartData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
+              taskRecordId
             },
             fields: ['inputQps', 'outputQps', 'timeCostAvg'],
             type: 'continuous' // 连续数据
@@ -610,7 +594,8 @@ export default {
           dagData: {
             tags: {
               type: 'node',
-              taskId
+              taskId,
+              taskRecordId
             },
             fields: [
               'inputInsertTotal',
@@ -644,7 +629,17 @@ export default {
       return params
     },
 
-    loadQuotaData() {
+    getParams() {
+      let params = {
+        quota: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter()
+        }
+      }
+      return params
+    },
+
+    loadData() {
       if (!this.dataflow?.id) {
         return
       }
@@ -654,147 +649,26 @@ export default {
       }
       this.count++
       const { count } = this
-      measurementApi
-        .queryV2(this.getFilter())
-        .then(data => {
-          this.quota = data
-          const granularity = getTimeGranularity(data.interval)
-          this.timeFormat = TIME_FORMAT_MAP[granularity]
-          this.dagData = this.getDagData(this.quota.samples.dagData)
-          console.log('this.dagData', this.dagData) // eslint-disable-line
-        })
-        .catch(() => {
-          let res = {
-            time: TIME_LIST.slice(count, count + 60),
-            samples: {
-              totalData: [
-                {
-                  inputInsertTotal: getRandom(),
-                  inputUpdateTotal: getRandom(),
-                  inputDeleteTotal: getRandom(),
-                  inputDdlTotal: getRandom(),
-                  inputOthersTotal: getRandom(),
-                  outputInsertTotal: getRandom(),
-                  outputUpdateTotal: getRandom(),
-                  outputDeleteTotal: getRandom(),
-                  outputDdlTotal: getRandom(),
-                  outputOthersTotal: getRandom(),
-                  tableTotal: getRandom(),
-                  createTableTotal: getRandom(),
-                  snapshotTableTotal: getRandom(),
-                  initialCompleteTime: 1657707577896, // 全量完成时间
-                  sourceConnection: 'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
-                  targetConnection: 'targetConnection',
-                  snapshotDoneAt: 1657707577896,
-                  snapshotRowTotal: getRandom(),
-                  snapshotInsertRowTotal: getRandom(),
-                  outputQps: getRandom()
-                }
-              ],
-              barChartData: [
-                {
-                  inputInsertTotal: getRandom(),
-                  inputUpdateTotal: getRandom(),
-                  inputDeleteTotal: getRandom(),
-                  inputDdlTotal: getRandom(),
-                  inputOthersTotal: getRandom(),
-                  outputInsertTotal: getRandom(),
-                  outputUpdateTotal: getRandom(),
-                  outputDeleteTotal: getRandom(),
-                  outputDdlTotal: getRandom(),
-                  outputOthersTotal: getRandom()
-                }
-              ],
-              lineChartData: [
-                {
-                  inputQps: VALUE_LIST.slice(count, count + 60),
-                  outputQps: VALUE_LIST.slice(count + 10, count + 60 + 10),
-                  timeCostAvg: VALUE_LIST.slice(count + 10, count + 60 + 10)
-                }
-              ],
-              dagData: [
-                {
-                  inputInsertTotal: getRandom(),
-                  inputUpdateTotal: getRandom(),
-                  inputDeleteTotal: getRandom(),
-                  inputDdlTotal: getRandom(),
-                  inputOthersTotal: getRandom(),
-                  outputInsertTotal: getRandom(),
-                  outputUpdateTotal: getRandom(),
-                  outputDeleteTotal: getRandom(),
-                  outputDdlTotal: getRandom(),
-                  outputOthersTotal: getRandom(),
-                  qps: getRandom(),
-                  timeCostAvg: getRandom(),
-                  currentEventTimestamp: getRandom(),
-                  tcpPing: getRandom(),
-                  connectPing: getRandom(),
-                  inputTotal: getRandom(),
-                  outputTotal: getRandom(),
-                  inputQps: getRandom(),
-                  outputQps: getRandom(),
-                  snapshotRowTotal: getRandom(),
-                  snapshotInsertRowTotal: getRandom(),
-                  tags: {
-                    nodeType: 'table_rename_processor',
-                    type: 'node',
-                    nodeId: '3a619752-50c5-4128-ac10-75a6fa14c672',
-                    subTaskId: '62e38b65290b4b01b05cec8b',
-                    taskId: '62e38b26290b4b01b05ce5cf'
-                  }
-                },
-                {
-                  insertTotal: getRandom(),
-                  updateTotal: getRandom(),
-                  deleteTotal: getRandom(),
-                  ddlTotal: getRandom(),
-                  othersTotal: getRandom(),
-                  qps: getRandom(),
-                  timeCostAvg: getRandom(),
-                  currentEventTimestamp: getRandom(),
-                  tcpPing: getRandom(),
-                  connectPing: getRandom(),
-                  inputTotal: getRandom(),
-                  outputTotal: getRandom(),
-                  inputQps: getRandom(),
-                  outputQps: getRandom(),
-                  tags: {
-                    nodeType: 'database',
-                    type: 'node',
-                    nodeId: '96f22ecc-6eb4-4f08-bc2a-2eab35ee9989',
-                    subTaskId: '62e38b65290b4b01b05cec8b',
-                    taskId: '62e38b26290b4b01b05ce5cf'
-                  }
-                },
-                {
-                  insertTotal: getRandom(),
-                  updateTotal: getRandom(),
-                  deleteTotal: getRandom(),
-                  ddlTotal: getRandom(),
-                  othersTotal: getRandom(),
-                  qps: getRandom(),
-                  timeCostAvg: getRandom(),
-                  currentEventTimestamp: getRandom(),
-                  tcpPing: getRandom(),
-                  connectPing: getRandom(),
-                  inputTotal: getRandom(),
-                  outputTotal: getRandom(),
-                  inputQps: getRandom(),
-                  outputQps: getRandom(),
-                  tags: {
-                    nodeType: 'database',
-                    type: 'node',
-                    nodeId: '439e6178-9f39-498b-8a4d-5c5d4f5b014c',
-                    subTaskId: '62e38b65290b4b01b05cec8b',
-                    taskId: '62e38b26290b4b01b05ce5cf'
-                  }
-                }
-              ]
-            }
+      measurementApi.batch(this.getParams()).then(data => {
+        const map = {
+          quota: this.loadQuotaData
+        }
+        for (let key in data) {
+          const item = data[key]
+          if (item.code === 'ok') {
+            map[key]?.(data[key].data)
+          } else {
+            this.$message.error(item.error)
           }
-          this.quota = res
-          this.dagData = this.getDagData(this.quota.samples.dagData)
-        })
+        }
+      })
+    },
+
+    loadQuotaData(data) {
+      this.quota = data
+      const granularity = getTimeGranularity(data.interval)
+      this.timeFormat = TIME_FORMAT_MAP[granularity]
+      this.dagData = this.getDagData(this.quota.samples.dagData)
     },
 
     getDagData(data = []) {
@@ -871,7 +745,7 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime
+      let endTimestamp = this.lastStopTime || Date.now()
       if (status === 'running') {
         endTimestamp = Date.now()
       }

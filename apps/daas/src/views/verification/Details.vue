@@ -1,5 +1,5 @@
 <template>
-  <section class="verify-details-wrap section-wrap" v-loading="loading">
+  <section class="verify-details-wrap h-100" v-loading="loading">
     <div class="section-wrap-box">
       <div class="verify-details-header" v-if="inspect">
         <div>
@@ -34,7 +34,7 @@
         </div>
       </div>
       <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
-        <VIcon class="color-danger">error</VIcon>
+        <VIcon class="color-danger mt-1">error</VIcon>
         <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
         <span>
           <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{

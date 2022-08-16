@@ -97,7 +97,7 @@ import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
 import { uuid } from '@tap/shared'
-import { taskApi } from '@tap/api'
+import { databaseTypesApi, taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 import { MoveNodeCommand } from './command'
 import dagre from 'dagre'
@@ -106,6 +106,8 @@ import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import editor from './mixins/editor'
 import Locale from './mixins/locale'
+import { DEFAULT_SETTINGS } from './constants'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Editor',
@@ -145,6 +147,7 @@ export default {
       },
 
       dataflow: {
+        ...DEFAULT_SETTINGS,
         id: '',
         name: ''
       },
@@ -158,6 +161,7 @@ export default {
       this.setStateReadonly(true)
     }
     this.setValidateLanguage()
+    await this.initPdkProperties()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -180,6 +184,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+
     async initNodeType() {
       this.addProcessorNode([
         {
@@ -656,11 +662,32 @@ export default {
 
     handleDetail() {
       this.$router.push({
-        name: 'dataflowDetails',
+        name: 'dataflowStatistics',
         params: {
           id: this.dataflow.id
         }
       })
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }

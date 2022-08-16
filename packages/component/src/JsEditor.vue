@@ -127,40 +127,38 @@ export default {
             return 0
           }
         })
-        editor.completers = [
-          {
-            getCompletions: (editor, session, pos, prefix, callback) => {
-              if (prefix.length === 0) {
-                return callback(null, [])
-              } else {
-                return callback(
-                  null,
-                  items.map((item, index) => {
-                    item.score = 1000000 - index
-                    return item
-                  })
-                )
-              }
-            },
-            getDocTooltip: function (item) {
-              if (item.type == 'snippet') {
-                let type = `<div class="code-editor-snippet-tips__type">${item.meta}</div>`
-                let title = `<span class="panel-title">${item.originType ? 'function' : 'Cache name'}</span>`
-                let body = item.parametersDesc
-                  ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
-                  : item.originType
-                  ? `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
-                  : `<pre class="code-editor-snippet-tips__body">${item.snippet}</pre>`
-                let footer = item.returnDesc
-                  ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
-                  : ''
-                item.docHTML = `<div class="code-editor-snippet-tips">${type}<div class="code-editor-snippet-tips__header">${title}${
-                  item.format || item.caption
-                }</div>${body}${footer}</div>`
-              }
+        tools.addCompleter({
+          getCompletions: (editor, session, pos, prefix, callback) => {
+            if (prefix.length === 0) {
+              return callback(null, [])
+            } else {
+              return callback(
+                null,
+                items.map((item, index) => {
+                  item.score = 1000000 - index
+                  return item
+                })
+              )
+            }
+          },
+          getDocTooltip: function (item) {
+            if (item.type == 'snippet') {
+              let type = `<div class="code-editor-snippet-tips__type">${item.meta}</div>`
+              let title = `<span class="panel-title">${item.originType ? 'function' : 'Cache name'}</span>`
+              let body = item.parametersDesc
+                ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
+                : item.originType
+                ? `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                : `<pre class="code-editor-snippet-tips__body">${item.snippet}</pre>`
+              let footer = item.returnDesc
+                ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
+                : ''
+              item.docHTML = `<div class="code-editor-snippet-tips">${type}<div class="code-editor-snippet-tips__header">${title}${
+                item.format || item.caption
+              }</div>${body}${footer}</div>`
             }
           }
-        ]
+        })
       })
     }
   }

@@ -65,8 +65,8 @@ export const createComponentSchema = (component, decorator) => {
   }
 }
 // eslint-disable-next-line
-export const createFieldSchema = (component, decorator = AllSchemas.FormItem) => {
-  return {
+export const createFieldSchema = (component, decorator = AllSchemas.FormItem, withEnum) => {
+  const base = {
     type: 'object',
     properties: {
       'field-group': {
@@ -112,14 +112,7 @@ export const createFieldSchema = (component, decorator = AllSchemas.FormItem) =>
           },
           enum: {
             'x-decorator': 'FormItem',
-            'x-component': DataSourceSetter,
-            'x-reactions': {
-              fulfill: {
-                state: {
-                  hidden: '{{$form.values["x-component"] !== "Select"}}'
-                }
-              }
-            }
+            'x-component': DataSourceSetter
           },
           required: {
             type: 'boolean',
@@ -131,6 +124,10 @@ export const createFieldSchema = (component, decorator = AllSchemas.FormItem) =>
       // ...createComponentSchema(component, decorator)
     }
   }
+  if (!withEnum) {
+    delete base.properties['field-group'].properties.enum
+  }
+  return base
 }
 
 export const createVoidFieldSchema = (component, decorator = AllSchemas.FormItem) => {

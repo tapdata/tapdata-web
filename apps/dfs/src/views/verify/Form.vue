@@ -1141,10 +1141,8 @@ export default {
               },
               byFirstCheckId: ''
             })
-          ).then(data => {
-            if (data) {
-              this.$router.back()
-            }
+          ).then(() => {
+            this.$router.back()
           })
         }
       })
