@@ -10,6 +10,8 @@
       :readonly="stateIsReadonly"
       placeholder="请输入任务名称"
       max-width="260"
+      hidden-icon
+      :input-min-width="32"
       @change="onNameInputChange"
     />
 
