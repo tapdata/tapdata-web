@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref } from '@vue/composition-api'
+import { defineComponent, reactive, ref, nextTick } from '@vue/composition-api'
 import { FilterBar } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import { useI18n, useMessage } from '@/hooks'
@@ -6,10 +6,10 @@ import './index.scss'
 
 export default defineComponent({
   props: ['parentId'],
-  setup(props, { root }) {
+  setup(props, { root, emit, refs }) {
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const list = ref([])
-    const { error } = useMessage()
+    const { error, success } = useMessage()
     const multipleSelection = ref([])
     const data = reactive({
       isShowDetails: false,
@@ -50,6 +50,18 @@ export default defineComponent({
           let { total, items } = res
           list.value = items || []
           data.page.total = total
+          //选中被绑定的资源
+          if (list.value?.length === 0) return
+          list.value.forEach(t => {
+            if (t?.allTags) {
+              let usedRow = t?.allTags.filter(tag => tag.id === props.parentId) || []
+              if (usedRow?.length > 0) {
+                nextTick(() => {
+                  refs.multipleTable?.toggleRowSelection(t, true)
+                })
+              }
+            }
+          })
         })
         .finally(() => {
           data.tableLoading = false
@@ -107,7 +119,7 @@ export default defineComponent({
     }
     const saveTags = () => {
       if (multipleSelection.value?.length === 0) {
-        root.$emit('update:visible', false)
+        emit('fetch', false)
       }
       let data = multipleSelection.value.map(t => {
         return {
@@ -122,7 +134,8 @@ export default defineComponent({
       discoveryApi
         .saveTags(where)
         .then(() => {
-          root.$emit('update:visible', false)
+          emit('fetch', false)
+          success('绑定成功')
         })
         .catch(err => {
           error(err)
@@ -151,7 +164,12 @@ export default defineComponent({
                 ></FilterBar>
               </div>
             </div>
-            <el-table class="discovery-page-table" data={this.list} onSelection-change={this.handleSelectionChange}>
+            <el-table
+              ref={'multipleTable'}
+              class="discovery-page-table"
+              data={this.list}
+              onSelection-change={this.handleSelectionChange}
+            >
               <el-table-column width="55" type="selection"></el-table-column>
               <el-table-column label={this.$t('object_list_name')} prop="name"></el-table-column>
               <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
