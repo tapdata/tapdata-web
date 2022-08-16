@@ -51,7 +51,7 @@ export default {
     return {
       visible: false,
       statusMap: {
-        NOSTART: {
+        NOT_START: {
           text: '未开始',
           type: 'waiting'
         },
@@ -121,8 +121,8 @@ export default {
           total: data.total || 0,
           data: data.items.map(t => {
             t.progress = Math.floor(t.syncRate * 100)
-            t.syncStatusText = this.statusMap[t.fullSyncStatus].text
-            t.syncStatusType = this.statusMap[t.fullSyncStatus].type
+            t.syncStatusText = this.statusMap[t.fullSyncStatus]?.text
+            t.syncStatusType = this.statusMap[t.fullSyncStatus]?.type
             return t
           })
         }
