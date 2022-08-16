@@ -42,7 +42,7 @@ export default {
       return time ? dayjs(time).format(fmt) : ''
     },
     formatNumber(val) {
-      return val ? val.toLocaleString() : ''
+      return typeof val === 'number' ? val.toLocaleString() : ''
     },
     getValue(row, item) {
       const val = row[item.prop]
