@@ -767,7 +767,7 @@ export default {
   operation_log_migration_update: '編輯任務',
   operation_log_migration_update_tip: '編輯了任務【@{parameter1}】的配寘資訊',
   operation_log_migration_copy: '複製任務',
-  operation_log_migration_copy_tip: '複製了任務[${parameter2}]為【@{parameter1}】',
+  operation_log_migration_copy_tip: '複製了任務[${parameter1}]為【@{parameter2}】',
   operation_log_migration_reset: '重置任務',
   operation_log_migration_reset_tip: '重置了任務【@{parameter1}】',
   operation_log_migration_delete: '删除任務',

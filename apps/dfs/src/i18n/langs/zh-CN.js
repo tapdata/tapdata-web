@@ -818,7 +818,7 @@ export default {
   operation_log_migration_update: '编辑任务',
   operation_log_migration_update_tip: '编辑了任务【@{parameter1}】的配置信息',
   operation_log_migration_copy: '复制任务',
-  operation_log_migration_copy_tip: '复制了任务[${parameter2}] 为【@{parameter1}】',
+  operation_log_migration_copy_tip: '复制了任务[@{parameter1}]为【${parameter2}】',
   operation_log_migration_reset: '重置任务',
   operation_log_migration_reset_tip: '重置了任务【@{parameter1}】',
   operation_log_migration_delete: '删除任务',
