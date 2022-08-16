@@ -15,7 +15,7 @@
         <TaskStatus :task="scope.row" />
       </template>
       <template slot="operation" slot-scope="scope">
-        <div class="operate-columns">
+        <div class="operate-columns" v-if="dataflow.taskRecordId !== scope.row.taskRecordId">
           <ElButton size="mini" type="text" @click="handleDetail(scope.row)">详情</ElButton>
         </div>
       </template>
@@ -32,6 +32,13 @@ export default {
   name: 'Record',
 
   components: { VTable, TaskStatus },
+
+  props: {
+    dataflow: {
+      type: Object,
+      default: () => {}
+    }
+  },
 
   data() {
     return {
