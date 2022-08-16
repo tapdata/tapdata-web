@@ -11,7 +11,6 @@
           multipleSelection = val
         }
       "
-      @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
       <template slot="search">
@@ -410,34 +409,6 @@ export default {
             data: list.map(makeStatusAndDisabled)
           }
         })
-    },
-
-    handleSelectTag() {
-      let tagList = {}
-      this.multipleSelection.forEach(row => {
-        if (row.listTagId) {
-          tagList[row.listTagId] = {
-            value: row.listTagValue
-          }
-        }
-      })
-      return tagList
-    },
-    handleOperationClassify(listtags) {
-      let ids = []
-      if (this.dataFlowId) {
-        ids = [this.dataFlowId]
-      } else {
-        ids = this.multipleSelection.map(r => r.id)
-      }
-      let attributes = {
-        id: ids,
-        listtags
-      }
-      taskApi.batchUpdateListtags(attributes).then(() => {
-        this.dataFlowId = ''
-        this.table.fetch()
-      })
     },
     create() {
       this.$router.push({

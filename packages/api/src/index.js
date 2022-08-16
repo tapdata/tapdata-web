@@ -183,7 +183,7 @@ export {
   dictionariesApi,
   metadataTransformerApi,
   functionApi,
-  monitoringLogsApi
+  monitoringLogsApi,
   discoveryApi
 }
 export * from './ApiClient'
