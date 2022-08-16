@@ -238,9 +238,11 @@ export default {
       const { size, current } = this.page
       const { originalTableName } = this.row
       let filter = {
+        where: {
+          originalTableName
+        },
         limit: size,
-        skip: size * (current - 1),
-        originalTableName
+        skip: size * (current - 1)
       }
       this.detailLoading = true
       const startStamp = Date.now()
