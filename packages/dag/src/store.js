@@ -78,7 +78,8 @@ const getState = () => ({
   nodeInputsWatcher: null,
   nodeOutputsWatcher: null,
   showConsole: false,
-  pdkPropertiesMap: {}
+  pdkPropertiesMap: {},
+  taskSaving: false
 })
 
 // 初始化 state
@@ -220,14 +221,16 @@ const getters = {
 
 // actions
 const actions = {
-  updateDag: debounce(async function ({ state, commit }) {
+  updateDag: async ({ state, commit }) => {
+    commit('toggleTaskSaving', true)
     const data = await taskApi.patch({
       id: state.taskId,
       editVersion: state.editVersion,
       dag: state.dag
     })
     commit('setEditVersion', data.editVersion)
-  }, 300),
+    commit('toggleTaskSaving', false)
+  },
 
   async addNodeAsync({ dispatch, commit }, nodeData) {
     commit('addNode', nodeData)
@@ -835,6 +838,10 @@ const mutations = {
 
   setPdkPropertiesMap(state, map) {
     Vue.set(state, 'pdkPropertiesMap', map)
+  },
+
+  toggleTaskSaving(state, flag = !state.taskSaving) {
+    state.taskSaving = flag
   }
 }
 

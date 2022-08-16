@@ -66,7 +66,7 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId', 'transformStatus', 'stateIsDirty']),
+    ...mapState('dataflow', ['activeNodeId', 'taskSaving', 'stateIsDirty']),
     ...mapGetters('dataflow', ['activeNode']),
 
     showLoading() {
@@ -76,7 +76,19 @@ export default {
 
   watch: {
     activeNodeId() {
-      this.isShow && this.loadFields()
+      this.unwatchTaskSaving?.()
+      if (this.isShow) {
+        if (this.taskSaving) {
+          this.loading = true
+          // 防止新增节点立刻展示元数据时，task自动保存中，出现的空指针以及空数据
+          this.unwatchTaskSaving = this.$watch('taskSaving', () => {
+            this.loadFields()
+            this.unwatchTaskSaving()
+          })
+        } else {
+          this.loadFields()
+        }
+      }
       if (this.activeNode) {
         this.checkTarget()
         this.checkNodeType()
@@ -103,7 +115,6 @@ export default {
 
   methods: {
     async loadFields() {
-      if (this.transformStatus === 'loading') return
       this.$refs.table.doLayout()
       this.loading = true
 
