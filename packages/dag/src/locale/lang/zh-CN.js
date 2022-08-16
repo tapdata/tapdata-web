@@ -4,7 +4,7 @@ export default {
   dialog_tableValidateTip: '新建表名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
   dialog_collectionValidateTip:
     '新建数据集名称仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
-  task_stetting_basic_setting: '基本设置',
+  task_stetting_basic_setting: '任务设置',
   task_stetting_most_setting: '高级设置',
   loading: '加载中',
   dag_connection: '连接',
@@ -67,6 +67,8 @@ export default {
   task_setting_lag_time: '增量滞后判断时间设置',
   task_setting_cdc_engine_filter: '启用引擎过滤',
   task_setting_share_cdc_mode: '共享增量读取的模式',
+  task_setting_processorThreadNum: '处理器线程数',
+  task_setting_increOperationMode: '增量数据处理模式',
   button_undo: '撤销',
   button_redo: '重做',
   button_delete: '删除',

@@ -1,13 +1,16 @@
 <template>
   <section
-    v-show="activeType"
+    v-show="showPanel"
     v-resize.top="{
       minHeight: 40
     }"
     class="config-panel border-top"
   >
     <VIcon class="config-panel-close" size="16" @click="handleClosePanel">close</VIcon>
-    <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden setting-panel-wrap">
+    <div
+      v-if="!onlyNode && activeType === 'settings'"
+      class="h-100 flex flex-column overflow-hidden setting-panel-wrap"
+    >
       <SettingPanel v-bind="$attrs" v-on="$listeners"></SettingPanel>
     </div>
     <div class="config-tabs-wrap">
@@ -63,6 +66,10 @@ export default {
 
   mixins: [Locale],
 
+  props: {
+    onlyNode: Boolean
+  },
+
   data() {
     return {
       currentTab: '0',
@@ -78,6 +85,10 @@ export default {
 
     icon() {
       return this.getIcon(this.activeNode)
+    },
+
+    showPanel() {
+      return this.onlyNode ? this.activeType === 'node' : this.activeType
     }
   },
 

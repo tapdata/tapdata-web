@@ -255,6 +255,82 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch'
                       },
+                      increSyncConcurrency: {
+                        title: this.t('task_setting_cdc_concurrency'),
+                        type: 'boolean',
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch'
+                      },
+                      increHysteresisSpace: {
+                        type: 'void',
+                        title: this.t('task_setting_lag_time'),
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Space',
+                        properties: {
+                          increHysteresis: {
+                            type: 'boolean',
+                            'x-component': 'Switch'
+                          },
+                          hysteresisInterval: {
+                            type: 'number',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              feedbackLayout: 'none',
+                              addonAfter: '秒'
+                            },
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 1
+                            },
+                            'x-reactions': {
+                              dependencies: ['.increHysteresis'],
+                              fulfill: {
+                                state: {
+                                  display: '{{$deps[0]?"visible":"hidden"}}'
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      processorThreadNum: {
+                        type: 'number',
+                        title: this.t('task_setting_processorThreadNum'),
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber'
+                      },
+                      increOperationModeSpace: {
+                        type: 'void',
+                        title: this.t('task_setting_increOperationMode'),
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Space',
+                        properties: {
+                          increOperationMode: {
+                            type: 'boolean',
+                            'x-component': 'Select',
+                            enum: [
+                              { label: '批量', value: false },
+                              { label: '逐条', value: true }
+                            ]
+                          },
+                          increaseReadSize: {
+                            type: 'number',
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 1
+                            },
+                            'x-reactions': {
+                              dependencies: ['.increOperationMode'],
+                              fulfill: {
+                                state: {
+                                  display: '{{$deps[0]?"visible":"hidden"}}'
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
                       accessNodeType: {
                         type: 'string',
                         title: this.$t('connection_form_access_node'),

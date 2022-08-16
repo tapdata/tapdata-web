@@ -39,7 +39,7 @@
         @drop-node="handleAddNodeByDrag"
         @add-table-as-node="handleAddTableAsNode"
       />
-      <section class="layout-wrap">
+      <section class="layout-wrap flex-1">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
           <PaperScroller
@@ -78,8 +78,10 @@
           ></NodePopover>
         </main>
         <!--配置面板-->
-        <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar"></ConfigPanel>
+        <ConfigPanel ref="configPanel" only-node :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
       </section>
+      <!--任务设置-->
+      <SettingPanel only-setting :scope="scope" :settings="dataflow" />
     </section>
   </section>
 </template>
@@ -96,6 +98,7 @@ import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
+import SettingPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
 import { databaseTypesApi, taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
@@ -108,6 +111,7 @@ import editor from './mixins/editor'
 import Locale from './mixins/locale'
 import { DEFAULT_SETTINGS } from './constants'
 import { mapMutations } from 'vuex'
+import { observable } from '@formily/reactive'
 
 export default {
   name: 'Editor',
@@ -121,10 +125,17 @@ export default {
     PaperScroller,
     TopHeader,
     DFNode,
-    LeftSidebar
+    LeftSidebar,
+    SettingPanel
   },
 
   data() {
+    const dataflow = observable({
+      ...DEFAULT_SETTINGS,
+      id: '',
+      name: ''
+    })
+
     return {
       NODE_PREFIX,
       status: 'draft',
@@ -146,11 +157,7 @@ export default {
         connectionData: {}
       },
 
-      dataflow: {
-        ...DEFAULT_SETTINGS,
-        id: '',
-        name: ''
-      },
+      dataflow,
 
       scale: 1
     }

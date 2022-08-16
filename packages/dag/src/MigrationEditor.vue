@@ -115,7 +115,6 @@ import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
 import { VExpandXTransition, VIcon, VEmpty } from '@tap/component'
-import { makeStatusAndDisabled, TaskStatus } from '@tap/business'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
 import ConsolePanel from './components/migration/ConsolePanel'
@@ -140,8 +139,7 @@ export default {
     TopHeader,
     DFNode,
     LeftSider,
-    VIcon,
-    TaskStatus
+    VIcon
   },
 
   data() {
