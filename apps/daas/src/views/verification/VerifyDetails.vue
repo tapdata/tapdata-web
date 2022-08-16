@@ -205,7 +205,7 @@ export default {
         tableName: this.keyword
       }
       return taskApi
-        .autoInspectResultsGroupByTable('taskid' || this.$route.params.id, {
+        .autoInspectResultsGroupByTable(this.$route.params.id, {
           filter: JSON.stringify(filter)
         })
         .then(data => {
@@ -243,7 +243,7 @@ export default {
       this.detailLoading = true
       const startStamp = Date.now()
       taskApi
-        .autoInspectResults('taskid' || this.$route.params.id, {
+        .autoInspectResults(this.$route.params.id, {
           filter: JSON.stringify(filter)
         })
         .then(data => {

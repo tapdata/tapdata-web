@@ -228,7 +228,7 @@ export default {
     loadData(loadMore = false) {
       const startStamp = Date.now()
       taskApi
-        .autoInspectResultsGroupByTable('taskid' || this.dataflow.id, {
+        .autoInspectResultsGroupByTable(this.dataflow.id, {
           filter: JSON.stringify(this.getFilter())
         })
         .then(data => {
