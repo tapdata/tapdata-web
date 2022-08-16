@@ -3,14 +3,6 @@
     <TablePage
       ref="table"
       row-key="id"
-      :classify="
-        isDaas
-          ? {
-              authority: 'datasource_catalog_management',
-              types: ['database']
-            }
-          : null
-      "
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
@@ -20,17 +12,6 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
-        <ElButton
-          v-if="isDaas"
-          v-show="multipleSelection.length > 0"
-          v-readonlybtn="'datasource_category_application'"
-          size="mini"
-          class="btn"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
@@ -488,17 +469,6 @@ export default {
         case 'source_and_target':
           return 'Source | Target'
       }
-    },
-    handleSelectTag() {
-      let tagList = {}
-      this.multipleSelection.forEach(row => {
-        if (row.listtags && row.listtags.length > 0) {
-          tagList[row.listtags[0].id] = {
-            value: row.listtags[0].value
-          }
-        }
-      })
-      return tagList
     },
     handleOperationClassify(listtags) {
       let attributes = {

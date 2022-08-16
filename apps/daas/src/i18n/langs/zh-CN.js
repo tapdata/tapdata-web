@@ -2091,5 +2091,12 @@ export default {
   new_create_connection_desc: '数据源是创建传输任务的前提，任务重所有的数据库和表数据节点都来自数据源',
   new_create_api_desc: 'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
   new_data_valid_desc:
-    '可对迁移同步任务的数据源与目标之间的数据进行比对校验，包含快速count校验，全表字段值校验，关联字段值校验等'
+    '可对迁移同步任务的数据源与目标之间的数据进行比对校验，包含快速count校验，全表字段值校验，关联字段值校验等',
+
+  //数据发现-数据对象
+  object_list_name: '对象名称',
+  object_list_classification: '对象分类',
+  object_list_type: '对象类型',
+  object_list_source_type: '来源类型',
+  object_list_source_information: '来源信息'
 }

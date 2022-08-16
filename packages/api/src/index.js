@@ -135,6 +135,9 @@ const functionApi = new Function()
 import MonitoringLogs from './MonitoringLogs'
 const monitoringLogsApi = new MonitoringLogs()
 
+import Discovery from './Discovery'
+const discoveryApi = new Discovery()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -180,7 +183,8 @@ export {
   dictionariesApi,
   metadataTransformerApi,
   functionApi,
-  monitoringLogsApi
+  monitoringLogsApi,
+  discoveryApi
 }
 export * from './ApiClient'
 

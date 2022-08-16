@@ -1,5 +1,5 @@
 <template>
-  <div ref="drawer" class="drawer-wrapper" v-show="visible">
+  <div ref="drawer" class="drawer-wrapper" :style="{ width: width }" v-show="visible">
     <slot></slot>
   </div>
 </template>
@@ -8,7 +8,13 @@
 export default {
   name: 'Drawer',
   props: {
-    visible: Boolean
+    visible: Boolean,
+    width: {
+      type: String,
+      default: () => {
+        return '304px'
+      }
+    }
   },
   watch: {
     visible() {
@@ -56,7 +62,6 @@ export default {
   bottom: 0px;
   z-index: 2001;
   height: 100%;
-  width: 304px;
   background-color: map-get($bgColor, white);
   box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 14%), 0 6px 30px 5px rgb(0 0 0 / 12%);
   overflow: auto;
