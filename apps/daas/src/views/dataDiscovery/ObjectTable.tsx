@@ -125,7 +125,18 @@ export default defineComponent({
           objCategory: t?.category
         }
       })
-      submitTags(data, 'postTags', [props.parentId])
+      if (data?.length === 0) {
+        //给你当前列表数据
+        let listFilter = list.value.map(t => {
+          return {
+            id: t?.id,
+            objCategory: t?.category
+          }
+        })
+        submitTags(listFilter, 'patchTags', [props.parentId])
+      } else {
+        submitTags(data, 'postTags', [props.parentId])
+      }
     }
     const saveTags = (selection, row) => {
       if (selection?.length > 0) {
