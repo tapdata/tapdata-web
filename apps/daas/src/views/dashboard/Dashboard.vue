@@ -149,7 +149,7 @@
           </el-col>
         </el-row>
         <!-- 服务器进程 -->
-        <div class="dashboard-row dashboard-col col mb-5" v-readonlybtn="'Cluster_management_menu'">
+        <div class="dashboard-row dashboard-col col" v-readonlybtn="'Cluster_management_menu'">
           <div class="dashboard-col">
             <div class="dashboard-col-box">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_server_title') }}</div>
