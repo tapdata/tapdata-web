@@ -5,6 +5,11 @@ import axios from 'axios'
 import Qs from 'qs'
 import { Message } from 'element-ui'
 import { errorConfirmFnc } from '@/util'
+import { buried } from './buried'
+
+const buriedMap = {
+  'post_tm/': ''
+}
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';

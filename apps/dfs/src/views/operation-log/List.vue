@@ -475,24 +475,6 @@ export default {
             }
           })
           break
-        // 二次校验
-        case 'differenceInspect':
-          this.$router.push({
-            name: 'Verify',
-            query: {
-              keyword: parameter1
-            }
-          })
-          break
-        // 数据校验
-        case 'inspect':
-          this.$router.push({
-            name: 'Verify',
-            query: {
-              keyword: parameter1
-            }
-          })
-          break
       }
     },
     reset() {

@@ -59,7 +59,7 @@ import { VIcon } from '@tap/component'
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import BindPhone from '@/views/user/components/BindPhone'
-import { buried } from '@/util'
+import { buried } from '@/plugins/buried'
 
 export default {
   components: {
@@ -94,11 +94,6 @@ export default {
           name: 'migrateList',
           title: $t('task_manage_migrate'),
           icon: 'task'
-        },
-        {
-          name: 'Verify',
-          title: $t('verify_manage'),
-          icon: 'shujuxiaoyan'
         },
         {
           name: 'OperationLog',

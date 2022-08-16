@@ -9,14 +9,6 @@
           <ElButton type="primary" @click="createAgent" :loading="createAgentLoading">
             <span>{{ $t('agent_button_create') }}</span>
           </ElButton>
-          <template v-if="isShowTestBtn">
-            <ElButton type="primary" @click="toOldPurchase">
-              <span>{{ $t('agent_button_order1') }}</span>
-            </ElButton>
-            <ElButton type="primary" @click="toPurchase">
-              <span>{{ $t('agent_button_order2') }}</span>
-            </ElButton>
-          </template>
         </div>
       </div>
       <ElTable
@@ -281,7 +273,7 @@ import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
-import { buried } from '@/util'
+import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 
 let timer = null
@@ -297,7 +289,6 @@ export default {
   mixins: [timeFunction],
   data() {
     return {
-      isShowTestBtn: window.__config__.ENV === 'dev',
       loading: true,
       createAgentLoading: false,
       searchParams: {
@@ -497,37 +488,6 @@ export default {
     },
     rowClick(row) {
       this.selectedRow = row
-    },
-    toOldPurchase() {
-      this.$confirm(this.$t('agent_link_to_old_purchase_msg'), this.$t('agent_link_to_old_purchase_title'), {
-        type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
-      }).then(res => {
-        if (!res) {
-          return
-        }
-        let downloadUrl = window.App.$router.resolve({
-          name: 'Purchase'
-        })
-        window.open(downloadUrl.href, '_blank')
-      })
-    },
-    toPurchase() {
-      this.$confirm(this.$t('agent_link_to_purchase_msg'), this.$t('agent_link_to_purchase_title'), {
-        type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
-      }).then(res => {
-        if (!res) {
-          return
-        }
-        let downloadUrl = window.App.$router.resolve({
-          name: 'FastDownload'
-        })
-
-        window.open(downloadUrl.href, '_blank')
-      })
     },
     loadDetailsData(data) {
       if (this.selectedRow?.id) {

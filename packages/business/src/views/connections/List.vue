@@ -166,7 +166,7 @@ let timeout = null
 
 export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
-  inject: ['checkAgent'],
+  inject: ['checkAgent', 'buried'],
   mixins: [Locale],
   data() {
     return {
@@ -528,11 +528,13 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
+      this.buried('connectionCreateDialog')
       this.checkAgent(() => {
         this.dialogDatabaseTypeVisible = true
       })
     },
     async testConnection(item) {
+      this.buried('connectionTest')
       this.checkAgent(() => {
         let loading = this.$loading()
         this.testData = Object.assign({}, defaultModel['default'], item)
@@ -551,9 +553,14 @@ export default {
             this.$refs.test.start()
             this.table.fetch()
           })
+          .catch(() => {
+            this.buried('connectionTestFail')
+          })
           .finally(() => {
             loading.close()
           })
+      }).catch(() => {
+        this.buried('connectionTestAgentFail')
       })
     },
     returnTestData(data) {
@@ -564,6 +571,9 @@ export default {
       } else {
         this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false)
       }
+      this.buried('connectionTest', '', {
+        result: status === 'ready'
+      })
       this.table.fetch()
     },
     getFilterItems() {

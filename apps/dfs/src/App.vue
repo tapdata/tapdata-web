@@ -5,12 +5,20 @@
 </template>
 
 <script>
+import { buried } from '@/plugins/buried'
 export default {
   name: 'app',
   provide: {
-    checkAgent(cb) {
-      cb && cb()
-    }
+    async checkAgent(callback) {
+      let data = await this.$axios.get('api/tcm/agent/agentCount')
+      if (data.agentRunningCount || data.agentRunningCount > 0) {
+        callback?.()
+      } else {
+        this.$message.error(this.$t('agent_error_check'))
+        throw new Error(this.$t('agent_error_check'))
+      }
+    },
+    buried
   }
 }
 </script>

@@ -275,6 +275,7 @@ let timeout = null
 export default {
   name: 'TaskList',
   components: { VIcon, FilterBar, TablePage, SkipError, Drawer, Upload },
+  inject: ['checkAgent', 'buried'],
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
@@ -528,8 +529,15 @@ export default {
       })
     },
     create() {
-      this.$router.push({
-        name: 'MigrateCreate'
+      this.buried('migrationCreate')
+      this.checkAgent(() => {
+        this.$router
+          .push({
+            name: 'MigrateCreate'
+          })
+          .catch(() => {
+            this.buried('migrationCreateAgentFail')
+          })
       })
     },
     handleEditor(id) {
@@ -597,8 +605,8 @@ export default {
     export(ids) {
       taskApi.export(ids)
     },
-    start(ids) {
-      let _this = this
+    async start(ids) {
+      this.buried('migrationStart')
       let id = ids[0]
       let filter = {
         fields: {
@@ -611,29 +619,27 @@ export default {
           }
         }
       }
-
-      taskApi
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(data => {
-          let flag = false
-          let items = data?.items || []
-          if (items.length) {
-            items.forEach(item => {
-              if (item?.errorEvents?.length) {
-                flag = true
-              }
-            })
-          }
-          taskApi.batchStart(ids).then(data => {
-            this.$message.success(data?.message || this.$t('message_operation_succuess'))
-            this.table.fetch()
+      try {
+        let data = await taskApi.get({ filter: JSON.stringify(filter) })
+        let flag = false
+        let items = data?.items || []
+        if (items.length) {
+          items.forEach(item => {
+            if (item?.errorEvents?.length) {
+              flag = true
+            }
           })
-          if (flag) {
-            _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {})
-          }
-        })
+        }
+        let result = await taskApi.batchStart(ids)
+        this.buried('migrationStart', '', { result: true })
+        this.$message.success(result?.message || this.$t('message_operation_succuess'))
+        this.table.fetch()
+        if (flag) {
+          this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {})
+        }
+      } catch (error) {
+        this.buried('migrationStart', '', { result: false })
+      }
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
