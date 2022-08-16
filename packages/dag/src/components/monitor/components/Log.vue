@@ -162,7 +162,7 @@ export default {
     return {
       activeNodeId: 'all',
       keyword: '',
-      checkList: ['debug', 'info', 'warn', 'error'],
+      checkList: ['info', 'warn', 'error'],
       checkItems: [
         {
           label: 'debug',
