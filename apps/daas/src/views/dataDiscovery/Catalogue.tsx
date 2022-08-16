@@ -33,7 +33,8 @@ export default defineComponent({
       let { size, current } = data.page
       let where = {
         page: current,
-        pageSize: size
+        pageSize: size,
+        tagId: data?.currentNode?.id || ''
       }
       sourceType && (where['sourceType'] = sourceType)
       queryKey && (where['queryKey'] = queryKey)
@@ -102,6 +103,7 @@ export default defineComponent({
     }
     const getNodeChecked = node => {
       data.currentNode = node
+      loadData(1)
     }
     const renderNode = ({ row }) => {
       return (
@@ -208,7 +210,7 @@ export default defineComponent({
               visible={this.data.isShowSourceDrawer}
               on={{ ['update:visible']: this.closeSourceDrawer }}
             >
-              <ObjectTable ref={'objectTable'}></ObjectTable>
+              <ObjectTable ref={'objectTable'} parentId={this.data.currentNode.id}></ObjectTable>
             </el-drawer>
           </div>
         </div>

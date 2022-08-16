@@ -1,13 +1,16 @@
 import { defineComponent, reactive, ref } from '@vue/composition-api'
 import { FilterBar } from '@tap/component'
 import { discoveryApi } from '@tap/api'
+import { useI18n, useMessage } from '@/hooks'
 import './index.scss'
 
 export default defineComponent({
-  props: [''],
+  props: ['parentId'],
   setup(props, { root }) {
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const list = ref([])
+    const { error } = useMessage()
+    const multipleSelection = ref([])
     const data = reactive({
       isShowDetails: false,
       searchParams: {
@@ -90,6 +93,9 @@ export default defineComponent({
         ]
       })
     }
+    const handleSelectionChange = val => {
+      multipleSelection.value = val
+    }
     const dataAssembly = data => {
       if (data?.length === 0) return
       return data.map(item => {
@@ -99,11 +105,36 @@ export default defineComponent({
         }
       })
     }
+    const saveTags = () => {
+      if (multipleSelection.value?.length === 0) {
+        root.$emit('update:visible', false)
+      }
+      let data = multipleSelection.value.map(t => {
+        return {
+          id: t?.id,
+          objCategory: t?.category
+        }
+      })
+      let where = {
+        tagBindingParams: data,
+        tagIds: [props.parentId]
+      }
+      discoveryApi
+        .saveTags(where)
+        .then(() => {
+          root.$emit('update:visible', false)
+        })
+        .catch(err => {
+          error(err)
+        })
+    }
     return {
       data,
       list,
       loadTableData,
-      loadFilterList
+      loadFilterList,
+      handleSelectionChange,
+      saveTags
     }
   },
   render() {
@@ -120,7 +151,7 @@ export default defineComponent({
                 ></FilterBar>
               </div>
             </div>
-            <el-table class="discovery-page-table" data={this.list}>
+            <el-table class="discovery-page-table" data={this.list} onSelection-change={this.handleSelectionChange}>
               <el-table-column width="55" type="selection"></el-table-column>
               <el-table-column label={this.$t('object_list_name')} prop="name"></el-table-column>
               <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
@@ -138,7 +169,13 @@ export default defineComponent({
                 total={this.data.page.total}
                 onCurrent-change={this.loadTableData}
               ></el-pagination>
-              <el-button class="mt-4" type="primary" size="mini" style={'width:30px;float:right'}>
+              <el-button
+                class="mt-4"
+                type="primary"
+                size="mini"
+                style={'width:30px;float:right'}
+                onClick={this.saveTags}
+              >
                 确认
               </el-button>
             </footer>
