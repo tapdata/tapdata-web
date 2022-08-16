@@ -131,7 +131,7 @@
       ></LineChart>
     </ElDialog>
 
-    <InitialList v-model="initialListDialog" :dataflow="dataflow"></InitialList>
+    <InitialList v-model="initialListDialog" :dataflow="dataflow" ref="initialList"></InitialList>
   </aside>
 </template>
 
@@ -355,6 +355,10 @@ export default {
           ]
         }
       )
+    },
+
+    initialList() {
+      return this.$refs?.initialList
     }
   },
 

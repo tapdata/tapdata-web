@@ -98,19 +98,52 @@ export default {
         //   slotName: 'operation',
         //   width: 60
         // }
-      ]
+      ],
+      pageObj: {
+        current: 1,
+        size: 20
+      },
+      timer: null
     }
   },
 
   watch: {
     value(v) {
       this.visible = !!v
+      if (this.visible) {
+        this.init()
+      } else {
+        this.timer && clearInterval(this.timer)
+      }
     }
   },
 
   methods: {
+    init() {
+      this.timer && clearInterval(this.timer)
+      this.timer = setInterval(() => {
+        this.startLoadData()
+      }, 5000)
+      this.startLoadData()
+    },
+
+    startLoadData() {
+      this.$refs.table.fetch?.(this.pageObj.current, 0, true)
+    },
+
+    getFilter(pageObj = {}) {
+      let { current = 1, size = 20 } = pageObj || this.pageObj
+      let filter = {
+        taskRecordId: this.dataflow?.taskRecordId,
+        size,
+        page: current
+      }
+      return filter
+    },
+
     remoteMethod({ page }) {
       let { current, size } = page
+      this.pageObj = { current, size }
       let filter = {
         taskRecordId: this.dataflow?.taskRecordId,
         size,

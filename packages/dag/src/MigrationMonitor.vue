@@ -41,6 +41,7 @@
           :quota="quota"
           :timeFormat="timeFormat"
           :range="[firstStartTime, lastStopTime || Date.now()]"
+          ref="leftSider"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
@@ -249,7 +250,12 @@ export default {
     },
 
     isEnterTimer() {
-      return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
+      return (
+        this.quotaTimeType !== 'custom' &&
+        !this.nodeDetailDialog &&
+        !this.$refs.leftSider?.initialList?.visible &&
+        this.dataflow?.status === 'running'
+      )
     }
   },
 
@@ -647,7 +653,10 @@ export default {
       }
       const $verifyPanel = this.$refs.verifyPanel
       if ($verifyPanel) {
-        params.verify = $verifyPanel.getFilter(1)
+        params.verify = {
+          uri: `/api/Task/${this.dataflow.id}/auto-inspect-results-group-by-table`,
+          param: $verifyPanel.getFilter(1)
+        }
       }
       return params
     },
