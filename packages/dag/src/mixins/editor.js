@@ -1,9 +1,9 @@
 import { merge } from 'lodash'
-import { connectorActiveStyle } from '../style'
-import { taskApi } from '@tap/api'
 import Mousetrap from 'mousetrap'
+import { taskApi } from '@tap/api'
+import { makeStatusAndDisabled } from '@tap/business'
+import { connectorActiveStyle } from '../style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
-import { getSubTaskStatus, getTaskBtnDisabled } from '@tap/business'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -494,14 +494,10 @@ export default {
           }
         })
       }
+      makeStatusAndDisabled(data)
+      console.log('reformDataflow', data) // eslint-disable-line
       this.$set(this.dataflow, 'status', data.status)
-      this.$set(this.dataflow, 'statuses', data.statuses)
-      this.$set(this.dataflow, 'statusResult', getSubTaskStatus(data.statuses))
-      this.$set(
-        this.dataflow,
-        'disabledData',
-        getTaskBtnDisabled(this.dataflow, this.$disabledByPermission('SYNC_job_operation_all_data', data.user_id))
-      )
+      this.$set(this.dataflow, 'disabledData', data.btnDisabled)
     },
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
@@ -1646,10 +1642,10 @@ export default {
       }
     },
 
-    async loadDataflow(id) {
+    async loadDataflow(id, params) {
       this.loading = true
       try {
-        const data = await taskApi.get([id])
+        const data = await taskApi.get(id, params)
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
         return data

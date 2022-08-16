@@ -1,8 +1,8 @@
 <template>
   <section
-    v-show="activeType"
+    v-show="showPanel"
     class="config-panel border-start flex-column"
-    :class="{ flex: activeType, 'show-settings': activeType === 'settings' }"
+    :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
   >
     <div class="panel-header flex align-center px-4 border-bottom">
       <template v-if="activeType !== 'settings'">
@@ -24,6 +24,7 @@
 
     <div class="panel-content flex-1">
       <FormPanel
+        v-if="!onlySetting"
         v-show="activeType !== 'settings'"
         v-on="$listeners"
         v-bind="$attrs"
@@ -64,6 +65,10 @@ export default {
 
   mixins: [Locale],
 
+  props: {
+    onlySetting: Boolean
+  },
+
   data() {
     return {
       currentTab: '0',
@@ -74,7 +79,11 @@ export default {
   components: { TextEditable, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+
+    showPanel() {
+      return this.onlySetting ? this.activeType === 'settings' : this.activeType
+    }
   },
 
   watch: {

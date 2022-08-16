@@ -1,5 +1,3 @@
-const Mock = require('mockjs')
-
 module.exports = {
   '/api/Task/chart': {
     reqId: 'f3d6efb7-7a11-4e43-951c-e8c6a0b6370e',
@@ -48,6 +46,24 @@ module.exports = {
         deletedTotal: 8350087,
         outputTotal: 417668247
       }
+    }
+  },
+  '/api/verify': {
+    reqId: '@id',
+    ts: '@time',
+    code: 'ok',
+    data: {
+      total: 20,
+      'items|20': [
+        {
+          tableName: '@name',
+          connectionId: '@cuid',
+          diff: '@integer(1000, 5500)',
+          id: '@id',
+          progress: '@integer(0, 100)',
+          connectionName: '@name'
+        }
+      ]
     }
   }
 }

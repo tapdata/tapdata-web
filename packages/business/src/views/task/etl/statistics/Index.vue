@@ -34,6 +34,7 @@ import { Log } from '../../../../components'
 import Info from './Info'
 import Schedule from './Schedule'
 import ShareMining from './ShareMining'
+import { makeStatusAndDisabled } from '../../../../shared'
 
 export default {
   name: 'Statistics',
@@ -85,7 +86,7 @@ export default {
       type: 'watch',
       collection: 'DataFlows',
       filter: {
-        where: { 'fullDocument._id': { $in: [this.$route.params.subId] } }, //查询条件
+        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
         fields: {
           'fullDocument.id': true,
           'fullDocument._id': true,
@@ -125,7 +126,7 @@ export default {
       this.loadTask()
     },
     async loadTask(hiddenLoading) {
-      let id = this.$route.params?.subId
+      let id = this.$route.params?.id
       if (!hiddenLoading) {
         this.loading = true
       }
@@ -156,6 +157,7 @@ export default {
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = this.formatTime(data.finishTime)
       data.cdcTimeFmt = this.formatTime(cdcTime)
+      makeStatusAndDisabled(data)
       return data
     },
     formatTime(time) {

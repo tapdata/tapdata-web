@@ -4,7 +4,6 @@ import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
 import EmptyItem from 'web-core/components/EmptyItem'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import './style.scss'
 import { VIcon } from '@tap/component'
 import { delayTrigger } from 'web-core/util'
@@ -45,6 +44,10 @@ export const FieldRenameProcessor = defineComponent({
         count: 1
       }
     })
+    const updateDeletedNum = item => {
+      item.userDeletedNum = item.fieldsMapping.filter(field => !field.isShow).length
+      return item
+    }
     //数据初始化
     const loadData = (value, type, loading) => {
       if (!loading) {
@@ -68,8 +71,8 @@ export const FieldRenameProcessor = defineComponent({
       taskApi
         .getNodeTableInfo(where)
         .then(res => {
-          let { total, items } = res
-          list.value = items || []
+          let { total, items = [] } = res
+          list.value = items.map(updateDeletedNum)
           config.page.total = total
           config.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
           updateView(config.position)
@@ -304,6 +307,7 @@ export const FieldRenameProcessor = defineComponent({
           tableList.value[i]['isShow'] = true
         }
       }
+      updateDeletedNum(config.selectTableRow)
       doUpdateField(row, 'del', true)
     }
     const doDeleteRow = row => {
@@ -313,6 +317,7 @@ export const FieldRenameProcessor = defineComponent({
         }
       }
       doUpdateField(row, 'del', false)
+      updateDeletedNum(config.selectTableRow)
     }
     const tableRowClassName = ({ row }) => {
       if (!row.isShow) {
@@ -354,7 +359,7 @@ export const FieldRenameProcessor = defineComponent({
         >
           <input
             readOnly={props.disabled}
-            class="rename-table-item-input"
+            class="rename-table-item-input px-2"
             value={row.targetFieldName}
             onChange={event => {
               updateName(row, event.target.value)

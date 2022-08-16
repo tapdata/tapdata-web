@@ -20,9 +20,7 @@
         <div class="task-info__row">
           <span class="task-info__label">运行状态：</span>
           <span class="task-info__value">
-            <span :class="['status-' + dataflow.status, 'status-block']">
-              {{ $t('task_preview_status_' + dataflow.status) }}
-            </span>
+            <TaskStatus :task="dataflow" />
           </span>
         </div>
       </div>
@@ -67,12 +65,12 @@
         </CollapsePanel>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box">
-        <CollapsePanel>
+        <CollapsePanel :active="initialData.snapshotDoneAt || initialData.finishDuration ? '1' : null">
           <template #header>
             <span class="fw-bold font-color-normal">全量信息</span>
           </template>
           <template #header-right>
-            <ElTooltip transition="tooltip-fade-in" content="放大">
+            <ElTooltip transition="tooltip-fade-in" content="列表">
               <VIcon @click.stop="toInitialList">menu-left</VIcon>
             </ElTooltip>
           </template>
@@ -133,7 +131,7 @@
       ></LineChart>
     </ElDialog>
 
-    <InitialList v-model="initialListDialog"></InitialList>
+    <InitialList v-model="initialListDialog" :dataflow="dataflow"></InitialList>
   </aside>
 </template>
 
@@ -160,6 +158,7 @@ import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
 import InitialList from './components/InitialList'
 import { Chart } from '@tap/component'
+import { TaskStatus } from '@tap/business'
 import { getPieOptions } from './util'
 import dayjs from 'dayjs'
 import { calcTimeUnit } from '@tap/shared'
@@ -179,7 +178,8 @@ export default {
     TimeSelect,
     CollapsePanel,
     VIcon,
-    InitialList
+    InitialList,
+    TaskStatus
   },
 
   data() {
@@ -199,18 +199,12 @@ export default {
     // 任务事件统计（条）-任务累计
     eventDataAll() {
       const data = this.quota.samples?.totalData?.[0]
-      if (!data) {
-        return
-      }
       return this.getInputOutput(data)
     },
 
     // 任务事件统计（条）-所选周期累计
     eventDataPeriod() {
       const data = this.quota.samples?.barChartData?.[0]
-      if (!data) {
-        return
-      }
       return this.getInputOutput(data)
     },
 
@@ -403,7 +397,7 @@ export default {
         for (let key in result) {
           let item = result[key]
           if (el.includes(key)) {
-            item[el.replace(key, '')] = data[el] || 0
+            item[el.replace(key, '')] = data?.[el] || 0
           }
         }
       })

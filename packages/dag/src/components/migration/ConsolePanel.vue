@@ -30,7 +30,7 @@
     </div>
     <div class="flex-1 flex flex-column">
       <div class="flex p-2">
-        <ElCheckboxGroup v-model="levels" :min="1" size="mini" class="inline-flex flex-1">
+        <ElCheckboxGroup v-model="levels" :min="1" size="mini" class="inline-flex flex-1" @change="autoLoad">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -40,7 +40,7 @@
       </div>
       <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
         <code class="log-list block h-100 overflow-auto py-1 rounded-2">
-          <VEmpty v-if="!logList.length && !loading" large />
+          <VEmpty v-if="!logList.length && !ifAuto && !loading" large />
           <pre
             v-for="(item, i) in logList"
             :key="i"
@@ -49,7 +49,7 @@
 
           <pre
             class="justify-content-center align-center m-0 p-1"
-            :class="loading ? 'flex' : 'none'"
+            :class="ifAuto || loading ? 'flex' : 'none'"
           ><svg viewBox="25 25 50 50" class="circular">
               <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
             </svg><span class="ml-1 font-color-light">加载中</span>
@@ -87,6 +87,7 @@ export default {
       logList: [],
       nodeList: [],
       nodeId: '',
+      ifAuto: false,
       loading: false
     }
   },

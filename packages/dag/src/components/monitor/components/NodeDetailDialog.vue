@@ -23,7 +23,7 @@
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
-      <div v-if="isSource" class="chart-box rounded-2">
+      <div v-if="isSource" :class="{ 'w-100': !isSource && !isTarget }" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
         <div class="chart-box__content p-4 flex justify-content-between">
           <div class="pl-6">
@@ -56,7 +56,11 @@
           </div>
         </div>
       </div>
-      <div v-else-if="isTarget" class="chart-box rounded-2 flex flex-column">
+      <div
+        v-else-if="isTarget"
+        :class="{ 'w-100': !isSource && !isTarget }"
+        class="chart-box rounded-2 flex flex-column"
+      >
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">连接状态</div>
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <div class="text-center pb-10 w-100">
@@ -198,18 +202,12 @@ export default {
     // 任务事件统计（条）-任务累计
     eventDataAll() {
       const data = this.quota.samples?.totalData?.[0]
-      if (!data) {
-        return
-      }
       return this.getInputOutput(data)
     },
 
     // 任务事件统计（条）-所选周期累计
     eventDataPeriod() {
       const data = this.quota.samples?.barChartData?.[0]
-      if (!data) {
-        return
-      }
       return this.getInputOutput(data)
     },
 
@@ -437,7 +435,7 @@ export default {
     },
 
     getFilter() {
-      const taskId = this.dataflow?.id
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       const nodeId = this.selected
       const [startAt, endAt] = this.quotaTime
       let params = {
@@ -449,6 +447,7 @@ export default {
             tags: {
               type: 'node',
               taskId,
+              taskRecordId,
               nodeId
             },
             endAt: Date.now(), // 停止时间 || 当前时间
@@ -484,6 +483,7 @@ export default {
             tags: {
               type: 'node',
               taskId,
+              taskRecordId,
               nodeId
             },
             fields: [
@@ -510,6 +510,7 @@ export default {
             tags: {
               type: 'node',
               taskId,
+              taskRecordId,
               nodeId
             },
             fields: ['qps', 'inputQps', 'outputQps', 'timeCostAvg'],
@@ -599,7 +600,7 @@ export default {
       }
       let newData = {}
       for (let key in data) {
-        newData[key.toLowerCase()] = data[key]
+        newData[key.toLowerCase()] = data[key] || 0
       }
       keyArr.forEach(el => {
         for (let key in result) {

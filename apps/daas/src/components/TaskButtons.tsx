@@ -124,15 +124,11 @@ export default defineComponent({
         emit('trigger', 'del', task.value)
       }
     }
-    // 计算属性：获取按钮禁用状态
-    const disabledMap = computed(() => {
-      return getTaskBtnDisabled(task.value)
-    })
 
     return () => {
       return (
         <div>
-          <el-button type="text" disabled={disabledMap.value.start} onClick={start}>
+          <el-button type="text" disabled={props.task.btnDisabled.start} onClick={start}>
             {$t('task_list_run')}
           </el-button>
           <el-divider direction="vertical"></el-divider>
@@ -141,12 +137,12 @@ export default defineComponent({
               {$t('task_list_force_stop')}
             </el-button>
           ) : (
-            <el-button type="text" disabled={disabledMap.value.stop} onClick={stop}>
+            <el-button type="text" disabled={props.task.btnDisabled.stop} onClick={stop}>
               {$t('task_list_stop')}
             </el-button>
           )}
           <el-divider direction="vertical"></el-divider>
-          <el-button type="text" disabled={disabledMap.value.edit} onClick={edit}>
+          <el-button type="text" disabled={props.task.btnDisabled.edit} onClick={edit}>
             {$t('button_edit')}
           </el-button>
           <el-divider direction="vertical"></el-divider>
@@ -160,7 +156,7 @@ export default defineComponent({
               ) : (
                 ''
               )}
-              <el-dropdown-item command="reset" disabled={disabledMap.value.reset}>
+              <el-dropdown-item command="reset" disabled={props.task.btnDisabled.reset}>
                 {$t('task_list_reset')}
               </el-dropdown-item>
               {!hideList.value.includes('del') ? (

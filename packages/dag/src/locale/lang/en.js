@@ -5,7 +5,7 @@ export default {
     'The new table name only supports English, numbers, underscores, dots, minus signs, and starts with English letters, and does not allow system to start',
   dialog_collectionValidateTip:
     'The name of the new dataset only supports English, numbers, underscores, dots, minus signs, and starts with English letters, and does not allow system to start',
-  task_stetting_basic_setting: 'Basic settings',
+  task_stetting_basic_setting: 'Settings',
   task_stetting_most_setting: 'Advanced settings',
   loading: 'Loading',
   dag_connection: 'connection',
@@ -70,6 +70,8 @@ export default {
   task_setting_lag_time: 'Incremental lag judgment time setting',
   task_setting_cdc_engine_filter: 'Enable engine filtering',
   task_setting_share_cdc_mode: 'Shared incremental read mode',
+  task_setting_processorThreadNum: 'Processor thread num',
+  task_setting_increOperationMode: 'Incremental operation mode',
   button_undo: 'Undo',
   button_redo: 'Redo',
   button_delete: 'Delete',

@@ -1,4 +1,4 @@
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent, watch } from '@vue/composition-api'
 import { h } from '@formily/vue'
 import { stylePrefix } from '../configs'
 import { useFormLayout } from '@formily/element'
@@ -96,7 +96,7 @@ export const Space = defineComponent({
               'span',
               {
                 class: `${itemClassName}-split`,
-                key: `${itemClassName}-split`,
+                key: `${itemClassName}-split-${i}`,
                 style
               },
               {

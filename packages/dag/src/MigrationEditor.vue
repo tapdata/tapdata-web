@@ -26,13 +26,7 @@
       @reset="handleReset"
       @edit="handleEdit"
       @detail="handleDetail"
-    >
-      <template #status="{ result }">
-        <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ t('task_preview_status_' + result[0].status) }}
-        </span>
-      </template>
-    </TopHeader>
+    />
     <section class="layout-wrap layout-has-sider position-relative">
       <!--左侧边栏-->
       <VExpandXTransition>
@@ -120,11 +114,11 @@ import { merge } from 'lodash'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
-import { VIcon, VEmpty } from '@tap/component'
-import { VExpandXTransition } from '@tap/component'
+import { VExpandXTransition, VIcon, VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
 import ConsolePanel from './components/migration/ConsolePanel'
+import { DEFAULT_SETTINGS } from './constants'
 
 export default {
   name: 'MigrationEditor',
@@ -150,6 +144,7 @@ export default {
 
   data() {
     const dataflow = observable({
+      ...DEFAULT_SETTINGS,
       id: '',
       name: ''
     })
@@ -276,23 +271,12 @@ export default {
     },
 
     gotoViewer(newTab) {
-      let subId = this.dataflow.statuses[0]?.id || ''
-      /*this.$router.push({
-        name: 'MigrationMonitor',
-        params: {
-          id: this.dataflow.id
-        },
-        query: {
-          subId: subId
-        }
-      })*/
       if (newTab) {
         window.open(
           this.$router.resolve({
             name: 'MigrationMonitor',
             query: {
-              id: this.dataflow.id,
-              subId: subId
+              id: this.dataflow.id
             },
             params: {
               id: this.dataflow.id
@@ -304,8 +288,7 @@ export default {
         this.$router.push({
           name: 'MigrationMonitor',
           query: {
-            id: this.dataflow.id,
-            subId: subId
+            id: this.dataflow.id
           },
           params: {
             id: this.dataflow.id
@@ -449,17 +432,10 @@ export default {
     },
 
     handleDetail() {
-      let subId = this.dataflow.statuses[0]?.id || ''
-      if (!subId) {
-        this.$message.error('该复制任务没有子任务')
-        return
-      }
-
       this.$router.push({
         name: 'MigrationMonitor',
         query: {
-          id: this.dataflow.id,
-          subId: subId
+          id: this.dataflow.id
         },
         params: {
           id: this.dataflow.id

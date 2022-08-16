@@ -233,7 +233,7 @@ export const TableRename = observer(
                       >
                         <input
                           readOnly={this.disabled}
-                          class="name-list-item-input"
+                          class="name-list-item-input px-2"
                           value={this.nameMap[name] || name}
                           onChange={event => {
                             this.updateName(event.target.value, name)

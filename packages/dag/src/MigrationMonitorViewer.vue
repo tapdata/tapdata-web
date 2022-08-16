@@ -8,6 +8,7 @@
       :dataflow="dataflow"
       :scale="scale"
       :showBottomPanel="showBottomPanel"
+      :hide-menus="['verify', 'operation']"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -30,33 +31,6 @@
       </template>
     </TopHeader>
     <section class="layout-wrap layout-has-sider position-relative font-color-light">
-      <!--左侧边栏-->
-      <VExpandXTransition>
-        <LeftSider
-          v-resize.right="{
-            minWidth: 356,
-            maxWidth: 750
-          }"
-          :dataflow="dataflow"
-          :quota="quota"
-          :timeFormat="timeFormat"
-          :range="[firstStartTime, lastStopTime || Date.now()]"
-          @move-node="handleDragMoveNode"
-          @drop-node="handleAddNodeByDrag"
-          @add-node="handleAddNode"
-          @toggle-expand="handleToggleExpand"
-          @changeTimeSelect="handleChangeTimeSelect"
-        >
-          <template #status="{ result }">
-            <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ t('task_preview_status_' + result[0].status) }}
-            </span>
-          </template>
-        </LeftSider>
-      </VExpandXTransition>
-      <div v-if="!stateIsReadonly" class="sider-expand-wrap flex justify-center align-center rotate-180">
-        <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
-      </div>
       <!--内容体-->
       <section class="layout-wrap flex-1">
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex flex-column flex-1 overflow-hidden">
@@ -67,18 +41,15 @@
             @mouse-select="handleMouseSelect"
             @change-scale="handleChangeScale"
           >
-            <Node
+            <DFNode
               v-for="n in allNodes"
               :key="n.id"
               :node-id="n.id"
-              :node="n"
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
                 'options-active': nodeMenu.typeId === n.id
               }"
-              :task-type="dataflow.type"
-              :sample="dagData ? dagData[n.id] : {}"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -87,8 +58,7 @@
               @nodeSelected="nodeSelectedById"
               @delete="handleDeleteById"
               @show-node-popover="showNodePopover"
-              @open-detail="handleOpenDetail(n)"
-            ></Node>
+            ></DFNode>
           </PaperScroller>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large></VEmpty>
@@ -100,24 +70,12 @@
             minHeight: 328
           }"
           :dataflow="dataflow"
+          class="tabs-header__hidden"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
       </section>
-      <!--校验面板-->
-      <VerifyPanel
-        v-if="activeType === 'verify'"
-        ref="verifyPanel"
-        :settings="dataflow"
-        :scope="formScope"
-        :data="verifyData"
-        :dataflow="dataflow"
-        @showVerify="handleShowVerify"
-        @hide="onHideSidebar"
-        @verifyDetails="handleVerifyDetails"
-        @connectionList="handleConnectionList"
-      />
       <!--配置面板-->
-      <ConfigPanel v-else ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
 
       <!--   节点详情   -->
       <NodeDetailDialog
@@ -136,36 +94,31 @@
 </template>
 
 <script>
-import dagre from 'dagre'
-import { observable } from '@formily/reactive'
-
-import { VExpandXTransition, VEmpty } from '@tap/component'
-import { measurementApi, taskApi } from '@tap/api'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { titleChange } from 'web-core/mixins/titleChange'
-import { showMessage } from 'web-core/mixins/showMessage'
-import resize from 'web-core/directives/resize'
-import VIcon from 'web-core/components/VIcon'
-
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
-import LeftSider from './components/monitor/LeftSider'
-import Node from './components/monitor/Node'
+import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { allResourceIns } from './nodes/loader'
+import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
+import { titleChange } from 'web-core/mixins/titleChange'
+import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
-import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
+import resize from 'web-core/directives/resize'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
+import { VEmpty } from '@tap/component'
+import { observable } from '@formily/reactive'
 import Locale from './mixins/locale'
+import { measurementApi, taskApi } from '@tap/api'
+import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 
 export default {
-  name: 'MigrationMonitor',
+  name: 'MigrationMonitorViewer',
 
   directives: {
     resize
@@ -174,16 +127,12 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
 
   components: {
-    VExpandXTransition,
     VEmpty,
     ConfigPanel,
-    VerifyPanel,
     BottomPanel,
     PaperScroller,
     TopHeader,
-    Node,
-    LeftSider,
-    VIcon,
+    DFNode,
     NodeDetailDialog
   },
 
@@ -217,16 +166,16 @@ export default {
       dataflow,
 
       scale: 1,
-      showBottomPanel: false,
+      showBottomPanel: true,
       timer: null,
       quotaTimeType: '5m',
       quotaTime: [],
+      count: 0,
       quota: {}, // 指标数据
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
       timeFormat: 'HH:mm:ss',
-      dagData: null,
-      verifyData: null
+      dagData: null
     }
   },
 
@@ -256,11 +205,6 @@ export default {
   watch: {
     'dataflow.type'(v) {
       v && this.init()
-    },
-    'dataflow.status'(v1, v2) {
-      if (v1 !== v2) {
-        this.init()
-      }
     }
   },
 
@@ -272,8 +216,6 @@ export default {
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
-        // 显示连线动画
-        this.jsPlumbIns.select().addClass('running')
         // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
@@ -312,7 +254,9 @@ export default {
     },
 
     async openDataflow(id) {
-      const data = await this.loadDataflow(id)
+      const data = await this.loadDataflow(id, {
+        taskRecordId: this.$route.query?.taskRecordId
+      })
       if (data) {
         const { dag } = data
         this.setTaskId(data.id)
@@ -522,7 +466,6 @@ export default {
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.t('message_operation_succuess'))
         this.isSaving = false
-        this.loadDataflow(this.dataflow?.id)
       } catch (e) {
         this.handleError(e)
         this.isSaving = false
@@ -530,7 +473,7 @@ export default {
     },
 
     getQuotaFilter() {
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      const taskId = this.dataflow?.id
       const [startAt, endAt] = this.quotaTime
       let params = {
         startAt,
@@ -540,8 +483,7 @@ export default {
           totalData: {
             tags: {
               type: 'task',
-              taskId,
-              taskRecordId
+              taskId
             },
             endAt: Date.now(), // 停止时间 || 当前时间
             fields: [
@@ -572,8 +514,7 @@ export default {
           barChartData: {
             tags: {
               type: 'task',
-              taskId,
-              taskRecordId
+              taskId
             },
             fields: [
               'inputInsertTotal',
@@ -593,8 +534,7 @@ export default {
           lineChartData: {
             tags: {
               type: 'task',
-              taskId,
-              taskRecordId
+              taskId
             },
             fields: ['inputQps', 'outputQps', 'timeCostAvg'],
             type: 'continuous' // 连续数据
@@ -603,8 +543,7 @@ export default {
           dagData: {
             tags: {
               type: 'node',
-              taskId,
-              taskRecordId
+              taskId
             },
             fields: [
               'inputInsertTotal',
@@ -645,10 +584,6 @@ export default {
           param: this.getQuotaFilter()
         }
       }
-      const $verifyPanel = this.$refs.verifyPanel
-      if ($verifyPanel) {
-        params.verify = $verifyPanel.getFilter(1)
-      }
       return params
     },
 
@@ -658,8 +593,7 @@ export default {
       }
       measurementApi.batch(this.getParams()).then(data => {
         const map = {
-          quota: this.loadQuotaData,
-          verify: this.loadVerifyData
+          quota: this.loadQuotaData
         }
         for (let key in data) {
           const item = data[key]
@@ -677,10 +611,6 @@ export default {
       const granularity = getTimeGranularity(data.interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
-    },
-
-    loadVerifyData(data) {
-      this.verifyData = data
     },
 
     getDagData(data = []) {
@@ -809,26 +739,6 @@ export default {
         }
       })
       window.open(routeUrl.href)
-    },
-
-    handleReset() {
-      let msg = this.getConfirmMessage('initialize')
-      this.$confirm(msg, '', {
-        type: 'warning'
-      }).then(async resFlag => {
-        if (!resFlag) {
-          return
-        }
-        try {
-          this.dataflow.disabledData.reset = true
-          const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.t('message_resetOk'))
-          // this.init()
-          this.loadDataflow(this.dataflow?.id)
-        } catch (e) {
-          this.handleError(e, this.t('message_resetFailed'))
-        }
-      })
     }
   }
 }

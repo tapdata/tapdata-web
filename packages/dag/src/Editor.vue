@@ -39,7 +39,7 @@
         @drop-node="handleAddNodeByDrag"
         @add-table-as-node="handleAddTableAsNode"
       />
-      <section class="layout-wrap">
+      <section class="layout-wrap flex-1">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
           <PaperScroller
@@ -78,8 +78,10 @@
           ></NodePopover>
         </main>
         <!--配置面板-->
-        <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar"></ConfigPanel>
+        <ConfigPanel ref="configPanel" only-node :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
       </section>
+      <!--任务设置-->
+      <SettingPanel only-setting :scope="scope" :settings="dataflow" />
     </section>
   </section>
 </template>
@@ -96,8 +98,9 @@ import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
+import SettingPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
-import { taskApi } from '@tap/api'
+import { databaseTypesApi, taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 import { MoveNodeCommand } from './command'
 import dagre from 'dagre'
@@ -106,6 +109,9 @@ import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import editor from './mixins/editor'
 import Locale from './mixins/locale'
+import { DEFAULT_SETTINGS } from './constants'
+import { mapMutations } from 'vuex'
+import { observable } from '@formily/reactive'
 
 export default {
   name: 'Editor',
@@ -119,10 +125,17 @@ export default {
     PaperScroller,
     TopHeader,
     DFNode,
-    LeftSidebar
+    LeftSidebar,
+    SettingPanel
   },
 
   data() {
+    const dataflow = observable({
+      ...DEFAULT_SETTINGS,
+      id: '',
+      name: ''
+    })
+
     return {
       NODE_PREFIX,
       status: 'draft',
@@ -144,10 +157,7 @@ export default {
         connectionData: {}
       },
 
-      dataflow: {
-        id: '',
-        name: ''
-      },
+      dataflow,
 
       scale: 1
     }
@@ -158,6 +168,7 @@ export default {
       this.setStateReadonly(true)
     }
     this.setValidateLanguage()
+    await this.initPdkProperties()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -180,6 +191,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+
     async initNodeType() {
       this.addProcessorNode([
         {
@@ -656,11 +669,32 @@ export default {
 
     handleDetail() {
       this.$router.push({
-        name: 'dataflowDetails',
+        name: 'dataflowStatistics',
         params: {
           id: this.dataflow.id
         }
       })
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }
