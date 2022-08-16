@@ -236,9 +236,11 @@ export default {
     fetch(page = 1) {
       this.page.current = page
       const { size, current } = this.page
+      const { originalTableName } = this.row
       let filter = {
         limit: size,
-        skip: size * (current - 1)
+        skip: size * (current - 1),
+        originalTableName
       }
       this.detailLoading = true
       const startStamp = Date.now()
