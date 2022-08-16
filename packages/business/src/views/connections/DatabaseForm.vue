@@ -107,7 +107,15 @@
 <script>
 import { action } from '@formily/reactive'
 
-import { clusterApi, connectionsApi, databaseTypesApi, logcollectorApi, pdkApi, settingsApi } from '@tap/api'
+import {
+  clusterApi,
+  connectionsApi,
+  databaseTypesApi,
+  logcollectorApi,
+  pdkApi,
+  settingsApi,
+  commandApi
+} from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import Test from './Test'
@@ -736,6 +744,33 @@ export default {
               }
             }) || []
           )
+        },
+        loadCommand: async filter => {
+          const { pdkId, group, version } = this.pdkOptions
+          const { $values, command, page, size } = filter
+          let params = {
+            pdkId,
+            group,
+            version,
+            connectionConfig: $values,
+            command: command,
+            action: 'list',
+            argMap: {
+              page,
+              size
+            }
+          }
+          const searchLabel = filter.where?.label
+          if (searchLabel) {
+            params.action = 'search'
+            params.argMap.key = searchLabel?.like
+          }
+          try {
+            let result = await commandApi.codding(params)
+            return result
+          } catch (e) {
+            return { total: 0, items: [] }
+          }
         }
       }
       this.schemaData = result
