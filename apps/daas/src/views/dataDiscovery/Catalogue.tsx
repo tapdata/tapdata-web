@@ -57,14 +57,14 @@ export default defineComponent({
         data.filterItems = [
           {
             label: '资源类型',
-            key: 'type',
+            key: 'sourceType',
             type: 'select-inner',
             items: dataAssembly(sourceType),
             selectedWidth: '200px'
           },
           {
             placeholder: '连接对象名',
-            key: 'connectionName',
+            key: 'queryKey',
             type: 'input'
           }
         ]
