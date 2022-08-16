@@ -83,9 +83,8 @@ export default {
   methods: {
     remoteMethod({ page }) {
       const { current, size } = page
-      const { id: taskId } = this.$attrs.dataflow || {}
+      const { id: taskId } = this.dataflow || {}
       let filter = {
-        // taskId,
         limit: size,
         skip: size * (current - 1)
       }
