@@ -12,9 +12,7 @@
       hide-on-single-page
     >
       <template slot="status" slot-scope="scope">
-        <span v-if="scope.row.status" :class="['status-' + getStatusItem(scope.row.status).type, 'status-block']">
-          {{ getStatusItem(scope.row.status).label }}
-        </span>
+        <TaskStatus :task="scope.row" />
       </template>
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
@@ -28,28 +26,15 @@
 <script>
 import { VTable } from '@tap/component'
 import { taskApi } from '@tap/api'
+import { TaskStatus } from '@tap/business'
 
 export default {
   name: 'Record',
 
-  components: { VTable },
+  components: { VTable, TaskStatus },
 
   data() {
     return {
-      statusMap: {
-        finish: {
-          type: 'edit',
-          label: '已完成'
-        },
-        error: {
-          type: 'error',
-          label: '错误'
-        },
-        running: {
-          type: 'running',
-          label: '运行中'
-        }
-      },
       columns: [
         {
           label: '运行开始时间',
@@ -103,10 +88,6 @@ export default {
           data: data.items || []
         }
       })
-    },
-
-    getStatusItem(status) {
-      return this.statusMap[status] || {}
     },
 
     handleDetail(row = {}) {
