@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, nextTick } from '@vue/composition-api'
+import { defineComponent, reactive, ref, nextTick, watch } from '@vue/composition-api'
 import { FilterBar } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import { useI18n, useMessage } from '@/hooks'
@@ -45,7 +45,7 @@ export default defineComponent({
       queryKey && (where['queryKey'] = queryKey)
       data.tableLoading = true
       discoveryApi
-        .list()
+        .list(where)
         .then(res => {
           let { total, items } = res
           list.value = items || []
@@ -57,6 +57,7 @@ export default defineComponent({
               let usedRow = t?.allTags.filter(tag => tag.id === props.parentId) || []
               if (usedRow?.length > 0) {
                 nextTick(() => {
+                  // @ts-ignore
                   refs.multipleTable?.toggleRowSelection(t, true)
                 })
               }
@@ -117,37 +118,56 @@ export default defineComponent({
         }
       })
     }
-    const saveTags = () => {
-      if (multipleSelection.value?.length === 0) {
-        emit('fetch', false)
-      }
-      let data = multipleSelection.value.map(t => {
+    const saveAllTags = selection => {
+      let data = selection.map(t => {
         return {
           id: t?.id,
           objCategory: t?.category
         }
       })
+      submitTags(data, 'postTags', [props.parentId])
+    }
+    const saveTags = (selection, row) => {
+      if (selection?.length > 0) {
+        let data = [{ id: row?.id, objCategory: row?.category }]
+        let findRow = selection.filter(t => row?.id === t.id) || []
+        if (findRow?.length > 0) {
+          //绑定 post
+          submitTags(data, 'postTags', [props.parentId])
+        } else {
+          //解绑
+          let tagIds = row?.listtags.filter(t => t.id !== props.parentId).map(t => t.id)
+          submitTags(data, 'patchTags', tagIds)
+        }
+      }
+    }
+    const submitTags = (data, http, tagIds) => {
       let where = {
         tagBindingParams: data,
-        tagIds: [props.parentId]
+        tagIds: tagIds
       }
-      discoveryApi
-        .saveTags(where)
+      discoveryApi[http](where)
         .then(() => {
-          emit('fetch', false)
-          success('绑定成功')
+          success('操作成功')
         })
         .catch(err => {
           error(err)
         })
     }
+    watch(
+      () => root.$route.query,
+      val => {
+        loadTableData(1)
+      }
+    )
     return {
       data,
       list,
       loadTableData,
       loadFilterList,
       handleSelectionChange,
-      saveTags
+      saveTags,
+      saveAllTags
     }
   },
   render() {
@@ -168,6 +188,8 @@ export default defineComponent({
               ref={'multipleTable'}
               class="discovery-page-table"
               data={this.list}
+              onselect={this.saveTags}
+              onSelect-all={this.saveAllTags}
               onSelection-change={this.handleSelectionChange}
             >
               <el-table-column width="55" type="selection"></el-table-column>
@@ -187,15 +209,6 @@ export default defineComponent({
                 total={this.data.page.total}
                 onCurrent-change={this.loadTableData}
               ></el-pagination>
-              <el-button
-                class="mt-4"
-                type="primary"
-                size="mini"
-                style={'width:30px;float:right'}
-                onClick={this.saveTags}
-              >
-                确认
-              </el-button>
             </footer>
           </div>
         </div>

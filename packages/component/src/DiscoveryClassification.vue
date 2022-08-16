@@ -224,6 +224,10 @@ export default {
             let items = data?.items || []
             this.treeData = this.formatData(items)
             cb && cb(items)
+            //默认选中第一个
+            this.$nextTick(() => {
+              this.$emit('nodeChecked', this.treeData?.[0])
+            })
           })
       }
     },
