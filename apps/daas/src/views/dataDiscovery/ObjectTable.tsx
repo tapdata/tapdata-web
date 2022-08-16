@@ -23,7 +23,7 @@ export default defineComponent({
       tableLoading: false,
       desc: '',
       page: {
-        size: 10,
+        size: 20,
         current: 1,
         total: 0,
         count: 1
@@ -139,8 +139,8 @@ export default defineComponent({
       }
     }
     const saveTags = (selection, row) => {
+      let data = [{ id: row?.id, objCategory: row?.category }]
       if (selection?.length > 0) {
-        let data = [{ id: row?.id, objCategory: row?.category }]
         let findRow = selection.filter(t => row?.id === t.id) || []
         if (findRow?.length > 0) {
           //绑定 post
@@ -150,6 +150,10 @@ export default defineComponent({
           let tagIds = row?.listtags.filter(t => t.id !== props.parentId).map(t => t.id)
           submitTags(data, 'patchTags', tagIds)
         }
+      } else {
+        //解绑
+        let tagIds = row?.listtags.filter(t => t.id !== props.parentId).map(t => t.id)
+        submitTags(data, 'patchTags', tagIds)
       }
     }
     const submitTags = (data, http, tagIds) => {
@@ -214,7 +218,7 @@ export default defineComponent({
               <el-pagination
                 background
                 class="table-page-pagination mt-3"
-                layout="->,total, sizes,  prev, pager, next, jumper"
+                layout="->,total, prev, pager, next, jumper"
                 on={{ ['update:current-page']: this.loadTableData }}
                 current-page={this.data.page.current}
                 total={this.data.page.total}
