@@ -189,7 +189,9 @@ export default {
           })
             .then(({ data, total }) => {
               this.page.total = total
-              this.list = data || []
+              if (JSON.stringify(this.list) !== JSON.stringify(data)) {
+                this.list = data || []
+              }
               this.nonePage = this.page.total <= this.list.length
               if (total > 0 && (!data || !data.length)) {
                 setTimeout(() => {

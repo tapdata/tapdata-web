@@ -105,12 +105,34 @@ export default {
   watch: {
     value(v) {
       this.visible = !!v
+      if (this.visible) {
+        this.init()
+      }
     }
   },
 
   methods: {
+    init() {
+      this.startLoadData()
+    },
+
+    startLoadData() {
+      this.$refs.table.fetch?.()
+    },
+
+    getFilter(pageObj = {}) {
+      let { current = 1, size = 20 } = pageObj
+      let filter = {
+        taskRecordId: this.dataflow?.taskRecordId,
+        size,
+        page: current
+      }
+      return filter
+    },
+
     remoteMethod({ page }) {
       let { current, size } = page
+      this.pageObj = { current, size }
       let filter = {
         taskRecordId: this.dataflow?.taskRecordId,
         size,

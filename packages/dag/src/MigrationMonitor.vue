@@ -647,7 +647,10 @@ export default {
       }
       const $verifyPanel = this.$refs.verifyPanel
       if ($verifyPanel) {
-        params.verify = $verifyPanel.getFilter(1)
+        params.verify = {
+          uri: `/api/Task/${this.dataflow.id}/auto-inspect-results-group-by-table`,
+          param: $verifyPanel.getFilter(1)
+        }
       }
       return params
     },

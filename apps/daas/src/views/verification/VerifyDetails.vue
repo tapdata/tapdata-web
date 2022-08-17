@@ -236,7 +236,11 @@ export default {
     fetch(page = 1) {
       this.page.current = page
       const { size, current } = this.page
+      const { originalTableName } = this.row
       let filter = {
+        where: {
+          originalTableName
+        },
         limit: size,
         skip: size * (current - 1)
       }
@@ -298,6 +302,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.verify-details {
+  height: 100%;
+}
 .verify-details__wrap {
   border-radius: 4px;
   background-color: #fff;

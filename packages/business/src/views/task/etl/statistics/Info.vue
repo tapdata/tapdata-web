@@ -14,7 +14,7 @@
           {{ $t('task_info_start_time') }}： <span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
-      <div v-if="task" class="operation">
+      <div v-if="task.btnDisabled" class="operation">
         <VButton type="primary" :disabled="task.btnDisabled.start" @click="start(task, arguments[0])">
           <VIcon size="12">start-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_start') }}</span>

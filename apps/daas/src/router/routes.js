@@ -228,6 +228,48 @@ export default [
           }
         ]
       },
+      /* ---------- 数据发现-数据对象  ----------*/
+      {
+        path: '/objectList',
+        name: 'objectList',
+        component: Parent,
+        redirect: 'objectList',
+        meta: {
+          title: '数据对象'
+        },
+        children: [
+          {
+            path: '',
+            name: 'objectList',
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/ObjectList.tsx'),
+            meta: {
+              title: '数据对象',
+              code: 'datasource_menu'
+            }
+          }
+        ]
+      },
+      /* ---------- 数据发现-数据目录  ----------*/
+      {
+        path: '/catalogue',
+        name: 'catalogue',
+        component: Parent,
+        redirect: 'catalogue',
+        meta: {
+          title: '数据目录'
+        },
+        children: [
+          {
+            path: '',
+            name: 'catalogue',
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/Catalogue.tsx'),
+            meta: {
+              title: '数据目录',
+              code: ''
+            }
+          }
+        ]
+      },
       /* ---------- 数据复制  ----------*/
       {
         path: '/migrate',
@@ -559,48 +601,6 @@ export default [
             }
           }
         ]
-      },
-      /* ---------- 数据目录  ----------*/
-      {
-        path: '/catalogue',
-        name: 'metadata',
-        component: Parent,
-        redirect: 'catalogue/',
-        meta: {
-          title: 'page_title_data_catalogue'
-        },
-        children: [
-          {
-            path: '',
-            name: 'metadataList',
-            component: () => import(/* webpackChunkName: "metadata" */ '@/views/metadata/List'),
-            meta: {
-              title: 'page_title_data_catalogue',
-              code: 'data_catalog_menu',
-              types: ['table', 'view', 'collection']
-              // 'mongo_view'
-            }
-          },
-          {
-            path: ':id/details',
-            name: 'metadataDetails',
-            component: () => import(/* webpackChunkName: "metadata-details" */ '@/views/metadata/Info'),
-            meta: {
-              code: 'data_catalog_menu',
-              title: 'page_title_data_catalogue_info'
-            }
-          }
-        ]
-      },
-      /* ---------- 数据搜索  ----------*/
-      {
-        path: '/search',
-        name: 'search',
-        component: () => import(/* webpackChunkName: "metadata-search" */ '@/views/metadata/Search'),
-        meta: {
-          title: 'page_title_data_search',
-          code: 'data_search_menu'
-        }
       },
       /* ---------- API发布  ----------*/
       {

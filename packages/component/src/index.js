@@ -9,6 +9,7 @@ import VCodeEditor from './base/VCodeEditor.vue'
 import VIcon from './base/VIcon.vue'
 import VStep from './base/VStep.vue'
 import Classification from './Classification.vue'
+import DiscoveryClassification from './DiscoveryClassification'
 import FilterBar from './filter-bar'
 import DatetimeRange from './filter-bar/DatetimeRange.vue'
 import SelectList from './SelectList.vue'
@@ -40,7 +41,8 @@ export {
   GitBook,
   Drawer,
   TableList,
-  InlineInput
+  InlineInput,
+  DiscoveryClassification
 }
 
 export * from './base'
