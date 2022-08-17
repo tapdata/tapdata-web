@@ -5,7 +5,6 @@
     :visible.sync="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
-    custom-class="initial-list__dialog"
     @close="$emit('input', false)"
   >
     <ElTooltip transition="tooltip-fade-in" content="点击刷新" class="refresh-tooltip">
@@ -150,7 +149,7 @@ export default {
 
 <style lang="scss" scoped>
 ::v-deep {
-  .initial-list__dialog {
+  .el-dialog {
     .el-dialog__body {
       padding-top: 6px;
     }
