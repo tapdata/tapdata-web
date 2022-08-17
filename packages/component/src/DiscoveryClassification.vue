@@ -35,7 +35,7 @@
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <span class="table-label"
-            >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
+            >{{ data.value }}<span class="count-label mr-2">({{ data.objCount }})</span></span
           >
           <span class="btn-menu">
             <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
@@ -67,8 +67,8 @@
             show-word-limit
           ></ElInput>
         </ElFormItem>
-        <ElFormItem label="目录分类" v-if="dialogConfig.isParent === 1">
-          <ElSelect v-model="dialogConfig.item_type" :disabled="dialogConfig.type === 'edit'">
+        <ElFormItem label="目录分类" v-if="dialogConfig.isParent">
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
             <el-option label="资源目录" value="resource"> </el-option>
             <el-option label="任务目录" value="task"> </el-option>
           </ElSelect>
@@ -77,7 +77,7 @@
           <ElInput
             type="textarea"
             v-model="dialogConfig.desc"
-            placeholder="请输入目录名称"
+            placeholder="请输入目录描述"
             maxlength="50"
             show-word-limit
           ></ElInput>
@@ -325,18 +325,18 @@ export default {
     },
     showDialog(node, dialogType) {
       let type = dialogType || 'add'
-      let item_type = this.types
+      let itemType = this.types
       if (node && node.data && node.data.item_type) {
-        item_type = node.data.item_type
+        itemType = node.data.item_type?.join('')
       }
       this.dialogConfig = {
-        item_type: item_type,
+        itemType: itemType,
         visible: true,
         type,
         id: node ? node.key : '',
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
-        isParent: node ? 0 : 1,
+        isParent: (type === 'add' && !node) || (type === 'edit' && node?.level === 1),
         title:
           type === 'add'
             ? node
@@ -390,11 +390,13 @@ export default {
       } else {
         let params = {
           item_type: itemType,
+          desc: config.desc,
           value
         }
         if (config.type === 'edit') {
           method = 'changeById'
           params.id = id
+          delete params.item_type
         } else if (id) {
           params.parent_id = id
         }
