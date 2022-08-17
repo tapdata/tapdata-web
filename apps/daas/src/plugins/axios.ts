@@ -122,7 +122,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
     if (response?.config?.responseType === 'blob') {
       return resolve(response)
     }
-    if (code) {
+    if (code === 'ok') {
       return resolve(response.data.data)
     } else if (code === 'SystemError') {
       Message.error(response.data.message)

@@ -100,7 +100,11 @@ export default defineComponent({
     }
     const closeSourceDrawer = val => {
       data.isShowSourceDrawer = val
-      loadData(1)
+      nextTick(() => {
+        loadData(1)
+        // @ts-ignore
+        refs?.classify?.getData()
+      })
     }
     const getNodeChecked = node => {
       data.currentNode = node
