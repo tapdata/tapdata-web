@@ -25,7 +25,7 @@
             <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
           </div>
         </ElLink>
-        <ConnectionTest ref="test"></ConnectionTest>
+        <ConnectionTest ref="test" />
       </div>
 
       <div class="selector-panel__body">
@@ -601,7 +601,7 @@ export default {
         if (this?.$refs?.test) {
           let data = res
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          this.$refs.test.start(data, false, true)
+          this.$refs.test.startByConnection(data, true)
           this.getProgress()
         }
       })
