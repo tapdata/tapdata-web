@@ -133,9 +133,9 @@ export default defineComponent({
             objCategory: t?.category
           }
         })
-        submitTags(listFilter, 'patchTags', [props.parentId])
+        submitTags(listFilter, 'patchTags')
       } else {
-        submitTags(data, 'postTags', [props.parentId])
+        submitTags(data, 'postTags')
       }
     }
     const saveTags = (selection, row) => {
@@ -144,22 +144,20 @@ export default defineComponent({
         let findRow = selection.filter(t => row?.id === t.id) || []
         if (findRow?.length > 0) {
           //绑定 post
-          submitTags(data, 'postTags', [props.parentId])
+          submitTags(data, 'postTags')
         } else {
           //解绑
-          let tagIds = row?.listtags.filter(t => t.id !== props.parentId).map(t => t.id)
-          submitTags(data, 'patchTags', tagIds)
+          submitTags(data, 'patchTags')
         }
       } else {
         //解绑
-        let tagIds = row?.listtags.filter(t => t.id !== props.parentId).map(t => t.id)
-        submitTags(data, 'patchTags', tagIds)
+        submitTags(data, 'patchTags')
       }
     }
-    const submitTags = (data, http, tagIds) => {
+    const submitTags = (data, http) => {
       let where = {
         tagBindingParams: data,
-        tagIds: tagIds
+        tagIds: [props.parentId]
       }
       discoveryApi[http](where)
         .then(() => {
