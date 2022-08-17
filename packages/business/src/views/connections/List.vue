@@ -445,7 +445,7 @@ export default {
     goTaskList(item) {
       if (item?.syncType === 'migrate') {
         this.$router.push({
-          name: 'migrate',
+          name: 'migrateList',
           query: {
             keyword: item.name
           }
