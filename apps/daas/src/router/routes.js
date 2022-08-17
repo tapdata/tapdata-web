@@ -168,7 +168,7 @@ export default [
     }
   },
   {
-    path: '/migrate/monitorRecord/:id',
+    path: '/migrate/monitor-record/:id',
     name: 'MigrationMonitorViewer',
     component: MigrationMonitorViewer,
     meta: {
