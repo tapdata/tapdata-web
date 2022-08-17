@@ -281,6 +281,10 @@ export default {
       const { page, pageSize, total } = this.oldPageObj
       if (!page) return false
       return page * pageSize > total
+    },
+
+    isEnterTimer() {
+      return this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
     }
   },
 
@@ -294,6 +298,19 @@ export default {
 
   methods: {
     init() {
+      if (this.$route.name === 'MigrationMonitorViewer') {
+        this.timeOptions = [
+          {
+            label: '全部',
+            value: 'full'
+          },
+          {
+            label: '自定义时间',
+            type: 'custom',
+            value: 'custom'
+          }
+        ]
+      }
       this.resetData()
     },
 
@@ -329,7 +346,7 @@ export default {
     pollingData() {
       this.clearTimer()
       this.timer = setInterval(() => {
-        this.loadNew()
+        this.isEnterTimer && this.loadNew()
       }, 5000)
       this.loadNew()
     },
