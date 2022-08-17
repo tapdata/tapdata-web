@@ -120,6 +120,13 @@ export default {
   watch: {
     value(v) {
       this.setPeriod(v)
+    },
+
+    options: {
+      deep: true,
+      handler() {
+        this.setPeriod()
+      }
     }
   },
 
