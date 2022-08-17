@@ -22,7 +22,7 @@
           <VIcon class="ml-2 color-primary cursor-pointer" size="9" @click="search">icon_table_selector_load</VIcon>
         </ElTooltip>
       </div>
-      <ElTooltip transition="tooltip-fade-in" content="列表">
+      <ElTooltip v-if="!!total" transition="tooltip-fade-in" content="列表">
         <VIcon size="16" class="cursor-pointer" @click="$emit('verifyDetails')">menu-left</VIcon>
       </ElTooltip>
     </div>

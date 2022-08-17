@@ -59,10 +59,10 @@
           </ElRadioGroup>
           <ElButton type="primary">导出</ElButton>
         </div>
-        <div v-loading="detailLoading" class="verify-result__list flex-fill flex flex-column px-4 pb-6">
+        <div v-loading="detailLoading" class="verify-result__list flex-fill flex flex-column pr-4 pb-6">
           <div class="table__header">
             <ElRow
-              class="table__header flex align-items-center p-4"
+              class="table__header flex align-items-center p-4 font-color-normal fw-bold"
               style="height: 54px; background: #fafafa; border-radius: 4px 4px 0 0"
             >
               <ElCol :span="12">
@@ -73,7 +73,7 @@
               </ElCol>
             </ElRow>
           </div>
-          <div class="table__body flex-fill">
+          <div v-if="resultList.length" class="table__body flex-fill">
             <ElRow
               v-for="(item, index) in resultList"
               :key="index"
@@ -116,7 +116,10 @@
               </ElCol>
             </ElRow>
           </div>
-
+          <div v-else class="table__body flex-fill flex flex-column justify-content-center text-center">
+            <img :src="detailSvg" width="160" class="mx-auto" />
+            <span class="mt-4">恭喜~校验结果源表与目标表内容完全一致，没有错误记录</span>
+          </div>
           <ElPagination
             class="result-view-pagination"
             background
@@ -177,7 +180,8 @@ export default {
       },
       showAdvancedVerification: false,
       row: null,
-      detailLoading: false
+      detailLoading: false,
+      detailSvg: require('@tap/assets/images/detail-info.svg')
     }
   },
 
