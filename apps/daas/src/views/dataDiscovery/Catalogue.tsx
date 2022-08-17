@@ -165,14 +165,14 @@ export default defineComponent({
                 ></FilterBar>
               </div>
               <div class="catalogue-page-operation-bar">
-                <el-button type="primary" size="mini">
-                  <span
-                    onClick={() => {
-                      this.handleSourceDrawer()
-                    }}
-                  >
-                    资源绑定
-                  </span>
+                <el-button
+                  type="primary"
+                  size="mini"
+                  onClick={() => {
+                    this.handleSourceDrawer()
+                  }}
+                >
+                  <span>资源绑定</span>
                 </el-button>
               </div>
             </div>
