@@ -109,7 +109,7 @@
       width="774px"
       :visible.sync="lineChartDialog"
       :close-on-click-modal="false"
-      :append-to-body="true"
+      :modal-append-to-body="false"
     >
       <LineChart
         :data="qpsData"
@@ -416,6 +416,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep {
+  .el-dialog {
+    .el-dialog__body {
+      padding-top: 6px;
+    }
+  }
+}
+
 .layout-sidebar.--left {
   overflow: hidden auto;
   will-change: width;
