@@ -23,9 +23,7 @@
       <ElTableColumn show-overflow-tooltip prop="tableName" min-width="100" :label="$t('column_table')"></ElTableColumn>
       <ElTableColumn :label="$t('shared_cache_status')" min-width="70">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResultData, 'status-block']">
-            {{ $t('task_preview_status_' + row.statusResultData) }}
-          </span>
+          <TaskStatus :task="row" />
         </template>
       </ElTableColumn>
       <ElTableColumn prop="createTime" :label="$t('column_create_time')" min-width="100" sortable="createTime">
@@ -156,7 +154,7 @@
 import dayjs from 'dayjs'
 import { sharedCacheApi } from '@tap/api'
 import { FilterBar, Drawer } from '@tap/component'
-import { TablePage } from '@tap/business'
+import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import { getSubTaskStatus, toRegExp } from '@/utils/util'
 import TaskButtons from '@/components/TaskButtons'
@@ -164,7 +162,7 @@ import TaskButtons from '@/components/TaskButtons'
 import CodeView from './CodeView.vue'
 
 export default {
-  components: { TablePage, FilterBar, Drawer, TaskButtons, CodeView },
+  components: { TablePage, FilterBar, Drawer, TaskButtons, CodeView, TaskStatus },
   data() {
     return {
       searchParams: {
@@ -225,8 +223,7 @@ export default {
               item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.cacheTimeAtFmt = item.cacheTimeAt ? dayjs(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
 
-              let statuses = item.statuses
-              item.statusResultData = getSubTaskStatus(statuses)[0].status
+              makeStatusAndDisabled(item)
               return item
             })
           }
