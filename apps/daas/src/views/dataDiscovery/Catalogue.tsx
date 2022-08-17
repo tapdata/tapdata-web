@@ -213,7 +213,7 @@ export default defineComponent({
             >
               <ObjectTable
                 ref={'objectTable'}
-                parentId={this.data.currentNode.id}
+                parentNode={this.data.currentNode}
                 {...{ on: { fetch: this.closeSourceDrawer } }}
               ></ObjectTable>
             </el-drawer>

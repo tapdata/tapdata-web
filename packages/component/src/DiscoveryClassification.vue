@@ -16,7 +16,7 @@
         </ElInput>
       </div>
     </div>
-    <div class="tree-block" v-if="isExpand">
+    <div class="tree-block" v-if="isExpand" v-loading="loadingTree">
       <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly
@@ -34,7 +34,9 @@
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <span class="table-label">{{ data.value }}</span>
+          <span class="table-label"
+            >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
+          >
           <span class="btn-menu">
             <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
               ><VIcon size="12" class="color-primary">add</VIcon></ElButton
@@ -65,8 +67,8 @@
             show-word-limit
           ></ElInput>
         </ElFormItem>
-        <ElFormItem label="目录分类" v-if="dialogConfig.isParent">
-          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+        <ElFormItem label="目录分类" v-if="dialogConfig.isParent === 1">
+          <ElSelect v-model="dialogConfig.item_type" :disabled="dialogConfig.type === 'edit'">
             <el-option label="资源目录" value="resource"> </el-option>
             <el-option label="任务目录" value="task"> </el-option>
           </ElSelect>
@@ -115,6 +117,7 @@ export default {
       filterText: '',
       treeData: [],
       default_expanded: false,
+      loadingTree: false,
       props: {
         key: 'id',
         label: 'value'
@@ -223,6 +226,7 @@ export default {
             cb && cb(treeData)
           })
       } else {
+        this.loadingTree = true
         metadataDefinitionsApi
           .get({
             filter: JSON.stringify(filter)
@@ -235,6 +239,9 @@ export default {
             this.$nextTick(() => {
               this.$emit('nodeChecked', this.treeData?.[0])
             })
+          })
+          .finally(() => {
+            this.loadingTree = false
           })
       }
     },
@@ -318,18 +325,18 @@ export default {
     },
     showDialog(node, dialogType) {
       let type = dialogType || 'add'
-      let itemType = this.types
+      let item_type = this.types
       if (node && node.data && node.data.item_type) {
-        itemType = node.data.item_type?.[0]
+        item_type = node.data.item_type
       }
       this.dialogConfig = {
-        itemType: itemType,
+        item_type: item_type,
         visible: true,
         type,
         id: node ? node.key : '',
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
-        isParent: (type === 'add' && !node) || node?.level === 1,
+        isParent: node ? 0 : 1,
         title:
           type === 'add'
             ? node
@@ -616,6 +623,10 @@ export default {
       max-width: 120px;
       font-weight: 400;
       color: map-get($fontColor, normal);
+    }
+    .count-label {
+      font-size: 12px;
+      color: map-get($fontColor, sslight);
     }
     .btn-menu {
       display: none;

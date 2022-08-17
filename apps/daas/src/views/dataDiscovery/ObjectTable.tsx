@@ -5,7 +5,7 @@ import { useI18n, useMessage } from '@/hooks'
 import './index.scss'
 
 export default defineComponent({
-  props: ['parentId'],
+  props: ['parentNode'],
   setup(props, { root, emit, refs }) {
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const list = ref([])
@@ -36,7 +36,8 @@ export default defineComponent({
       let { size, current } = data.page
       let where = {
         page: current,
-        pageSize: size
+        pageSize: size,
+        itemTypes: props.parentNode?.item_type || []
       }
       category && (where['category'] = category)
       type && (where['type'] = type)
@@ -54,7 +55,7 @@ export default defineComponent({
           if (list.value?.length === 0) return
           list.value.forEach(t => {
             if (t?.allTags) {
-              let usedRow = t?.allTags.filter(tag => tag.id === props.parentId) || []
+              let usedRow = t?.allTags.filter(tag => tag.id === props.parentNode?.id) || []
               if (usedRow?.length > 0) {
                 nextTick(() => {
                   // @ts-ignore
@@ -157,7 +158,7 @@ export default defineComponent({
     const submitTags = (data, http) => {
       let where = {
         tagBindingParams: data,
-        tagIds: [props.parentId]
+        tagIds: [props.parentNode?.id]
       }
       discoveryApi[http](where)
         .then(() => {
