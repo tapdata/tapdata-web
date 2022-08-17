@@ -25,6 +25,9 @@
   padding: 20px;
   border-radius: 4px;
 }
+.el-table::before{
+  height: 0;
+}
 .discovery-page-table{
   flex: 1;
   border-bottom: none;
@@ -36,9 +39,6 @@
   }
   .el-table__fixed {
     height: auto !important; //设置高优先，以覆盖内联样式
-  }
-  .el-table::before{
-    height: 0 !important; //设置高优先，以覆盖内联样式
   }
 }
 .object-page-topbar {
