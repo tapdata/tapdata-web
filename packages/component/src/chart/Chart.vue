@@ -111,24 +111,7 @@ export default {
       }
       if (extend) {
         if (JSON.stringify(this.chartOption) !== JSON.stringify(extend)) {
-          const isEmptyData = extend.series.every(t => !t.data.length)
-          this.chartOption = Object.assign(
-            {},
-            {
-              title: {
-                show: isEmptyData,
-                textStyle: {
-                  color: '#909399',
-                  fontSize: 20,
-                  fontWeight: '500'
-                },
-                text: this.t('no_data'),
-                left: 'center',
-                top: 'center'
-              }
-            },
-            extend
-          )
+          this.chartOption = extend
         }
         return
       }

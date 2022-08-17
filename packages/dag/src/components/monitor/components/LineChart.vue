@@ -139,7 +139,24 @@ export default {
         }, 100)
       )
       if (this.end === 100) {
-        this.extend = options
+        const isEmptyData = options.series.every(t => !t.data.length)
+        this.extend = Object.assign(
+          {},
+          {
+            title: {
+              show: isEmptyData,
+              textStyle: {
+                color: '#909399',
+                fontSize: 20,
+                fontWeight: '500'
+              },
+              text: '暂无数据',
+              left: 'center',
+              top: 'center'
+            }
+          },
+          options
+        )
       }
     },
     getOptions() {
