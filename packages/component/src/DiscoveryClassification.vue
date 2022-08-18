@@ -16,7 +16,7 @@
         </ElInput>
       </div>
     </div>
-    <div class="tree-block" v-if="isExpand">
+    <div class="tree-block" v-if="isExpand" v-loading="loadingTree">
       <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly
@@ -34,7 +34,9 @@
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <span class="table-label">{{ data.value }}</span>
+          <span class="table-label"
+            >{{ data.value }}<span class="count-label mr-2">({{ data.objCount }})</span></span
+          >
           <span class="btn-menu">
             <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
               ><VIcon size="12" class="color-primary">add</VIcon></ElButton
@@ -66,17 +68,16 @@
           ></ElInput>
         </ElFormItem>
         <ElFormItem label="目录分类" v-if="dialogConfig.isParent">
-          <ElSelect v-model="dialogConfig.itemType">
-            <el-option label="存储" value="storage"> </el-option>
-            <el-option label="计算" value="calculate"> </el-option>
-            <el-option label="服务" value="server"> </el-option>
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+            <el-option label="资源目录" value="resource"></el-option>
+            <!--            <el-option label="任务目录" value="task"></el-option>-->
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="目录描述">
           <ElInput
             type="textarea"
             v-model="dialogConfig.desc"
-            placeholder="请输入目录名称"
+            placeholder="请输入目录描述"
             maxlength="50"
             show-word-limit
           ></ElInput>
@@ -116,6 +117,7 @@ export default {
       filterText: '',
       treeData: [],
       default_expanded: false,
+      loadingTree: false,
       props: {
         key: 'id',
         label: 'value'
@@ -128,7 +130,7 @@ export default {
         gid: '',
         label: '',
         title: '',
-        itemType: 'Object',
+        itemType: 'resource',
         desc: '',
         visible: false
       },
@@ -188,7 +190,15 @@ export default {
         }
       }
       let filter = {
-        where
+        where,
+        fields: {
+          id: 1,
+          item_type: 1,
+          last_updated: 1,
+          value: 1,
+          objCount: 1,
+          parent_id: 1
+        }
       }
       if (this.types[0] === 'user') {
         userGroupsApi
@@ -216,6 +226,7 @@ export default {
             cb && cb(treeData)
           })
       } else {
+        this.loadingTree = true
         metadataDefinitionsApi
           .get({
             filter: JSON.stringify(filter)
@@ -228,6 +239,9 @@ export default {
             this.$nextTick(() => {
               this.$emit('nodeChecked', this.treeData?.[0])
             })
+          })
+          .finally(() => {
+            this.loadingTree = false
           })
       }
     },
@@ -311,7 +325,7 @@ export default {
     },
     showDialog(node, dialogType) {
       let type = dialogType || 'add'
-      let itemType = this.types
+      let itemType = 'resource'
       if (node && node.data && node.data.item_type) {
         itemType = node.data.item_type?.join('')
       }
@@ -322,7 +336,7 @@ export default {
         id: node ? node.key : '',
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
-        isParent: (type === 'add' && !node) || node?.level === 1,
+        isParent: (type === 'add' && !node) || (type === 'edit' && node?.level === 1),
         title:
           type === 'add'
             ? node
@@ -376,23 +390,29 @@ export default {
       } else {
         let params = {
           item_type: itemType,
+          desc: config.desc,
           value
         }
         if (config.type === 'edit') {
           method = 'changeById'
           params.id = id
+          delete params.item_type
         } else if (id) {
           params.parent_id = id
         }
-        metadataDefinitionsApi[method](params).then(() => {
-          let self = this
-          self.getData(() => {
-            this.$nextTick(() => {
-              this.emitCheckedNodes()
+        metadataDefinitionsApi[method](params)
+          .then(() => {
+            let self = this
+            self.getData(() => {
+              this.$nextTick(() => {
+                this.emitCheckedNodes()
+              })
             })
+            self.hideDialog()
           })
-          self.hideDialog()
-        })
+          .catch(err => {
+            this.$message.error(err.message)
+          })
       }
     },
     deleteNode(id) {
@@ -609,6 +629,10 @@ export default {
       max-width: 120px;
       font-weight: 400;
       color: map-get($fontColor, normal);
+    }
+    .count-label {
+      font-size: 12px;
+      color: map-get($fontColor, sslight);
     }
     .btn-menu {
       display: none;

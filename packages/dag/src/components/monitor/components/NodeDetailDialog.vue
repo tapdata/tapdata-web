@@ -4,7 +4,7 @@
     width="774px"
     :visible.sync="visible"
     :close-on-click-modal="false"
-    :append-to-body="true"
+    :modal-append-to-body="false"
     @close="$emit('input', false)"
   >
     <div class="flex mb-4 align-items-center">
@@ -17,13 +17,13 @@
       <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
     </div>
     <div class="flex justify-content-between">
-      <div class="chart-box rounded-2">
+      <div class="chart-box rounded-2" :class="{ 'w-100': !isSource && !isTarget }">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">事件统计</div>
         <div class="chart-box__content px-4 pb-2">
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
-      <div v-if="isSource" :class="{ 'w-100': !isSource && !isTarget }" class="chart-box rounded-2">
+      <div v-if="isSource" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
         <div class="chart-box__content p-4 flex justify-content-between">
           <div class="pl-6">
@@ -83,7 +83,6 @@
           </div>
         </div>
       </div>
-      <div v-else class="chart-box border-0"></div>
     </div>
     <div class="my-4">性能指标</div>
     <div class="flex justify-content-between">
@@ -628,6 +627,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep {
+  .el-dialog {
+    .el-dialog__body {
+      padding-top: 6px;
+    }
+  }
+}
 .chart-box {
   width: 355px;
   height: 286px;

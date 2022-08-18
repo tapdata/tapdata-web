@@ -5,7 +5,7 @@ import { useI18n, useMessage } from '@/hooks'
 import './index.scss'
 
 export default defineComponent({
-  props: ['parentId'],
+  props: ['parentNode'],
   setup(props, { root, emit, refs }) {
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const list = ref([])
@@ -36,7 +36,8 @@ export default defineComponent({
       let { size, current } = data.page
       let where = {
         page: current,
-        pageSize: size
+        pageSize: size,
+        itemTypes: props.parentNode?.item_type || []
       }
       category && (where['category'] = category)
       type && (where['type'] = type)
@@ -54,7 +55,7 @@ export default defineComponent({
           if (list.value?.length === 0) return
           list.value.forEach(t => {
             if (t?.allTags) {
-              let usedRow = t?.allTags.filter(tag => tag.id === props.parentId) || []
+              let usedRow = t?.allTags.filter(tag => tag.id === props.parentNode?.id) || []
               if (usedRow?.length > 0) {
                 nextTick(() => {
                   // @ts-ignore
@@ -133,9 +134,9 @@ export default defineComponent({
             objCategory: t?.category
           }
         })
-        submitTags(listFilter, 'patchTags', [props.parentId])
+        submitTags(listFilter, 'patchTags')
       } else {
-        submitTags(data, 'postTags', [props.parentId])
+        submitTags(data, 'postTags')
       }
     }
     const saveTags = (selection, row) => {
@@ -144,22 +145,20 @@ export default defineComponent({
         let findRow = selection.filter(t => row?.id === t.id) || []
         if (findRow?.length > 0) {
           //绑定 post
-          submitTags(data, 'postTags', [props.parentId])
+          submitTags(data, 'postTags')
         } else {
           //解绑
-          let tagIds = row?.listtags.filter(t => t.id !== props.parentId).map(t => t.id)
-          submitTags(data, 'patchTags', tagIds)
+          submitTags(data, 'patchTags')
         }
       } else {
         //解绑
-        let tagIds = row?.listtags.filter(t => t.id !== props.parentId).map(t => t.id)
-        submitTags(data, 'patchTags', tagIds)
+        submitTags(data, 'patchTags')
       }
     }
-    const submitTags = (data, http, tagIds) => {
+    const submitTags = (data, http) => {
       let where = {
         tagBindingParams: data,
-        tagIds: tagIds
+        tagIds: [props.parentNode?.id]
       }
       discoveryApi[http](where)
         .then(() => {

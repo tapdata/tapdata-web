@@ -14,7 +14,11 @@
 
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElTooltip v-if="!hideMenus.includes('verify')" transition="tooltip-fade-in" content="校验">
+      <ElTooltip
+        v-if="dataflow.isAutoInspect && !hideMenus.includes('verify')"
+        transition="tooltip-fade-in"
+        content="校验"
+      >
         <button :class="{ active: activeType === 'verify' }" class="icon-btn" @click="$emit('showVerify')">
           <VIcon size="16">verify-list</VIcon>
         </button>

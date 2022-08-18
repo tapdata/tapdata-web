@@ -220,9 +220,13 @@ export default {
       let data = Object.assign({}, this.formData)
       delete data.schema
       delete data.response_body
+      this.startByConnection(data, updateSchema, editTest)
+    },
+
+    startByConnection(connection, updateSchema, editTest) {
       let msg = {
         type: 'testConnection',
-        data: data
+        data: connection
       }
       msg.data['updateSchema'] = false //默认值
       msg.data['editTest'] = false //默认值

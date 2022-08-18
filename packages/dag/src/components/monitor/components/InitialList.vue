@@ -4,28 +4,21 @@
     width="774px"
     :visible.sync="visible"
     :close-on-click-modal="false"
-    :append-to-body="true"
+    :modal-append-to-body="false"
     @close="$emit('input', false)"
   >
-    <VTable :remoteMethod="remoteMethod" :columns="columns" ref="table" class="table-list">
+    <ElTooltip transition="tooltip-fade-in" content="点击刷新" class="refresh-tooltip">
+      <VIcon class="color-primary cursor-pointer" size="12" @click="startLoadData">icon_table_selector_load</VIcon>
+    </ElTooltip>
+    <VTable :remoteMethod="remoteMethod" :columns="columns" height="100%" ref="table" class="table-list">
       <template slot="progress" slot-scope="scope">
         <ElProgress color="#2C65FF" :percentage="scope.row.progress" style="font-size: 12px !important"></ElProgress>
       </template>
-      <!--      <template slot="structureStatus" slot-scope="scope">-->
-      <!--        <span v-if="scope.row.structureStatus" :class="['status-' + scope.row.structureStatus.status, 'status-block']">-->
-      <!--          {{ scope.row.structureStatus.text }}-->
-      <!--        </span>-->
-      <!--      </template>-->
       <template slot="syncStatus" slot-scope="scope">
         <span :class="['status-' + scope.row.syncStatusType, 'status-block']">
           {{ scope.row.syncStatusText }}
         </span>
       </template>
-      <!--      <template slot="operation" slot-scope="scope">-->
-      <!--        <div class="operate-columns">-->
-      <!--          <ElButton size="mini" type="text">重试</ElButton>-->
-      <!--        </div>-->
-      <!--      </template>-->
     </VTable>
   </ElDialog>
 </template>
@@ -117,7 +110,7 @@ export default {
     },
 
     startLoadData() {
-      this.$refs.table.fetch?.()
+      this.$refs.table?.fetch?.()
     },
 
     getFilter(pageObj = {}) {
@@ -155,7 +148,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep {
+  .el-dialog {
+    .el-dialog__body {
+      padding-top: 6px;
+    }
+  }
+}
 .table-list {
+  height: 560px;
   .el-progress {
     ::v-deep {
       .el-progress__text {
@@ -163,5 +164,10 @@ export default {
       }
     }
   }
+}
+.refresh-tooltip {
+  position: absolute;
+  top: 26px;
+  left: 120px;
 }
 </style>
