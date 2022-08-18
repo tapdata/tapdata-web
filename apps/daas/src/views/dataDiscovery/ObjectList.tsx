@@ -15,11 +15,11 @@ export default defineComponent({
     const data = reactive({
       tableLoading: false,
       searchParams: {
-        category: category || '',
-        type: type || '',
-        sourceCategory: sourceCategory || '',
-        sourceType: sourceType || '',
-        queryKey: queryKey || ''
+        category: category || '', //对象分类
+        type: type || '', //对象类型
+        sourceCategory: sourceCategory || '', //来源分类
+        sourceType: sourceType || '', //来源类型
+        queryKey: queryKey || '' //输入搜索值
       },
       activeName: 'first',
       activeUser: 'admin',
@@ -57,6 +57,7 @@ export default defineComponent({
           data.tableLoading = false
         })
     }
+    //请求筛选条件-下拉列表
     const loadFilterList = () => {
       let filterType = ['objCategory', 'objType', 'sourceCategory', 'sourceType']
       discoveryApi.filterList(filterType).then(res => {
@@ -64,37 +65,38 @@ export default defineComponent({
         data.filterItems = [
           {
             label: i18n.t('object_list_classification'),
-            key: 'category',
+            key: 'category', //对象分类
             type: 'select-inner',
             items: dataAssembly(objCategory),
             selectedWidth: '200px'
           },
           {
             label: i18n.t('object_list_type'),
-            key: 'type',
+            key: 'type', //对象类型
             type: 'select-inner',
             items: dataAssembly(objType)
           },
           {
             label: i18n.t('object_list_source_type'),
-            key: 'sourceType',
+            key: 'sourceType', //来源类型
             type: 'select-inner',
             items: dataAssembly(sourceCategory)
           },
           {
             label: i18n.t('datadiscovery_objectlist_laiyuanfenlei'),
-            key: 'sourceCategory',
+            key: 'sourceCategory', //来源分类
             type: 'select-inner',
             items: dataAssembly(sourceType)
           },
           {
             placeholder: i18n.t('datadiscovery_objectlist_duixiangminglaiyuan'),
-            key: 'queryKey',
+            key: 'queryKey', //输入搜索名称
             type: 'input'
           }
         ]
       })
     }
+    //公用方法 格式化数据
     const dataAssembly = data => {
       if (data?.length === 0) return
       return data.map(item => {
@@ -104,6 +106,7 @@ export default defineComponent({
         }
       })
     }
+    //打开对象概览
     const handlePreview = row => {
       data.isShowDetails = true
       // @ts-ignore

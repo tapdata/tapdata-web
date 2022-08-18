@@ -80,6 +80,7 @@ export default defineComponent({
         }
       })
     }
+    //打开资源概览
     const handlePreview = row => {
       data.isShowDetails = true
       nextTick(() => {
@@ -90,12 +91,15 @@ export default defineComponent({
     const closeDrawer = val => {
       data.isShowDetails = val
     }
+    //打开资源绑定抽屉
     const handleSourceDrawer = () => {
       data.isShowSourceDrawer = true
       nextTick(() => {
         // @ts-ignore
+        //请求筛选条件-下拉列表
         refs?.objectTable?.loadFilterList()
         // @ts-ignore
+        //请求资源绑定目录
         refs?.objectTable?.loadTableData()
       })
     }
@@ -104,9 +108,11 @@ export default defineComponent({
       nextTick(() => {
         loadData(1)
         // @ts-ignore
+        //关闭资源绑定抽屉 刷新数据目录分类树 主要是统计
         refs?.classify?.getData()
       })
     }
+    //切换目录
     const getNodeChecked = node => {
       data.currentNode = node
       loadData(1)

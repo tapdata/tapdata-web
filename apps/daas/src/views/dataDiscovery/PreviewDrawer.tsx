@@ -7,7 +7,6 @@ import dayjs from 'dayjs'
 
 export default defineComponent({
   setup() {
-    const overview = ref('')
     const preview = ref('')
     const data = reactive({
       activeName: 'first',
@@ -74,7 +73,6 @@ export default defineComponent({
     return {
       data,
       preview,
-      overview,
       loadData
     }
   },
@@ -83,7 +81,9 @@ export default defineComponent({
       <div class="drawer-content" v-loading={this.data.loading}>
         <div class="flex align-items-center ml-4">
           <header class="font-weight-bold mr-4">
-            <span class="drawer__header_text inline-block">{i18n.t('datadiscovery_previewdrawer_duixiangxiangqing')}</span>
+            <span class="drawer__header_text inline-block">
+              {i18n.t('datadiscovery_previewdrawer_duixiangxiangqing')}
+            </span>
           </header>
           <el-tabs v-model={this.data.activeName} type="card">
             <el-tab-pane label={i18n.t('page_title_overview')} name="first"></el-tab-pane>
@@ -114,7 +114,9 @@ export default defineComponent({
                         <span class="ml-2">{dayjs(this.preview.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_biangengshijian')}</span>
+                        <span class="max-label inline-block">
+                          {i18n.t('datadiscovery_previewdrawer_biangengshijian')}
+                        </span>
                         <span class="ml-2">{dayjs(this.preview.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                       </el-col>
                       <el-col span={8}>
@@ -146,20 +148,26 @@ export default defineComponent({
                         <span class="ml-2">{this.preview.connectionType}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_lianjiemiaoshu')}</span>
+                        <span class="max-label inline-block">
+                          {i18n.t('datadiscovery_previewdrawer_lianjiemiaoshu')}
+                        </span>
                         <span class="ml-2">{this.preview.connectionDesc}</span>
                       </el-col>
                     </el-row>
                     <el-row class="mt-2">
                       <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_yewumingcheng')}</span>
+                        <span class="max-label inline-block">
+                          {i18n.t('datadiscovery_previewdrawer_yewumingcheng')}
+                        </span>
                         <span class="ml-2">{this.preview.businessName}</span>
                       </el-col>
                     </el-row>
                   </div>
                 </div>
                 <div class="mt-4">
-                  <span class="drawer__header_text inline-block">{i18n.t('datadiscovery_previewdrawer_shujuxiang')}</span>
+                  <span class="drawer__header_text inline-block">
+                    {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
+                  </span>
                   <TableList
                     class="discovery-page-table"
                     columns={this.data.columns}
