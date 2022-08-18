@@ -377,12 +377,12 @@ let menuSetting = [
   },
   {
     name: 'discovery',
-    label: '数据发现',
+    label: 'page_title_data_discovery',
     icon: 'system',
     code: 'system_management',
     children: [
-      { name: 'objectList', code: 'datasource_menu', parent: 'discovery' },
-      { name: 'catalogue', code: 'datasource_menu', parent: 'discovery' }
+      { name: 'objectList', code: 'datasource_menu', parent: 'object' },
+      { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogu' }
     ]
   },
   {

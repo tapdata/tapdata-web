@@ -162,6 +162,7 @@ export default {
   page_title_shared_cache_create: '創建緩存',
   page_title_shared_cache_edit: '編輯緩存',
   page_title_data_discovery: '數據發現',
+  page_title_data_object: '數據對象',
   page_title_data_catalogue: '數據目錄',
   page_title_data_catalogue_info: '數據目錄詳情',
   page_title_data_search: '數據搜索',

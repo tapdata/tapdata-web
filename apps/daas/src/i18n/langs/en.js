@@ -164,6 +164,7 @@ export default {
   page_title_shared_cache_create: 'Create cache',
   page_title_shared_cache_edit: 'Edit cache',
   page_title_data_discovery: 'Data Discovery',
+  page_title_data_object: 'Data Object',
   page_title_data_catalogue: 'Data catalog',
   page_title_data_catalogue_info: 'Data catalogue details',
   page_title_data_search: 'Data search',

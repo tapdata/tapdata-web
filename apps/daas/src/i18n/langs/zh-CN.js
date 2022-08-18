@@ -162,6 +162,7 @@ export default {
   page_title_shared_cache_create: '创建缓存',
   page_title_shared_cache_edit: '编辑缓存',
   page_title_data_discovery: '数据发现',
+  page_title_data_object: '数据对象',
   page_title_data_catalogue: '数据目录',
   page_title_data_catalogue_info: '数据目录详情',
   page_title_data_search: '数据搜索',

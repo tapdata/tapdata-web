@@ -125,7 +125,6 @@ export default defineComponent({
         </div>
       )
     }
-    loadData(1)
     loadFilterList()
     watch(
       () => root.$route.query,
