@@ -382,7 +382,7 @@ let menuSetting = [
     code: 'system_management',
     children: [
       { name: 'objectList', code: 'datasource_menu', parent: 'object' },
-      { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogu' }
+      { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogue' }
     ]
   },
   {
