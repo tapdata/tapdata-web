@@ -14,14 +14,23 @@
 
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElTooltip
-        v-if="dataflow.isAutoInspect && !hideMenus.includes('verify')"
-        transition="tooltip-fade-in"
-        content="校验"
-      >
-        <button :class="{ active: activeType === 'verify' }" class="icon-btn" @click="$emit('showVerify')">
+      <ElTooltip v-if="!hideMenus.includes('verify')" transition="tooltip-fade-in">
+        <div v-if="!dataflow.canOpenInspect" slot="content">
+          <p>当前任务暂不支持校验，可能的原因：</p>
+          <p>1.添加了中间处理节点</p>
+          <p>2.源连接不支持校验</p>
+          <p>3.目标连接不支持校验</p>
+        </div>
+        <div v-else>打开校验</div>
+        <button
+          v-if="dataflow.canOpenInspect"
+          :class="{ active: activeType === 'verify' }"
+          class="icon-btn"
+          @click="$emit('showVerify')"
+        >
           <VIcon size="16">verify-list</VIcon>
         </button>
+        <span v-else class="icon-btn disabled"><VIcon size="16">verify-list</VIcon></span>
       </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" content="日志">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
@@ -314,7 +323,7 @@ $sidebarBg: #fff;
     cursor: pointer;
 
     &.active,
-    &:hover {
+    &:not(.disabled):hover {
       color: map-get($color, primary);
       background: $hoverBg;
     }
