@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 import { defineComponent, reactive, ref } from '@vue/composition-api'
 import { TableList } from '@tap/component'
 import { discoveryApi } from '@tap/api'
@@ -15,43 +16,43 @@ export default defineComponent({
       loading: false,
       columns: [
         {
-          label: '名称',
+          label: i18n.t('metadata_name'),
           prop: 'name'
         },
         {
-          label: '类型',
+          label: i18n.t('metadata_type'),
           prop: 'dataType'
         },
         {
-          label: '主键',
+          label: i18n.t('datadiscovery_previewdrawer_zhujian'),
           prop: 'primaryKey'
         },
         {
-          label: '外键',
+          label: i18n.t('datadiscovery_previewdrawer_waijian'),
           prop: 'foreignKey'
         },
         {
-          label: '索引',
+          label: i18n.t('datadiscovery_previewdrawer_suoyin'),
           prop: 'index'
         },
         {
-          label: '非空',
+          label: i18n.t('meta_table_not_null'),
           prop: 'notNull'
         },
         {
-          label: '默认值',
+          label: i18n.t('meta_table_default'),
           prop: 'defaultValue'
         },
         {
-          label: '业务名称',
+          label: i18n.t('datadiscovery_previewdrawer_yewumingcheng'),
           prop: 'businessName'
         },
         {
-          label: '业务类型',
+          label: i18n.t('datadiscovery_previewdrawer_yewuleixing'),
           prop: 'businessType'
         },
         {
-          label: '业务描述',
+          label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'businessDesc'
         }
       ]
@@ -82,10 +83,10 @@ export default defineComponent({
       <div class="drawer-content" v-loading={this.data.loading}>
         <div class="flex align-items-center ml-4">
           <header class="font-weight-bold mr-4">
-            <span class="drawer__header_text inline-block">对象详情</span>
+            <span class="drawer__header_text inline-block">{i18n.t('datadiscovery_previewdrawer_duixiangxiangqing')}</span>
           </header>
           <el-tabs v-model={this.data.activeName} type="card">
-            <el-tab-pane label="概览" name="first"></el-tab-pane>
+            <el-tab-pane label={i18n.t('page_title_overview')} name="first"></el-tab-pane>
             {/*<el-tab-pane label="预览" name="second"></el-tab-pane>*/}
           </el-tabs>
         </div>
@@ -95,7 +96,7 @@ export default defineComponent({
               <div class="discovery-page-right" v-loading={this.data.tableLoading}>
                 <div class="ml-4">
                   <div class="user">
-                    <span class="mr-4">管理员</span>
+                    <span class="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
                     <el-select v-model={this.data.activeUser}>
                       <el-option label="admin" value="admin"></el-option>
                     </el-select>
@@ -103,62 +104,62 @@ export default defineComponent({
                   <div class="details_data_info mt-4 p-5">
                     <el-row class="mt-2">
                       <el-col>
-                        <span class="drawer__header_text inline-block">数据表</span>
+                        <span class="drawer__header_text inline-block">{i18n.t('metadata_meta_type_table')}</span>
                         <span class="ml-2">{this.preview.name}</span>
                       </el-col>
                     </el-row>
                     <el-row class="mt-2">
                       <el-col span={8}>
-                        <span class="max-label inline-block">创建时间</span>
+                        <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
                         <span class="ml-2">{dayjs(this.preview.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">变更时间</span>
+                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_biangengshijian')}</span>
                         <span class="ml-2">{dayjs(this.preview.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">数据项</span>
+                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_shujuxiang')}</span>
                         <span class="ml-2">{this.preview.fieldNum}</span>
                       </el-col>
                     </el-row>
                     <el-row class="mt-2">
                       <el-col span={8}>
-                        <span class="max-label inline-block">数据量</span>
+                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_shujuliang')}</span>
                         <span class="ml-2">{this.preview.rowNum}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">来源信息</span>
+                        <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
                         <span class="ml-2">{this.preview.sourceInfo}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">来源类型</span>
+                        <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
                         <span class="ml-2">{this.preview.sourceType}</span>
                       </el-col>
                     </el-row>
                     <el-row class="mt-2">
                       <el-col span={8}>
-                        <span class="max-label inline-block">连接名</span>
+                        <span class="max-label inline-block">{i18n.t('connection_list_name')}</span>
                         <span class="ml-2">{this.preview.connectionName}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">连接类型</span>
+                        <span class="max-label inline-block">{i18n.t('connection_list_type')}</span>
                         <span class="ml-2">{this.preview.connectionType}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">连接描述</span>
+                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_lianjiemiaoshu')}</span>
                         <span class="ml-2">{this.preview.connectionDesc}</span>
                       </el-col>
                     </el-row>
                     <el-row class="mt-2">
                       <el-col span={8}>
-                        <span class="max-label inline-block">业务名称</span>
+                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_yewumingcheng')}</span>
                         <span class="ml-2">{this.preview.businessName}</span>
                       </el-col>
                     </el-row>
                   </div>
                 </div>
                 <div class="mt-4">
-                  <span class="drawer__header_text inline-block">数据项</span>
+                  <span class="drawer__header_text inline-block">{i18n.t('datadiscovery_previewdrawer_shujuxiang')}</span>
                   <TableList
                     class="discovery-page-table"
                     columns={this.data.columns}

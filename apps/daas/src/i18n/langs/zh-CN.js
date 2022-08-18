@@ -2099,5 +2099,22 @@ export default {
   object_list_classification: '对象分类',
   object_list_type: '对象类型',
   object_list_source_type: '来源类型',
-  object_list_source_information: '来源信息'
+  object_list_source_information: '来源信息',
+  datadiscovery_catalogue_ziyuanbangding: '资源绑定',
+  datadiscovery_catalogue_lianjieduixiangming: '连接对象名',
+  datadiscovery_catalogue_ziyuanleixing: '资源类型',
+  datadiscovery_objectlist_duixiangminglaiyuan: '对象名/来源名',
+  datadiscovery_objectlist_laiyuanfenlei: '来源分类',
+  datadiscovery_previewdrawer_shujuxiang: '数据项',
+  datadiscovery_previewdrawer_yewumingcheng: '业务名称',
+  datadiscovery_previewdrawer_lianjiemiaoshu: '连接描述',
+  datadiscovery_previewdrawer_shujuliang: '数据量',
+  datadiscovery_previewdrawer_biangengshijian: '变更时间',
+  datadiscovery_previewdrawer_guanliyuan: '管理员',
+  datadiscovery_previewdrawer_duixiangxiangqing: '对象详情',
+  datadiscovery_previewdrawer_yewumiaoshu: '业务描述',
+  datadiscovery_previewdrawer_yewuleixing: '业务类型',
+  datadiscovery_previewdrawer_suoyin: '索引',
+  datadiscovery_previewdrawer_waijian: '外键',
+  datadiscovery_previewdrawer_zhujian: '主键'
 }

@@ -2163,5 +2163,28 @@ export default {
   new_create_api_desc:
     'API is data publishing, you can create a new collection API based on the existing collection or through synchronization tasks',
   new_data_valid_desc:
-    'It can compare and verify the data between the data source and the target of the migration synchronization task, including fast count verification, full table field value verification, associated field value verification, etc.'
+    'It can compare and verify the data between the data source and the target of the migration synchronization task, including fast count verification, full table field value verification, associated field value verification, etc.',
+  //数据发现-数据对象
+  object_list_name: 'Object name',
+  object_list_classification: 'Object classification',
+  object_list_type: 'Object type',
+  object_list_source_type: 'Source type',
+  object_list_source_information: 'Source information',
+  datadiscovery_catalogue_ziyuanbangding: 'Resource binding',
+  datadiscovery_catalogue_lianjieduixiangming: 'Connection object name',
+  datadiscovery_catalogue_ziyuanleixing: 'Resource Type',
+  datadiscovery_objectlist_duixiangminglaiyuan: 'object name/source name',
+  datadiscovery_objectlist_laiyuanfenlei: 'Source classification',
+  datadiscovery_previewdrawer_shujuxiang: 'Data item',
+  datadiscovery_previewdrawer_yewumingcheng: 'Business name',
+  datadiscovery_previewdrawer_lianjiemiaoshu: 'Connection description',
+  datadiscovery_previewdrawer_shujuliang: 'Data volume',
+  datadiscovery_previewdrawer_biangengshijian: 'Change time',
+  datadiscovery_previewdrawer_guanliyuan: 'Administrator',
+  datadiscovery_previewdrawer_duixiangxiangqing: 'Object details',
+  datadiscovery_previewdrawer_yewumiaoshu: 'Business description',
+  datadiscovery_previewdrawer_yewuleixing: 'Business type',
+  datadiscovery_previewdrawer_suoyin: 'Index',
+  datadiscovery_previewdrawer_waijian: 'Foreign key',
+  datadiscovery_previewdrawer_zhujian: 'Primary key'
 }
