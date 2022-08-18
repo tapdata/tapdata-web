@@ -2074,5 +2074,28 @@ export default {
   new_create_connection_desc: '數據源是創建傳輸任務的前提，任務重所有的數據庫和表數據節點都來自數據源',
   new_create_api_desc: 'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
   new_data_valid_desc:
-    '可對遷移同步任務的數據源與目標之間的數據進行比對校驗，包含快速count校驗，全表字段值校驗，關聯字段值校驗等'
+    '可對遷移同步任務的數據源與目標之間的數據進行比對校驗，包含快速count校驗，全表字段值校驗，關聯字段值校驗等',
+
+  object_list_name: '對象名稱',
+  object_list_classification: '對象分類',
+  object_list_type: '對像類型',
+  object_list_source_type: '來源類型',
+  object_list_source_information: '來源信息',
+  datadiscovery_catalogue_ziyuanbangding: '資源綁定',
+  datadiscovery_catalogue_lianjieduixiangming: '連接對象名',
+  datadiscovery_catalogue_ziyuanleixing: '資源類型',
+  datadiscovery_objectlist_duixiangminglaiyuan: '對象名/來源名',
+  datadiscovery_objectlist_laiyuanfenlei: '來源分類',
+  datadiscovery_previewdrawer_shujuxiang: '數據項',
+  datadiscovery_previewdrawer_yewumingcheng: '業務名稱',
+  datadiscovery_previewdrawer_lianjiemiaoshu: '連接描述',
+  datadiscovery_previewdrawer_shujuliang: '數據量',
+  datadiscovery_previewdrawer_biangengshijian: '變更時間',
+  datadiscovery_previewdrawer_guanliyuan: '管理員',
+  datadiscovery_previewdrawer_duixiangxiangqing: '對象詳情',
+  datadiscovery_previewdrawer_yewumiaoshu: '業務描述',
+  datadiscovery_previewdrawer_yewuleixing: '業務類型',
+  datadiscovery_previewdrawer_suoyin: '索引',
+  datadiscovery_previewdrawer_waijian: '外鍵',
+  datadiscovery_previewdrawer_zhujian: '主鍵'
 }

@@ -1,7 +1,8 @@
 import { defineComponent, reactive, ref, nextTick, watch } from '@vue/composition-api'
+import i18n from '@/i18n'
 import { FilterBar } from '@tap/component'
 import { discoveryApi } from '@tap/api'
-import { useI18n, useMessage } from '@/hooks'
+import { useMessage } from '@/hooks'
 import './index.scss'
 
 export default defineComponent({
@@ -75,32 +76,32 @@ export default defineComponent({
         let { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {
-            label: '对象分类',
+            label: i18n.t('object_list_classification'),
             key: 'category',
             type: 'select-inner',
             items: dataAssembly(objCategory),
             selectedWidth: '200px'
           },
           {
-            label: '对象类型',
+            label: i18n.t('object_list_type'),
             key: 'type',
             type: 'select-inner',
             items: dataAssembly(objType)
           },
           {
-            label: '来源类型',
+            label: i18n.t('object_list_source_type'),
             key: 'sourceType',
             type: 'select-inner',
             items: dataAssembly(sourceCategory)
           },
           {
-            label: '来源分类',
+            label: i18n.t('datadiscovery_objectlist_laiyuanfenlei'),
             key: 'sourceCategory',
             type: 'select-inner',
             items: dataAssembly(sourceType)
           },
           {
-            placeholder: '对象名/来源名',
+            placeholder: i18n.t('datadiscovery_objectlist_duixiangminglaiyuan'),
             key: 'queryKey',
             type: 'input'
           }
@@ -162,7 +163,7 @@ export default defineComponent({
       }
       discoveryApi[http](where)
         .then(() => {
-          success('操作成功')
+          success(i18n.t('message_operation_succuess'))
         })
         .catch(err => {
           error(err)
