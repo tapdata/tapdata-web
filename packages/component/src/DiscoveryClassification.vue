@@ -69,8 +69,8 @@
         </ElFormItem>
         <ElFormItem label="目录分类" v-if="dialogConfig.isParent">
           <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-            <el-option label="资源目录" value="resource"> </el-option>
-            <el-option label="任务目录" value="task"> </el-option>
+            <el-option label="资源目录" value="resource"></el-option>
+            <!--            <el-option label="任务目录" value="task"></el-option>-->
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="目录描述">
@@ -325,7 +325,7 @@ export default {
     },
     showDialog(node, dialogType) {
       let type = dialogType || 'add'
-      let itemType = this.types
+      let itemType = 'resource'
       if (node && node.data && node.data.item_type) {
         itemType = node.data.item_type?.join('')
       }
@@ -400,15 +400,19 @@ export default {
         } else if (id) {
           params.parent_id = id
         }
-        metadataDefinitionsApi[method](params).then(() => {
-          let self = this
-          self.getData(() => {
-            this.$nextTick(() => {
-              this.emitCheckedNodes()
+        metadataDefinitionsApi[method](params)
+          .then(() => {
+            let self = this
+            self.getData(() => {
+              this.$nextTick(() => {
+                this.emitCheckedNodes()
+              })
             })
+            self.hideDialog()
           })
-          self.hideDialog()
-        })
+          .catch(err => {
+            this.$message.error(err.message)
+          })
       }
     },
     deleteNode(id) {

@@ -14,6 +14,7 @@ export default defineComponent({
         cb && cb()
       }
     })
+    provide('buried', () => {})
     return () => {
       return (
         <div id="app">

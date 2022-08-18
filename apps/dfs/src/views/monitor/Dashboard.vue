@@ -216,6 +216,7 @@ import timeFunction from '@/mixins/timeFunction'
 
 export default {
   components: { StatusTag, TaskProgress, Log, FieldMapping },
+  inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
     return {
@@ -561,7 +562,7 @@ export default {
       }
     },
     start() {
-      this.$checkAgentStatus(async () => {
+      this.checkAgent(async () => {
         this.startLoading = true
         await this.changeStatus({ status: 'scheduled' })
         this.startLoading = false

@@ -31,13 +31,13 @@
     </ElForm>
 
     <span slot="footer" class="dialog-footer">
-      <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{ $t('dataVerify_cancel') }}</VButton>
+      <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{ $t('button_cancel') }}</VButton>
       <VButton
         type="primary"
         :disabled="!phoneForm.current || !phoneForm.oldCode"
         auto-loading
         @click="bindPhoneConfirm(arguments[0])"
-        >{{ $t('dataVerify_confirm') }}</VButton
+        >{{ $t('button_confirm') }}</VButton
       >
     </span>
   </ElDialog>

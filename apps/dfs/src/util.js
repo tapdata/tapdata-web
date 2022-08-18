@@ -196,7 +196,7 @@ export const errorConfirmFnc = error => {
                 <input type="checkbox" id="errorConfirm" style="display: none" />
                 <div class="error-confirm-fold-content text-truncate">${mm}</div>
                 <label for="errorConfirm" class="color-primary cursor-pointer text-nowrap">${i18n.t(
-                  'verify_Details_zhanKai'
+                  'button_zhanKai'
                 )}</label>
               </div>`
   }
@@ -211,19 +211,6 @@ export const errorConfirmFnc = error => {
       location.reload()
     }
   })
-}
-
-export const buried = (code, page, attrs) => {
-  let userInfo = window.__USER_INFO__ || {}
-  let data = {
-    user_id: userInfo.user_id,
-    code,
-    page
-  }
-  if (attrs) {
-    data.attrs = attrs
-  }
-  window.axios.get('api/tcm/user/behavior?data=' + encodeURIComponent(JSON.stringify(data)))
 }
 
 export const addEvent = (target, eventType, handle) => {

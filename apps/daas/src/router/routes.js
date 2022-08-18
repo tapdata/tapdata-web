@@ -230,12 +230,12 @@ export default [
       },
       /* ---------- 数据发现-数据对象  ----------*/
       {
-        path: '/objectList',
-        name: 'objectList',
+        path: '/object',
+        name: 'object',
         component: Parent,
-        redirect: 'objectList',
+        redirect: 'object/',
         meta: {
-          title: '数据对象'
+          title: 'page_title_data_object'
         },
         children: [
           {
@@ -243,7 +243,7 @@ export default [
             name: 'objectList',
             component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/ObjectList.tsx'),
             meta: {
-              title: '数据对象',
+              title: 'page_title_data_object',
               code: 'datasource_menu'
             }
           }
@@ -256,15 +256,15 @@ export default [
         component: Parent,
         redirect: 'catalogue',
         meta: {
-          title: '数据目录'
+          title: 'page_title_data_catalogue'
         },
         children: [
           {
             path: '',
-            name: 'catalogue',
+            name: 'catalogueList',
             component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/Catalogue.tsx'),
             meta: {
-              title: '数据目录',
+              title: 'page_title_data_catalogue',
               code: ''
             }
           }

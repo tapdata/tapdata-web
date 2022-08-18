@@ -144,6 +144,11 @@ export default {
           desc: this.$t('operation_log_agent_delete_tip')
         },
         {
+          label: this.$t('operation_log_agent_stop'),
+          value: 'agent&&stop',
+          desc: this.$t('operation_log_agent_stop_tip')
+        },
+        {
           label: this.$t('operation_log_agent_rename'),
           value: 'agent&&rename',
           desc: this.$t('operation_log_agent_rename_tip')
@@ -471,24 +476,6 @@ export default {
             name: 'Instance',
             query: {
               status: '',
-              keyword: parameter1
-            }
-          })
-          break
-        // 二次校验
-        case 'differenceInspect':
-          this.$router.push({
-            name: 'Verify',
-            query: {
-              keyword: parameter1
-            }
-          })
-          break
-        // 数据校验
-        case 'inspect':
-          this.$router.push({
-            name: 'Verify',
-            query: {
               keyword: parameter1
             }
           })
