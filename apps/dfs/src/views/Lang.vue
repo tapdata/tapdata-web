@@ -66,8 +66,8 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="dialog.visible = false">{{ $t('dataVerify_cancel') }}</ElButton>
-        <ElButton type="primary" @click="confirm">{{ $t('dataVerify_confirm') }}</ElButton>
+        <ElButton @click="dialog.visible = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="confirm">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </div>

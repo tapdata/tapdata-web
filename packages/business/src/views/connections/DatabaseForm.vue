@@ -119,7 +119,7 @@ import { checkConnectionName } from '@tap/shared'
 export default {
   name: 'DatabaseForm',
   components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook },
-  inject: ['checkAgent'],
+  inject: ['checkAgent', 'buried'],
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
@@ -194,6 +194,7 @@ export default {
       })
     },
     submit() {
+      this.buried('connectionSubmit')
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
         this.submitBtnLoading = true
@@ -243,6 +244,9 @@ export default {
         }
         promise
           .then(() => {
+            this.buried('connectionSubmit', '', {
+              result: true
+            })
             this.$message.success(this.$t('message.saveOK'))
             if (this.$route.query.step) {
               this.$router.push({
@@ -258,6 +262,9 @@ export default {
             }
           })
           .catch(err => {
+            this.buried('connectionSubmit', '', {
+              result: false
+            })
             this.$message.error(err?.data?.message || this.$t('message.saveFail'))
           })
           .finally(() => {
@@ -267,10 +274,13 @@ export default {
     },
     //开始测试
     async startTest() {
+      this.buried('connectionTest')
       this.checkAgent(() => {
         this.schemaFormInstance.validate().then(() => {
           this.startTestPdk()
         })
+      }).catch(() => {
+        this.buried('connectionTestAgentFail')
       })
     },
     startTestPdk() {
@@ -293,6 +303,9 @@ export default {
     returnTestData(data) {
       if (!data.status || data.status === null) return
       this.status = data.status
+      this.buried('connectionTest', '', {
+        result: data.status === 'ready'
+      })
     },
     //取消
     handleCancelRename() {

@@ -1,5 +1,5 @@
 <template>
-  <section class="error-page-wrap" :class="[{ 'error-page-purchase': $route.meta.isPurchase }]">
+  <section class="error-page-wrap">
     <TheHeader></TheHeader>
     <div class="header">{{ 'Tapdata Cloud' }}</div>
     <div class="body">
@@ -46,9 +46,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.error-page-purchase {
-  padding: 0;
-}
 .error-page-wrap {
   padding-top: 68px;
   height: 100%;

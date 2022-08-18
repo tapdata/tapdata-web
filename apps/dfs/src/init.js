@@ -7,17 +7,14 @@ import VueRouter from 'vue-router'
 import 'github-markdown-css'
 import './assets/styles/app.scss'
 import VueClipboard from 'vue-clipboard2'
-import { Message } from 'element-ui'
-import settings from './settings'
 import TapdataWebCore from 'web-core'
 import i18n from './i18n'
-import Purchase from '@/views/purchase/Purchase'
 import store from '@/store'
-import { errorConfirmFnc, buried, addEvent, removeEvent } from '@/util'
+import { errorConfirmFnc } from '@/util'
 import VConfirm from '@/components/v-confirm'
+import { startTimeOnSite, startTimeOnPage } from '@/plugins/buried'
 
 Vue.config.productionTip = false
-Vue.prototype.$settings = settings
 Vue.use(VueClipboard)
 
 const originalPush = VueRouter.prototype.push
@@ -30,19 +27,6 @@ VueRouter.prototype.replace = function replace(location) {
 }
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
-
-Vue.prototype.$checkAgentStatus = callback => {
-  return new Promise((resolve, reject) => {
-    window.axios.get('api/tcm/agent/agentCount').then(data => {
-      if (data.agentRunningCount || data.agentRunningCount > 0) {
-        resolve(callback?.())
-      } else {
-        Message.error(i18n.t('agent_error_check'))
-        reject()
-      }
-    })
-  })
-}
 
 Vue.prototype.$confirm = (message, title, options) => {
   return new Promise((resolve, reject) => {
@@ -58,79 +42,23 @@ Vue.prototype.$confirm = (message, title, options) => {
 
 export default ({ routes }) => {
   let loading = null
-  let all = {
-    timer: null,
-    count: 0
-  }
-  let one = {
-    timer: null,
-    count: 0,
-    page: ''
-  }
+
   const init = () => {
-    document.cookie = `tapdata_user_id=${window.__USER_INFO__?.userId};domain=tapdata.net;path=/;max-age=${
-      365 * 24 * 60 * 60
-    };`
-    all.timer && clearInterval(all.timer)
-    all.timer = setInterval(() => {
-      all.count++
-      if (all.count > 0 && all.count % 30 === 0) {
-        buried('timeOnSite', '/', {
-          times: all.count + 's'
-        })
-      }
-    }, 1000)
-    if (window.__config__.ENV === 'dev') {
-      routes.push({
-        path: '/Purchase',
-        name: 'Purchase',
-        component: Purchase
-      })
-    }
     const router = new VueRouter({
       routes
     })
-    router.beforeEach((to, from, next) => {
-      next()
-      buried('accessPage', to.path || '/')
-      one.page = to.path
-      one.count = 0
-      one.timer && clearInterval(one.timer)
-      one.timer = setInterval(() => {
-        one.count++
-        if (one.count > 0 && one.count % 30 === 0) {
-          buried('timeOnPage', to.path || '/', {
-            times: one.count + 's'
-          })
-        }
-      }, 1000)
-    })
-    let startTime = Date.now()
-    const un = () => {
-      let t = (Date.now() - startTime) / 1000
-      if (t < 1) {
-        return
-      }
-      buried('leaveSite', one.page, {
-        times: t + 's'
-      })
-      buried('leavePage', one.page, {
-        times: one.count + 's'
-      })
-    }
-    removeEvent(window, 'beforeunload', un)
-    addEvent(window, 'beforeunload', un)
+    startTimeOnPage(router)
+
     var loc = window.location,
       wsUrl = 'ws://'
     if (loc.protocol === 'https:') {
       wsUrl = 'wss://'
     }
-    let preUrl = settings.DFS_TM_API_PRE_URL || ''
     let queryString = ``
     if (process.env.NODE_ENV === 'development') {
       queryString = `__token=${process.env.VUE_APP_ACCESS_TOKEN}`
     }
-    wsUrl = wsUrl + loc.host + preUrl + `/ws/agent?${queryString}`
+    wsUrl = wsUrl + loc.host + `/tm/ws/agent?${queryString}`
     window.App = new Vue({
       router,
       store,
@@ -150,6 +78,7 @@ export default ({ routes }) => {
       .then(data => {
         let userInfo = data
         window.__USER_INFO__ = userInfo
+
         loading.close()
         init()
       })
@@ -178,4 +107,5 @@ export default ({ routes }) => {
     getData()
   })
 }
-sessionStorage.setItem('TM_CONFIG', JSON.stringify(settings))
+
+startTimeOnSite()
