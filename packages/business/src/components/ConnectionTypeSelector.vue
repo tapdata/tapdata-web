@@ -53,6 +53,7 @@
 import axios from 'axios'
 
 import Cookie from '@tap/shared/src/cookie'
+import { getConnectionIcon } from './util'
 
 export default {
   name: 'ConnectionTypeSelector',
@@ -145,7 +146,7 @@ export default {
     getPdkIcon(item) {
       const token = Cookie.get('token')
       let baseUrl = axios.defaults.baseURL
-      return baseUrl + `/api/pdk/icon?access_token=${token}&pdkHash=${item.pdkHash}`
+      return baseUrl + `api/pdk/icon?access_token=${token}&pdkHash=${item.pdkHash}`
     },
     getComingItemStyle(index) {
       let count = 9
