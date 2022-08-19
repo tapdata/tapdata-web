@@ -203,6 +203,7 @@ export default defineComponent({
               layout="->,total, prev, pager, next, jumper"
               on={{ ['update:current-page']: this.loadData }}
               current-page={this.data.page.current}
+              page-size={this.data.page.size}
               total={this.data.page.total}
               onCurrent-change={this.loadData}
             ></el-pagination>
