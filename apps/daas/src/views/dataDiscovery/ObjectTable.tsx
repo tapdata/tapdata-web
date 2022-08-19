@@ -93,13 +93,13 @@ export default defineComponent({
             label: i18n.t('object_list_source_type'),
             key: 'sourceType',
             type: 'select-inner',
-            items: dataAssembly(sourceCategory)
+            items: dataAssembly(sourceType)
           },
           {
             label: i18n.t('datadiscovery_objectlist_laiyuanfenlei'),
             key: 'sourceCategory',
             type: 'select-inner',
-            items: dataAssembly(sourceType)
+            items: dataAssembly(sourceCategory)
           },
           {
             placeholder: i18n.t('datadiscovery_objectlist_duixiangminglaiyuan'),
