@@ -1,6 +1,6 @@
 <template>
   <ElContainer class="layout-container" direction="vertical">
-    <ElHeader class="layout-header" height="60px">
+    <ElHeader v-if="!IS_IFRAME" class="layout-header" height="60px">
       <a class="logo" href="/">
         <img :src="logoUrl" />
       </a>
@@ -72,7 +72,7 @@
       </div>
     </ElHeader>
     <ElContainer style="width: 100%; flex: 1; overflow: hidden">
-      <ElAside class="layout-aside" width="auto" v-if="!isNotAside">
+      <ElAside v-if="!isNotAside && !IS_IFRAME" class="layout-aside" width="auto">
         <ElMenu
           unique-opened
           class="menu"
@@ -416,6 +416,8 @@ export default {
   components: { CustomerService, newDataFlow, NotificationPopover, PageHeader, VIcon },
   data() {
     return {
+      IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
+
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
       languages: {
         zh_CN: '中文 (简)',
