@@ -9,7 +9,7 @@
     >
       {{ t('button_edit') }}
     </ElLink>
-    <List :isMetaData="true" :readOnly="true" :updateList="updateList"></List>
+    <List ref="list" :isMetaData="true" :readOnly="true" :updateList="updateList"></List>
     <Dialog v-if="dialogVisible" :visible.sync="dialogVisible"></Dialog>
   </section>
 </template>
