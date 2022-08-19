@@ -219,7 +219,10 @@ export default defineComponent({
               <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
               <el-table-column label={this.$t('object_list_type')} prop="type"></el-table-column>
               <el-table-column label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
-              <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
+              <el-table-column
+                label={this.$t('object_list_source_information')}
+                prop="sourceCategory"
+              ></el-table-column>
             </el-table>
             <footer>
               <el-pagination
