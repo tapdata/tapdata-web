@@ -64,7 +64,6 @@
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
-import Locale from '../../mixins/locale'
 import VIcon from 'web-core/components/VIcon'
 import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
@@ -76,8 +75,6 @@ export default {
   directives: {
     resize
   },
-
-  mixins: [Locale],
 
   components: { VEmpty, NodeIcon, VIcon },
 

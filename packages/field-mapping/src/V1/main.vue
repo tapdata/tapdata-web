@@ -7,12 +7,12 @@
       :loading="loading"
       :disabled="isDisable"
       @click="getMetaData()"
-      >{{ t('dag_link_button_field_mapping') }}</el-button
+      >{{ $t('dag_link_button_field_mapping') }}</el-button
     >
     <el-dialog
       v-if="dialogFieldProcessVisible"
       width="85%"
-      :title="t('dag_link_button_mapping_configuration')"
+      :title="$t('dag_link_button_mapping_configuration')"
       :visible.sync="dialogFieldProcessVisible"
       :modal-append-to-body="false"
       custom-class="database-filed-mapping-dialog"
@@ -34,7 +34,7 @@
       ></FieldMappingDialog>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-if="this.transform.mode !== 'readOnly'" @click="saveReturnData">{{
-          t('dataVerify_confirm')
+          $t('dataVerify_confirm')
         }}</el-button>
       </div>
     </el-dialog>
@@ -44,11 +44,9 @@
 <script>
 import FieldMappingDialog from './FieldMappingDialog'
 import { taskApi, metadataInstancesApi, typeMappingApi, metadataTransformerApi } from '@tap/api'
-import Locale from '../mixins/locale'
 
 export default {
   name: 'FieldMapping',
-  mixins: [Locale],
   components: { FieldMappingDialog },
   props: ['mappingType', 'transform', 'getDataFlow', 'isDisable'],
   data() {
@@ -94,10 +92,10 @@ export default {
           this.transform?.queueData?.length === 0 &&
           this.transform.transferFlag //mq判断
         ) {
-          this.$message.error(this.t('dag_link_field_mapping_error_no_table'))
+          this.$message.error(this.$t('dag_link_field_mapping_error_no_table'))
           return
         } else if (this.transform.selectSourceArr?.length === 0 && !this.transform.transferFlag) {
-          this.$message.error(this.t('dag_link_field_mapping_error_no_table')) //其他数据源
+          this.$message.error(this.$t('dag_link_field_mapping_error_no_table')) //其他数据源
           return
         }
       }
@@ -458,7 +456,7 @@ export default {
       if (!returnData.valid) return //检验不通过
       let deleteLen = returnData.target.filter(v => !v.is_deleted)
       if (deleteLen.length === 0) {
-        this.$message.error(this.t('dag_link_field_mapping_error_all_deleted'))
+        this.$message.error(this.$t('dag_link_field_mapping_error_all_deleted'))
         return //所有字段被删除了 不可以保存任务
       }
       await this.saveOperations(returnData.row, returnData.operations, returnData.target, () => {

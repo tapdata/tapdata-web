@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tap/locale": "workspace:^1.0.0",
+    "@tap/i18n": "workspace:^1.0.0",
     "@tap/api": "workspace:^1.0.0"
   }
 }

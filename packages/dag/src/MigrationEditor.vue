@@ -116,7 +116,6 @@ import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
 import { VExpandXTransition, VIcon, VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
-import Locale from './mixins/locale'
 import ConsolePanel from './components/migration/ConsolePanel'
 import { DEFAULT_SETTINGS } from './constants'
 
@@ -127,7 +126,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     ConsolePanel,
@@ -298,12 +297,12 @@ export default {
     },
 
     /*async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const dataNodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
       // if (dataNodes.length < 2) {
-      //   return this.t('editor_cell_validate_none_data_node')
+      //   return this.$t('editor_cell_validate_none_data_node')
       // }
 
       await this.validateAllNodes()
@@ -386,7 +385,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        // this.$message.success(this.t('message_save_ok'))
+        // this.$message.success(this.$t('message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
@@ -465,7 +464,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.t('message_save_ok'))
+        !needStart && this.$message.success(this.$t('message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true

@@ -26,7 +26,7 @@
         <ElInput
           v-model="dbSearchTxt"
           ref="dbInput"
-          :placeholder="t('connection_name_search_placeholder')"
+          :placeholder="$t('connection_name_search_placeholder')"
           size="mini"
           clearable
           @keydown.native.stop
@@ -91,7 +91,7 @@
               </div>
               <VEmpty v-if="!dbList.length" />
               <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                {{ t('loading') }}<span class="dotting"></span>
+                {{ $t('loading') }}<span class="dotting"></span>
               </div>
             </div>
           </div>
@@ -193,12 +193,10 @@ import { Select } from 'element-ui'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import NodeIcon from '../NodeIcon'
-import Locale from '../../mixins/locale'
 import { escapeRegExp } from 'lodash'
 
 export default {
   name: 'LeftSider',
-  mixins: [Locale],
   components: {
     NodeIcon,
     VEmpty,

@@ -20,23 +20,19 @@
     </el-form>
 
     <span slot="footer" class="dialog-footer">
-      <el-button @click="closeDialogForm">{{ t('button_cancel') }}</el-button>
-      <el-button type="primary" @click="confirm" @>{{ t('button_confirm') }}</el-button>
+      <el-button @click="closeDialogForm">{{ $t('button_cancel') }}</el-button>
+      <el-button type="primary" @click="confirm" @>{{ $t('button_confirm') }}</el-button>
     </span>
   </ElDialog>
 </template>
 
 <script>
-import Locale from '../../src/mixins/locale'
-
 export default {
   name: 'CreateTable',
 
   props: {
     dialog: Object
   },
-
-  mixins: [Locale],
 
   data() {
     return {
@@ -52,7 +48,7 @@ export default {
           //   pattern: /^[a-zA-Z][0-9a-zA-Z_.-]*$/,
           //   trigger: 'blur',
           //   message:
-          //     this.dialog.type === 'table' ? this.t('dialog_tableValidateTip') : this.t('dialog_collectionValidateTip')
+          //     this.dialog.type === 'table' ? this.$t('dialog_tableValidateTip') : this.$t('dialog_collectionValidateTip')
           // }
         ]
       }
@@ -83,7 +79,7 @@ export default {
       let first = this.ruleForm.newTable.split('.')[0] == 'system' ? true : false
       if (flag) {
         if (this.dialog.type === 'collection' && first) {
-          this.$message.error(this.t('dialog_collectionValidateTip'))
+          this.$message.error(this.$t('dialog_collectionValidateTip'))
         } else {
           this.dialog.visible = false
           this.$emit('handleTable', this.ruleForm.newTable)

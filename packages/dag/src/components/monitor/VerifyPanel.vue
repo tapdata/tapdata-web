@@ -99,14 +99,10 @@ import { calcUnit, deepCopy } from '@tap/shared'
 import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 
-import Locale from '../../mixins/locale'
-
 export default {
   name: 'VerifyPanel',
 
   components: { Chart, DynamicScroller, DynamicScrollerItem, VEmpty },
-
-  mixins: [Locale],
 
   props: {
     dataflow: Object,

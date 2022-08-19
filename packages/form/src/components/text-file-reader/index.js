@@ -1,11 +1,9 @@
 import { defineComponent, ref } from 'vue-demi'
-import Locale from '../../mixins/locale'
 
 export const TextFileReader = defineComponent({
   props: ['value', 'accept', 'maxFileSize', 'base64', 'fileName'],
   setup(props, { emit, root }) {
     const fileName = ref(props.fileName || '')
-    const t = Locale.methods.t
     let selectFile = file => {
       if (file) {
         fileName.value = file.name
@@ -41,7 +39,7 @@ export const TextFileReader = defineComponent({
       return (
         <ElInput
           value={fileName.value}
-          placeholder={t('formBuilder_file_placeholder')}
+          placeholder={root.$t('formBuilder_file_placeholder')}
           vOn:clear={() => {
             emit('change', null)
             emit('update:fileName', null)
@@ -63,7 +61,7 @@ export const TextFileReader = defineComponent({
                 }
               }}
             >
-              <ElButton>{t('formBuilder_file_button')}</ElButton>
+              <ElButton>{root.$t('formBuilder_file_button')}</ElButton>
             </ElUpload>
           </template>
         </ElInput>

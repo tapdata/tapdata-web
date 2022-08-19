@@ -3,7 +3,7 @@ import '@/styles/app.scss'
 import Vue from 'vue'
 import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
-import i18n from '@tap/i18n'
+import i18n from './i18n'
 import VueClipboard from 'vue-clipboard2'
 // import factory from '@/api/factory'
 import TapdataWebCore from 'web-core'

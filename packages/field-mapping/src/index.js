@@ -4,7 +4,7 @@
  * @description
  */
 import FieldMapping from './V1/main'
-import locale from './locale'
+import langs from './locale'
 
 export default FieldMapping
-export { FieldMapping, locale }
+export { FieldMapping, langs }

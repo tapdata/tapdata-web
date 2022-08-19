@@ -23,7 +23,7 @@
         </ElButton>
       </div>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="t('connection_column_name')">
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('connection_column_name')">
         <template slot-scope="scope">
           <span class="connection-name">
             <img class="connection-img mr-2" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
@@ -141,14 +141,12 @@ import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
-import Locale from '../../mixins/locale'
 
 let timeout = null
 
 export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   inject: ['checkAgent', 'buried'],
-  mixins: [Locale],
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',

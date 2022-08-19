@@ -202,15 +202,12 @@ import { Select } from 'element-ui'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
 import { CancelToken } from '@tap/api'
-import Locale from '../../mixins/locale'
 import { escapeRegExp } from 'lodash'
 
 export default {
   name: 'AsyncSelect',
 
   extends: Select,
-
-  mixins: [Locale],
 
   props: {
     method: {
@@ -290,17 +287,17 @@ export default {
       } else {
         if (this.remote && this.query === '' && this.options.length === 0) return false
         if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
-          return this.noMatchText || this.t('el.select.noMatch')
+          return this.noMatchText || this.$t('el.select.noMatch')
         }
         if (this.total === 0) {
-          return this.noDataText || this.t('el.select.noData')
+          return this.noDataText || this.$t('el.select.noData')
         }
       }
       return null
     },
 
     loadingTxt() {
-      return this.loadingText || this.t('el.select.loading')
+      return this.loadingText || this.$t('el.select.loading')
     },
 
     noMore() {

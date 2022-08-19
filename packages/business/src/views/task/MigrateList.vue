@@ -243,7 +243,6 @@ import { toRegExp } from '@tap/shared'
 
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 import { TablePage, TaskStatus } from '../../components'
-import locale from '../../mixins/locale'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 
@@ -252,7 +251,6 @@ export default {
   name: 'MigrateList',
   components: { VIcon, FilterBar, TablePage, SkipError, Drawer, Upload, TaskStatus },
   inject: ['checkAgent', 'buried'],
-  mixins: [locale],
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
@@ -329,7 +327,7 @@ export default {
     statusOptions() {
       const options = Object.entries(this.STATUS_MAP).map(([status, item]) => {
         return {
-          label: this.t(item.i18n),
+          label: this.$t(item.i18n),
           value: item.in ? item.in.join(',') : status
         }
       })

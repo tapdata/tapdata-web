@@ -26,7 +26,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ t('task_preview_status_' + result[0].status) }}
+          {{ $t('task_preview_status_' + result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -110,7 +110,6 @@ import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import { VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
-import Locale from './mixins/locale'
 import { measurementApi, taskApi } from '@tap/api'
 import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
@@ -124,7 +123,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     VEmpty,
@@ -274,12 +273,12 @@ export default {
     gotoViewer() {},
 
     async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter(node => node.type === 'database')
       if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
+        return this.$t('editor_cell_validate_none_data_node')
       }
 
       await this.validateAllNodes()
@@ -464,7 +463,7 @@ export default {
       this.isSaving = true
       try {
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.t('message_operation_succuess'))
+        this.$message.success(this.$t('message_operation_succuess'))
         this.isSaving = false
       } catch (e) {
         this.handleError(e)

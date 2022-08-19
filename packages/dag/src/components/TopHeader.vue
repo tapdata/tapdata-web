@@ -22,26 +22,26 @@
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
         <!--撤销-->
-        <ElTooltip transition="tooltip-fade-in" :content="t('button_undo') + `(${commandCode} + Z)`">
+        <ElTooltip transition="tooltip-fade-in" :content="$t('button_undo') + `(${commandCode} + Z)`">
           <button @click="$emit('undo')" class="icon-btn">
             <VIcon size="20">undo</VIcon>
           </button>
         </ElTooltip>
         <!--重做-->
-        <ElTooltip transition="tooltip-fade-in" :content="t('button_redo') + `(${commandCode} + Shift + Z)`">
+        <ElTooltip transition="tooltip-fade-in" :content="$t('button_redo') + `(${commandCode} + Shift + Z)`">
           <button @click="$emit('redo')" class="icon-btn">
             <VIcon size="20">redo</VIcon>
           </button>
         </ElTooltip>
         <!--删除-->
-        <ElTooltip transition="tooltip-fade-in" :content="t('button_delete') + '(Del)'">
+        <ElTooltip transition="tooltip-fade-in" :content="$t('button_delete') + '(Del)'">
           <button @click="$emit('delete')" class="icon-btn">
             <VIcon size="20">delete</VIcon>
           </button>
         </ElTooltip>
       </template>
       <!--内容居中-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_center_content') + '(Shift + 1)'">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_center_content') + '(Shift + 1)'">
         <button @click="$emit('center-content')" class="icon-btn">
           <VIcon size="20">compress</VIcon>
         </button>
@@ -49,27 +49,27 @@
       <!--自动布局-->
       <ElTooltip
         transition="tooltip-fade-in"
-        :content="t('button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
+        :content="$t('button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
       >
         <button @click="$emit('auto-layout')" class="icon-btn">
           <VIcon size="20">auto-layout</VIcon>
         </button>
       </ElTooltip>
       <!--移动画布-->
-      <!--<ElTooltip transition="tooltip-fade-in" :content="t('button_move_paper')">
+      <!--<ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
         <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
           <VIcon size="20">hand</VIcon>
         </button>
       </ElTooltip>-->
       <!--拖选画布-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('mouse_selection')">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('mouse_selection')">
         <button @click="toggleShiftKeyPressed()" class="icon-btn" :class="{ active: shiftKeyPressed }">
           <VIcon size="20">kuangxuan</VIcon>
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--缩小-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_zoom_out') + `(${commandCode} -)`">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out') + `(${commandCode} -)`">
         <button @click="$emit('zoom-out')" class="icon-btn">
           <VIcon size="20">remove-outline</VIcon>
         </button>
@@ -79,11 +79,11 @@
           <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
           <div class="choose-list p-2">
             <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">{{ t('button_zoom_out') }}</span>
+              <span class="title">{{ $t('button_zoom_out') }}</span>
               <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
             </div>
             <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">{{ t('button_zoom_in') }}</span>
+              <span class="title">{{ $t('button_zoom_in') }}</span>
               <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
             </div>
             <VDivider class="my-2"></VDivider>
@@ -94,7 +94,7 @@
         </ElPopover>
       </div>
       <!--放大-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_zoom_in') + `(${commandCode} +)`">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_in') + `(${commandCode} +)`">
         <button @click="$emit('zoom-in')" class="icon-btn">
           <VIcon size="20">add-outline</VIcon>
         </button>
@@ -107,7 +107,7 @@
         </button>
       </ElTooltip>
       <!--设置-->
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
           <VIcon size="20">setting-outline</VIcon>
         </button>
@@ -119,7 +119,7 @@
       <ElButton v-if="stateIsReadonly" size="mini" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
-        {{ t('task_list_button_monitor') }}
+        {{ $t('task_list_button_monitor') }}
       </ElButton>
 
       <ElButton
@@ -131,7 +131,7 @@
         @click="$emit('save')"
       >
         <!--保存-->
-        {{ t('button_save') }}
+        {{ $t('button_save') }}
       </ElButton>
       <template v-else>
         <ElButton
@@ -144,7 +144,7 @@
         >
           <VIcon>edit</VIcon>
           <!--编辑-->
-          {{ t('button_edit') }}
+          {{ $t('button_edit') }}
         </ElButton>
 
         <ElButton
@@ -156,7 +156,7 @@
           @click="$emit('forceStop')"
         >
           <VIcon>stop</VIcon>
-          {{ t('task_list_force_stop') }}
+          {{ $t('task_list_force_stop') }}
         </ElButton>
         <ElButton
           key="stop"
@@ -167,7 +167,7 @@
           @click="$emit('stop')"
         >
           <VIcon>stop</VIcon>
-          {{ t('task_list_stop') }}
+          {{ $t('task_list_stop') }}
         </ElButton>
         <ElButton
           key="reset"
@@ -177,7 +177,7 @@
           @click="$emit('reset')"
         >
           <VIcon>reset</VIcon>
-          {{ t('dataFlow_button_reset') }}
+          {{ $t('dataFlow_button_reset') }}
         </ElButton>
       </template>
 
@@ -188,7 +188,7 @@
         type="primary"
         @click="$emit('start')"
       >
-        {{ t('task_list_run') }}
+        {{ $t('task_list_run') }}
       </ElButton>
     </div>
   </header>
@@ -200,14 +200,11 @@ import { VIcon, TextEditable } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import focusSelect from 'web-core/directives/focusSelect'
 import VDivider from 'web-core/components/VDivider'
-import Locale from '../mixins/locale'
 
 export default {
   name: 'TopHeader',
 
   directives: { focusSelect },
-
-  mixins: [Locale],
 
   props: {
     loading: Boolean,
@@ -226,9 +223,9 @@ export default {
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.t('dataFlow_initial_sync') + '+' + this.t('dataFlow_cdc'),
-        initial_sync: this.t('dataFlow_initial_sync'),
-        cdc: this.t('dataFlow_cdc')
+        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc'),
+        initial_sync: this.$t('dataFlow_initial_sync'),
+        cdc: this.$t('dataFlow_cdc')
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,

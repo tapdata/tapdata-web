@@ -8,7 +8,7 @@
               <template v-if="collapseMode === 'db'">
                 <span class="flex-1 user-select-none text-truncate flex align-center">
                   <!--连接-->
-                  {{ t('dag_connection') }}
+                  {{ $t('dag_connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
                 <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
@@ -20,7 +20,7 @@
                 v-model="dbSearchTxt"
                 ref="dbInput"
                 class="header__input"
-                :placeholder="t('connection_name_search_placeholder')"
+                :placeholder="$t('connection_name_search_placeholder')"
                 size="mini"
                 clearable
                 @keydown.native.stop
@@ -70,7 +70,7 @@
                 </div>
                 <VEmpty v-if="!dbList.length" />
                 <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                  {{ t('loading') }}<span class="dotting"></span>
+                  {{ $t('loading') }}<span class="dotting"></span>
                 </div>
               </div>
             </ElSkeleton>
@@ -82,11 +82,11 @@
         <div class="tb-header flex align-center px-4">
           <span class="flex-1 user-select-none text-truncate flex align-center">
             <!--表-->
-            {{ t('dag_table') }}
+            {{ $t('dag_table') }}
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
-          <ElTooltip :content="t('dag_create_table_as_node')" placement="top">
+          <ElTooltip :content="$t('dag_create_table_as_node')" placement="top">
             <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
           </ElTooltip>
           <VIcon size="20" class="click-btn" @click.stop="handleShowTBInput">search-outline</VIcon>
@@ -96,7 +96,7 @@
             v-model="tbSearchTxt"
             ref="tbInput"
             class="header__input"
-            :placeholder="t('table_name_search_placeholder')"
+            :placeholder="$t('table_name_search_placeholder')"
             size="mini"
             clearable
             @keydown.native.stop
@@ -145,7 +145,7 @@
                 </div>
                 <VEmpty v-if="!tbList.length" />
                 <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                  {{ t('loading') }}<span class="dotting"></span>
+                  {{ $t('loading') }}<span class="dotting"></span>
                 </div>
               </div>
             </div>
@@ -160,7 +160,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ t('dag_processor_node') }}
+              {{ $t('dag_processor_node') }}
             </span>
           </div>
         </template>
@@ -256,7 +256,6 @@ import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
 import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
-import Locale from '../mixins/locale'
 import { escapeRegExp } from 'lodash'
 
 export default {
@@ -273,8 +272,6 @@ export default {
     ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar
   },
-
-  mixins: [Locale],
 
   data() {
     return {
@@ -319,8 +316,8 @@ export default {
 
       dialogData: {
         type: 'table',
-        title: this.t('dialog_createTable'),
-        placeholder: this.t('dialog_placeholderTable'),
+        title: this.$t('dialog_createTable'),
+        placeholder: this.$t('dialog_placeholderTable'),
         visible: false
       }
     }

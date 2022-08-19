@@ -4,13 +4,11 @@ import { defineComponent } from 'vue-demi'
 import { VIcon } from '@tap/component'
 import '../field-rename/index.scss'
 import { convertSchemaToTreeData } from '../field-rename/util'
-import Locale from '../../mixins/locale'
 
 export const FieldValue = connect(
   observer(
     defineComponent({
       props: ['loading', 'options', 'disabled'],
-      mixins: [Locale],
       setup() {
         const formRef = useForm()
         const form = formRef.value
@@ -138,7 +136,7 @@ export const FieldValue = connect(
               <ElForm>
                 <ElFormItem>
                   <ElInput
-                    placeholder="t('editor_cell_processor_field_form_expression')"
+                    placeholder="$t('editor_cell_processor_field_form_expression')"
                     v-model={this.scriptDialog.script}
                     size="mini"
                   >

@@ -331,17 +331,17 @@ importers:
   packages/business:
     specifiers:
       '@tap/assets': workspace:^1.0.0
-      '@tap/locale': workspace:^1.0.0
+      '@tap/i18n': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
     dependencies:
       '@tap/assets': link:../assets
-      '@tap/locale': link:../locale
+      '@tap/i18n': link:../i18n
       '@tap/shared': link:../shared
 
   packages/component:
     specifiers:
       '@tap/api': workspace:^1.0.0
-      '@tap/locale': workspace:^1.0.0
+      '@tap/i18n': workspace:^1.0.0
       ace-builds: ^1.4.13
       dayjs: ^1.11.2
       echarts: ^5.0.2
@@ -350,7 +350,7 @@ importers:
       vue-echarts: ^6.0.0
     dependencies:
       '@tap/api': link:../api
-      '@tap/locale': link:../locale
+      '@tap/i18n': link:../i18n
       ace-builds: registry.npmmirror.com/ace-builds/1.6.1
       dayjs: registry.npmmirror.com/dayjs/1.11.3
       echarts: registry.npmmirror.com/echarts/5.3.3
@@ -370,7 +370,7 @@ importers:
       '@tap/component': workspace:^1.0.0
       '@tap/field-mapping': workspace:^1.0.0
       '@tap/form': workspace:^1.0.0
-      '@tap/locale': workspace:^1.0.0
+      '@tap/i18n': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
       dagre: ^0.8.5
       dayjs: ^1.11.2
@@ -388,7 +388,7 @@ importers:
       '@tap/component': link:../component
       '@tap/field-mapping': link:../field-mapping
       '@tap/form': link:../form
-      '@tap/locale': link:../locale
+      '@tap/i18n': link:../i18n
       '@tap/shared': link:../shared
       dagre: registry.npmmirror.com/dagre/0.8.5
       dayjs: registry.npmmirror.com/dayjs/1.11.3
@@ -399,10 +399,10 @@ importers:
   packages/field-mapping:
     specifiers:
       '@tap/api': workspace:^1.0.0
-      '@tap/locale': workspace:^1.0.0
+      '@tap/i18n': workspace:^1.0.0
     dependencies:
       '@tap/api': link:../api
-      '@tap/locale': link:../locale
+      '@tap/i18n': link:../i18n
 
   packages/form:
     specifiers:
@@ -417,7 +417,7 @@ importers:
       '@tap/assets': workspace:^1.0.0
       '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
-      '@tap/locale': workspace:^1.0.0
+      '@tap/i18n': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
       '@vue/composition-api': ^1.2.4
       ace-builds: ^1.4.13
@@ -438,7 +438,7 @@ importers:
       '@tap/assets': link:../assets
       '@tap/business': link:../business
       '@tap/component': link:../component
-      '@tap/locale': link:../locale
+      '@tap/i18n': link:../i18n
       '@tap/shared': link:../shared
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.6.3_vue@2.6.14
       ace-builds: registry.npmmirror.com/ace-builds/1.6.1
@@ -449,9 +449,6 @@ importers:
       vue-virtual-scroller: registry.npmmirror.com/vue-virtual-scroller/1.0.10_vue@2.6.14
 
   packages/i18n:
-    specifiers: {}
-
-  packages/locale:
     specifiers: {}
 
   packages/node-design:
@@ -5457,7 +5454,7 @@ packages:
       mississippi: registry.npmmirror.com/mississippi/3.0.0
       mkdirp: registry.npmmirror.com/mkdirp/0.5.6
       move-concurrently: registry.npmmirror.com/move-concurrently/1.0.1
-      promise-inflight: registry.npmmirror.com/promise-inflight/1.0.1
+      promise-inflight: registry.npmmirror.com/promise-inflight/1.0.1_bluebird@3.7.2
       rimraf: registry.npmmirror.com/rimraf/2.7.1
       ssri: registry.npmmirror.com/ssri/6.0.2
       unique-filename: registry.npmmirror.com/unique-filename/1.1.1
@@ -13437,6 +13434,20 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
+
+  registry.npmmirror.com/promise-inflight/1.0.1_bluebird@3.7.2:
+    resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/promise-inflight/-/promise-inflight-1.0.1.tgz}
+    id: registry.npmmirror.com/promise-inflight/1.0.1
+    name: promise-inflight
+    version: 1.0.1
+    peerDependencies:
+      bluebird: '*'
+    peerDependenciesMeta:
+      bluebird:
+        optional: true
+    dependencies:
+      bluebird: registry.npmmirror.com/bluebird/3.7.2
     dev: true
 
   registry.npmmirror.com/proxy-addr/2.0.7:
