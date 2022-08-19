@@ -8,4 +8,5 @@ const langs = {
   'en-US': en,
   en: en
 }
-export default new Locale(langs, zhCN)
+const local = new Locale(langs, zhCN)
+export { langs, local }
