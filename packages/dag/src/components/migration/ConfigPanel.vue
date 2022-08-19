@@ -66,7 +66,11 @@ export default {
   mixins: [Locale],
 
   props: {
-    onlySetting: Boolean
+    onlySetting: Boolean,
+    includesType: {
+      type: Array,
+      default: () => ['node', 'settings']
+    }
   },
 
   data() {
@@ -82,7 +86,7 @@ export default {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
 
     showPanel() {
-      return this.onlySetting ? this.activeType === 'settings' : this.activeType
+      return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
     }
   },
 
