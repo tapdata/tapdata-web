@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 import { defineComponent, reactive, ref, watch, nextTick } from '@vue/composition-api'
 import { FilterBar, Drawer, DiscoveryClassification } from '@tap/component'
 import { discoveryApi } from '@tap/api'
@@ -56,14 +57,14 @@ export default defineComponent({
         let { sourceType } = res
         data.filterItems = [
           {
-            label: '资源类型',
+            label: i18n.t('datadiscovery_catalogue_ziyuanleixing'),
             key: 'sourceType',
             type: 'select-inner',
             items: dataAssembly(sourceType),
             selectedWidth: '200px'
           },
           {
-            placeholder: '连接对象名',
+            placeholder: i18n.t('datadiscovery_catalogue_lianjieduixiangming'),
             key: 'queryKey',
             type: 'input'
           }
@@ -79,6 +80,7 @@ export default defineComponent({
         }
       })
     }
+    //打开资源概览
     const handlePreview = row => {
       data.isShowDetails = true
       nextTick(() => {
@@ -89,12 +91,15 @@ export default defineComponent({
     const closeDrawer = val => {
       data.isShowDetails = val
     }
+    //打开资源绑定抽屉
     const handleSourceDrawer = () => {
       data.isShowSourceDrawer = true
       nextTick(() => {
         // @ts-ignore
+        //请求筛选条件-下拉列表
         refs?.objectTable?.loadFilterList()
         // @ts-ignore
+        //请求资源绑定目录
         refs?.objectTable?.loadTableData()
       })
     }
@@ -103,9 +108,11 @@ export default defineComponent({
       nextTick(() => {
         loadData(1)
         // @ts-ignore
+        //关闭资源绑定抽屉 刷新数据目录分类树 主要是统计
         refs?.classify?.getData()
       })
     }
+    //切换目录
     const getNodeChecked = node => {
       data.currentNode = node
       loadData(1)
@@ -125,7 +132,6 @@ export default defineComponent({
         </div>
       )
     }
-    loadData(1)
     loadFilterList()
     watch(
       () => root.$route.query,
@@ -157,7 +163,7 @@ export default defineComponent({
           </div>
           <div class="discovery-page-right">
             <div class="flex flex-row align-items-center mb-2">
-              <span class="ml-2 mr-2">目录</span>
+              <span class="ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
               <span class="mr-2"> {this.data.currentNode.value} </span>
             </div>
             <div class="catalogue-page-topbar">
@@ -176,20 +182,20 @@ export default defineComponent({
                     this.handleSourceDrawer()
                   }}
                 >
-                  <span>资源绑定</span>
+                  <span>{i18n.t('datadiscovery_catalogue_ziyuanbangding')}</span>
                 </el-button>
               </div>
             </div>
             <el-table class="discovery-page-table" data={this.list} v-loading={this.data.tableLoading}>
               <el-table-column
-                label="名称"
+                label={i18n.t('metadata_name')}
                 prop="name"
                 scopedSlots={{
                   default: this.renderNode
                 }}
               ></el-table-column>
-              <el-table-column label="类型" prop="type"></el-table-column>
-              <el-table-column label="描述" prop="desc"></el-table-column>
+              <el-table-column label={i18n.t('metadata_type')} prop="type"></el-table-column>
+              <el-table-column label={i18n.t('module_form_describtion')} prop="desc"></el-table-column>
             </el-table>
             <el-pagination
               background
@@ -211,7 +217,7 @@ export default defineComponent({
             <el-drawer
               class="object-drawer-wrap"
               size="56%"
-              title="资源绑定"
+              title={i18n.t('datadiscovery_catalogue_ziyuanbangding')}
               visible={this.data.isShowSourceDrawer}
               on={{ ['update:visible']: this.closeSourceDrawer }}
             >

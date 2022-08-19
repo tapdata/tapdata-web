@@ -1,25 +1,25 @@
 import { defineComponent, reactive, ref, watch } from '@vue/composition-api'
+import i18n from '@/i18n'
 import { FilterBar, Drawer } from '@tap/component'
 import DrawerContent from './PreviewDrawer'
-import { useI18n, useMessage } from '@/hooks'
+import { useMessage } from '@/hooks'
 import { discoveryApi } from '@tap/api'
 import './index.scss'
 
 export default defineComponent({
   props: [''],
   setup(props, { refs, root }) {
-    const { $t } = useI18n()
     const { success } = useMessage()
     const list = ref([])
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const data = reactive({
       tableLoading: false,
       searchParams: {
-        category: category || '',
-        type: type || '',
-        sourceCategory: sourceCategory || '',
-        sourceType: sourceType || '',
-        queryKey: queryKey || ''
+        category: category || '', //对象分类
+        type: type || '', //对象类型
+        sourceCategory: sourceCategory || '', //来源分类
+        sourceType: sourceType || '', //来源类型
+        queryKey: queryKey || '' //输入搜索值
       },
       activeName: 'first',
       activeUser: 'admin',
@@ -57,44 +57,46 @@ export default defineComponent({
           data.tableLoading = false
         })
     }
+    //请求筛选条件-下拉列表
     const loadFilterList = () => {
       let filterType = ['objCategory', 'objType', 'sourceCategory', 'sourceType']
       discoveryApi.filterList(filterType).then(res => {
         let { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {
-            label: '对象分类',
-            key: 'category',
+            label: i18n.t('object_list_classification'),
+            key: 'category', //对象分类
             type: 'select-inner',
             items: dataAssembly(objCategory),
             selectedWidth: '200px'
           },
           {
-            label: '对象类型',
-            key: 'type',
+            label: i18n.t('object_list_type'),
+            key: 'type', //对象类型
             type: 'select-inner',
             items: dataAssembly(objType)
           },
           {
-            label: '来源类型',
-            key: 'sourceType',
+            label: i18n.t('object_list_source_type'),
+            key: 'sourceType', //来源类型
             type: 'select-inner',
             items: dataAssembly(sourceCategory)
           },
           {
-            label: '来源分类',
-            key: 'sourceCategory',
+            label: i18n.t('datadiscovery_objectlist_laiyuanfenlei'),
+            key: 'sourceCategory', //来源分类
             type: 'select-inner',
             items: dataAssembly(sourceType)
           },
           {
-            placeholder: '对象名/来源名',
-            key: 'queryKey',
+            placeholder: i18n.t('datadiscovery_objectlist_duixiangminglaiyuan'),
+            key: 'queryKey', //输入搜索名称
             type: 'input'
           }
         ]
       })
     }
+    //公用方法 格式化数据
     const dataAssembly = data => {
       if (data?.length === 0) return
       return data.map(item => {
@@ -104,6 +106,7 @@ export default defineComponent({
         }
       })
     }
+    //打开对象概览
     const handlePreview = row => {
       data.isShowDetails = true
       // @ts-ignore
@@ -139,7 +142,6 @@ export default defineComponent({
       data,
       list,
       success,
-      $t,
       loadData,
       renderNode,
       closeDrawer

@@ -21,7 +21,6 @@
       @forceStop="handleForceStop"
       @reset="handleReset"
       @edit="handleEdit"
-      @detail="handleDetail"
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
@@ -261,6 +260,7 @@ export default {
       if (v1 !== v2) {
         this.init()
       }
+      this.toggleConnectionRun(v1 === 'running')
     }
   },
 
@@ -272,8 +272,7 @@ export default {
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
-        // 显示连线动画
-        this.jsPlumbIns.select().addClass('running')
+        this.toggleConnectionRun()
         // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
@@ -484,22 +483,6 @@ export default {
       this.$router.push({
         name: 'MigrateEditor',
         params: { id: this.dataflow.id }
-      })
-    },
-
-    handleDetail() {
-      let subId = this.dataflow.statuses[0]?.id || ''
-      if (!subId) {
-        this.$message.error('该复制任务没有子任务')
-        return
-      }
-
-      this.$router.push({
-        name: 'MigrateStatistics',
-        query: {
-          id: this.dataflow.id,
-          subId: subId
-        }
       })
     },
 
@@ -832,6 +815,18 @@ export default {
           this.handleError(e, this.t('message_resetFailed'))
         }
       })
+    },
+
+    /**
+     * 显示/隐藏连线动效
+     * @param flag
+     */
+    toggleConnectionRun(flag = this.dataflow.status === 'running') {
+      if (flag) {
+        this.jsPlumbIns.select().addClass('running')
+      } else {
+        this.jsPlumbIns.select().removeClass('running')
+      }
     }
   }
 }

@@ -1,7 +1,8 @@
 import { defineComponent, reactive, ref, nextTick, watch } from '@vue/composition-api'
+import i18n from '@/i18n'
 import { FilterBar } from '@tap/component'
 import { discoveryApi } from '@tap/api'
-import { useI18n, useMessage } from '@/hooks'
+import { useMessage } from '@/hooks'
 import './index.scss'
 
 export default defineComponent({
@@ -12,7 +13,6 @@ export default defineComponent({
     const { error, success } = useMessage()
     const multipleSelection = ref([])
     const data = reactive({
-      isShowDetails: false,
       searchParams: {
         category: category || '',
         type: type || '',
@@ -30,6 +30,7 @@ export default defineComponent({
       },
       filterItems: []
     })
+    //加载table 数据
     const loadTableData = val => {
       let { category, type, sourceCategory, sourceType, queryKey } = data.searchParams
       data.page.current = val
@@ -69,47 +70,50 @@ export default defineComponent({
           data.tableLoading = false
         })
     }
+    //请求过滤条件每一个下拉列表的数据
     const loadFilterList = () => {
       let filterType = ['objCategory', 'objType', 'sourceCategory', 'sourceType']
       discoveryApi.filterList(filterType).then(res => {
         let { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {
-            label: '对象分类',
+            label: i18n.t('object_list_classification'),
             key: 'category',
             type: 'select-inner',
             items: dataAssembly(objCategory),
             selectedWidth: '200px'
           },
           {
-            label: '对象类型',
+            label: i18n.t('object_list_type'),
             key: 'type',
             type: 'select-inner',
             items: dataAssembly(objType)
           },
           {
-            label: '来源类型',
+            label: i18n.t('object_list_source_type'),
             key: 'sourceType',
             type: 'select-inner',
             items: dataAssembly(sourceCategory)
           },
           {
-            label: '来源分类',
+            label: i18n.t('datadiscovery_objectlist_laiyuanfenlei'),
             key: 'sourceCategory',
             type: 'select-inner',
             items: dataAssembly(sourceType)
           },
           {
-            placeholder: '对象名/来源名',
+            placeholder: i18n.t('datadiscovery_objectlist_duixiangminglaiyuan'),
             key: 'queryKey',
             type: 'input'
           }
         ]
       })
     }
+    //table check box change
     const handleSelectionChange = val => {
       multipleSelection.value = val
     }
+    //公用方法 处理数据结构
     const dataAssembly = data => {
       if (data?.length === 0) return
       return data.map(item => {
@@ -119,6 +123,7 @@ export default defineComponent({
         }
       })
     }
+    //全选 只发一个接口（解绑/绑定）
     const saveAllTags = selection => {
       let data = selection.map(t => {
         return {
@@ -127,7 +132,7 @@ export default defineComponent({
         }
       })
       if (data?.length === 0) {
-        //给你当前列表数据
+        //全选解绑 传当前列表数据
         let listFilter = list.value.map(t => {
           return {
             id: t?.id,
@@ -139,6 +144,7 @@ export default defineComponent({
         submitTags(data, 'postTags')
       }
     }
+    //单个资源绑定
     const saveTags = (selection, row) => {
       let data = [{ id: row?.id, objCategory: row?.category }]
       if (selection?.length > 0) {
@@ -155,6 +161,7 @@ export default defineComponent({
         submitTags(data, 'patchTags')
       }
     }
+    //统一提交绑定数据
     const submitTags = (data, http) => {
       let where = {
         tagBindingParams: data,
@@ -162,12 +169,13 @@ export default defineComponent({
       }
       discoveryApi[http](where)
         .then(() => {
-          success('操作成功')
+          success(i18n.t('message_operation_succuess'))
         })
         .catch(err => {
           error(err)
         })
     }
+    //监听路由变化 筛选条件变化
     watch(
       () => root.$route.query,
       val => {

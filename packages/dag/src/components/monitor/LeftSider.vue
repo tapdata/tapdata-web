@@ -15,7 +15,7 @@
         </div>
         <div class="task-info__row">
           <span class="task-info__label">所属FE：</span>
-          <span class="task-info__value">{{ dataflow.agentName || '-' }}</span>
+          <span class="task-info__value">{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
         </div>
         <div class="task-info__row">
           <span class="task-info__label">运行状态：</span>
