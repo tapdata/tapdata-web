@@ -19,7 +19,7 @@ import '@/directives'
 import LoadMore from '@/utils/loadMore'
 
 import '@/plugins/axios.ts'
-import { configUser } from '@/utils/util'
+import { configUser, getUrlSearch } from '@/utils/util'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -69,7 +69,14 @@ Vue.prototype.$confirm = (message, title, options) => {
   })
 }
 
+const IS_IFRAME = getUrlSearch('only_content') === 'true' || window.self !== window.top
+sessionStorage.setItem('IS_IFRAME', IS_IFRAME)
+const TOKEN = getUrlSearch('token')
+if (TOKEN) {
+  Cookie.set('token', TOKEN)
+}
 let token = Cookie.get('token')
+
 let init = settings => {
   window.__settings__ = settings
   let lang = Cookie.get('lang') || 'en_US'
