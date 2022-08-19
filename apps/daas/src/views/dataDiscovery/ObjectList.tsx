@@ -177,8 +177,9 @@ export default defineComponent({
             <el-pagination
               background
               class="table-page-pagination mt-3"
-              layout="->,total,  prev, pager, next, jumper"
+              layout="->,total, prev, pager, next, jumper"
               on={{ ['update:current-page']: this.loadData }}
+              page-size={this.data.page.size}
               current-page={this.data.page.current}
               total={this.data.page.total}
               onCurrent-change={this.loadData}
