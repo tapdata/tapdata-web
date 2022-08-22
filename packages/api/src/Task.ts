@@ -135,12 +135,16 @@ export default class Task extends Http {
     return this.axios.get(this.url + `/records/${id}`, { params })
   }
 
-  autoInspectResultsGroupByTable(taskId, params) {
-    return this.axios.get(this.url + `/${taskId}/auto-inspect-results-group-by-table`, { params })
+  autoInspectResultsGroupByTable(params) {
+    return this.axios.post(this.url + `/auto-inspect-results-group-by-table`, params)
   }
 
   autoInspectResults(taskId, params) {
     return this.axios.get(this.url + `/${taskId}/auto-inspect-results`, { params })
+  }
+
+  autoInspectTotals(params) {
+    return this.axios.post(this.url + `/auto-inspect-totals`, params)
   }
 }
 export { Task }

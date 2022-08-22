@@ -35,7 +35,7 @@ export default defineComponent({
       let where = {
         page: current,
         pageSize: size,
-        tagId: data.currentNode['id'] || ''
+        tagId: data?.currentNode?.['id'] || ''
       }
       sourceType && (where['sourceType'] = sourceType)
       queryKey && (where['queryKey'] = queryKey)

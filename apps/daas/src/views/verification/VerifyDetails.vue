@@ -204,27 +204,24 @@ export default {
     remoteMethod({ page }) {
       let { current, size } = page
       let filter = {
+        id: this.$route.params.id,
         limit: size,
         skip: size * (current - 1),
-        tableName: this.keyword
+        filter: this.keyword
       }
-      return taskApi
-        .autoInspectResultsGroupByTable(this.$route.params.id, {
-          filter: JSON.stringify(filter)
+      return taskApi.autoInspectResultsGroupByTable(filter).then(data => {
+        const list = data.items.map(t => {
+          t.counts = t.counts.toLocaleString()
+          return t
         })
-        .then(data => {
-          const list = data.items.map(t => {
-            t.counts = t.counts.toLocaleString()
-            return t
-          })
-          if (!this.row || !list.find(t => JSON.stringify(this.row) === JSON.stringify(t))) {
-            this.handleRow(list[0])
-          }
-          return {
-            total: data.total,
-            data: list
-          }
-        })
+        if (!this.row || !list.find(t => JSON.stringify(this.row) === JSON.stringify(t))) {
+          this.handleRow(list[0])
+        }
+        return {
+          total: data.total,
+          data: list
+        }
+      })
     },
 
     handleRow(row) {

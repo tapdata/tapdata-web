@@ -1,10 +1,10 @@
 <template>
   <section class="bottom-panel border-top flex-column">
-    <Log v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab"></Log>
+    <Log v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
     <div v-else class="panel-header flex pr-4 h-100">
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column">
         <ElTabPane label="日志" name="log">
-          <Log v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab"></Log>
+          <Log v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
         </ElTabPane>
         <ElTabPane label="运行记录" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
@@ -83,6 +83,10 @@ export default {
 
     async validateForm() {
       await this.$refs.formPanel?.validate()
+    },
+
+    getLogRef() {
+      return this.$refs.log
     }
   }
 }
@@ -95,7 +99,7 @@ $headerHeight: 40px;
 
 .bottom-panel {
   position: relative;
-  z-index: 10;
+  z-index: 9;
   height: 328px;
   //min-height: 328px;
   //height: 100%;

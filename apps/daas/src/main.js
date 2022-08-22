@@ -69,7 +69,7 @@ Vue.prototype.$confirm = (message, title, options) => {
   })
 }
 
-const IS_IFRAME = getUrlSearch('only_content') === 'true' || window.self !== window.top
+const IS_IFRAME = getUrlSearch('frame') === 'true' || window.self !== window.top
 sessionStorage.setItem('IS_IFRAME', IS_IFRAME)
 const TOKEN = getUrlSearch('token')
 if (TOKEN) {
