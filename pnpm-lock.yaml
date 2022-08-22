@@ -24,6 +24,7 @@ importers:
       '@vue/cli-plugin-router': ~4.5.0
       '@vue/cli-plugin-vuex': ~4.5.0
       '@vue/cli-service': ~4.5.0
+      '@vue/composition-api': ^1.6.2
       '@vue/eslint-config-typescript': ^9.1.0
       babel-plugin-dynamic-import-node: ^2.3.3
       element-ui: 2.15.7
@@ -37,6 +38,7 @@ importers:
       vue: ^2.6.14
       vue-router: ^3.2.0
     dependencies:
+      '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.6.3_vue@2.6.14
       element-ui: registry.npmmirror.com/element-ui/2.15.7_vue@2.6.14
       lodash: registry.npmmirror.com/lodash/4.17.21
       vue: registry.npmmirror.com/vue/2.6.14
@@ -3111,7 +3113,7 @@ packages:
     dependencies:
       '@babel/core': registry.npmmirror.com/@babel/core/7.18.6
       '@vue/babel-preset-app': registry.npmmirror.com/@vue/babel-preset-app/4.5.19_vue@2.6.14
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.19_4xdgbciravlsqpb4hkufpsppue
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.19_sbs6or2oam5i4s4vmfp4rzwdnq
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.19
       babel-loader: registry.npmmirror.com/babel-loader/8.2.5_xcbjw3zjektbxpb7yraegegdpi
       cache-loader: registry.npmmirror.com/cache-loader/4.1.0_webpack@4.46.0
@@ -3200,7 +3202,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.19_4xdgbciravlsqpb4hkufpsppue
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.19_sbs6or2oam5i4s4vmfp4rzwdnq
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.19
     dev: true
 
