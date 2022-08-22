@@ -165,6 +165,7 @@ export default defineComponent({
             <div class="flex flex-row align-items-center mb-2">
               <span class="ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
               <span class="mr-2"> {this.data.currentNode.value} </span>
+              <span class="discovery-desc ml-2">{this.data.currentNode.desc} </span>
             </div>
             <div class="catalogue-page-topbar">
               <div class="catalogue-page-search-bar">

@@ -197,7 +197,8 @@ export default {
           last_updated: 1,
           value: 1,
           objCount: 1,
-          parent_id: 1
+          parent_id: 1,
+          desc: 1
         }
       }
       if (this.types[0] === 'user') {
@@ -337,6 +338,7 @@ export default {
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
         isParent: (type === 'add' && !node) || (type === 'edit' && node?.level === 1),
+        desc: node?.data?.desc,
         title:
           type === 'add'
             ? node
