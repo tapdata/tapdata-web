@@ -110,17 +110,6 @@ export default {
 
   props: {
     dataflow: Object,
-    settings: Object,
-    samples: {
-      type: Object,
-      default: () => {
-        return {
-          passed: 10232,
-          diff: 456,
-          notSupport: 231114
-        }
-      }
-    },
     data: {
       type: Object,
       default: () => {
@@ -129,7 +118,8 @@ export default {
           items: []
         }
       }
-    }
+    },
+    totals: Object
   },
 
   data() {
@@ -143,6 +133,7 @@ export default {
       page: 1,
       total: 0,
       idMap: {},
+      totalsData: {},
       hasNew: false // 出现新数据
     }
   },
@@ -155,6 +146,12 @@ export default {
     },
 
     pieOptions() {
+      let { totalsData, totals } = this
+      if (totals) {
+        totalsData = {
+          ...totals
+        }
+      }
       let arr = [
         {
           name: '校验一致',
@@ -164,20 +161,20 @@ export default {
         },
         {
           name: '校验不一致',
-          key: 'diff',
+          key: 'diffTables',
           value: 0,
           color: '#F7D762'
         },
         {
           name: '不支持校验',
-          key: 'notSupport',
+          key: 'ignore',
           value: 0,
           color: '#88DBDA'
         }
       ]
       const values = arr.map(t =>
         Object.assign({}, t, {
-          value: this.samples?.[t.key] ?? 0
+          value: totalsData?.[t.key] ?? 0
         })
       )
       return this.getPieOptions(values)
@@ -211,6 +208,7 @@ export default {
   methods: {
     init() {
       this.loadData()
+      this.loadTotals()
     },
 
     resetPage() {
@@ -222,9 +220,10 @@ export default {
       const { pageSize, keyword } = this
       page = page || this.page
       let filter = {
+        id: this.dataflow.id,
         limit: pageSize,
         skip: pageSize * (page - 1),
-        tableName: keyword
+        filter: keyword
       }
       return filter
     },
@@ -232,9 +231,7 @@ export default {
     loadData(loadMore = false) {
       const startStamp = Date.now()
       taskApi
-        .autoInspectResultsGroupByTable(this.dataflow.id, {
-          filter: JSON.stringify(this.getFilter())
-        })
+        .autoInspectResultsGroupByTable(this.getFilter())
         .then(({ total, items = [] }) => {
           this.total = total
           const lastId = this.list.at(-1)?.id || 0
@@ -265,6 +262,18 @@ export default {
             },
             Date.now() - startStamp < 1000 ? 1500 : 0
           )
+        })
+    },
+
+    loadTotals() {
+      taskApi
+        .autoInspectTotals({
+          id: this.dataflow.id
+        })
+        .then(data => {
+          const { diffTables = 0, ignore = 0, totals = 0 } = data
+          const passed = totals - ignore - diffTables
+          this.totalsData = { diffTables, ignore, passed }
         })
     },
 
