@@ -449,7 +449,10 @@ importers:
       vue-virtual-scroller: registry.npmmirror.com/vue-virtual-scroller/1.0.10_vue@2.6.14
 
   packages/i18n:
-    specifiers: {}
+    specifiers:
+      '@tap/shared': workspace:^1.0.0
+    dependencies:
+      '@tap/shared': link:../shared
 
   packages/node-design:
     specifiers:
@@ -5454,7 +5457,7 @@ packages:
       mississippi: registry.npmmirror.com/mississippi/3.0.0
       mkdirp: registry.npmmirror.com/mkdirp/0.5.6
       move-concurrently: registry.npmmirror.com/move-concurrently/1.0.1
-      promise-inflight: registry.npmmirror.com/promise-inflight/1.0.1_bluebird@3.7.2
+      promise-inflight: registry.npmmirror.com/promise-inflight/1.0.1
       rimraf: registry.npmmirror.com/rimraf/2.7.1
       ssri: registry.npmmirror.com/ssri/6.0.2
       unique-filename: registry.npmmirror.com/unique-filename/1.1.1
@@ -13434,20 +13437,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
-
-  registry.npmmirror.com/promise-inflight/1.0.1_bluebird@3.7.2:
-    resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/promise-inflight/-/promise-inflight-1.0.1.tgz}
-    id: registry.npmmirror.com/promise-inflight/1.0.1
-    name: promise-inflight
-    version: 1.0.1
-    peerDependencies:
-      bluebird: '*'
-    peerDependenciesMeta:
-      bluebird:
-        optional: true
-    dependencies:
-      bluebird: registry.npmmirror.com/bluebird/3.7.2
     dev: true
 
   registry.npmmirror.com/proxy-addr/2.0.7:

@@ -119,7 +119,8 @@
 
 <script>
 import DatabaseTypeDialog from '@tap/business/src/views/connections/DatabaseTypeDialog'
-import Cookie from '@tap/shared/src/cookie'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+
 export default {
   name: 'newDataFlow',
   components: { DatabaseTypeDialog },
@@ -133,7 +134,7 @@ export default {
   data() {
     return {
       dialogDatabaseTypeVisible: false,
-      lang: Cookie.get('lang') || 'en_US',
+      lang: getCurrentLanguage(),
       whiteList: [
         'mysql',
         'oracle',

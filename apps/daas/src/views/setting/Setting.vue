@@ -188,8 +188,8 @@
 <script>
 import { uniq, find } from 'lodash'
 import { VIcon } from '@tap/component'
-import Cookie from '@tap/shared/src/cookie'
 import { licensesApi, settingsApi } from '@tap/api'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 export default {
   name: 'Setting',
@@ -203,7 +203,7 @@ export default {
       },
       activeTab: 0,
       activePanel: 'Log',
-      lang: Cookie.get('lang') || 'en_US',
+      lang: getCurrentLanguage(),
       emailTabs: [
         {
           label: this.$t('setting_Email_Template_Running'),
