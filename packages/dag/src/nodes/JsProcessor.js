@@ -9,6 +9,7 @@ export class JavaScript extends NodeType {
   type = 'migrate_js_processor'
 
   maxInputs = 1 // 最大输入个数
+  maxOutputs = 1 // 最大输出个数
 
   group = 'processor'
 

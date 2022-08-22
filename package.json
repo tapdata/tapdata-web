@@ -11,6 +11,7 @@
     "clean": "rm -rf node_modules && pnpm -r exec -- rm -rf node_modules"
   },
   "dependencies": {
+    "@vue/composition-api": "^1.6.2",
     "element-ui": "2.15.7",
     "lodash": "^4.17.15",
     "vue": "^2.6.14",
