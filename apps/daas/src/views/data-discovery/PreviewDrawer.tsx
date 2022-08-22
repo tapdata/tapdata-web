@@ -1,6 +1,7 @@
 import i18n from '@/i18n'
 import { defineComponent, reactive, ref } from '@vue/composition-api'
 import { TableList } from '@tap/component'
+import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import { discoveryApi } from '@tap/api'
 import './index.scss'
 import dayjs from 'dayjs'
@@ -133,9 +134,17 @@ export default defineComponent({
                         <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
                         <span class="ml-2">{this.preview.sourceType}</span>
                       </el-col>
-                      <el-col class="ellipsis" span={8}>
+                      <el-col class="flex" span={8}>
                         <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
-                        <span class="ml-2">{this.preview.sourceInfo}</span>
+                        <span class="ml-2">
+                          <OverflowTooltip
+                            class="cursor-pointer"
+                            style="width:190px"
+                            text={this.preview.sourceInfo}
+                            placement="right"
+                            open-delay={400}
+                          ></OverflowTooltip>
+                        </span>
                       </el-col>
                     </el-row>
                     <el-row class="mt-2">
