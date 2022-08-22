@@ -130,12 +130,12 @@ export default defineComponent({
                         <span class="ml-2">{this.preview.rowNum}</span>
                       </el-col>
                       <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
-                        <span class="ml-2">{this.preview.sourceInfo}</span>
-                      </el-col>
-                      <el-col span={8}>
                         <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
                         <span class="ml-2">{this.preview.sourceType}</span>
+                      </el-col>
+                      <el-col class="ellipsis" span={8}>
+                        <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
+                        <span class="ml-2">{this.preview.sourceInfo}</span>
                       </el-col>
                     </el-row>
                     <el-row class="mt-2">

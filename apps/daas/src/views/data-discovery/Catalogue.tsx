@@ -2,8 +2,8 @@ import i18n from '@/i18n'
 import { defineComponent, reactive, ref, watch, nextTick } from '@vue/composition-api'
 import { FilterBar, Drawer, DiscoveryClassification } from '@tap/component'
 import { discoveryApi } from '@tap/api'
-import DrawerContent from '@/views/dataDiscovery/PreviewDrawer'
-import ObjectTable from '@/views/dataDiscovery/ObjectTable'
+import DrawerContent from '@/views/data-discovery/PreviewDrawer'
+import ObjectTable from '@/views/data-discovery/ObjectTable'
 import './index.scss'
 
 export default defineComponent({
