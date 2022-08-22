@@ -94,7 +94,7 @@
           </div>
         </main>
         <BottomPanel
-          v-if="showBottomPanel"
+          v-if="dataflow && dataflow.status && showBottomPanel"
           v-resize.top="{
             minHeight: 328
           }"
