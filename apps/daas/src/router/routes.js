@@ -241,7 +241,7 @@ export default [
           {
             path: '',
             name: 'objectList',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/ObjectList.tsx'),
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/ObjectList.tsx'),
             meta: {
               title: 'page_title_data_object',
               code: 'datasource_menu'
@@ -262,7 +262,7 @@ export default [
           {
             path: '',
             name: 'catalogueList',
-            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/dataDiscovery/Catalogue.tsx'),
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/Catalogue.tsx'),
             meta: {
               title: 'page_title_data_catalogue',
               code: ''

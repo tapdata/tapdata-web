@@ -14,8 +14,8 @@
       width="85%"
       :title="t('dag_link_button_mapping_configuration')"
       :visible.sync="dialogFieldProcessVisible"
-      :modal-append-to-body="false"
       custom-class="database-filed-mapping-dialog"
+      append-to-body
       :close-on-click-modal="false"
     >
       <FieldMappingDialog

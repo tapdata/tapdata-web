@@ -812,7 +812,8 @@ export default {
         this.t('dag_dialog_field_mapping_error_rollback_all'),
         this.t('dag_dialog_field_mapping_error_tip'),
         {
-          type: 'warning'
+          type: 'warning',
+          zIndex: 9999
         }
       ).then(resFlag => {
         if (resFlag) {

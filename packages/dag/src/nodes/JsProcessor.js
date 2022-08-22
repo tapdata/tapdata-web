@@ -9,6 +9,7 @@ export class JavaScript extends NodeType {
   type = 'migrate_js_processor'
 
   maxInputs = 1 // 最大输入个数
+  maxOutputs = 1 // 最大输出个数
 
   group = 'processor'
 
@@ -20,20 +21,6 @@ export class JavaScript extends NodeType {
         type: 'array',
         display: 'none'
       },
-      /*declareScript: {
-        title: '模型声明',
-        type: 'string',
-        required: true,
-        default: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'JsEditor',
-        'x-component-props': {
-          height: 240,
-          options: { showPrintMargin: false, useWrapMode: true },
-          before: 'function declare(schemaApplyResultList) {',
-          after: `  return schemaApplyResultList\n}`
-        }
-      },*/
       script: {
         type: 'string',
         required: true,
@@ -45,7 +32,7 @@ export class JavaScript extends NodeType {
           includeBeforeAndAfter: true,
           before: 'function process(record){',
           beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
-          afterRegexp: '}[^]*$',
+          afterRegexp: '}[^}]*$',
           after: '}',
           handleAddCompleter: '{{addDeclaredCompleterForMigrate}}'
         }

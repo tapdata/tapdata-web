@@ -2,8 +2,8 @@ import i18n from '@/i18n'
 import { defineComponent, reactive, ref, watch, nextTick } from '@vue/composition-api'
 import { FilterBar, Drawer, DiscoveryClassification } from '@tap/component'
 import { discoveryApi } from '@tap/api'
-import DrawerContent from '@/views/dataDiscovery/PreviewDrawer'
-import ObjectTable from '@/views/dataDiscovery/ObjectTable'
+import DrawerContent from '@/views/data-discovery/PreviewDrawer'
+import ObjectTable from '@/views/data-discovery/ObjectTable'
 import './index.scss'
 
 export default defineComponent({
@@ -165,6 +165,7 @@ export default defineComponent({
             <div class="flex flex-row align-items-center mb-2">
               <span class="ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
               <span class="mr-2"> {this.data.currentNode.value} </span>
+              <span class="discovery-desc ml-2">{this.data.currentNode.desc} </span>
             </div>
             <div class="catalogue-page-topbar">
               <div class="catalogue-page-search-bar">
@@ -203,6 +204,7 @@ export default defineComponent({
               layout="->,total, prev, pager, next, jumper"
               on={{ ['update:current-page']: this.loadData }}
               current-page={this.data.page.current}
+              page-size={this.data.page.size}
               total={this.data.page.total}
               onCurrent-change={this.loadData}
             ></el-pagination>

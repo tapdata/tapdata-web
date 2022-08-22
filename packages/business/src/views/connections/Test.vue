@@ -240,6 +240,8 @@ export default {
       }
       this.$ws.ready(() => {
         this.$ws.send(msg)
+        this.timer && clearTimeout(this.timer)
+        this.timer = null
         this.timer = setTimeout(() => {
           this.isTimeout = true //重置
           this.wsError = 'ERROR'

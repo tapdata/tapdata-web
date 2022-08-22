@@ -86,7 +86,8 @@
                 <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
                 <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
-                <span v-if="item.data" v-html="item.dataText"></span>
+                <span v-html="item.errorStack" class="ml-1"></span>
+                <span v-if="item.dataText" v-html="item.dataText"></span>
               </div>
             </DynamicScrollerItem>
           </template>
@@ -458,7 +459,7 @@ export default {
       result.forEach(row => {
         row.levelText = `[${row.level}]`
         row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
-        row.dataText = JSON.stringify(row.data || {})
+        row.dataText = row.data?.length ? JSON.stringify(row.data) : ''
         arr.forEach(el => {
           row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
         })
