@@ -849,7 +849,7 @@ export default {
       if (!$log) {
         return
       }
-      $log.init()
+      $log.resList()
     }
   }
 }
