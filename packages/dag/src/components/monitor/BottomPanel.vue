@@ -99,7 +99,7 @@ $headerHeight: 40px;
 
 .bottom-panel {
   position: relative;
-  z-index: 10;
+  z-index: 9;
   height: 328px;
   //min-height: 328px;
   //height: 100%;
