@@ -68,6 +68,9 @@ const mutations = {
   },
   notification(state, payload) {
     state.notification = payload
+  },
+  catalogueKey(state, key) {
+    state.catalogueKey = key
   }
 }
 export default mutations
