@@ -15,6 +15,8 @@ export const JsProcessor = observer(
       const form = formRef.value
       const tableLoading = ref(false)
       const running = ref(false)
+      const runningText = ref('')
+      let queryTimes = 0
       const params = reactive({
         taskId,
         jsNodeId: form.values.id,
@@ -74,18 +76,36 @@ export const JsProcessor = observer(
           })
       }
 
+      const resetQuery = () => {
+        queryTimes = 0
+        running.value = false
+        runningText.value = ''
+      }
+
       const handleAutoQuery = () => {
         running.value = true
+        queryTimes++
         clearTimeout(timer)
-        handleQuery().then(isOver => {
-          if (!isOver) {
-            timer = setTimeout(() => {
-              handleAutoQuery()
-            }, 2000)
-          } else {
-            running.value = false
-          }
-        })
+        if (queryTimes > 5) {
+          runningText.value = '仍在拼命加载中，请耐心等待'
+        }
+
+        if (queryTimes > 10) {
+          resetQuery()
+          root.$message.error('请求超时，请重试')
+          return
+        }
+        handleQuery()
+          .then(isOver => {
+            if (!isOver) {
+              timer = setTimeout(() => {
+                handleAutoQuery()
+              }, 2000)
+            } else {
+              resetQuery()
+            }
+          })
+          .catch(resetQuery)
       }
 
       const handleRun = () => {
@@ -171,7 +191,7 @@ export const JsProcessor = observer(
               </div>
             </div>
 
-            <div class="flex" v-loading={running.value}>
+            <div class="flex" v-loading={running.value} element-loading-text={runningText.value}>
               <FormItem.BaseItem class="flex-1 mr-4" label="调试输入">
                 <VCodeEditor
                   class="border rounded-2 py-0"
