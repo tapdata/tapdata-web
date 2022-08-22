@@ -511,6 +511,15 @@ export default {
       } else {
         this.setStateReadonly(false)
       }
+    },
+
+    async validateSetting() {
+      try {
+        await this.$refs.configPanel.validateSetting()
+      } catch (e) {
+        this.setActiveType('settings')
+        return '任务设置异常'
+      }
     }
   }
 }

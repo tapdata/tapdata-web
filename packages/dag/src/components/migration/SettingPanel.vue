@@ -138,6 +138,10 @@ export default observer({
                         //调度表达式
                         title: '重复策略', //定期调度任务
                         type: 'string',
+                        'x-validator': {
+                          cron: true,
+                          message: 'Cron表达式格式有误'
+                        },
                         'x-decorator': 'FormItem',
                         'x-component': 'Input.TextArea',
                         'x-component-props': {
