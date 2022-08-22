@@ -38,7 +38,7 @@ export class JavaScript extends NodeType {
               includeBeforeAndAfter: true,
               before: 'function process(record){',
               beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
-              afterRegexp: '}[^]*$',
+              afterRegexp: '}[^}]*$',
               after: '}'
             }
           },
