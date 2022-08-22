@@ -20,20 +20,6 @@ export class JavaScript extends NodeType {
         type: 'array',
         display: 'none'
       },
-      /*declareScript: {
-        title: '模型声明',
-        type: 'string',
-        required: true,
-        default: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'JsEditor',
-        'x-component-props': {
-          height: 240,
-          options: { showPrintMargin: false, useWrapMode: true },
-          before: 'function declare(schemaApplyResultList) {',
-          after: `  return schemaApplyResultList\n}`
-        }
-      },*/
       script: {
         type: 'string',
         required: true,
@@ -45,7 +31,7 @@ export class JavaScript extends NodeType {
           includeBeforeAndAfter: true,
           before: 'function process(record){',
           beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
-          afterRegexp: '}[^]*$',
+          afterRegexp: '}[^}]*$',
           after: '}',
           handleAddCompleter: '{{addDeclaredCompleterForMigrate}}'
         }

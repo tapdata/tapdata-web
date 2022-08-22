@@ -176,9 +176,9 @@
                 <el-dropdown-item command="del" :disabled="row.btnDisabled.delete" v-readonlybtn="'SYNC_job_delete'">
                   {{ $t('task_list_delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">
-                  {{ $t('dataFlow.addTag') }}
-                </el-dropdown-item>
+                <!--                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">-->
+                <!--                  {{ $t('dataFlow.addTag') }}-->
+                <!--                </el-dropdown-item>-->
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
                   $t('dataVerify.dataVerify')
                 }}</el-dropdown-item>

@@ -235,10 +235,10 @@ export default {
         .autoInspectResultsGroupByTable(this.dataflow.id, {
           filter: JSON.stringify(this.getFilter())
         })
-        .then(data => {
-          this.total = data.total
+        .then(({ total, items = [] }) => {
+          this.total = total
           const lastId = this.list.at(-1)?.id || 0
-          let items = data.items.map((t, i) => {
+          items = items.map((t, i) => {
             t.id = lastId + i + 1
             t.counts = t.counts.toLocaleString()
             return t

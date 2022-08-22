@@ -80,13 +80,13 @@ export default defineComponent({
             label: i18n.t('object_list_source_type'),
             key: 'sourceType', //来源类型
             type: 'select-inner',
-            items: dataAssembly(sourceCategory)
+            items: dataAssembly(sourceType)
           },
           {
             label: i18n.t('datadiscovery_objectlist_laiyuanfenlei'),
             key: 'sourceCategory', //来源分类
             type: 'select-inner',
-            items: dataAssembly(sourceType)
+            items: dataAssembly(sourceCategory)
           },
           {
             placeholder: i18n.t('datadiscovery_objectlist_duixiangminglaiyuan'),
@@ -172,13 +172,18 @@ export default defineComponent({
               <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
               <el-table-column label={this.$t('object_list_type')} prop="type"></el-table-column>
               <el-table-column label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
+              <el-table-column
+                label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
+                prop="sourceCategory"
+              ></el-table-column>
               <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
             </el-table>
             <el-pagination
               background
               class="table-page-pagination mt-3"
-              layout="->,total,  prev, pager, next, jumper"
+              layout="->,total, prev, pager, next, jumper"
               on={{ ['update:current-page']: this.loadData }}
+              page-size={this.data.page.size}
               current-page={this.data.page.current}
               total={this.data.page.total}
               onCurrent-change={this.loadData}
