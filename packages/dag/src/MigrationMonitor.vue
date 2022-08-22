@@ -216,7 +216,7 @@ export default {
       dataflow,
 
       scale: 1,
-      showBottomPanel: false,
+      showBottomPanel: true,
       timer: null,
       quotaTimeType: '5m',
       quotaTime: [],
