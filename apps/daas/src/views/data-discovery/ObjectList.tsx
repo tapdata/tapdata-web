@@ -169,10 +169,19 @@ export default defineComponent({
                   default: this.renderNode
                 }}
               ></el-table-column>
-              <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
-              <el-table-column label={this.$t('object_list_type')} prop="type"></el-table-column>
-              <el-table-column label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
               <el-table-column
+                width="120px"
+                label={this.$t('object_list_classification')}
+                prop="category"
+              ></el-table-column>
+              <el-table-column width="100px" label={this.$t('object_list_type')} prop="type"></el-table-column>
+              <el-table-column
+                width="120px"
+                label={this.$t('object_list_source_type')}
+                prop="sourceType"
+              ></el-table-column>
+              <el-table-column
+                width="120px"
                 label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
                 prop="sourceCategory"
               ></el-table-column>
