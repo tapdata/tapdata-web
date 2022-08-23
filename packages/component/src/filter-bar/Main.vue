@@ -70,6 +70,9 @@ export default {
       handler(v) {
         v && this.init()
       }
+    },
+    items() {
+      this.init()
     }
   },
   created() {
