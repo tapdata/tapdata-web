@@ -9,6 +9,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   // 全局变量
   state: {
+    catalogueKey: '',
     notification: {
       unRead: 0
     },

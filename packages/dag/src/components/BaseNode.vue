@@ -199,43 +199,6 @@ $height: 40px;
       display: flex;
     }
   }
-  &.can-be-connected {
-    .node-anchor.input {
-      display: flex;
-
-      &:before {
-        content: '';
-        position: absolute;
-        border-width: 2px;
-        border-style: solid;
-        border-color: #2c65ff;
-        border-radius: 50%;
-        background: #c0d1ff;
-        width: 14px;
-        height: 14px;
-      }
-    }
-
-    &.dropHover .node-anchor.input {
-      &:before {
-        width: 16px;
-        height: 16px;
-        border-color: #2c65ff;
-      }
-    }
-
-    &.dropHover ~ svg.jtk-connector.jtk-dragging {
-      path:nth-child(2) {
-        stroke: #2c65ff;
-      }
-      path:nth-child(3) {
-        fill: #2c65ff;
-        stroke: #2c65ff;
-      }
-      //fill: #2c65ff;
-      //stroke: #2c65ff;
-    }
-  }
 }
 
 .df-menu-list {

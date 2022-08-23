@@ -94,11 +94,12 @@
           </div>
         </main>
         <BottomPanel
-          v-if="showBottomPanel"
+          v-if="dataflow && dataflow.status && showBottomPanel"
           v-resize.top="{
             minHeight: 328
           }"
           :dataflow="dataflow"
+          ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
       </section>
@@ -109,6 +110,7 @@
         :settings="dataflow"
         :scope="formScope"
         :data="verifyData"
+        :totals="verifyTotals"
         :dataflow="dataflow"
         @showVerify="handleShowVerify"
         @hide="onHideSidebar"
@@ -216,7 +218,7 @@ export default {
       dataflow,
 
       scale: 1,
-      showBottomPanel: false,
+      showBottomPanel: true,
       timer: null,
       quotaTimeType: '5m',
       quotaTime: [],
@@ -225,7 +227,8 @@ export default {
       nodeDetailDialogId: '',
       timeFormat: 'HH:mm:ss',
       dagData: null,
-      verifyData: null
+      verifyData: null,
+      verifyTotals: null
     }
   },
 
@@ -631,8 +634,14 @@ export default {
       const $verifyPanel = this.$refs.verifyPanel
       if ($verifyPanel) {
         params.verify = {
-          uri: `/api/Task/${this.dataflow.id}/auto-inspect-results-group-by-table`,
+          uri: `/api/task/auto-inspect-results-group-by-table`,
           param: $verifyPanel.getFilter(1)
+        }
+        params.verifyTotals = {
+          uri: `/api/task/auto-inspect-totals`,
+          param: {
+            id: this.dataflow.id
+          }
         }
       }
       return params
@@ -645,7 +654,8 @@ export default {
       measurementApi.batch(this.getParams()).then(data => {
         const map = {
           quota: this.loadQuotaData,
-          verify: this.loadVerifyData
+          verify: this.loadVerifyData,
+          verifyTotals: this.loadVerifyTotals
         }
         for (let key in data) {
           const item = data[key]
@@ -667,6 +677,10 @@ export default {
 
     loadVerifyData(data) {
       this.verifyData = data
+    },
+
+    loadVerifyTotals(data) {
+      this.verifyTotals = data
     },
 
     getDagData(data = []) {
@@ -811,6 +825,7 @@ export default {
           this.responseHandler(data, this.t('message_resetOk'))
           // this.init()
           this.loadDataflow(this.dataflow?.id)
+          this.resetLog()
         } catch (e) {
           this.handleError(e, this.t('message_resetFailed'))
         }
@@ -827,6 +842,14 @@ export default {
       } else {
         this.jsPlumbIns.select().removeClass('running')
       }
+    },
+
+    resetLog() {
+      const $log = this.$refs.bottomPanel?.getLogRef?.()
+      if (!$log) {
+        return
+      }
+      $log.resList()
     }
   }
 }

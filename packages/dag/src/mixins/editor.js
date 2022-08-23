@@ -1127,10 +1127,16 @@ export default {
       // 任务中没有JS节点、自定义节点、并开关闭增量自定义SQL 时DDL按钮才会开放
     },
 
-    eachValidate(...fns) {
+    async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
-        if (result) return result
+        if (result) {
+          if (result instanceof Promise) {
+            result = await result
+            if (!result) continue
+          }
+          return result
+        }
       }
     },
 
@@ -1140,7 +1146,13 @@ export default {
 
       await this.validateAllNodes()
 
-      return this.eachValidate(this.validateDag, this.validateAgent, this.validateLink, this.validateDDL)
+      return await this.eachValidate(
+        this.validateSetting,
+        this.validateDag,
+        this.validateAgent,
+        this.validateLink,
+        this.validateDDL
+      )
     },
 
     /**

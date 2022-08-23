@@ -317,7 +317,7 @@ export default {
 
     resetData() {
       this.preLoading = false
-      this.list = []
+      this.resList()
       this.resetOldPage()
       this.resetDataTime = Date.now()
       this.loadOld(this.pollingData)
@@ -601,6 +601,10 @@ export default {
           break
       }
       return result
+    },
+
+    resList() {
+      this.list = []
     }
   }
 }

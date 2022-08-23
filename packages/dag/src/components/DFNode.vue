@@ -1,5 +1,5 @@
 <template>
-  <div class="df-node-wrap position-absolute" :style="nodeStyle">
+  <div class="df-node-wrap position-absolute" :class="wrapClass" :style="nodeStyle">
     <BaseNode :node="data" :class="nodeClass" @click="mouseClick">
       <template #text="{ text }">
         <OverflowTooltip
@@ -93,11 +93,15 @@ export default {
       return true
     },
 
+    wrapClass() {
+      if (this.canBeConnectedNodeIds.includes(this.nodeId)) return 'can-be-connected'
+      return ''
+    },
+
     nodeClass() {
       const list = []
       if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
-      if (this.canBeConnectedNodeIds.includes(this.nodeId)) list.push('can-be-connected')
       this.ins && list.push(`node--${this.ins.group}`)
       return list
     },
@@ -374,9 +378,44 @@ export default {
 }
 </style>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .df-node-wrap {
   z-index: 5;
+  &.can-be-connected {
+    .node-anchor.input {
+      display: flex;
+
+      &:before {
+        content: '';
+        position: absolute;
+        border-width: 2px;
+        border-style: solid;
+        border-color: #2c65ff;
+        border-radius: 50%;
+        background: #c0d1ff;
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    &.dropHover .node-anchor.input {
+      &:before {
+        width: 16px;
+        height: 16px;
+        border-color: #2c65ff;
+      }
+    }
+
+    &.dropHover ~ svg.jtk-connector.jtk-dragging {
+      path:nth-child(2) {
+        stroke: #2c65ff;
+      }
+      path:nth-child(3) {
+        fill: #2c65ff;
+        stroke: #2c65ff;
+      }
+    }
+  }
   .df-node {
     position: static;
   }

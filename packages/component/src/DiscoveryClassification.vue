@@ -19,7 +19,6 @@
     <div class="tree-block" v-if="isExpand" v-loading="loadingTree">
       <ElTree
         v-if="treeData && treeData.length > 0"
-        check-strictly
         class="classification-tree"
         ref="tree"
         node-key="id"
@@ -27,6 +26,7 @@
         :props="props"
         :expand-on-click-node="false"
         :data="treeData"
+        :default-expanded-keys="expandedKeys"
         :filter-node-method="filterNode"
         :render-after-expand="false"
         @node-click="nodeClickHandler"
@@ -117,6 +117,7 @@ export default {
       filterText: '',
       treeData: [],
       default_expanded: false,
+      expandedKeys: [],
       loadingTree: false,
       props: {
         key: 'id',
@@ -180,7 +181,10 @@ export default {
       this.emitCheckedNodes(node)
     },
     emitCheckedNodes(node) {
+      if (!node) return
       this.$emit('nodeChecked', node?.data)
+      //将当前选中的目录缓存
+      this.$store.commit('catalogueKey', node?.data)
     },
     getData(cb) {
       let where = {}
@@ -238,7 +242,16 @@ export default {
             cb && cb(items)
             //默认选中第一个
             this.$nextTick(() => {
-              this.$emit('nodeChecked', this.treeData?.[0])
+              let data = this.$store.state.catalogueKey
+              if (!data) {
+                this.$store.commit('catalogueKey', this.treeData?.[0])
+                this.$emit('nodeChecked', this.treeData?.[0])
+              } else {
+                this.$emit('nodeChecked', data)
+              }
+              let key = data?.id || this.treeData?.[0]?.id
+              this.$refs.tree.setCurrentKey(key)
+              this.expandedKeys = [key]
             })
           })
           .finally(() => {
@@ -442,6 +455,8 @@ export default {
         } else {
           metadataDefinitionsApi.delete(id).then(() => {
             let self = this
+            //将当前选中的目录缓存
+            this.$store.commit('catalogueKey', '')
             self.getData()
           })
         }
