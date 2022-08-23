@@ -344,11 +344,10 @@ export const FieldRenameProcessor = defineComponent({
       ) : (
         <span>{row.sourceFieldName}</span>
       )
-      let disabled = row.isShow ? <span>屏蔽</span> : <span>恢复</span>
-      return props.disabled ? disabled : show
+      return show
     }
     const renderNode = ({ row }) => {
-      return row.isShow || props.disabled ? (
+      return row.isShow && !props.disabled ? (
         <div
           class={[
             'cursor-pointer',
