@@ -236,7 +236,8 @@ export default {
       quotaTimeType: 'full',
       quotaTime: [],
       newFilter: {},
-      showNoMore: false
+      showNoMore: false,
+      extraEnterCount: 0
     }
   },
 
@@ -347,7 +348,10 @@ export default {
     pollingData() {
       this.clearTimer()
       this.timer = setInterval(() => {
-        this.isEnterTimer && this.loadNew()
+        // 不满足轮询条件，则多请求几次结束
+        if (this.isEnterTimer || (!this.isEnterTimer && ++this.extraEnterCount < 3)) {
+          this.loadNew()
+        }
       }, 5000)
       this.loadNew()
     },
@@ -449,6 +453,10 @@ export default {
         this.list = Object.freeze(arr)
         if (this.isScrollBottom) {
           this.scrollToBottom()
+        }
+        // 清空额外请求的计数
+        if (this.isEnterTimer) {
+          this.extraEnterCount = 0
         }
       })
     },

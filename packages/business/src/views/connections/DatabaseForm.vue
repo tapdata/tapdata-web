@@ -568,11 +568,14 @@ export default {
           },
           table_filter: {
             type: 'string',
-            title: '',
+            title: ' ',
             'x-decorator': 'FormItem',
             'x-component': 'Input.TextArea',
             'x-component-props': {
               placeholder: this.$t('connection_form_database_owner_tip')
+            },
+            'x-decorator-props': {
+              colon: false
             },
             'x-reactions': {
               dependencies: ['__TAPDATA.loadAllTables'],
