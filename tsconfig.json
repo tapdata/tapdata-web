@@ -80,16 +80,8 @@
   "include": [
     "apps/daas/src/**/*.ts",
     "apps/daas/src/**/*.tsx",
-    "apps/daas/src/**/*.vue",
-    "apps/daas/tests/**/*.ts",
-    "apps/daas/tests/**/*.tsx",
-    "apps/daas/types/**/*.ts",
     "apps/dfs/src/**/*.ts",
     "apps/dfs/src/**/*.tsx",
-    "apps/dfs/src/**/*.vue",
-    "apps/dfs/tests/**/*.ts",
-    "apps/dfs/tests/**/*.tsx",
-    "apps/dfs/types/**/*.ts",
     "packages/api/src/*.ts",
     "types/*.d.ts"
   ],
