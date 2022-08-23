@@ -81,7 +81,7 @@
         <ConfigPanel ref="configPanel" only-node :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
       </section>
       <!--任务设置-->
-      <SettingPanel only-setting :scope="scope" :settings="dataflow" />
+      <SettingPanel ref="settingPanel" only-setting :scope="scope" :settings="dataflow" />
     </section>
   </section>
 </template>
@@ -695,6 +695,15 @@ export default {
           return map
         }, {})
       )
+    },
+
+    async validateSetting() {
+      try {
+        await this.$refs.settingPanel.validateSetting()
+      } catch (e) {
+        this.setActiveType('settings')
+        return '任务设置异常'
+      }
     }
   }
 }

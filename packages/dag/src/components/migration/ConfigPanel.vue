@@ -38,7 +38,7 @@
         }"
       />
 
-      <SettingPanel v-bind="$attrs" v-on="$listeners" v-if="activeType === 'settings'" />
+      <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
     </div>
   </section>
 </template>
@@ -120,6 +120,10 @@ export default {
 
     async validateForm() {
       await this.$refs.formPanel?.validate()
+    },
+
+    async validateSetting() {
+      await this.$refs.setting?.form.validate()
     }
   }
 }
