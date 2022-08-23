@@ -69,8 +69,10 @@ Vue.prototype.$confirm = (message, title, options) => {
   })
 }
 
-const IS_IFRAME = getUrlSearch('frame') === 'true' || window.self !== window.top
-sessionStorage.setItem('IS_IFRAME', IS_IFRAME)
+const IS_IFRAME = (getUrlSearch('frame') || sessionStorage.getItem('IS_IFRAME') || window.self !== window.top) + ''
+if (IS_IFRAME) {
+  sessionStorage.setItem('IS_IFRAME', IS_IFRAME)
+}
 const TOKEN = getUrlSearch('token')
 if (TOKEN) {
   Cookie.set('token', TOKEN)
