@@ -257,6 +257,10 @@ export default observer({
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip:
+                            '当任务符合以下情况下，即使开启开关任务也不会进行校验\n 1.添加了中间处理节点\n 2.源连接不支持校验\n 3.目标连接不支持校验'
+                        },
                         'x-component': 'Switch'
                       },
                       increSyncConcurrency: {
