@@ -45,7 +45,7 @@
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
           <span class="icon-btn py-1 px-3">
-            <VIcon size="16">{{ { zh_CN: 'language-sc', en_US: 'language-sc', zh_TW: 'language-sc' }[lang] }}</VIcon>
+            <VIcon size="16">{{ { zh_CN: 'language-sc', en: 'language-sc', zh_TW: 'language-sc' }[lang] }}</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">

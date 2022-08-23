@@ -28,5 +28,5 @@ export const getBrowserLanguage = () => {
   if (!window.navigator) {
     return 'en'
   }
-  return window.navigator['browserlanguage'] || window.navigator?.language || 'en_US'
+  return window.navigator['browserlanguage'] || window.navigator?.language || 'en'
 }

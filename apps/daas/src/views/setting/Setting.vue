@@ -1,7 +1,7 @@
 <template>
   <section class="setting-list-wrap">
     <div class="setting-list-box">
-      <ul class="setting-nav" :style="lang === 'en_US' ? '280px' : '160px'">
+      <ul class="setting-nav" :style="lang === 'en' ? '280px' : '160px'">
         <li
           v-for="(item, index) in formData.items"
           :key="index"

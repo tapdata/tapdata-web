@@ -1,30 +1,30 @@
-import { getBrowserLanguage } from '@tap/shared'
+import { getBrowserLanguage, Cookie } from '@tap/shared'
 
+// 后端需要的值
 export const langKeyMap = {
   'zh-CN': 'zh_CN',
   'zh-TW': 'zh_TW',
-  'en-US': 'en_US',
   en: 'en_US'
 }
 
-export const langFileNameMap = {
-  zh_CN: 'zh-CN',
-  zh_TW: 'zh-TW',
-  en_US: 'en'
+export const langMenu = {
+  'zh-CN': '中文 (简)',
+  'zh-TW': '中文 (繁)',
+  en: 'English'
 }
 
-export const langMenu = {
-  zh_CN: '中文 (简)',
-  en_US: 'English',
-  zh_TW: '中文 (繁)'
+export const getLang = lang => {
+  return Object.keys(langKeyMap).includes(lang) ? lang : 'en'
 }
 
 export const getCurrentLanguage = () => {
   const lang = localStorage.getItem('lang') || getBrowserLanguage()
-  return langKeyMap[lang] || lang
+  return getLang(lang)
 }
 
 export const setCurrentLanguage = (lang, $i18n) => {
-  localStorage.setItem('lang', lang)
-  $i18n.locale = langFileNameMap[lang]
+  const l = getCurrentLanguage(lang)
+  localStorage.setItem('lang', l)
+  Cookie.set('lang', langKeyMap[l] || langKeyMap['en'])
+  $i18n.locale = l
 }
