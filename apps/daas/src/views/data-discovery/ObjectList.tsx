@@ -11,14 +11,15 @@ export default defineComponent({
   setup(props, { refs, root }) {
     const { success } = useMessage()
     const list = ref([])
+    const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const data = reactive({
       tableLoading: false,
       searchParams: {
-        category: '', //对象分类
-        type: '', //对象类型
-        sourceCategory: '', //来源分类
-        sourceType: '', //来源类型
-        queryKey: '' //输入搜索值
+        category: category || '', //对象分类
+        type: type || '', //对象类型
+        sourceCategory: sourceCategory || '', //来源分类
+        sourceType: sourceType || '', //来源类型
+        queryKey: queryKey || '' //输入搜索值
       },
       activeName: 'first',
       activeUser: 'admin',
@@ -93,14 +94,6 @@ export default defineComponent({
             type: 'input'
           }
         ]
-        const { category, type, sourceCategory: sCategory, sourceType: sType, queryKey } = root.$route.query || {}
-        data.searchParams = {
-          category: category || '', //对象分类
-          type: type || '', //对象类型
-          sourceCategory: sCategory || '', //来源分类
-          sourceType: sType || '', //来源类型
-          queryKey: queryKey || '' //输入搜索值
-        }
       })
     }
     //公用方法 格式化数据

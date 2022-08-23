@@ -8,16 +8,17 @@ import './index.scss'
 export default defineComponent({
   props: ['parentNode'],
   setup(props, { root, emit, refs }) {
+    const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const list = ref([])
     const { error, success } = useMessage()
     const multipleSelection = ref([])
     const data = reactive({
       searchParams: {
-        category: '',
-        type: '',
-        sourceCategory: '',
-        sourceType: '',
-        queryKey: ''
+        category: category || '',
+        type: type || '',
+        sourceCategory: sourceCategory || '',
+        sourceType: sourceType || '',
+        queryKey: queryKey || ''
       },
       tableLoading: false,
       desc: '',
@@ -106,14 +107,6 @@ export default defineComponent({
             type: 'input'
           }
         ]
-        const { category, type, sourceCategory: sCategory, sourceType: sType, queryKey } = root.$route.query || {}
-        data.searchParams = {
-          category: category || '', //对象分类
-          type: type || '', //对象类型
-          sourceCategory: sCategory || '', //来源分类
-          sourceType: sType || '', //来源类型
-          queryKey: queryKey || '' //输入搜索值
-        }
       })
     }
     //table check box change
