@@ -13,7 +13,7 @@
             style="width: 240px"
             @input="searchFnc(800)"
           ></ElInput>
-          <ElButton type="primary" size="mini">校验</ElButton>
+          <!--          <ElButton type="primary" size="mini">校验</ElButton>-->
         </div>
         <VTable
           v-model="selection"
