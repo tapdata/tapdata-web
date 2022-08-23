@@ -37,7 +37,7 @@ export default defineComponent({
         pageSize: size,
         tagId: data?.currentNode?.['id'] || ''
       }
-      sourceType && (where['sourceType'] = sourceType)
+      sourceType && (where['objType'] = sourceType)
       queryKey && (where['queryKey'] = queryKey)
       data.tableLoading = true
       discoveryApi
@@ -52,15 +52,15 @@ export default defineComponent({
         })
     }
     const loadFilterList = () => {
-      let filterType = ['sourceType']
+      let filterType = ['objType']
       discoveryApi.filterList(filterType).then(res => {
-        let { sourceType } = res
+        let { objType } = res
         data.filterItems = [
           {
             label: i18n.t('datadiscovery_catalogue_ziyuanleixing'),
             key: 'sourceType',
             type: 'select-inner',
-            items: dataAssembly(sourceType),
+            items: dataAssembly(objType),
             selectedWidth: '200px'
           },
           {
