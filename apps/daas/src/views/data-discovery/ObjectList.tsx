@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, watch } from '@vue/composition-api'
+import { defineComponent, onMounted, reactive, ref, watch } from '@vue/composition-api'
 import i18n from '@/i18n'
 import { FilterBar, Drawer } from '@tap/component'
 import DrawerContent from './PreviewDrawer'
@@ -11,15 +11,14 @@ export default defineComponent({
   setup(props, { refs, root }) {
     const { success } = useMessage()
     const list = ref([])
-    const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const data = reactive({
       tableLoading: false,
       searchParams: {
-        category: category || '', //对象分类
-        type: type || '', //对象类型
-        sourceCategory: sourceCategory || '', //来源分类
-        sourceType: sourceType || '', //来源类型
-        queryKey: queryKey || '' //输入搜索值
+        category: '', //对象分类
+        type: '', //对象类型
+        sourceCategory: '', //来源分类
+        sourceType: '', //来源类型
+        queryKey: '' //输入搜索值
       },
       activeName: 'first',
       activeUser: 'admin',
@@ -94,6 +93,14 @@ export default defineComponent({
             type: 'input'
           }
         ]
+        const { category, type, sourceCategory: sCategory, sourceType: sType, queryKey } = root.$route.query || {}
+        data.searchParams = {
+          category: category || '', //对象分类
+          type: type || '', //对象类型
+          sourceCategory: sCategory || '', //来源分类
+          sourceType: sType || '', //来源类型
+          queryKey: queryKey || '' //输入搜索值
+        }
       })
     }
     //公用方法 格式化数据
@@ -170,18 +177,18 @@ export default defineComponent({
                 }}
               ></el-table-column>
               <el-table-column
-                width="120px"
+                width="145px"
                 label={this.$t('object_list_classification')}
                 prop="category"
               ></el-table-column>
               <el-table-column width="100px" label={this.$t('object_list_type')} prop="type"></el-table-column>
               <el-table-column
-                width="120px"
+                width="140px"
                 label={this.$t('object_list_source_type')}
                 prop="sourceType"
               ></el-table-column>
               <el-table-column
-                width="120px"
+                width="145px"
                 label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
                 prop="sourceCategory"
               ></el-table-column>
