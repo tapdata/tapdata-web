@@ -17,26 +17,16 @@
       <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
     </div>
     <div class="flex justify-content-between">
-      <div class="chart-box rounded-2" :class="{ 'w-100': !isSource && !isTarget }">
+      <div v-loading="loading" class="chart-box rounded-2" :class="{ 'w-100': !isSource && !isTarget }">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">事件统计</div>
         <div class="chart-box__content px-4 pb-2">
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
-      <div v-if="isSource" class="chart-box rounded-2">
+      <div v-if="isSource" v-loading="loading" class="chart-box rounded-2 flex flex-column">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
-        <div class="chart-box__content p-4 flex justify-content-between">
-          <div class="pl-6">
-            <div>
-              <div class="text-center mb-2">全量同步状态</div>
-              <Chart :extend="cdcOptions" class="pie-chart"></Chart>
-            </div>
-            <div class="mt-4">
-              <div class="text-center mb-2">增量同步状态</div>
-              <Chart :extend="initialOptions" class="pie-chart"></Chart>
-            </div>
-          </div>
-          <div class="pt-7 pr-6" style="width: 160px">
+        <div class="chart-box__content p-4 flex-fill flex align-items-center">
+          <div class="text-center pb-10 w-100">
             <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(sourceData.tcpPing, 2) }}</div>
               <div>TCP连接耗时</div>
@@ -49,7 +39,7 @@
             </div>
             <div>
               <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ formatTime(sourceData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss') }}
+                {{ formatTime(sourceData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}
               </div>
               <div>增量时间点</div>
             </div>
@@ -58,6 +48,7 @@
       </div>
       <div
         v-else-if="isTarget"
+        v-loading="loading"
         :class="{ 'w-100': !isSource && !isTarget }"
         class="chart-box rounded-2 flex flex-column"
       >
@@ -75,8 +66,8 @@
               <div>协议连接耗时</div>
             </div>
             <div>
-              <div class="font-color-normal fw-bold mb-1">
-                {{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss') }}
+              <div class="font-color-normal fw-bold mb-1 din-font">
+                {{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}
               </div>
               <div>增量时间点</div>
             </div>
@@ -86,7 +77,7 @@
     </div>
     <div class="my-4">性能指标</div>
     <div class="flex justify-content-between">
-      <div class="chart-box rounded-2">
+      <div v-loading="loading" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">QPS</div>
         <div class="chart-box__content p-4">
           <LineChart
@@ -99,7 +90,7 @@
           ></LineChart>
         </div>
       </div>
-      <div class="chart-box rounded-2">
+      <div v-loading="loading" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">处理耗时</div>
         <div class="chart-box__content p-4">
           <LineChart
@@ -122,37 +113,17 @@ import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 
 import { measurementApi } from '@tap/api'
-import { Chart } from '@tap/component'
 import { calcTimeUnit } from '@tap/shared'
 
 import EventChart from './EventChart'
 import LineChart from './LineChart'
 import TimeSelect from './TimeSelect'
-import { getPieOptions, TIME_FORMAT_MAP, getTimeGranularity } from '../util'
-
-function getRandom(num = 100) {
-  return Math.ceil(Math.random() * 100 * num)
-}
-
-function getRandomArray(count = 20, num = 1) {
-  return Array(count)
-    .fill()
-    .map(() => getRandom(num))
-}
-
-function getRandomTimeArray(count = 20, ms = 5000) {
-  return Array(count)
-    .fill()
-    .map((t, i) => Date.now() + i * ms)
-}
-
-const TIME_LIST = getRandomTimeArray(100000)
-const VALUE_LIST = getRandomArray(100000)
+import { TIME_FORMAT_MAP, getTimeGranularity } from '../util'
 
 export default {
   name: 'NodeDetailDialog',
 
-  components: { EventChart, LineChart, Chart, TimeSelect },
+  components: { EventChart, LineChart, TimeSelect },
 
   props: {
     value: {
@@ -176,11 +147,10 @@ export default {
       visible: false,
       selected: '',
       quota: {},
-      refresh: false, // 刷新数据还是初始化数据
-      count: 0,
       timeFormat: 'HH:mm:ss',
       quotaTime: [],
-      quotaTimeType: '5m'
+      quotaTimeType: '5m',
+      loading: false
     }
   },
 
@@ -285,114 +255,6 @@ export default {
     isTarget() {
       const { type, $outputs } = this.node
       return (type === 'database' || type === 'table') && !$outputs.length
-    },
-
-    // 全量同步状态
-    cdcOptions() {
-      let arr = [
-        {
-          name: '待进行',
-          key: 'wait',
-          value: 0,
-          color: '#F7D762'
-        },
-        // {
-        //   name: '无需创建',
-        //   key: 'noCreate',
-        //   value: 0,
-        //   color: '#88DBDA'
-        // },
-        {
-          name: '已完成',
-          key: 'finished',
-          value: 0,
-          color: '#82C647'
-        }
-        // {
-        //   name: '错误',
-        //   key: 'error',
-        //   value: 0,
-        //   color: '#EC8181'
-        // }
-      ]
-      // const { structure } = this.quota.statistics?.[0] || {}
-      const { snapshotTableTotal = 0, tableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
-      let result = {
-        wait: 0,
-        finished: snapshotTableTotal
-      }
-      result.wait = tableTotal - result.finished
-      const values = arr.map(t =>
-        Object.assign({}, t, {
-          value: result?.[t.key] ?? 0
-        })
-      )
-      const options = {
-        legend: {
-          show: false
-        },
-        series: [
-          {
-            name: '全量同步状态',
-            radius: ['55%', '85%'],
-            center: ['50%', '50%']
-          }
-        ]
-      }
-      return getPieOptions(values, options)
-    },
-
-    // 增量同步状态
-    initialOptions() {
-      let arr = [
-        // {
-        //   name: '待进行',
-        //   key: 'wait',
-        //   value: 0,
-        //   color: '#F7D762'
-        // },
-        {
-          name: '进行中',
-          key: 'running',
-          value: 0,
-          color: '#88DBDA'
-        }
-        // {
-        //   name: '已完成',
-        //   key: 'finished',
-        //   value: 0,
-        //   color: '#82C647'
-        // },
-        // {
-        //   name: '错误',
-        //   key: 'error',
-        //   value: 0,
-        //   color: '#EC8181'
-        // }
-      ]
-      // const { data } = this.quota.statistics?.[0] || {}
-      const { tableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
-      let result = {
-        running: tableTotal
-      }
-      const values = arr.map(t =>
-        Object.assign({}, t, {
-          value: result?.[t.key] ?? 0
-        })
-      )
-      const options = {
-        legend: {
-          show: false
-        },
-        series: [
-          {
-            name: '增量同步状态',
-            radius: ['55%', '85%'],
-            center: ['50%', '50%']
-          }
-        ]
-      }
-      return getPieOptions(values, options)
     }
   },
 
@@ -418,7 +280,7 @@ export default {
       this.timer = setInterval(() => {
         this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running' && this.loadQuotaData()
       }, 5000)
-      this.loadQuotaData()
+      this.loadQuotaData(true)
       this.$nextTick(() => {
         this.$refs.qpsLineChart?.reset?.()
         this.$refs.delayLineChart?.reset?.()
@@ -520,13 +382,11 @@ export default {
       return params
     },
 
-    loadQuotaData() {
-      const { refresh } = this
-      if (refresh) {
-        this.count = 0
+    loadQuotaData(showLoading = false) {
+      if (showLoading) {
+        this.loading = true
       }
-      this.count++
-      const { count } = this
+      const startStamp = Date.now()
       measurementApi
         .queryV2(this.getFilter())
         .then(data => {
@@ -534,56 +394,14 @@ export default {
           const granularity = getTimeGranularity(data.interval)
           this.timeFormat = TIME_FORMAT_MAP[granularity]
         })
-        .catch(() => {
-          let res = {
-            time: TIME_LIST.slice(count, count + 60),
-            samples: {
-              totalData: [
-                {
-                  insertTotal: getRandom(),
-                  updateTotal: getRandom(),
-                  deleteTotal: getRandom(),
-                  ddlTotal: getRandom(),
-                  othersTotal: getRandom()
-                }
-              ],
-              barChartData: [
-                {
-                  insertTotal: getRandom(),
-                  updateTotal: getRandom(),
-                  deleteTotal: getRandom(),
-                  ddlTotal: getRandom(),
-                  othersTotal: getRandom()
-                }
-              ],
-              lineChartData: [
-                {
-                  inputQps: VALUE_LIST.slice(count, count + 60),
-                  outputQps: VALUE_LIST.slice(count + 10, count + 60 + 10),
-                  timeCostAvg: VALUE_LIST.slice(count + 10, count + 60 + 10)
-                }
-              ],
-              dagData: [
-                {
-                  insertTotal: getRandom(),
-                  updateTotal: getRandom(),
-                  deleteTotal: getRandom(),
-                  ddlTotal: getRandom(),
-                  othersTotal: getRandom(),
-                  qps: getRandom(),
-                  timeCostAvg: getRandom(),
-                  currentEventTimestamp: getRandom(),
-                  tcpPing: getRandom(),
-                  connectPing: getRandom(),
-                  inputTotal: getRandom(),
-                  outputTotal: getRandom(),
-                  inputQps: getRandom(),
-                  outputQps: getRandom()
-                }
-              ]
-            }
-          }
-          this.quota = res
+        .finally(() => {
+          this.loading &&
+            setTimeout(
+              () => {
+                this.loading = false
+              },
+              Date.now() - startStamp < 1000 ? 1000 : 0
+            )
         })
     },
 
