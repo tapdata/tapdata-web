@@ -666,7 +666,10 @@ export default {
     updateNodePropsDebounce(form) {
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {
-        this.updateNodeProps(form)
+        const node = this.nodeById(form.values.id)
+        if (node && JSON.stringify(form.values) !== JSON.stringify(node)) {
+          this.updateNodeProps(form)
+        }
       }, 60)
     },
 
@@ -707,11 +710,8 @@ export default {
         // if (!this.node || form.values.id !== this.node.id) {
         //   console.log('节点已经切换', form.values.name, '->', this.node.name) // eslint-disable-line
         // }
-        const node = this.nodeById(form.values.id)
         console.log(`🚗onFormValuesChange`, JSON.parse(JSON.stringify(form.values)))
-        if (node && JSON.stringify(form.values) !== JSON.stringify(node)) {
-          this.updateNodePropsDebounce(form)
-        }
+        this.updateNodePropsDebounce(form)
       })
 
       onFormInputChange(form => {

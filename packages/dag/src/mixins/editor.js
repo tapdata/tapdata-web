@@ -521,7 +521,13 @@ export default {
         // 保存后路由跳转
         this.setStateDirty(false)
         this.setStateReadonly(false)
-        this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
+        this.stopDagWatch = this.$watch(
+          () => [this.allNodes.length, this.allEdges.length],
+          () => {
+            console.log('initView-dataflowEdit 开启的监听') // eslint-disable-line
+            this.updateDag()
+          }
+        )
         // 从查看进入编辑，清掉轮询
         return Promise.resolve()
       }
@@ -550,7 +556,13 @@ export default {
         } else {
           await this.newDataflow()
         }
-        this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
+        this.stopDagWatch = this.$watch(
+          () => [this.allNodes.length, this.allEdges.length],
+          () => {
+            console.log('initView-Editor 开启的监听') // eslint-disable-line
+            this.updateDag()
+          }
+        )
       }
 
       this.initWS()
@@ -1658,6 +1670,10 @@ export default {
       this.loading = true
       try {
         const data = await taskApi.get(id, params)
+        if (!data) {
+          this.$message.error('任务不存在')
+          this.handlePageReturn()
+        }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
         return data
