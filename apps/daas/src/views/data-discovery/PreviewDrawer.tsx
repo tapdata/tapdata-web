@@ -57,6 +57,15 @@ export default defineComponent({
         }
       ]
     })
+    const format = data => {
+      for (let i = 0; i < data?.length; i++) {
+        data[i].primaryKey = !data[i].primaryKey ? '' : data[i].primaryKey
+        data[i].foreignKey = !data[i].foreignKey ? '' : data[i].foreignKey
+        data[i].index = !data[i].index ? '' : data[i].index
+        data[i].notNull = !data[i].notNull ? '' : data[i].notNull
+      }
+      return data
+    }
     const loadData = row => {
       data.currentRow = row
       if (data.activeName === 'first') {
@@ -64,7 +73,9 @@ export default defineComponent({
         discoveryApi
           .overView(row.id)
           .then(res => {
-            preview.value = res || ''
+            let data = res
+            data['fields'] = format(res.fields)
+            preview.value = data || ''
           })
           .finally(() => {
             data.loading = false
