@@ -43,7 +43,8 @@ export const SqlEditor = {
     }
     return (
       <VCodeEditor
-        class="border rounded-2"
+        class="border rounded-2 p-0"
+        theme="sqlserver"
         value={this.sql}
         lang="sql"
         height={this.height}
