@@ -429,7 +429,7 @@ export default {
          * @param item
          */
         handlerSyncDatabaseChange: (form, item) => {
-          const field = form.query('grid.leftCell.connectionIdWrap.clipboardButton').take()
+          const field = form.query('connectionIdWrap.clipboardButton').take()
           field.setComponentProps({
             content: item.name
           })

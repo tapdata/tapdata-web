@@ -77,11 +77,9 @@
             @hide="nodeMenu.typeId = ''"
           ></NodePopover>
         </main>
-        <!--配置面板-->
-        <ConfigPanel ref="configPanel" only-node :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
       </section>
-      <!--任务设置-->
-      <SettingPanel ref="settingPanel" only-setting :scope="scope" :settings="dataflow" />
+      <!--配置面板-->
+      <ConfigPanel ref="settingPanel" :scope="scope" :settings="dataflow" />
     </section>
   </section>
 </template>
@@ -97,8 +95,7 @@ import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
-import ConfigPanel from './components/ConfigPanel'
-import SettingPanel from './components/migration/ConfigPanel'
+import ConfigPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
 import { databaseTypesApi, taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
@@ -125,8 +122,7 @@ export default {
     PaperScroller,
     TopHeader,
     DFNode,
-    LeftSidebar,
-    SettingPanel
+    LeftSidebar
   },
 
   data() {
