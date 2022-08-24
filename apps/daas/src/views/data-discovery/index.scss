@@ -103,3 +103,11 @@
 .discovery-desc{
   color: map-get($fontColor, slight);
 }
+.discovery-title{
+  color: map-get($fontColor, dark);
+  font-size: 14px;
+  font-weight: 500;
+}
+.border-right{
+  border-right: 1px solid map-get($borderColor, light);
+}

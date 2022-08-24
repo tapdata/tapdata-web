@@ -1,6 +1,7 @@
-import { defineComponent, reactive, ref, nextTick, watch } from '@vue/composition-api'
+import { defineComponent, reactive, ref, nextTick, watch, onMounted } from '@vue/composition-api'
 import i18n from '@/i18n'
 import { FilterBar } from '@tap/component'
+import { TablePage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
 import { useMessage } from '@/hooks'
 import './index.scss'
@@ -31,10 +32,9 @@ export default defineComponent({
       filterItems: []
     })
     //加载table 数据
-    const loadTableData = val => {
+    const loadTableData = ({ page }) => {
       let { category, type, sourceCategory, sourceType, queryKey } = data.searchParams
-      data.page.current = val
-      let { size, current } = data.page
+      let { size, current } = page
       let where = {
         page: current,
         pageSize: size,
@@ -45,30 +45,31 @@ export default defineComponent({
       sourceType && (where['sourceType'] = sourceType)
       sourceCategory && (where['sourceCategory'] = sourceCategory)
       queryKey && (where['queryKey'] = queryKey)
-      data.tableLoading = true
-      discoveryApi
-        .list(where)
-        .then(res => {
-          let { total, items } = res
-          list.value = items || []
-          data.page.total = total
-          //选中被绑定的资源
-          if (list.value?.length === 0) return
-          list.value.forEach(t => {
-            if (t?.allTags) {
-              let usedRow = t?.allTags.filter(tag => tag.id === props.parentNode?.id) || []
-              if (usedRow?.length > 0) {
-                nextTick(() => {
-                  // @ts-ignore
-                  refs.multipleTable?.toggleRowSelection(t, true)
-                })
-              }
+      return discoveryApi.list(where).then(res => {
+        let { total, items } = res
+        list.value = items || []
+        //选中被绑定的资源
+        if (list.value?.length === 0)
+          return {
+            total: total,
+            data: items
+          }
+        list.value.forEach(t => {
+          if (t?.allTags) {
+            let usedRow = t?.allTags.filter(tag => tag.id === props.parentNode?.id) || []
+            if (usedRow?.length > 0) {
+              nextTick(() => {
+                // @ts-ignore
+                refs.multipleTable?.toggleRowSelection(t, true)
+              })
             }
-          })
+          }
         })
-        .finally(() => {
-          data.tableLoading = false
-        })
+        return {
+          total: total,
+          data: items
+        }
+      })
     }
     //请求过滤条件每一个下拉列表的数据
     const loadFilterList = () => {
@@ -179,9 +180,14 @@ export default defineComponent({
     watch(
       () => root.$route.query,
       val => {
-        loadTableData(1)
+        // @ts-ignore
+        refs.multipleTable.fetch(1)
       }
     )
+    onMounted(() => {
+      // @ts-ignore
+      refs.multipleTable.fetch(1)
+    })
     return {
       data,
       list,
@@ -195,50 +201,43 @@ export default defineComponent({
   render() {
     return (
       <section class="discovery-page-wrap">
-        <div class="discovery-page-main-box">
-          <div class="discovery-page-right" v-loading={this.data.tableLoading}>
-            <div class="object-page-topbar">
-              <div class="object-page-search-bar mt-2">
-                <FilterBar
-                  v-model={this.data.searchParams}
-                  items={this.data.filterItems}
-                  {...{ on: { fetch: this.loadTableData } }}
-                ></FilterBar>
-              </div>
-            </div>
-            <el-table
-              ref={'multipleTable'}
-              class="discovery-page-table"
-              data={this.list}
-              onselect={this.saveTags}
-              onSelect-all={this.saveAllTags}
-              onSelection-change={this.handleSelectionChange}
-            >
-              <el-table-column width="55" type="selection"></el-table-column>
-              <el-table-column label={this.$t('object_list_name')} prop="name"></el-table-column>
-              <el-table-column label={this.$t('object_list_classification')} prop="category"></el-table-column>
-              <el-table-column label={this.$t('object_list_type')} prop="type"></el-table-column>
-              <el-table-column label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
-              <el-table-column
-                label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
-                prop="sourceCategory"
-              ></el-table-column>
-              <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
-            </el-table>
-            <footer>
-              <el-pagination
-                background
-                class="table-page-pagination mt-3"
-                layout="->,total, prev, pager, next, jumper"
-                on={{ ['update:current-page']: this.loadTableData }}
-                current-page={this.data.page.current}
-                page-size={this.data.page.size}
-                total={this.data.page.total}
-                onCurrent-change={this.loadTableData}
-              ></el-pagination>
-            </footer>
-          </div>
-        </div>
+        <TablePage
+          ref="multipleTable"
+          row-key="id"
+          remoteMethod={this.loadTableData}
+          onselect={this.saveTags}
+          onSelect-all={this.saveAllTags}
+          onSelection-change={this.handleSelectionChange}
+        >
+          <template slot="search">
+            <FilterBar
+              items={this.data.filterItems}
+              v-model={this.data.searchParams}
+              {...{ on: { fetch: this.loadTableData } }}
+            ></FilterBar>
+          </template>
+          <el-table-column width="55" type="selection"></el-table-column>
+          <el-table-column
+            label={this.$t('object_list_name')}
+            prop="name"
+            scopedSlots={{
+              default: this.renderNode
+            }}
+          ></el-table-column>
+          <el-table-column
+            width="145px"
+            label={this.$t('object_list_classification')}
+            prop="category"
+          ></el-table-column>
+          <el-table-column width="100px" label={this.$t('object_list_type')} prop="type"></el-table-column>
+          <el-table-column width="140px" label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
+          <el-table-column
+            width="145px"
+            label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
+            prop="sourceCategory"
+          ></el-table-column>
+          <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
+        </TablePage>
       </section>
     )
   }
