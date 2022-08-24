@@ -735,7 +735,7 @@ export default {
               previewList.push({
                 label: opt.label,
                 value: val || val === 0 ? val : '-',
-                key
+                icon: opt.icon
               })
             }
           }
