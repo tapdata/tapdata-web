@@ -55,6 +55,10 @@ export default {
         DONE: {
           text: '已完成',
           type: 'finish'
+        },
+        ING: {
+          text: '同步中',
+          type: 'running'
         }
       },
       columns: [

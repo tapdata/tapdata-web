@@ -134,7 +134,7 @@ export default observer({
                           }
                         }
                       },
-                      crontabExpression: {
+                      /*crontabExpression: {
                         //调度表达式
                         title: '重复策略', //定期调度任务
                         type: 'string',
@@ -158,7 +158,7 @@ export default observer({
                             }
                           }
                         }
-                      },
+                      },*/
                       syncPoints: {
                         title: this.t('task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',

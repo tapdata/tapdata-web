@@ -315,22 +315,26 @@ export default {
         })
         .then(data => {
           let list = (data?.items || []).map(item => {
-            if (item.config?.uri) {
-              const regResult =
-                /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                  item.config.uri
-                )
-              if (regResult && regResult.groups && regResult.groups.password) {
-                const { username, host, database, query } = regResult.groups
-                item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
-              } else {
-                item.connectionUrl = item.config.uri
+            if (item.connectionString) {
+              item.connectionUrl = item.connectionString
+            } else {
+              if (item.config?.uri) {
+                const regResult =
+                  /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+                    item.config.uri
+                  )
+                if (regResult && regResult.groups && regResult.groups.password) {
+                  const { username, host, database, query } = regResult.groups
+                  item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+                } else {
+                  item.connectionUrl = item.config.uri
+                }
+              } else if (item.config) {
+                const { host, port, database, schema } = item.config
+                item.connectionUrl = host
+                  ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+                  : ''
               }
-            } else if (item.config) {
-              const { host, port, database, schema } = item.config
-              item.connectionUrl = host
-                ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
-                : ''
             }
 
             item.lastUpdateTime = item.last_updated = item.last_updated

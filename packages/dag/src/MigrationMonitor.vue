@@ -825,7 +825,6 @@ export default {
           this.responseHandler(data, this.t('message_resetOk'))
           // this.init()
           this.loadDataflow(this.dataflow?.id)
-          this.resetLog()
         } catch (e) {
           this.handleError(e, this.t('message_resetFailed'))
         }
@@ -842,14 +841,6 @@ export default {
       } else {
         this.jsPlumbIns.select().removeClass('running')
       }
-    },
-
-    resetLog() {
-      const $log = this.$refs.bottomPanel?.getLogRef?.()
-      if (!$log) {
-        return
-      }
-      $log.resList()
     }
   }
 }
