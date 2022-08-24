@@ -36,9 +36,16 @@ export class Database extends NodeType {
         'x-reactions': '{{useSyncConnection}}'
       },
 
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
+
       layout: {
         type: 'void',
-        title: '节点描述',
         'x-component': 'FormLayout',
         'x-component-props': {
           layout: 'horizontal',
@@ -74,7 +81,8 @@ export class Database extends NodeType {
         }
       },
 
-      desc: {
+      // 没啥用
+      /*desc: {
         type: 'string',
         title: '节点描述',
         'x-decorator': 'FormItem',
@@ -82,7 +90,7 @@ export class Database extends NodeType {
         'x-component-props': {
           autosize: { maxRows: 2 }
         }
-      },
+      },*/
 
       increaseReadSize: {
         title: '批量读取条数', //增量批次读取条数
@@ -235,11 +243,6 @@ export class Database extends NodeType {
             }
           }
         }
-      },
-
-      name: {
-        type: 'string',
-        'x-display': 'hidden'
       },
 
       // 切换连接，保存连接的类型

@@ -4,16 +4,36 @@
     class="config-panel border-start flex-column"
     :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
   >
-    <div class="panel-header flex align-center px-4 border-bottom">
+    <ElTabs v-model="currentTab" class="config-tabs">
+      <ElTabPane label="配置">
+        <FormPanel
+          v-show="activeType !== 'settings'"
+          v-on="$listeners"
+          v-bind="$attrs"
+          ref="formPanel"
+          :formProps="{
+            colon: false,
+            shallow: false,
+            layout: 'vertical',
+            feedbackLayout: 'terse'
+          }"
+        />
+      </ElTabPane>
+      <ElTabPane label="模型"> </ElTabPane>
+    </ElTabs>
+
+    <!--<div class="panel-header flex align-center px-4 border-bottom">
       <template v-if="activeType !== 'settings'">
         <NodeIcon v-if="activeNode" class="mr-2" :node="activeNode" />
-        <TextEditable
-          ref="nameInput"
-          v-model="name"
-          class="flex-1 min-w-0"
-          :readonly="stateIsReadonly"
-          @change="handleChangeName"
-        />
+        <div class="flex-1">
+          <TextEditable
+            ref="nameInput"
+            v-model="name"
+            class="min-w-0"
+            :readonly="stateIsReadonly"
+            @change="handleChangeName"
+          />
+        </div>
       </template>
       <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
         {{ t('task_stetting_basic_setting') }}
@@ -39,7 +59,7 @@
       />
 
       <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
-    </div>
+    </div>-->
   </section>
 </template>
 
@@ -246,8 +266,8 @@ $headerHeight: 40px;
       > .el-tabs__header {
         margin: 0;
         .el-tabs__nav-wrap {
-          padding-left: $tabsHeaderWidth + 32px;
-          padding-right: 16px;
+          padding-left: 4px;
+          padding-right: 4px;
 
           &::after {
             height: 1px;
@@ -258,6 +278,7 @@ $headerHeight: 40px;
         }
 
         .el-tabs__item {
+          padding: 0 12px;
           font-weight: 400;
 
           &.is-active,

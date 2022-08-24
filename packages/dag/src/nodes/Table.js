@@ -30,6 +30,14 @@ export class Table extends NodeType {
         'x-display': 'hidden'
       },
 
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
+
       connectionIdWrap: {
         type: 'void',
         title: '数据库',
@@ -192,11 +200,6 @@ export class Table extends NodeType {
             }
           }
         }
-      },
-
-      name: {
-        type: 'string',
-        'x-display': 'hidden'
       },
 
       sourceNodeConfig: {
