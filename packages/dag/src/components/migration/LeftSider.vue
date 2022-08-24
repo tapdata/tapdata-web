@@ -376,8 +376,13 @@ export default {
       this.dbTotal = data.total
 
       const dbList = data.items.map(item => {
-        let connectionUrl = ''
+        item.databaseType = item.database_type
+        if (item.connectionString) {
+          item.connectionUrl = item.connectionString
+          return item
+        }
 
+        let connectionUrl = ''
         if (item.config) {
           if (item.config.uri) {
             connectionUrl = item.config.uri
@@ -390,7 +395,6 @@ export default {
         }
 
         item.connectionUrl = connectionUrl
-        item.databaseType = item.database_type
         return item
       })
 
