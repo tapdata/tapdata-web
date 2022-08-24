@@ -23,7 +23,7 @@ export const getCurrentLanguage = () => {
 }
 
 export const setCurrentLanguage = (lang, $i18n) => {
-  const l = getCurrentLanguage(lang)
+  const l = getLang(lang)
   localStorage.setItem('lang', l)
   Cookie.set('lang', langKeyMap[l] || langKeyMap['en'])
   $i18n.locale = l
