@@ -1,6 +1,6 @@
 <template>
   <div class="section-wrap setting-warp">
-    <div class="setting-warp-box">
+    <div class="setting-warp-box h-100">
       <div class="setting-center">
         <div class="setting-left-sidebar">
           <ul>

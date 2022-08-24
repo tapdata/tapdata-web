@@ -34,7 +34,7 @@
                 <ul class="job-list">
                   <li v-for="task in migrationTaskList" :key="task.label" @click="handleStatus(task.label)">
                     <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                    <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
+                    <span class="fw-normal font-color-light">{{ task.name }}</span
                     ><span class="num pl-7 font-color-dark">{{ task.value }}</span>
                   </li>
                 </ul>
@@ -64,7 +64,7 @@
                 <ul class="job-list">
                   <li v-for="task in syncTaskList" :key="task.label">
                     <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                    <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
+                    <span class="fw-normal font-color-light">{{ task.name }}</span
                     ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(task.value) }}</span>
                   </li>
                 </ul>
@@ -212,6 +212,7 @@
 <script>
 import { Chart } from '@tap/component'
 import { clusterApi, taskApi } from '@tap/api'
+import { STATUS_MAP } from '@tap/business'
 import { toThousandsUnit } from '@/utils/util'
 
 export default {
@@ -305,7 +306,7 @@ export default {
       statusList: [
         { name: this.$t('dashboard_status_running'), label: 'running', value: 0 },
         { name: this.$t('dashboard_status_edit'), label: 'edit', value: 0 },
-        { name: this.$t('dashboard_status_wait_run'), label: 'wait_run', value: 0 },
+        { name: this.$t('status_ready'), label: 'wait_start', value: 0 },
         { name: this.$t('dashboard_status_stop'), label: 'stop', value: 0 },
         { name: this.$t('dashboard_status_complete'), label: 'complete', value: 0 },
         { name: this.$t('dashboard_status_error'), label: 'error', value: 0 }
@@ -467,6 +468,8 @@ export default {
               : []
             self.syncTaskList = data?.chart3 ? self.handleDataProcessing(data.chart3.items, self.statusList) : []
 
+            console.log('STATUS_MAP', STATUS_MAP) // eslint-disable-line
+
             self.copyPieData = setColor(self.migrationTaskList)
             self.copyTaskData = this.handleChart(data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
@@ -513,14 +516,23 @@ export default {
       if (dataItem?.length) {
         dataItem.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1))
         statusData.forEach(item => {
-          dataItem.forEach(element => {
-            if (item.label === element._id) {
-              statusItem.push({
-                name: item.name,
-                label: element._id,
-                value: element.count
-              })
-            }
+          const $in = STATUS_MAP[item.label].in
+          let total = 0
+          if ($in?.length) {
+            total = dataItem.reduce((total, item) => {
+              if ($in.includes(item._id)) {
+                total += item.count
+              }
+              return total
+            }, total)
+          } else {
+            let dataObj = dataItem.find(element => item.label === element._id)
+            dataObj && (total = dataObj.count)
+          }
+          statusItem.push({
+            name: item.name,
+            label: item.label,
+            value: total
           })
         })
       } else {
