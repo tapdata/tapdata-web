@@ -269,7 +269,7 @@ export default {
       }).then(flag => {
         if (flag) {
           sharedCacheApi.delete(id).then(() => {
-            this.$$message.success(this.$t('message_delete_ok'))
+            this.$message.success(this.$t('message_delete_ok'))
             this.table.fetch()
           })
         }

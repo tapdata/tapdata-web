@@ -91,22 +91,23 @@ export default defineComponent({
   render() {
     return (
       <div class="drawer-content" v-loading={this.data.loading}>
-        <div class="flex align-items-center ml-4">
-          <header class="font-weight-bold mr-4">
+        <div class="flex align-items-center ml-4 drawer-header-h">
+          <header class="font-weight-bold mr-4 drawer-header-mt">
             <span class="drawer__header_text inline-block">
               {i18n.t('datadiscovery_previewdrawer_duixiangxiangqing')}
             </span>
           </header>
-          <el-tabs v-model={this.data.activeName} type="card">
-            <el-tab-pane label={i18n.t('page_title_overview')} name="first"></el-tab-pane>
-            {/*<el-tab-pane label="预览" name="second"></el-tab-pane>*/}
+          <el-tabs v-model={this.data.activeName} class="drawer-header-mt">
+            <el-tab-pane label={i18n.t('page_title_overview')} name="first">
+              <div style="width:40px"></div>
+            </el-tab-pane>
           </el-tabs>
         </div>
         {this.preview ? (
           <section class="discovery-page-wrap">
             <div class="discovery-page-main-box">
               <div class="discovery-page-right" v-loading={this.data.tableLoading}>
-                <div class="ml-4">
+                <div>
                   <div class="user">
                     <span class="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
                     <el-select v-model={this.data.activeUser}>
@@ -184,7 +185,7 @@ export default defineComponent({
                     </el-row>
                   </div>
                 </div>
-                <div class="mt-4">
+                <div class="mt-5">
                   <span class="drawer__header_text inline-block">
                     {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
                   </span>
