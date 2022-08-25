@@ -532,6 +532,7 @@ export default {
       top: 2px;
       right: 12px;
       font-size: 12px;
+      color: map-get($fontColor, light);
       .iconfont.icon-jia {
         display: flex;
         flex-direction: row;
@@ -539,12 +540,7 @@ export default {
         align-items: center;
         color: map-get($fontColor, light);
         font-size: 16px;
-        // background-color: map-get($bgColor, white);
-        // border: 1px solid #dedee4;
         height: 66%;
-        // padding: 0 4px;
-        // padding-right: 6px;
-        // padding-left: 5px;
         margin-top: 0px;
         border-top-width: 1px;
         border-radius: 3px;

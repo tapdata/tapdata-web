@@ -108,6 +108,11 @@
   font-size: 14px;
   font-weight: 500;
 }
+.discovery-secondary-title{
+  color: map-get($fontColor, light);
+  font-size: 12px;
+  font-weight: 400;
+}
 .border-right{
   border-right: 1px solid map-get($borderColor, light);
 }
