@@ -37,8 +37,9 @@ export default {
       const blob = new Blob([v])
       reader.readAsText(blob, 'utf8')
       reader.onload = () => {
-        const md = new MarkdownIt()
+        const md = new MarkdownIt({ html: true })
         this.html = md.render(reader.result)
+        console.log('this.html', this.html) // eslint-disable-line
       }
     }
   }
