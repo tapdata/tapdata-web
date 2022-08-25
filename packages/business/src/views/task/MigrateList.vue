@@ -214,7 +214,7 @@
         <ul class="info-list">
           <li v-for="item in previewList" :key="item.label">
             <template v-if="!!item.value">
-              <VIcon class="icon mr-4">{{ item.icon }}</VIcon>
+              <VIcon class="icon mr-4" style="margin-top: 3px">{{ item.icon }}</VIcon>
               <div class="label-text">
                 <div class="label font-color-light">{{ item.label }}:</div>
                 <div class="value align-items-center align-middle font-color-dark">
