@@ -127,9 +127,9 @@ export const JoinExpression = observer(
             )
             return (
               <div class="flex join-expression-row" key={i}>
-                <div class="join-field">{left}</div>
+                <div class="join-field flex-1">{left}</div>
                 <FormItem class="join-operator">=</FormItem>
-                <div class="join-field">{right}</div>
+                <div class="join-field  flex-1">{right}</div>
                 <FormItem>
                   <ElButton class="ml-3 align-middle" size="mini" type="text" onClick={() => handleAdd()}>
                     <VIcon size={16}>plus</VIcon>
@@ -152,15 +152,15 @@ export const JoinExpression = observer(
         return (
           <div class="join-expression">
             <div class="join-name-wrap flex align-center">
-              <div class="join-name flex text-nowrap">
+              <div class="join-name flex text-nowrap flex-1">
                 {leftTitle}：<OverflowTooltip class="ml-1" placement="top" text={leftNodeName}></OverflowTooltip>
               </div>
-              <div class="join-exchange">
+              <div class="join-operator">
                 <VIcon onClick={handleExchange} size={16}>
                   exchange
                 </VIcon>
               </div>
-              <div class="join-name flex text-nowrap">
+              <div class="join-name flex text-nowrap flex-1">
                 {rightTitle}：<OverflowTooltip class="ml-1" placement="top" text={rightNodeName}></OverflowTooltip>
               </div>
             </div>

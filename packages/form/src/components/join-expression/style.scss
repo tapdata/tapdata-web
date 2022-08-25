@@ -1,7 +1,8 @@
 @use "sass:math";
 .join-expression {
   $nw: 300px;
-  $ow: 60px;
+  $ow: 56px;
+
   .join-operator {
     width: $ow;
     text-align: center;
@@ -9,20 +10,6 @@
 
   .join-name-wrap {
     position: relative;
-  }
-
-  .join-name {
-    margin-right: $ow;
-    width: $nw;
-  }
-
-  .join-field {
-    width: $nw;
-  }
-
-  .join-exchange {
-    position: absolute;
-    left: $nw + math.div($ow, 2);
-    transform: translateX(-50%);
+    padding-right: $ow;
   }
 }
