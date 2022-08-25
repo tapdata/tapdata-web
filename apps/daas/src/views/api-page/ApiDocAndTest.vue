@@ -1,6 +1,6 @@
 <template>
   <div class="api-doc">
-    <div class="section-wrap-box">
+    <div class="section-wrap-box h-100">
       <div class="api-doc-box">
         <el-button title="导出到postman" size="mini" @click="exportJson">
           {{ $t('button_export') }}
@@ -64,7 +64,7 @@ export default {
         let token = await this.apiClient.getAPIServerToken()
         this.token = token
 
-        let url = `${location.protocol}//${location.hostname}:${location.port}/static/explorer/index.html?url=${openApi}&token=${token}#/`
+        let url = `${location.origin}/static/explorer/index.html?url=${openApi}&token=${token}#/`
 
         if (defaultCollection) {
           url = url + defaultCollection
@@ -187,7 +187,7 @@ export default {
 <style scoped lang="scss">
 .api-doc {
   position: relative;
-  // height: 100%;
+  height: 100%;
   // overflow: hidden !important;
   .api-doc-box {
     position: absolute;
