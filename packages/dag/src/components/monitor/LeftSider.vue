@@ -211,7 +211,7 @@ export default {
         return {
           x: [],
           name: [],
-          value: []
+          value: [[], []]
         }
       }
       const { time = [] } = this.quota

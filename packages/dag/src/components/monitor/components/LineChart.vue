@@ -99,10 +99,10 @@ export default {
       let series = []
       if (value?.[0] instanceof Array) {
         value.forEach((el, index) => {
-          series.push(this.getSeriesItem(el || [], index, name?.[index]))
+          series.push(this.getSeriesItem(el?.map(t => t || 0) || [], index, name?.[index]))
         })
       } else {
-        series.push(this.getSeriesItem(value || []))
+        series.push(this.getSeriesItem(value?.map(t => t || 0) || []))
       }
       options.series = series
       const seriesNoData = series.every(t => !t.data.length)
@@ -130,14 +130,15 @@ export default {
             endValue: x[len - 1] + ''
           }
         ]
+        this.$refs.chart.chart?.chart.on(
+          'datazoom',
+          debounce(params => {
+            const { end } = params?.batch?.[0] || {}
+            this.end = end
+          }, 100)
+        )
       }
-      this.$refs.chart.chart?.chart.on(
-        'datazoom',
-        debounce(params => {
-          const { end } = params?.batch?.[0] || {}
-          this.end = end
-        }, 100)
-      )
+
       if (this.end === 100) {
         const isEmptyData = options.series.every(t => !t.data.length)
         this.extend = Object.assign(
@@ -175,15 +176,18 @@ export default {
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
-              let val
-              if (this.timeValue) {
-                val = calcTimeUnit(data || 0, 2)
-              } else {
-                val = (data || 0).toLocaleString('zh', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })
+              let val = data
+              if (![null, undefined].includes(data)) {
+                if (this.timeValue) {
+                  val = calcTimeUnit(data || 0, 2)
+                } else {
+                  val = (data || 0).toLocaleString('zh', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })
+                }
               }
+
               result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
@@ -246,7 +250,7 @@ export default {
           axisLabel: {
             color: '#535F72',
             formatter: val => {
-              return this.timeValue ? calcTimeUnit(val) : calcUnit(val)
+              return this.timeValue ? calcTimeUnit(val, 2) : calcUnit(val)
             }
             // showMaxLabel: false,
             // showMinLabel: false
