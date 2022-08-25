@@ -28,6 +28,7 @@ export class MergeTable extends NodeType {
         required: true,
         'x-component': 'MergeTableTree',
         'x-component-props': {
+          treeWidth: 200,
           findNodeById: '{{findNodeById}}',
           loadFieldsMethod: '{{loadNodeFieldOptions}}'
         },
