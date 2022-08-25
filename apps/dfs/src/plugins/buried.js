@@ -59,14 +59,19 @@ export const startTimeOnPage = router => {
   router.beforeEach((to, from, next) => {
     let sessionId = sessionStorage.getItem(TIME_ON_PAGE_KEY)
     let arr = sessionId?.split('_') || []
+    const createSessionItem = () => {
+      sessionId = to.path + '_' + new Date().getTime()
+      sessionStorage.setItem(TIME_ON_PAGE_KEY, sessionId)
+      buried('accessPage', to.path || '/', null, sessionId)
+    }
     if (arr.length) {
       count = 1
       updateTimeOnPage()
       if (arr[0] !== to.path) {
-        sessionId = to.path + '_' + new Date().getTime()
-        sessionStorage.setItem(TIME_ON_PAGE_KEY, sessionId)
-        buried('accessPage', to.path || '/', null, sessionId)
+        createSessionItem()
       }
+    } else {
+      createSessionItem()
     }
     next()
   })

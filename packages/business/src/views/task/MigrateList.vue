@@ -214,13 +214,10 @@
         <ul class="info-list">
           <li v-for="item in previewList" :key="item.label">
             <template v-if="!!item.value">
-              <VIcon class="icon mr-4">{{ item.label }}</VIcon>
+              <VIcon class="icon mr-4" style="margin-top: 3px">{{ item.icon }}</VIcon>
               <div class="label-text">
-                <div class="label font-color-light">{{ $t('task_preview_' + item.label) }}:</div>
-                <div
-                  class="value align-items-center align-middle font-color-dark"
-                  :class="{ 'align-top': item.value && item.value.length > 15 }"
-                >
+                <div class="label font-color-light">{{ item.label }}:</div>
+                <div class="value align-items-center align-middle font-color-dark">
                   {{ item.value }}
                 </div>
               </div>
@@ -690,43 +687,56 @@ export default {
         .findTaskDetailById([id])
         .then((data = {}) => {
           let previewList = []
+          let map = {
+            title: { label: this.$t('task_preview_title'), icon: 'title' },
+            createUser: { label: this.$t('task_preview_createUser'), icon: 'createUser' },
+            sync_type: { label: this.$t('task_preview_sync_type'), icon: 'sync_type' },
+            type: { label: this.$t('task_preview_type'), icon: 'type', format: val => this.syncType[val] },
+            id: { label: this.$t('task_preview_id'), icon: 'id' },
+            createAt: { label: this.$t('task_preview_createAt'), icon: 'createAt', format: this.formatTime },
+            createTime: { label: this.$t('task_preview_createTime'), icon: 'createTime' },
+            startTime: { label: this.$t('task_preview_startTime'), icon: 'startTime', format: this.formatTime },
+            initStartTime: {
+              label: this.$t('task_preview_initStartTime'),
+              icon: 'initStartTime',
+              format: this.formatTime
+            },
+            cdcStartTime: {
+              label: this.$t('task_preview_cdcStartTime'),
+              icon: 'cdcStartTime',
+              format: this.formatTime
+            },
+            taskFinishTime: {
+              label: this.$t('task_preview_taskFinishTime'),
+              icon: 'taskFinishTime',
+              format: this.formatTime
+            },
+            taskLastHour: {
+              label: this.$t('task_preview_taskLastHour'),
+              icon: 'taskLastHour',
+              format: this.handleTimeConvert
+            },
+            eventTime: { label: this.$t('task_preview_eventTime'), icon: 'eventTime', format: this.formatTime },
+            cdcDelayTime: {
+              label: this.$t('task_preview_cdcDelayTime'),
+              icon: 'cdcDelayTime',
+              format: this.handleTimeConvert
+            },
+            failCount: { label: this.$t('task_preview_failCount'), icon: 'failCount' }
+          }
           this.previewData = makeStatusAndDisabled(data)
-          for (let item in data) {
-            if (['type'].includes(item)) {
-              data[item] = this.syncType[data[item]]
-            }
-
-            if (['cdcDelayTime', 'taskLastHour'].includes(item)) {
-              data[item] = this.handleTimeConvert(data[item])
-            }
-            if (
-              [
-                'createAt',
-                'startTime',
-                'initStartTime',
-                'cdcStartTime',
-                'initStartTime',
-                'taskFinishTime',
-                'eventTime'
-              ].includes(item)
-            ) {
-              data[item] = this.formatTime(data[item])
-            }
-
-            if (
-              ![
-                'customId',
-                'lastUpdAt',
-                'userId',
-                'lastUpdBy',
-                'lastUpdBy',
-                'status',
-                'desc',
-                'name',
-                'btnDisabled'
-              ].includes(item)
-            ) {
-              previewList.push({ label: item, value: data[item] || '-' })
+          for (let key in data) {
+            let opt = map[key]
+            let val = data[key]
+            if (opt) {
+              if (opt.format) {
+                val = opt.format(val)
+              }
+              previewList.push({
+                label: opt.label,
+                value: val || val === 0 ? val : '-',
+                icon: opt.icon
+              })
             }
           }
 

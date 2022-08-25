@@ -643,7 +643,6 @@ export default {
 .filter-items__item {
   padding: 0 16px;
   height: 40px;
-  line-height: 40px;
   cursor: pointer;
   &.active {
     background: rgba(44, 101, 255, 0.05);
