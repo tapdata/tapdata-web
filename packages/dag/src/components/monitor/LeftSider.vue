@@ -48,7 +48,6 @@
               :color="['#26CF6C', '#2C65FF']"
               title="QPS（Q/S）"
               :time-format="timeFormat"
-              :limit="20"
               style="height: 140px"
             ></LineChart>
             <LineChart
@@ -56,7 +55,6 @@
               title="增量延迟"
               :color="['#2C65FF']"
               :time-format="timeFormat"
-              :limit="20"
               time-value
               class="mt-4"
               style="height: 140px"
@@ -65,7 +63,7 @@
         </CollapsePanel>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box">
-        <CollapsePanel :active="initialData.snapshotDoneAt || initialData.finishDuration ? '1' : null">
+        <CollapsePanel>
           <template #header>
             <span class="fw-bold font-color-normal">全量信息</span>
           </template>
@@ -114,7 +112,6 @@
       <LineChart
         :data="qpsData"
         :color="['#26CF6C', '#2C65FF']"
-        :limit="20"
         title="QPS（Q/S）"
         :time-format="timeFormat"
         style="height: 200px"
@@ -122,7 +119,6 @@
       <LineChart
         :data="delayData"
         :color="['#2C65FF']"
-        :limit="20"
         :time-format="timeFormat"
         time-value
         title="增量延迟"

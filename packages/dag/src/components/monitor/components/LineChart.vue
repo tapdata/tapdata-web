@@ -56,8 +56,7 @@ export default {
       default: () => ['#26CF6C']
     },
     limit: {
-      type: Number,
-      default: 10
+      type: Number
     },
     timeFormat: {
       type: String,
