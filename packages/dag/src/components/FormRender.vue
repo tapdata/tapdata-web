@@ -1,6 +1,6 @@
 <template>
   <div class="attr-panel">
-    <div class="attr-panel-body overflow-auto py-1">
+    <div class="attr-panel-body overflow-auto pt-1">
       <Form class-name="form-wrap" :form="form" v-bind="formProps">
         <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
