@@ -324,6 +324,7 @@ export default {
         ]
       }
       this.extraEnterCount = 0
+      this.clearTimer()
       this.resetData()
     },
 
