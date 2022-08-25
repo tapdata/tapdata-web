@@ -9,7 +9,7 @@
       </div>
       <!-- v-if="searchFalg" -->
       <div class="search-box">
-        <ElInput class="search" size="mini" v-model="filterText">
+        <ElInput size="mini" v-model="filterText">
           <span slot="suffix" class="el-input__icon h-100 ml-1">
             <VIcon size="14">search</VIcon>
           </span>
@@ -514,7 +514,7 @@ export default {
   &.expand {
     height: 100%;
     //width: 100%;
-    padding: 20px 0;
+    padding: 12px 0 20px 0;
     // border-right: 1px solid map-get($borderColor, light);
     width: 214px;
     .btn-expand {
@@ -610,9 +610,6 @@ export default {
       // 	border-radius: 3px;
       // 	cursor: pointer;
       // }
-    }
-    .search {
-      margin-left: 7px;
     }
   }
   .tree-block {
