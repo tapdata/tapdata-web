@@ -4,7 +4,7 @@
     class="config-panel border-start flex-column"
     :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
   >
-    <ElTabs v-model="currentTab" class="config-tabs">
+    <ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
       <ElTabPane label="配置">
         <FormPanel
           v-show="activeType !== 'settings'"
@@ -19,47 +19,23 @@
           }"
         />
       </ElTabPane>
-      <ElTabPane label="模型"> </ElTabPane>
+      <ElTabPane v-if="showSchemaPanel" label="模型">
+        <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
+      </ElTabPane>
     </ElTabs>
 
-    <!--<div class="panel-header flex align-center px-4 border-bottom">
-      <template v-if="activeType !== 'settings'">
-        <NodeIcon v-if="activeNode" class="mr-2" :node="activeNode" />
-        <div class="flex-1">
-          <TextEditable
-            ref="nameInput"
-            v-model="name"
-            class="min-w-0"
-            :readonly="stateIsReadonly"
-            @change="handleChangeName"
-          />
+    <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
+      <div class="panel-header flex align-center px-4 border-bottom">
+        <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
+          {{ t('task_stetting_basic_setting') }}
         </div>
-      </template>
-      <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
-        {{ t('task_stetting_basic_setting') }}
+        <!--<VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>-->
       </div>
 
-      <VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>
+      <div class="panel-content flex-1">
+        <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
+      </div>
     </div>
-
-    <div class="panel-content flex-1">
-      <FormPanel
-        v-if="!onlySetting"
-        v-show="activeType !== 'settings'"
-        v-on="$listeners"
-        v-bind="$attrs"
-        ref="formPanel"
-        :formProps="{
-          colon: false,
-          shallow: false,
-          layout: 'vertical',
-          // labelWidth: 120,
-          feedbackLayout: 'terse'
-        }"
-      />
-
-      <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
-    </div>-->
   </section>
 </template>
 
@@ -72,7 +48,7 @@ import { VIcon } from '@tap/component'
 import focusSelect from 'web-core/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
-import { TextEditable } from '@tap/component'
+import MetaPane from '../MetaPane'
 import Locale from '../../mixins/locale'
 
 export default {
@@ -87,6 +63,7 @@ export default {
 
   props: {
     onlySetting: Boolean,
+    showSchemaPanel: Boolean,
     includesType: {
       type: Array,
       default: () => ['node', 'settings']
@@ -100,7 +77,7 @@ export default {
     }
   },
 
-  components: { TextEditable, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
+  components: { MetaPane, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
@@ -278,7 +255,7 @@ $headerHeight: 40px;
         }
 
         .el-tabs__item {
-          padding: 0 12px;
+          //padding: 0 12px;
           font-weight: 400;
 
           &.is-active,

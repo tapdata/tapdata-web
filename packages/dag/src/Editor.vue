@@ -79,7 +79,7 @@
         </main>
       </section>
       <!--配置面板-->
-      <ConfigPanel ref="settingPanel" :scope="scope" :settings="dataflow" />
+      <ConfigPanel ref="settingPanel" :scope="scope" :settings="dataflow" show-schema-panel />
     </section>
   </section>
 </template>
