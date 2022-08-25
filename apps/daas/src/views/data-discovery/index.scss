@@ -111,3 +111,18 @@
 .border-right{
   border-right: 1px solid map-get($borderColor, light);
 }
+.el-table th.el-table__cell > .cell{
+  font-weight: 700;
+}
+.el-table__body-wrapper {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 450px)
+}
+.drawer-header-h{
+  height: 45px;
+  border-bottom: 1px solid map-get($borderColor, light);
+}
+.drawer-header-mt{
+  margin-top: 18px;
+}

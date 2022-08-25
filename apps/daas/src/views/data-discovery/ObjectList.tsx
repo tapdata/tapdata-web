@@ -180,7 +180,7 @@ export default defineComponent({
           <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
         </TablePage>
         <Drawer
-          class="object-drawer-wrap"
+          class="object-drawer-wrap overflow-hidden"
           width="850px"
           visible={this.data.isShowDetails}
           on={{ ['update:visible']: this.closeDrawer }}

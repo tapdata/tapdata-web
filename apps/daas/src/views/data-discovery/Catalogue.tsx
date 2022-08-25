@@ -187,7 +187,7 @@ export default defineComponent({
           <el-table-column label={i18n.t('module_form_describtion')} prop="desc"></el-table-column>
         </TablePage>
         <Drawer
-          class="object-drawer-wrap"
+          class="object-drawer-wrap overflow-hidden"
           width="850px"
           visible={this.data.isShowDetails}
           on={{ ['update:visible']: this.closeDrawer }}
