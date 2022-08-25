@@ -112,9 +112,10 @@ export default {
         options.xAxis.data = x
       } else {
         const now = Date.now()
-        options.xAxis.data = Array(this.limit)
+        const count = this.limit || 5
+        options.xAxis.data = Array(count)
           .fill()
-          .map((t, index) => now - (this.limit - index - 1) * 5000)
+          .map((t, index) => now - (count - index - 1) * 5000)
       }
 
       if (limit && x?.length) {
