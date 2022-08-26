@@ -120,10 +120,20 @@
   .el-table th.el-table__cell > .cell{
     font-weight: 700;
   }
-  .el-table__body-wrapper {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: calc(100vh - 450px)
+
+  .discovery-page-table{
+    .el-table__body-wrapper {
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: calc(100vh - 450px)
+    }
+  }
+  .discovery-page-api-table{
+    .el-table__body-wrapper {
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 230px
+    }
   }
   .drawer-header-h{
     height: 45px;
