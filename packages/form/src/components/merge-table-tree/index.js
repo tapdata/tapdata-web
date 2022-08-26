@@ -38,7 +38,7 @@ export const MergeTableTree = observer(
         currentPath.value = path
         if (pathArr.length === 1) {
           form.setFieldState(`mergeProperties.${path}.mergeType`, {
-            visible: false
+            display: 'hidden'
           })
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
             visible: false
