@@ -83,19 +83,14 @@
                 <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
               </ElTooltip>
             </div>
-            <div class="flex justify-content-around">
-              <div>
-                <div class="text-center">表结构同步</div>
-                <Chart :extend="initialStructureOptions" style="width: 140px; height: 170px"></Chart>
-              </div>
-              <div>
-                <div class="text-center">表数据状态</div>
-                <Chart
-                  ref="chart"
-                  :extend="initialDataOptions"
-                  style="margin-left: 35px; width: 140px; height: 170px"
-                ></Chart>
-              </div>
+            <div class="mb-4 flex align-items-center">
+              <span class="mr-2">表同步总进度</span>
+              <ElProgress
+                class="flex-1 my-2"
+                :show-text="false"
+                :percentage="(totalData.snapshotTableTotal / totalData.tableTotal) * 100"
+              />
+              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
             </div>
           </template>
         </CollapsePanel>
@@ -249,108 +244,9 @@ export default {
       }
     },
 
-    // 全量-表结构同步
-    initialStructureOptions() {
-      let arr = [
-        {
-          name: '待进行',
-          key: 'wait',
-          value: 0,
-          color: '#F7D762'
-        },
-        // {
-        //   name: '无需创建',
-        //   key: 'noCreate',
-        //   value: 0,
-        //   color: '#88DBDA'
-        // },
-        {
-          name: '已完成',
-          key: 'finished',
-          value: 0,
-          color: '#82C647'
-        }
-        // {
-        //   name: '错误',
-        //   key: 'error',
-        //   value: 0,
-        //   color: '#EC8181'
-        // }
-      ]
-      const data = this.quota.samples?.totalData?.[0] || {}
-      const { tableTotal = 0, createTableTotal = 0 } = data
-      let result = {
-        wait: 0,
-        finished: createTableTotal
-      }
-      result.wait = tableTotal - result.finished
-      // const { structure } = this.quota.statistics?.[0] || {}
-      return getPieOptions(
-        arr.map(t =>
-          Object.assign({}, t, {
-            value: result[t.key] ?? 0
-          })
-        ),
-        {
-          series: [
-            {
-              name: '表结构同步'
-            }
-          ]
-        }
-      )
-    },
-
-    // 全量-表数据同步
-    initialDataOptions() {
-      let arr = [
-        {
-          name: '待进行',
-          key: 'wait',
-          value: 0,
-          color: '#F7D762'
-        },
-        // {
-        //   name: '进行中',
-        //   key: 'running',
-        //   value: 0,
-        //   color: '#88DBDA'
-        // },
-        {
-          name: '已完成',
-          key: 'finished',
-          value: 0,
-          color: '#82C647'
-        }
-        // {
-        //   name: '错误',
-        //   key: 'error',
-        //   value: 0,
-        //   color: '#EC8181'
-        // }
-      ]
-      // const { data } = this.quota.statistics?.[0] || {}
-      const data = this.quota.samples?.totalData?.[0] || {}
-      const { tableTotal = 0, snapshotTableTotal = 0 } = data
-      let result = {
-        wait: 0,
-        finished: snapshotTableTotal
-      }
-      result.wait = tableTotal - result.finished
-      return getPieOptions(
-        arr.map(t =>
-          Object.assign({}, t, {
-            value: result?.[t.key] ?? 0
-          })
-        ),
-        {
-          series: [
-            {
-              name: '表数据同步'
-            }
-          ]
-        }
-      )
+    totalData() {
+      const { tableTotal = 0, snapshotTableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
+      return { tableTotal, snapshotTableTotal }
     },
 
     initialList() {
