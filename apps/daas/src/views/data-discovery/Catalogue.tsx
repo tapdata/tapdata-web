@@ -176,6 +176,17 @@ export default defineComponent({
               {...{ on: { fetch: this.loadData } }}
             ></FilterBar>
           </template>
+          <template slot="operation">
+            <el-button
+              type="primary"
+              size="mini"
+              onClick={() => {
+                this.handleSourceDrawer()
+              }}
+            >
+              <span>{i18n.t('datadiscovery_catalogue_ziyuanbangding')}</span>
+            </el-button>
+          </template>
           <el-table-column
             label={i18n.t('metadata_name')}
             prop="name"
