@@ -39,7 +39,6 @@ export default {
       reader.onload = () => {
         const md = new MarkdownIt({ html: true })
         this.html = md.render(reader.result)
-        console.log('this.html', this.html) // eslint-disable-line
       }
     }
   }
