@@ -81,88 +81,6 @@ export class Database extends NodeType {
         }
       },
 
-      // 没啥用
-      /*desc: {
-        type: 'string',
-        title: '节点描述',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input.TextArea',
-        'x-component-props': {
-          autosize: { maxRows: 2 }
-        }
-      },*/
-
-      increaseReadSize: {
-        title: '批量读取条数', //增量批次读取条数
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'InputNumber',
-        'x-decorator-props': {
-          tooltip: '全量每批次读取的条数'
-        },
-        'x-component-props': {
-          min: 1,
-          max: 100000
-        },
-        default: 100,
-        'x-reactions': {
-          fulfill: {
-            state: {
-              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-            }
-          }
-        }
-      },
-      enableDynamicTable: {
-        title: '动态新增表',
-        type: 'boolean',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          tooltip: '开启后任务将会自动处理新增，删除表',
-          feedbackLayout: 'none'
-        },
-        'x-component': 'Switch',
-        'x-reactions': [
-          {
-            dependencies: ['.migrateTableSelectType'],
-            fulfill: {
-              state: {
-                visible:
-                  '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}'
-              }
-            }
-          }
-        ]
-      },
-
-      enableDDL: {
-        title: 'DDL事件采集',
-        type: 'boolean',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
-          tooltip: '开启后任务将会自动采集选中的源端DDL事件',
-          feedbackLayout: 'none'
-          // wrapperStyle: {
-          //   width: 'auto'
-          // }
-        },
-        'x-component': 'Switch',
-        'x-reactions': {
-          target: 'disabledEvents',
-          fulfill: {
-            state: {
-              display: '{{$self.value ? "visible" :"hidden"}}'
-            }
-          }
-        }
-      },
-
-      disabledEvents: {
-        type: 'array',
-        'x-component': 'DdlEventCheckbox'
-      },
-
       migrateTableSelectType: {
         title: '选择表',
         type: 'string',
@@ -243,6 +161,77 @@ export class Database extends NodeType {
             }
           }
         }
+      },
+
+      increaseReadSize: {
+        title: '批量读取条数', //增量批次读取条数
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'InputNumber',
+        'x-decorator-props': {
+          tooltip: '全量每批次读取的条数'
+        },
+        'x-component-props': {
+          min: 1,
+          max: 100000
+        },
+        default: 100,
+        'x-reactions': {
+          fulfill: {
+            state: {
+              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+            }
+          }
+        }
+      },
+      enableDynamicTable: {
+        title: '动态新增表',
+        type: 'boolean',
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          tooltip: '开启后任务将会自动处理新增，删除表',
+          feedbackLayout: 'none'
+        },
+        'x-component': 'Switch',
+        'x-reactions': [
+          {
+            dependencies: ['.migrateTableSelectType'],
+            fulfill: {
+              state: {
+                visible:
+                  '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}'
+              }
+            }
+          }
+        ]
+      },
+
+      enableDDL: {
+        title: 'DDL事件采集',
+        type: 'boolean',
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
+          tooltip: '开启后任务将会自动采集选中的源端DDL事件',
+          feedbackLayout: 'none'
+          // wrapperStyle: {
+          //   width: 'auto'
+          // }
+        },
+        'x-component': 'Switch',
+        'x-reactions': {
+          target: 'disabledEvents',
+          fulfill: {
+            state: {
+              display: '{{$self.value ? "visible" :"hidden"}}'
+            }
+          }
+        }
+      },
+
+      disabledEvents: {
+        type: 'array',
+        'x-component': 'DdlEventCheckbox'
       },
 
       // 切换连接，保存连接的类型

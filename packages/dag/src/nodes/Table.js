@@ -214,109 +214,6 @@ export class Table extends NodeType {
           }
         },
         properties: {
-          totalReadMethod: {
-            title: '全量数据读取',
-            type: 'string',
-            default: 'fullRead',
-            enum: [
-              {
-                label: '全量读取',
-                value: 'fullRead'
-              },
-              {
-                label: '自定义sql',
-                value: 'customizeSql'
-              }
-            ],
-            'x-decorator': 'FormItem',
-            'x-component': 'Radio.Group'
-          },
-          totalsql: {
-            type: 'string',
-            'x-decorator': 'FormItem',
-            'x-component': 'SqlEditor',
-            'x-component-props': {
-              options: { showPrintMargin: false, useWrapMode: true }
-            },
-            'x-reactions': {
-              dependencies: ['totalReadMethod'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="customizeSql" ? "visible":"hidden"}}'
-                }
-              }
-            }
-          },
-          increasePoll: {
-            title: '增量数据读取',
-            type: 'string',
-            default: 'fullRead',
-            enum: [
-              {
-                label: '日志CDC',
-                value: 'fullRead'
-              },
-              {
-                label: '自定义sql',
-                value: 'customizeSql'
-              }
-            ],
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              className: 'font-color-slight',
-              wrapperStyle: {
-                width: 'auto'
-              }
-            },
-            'x-component': 'Radio.Group',
-            'x-reactions': {
-              fulfill: {
-                schema: {
-                  'x-decorator-props.addonAfter':
-                    '{{$self.value==="customizeSql" ? "使用增量自定义SQL时暂不支持开启DDL事件采集":""}}'
-                }
-              }
-            }
-          },
-          increasesql: {
-            type: 'string',
-            'x-decorator': 'FormItem',
-            'x-component': 'SqlEditor',
-            'x-component-props': {
-              options: { showPrintMargin: false, useWrapMode: true }
-            },
-            'x-reactions': {
-              dependencies: ['increasePoll'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="customizeSql" ? "visible":"hidden"}}'
-                }
-              }
-            }
-          },
-          initialOffset: {
-            title: 'sql增量条件',
-            type: 'string',
-            required: true,
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              wrapperWidth: 300
-            },
-            'x-component': 'Input',
-            'x-reactions': {
-              dependencies: ['increasePoll'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="customizeSql" ? "visible":"hidden"}}'
-                }
-              }
-            }
-          },
-          /*increaseSyncTitle: {
-            title: '增量轮询',
-            type: 'void',
-            'x-component': 'FormTitle'
-          },*/
           increase: {
             type: 'void',
             'x-component': 'Space',
@@ -342,23 +239,6 @@ export class Table extends NodeType {
                 'x-component': 'InputNumber',
                 'x-component-props': {
                   min: 1
-                }
-              }
-            }
-          },
-          maxTransactionDuration: {
-            title: '事务最大时长(小时)',
-            type: 'number',
-            'x-decorator': 'FormItem',
-            'x-component': 'InputNumber',
-            'x-component-props': {
-              min: 0
-            },
-            'x-reactions': {
-              dependencies: ['databaseType'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="oracle" ? "visible":"hidden"}}'
                 }
               }
             }
