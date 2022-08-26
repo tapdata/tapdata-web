@@ -77,7 +77,7 @@
               :item="item"
               :active="active"
               :data-index="index"
-              :size-dependencies="[item.id, item.message]"
+              :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
             >
               <div class="log-line py-1 font-color-light">
                 <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
@@ -86,7 +86,7 @@
                 <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
                 <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
-                <span v-html="item.errorStack" class="ml-1"></span>
+                <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>
                 <span v-if="item.dataText" v-html="item.dataText"></span>
               </div>
             </DynamicScrollerItem>
@@ -324,6 +324,7 @@ export default {
         ]
       }
       this.extraEnterCount = 0
+      this.clearTimer()
       this.resetData()
     },
 
@@ -481,7 +482,15 @@ export default {
       result.forEach(row => {
         row.levelText = `[${row.level}]`
         row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
-        row.dataText = row.data?.length ? JSON.stringify(row.data) : ''
+        row.dataText = row.data?.length
+          ? JSON.stringify(
+              row.data.map(t => {
+                return {
+                  eventId: t.eventId
+                }
+              })
+            )
+          : ''
         arr.forEach(el => {
           row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
         })
