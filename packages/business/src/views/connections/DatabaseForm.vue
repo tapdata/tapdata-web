@@ -545,50 +545,50 @@ export default {
         }
       }
 
-      // 是否支持包含表
-      if (this.pdkOptions.capabilities?.some(t => t.id === 'get_table_names_function')) {
-        let config = {
-          //对象配置
-          loadAllTables: {
-            type: 'boolean',
-            default: true,
-            title: '对象收集',
-            'x-decorator': 'FormItem',
-            'x-component': 'Radio.Group',
-            enum: [
-              {
-                label: '全部',
-                value: true
-              },
-              {
-                label: '自定义',
-                value: false
-              }
-            ]
-          },
-          table_filter: {
-            type: 'string',
-            title: ' ',
-            'x-decorator': 'FormItem',
-            'x-component': 'Input.TextArea',
-            'x-component-props': {
-              placeholder: this.$t('connection_form_database_owner_tip')
-            },
-            'x-decorator-props': {
-              colon: false
-            },
-            'x-reactions': {
-              dependencies: ['__TAPDATA.loadAllTables'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] ? "hidden" : "visible"}}'
-                }
-              }
-            }
-          }
-        }
-        END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
-      }
+      // // 是否支持包含表
+      // if (this.pdkOptions.capabilities?.some(t => t.id === 'get_table_names_function')) {
+      //   let config = {
+      //     //对象配置
+      //     loadAllTables: {
+      //       type: 'boolean',
+      //       default: true,
+      //       title: '对象收集',
+      //       'x-decorator': 'FormItem',
+      //       'x-component': 'Radio.Group',
+      //       enum: [
+      //         {
+      //           label: '全部',
+      //           value: true
+      //         },
+      //         {
+      //           label: '自定义',
+      //           value: false
+      //         }
+      //       ]
+      //     },
+      //     table_filter: {
+      //       type: 'string',
+      //       title: ' ',
+      //       'x-decorator': 'FormItem',
+      //       'x-component': 'Input.TextArea',
+      //       'x-component-props': {
+      //         placeholder: this.$t('connection_form_database_owner_tip')
+      //       },
+      //       'x-decorator-props': {
+      //         colon: false
+      //       },
+      //       'x-reactions': {
+      //         dependencies: ['__TAPDATA.loadAllTables'],
+      //         fulfill: {
+      //           state: {
+      //             display: '{{$deps[0] ? "hidden" : "visible"}}'
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      //   END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
+      // }
       END.properties.__TAPDATA.properties.accessNodeType = {
         type: 'string',
         title: this.$t('connection_form_access_node'),
