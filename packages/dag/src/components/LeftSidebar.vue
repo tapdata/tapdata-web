@@ -828,8 +828,7 @@ $hoverBg: #eef3ff;
     .db-item,
     .tb-item,
     .node-item {
-      margin-bottom: 4px;
-      height: $itemH;
+      height: 28px;
       font-size: 12px;
       &.active {
         background-color: #eef3ff;
@@ -844,13 +843,10 @@ $hoverBg: #eef3ff;
         height: 20px;
         vertical-align: middle;
       }
-
-      &:last-child {
-        margin-bottom: 0;
-      }
     }
 
     .db-item {
+      margin-bottom: 4px;
       height: 42px;
       line-height: normal;
 
@@ -870,6 +866,10 @@ $hoverBg: #eef3ff;
         > :last-child {
           color: rgb(83 95 114 / 70%);
         }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
       }
     }
 
