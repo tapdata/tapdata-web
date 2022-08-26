@@ -61,12 +61,32 @@
                     onStop
                   }"
                   :key="db.id"
-                  class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
+                  class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
                   :class="{ active: activeConnection.id === db.id }"
                   @click="handleSelectDB(db)"
                 >
-                  <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
-                  <div class="db-item-txt text-truncate">{{ db.name }}</div>
+                  <div class="flex-shrink-0 mr-2 db-item-icon">
+                    <NodeIcon :node="db" />
+                  </div>
+                  <div class="flex flex-column justify-center db-item-content">
+                    <div class="flex align-center">
+                      <OverflowTooltip
+                        class="text-truncate mr-1"
+                        placement="right"
+                        :disabled="dragStarting"
+                        :text="db.name"
+                        :open-delay="400"
+                      />
+                      <ConnectionType :type="db.connection_type" />
+                    </div>
+                    <OverflowTooltip
+                      class="w-100 text-truncate"
+                      placement="right"
+                      :disabled="dragStarting"
+                      :text="db.connectionUrl"
+                      :open-delay="400"
+                    />
+                  </div>
                 </div>
                 <VEmpty v-if="!dbList.length" />
                 <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
@@ -227,37 +247,22 @@
 </template>
 
 <script>
-import 'web-core/assets/icons/svg/magnify.svg'
-import 'web-core/assets/icons/svg/table.svg'
-import 'web-core/assets/icons/svg/javascript.svg'
-import 'web-core/assets/icons/svg/joint-cache.svg'
-import 'web-core/assets/icons/svg/row-filter.svg'
-import 'web-core/assets/icons/svg/aggregator.svg'
-import 'web-core/assets/icons/svg/field-processor.svg'
-import 'web-core/assets/icons/svg/join.svg'
-import 'web-core/assets/icons/svg/custom-node.svg'
-import 'web-core/assets/icons/svg/merge_table.svg'
-import 'web-core/assets/icons/svg/field_calc.svg'
-import 'web-core/assets/icons/svg/field_add_del.svg'
-import 'web-core/assets/icons/svg/field_rename.svg'
-import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
-import mouseDrag from 'web-core/directives/mousedrag'
-import { ConnectionTypeSelector } from '@tap/business'
-import { VIcon, VEmpty } from '@tap/component'
-import resize from 'web-core/directives/resize'
-import BaseNode from './BaseNode'
-import { debounce } from 'lodash'
-import { CancelToken, connectionsApi } from '@tap/api'
+import { debounce, escapeRegExp } from 'lodash'
 import { Select } from 'element-ui'
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
-import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
+import { VIcon, VEmpty } from '@tap/component'
+import { ConnectionTypeSelector } from '@tap/business'
+import mouseDrag from 'web-core/directives/mousedrag'
+import resize from 'web-core/directives/resize'
+import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
+import BaseNode from './BaseNode'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
-import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
+import ConnectionType from './ConnectionType'
 import Locale from '../mixins/locale'
-import { escapeRegExp } from 'lodash'
 
 export default {
   name: 'LeftSidebar',
@@ -269,7 +274,7 @@ export default {
     OverflowTooltip,
     BaseNode,
     VIcon,
-    // Form,
+    ConnectionType,
     ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar
   },
@@ -423,6 +428,16 @@ export default {
           name: 1,
           id: 1,
           database_type: 1,
+          database_owner: 1,
+          database_name: 1,
+          database_username: 1,
+          database_host: 1,
+          database_port: 1,
+          database_uri: 1,
+          connection_name: 1,
+          brokerURL: 1,
+          mqType: 1,
+          kafkaBootstrapServers: 1,
           connection_type: 1,
           status: 1,
           accessNodeType: 1,
@@ -430,7 +445,8 @@ export default {
           accessNodeProcessIdList: 1,
           pdkType: 1,
           pdkHash: 1,
-          capabilities: 1
+          capabilities: 1,
+          config: 1
         },
         order: ['status DESC', 'name ASC']
       }
@@ -458,6 +474,24 @@ export default {
 
       const dbList = data.items.map(item => {
         item.databaseType = item.database_type
+        if (item.connectionString) {
+          item.connectionUrl = item.connectionString
+          return item
+        }
+
+        let connectionUrl = ''
+        if (item.config) {
+          if (item.config.uri) {
+            connectionUrl = item.config.uri
+          } else {
+            const { host, port, database, schema } = item.config
+            connectionUrl = host
+              ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+              : ''
+          }
+        }
+
+        item.connectionUrl = connectionUrl
         return item
       })
 
@@ -813,6 +847,29 @@ $hoverBg: #eef3ff;
 
       &:last-child {
         margin-bottom: 0;
+      }
+    }
+
+    .db-item {
+      height: 42px;
+      line-height: normal;
+
+      &-icon {
+        padding: 4px;
+        border: 1px solid #f2f2f2;
+        border-radius: 50%;
+      }
+
+      &-content {
+        overflow: hidden;
+        > :not(:last-child) {
+          margin-bottom: 4px;
+          font-size: 13px;
+        }
+
+        > :last-child {
+          color: rgb(83 95 114 / 70%);
+        }
       }
     }
 

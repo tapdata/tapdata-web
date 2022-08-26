@@ -243,8 +243,8 @@ $headerHeight: 40px;
       > .el-tabs__header {
         margin: 0;
         .el-tabs__nav-wrap {
-          padding-left: 4px;
-          padding-right: 4px;
+          padding-left: 16px;
+          padding-right: 16px;
 
           &::after {
             height: 1px;
