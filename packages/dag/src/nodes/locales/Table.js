@@ -1,6 +1,6 @@
 export const Table = {
   'zh-cn': {
-    connectionIdWrap: '数据库',
+    connectionIdWrap: '连接',
     tableNameWrap: '表',
     totalReadMethod: {
       title: '全量数据读取',
@@ -28,7 +28,7 @@ export const Table = {
     attrs: { accessNodeProcessId: '所属agent' }
   },
   'zh-tw': {
-    connectionIdWrap: '數據庫',
+    connectionIdWrap: '連接',
     tableNameWrap: '表',
     totalReadMethod: {
       title: '全量數據讀取',

@@ -11,15 +11,19 @@
                   {{ t('dag_connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
-                <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
-                <VIcon size="20" class="click-btn" @click.stop="handleShowDBInput">search-outline</VIcon>
+                <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
+                  >search-outline</VIcon
+                >
+                <VIcon size="20" class="click-btn" @mousedown.stop @click.stop="creat">add-outline</VIcon>
               </template>
               <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
+            </div>
+          </template>
+          <div class="flex flex-column h-100">
+            <div v-show="showDBInput" class="p-2">
               <ElInput
-                v-if="showDBInput"
                 v-model="dbSearchTxt"
                 ref="dbInput"
-                class="header__input"
                 :placeholder="t('connection_name_search_placeholder')"
                 size="mini"
                 clearable
@@ -27,74 +31,73 @@
                 @keyup.native.stop
                 @click.native.stop
                 @input="handleDBInput"
-                @blur="handleBlur"
-                @clear="handleShowDBInput"
               >
                 <template #prefix>
-                  <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
+                  <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
                 </template>
               </ElInput>
             </div>
-          </template>
-          <ElScrollbar ref="dbList" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
-            <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
-              <template #template>
-                <div v-for="i in 5" :key="i" class="flex p-4 align-center">
-                  <ElSkeletonItem
-                    class="mr-3 flex-shrink-0"
-                    style="width: 20px; height: 20px"
-                    variant="rect"
-                  ></ElSkeletonItem>
-                  <ElSkeletonItem variant="text"></ElSkeletonItem>
-                </div>
-              </template>
-              <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pb-2">
-                <div
-                  v-for="db in dbList"
-                  v-mouse-drag="{
-                    item: db,
-                    container: '#dfEditorContent',
-                    getDragDom,
-                    onStart,
-                    onMove,
-                    onDrop,
-                    onStop
-                  }"
-                  :key="db.id"
-                  class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
-                  :class="{ active: activeConnection.id === db.id }"
-                  @click="handleSelectDB(db)"
-                >
-                  <div class="flex-shrink-0 mr-2 db-item-icon">
-                    <NodeIcon :node="db" />
+
+            <ElScrollbar ref="dbList" class="flex-1" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
+              <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
+                <template #template>
+                  <div v-for="i in 5" :key="i" class="flex p-4 align-center">
+                    <ElSkeletonItem
+                      class="mr-3 flex-shrink-0"
+                      style="width: 20px; height: 20px"
+                      variant="rect"
+                    ></ElSkeletonItem>
+                    <ElSkeletonItem variant="text"></ElSkeletonItem>
                   </div>
-                  <div class="flex flex-column justify-center db-item-content">
-                    <div class="flex align-center">
+                </template>
+                <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pb-2">
+                  <div
+                    v-for="db in dbList"
+                    v-mouse-drag="{
+                      item: db,
+                      container: '#dfEditorContent',
+                      getDragDom,
+                      onStart,
+                      onMove,
+                      onDrop,
+                      onStop
+                    }"
+                    :key="db.id"
+                    class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
+                    :class="{ active: activeConnection.id === db.id }"
+                    @click="handleSelectDB(db)"
+                  >
+                    <div class="flex-shrink-0 mr-2 db-item-icon">
+                      <NodeIcon :node="db" />
+                    </div>
+                    <div class="flex flex-column justify-center db-item-content">
+                      <div class="flex align-center">
+                        <OverflowTooltip
+                          class="text-truncate mr-1"
+                          placement="right"
+                          :disabled="dragStarting"
+                          :text="db.name"
+                          :open-delay="400"
+                        />
+                        <ConnectionType :type="db.connection_type" />
+                      </div>
                       <OverflowTooltip
-                        class="text-truncate mr-1"
+                        class="w-100 text-truncate"
                         placement="right"
                         :disabled="dragStarting"
-                        :text="db.name"
+                        :text="db.connectionUrl"
                         :open-delay="400"
                       />
-                      <ConnectionType :type="db.connection_type" />
                     </div>
-                    <OverflowTooltip
-                      class="w-100 text-truncate"
-                      placement="right"
-                      :disabled="dragStarting"
-                      :text="db.connectionUrl"
-                      :open-delay="400"
-                    />
+                  </div>
+                  <VEmpty v-if="!dbList.length" />
+                  <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+                    {{ t('loading') }}<span class="dotting"></span>
                   </div>
                 </div>
-                <VEmpty v-if="!dbList.length" />
-                <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                  {{ t('loading') }}<span class="dotting"></span>
-                </div>
-              </div>
-            </ElSkeleton>
-          </ElScrollbar>
+              </ElSkeleton>
+            </ElScrollbar>
+          </div>
         </ElCollapseItem>
       </ElCollapse>
 
@@ -106,71 +109,74 @@
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
+          <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
+            >search-outline</VIcon
+          >
           <ElTooltip :content="t('dag_create_table_as_node')" placement="top">
             <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
           </ElTooltip>
-          <VIcon size="20" class="click-btn" @click.stop="handleShowTBInput">search-outline</VIcon>
-
-          <ElInput
-            v-if="showTBInput"
-            v-model="tbSearchTxt"
-            ref="tbInput"
-            class="header__input"
-            :placeholder="t('table_name_search_placeholder')"
-            size="mini"
-            clearable
-            @keydown.native.stop
-            @keyup.native.stop
-            @click.native.stop
-            @input="handleTBInput"
-            @blur="handleTBBlur"
-            @clear="handleShowTBInput"
-          >
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-            </template>
-          </ElInput>
         </div>
-        <ElScrollbar
-          ref="tbList"
-          class="flex-1 min-h-0"
-          tag="div"
-          wrap-class="tb-list"
-          :wrap-style="scrollbarWrapStyle"
-        >
-          <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
-            <template #template>
-              <div v-for="i in 5" :key="i" class="flex p-4 align-center">
-                <ElSkeletonItem variant="text"></ElSkeletonItem>
-              </div>
-            </template>
-            <!--多加一层div包裹，避免骨架屏出现时，v-infinite-scroll指令dom指向骨架屏-->
-            <div>
-              <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pb-2">
-                <div
-                  v-for="tb in tbList"
-                  v-mouse-drag="{
-                    item: tb,
-                    container: '#dfEditorContent',
-                    getDragDom,
-                    onStart: onTBStart,
-                    onMove,
-                    onDrop,
-                    onStop
-                  }"
-                  :key="tb.id"
-                  class="tb-item grabbable flex align-center px-2 user-select-none rounded-2"
-                >
-                  <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+
+        <div class="flex flex-column flex-1 min-h-0">
+          <div v-show="showTBInput" class="p-2">
+            <ElInput
+              v-model="tbSearchTxt"
+              ref="tbInput"
+              :placeholder="t('table_name_search_placeholder')"
+              size="mini"
+              clearable
+              @keydown.native.stop
+              @keyup.native.stop
+              @click.native.stop
+              @input="handleTBInput"
+            >
+              <template #prefix>
+                <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+              </template>
+            </ElInput>
+          </div>
+
+          <ElScrollbar
+            ref="tbList"
+            class="flex-1 min-h-0"
+            tag="div"
+            wrap-class="tb-list"
+            :wrap-style="scrollbarWrapStyle"
+          >
+            <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
+              <template #template>
+                <div v-for="i in 5" :key="i" class="flex p-4 align-center">
+                  <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
-                <VEmpty v-if="!tbList.length" />
-                <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                  {{ t('loading') }}<span class="dotting"></span>
+              </template>
+              <!--多加一层div包裹，避免骨架屏出现时，v-infinite-scroll指令dom指向骨架屏-->
+              <div>
+                <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pb-2">
+                  <div
+                    v-for="tb in tbList"
+                    v-mouse-drag="{
+                      item: tb,
+                      container: '#dfEditorContent',
+                      getDragDom,
+                      onStart: onTBStart,
+                      onMove,
+                      onDrop,
+                      onStop
+                    }"
+                    :key="tb.id"
+                    class="tb-item grabbable flex align-center px-2 user-select-none rounded-2"
+                  >
+                    <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+                  </div>
+                  <VEmpty v-if="!tbList.length" />
+                  <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+                    {{ t('loading') }}<span class="dotting"></span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </ElSkeleton>
-        </ElScrollbar>
+            </ElSkeleton>
+          </ElScrollbar>
+        </div>
       </div>
     </div>
 
@@ -685,30 +691,34 @@ export default {
       if (this.$refs.tbList) this.$refs.tbList.wrap.scrollTop = 0
     },
 
-    handleTBBlur() {
-      if (!this.tbSearchTxt.trim()) {
-        this.showTBInput = false
-      }
-    },
-
     handleShowTBInput() {
-      this.showTBInput = true
-      this.$nextTick(() => {
-        this.$refs.tbInput.focus()
-      })
-    },
+      this.showTBInput = !this.showTBInput
 
-    handleBlur() {
-      if (!this.dbSearchTxt.trim()) {
-        this.showDBInput = false
+      if (this.showTBInput) {
+        this.$nextTick(() => {
+          this.$refs.tbInput.focus()
+        })
+      }
+
+      if (this.tbSearchTxt) {
+        this.tbSearchTxt = ''
+        this.loadDatabaseTable()
       }
     },
 
     handleShowDBInput() {
-      this.showDBInput = true
-      this.$nextTick(() => {
-        this.$refs.dbInput.focus()
-      })
+      this.showDBInput = !this.showDBInput
+
+      if (this.showDBInput) {
+        this.$nextTick(() => {
+          this.$refs.dbInput.focus()
+        })
+      }
+
+      if (this.dbSearchTxt) {
+        this.dbSearchTxt = ''
+        this.loadDatabase()
+      }
     },
 
     handleDBInput: debounce(function () {
@@ -785,6 +795,10 @@ $hoverBg: #eef3ff;
       .el-collapse-item:last-child {
         margin-bottom: -1px;
       }
+
+      .el-collapse-item__header {
+        color: map-get($fontColor, normal) !important;
+      }
     }
 
     .click-btn {
@@ -793,7 +807,8 @@ $hoverBg: #eef3ff;
       z-index: 2;
       border-radius: 4px;
 
-      &:hover {
+      &:hover,
+      &.active {
         color: map-get($color, primary);
         background: $hoverBg;
       }
@@ -932,34 +947,6 @@ $hoverBg: #eef3ff;
 
     .el-scrollbar {
       height: 100%;
-    }
-
-    .header__input {
-      position: absolute;
-      z-index: 3;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      margin-bottom: -1px;
-
-      input {
-        width: 100%;
-        height: 100%;
-        border-width: 0 0 1px;
-        border-radius: 0;
-      }
-
-      input,
-      .v-icon,
-      .el-input__icon {
-        vertical-align: top;
-      }
-
-      input,
-      .el-input__icon {
-        line-height: $headerH;
-      }
     }
   }
 }
