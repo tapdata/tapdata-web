@@ -1,13 +1,14 @@
 import { defineComponent, ref } from 'vue-demi'
 import Locale from '../../mixins/locale'
-import { useForm } from '@formily/vue'
+import { useForm, useField } from '@formily/vue'
 
 export const TextFileReader = defineComponent({
   props: ['value', 'accept', 'maxFileSize', 'base64', 'fileName', 'fileNameField'],
   setup(props, { emit, root }) {
     const formRef = useForm()
+    const fieldRef = useField()
     const form = formRef.value
-    const fileNameField = props.fileNameField || '__TAPDATA_UI.fileName'
+    const fileNameField = props.fileNameField ?? `__TAPDATA_UI.${fieldRef.value.props.name}`
     const fileName = ref(props.fileName || form.getValuesIn(fileNameField) || '')
     const t = Locale.methods.t
     let selectFile = file => {
