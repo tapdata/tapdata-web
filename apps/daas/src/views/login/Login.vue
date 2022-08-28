@@ -98,6 +98,7 @@ export default {
 
         let data = await usersApi.login(this.form)
         Cookie.set('token', data?.id)
+        Cookie.set('tem_token', data?.id)
         // eslint-disable-next-line
         console.log('登录成功：', data)
 
