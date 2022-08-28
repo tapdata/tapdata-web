@@ -490,6 +490,7 @@ export default {
         size: 20,
         where: {
           'source.id': this.activeConnection.id,
+          taskId: this.$store.state.dataflow.taskId,
           meta_type: {
             in: ['collection', 'table', 'view']
           },

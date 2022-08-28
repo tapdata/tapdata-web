@@ -5,7 +5,7 @@ import { defineComponent } from 'vue-demi'
 
 export const TableSelect = observer(
   defineComponent({
-    setup(props, { attrs, listeners }) {
+    setup(props, { attrs, listeners, root }) {
       const fieldRef = useField()
       // const createValidate = v => /^[a-zA-Z][0-9a-zA-Z_.-]*$/.test(v)
       // const handleCreate = v => {
@@ -21,7 +21,7 @@ export const TableSelect = observer(
       // }
       return () => {
         const connectionId = fieldRef.value.query('connectionId').value()
-        const params = { where: { 'source.id': connectionId } }
+        const params = { where: { 'source.id': connectionId, taskId: root.$store.state.dataflow.taskId } }
         // console.log('TableSelect', params, attrs) // eslint-disable-line
         return (
           <AsyncSelect
