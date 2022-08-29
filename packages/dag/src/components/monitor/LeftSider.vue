@@ -141,7 +141,6 @@ import 'web-core/assets/icons/svg/field_calc.svg'
 import 'web-core/assets/icons/svg/field_add_del.svg'
 import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
-import Locale from '../../mixins/locale'
 import EventChart from './components/EventChart'
 import LineChart from './components/LineChart'
 import TimeSelect from './components/TimeSelect'
@@ -156,7 +155,6 @@ import { calcTimeUnit } from '@tap/shared'
 
 export default {
   name: 'LeftSider',
-  mixins: [Locale],
   props: {
     dataflow: Object,
     quota: Object,

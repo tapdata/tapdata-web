@@ -25,6 +25,7 @@
     "@tap/form": "workspace:^1.0.0",
     "@tap/node-design": "workspace:^1.0.0",
     "@tap/shared": "workspace:^1.0.0",
+    "@tap/i18n": "workspace:^1.0.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",

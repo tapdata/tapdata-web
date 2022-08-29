@@ -1,4 +1,5 @@
 import { each, isPlainObj, Cookie } from '@tap/shared'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 export const lowerSnake = str => {
   return String(str).replace(/\s+/g, '_').toLocaleLowerCase()
@@ -24,7 +25,5 @@ export const mergeLocales = (target, source) => {
 }
 
 export const getBrowserLanguage = () => {
-  let lang = Cookie.get('lang')
-  lang = lang ? lang.replace('_', '-') : 'en-US'
-  return lang
+  return getCurrentLanguage()
 }

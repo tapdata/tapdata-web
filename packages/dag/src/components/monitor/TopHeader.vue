@@ -37,7 +37,7 @@
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
         <button :class="{ active: activeType === 'settings' }" class="icon-btn" @click="$emit('showSettings')">
           <VIcon size="20">setting-outline</VIcon>
         </button>
@@ -46,7 +46,7 @@
         <ElTooltip
           v-if="dataflow.disabledData && !dataflow.disabledData.edit"
           transition="tooltip-fade-in"
-          :content="t('button_edit')"
+          :content="$t('button_edit')"
         >
           <button @click="$emit('edit')" class="icon-btn edit rounded-circle">
             <img :src="editSvg" />
@@ -58,7 +58,7 @@
           class="mx-2"
           @click="$emit('reset')"
         >
-          {{ t('dataFlow_button_reset') }}
+          {{ $t('dataFlow_button_reset') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
@@ -67,7 +67,7 @@
           type="primary"
           @click="$emit('start')"
         >
-          {{ t('task_list_run') }}
+          {{ $t('task_list_run') }}
         </ElButton>
         <template v-else>
           <ElButton
@@ -79,7 +79,7 @@
             type="danger"
             @click="$emit('forceStop')"
           >
-            {{ t('task_list_force_stop') }}
+            {{ $t('task_list_force_stop') }}
           </ElButton>
           <ElButton
             v-else
@@ -90,7 +90,7 @@
             class="mx-2"
             @click="$emit('stop')"
           >
-            {{ t('task_list_stop') }}
+            {{ $t('task_list_stop') }}
           </ElButton>
         </template>
       </template>
@@ -103,14 +103,11 @@ import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { TextEditable } from '@tap/component'
-import Locale from '../../mixins/locale'
 
 export default {
   name: 'TopHeader',
 
   directives: { focusSelect },
-
-  mixins: [Locale],
 
   props: {
     loading: Boolean,
@@ -130,9 +127,9 @@ export default {
     return {
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.t('dataFlow_initial_sync') + '+' + this.t('dataFlow_cdc'),
-        initial_sync: this.t('dataFlow_initial_sync'),
-        cdc: this.t('dataFlow_cdc')
+        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc'),
+        initial_sync: this.$t('dataFlow_initial_sync'),
+        cdc: this.$t('dataFlow_cdc')
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,

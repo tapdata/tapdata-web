@@ -1,4 +1,4 @@
-import locale from './locale'
+import langs from './locale'
 
 // base
 import VirtualTransfer from './base/virtual-transfer'
@@ -23,7 +23,7 @@ import Chart from './chart'
 import MqTransfer from './mq-transfer'
 import JsEditor from './JsEditor.vue'
 export {
-  locale,
+  langs,
   VIcon,
   VStep,
   VirtualTransfer,

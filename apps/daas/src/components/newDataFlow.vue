@@ -55,7 +55,7 @@
           :span="8"
           class="more-col"
           v-if="$has('datasource_menu') && $has('datasource_creation')"
-          :style="{ minHeight: lang === 'en_US' ? '190px' : '120px' }"
+          :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
         >
           <div class="more-col-box p-4" @click="handleConnection">
             <div class="fs-7 pb-4 font-color-dark">
@@ -64,7 +64,7 @@
                 <span class="pl-2 fw-sub">{{ $t('new_create_connection') }}</span>
               </div>
             </div>
-            <div class="fs-8 desc" :style="{ minHeight: lang === 'en_US' ? '120px' : '70px' }">
+            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
               <!-- <ElTooltip effect="dark" :content="$t('new_create_connection_desc')" placement="bottom"> -->
               {{ $t('new_create_connection_desc') }}
               <!-- </ElTooltip> -->
@@ -75,7 +75,7 @@
           :span="8"
           class="more-col"
           v-if="$has('API_management_menu') && $has('API_creation')"
-          :style="{ minHeight: lang === 'en_US' ? '190px' : '120px' }"
+          :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
         >
           <div class="more-col-box p-4" @click="handleModules">
             <div class="fs-7 pb-4 font-color-dark">
@@ -84,7 +84,7 @@
                 <span class="pl-2 fw-sub">{{ $t('new_create_api') }}</span>
               </div>
             </div>
-            <div class="fs-8 desc" :style="{ minHeight: lang === 'en_US' ? '120px' : '70px' }">
+            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
               {{ $t('new_create_api_desc') }}
             </div>
           </div>
@@ -93,7 +93,7 @@
           :span="8"
           class="more-col"
           v-if="$has('Data_verify_menu') && $has('verify_job_creation')"
-          :style="{ minHeight: lang === 'en_US' ? '190px' : '120px' }"
+          :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
         >
           <div class="more-col-box p-4" @click="handleDataVerification">
             <div class="fs-7 pb-4 font-color-dark">
@@ -102,7 +102,7 @@
                 <span class="pl-2 fw-sub">{{ $t('new_data_valid') }}</span>
               </div>
             </div>
-            <div class="fs-8 desc" :style="{ minHeight: lang === 'en_US' ? '120px' : '70px' }">
+            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
               {{ $t('new_data_valid_desc') }}
             </div>
           </div>
@@ -119,7 +119,8 @@
 
 <script>
 import DatabaseTypeDialog from '@tap/business/src/views/connections/DatabaseTypeDialog'
-import Cookie from '@tap/shared/src/cookie'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+
 export default {
   name: 'newDataFlow',
   components: { DatabaseTypeDialog },
@@ -133,7 +134,7 @@ export default {
   data() {
     return {
       dialogDatabaseTypeVisible: false,
-      lang: Cookie.get('lang') || 'en_US',
+      lang: getCurrentLanguage(),
       whiteList: [
         'mysql',
         'oracle',

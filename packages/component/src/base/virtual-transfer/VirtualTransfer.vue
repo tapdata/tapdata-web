@@ -5,9 +5,9 @@
       v-bind="$props"
       ref="leftPanel"
       :data="sourceData"
-      :title="titles[0] || t('transfer_titles.0')"
+      :title="titles[0] || $t('transfer_titles.0')"
       :default-checked="leftDefaultChecked"
-      :placeholder="filterPlaceholder || t('filter_placeholder')"
+      :placeholder="filterPlaceholder || $t('filter_placeholder')"
       @checked-change="onSourceCheckedChange"
     >
       <slot name="left" :option="option"></slot>
@@ -38,9 +38,9 @@
       v-bind="$props"
       ref="rightPanel"
       :data="targetData"
-      :title="titles[1] || t('transfer_titles.1')"
+      :title="titles[1] || $t('transfer_titles.1')"
       :default-checked="rightDefaultChecked"
-      :placeholder="filterPlaceholder || t('filter_placeholder')"
+      :placeholder="filterPlaceholder || $t('filter_placeholder')"
       @checked-change="onTargetCheckedChange"
     >
       <slot name="right" :option="option"></slot>
@@ -52,13 +52,11 @@
 <script>
 import { Transfer } from 'element-ui'
 import VirtualTransferPanel from './VirtualTransferPanel'
-import Locale from '../../mixins/locale'
 
 export default {
   name: 'VirtualTransfer',
   components: { VirtualTransferPanel },
   extends: Transfer,
-  mixins: [Locale],
   computed: {
     sourceData() {
       // console.time('sourceData')

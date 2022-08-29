@@ -48,9 +48,10 @@
   </ElHeader>
 </template>
 <script>
-import Cookie from '@tap/shared/src/cookie'
-import NotificationPopover from '@/views/workbench/NotificationPopover'
 import { VIcon } from '@tap/component'
+import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+
+import NotificationPopover from '@/views/workbench/NotificationPopover'
 
 export default {
   components: { VIcon, NotificationPopover },
@@ -59,17 +60,12 @@ export default {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       lang: '',
-      languagesItems: {
-        'zh-CN': '中文 (简)',
-        'zh-TW': '中文 (繁)',
-        'en-US': 'English'
-      }
+      languagesItems: langMenu
     }
   },
   created() {
-    this.lang =
-      Cookie.get('lang') || Cookie.get('_authing_lang') || navigator.language || navigator.browserLanguage || 'zh-CN'
-    this.setLangCookie()
+    this.lang = getCurrentLanguage()
+    setCurrentLanguage(this.lang, this.$i18n)
   },
   methods: {
     command(command) {
@@ -122,7 +118,7 @@ export default {
     // 中英文切换
     changeLanguage(lang) {
       this.lang = lang
-      this.setLangCookie()
+      setCurrentLanguage(this.lang, this.$i18n)
       location.reload()
     },
     clearCookie() {
@@ -132,12 +128,6 @@ export default {
           document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
-    },
-    setLangCookie() {
-      const map = {
-        en: 'en-US'
-      }
-      Cookie.set('lang', map[this.lang] || this.lang, { expires: 365 })
     }
   }
 }

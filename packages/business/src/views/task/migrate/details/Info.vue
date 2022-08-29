@@ -476,7 +476,7 @@ export default {
         if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
           r = 1 + this.$t('taskProgress.m')
         }
-        // r = parseInt(s) + i18n.t('timeToLive.s')
+        // r = parseInt(s) + this.$t('timeToLive.s')
         if (m > 0) {
           r = parseInt(m) + this.$t('taskProgress.m')
         }

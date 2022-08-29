@@ -1,50 +1,39 @@
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
-import { langs } from 'web-core'
+import i18n from '@tap/i18n'
+// apps语言文件
+import en from './langs/en'
+import zhCN from './langs/zh-CN'
+import zhTW from './langs/zh-TW'
+// elementUI
 import locale from 'element-ui/lib/locale'
 import enLocale from 'element-ui/lib/locale/lang/en'
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
-import en from './langs/en'
-import zhCN from './langs/zh-CN'
-import zhTW from './langs/zh-TW'
-import Cookie from '@tap/shared/src/cookie'
-import { locale as dagLocale } from '@tap/dag'
-import { locale as fieldMappingLocale } from '@tap/field-mapping'
-import { locale as formLocale } from '@tap/form'
-import { locale as businessLocale } from '@tap/business'
+// 公共模块
+import { langs as dagLangs } from '@tap/dag'
+import { langs as webCoreLangs } from 'web-core'
+import { langs as fieldMappingLangs } from '@tap/field-mapping'
+import { langs as formLangs } from '@tap/form'
+import { langs as componentLangs } from '@tap/component'
+import { langs as businessLangs } from '@tap/business'
 
-let eleLangs = {
+const eleLangs = {
   'zh-CN': zhLocale,
   'zh-TW': tcLocale,
   en: enLocale
 }
-let localLangs = {
+const localLangs = {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
   en: en
 }
-const langMap = {
-  zh_CN: 'zh-CN',
-  zh_TW: 'zh-TW',
-  en_US: 'en'
-}
-Vue.use(VueI18n)
-let lang = Cookie.get('lang') || 'en_US'
-const i18n = new VueI18n({
-  locale: langMap[lang],
-  messages: eleLangs
-})
-Object.values(langMap).forEach(l => {
-  i18n.mergeLocaleMessage(l, langs[l])
-  i18n.mergeLocaleMessage(l, localLangs[l])
-})
-
-const current = i18n.locale
 locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
-dagLocale.use(current)
-fieldMappingLocale.use(current)
-formLocale.use(current)
-businessLocale.use(current)
-
+i18n.merge(eleLangs)
+i18n.merge(webCoreLangs)
+i18n.merge(dagLangs)
+i18n.merge(fieldMappingLangs)
+i18n.merge(formLangs)
+i18n.merge(componentLangs)
+i18n.merge(businessLangs)
+// apps语言文件，最后覆盖
+i18n.merge(localLangs)
 export default i18n

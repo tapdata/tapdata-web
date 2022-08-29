@@ -4,14 +4,12 @@ import { defineComponent } from 'vue-demi'
 import { VIcon } from '@tap/component'
 import { convertSchemaToTreeData, uuid } from '../field-rename/util'
 import '../field-rename/index.scss'
-import Locale from '../../mixins/locale'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldAddDel = connect(
   observer(
     defineComponent({
       props: ['loading', 'options', 'disabled'],
-      mixins: [Locale],
       setup() {
         const formRef = useForm()
         const form = formRef.value
@@ -380,7 +378,7 @@ export const FieldAddDel = connect(
             (parentNode && parentNode.length >= 1 && name === 'newFieldName') ||
             (parentNode && parentNode.length > 1 && name !== 'newFieldName')
           ) {
-            this.$message.error(name + this.t('message_exists_name'))
+            this.$message.error(name + this.$t('message_exists_name'))
             exist = true
           }
           return exist

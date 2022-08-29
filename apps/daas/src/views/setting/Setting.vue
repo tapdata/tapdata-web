@@ -1,7 +1,7 @@
 <template>
   <section class="setting-list-wrap">
     <div class="setting-list-box">
-      <ul class="setting-nav" :style="lang === 'en_US' ? '280px' : '160px'">
+      <ul class="setting-nav" :style="lang === 'en' ? '280px' : '160px'">
         <li
           v-for="(item, index) in formData.items"
           :key="index"
@@ -188,8 +188,8 @@
 <script>
 import { uniq, find } from 'lodash'
 import { VIcon } from '@tap/component'
-import Cookie from '@tap/shared/src/cookie'
 import { licensesApi, settingsApi } from '@tap/api'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 export default {
   name: 'Setting',
@@ -203,7 +203,7 @@ export default {
       },
       activeTab: 0,
       activePanel: 'Log',
-      lang: Cookie.get('lang') || 'en_US',
+      lang: getCurrentLanguage(),
       emailTabs: [
         {
           label: this.$t('setting_Email_Template_Running'),

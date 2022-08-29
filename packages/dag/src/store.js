@@ -1,13 +1,15 @@
 import Vue from 'vue'
-import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
-import { taskApi, customNodeApi } from '@tap/api'
 import { debounce } from 'lodash'
-import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
 import { setValidateLanguage } from '@formily/core'
+
+import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
+import { taskApi, customNodeApi } from '@tap/api'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+
+import { AddDagCommand } from './command'
 import { CustomProcessor } from './nodes/extends/CustomProcessor'
-import Cookie from '@tap/shared/src/cookie'
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
@@ -34,12 +36,6 @@ const findByCod = (arr, cond) => {
       return flag
     }
   })
-}
-
-const langMap = {
-  zh_CN: 'zh-CN',
-  zh_TW: 'zh-TW',
-  en_US: 'en-US'
 }
 
 const getState = () => ({
@@ -199,9 +195,7 @@ const getters = {
   hasNodeError: state => id => state.nodeErrorState[id],
 
   language: () => {
-    let lang = Cookie.get('lang')
-    lang = lang ? lang.replace('-', '_') : 'en_US'
-    if (lang) return langMap[lang].toLocaleLowerCase()
+    return getCurrentLanguage()
   },
 
   getMessage: (state, getters) => (token, locales) => {
@@ -822,7 +816,7 @@ const mutations = {
   },
 
   setValidateLanguage() {
-    setValidateLanguage(langMap[Cookie.get('lang')])
+    setValidateLanguage(getCurrentLanguage())
   },
 
   setNodeInputsWatcher(state, watcher) {

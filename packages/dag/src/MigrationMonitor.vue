@@ -24,7 +24,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ t('task_preview_status_' + result[0].status) }}
+          {{ $t('task_preview_status_' + result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -48,7 +48,7 @@
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ t('task_preview_status_' + result[0].status) }}
+              {{ $t('task_preview_status_' + result[0].status) }}
             </span>
           </template>
         </LeftSider>
@@ -160,7 +160,6 @@ import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
-import Locale from './mixins/locale'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
@@ -172,7 +171,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     VExpandXTransition,
@@ -335,12 +334,12 @@ export default {
     gotoViewer() {},
 
     async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter(node => node.type === 'database')
       if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
+        return this.$t('editor_cell_validate_none_data_node')
       }
 
       await this.validateAllNodes()
@@ -509,7 +508,7 @@ export default {
       this.isSaving = true
       try {
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.t('message_operation_succuess'))
+        this.$message.success(this.$t('message_operation_succuess'))
         this.isSaving = false
         this.loadDataflow(this.dataflow?.id)
       } catch (e) {
@@ -825,10 +824,11 @@ export default {
         try {
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.t('message_resetOk'))
+          this.responseHandler(data, this.$t('message_resetOk'))
+          // this.init()
           this.loadDataflow(this.dataflow?.id)
         } catch (e) {
-          this.handleError(e, this.t('message_resetFailed'))
+          this.handleError(e, this.$t('message_resetFailed'))
         }
       })
     },

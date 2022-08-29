@@ -108,7 +108,6 @@ import { merge } from 'lodash'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import editor from './mixins/editor'
-import Locale from './mixins/locale'
 import { DEFAULT_SETTINGS } from './constants'
 import { mapMutations } from 'vuex'
 import { observable } from '@formily/reactive'
@@ -116,7 +115,7 @@ import { observable } from '@formily/reactive'
 export default {
   name: 'Editor',
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     NodePopover,
@@ -281,12 +280,12 @@ export default {
     },
 
     /*async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter(node => node.type === 'table')
       if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
+        return this.$t('editor_cell_validate_none_data_node')
       }
 
       await this.validateAllNodes()
@@ -460,7 +459,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.t('message_save_ok'))
+        !needStart && this.$message.success(this.$t('message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         return true
@@ -479,7 +478,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        // this.$message.success(this.t('message_save_ok'))
+        // this.$message.success(this.$t('message_save_ok'))
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
@@ -647,7 +646,7 @@ export default {
             }
           }
         }
-        // this.$message.error(`${this.t('dag_save_fail')} ${names.join('，')}`)
+        // this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
       }
       // else if (error?.data?.message) {
       //   this.$message.error(error.data.message)

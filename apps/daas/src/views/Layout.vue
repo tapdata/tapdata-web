@@ -45,7 +45,7 @@
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
           <span class="icon-btn py-1 px-3">
-            <VIcon size="16">{{ { zh_CN: 'language-sc', en_US: 'language-sc', zh_TW: 'language-sc' }[lang] }}</VIcon>
+            <VIcon size="16">language-sc</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
@@ -347,15 +347,18 @@
 </style>
 
 <script>
+import dayjs from 'dayjs'
+
+import Cookie from '@tap/shared/src/cookie'
+import { VIcon } from '@tap/component'
+import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { usersApi, timeStampApi, licensesApi } from '@tap/api'
+
 import CustomerService from '@/components/CustomerService'
 import newDataFlow from '@/components/newDataFlow'
+import PageHeader from '@/components/PageHeader'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
-import Cookie from '@tap/shared/src/cookie'
-import PageHeader from '@/components/PageHeader'
-import { VIcon } from '@tap/component'
-import dayjs from 'dayjs'
-import { usersApi, timeStampApi, licensesApi } from '@tap/api'
 
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
@@ -419,12 +422,8 @@ export default {
       IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
 
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-      languages: {
-        zh_CN: '中文 (简)',
-        en_US: 'English',
-        zh_TW: '中文 (繁)'
-      },
-      lang: Cookie.get('lang') || 'en_US',
+      languages: langMenu,
+      lang: getCurrentLanguage(),
       settingVisibility:
         this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
       settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
@@ -621,7 +620,7 @@ export default {
       })
     },
     changeLanguage(lang) {
-      Cookie.set('lang', lang)
+      setCurrentLanguage(lang, this.$i18n)
       location.reload()
     },
 
