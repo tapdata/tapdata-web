@@ -487,6 +487,11 @@ export default {
     },
 
     reformDataflow(data, fromWS) {
+      makeStatusAndDisabled(data)
+      this.$set(this.dataflow, 'status', data.status)
+      this.$set(this.dataflow, 'disabledData', data.btnDisabled)
+      this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
+
       if (!fromWS) {
         Object.keys(data).forEach(key => {
           if (!['dag'].includes(key)) {
@@ -496,10 +501,12 @@ export default {
           }
         })
       }
-      makeStatusAndDisabled(data)
-      this.$set(this.dataflow, 'status', data.status)
-      this.$set(this.dataflow, 'disabledData', data.btnDisabled)
-      this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
+
+      // makeStatusAndDisabled(data)
+      // this.$set(this.dataflow, 'status', data.status)
+      // this.$set(this.dataflow, 'disabledData', data.btnDisabled)
+      // this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
+      // console.log('this.dataflow', this.dataflow) // eslint-disable-line
     },
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
