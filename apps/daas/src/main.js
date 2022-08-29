@@ -76,6 +76,8 @@ if (IS_IFRAME) {
 const TOKEN = getUrlSearch('token')
 if (TOKEN) {
   Cookie.set('token', TOKEN)
+  // eslint-disable-next-line
+  console.log('保存token到cookie：', TOKEN)
 }
 let token = Cookie.get('token')
 
