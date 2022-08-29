@@ -490,12 +490,13 @@ export default {
       if (!fromWS) {
         Object.keys(data).forEach(key => {
           if (!['dag'].includes(key)) {
+            // 坑啊...formily响应式observable和vue2搭配需要加个避免属性不更新Field
+            this.dataflow[key] = data[key]
             this.$set(this.dataflow, key, data[key])
           }
         })
       }
       makeStatusAndDisabled(data)
-      console.log('reformDataflow', data) // eslint-disable-line
       this.$set(this.dataflow, 'status', data.status)
       this.$set(this.dataflow, 'disabledData', data.btnDisabled)
       this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
