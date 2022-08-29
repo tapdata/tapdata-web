@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "vue-i18n": "^8.24.5",
     "@tap/shared": "workspace:^1.0.0"
   }
 }
