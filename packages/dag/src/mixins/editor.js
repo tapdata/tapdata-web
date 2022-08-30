@@ -487,17 +487,28 @@ export default {
     },
 
     reformDataflow(data, fromWS) {
+      makeStatusAndDisabled(data)
+      if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
+      this.$set(this.dataflow, 'status', data.status)
+      this.$set(this.dataflow, 'disabledData', data.btnDisabled)
+      this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
+      this.$set(this.dataflow, 'stopTime', data.stopTime)
+
       if (!fromWS) {
         Object.keys(data).forEach(key => {
           if (!['dag'].includes(key)) {
+            // 坑啊...formily响应式observable和vue2搭配需要加个避免属性不更新Field
+            this.dataflow[key] = data[key]
             this.$set(this.dataflow, key, data[key])
           }
         })
       }
-      makeStatusAndDisabled(data)
-      console.log('reformDataflow', data) // eslint-disable-line
-      this.$set(this.dataflow, 'status', data.status)
-      this.$set(this.dataflow, 'disabledData', data.btnDisabled)
+
+      // makeStatusAndDisabled(data)
+      // this.$set(this.dataflow, 'status', data.status)
+      // this.$set(this.dataflow, 'disabledData', data.btnDisabled)
+      // this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
+      // console.log('this.dataflow', this.dataflow) // eslint-disable-line
     },
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {

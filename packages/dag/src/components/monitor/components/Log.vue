@@ -77,16 +77,16 @@
               :item="item"
               :active="active"
               :data-index="index"
-              :size-dependencies="[item.id, item.message]"
+              :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
             >
-              <div class="py-1 font-color-light">
+              <div class="log-line py-1 font-color-light">
                 <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
                 <span class="white-space-nowrap ml-1">{{ formatTime(item.timestamp) }}</span>
                 <span v-if="item.taskName" v-html="item.taskNameText" class="ml-1"></span>
                 <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
                 <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
-                <span v-html="item.errorStack" class="ml-1"></span>
+                <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>
                 <span v-if="item.dataText" v-html="item.dataText"></span>
               </div>
             </DynamicScrollerItem>
@@ -290,6 +290,16 @@ export default {
     }
   },
 
+  watch: {
+    'dataflow.status'(v) {
+      if (v === 'edit') return
+      this.init()
+    },
+    'dataflow.taskRecordId'() {
+      this.init()
+    }
+  },
+
   mounted() {
     this.init()
   },
@@ -313,6 +323,8 @@ export default {
           }
         ]
       }
+      this.extraEnterCount = 0
+      this.clearTimer()
       this.resetData()
     },
 
@@ -349,7 +361,10 @@ export default {
       this.clearTimer()
       this.timer = setInterval(() => {
         // 不满足轮询条件，则多请求几次结束
-        if (this.isEnterTimer || (!this.isEnterTimer && ++this.extraEnterCount < 3)) {
+        if (
+          this.isEnterTimer ||
+          (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 5)
+        ) {
           this.loadNew()
         }
       }, 5000)
@@ -467,7 +482,15 @@ export default {
       result.forEach(row => {
         row.levelText = `[${row.level}]`
         row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
-        row.dataText = row.data?.length ? JSON.stringify(row.data) : ''
+        row.dataText = row.data?.length
+          ? JSON.stringify(
+              row.data.map(t => {
+                return {
+                  eventId: t.eventId
+                }
+              })
+            )
+          : ''
         arr.forEach(el => {
           row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
         })
@@ -629,7 +652,6 @@ export default {
 .filter-items__item {
   padding: 0 16px;
   height: 40px;
-  line-height: 40px;
   cursor: pointer;
   &.active {
     background: rgba(44, 101, 255, 0.05);
@@ -643,6 +665,9 @@ export default {
   border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
+    .log-line {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    }
     .highlight-bg-color {
       background-color: #ff0;
     }

@@ -30,7 +30,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSidebar
-        v-if="!stateIsReadonly"
+        v-if="!stateIsReadonly && dataflow.id"
         v-resize.right="{
           minWidth: 260,
           maxWidth: 400
@@ -246,6 +246,7 @@ export default {
         await this.$nextTick()
         await this.addNodes(dag)
         await this.$nextTick()
+        this.$refs.paperScroller.initVisibleArea()
         this.$refs.paperScroller.autoResizePaper()
         this.handleCenterContent()
       }
@@ -478,6 +479,9 @@ export default {
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
+        })
+        this.$nextTick(() => {
+          this.$refs.paperScroller.initVisibleArea()
         })
       } catch (e) {
         // eslint-disable-next-line no-console

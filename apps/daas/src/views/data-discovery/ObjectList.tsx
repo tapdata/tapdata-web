@@ -1,6 +1,7 @@
-import { defineComponent, onMounted, reactive, ref, watch } from '@vue/composition-api'
+import { defineComponent, reactive, ref, computed, watch, onMounted } from '@vue/composition-api'
 import i18n from '@/i18n'
 import { FilterBar, Drawer } from '@tap/component'
+import { TablePage } from '@tap/business'
 import DrawerContent from './PreviewDrawer'
 import { useMessage } from '@/hooks'
 import { discoveryApi } from '@tap/api'
@@ -32,10 +33,9 @@ export default defineComponent({
       },
       filterItems: []
     })
-    const loadData = val => {
+    const loadData = ({ page }) => {
       let { category, type, sourceCategory, sourceType, queryKey } = data.searchParams
-      data.page.current = val
-      let { size, current } = data.page
+      let { size, current } = page
       let where = {
         page: current,
         pageSize: size
@@ -45,17 +45,13 @@ export default defineComponent({
       sourceType && (where['sourceType'] = sourceType)
       sourceCategory && (where['sourceCategory'] = sourceCategory)
       queryKey && (where['queryKey'] = queryKey)
-      data.tableLoading = true
-      discoveryApi
-        .list(where)
-        .then(res => {
-          let { total, items } = res
-          list.value = items || []
-          data.page.total = total
-        })
-        .finally(() => {
-          data.tableLoading = false
-        })
+      return discoveryApi.list(where).then(res => {
+        let { total, items } = res
+        return {
+          total: total,
+          data: items
+        }
+      })
     }
     //请求筛选条件-下拉列表
     const loadFilterList = () => {
@@ -130,14 +126,18 @@ export default defineComponent({
         </div>
       )
     }
-    loadData(1)
-    loadFilterList()
     watch(
       () => root.$route.query,
       val => {
-        loadData(1)
+        // @ts-ignore
+        refs.table.fetch(1)
       }
     )
+    onMounted(() => {
+      // @ts-ignore
+      refs.table.fetch(1)
+    })
+    loadFilterList()
     return {
       data,
       list,
@@ -150,63 +150,43 @@ export default defineComponent({
   render() {
     return (
       <section class="discovery-page-wrap">
-        <div class="discovery-page-main-box">
-          <div class="discovery-page-right">
-            <div class="object-page-topbar">
-              <div class="object-page-search-bar">
-                <FilterBar
-                  items={this.data.filterItems}
-                  v-model={this.data.searchParams}
-                  {...{ on: { fetch: this.loadData } }}
-                ></FilterBar>
-              </div>
-            </div>
-            <el-table class="discovery-page-table" data={this.list} v-loading={this.data.tableLoading}>
-              <el-table-column
-                label={this.$t('object_list_name')}
-                prop="name"
-                scopedSlots={{
-                  default: this.renderNode
-                }}
-              ></el-table-column>
-              <el-table-column
-                width="145px"
-                label={this.$t('object_list_classification')}
-                prop="category"
-              ></el-table-column>
-              <el-table-column width="100px" label={this.$t('object_list_type')} prop="type"></el-table-column>
-              <el-table-column
-                width="140px"
-                label={this.$t('object_list_source_type')}
-                prop="sourceType"
-              ></el-table-column>
-              <el-table-column
-                width="145px"
-                label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
-                prop="sourceCategory"
-              ></el-table-column>
-              <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
-            </el-table>
-            <el-pagination
-              background
-              class="table-page-pagination mt-3"
-              layout="->,total, prev, pager, next, jumper"
-              on={{ ['update:current-page']: this.loadData }}
-              page-size={this.data.page.size}
-              current-page={this.data.page.current}
-              total={this.data.page.total}
-              onCurrent-change={this.loadData}
-            ></el-pagination>
-            <Drawer
-              class="object-drawer-wrap"
-              width="850px"
-              visible={this.data.isShowDetails}
-              on={{ ['update:visible']: this.closeDrawer }}
-            >
-              <DrawerContent ref={'drawerContent'}></DrawerContent>
-            </Drawer>
-          </div>
-        </div>
+        <TablePage ref="table" row-key="id" remoteMethod={this.loadData}>
+          <template slot="search">
+            <FilterBar
+              items={this.data.filterItems}
+              v-model={this.data.searchParams}
+              {...{ on: { fetch: this.loadData } }}
+            ></FilterBar>
+          </template>
+          <el-table-column
+            label={this.$t('object_list_name')}
+            prop="name"
+            scopedSlots={{
+              default: this.renderNode
+            }}
+          ></el-table-column>
+          <el-table-column
+            width="145px"
+            label={this.$t('object_list_classification')}
+            prop="category"
+          ></el-table-column>
+          <el-table-column width="100px" label={this.$t('object_list_type')} prop="type"></el-table-column>
+          <el-table-column width="140px" label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
+          <el-table-column
+            width="145px"
+            label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
+            prop="sourceCategory"
+          ></el-table-column>
+          <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
+        </TablePage>
+        <Drawer
+          class="object-drawer-wrap overflow-hidden"
+          width="850px"
+          visible={this.data.isShowDetails}
+          on={{ ['update:visible']: this.closeDrawer }}
+        >
+          <DrawerContent ref={'drawerContent'}></DrawerContent>
+        </Drawer>
       </section>
     )
   }

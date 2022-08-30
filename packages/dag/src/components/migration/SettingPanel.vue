@@ -230,13 +230,13 @@ export default observer({
                       //   'x-component': 'Switch',
                       //   default: true
                       // },
-                      isStopOnError: {
-                        title: this.t('task_setting_stop_on_error'), //遇到错误停止
-                        type: 'boolean',
-                        default: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      },
+                      // isStopOnError: {
+                      //   title: this.t('task_setting_stop_on_error'), //遇到错误停止
+                      //   type: 'boolean',
+                      //   default: true,
+                      //   'x-decorator': 'FormItem',
+                      //   'x-component': 'Switch'
+                      // },
                       shareCdcEnable: {
                         title: this.t('connection_form_shared_mining'), //共享挖掘日志过滤
                         type: 'boolean',

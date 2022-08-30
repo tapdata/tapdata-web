@@ -9,7 +9,7 @@
       </div>
       <!-- v-if="searchFalg" -->
       <div class="search-box">
-        <ElInput class="search" size="mini" v-model="filterText">
+        <ElInput size="mini" v-model="filterText">
           <span slot="suffix" class="el-input__icon h-100 ml-1">
             <VIcon size="14">search</VIcon>
           </span>
@@ -514,7 +514,7 @@ export default {
   &.expand {
     height: 100%;
     //width: 100%;
-    padding: 20px 0;
+    padding: 12px 0 20px 0;
     // border-right: 1px solid map-get($borderColor, light);
     width: 214px;
     .btn-expand {
@@ -532,6 +532,7 @@ export default {
       top: 2px;
       right: 12px;
       font-size: 12px;
+      color: map-get($fontColor, light);
       .iconfont.icon-jia {
         display: flex;
         flex-direction: row;
@@ -539,12 +540,7 @@ export default {
         align-items: center;
         color: map-get($fontColor, light);
         font-size: 16px;
-        // background-color: map-get($bgColor, white);
-        // border: 1px solid #dedee4;
         height: 66%;
-        // padding: 0 4px;
-        // padding-right: 6px;
-        // padding-left: 5px;
         margin-top: 0px;
         border-top-width: 1px;
         border-radius: 3px;
@@ -610,9 +606,6 @@ export default {
       // 	border-radius: 3px;
       // 	cursor: pointer;
       // }
-    }
-    .search {
-      margin-left: 7px;
     }
   }
   .tree-block {

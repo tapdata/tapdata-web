@@ -368,23 +368,23 @@ let menuSetting = [
     children: [
       { name: 'migrateList', code: 'Data_SYNC_menu', parent: 'migrate' },
       { name: 'dataflowList', code: 'Data_SYNC_menu', parent: 'dataflow' },
-      { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
+      // { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
       { name: 'sharedMiningList', code: 'log_collector_menu', parent: 'sharedMining' },
       { name: 'functionList', code: 'SYNC_Function_management', parent: 'function' },
       { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' },
       { name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
-  {
-    name: 'discovery',
-    label: 'page_title_data_discovery',
-    icon: 'system',
-    code: 'system_management',
-    children: [
-      { name: 'objectList', code: 'datasource_menu', parent: 'object' },
-      { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogue' }
-    ]
-  },
+  // {
+  //   name: 'discovery',
+  //   label: 'page_title_data_discovery',
+  //   icon: 'system',
+  //   code: 'system_management',
+  //   children: [
+  //     { name: 'objectList', code: 'datasource_menu', parent: 'object' },
+  //     { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogue' }
+  //   ]
+  // },
   {
     name: 'dataService',
     label: 'page_title_data_service',

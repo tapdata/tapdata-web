@@ -1,10 +1,15 @@
 import { defineComponent, ref } from 'vue-demi'
 import Locale from '../../mixins/locale'
+import { useForm, useField } from '@formily/vue'
 
 export const TextFileReader = defineComponent({
-  props: ['value', 'accept', 'maxFileSize', 'base64', 'fileName'],
+  props: ['value', 'accept', 'maxFileSize', 'base64', 'fileName', 'fileNameField'],
   setup(props, { emit, root }) {
-    const fileName = ref(props.fileName || '')
+    const formRef = useForm()
+    const fieldRef = useField()
+    const form = formRef.value
+    const fileNameField = props.fileNameField ?? `__TAPDATA_UI.${fieldRef.value.props.name}`
+    const fileName = ref(props.fileName || form.getValuesIn(fileNameField) || '')
     const t = Locale.methods.t
     let selectFile = file => {
       if (file) {
@@ -28,12 +33,14 @@ export const TextFileReader = defineComponent({
             reader.onload = () => {
               emit('change', reader.result)
               emit('update:fileName', file.name)
+              fileNameField && form.setValuesIn(fileNameField, file.name)
             }
           }
         }
       } else {
         emit('change', '')
         emit('update:fileName', '')
+        fileNameField && form.setValuesIn(fileNameField, '')
       }
     }
 

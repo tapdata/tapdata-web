@@ -260,10 +260,13 @@ export default {
       v && this.init()
     },
     'dataflow.status'(v1, v2) {
-      if (v1 !== v2) {
+      if (v1 !== 'edit' && v1 !== v2) {
         this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
+    },
+    'dataflow.taskRecordId'() {
+      this.init()
     }
   },
 
@@ -823,9 +826,7 @@ export default {
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.t('message_resetOk'))
-          // this.init()
           this.loadDataflow(this.dataflow?.id)
-          this.resetLog()
         } catch (e) {
           this.handleError(e, this.t('message_resetFailed'))
         }
@@ -842,14 +843,6 @@ export default {
       } else {
         this.jsPlumbIns.select().removeClass('running')
       }
-    },
-
-    resetLog() {
-      const $log = this.$refs.bottomPanel?.getLogRef?.()
-      if (!$log) {
-        return
-      }
-      $log.resList()
     }
   }
 }

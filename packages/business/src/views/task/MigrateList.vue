@@ -214,13 +214,10 @@
         <ul class="info-list">
           <li v-for="item in previewList" :key="item.label">
             <template v-if="!!item.value">
-              <VIcon class="icon mr-4">{{ item.label }}</VIcon>
+              <VIcon class="icon mr-4" style="margin-top: 3px">{{ item.icon }}</VIcon>
               <div class="label-text">
-                <div class="label font-color-light">{{ $t('task_preview_' + item.label) }}:</div>
-                <div
-                  class="value align-items-center align-middle font-color-dark"
-                  :class="{ 'align-top': item.value && item.value.length > 15 }"
-                >
+                <div class="label font-color-light">{{ item.label }}:</div>
+                <div class="value align-items-center align-middle font-color-dark">
                   {{ item.value }}
                 </div>
               </div>
@@ -407,10 +404,28 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          let list = data?.items || []
+          let list = (data?.items || []).map(makeStatusAndDisabled)
+
+          // 有选中行，列表刷新后无法更新行数据，比如状态
+          if (this.multipleSelection.length && list.length) {
+            let tempMap = list.reduce((map, item) => {
+              map[item.id] = {
+                status: item.status,
+                btnDisabled: item.btnDisabled
+              }
+              return map
+            }, {})
+            this.multipleSelection.forEach(item => {
+              const temp = tempMap[item.id]
+              if (temp) {
+                Object.assign(item, temp)
+              }
+            })
+          }
+
           return {
-            total: data?.total,
-            data: list.map(makeStatusAndDisabled)
+            total: data.total,
+            data: list
           }
         })
     },
@@ -469,12 +484,36 @@ export default {
       }
     },
     handleCommand(command, node) {
+      let commandFilter = ['start', 'stop', 'del']
       let ids = []
+      let taskList = []
       if (node) {
-        ids = [node.id]
+        taskList = [node]
       } else {
-        ids = this.multipleSelection.map(item => item.id)
+        taskList = this.multipleSelection
       }
+      let canList = []
+      let canNotList = []
+      if (commandFilter.includes(command)) {
+        let op = command === 'del' ? 'delete' : command
+        taskList.forEach(task => {
+          if (task.btnDisabled?.[op]) {
+            canNotList.push(task)
+          } else {
+            canList.push(task)
+          }
+        })
+      } else {
+        canList = taskList
+      }
+
+      if (canNotList.length) {
+        const msg = canNotList.length !== taskList.length ? `部分任务不支持该操作` : `所选任务不支持该操作`
+        this.$message.warning(msg)
+      }
+
+      if (!canList.length) return
+      ids = canList.map(item => item.id)
       this[command](ids, node)
     },
     export(ids) {
@@ -507,7 +546,7 @@ export default {
         }
         let result = await taskApi.batchStart(ids)
         this.buried('migrationStart', '', { result: true })
-        this.$message.success(result?.message || this.$t('message_operation_succuess'))
+        this.$message.success(result?.message || this.$t('message_operation_succuess'), false)
         this.table.fetch()
         if (flag) {
           this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {})
@@ -527,7 +566,7 @@ export default {
           return
         }
         taskApi.batchStop(ids).then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('message_operation_succuess'), false)
           this.table.fetch()
         })
       })
@@ -542,7 +581,7 @@ export default {
           return
         }
         taskApi.forceStop(ids).then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('message_operation_succuess'), false)
           this.table.fetch()
         })
       })
@@ -647,7 +686,7 @@ export default {
             .join('')
         })
       } else if (msg) {
-        this.$message.success(msg)
+        this.$message.success(msg, false)
       }
     },
     // 任务调度设置保存
@@ -690,43 +729,56 @@ export default {
         .findTaskDetailById([id])
         .then((data = {}) => {
           let previewList = []
+          let map = {
+            title: { label: this.$t('task_preview_title'), icon: 'title' },
+            createUser: { label: this.$t('task_preview_createUser'), icon: 'createUser' },
+            sync_type: { label: this.$t('task_preview_sync_type'), icon: 'sync_type' },
+            type: { label: this.$t('task_preview_type'), icon: 'type', format: val => this.syncType[val] },
+            id: { label: this.$t('task_preview_id'), icon: 'id' },
+            createAt: { label: this.$t('task_preview_createAt'), icon: 'createAt', format: this.formatTime },
+            createTime: { label: this.$t('task_preview_createTime'), icon: 'createTime' },
+            startTime: { label: this.$t('task_preview_startTime'), icon: 'startTime', format: this.formatTime },
+            initStartTime: {
+              label: this.$t('task_preview_initStartTime'),
+              icon: 'initStartTime',
+              format: this.formatTime
+            },
+            cdcStartTime: {
+              label: this.$t('task_preview_cdcStartTime'),
+              icon: 'cdcStartTime',
+              format: this.formatTime
+            },
+            taskFinishTime: {
+              label: this.$t('task_preview_taskFinishTime'),
+              icon: 'taskFinishTime',
+              format: this.formatTime
+            },
+            taskLastHour: {
+              label: this.$t('task_preview_taskLastHour'),
+              icon: 'taskLastHour',
+              format: this.handleTimeConvert
+            },
+            eventTime: { label: this.$t('task_preview_eventTime'), icon: 'eventTime', format: this.formatTime },
+            cdcDelayTime: {
+              label: this.$t('task_preview_cdcDelayTime'),
+              icon: 'cdcDelayTime',
+              format: this.handleTimeConvert
+            },
+            failCount: { label: this.$t('task_preview_failCount'), icon: 'failCount' }
+          }
           this.previewData = makeStatusAndDisabled(data)
-          for (let item in data) {
-            if (['type'].includes(item)) {
-              data[item] = this.syncType[data[item]]
-            }
-
-            if (['cdcDelayTime', 'taskLastHour'].includes(item)) {
-              data[item] = this.handleTimeConvert(data[item])
-            }
-            if (
-              [
-                'createAt',
-                'startTime',
-                'initStartTime',
-                'cdcStartTime',
-                'initStartTime',
-                'taskFinishTime',
-                'eventTime'
-              ].includes(item)
-            ) {
-              data[item] = this.formatTime(data[item])
-            }
-
-            if (
-              ![
-                'customId',
-                'lastUpdAt',
-                'userId',
-                'lastUpdBy',
-                'lastUpdBy',
-                'status',
-                'desc',
-                'name',
-                'btnDisabled'
-              ].includes(item)
-            ) {
-              previewList.push({ label: item, value: data[item] || '-' })
+          for (let key in data) {
+            let opt = map[key]
+            let val = data[key]
+            if (opt) {
+              if (opt.format) {
+                val = opt.format(val)
+              }
+              previewList.push({
+                label: opt.label,
+                value: val || val === 0 ? val : '-',
+                icon: opt.icon
+              })
             }
           }
 

@@ -32,7 +32,7 @@
         ></el-progress>
       </div>
       <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
-        <div class="pt-3">
+        <div class="pt-2">
           <VIcon>{{ item.icon }}</VIcon>
         </div>
         <div class="flex-fill ml-4">

@@ -83,7 +83,6 @@
           <LineChart
             :data="qpsData"
             :color="['#26CF6C', '#2C65FF']"
-            :limit="20"
             :time-format="timeFormat"
             title="QPS（Q/S）"
             ref="qpsLineChart"
@@ -95,7 +94,6 @@
         <div class="chart-box__content p-4">
           <LineChart
             :data="delayData"
-            :limit="20"
             :time-format="timeFormat"
             :color="['#2C65FF']"
             time-value

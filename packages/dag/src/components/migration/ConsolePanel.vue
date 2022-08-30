@@ -45,7 +45,7 @@
             v-for="(item, i) in logList"
             :key="i"
             class="log-list-item m-0 px-1"
-          ><span class="log-list-item-level" :class="`log-${item.grade}`">[{{item.grade}}]</span><span>{{item.log}}</span></pre>
+          ><span class="log-list-item-level mr-1" :class="`log-${item.grade}`">[{{item.grade}}]</span><span>{{item.log}}</span></pre>
 
           <pre
             class="justify-content-center align-center m-0 p-1"

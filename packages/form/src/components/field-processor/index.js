@@ -267,7 +267,7 @@ export const FieldRenameProcessor = defineComponent({
         fieldsMapping = toList(map)
         emit('change', fieldsMapping)
         setTimeout(() => {
-          loadData('', '', true)
+          loadData(config.searchTable, 'search', true)
         }, 2000)
       }
       if (config.checkedFields?.length > 0) {
@@ -298,6 +298,7 @@ export const FieldRenameProcessor = defineComponent({
       emit('change', [])
       metadataInstancesApi.resetTable(where).then(() => {
         loadData() //更新整个数据
+        config.searchTable = '' //清除筛选条件
       })
     }
     //单个删除字段

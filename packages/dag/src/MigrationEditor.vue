@@ -456,9 +456,6 @@ export default {
         return this.saveAsNewDataflow()
       }
 
-      this.toggleConsole(true)
-      this.$refs.console?.startAuto() // 信息输出自动加载
-
       const data = this.getDataflowDataToSave()
       let isOk = false
 
@@ -473,6 +470,8 @@ export default {
         this.handleError(e)
       }
       this.isSaving = false
+      this.toggleConsole(true)
+      this.$refs.console?.startAuto() // 信息输出自动加载
       if (!needStart) {
         // this.$refs.console?.stopAuto() // 再load一下信息输出，并且停掉计时器
         // this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
@@ -488,7 +487,7 @@ export default {
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
           } else {
-            this.gotoViewer(true)
+            this.gotoViewer(false)
           }
           // this.unWatchStatus()
         }
