@@ -79,7 +79,7 @@
         </main>
       </section>
       <!--配置面板-->
-      <ConfigPanel ref="settingPanel" :scope="scope" :settings="dataflow" show-schema-panel />
+      <ConfigPanel ref="configPanel" :scope="scope" :settings="dataflow" show-schema-panel />
     </section>
   </section>
 </template>
@@ -695,15 +695,6 @@ export default {
           return map
         }, {})
       )
-    },
-
-    async validateSetting() {
-      try {
-        await this.$refs.settingPanel.validateSetting()
-      } catch (e) {
-        this.setActiveType('settings')
-        return '任务设置异常'
-      }
     }
   }
 }

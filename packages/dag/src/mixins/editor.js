@@ -1045,6 +1045,15 @@ export default {
       return someErrorMsg
     },
 
+    async validateSetting() {
+      try {
+        await this.$refs.configPanel.validateSetting()
+      } catch (e) {
+        this.setActiveType('settings')
+        return '任务设置异常'
+      }
+    },
+
     loadLeafNode(node) {
       let arr = []
       if (node.$outputs.length) {
