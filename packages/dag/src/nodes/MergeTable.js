@@ -47,9 +47,6 @@ export class MergeTable extends NodeType {
                   type: 'string',
                   title: '数据写入模式',
                   'x-decorator': 'FormItem',
-                  'x-decorator-props': {
-                    wrapperWidth: 320
-                  },
                   'x-component': 'Select',
                   enum: [
                     { label: '更新写入', value: 'updateWrite' },
@@ -61,31 +58,24 @@ export class MergeTable extends NodeType {
                   type: 'void',
                   'x-component': 'FormContent',
                   properties: {
-                    space: {
-                      type: 'void',
-                      'x-component': 'Space',
-                      properties: {
-                        targetPath: {
-                          type: 'string',
-                          title: '关联后写入路径',
-                          'x-decorator': 'FormItem',
-                          'x-decorator-props': {
-                            wrapperWidth: 320
-                          },
-                          'x-component': 'Input',
-                          'x-reactions': [
-                            {
-                              dependencies: ['.mergeType', '.id'],
-                              fulfill: {
-                                state: {
-                                  value: `{{ !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1])?.name : $self.value }}`
-                                }
-                              }
-                            },
-                            {
-                              effects: ['onFieldInputValueChange'],
-                              fulfill: {
-                                run: `{{
+                    targetPath: {
+                      type: 'string',
+                      title: '关联后写入路径',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'Input',
+                      'x-reactions': [
+                        {
+                          dependencies: ['.mergeType', '.id'],
+                          fulfill: {
+                            state: {
+                              value: `{{ !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1])?.name : $self.value }}`
+                            }
+                          }
+                        },
+                        {
+                          effects: ['onFieldInputValueChange'],
+                          fulfill: {
+                            run: `{{
                                   const arr = $self.value.split('.')
                                   if (arr.length > 2) {
                                     $self.value = arr.slice(0,2).join('.')
@@ -94,35 +84,30 @@ export class MergeTable extends NodeType {
                                     $self.description = ''
                                   }
                                 }}`
-                              }
-                            }
-                          ]
-                        },
-                        arrayKeys: {
-                          type: 'array',
-                          title: '内嵌数组匹配条件',
-                          'x-decorator': 'FormItem',
-                          'x-decorator-props': {
-                            wrapperWidth: 320
-                          },
-                          'x-component': 'FieldSelect',
-                          'x-component-props': {
-                            'allow-create': true,
-                            multiple: true,
-                            filterable: true
-                          },
-                          'x-reactions': [
-                            {
-                              dependencies: ['.mergeType'],
-                              fulfill: {
-                                state: {
-                                  visible: '{{ $deps[0] === "updateIntoArray" }}'
-                                }
-                              }
-                            }
-                          ]
+                          }
                         }
-                      }
+                      ]
+                    },
+                    arrayKeys: {
+                      type: 'array',
+                      title: '内嵌数组匹配条件',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'FieldSelect',
+                      'x-component-props': {
+                        'allow-create': true,
+                        multiple: true,
+                        filterable: true
+                      },
+                      'x-reactions': [
+                        {
+                          dependencies: ['.mergeType'],
+                          fulfill: {
+                            state: {
+                              visible: '{{ $deps[0] === "updateIntoArray" }}'
+                            }
+                          }
+                        }
+                      ]
                     },
                     joinKeys: {
                       type: 'array',
