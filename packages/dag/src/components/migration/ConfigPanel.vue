@@ -188,7 +188,7 @@ $headerHeight: 40px;
 .config-panel {
   position: relative;
   z-index: 9;
-  width: 640px;
+  width: 600px;
   height: 100%;
   overflow: auto;
   background-color: #fff;

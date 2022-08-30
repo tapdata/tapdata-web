@@ -1,5 +1,5 @@
 export const connectorActiveStyle = {
-  paintStyle: { strokeWidth: 2, stroke: '#fa6303' },
+  paintStyle: { strokeWidth: 1, stroke: '#fa6303' },
   hoverPaintStyle: { stroke: '#fa6303' },
   cssClass: 'connector-selected',
   overlays: []
@@ -48,10 +48,10 @@ export const sourceEndpoint = {
     radius: 8
   },
   connectorStyle: {
-    strokeWidth: 2,
+    strokeWidth: 1,
     stroke: '#9f9f9f',
     outlineStroke: 'transparent',
-    outlineWidth: 2
+    outlineWidth: 1
   },
   connectorHoverStyle: {
     stroke: '#2c65ff'

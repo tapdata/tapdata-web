@@ -24,8 +24,8 @@ export default {
 </script>
 
 <style lang="scss">
-$width: 180px;
-$height: 40px;
+$width: 160px;
+$height: 30px;
 
 .layout-content .df-node {
   cursor: move;
@@ -53,7 +53,7 @@ $height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 48px;
+    width: 28px;
     height: 100%;
     background-color: rgba(44, 101, 255, 0.2);
     border-right-style: solid;
@@ -73,8 +73,8 @@ $height: 40px;
     }
 
     .el-image {
-      width: 21px;
-      height: 21px;
+      width: 14px;
+      height: 14px;
     }
   }
 
@@ -130,15 +130,15 @@ $height: 40px;
       &:before {
         content: '';
         position: absolute;
-        width: 32px;
-        height: 32px;
+        width: 22px;
+        height: 22px;
         border: 1px solid #6236ff;
         border-radius: 50%;
         background: #fff;
       }
       .v-icon {
-        width: 28px;
-        height: 28px;
+        width: 14px;
+        height: 14px;
         background-color: #6236ff;
         color: #fff;
         font-size: 14px;
@@ -158,15 +158,15 @@ $height: 40px;
       &:before {
         content: '';
         position: absolute;
-        width: 32px;
-        height: 32px;
+        width: 22px;
+        height: 22px;
         border: 1px solid #008eff;
         border-radius: 50%;
         background: #fff;
       }
       .v-icon {
-        width: 28px;
-        height: 28px;
+        width: 14px;
+        height: 14px;
         background-color: #008eff;
         color: #fff;
         font-size: 14px;
