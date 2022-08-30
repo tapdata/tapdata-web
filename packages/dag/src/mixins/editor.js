@@ -229,6 +229,7 @@ export default {
         // 不可编辑
         this.gotoViewer()
         this.setStateReadonly(true)
+        return true
       }
     },
 
@@ -563,7 +564,7 @@ export default {
         if (id) {
           await this.openDataflow(id)
           // 检查任务是否可编辑
-          this.checkGotoViewer()
+          if (this.checkGotoViewer()) return // 跳转到viewer不需要继续往下走
         } else {
           await this.newDataflow()
         }
