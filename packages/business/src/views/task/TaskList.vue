@@ -5,7 +5,7 @@
       row-key="id"
       class="data-flow-list"
       :remoteMethod="getData"
-      :default-sort="{ prop: 'createTime', order: 'descending' }"
+      :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
         val => {
           multipleSelection = val
@@ -263,7 +263,7 @@ export default {
         status: '',
         type: ''
       },
-      order: 'createTime DESC',
+      order: 'last_updated DESC',
       typeOptions: [
         { label: this.$t('select_option_all'), value: '' },
         {
