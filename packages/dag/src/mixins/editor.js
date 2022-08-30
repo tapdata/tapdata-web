@@ -488,6 +488,7 @@ export default {
 
     reformDataflow(data, fromWS) {
       makeStatusAndDisabled(data)
+      if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
       this.$set(this.dataflow, 'status', data.status)
       this.$set(this.dataflow, 'disabledData', data.btnDisabled)
       this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
