@@ -488,6 +488,7 @@ export default {
       this.$set(this.dataflow, 'status', data.status)
       this.$set(this.dataflow, 'disabledData', data.btnDisabled)
       this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
+      this.$set(this.dataflow, 'stopTime', data.stopTime)
 
       if (!fromWS) {
         Object.keys(data).forEach(key => {
