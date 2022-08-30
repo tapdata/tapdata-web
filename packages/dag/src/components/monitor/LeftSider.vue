@@ -85,11 +85,7 @@
             </div>
             <div class="mb-4 flex align-items-center">
               <span class="mr-2">表同步总进度</span>
-              <ElProgress
-                class="flex-1 my-2"
-                :show-text="false"
-                :percentage="(totalData.snapshotTableTotal / totalData.tableTotal) * 100"
-              />
+              <ElProgress class="flex-1 my-2" :show-text="false" :percentage="totalDataPercentage" />
               <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
             </div>
           </template>
@@ -247,6 +243,11 @@ export default {
     totalData() {
       const { tableTotal = 0, snapshotTableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
       return { tableTotal, snapshotTableTotal }
+    },
+
+    totalDataPercentage() {
+      const { tableTotal, snapshotTableTotal } = this.totalData
+      return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
     },
 
     initialList() {

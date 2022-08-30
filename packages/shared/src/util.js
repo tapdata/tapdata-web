@@ -203,6 +203,19 @@ export function checkConnectionName(name) {
   return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(name)
 }
 
+export function openUrl(url, target = '_blank', name = '') {
+  const dom = document.createElement('a')
+  if (name) dom.download = decodeURI(name)
+  dom.href = url
+  dom.setAttribute('target', target)
+  dom.setAttribute('ID', name)
+  dom.style.display = 'none'
+  document.body.appendChild(dom)
+  dom.click()
+  dom.parentNode.removeChild(dom)
+  window.URL.revokeObjectURL(url)
+}
+
 // 下载Blob
 export function downloadBlob(res, name = '') {
   if (!res) {
@@ -211,13 +224,5 @@ export function downloadBlob(res, name = '') {
   const { data, headers } = res
   const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
   const blob = new Blob([data], { type: headers['content-type'] })
-  let dom = document.createElement('a')
-  let url = window.URL.createObjectURL(blob)
-  dom.href = url
-  dom.download = decodeURI(fileName)
-  dom.style.display = 'none'
-  document.body.appendChild(dom)
-  dom.click()
-  dom.parentNode.removeChild(dom)
-  window.URL.revokeObjectURL(url)
+  openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
