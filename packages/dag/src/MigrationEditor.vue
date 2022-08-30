@@ -487,7 +487,7 @@ export default {
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
           } else {
-            this.gotoViewer(true)
+            this.gotoViewer(false)
           }
           // this.unWatchStatus()
         }
