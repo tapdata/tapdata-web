@@ -257,19 +257,9 @@ export const TableRename = observer(
             <div class="font-color-light">以下操作仅对已搜索出来的原表名生效</div>
             <FormItem.BaseItem label="替换">
               <div class="flex">
-                <ElInput
-                  v-model={this.config.replaceBefore}
-                  disabled={this.disabled}
-                  prefixIcon="el-icon-search"
-                  clearable
-                />
+                <ElInput v-model={this.config.replaceBefore} disabled={this.disabled} clearable />
                 <div class="px-4 text-nowrap font-color-light">改为</div>
-                <ElInput
-                  v-model={this.config.replaceAfter}
-                  disabled={this.disabled}
-                  prefixIcon="el-icon-search"
-                  clearable
-                />
+                <ElInput v-model={this.config.replaceAfter} disabled={this.disabled} clearable />
               </div>
             </FormItem.BaseItem>
             <FormItem.BaseItem label="前缀">
