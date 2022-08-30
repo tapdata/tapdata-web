@@ -268,7 +268,7 @@ export default {
         status: '',
         type: ''
       },
-      order: 'createTime DESC',
+      order: 'last_updated DESC',
       progressOptions: [
         { label: this.$t('select_option_all'), value: '' },
         {
