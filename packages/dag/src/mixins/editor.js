@@ -393,7 +393,6 @@ export default {
       node && this.nodeSelected(node)
       if (setActive) {
         this.setActiveNode(node.id)
-        this.showLeftSider = false
       }
     },
 

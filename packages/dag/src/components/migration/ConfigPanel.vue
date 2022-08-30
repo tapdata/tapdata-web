@@ -4,6 +4,7 @@
     class="config-panel border-start flex-column"
     :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
   >
+    <NodeIcon v-if="activeNode" class="config-node-icon" :node="activeNode" />
     <ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
       <ElTabPane label="配置">
         <FormPanel
@@ -236,6 +237,14 @@ $headerHeight: 40px;
     background: #fff;
   }
 
+  .config-node-icon {
+    position: absolute;
+    left: 16px;
+    top: 10px;
+    width: 20px;
+    height: 20px;
+  }
+
   ::v-deep {
     .config-tabs.el-tabs {
       height: 100%;
@@ -243,7 +252,7 @@ $headerHeight: 40px;
       > .el-tabs__header {
         margin: 0;
         .el-tabs__nav-wrap {
-          padding-left: 16px;
+          padding-left: 52px;
           padding-right: 16px;
 
           &::after {

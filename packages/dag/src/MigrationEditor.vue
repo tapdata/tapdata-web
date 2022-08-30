@@ -55,7 +55,6 @@
             @add-node="handleAddNodeToPos"
             @mouse-select="handleMouseSelect"
             @change-scale="handleChangeScale"
-            @click-blank="showLeftSider = true"
           >
             <DFNode
               v-for="n in allNodes"
