@@ -1,17 +1,35 @@
 <template>
-  <header class="layout-header border-bottom px-4">
-    <div class="flex align-items-center">
-      <button @click="$emit('page-return')" class="icon-btn">
-        <VIcon size="18">left</VIcon>
-      </button>
-      <TextEditable
-        v-model="name"
-        placeholder="请输入任务名称"
-        max-width="260"
-        @change="onNameInputChange"
-      />
-      <span class="ml-4">{{ syncType[dataflow.type] }}</span>
-      <TaskStatus :task="dataflow" class="ml-4" />
+  <header class="layout-header border-bottom p-4">
+    <div>
+      <div class="flex align-items-center">
+        <button @click="$emit('page-return')" class="icon-btn">
+          <VIcon size="18">left</VIcon>
+        </button>
+        <TextEditable v-model="name" placeholder="请输入任务名称" max-width="260" @change="onNameInputChange" />
+        <span class="ml-4">{{ syncType[dataflow.type] }}</span>
+        <TaskStatus :task="dataflow" class="ml-4" />
+      </div>
+      <div class="flex align-items-center font-color-light">
+        <div class="ml-10 pl-1">
+          <span>启动时间：</span>
+          <span>{{ stopTime }}</span>
+        </div>
+        <div class="ml-4">
+          <span>{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
+        </div>
+        <div class="ml-4">
+          <span>%CPU：</span>
+          <span>121.9</span>
+        </div>
+        <div class="ml-4">
+          <span>%MEM：</span>
+          <span>72.8</span>
+        </div>
+        <div class="ml-4">
+          <span>GC：</span>
+          <span>89%</span>
+        </div>
+      </div>
     </div>
 
     <div class="operation-center flex align-center">
@@ -91,15 +109,6 @@
         <span v-else class="icon-btn disabled"><VIcon size="16">verify-list</VIcon></span>
       </ElTooltip>
       <template v-if="!hideMenus.includes('operation')">
-        <ElTooltip
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit"
-          transition="tooltip-fade-in"
-          :content="$t('button_edit')"
-        >
-          <button @click="$emit('edit')" class="icon-btn edit rounded-circle">
-            <img :src="editSvg" />
-          </button>
-        </ElTooltip>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
           size="mini"
@@ -107,6 +116,14 @@
           @click="$emit('reset')"
         >
           {{ $t('dataFlow_button_reset') }}
+        </ElButton>
+        <ElButton
+          v-if="dataflow.disabledData && !dataflow.disabledData.edit"
+          size="mini"
+          class="mx-2"
+          @click="$emit('edit')"
+        >
+          {{ $t('button_edit') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
@@ -147,9 +164,12 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
-import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
+import dayjs from 'dayjs'
+
+import VIcon from 'web-core/components/VIcon'
+import VDivider from 'web-core/components/VDivider'
+import focusSelect from 'web-core/directives/focusSelect'
 import { TextEditable } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 
@@ -170,12 +190,13 @@ export default {
     }
   },
 
-  components: { VIcon, TextEditable, TaskStatus },
+  components: { VIcon, TextEditable, TaskStatus, VDivider },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
       commandCode: isMacOs ? '⌘' : 'Ctrl',
+      optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
         'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc'),
@@ -190,7 +211,7 @@ export default {
         initial_sync: '全量',
         cdc: '增量',
         'initial_sync+cdc': '全量+增量'
-      },
+      }
     }
   },
 
@@ -200,6 +221,11 @@ export default {
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
+    },
+
+    stopTime() {
+      const { stopTime } = this.dataflow
+      return stopTime ? dayjs(stopTime).format('YYYY-MM-DD HH:mm:ss') : '-'
     }
   },
 
