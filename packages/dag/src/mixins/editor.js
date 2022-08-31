@@ -60,6 +60,11 @@ export default {
     }
   },
 
+  beforeDestroy() {
+    this.destory = true
+    this.stopDagWatch?.()
+  },
+
   methods: {
     ...mapMutations('dataflow', [
       'setStateDirty',
