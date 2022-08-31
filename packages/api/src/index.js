@@ -138,6 +138,9 @@ const monitoringLogsApi = new MonitoringLogs()
 import Discovery from './Discovery'
 const discoveryApi = new Discovery()
 
+import Verify from './Verify'
+const verifyApi = new Verify()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -184,7 +187,8 @@ export {
   metadataTransformerApi,
   functionApi,
   monitoringLogsApi,
-  discoveryApi
+  discoveryApi,
+  verifyApi
 }
 export * from './ApiClient'
 

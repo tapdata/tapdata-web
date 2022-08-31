@@ -13,7 +13,7 @@
             style="width: 240px"
             @input="searchFnc(800)"
           ></ElInput>
-          <!--          <ElButton type="primary" size="mini">校验</ElButton>-->
+          <ElButton type="primary" size="mini" @click="handleAgainCheck">校验</ElButton>
         </div>
         <VTable
           v-model="selection"
@@ -141,7 +141,7 @@
 <script>
 import { delayTrigger, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
-import { taskApi } from '@tap/api'
+import { taskApi, verifyApi } from '@tap/api'
 
 export default {
   name: 'VerifyDetails',
@@ -199,6 +199,15 @@ export default {
       delayTrigger(() => {
         this.$refs.table.fetch?.()
       }, debounce)
+    },
+    //再次校验
+    handleAgainCheck() {
+      if (this.selection?.length === 0) return
+
+      let data = this.selection.map(row => {
+        row.id + row.tableName
+      })
+      verifyApi.patch(data).then(() => {})
     },
 
     remoteMethod({ page }) {
