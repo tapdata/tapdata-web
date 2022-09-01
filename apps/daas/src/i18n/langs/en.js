@@ -8,6 +8,8 @@ export default {
   tips_not_null: 'The value cannot be empty',
   tips_must_number: 'The value must be a number',
   tips_rule_not_empty: ' cannot be empty',
+  text_open: 'Open',
+  text_close: 'Close',
 
   // 通用下拉框
   select_option_all: 'All',
@@ -37,7 +39,7 @@ export default {
   status_schedule_failed: 'Error',
 
   // 通用按钮
-
+  button_help: 'Help',
   button_edit: 'Edit',
   button_confirm: 'Confirm',
   button_cancel: 'Cancel',
@@ -51,33 +53,37 @@ export default {
   button_details: 'Details',
   button_preview: 'Preview',
   button_reload: 'Reload',
-
+  button_ok: 'OK',
   button_restart: 'Restart',
   button_start: 'Start',
   button_close: 'Close',
-
+  button_filter: 'Filter',
+  button_search: 'Search',
+  button_query: 'Query',
   button_reset: 'Reset',
   button_create: 'Create',
   button_export: 'Export',
-
+  button_import: 'Import',
   button_download: 'Download',
   button_button: 'Add',
   button_see_more: 'See more',
   button_bulk_operation: 'Bulk operation',
   button_bulk_tag: 'Set category',
-
+  button_clear: 'Clear',
+  button_rollback: 'rollback',
   button_revise: 'revise',
   button_refresh: 'Refresh',
-
+  button_redo: 'Redo',
+  button_undo: 'Undo',
   button_center_content: 'Center content',
   button_auto_layout: 'Auto layout',
   button_zoom_in: 'Zoom in',
   button_zoom_out: 'Zoom out',
   button_move_paper: 'Move canvas[Press space]',
   button_search_node: 'Search node',
-
+  button_finish: 'Finish',
   button_btn_back: 'Previous step',
-
+  button_btn_next: 'Next',
   button_bulk_import: 'Bulk Import',
   button_bulk_export: 'Bulk Export',
 
@@ -98,7 +104,7 @@ export default {
   message_delete_fail: 'Deletion failed',
   message_upload_success: 'Upload successful',
   message_upload_fail: 'Upload failed',
-
+  message_deleting: 'Deleting',
   message_reload_ok: 'Reloading in progress',
   message_update_success: 'Modification succeeded',
   message_operation_succuess: 'The operation succeeded',
@@ -123,6 +129,9 @@ export default {
 
   // dialog按钮
   dialog_button_cancel: 'Cancel',
+  dialog_button_confirm: 'OK',
+  dialog_button_save: 'Save',
+  dialog_button_delete: 'Delete',
 
   //页面标题
   page_title_overview: 'Overview',
@@ -176,7 +185,7 @@ export default {
   page_title_schedule: 'Scheduling tasks',
   page_title_schedule_history: 'Scheduling History',
   page_title_cluster: 'Cluster',
-
+  page_title_process: 'Process',
   page_title_user: 'Usert',
   page_title_role: 'Rolet',
   page_title_setting: 'System settings',
@@ -204,16 +213,17 @@ export default {
   app_license_expire_warning: 'Reminder: License expires in {0} days remaining',
 
   // 路由名
+  app_menu_jsFuncs: 'Function',
 
   // Agent
   agent_check_error: "Agent's current state is abnormal and cannot create a connection, please check",
 
   // console
   dashboard_status_running: 'Running',
-
+  dashboard_status_paused: 'Paused',
   dashboard_status_edit: 'Editing',
   dashboard_status_error: 'Error',
-
+  dashboard_status_wait_run: 'Scheduled',
   dashboard_status_complete: 'Completed',
   dashboard_status_stop: 'stopped',
   dashboard_all_total: 'All tasks',
@@ -235,15 +245,20 @@ export default {
   dashboard_passed: 'Consistent verification',
   dashboard_countDiff: 'Count inconsistent',
   dashboard_valueDiff: 'Content Difference',
-
+  dashboard_error: 'Error',
+  dashboard_initializing: 'Initializing',
   dashboard_initialized: 'Initialization complete',
-
+  dashboard_cdc: 'Increasing',
   dashboard_Lag: 'Incremental lag',
-
+  dashboard_server: 'Server',
   dashboard_management: 'Management side',
   dashboard_task_transfer: 'Task transfer',
   dashboard_api_service: 'API service',
-
+  dashboard_starting: 'Starting',
+  dashboard_running: 'Running',
+  dashboard_stopping: 'Closing',
+  dashboard_stopped: 'Closed',
+  dashboard_restarting: 'Restarting',
   dashboard_total_input: 'Total input',
   dashboard_total_output: 'Total output',
   dashboard_total_insert: 'Total insert',
@@ -259,14 +274,16 @@ export default {
   metadata_change_name: 'Rename',
   metadata_name: 'Name',
   metadata_name_placeholder: 'Please enter the table name/database name',
-
+  metadata_meta_type_database: 'Database',
   metadata_meta_type_api: 'Data type',
-
+  metadata_meta_type_job: 'Task',
+  metadata_meta_type_collection: 'Dataset',
+  metadata_meta_type_view: 'View',
   metadata_meta_type_directory: 'Directory',
   metadata_meta_type_table: 'Data table',
   metadata_meta_type_dataflow: 'Task scheduling',
   metadata_meta_type_mongo_view: 'Mongodb view',
-
+  metadata_meta_type_ftp: 'FTP',
   metadata_meta_type_apiendpoint: 'API connection',
 
   metadata_form_create: 'Create model',
@@ -364,10 +381,11 @@ export default {
   modules_unpublish_api: 'Unpublish',
   modules_edit: 'Edit',
   modules_dialog_import_title: 'Task import',
-
+  modules_dialog_condition: 'Condition',
   modules_dialog_overwrite_data: 'Overwrite existing data',
   modules_dialog_skip_data: 'Skip existing data',
-
+  modules_dialog_group: 'Group',
+  modules_dialog_file: 'File',
   modules_dialog_upload_files: 'Upload files',
 
   modules_header_api_name: 'API name',
@@ -381,9 +399,15 @@ export default {
   modules_header_last_updated: 'Update time',
   modules_header_operator: 'Operation',
 
+  modules_status_deploying: 'Deploying',
+  modules_status_starting: 'Starting',
+  modules_status_running: 'Running',
   modules_status_restart: 'Update in progress',
   modules_status_deploy_fail: 'Publishing API failed',
-
+  modules_status_exit: 'Exited',
+  modules_status_stop: 'Stopped',
+  modules_status_ready: 'valid',
+  modules_status_invalid: 'invalid',
   modules_allacancel: 'Batch cancel',
   modules_allarelease: 'Batch release',
   modules_releasefb: 'Are you sure you want to release the following APIs in batches?',
@@ -416,7 +440,7 @@ export default {
   module_form_tags: 'Data Directory',
   module_form_preview: 'Data Preview',
   module_form_public_api: 'Public',
-
+  module_form_private_api: 'Private',
   module_form_available_query_field: 'Available query field',
   module_form_required_query_field: 'Required query conditions',
   module_form_validator_name:
@@ -492,15 +516,19 @@ export default {
   api_monitor_detail_Monitoring_conditions: 'Monitoring conditions',
 
   // api statistics api服务器
-
+  api_asnalysis_header_api: 'API',
+  api_asnalysis_header_method: 'Method',
+  api_asnalysis_header_url: 'Address',
   api_asnalysis_header_users: 'Number of users',
   api_asnalysis_header_calls: 'Number of calls',
   api_asnalysis_header_lastTime: 'Last call',
   api_asnalysis_header_rows: 'Return the number of rows',
-
+  api_asnalysis_header_in_bytes: 'inflow',
+  api_asnalysis_header_out_bytes: 'Outflow',
   api_asnalysis_header_sum_res_timespan: 'Total operation time (seconds)',
   api_asnalysis_header_avg_res_timespan: 'Average response time (milliseconds)',
-
+  api_asnalysis_total: 'Statistics',
+  api_asnalysis_name: 'Name',
   api_asnalysis_placeholder: 'Request method/path',
 
   // api server api浏览
@@ -519,7 +547,7 @@ export default {
   dataExplorer_collection_required: 'Please select API',
   dataExplorer_zone: 'Time zone setting',
   dataExplorer_api_server: 'API server',
-
+  dataExplorer_collection: 'API',
   dataExplorer_query: 'Query',
   dataExplorer_document: 'API Document',
   dataExplorer_query_time: 'Query usage',
@@ -586,15 +614,18 @@ export default {
   connection_list_form_all_status: 'All status',
   connection_list_form_search: 'Search by connection name',
   connection_list_name: 'Connection name',
-
+  connection_list_status: 'Status',
   connection_list_schema_load_progress: 'Schema loading progress',
   connection_list_type: 'Connection Type',
-
+  connection_list_source: 'Source',
+  connection_list_target: 'Target',
   connection_list_source_and_target: 'Source and target',
   connection_list_change_time: 'Modification time',
-
+  connection_list_operate: 'Operation',
   connection_list_test: 'Connection Test',
-
+  connection_list_edit: 'Edit',
+  connection_list_copy: 'Copy',
+  connection_list_delete: 'Delete',
   connection_list_test_failed: 'Test connection failed',
   connection_list_task_occupied: 'This connection is occupied by a task and cannot be deleted',
   connection_list_delete_failed: 'Deletion failed',
@@ -612,7 +643,7 @@ export default {
   connection_list_desc:
     'Data sources include types such as databases, structured files, application RESTful APIs, custom interfaces, etc. A data source must be created before a migration or synchronization task can be created. For more configuration instructions, please click ',
   connection_list_help_doc: 'Help Documentation',
-
+  connection_list_test_button: 'Test',
   connection_list_delete_link_job: 'The connection is applied and cannot be deleted',
 
   connection_form_kuduhost: 'IP address: port; support multiple; split with ,',
@@ -643,28 +674,32 @@ export default {
   connection_form_data_source: 'Data source',
   connection_form_data_source_type: 'Data source type',
   connection_form_database_address: 'Database address',
-
+  connection_form_change: 'change',
+  connection_form_rename: 'rename',
   connection_form_database_owner_tip:
     'Comma-separated list of expressions, use * to represent any character of any length',
   connection_form_connection_type: 'Connection Type',
   connection_form_source_and_target: 'Source and target',
-
+  connection_form_source: 'Source',
+  connection_form_target: 'Target',
   connection_form_source_and_target_tip:
     'This data connection can be used as source and target at the same time in Tapdata',
   connection_form_source_tip: 'This data connection can only be used as a source in Tapdata, not as a target',
   connection_form_target_tip:
     'This data connection can only be used as a target in Tapdata, and cannot be used as a source',
   connection_form_host: 'Database host',
-
+  connection_form_port: 'Port',
   connection_form_connection_name: 'Connection name',
-
+  connection_form_user_name: 'Account',
+  connection_form_password: 'Password',
   connection_form_shared_mining: 'Shared mining',
   connection_form_shared_mining_tip:
     'Shared mining will mine incremental logs. When there are multiple incremental tasks, there is no need to repeatedly start the log collection process, which can greatly reduce the occupation and waste of source library resources.',
   connection_form_oracle_redoLog_parser: 'bare log',
   connection_form_oracle_redoLog_parser_post: 'Log parsing service address IP',
   connection_form_database_name: 'Database name',
-
+  connection_form_database_username: 'Account',
+  connection_form_database_password: 'password',
   connection_form_additional_string: 'Other connection string parameters',
   connection_form_timezone: 'Time zone of the time type',
   connection_form_virtual_host: 'Virtual host',
@@ -704,6 +739,8 @@ export default {
   connection_form_custom_connection_before_operate: 'Pre-operation',
   connection_form_custom_connection_after_operate: 'Post-operation',
 
+  connection_redis_valid: 'Authentication',
+
   connection_hana_label_hana_type: 'Install type',
   connection_form_hana_file_schema_tip: 'If matching files have the same structure, please specify a common name',
 
@@ -735,6 +772,11 @@ export default {
   connection_form_dameng_database_owner_tip:
     'Comma-separated expression list, use * to represent any character of any length',
 
+  connection_form_hazecast_rename: 'Rename',
+  connection_form_hazecast_cancel: 'Cancel',
+  connection_form_hazecast_save: 'Save',
+
+  connection_form_hazecast_options_target: 'Target',
   connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
   connection_form_hazecast_connection_type: 'Connection Type',
   connection_form_hazecast_connection_test: 'Connection test',
@@ -742,7 +784,7 @@ export default {
   connection_form_hazecast_edit: 'Edit connection',
   connection_form_hazecast_data_source: 'Data source',
   connection_form_hazecast_data_source_type: 'Data source',
-
+  connection_form_hazecast_change: 'Change',
   connection_form_hazecast_name_rules:
     'Starting with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, and spaces',
   connection_form_hazecast_no_name: 'The connection name cannot be empty',
@@ -757,7 +799,7 @@ export default {
   connection_form_hazecast_connection_name: 'Connection Name',
   connection_form_hazecast_connection_name_placeholder: 'Please enter the connection name',
   connection_form_hazecast_database_name: 'Cluster Name', //集群名称
-
+  connection_form_hazecast_plain_password: 'Token',
   connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
   connection_form_hazecast_sslKey: 'Key Store File',
   connection_form_hazecast_sslCA: 'Trust Key Store File',
@@ -786,7 +828,8 @@ export default {
   connection_oracle_config_share_log_switch: 'Shared mining',
 
   connection_preview_load_schema: 'Load Schema',
-
+  connection_preview_edit: 'Edit',
+  connection_preview_test: 'Test',
   connection_preview_no_sure: 'Do not confirm',
   connection_preview_master_partition: 'Write to master partition only',
   connection_preview_isr_partition: 'Write all ISR partitions',
@@ -794,10 +837,10 @@ export default {
 
   // function函数
   js_func_name: 'Function name',
-
+  js_func_parameters: 'Parameters',
   js_func_function_body: 'Function body',
   js_func_last_update: 'Update time',
-
+  js_func_create: 'Create',
   js_func_function_name_repeat: 'Method name is repeated',
   js_func_dialog_format: 'Format code',
   js_func_dialog_code: 'Javascript function code',
@@ -811,7 +854,9 @@ export default {
   dag_data_node_label_dameng: 'Dameng Node',
   dag_data_node_label_database_link_table: 'Table name case',
   dag_data_node_label_database_link_field: 'Field name case',
-
+  dag_data_node_label_database_link_unchang: 'Unchanged',
+  dag_data_node_label_database_link_to_uppercase: 'Uppercase',
+  dag_data_node_label_database_link_to_lowercase: 'Lowercase',
   dag_data_node_label_memcache_type: 'Cache Type',
   dag_data_node_label_memcache_type_all: 'Global cache',
   dag_data_node_label_memcache_type_local: 'Local cache',
@@ -819,16 +864,24 @@ export default {
     'All tasks in the global cache can be referenced, and the local cache can only be referenced by the current DAG. ',
   dag_data_node_label_clickhouse: 'ClickHouse Node',
   dag_data_node_label_kafka_high_performance_mode: 'High performance mode',
-
+  dag_data_node_label_kafka_all: 'All',
+  dag_data_node_label_aggregate_filter: 'Filter',
   dag_link_button_custom_script: 'Custom processing script',
   dag_data_node_hana_hana_check: 'Hana as a source only supports full tasks',
   dag_data_node_label_hazelcast: 'Hazelcast Cloud Node',
   dag_data_setting_expression: '表達式：',
   dag_data_setting_explanation: '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務',
   dag_data_setting_grammar: '語法:',
-
+  dag_data_setting_second: '秒',
+  dag_data_setting_minute: '分鐘',
+  dag_data_setting_hour: '小時',
+  dag_data_setting_day: '日',
+  dag_data_setting_month: '月',
+  dag_data_setting_week: '星期',
+  dag_data_setting_year: '年',
   dag_data_setting_example: '例子:',
-
+  dag_data_setting_runMinute: '每分鐘運行一次',
+  dag_data_setting_runDay: '每天2點運行',
   dag_attributes_exist_data_deal: 'Existing data processing',
   dag_attributes_exist_data_keep_data: 'Keep existing data',
   dag_attributes_exist_data_remove_data: 'Remove existing data before running',
@@ -850,10 +903,13 @@ export default {
   dag_dialog_field_mapping_rollback_field: 'Restore default field',
   dag_dialog_field_mapping_search_table: 'Search table',
   dag_dialog_field_mapping_loading_schema: 'Loading, please wait...',
-
+  dag_dialog_field_mapping_selected: 'Selected',
   dag_dialog_field_mapping_search_field: 'Search Field',
   dag_dialog_field_mapping_source_field: 'Source table field name',
-
+  dag_dialog_field_mapping_field: 'Name',
+  dag_dialog_field_mapping_type: 'Type',
+  dag_dialog_field_mapping_precision: 'Precision',
+  dag_dialog_field_mapping_scale: 'Scale',
   dag_dialog_field_mapping_source_type: 'Source table type',
   dag_dialog_field_mapping_source_precision: 'Source table scale',
   dag_dialog_field_mapping_source_scale: 'Source table precision',
@@ -861,13 +917,14 @@ export default {
   dag_dialog_field_mapping_target_type: 'Target table type',
   dag_dialog_field_mapping_target_precision: 'Target table scale',
   dag_dialog_field_mapping_target_scale: 'Target table precision',
-
+  dag_dialog_field_mapping_operate: 'Operation',
   dag_dialog_field_mapping_no_data: 'No data yet',
   dag_dialog_field_mapping_range_precision: 'Length range',
   dag_dialog_field_mapping_range_scale: 'Precision range',
   dag_dialog_field_mapping_batch_table_name: 'Batch change table name setting',
   dag_dialog_field_mapping_batch_field_name: 'Batch change field name settings',
-
+  dag_dialog_field_mapping_example_prefix: 'Prefix',
+  dag_dialog_field_mapping_example_suffix: 'Suffix',
   dag_dialog_field_mapping_example_tip: 'Explanation: the prefix and suffix set also follow the capitalization rules',
   dag_dialog_field_mapping_example_origin_table_name: 'Original table name',
   dag_dialog_field_mapping_example_change: 'After modification',
@@ -877,7 +934,7 @@ export default {
   dag_dialog_field_mapping_tittle_precision: 'Modify the length of the target field',
   dag_dialog_field_mapping_tittle_scale: 'Modify the precision of the target table',
   dag_dialog_field_mapping_tittle_value: 'Modify the default value of the target table field',
-
+  dag_dialog_field_mapping_error_tip: 'tip',
   dag_dialog_field_mapping_error_rollback_all: 'Are you sure you want to restore all to the default',
   dag_dialog_field_mapping_error_rollback: 'Are you sure you want to restore all to the default',
   dag_dialog_field_mapping_error_range: 'The current value does not meet the field range',
@@ -898,7 +955,8 @@ export default {
   task_job_tip_text:
     'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? ',
   task_job_source_falg: 'as a source, only full tasks are supported',
-
+  data_flow_automatically: 'automatically',
+  data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
   task_form_error_name_Duplicate: 'Task name already exists, please re-enter',
 
@@ -908,11 +966,12 @@ export default {
   task_list_run: 'Start',
   task_list_stop: 'Stop',
   task_list_force_stop: 'Forced stop',
-
+  task_list_edit: 'Edit',
   task_list_verify: 'Data verification',
-
+  task_list_export: 'Export',
+  task_list_copy: 'Copy',
   task_list_reset: 'Reset',
-
+  task_list_delete: 'Delete',
   task_list_name: 'Task name',
   task_list_task_type: 'Task type',
   task_list_status: 'Task status',
@@ -920,12 +979,13 @@ export default {
   task_list_sync_type: 'Sync type',
   task_list_execution_status: 'Execution status',
   task_list_search_placeholder: 'task name/node name/library name',
-
+  task_list_status_initializing: 'Initializing',
+  task_list_status_cdc: 'Increasing',
   task_list_status_initialized: 'Initialization completed',
   task_list_status_Lag: 'Incremental lag',
   task_list_status_all: 'All status',
   task_list_button_schedule: 'Timed scheduling',
-
+  task_list_button_monitor: 'Monitor',
   task_list_edit_confirm:
     'If the number of tables and field mappings have been modified during editing, the new configuration may not take effect if it is not reset after submission. Do you want to continue editing?',
   task_list_important_reminder: 'Important reminder',
@@ -933,7 +993,7 @@ export default {
     'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
 
   task_preview_title: 'Database Migration Details',
-
+  task_preview_createUser: 'Creator',
   task_preview_sync_type: 'Task synchronization',
   task_preview_type: 'Task synchronization',
   task_preview_id: 'Task ID',
@@ -947,8 +1007,18 @@ export default {
   task_preview_eventTime: 'The time point of the increment',
   task_preview_cdcDelayTime: 'Incremental max delay time',
   task_preview_failCount: 'Total number of failures',
-
+  task_preview_subtasks: 'Subtasks',
+  task_preview_status_error: 'Error',
+  task_preview_status_edit: 'Edit',
+  task_preview_status_wait_run: 'Scheduling',
+  task_preview_status_complete: 'Completed',
+  task_preview_status_running: 'Running',
+  task_preview_status_stop: 'Stopped',
+  task_preview_status_stopping: 'Stopping',
+  task_preview_status_preparing: 'Preparing',
+  task_preview_status_scheduling: 'Scheduling',
   task_preview_status_schedule_failed: 'Scheduling failed',
+  task_preview_status_ready: 'Ready',
 
   task_status_running: 'Running',
   task_status_not_running: 'Not running',
@@ -958,11 +1028,11 @@ export default {
   task_monitor_full_sync: 'Full synchronization overview',
   task_monitor_full_completion_time: 'It is estimated that full completion will take time',
   task_monitor_cdc_overview: 'Incremental synchronization overview',
-
+  task_monitor_delay: 'Delay',
   task_monitor_progress_details: 'Progress details',
   task_monitor_cdc_details: 'Incremental details',
   task_monitor_source_library: 'Source library',
-
+  task_monitor_time: 'Time',
   task_monitor_target_library: 'Target library',
   task_monitor_status_statistice: 'Status Statistics',
   task_monitor_migrate_table_number: 'Number of tables planned to be migrated',
@@ -974,11 +1044,13 @@ export default {
   task_monitor_unit_row: 'Unit:/item',
   task_monitor_unit_second: 'Unit:/sec',
   task_monitor_not_start: 'Not started',
-
+  task_monitor_founder: 'creator',
   task_monitor_change_time: 'Modification time',
   task_monitor_sync_type: 'Sync type',
   task_monitor_incremental_lag: 'Incremental lag',
-
+  task_monitor_start: 'Start',
+  task_monitor_stop: 'Stop',
+  task_monitor_reset: 'Reset',
   task_monitor_forced_stop: 'Forced stop',
   task_monitor_total_output: 'Total output',
   task_monitor_total_input: 'Total input',
@@ -989,7 +1061,7 @@ export default {
   task_monitor_end_time: 'End time of this time',
   task_monitor_cdc_time: 'The time point of the increment',
   task_monitor_run_log: 'Run log',
-
+  task_monitor_run_connection: 'Connection',
   task_monitor_history_run_record: 'History run record',
   task_monitor_mining_task: 'Mining task',
   task_monitor_mining_task_name: 'Mining task name',
@@ -999,7 +1071,7 @@ export default {
   task_monitor_no_milestone_data:
     'This task has not been started or has been reset. There is no running milestone data yet',
   task_monitor_task_details: 'Task details',
-
+  task_monitor_status: 'Status',
   task_monitor_sync_content: 'Sync content',
   task_monitor_source_info: 'Source information',
   task_monitor_node_name: 'Node name',
@@ -1014,20 +1086,26 @@ export default {
 
   task_info_start_time: 'Start time',
   task_info_initial_sync: 'INITIAL SYNC',
-
+  task_info_initial_cdc: 'CDC',
+  task_info_node: 'node',
+  task_info_cycle: 'cycle',
+  task_info_frequency: 'Frequency',
+  task_info_start: 'Start',
+  task_info_stopt: 'Stop',
   task_info_data_screening: 'Event Statistics',
   task_info_input_output: 'Input and output statistics',
   task_info_throughputpop:
     'Input and output statistics: average source data collection speed and target write speed per second, the larger the value, the better',
-
+  task_info_overview: 'Overview',
   task_info_table_number: 'Plan full synchronization data volume',
   task_info_completed: 'Complete the full amount of synchronization data',
-
+  task_info_expected: 'Expected',
   task_info_completed_time: 'Completed time',
-
+  task_info_info: 'Details',
+  task_info_synced: 'Synced',
   task_info_task_stopped: 'Task has been stopped',
   task_info_progress: 'Running',
-
+  task_info_stopped: 'Stopped',
   task_info_ms: 'milliseconds',
   task_info_s: 'seconds',
   task_info_m: 'minutes',
@@ -1052,22 +1130,24 @@ export default {
   task_info_data_row: 'Data volume (row)',
   task_info_target_table: 'Target data table',
   task_info_amount_sync_data: 'Completed synchronization data amount (rows)',
-
+  task_info_schedule: 'Progress',
   task_info_table_name: 'table name',
-
+  task_info_milestone: 'Milestone',
+  task_info_error: 'Error',
   task_start_task: 'Start task',
   task_stop_task: 'Stop task',
   task_info_forced_stop_task: 'Force stop task',
   task_info_running_time: 'running time',
-
+  task_info_operator: 'Operator',
   task_info_operator_content: 'Operation content',
-
+  task_info_connection_test: 'Test',
   task_info_overView_error_msg: 'Calculation error',
+  task_info_overView_status: 'Calculating',
 
   task_info_select_node: 'Please select a node',
   task_info_select_period: 'Please select a period',
   task_info_select_frequency: 'Please select the frequency',
-
+  task_info_default: 'default',
   task_info_five_min: 'Last five minutes',
   task_info_ten_min: 'The last ten minutes',
   task_info_fifteen_min: 'The last fifteen minutes',
@@ -1078,14 +1158,20 @@ export default {
   task_info_one_min: '1 minute',
   task_info_full_progress: 'INITIAL SYNC progress',
   task_info_full_time: 'full completion time',
-
+  task_info_calculating: 'Calculating',
   task_info_incremental_delay: 'CDC delay',
   task_info_increment_time_point: 'The time point of the increment',
   task_info_statistics_time: 'Statistics time',
 
+  task_info_status_waiting: 'Waiting',
+  task_info_status_running: 'Running',
+  task_info_status_done: 'Done',
+  task_info_status_paused: 'Paused',
+
   task_info_subtasks_tip:
     'In Tapdata, each target node in the task you create will be defined as a subtask. You can view the details of each subtask below',
   task_info_subtasks_name: 'Subtask name',
+  task_info_subtasks_status: 'Status',
 
   task_stetting_basic_setting: 'Basic settings',
   task_stetting_most_setting: 'Advanced settings',
@@ -1126,19 +1212,19 @@ export default {
   task_setting_share_cdc_mode: 'Shared incremental read mode',
   task_setting_streaming: 'Streaming reading',
   task_setting_polling: 'Polling read',
-
+  task_setting_off: 'Off',
   task_setting_cdc_engine_filter: 'Enable engine filtering',
   task_setting_maximum_transaction: 'Transaction maximum duration (hours)',
   task_setting_create_tables: 'Automatically create tables',
   task_setting_no_primary_key: 'Support no primary key synchronization',
   task_setting_cdc_data_process: 'Incremental data processing mechanism',
-
+  task_setting_batch: 'Batch',
   task_setting_onebyone: 'One by one',
   task_setting_cdc_fetch_size: 'Number of incremental batches read',
   task_setting_distinct_write_type: 'De-duplication write mechanism',
   task_setting_is_schedule: 'Scheduled tasks regularly',
   task_setting_cron_expression: 'Please enter the scheduling expression',
-
+  task_setting_cron_expression_label: 'Expression',
   task_setting_read_cdc_interval: 'Incremental synchronization interval',
   task_setting_read_batch_size: 'Number of reads each time',
   task_setting_processor_concurrency: 'Number of processor threads',
@@ -1158,12 +1244,15 @@ export default {
   task_name: 'Task name',
   task_status: 'Task Status',
   task_sync_type: 'Task synchronization type',
-
-  // stop editing subtask
-
+  task_button_pause: 'Pause',
+  task_button_recover: 'Recover',
+  task_button_start: 'Start', // stop editing subtask
+  task_button_stop: 'Stop',
+  task_button_reset: 'Reset',
   task_button_force_stop: 'Force stop',
-
-  // description start forced stop stop edit subtask
+  task_button_edit: 'Edit',
+  task_details_sub_task: 'Subtask',
+  task_details_desc: 'description', // description start forced stop stop edit subtask
   task_details_running_statistics: 'running statistics', // description start forced stop stop edit subtask
   task_job_link_type_table_tips: 'Table does not currently support foreign key replication',
   task_job_link_type_view_tips:
@@ -1180,7 +1269,7 @@ export default {
   task_form_give_up: 'Whether to give up creating/editing this task',
   task_form_model_deduction_failed: 'Model deduction failed',
   task_form_no_table_available: 'No table available? ',
-
+  task_form_reload: 'Reload',
   task_form_field_mapping: 'Field mapping',
   task_form_regular:
     'Start with an English letter, only support English, numbers, underscores, dots, and underscores, with a limit of 0~50 characters',
@@ -1215,7 +1304,7 @@ export default {
   task_mapping_table_field_rename: 'Field renamed',
   task_mapping_table_restore_default: 'Restore default',
   task_mapping_table_search_table: 'Search table',
-
+  task_mapping_table_selected: 'Selected',
   task_mapping_table_search_field: 'Search field',
   task_mapping_table_restore_default_fields: 'Restore default fields',
   task_mapping_table_source_table_field: 'Source table field name',
@@ -1226,14 +1315,14 @@ export default {
   task_mapping_table_target_type: 'Target table type',
   task_mapping_table_target_length: 'Target table length',
   task_mapping_table_target_accuracy: 'Target table accuracy',
-
+  task_mapping_table_operate: 'Operation',
   task_mapping_table_length_range: 'Length range',
   task_mapping_table_accuracy_range: 'Accuracy range',
-
+  task_mapping_table_reduction: 'Restore',
   task_mapping_table_no_data: 'No data temporarily',
   task_mapping_batch_change_field_title: 'Batch change field name settings',
   task_mapping_dialog_field_name_case: 'Field name case',
-
+  task_mapping_dialog_constant: 'Unchanged',
   task_mapping_dialog_to_uppercase: 'Turn to uppercase',
   task_mapping_dialog_lowercase: 'turn to lowercase',
   task_mapping_dialog_modify_target_field_name: 'Modify target field length',
@@ -1250,12 +1339,12 @@ export default {
   task_mapping_dialog_enter_suffix: 'Please enter the suffix',
   task_mapping_dialog_underscore_begin:
     'Start with English letters and underscores, only support English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
-
+  task_mapping_dialog_example: 'Example',
   task_mapping_dialog_original_table_name: 'Original table name',
   task_mapping_dialog_after_modify: 'After modification',
   task_mapping_dialog_rule_input: 'Please input according to the following rules:',
   task_mapping_dialog_all_restore_defaults: 'Are you sure you want to restore all defaults? ',
-
+  task_mapping_dialog_hint: 'Hint',
   task_mapping_dialog_delete_all_field_tip:
     'All fields in the current table have been deleted, and the save operation is not allowed',
   task_mapping_dialog_restore_defaults: 'Are you sure you want to restore the defaults? ',
@@ -1289,11 +1378,12 @@ export default {
   function_button_edit_function: 'Edit function',
   function_details: 'Function details',
   function_checkbox_Line_number: 'Display line number',
-
+  function_button_create: 'Create',
+  function_button_edit: 'Edit',
   function_tips_name_repeat: 'Method name repeat',
   function_button_code_format: 'Format code',
   function_last_update_label: 'Update time',
-
+  function_parameters_label: 'Parameters',
   function_type_label: 'Function type',
   function_type_option_custom: 'Custom function',
   function_type_option_jar: 'Third-party jar package',
@@ -1407,7 +1497,7 @@ export default {
   share_detail_statistics_time: 'Statistics time',
   share_detail_start_time: 'Start time',
   share_detail_end_time: 'End time',
-
+  share_detail_to: 'to',
   share_detail_incremental_play: 'Incremental delay',
   share_detail_incremental_time: 'The time point',
 
@@ -1422,7 +1512,9 @@ export default {
 
   shared_cache_name: 'Cache name',
   shared_cache_status: 'Cache status',
-
+  shared_cache_status_error: 'error',
+  shared_cache_status_running: 'running',
+  shared_cache_status_ready: 'ready',
   shared_cache_time: 'Cache time',
   shared_cache_keys: 'Cache keys',
   shared_cache_fields: 'Cache fields',
@@ -1444,13 +1536,16 @@ export default {
   setting_connect_and_test: 'Connection test',
   setting_saveSuccess: 'Save successfully, take effect in one minute',
   setting_nameserver: 'Server name',
-
+  setting_Log: 'Log',
+  setting_SMTP: 'SMTP',
+  setting_Job: 'Task',
   setting_license: 'License Control',
   setting_expiredate: 'Expiration time',
   setting_import: 'Import',
   setting_apply: 'Apply for license',
   setting_license_expire_date: 'License expiration time',
-
+  setting_Worker: 'Process',
+  setting_Download: 'Download',
   setting_Log_level: 'Log level',
   setting_maxCpuUsage: 'Maximum CPU usage (value range 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: 'Maximum heap memory usage (value range 0.1 ~ 1)',
@@ -1503,7 +1598,7 @@ export default {
   setting_Process_message_mode__consistency_fast: 'Message processing mode consistency/fast',
   setting_Worker_can_execute_the_nums_of_Jobs: 'The process can perform multiple tasks',
   setting_Worker_heartbeat_expire_time: 'Process heartbeat period time',
-
+  setting_Users: 'User',
   setting_Show_Page: 'Show download page',
   setting_User_Registery: 'User registration management',
   setting_hint_Show_Page: 'Show download page',
@@ -1528,7 +1623,7 @@ export default {
   setting_Filter_the_interval_between_duplicate_logs__seconds__:
     'The same log appears only once within a specified time (valid after 1 minute)',
   setting__DK36: 'File download',
-
+  setting_File_Down_Base_Url: 'Address',
   setting_Set_the_average_number_of_events_per_second_to_allow:
     'Log settings allow the average number of events per second',
   setting_Log_Filter_Rate: 'Log output frequency (line/sec)',
@@ -1611,7 +1706,13 @@ export default {
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
 
   process_name: 'name/worker type',
-
+  process_worker_ip: 'Address',
+  process_version: 'version',
+  process_online: 'Online',
+  process_offline: 'Offline',
+  process_all: 'All',
+  process_state: 'State',
+  process_job_ids: 'Details',
   process_running_thread: 'Running thread',
   process_total_thread: 'Number of threads',
   process_worker_type: 'Worker type',
@@ -1669,7 +1770,9 @@ export default {
   cluster_status: 'status',
   cluster_cpu_usage: 'CPU usage',
   cluster_heap_memory_usage: 'Heap memory usage',
-
+  cluster_update: 'Update',
+  cluster_running: 'running',
+  cluster_stopped: 'stopped',
   cluster_sync_gover: 'Sync governance',
   cluster_manage_sys: 'Management background',
   cluster_add_server_mon: 'Add service monitoring',
@@ -1828,6 +1931,7 @@ export default {
   role_null: 'The role name cannot be empty',
   role_form_description: 'The role description cannot be empty',
 
+  role_page_Dashboard_menu: 'Console',
   role_page_datasource_menu: 'Connection management',
   role_page_Data_SYNC_menu: 'Data Replication & Data Development',
   role_page_Data_verify_menu: 'Data verification',
@@ -2004,6 +2108,8 @@ export default {
   milestone_list_status_finish: 'finish',
   milestone_list_status_error: 'Error',
   milestone_list_status_waiting: 'Waiting',
+  milestone_list_status_running: 'Running',
+  milestone_list_status_paused: 'Paused',
 
   classification_name_already_exists: 'Classification name already exists',
 
@@ -2019,17 +2125,27 @@ export default {
   signin_not_mailbox: 'oops~This mailbox has not been registered yet',
 
   dag_create_table_as_node: 'Create a new table to use as a node',
-
+  dag_join: 'Join',
+  dag_aggregator: 'Aggregator',
   dag_merge_table: 'Merge Table',
   dag_field_processor: 'Field Processor',
   dag_property_setting: 'Property Setting',
   dag_meta_data: 'Meta Data',
-
+  dag_connection: 'Connection',
+  dag_table: 'Table',
   dag_processor_node: 'Processor Node',
   dag_save_fail: 'Save failed, please check node',
-
+  dag_search_node_placeholder: '请输入节点名称搜索',
+  meta_table_index: 'Index',
+  meta_table_field_name: 'Name',
+  meta_table_field_type: 'Type',
+  meta_table_scale: 'Scale',
+  meta_table_precision: 'Precision',
+  meta_table_comment: 'Comment',
   meta_table_default: 'Default',
   meta_table_not_null: 'Not null',
+  meta_table_true: 'True',
+  meta_table_false: 'False',
 
   new_advanced_mode: 'Standard Mode',
   new_more_features: 'More features',
