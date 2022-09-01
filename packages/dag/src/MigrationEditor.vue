@@ -207,9 +207,9 @@ export default {
     }
   },
 
-  async mounted() {
+  mounted() {
     this.setValidateLanguage()
-    await this.initNodeType()
+    this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -233,7 +233,7 @@ export default {
   },
 
   methods: {
-    async initNodeType() {
+    initNodeType() {
       this.addProcessorNode([
         {
           name: '表编辑',
@@ -255,6 +255,7 @@ export default {
       const data = await this.loadDataflow(id)
 
       if (data) {
+        if (this.destory) return
         const { dag } = data
         this.setStateReadonly(this.$route.name === 'MigrateViewer' ? true : this.dataflow.disabledData.edit)
         this.setTaskId(data.id)
@@ -507,6 +508,7 @@ export default {
         // 不可编辑
         // this.gotoViewer()
         this.setStateReadonly(true)
+        return true
       } else {
         this.setStateReadonly(false)
       }

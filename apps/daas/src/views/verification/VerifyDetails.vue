@@ -57,7 +57,7 @@
             <ElRadio label="diff">仅显示差异字段</ElRadio>
             <ElRadio label="all">显示完整字段</ElRadio>
           </ElRadioGroup>
-          <ElButton type="primary">导出</ElButton>
+          <!--<ElButton type="primary">导出</ElButton>-->
         </div>
         <div v-loading="detailLoading" class="verify-result__list flex-fill flex flex-column pr-4 pb-6">
           <div class="table__header">
@@ -256,7 +256,7 @@ export default {
           let items = data.items || []
           this.page.total = data.total || 0
           items.forEach(el => {
-            const { sourceData, targetData, originalKeymap } = el
+            const { sourceData = {}, targetData = {}, originalKeymap } = el
             let obj = {
               id: el.id,
               originalKeymap,

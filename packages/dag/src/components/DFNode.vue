@@ -257,6 +257,7 @@ export default {
             maxConnections: maxOutputs,
             dragOptions: {
               beforeStart: ({ el }) => {
+                if (this.stateIsReadonly) return false
                 // 源point没有onMaxConnections事件回调，故用次事件内提示
                 if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
                   this.$message.error(`该节点「${this.data.name}」已经达到最大连线限制`)
