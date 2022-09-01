@@ -4,92 +4,93 @@
       <div class="info-box">
         <TimeSelect :range="$attrs.range" ref="timeSelect" @change="changeTimeSelect"></TimeSelect>
       </div>
+      <div v-if="dataflow.type !== 'cdc'" class="info-box">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 font-color-normal">全量信息</span>
+          <ElTooltip transition="tooltip-fade-in" content="列表">
+            <VIcon @click.stop="toInitialList">menu-left</VIcon>
+          </ElTooltip>
+        </div>
+        <div v-if="initialData.snapshotDoneAt" class="mb-2">
+          <span>全量完成时间：</span>
+          <span>{{ initialData.snapshotDoneAt }}</span>
+        </div>
+        <div v-else class="mb-2">
+          <span>预计全量完成还需：</span>
+          <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
+            <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
+          </ElTooltip>
+        </div>
+        <div class="mb-4 flex align-items-center">
+          <span class="mr-2">表同步总进度</span>
+          <ElProgress class="flex-1 my-2" :show-text="false" :percentage="totalDataPercentage" />
+          <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+        </div>
+      </div>
       <div class="info-box">
-        <div class="task-info__row">
-          <span class="task-info__label">任务ID：</span>
-          <span class="task-info__value">{{ dataflow.id }}</span>
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 font-color-normal">任务校验</span>
+          <ElTooltip transition="tooltip-fade-in" content="列表">
+            <VIcon @click.stop="toInitialList">menu-left</VIcon>
+          </ElTooltip>
         </div>
-        <div class="task-info__row">
-          <span class="task-info__label">任务类型：</span>
-          <span class="task-info__value">{{ syncType[dataflow.type] }}</span>
+        <div class="flex justify-content-between mb-2">
+          <span>差异总行数：</span>
+          <span class="color-danger">{{ verifyTotals.diffRecords }}</span>
         </div>
-        <div class="task-info__row">
-          <span class="task-info__label">所属FE：</span>
-          <span class="task-info__value">{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
+        <div class="flex justify-content-between mb-2">
+          <span>校验不一致的表：</span>
+          <span>
+            <span>{{ verifyTotals.diffTables }}</span>
+            <span>/</span>
+            <span>{{ verifyTotals.totals }}</span>
+          </span>
         </div>
-        <div class="task-info__row">
-          <span class="task-info__label">运行状态：</span>
-          <span class="task-info__value">
-            <TaskStatus :task="dataflow" />
+        <div class="flex justify-content-between">
+          <span class="mr-2">不支持校验的表：</span>
+          <span>
+            <span>{{ verifyTotals.ignore }}</span>
+            <span>/</span>
+            <span>{{ verifyTotals.totals }}</span>
           </span>
         </div>
       </div>
       <div class="info-box">
-        <div class="font-color-normal fw-bold mb-2">任务事件统计（条）</div>
-        <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
-      </div>
-      <div class="info-box">
-        <CollapsePanel>
-          <template #header>
-            <div class="flex align-items-center fw-bold font-color-normal">
-              <span>性能指标</span>
-              <!--              <span class="fs-8 font-color-sslight ml-1">{{ timeSelectLabel }}</span>-->
-              <!--              <VIcon class="color-primary ml-2">timer</VIcon>-->
-            </div>
-          </template>
-          <template #header-right>
-            <ElTooltip transition="tooltip-fade-in" content="放大">
-              <VIcon @click.stop="toFullscreen">enlarge</VIcon>
-            </ElTooltip>
-          </template>
-          <template #content>
-            <LineChart
-              :data="qpsData"
-              :color="['#26CF6C', '#2C65FF']"
-              title="QPS（Q/S）"
-              :time-format="timeFormat"
-              style="height: 140px"
-            ></LineChart>
-            <LineChart
-              :data="delayData"
-              title="增量延迟"
-              :color="['#2C65FF']"
-              :time-format="timeFormat"
-              time-value
-              class="mt-4"
-              style="height: 140px"
-            ></LineChart>
-          </template>
-        </CollapsePanel>
-      </div>
-      <div v-if="dataflow.type !== 'cdc'" class="info-box">
-        <CollapsePanel>
-          <template #header>
-            <span class="fw-bold font-color-normal">全量信息</span>
-          </template>
-          <template #header-right>
-            <ElTooltip transition="tooltip-fade-in" content="列表">
-              <VIcon @click.stop="toInitialList">menu-left</VIcon>
-            </ElTooltip>
-          </template>
-          <template #content>
-            <div v-if="initialData.snapshotDoneAt" class="mb-4">
-              <span>全量完成时间：</span>
-              <span>{{ initialData.snapshotDoneAt }}</span>
-            </div>
-            <div v-else class="mb-4">
-              <span>预计全量完成还需：</span>
-              <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-                <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
-              </ElTooltip>
-            </div>
-            <div class="mb-4 flex align-items-center">
-              <span class="mr-2">表同步总进度</span>
-              <ElProgress class="flex-1 my-2" :show-text="false" :percentage="totalDataPercentage" />
-              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
-            </div>
-          </template>
-        </CollapsePanel>
+        <div class="flex justify-content-between mb-2">
+          <span class="fs-7 fw-bold font-color-normal">性能指标</span>
+          <ElTooltip transition="tooltip-fade-in" content="放大">
+            <VIcon @click.stop="toFullscreen">enlarge</VIcon>
+          </ElTooltip>
+        </div>
+        <div class="mb-2" style="height: 140px">
+          <LineChart
+            :data="qpsData"
+            :color="['#26CF6C', '#2C65FF']"
+            title="QPS（Q/S）"
+            :time-format="timeFormat"
+            class="h-100"
+          ></LineChart>
+        </div>
+        <div class="mb-2" style="height: 140px">
+          <LineChart
+            :data="delayData"
+            title="增量延迟"
+            :color="['#2C65FF']"
+            :time-format="timeFormat"
+            time-value
+            class="h-100"
+          ></LineChart>
+        </div>
+        <div style="height: 140px">
+          <LineChart
+            :data="delayData"
+            title="处理耗时（ms）"
+            :color="['#2C65FF']"
+            :time-format="timeFormat"
+            time-value
+            class="h-100"
+          ></LineChart>
+        </div>
       </div>
     </div>
 
@@ -137,15 +138,10 @@ import 'web-core/assets/icons/svg/field_calc.svg'
 import 'web-core/assets/icons/svg/field_add_del.svg'
 import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
-import EventChart from './components/EventChart'
 import LineChart from './components/LineChart'
 import TimeSelect from './components/TimeSelect'
-import CollapsePanel from './components/CollapsePanel'
 import VIcon from 'web-core/components/VIcon'
 import InitialList from './components/InitialList'
-import { Chart } from '@tap/component'
-import { TaskStatus } from '@tap/business'
-import { getPieOptions } from './util'
 import dayjs from 'dayjs'
 import { calcTimeUnit } from '@tap/shared'
 
@@ -154,26 +150,21 @@ export default {
   props: {
     dataflow: Object,
     quota: Object,
+    verifyTotals: {
+      type: Object,
+      default: () => {}
+    },
     timeFormat: String
   },
   components: {
-    EventChart,
     LineChart,
-    Chart,
     TimeSelect,
-    CollapsePanel,
     VIcon,
-    InitialList,
-    TaskStatus
+    InitialList
   },
 
   data() {
     return {
-      syncType: {
-        initial_sync: '全量',
-        cdc: '增量',
-        'initial_sync+cdc': '全量+增量'
-      },
       lineChartDialog: false,
       initialListDialog: false,
       timeSelectLabel: ''
@@ -181,18 +172,6 @@ export default {
   },
 
   computed: {
-    // 任务事件统计（条）-任务累计
-    eventDataAll() {
-      const data = this.quota.samples?.totalData?.[0]
-      return this.getInputOutput(data)
-    },
-
-    // 任务事件统计（条）-所选周期累计
-    eventDataPeriod() {
-      const data = this.quota.samples?.barChartData?.[0]
-      return this.getInputOutput(data)
-    },
-
     // qps
     qpsData() {
       const data = this.quota.samples?.lineChartData?.[0]
@@ -371,7 +350,7 @@ export default {
 }
 
 .info-box {
-  padding: 16px;
+  padding: 8px 16px;
   border-bottom: 1px solid #f2f2f2;
 }
 .task-info__row {
