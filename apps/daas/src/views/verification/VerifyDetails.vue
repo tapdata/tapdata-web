@@ -141,7 +141,7 @@
 <script>
 import { delayTrigger, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
-import { taskApi, verifyApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 
 export default {
   name: 'VerifyDetails',
@@ -203,11 +203,11 @@ export default {
     //再次校验
     handleAgainCheck() {
       if (this.selection?.length === 0) return
-
-      let data = this.selection.map(row => {
-        row.id + row.tableName
-      })
-      verifyApi.patch(data).then(() => {})
+      let tables = this.selection.map(row => row.originalTableName)
+      let params = {
+        tables: tables
+      }
+      taskApi.autoInspectAgain(this.$route.params.id, params)
     },
 
     remoteMethod({ page }) {
