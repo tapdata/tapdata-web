@@ -262,13 +262,10 @@ export default {
       v && this.init()
     },
     'dataflow.status'(v1, v2) {
-      if (v1 !== 'edit' && v1 !== v2) {
+      if (v1 !== v2) {
         this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
-    },
-    'dataflow.taskRecordId'() {
-      this.init()
     }
   },
 

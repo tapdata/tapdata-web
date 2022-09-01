@@ -679,9 +679,9 @@ export default {
         name: 'function'
       })
     },
-    toDetail(row) {
+    toDetail(row = {}) {
       this.$router.push({
-        name: 'dataflowStatistics',
+        name: 'MigrationMonitor',
         params: {
           id: row.id
         }
