@@ -1,102 +1,102 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
-      <div class="connection-tabs flex align-center px-1 border-bottom">
-        <div
-          class="connection-tabs-pane flex align-center px-3 font-color-light text-nowrap"
-          :class="{ active: connectionType === 'source' }"
-          @click="toggleConnectionType('source')"
-        >
-          来源
-        </div>
-        <div
-          class="connection-tabs-pane flex align-center px-3 font-color-light text-nowrap"
-          :class="{ active: connectionType === 'target' }"
-          @click="toggleConnectionType('target')"
-        >
-          目标
-        </div>
-        <div class="flex-grow-1"></div>
-        <div class="connection-tabs-extra">
-          <VIcon size="24" class="click-btn mr-2 font-color-light" @click.stop="$emit('toggle-expand')">expand</VIcon>
-        </div>
-      </div>
-
-      <div class="px-4 py-3">
-        <ElInput
-          v-model="dbSearchTxt"
-          ref="dbInput"
-          :placeholder="t('connection_name_search_placeholder')"
-          size="mini"
-          clearable
-          @keydown.native.stop
-          @keyup.native.stop
-          @click.native.stop
-          @input="handleDBInput"
-        >
-          <template #prefix>
-            <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-          </template>
-        </ElInput>
-      </div>
-
-      <ElScrollbar ref="dbList" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
-        <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
-          <template #template>
-            <div v-for="i in 5" :key="i" class="flex p-4 align-center">
-              <ElSkeletonItem
-                class="mr-3 flex-shrink-0"
-                style="width: 20px; height: 20px"
-                variant="rect"
-              ></ElSkeletonItem>
-              <ElSkeletonItem variant="text"></ElSkeletonItem>
+      <ElCollapse v-model="collapseMode" ref="dbCollapse" class="collapse-fill h-100" accordion>
+        <ElCollapseItem name="db">
+          <template #title>
+            <div class="flex align-center flex-1 overflow-hidden">
+              <template>
+                <span class="flex-1 user-select-none text-truncate flex align-center">
+                  <!--连接-->
+                  {{ t('dag_connection') }}
+                  <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
+                </span>
+                <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
+                  >search-outline</VIcon
+                >
+                <VIcon size="20" class="click-btn" @mousedown.stop @click.stop="creat">add-outline</VIcon>
+              </template>
             </div>
           </template>
-          <div>
-            <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-3 pt-1">
-              <div
-                v-for="db in dbList"
-                v-mouse-drag="{
-                  item: db,
-                  container: '#dfEditorContent',
-                  getDragDom,
-                  onStart,
-                  onMove,
-                  onDrop,
-                  onStop
-                }"
-                :key="db.id"
-                class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
-                @dblclick="$emit('add-node', getNodeProps(db))"
+          <div class="flex flex-column h-100">
+            <div v-show="showDBInput" class="p-2">
+              <ElInput
+                v-model="dbSearchTxt"
+                ref="dbInput"
+                :placeholder="t('connection_name_search_placeholder')"
+                size="mini"
+                clearable
+                @keydown.native.stop
+                @keyup.native.stop
+                @click.native.stop
+                @input="handleDBInput"
               >
-                <div class="flex-shrink-0 mr-2 db-item-icon">
-                  <NodeIcon :node="db" />
-                </div>
-                <div class="flex flex-column justify-center db-item-content">
-                  <OverflowTooltip
-                    class="w-100 text-truncate"
-                    placement="right"
-                    :disabled="dragStarting"
-                    :text="db.name"
-                    :open-delay="400"
-                  />
-                  <OverflowTooltip
-                    class="w-100 text-truncate"
-                    placement="right"
-                    :disabled="dragStarting"
-                    :text="db.connectionUrl"
-                    :open-delay="400"
-                  />
-                </div>
-              </div>
-              <VEmpty v-if="!dbList.length" />
-              <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                {{ t('loading') }}<span class="dotting"></span>
-              </div>
+                <template #prefix>
+                  <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+                </template>
+              </ElInput>
             </div>
+
+            <ElScrollbar ref="dbList" class="flex-1" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
+              <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
+                <template #template>
+                  <div v-for="i in 5" :key="i" class="flex p-4 align-center">
+                    <ElSkeletonItem
+                      class="mr-3 flex-shrink-0"
+                      style="width: 20px; height: 20px"
+                      variant="rect"
+                    ></ElSkeletonItem>
+                    <ElSkeletonItem variant="text"></ElSkeletonItem>
+                  </div>
+                </template>
+                <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pb-2">
+                  <div
+                    v-for="db in dbList"
+                    v-mouse-drag="{
+                      item: db,
+                      container: '#dfEditorContent',
+                      getDragDom,
+                      onStart,
+                      onMove,
+                      onDrop,
+                      onStop
+                    }"
+                    :key="db.id"
+                    class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
+                  >
+                    <div class="flex-shrink-0 mr-2 db-item-icon">
+                      <NodeIcon :node="db" />
+                    </div>
+                    <div class="flex flex-column justify-center db-item-content">
+                      <div class="flex align-center">
+                        <OverflowTooltip
+                          class="text-truncate mr-1"
+                          placement="right"
+                          :disabled="dragStarting"
+                          :text="db.name"
+                          :open-delay="400"
+                        />
+                        <ConnectionType :type="db.connection_type" />
+                      </div>
+                      <OverflowTooltip
+                        class="w-100 text-truncate"
+                        placement="right"
+                        :disabled="dragStarting"
+                        :text="db.connectionUrl"
+                        :open-delay="400"
+                      />
+                    </div>
+                  </div>
+                  <VEmpty v-if="!dbList.length" />
+                  <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+                    {{ t('loading') }}<span class="dotting"></span>
+                  </div>
+                </div>
+              </ElSkeleton>
+            </ElScrollbar>
           </div>
-        </ElSkeleton>
-      </ElScrollbar>
+        </ElCollapseItem>
+      </ElCollapse>
     </div>
 
     <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
@@ -195,6 +195,7 @@ import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import NodeIcon from '../NodeIcon'
 import Locale from '../../mixins/locale'
 import { escapeRegExp } from 'lodash'
+import ConnectionType from '../ConnectionType'
 
 export default {
   name: 'LeftSider',
@@ -206,7 +207,8 @@ export default {
     BaseNode,
     VIcon,
     ConnectionTypeSelector,
-    ElScrollbar: Select.components.ElScrollbar
+    ElScrollbar: Select.components.ElScrollbar,
+    ConnectionType
   },
 
   data() {
@@ -528,6 +530,21 @@ export default {
       }
 
       return props
+    },
+
+    handleShowDBInput() {
+      this.showDBInput = !this.showDBInput
+
+      if (this.showDBInput) {
+        this.$nextTick(() => {
+          this.$refs.dbInput.focus()
+        })
+      }
+
+      if (this.dbSearchTxt) {
+        this.dbSearchTxt = ''
+        this.loadDatabase()
+      }
     }
   }
 }
@@ -638,6 +655,7 @@ $hoverBg: #eef3ff;
       height: 42px;
       margin-bottom: 4px;
       font-size: 12px;
+      line-height: normal;
       &.active {
         background-color: #eef3ff;
       }
@@ -720,7 +738,7 @@ $hoverBg: #eef3ff;
           position: relative;
           padding-left: 16px;
           padding-right: 16px;
-          //height: $headerH;
+          height: $headerH;
           font-size: 14px;
 
           &:hover {
