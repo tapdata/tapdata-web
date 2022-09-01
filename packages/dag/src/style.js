@@ -48,10 +48,10 @@ export const sourceEndpoint = {
     radius: 8
   },
   connectorStyle: {
-    strokeWidth: 1,
+    strokeWidth: 1.5,
     stroke: '#9f9f9f',
     outlineStroke: 'transparent',
-    outlineWidth: 1
+    outlineWidth: 1.5
   },
   connectorHoverStyle: {
     stroke: '#2c65ff'

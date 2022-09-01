@@ -866,8 +866,8 @@ export default {
             }
           }
 
-          func(insertPolicy, insertField)
-          func(updatePolicy, updateField)
+          insertField && func(insertPolicy, insertField)
+          updateField && func(updatePolicy, updateField)
         },
 
         useSyncConnection: async field => {
