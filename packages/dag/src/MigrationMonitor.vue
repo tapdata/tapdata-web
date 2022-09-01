@@ -41,6 +41,7 @@
           }"
           :dataflow="dataflow"
           :quota="quota"
+          :verifyTotals="verifyTotals"
           :timeFormat="timeFormat"
           :range="[firstStartTime, lastStopTime || Date.now()]"
           @move-node="handleDragMoveNode"
@@ -641,6 +642,12 @@ export default {
         quota: {
           uri: '/api/measurement/query/v2',
           param: this.getQuotaFilter()
+        },
+        verifyTotals: {
+          uri: `/api/task/auto-inspect-totals`,
+          param: {
+            id: this.dataflow.id
+          }
         }
       }
       const $verifyPanel = this.$refs.verifyPanel
@@ -648,12 +655,6 @@ export default {
         params.verify = {
           uri: `/api/task/auto-inspect-results-group-by-table`,
           param: $verifyPanel.getFilter(1)
-        }
-        params.verifyTotals = {
-          uri: `/api/task/auto-inspect-totals`,
-          param: {
-            id: this.dataflow.id
-          }
         }
       }
       return params
