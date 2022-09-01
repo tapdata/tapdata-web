@@ -88,11 +88,11 @@
                   :class="{ 'mt-2': pIndex !== 0 }"
                 >
                   <span class="row__label">{{ pKey + ':' }}</span>
-                  <span class="row__value">{{ pValue }}</span>
+                  <span class="row__value ml-4">{{ pValue }}</span>
                 </div>
                 <div v-for="(sItem, sIndex) in item.sourceData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
-                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
+                  <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
                     sItem.value
                   }}</span>
                 </div>
@@ -105,11 +105,11 @@
                   :class="{ 'mt-2': pIndex !== 0 }"
                 >
                   <span class="row__label">{{ pKey + ':' }}</span>
-                  <span class="row__value">{{ pValue }}</span>
+                  <span class="row__value ml-4">{{ pValue }}</span>
                 </div>
                 <div v-for="(sItem, sIndex) in item.targetData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
-                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
+                  <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
                     sItem.value
                   }}</span>
                 </div>
@@ -263,13 +263,14 @@ export default {
               sourceData: [],
               targetData: []
             }
-            const notPrimaryKeyFields = uniqueArr([...Object.keys(sourceData), ...Object.keys(targetData)]).filter(
-              t => !Object.keys(originalKeymap).includes(t)
-            )
+            const notPrimaryKeyFields = uniqueArr([
+              ...Object.keys(sourceData || {}),
+              ...Object.keys(targetData || {})
+            ]).filter(t => !Object.keys(originalKeymap).includes(t))
             for (let i = 0; i < notPrimaryKeyFields.length; i++) {
               const key = notPrimaryKeyFields[i]
-              const sVal = sourceData[key]
-              const tVal = targetData[key]
+              const sVal = sourceData?.[key]
+              const tVal = targetData?.[key]
               const isDiff = sVal !== tVal
               if (this.showType === 'diff' && !isDiff) {
                 continue
@@ -337,9 +338,5 @@ export default {
 .table__body {
   height: 0;
   overflow-y: auto;
-}
-.row__label {
-  display: inline-block;
-  width: 100px;
 }
 </style>
