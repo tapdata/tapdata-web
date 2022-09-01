@@ -211,8 +211,8 @@ export class Database extends NodeType {
                 fulfill: {
                   state: {
                     visible:
-                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}'
-                  }
+                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
+                  value: '{{$deps[0] !== "all" ? false : $self.value}}'}
                 }
               }
             ]
@@ -460,7 +460,6 @@ export class Database extends NodeType {
             }
           },
 
-          // 切换连接，保存连接的类型
           'attrs.capabilities': {
             type: 'array',
             'x-display': 'hidden',
@@ -469,7 +468,6 @@ export class Database extends NodeType {
         }
       },
 
-      // 切换连接，保存连接的类型
       'attrs.connectionType': {
         type: 'string',
         'x-display': 'hidden'

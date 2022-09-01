@@ -60,6 +60,11 @@ export default {
     }
   },
 
+  beforeDestroy() {
+    this.destory = true
+    this.stopDagWatch?.()
+  },
+
   methods: {
     ...mapMutations('dataflow', [
       'setStateDirty',
@@ -701,6 +706,7 @@ export default {
       })
 
       jsPlumbIns.bind('beforeDrop', info => {
+        if (this.stateIsReadonly) return false
         const { sourceId, targetId } = info
 
         return this.checkCanBeConnected(this.getRealId(sourceId), this.getRealId(targetId), true)
@@ -715,12 +721,14 @@ export default {
 
       // 连线拖动时，可以被连的节点在画布上凸显
       jsPlumbIns.bind('connectionDrag', info => {
+        if (this.stateIsReadonly) return false
         const source = this.nodeById(this.getRealId(info.sourceId))
         const canBeConnectedNodes = this.allNodes.filter(target => this.checkCanBeConnected(source.id, target.id))
         this.setCanBeConnectedNodeIds(canBeConnectedNodes.map(n => n.id))
       })
 
       jsPlumbIns.bind('connectionDragStop', () => {
+        if (this.stateIsReadonly) return false
         this.setCanBeConnectedNodeIds([])
       })
     },

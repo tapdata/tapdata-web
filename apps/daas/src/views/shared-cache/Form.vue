@@ -20,7 +20,7 @@
             v-model="form.connectionId"
             filterable
             class="form-input"
-            :item-size="50"
+            :item-size="34"
             :items="connectionOptions"
             :loading="!connectionOptions.length"
             :placeholder="$t('shared_cache_placeholder_connection')"
@@ -32,7 +32,7 @@
             v-model="form.tableName"
             filterable
             class="form-input"
-            :item-size="50"
+            :item-size="34"
             :items="tableOptions"
             :loading="tableOptionsLoading"
             :placeholder="$t('shared_cache_placeholder_table')"

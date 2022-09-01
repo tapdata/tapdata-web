@@ -222,7 +222,7 @@ const getters = {
 // actions
 const actions = {
   updateDag: async ({ state, commit }) => {
-    if (!state.taskId) return
+    if (!state.taskId || state.stateIsReadonly) return
     commit('toggleTaskSaving', true)
     const data = await taskApi.patch({
       id: state.taskId,
