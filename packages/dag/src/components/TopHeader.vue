@@ -149,7 +149,7 @@
 
         <ElButton
           key="forceStop"
-          v-if="dataflow.status === 'stoping'"
+          v-if="dataflow.status === 'stopping'"
           class="mx-1 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
           size="mini"

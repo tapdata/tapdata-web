@@ -65,9 +65,7 @@
           <span> {{ formatTime(scope.row.syncTimestamp) }}</span>
         </template>
         <template slot="status" slot-scope="scope">
-          <span :class="['status-' + scope.row.status, 'status-block']">
-            {{ $t('task_preview_status_' + scope.row.status) }}
-          </span>
+          <TaskStatus :task="scope.row" />
         </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
@@ -115,10 +113,11 @@ import { Chart, DatetimeRange, TableList } from '@tap/component'
 import { formatMs } from '@/utils/util'
 import dayjs from 'dayjs'
 import { measurementApi, logcollectorApi } from '@tap/api'
+import { TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 export default {
   name: 'Info',
-  components: { Chart, TableList, DatetimeRange },
+  components: { Chart, TableList, DatetimeRange, TaskStatus },
   data() {
     return {
       id: '',
@@ -282,10 +281,7 @@ export default {
     getData(id) {
       logcollectorApi.getDetail(id).then(data => {
         let detailData = data || {}
-        detailData.taskList = detailData.taskList?.map(item => {
-          item.status = item.status === 'edit' ? 'ready' : item.status === 'schedule_failed' ? 'error' : item.status //没有子任务的概念
-          return item
-        })
+        detailData.taskList = detailData.taskList?.map(makeStatusAndDisabled)
         this.detailData = detailData
         this.getMeasurement()
       })
@@ -414,18 +410,16 @@ export default {
     goDetail(row) {
       if (row?.syncType === 'migrate') {
         this.$router.push({
-          name: 'MigrateStatistics',
-          query: {
-            id: row.parentId || this.detailData.id,
-            subId: row.id
+          name: 'MigrationMonitor',
+          params: {
+            id: row.id
           }
         })
       } else {
         this.$router.push({
           name: 'dataflowStatistics',
           params: {
-            id: row.parentId || this.detailData.id,
-            subId: row.id
+            id: row.id
           }
         })
       }

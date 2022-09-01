@@ -101,12 +101,12 @@ export default {
 
     handleChangeName(name) {
       if (name) {
-        this.updateNodeProperties({
+        /*this.updateNodeProperties({
           id: this.activeNode.id,
           properties: {
             name
           }
-        })
+        })*/
         this.$refs.formPanel?.form.setValuesIn('name', name)
         // this.updateDag()
       } else {

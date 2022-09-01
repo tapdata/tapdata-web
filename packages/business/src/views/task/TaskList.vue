@@ -5,7 +5,7 @@
       row-key="id"
       class="data-flow-list"
       :remoteMethod="getData"
-      :default-sort="{ prop: 'createTime', order: 'descending' }"
+      :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
         val => {
           multipleSelection = val
@@ -261,7 +261,7 @@ export default {
         status: '',
         type: ''
       },
-      order: 'createTime DESC',
+      order: 'last_updated DESC',
       typeOptions: [
         { label: this.$t('select_option_all'), value: '' },
         {
@@ -401,10 +401,28 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          let list = data?.items || []
+          let list = (data?.items || []).map(makeStatusAndDisabled)
+
+          // 有选中行，列表刷新后无法更新行数据，比如状态
+          if (this.multipleSelection.length && list.length) {
+            let tempMap = list.reduce((map, item) => {
+              map[item.id] = {
+                status: item.status,
+                btnDisabled: item.btnDisabled
+              }
+              return map
+            }, {})
+            this.multipleSelection.forEach(item => {
+              const temp = tempMap[item.id]
+              if (temp) {
+                Object.assign(item, temp)
+              }
+            })
+          }
+
           return {
             total: data.total,
-            data: list.map(makeStatusAndDisabled)
+            data: list
           }
         })
     },
@@ -485,12 +503,36 @@ export default {
       }
     },
     handleCommand(command, node) {
+      let commandFilter = ['start', 'stop', 'del']
       let ids = []
+      let taskList = []
       if (node) {
-        ids = [node.id]
+        taskList = [node]
       } else {
-        ids = this.multipleSelection.map(item => item.id)
+        taskList = this.multipleSelection
       }
+      let canList = []
+      let canNotList = []
+      if (commandFilter.includes(command)) {
+        let op = command === 'del' ? 'delete' : command
+        taskList.forEach(task => {
+          if (task.btnDisabled?.[op]) {
+            canNotList.push(task)
+          } else {
+            canList.push(task)
+          }
+        })
+      } else {
+        canList = taskList
+      }
+
+      if (canNotList.length) {
+        const msg = canNotList.length !== taskList.length ? `部分任务不支持该操作` : `所选任务不支持该操作`
+        this.$message.warning(msg)
+      }
+
+      if (!canList.length) return
+      ids = canList.map(item => item.id)
       this[command](ids, node)
     },
     toView([id]) {
@@ -533,7 +575,7 @@ export default {
           })
         }
         taskApi.batchStart(ids).then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('message_operation_succuess'), false)
           this.table.fetch()
         })
         if (flag) {
@@ -552,7 +594,7 @@ export default {
           return
         }
         taskApi.batchStop(ids).then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('message_operation_succuess'), false)
           this.table.fetch()
         })
       })
@@ -567,7 +609,7 @@ export default {
           return
         }
         taskApi.forceStop(ids).then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('message_operation_succuess'), false)
           this.table.fetch()
         })
       })
@@ -671,7 +713,7 @@ export default {
             .join('')
         })
       } else if (msg) {
-        this.$message.success(msg)
+        this.$message.success(msg, false)
       }
     },
     handleGoFunction() {

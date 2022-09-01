@@ -196,7 +196,7 @@ export default {
         storageTime: 3
       },
       currentForm: {},
-      logSaveList: ['1', '2', '3', '4', '5', '6', '7'],
+      logSaveList: [1, 2, 3, 4, 5, 6, 7],
       showEditSettingBtn: false, //禁用
       rules: {
         persistenceMongodb_uri_db: [
@@ -263,6 +263,9 @@ export default {
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               item.logTime = dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
               makeStatusAndDisabled(item)
+              if (item.status === 'edit') {
+                item.btnDisabled.start = false
+              }
               return item
             })
           }
@@ -353,7 +356,7 @@ export default {
       this.$refs['editForm'].validate(valid => {
         if (valid) {
           let id = this.editForm?.id
-          logcollectorApi.patch(id, this.editForm).then(() => {
+          logcollectorApi.patchId(id, this.editForm).then(() => {
             this.editDialogVisible = false
             this.table.fetch(1)
             this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))

@@ -49,9 +49,7 @@
         </div>
         <div class="flex-fill ml-4 overflow-hidden">
           <div class="fs-6 ellipsis">{{ details.name }}</div>
-          <span :class="['status-' + details.statusResultData, 'status-block', 'mt-2']">
-            {{ $t('task_preview_status_' + details.statusResultData) }}
-          </span>
+          <TaskStatus class="mt-2" :task="details" />
         </div>
       </div>
       <ul class="mt-2">
@@ -156,7 +154,7 @@ import { sharedCacheApi } from '@tap/api'
 import { FilterBar, Drawer } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
-import { getSubTaskStatus, toRegExp } from '@/utils/util'
+import { toRegExp } from '@/utils/util'
 import TaskButtons from '@/components/TaskButtons'
 
 import CodeView from './CodeView.vue'

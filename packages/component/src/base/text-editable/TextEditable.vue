@@ -76,11 +76,13 @@ export default {
 
   methods: {
     handleInput(event) {
-      this.$emit('input', event.target.value.trim())
+      this.$emit('input', event.target.value)
     },
 
     handleChange(event) {
-      this.$emit('change', event.target.value.trim())
+      const val = event.target.value.trim()
+      this.$emit('input', val)
+      this.$emit('change', val)
     },
 
     handleFocusInput() {

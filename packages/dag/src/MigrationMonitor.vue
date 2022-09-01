@@ -318,6 +318,7 @@ export default {
     async openDataflow(id) {
       const data = await this.loadDataflow(id)
       if (data) {
+        if (this.destory) return
         const { dag } = data
         this.setTaskId(data.id)
         this.setEdges(dag.edges)

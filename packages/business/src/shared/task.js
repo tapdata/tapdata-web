@@ -125,7 +125,7 @@ const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => 
 }, {})
 
 const BUTTON_WITH_STATUS = {
-  start: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  start: ['wait_start', 'complete', 'error', 'stop'],
   edit: ['edit', 'wait_start', 'complete', 'error', 'stop'],
   delete: ['edit', 'wait_start', 'complete', 'error', 'stop'],
   stop: ['running'],

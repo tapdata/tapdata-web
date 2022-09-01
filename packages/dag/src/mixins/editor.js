@@ -57,6 +57,11 @@ export default {
     }
   },
 
+  beforeDestroy() {
+    this.destory = true
+    this.stopDagWatch?.()
+  },
+
   methods: {
     ...mapMutations('dataflow', [
       'setStateDirty',
@@ -226,6 +231,7 @@ export default {
         // 不可编辑
         this.gotoViewer()
         this.setStateReadonly(true)
+        return true
       }
     },
 
@@ -485,6 +491,7 @@ export default {
 
     reformDataflow(data, fromWS) {
       makeStatusAndDisabled(data)
+      if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
       this.$set(this.dataflow, 'status', data.status)
       this.$set(this.dataflow, 'disabledData', data.btnDisabled)
       this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
@@ -559,7 +566,7 @@ export default {
         if (id) {
           await this.openDataflow(id)
           // 检查任务是否可编辑
-          this.checkGotoViewer()
+          if (this.checkGotoViewer()) return // 跳转到viewer不需要继续往下走
         } else {
           await this.newDataflow()
         }
@@ -697,6 +704,7 @@ export default {
       })
 
       jsPlumbIns.bind('beforeDrop', info => {
+        if (this.stateIsReadonly) return false
         const { sourceId, targetId } = info
 
         return this.checkCanBeConnected(this.getRealId(sourceId), this.getRealId(targetId), true)
@@ -711,12 +719,14 @@ export default {
 
       // 连线拖动时，可以被连的节点在画布上凸显
       jsPlumbIns.bind('connectionDrag', info => {
+        if (this.stateIsReadonly) return false
         const source = this.nodeById(this.getRealId(info.sourceId))
         const canBeConnectedNodes = this.allNodes.filter(target => this.checkCanBeConnected(source.id, target.id))
         this.setCanBeConnectedNodeIds(canBeConnectedNodes.map(n => n.id))
       })
 
       jsPlumbIns.bind('connectionDragStop', () => {
+        if (this.stateIsReadonly) return false
         this.setCanBeConnectedNodeIds([])
       })
     },

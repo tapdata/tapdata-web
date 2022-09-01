@@ -56,6 +56,7 @@ export const FieldRenameProcessor = defineComponent({
       }
       let where = {
         taskId: root.$route.params.id,
+        taskRecordId: root.$route.query?.taskRecordId,
         nodeId: props.nodeId
       }
       if (type === 'search') {
