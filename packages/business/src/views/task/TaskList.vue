@@ -27,7 +27,7 @@
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
+            <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
               $t('dataFlow.bulkExport')
             }}</el-dropdown-item>
             <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
@@ -44,7 +44,7 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+        <el-button v-if="isDaas" v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('button_bulk_import') }}</span>
         </el-button>
@@ -63,6 +63,7 @@
         reserve-selection
         type="selection"
         width="45"
+        align="center"
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
       >
       </el-table-column>
@@ -74,7 +75,7 @@
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
-              @click.stop="handlePreview(row.id)"
+              @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
@@ -100,7 +101,7 @@
           {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="280">
+      <el-table-column :label="$t('column_operation')" width="240">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -117,7 +118,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.btnDisabled.forceStop"
-              @click="forceStop([row.id])"
+              @click="forceStop([row.id], row)"
             >
               {{ $t('task_list_force_stop') }}
             </ElLink>
@@ -134,7 +135,7 @@
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.edit"
-              @click="handleEditor(row.id)"
+              @click="handleEditor(row)"
             >
               {{ $t('button_edit') }}
             </ElLink>
@@ -154,7 +155,7 @@
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
-                <el-dropdown-item v-readonlybtn="'SYNC_job_export'" command="export">{{
+                <el-dropdown-item v-if="isDaas" v-readonlybtn="'SYNC_job_export'" command="export">{{
                   $t('dataFlow.dataFlowExport')
                 }}</el-dropdown-item>
                 <el-dropdown-item v-readonlybtn="'SYNC_job_creation'" command="copy"
@@ -174,9 +175,6 @@
                 <!--                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">-->
                 <!--                  {{ $t('dataFlow.addTag') }}-->
                 <!--                </el-dropdown-item>-->
-                <el-dropdown-item v-readonlybtn="'Data_verify'" command="validate">{{
-                  $t('dataVerify.dataVerify')
-                }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -184,49 +182,8 @@
       </el-table-column>
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
-    <Drawer class="task-drawer" :visible.sync="isShowDetails">
-      <div v-loading="previewLoading" class="task-drawer-wrap">
-        <header class="header mb-3">
-          <div class="tab pb-3">
-            <div class="img-box">
-              <VIcon class="icon">text</VIcon>
-            </div>
-            <div class="content" v-if="previewData">
-              <div class="name fs-6">
-                <el-tooltip class="item" effect="dark" placement="top-start" :content="previewData.name">
-                  <span> {{ previewData.name }}</span>
-                </el-tooltip>
-              </div>
-              <div class="fs-8 mt-2 mb-2 desc">
-                {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
-              </div>
-              <div class="status">
-                <TaskStatus :task="previewData" />
-              </div>
-            </div>
-          </div>
-        </header>
-        <ul class="info-list">
-          <li v-for="item in previewList" :key="item.label">
-            <template v-if="!!item.value">
-              <VIcon class="icon mr-4">{{ item.label }}</VIcon>
-              <div class="label-text">
-                <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
-                <div
-                  class="value align-items-center align-middle"
-                  :class="{ 'align-top': item.value && item.value.length > 15 }"
-                >
-                  <span v-if="item.label === 'type'"> {{ syncType[item.value] }} </span>
-                  <span v-else>{{ item.value }}</span>
-                </div>
-              </div>
-            </template>
-          </li>
-        </ul>
-      </div>
-    </Drawer>
     <!-- 导入 -->
-    <Upload :type="'dataflow'" ref="upload"></Upload>
+    <Upload v-if="isDaas" :type="'dataflow'" ref="upload"></Upload>
   </section>
 </template>
 
@@ -234,7 +191,7 @@
 import dayjs from 'dayjs'
 
 import { taskApi } from '@tap/api'
-import { FilterBar, Drawer } from '@tap/component'
+import { FilterBar } from '@tap/component'
 import { toRegExp } from '@tap/shared'
 
 import SkipError from './SkipError'
@@ -246,10 +203,11 @@ import locale from '../../mixins/locale'
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, SkipError, Drawer, Upload, TaskStatus },
+  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
   mixins: [locale],
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       STATUS_MAP,
       proportionData: [],
       isShowDetails: false,
@@ -433,8 +391,12 @@ export default {
         name: 'DataflowNew'
       })
     },
-    handleEditor(id) {
-      const h = this.$createElement
+    handleEditor({ id }) {
+      this.$router.push({
+        name: 'DataflowEditor',
+        params: { id: id }
+      })
+      /*const h = this.$createElement
       this.$confirm(
         h('p', null, [
           h('span', null, this.$t('dataFlow.modifyEditText')),
@@ -468,7 +430,7 @@ export default {
         document.querySelectorAll('.el-tooltip__popper').forEach(it => {
           it.outerHTML = ''
         })
-      }, 200)
+      }, 200)*/
     },
     handleImport() {
       this.$refs.upload.show()
@@ -848,6 +810,18 @@ export default {
           type: 'input'
         }
       ]
+    },
+
+    /**
+     * 点击名称调整
+     * @param row
+     */
+    handleClickName(row) {
+      if (row.btnDisabled.edit) {
+        this.toDetail(row)
+      } else {
+        this.handleEditor(row)
+      }
     }
   }
 }
@@ -920,214 +894,6 @@ export default {
         }
       }
     }
-  }
-}
-.dataflow-table-more-dropdown-menu .btn-delete {
-  color: #f56c6c;
-  &.is-disabled {
-    color: map-get($fontColor, slight);
-  }
-}
-.task-drawer {
-  padding: 16px;
-  .task-drawer-wrap {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    height: 100%;
-  }
-  .header {
-    display: flex;
-    flex-direction: column;
-    border-bottom: 1px solid #eee;
-  }
-  .test-progress {
-    width: 94.5%;
-    margin: 0 10px 10px 30px;
-  }
-  .tab {
-    display: flex;
-    justify-content: flex-start;
-    .img-box {
-      display: flex;
-      width: 20px;
-      justify-content: center;
-      align-items: flex-start;
-      background-color: map-get($bgColor, white);
-      //border: 1px solid #dedee4;
-      border-radius: 3px;
-      margin: 5px 0 0 0;
-      img {
-        width: 20px;
-      }
-    }
-    .content {
-      margin-left: 10px;
-      margin-top: 4px;
-      width: 100%;
-      overflow: hidden;
-      .name {
-        color: map-get($fontColor, dark);
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      .desc {
-        color: map-get($fontColor, normal);
-        span {
-          color: map-get($fontColor, light);
-        }
-      }
-    }
-    .status {
-      font-size: 12px;
-      border-top-width: 2px;
-      box-sizing: border-box;
-      .proportion {
-        height: 6px;
-        background-color: map-get($bgColor, main);
-        span {
-          display: inline-block;
-          height: 6px;
-          &:first-child {
-            border-top-left-radius: 2px;
-            border-bottom-left-radius: 2px;
-          }
-          &:first-child {
-            border-top-left-radius: 2px;
-            border-bottom-left-radius: 2px;
-          }
-          &:last-child {
-            border-top-right-radius: 2px;
-            border-bottom-right-radius: 2px;
-          }
-        }
-      }
-      .error {
-        color: #f56c6c;
-      }
-      .success {
-        color: #67c23a;
-      }
-      .warning {
-        color: #e6a23c;
-      }
-    }
-  }
-  .label-img {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    margin-right: 15px;
-    margin-top: 2px;
-  }
-
-  .schema-load {
-    color: map-get($fontColor, slight);
-    display: inline-block;
-    margin-left: 20px;
-    font-size: 12px;
-    font-weight: normal;
-  }
-  .info-list {
-    flex: 1;
-    overflow-y: auto;
-    max-height: 690px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
-    li {
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-      margin-bottom: 10px;
-      .label-text {
-        width: 100%;
-        margin-right: 16px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid map-get($borderColor, light);
-        .label {
-          width: 100%;
-          text-align: left;
-          color: rgba(0, 0, 0, 0.6);
-          font-size: 12px;
-        }
-        .value {
-          display: inline-block;
-          width: 100%;
-          padding-top: 5px;
-          color: map-get($fontColor, light);
-          font-size: 12px;
-          color: map-get($fontColor, dark);
-          word-break: break-all;
-        }
-      }
-    }
-  }
-  .bar {
-    display: block;
-    width: 100%;
-    height: 30px;
-    background: map-get($bgColor, main);
-    border-bottom: 1px solid #dedee4;
-  }
-  .back-btn-icon-box {
-    width: 30px;
-    height: 30px;
-    margin: 0;
-    padding: 0;
-    line-height: 1;
-    font-weight: normal;
-    font-size: 14px;
-    color: red;
-    text-align: center;
-    white-space: nowrap;
-    cursor: pointer;
-    outline: 0;
-    border: 0;
-    border-radius: 0;
-    box-sizing: border-box;
-    background: map-get($color, primary);
-    transition: 0.1s;
-    -webkit-appearance: none;
-    -webkit-box-sizing: border-box;
-    -webkit-transition: 0.1s;
-  }
-  .back-btn-icon-box:hover {
-    background: #6dc5e8;
-  }
-  .back-btn-icon {
-    color: map-get($fontColor, white);
-  }
-  .back-btn-text {
-    padding-left: 10px;
-    font-size: 12px;
-  }
-}
-</style>
-<style lang="scss">
-.data-flow-wrap .data-flow-list .dataflow-table__icon {
-  margin-left: -5px;
-  font-size: 14px;
-  width: 26px;
-  text-align: center;
-}
-.jobSeceduleDialog {
-  .text {
-    padding-left: 100px;
-    line-height: 28px;
-    color: map-get($fontColor, slight);
-    ul {
-      display: flex;
-      flex-direction: row;
-      text-align: center;
-      li {
-        padding-right: 20px;
-      }
-    }
-  }
-  .box {
-    padding-left: 0;
   }
 }
 </style>

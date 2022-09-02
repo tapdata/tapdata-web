@@ -80,7 +80,7 @@
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
-              @click.stop="handlePreview(row.id)"
+              @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
@@ -140,7 +140,7 @@
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.edit"
-              @click="handleEditor(row.id)"
+              @click="handleEditor(row)"
             >
               {{ $t('task_list_edit') }}
             </ElLink>
@@ -441,7 +441,7 @@ export default {
           })
       })
     },
-    handleEditor(id) {
+    handleEditor({ id }) {
       this.$router.push({
         name: 'MigrateEditor',
         params: {
@@ -846,6 +846,18 @@ export default {
         }
       }
       return r
+    },
+
+    /**
+     * 点击名称调整
+     * @param row
+     */
+    handleClickName(row) {
+      if (row.btnDisabled.edit) {
+        this.toDetail(row)
+      } else {
+        this.handleEditor(row)
+      }
     }
   }
 }
