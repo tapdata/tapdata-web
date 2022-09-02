@@ -37,7 +37,7 @@
           <span class="table-label"
             >{{ data.value }}<span class="count-label mr-2">({{ data.objCount }})</span></span
           >
-          <span class="btn-menu">
+          <span class="btn-menu" v-if="!data.readOnly">
             <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
               ><VIcon size="12" class="color-primary">add</VIcon></ElButton
             >
