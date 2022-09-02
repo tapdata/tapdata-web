@@ -685,11 +685,11 @@ export default {
         name: 'function'
       })
     },
-    toDetail(row) {
+    toDetail({ id }) {
       this.$router.push({
-        name: 'dataflowStatistics',
+        name: 'TaskMonitor',
         params: {
-          id: row.id
+          id
         }
       })
     },

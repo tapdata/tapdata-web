@@ -130,6 +130,15 @@ export default [
       code: 'Data_SYNC_menu'
     }
   },
+  {
+    path: '/dataflow/monitor/:id',
+    name: 'TaskMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'Data_SYNC_menu'
+    }
+  },
 
   {
     path: '/migrate/editor',
