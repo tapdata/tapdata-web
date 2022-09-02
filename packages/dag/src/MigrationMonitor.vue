@@ -144,13 +144,12 @@
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
 
-import { VExpandXTransition, VEmpty } from '@tap/component'
+import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
 import { measurementApi, taskApi } from '@tap/api'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { titleChange } from 'web-core/mixins/titleChange'
-import { showMessage } from 'web-core/mixins/showMessage'
-import resize from 'web-core/directives/resize'
-import VIcon from 'web-core/components/VIcon'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
+import resize from '@tap/component/src/directives/resize'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'

@@ -27,7 +27,7 @@
           <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
         </div>
       </div>
-      <div class="info-box">
+      <div v-if="verifyTotals" class="info-box">
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">任务校验</span>
           <ElTooltip transition="tooltip-fade-in" content="列表">
@@ -140,7 +140,7 @@ import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import LineChart from './components/LineChart'
 import TimeSelect from './components/TimeSelect'
-import VIcon from 'web-core/components/VIcon'
+import { VIcon } from '@tap/component'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
 import { calcTimeUnit } from '@tap/shared'

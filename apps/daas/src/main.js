@@ -13,6 +13,7 @@ import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
 import { settingsApi, usersApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import FormBuilder from '@tap/component/src/form-builder'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -26,6 +27,7 @@ Vue.config.productionTip = false
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
 Vue.use(TapdataWebCore)
+Vue.use(FormBuilder)
 
 // Vue.prototype.$api = factory
 

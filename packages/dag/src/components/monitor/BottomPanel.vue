@@ -19,9 +19,9 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 
-import 'web-core/directives/resize/index.scss'
-import resize from 'web-core/directives/resize'
-import focusSelect from 'web-core/directives/focusSelect'
+import '@tap/component/src/directives/resize/index.scss'
+import resize from '@tap/component/src/directives/resize'
+import focusSelect from '@tap/component/src/directives/focusSelect'
 
 import Log from './components/Log'
 import Record from './components/Record'

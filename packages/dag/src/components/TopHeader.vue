@@ -196,10 +196,9 @@
 
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { VIcon, TextEditable } from '@tap/component'
+import { VIcon, TextEditable, VDivider } from '@tap/component'
 import { TaskStatus } from '@tap/business'
-import focusSelect from 'web-core/directives/focusSelect'
-import VDivider from 'web-core/components/VDivider'
+import focusSelect from '@tap/component/src/directives/focusSelect'
 
 export default {
   name: 'TopHeader',

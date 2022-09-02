@@ -131,9 +131,8 @@ import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
-import VIcon from 'web-core/components/VIcon'
 import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
-import { VEmpty } from '@tap/component'
+import { VEmpty, VIcon } from '@tap/component'
 import { monitoringLogsApi } from '@tap/api'
 
 import TimeSelect from './TimeSelect'

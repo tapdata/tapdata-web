@@ -34,12 +34,11 @@
 
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { sourceEndpoint, targetEndpoint } from '../style'
 import { NODE_PREFIX } from '../constants'
 import BaseNode from './BaseNode'
-import { VIcon } from '@tap/component'
-import OverflowTooltip from 'web-core/components/overflow-tooltip'
+import { VIcon, OverflowTooltip } from '@tap/component'
 
 export default {
   name: 'DFNode',

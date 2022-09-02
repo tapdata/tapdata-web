@@ -320,7 +320,7 @@ f
 
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
-import OverflowTooltip from 'web-core/components/overflow-tooltip'
+import { OverflowTooltip } from '@tap/component'
 import { metadataInstancesApi, connectionsApi } from '@tap/api'
 import { ConnectionTest } from '@tap/business'
 

@@ -42,20 +42,6 @@
             </div>
           </div>
         </div>
-        <!--        <div v-if="isSource" class="grid statistic-list mt-2">-->
-        <!--          <div v-if="taskType !== 'cdc'" class="statistic">-->
-        <!--            <div class="statistic-title">全量状态</div>-->
-        <!--            <div class="statistic-content">-->
-        <!--              <Chart ref="chart" :extend="initialSyncOption" style="width: 80px; height: 80px"></Chart>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--          <div v-if="taskType !== 'initial_sync'" class="statistic">-->
-        <!--            <div class="statistic-title">增量状态</div>-->
-        <!--            <div class="statistic-content">-->
-        <!--              <Chart ref="chart" :extend="cdcOption" style="width: 80px; height: 80px"></Chart>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </div>-->
       </div>
       <div class="node-card-footer flex align-center justify-content-end">
         <ElTooltip v-if="taskType !== 'cdc' && isSource" :content="initialSyncProcessTip">
@@ -71,10 +57,9 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
 import dayjs from 'dayjs'
 
-import { Chart } from '@tap/component'
+import { VIcon } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 
 import DFNode from '../DFNode'
@@ -82,7 +67,6 @@ import DFNode from '../DFNode'
 export default {
   name: 'Node',
   components: {
-    Chart,
     DFNode,
     VIcon
   },

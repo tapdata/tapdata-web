@@ -1,22 +1,10 @@
 import locale from './locale'
-import baseComponents from './components/base'
-import FormBuilder from './components/form-builder'
-import FieldMapping from './components/FieldMapping'
-import CheckStage from './components/CheckStage'
 
 import WSClient from './plugins/ws-client'
 import * as _util from './util'
 
-const components = [FieldMapping, CheckStage].concat(baseComponents)
-
 const install = Vue => {
   Vue.prototype.$util = _util
-
-  Vue.use(FormBuilder)
-
-  components.forEach(component => {
-    Vue.component(component.name, component)
-  })
 
   Vue.mixin({
     created() {
@@ -37,4 +25,4 @@ const langs = locale
 export default {
   install
 }
-export { langs, WSClient, FieldMapping, CheckStage }
+export { langs, WSClient }

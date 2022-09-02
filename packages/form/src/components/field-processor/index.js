@@ -2,10 +2,8 @@ import { defineComponent, ref, reactive, nextTick } from 'vue-demi'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
-import EmptyItem from 'web-core/components/EmptyItem'
-import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import './style.scss'
-import { VIcon } from '@tap/component'
+import { VIcon, EmptyItem, OverflowTooltip } from '@tap/component'
 import { delayTrigger } from 'web-core/util'
 
 export const FieldRenameProcessor = defineComponent({

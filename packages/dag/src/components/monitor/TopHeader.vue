@@ -167,10 +167,8 @@
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
 
-import VIcon from 'web-core/components/VIcon'
-import VDivider from 'web-core/components/VDivider'
-import focusSelect from 'web-core/directives/focusSelect'
-import { TextEditable } from '@tap/component'
+import focusSelect from '@tap/component/src/directives/focusSelect'
+import { TextEditable, VIcon, VDivider } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 
 export default {

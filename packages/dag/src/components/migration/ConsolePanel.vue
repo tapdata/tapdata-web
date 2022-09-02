@@ -62,11 +62,10 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import 'web-core/directives/resize/index.scss'
-import resize from 'web-core/directives/resize'
-import VIcon from 'web-core/components/VIcon'
+import '@tap/component/src/directives/resize/index.scss'
+import resize from '@tap/component/src/directives/resize'
 import { taskApi } from '@tap/api'
-import { VEmpty } from '@tap/component'
+import { VEmpty, VIcon } from '@tap/component'
 import NodeIcon from '../NodeIcon'
 
 export default {

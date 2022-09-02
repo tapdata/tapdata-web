@@ -1,5 +1,4 @@
-import { VIcon } from '@tap/component'
-import OverflowTooltip from 'web-core/components/overflow-tooltip'
+import { VIcon, OverflowTooltip } from '@tap/component'
 import { h as createElement, useForm, useField, useFieldSchema, RecursionField } from '@formily/vue'
 import { defineComponent } from '@vue/composition-api/dist/vue-composition-api'
 import { observer } from '@formily/reactive-vue'

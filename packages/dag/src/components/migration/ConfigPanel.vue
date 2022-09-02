@@ -45,11 +45,11 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import 'web-core/directives/resize/index.scss'
-import resize from 'web-core/directives/resize'
+import '@tap/component/src/directives/resize/index.scss'
+import resize from '@tap/component/src/directives/resize'
 import FormPanel from '../FormPanel'
 import { VIcon } from '@tap/component'
-import focusSelect from 'web-core/directives/focusSelect'
+import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import { TextEditable } from '@tap/component'

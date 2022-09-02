@@ -171,13 +171,12 @@
 </template>
 
 <script>
-import { VIcon } from '@tap/component'
+import { VIcon, OverflowTooltip } from '@tap/component'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import noData from 'web-core/assets/images/noData.png'
-import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import { metadataInstancesApi, taskApi, typeMappingApi } from '@tap/api'
 
 export default {
