@@ -86,6 +86,9 @@ export default {
   button_btn_next: '下一步',
   button_bulk_import: '批量導入',
   button_bulk_export: '批量導出',
+  button_public: '發布',
+  button_revoke: '撤銷',
+  button_submit: '提交',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -167,6 +170,7 @@ export default {
   page_title_data_catalogue_info: '數據目錄詳情',
   page_title_data_search: '數據搜索',
   page_title_data_service: '數據服務',
+  page_title_data_server_list: '服務管理',
   page_title_api_publish: 'API發布',
   page_title_api_publish_create: '創建API發布',
   page_title_api_publish_edit: '編輯API發布',

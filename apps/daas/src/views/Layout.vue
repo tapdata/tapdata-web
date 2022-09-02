@@ -391,6 +391,7 @@ let menuSetting = [
     icon: 'connection',
     code: 'data_publish',
     children: [
+      { name: 'dataServer', code: 'API_management_menu', parent: 'dataServer' },
       { name: 'apiPublishList', code: 'API_management_menu', parent: 'apiPublish' },
       { name: 'apiExplorer', code: 'API_data_explorer_menu', parent: 'apiExplorer' },
       { name: 'apiDocAndTest', code: 'API_doc_&_test_menu', parent: 'apiDocAndTest' },

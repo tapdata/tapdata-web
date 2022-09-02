@@ -86,6 +86,9 @@ export default {
   button_btn_next: 'Next',
   button_bulk_import: 'Bulk Import',
   button_bulk_export: 'Bulk Export',
+  button_public: 'Public',
+  button_revoke: 'Revoke',
+  button_submit: 'Submit',
 
   query_fuzzy: 'Fuzzy match',
   query_precise: 'Exact match',
@@ -169,6 +172,7 @@ export default {
   page_title_data_catalogue_info: 'Data catalogue details',
   page_title_data_search: 'Data search',
   page_title_data_service: 'Data Service',
+  page_title_data_server_list: 'Server management',
   page_title_api_publish: 'API publish',
   page_title_api_publish_create: 'Create API Publish',
   page_title_api_publish_edit: 'Edit API Publish',

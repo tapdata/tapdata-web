@@ -641,6 +641,16 @@ export default [
           }
         ]
       },
+      /* ---------- 数据服务管理  ----------*/
+      {
+        path: '/data-server',
+        name: 'dataServer',
+        component: () => import('@/views/data-server/List.vue'),
+        meta: {
+          title: 'page_title_data_server_list',
+          code: 'API_data_explorer_menu'
+        }
+      },
       /* ---------- API浏览  ----------*/
       {
         path: '/api-browse',

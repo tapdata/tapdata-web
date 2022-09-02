@@ -85,6 +85,9 @@ export default {
   button_btn_next: '下一步',
   button_bulk_import: '批量导入',
   button_bulk_export: '批量导出',
+  button_public: '发布',
+  button_revoke: '撤销',
+  button_submit: '提交',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -167,6 +170,7 @@ export default {
   page_title_data_catalogue_info: '数据目录详情',
   page_title_data_search: '数据搜索',
   page_title_data_service: '数据服务',
+  page_title_data_server_list: '服务管理',
   page_title_api_publish: 'API发布',
   page_title_api_publish_create: '创建API发布',
   page_title_api_publish_edit: '编辑API发布',
