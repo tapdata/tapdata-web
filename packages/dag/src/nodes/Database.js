@@ -9,7 +9,7 @@ export class Database extends NodeType {
 
   minInputs = 0 // 最小输入个数
   maxInputs = 1 // 最小输入个数
-  minOutputs = 1 // 最小输出个数
+  minOutputs = 0 // 最小输出个数
   maxOutputs = 1 // 最大输出个数
 
   // allowSource = false // 该节点不允许有源
@@ -212,7 +212,8 @@ export class Database extends NodeType {
                   state: {
                     visible:
                       '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
-                  value: '{{$deps[0] !== "all" ? false : $self.value}}'}
+                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
+                  }
                 }
               }
             ]
