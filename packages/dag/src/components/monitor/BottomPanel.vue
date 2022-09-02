@@ -9,6 +9,9 @@
         <ElTabPane label="运行记录" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
         </ElTabPane>
+        <ElTabPane label="告警列表" name="alert">
+          <Alert v-if="currentTab === 'alert'" v-bind="$attrs" :currentTab="currentTab"></Alert>
+        </ElTabPane>
       </ElTabs>
 
       <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
@@ -26,11 +29,12 @@ import focusSelect from 'web-core/directives/focusSelect'
 import Locale from '../../mixins/locale'
 import Log from './components/Log'
 import Record from './components/Record'
+import Alert from './components/Alert'
 
 export default {
   name: 'ConfigPanel',
 
-  components: { Log, Record },
+  components: { Log, Record, Alert },
 
   directives: {
     resize,
