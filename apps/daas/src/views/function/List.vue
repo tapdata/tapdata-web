@@ -67,7 +67,7 @@
             <ElDivider direction="vertical"></ElDivider>
             <ElLink type="primary" size="mini" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" @click="remove(row)">{{ $t('button.delete') }}</ElLink>
+            <ElLink type="primary" size="mini" @click="remove(row)">{{ $t('button_delete') }}</ElLink>
           </template>
         </template>
       </ElTableColumn>

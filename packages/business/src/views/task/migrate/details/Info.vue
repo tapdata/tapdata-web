@@ -474,17 +474,17 @@ export default {
           }
         }
         if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-          r = 1 + this.$t('taskProgress.m')
+          r = 1 + this.$t('taskProgress_m')
         }
-        // r = parseInt(s) + this.$t('timeToLive.s')
+        // r = parseInt(s) + this.$t('timeToLive_s')
         if (m > 0) {
-          r = parseInt(m) + this.$t('taskProgress.m')
+          r = parseInt(m) + this.$t('taskProgress_m')
         }
         if (h > 0) {
-          r = parseInt(h) + this.$t('taskProgress.h') + r
+          r = parseInt(h) + this.$t('taskProgress_h') + r
         }
         if (d > 0) {
-          r = parseInt(d) + this.$t('taskProgress.d') + r
+          r = parseInt(d) + this.$t('taskProgress_d') + r
         }
         return r
       }

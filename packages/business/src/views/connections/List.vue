@@ -19,7 +19,7 @@
           size="mini"
           @click="checkTestConnectionAvailable"
         >
-          <span> {{ $t('connection.createNewDataSource') }}</span>
+          <span> {{ $t('connection_createNewDataSource') }}</span>
         </ElButton>
       </div>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
@@ -38,12 +38,12 @@
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('connection.connectionInfo')" min-width="200">
+      <ElTableColumn show-overflow-tooltip :label="$t('connection_connectionInfo')" min-width="200">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" min-width="80">
+      <ElTableColumn prop="status" :label="$t('connection_dataBaseStatus')" min-width="80">
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
@@ -52,7 +52,7 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="120" :label="$t('connection.connectionType')">
+      <ElTableColumn prop="connection_type" min-width="120" :label="$t('connection_connectionType')">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
@@ -72,13 +72,13 @@
         prop="last_updated"
         sortable="last_updated"
         min-width="150"
-        :label="$t('connection.lastUpdateTime')"
+        :label="$t('connection_lastUpdateTime')"
       >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="220" :label="$t('connection.operate')">
+      <ElTableColumn width="220" :label="$t('connection_operate')">
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElButton>
           <ElDivider direction="vertical"></ElDivider>
@@ -390,19 +390,19 @@ export default {
         )
         .then(() => {
           this.table.fetch()
-          this.$message.success(this.$t('connection.copyMsg'))
+          this.$message.success(this.$t('connection_copyMsg'))
         })
       // .catch(err => {
       //   if (err && err.response) {
       //     if (err.response.msg === 'duplicate source') {
-      //       this.$message.error(this.$t('connection.copyFailedMsg'))
+      //       this.$message.error(this.$t('connection_copyFailedMsg'))
       //     }
       //   }
       // })
     },
     remove(row) {
       const h = this.$createElement
-      let strArr = this.$t('connection.deteleDatabaseMsg').split('xxx')
+      let strArr = this.$t('connection_deteleDatabaseMsg').split('xxx')
       let msg = h('p', null, [
         strArr[0],
         h(
@@ -428,9 +428,9 @@ export default {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
               if (jobs.length > 0 || modules.length > 0) {
-                this.$message.error(this.$t('connection.checkMsg'))
+                this.$message.error(this.$t('connection_checkMsg'))
               } else {
-                this.$message.success(this.$t('message.deleteOK'))
+                this.$message.success(this.$t('message_deleteOK'))
                 this.table.fetch()
               }
             })
@@ -539,9 +539,9 @@ export default {
       if (!data.status || data.status === null) return
       let status = data.status
       if (status === 'ready') {
-        this.$message.success(this.$t('connection.testConnection') + this.$t('connection.status.ready'), false)
+        this.$message.success(this.$t('connection_testConnection') + this.$t('connection_status_ready'), false)
       } else {
-        this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false)
+        this.$message.error(this.$t('connection_testConnection') + this.$t('connection_status_invalid'), false)
       }
       this.buried('connectionTest', '', {
         result: status === 'ready'

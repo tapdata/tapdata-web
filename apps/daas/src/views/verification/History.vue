@@ -2,12 +2,12 @@
   <section class="data-verify-history-wrap h-100" v-loading="loading">
     <div class="panel-main section-wrap-box h-100">
       <el-table :data="page.data" height="100%">
-        <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
+        <el-table-column :label="$t('dataVerification_verifyTime')" prop="start">
           <template slot-scope="scope">
             {{ scope.row.startTimeFmt }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('dataVerification.completeTime')" prop="last_updated" align="center" width="180">
+        <el-table-column :label="$t('dataVerification_completeTime')" prop="last_updated" align="center" width="180">
           <template slot-scope="scope">
             <span>
               {{ formatTime(scope.row.last_updated) }}
@@ -33,7 +33,7 @@
             align="center"
           ></el-table-column>
         </template>
-        <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
+        <el-table-column prop="progress" :label="$t('dataVerification_verifyProgress')" width="120px">
           <template slot-scope="scope">
             <div>
               <span>{{
@@ -42,12 +42,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('dataVerification.verifytype')" prop="inspect.inspectMethod">
+        <el-table-column :label="$t('dataVerification_verifytype')" prop="inspect.inspectMethod">
           <template slot-scope="scope">
             <span>{{ inspectMethod[scope.row.inspect ? scope.row.inspect.inspectMethod : ''] }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('dataVerification.verifyResult')" width="180">
+        <el-table-column :label="$t('dataVerification_verifyResult')" width="180">
           <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
             <div class="inspect-result">
               <span v-if="scope.row.result !== 'passed'" class="error">
@@ -65,10 +65,10 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
-        <el-table-column :label="$t('dataFlow.operate')" width="60px">
+        <el-table-column :label="$t('dataVerification_verifyStatus')" prop="status"></el-table-column>
+        <el-table-column :label="$t('dataFlow_operate')" width="60px">
           <template slot-scope="scope">
-            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('button.details') }}</ElLink>
+            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('button_details') }}</ElLink>
           </template>
         </el-table-column>
       </el-table>
@@ -110,9 +110,9 @@ export default {
       },
       selections: [],
       inspectMethod: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        row_count: this.$t('dataVerification_rowVerify'),
+        field: this.$t('dataVerification_contentVerify'),
+        jointField: this.$t('dataVerification_jointVerify')
       }
     }
   },

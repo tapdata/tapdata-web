@@ -8,10 +8,10 @@
   >
     <el-form :model="form" :rules="rules" ref="form" label-width="120" class="e-form" label-position="left">
       <div class="box">
-        <el-form-item :label="$t('metadata.details.filedName')" prop="field_name" required>
+        <el-form-item :label="$t('metadata_details_filedName')" prop="field_name" required>
           <el-input
             v-model="form.field_name"
-            :placeholder="$t('metadata.details.enter') + $t('metadata.details.filedName')"
+            :placeholder="$t('metadata_details_enter') + $t('metadata_details_filedName')"
             autocomplete="off"
             :disabled="fieldNameDisabled"
             size="mini"
@@ -19,27 +19,27 @@
             show-word-limit
           ></el-input>
         </el-form-item>
-        <el-form-item :label="$t('metadata.details.alias')">
+        <el-form-item :label="$t('metadata_details_alias')">
           <el-input
             v-model="form.alias_name"
-            :placeholder="$t('metadata.details.enter') + $t('metadata.details.alias')"
+            :placeholder="$t('metadata_details_enter') + $t('metadata_details_alias')"
             autocomplete="off"
             size="mini"
             maxlength="50"
             show-word-limit
           ></el-input>
         </el-form-item>
-        <el-form-item :label="$t('metadata.details.description')">
+        <el-form-item :label="$t('metadata_details_description')">
           <el-input
             type="textarea"
-            :placeholder="$t('metadata.details.enter') + $t('metadata.details.description')"
+            :placeholder="$t('metadata_details_enter') + $t('metadata_details_description')"
             v-model="form.comment"
             maxlength="50"
             show-word-limit
           >
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('metadata.details.fieldType')" prop="data_type" required>
+        <el-form-item :label="$t('metadata_details_fieldType')" prop="data_type" required>
           <ElAutocomplete
             :disabled="fieldNameDisabled"
             v-model="form.data_type"
@@ -50,35 +50,35 @@
           <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         </el-form-item>
         <el-form-item style="margin-left: 100px">
-          <el-checkbox v-model="form.is_auto_allowed">{{ $t('metadata.details.allowOverwrite') }}</el-checkbox>
-          <el-checkbox v-model="form.autoincrement">{{ $t('metadata.details.selfIncreasing') }}</el-checkbox>
-          <el-checkbox v-model="form.primary_key">{{ $t('metadata.details.primaryKey') }}</el-checkbox>
+          <el-checkbox v-model="form.is_auto_allowed">{{ $t('metadata_details_allowOverwrite') }}</el-checkbox>
+          <el-checkbox v-model="form.autoincrement">{{ $t('metadata_details_selfIncreasing') }}</el-checkbox>
+          <el-checkbox v-model="form.primary_key">{{ $t('metadata_details_primaryKey') }}</el-checkbox>
         </el-form-item>
-        <!--        <el-form-item :label="$t('metadata.details.fieldLength')">-->
+        <!--        <el-form-item :label="$t('metadata_details_fieldLength')">-->
         <!--          <el-input-number v-model="form.columnSize" :min="0" size="mini"></el-input-number>-->
         <!--        </el-form-item>-->
-        <!--        <el-form-item :label="$t('metadata.details.accuracy')">-->
+        <!--        <el-form-item :label="$t('metadata_details_accuracy')">-->
         <!--          <el-input-number v-model="form.scale" :min="0" size="mini"></el-input-number>-->
         <!--        </el-form-item>-->
-        <!--        <el-form-item :label="$t('metadata.details.numberLength')">-->
+        <!--        <el-form-item :label="$t('metadata_details_numberLength')">-->
         <!--          <el-input-number v-model="form.precision" :min="0" size="mini"></el-input-number>-->
         <!--        </el-form-item>-->
       </div>
       <!-- 字典模板 -->
       <!-- <div class="box">
-        <h2>{{ $t('metadata.details.dictionarySettings') }}</h2>
+        <h2>{{ $t('metadata_details_dictionarySettings') }}</h2>
         <el-table :data="form.dictionary" border class="e-table" style="width: 100%">
-          <el-table-column prop="key" :label="$t('metadata.details.initialValue')">
+          <el-table-column prop="key" :label="$t('metadata_details_initialValue')">
             <template slot-scope="scope">
               <el-input v-model="scope.row.key" size="mini"> </el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="value" :label="$t('metadata.details.mappedValue')">
+          <el-table-column prop="value" :label="$t('metadata_details_mappedValue')">
             <template slot-scope="scope">
               <el-input v-model="scope.row.value" size="mini"> </el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="address" :label="$t('metadata.details.opera')" width="60">
+          <el-table-column prop="address" :label="$t('metadata_details_opera')" width="60">
             <template slot-scope="scope">
               <el-button
                 @click="delDictionary(scope.$index, 0)"
@@ -90,17 +90,17 @@
           </el-table-column>
         </el-table>
         <div class="addBtn">
-          <el-button @click="addDictionary" size="mini">+ {{ $t('metadata.details.newMapping') }}</el-button>
+          <el-button @click="addDictionary" size="mini">+ {{ $t('metadata_details_newMapping') }}</el-button>
           <el-button @click="handleSelectTemplate(form)" size="mini">{{
-            $t('metadata.details.chooseTemplate')
+            $t('metadata_details_chooseTemplate')
           }}</el-button>
         </div>
       </div> -->
       <!-- 外键设置 -->
       <div class="box">
-        <h2>{{ $t('metadata.details.foreignKeySetting') }}</h2>
+        <h2>{{ $t('metadata_details_foreignKeySetting') }}</h2>
         <el-table :data="form.relation" border class="e-table" style="width: 100%">
-          <el-table-column prop="table_name" :label="$t('metadata.details.associationTable')">
+          <el-table-column prop="table_name" :label="$t('metadata_details_associationTable')">
             <template slot-scope="scope">
               <el-select v-model="scope.row.table_name" @change="changeRecordTable($event)" size="mini">
                 <el-option
@@ -112,7 +112,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="field_name" :label="$t('metadata.details.associationField')">
+          <el-table-column prop="field_name" :label="$t('metadata_details_associationField')">
             <template slot-scope="scope">
               <el-select v-model="scope.row.field_name" @focus="changeRecordTable(scope.row.table_name)" size="mini">
                 <el-option
@@ -124,7 +124,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="rel" :label="$t('metadata.details.connectionRelation')">
+          <el-table-column prop="rel" :label="$t('metadata_details_connectionRelation')">
             <template slot-scope="scope">
               <el-select v-model="scope.row.rel" size="mini">
                 <el-option
@@ -136,7 +136,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="address" :label="$t('metadata.details.opera')" width="60">
+          <el-table-column prop="address" :label="$t('metadata_details_opera')" width="60">
             <template slot-scope="scope">
               <el-button
                 @click="delRelation(scope.$index, 0)"
@@ -149,7 +149,7 @@
         </el-table>
         <div class="addBtn">
           <el-button @click="addRelation" class="add" size="mini"
-            >+ {{ $t('metadata.details.addRelatedTable') }}</el-button
+            >+ {{ $t('metadata_details_addRelatedTable') }}</el-button
           >
         </div>
       </div>
@@ -161,7 +161,7 @@
       <el-button type="primary" @click="save()" size="mini">{{ $t('button_save') }}</el-button>
     </div>
     <el-dialog
-      :title="$t('metadata.details.chooseTemplate')"
+      :title="$t('metadata_details_chooseTemplate')"
       :close-on-click-modal="false"
       :visible.sync="dialogDictionaryVisible"
       :append-to-body="true"
@@ -182,9 +182,9 @@
 			</ul> -->
       <div slot="footer" class="dialog-footer">
         <el-button class="cancel" @click="dialogDictionaryVisible = false" size="mini">{{
-          $t('message.cancel')
+          $t('message_cancel')
         }}</el-button>
-        <el-button type="primary" @click="handleSelectDictionary" size="mini">{{ $t('message.confirm') }}</el-button>
+        <el-button type="primary" @click="handleSelectDictionary" size="mini">{{ $t('message_confirm') }}</el-button>
       </div>
     </el-dialog>
   </el-dialog>
@@ -208,7 +208,7 @@ export default {
   },
   data() {
     return {
-      title: this.data.id ? this.$t('metadata.details.editFild') : this.$t('metadata.details.createFiled'),
+      title: this.data.id ? this.$t('metadata_details_editFild') : this.$t('metadata_details_createFiled'),
       dialogFormVisible: this.dialogVisible,
       selectDictionaryTem: '',
       fieldNameDisabled: false,
@@ -229,15 +229,15 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('metadata.details.msgFiledName')
+            message: this.$t('metadata_details_msgFiledName')
           }
         ]
       },
       typeMapping: [],
       relationshipList: [
-        { name: this.$t('metadata.details.oneone'), key: 'oneone' },
-        { name: this.$t('metadata.details.onemany'), key: 'onemany' },
-        { name: this.$t('metadata.details.manyone'), key: 'manyone' }
+        { name: this.$t('metadata_details_oneone'), key: 'oneone' },
+        { name: this.$t('metadata_details_onemany'), key: 'onemany' },
+        { name: this.$t('metadata_details_manyone'), key: 'manyone' }
       ],
       fieldList: [],
       getTableData: [],
@@ -415,9 +415,9 @@ export default {
         }
       } else {
         if (!that.form.field_name) {
-          that.$message.error(that.$t('metadata.details.fieldNameNo'))
+          that.$message.error(that.$t('metadata_details_fieldNameNo'))
         } else {
-          that.$message.error(that.$t('metadata.details.dictionary_typeNo'))
+          that.$message.error(that.$t('metadata_details_dictionary_typeNo'))
         }
       }
     },
@@ -449,9 +449,9 @@ export default {
         })
       } else {
         if (!this.form.field_name) {
-          this.$message.error(this.$t('metadata.details.fieldNameNo'))
+          this.$message.error(this.$t('metadata_details_fieldNameNo'))
         } else {
-          this.$message.error(this.$t('metadata.details.dictionary_typeNo'))
+          this.$message.error(this.$t('metadata_details_dictionary_typeNo'))
         }
       }
     },
@@ -569,13 +569,13 @@ export default {
             metadataInstancesApi.patchId(this.metadata.id, params).then(() => {
               this.dialogFormVisible = false
               this.$emit('dialogVisible', false)
-              this.$message.success(this.$t('metadata.details.success_Release'))
+              this.$message.success(this.$t('metadata_details_success_Release'))
             })
             // .catch(() => {
             //   this.$message.error(this.$t('message_save_fail'))
             // })
           } else {
-            this.$message.error(this.$t('metadata.details.filedName_repeat'))
+            this.$message.error(this.$t('metadata_details_filedName_repeat'))
           }
         }
       })

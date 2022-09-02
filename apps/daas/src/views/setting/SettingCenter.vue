@@ -33,7 +33,7 @@ export default {
       settingList: [
         {
           icon: 'setting',
-          name: this.$t('account.systemSetting'),
+          name: this.$t('account_systemSetting'),
           key: 'settings'
         },
         {
@@ -43,7 +43,7 @@ export default {
         },
         {
           icon: 'account',
-          name: this.$t('account.accountSettings'),
+          name: this.$t('account_accountSettings'),
           key: 'accountSetting'
         }
       ],

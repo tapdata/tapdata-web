@@ -19,7 +19,7 @@ export default {
       h('ElInput', {
         attrs: {
           maxlength: config.maxlength,
-          placeholder: config.placeholder || `${self.$t('formBuilder.input.placeholderPrefix')}${config.label || ''}`
+          placeholder: config.placeholder || `${self.$t('formBuilder_input_placeholderPrefix')}${config.label || ''}`
         },
         props: {
           value: self.value,

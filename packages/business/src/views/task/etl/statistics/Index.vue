@@ -50,7 +50,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('dataFlow.dataScreening'),
+          title: this.$t('dataFlow_dataScreening'),
           loading: false
         },
         body: {
@@ -66,8 +66,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'second',
-          title: this.$t('dataFlow.inputOutput'),
-          tip: this.$t('dataFlow.throughputpop'),
+          title: this.$t('dataFlow_inputOutput'),
+          tip: this.$t('dataFlow_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           loading: false

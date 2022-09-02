@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="$t('dataFlow.batchSortOperation')"
+    :title="$t('dataFlow_batchSortOperation')"
     :visible="dialogVisible"
     width="600px"
     class="SelectClassify-dialog"

@@ -287,17 +287,17 @@ export default {
       } else {
         if (this.remote && this.query === '' && this.options.length === 0) return false
         if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
-          return this.noMatchText || this.$t('el.select.noMatch')
+          return this.noMatchText || this.$t('el_select_noMatch')
         }
         if (this.total === 0) {
-          return this.noDataText || this.$t('el.select.noData')
+          return this.noDataText || this.$t('el_select_noData')
         }
       }
       return null
     },
 
     loadingTxt() {
-      return this.loadingText || this.$t('el.select.loading')
+      return this.loadingText || this.$t('el_select_loading')
     },
 
     noMore() {

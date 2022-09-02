@@ -1,13 +1,13 @@
 <template>
   <section class="history-list-wrap">
     <div class="history-head">
-      <div>{{ $t('metadata.details.version.currentVersion') }} V{{ currentVersionNum }}</div>
-      <div>{{ $t('metadata.details.version.version') }} V{{ versionNum }}</div>
+      <div>{{ $t('metadata_details_version_currentVersion') }} V{{ currentVersionNum }}</div>
+      <div>{{ $t('metadata_details_version_version') }} V{{ versionNum }}</div>
     </div>
     <div class="attributes-table">
       <div class="left-table">
         <el-table border :data="properties" class="table-page-table" height="100%">
-          <el-table-column :label="$t('metadata.details.attrName')" prop="key">
+          <el-table-column :label="$t('metadata_details_attrName')" prop="key">
             <template slot-scope="scope">
               <div v-if="scope.row.result !== 'del'">
                 <span :class="{ activeColor: scope.row.result !== 'eq' }" v-if="!scope.row.isCustom">{{
@@ -17,8 +17,8 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.attrKey')" prop="baseValue"> </el-table-column>
-          <el-table-column :label="$t('metadata.details.attrName')" prop="key">
+          <el-table-column :label="$t('metadata_details_attrKey')" prop="baseValue"> </el-table-column>
+          <el-table-column :label="$t('metadata_details_attrName')" prop="key">
             <template slot-scope="scope">
               <div v-if="scope.row.result !== 'add'">
                 <span :class="{ activeColor: scope.row.result !== 'eq' }" v-if="!scope.row.isCustom">{{
@@ -28,7 +28,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.attrKey')" prop="compareValue">
+          <el-table-column :label="$t('metadata_details_attrKey')" prop="compareValue">
             <template slot-scope="scope">
               <span
                 :class="{
@@ -43,49 +43,49 @@
       </div>
       <div class="field-table">
         <el-table border :data="fieldsItems" class="table-page-table" height="100%">
-          <el-table-column :label="$t('metadata.details.alias')" prop="base_alias_name">
+          <el-table-column :label="$t('metadata_details_alias')" prop="base_alias_name">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.alias_name_result !== 'eq' }">
                 {{ scope.row.base_alias_name }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.name')" prop="base_field_name">
+          <el-table-column :label="$t('metadata_details_name')" prop="base_field_name">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.field_name_result !== 'eq' }">
                 {{ scope.row.base_field_name }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.data_type')" prop="base_java_type">
+          <el-table-column :label="$t('metadata_details_data_type')" prop="base_java_type">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.java_type_result !== 'eq' }">
                 {{ scope.row.base_java_type }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.precision')" prop="base_precision">
+          <el-table-column :label="$t('metadata_details_precision')" prop="base_precision">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.precision_result !== 'eq' }">
                 {{ scope.row.base_precision }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.columnSize')" prop="base_columnSize">
+          <el-table-column :label="$t('metadata_details_columnSize')" prop="base_columnSize">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.precision_result !== 'eq' }">
                 {{ scope.row.base_columnSize }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.scale')" prop="base_scale">
+          <el-table-column :label="$t('metadata_details_scale')" prop="base_scale">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.scale_result !== 'eq' }">
                 {{ scope.row.base_scale }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.autoincrement')" prop="base_autoincrement">
+          <el-table-column :label="$t('metadata_details_autoincrement')" prop="base_autoincrement">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.base_autoincrement"
@@ -96,7 +96,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.primary_key_position')" prop="base_primary_key_position">
+          <el-table-column :label="$t('metadata_details_primary_key_position')" prop="base_primary_key_position">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.base_primary_key_position"
@@ -107,7 +107,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.foreign_key_position')" prop="base_foreign_key_position">
+          <el-table-column :label="$t('metadata_details_foreign_key_position')" prop="base_foreign_key_position">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.base_foreign_key_position"
@@ -118,7 +118,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.is_nullable')" prop="base_is_nullable">
+          <el-table-column :label="$t('metadata_details_is_nullable')" prop="base_is_nullable">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.base_is_nullable"
@@ -129,7 +129,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.unique')" prop="base_unique">
+          <el-table-column :label="$t('metadata_details_unique')" prop="base_unique">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.base_unique"
@@ -142,49 +142,49 @@
           </el-table-column>
         </el-table>
         <el-table border :data="fieldsItems" class="table-page-table" height="100%">
-          <el-table-column :label="$t('metadata.details.alias')" prop="compare_field_name">
+          <el-table-column :label="$t('metadata_details_alias')" prop="compare_field_name">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.alias_name_result !== 'eq' }">
                 {{ scope.row.compare_alias_name }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.name')" prop="compare_field_name">
+          <el-table-column :label="$t('metadata_details_name')" prop="compare_field_name">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.field_name_result !== 'eq' }">
                 {{ scope.row.compare_field_name }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.data_type')" prop="compare_java_type">
+          <el-table-column :label="$t('metadata_details_data_type')" prop="compare_java_type">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.java_type_result !== 'eq' }">
                 {{ scope.row.compare_java_type }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.precision')" prop="compare_precision">
+          <el-table-column :label="$t('metadata_details_precision')" prop="compare_precision">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.precision_result !== 'eq' }">
                 {{ scope.row.compare_precision }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.columnSize')" prop="compare_columnSize">
+          <el-table-column :label="$t('metadata_details_columnSize')" prop="compare_columnSize">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.precision_result !== 'eq' }">
                 {{ scope.row.compare_columnSize }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.scale')" prop="compare_scale">
+          <el-table-column :label="$t('metadata_details_scale')" prop="compare_scale">
             <template slot-scope="scope">
               <span :class="{ activeColor: scope.row.scale_result !== 'eq' }">
                 {{ scope.row.compare_scale }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.autoincrement')" prop="compare_autoincrement">
+          <el-table-column :label="$t('metadata_details_autoincrement')" prop="compare_autoincrement">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.compare_autoincrement"
@@ -195,7 +195,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.primary_key_position')" prop="compare_primary_key_position">
+          <el-table-column :label="$t('metadata_details_primary_key_position')" prop="compare_primary_key_position">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.compare_primary_key_position"
@@ -206,7 +206,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.foreign_key_position')" prop="compare_foreign_key_position">
+          <el-table-column :label="$t('metadata_details_foreign_key_position')" prop="compare_foreign_key_position">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.compare_foreign_key_position"
@@ -217,7 +217,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.is_nullable')" prop="compare_is_nullable">
+          <el-table-column :label="$t('metadata_details_is_nullable')" prop="compare_is_nullable">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.compare_is_nullable"
@@ -228,7 +228,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :label="$t('metadata.details.unique')" prop="compare_unique">
+          <el-table-column :label="$t('metadata_details_unique')" prop="compare_unique">
             <template slot-scope="scope">
               <span
                 v-if="scope.row.compare_unique"

@@ -3,22 +3,22 @@
     <div class="section-wrap-box">
       <head class="head">
         <i class="iconfont icon-left-circle back-btn-icon link-primary cursor-pointer" @click="back"></i>
-        <h1 class="pl-2">{{ $t('role.settingTitle') }}</h1>
-        <span>{{ $t('role.currentRole') }}: {{ roleName }}</span>
+        <h1 class="pl-2">{{ $t('role_settingTitle') }}</h1>
+        <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
       </head>
 
       <div class="role-tableBox">
         <div class="headTitle">
-          <h4>{{ $t('role.pageVisible') }}</h4>
-          <p>{{ $t('role.pageShowTip') }}</p>
+          <h4>{{ $t('role_pageVisible') }}</h4>
+          <p>{{ $t('role_pageShowTip') }}</p>
         </div>
         <ul class="role-table page-table">
           <li class="role-head">
             <el-row class="e-row">
               <el-col class="e-col borderRight" :span="21">
-                {{ $t('role.choosePage') }}
+                {{ $t('role_choosePage') }}
               </el-col>
-              <el-col class="e-col" :span="3">{{ $t('role.bulkOperate') }} </el-col>
+              <el-col class="e-col" :span="3">{{ $t('role_bulkOperate') }} </el-col>
             </el-row>
           </li>
           <li v-for="item in dataList" :key="item.id">
@@ -49,19 +49,19 @@
           </li>
         </ul>
         <div class="headTitle">
-          <h4>{{ $t('role.funcPermission') }}</h4>
-          <p>{{ $t('role.choosePermissionTip') }}</p>
+          <h4>{{ $t('role_funcPermission') }}</h4>
+          <p>{{ $t('role_choosePermissionTip') }}</p>
         </div>
         <ul class="role-table">
           <li class="role-head">
             <el-row class="e-row">
               <el-col class="e-col" :span="3">
-                {{ $t('role.module') }}
+                {{ $t('role_module') }}
               </el-col>
               <el-col class="e-col borderLeft" :span="18">
-                {{ $t('role.functionDataPermission') }}
+                {{ $t('role_functionDataPermission') }}
               </el-col>
-              <el-col class="e-col borderLeft" :span="3">{{ $t('role.bulkOperate') }} </el-col>
+              <el-col class="e-col borderLeft" :span="3">{{ $t('role_bulkOperate') }} </el-col>
             </el-row>
           </li>
           <li class="module-style">
@@ -92,7 +92,7 @@
                         @change="handleOneAllData($event, item, item.children, second, 'children')"
                         v-cloak
                       >
-                        <div>{{ $t('role.allData') }}</div>
+                        <div>{{ $t('role_allData') }}</div>
                       </el-checkbox>
                     </el-checkbox>
                   </el-col>
@@ -102,7 +102,7 @@
                       @change="handleAuthoritySelectAll($event, item, item.children)"
                       v-cloak
                     >
-                      <div>{{ $t('role.chooseAllFunction') }}</div>
+                      <div>{{ $t('role_chooseAllFunction') }}</div>
                     </el-checkbox>
                     <el-checkbox
                       class="e-checkbox"
@@ -110,7 +110,7 @@
                       @change="handleCheckedAllData($event, item, item.children)"
                       v-cloak
                     >
-                      <div>{{ $t('role.chooseAllRole') }}</div>
+                      <div>{{ $t('role_chooseAllRole') }}</div>
                     </el-checkbox>
                   </el-col>
                 </el-row>
@@ -148,7 +148,7 @@
                       @change="handleAuthoritySelectAll($event, item, item.classification)"
                       v-cloak
                     >
-                      <div>{{ $t('role.chooseAllFunction') }}</div>
+                      <div>{{ $t('role_chooseAllFunction') }}</div>
                     </el-checkbox>
                   </el-col>
                 </el-row>
@@ -176,7 +176,7 @@
                       @change="handleAuthoritySelectAll($event, item, item.functional)"
                       v-cloak
                     >
-                      <div>{{ $t('role.chooseAllFunction') }}</div>
+                      <div>{{ $t('role_chooseAllFunction') }}</div>
                     </el-checkbox>
                   </el-col>
                 </el-row>
@@ -186,9 +186,9 @@
         </ul>
       </div>
       <div class="btn">
-        <el-button size="mini" @click="back">{{ $t('dataVerify.back') }} </el-button>
+        <el-button size="mini" @click="back">{{ $t('dataVerify_back') }} </el-button>
         <el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')"
-          >{{ $t('app.save') }}
+          >{{ $t('app_save') }}
         </el-button>
       </div>
     </div>

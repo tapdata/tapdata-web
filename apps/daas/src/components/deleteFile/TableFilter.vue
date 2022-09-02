@@ -14,7 +14,7 @@
       :value="value"
       @input="input"
     >
-      <ElOption value="" :label="$t('button.all')"></ElOption>
+      <ElOption value="" :label="$t('button_all')"></ElOption>
       <ElOption v-for="(opt, key) in options" :key="key" :value="opt.value || key" :label="opt.label || opt"></ElOption>
     </ElSelect>
   </span>

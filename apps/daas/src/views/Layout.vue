@@ -9,7 +9,7 @@
           $t('app_license_expire_warning', [licenseExpire])
         }}</span>
         <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
-          {{ $t('dataFlow.createNew') }}
+          {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
         <ElDropdown
@@ -23,7 +23,7 @@
             <VIcon size="16">wenda</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
+            <ElDropdownItem command="help">{{ $t('app_document') }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
         <ElDropdown
@@ -60,13 +60,13 @@
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem command="account">{{ $t('app.account') }}</ElDropdownItem>
-            <ElDropdownItem command="version">{{ $t('app.version') }}</ElDropdownItem>
+            <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
+            <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
             <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
             <ElDropdownItem v-if="$getSettingByKey('SHOW_HOME_BUTTON')" command="home">
-              {{ $t('app.home') }}
+              {{ $t('app_home') }}
             </ElDropdownItem>
-            <ElDropdownItem command="signOut">{{ $t('app.signOut') }}</ElDropdownItem>
+            <ElDropdownItem command="signOut">{{ $t('app_signOut') }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
       </div>
@@ -588,7 +588,7 @@ export default {
           window.open('https://tapdata.net/', '_blank')
           break
         case 'signOut':
-          this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut'), {
+          this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {
             type: 'warning'
           }).then(resFlag => {
             if (!resFlag) {

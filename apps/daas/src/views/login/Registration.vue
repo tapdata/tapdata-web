@@ -4,20 +4,20 @@
     <main>
       <div class="body">
         <el-card class="sign-in-panel">
-          <div class="title">{{ $t('app.signIn.registry') }}</div>
+          <div class="title">{{ $t('app_signIn_registry') }}</div>
           <div class="error-tips" v-show="errorMessage">
             <i class="el-icon-warning-outline"></i>
             {{ errorMessage }}
           </div>
           <el-form ref="form" :model="form">
             <el-form-item prop="email">
-              <el-input v-model="form.email" type="email" :placeholder="$t('app.signIn.email_placeholder')"></el-input>
+              <el-input v-model="form.email" type="email" :placeholder="$t('app_signIn_email_placeholder')"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input
                 v-model="form.password"
                 :type="passwordType"
-                :placeholder="$t('app.signIn.password_placeholder')"
+                :placeholder="$t('app_signIn_password_placeholder')"
                 @keyup.13="submit"
               >
                 <i
@@ -33,12 +33,12 @@
               <el-input
                 v-model="form.inviteCode"
                 type="text"
-                :placeholder="$t('app.signIn.inviteCode_placeholder')"
+                :placeholder="$t('app_signIn_inviteCode_placeholder')"
               ></el-input>
             </el-form-item>
             <el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display: none">
               <span class="font-color-light"
-                >{{ $t('app.signIn.registry_tip') }} <i>{{ $t('app.signIn.userPplicy') }}</i></span
+                >{{ $t('app_signIn_registry_tip') }} <i>{{ $t('app_signIn_userPplicy') }}</i></span
               >
             </el-checkbox>
             <el-button
@@ -49,18 +49,18 @@
               :loading="loading"
               @click="submit"
             >
-              {{ $t('app.signIn.nextStep') }}
+              {{ $t('app_signIn_nextStep') }}
             </el-button>
           </el-form>
 
           <div class="back-login">
-            {{ $t('app.signIn.haveAccpunt') }}
-            <span @click="backLogin">{{ $t('app.signIn.backLogin') }}</span>
+            {{ $t('app_signIn_haveAccpunt') }}
+            <span @click="backLogin">{{ $t('app_signIn_backLogin') }}</span>
           </div>
         </el-card>
         <el-card class="qrCode">
-          <div class="title">{{ $t('app.signIn.getCode') }}</div>
-          <p>{{ $t('app.signIn.qrCodeText') }}</p>
+          <div class="title">{{ $t('app_signIn_getCode') }}</div>
+          <p>{{ $t('app_signIn_qrCodeText') }}</p>
           <div class="imageBox">
             <el-image class="image" :src="require('@/assets/images/tapdateQR.png')" fit="cover"></el-image>
           </div>
@@ -104,20 +104,20 @@ export default {
       form.source = 'registration'
       let message = ''
       if (!form.email || !form.email.trim()) {
-        message = this.$t('app.signIn.email_require')
+        message = this.$t('app_signIn_email_require')
         // eslint-disable-next-line
       } else if (!form.inviteCode) {
-        message = this.$t('app.signIn.inviteCode_require')
+        message = this.$t('app_signIn_inviteCode_require')
       } else if (
         // eslint-disable-next-line
         !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
       ) {
-        message = this.$t('app.signIn.email_invalid')
+        message = this.$t('app_signIn_email_invalid')
       } else if (!form.password || form.password.length < 5) {
-        message = this.$t('app.signIn.password_invalid')
+        message = this.$t('app_signIn_password_invalid')
         // eslint-disable-next-line
       } else if (/[\s\u4E00-\u9FA5]/.test(form.password)) {
-        message = this.$t('account.passwordNotCN')
+        message = this.$t('account_passwordNotCN')
       } else {
         message = ''
       }
@@ -126,7 +126,7 @@ export default {
         return
       }
       if (!this.keepSignIn) {
-        this.$t('app.signIn.userPplicy_message')
+        this.$t('app_signIn_userPplicy_message')
         return
       }
 
@@ -147,12 +147,12 @@ export default {
       } catch (e) {
         if (e.response && e.response.msg) {
           if (e.response.msg.indexOf('Email already exists') !== -1) {
-            this.errorMessage = this.$t('app.signIn.hasMailbox')
+            this.errorMessage = this.$t('app_signIn_hasMailbox')
           }
           if (e.response.msg.indexOf('Invite Code Invalid') !== -1) {
-            this.errorMessage = this.$t('app.signIn.inviteCode_invalid')
+            this.errorMessage = this.$t('app_signIn_inviteCode_invalid')
           } else if (e.response.msg.indexOf('Disable Signup') !== -1) {
-            this.errorMessage = this.$t('app.signIn.disableSignup')
+            this.errorMessage = this.$t('app_signIn_disableSignup')
           } else {
             this.errorMessage = e.response.msg
           }

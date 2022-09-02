@@ -17,24 +17,24 @@
       >
         <i class="el-icon-warning" style="color: #d54e21"></i>
         <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto mt-0"></pre>
-        <span v-else>{{ $t('dataForm.test.error') }}</span>
+        <span v-else>{{ $t('dataForm_test_error') }}</span>
       </div>
       <div v-else>
         <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
           <VIcon :style="{ color: colorMap[status] }">error</VIcon>
-          <span class="test-title">{{ $t('dataForm.test.testResultFail') }}</span>
+          <span class="test-title">{{ $t('dataForm_test_testResultFail') }}</span>
         </div>
         <div class="test-status" v-if="['ready'].includes(status)">
           <i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
-          <span class="test-title">{{ $t('dataForm.test.testResultSuccess') }}</span>
+          <span class="test-title">{{ $t('dataForm_test_testResultSuccess') }}</span>
         </div>
         <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
           <el-image
             style="width: 20px; height: 20px; vertical-align: bottom"
             :src="require('@tap/assets/images/loading.gif')"
           ></el-image>
-          <span v-if="testData.testLogs.length === 0">{{ $t('dataForm.primaryTest') }}</span>
-          <span v-else>{{ $t('dataForm.testing') }}</span>
+          <span v-if="testData.testLogs.length === 0">{{ $t('dataForm_primaryTest') }}</span>
+          <span v-else>{{ $t('dataForm_testing') }}</span>
         </div>
       </div>
     </div>
@@ -46,12 +46,12 @@
       :row-style="rowStyleHandler"
       v-show="testData.testLogs && testData.testLogs.length > 0"
     >
-      <el-table-column prop="show_msg" :label="$t('dataForm.test.items')">
+      <el-table-column prop="show_msg" :label="$t('dataForm_test_items')">
         <template slot-scope="scope">
           <span>{{ scope.row.show_msg }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('dataForm.test.result')" width="150">
+      <el-table-column prop="status" :label="$t('dataForm_test_result')" width="150">
         <template slot-scope="scope">
           <span v-if="scope.row.status === 'failed' && !scope.row.required" :style="`color: ${colorMap['warning']};`">
             <VIcon size="12" :style="{ color: colorMap[status] }">warning</VIcon>
@@ -71,12 +71,12 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="fail_message" :label="$t('dataForm.test.information')" width="308"></el-table-column>
+      <el-table-column prop="fail_message" :label="$t('dataForm_test_information')" width="308"></el-table-column>
     </el-table>
     <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <span slot="footer" class="dialog-footer">
-      <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('dataForm.test.retryBtn') }}</el-button>
-      <el-button size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
+      <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('dataForm_test_retryBtn') }}</el-button>
+      <el-button size="mini" type="primary" @click="handleClose()">{{ $t('dataForm_close') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -128,13 +128,13 @@ export default {
         unTest: ''
       },
       statusMap: {
-        ready: this.$t('dataForm.test.success'),
-        invalid: this.$t('dataForm.test.fail'),
-        testing: this.$t('dataForm.test.testing'),
-        passed: this.$t('dataForm.test.success'),
-        waiting: this.$t('dataForm.test.testing'),
-        failed: this.$t('dataForm.test.fail'),
-        unTest: this.$t('dataForm.test.unTest')
+        ready: this.$t('dataForm_test_success'),
+        invalid: this.$t('dataForm_test_fail'),
+        testing: this.$t('dataForm_test_testing'),
+        passed: this.$t('dataForm_test_success'),
+        waiting: this.$t('dataForm_test_testing'),
+        failed: this.$t('dataForm_test_fail'),
+        unTest: this.$t('dataForm_test_unTest')
       }
     }
   },
@@ -245,7 +245,7 @@ export default {
         this.timer = setTimeout(() => {
           this.isTimeout = true //重置
           this.wsError = 'ERROR'
-          this.wsErrorMsg = this.wsErrorMsg ? this.wsErrorMsg : this.$t('dataForm.test.retryTest')
+          this.wsErrorMsg = this.wsErrorMsg ? this.wsErrorMsg : this.$t('dataForm_test_retryTest')
           let testData = {
             wsError: 'ERROR'
           }

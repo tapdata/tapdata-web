@@ -45,19 +45,19 @@
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
                 <span>
-                  {{ $t('connection.status.invalid') }}
+                  {{ $t('connection_status_invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
                 <i class="el-icon-success"></i>
                 <span>
-                  {{ $t('connection.status.ready') }}
+                  {{ $t('connection_status_ready') }}
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
                 <i class="el-icon-warning"></i>
                 <span>
-                  {{ $t('connection.status.testing') }}
+                  {{ $t('connection_status_testing') }}
                 </span>
               </span>
             </span>
@@ -81,7 +81,7 @@
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
     <el-dialog
-      :title="$t('connection.rename')"
+      :title="$t('connection_rename')"
       :close-on-click-modal="false"
       :visible.sync="dialogEditNameVisible"
       width="30%"
@@ -131,7 +131,7 @@ export default {
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
-        callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
+        callback(new Error(this.$t('dataForm_form_connectionName') + this.$t('formBuilder_noneText')))
       } else if (!checkConnectionName(this.renameData.rename)) {
         callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
       } else {
@@ -255,7 +255,7 @@ export default {
             this.buried('connectionSubmit', '', {
               result: true
             })
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_saveOK'))
             if (this.$route.query.step) {
               this.$router.push({
                 name: 'connections',
@@ -273,7 +273,7 @@ export default {
             this.buried('connectionSubmit', '', {
               result: false
             })
-            this.$message.error(err?.data?.message || this.$t('message.saveFail'))
+            this.$message.error(err?.data?.message || this.$t('message_saveFail'))
           })
           .finally(() => {
             this.submitBtnLoading = false
@@ -358,12 +358,12 @@ export default {
               this.editBtnLoading = false
               if (err && err.response) {
                 if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(this.$t('dataForm.error.connectionNameExist'))
+                  this.$message.error(this.$t('dataForm_error_connectionNameExist'))
                 } else {
                   this.$message.error(err.response.msg)
                 }
               } else {
-                this.$message.error(this.$t('dataForm.saveFail'))
+                this.$message.error(this.$t('dataForm_saveFail'))
               }
             })
         }

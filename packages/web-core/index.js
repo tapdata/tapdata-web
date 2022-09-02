@@ -1,5 +1,3 @@
-import locale from './locale'
-
 import WSClient from './plugins/ws-client'
 import * as _util from './util'
 
@@ -21,8 +19,8 @@ const install = Vue => {
 if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
-const langs = locale
+
 export default {
   install
 }
-export { langs, WSClient }
+export { WSClient }

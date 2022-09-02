@@ -10,37 +10,37 @@
         @click="openCreateDialog"
       >
         <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-        <span>{{ $t('metadata.details.index.create') }}</span>
+        <span>{{ $t('metadata_details_index_create') }}</span>
       </el-button>
     </div>
     <!-- 索引表格 start -->
     <el-table ref="table" class="table-page-table" :data="indexTableData">
-      <el-table-column :label="$t('metadata.details.index.name')" prop="name"> </el-table-column>
-      <el-table-column :label="$t('metadata.details.index.fields')" prop="key">
+      <el-table-column :label="$t('metadata_details_index_name')" prop="name"> </el-table-column>
+      <el-table-column :label="$t('metadata_details_index_fields')" prop="key">
         <template slot-scope="scope">
           <div v-for="(value, key) in scope.row.key" :key="key">
             {{ key }}&nbsp;:&nbsp;&nbsp;{{ value === 1 ? 'ASC(1)' : value === -1 ? 'DESC(-1)' : value }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.index.unique')" prop="unique">
+      <el-table-column :label="$t('metadata_details_index_unique')" prop="unique">
         <template slot-scope="scope">
           <span>{{ $t('metadata.details.index.unique_' + !!scope.row.unique) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.index.status')" prop="status">
+      <el-table-column :label="$t('metadata_details_index_status')" prop="status">
         <template slot-scope="scope">
           <span>{{ $t('metadata.details.index.status_' + scope.row.status) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.index.create_by')" prop="create_by">
+      <el-table-column :label="$t('metadata_details_index_create_by')" prop="create_by">
         <!-- <template slot-scope="scope">
           <span>{{
             $t('metadata.details.index.create_by_' + scope.row.create_by)
           }}</span>
         </template> -->
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')" width="120">
+      <el-table-column :label="$t('metadata_details_opera')" width="120">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -48,7 +48,7 @@
             style="color: #f56c6c"
             @click="remove(scope.row)"
             v-if="scope.row.name !== '_id_' && scope.row.status === 'created'"
-            >{{ $t('button.delete') }}</el-button
+            >{{ $t('button_delete') }}</el-button
           >
         </template>
       </el-table-column>
@@ -58,17 +58,17 @@
     <el-dialog
       width="600px"
       custom-class="create-dialog"
-      :title="$t('metadata.details.index.create')"
+      :title="$t('metadata_details_index_create')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
       <el-form ref="form" :model="createForm" class="dataRule-form">
-        <el-form-item :label="$t('metadata.details.index.name')">
+        <el-form-item :label="$t('metadata_details_index_name')">
           <el-input
             type="text"
             size="mini"
             v-model="createForm.task_data.name"
-            :placeholder="$t('dataRule.pleaseSelect') + $t('metadata.details.index.name')"
+            :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_index_name')"
           ></el-input>
         </el-form-item>
         <el-row
@@ -82,7 +82,7 @@
             <el-row :gutter="10">
               <el-col :span="16">
                 <el-form-item
-                  :label="$t('metadata.details.index.definition')"
+                  :label="$t('metadata_details_index_definition')"
                   :prop="'indexDefinition.' + index + '.key'"
                   filterable
                   allow-create
@@ -125,7 +125,7 @@
               @click="removeRow(item, index)"
               v-if="createForm.indexDefinition.length > 1"
             >
-              {{ $t('message.delete') }}
+              {{ $t('message_delete') }}
             </el-button>
             <el-button
               plain
@@ -134,18 +134,18 @@
               @click="addRow"
               v-if="index === createForm.indexDefinition.length - 1"
             >
-              {{ $t('relations.add') }}
+              {{ $t('relations_add') }}
             </el-button>
           </el-col>
         </el-row>
-        <el-form-item :label="$t('metadata.details.index.options')">
+        <el-form-item :label="$t('metadata_details_index_options')">
           <el-checkbox v-model="createForm.task_data.background">{{
-            $t('metadata.details.index.build_in_background')
+            $t('metadata_details_index_build_in_background')
           }}</el-checkbox>
           <el-checkbox v-model="createForm.task_data.unique">{{
-            $t('metadata.details.index.create_unique')
+            $t('metadata_details_index_create_unique')
           }}</el-checkbox>
-          <el-checkbox v-model="createForm.task_data.ttl">{{ $t('metadata.details.index.create_ttl') }}</el-checkbox>
+          <el-checkbox v-model="createForm.task_data.ttl">{{ $t('metadata_details_index_create_ttl') }}</el-checkbox>
         </el-form-item>
         <el-form-item v-if="createForm.task_data.ttl">
           <el-col :span="16">
@@ -160,8 +160,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message_cancel') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message_confirm') }}</el-button>
       </span>
     </el-dialog>
     <!-- 创建索引弹窗 end -->
@@ -208,13 +208,13 @@ export default {
         }
       },
       dataTypeList: [
-        { label: this.$t('timeToLive.s'), value: 's' },
-        { label: this.$t('timeToLive.m'), value: 'm' },
-        { label: this.$t('timeToLive.h'), value: 'h' },
-        { label: this.$t('timeToLive.d'), value: 'd' },
-        { label: this.$t('timeToLive.w'), value: 'w' },
-        { label: this.$t('timeToLive.mo'), value: 'mo' },
-        { label: this.$t('timeToLive.y'), value: 'y' }
+        { label: this.$t('timeToLive_s'), value: 's' },
+        { label: this.$t('timeToLive_m'), value: 'm' },
+        { label: this.$t('timeToLive_h'), value: 'h' },
+        { label: this.$t('timeToLive_d'), value: 'd' },
+        { label: this.$t('timeToLive_w'), value: 'w' },
+        { label: this.$t('timeToLive_mo'), value: 'mo' },
+        { label: this.$t('timeToLive_y'), value: 'y' }
       ]
     }
   },
@@ -286,7 +286,7 @@ export default {
           let { name, background, unique, ttl, expireAfterSeconds, data_type } = _this.createForm.task_data
           let existsIndexes = _this.indexTableData.filter(it => it.name === name)
           if (existsIndexes && existsIndexes.length > 0) {
-            this.$message.error(this.$t('metadata.details.index.name_exists'))
+            this.$message.error(this.$t('metadata_details_index_name_exists'))
             return false
           }
           let key = {}
@@ -294,7 +294,7 @@ export default {
           let _keyJson = JSON.stringify(key)
           existsIndexes = _this.indexTableData.find(v => _keyJson === JSON.stringify(v.key))
           if (existsIndexes) {
-            this.$message.error(this.$t('metadata.details.index.index_exists'))
+            this.$message.error(this.$t('metadata_details_index_index_exists'))
             return false
           }
           let typeData = ''
@@ -349,7 +349,7 @@ export default {
     remove(item) {
       const h = this.$createElement
       let _this = this
-      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.name])
+      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.name])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
@@ -369,7 +369,7 @@ export default {
               }
             })
             .then(() => {
-              this.$message.success(this.$t('message.deleting'))
+              this.$message.success(this.$t('message_deleting'))
             })
         }
       })

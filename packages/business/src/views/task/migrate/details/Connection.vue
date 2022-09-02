@@ -185,8 +185,8 @@ export default {
     async reload(row) {
       this.checkAgent(() => {
         let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
+          title: this.$t('connection_reloadTittle'),
+          Message: this.$t('connection_reloadMsg'),
           confirmButtonText: this.$t('button_confirm'),
           cancelButtonText: this.$t('button_close'),
           name: row.name,

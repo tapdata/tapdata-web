@@ -9,7 +9,7 @@
           </span>
         </div>
       </div>
-      <!-- <div class="slogan">{{ $t('app.signIn.slogan') }}</div> -->
+      <!-- <div class="slogan">{{ $t('app_signIn_slogan') }}</div> -->
     </header>
   </div>
 </template>

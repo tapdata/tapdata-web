@@ -165,7 +165,7 @@ export default {
       databaseOptions: [],
       tableNameSelectConfig: {
         size: 'mini',
-        placeholder: this.$t('editor.cell.data_node.collection.form.collection.placeholder'),
+        placeholder: this.$t('editor_cell_data_node_collection_form_collection_placeholder'),
         loading: false,
         filterable: true,
         options: [],

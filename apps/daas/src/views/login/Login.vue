@@ -3,8 +3,8 @@
     <section class="page-sign-in" slot="main">
       <div class="sign-in-panel">
         <div class="title">
-          {{ $t('app.signIn.signIn') }}
-          <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app.signIn.Registration') }}</span>
+          {{ $t('app_signIn_signIn') }}
+          <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
         </div>
         <div class="error-tips align-center justify-content-start" v-show="errorMessage">
           <i class="el-icon-warning-outline mr-2"></i>
@@ -15,27 +15,27 @@
             class="input"
             type="email"
             autocomplete="username"
-            :placeholder="$t('app.signIn.email_placeholder')"
+            :placeholder="$t('app_signIn_email_placeholder')"
             v-model="form.email"
           />
           <input
             class="input"
             type="password"
             autocomplete="current-password"
-            :placeholder="$t('app.signIn.password_placeholder')"
+            :placeholder="$t('app_signIn_password_placeholder')"
             v-model="form.password"
             @keyup.13="submit"
           />
         </form>
         <el-checkbox class="keep-sign-in" v-model="keepSignIn">
-          {{ $t('app.signIn.keepSignIn') }}
+          {{ $t('app_signIn_keepSignIn') }}
         </el-checkbox>
         <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
-          {{ $t('app.signIn.signIn') }}
+          {{ $t('app_signIn_signIn') }}
         </ElButton>
 
         <div class="remember">
-          <ElButton type="text" @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</ElButton>
+          <ElButton type="text" @click="forgetPassword">{{ $t('app_signIn_forgetPassword') }}</ElButton>
         </div>
       </div>
     </section>
@@ -74,14 +74,14 @@ export default {
       let oldPassword = this.form.password + ''
       let message = ''
       if (!form.email || !form.email.trim()) {
-        message = this.$t('app.signIn.email_require')
+        message = this.$t('app_signIn_email_require')
       } else if (
         // eslint-disable-next-line
         !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
       ) {
-        message = this.$t('app.signIn.email_invalid')
+        message = this.$t('app_signIn_email_invalid')
       } else if (!form.password || form.password.length < 5) {
-        message = this.$t('app.signIn.password_invalid')
+        message = this.$t('app_signIn_password_invalid')
       }
       if (message) {
         this.errorMessage = message

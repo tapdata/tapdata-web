@@ -15,7 +15,7 @@ export default {
         class: 'user-operation-wrap'
       },
       [
-        this.$t('notification.account') + ' ',
+        this.$t('notification_account') + ' ',
         h('span', { style: activeTextStyle }, record.username || record.email),
         this.$t('notification.operation.' + record.operation),
         this.$t('notification.modular.' + record.modular) + ' ',

@@ -20,18 +20,18 @@
             }}：{{ metadataDataObj.original_name }}
             <span v-if="metadataDataObj.alias_name">)</span>
             <el-button type="text" @click="handleChangeName" style="padding: 0 10px">{{
-              $t('metadata.details.renamed')
+              $t('metadata_details_renamed')
             }}</el-button>
           </h3>
           <div class="description pt-2">
             <span v-if="metadataDataObj.comment">{{ metadataDataObj.comment }}</span>
 
-            <span v-else>{{ $t('metadata.details.clickAddDes') }}</span>
+            <span v-else>{{ $t('metadata_details_clickAddDes') }}</span>
             <el-button
               class="e-button"
               type="text"
               @click=";(editCommentDialogVisible = true), (editCommentForm.comment = metadataDataObj.comment)"
-              >{{ $t('metadata.details.edit') }}</el-button
+              >{{ $t('metadata_details_edit') }}</el-button
             >
           </div>
 
@@ -54,22 +54,22 @@
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
+              <span class="fs-7 font-color-light fw-sub">{{ $t('metadata_details_basicAttributes') }}</span>
               <ElLink type="primary" @click.stop="asideFalg = false" class="iconfont icon-outdent"></ElLink>
             </div>
             <ul class="metadata-aside-main pt-4">
               <li>
-                <span class="label">{{ $t('metadata.details.originalTableName') }}：</span>
+                <span class="label">{{ $t('metadata_details_originalTableName') }}：</span>
                 <el-tooltip :content="metadataDataObj.original_name" placement="right">
                   <span>{{ metadataDataObj.original_name }}</span>
                 </el-tooltip>
               </li>
               <li>
-                <span class="label">{{ $t('metadata.details.typesOf') }}：</span>
+                <span class="label">{{ $t('metadata_details_typesOf') }}：</span>
                 <span>{{ metadataDataObj.meta_type }}</span>
               </li>
               <li>
-                <span class="label">{{ $t('metadata.details.owningConnection') }}：</span>
+                <span class="label">{{ $t('metadata_details_owningConnection') }}：</span>
                 <template v-if="metadataDataObj.source && metadataDataObj.source.name">
                   <el-tooltip :content="metadataDataObj.source.name" placement="right">
                     <span>{{ metadataDataObj.source.name }}</span>
@@ -77,25 +77,25 @@
                 </template>
               </li>
               <li>
-                <span class="label">{{ $t('metadata.details.primaryKey') }}：</span>
+                <span class="label">{{ $t('metadata_details_primaryKey') }}：</span>
                 <el-tooltip :content="metadataDataObj.qualified_name" placement="right">
                   <span>{{ metadataDataObj.qualified_name }}</span>
                 </el-tooltip>
               </li>
               <li>
-                <span class="label">{{ $t('metadata.details.source') }}：</span>
+                <span class="label">{{ $t('metadata_details_source') }}：</span>
                 <span>{{ metadataDataObj.create_source }}</span>
               </li>
               <li>
-                <span class="label">{{ $t('metadata.details.creationTime') }}：</span>
+                <span class="label">{{ $t('metadata_details_creationTime') }}：</span>
                 <span>{{ metadataDataObj.createTimeFmt }}</span>
               </li>
               <li>
-                <span class="label">{{ $t('metadata.details.changeTime') }}：</span>
+                <span class="label">{{ $t('metadata_details_changeTime') }}：</span>
                 <span>{{ metadataDataObj.lastUpdatedFmt }}</span>
               </li>
               <li>
-                <span class="label">{{ $t('metadata.details.Modifier') }}：</span>
+                <span class="label">{{ $t('metadata_details_Modifier') }}：</span>
                 <span>{{ metadataDataObj.last_user_name }}</span>
               </li>
             </ul>
@@ -104,9 +104,9 @@
 
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
+              <span class="fs-7 font-color-light fw-sub">{{ $t('metadata_details_businessAttributes') }}</span>
               <ElLink type="primary" size="mini" @click.stop="creatBusiness"
-                >+ {{ $t('metadata.details.creat') }}</ElLink
+                >+ {{ $t('metadata_details_creat') }}</ElLink
               >
             </div>
             <ul class="metadata-aside-main pt-4">
@@ -138,7 +138,7 @@
                       <ul class="search-bar">
                         <li class="item">
                           <el-input
-                            :placeholder="$t('metadata.details.searchPlaceholder')"
+                            :placeholder="$t('metadata_details_searchPlaceholder')"
                             clearable
                             v-model="searchParams.keyword"
                             size="mini"
@@ -151,7 +151,7 @@
                         </li>
                         <li class="item">
                           <el-button type="text" class="restBtn" size="mini" @click="reset()">
-                            {{ $t('dataFlow.reset') }}
+                            {{ $t('dataFlow_reset') }}
                           </el-button>
                         </li>
                       </ul>
@@ -160,7 +160,7 @@
                       <div slot="operation" class="operation">
                         <el-button class="btn-create" type="primary" size="mini" @click="hanldCreateFiled">
                           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-                          <span> {{ $t('metadata.details.createFiled') }}</span>
+                          <span> {{ $t('metadata_details_createFiled') }}</span>
                         </el-button>
                       </div>
                     </div>
@@ -170,7 +170,7 @@
                     class="table-page-table"
                     height="100%"
                     v-loading="loading"
-                    :element-loading-text="$t('dataFlow.dataLoading')"
+                    :element-loading-text="$t('dataFlow_dataLoading')"
                     :data="tableFieldList"
                     :header-cell-style="tableHeaderStyle"
                   >
@@ -178,16 +178,16 @@
                       <template slot-scope="scope">
                         <ul class="attributes">
                           <li class="more">
-                            <label class="label">{{ $t('metadata.details.moreAttributes') }} </label>
-                            <span>{{ $t('metadata.details.allowOverwrite') }} : {{ scope.row.is_auto_allowed }}</span>
-                            <span>{{ $t('metadata.details.is_nullable') }} : {{ scope.row.is_nullable }}</span>
-                            <span>{{ $t('metadata.details.fieldLength') }} : {{ scope.row.columnSize }}</span>
-                            <span>{{ $t('metadata.details.accuracy') }} : {{ scope.row.precision }}</span>
-                            <span>{{ $t('metadata.details.numberLength') }} : {{ scope.row.scale }}</span>
-                            <span>{{ $t('metadata.details.selfIncreasing') }} : {{ scope.row.autoincrement }}</span>
+                            <label class="label">{{ $t('metadata_details_moreAttributes') }} </label>
+                            <span>{{ $t('metadata_details_allowOverwrite') }} : {{ scope.row.is_auto_allowed }}</span>
+                            <span>{{ $t('metadata_details_is_nullable') }} : {{ scope.row.is_nullable }}</span>
+                            <span>{{ $t('metadata_details_fieldLength') }} : {{ scope.row.columnSize }}</span>
+                            <span>{{ $t('metadata_details_accuracy') }} : {{ scope.row.precision }}</span>
+                            <span>{{ $t('metadata_details_numberLength') }} : {{ scope.row.scale }}</span>
+                            <span>{{ $t('metadata_details_selfIncreasing') }} : {{ scope.row.autoincrement }}</span>
                           </li>
                           <li v-if="scope.row.dictionary && scope.row.dictionary.length">
-                            <label class="label">{{ $t('metadata.details.filedDictionary') }}</label>
+                            <label class="label">{{ $t('metadata_details_filedDictionary') }}</label>
                             <div class="dropInfo">
                               <span v-for="item in scope.row.dictionary" :key="item.table_name"
                                 >{{ item.key }} : {{ item.value }}</span
@@ -195,7 +195,7 @@
                             </div>
                           </li>
                           <li v-if="scope.row.relation && scope.row.relation.length">
-                            <label class="label">{{ $t('metadata.details.foreignKeyAssociation') }}</label>
+                            <label class="label">{{ $t('metadata_details_foreignKeyAssociation') }}</label>
                             <div class="dropInfo">
                               <span v-for="item in scope.row.relation" :key="item.key"
                                 >{{ item.table_name }}, {{ item.field_name }},{{
@@ -208,7 +208,7 @@
                       </template>
                     </el-table-column>
                     <!-- <el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column> -->
-                    <el-table-column prop="field_name" :label="$t('metadata.details.filedAliasName')" width="150">
+                    <el-table-column prop="field_name" :label="$t('metadata_details_filedAliasName')" width="150">
                       <template slot-scope="scope">
                         <div class="database-text" style="margin-left: 0">
                           <div>
@@ -221,14 +221,14 @@
                         </div>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="alias_name" :label="$t('metadata.details.alias')" width="80">
+                    <el-table-column prop="alias_name" :label="$t('metadata_details_alias')" width="80">
                       <template slot-scope="scope">
                         <div class="database-text" style="margin-left: 0">
                           <div>{{ scope.row.alias_name }}</div>
                         </div>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="data_type" :label="$t('metadata.details.fieldType')" width="150">
+                    <el-table-column prop="data_type" :label="$t('metadata_details_fieldType')" width="150">
                       <template slot-scope="scope">
                         <div>
                           {{ scope.row.data_type }}
@@ -237,11 +237,11 @@
                     </el-table-column>
                     <el-table-column
                       prop="columnSize"
-                      :label="$t('metadata.details.fieldLength')"
+                      :label="$t('metadata_details_fieldLength')"
                       width="100"
                     ></el-table-column>
-                    <el-table-column prop="comment" :label="$t('metadata.details.description')"></el-table-column>
-                    <el-table-column width="120" :label="$t('metadata.details.opera')">
+                    <el-table-column prop="comment" :label="$t('metadata_details_description')"></el-table-column>
+                    <el-table-column width="120" :label="$t('metadata_details_opera')">
                       <template slot-scope="scope">
                         <el-button
                           v-readonlybtn="'data_catalog_edition'"
@@ -249,7 +249,7 @@
                           type="text"
                           @click="edit(scope.row)"
                         >
-                          {{ $t('metadata.details.edit') }}
+                          {{ $t('metadata_details_edit') }}
                         </el-button>
                         <el-button
                           v-readonlybtn="'meta_data_deleting'"
@@ -257,7 +257,7 @@
                           size="mini"
                           type="text"
                           @click="remove(scope.row, scope.$index, 0)"
-                          >{{ $t('button.delete') }}</el-button
+                          >{{ $t('button_delete') }}</el-button
                         >
                       </template>
                     </el-table-column>
@@ -323,7 +323,7 @@
     ></FormPage>
     <el-dialog
       width="600px"
-      :title="$t('metadata.details.businessAttrTitle')"
+      :title="$t('metadata_details_businessAttrTitle')"
       :close-on-click-modal="false"
       :visible.sync="businessDialogVisible"
       custom-class="dialogForm"
@@ -331,50 +331,50 @@
       <FormBuilder ref="form" v-model="businessForm" :config="businessFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
         <el-button class="cancel" @click="businessDialogVisible = false" size="small">{{
-          $t('message.cancel')
+          $t('message_cancel')
         }}</el-button>
-        <el-button type="primary" @click="saveBusiness()" size="small">{{ $t('message.save') }}</el-button>
+        <el-button type="primary" @click="saveBusiness()" size="small">{{ $t('message_save') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
       width="600px"
-      :title="$t('metadata.details.editAliasNameTitle')"
+      :title="$t('metadata_details_editAliasNameTitle')"
       :close-on-click-modal="false"
       :visible.sync="editNameDialogVisible"
       custom-class="dialogForm"
     >
       <el-form :model="editNameForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item :label="$t('metadata.details.originalTableName')" prop="name">
+        <el-form-item :label="$t('metadata_details_originalTableName')" prop="name">
           {{ editNameForm.original_name }}
         </el-form-item>
-        <el-form-item :label="$t('metadata.details.alias')" prop="name">
+        <el-form-item :label="$t('metadata_details_alias')" prop="name">
           <el-input v-model="editNameForm.alias_name" size="small" maxlength="100" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button class="cancel" @click="editNameDialogVisible = false" size="small">{{
-          $t('message.cancel')
+          $t('message_cancel')
         }}</el-button>
-        <el-button type="primary" @click="saveAliasName()" size="small">{{ $t('message.save') }}</el-button>
+        <el-button type="primary" @click="saveAliasName()" size="small">{{ $t('message_save') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
       width="600px"
-      :title="$t('metadata.details.editCommentTitle')"
+      :title="$t('metadata_details_editCommentTitle')"
       :close-on-click-modal="false"
       :visible.sync="editCommentDialogVisible"
       custom-class="dialogForm"
     >
       <el-form :model="editCommentForm" ref="ruleForm" label-width="90px" class="demo-ruleForm">
-        <el-form-item :label="$t('metadata.details.description')" prop="name">
+        <el-form-item :label="$t('metadata_details_description')" prop="name">
           <el-input type="textarea" v-model="editCommentForm.comment" maxlength="500" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button class="cancel" @click="editCommentDialogVisible = false" size="small">{{
-          $t('message.cancel')
+          $t('message_cancel')
         }}</el-button>
-        <el-button type="primary" @click="saveComment()" size="small">{{ $t('message.save') }}</el-button>
+        <el-button type="primary" @click="saveComment()" size="small">{{ $t('message_save') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -410,12 +410,12 @@ export default {
       activePanel: 'version',
       menuList: [
         {
-          name: this.$t('metadata.details.model'),
+          name: this.$t('metadata_details_model'),
           mateTypes: ['collection', 'table', 'mongo_view'],
           key: 'model'
         },
         {
-          name: this.$t('metadata.details.version.version_control'),
+          name: this.$t('metadata_details_version_version_control'),
           mateTypes: [
             'collection',
             'table',
@@ -465,12 +465,12 @@ export default {
         items: [
           {
             type: 'input',
-            label: this.$t('metadata.details.attrName'),
+            label: this.$t('metadata_details_attrName'),
             field: 'key'
           },
           {
             type: 'input',
-            label: this.$t('metadata.details.attrKey'),
+            label: this.$t('metadata_details_attrKey'),
             field: 'value'
           }
         ]
@@ -561,7 +561,7 @@ export default {
       let primary_key_position_mum = item.primary_key_position
       const h = this.$createElement
       let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
+        this.$t('message_deleteOrNot') + ' ',
         h('span', { style: { color: '#2C65FF' } }, item.field_name)
       ])
       this.$confirm(message, this.$t('message_title_prompt'), {
@@ -617,10 +617,10 @@ export default {
         }
         metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
-          this.$message.success(this.$t('message.deleteOK'))
+          this.$message.success(this.$t('message_deleteOK'))
         })
         // .catch(() => {
-        //   this.$message.info(this.$t('message.deleteFail'))
+        //   this.$message.info(this.$t('message_deleteFail'))
         // })
       })
     },
@@ -663,7 +663,7 @@ export default {
     // 删除业务属性
     delBusiness(item, key) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message.deleteOrNot') + ' ', h('span', { style: { color: '#409EFF' } }, key)])
+      let message = h('p', [this.$t('message_deleteOrNot') + ' ', h('span', { style: { color: '#409EFF' } }, key)])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
@@ -681,7 +681,7 @@ export default {
         }
         metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
-          this.$message.success(this.$t('metadata.details.success_Release'))
+          this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
         //   this.$message.error(this.$t('message_save_fail'))
@@ -703,7 +703,7 @@ export default {
         .patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
-          this.$message.success(this.$t('metadata.details.success_Release'))
+          this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
         //   this.$message.error(this.$t('message_save_fail'))
@@ -731,7 +731,7 @@ export default {
         .patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
-          this.$message.success(this.$t('metadata.details.success_Release'))
+          this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
         //   this.$message.error(this.$t('message_save_fail'))
@@ -749,7 +749,7 @@ export default {
         .patchId(this.metadataDataObj.id, params)
         .then(() => {
           this.getData()
-          this.$message.success(this.$t('metadata.details.success_Release'))
+          this.$message.success(this.$t('metadata_details_success_Release'))
         })
         // .catch(() => {
         //   this.$message.error(this.$t('message_save_fail'))

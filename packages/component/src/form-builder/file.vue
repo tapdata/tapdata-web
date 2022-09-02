@@ -66,7 +66,7 @@ export default {
       'ElInput',
       {
         attrs: {
-          placeholder: config.placeholder || self.$t('formBuilder.file.placeholder')
+          placeholder: config.placeholder || self.$t('formBuilder_file_placeholder')
         },
         props: {
           value: fileName,
@@ -98,7 +98,7 @@ export default {
             },
             slot: 'append'
           },
-          [h('ElButton', self.$t('formBuilder.file.button'))]
+          [h('ElButton', self.$t('formBuilder_file_button'))]
         )
       ]
     )

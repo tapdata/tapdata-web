@@ -61,37 +61,37 @@ export const TOPOLOGY_MAP = topologyMap,
   },
   MIGRATE_STATUS_MAP = {
     running: {
-      text: i18n.t('dataFlow.status.running'),
+      text: i18n.t('dataFlow_status_running'),
       icon: 'right-fill',
       type: 'success'
     },
     paused: {
-      text: i18n.t('dataFlow.status.paused'),
+      text: i18n.t('dataFlow_status_paused'),
       icon: 'wait-fill',
       type: 'primary'
     },
     error: {
-      text: i18n.t('dataFlow.status.error'),
+      text: i18n.t('dataFlow_status_error'),
       icon: 'warning',
       type: 'warning'
     },
     draft: {
-      text: i18n.t('dataFlow.status.draft'),
+      text: i18n.t('dataFlow_status_draft'),
       icon: 'wait-fill',
       type: 'primary'
     },
     scheduled: {
-      text: i18n.t('dataFlow.status.scheduled'),
+      text: i18n.t('dataFlow_status_scheduled'),
       icon: 'loading',
       type: 'success'
     },
     stopping: {
-      text: i18n.t('dataFlow.status.stopping'),
+      text: i18n.t('dataFlow_status_stopping'),
       icon: 'loading',
       type: 'success'
     },
     'force stopping': {
-      text: i18n.t('dataFlow.status.force_stopping'),
+      text: i18n.t('dataFlow_status_force_stopping'),
       icon: 'loading',
       type: 'success'
     }

@@ -2,24 +2,24 @@
   <el-card class="customer-service-wrap" v-if="value">
     <!-- 客服 -->
     <header>
-      <span>{{ $t('app.qa') }}</span>
+      <span>{{ $t('app_qa') }}</span>
       <i class="btn-close el-icon-close" @click="close"></i>
     </header>
     <main>
       <div class="panel">
         <div class="title">
-          {{ $t('app.customerService.technicalSupport') }}
+          {{ $t('app_customerService_technicalSupport') }}
         </div>
         <div class="content">
-          <span>{{ $t('app.customerService.technicalSupportText') }}</span>
-          {{ $t('app.customerService.userSupport') }}
-          <span>{{ $t('app.customerService.technicalSupportText1') }}</span>
+          <span>{{ $t('app_customerService_technicalSupportText') }}</span>
+          {{ $t('app_customerService_userSupport') }}
+          <span>{{ $t('app_customerService_technicalSupportText1') }}</span>
         </div>
       </div>
       <div class="panel">
-        <div class="title">{{ $t('app.customerService.otherDmands') }}</div>
+        <div class="title">{{ $t('app_customerService_otherDmands') }}</div>
         <div class="content">
-          <span>{{ $t('app.customerService.otherDmandsText') }}</span>
+          <span>{{ $t('app_customerService_otherDmandsText') }}</span>
         </div>
       </div>
       <div class="panel">

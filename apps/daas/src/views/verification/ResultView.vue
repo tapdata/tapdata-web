@@ -1,14 +1,14 @@
 <template>
   <div class="verification-result-view panel-box" v-loading="loading">
     <div class="header">
-      {{ $t('dataVerification.verifyDetail') }}
+      {{ $t('dataVerification_verifyDetail') }}
     </div>
     <div class="main">
       <ul class="inspect-result" v-if="statsInfo.status">
         <li>
           <span>
             {{
-              $t('dataVerification.sourceTable') +
+              $t('dataVerification_sourceTable') +
               ' : ' +
               statsInfo.source.table +
               ' / ' +
@@ -22,7 +22,7 @@
         <li>
           <span>
             {{
-              $t('dataVerification.targetTable') +
+              $t('dataVerification_targetTable') +
               ' : ' +
               statsInfo.target.table +
               ' / ' +
@@ -34,7 +34,7 @@
           </span>
         </li>
         <li>
-          <span>{{ $t('dataVerification.verifyResult') + ' : ' + statsInfo.result }}</span>
+          <span>{{ $t('dataVerification_verifyResult') + ' : ' + statsInfo.result }}</span>
         </li>
         <li v-if="statsInfo.result !== 'passed'">
           <span>{{ statsInfo.countResultText }}</span>
@@ -45,7 +45,7 @@
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
         <img style="height: 30px; margin-right: 5px" src="../../assets/images/zhuhe.png" />
-        <span>{{ $t('dataVerification.success') }}</span>
+        <span>{{ $t('dataVerification_success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
         <VIcon size="12">warning-circle</VIcon>
@@ -55,16 +55,16 @@
         <div class="inspect-result-box" v-if="!showAdvancedVerification">
           <div v-for="item in resultList" :key="item.id" class="inspect-details">
             <ul class="father-table">
-              <li>{{ $t('dataVerification.inconsistentType') }}</li>
-              <li>{{ $t('dataVerification.sourceFieldName') }}</li>
-              <li>{{ $t('dataVerification.Value') }}</li>
-              <li>{{ $t('dataVerification.targetFieldName') }}</li>
-              <li>{{ $t('dataVerification.Value') }}</li>
+              <li>{{ $t('dataVerification_inconsistentType') }}</li>
+              <li>{{ $t('dataVerification_sourceFieldName') }}</li>
+              <li>{{ $t('dataVerification_Value') }}</li>
+              <li>{{ $t('dataVerification_targetFieldName') }}</li>
+              <li>{{ $t('dataVerification_Value') }}</li>
             </ul>
             <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
               <li>
                 {{
-                  detail.type === 'uniqueField' ? $t('dataVerification.uniqueField') : $t('dataVerification.otherField')
+                  detail.type === 'uniqueField' ? $t('dataVerification_uniqueField') : $t('dataVerification_otherField')
                 }}
               </li>
               <li>{{ detail.source.key }}</li>
@@ -80,16 +80,16 @@
         </div>
         <div class="inspect-ad-box" v-if="showAdvancedVerification">
           <div class="title-box">
-            <div>{{ $t('dataVerification.verifyResult') }}</div>
+            <div>{{ $t('dataVerification_verifyResult') }}</div>
           </div>
           <div v-for="item in resultList" :key="item.id" class="inspect-details">
             <div class="message-box">
-              <span>{{ $t('dataVerification.returnMsg') }}</span>
+              <span>{{ $t('dataVerification_returnMsg') }}</span>
               <div>{{ item.message }}</div>
             </div>
             <ul class="father-table">
-              <li>{{ $t('dataVerification.sourceTableData') }}</li>
-              <li>{{ $t('dataVerification.returnedData') }}</li>
+              <li>{{ $t('dataVerification_sourceTableData') }}</li>
+              <li>{{ $t('dataVerification_returnedData') }}</li>
             </ul>
             <ul class="sub-table">
               <li><JsonViewer :value="item.source"></JsonViewer></li>

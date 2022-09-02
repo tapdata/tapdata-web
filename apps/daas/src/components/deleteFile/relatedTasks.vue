@@ -7,9 +7,9 @@
         </div>
       </template>
 
-      <div v-else class="noData">{{ $t('message.noRelatedTask') }}</div>
+      <div v-else class="noData">{{ $t('message_noRelatedTask') }}</div>
 
-      <el-button class="e-button" slot="reference">{{ $t('message.clickRelatedTasks') }}</el-button>
+      <el-button class="e-button" slot="reference">{{ $t('message_clickRelatedTasks') }}</el-button>
     </el-popover>
   </div>
 </template>

@@ -11,7 +11,7 @@
         {{ $t('button_button') }}
       </ElButton>
       <div class="title">
-        <span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
+        <span>{{ types[0] === 'user' ? $t('classification_userTitle') : $t('classification_title') }}</span>
       </div>
       <!-- v-if="searchFalg" -->
       <div class="search-box">
@@ -47,10 +47,10 @@
             <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
             <ElDropdownMenu slot="dropdown">
               <ElDropdownItem command="add">
-                {{ $t('classification.addChildernNode') }}
+                {{ $t('classification_addChildernNode') }}
               </ElDropdownItem>
-              <ElDropdownItem command="edit">{{ $t('classification.editNode') }}</ElDropdownItem>
-              <ElDropdownItem command="delete">{{ $t('classification.deleteNode') }}</ElDropdownItem>
+              <ElDropdownItem command="edit">{{ $t('classification_editNode') }}</ElDropdownItem>
+              <ElDropdownItem command="delete">{{ $t('classification_deleteNode') }}</ElDropdownItem>
             </ElDropdownMenu>
           </ElDropdown>
         </span>
@@ -62,7 +62,7 @@
         @click="showDialog()"
         class="create"
       >
-        {{ types[0] === 'user' ? $t('classification.creatUserGroup') : $t('classification.creatDataClassification') }}
+        {{ types[0] === 'user' ? $t('classification_creatUserGroup') : $t('classification_creatDataClassification') }}
       </ElButton>
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
@@ -70,7 +70,7 @@
       <ElInput
         size="mini"
         v-model="dialogConfig.label"
-        :placeholder="$t('classification.nodeName')"
+        :placeholder="$t('classification_nodeName')"
         maxlength="50"
         show-word-limit
       ></ElInput>
@@ -312,9 +312,9 @@ export default {
         title:
           type === 'add'
             ? node
-              ? this.$t('classification.addChildernNode')
-              : this.$t('classification.addNode')
-            : this.$t('classification.editNode')
+              ? this.$t('classification_addChildernNode')
+              : this.$t('classification_addNode')
+            : this.$t('classification_editNode')
       }
     },
     hideDialog() {
@@ -331,14 +331,14 @@ export default {
       let method = 'post'
 
       if (!value || value.trim() === '') {
-        this.$message.error(this.$t('classification.nodeName'))
+        this.$message.error(this.$t('classification_nodeName'))
         return
       }
 
       if (this.types[0] === 'user') {
         let nameExist = await this.checkName(value)
         if (nameExist) {
-          return this.$message.error(this.$t('classification.nameExist'))
+          return this.$message.error(this.$t('classification_nameExist'))
         }
         let params = {
           name: value
@@ -383,9 +383,9 @@ export default {
     },
     deleteNode(id) {
       let that = this
-      this.$confirm(this.$t('classification.deteleMessage'), {
-        confirmButtonText: this.$t('message.delete'),
-        cancelButtonText: this.$t('message.cancel'),
+      this.$confirm(this.$t('classification_deteleMessage'), {
+        confirmButtonText: this.$t('message_delete'),
+        cancelButtonText: this.$t('message_cancel'),
         type: 'warning',
         closeOnClickModal: false
       }).then(resFlag => {

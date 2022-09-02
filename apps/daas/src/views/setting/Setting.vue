@@ -179,7 +179,7 @@
       </el-row>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" type="primary" @click="emailTemplateDialog = false">{{
-          $t('message.confirm')
+          $t('message_confirm')
         }}</el-button>
       </div>
     </el-dialog>

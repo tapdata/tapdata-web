@@ -23,7 +23,7 @@
         <template #default="{ row }">
           <ElLink type="primary" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(row)">{{ $t('button.delete') }}</ElLink>
+          <ElLink type="primary" @click="remove(row)">{{ $t('button_delete') }}</ElLink>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -147,10 +147,10 @@ export default {
               })}
             </div>
           </div>,
-          this.$t('dataFlow.importantReminder'),
+          this.$t('dataFlow_importantReminder'),
           {
             customClass: 'custom-node-edit-confirm',
-            confirmButtonText: this.$t('dataFlow.continueEditing'),
+            confirmButtonText: this.$t('dataFlow_continueEditing'),
             type: 'warning'
           }
         ).then(resFlag => {

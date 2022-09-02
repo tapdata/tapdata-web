@@ -153,9 +153,9 @@ export default {
         }
       ],
       syncTypeMap: {
-        initial_sync: this.$t('dataFlow.initial_sync'),
-        cdc: this.$t('dataFlow.cdc'),
-        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
+        initial_sync: this.$t('dataFlow_initial_sync'),
+        cdc: this.$t('dataFlow_cdc'),
+        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc')
       },
       list: [],
       loadingObj: {
@@ -379,7 +379,7 @@ export default {
         taskApi
           .reset(id)
           .then(data => {
-            this.responseHandler(data, this.$t('message.deleteOK'))
+            this.responseHandler(data, this.$t('message_deleteOK'))
           })
           // .catch(error => {
           //   if (error?.isException) {
@@ -412,7 +412,7 @@ export default {
       dataFlowsApi
         .update(where, attributes)
         .then(data => {
-          this.responseHandler(data, this.$t('message.deleteOK'))
+          this.responseHandler(data, this.$t('message_deleteOK'))
         })
         // .catch(error => {
         //   if (error?.isException) {
@@ -461,22 +461,22 @@ export default {
       const h = this.$createElement
       this.$confirm(
         h('p', null, [
-          h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
+          h('span', null, this.$t('dataFlow_modifyEditText')),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow_nodeLayoutProcess')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow_nodeAttributes')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow_matchingRelationship')),
           h('span', null, '，'),
-          h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
-          h('span', null, this.$t('dataFlow.runNomally')),
-          h('span', null, this.$t('dataFlow.editLayerTip'))
+          h('span', null, this.$t('dataFlow_afterSubmission')),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow_reset')),
+          h('span', null, this.$t('dataFlow_runNomally')),
+          h('span', null, this.$t('dataFlow_editLayerTip'))
         ]),
-        this.$t('dataFlow.importantReminder'),
+        this.$t('dataFlow_importantReminder'),
         {
           customClass: 'dataflow-clickTip',
-          confirmButtonText: this.$t('dataFlow.continueEditing'),
+          confirmButtonText: this.$t('dataFlow_continueEditing'),
           type: 'warning'
         }
       ).then(resFlag => {

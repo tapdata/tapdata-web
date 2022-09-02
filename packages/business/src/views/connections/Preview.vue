@@ -175,7 +175,7 @@ export default {
             icon: 'connect_schema',
             items: [
               {
-                label: this.$t('dataForm.form.databaseOwner'),
+                label: this.$t('dataForm_form_databaseOwner'),
                 key: 'database_owner'
               }
             ]
@@ -310,10 +310,10 @@ export default {
     async reload() {
       this.checkAgent(() => {
         let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
-          confirmButtonText: this.$t('message.confirm'),
-          cancelButtonText: this.$t('message.cancel'),
+          title: this.$t('connection_reloadTittle'),
+          Message: this.$t('connection_reloadMsg'),
+          confirmButtonText: this.$t('message_confirm'),
+          cancelButtonText: this.$t('message_cancel'),
           name: this.connection.name,
           id: this.connection.id
         }

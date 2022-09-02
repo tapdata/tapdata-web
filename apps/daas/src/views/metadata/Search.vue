@@ -4,53 +4,53 @@
       <div class="no-search-box-wrap" v-show="showNoSearch">
         <div class="no-search-box">
           <header class="metadata-search-title link-primary">
-            {{ $t('metadata.metadataSearch.title') }}
+            {{ $t('metadata_metadataSearch_title') }}
           </header>
           <el-input
-            :placeholder="$t('metadata.metadataSearch.placeholder')"
+            :placeholder="$t('metadata_metadataSearch_placeholder')"
             v-model="keyword"
             class="input-with"
             maxlength="100"
           >
             <el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
-              <el-option :label="$t('metadata.metadataSearch.table')" value="table"></el-option>
-              <el-option :label="$t('metadata.metadataSearch.column')" value="column"></el-option>
+              <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
+              <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
             </el-select>
             <el-button type="primary" slot="append" @click="handleSearch">{{
-              $t('metadata.metadataSearch.search')
+              $t('metadata_metadataSearch_search')
             }}</el-button>
           </el-input>
           <div class="desc">
-            {{ $t('metadata.metadataSearch.desc') }}
+            {{ $t('metadata_metadataSearch_desc') }}
           </div>
         </div>
       </div>
       <div class="search-box-wrap" v-show="!showNoSearch">
         <div class="search-box">
           <div class="search-header">
-            <span class="search-title">{{ $t('metadata.metadataSearch.title') }}</span>
+            <span class="search-title">{{ $t('metadata_metadataSearch_title') }}</span>
             <el-input
               class="input-with"
-              :placeholder="$t('metadata.metadataSearch.placeholder')"
+              :placeholder="$t('metadata_metadataSearch_placeholder')"
               v-model="keyword"
               ref="searchInput"
               maxlength="100"
               @keyup.native.13="handleSearch('')"
             >
               <el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
-                <el-option :label="$t('metadata.metadataSearch.table')" value="table"></el-option>
-                <el-option :label="$t('metadata.metadataSearch.column')" value="column"></el-option>
+                <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
+                <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
               </el-select>
               <el-button type="primary" slot="append" @click="handleSearch('')">{{
-                $t('metadata.metadataSearch.search')
+                $t('metadata_metadataSearch_search')
               }}</el-button>
             </el-input>
           </div>
           <div class="no-result" v-if="searchData.length === 0 && firstSearch === 0">
-            {{ $t('metadata.metadataSearch.noSearch') }}
+            {{ $t('metadata_metadataSearch_noSearch') }}
           </div>
           <div class="no-result" v-else-if="searchData.length === 0 && firstSearch !== 0">
-            {{ $t('metadata.metadataSearch.noResult') }}
+            {{ $t('metadata_metadataSearch_noResult') }}
           </div>
           <div ref="searchResult" class="search-result" v-else>
             <ul class="metadata-table">
@@ -85,9 +85,9 @@
                   </li>
                 </ul>
               </li>
-              <li class="more" v-if="noMore">{{ $t('metadata.metadataSearch.noMore') }} ?_(:з」∠)......</li>
+              <li class="more" v-if="noMore">{{ $t('metadata_metadataSearch_noMore') }} ?_(:з」∠)......</li>
               <li v-else class="more" v-loading="loading" @click="handleSearch(lastId)">
-                {{ $t('metadata.metadataSearch.more') }}
+                {{ $t('metadata_metadataSearch_more') }}
               </li>
             </ul>
           </div>

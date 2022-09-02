@@ -54,7 +54,7 @@ export default {
                 }
               }
             },
-            [this.$t('dataFlow.selectAll')]
+            [this.$t('dataFlow_selectAll')]
           )
         ]
       )

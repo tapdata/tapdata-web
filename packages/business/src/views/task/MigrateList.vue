@@ -24,23 +24,23 @@
         >
           <el-button class="btn-dropdowm" size="mini">
             <i class="iconfont icon-piliang back-btn-icon"></i>
-            <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
+            <span> {{ $t('dataFlow_taskBulkOperation') }}</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
-              $t('dataFlow.bulkExport')
+              $t('dataFlow_bulkExport')
             }}</el-dropdown-item>
             <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('dataFlow.bulkScheuled')
+              $t('dataFlow_bulkScheuled')
             }}</el-dropdown-item>
             <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('dataFlow.bulkStopping')
+              $t('dataFlow_bulkStopping')
             }}</el-dropdown-item>
             <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'">{{
-              $t('dataFlow.batchDelete')
+              $t('dataFlow_batchDelete')
             }}</el-dropdown-item>
             <el-dropdown-item command="initialize" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('dataFlow.batchRest')
+              $t('dataFlow_batchRest')
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -177,10 +177,10 @@
                   {{ $t('task_list_delete') }}
                 </el-dropdown-item>
                 <!--                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">-->
-                <!--                  {{ $t('dataFlow.addTag') }}-->
+                <!--                  {{ $t('dataFlow_addTag') }}-->
                 <!--                </el-dropdown-item>-->
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('dataVerify.dataVerify')
+                  $t('dataVerify_dataVerify')
                 }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -270,15 +270,15 @@ export default {
       progressOptions: [
         { label: this.$t('select_option_all'), value: '' },
         {
-          label: this.$t('dataFlow.initial_sync'),
+          label: this.$t('dataFlow_initial_sync'),
           value: 'initial_sync'
         },
         {
-          label: this.$t('dataFlow.cdc'),
+          label: this.$t('dataFlow_cdc'),
           value: 'cdc'
         },
         {
-          label: this.$t('dataFlow.initial_sync') + this.$t('dataFlow.cdc'),
+          label: this.$t('dataFlow_initial_sync') + this.$t('dataFlow_cdc'),
           value: 'initial_sync+cdc'
         }
       ],
@@ -289,9 +289,9 @@ export default {
       taskSettingsDialog: false, //任务调度设置弹窗开关
 
       syncType: {
-        initial_sync: this.$t('dataFlow.initial_sync'),
-        cdc: this.$t('dataFlow.cdc'),
-        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
+        initial_sync: this.$t('dataFlow_initial_sync'),
+        cdc: this.$t('dataFlow_cdc'),
+        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc')
       },
       statusTransformMap: {
         running: this.$t('task_list_transform_running'),
@@ -595,7 +595,7 @@ export default {
         }
         taskApi.batchDelete(ids).then(data => {
           this.table.fetch()
-          this.responseHandler(data, this.$t('message.deleteOK'))
+          this.responseHandler(data, this.$t('message_deleteOK'))
         })
       })
     },
@@ -612,7 +612,7 @@ export default {
           .batchRenew(ids)
           .then(data => {
             this.table.fetch()
-            this.responseHandler(data, this.$t('message.resetOk'))
+            this.responseHandler(data, this.$t('message_resetOk'))
           })
           .finally(() => {
             this.restLoading = false
@@ -628,7 +628,7 @@ export default {
     copy(ids, node) {
       taskApi.copy(node.id).then(() => {
         this.table.fetch()
-        this.$message.success(this.$t('message.copySuccess'))
+        this.$message.success(this.$t('message_copySuccess'))
       })
     },
     setTag(ids, node) {
@@ -664,10 +664,10 @@ export default {
       let failList = data?.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: this.$t('dataFlow.multiError.notFound'),
-          6: this.$t('dataFlow.multiError.statusError'),
-          7: this.$t('dataFlow.multiError.otherError'),
-          8: this.$t('dataFlow.multiError.statusError')
+          5: this.$t('dataFlow_multiError_notFound'),
+          6: this.$t('dataFlow_multiError_statusError'),
+          7: this.$t('dataFlow_multiError_otherError'),
+          8: this.$t('dataFlow_multiError_statusError')
         }
         let nameMapping = {}
         this.table.list.forEach(item => {
@@ -832,7 +832,7 @@ export default {
         if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
           r = 1 + this.$t('task_info_m')
         }
-        // r = parseInt(s) + this.$t('timeToLive.s')
+        // r = parseInt(s) + this.$t('timeToLive_s')
         if (m > 0) {
           r = parseInt(m) + this.$t('task_info_m')
         }

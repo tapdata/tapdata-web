@@ -25,7 +25,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
         </el-button>
         <el-button
           v-readonlybtn="'new_model_creation'"
@@ -35,11 +35,11 @@
           @click="openCreateDialog"
         >
           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-          <span>{{ $t('metadata.createModel') }}</span>
+          <span>{{ $t('metadata_createModel') }}</span>
         </el-button>
       </div>
       <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
-      <el-table-column :label="$t('metadata.header.name')" prop="name" sortable="custom">
+      <el-table-column :label="$t('metadata_header_name')" prop="name" sortable="custom">
         <template slot-scope="scope">
           <div class="metadata-name">
             <div class="name ellipsis">
@@ -62,22 +62,22 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.header.meta_type')" prop="meta_type" sortable="custom">
+      <el-table-column :label="$t('metadata_header_meta_type')" prop="meta_type" sortable="custom">
         <template slot-scope="scope">
           {{ $t('metadata.metaType.' + scope.row.meta_type) }}
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('metadata.header.last_user_name')"
+        :label="$t('metadata_header_last_user_name')"
         prop="username"
         sortable="custom"
       ></el-table-column>
-      <el-table-column :label="$t('metadata.header.last_updated')" prop="last_updated" sortable="custom">
+      <el-table-column :label="$t('metadata_header_last_updated')" prop="last_updated" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.lastUpdatedFmt }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')" width="180">
+      <el-table-column :label="$t('metadata_details_opera')" width="180">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"
@@ -100,7 +100,7 @@
             "
             @click="changeName(scope.row)"
           >
-            {{ $t('button.rename') }}
+            {{ $t('button_rename') }}
           </el-button>
           <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
@@ -244,7 +244,7 @@ export default {
               }
               const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
               if (v.split('.')[0] == 'system' || !flag) {
-                return callback(new Error(this.$t('dialog.placeholderTable')))
+                return callback(new Error(this.$t('dialog_placeholderTable')))
               }
               return callback()
             }
@@ -505,7 +505,7 @@ export default {
     remove(item) {
       const h = this.$createElement
       let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
+        this.$t('message_deleteOrNot') + ' ',
         h('span', { style: { color: '#2C65FF' } }, item.original_name)
       ])
       this.$confirm(message, '', {
@@ -517,7 +517,7 @@ export default {
           return
         }
         metadataInstancesApi.delete(item.id).then(() => {
-          this.$message.success(this.$t('message.deleteOK'))
+          this.$message.success(this.$t('message_deleteOK'))
           this.table.fetch()
         })
       })
