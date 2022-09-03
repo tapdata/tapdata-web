@@ -20,7 +20,7 @@
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
         <!--属性设置-->
-        <ElTabPane :label="$t('dag_property_setting')">
+        <ElTabPane :label="$t('packages_dag_dag_property_setting')">
           <FormPanel
             v-on="$listeners"
             v-bind="$attrs"
@@ -29,7 +29,7 @@
           ></FormPanel>
         </ElTabPane>
         <!--元数据-->
-        <ElTabPane :label="$t('dag_meta_data')">
+        <ElTabPane :label="$t('packages_dag_dag_meta_data')">
           <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
         </ElTabPane>
         <!--<ElTabPane label="数据详情">

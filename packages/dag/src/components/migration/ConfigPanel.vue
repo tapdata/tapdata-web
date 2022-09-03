@@ -16,7 +16,7 @@
         />
       </template>
       <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
-        {{ $t('task_stetting_basic_setting') }}
+        {{ $t('packages_dag_task_stetting_basic_setting') }}
       </div>
 
       <VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>

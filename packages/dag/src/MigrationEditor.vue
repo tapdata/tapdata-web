@@ -298,12 +298,12 @@ export default {
     },
 
     /*async validate() {
-      if (!this.dataflow.name) return this.$t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const dataNodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
       // if (dataNodes.length < 2) {
-      //   return this.$t('editor_cell_validate_none_data_node')
+      //   return this.$t('packages_dag_editor_cell_validate_none_data_node')
       // }
 
       await this.validateAllNodes()
@@ -386,7 +386,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        // this.$message.success(this.$t('message_save_ok'))
+        // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
@@ -462,7 +462,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('message_save_ok'))
+        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true

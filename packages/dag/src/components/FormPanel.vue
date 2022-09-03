@@ -239,18 +239,18 @@ export default {
             },
             properties: {
               flowEngineVersion: {
-                title: this.$t('dataFlow_flowEngineVersion'),
+                title: this.$t('packages_dag_dataFlow_flowEngineVersion'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 default: 'Data_Flow_Engine_V1',
                 enum: [
                   {
-                    label: this.$t('dataFlow_flowEngineV1'),
+                    label: this.$t('packages_dag_dataFlow_flowEngineV1'),
                     value: 'Data_Flow_Engine_V1'
                   },
                   {
-                    label: this.$t('dataFlow_jetFlowEngineV2'),
+                    label: this.$t('packages_dag_dataFlow_jetFlowEngineV2'),
                     value: 'Jet_Flow_Engine_V2'
                   }
                 ]
@@ -350,11 +350,11 @@ export default {
                 'x-component': 'Select',
                 enum: [
                   {
-                    label: this.$t('dataFlow_setting_intellect'),
+                    label: this.$t('packages_dag_dataFlow_setting_intellect'),
                     value: 'intellect'
                   },
                   {
-                    label: this.$t('dataFlow_setting_compel'),
+                    label: this.$t('packages_dag_dataFlow_setting_compel'),
                     value: 'compel'
                   }
                 ]
@@ -566,15 +566,15 @@ export default {
                             },
                             enum: [
                               {
-                                label: this.$t('dataFlow_SyncInfo_localTZType'),
+                                label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
                                 value: 'localTZ'
                               },
                               {
-                                label: this.$t('dataFlow_SyncInfo_connTZType'),
+                                label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
                                 value: 'connTZ'
                               },
                               {
-                                label: this.$t('dataFlow_SyncInfo_currentType'),
+                                label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
                                 value: 'current'
                               }
                             ]
