@@ -12,7 +12,7 @@
     </template>
     <template slot="operation" slot-scope="scope">
       <div class="operate-columns">
-        <ElButton size="mini" type="text" @click="goShareCdcInfo(scope.row.id)">{{ $t('task_info_info') }}</ElButton>
+        <ElButton size="mini" type="text" @click="goShareCdcInfo(scope.row.id)">{{ $t('packages_business_task_info_info') }}</ElButton>
       </div>
     </template>
   </TableList>
@@ -37,19 +37,19 @@ export default {
       taskList: [],
       columns: [
         {
-          label: this.$t('share_task_table_name'),
+          label: this.$t('packages_business_share_task_table_name'),
           prop: 'name'
         },
         {
-          label: this.$t('share_task_table_time'),
+          label: this.$t('packages_business_share_task_table_time'),
           slotName: 'sourceTimestamp'
         },
         {
-          label: this.$t('share_task_table_status'),
+          label: this.$t('packages_business_share_task_table_status'),
           slotName: 'status'
         },
         {
-          label: this.$t('column_operation'),
+          label: this.$t('packages_business_column_operation'),
           prop: 'operation',
           slotName: 'operation'
         }

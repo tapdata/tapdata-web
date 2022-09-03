@@ -18,13 +18,13 @@
       </template>
       <template slot="status" slot-scope="scope">
         <span :class="['status-connection-' + scope.row.status, 'status-block']">
-          {{ $t('connection_status_' + scope.row.status) }}
+          {{ $t('packages_business_connection_status_' + scope.row.status) }}
         </span>
       </template>
       <template slot="schemaHeader">
         <div>
-          {{ $t('connection_list_column_schema_status') }}
-          <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
+          {{ $t('packages_business_connection_list_column_schema_status') }}
+          <ElTooltip placement="top" :content="$t('packages_business_connection_list_column_schema_status_tips')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -35,11 +35,11 @@
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
           <ElButton size="mini" type="text" @click="testConnection(scope.row)">{{
-            $t('task_info_connection_test')
+            $t('packages_business_task_info_connection_test')
           }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton size="mini" type="text" @click="reload(scope.row)">{{
-            $t('connection_preview_load_schema')
+            $t('packages_business_connection_preview_load_schema')
           }}</ElButton>
         </div>
       </template>
@@ -75,39 +75,39 @@ export default {
       fetchTimer: null,
       columns: [
         {
-          label: this.$t('connection_list_name'),
+          label: this.$t('packages_business_connection_list_name'),
           slotName: 'name'
         },
         {
-          label: this.$t('connection_list_status'),
+          label: this.$t('packages_business_connection_list_status'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: this.$t('connection_list_type'),
+          label: this.$t('packages_business_connection_list_type'),
           prop: 'connectType'
         },
         {
-          label: this.$t('connection_list_schema_load_progress'),
+          label: this.$t('packages_business_connection_list_schema_load_progress'),
           prop: 'schema',
           headerSlot: 'schemaHeader',
           slotName: 'schema'
         },
         {
-          label: this.$t('connection_list_change_time'),
+          label: this.$t('packages_business_connection_list_change_time'),
           prop: 'last_updated',
           dataType: 'time'
         },
         {
-          label: this.$t('connection_list_operate'),
+          label: this.$t('packages_business_connection_list_operate'),
           prop: 'operation',
           slotName: 'operation'
         }
       ],
       connectTypeMap: {
-        source: this.$t('connection_list_source'),
-        target: this.$t('connection_list_target'),
-        source_and_target: this.$t('connection_list_source_and_target')
+        source: this.$t('packages_business_connection_list_source'),
+        target: this.$t('packages_business_connection_list_target'),
+        source_and_target: this.$t('packages_business_connection_list_source_and_target')
       }
     }
   },
@@ -178,17 +178,17 @@ export default {
         this.fetch()
       } catch (error) {
         // if (error?.isException) {
-        //   this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
+        //   this.$message.error(error?.response?.msg || this.$t('packages_business_connection_list_test_failed'))
         // }
       }
     },
     async reload(row) {
       this.checkAgent(() => {
         let config = {
-          title: this.$t('connection_reloadTittle'),
-          Message: this.$t('connection_reloadMsg'),
-          confirmButtonText: this.$t('button_confirm'),
-          cancelButtonText: this.$t('button_close'),
+          title: this.$t('packages_business_connection_reloadTittle'),
+          Message: this.$t('packages_business_connection_reloadMsg'),
+          confirmButtonText: this.$t('packages_business_button_confirm'),
+          cancelButtonText: this.$t('packages_business_button_close'),
           name: row.name,
           id: row.id
         }

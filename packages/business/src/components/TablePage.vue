@@ -35,7 +35,7 @@
             v-loading="loading"
             class="table-page-table"
             height="100%"
-            :element-loading-text="$t('dataFlow_dataLoading')"
+            :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
             :row-key="rowKey"
             :span-method="spanMethod"
             :data="list"

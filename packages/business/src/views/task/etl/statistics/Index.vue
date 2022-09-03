@@ -10,13 +10,13 @@
       ></Info>
       <div class="flex-1 mt-6 px-5 pb-12 bg-white">
         <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-          <ElTabPane :label="$t('task_monitor_progress')" name="schedule" lazy>
+          <ElTabPane :label="$t('packages_business_task_monitor_progress')" name="schedule" lazy>
             <Schedule :task="task" @sync="getSyncData"></Schedule>
           </ElTabPane>
-          <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
+          <ElTabPane :label="$t('packages_business_task_monitor_run_log')" name="log" lazy>
             <Log :id="task.id"></Log>
           </ElTabPane>
-          <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
+          <ElTabPane :label="$t('packages_business_task_monitor_mining_task')" name="sharedMing" lazy>
             <ShareMining :id="task.id"></ShareMining>
           </ElTabPane>
         </ElTabs>
@@ -50,7 +50,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('dataFlow_dataScreening'),
+          title: this.$t('packages_business_dataFlow_dataScreening'),
           loading: false
         },
         body: {
@@ -66,8 +66,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'second',
-          title: this.$t('dataFlow_inputOutput'),
-          tip: this.$t('dataFlow_throughputpop'),
+          title: this.$t('packages_business_dataFlow_inputOutput'),
+          tip: this.$t('packages_business_dataFlow_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           loading: false

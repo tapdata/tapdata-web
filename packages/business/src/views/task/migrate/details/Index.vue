@@ -9,19 +9,19 @@
     ></Info>
     <div class="card-box__content card-box px-6 py-2 mt-6">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-        <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
+        <ElTabPane :label="$t('packages_business_task_monitor_progress')" name="schedule">
           <Schedule :task="task" @sync="getSyncData"></Schedule>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
+        <ElTabPane :label="$t('packages_business_task_monitor_run_log')" name="log" lazy>
           <Log :id="task.id" style="max-height: 450px"></Log>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
+        <ElTabPane :label="$t('packages_business_task_monitor_run_connection')" name="connect" lazy>
           <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
+        <ElTabPane :label="$t('packages_business_task_monitor_history_run_record')" name="history" lazy>
           <History :ids="[task.parentId]" :operations="operations"></History>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
+        <ElTabPane :label="$t('packages_business_task_monitor_mining_task')" name="sharedMing" lazy>
           <ShareMining :id="task.id"></ShareMining>
         </ElTabPane>
       </ElTabs>
@@ -54,7 +54,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('task_info_data_screening'),
+          title: this.$t('packages_business_task_info_data_screening'),
           loading: false
         },
         body: {
@@ -70,8 +70,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'second',
-          title: this.$t('task_info_input_output'),
-          tip: this.$t('task_info_throughputpop'),
+          title: this.$t('packages_business_task_info_input_output'),
+          tip: this.$t('packages_business_task_info_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           loading: false

@@ -21,7 +21,7 @@
             </div>
             <div class="mr-6 mt-4 flex align-items-center">
               <VIcon size="12" class="v-icon">document</VIcon>
-              <span class="ml-1">{{ $t('task_details_desc') }}：</span>
+              <span class="ml-1">{{ $t('packages_business_task_details_desc') }}：</span>
               <InlineInput
                 :value="task.desc"
                 :icon-config="{ class: 'color-primary' }"
@@ -41,14 +41,14 @@
               @click="start($route.params.id, arguments[0])"
             >
               <VIcon size="12">start-fill</VIcon>
-              <span class="ml-1">{{ $t('task_button_start') }}</span>
+              <span class="ml-1">{{ $t('packages_business_task_button_start') }}</span>
             </ElButton>
             <ElButton
               v-if="isShowForceStop(task.statuses)"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', task.user_id)"
               @click="forceStop($route.params.id)"
             >
-              {{ $t('task_list_force_stop') }}
+              {{ $t('packages_business_task_list_force_stop') }}
             </ElButton>
             <ElButton
               v-else
@@ -58,15 +58,15 @@
               @click="stop($route.params.id, arguments[0])"
             >
               <VIcon size="12">pause-fill</VIcon>
-              <span class="ml-1">{{ $t('task_button_stop') }}</span>
+              <span class="ml-1">{{ $t('packages_business_task_button_stop') }}</span>
             </ElButton>
             <ElButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
-              <span class="ml-1">{{ $t('task_button_edit') }}</span>
+              <span class="ml-1">{{ $t('packages_business_task_button_edit') }}</span>
             </ElButton>
             <ElButton @click="toView(task.id)">
               <VIcon size="12">yulan</VIcon>
-              <span class="ml-1">{{ $t('button_check') }}</span>
+              <span class="ml-1">{{ $t('packages_business_button_check') }}</span>
             </ElButton>
           </div>
         </div>
@@ -83,19 +83,19 @@
     </div>
     <div class="sub-task flex-fill mt-6 px-6 py-2 bg-white">
       <ElTabs v-model="activeTab" class="dashboard-tabs">
-        <ElTabPane :label="$t('task_preview_subtasks')" name="subTask">
+        <ElTabPane :label="$t('packages_business_task_preview_subtasks')" name="subTask">
           <div slot="label">
-            <span class="mr-2">{{ $t('task_details_sub_task') }}</span>
-            <ElTooltip placement="top" :content="$t('task_info_subtasks_tip')">
+            <span class="mr-2">{{ $t('packages_business_task_details_sub_task') }}</span>
+            <ElTooltip placement="top" :content="$t('packages_business_task_info_subtasks_tip')">
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
           </div>
           <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect">
+        <ElTabPane :label="$t('packages_business_task_monitor_run_connection')" name="connect">
           <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history">
+        <ElTabPane :label="$t('packages_business_task_monitor_history_run_record')" name="history">
           <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
       </ElTabs>
@@ -129,33 +129,33 @@ export default {
         {
           key: 'creator',
           icon: 'account-fill',
-          label: this.$t('task_monitor_founder')
+          label: this.$t('packages_business_task_monitor_founder')
         },
         {
           key: 'updatedTime',
           icon: 'time-fill',
-          label: this.$t('task_monitor_change_time')
+          label: this.$t('packages_business_task_monitor_change_time')
         },
         {
           key: 'type',
           icon: 'menu',
-          label: this.$t('task_monitor_sync_type')
+          label: this.$t('packages_business_task_monitor_sync_type')
         }
       ],
       ouputItems: [
         {
           key: 'totalOutput',
-          label: this.$t('task_monitor_total_input')
+          label: this.$t('packages_business_task_monitor_total_input')
         },
         {
           key: 'totalInput',
-          label: this.$t('task_monitor_total_output')
+          label: this.$t('packages_business_task_monitor_total_output')
         }
       ],
       syncTypeMap: {
-        initial_sync: this.$t('dataFlow_initial_sync'),
-        cdc: this.$t('dataFlow_cdc'),
-        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc')
+        initial_sync: this.$t('packages_business_dataFlow_initial_sync'),
+        cdc: this.$t('packages_business_dataFlow_cdc'),
+        'initial_sync+cdc': this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
       },
       list: [],
       loadingObj: {
@@ -168,7 +168,7 @@ export default {
       pieData: [],
       pieOptions: {
         title: {
-          text: this.$t('task_status'),
+          text: this.$t('packages_business_task_status'),
           left: 'center',
           top: 'center',
           textStyle: {
@@ -286,7 +286,7 @@ export default {
       taskApi
         .start(id)
         .then(() => {
-          this.$message.success(this.$t('message_operation_succuess'))
+          this.$message.success(this.$t('packages_business_message_operation_succuess'))
         })
         .finally(resetLoading)
     },
@@ -313,7 +313,7 @@ export default {
           taskApi
             .stop(id)
             .then(() => {
-              this.$message.success(this.$t('message_operation_succuess'))
+              this.$message.success(this.$t('packages_business_message_operation_succuess'))
             })
             .finally(resetLoading)
         } else {
@@ -328,7 +328,7 @@ export default {
       }).then(resFlag => {
         if (resFlag) {
           taskApi.forceStop([id]).then(() => {
-            this.$message.success(this.$t('message_operation_succuess'))
+            this.$message.success(this.$t('packages_business_message_operation_succuess'))
           })
         }
       })
@@ -379,7 +379,7 @@ export default {
         taskApi
           .reset(id)
           .then(data => {
-            this.responseHandler(data, this.$t('message_deleteOK'))
+            this.responseHandler(data, this.$t('packages_business_message_deleteOK'))
           })
           // .catch(error => {
           //   if (error?.isException) {
@@ -412,7 +412,7 @@ export default {
       dataFlowsApi
         .update(where, attributes)
         .then(data => {
-          this.responseHandler(data, this.$t('message_deleteOK'))
+          this.responseHandler(data, this.$t('packages_business_message_deleteOK'))
         })
         // .catch(error => {
         //   if (error?.isException) {
@@ -453,7 +453,7 @@ export default {
         })
         .then(() => {
           this.task.desc = val
-          this.$message.success(this.$t('message_update_success'))
+          this.$message.success(this.$t('packages_business_message_update_success'))
         })
     },
     // 编辑
@@ -461,22 +461,22 @@ export default {
       const h = this.$createElement
       this.$confirm(
         h('p', null, [
-          h('span', null, this.$t('dataFlow_modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow_nodeLayoutProcess')),
+          h('span', null, this.$t('packages_business_dataFlow_modifyEditText')),
+          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_nodeLayoutProcess')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow_nodeAttributes')),
+          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_nodeAttributes')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow_matchingRelationship')),
+          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_matchingRelationship')),
           h('span', null, '，'),
-          h('span', null, this.$t('dataFlow_afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow_reset')),
-          h('span', null, this.$t('dataFlow_runNomally')),
-          h('span', null, this.$t('dataFlow_editLayerTip'))
+          h('span', null, this.$t('packages_business_dataFlow_afterSubmission')),
+          h('span', { style: 'color: #409EFF' }, this.$t('packages_business_dataFlow_reset')),
+          h('span', null, this.$t('packages_business_dataFlow_runNomally')),
+          h('span', null, this.$t('packages_business_dataFlow_editLayerTip'))
         ]),
-        this.$t('dataFlow_importantReminder'),
+        this.$t('packages_business_dataFlow_importantReminder'),
         {
           customClass: 'dataflow-clickTip',
-          confirmButtonText: this.$t('dataFlow_continueEditing'),
+          confirmButtonText: this.$t('packages_business_dataFlow_continueEditing'),
           type: 'warning'
         }
       ).then(resFlag => {

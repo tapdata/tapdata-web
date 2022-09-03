@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="$t('connection_createNewDataSource')"
+    :title="$t('packages_business_connection_createNewDataSource')"
     :visible="dialogVisible"
     :append-to-body="true"
     width="1030px"

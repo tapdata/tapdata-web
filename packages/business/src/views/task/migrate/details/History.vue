@@ -28,26 +28,26 @@ export default {
   data() {
     return {
       mapData: {
-        start: this.$t('task_start_task'),
-        stop: this.$t('task_stop_task'),
-        forceStop: this.$t('task_info_forced_stop_task')
+        start: this.$t('packages_business_task_start_task'),
+        stop: this.$t('packages_business_task_stop_task'),
+        forceStop: this.$t('packages_business_task_info_forced_stop_task')
       },
       columns: [
         {
-          label: this.$t('task_name'),
+          label: this.$t('packages_business_task_name'),
           prop: 'parameter1'
         },
         {
-          label: this.$t('task_info_running_time'),
+          label: this.$t('packages_business_task_info_running_time'),
           prop: 'createTime',
           dataType: 'time'
         },
         {
-          label: this.$t('task_info_operator'),
+          label: this.$t('packages_business_task_info_operator'),
           prop: 'username'
         },
         {
-          label: this.$t('task_info_operator_content'),
+          label: this.$t('packages_business_task_info_operator_content'),
           prop: 'desc',
           slotName: 'desc'
         }

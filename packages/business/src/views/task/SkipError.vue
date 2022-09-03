@@ -1,15 +1,15 @@
 <template>
-  <el-dialog :title="$t('dataFlow_skipError_title')" :visible.sync="dialogVisible" width="60%">
-    <div class="skip-tip">{{ $t('dataFlow_skipError_tip') }}</div>
-    <div class="skip-tip">{{ $t('dataFlow_skipError_attention') }}</div>
+  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" :visible.sync="dialogVisible" width="60%">
+    <div class="skip-tip">{{ $t('packages_business_dataFlow_skipError_tip') }}</div>
+    <div class="skip-tip">{{ $t('packages_business_dataFlow_skipError_attention') }}</div>
     <div class="skip-name">
-      {{ `${$t('dataFlow_skipError_taskName')}:` }}
+      {{ `${$t('packages_business_dataFlow_skipError_taskName')}:` }}
       <span class="link-primary">{{ task.name }}</span>
     </div>
     <ul class="error-list">
       <span class="check-all"
         ><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
-          $t('dataFlow_selectAll')
+          $t('packages_business_dataFlow_selectAll')
         }}</el-checkbox></span
       >
       <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
@@ -24,11 +24,11 @@
     </ul>
     <div class="total">
       {{ errorTotal }} {{ checkedData.length }}
-      {{ $t('dataFlow_skipError_strip') }}
+      {{ $t('packages_business_dataFlow_skipError_strip') }}
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false" size="mini">{{ $t('dataFlow_skipError_cancel') }}</el-button>
-      <el-button type="primary" size="mini" @click="skipErrorData">{{ $t('dataFlow_skipError_startJob') }}</el-button>
+      <el-button @click="dialogVisible = false" size="mini">{{ $t('packages_business_dataFlow_skipError_cancel') }}</el-button>
+      <el-button type="primary" size="mini" @click="skipErrorData">{{ $t('packages_business_dataFlow_skipError_startJob') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -45,7 +45,7 @@ export default {
       checkAll: false,
       checkedData: [],
       task: {},
-      errorTotal: this.$t('dataFlow_skipError_errorTotal')
+      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
     }
   },
   methods: {

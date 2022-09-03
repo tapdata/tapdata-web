@@ -1,7 +1,7 @@
 <template>
   <div class="database">
     <el-radio-group v-if="!hideType && otherTypes.length" class="pb-5" v-model="type" @change="changeType">
-      <el-radio-button label="sourcedata">{{ $t('connection_form_data_source') }}</el-radio-button>
+      <el-radio-button label="sourcedata">{{ $t('packages_business_connection_form_data_source') }}</el-radio-button>
       <el-radio-button label="other">Other Type</el-radio-button>
     </el-radio-group>
     <template v-if="type === 'sourcedata'">
@@ -87,8 +87,8 @@ export default {
   data() {
     return {
       type: 'sourcedata',
-      comingDesc1: this.$t('connection_selector_desc1'),
-      comingDesc2: this.$t('connection_selector_desc2'),
+      comingDesc1: this.$t('packages_business_connection_selector_desc1'),
+      comingDesc2: this.$t('packages_business_connection_selector_desc2'),
       comingTypes: [
         { name: 'MongoDB', type: 'mongodb' },
         { name: 'MySQL', type: 'mysql' },

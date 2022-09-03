@@ -1,12 +1,12 @@
 <template>
   <div class="milestone-container">
     <div class="inline-flex align-items-center fs-7 font-color-dark cursor-pointer" @click="toggleFnc">
-      <span>{{ $t('task_monitor_mission_milestone') }}</span>
+      <span>{{ $t('packages_business_task_monitor_mission_milestone') }}</span>
       <VIcon v-if="isFold" class="v-icon ml-1">arrow-right</VIcon>
       <VIcon v-else class="v-icon ml-1">arrow-down</VIcon>
     </div>
     <TableList
-      :empty-text="$t('task_monitor_no_milestone_data')"
+      :empty-text="$t('packages_business_task_monitor_no_milestone_data')"
       :data="milestoneList"
       :columns="milestoneColumns"
       max-height="300"
@@ -23,12 +23,12 @@
           type="text"
           @click="checkError(scope.row.errorMessage)"
         >
-          {{ $t('milestone_btn_check_error') }}
+          {{ $t('packages_business_milestone_btn_check_error') }}
         </ElButton>
       </template>
       <template slot="status" slot-scope="scope">
         <span :class="['status-' + scope.row.status, 'fs-8', 'px-2', 'py-1', 'rounded-md']">
-          {{ $t('milestone_list_status_' + getMilestoneStatus(scope.row.status)) }}
+          {{ $t('packages_business_milestone_list_status_' + getMilestoneStatus(scope.row.status)) }}
         </span>
 
         <!-- <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)"></StatusTag> -->
@@ -62,18 +62,18 @@ export default {
       isFold: this.fold,
       milestoneColumns: [
         {
-          label: this.$t('task_info_milestone'),
+          label: this.$t('packages_business_task_info_milestone'),
           prop: 'label',
           slotName: 'label'
         },
         {
-          label: this.$t('task_monitor_status'),
+          label: this.$t('packages_business_task_monitor_status'),
           prop: 'status',
           slotName: 'status',
           width: 100
         },
         {
-          label: this.$t('task_monitor_time'),
+          label: this.$t('packages_business_task_monitor_time'),
           prop: 'fromNow',
           width: 160
         }
@@ -94,7 +94,7 @@ export default {
       return result
     },
     checkError(msg) {
-      this.$confirm(msg, this.$t('task_info_error'), {
+      this.$confirm(msg, this.$t('packages_business_task_info_error'), {
         type: 'warning',
         width: '850px',
         customClass: 'milestone-check-error-container'

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="$t('dataFlow_batchSortOperation')"
+    :title="$t('packages_business_dataFlow_batchSortOperation')"
     :visible="dialogVisible"
     width="600px"
     class="SelectClassify-dialog"
@@ -45,8 +45,8 @@
       </span>
     </el-tree>
     <span slot="footer" class="dialog-footer">
-      <el-button class="message-button-cancel" @click="handleCancel" size="mini">{{ $t('button_cancel') }}</el-button>
-      <el-button type="primary" @click="handleAdd" size="mini">{{ $t('button_save') }}</el-button>
+      <el-button class="message-button-cancel" @click="handleCancel" size="mini">{{ $t('packages_business_button_cancel') }}</el-button>
+      <el-button type="primary" @click="handleAdd" size="mini">{{ $t('packages_business_button_save') }}</el-button>
     </span>
   </el-dialog>
 </template>
