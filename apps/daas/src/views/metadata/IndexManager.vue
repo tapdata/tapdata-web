@@ -25,18 +25,18 @@
       </el-table-column>
       <el-table-column :label="$t('metadata_details_index_unique')" prop="unique">
         <template slot-scope="scope">
-          <span>{{ $t('metadata.details.index.unique_' + !!scope.row.unique) }}</span>
+          <span>{{ $t('metadata_details_index_unique_' + !!scope.row.unique) }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('metadata_details_index_status')" prop="status">
         <template slot-scope="scope">
-          <span>{{ $t('metadata.details.index.status_' + scope.row.status) }}</span>
+          <span>{{ $t('metadata_details_index_status_' + scope.row.status) }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('metadata_details_index_create_by')" prop="create_by">
         <!-- <template slot-scope="scope">
           <span>{{
-            $t('metadata.details.index.create_by_' + scope.row.create_by)
+            $t('metadata_details_index_create_by_' + scope.row.create_by)
           }}</span>
         </template> -->
       </el-table-column>

@@ -17,8 +17,8 @@ export default {
       [
         this.$t('notification_account') + ' ',
         h('span', { style: activeTextStyle }, record.username || record.email),
-        this.$t('notification.operation.' + record.operation),
-        this.$t('notification.modular.' + record.modular) + ' ',
+        this.$t('notification_operation_' + record.operation),
+        this.$t('notification_modular_' + record.modular) + ' ',
         h('span', { style: activeTextStyle }, record.parameter1)
       ]
     )

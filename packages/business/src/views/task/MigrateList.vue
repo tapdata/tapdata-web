@@ -458,7 +458,7 @@ export default {
         message = 'bulk_' + message
       }
       const h = this.$createElement
-      let strArr = this.$t('dataFlow.' + message).split('xxx')
+      let strArr = this.$t('dataFlow_' + message).split('xxx')
       let msg = h(
         'p',
         {
@@ -478,7 +478,7 @@ export default {
       )
       return {
         msg,
-        title: this.$t('dataFlow.' + title)
+        title: this.$t('dataFlow_' + title)
       }
     },
     handleCommand(command, node) {

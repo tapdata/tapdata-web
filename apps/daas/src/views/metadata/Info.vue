@@ -199,7 +199,7 @@
                             <div class="dropInfo">
                               <span v-for="item in scope.row.relation" :key="item.key"
                                 >{{ item.table_name }}, {{ item.field_name }},{{
-                                  $t('metadata.details.' + item.rel)
+                                  $t('metadata_details_' + item.rel)
                                 }}</span
                               >
                             </div>

@@ -11,7 +11,7 @@
             <template slot-scope="scope">
               <div v-if="scope.row.result !== 'del'">
                 <span :class="{ activeColor: scope.row.result !== 'eq' }" v-if="!scope.row.isCustom">{{
-                  $t('metadata.details.' + scope.row.key)
+                  $t('metadata_details_' + scope.row.key)
                 }}</span>
                 <span :class="{ activeColor: scope.row.result !== 'eq' }" v-else>{{ scope.row.key }}</span>
               </div>
@@ -22,7 +22,7 @@
             <template slot-scope="scope">
               <div v-if="scope.row.result !== 'add'">
                 <span :class="{ activeColor: scope.row.result !== 'eq' }" v-if="!scope.row.isCustom">{{
-                  $t('metadata.details.' + scope.row.key)
+                  $t('metadata_details_' + scope.row.key)
                 }}</span>
                 <span :class="{ activeColor: scope.row.result !== 'eq' }" v-else>{{ scope.row.key }}</span>
               </div>

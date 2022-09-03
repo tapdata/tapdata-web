@@ -274,7 +274,7 @@ export default {
                 id: item.id,
                 name: item.name,
                 label: `${item.name} ${
-                  item.status ? `(${this.$t('connection.status.' + item.status) || item.status})` : ''
+                  item.status ? `(${this.$t('connection_status_' + item.status) || item.status})` : ''
                 }`,
                 value: item.id,
                 databaseType: item.database_type,
@@ -376,7 +376,7 @@ export default {
                 id: item.id,
                 name: item.name,
                 label: `${item.name} ${
-                  item.status ? `(${this.$t('connection.status.' + item.status) || item.status})` : ''
+                  item.status ? `(${this.$t('connection_status_' + item.status) || item.status})` : ''
                 }`,
                 value: item.id,
                 databaseType: item.database_type,

@@ -47,14 +47,14 @@
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
-              {{ $t('connection.status.' + row.status) }}
+              {{ $t('connection_status_' + row.status) }}
             </span>
           </div>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="connection_type" min-width="120" :label="$t('connection_connectionType')">
         <template slot-scope="scope">
-          {{ $t('connection.type.' + scope.row.connection_type) }}
+          {{ $t('connection_type_' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="140">

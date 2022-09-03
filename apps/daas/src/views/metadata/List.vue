@@ -64,7 +64,7 @@
       </el-table-column>
       <el-table-column :label="$t('metadata_header_meta_type')" prop="meta_type" sortable="custom">
         <template slot-scope="scope">
-          {{ $t('metadata.metaType.' + scope.row.meta_type) }}
+          {{ $t('metadata_metaType_' + scope.row.meta_type) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -201,7 +201,7 @@ export default {
       dbOptions: [],
       metaTypeOptions: types.map(v => {
         return {
-          label: this.$t('metadata.metaType.' + v),
+          label: this.$t('metadata_metaType_' + v),
           value: v
         }
       }),

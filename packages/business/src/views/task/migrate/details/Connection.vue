@@ -18,7 +18,7 @@
       </template>
       <template slot="status" slot-scope="scope">
         <span :class="['status-connection-' + scope.row.status, 'status-block']">
-          {{ $t('connection.status.' + scope.row.status) }}
+          {{ $t('connection_status_' + scope.row.status) }}
         </span>
       </template>
       <template slot="schemaHeader">

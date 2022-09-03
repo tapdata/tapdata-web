@@ -1640,7 +1640,7 @@ export default {
       let message = operateStr + '_confirm_message'
 
       const h = this.$createElement
-      let strArr = this.$t('dataFlow.' + message).split('xxx')
+      let strArr = this.$t('dataFlow_' + message).split('xxx')
       let msg = h('p', null, [
         strArr[0],
         h(
