@@ -253,7 +253,7 @@ export const FieldRename = connect(
           if (node && node.parent && node.parent.childNodes) {
             let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
             if (parentNode && parentNode.length === 2) {
-              this.$message.error(data.field_name + this.$t('message_exists_name'))
+              this.$message.error(data.field_name + this.$t('packages_form_message_exists_name'))
               exist = true
             }
           }

@@ -41,7 +41,7 @@
             </ul>
             <div class="task-form-left__ul flex flex-column align-items-center" v-else>
               <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
-              <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+              <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
             </div>
           </div>
           <ElPagination
@@ -78,7 +78,7 @@
                 <VIcon>refresh</VIcon>
               </ElButton>
               <ElButton v-if="!readOnly" type="text" class="btn-rest" @click="updateMetaData">
-                {{ $t('button_reset') }}
+                {{ $t('packages_form_button_reset') }}
               </ElButton>
             </div>
           </div>
@@ -89,7 +89,7 @@
             v-loading="loadingTable"
           >
             <ElTableColumn type="index" width="55" label="序号"></ElTableColumn>
-            <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_field')" prop="field_name">
+            <ElTableColumn show-overflow-tooltip :label="$t('packages_form_dag_dialog_field_mapping_field')" prop="field_name">
               <template #default="{ row }">
                 <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
                   >{{ row.targetFieldName }}
@@ -98,14 +98,14 @@
                 <span v-else class="item" :show-overflow-tooltip="true">{{ row.targetFieldName }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_type')" prop="sourceFieldType">
+            <ElTableColumn :label="$t('packages_form_dag_dialog_field_mapping_type')" prop="sourceFieldType">
               <template #default="{ row }">
                 <div>
                   <span :show-overflow-tooltip="true">{{ row.sourceFieldType }}</span>
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('meta_table_default')">
+            <ElTableColumn :label="$t('packages_form_meta_table_default')">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!readOnly" @click="edit(row, 'defaultValue')">
                   <ElTooltip class="item" effect="dark" :content="row.defaultValue" placement="left">
@@ -118,7 +118,7 @@
             </ElTableColumn>
             <div class="field-mapping-table__empty" slot="empty">
               <div class="table__empty_img" style="margin-left: 30%"><img style="" :src="noData" /></div>
-              <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+              <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
             </div>
           </ElTable>
         </div>
@@ -143,13 +143,13 @@
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-              <div v-if="index === 0">{{ $t('dag_dialog_field_mapping_range_precision') }}</div>
+              <div v-if="index === 0">{{ $t('packages_form_dag_dialog_field_mapping_range_precision') }}</div>
               <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
             </div>
             <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
-              <div>{{ $t('dag_dialog_field_mapping_range_scale') }}</div>
+              <div>{{ $t('packages_form_dag_dialog_field_mapping_range_scale') }}</div>
               <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
@@ -163,8 +163,8 @@
         v-model="editValueType[currentOperationType]"
       ></ElInput>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="handleClose()">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="editSave()">{{ $t('button_confirm') }}</ElButton>
+        <ElButton @click="handleClose()">{{ $t('packages_form_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="editSave()">{{ $t('packages_form_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
@@ -206,8 +206,8 @@ export default {
         defaultValue: ''
       },
       titleType: {
-        sourceFieldType: this.$t('dag_dialog_field_mapping_tittle_data_type'),
-        defaultValue: this.$t('dag_dialog_field_mapping_tittle_value')
+        sourceFieldType: this.$t('packages_form_dag_dialog_field_mapping_tittle_data_type'),
+        defaultValue: this.$t('packages_form_dag_dialog_field_mapping_tittle_value')
       },
       position: 0,
       selectRow: '',

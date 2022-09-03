@@ -238,10 +238,10 @@ export const FilterConditions = connect(
           btns = !conditions.length
             ? [
                 <el-button plain size="mini" icon="el-icon-plus" onClick={() => this.addCond('cond')}>
-                  {$t('queryBuilder_addCond')}
+                  {$t('packages_form_queryBuilder_addCond')}
                 </el-button>,
                 <el-button plain size="mini" icon="el-icon-plus" onClick={() => this.addCond('group')}>
-                  ({$t('queryBuilder_addCond')})
+                  ({$t('packages_form_queryBuilder_addCond')})
                 </el-button>
               ]
             : [

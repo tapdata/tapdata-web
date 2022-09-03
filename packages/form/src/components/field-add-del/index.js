@@ -378,7 +378,7 @@ export const FieldAddDel = connect(
             (parentNode && parentNode.length >= 1 && name === 'newFieldName') ||
             (parentNode && parentNode.length > 1 && name !== 'newFieldName')
           ) {
-            this.$message.error(name + this.$t('message_exists_name'))
+            this.$message.error(name + this.$t('packages_form_message_exists_name'))
             exist = true
           }
           return exist

@@ -136,7 +136,7 @@ export const FieldValue = connect(
               <ElForm>
                 <ElFormItem>
                   <ElInput
-                    placeholder="$t('editor_cell_processor_field_form_expression')"
+                    placeholder="$t('packages_form_editor_cell_processor_field_form_expression')"
                     v-model={this.scriptDialog.script}
                     size="mini"
                   >

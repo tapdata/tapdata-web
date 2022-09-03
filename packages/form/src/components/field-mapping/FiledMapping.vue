@@ -7,7 +7,7 @@
       :disabled="stateIsReadonly"
       @click.stop="dialogVisible = true"
     >
-      {{ $t('button_edit') }}
+      {{ $t('packages_form_button_edit') }}
     </ElLink>
     <List ref="list" :isMetaData="true" :readOnly="true" :updateList="updateList"></List>
     <Dialog v-if="dialogVisible" :visible.sync="dialogVisible"></Dialog>
