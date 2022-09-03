@@ -133,7 +133,7 @@ export default {
           required: true,
           validator(rule, value, callback) {
             if ((!value && value !== 0) || (value && !(value + '').trim())) {
-              callback(new Error(`${config.label}` + self.$t('formBuilder_noneText')))
+              callback(new Error(`${config.label}` + self.$t('packages_component_formBuilder_noneText')))
             } else {
               callback()
             }

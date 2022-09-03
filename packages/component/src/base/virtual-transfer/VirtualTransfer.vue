@@ -5,9 +5,9 @@
       v-bind="$props"
       ref="leftPanel"
       :data="sourceData"
-      :title="titles[0] || $t('transfer_titles_0')"
+      :title="titles[0] || $t('packages_component_transfer_titles_0')"
       :default-checked="leftDefaultChecked"
-      :placeholder="filterPlaceholder || $t('filter_placeholder')"
+      :placeholder="filterPlaceholder || $t('packages_component_filter_placeholder')"
       @checked-change="onSourceCheckedChange"
     >
       <slot name="left" :option="option"></slot>
@@ -38,9 +38,9 @@
       v-bind="$props"
       ref="rightPanel"
       :data="targetData"
-      :title="titles[1] || $t('transfer_titles_1')"
+      :title="titles[1] || $t('packages_component_transfer_titles_1')"
       :default-checked="rightDefaultChecked"
-      :placeholder="filterPlaceholder || $t('filter_placeholder')"
+      :placeholder="filterPlaceholder || $t('packages_component_filter_placeholder')"
       @checked-change="onTargetCheckedChange"
     >
       <slot name="right" :option="option"></slot>

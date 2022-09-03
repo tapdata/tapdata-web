@@ -10,8 +10,8 @@
     <div>
       <ElInput v-model="current"></ElInput>
       <div class="btn-row">
-        <ElButton type="primary" @click="confirm">{{ $t('gl_button_confirm') }}</ElButton>
-        <ElButton @click="cancel">{{ $t('gl_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="confirm">{{ $t('packages_component_gl_button_confirm') }}</ElButton>
+        <ElButton @click="cancel">{{ $t('packages_component_gl_button_cancel') }}</ElButton>
       </div>
     </div>
     <div slot="reference" class="inner-select">

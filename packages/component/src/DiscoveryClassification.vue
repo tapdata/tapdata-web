@@ -44,15 +44,15 @@
             <ElDropdown size="mini" @command="handleRowCommand($event, node)">
               <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
               <ElDropdownMenu slot="dropdown">
-                <ElDropdownItem command="edit">{{ $t('classification_editNode') }}</ElDropdownItem>
-                <ElDropdownItem command="delete">{{ $t('classification_deleteNode') }}</ElDropdownItem>
+                <ElDropdownItem command="edit">{{ $t('packages_component_classification_editNode') }}</ElDropdownItem>
+                <ElDropdownItem command="delete">{{ $t('packages_component_classification_deleteNode') }}</ElDropdownItem>
               </ElDropdownMenu>
             </ElDropdown>
           </span>
         </span>
       </ElTree>
       <ElButton v-if="treeData && treeData.length === 0 && isExpand" type="text" @click="showDialog()" class="create">
-        {{ types[0] === 'user' ? $t('classification_creatUserGroup') : $t('classification_creatDataClassification') }}
+        {{ types[0] === 'user' ? $t('packages_component_classification_creatUserGroup') : $t('packages_component_classification_creatDataClassification') }}
       </ElButton>
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
@@ -62,7 +62,7 @@
           <ElInput
             size="mini"
             v-model="dialogConfig.label"
-            :placeholder="$t('classification_nodeName')"
+            :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
           ></ElInput>
@@ -84,9 +84,9 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('button_confirm') }}
+          {{ $t('packages_component_button_confirm') }}
         </ElButton>
       </span>
     </ElDialog>
@@ -355,9 +355,9 @@ export default {
         title:
           type === 'add'
             ? node
-              ? this.$t('classification_addChildernNode')
-              : this.$t('classification_addNode')
-            : this.$t('classification_editNode')
+              ? this.$t('packages_component_classification_addChildernNode')
+              : this.$t('packages_component_classification_addNode')
+            : this.$t('packages_component_classification_editNode')
       }
     },
     hideDialog() {
@@ -374,14 +374,14 @@ export default {
       let method = 'post'
 
       if (!value || value.trim() === '') {
-        this.$message.error(this.$t('classification_nodeName'))
+        this.$message.error(this.$t('packages_component_classification_nodeName'))
         return
       }
 
       if (this.types[0] === 'user') {
         let nameExist = await this.checkName(value)
         if (nameExist) {
-          return this.$message.error(this.$t('classification_nameExist'))
+          return this.$message.error(this.$t('packages_component_classification_nameExist'))
         }
         let params = {
           name: value
@@ -432,9 +432,9 @@ export default {
     },
     deleteNode(id) {
       let that = this
-      this.$confirm(this.$t('classification_deteleMessage'), {
-        confirmButtonText: this.$t('message_delete'),
-        cancelButtonText: this.$t('message_cancel'),
+      this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
+        confirmButtonText: this.$t('packages_component_message_delete'),
+        cancelButtonText: this.$t('packages_component_message_cancel'),
         type: 'warning',
         closeOnClickModal: false
       }).then(resFlag => {

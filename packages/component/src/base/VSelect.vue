@@ -54,7 +54,7 @@ export default {
                 }
               }
             },
-            [this.$t('dataFlow_selectAll')]
+            [this.$t('packages_component_dataFlow_selectAll')]
           )
         ]
       )

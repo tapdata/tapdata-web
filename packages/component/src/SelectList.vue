@@ -117,7 +117,7 @@
       <span
         :class="['inner-select__selected', { placeholder: !selectedLabel }]"
         :style="{ 'max-width': selectedWidth }"
-        >{{ selectedLabel || $t('common_placeholder_select') }}</span
+        >{{ selectedLabel || $t('packages_component_common_placeholder_select') }}</span
       >
       <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
@@ -278,14 +278,14 @@ export default {
 
     emptyText() {
       if (this.loading) {
-        return this.loadingText || this.$t('el_select_loading')
+        return this.loadingText || this.$t('packages_component_el_select_loading')
       } else {
         if (this.remote && this.query === '' && this.options.length === 0) return false
         if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
-          return this.noMatchText || this.$t('el_select_noMatch')
+          return this.noMatchText || this.$t('packages_component_el_select_noMatch')
         }
         if (this.filteredItems.length === 0) {
-          return this.noDataText || this.$t('el_select_noData')
+          return this.noDataText || this.$t('packages_component_el_select_noData')
         }
       }
       return null

@@ -69,16 +69,16 @@ export default {
       this.editor = editor
       this.beautify = beautify
       let typeMapping = {
-        custom: this.$t('function_type_option_custom'),
-        jar: this.$t('function_type_option_jar'),
-        system: this.$t('function_type_option_system')
+        custom: this.$t('packages_component_function_type_option_custom'),
+        jar: this.$t('packages_component_function_type_option_jar'),
+        system: this.$t('packages_component_function_type_option_system')
       }
       const formatCache = item => {
         return {
           caption: item.name,
           snippet: getCode(item)[0],
           type: 'snippet',
-          meta: this.$t('shared_cache')
+          meta: this.$t('packages_component_shared_cache')
         }
       }
       const formatFunction = item => {
