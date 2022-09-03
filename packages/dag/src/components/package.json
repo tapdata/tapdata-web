@@ -2,5 +2,6 @@
   "name": "components",
   "version": "1.0.0",
   "dependencies": {
+    "@tap/i18n": "workspace:^1.0.0"
   }
 }
