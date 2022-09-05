@@ -466,6 +466,7 @@ export default {
             id,
             name,
             apiType,
+            basePath,
             connectionId,
             tableName,
             params,
@@ -494,7 +495,7 @@ export default {
             datasource: connectionId, // 冗余老字段
             tableName,
             tablename: tableName, // 冗余老字段
-            basePath: '',
+            basePath,
 
             paths: [
               {
