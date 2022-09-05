@@ -216,7 +216,9 @@ export default {
       let params = {
         tables: tables
       }
-      taskApi.autoInspectAgain(this.$route.params.id, params)
+      taskApi.autoInspectAgain(this.$route.params.id, params).then(() => {
+        this.disableAgainVerify = true // 发起再次校验后 不能再校验
+      })
     },
 
     remoteMethod({ page }) {
