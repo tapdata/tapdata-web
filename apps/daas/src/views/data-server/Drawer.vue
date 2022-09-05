@@ -502,22 +502,23 @@ export default {
             connectionName,
             connectionType,
             operationType: method,
-            datasource: connectionId, // 冗余老字段
             tableName,
-            tablename: tableName, // 冗余老字段
             basePath,
+            readConcern: '',
+            readPreference: '',
+            readPreferenceTag: '',
+
+            datasource: connectionId, // 冗余老字段
+            tablename: tableName, // 冗余老字段
             apiVersion: '', // 冗余老字段
             prefix: '', // 冗余老字段
-            readConcern: '', // 冗余老字段
-            readPreference: '', // 冗余老字段
-            readPreferenceTag: '', // 冗余老字段
-            listtags: [],
+            listtags: [], // 冗余老字段
 
             paths: [
               {
                 name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage', // 冗余老字段
                 result: 'Page<Document>', // 冗余老字段
-                type: 'preset', // 冗余老字段
+                type: apiType === 'customerQuery' ? 'customerQuery' : 'preset', // 冗余老字段
                 acl: ['admin'], // 冗余老字段
 
                 method,
@@ -561,6 +562,8 @@ export default {
       const data = await databaseTypesApi.get().catch(() => {
         this.databaseTypes = []
       })
+      // this.databaseTypes =
+      //   data?.filter(it => it.capabilities?.some(c => c.id === 'api_server_supported'))?.map(it => it.name) || []
       this.databaseTypes = data?.map(it => it.name) || []
     },
     // 获取可选连接

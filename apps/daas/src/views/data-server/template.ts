@@ -1,5 +1,5 @@
-module.exports = {
-  java: `public String doGet(String url, String token, String param) {
+module.exports = function (url, token) {
+  let javaTemplate = `public String doGet(String url, String token, String param) {
   try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
     StringBuilder urlBuilder = new StringBuilder(url);
     urlBuilder.append("?access_token=").append(token);
@@ -22,9 +22,10 @@ module.exports = {
   } catch (IOException e) {
     throw new RuntimeException(e);
   }
-}
-    `,
-  javascript: `import fetch from 'node-fetch';
+}`
+    .replace('{{url}}', url)
+    .replace('{{access_token}}', token)
+  let jsTemplate = `import fetch from 'node-fetch';
 async function get(url){
   const response = await fetch(url);
   const data = await response.json();
@@ -50,8 +51,10 @@ post(url + '/find?access_token='+access_token,{}).then(data=>{
   console.info(data)
 }).catch(err=>{
   console.error(err)
-})`,
-  python: `import requests
+})`
+    .replace('{{url}}', url)
+    .replace('{{access_token}}', token)
+  let pythonTemplate = `import requests
 
 url = ''
 parms01 = {
@@ -61,4 +64,11 @@ ret = requests.get(url,params=parms01)
 print(ret)
 print(ret.text)
 print(ret.json())`
+    .replace('{{url}}', url)
+    .replace('{{access_token}}', token)
+  return {
+    java: javaTemplate,
+    javascript: jsTemplate,
+    python: pythonTemplate
+  }
 }
