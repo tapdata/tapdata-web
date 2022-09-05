@@ -77,7 +77,9 @@
                 'options-active': nodeMenu.typeId === n.id
               }"
               :task-type="dataflow.type"
+              :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
+              :quota="quota"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
