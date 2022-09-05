@@ -95,6 +95,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSider from './components/migration/LeftSider'
@@ -192,7 +194,7 @@ export default {
     },
 
     'dataflow.status'(v) {
-      console.log('状态监听', v) // eslint-disable-line
+      console.log(i18n.t('packages_dag_src_migrationeditor_zhuangtaijianting'), v) // eslint-disable-line
       if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
         // this.$refs.console?.loadData()
         if (v === 'running') {
@@ -234,15 +236,15 @@ export default {
     initNodeType() {
       this.addProcessorNode([
         {
-          name: '表编辑',
+          name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
           type: 'table_rename_processor'
         },
         {
-          name: '字段编辑',
+          name: i18n.t('packages_dag_src_migrationeditor_ziduanbianji'),
           type: 'migrate_field_rename_processor'
         },
         {
-          name: 'JS处理',
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor'
         }
       ])
@@ -392,7 +394,7 @@ export default {
         })
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error('任务保存出错', e)
+        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
         this.handleError(e)
       }
       this.isSaving = false

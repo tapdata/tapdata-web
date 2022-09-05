@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { debounce } from 'lodash'
 import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
@@ -19,7 +21,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '标题'
+      default: i18n.t('packages_dag_components_linechart_biaoti')
     },
     data: {
       type: Object,
@@ -47,7 +49,7 @@ export default {
             '2000-06-19',
             '2000-06-20'
           ],
-          name: ['标题'],
+          name: [i18n.t('packages_dag_components_linechart_biaoti')],
           value: [12, 3, 42, 4, 78, 24, 7, 5, 44, 22, 12, 3, 42, 4, 78, 24, 7, 5, 44, 222]
         }
       }
@@ -152,7 +154,7 @@ export default {
                 fontSize: 20,
                 fontWeight: '500'
               },
-              text: '暂无数据',
+              text: i18n.t('packages_dag_dag_dialog_field_mapping_no_data'),
               left: 'center',
               top: 'center'
             }

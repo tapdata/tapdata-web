@@ -1,12 +1,14 @@
 <template>
   <ElTable :data="tableData" stripe style="width: 100%" height="100%">
-    <ElTableColumn prop="date" label="日期" width="180"> </ElTableColumn>
-    <ElTableColumn prop="name" label="姓名" width="180"> </ElTableColumn>
-    <ElTableColumn prop="address" label="地址"> </ElTableColumn>
+    <ElTableColumn prop="date" :label="$t('packages_dag_components_datapane_riqi')" width="180"> </ElTableColumn>
+    <ElTableColumn prop="name" :label="$t('packages_dag_components_datapane_xingming')" width="180"> </ElTableColumn>
+    <ElTableColumn prop="address" :label="$t('packages_dag_components_datapane_dizhi')"> </ElTableColumn>
   </ElTable>
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 export default {
   name: 'DataPane',
   data() {
@@ -14,38 +16,38 @@ export default {
       tableData: [
         {
           date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
+          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
+          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
         },
         {
           date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+          name: i18n.t('packages_dag_components_datapane_wangxiaohu'),
+          address: i18n.t('packages_dag_components_datapane_shanghaishiputuo')
         }
       ]
     }

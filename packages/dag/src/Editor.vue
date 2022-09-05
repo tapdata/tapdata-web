@@ -85,6 +85,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSidebar from './components/LeftSidebar'
@@ -196,7 +198,7 @@ export default {
           type: 'js_processor'
         },
         {
-          name: '聚合',
+          name: i18n.t('packages_dag_src_editor_juhe'),
           type: 'aggregation_processor'
         },
         {
@@ -204,27 +206,27 @@ export default {
           type: 'row_filter_processor'
         },
         {
-          name: '连接',
+          name: i18n.t('packages_dag_dag_connection'),
           type: 'join_processor'
         },
         {
-          name: '主从合并',
+          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
           type: 'merge_table_processor'
         },
         {
-          name: '字段计算',
+          name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
           type: 'field_calc_processor'
         },
         {
-          name: '类型修改',
+          name: i18n.t('packages_dag_src_editor_leixingxiugai'),
           type: 'field_mod_type_processor'
         },
         {
-          name: '字段改名',
+          name: i18n.t('packages_dag_src_editor_ziduangaiming'),
           type: 'field_rename_processor'
         },
         {
-          name: '增删字段',
+          name: i18n.t('packages_dag_src_editor_zengshanziduan'),
           type: 'field_add_del_processor'
         }
       ])
@@ -485,7 +487,7 @@ export default {
         })
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error('任务保存出错', e)
+        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
         this.handleError(e)
       }
       this.isSaving = false
@@ -619,7 +621,7 @@ export default {
       }
     },*/
 
-    handleError(error, msg = '出错了') {
+    handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
       if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []
         if (error.data?.data) {

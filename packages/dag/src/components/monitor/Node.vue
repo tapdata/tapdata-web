@@ -4,14 +4,14 @@
       <div class="node-card-content p-2">
         <div class="grid statistic-list">
           <div v-if="taskType !== 'initial_sync'" class="statistic span-2">
-            <div class="statistic-title">增量时间点</div>
+            <div class="statistic-title">{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</div>
             <div class="statistic-content">
               <div class="statistic-value">{{ cdcEventStartTime }}</div>
             </div>
           </div>
 
           <div class="statistic">
-            <div class="statistic-title">耗时</div>
+            <div class="statistic-title">{{ $t('packages_dag_monitor_node_haoshi') }}</div>
             <div class="statistic-content">
               <div class="statistic-value">{{ timeCostAvg }}</div>
             </div>
@@ -25,7 +25,7 @@
           </div>
 
           <div class="statistic">
-            <div class="statistic-title">累计输入事件</div>
+            <div class="statistic-title">{{ $t('packages_dag_monitor_node_leijishurushi') }}</div>
             <div class="statistic-content">
               <ElTooltip transition="tooltip-fade-in" :content="inputTotal.toLocaleString()">
                 <div class="statistic-value">{{ calcUnit(inputTotal) }}</div>
@@ -34,7 +34,7 @@
           </div>
 
           <div class="statistic">
-            <div class="statistic-title">累计输出事件</div>
+            <div class="statistic-title">{{ $t('packages_dag_monitor_node_leijishuchushi') }}</div>
             <div class="statistic-content">
               <ElTooltip transition="tooltip-fade-in" :content="outputTotal.toLocaleString()">
                 <div class="statistic-value">{{ calcUnit(outputTotal) }}</div>
@@ -57,6 +57,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 
 import { VIcon } from '@tap/component'
@@ -91,19 +93,19 @@ export default {
       id: this.$attrs.id,
       seriesItemMap: {
         wait: {
-          name: '待进行',
+          name: i18n.t('packages_dag_monitor_node_daijinhang'),
           color: '#F7D762'
         },
         process: {
-          name: '进行中',
+          name: i18n.t('packages_dag_monitor_node_jinhangzhong'),
           color: '#88DBDA'
         },
         success: {
-          name: '已完成',
+          name: i18n.t('packages_dag_task_preview_status_complete'),
           color: '#82C647'
         },
         error: {
-          name: '错误',
+          name: i18n.t('packages_dag_task_preview_status_error'),
           color: '#EC8181'
         }
       },
@@ -156,12 +158,14 @@ export default {
       const { snapshotInsertRowTotal, snapshotRowTotal, outputQps } = this.sample
       return snapshotRowTotal
         ? snapshotInsertRowTotal === snapshotRowTotal
-          ? '已完成'
-          : `${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 ${
-              outputQps
+          ? i18n.t('packages_dag_task_preview_status_complete')
+          : i18n.t('packages_dag_monitor_node_snaps', {
+              val1: snapshotInsertRowTotal,
+              val2: snapshotRowTotal,
+              val3: outputQps
                 ? calcTimeUnit(Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000), 2)
                 : '-'
-            }`
+            })
         : '-'
     },
 
@@ -224,14 +228,14 @@ export default {
     initialPieData: {
       immediate: true,
       handler(v) {
-        this.seriesHandler(this.initialSyncOption, v, '全量状态')
+        this.seriesHandler(this.initialSyncOption, v, i18n.t('packages_dag_monitor_node_quanliangzhuangtai'))
       }
     },
 
     cdcPieData: {
       immediate: true,
       handler(v) {
-        this.seriesHandler(this.cdcOption, v, '增量状态')
+        this.seriesHandler(this.cdcOption, v, i18n.t('packages_dag_monitor_node_zengliangzhuangtai'))
       }
     }
   },

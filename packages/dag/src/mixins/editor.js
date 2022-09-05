@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
 import { taskApi } from '@tap/api'
@@ -160,7 +161,12 @@ export default {
       allowSource = typeof allowSource === 'boolean' ? allowSource : true
       const connectionType = target.attrs.connectionType
       if (!allowSource || (connectionType && !connectionType.includes('target'))) {
-        showMsg && this.$message.error(`该节点「${target.name}」仅支持作为源`)
+        showMsg &&
+          this.$message.error(
+            i18n.t('packages_dag_mixins_editor_gaijiedianta', {
+              val1: target.name
+            })
+          )
         return false
       }
       return true
@@ -171,7 +177,12 @@ export default {
       allowTarget = typeof allowTarget === 'boolean' ? allowTarget : true
       const connectionType = source.attrs.connectionType
       if (!allowTarget || (connectionType && !connectionType.includes('source'))) {
-        showMsg && this.$message.error(`该节点「${source.name}」仅支持作为目标`)
+        showMsg &&
+          this.$message.error(
+            i18n.t('packages_dag_mixins_editor_gaijiedianso', {
+              val1: source.name
+            })
+          )
         return false
       }
       return true
@@ -182,7 +193,7 @@ export default {
       const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + target.id })
 
       if (maxInputs !== -1 && connections.length >= maxInputs) {
-        showMsg && this.$message.error('该节点已经达到最大连线限制')
+        showMsg && this.$message.error(i18n.t('packages_dag_mixins_editor_gaijiedianyijing'))
         return false
       }
       return true
@@ -193,7 +204,7 @@ export default {
       const connections = this.jsPlumbIns.getConnections({ source: NODE_PREFIX + source.id })
 
       if (maxOutputs !== -1 && connections.length >= maxOutputs) {
-        showMsg && this.$message.error('该节点已经达到最大连线限制')
+        showMsg && this.$message.error(i18n.t('packages_dag_mixins_editor_gaijiedianyijing'))
         return false
       }
       return true
@@ -204,11 +215,23 @@ export default {
       const { allowTarget } = source.__Ctor
 
       if (typeof allowSource === 'function' && !allowSource(source, target)) {
-        showMsg && this.$message.error(`该节点「${target.name}」不支持「${source.name}」作为源`)
+        showMsg &&
+          this.$message.error(
+            i18n.t('packages_dag_mixins_editor_gaijiedianta', {
+              val1: target.name,
+              val2: source.name
+            })
+          )
         return false
       }
       if (typeof allowTarget === 'function' && !allowTarget(target, source)) {
-        showMsg && this.$message.error(`「${source.name}」不支持该节点「${target.name}」作为目标`)
+        showMsg &&
+          this.$message.error(
+            i18n.t('packages_dag_mixins_editor_sourc', {
+              val1: source.name,
+              val2: target.name
+            })
+          )
         return false
       }
       return true
@@ -236,7 +259,7 @@ export default {
     },
 
     async newDataflow() {
-      this.dataflow.name = '新任务@' + new Date().toLocaleTimeString()
+      this.dataflow.name = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
     },
 
@@ -537,7 +560,7 @@ export default {
         this.stopDagWatch = this.$watch(
           () => [this.allNodes.length, this.allEdges.length],
           () => {
-            console.log('initView-dataflowEdit 开启的监听') // eslint-disable-line
+            console.log(i18n.t('packages_dag_mixins_editor_initV')) // eslint-disable-line
             this.updateDag()
           }
         )
@@ -572,7 +595,7 @@ export default {
         this.stopDagWatch = this.$watch(
           () => [this.allNodes.length, this.allEdges.length],
           () => {
-            console.log('initView-Editor 开启的监听') // eslint-disable-line
+            console.log(i18n.t('packages_dag_mixins_editor_initV')) // eslint-disable-line
             this.updateDag()
           }
         )
@@ -652,7 +675,7 @@ export default {
             location: 0.35,
             create() {
               const div = document.createElement('div')
-              div.title = '添加节点'
+              div.title = i18n.t('packages_dag_components_dfnode_tianjiajiedian')
               div.classList.add('conn-btn__wrap')
               div.innerHTML = `<div class="conn-btn"><span class="v-icon"> <svg class="v-icon__svg"><use xlink:href="#icon-plus"></use></svg> </span></div>`
               return div
@@ -675,7 +698,7 @@ export default {
             location: 0.65,
             create() {
               const div = document.createElement('div')
-              div.title = '删除连接'
+              div.title = i18n.t('packages_dag_mixins_editor_shanchulianjie')
               div.classList.add('conn-btn__wrap')
               div.innerHTML = `<div class="conn-btn"><span class="v-icon"> <svg class="v-icon__svg"><use xlink:href="#icon-close"></use></svg> </span></div>`
               return div
@@ -955,7 +978,7 @@ export default {
         this.clearNodeError(node.id)
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.log('节点校验错误', e)
+        console.log(i18n.t('packages_dag_mixins_editor_jiedianjiaoyancuo'), e)
         this.setNodeError(node.id)
       }
     },
@@ -984,23 +1007,33 @@ export default {
         const outputNum = node.$outputs.length
 
         if (this.hasNodeError(id)) {
-          someErrorMsg = `「 ${node.name} 」配置异常`
+          someErrorMsg = i18n.t('packages_dag_mixins_editor_noden', {
+            val1: node.name
+          })
           return true
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
+          someErrorMsg = i18n.t('packages_dag_mixins_editor_noden', {
+            val1: node.name,
+            val2: minInputs
+          })
           return true
         }
 
         if (outputNum < minOutputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minOutputs}个目标节点`
+          someErrorMsg = i18n.t('packages_dag_mixins_editor_noden', {
+            val1: node.name,
+            val2: minOutputs
+          })
           return true
         }
 
         if (!inputNum && !outputNum) {
           // 存在没有连线的节点
-          someErrorMsg = `「 ${node.name} 」没有任何连线`
+          someErrorMsg = i18n.t('packages_dag_mixins_editor_noden', {
+            val1: node.name
+          })
           return true
         }
       })
@@ -1027,7 +1060,7 @@ export default {
 
         if (!chooseId) {
           // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
+          someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage') // 一样提示冲突
         } else {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
@@ -1035,12 +1068,12 @@ export default {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
+                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', { val1: agent.hostName, val2: agent.ip })
               })
               isError = true
             }
           })
-          isError && (someErrorMsg = `所属agent节点冲突`)
+          isError && (someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage'))
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
@@ -1055,7 +1088,7 @@ export default {
         await this.$refs.configPanel.validateSetting()
       } catch (e) {
         this.setActiveType('settings')
-        return '任务设置异常'
+        return i18n.t('packages_dag_mixins_editor_renwushezhiyi')
       }
     },
 
@@ -1130,12 +1163,12 @@ export default {
 
     validateLink() {
       const firstSourceNode = this.allNodes.find(node => !node.$inputs.length)
-      if (!firstSourceNode) return '任务链路不完整'
+      if (!firstSourceNode) return i18n.t('packages_dag_mixins_editor_renwulianlubu')
       this.eachMap = {}
       this.eachOutputs(firstSourceNode)
 
       if (this.allNodes.some(node => !this.eachMap[node.id])) {
-        return '不支持多条链路，请重新编辑任务链路'
+        return i18n.t('packages_dag_mixins_editor_buzhichiduotiao')
       }
     },
 
@@ -1150,7 +1183,7 @@ export default {
             hasEnableDDLAndIncreasesql = true
             this.setNodeErrorMsg({
               id: node.id,
-              msg: `该节点不支持DDL，请关闭`
+              msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi')
             })
           }
         }
@@ -1159,7 +1192,7 @@ export default {
         }
       })
       if ((hasEnableDDL && hasJsNode) || hasEnableDDLAndIncreasesql) {
-        return '任务中含有JS节点、自定义节点、或节点设置增量自定义SQL，暂不支持DDL，请手动关闭'
+        return i18n.t('packages_dag_mixins_editor_renwuzhonghanyou')
       }
       // 任务中没有JS节点、自定义节点、并开关闭增量自定义SQL 时DDL按钮才会开放
     },
@@ -1515,7 +1548,7 @@ export default {
       return newPosition
     },
 
-    handleError(error, msg = '出错了') {
+    handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
       error = error.data
       if (error?.code === 'Task.ListWarnMessage') {
         let names = []
@@ -1696,14 +1729,14 @@ export default {
       try {
         const data = await taskApi.get(id, params)
         if (!data) {
-          this.$message.error('任务不存在')
+          this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           this.handlePageReturn()
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
         return data
       } catch (e) {
-        console.log('任务加载出错', e) // eslint-disable-line
+        console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
       } finally {
         this.loading = false
       }

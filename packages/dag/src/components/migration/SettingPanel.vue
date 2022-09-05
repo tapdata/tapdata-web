@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapGetters } from 'vuex'
 import { createForm } from '@formily/core'
 // import { observable } from '@formily/reactive'
@@ -181,7 +183,7 @@ export default observer({
                               type: 'string',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: '请选择',
+                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze'),
                                 style: 'margin-bottom:10px'
                               },
                               default: 'current',
@@ -256,8 +258,7 @@ export default observer({
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip:
-                            '当任务符合以下情况下，即使开启开关任务也不会进行校验\n 1.添加了中间处理节点\n 2.源连接不支持校验\n 3.目标连接不支持校验'
+                          tooltip: i18n.t('packages_dag_migration_settingpanel_dangrenwufuhe')
                         },
                         'x-component': 'Switch'
                       },
@@ -283,7 +284,7 @@ export default observer({
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               feedbackLayout: 'none',
-                              addonAfter: '秒'
+                              addonAfter: i18n.t('packages_dag_dag_data_setting_second')
                             },
                             'x-component': 'InputNumber',
                             'x-component-props': {
@@ -316,8 +317,8 @@ export default observer({
                             type: 'boolean',
                             'x-component': 'Select',
                             enum: [
-                              { label: '批量', value: false },
-                              { label: '逐条', value: true }
+                              { label: i18n.t('packages_dag_components_formpanel_piliang'), value: false },
+                              { label: i18n.t('packages_dag_components_formpanel_zhutiao'), value: true }
                             ]
                           },
                           increaseReadSize: {
@@ -344,8 +345,14 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Select',
                         enum: [
-                          { label: this.$t('packages_dag_connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-                          { label: this.$t('packages_dag_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                          {
+                            label: this.$t('packages_dag_connection_form_automatic'),
+                            value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+                          },
+                          {
+                            label: this.$t('packages_dag_connection_form_manual'),
+                            value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                          }
                         ],
                         'x-reactions': [
                           {

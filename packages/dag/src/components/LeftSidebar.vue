@@ -93,7 +93,7 @@
                   </div>
                   <VEmpty v-if="!dbList.length" />
                   <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ t('loading') }}<span class="dotting"></span>
+                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
                   </div>
                 </div>
               </ElSkeleton>
@@ -113,7 +113,7 @@
           <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
             >search-outline</VIcon
           >
-          <ElTooltip :content="t('dag_create_table_as_node')" placement="top">
+          <ElTooltip :content="$t('dag_create_table_as_node')" placement="top">
             <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
           </ElTooltip>
         </div>
@@ -123,7 +123,7 @@
             <ElInput
               v-model="tbSearchTxt"
               ref="tbInput"
-              :placeholder="t('table_name_search_placeholder')"
+              :placeholder="$t('table_name_search_placeholder')"
               size="mini"
               clearable
               @keydown.native.stop
@@ -171,7 +171,7 @@
                   </div>
                   <VEmpty v-if="!tbList.length" />
                   <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ t('loading') }}<span class="dotting"></span>
+                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
                   </div>
                 </div>
               </div>
@@ -224,7 +224,7 @@
     <!-- E 节点拖拽元素 -->
 
     <ElDialog
-      title="选择数据源类型"
+      :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
       width="1030px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"

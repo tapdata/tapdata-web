@@ -3,39 +3,39 @@
     <ShadowSvg></ShadowSvg>
     <div class="hotkey-list user-select-none">
       <div>
-        <span class="mr-2">复制</span>
+        <span class="mr-2">{{ $t('packages_dag_components_paperempty_fuzhi') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>C</kbd>
         <span class="mx-2">/</span>
-        <span class="mr-2">粘贴</span>
+        <span class="mr-2">{{ $t('packages_dag_components_paperempty_zhantie') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>V</kbd>
       </div>
 
       <div>
-        <span class="mr-2">撤销</span>
+        <span class="mr-2">{{ $t('packages_dag_button_undo') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>Z</kbd>
         <span class="mx-2">/</span>
-        <span class="mr-2">重做</span>
+        <span class="mr-2">{{ $t('packages_dag_button_redo') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>⇧</kbd><span class="mx-1">+</span><kbd>Z</kbd>
       </div>
 
       <div>
-        <span class="mr-2">放大</span>
+        <span class="mr-2">{{ $t('packages_dag_button_zoom_in') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd>
         <span class="mx-2">/</span>
-        <span class="mr-2">缩小</span>
+        <span class="mr-2">{{ $t('packages_dag_button_zoom_out') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
       </div>
 
       <div>
-        <span class="mr-2">画布实际尺寸</span>
+        <span class="mr-2">{{ $t('packages_dag_components_paperempty_huabushijichi') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>0</kbd>
         <span class="mx-2">/</span>
-        <span class="mr-2">适应画布</span>
+        <span class="mr-2">{{ $t('packages_dag_components_paperempty_shiyinghuabu') }}</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>1</kbd>
       </div>
 
       <div>
-        <span class="mr-2">自动布局</span>
+        <span class="mr-2">{{ $t('packages_dag_button_auto_layout') }}</span>
         <kbd>⌘</kbd>
         <span class="mx-1">+</span>
         <kbd>⌥</kbd>
@@ -43,7 +43,10 @@
         <kbd>L</kbd>
       </div>
 
-      <div><span class="mr-2">删除</span><kbd>⌫</kbd></div>
+      <div>
+        <span class="mr-2">{{ $t('packages_dag_button_delete') }}</span
+        ><kbd>⌫</kbd>
+      </div>
     </div>
   </div>
 </template>

@@ -8,7 +8,7 @@
               <template>
                 <span class="flex-1 user-select-none text-truncate flex align-center">
                   <!--连接-->
-                  {{ t('dag_connection') }}
+                  {{ $t('packages_dag_dag_connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
                 <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
@@ -23,7 +23,7 @@
               <ElInput
                 v-model="dbSearchTxt"
                 ref="dbInput"
-                :placeholder="t('connection_name_search_placeholder')"
+                :placeholder="$t('connection_name_search_placeholder')"
                 size="mini"
                 clearable
                 @keydown.native.stop
@@ -89,7 +89,7 @@
                   </div>
                   <VEmpty v-if="!dbList.length" />
                   <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ t('loading') }}<span class="dotting"></span>
+                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
                   </div>
                 </div>
               </ElSkeleton>
@@ -148,7 +148,7 @@
     <!-- E 节点拖拽元素 -->
 
     <ElDialog
-      title="选择数据源类型"
+      :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
       width="1030px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"

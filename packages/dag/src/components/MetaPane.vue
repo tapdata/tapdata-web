@@ -8,7 +8,10 @@
       :getDataFlow="getDataFlow"
       @returnPreFixSuffix="loadFields"
     ></FieldMapping>
-    <div class="total mb-2 mt-4">共有 {{ tableData.length }} 个字段</div>
+    <div class="total mb-2 mt-4">
+      {{ $t('packages_dag_components_metapane_gongyou') }}{{ tableData.length
+      }}{{ $t('packages_dag_components_metapane_geziduan') }}
+    </div>
     <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
       <ElTableColumn width="56" type="index" :label="$t('packages_dag_meta_table_index')"> </ElTableColumn>
       <ElTableColumn prop="field_name" :label="$t('packages_dag_meta_table_field_name')">

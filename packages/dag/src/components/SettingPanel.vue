@@ -9,9 +9,9 @@
       :disabled="stateIsReadonly"
     >
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
-        <ElTabPane label="基本设置" name="base">
+        <ElTabPane :label="$t('packages_dag_components_settingpanel_jibenshezhi')" name="base">
           <div class="setting-panel-box bg-white pt-3">
-            <div class="setting-title fs-7 px-5">任务设置</div>
+            <div class="setting-title fs-7 px-5">{{ $t('packages_dag_task_stetting_basic_setting') }}</div>
             <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
@@ -73,11 +73,11 @@
             </div>
           </div>
         </ElTabPane>
-        <ElTabPane label="高级设置" name="advanced">
+        <ElTabPane :label="$t('packages_dag_task_stetting_most_setting')" name="advanced">
           <div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
-              运行设置
-              <span class="pl-2">任务在启动和运行时的环境设置</span>
+              {{ $t('packages_dag_components_settingpanel_yunxingshezhi')
+              }}<span class="pl-2">{{ $t('packages_dag_components_settingpanel_renwuzaiqidong') }}</span>
             </div>
             <div class="px-5">
               <ElRow>
@@ -92,7 +92,10 @@
                         :label="$t('packages_dag_connection_form_automatic')"
                         value="AUTOMATIC_PLATFORM_ALLOCATION"
                       ></ElOption>
-                      <ElOption :label="$t('packages_dag_connection_form_manual')" value="MANUALLY_SPECIFIED_BY_THE_USER"></ElOption>
+                      <ElOption
+                        :label="$t('packages_dag_connection_form_manual')"
+                        value="MANUALLY_SPECIFIED_BY_THE_USER"
+                      ></ElOption>
                     </ElSelect>
 
                     <ElSelect
@@ -111,8 +114,8 @@
           </div>
           <div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
-              读写设置
-              <span class="pl-2">任务在进行读取和写入时执行的策略</span>
+              {{ $t('packages_dag_components_settingpanel_duxieshezhi')
+              }}<span class="pl-2">{{ $t('packages_dag_components_settingpanel_renwuzaijinhang') }}</span>
             </div>
             <div class="px-5">
               <ElRow>
@@ -158,8 +161,8 @@
           </div>-->
           <div class="setting-panel-box bg-white border-bottom mt-5 px-5">
             <div class="setting-title fs-7">
-              增量设置
-              <span class="pl-2">任务的同步类型为增量或全量+增量时执行的</span>
+              {{ $t('packages_dag_components_settingpanel_zengliangshezhi')
+              }}<span class="pl-2">{{ $t('packages_dag_components_settingpanel_renwudetongbu') }}</span>
             </div>
             <div class="pb-5">
               <ElRow>
@@ -179,9 +182,9 @@
                         class="pl-5 mr-1"
                         :min="1"
                         controls-position="right"
-                      ></ElInputNumber>
-                      秒
-                    </template>
+                      ></ElInputNumber
+                      >{{ $t('packages_dag_components_settingpanel_miao') }}</template
+                    >
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="3" v-if="settings.type === 'cdc'">
@@ -194,8 +197,8 @@
                   <!--增量数据处理模式-->
                   <ElFormItem :label="$t('packages_dag_task_setting_share_cdc_mode')">
                     <ElSelect v-model="settings.increOperationMode">
-                      <ElOption label="批量" :value="false"></ElOption>
-                      <ElOption label="逐条" :value="true"></ElOption>
+                      <ElOption :label="$t('packages_dag_components_formpanel_piliang')" :value="false"></ElOption>
+                      <ElOption :label="$t('packages_dag_components_formpanel_zhutiao')" :value="true"></ElOption>
                     </ElSelect>
                     <template v-if="!settings.increOperationMode">
                       <ElInputNumber
@@ -208,7 +211,7 @@
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="4">
-                  <ElFormItem label="处理器线程数:">
+                  <ElFormItem :label="$t('packages_dag_components_settingpanel_chuliqixiancheng')">
                     <ElInputNumber
                       v-model="settings.processorThreadNum"
                       :min="1"
@@ -224,11 +227,14 @@
                   <ElCol :span="12" v-for="item in settings.syncPoints" :key="item.name">
                     <ElRow>
                       <div class="labelTxt">
-                        数据源:
-                        {{ item.connectionName || item.connectionId }}
+                        {{ $t('packages_dag_components_settingpanel_shujuyuan')
+                        }}{{ item.connectionName || item.connectionId }}
                       </div>
                       <ElCol :span="8" style="margin-right: 10px">
-                        <ElSelect v-model="item.pointType" placeholder="请选择">
+                        <ElSelect
+                          v-model="item.pointType"
+                          :placeholder="$t('packages_dag_components_formpanel_qingxuanze')"
+                        >
                           <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
                           </ElOption>
                         </ElSelect>
@@ -252,8 +258,7 @@
           <!-- 开启共享日志挖掘-->
           <div class="setting-panel-box bg-white border-bottom pt-3" v-if="settings.type !== 'initial_sync'">
             <div class="setting-title fs-7 px-5">
-              共享挖掘设置
-              <span class="pl-2">任务的同步类型为增量或全量+增量时执行</span>
+              {{ $t('packages_dag_components_settingpanel_gongxiangwajueshe') }}<span class="pl-2">{{ $t('packages_dag_components_settingpanel_renwudetongbu') }}</span>
             </div>
             <div class="px-5">
               <ElFormItem :label="$t('packages_dag_connection_form_shared_mining')">
@@ -268,6 +273,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapGetters, mapMutations, mapState } from 'vuex'
 // import 'web-core/components/form/styles/index.scss'
 
@@ -284,15 +291,15 @@ export default {
       systemTimeZone: '',
       options: [
         {
-          label: '用户浏览器时区',
+          label: i18n.t('packages_dag_dataFlow_SyncInfo_localTZType'),
           value: 'localTZ'
         },
         {
-          label: '数据库时区',
+          label: i18n.t('packages_dag_dataFlow_SyncInfo_connTZType'),
           value: 'connTZ'
         },
         {
-          label: '此刻',
+          label: i18n.t('packages_dag_dataFlow_SyncInfo_currentType'),
           value: 'current'
         }
       ],

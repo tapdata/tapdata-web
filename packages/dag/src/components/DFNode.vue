@@ -13,12 +13,16 @@
       <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
         <div
           class="node-option"
-          title="添加节点"
+          :title="$t('packages_dag_components_dfnode_tianjiajiedian')"
           @click.stop="$emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)"
         >
           <VIcon>plus</VIcon>
         </div>
-        <div @click.stop="$emit('delete', data.id)" class="node-option" title="删除节点">
+        <div
+          @click.stop="$emit('delete', data.id)"
+          class="node-option"
+          :title="$t('packages_dag_components_dfnode_shanchujiedian')"
+        >
           <VIcon>close</VIcon>
         </div>
       </div>
@@ -33,6 +37,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { sourceEndpoint, targetEndpoint } from '../style'
@@ -116,7 +122,7 @@ export default {
     nodeErrorMsg() {
       const res = this.hasNodeError(this.data.id)
       if (res) {
-        return typeof res === 'string' ? res : '请检查节点配置'
+        return typeof res === 'string' ? res : i18n.t('packages_dag_components_dfnode_qingjianchajiedian')
       }
       return null
     }
@@ -206,7 +212,11 @@ export default {
             }
 
             if (distance < 4 || Date.now() - this.onMouseDownAt < 10) {
-              console.log('拖动时间段，或者距离变化小，触发节点激活', Date.now() - this.onMouseDownAt, distance) // eslint-disable-line
+              console.log(
+                i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
+                Date.now() - this.onMouseDownAt,
+                distance
+              ) // eslint-disable-line
               this.removeActiveAction('dragActive')
             }
 
@@ -259,7 +269,7 @@ export default {
                 if (this.stateIsReadonly) return false
                 // 源point没有onMaxConnections事件回调，故用次事件内提示
                 if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
-                  this.$message.error(`该节点「${this.data.name}」已经达到最大连线限制`)
+                  this.$message.error(i18n.t('packages_dag_components_dfnode_gaijiedianth', { val1: this.data.name }))
                 }
               }
             }

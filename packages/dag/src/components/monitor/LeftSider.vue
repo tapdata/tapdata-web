@@ -6,40 +6,40 @@
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">全量信息</span>
-          <ElTooltip transition="tooltip-fade-in" content="列表">
+          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_quanliangxinxi') }}</span>
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
         <div v-if="initialData.snapshotDoneAt" class="mb-2">
-          <span>全量完成时间：</span>
+          <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
           <span>{{ initialData.snapshotDoneAt }}</span>
         </div>
         <div v-else class="mb-2">
-          <span>预计全量完成还需：</span>
+          <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
             <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
           </ElTooltip>
         </div>
         <div class="mb-4 flex align-items-center">
-          <span class="mr-2">表同步总进度</span>
+          <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_biaotongbuzongjin') }}</span>
           <ElProgress class="flex-1 my-2" :show-text="false" :percentage="totalDataPercentage" />
           <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
         </div>
       </div>
       <div v-if="verifyTotals" class="info-box">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">任务校验</span>
-          <ElTooltip transition="tooltip-fade-in" content="列表">
+          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
         <div class="flex justify-content-between mb-2">
-          <span>差异总行数：</span>
+          <span>{{ $t('packages_dag_monitor_leftsider_chayizongxingshu') }}</span>
           <span class="color-danger">{{ verifyTotals.diffRecords }}</span>
         </div>
         <div class="flex justify-content-between mb-2">
-          <span>校验不一致的表：</span>
+          <span>{{ $t('packages_dag_monitor_leftsider_jiaoyanbuyizhi') }}</span>
           <span>
             <span>{{ verifyTotals.diffTables }}</span>
             <span>/</span>
@@ -47,7 +47,7 @@
           </span>
         </div>
         <div class="flex justify-content-between">
-          <span class="mr-2">不支持校验的表：</span>
+          <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_buzhichijiaoyan') }}</span>
           <span>
             <span>{{ verifyTotals.ignore }}</span>
             <span>/</span>
@@ -57,8 +57,10 @@
       </div>
       <div class="info-box">
         <div class="flex justify-content-between mb-2">
-          <span class="fs-7 fw-bold font-color-normal">性能指标</span>
-          <ElTooltip transition="tooltip-fade-in" content="放大">
+          <span class="fs-7 fw-bold font-color-normal">{{
+            $t('packages_dag_components_nodedetaildialog_xingnengzhibiao')
+          }}</span>
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in')">
             <VIcon @click.stop="toFullscreen">enlarge</VIcon>
           </ElTooltip>
         </div>
@@ -74,7 +76,7 @@
         <div class="mb-2" style="height: 140px">
           <LineChart
             :data="delayData"
-            title="增量延迟"
+            :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
             :color="['#2C65FF']"
             :time-format="timeFormat"
             time-value
@@ -84,7 +86,7 @@
         <div style="height: 140px">
           <LineChart
             :data="delayData"
-            title="处理耗时（ms）"
+            :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
             :color="['#2C65FF']"
             :time-format="timeFormat"
             time-value
@@ -95,7 +97,7 @@
     </div>
 
     <ElDialog
-      title="性能指标"
+      :title="$t('packages_dag_components_nodedetaildialog_xingnengzhibiao')"
       width="774px"
       :visible.sync="lineChartDialog"
       :close-on-click-modal="false"
@@ -113,7 +115,7 @@
         :color="['#2C65FF']"
         :time-format="timeFormat"
         time-value
-        title="增量延迟"
+        :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
         class="mt-8"
         style="height: 200px"
       ></LineChart>
@@ -124,6 +126,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import 'web-core/assets/icons/svg/magnify.svg'
 import 'web-core/assets/icons/svg/table.svg'
 import 'web-core/assets/icons/svg/javascript.svg'
@@ -185,7 +189,10 @@ export default {
       const { time = [] } = this.quota
       return {
         x: time,
-        name: ['输入', '输出'],
+        name: [
+          i18n.t('packages_dag_components_nodedetaildialog_shuru'),
+          i18n.t('packages_dag_components_nodedetaildialog_shuchu')
+        ],
         value: [data.inputQps, data.outputQps]
       }
     },

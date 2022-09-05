@@ -5,13 +5,18 @@
         <button @click="$emit('page-return')" class="icon-btn">
           <VIcon size="18">left</VIcon>
         </button>
-        <TextEditable v-model="name" placeholder="请输入任务名称" max-width="260" @change="onNameInputChange" />
+        <TextEditable
+          v-model="name"
+          :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+          max-width="260"
+          @change="onNameInputChange"
+        />
         <span class="ml-4">{{ syncType[dataflow.type] }}</span>
         <TaskStatus :task="dataflow" class="ml-4" />
       </div>
       <div class="flex align-items-center font-color-light">
         <div class="ml-10 pl-1">
-          <span>启动时间：</span>
+          <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
           <span>{{ stopTime }}</span>
         </div>
         <div class="ml-4">
@@ -81,7 +86,7 @@
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="日志">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
           <VIcon size="16">list</VIcon>
         </button>
@@ -92,12 +97,12 @@
       <div class="flex-grow-1"></div>
       <ElTooltip v-if="!hideMenus.includes('verify')" transition="tooltip-fade-in">
         <div v-if="!dataflow.canOpenInspect" slot="content">
-          <p>当前任务暂不支持校验，可能的原因：</p>
-          <p>1.添加了中间处理节点</p>
-          <p>2.源连接不支持校验</p>
-          <p>3.目标连接不支持校验</p>
+          <p>{{ $t('packages_dag_monitor_topheader_dangqianrenwuzan') }}</p>
+          <p>{{ $t('packages_dag_monitor_topheader_tianjialezhongjian') }}</p>
+          <p>{{ $t('packages_dag_monitor_topheader_yuanlianjiebuzhi') }}</p>
+          <p>{{ $t('packages_dag_monitor_topheader_mubiaolianjiebu') }}</p>
         </div>
-        <div v-else>打开校验</div>
+        <div v-else>{{ $t('packages_dag_monitor_topheader_dakaijiaoyan') }}</div>
         <button
           v-if="dataflow.canOpenInspect"
           :class="{ active: activeType === 'verify' }"
@@ -164,6 +169,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
 
@@ -206,9 +213,9 @@ export default {
       nodeSearchInput: '',
       editSvg: require('@tap/assets/images/edit-fill.svg'),
       syncType: {
-        initial_sync: '全量',
-        cdc: '增量',
-        'initial_sync+cdc': '全量+增量'
+        initial_sync: i18n.t('packages_dag_task_setting_initial_sync'),
+        cdc: i18n.t('packages_dag_task_setting_cdc'),
+        'initial_sync+cdc': i18n.t('packages_dag_components_formpanel_quanliangzengliang')
       }
     }
   },

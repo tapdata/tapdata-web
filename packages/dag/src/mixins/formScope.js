@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
@@ -103,7 +104,7 @@ export default {
           while (parentId) {
             parent = this.scope.findNodeById(parentId)
             if (!parent) {
-              console.error('留意parent找不到', parentId) // eslint-disable-line
+              console.error(i18n.t('packages_dag_mixins_formscope_liuyipar'), parentId) // eslint-disable-line
             }
             parentId = parent?.$inputs?.[0]
           }
@@ -601,7 +602,7 @@ export default {
                   )
                   resolve(result)
                 } else {
-                  reject('推演失败')
+                  reject(i18n.t('packages_dag_mixins_formscope_tuiyanshibai'))
                 }
               })
             })

@@ -94,6 +94,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
 import DFNode from './components/DFNode'
@@ -312,17 +314,17 @@ export default {
 
         if (!sourceMap[id] && !targetMap[id]) {
           // 存在没有连线的节点
-          someErrorMsg = `「 ${node.name} 」没有任何连线`
+          someErrorMsg = i18n.t('packages_dag_src_migrationmonitorviewer_noden', { val1: node.name })
           return true
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
+          someErrorMsg = i18n.t('packages_dag_src_migrationmonitorviewer_noden', { val1: node.name, val2: minInputs })
           return true
         }
 
         if (this.hasNodeError(id)) {
-          someErrorMsg = `「 ${node.name} 」配置异常`
+          someErrorMsg = i18n.t('packages_dag_src_migrationmonitorviewer_noden', { val1: node.name })
           return true
         }
       })
@@ -332,7 +334,7 @@ export default {
       // 根据任务类型(全量、增量),检查不支持此类型的节点
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = '全量+增量'
+        typeName = i18n.t('packages_dag_components_formpanel_quanliangzengliang')
         tableNode.forEach(node => {
           if (
             sourceMap[node.id] &&
@@ -341,36 +343,36 @@ export default {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: '该节点不支持' + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
             })
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
-        typeName = '全量'
+        typeName = i18n.t('packages_dag_task_setting_initial_sync')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: '该节点不支持' + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
             })
           }
         })
       } else if (this.dataflow.type === 'cdc') {
-        typeName = '增量'
+        typeName = i18n.t('packages_dag_task_setting_cdc')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: '该节点不支持' + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
             })
           }
         })
       }
 
       if (nodeNames.length) {
-        someErrorMsg = `存在不支持${typeName}的节点`
+        someErrorMsg = i18n.t('packages_dag_src_migrationmonitorviewer_cunzaibuzhichi', { val1: typeName })
       }
 
       const accessNodeProcessIdArr = [
@@ -394,7 +396,10 @@ export default {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
+                msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi', {
+                  val1: agent.hostName,
+                  val2: agent.ip
+                })
               })
               isError = true
             }
@@ -433,7 +438,7 @@ export default {
     handleDetail() {
       let subId = this.dataflow.statuses[0]?.id || ''
       if (!subId) {
-        this.$message.error('该复制任务没有子任务')
+        this.$message.error(i18n.t('packages_dag_src_migrationmonitorviewer_gaifuzhirenwu'))
         return
       }
 
