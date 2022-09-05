@@ -7,15 +7,15 @@
           <div class="image iconfont icon-zhuhe"></div>
           <div class="text">
             <p>
-              {{ $t('app.signIn.account') }}
+              {{ $t('app_signIn_account') }}
               <i>{{ email }}</i>
-              {{ type === 'registy' ? $t('app.signIn.accountSuccess') : $t('app.signIn.resetAccountSuccess') }}
+              {{ type === 'registy' ? $t('app_signIn_accountSuccess') : $t('app_signIn_resetAccountSuccess') }}
             </p>
-            <p v-if="type === 'registy'">{{ $t('app.signIn.clickBtn') }}</p>
-            <p v-else>{{ $t('app.signIn.resetClickBtn') }}</p>
+            <p v-if="type === 'registy'">{{ $t('app_signIn_clickBtn') }}</p>
+            <p v-else>{{ $t('app_signIn_resetClickBtn') }}</p>
 
             <el-button class="btn" type="primary" size="mini" @click="goLogin">{{
-              $t('app.signIn.goLogin')
+              $t('app_signIn_goLogin')
             }}</el-button>
           </div>
         </template>
@@ -24,13 +24,13 @@
           <div class="image iconfont icon-cuowu errorIcon"></div>
           <div class="text">
             <p>
-              {{ $t('app.signIn.account') }}<i>{{ email }}</i
-              >{{ type === 'registy' ? $t('app.signIn.connectionFailed') : $t('app.signIn.resetConnectionFailed') }}
+              {{ $t('app_signIn_account') }}<i>{{ email }}</i
+              >{{ type === 'registy' ? $t('app_signIn_connectionFailed') : $t('app_signIn_resetConnectionFailed') }}
             </p>
             <div style="font-size: 18px">
-              {{ $t('app.signIn.confirmEmail')
+              {{ $t('app_signIn_confirmEmail')
               }}<span @click="backRegisty">{{
-                type === 'registy' ? $t('app.signIn.registered') : $t('app.signIn.modifyPassword')
+                type === 'registy' ? $t('app_signIn_registered') : $t('app_signIn_modifyPassword')
               }}</span>
             </div>
           </div>

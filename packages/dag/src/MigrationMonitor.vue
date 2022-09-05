@@ -12,6 +12,9 @@
       @save="save"
       @delete="handleDelete"
       @change-name="handleUpdateName"
+      @auto-layout="handleAutoLayout"
+      @zoom-out="handleZoomOut"
+      @zoom-in="handleZoomIn"
       @showSettings="handleShowSettings"
       @showVerify="handleShowVerify"
       @showBottomPanel="handleShowBottomPanel"
@@ -24,7 +27,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ t('task_preview_status_' + result[0].status) }}
+          {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -38,6 +41,7 @@
           }"
           :dataflow="dataflow"
           :quota="quota"
+          :verifyTotals="verifyTotals"
           :timeFormat="timeFormat"
           :range="[firstStartTime, lastStopTime || Date.now()]"
           @move-node="handleDragMoveNode"
@@ -48,7 +52,7 @@
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ t('task_preview_status_' + result[0].status) }}
+              {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
             </span>
           </template>
         </LeftSider>
@@ -140,13 +144,12 @@
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
 
-import { VExpandXTransition, VEmpty } from '@tap/component'
+import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
 import { measurementApi, taskApi } from '@tap/api'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { titleChange } from 'web-core/mixins/titleChange'
-import { showMessage } from 'web-core/mixins/showMessage'
-import resize from 'web-core/directives/resize'
-import VIcon from 'web-core/components/VIcon'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
+import resize from '@tap/component/src/directives/resize'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -160,7 +163,6 @@ import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
-import Locale from './mixins/locale'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
@@ -172,7 +174,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     VExpandXTransition,
@@ -260,13 +262,10 @@ export default {
       v && this.init()
     },
     'dataflow.status'(v1, v2) {
-      if (v1 !== 'edit' && v1 !== v2) {
+      if (v1 !== v2) {
         this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
-    },
-    'dataflow.taskRecordId'() {
-      this.init()
     }
   },
 
@@ -336,12 +335,12 @@ export default {
     gotoViewer() {},
 
     async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter(node => node.type === 'database')
       if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
+        return this.$t('packages_dag_editor_cell_validate_none_data_node')
       }
 
       await this.validateAllNodes()
@@ -510,7 +509,7 @@ export default {
       this.isSaving = true
       try {
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.t('message_operation_succuess'))
+        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
         this.loadDataflow(this.dataflow?.id)
       } catch (e) {
@@ -633,6 +632,12 @@ export default {
         quota: {
           uri: '/api/measurement/query/v2',
           param: this.getQuotaFilter()
+        },
+        verifyTotals: {
+          uri: `/api/task/auto-inspect-totals`,
+          param: {
+            id: this.dataflow.id
+          }
         }
       }
       const $verifyPanel = this.$refs.verifyPanel
@@ -640,12 +645,6 @@ export default {
         params.verify = {
           uri: `/api/task/auto-inspect-results-group-by-table`,
           param: $verifyPanel.getFilter(1)
-        }
-        params.verifyTotals = {
-          uri: `/api/task/auto-inspect-totals`,
-          param: {
-            id: this.dataflow.id
-          }
         }
       }
       return params
@@ -826,10 +825,11 @@ export default {
         try {
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.t('message_resetOk'))
+          this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
+          // this.init()
           this.loadDataflow(this.dataflow?.id)
         } catch (e) {
-          this.handleError(e, this.t('message_resetFailed'))
+          this.handleError(e, this.$t('packages_dag_message_resetFailed'))
         }
       })
     },

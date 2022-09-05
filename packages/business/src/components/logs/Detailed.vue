@@ -6,7 +6,7 @@
           class="search-input mt-2"
           v-model="keyword"
           prefix-icon="el-icon-search"
-          :placeholder="$t('task_info_log_placeholder')"
+          :placeholder="$t('packages_business_task_info_log_placeholder')"
           size="mini"
           @input="searchFnc(800)"
         ></ElInput>
@@ -23,7 +23,7 @@
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="noMore" class="font-color-light text-center pb-4">{{ $t('task_info_no_more') }}</div>
+      <div v-show="noMore" class="font-color-light text-center pb-4">{{ $t('packages_business_task_info_no_more') }}</div>
       <ul v-if="logs.length">
         <li class="log-item px-6 font-color-light" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span

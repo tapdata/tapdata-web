@@ -62,13 +62,13 @@
               </div>
               <ElAlert
                 v-show="showNoMore"
-                :title="$t('customer_logs_no_more_data')"
+                :title="$t('packages_dag_customer_logs_no_more_data')"
                 type="info"
                 class="no-more__alert position-absolute py-1 px-2"
               ></ElAlert>
               <VEmpty
                 v-if="!list.length"
-                :description="keyword ? $t('customer_logs_no_search_data') : $t('dag_dialog_field_mapping_no_data')"
+                :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('packages_dag_dag_dialog_field_mapping_no_data')"
               />
             </div>
           </template>
@@ -119,8 +119,8 @@
         </template>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleClose">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="handleSave">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="handleClose">{{ $t('packages_dag_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleSave">{{ $t('packages_dag_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -131,9 +131,8 @@ import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
-import VIcon from 'web-core/components/VIcon'
 import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
-import { VEmpty } from '@tap/component'
+import { VEmpty, VIcon } from '@tap/component'
 import { monitoringLogsApi } from '@tap/api'
 
 import TimeSelect from './TimeSelect'

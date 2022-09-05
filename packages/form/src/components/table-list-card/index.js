@@ -1,6 +1,6 @@
 import { defineComponent, ref } from 'vue-demi'
 import { metadataInstancesApi } from '@tap/api'
-import OverflowTooltip from 'web-core/components/overflow-tooltip'
+import { OverflowTooltip } from '@tap/component'
 import './style.scss'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'

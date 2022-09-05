@@ -12,8 +12,8 @@
           v-model="search.range"
           type="datetimerange"
           range-separator="-"
-          :start-placeholder="$t('dataFlow.startTime')"
-          :end-placeholder="$t('dataFlow.endTime')"
+          :start-placeholder="$t('dataFlow_startTime')"
+          :end-placeholder="$t('dataFlow_endTime')"
           @change="getData(1)"
         >
         </el-date-picker> -->
@@ -40,7 +40,7 @@
         class="search-item pl-4"
         size="small"
         v-model="search.keyword"
-        :placeholder="$t('notification.placeholder.keyword')"
+        :placeholder="$t('notification_placeholder_keyword')"
         @change="getData(1)"
       ></el-input>
       <!-- <el-select
@@ -49,7 +49,7 @@
           class="search-item"
           size="mini"
           v-model="search.userId"
-          :placeholder="$t('notification.placeholder.user')"
+          :placeholder="$t('notification_placeholder_user')"
           @change="getData(1)"
         >
           <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>

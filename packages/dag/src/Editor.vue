@@ -92,10 +92,11 @@ import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
 import { allResourceIns } from './nodes/loader'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { titleChange } from 'web-core/mixins/titleChange'
-import { showMessage } from 'web-core/mixins/showMessage'
-import ConfigPanel from './components/migration/ConfigPanel'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
+import ConfigPanel from './components/ConfigPanel'
+import SettingPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
 import { databaseTypesApi, taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
@@ -105,7 +106,6 @@ import { merge } from 'lodash'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import editor from './mixins/editor'
-import Locale from './mixins/locale'
 import { DEFAULT_SETTINGS } from './constants'
 import { mapMutations } from 'vuex'
 import { observable } from '@formily/reactive'
@@ -113,7 +113,7 @@ import { observable } from '@formily/reactive'
 export default {
   name: 'Editor',
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     NodePopover,
@@ -277,12 +277,12 @@ export default {
     },
 
     /*async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter(node => node.type === 'table')
       if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
+        return this.$t('packages_dag_editor_cell_validate_none_data_node')
       }
 
       await this.validateAllNodes()
@@ -456,7 +456,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.t('message_save_ok'))
+        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         return true
@@ -475,7 +475,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        // this.$message.success(this.t('message_save_ok'))
+        // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
@@ -643,7 +643,7 @@ export default {
             }
           }
         }
-        // this.$message.error(`${this.t('dag_save_fail')} ${names.join('，')}`)
+        // this.$message.error(`${this.$t('packages_dag_dag_save_fail')} ${names.join('，')}`)
       }
       // else if (error?.data?.message) {
       //   this.$message.error(error.data.message)

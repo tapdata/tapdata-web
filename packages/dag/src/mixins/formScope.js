@@ -3,11 +3,8 @@ import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
 import { merge, isEqual, escapeRegExp } from 'lodash'
-import Locale from './locale'
 
 export default {
-  mixins: [Locale],
-
   data() {
     function addDeclaredCompleter(tools, params1) {
       const tapType = [
@@ -277,7 +274,7 @@ export default {
                 id: item.id,
                 name: item.name,
                 label: `${item.name} ${
-                  item.status ? `(${this.t('connection.status.' + item.status) || item.status})` : ''
+                  item.status ? `(${this.$t('packages_dag_connection_status_' + item.status) || item.status})` : ''
                 }`,
                 value: item.id,
                 databaseType: item.database_type,
@@ -379,7 +376,7 @@ export default {
                 id: item.id,
                 name: item.name,
                 label: `${item.name} ${
-                  item.status ? `(${this.t('connection.status.' + item.status) || item.status})` : ''
+                  item.status ? `(${this.$t('packages_dag_connection_status_' + item.status) || item.status})` : ''
                 }`,
                 value: item.id,
                 databaseType: item.database_type,
@@ -519,22 +516,22 @@ export default {
         loadWriteModelOptions: field => {
           const options = [
             {
-              label: this.t('editor_cell_link_writeMode_append'),
+              label: this.$t('packages_dag_editor_cell_link_writeMode_append'),
               value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
             },
             {
-              label: this.t('editor_cell_link_writeMode_upsert'),
+              label: this.$t('packages_dag_editor_cell_link_writeMode_upsert'),
               value: 'upsert' // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
             },
             {
-              label: this.t('editor_cell_link_writeMode_update'),
+              label: this.$t('packages_dag_editor_cell_link_writeMode_update'),
               value: 'update' // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
             }
           ]
           if (field.form.values.type !== 'table') {
             // SupportEmbedArray
             options.push({
-              label: this.t('editor_cell_link_writeMode_merge_embed'),
+              label: this.$t('packages_dag_editor_cell_link_writeMode_merge_embed'),
               value: 'merge_embed' // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
             })
           }

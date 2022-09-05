@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     class="sp-setting"
-    :title="'STEP4: ' + $t('editor.ui.sidebar.setting')"
+    :title="'STEP4: ' + $t('editor_ui_sidebar_setting')"
     :visible.sync="dialogVisibleSetting"
     width="40%"
     :close-on-click-modal="false"
@@ -9,14 +9,14 @@
     :before-close="handleClose"
   >
     <el-form label-width="150px">
-      <el-form-item :label="$t('dataFlow.taskName')">
+      <el-form-item :label="$t('dataFlow_taskName')">
         <el-input v-model="dataflow.name" maxlength="50" show-word-limit class="task-name"></el-input>
       </el-form-item>
     </el-form>
     <setting ref="setting"></setting>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">{{ $t('dataFlow.previous') }}</el-button>
-      <el-button type="primary" @click="save">{{ $t('dataFlow.execution') }}</el-button>
+      <el-button @click="handleClose">{{ $t('dataFlow_previous') }}</el-button>
+      <el-button type="primary" @click="save">{{ $t('dataFlow_execution') }}</el-button>
     </span>
   </el-dialog>
 </template>

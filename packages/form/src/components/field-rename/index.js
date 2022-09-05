@@ -4,13 +4,11 @@ import { defineComponent } from 'vue-demi'
 import { VIcon } from '@tap/component'
 import { convertSchemaToTreeData } from './util'
 import './index.scss'
-import Locale from '../../mixins/locale'
 
 export const FieldRename = connect(
   observer(
     defineComponent({
       props: ['loading', 'options', 'disabled'],
-      mixins: [Locale],
       setup() {
         const formRef = useForm()
         const form = formRef.value
@@ -255,7 +253,7 @@ export const FieldRename = connect(
           if (node && node.parent && node.parent.childNodes) {
             let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
             if (parentNode && parentNode.length === 2) {
-              this.$message.error(data.field_name + this.t('message_exists_name'))
+              this.$message.error(data.field_name + this.$t('packages_form_message_exists_name'))
               exist = true
             }
           }

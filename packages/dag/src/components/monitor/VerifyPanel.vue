@@ -54,12 +54,12 @@
           <div class="before-scroll-content text-center font-color-light py-1">
             <VEmpty
               v-if="!list.length"
-              :description="keyword ? $t('customer_logs_no_search_data') : $t('dag_dialog_field_mapping_no_data')"
+              :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('packages_dag_dag_dialog_field_mapping_no_data')"
             />
             <div v-show="moreLoading">
               <i class="el-icon-loading"></i>
             </div>
-            <div v-show="!moreLoading && noMore">{{ $t('customer_logs_no_more_data') }}</div>
+            <div v-show="!moreLoading && noMore">{{ $t('packages_dag_customer_logs_no_more_data') }}</div>
           </div>
         </template>
         <template #default="{ item, index, active }">
@@ -99,14 +99,10 @@ import { calcUnit, deepCopy } from '@tap/shared'
 import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 
-import Locale from '../../mixins/locale'
-
 export default {
   name: 'VerifyPanel',
 
   components: { Chart, DynamicScroller, DynamicScrollerItem, VEmpty },
-
-  mixins: [Locale],
 
   props: {
     dataflow: Object,

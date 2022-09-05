@@ -1,16 +1,92 @@
 <template>
-  <header class="layout-header border-bottom px-4">
-    <button @click="$emit('page-return')" class="icon-btn">
-      <VIcon size="18">left</VIcon>
-    </button>
+  <header class="layout-header border-bottom p-4">
+    <div>
+      <div class="flex align-items-center">
+        <button @click="$emit('page-return')" class="icon-btn">
+          <VIcon size="18">left</VIcon>
+        </button>
+        <TextEditable v-model="name" placeholder="请输入任务名称" max-width="260" @change="onNameInputChange" />
+        <span class="ml-4">{{ syncType[dataflow.type] }}</span>
+        <TaskStatus :task="dataflow" class="ml-4" />
+      </div>
+      <div class="flex align-items-center font-color-light">
+        <div class="ml-10 pl-1">
+          <span>启动时间：</span>
+          <span>{{ stopTime }}</span>
+        </div>
+        <div class="ml-4">
+          <span>{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
+        </div>
+        <div class="ml-4">
+          <span>%CPU：</span>
+          <span>121.9</span>
+        </div>
+        <div class="ml-4">
+          <span>%MEM：</span>
+          <span>72.8</span>
+        </div>
+        <div class="ml-4">
+          <span>GC：</span>
+          <span>89%</span>
+        </div>
+      </div>
+    </div>
 
-    <TextEditable
-      v-model="name"
-      class="mr-3"
-      placeholder="请输入任务名称"
-      max-width="260"
-      @change="onNameInputChange"
-    />
+    <div class="operation-center flex align-center">
+      <!--自动布局-->
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
+      >
+        <button @click="$emit('auto-layout')" class="icon-btn">
+          <VIcon size="20">auto-layout</VIcon>
+        </button>
+      </ElTooltip>
+      <VDivider class="mx-3" vertical inset></VDivider>
+      <!--缩小-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
+        <button @click="$emit('zoom-out')" class="icon-btn">
+          <VIcon size="20">remove-outline</VIcon>
+        </button>
+      </ElTooltip>
+      <div class="choose-size mx-2">
+        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
+          <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
+          <div class="choose-list p-2">
+            <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
+              <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
+              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
+            </div>
+            <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
+              <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
+              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
+            </div>
+            <VDivider class="my-2"></VDivider>
+            <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
+              {{ val * 100 }}%
+            </div>
+          </div>
+        </ElPopover>
+      </div>
+      <!--放大-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
+        <button @click="$emit('zoom-in')" class="icon-btn">
+          <VIcon size="20">add-outline</VIcon>
+        </button>
+      </ElTooltip>
+      <VDivider class="mx-3" vertical inset></VDivider>
+      <!--设置-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_setting')">
+        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
+          <VIcon size="20">setting-outline</VIcon>
+        </button>
+      </ElTooltip>
+      <ElTooltip transition="tooltip-fade-in" content="日志">
+        <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
+          <VIcon size="16">list</VIcon>
+        </button>
+      </ElTooltip>
+    </div>
 
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
@@ -32,33 +108,22 @@
         </button>
         <span v-else class="icon-btn disabled"><VIcon size="16">verify-list</VIcon></span>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="日志">
-        <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
-          <VIcon size="16">list</VIcon>
-        </button>
-      </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" :content="t('button_setting')">
-        <button :class="{ active: activeType === 'settings' }" class="icon-btn" @click="$emit('showSettings')">
-          <VIcon size="20">setting-outline</VIcon>
-        </button>
-      </ElTooltip>
       <template v-if="!hideMenus.includes('operation')">
-        <ElTooltip
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit"
-          transition="tooltip-fade-in"
-          :content="t('button_edit')"
-        >
-          <button @click="$emit('edit')" class="icon-btn edit rounded-circle">
-            <img :src="editSvg" />
-          </button>
-        </ElTooltip>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
           size="mini"
           class="mx-2"
           @click="$emit('reset')"
         >
-          {{ t('dataFlow_button_reset') }}
+          {{ $t('packages_dag_dataFlow_button_reset') }}
+        </ElButton>
+        <ElButton
+          v-if="dataflow.disabledData && !dataflow.disabledData.edit"
+          size="mini"
+          class="mx-2"
+          @click="$emit('edit')"
+        >
+          {{ $t('packages_dag_button_edit') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
@@ -67,7 +132,7 @@
           type="primary"
           @click="$emit('start')"
         >
-          {{ t('task_list_run') }}
+          {{ $t('packages_dag_task_list_run') }}
         </ElButton>
         <template v-else>
           <ElButton
@@ -79,7 +144,7 @@
             type="danger"
             @click="$emit('forceStop')"
           >
-            {{ t('task_list_force_stop') }}
+            {{ $t('packages_dag_task_list_force_stop') }}
           </ElButton>
           <ElButton
             v-else
@@ -90,7 +155,7 @@
             class="mx-2"
             @click="$emit('stop')"
           >
-            {{ t('task_list_stop') }}
+            {{ $t('packages_dag_task_list_stop') }}
           </ElButton>
         </template>
       </template>
@@ -99,18 +164,17 @@
 </template>
 
 <script>
-import VIcon from 'web-core/components/VIcon'
-import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { TextEditable } from '@tap/component'
-import Locale from '../../mixins/locale'
+import dayjs from 'dayjs'
+
+import focusSelect from '@tap/component/src/directives/focusSelect'
+import { TextEditable, VIcon, VDivider } from '@tap/component'
+import { TaskStatus } from '@tap/business'
 
 export default {
   name: 'TopHeader',
 
   directives: { focusSelect },
-
-  mixins: [Locale],
 
   props: {
     loading: Boolean,
@@ -124,20 +188,28 @@ export default {
     }
   },
 
-  components: { VIcon, TextEditable },
+  components: { VIcon, TextEditable, TaskStatus, VDivider },
 
   data() {
+    const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
+      commandCode: isMacOs ? '⌘' : 'Ctrl',
+      optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.t('dataFlow_initial_sync') + '+' + this.t('dataFlow_cdc'),
-        initial_sync: this.t('dataFlow_initial_sync'),
-        cdc: this.t('dataFlow_cdc')
+        'initial_sync+cdc': this.$t('packages_dag_dataFlow_initial_sync') + '+' + this.$t('packages_dag_dataFlow_cdc'),
+        initial_sync: this.$t('packages_dag_dataFlow_initial_sync'),
+        cdc: this.$t('packages_dag_dataFlow_cdc')
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
       nodeSearchInput: '',
-      editSvg: require('@tap/assets/images/edit-fill.svg')
+      editSvg: require('@tap/assets/images/edit-fill.svg'),
+      syncType: {
+        initial_sync: '全量',
+        cdc: '增量',
+        'initial_sync+cdc': '全量+增量'
+      }
     }
   },
 
@@ -147,6 +219,11 @@ export default {
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
+    },
+
+    stopTime() {
+      const { stopTime } = this.dataflow
+      return stopTime ? dayjs(stopTime).format('YYYY-MM-DD HH:mm:ss') : '-'
     }
   },
 

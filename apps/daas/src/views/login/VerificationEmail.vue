@@ -5,21 +5,21 @@
         <div class="image iconfont icon-fasongyoujian"></div>
         <div class="text">
           <p>
-            {{ type === 'reset' ? $t('app.signIn.passwordResetText') : $t('app.signIn.confirmationEmail') }}
+            {{ type === 'reset' ? $t('app_signIn_passwordResetText') : $t('app_signIn_confirmationEmail') }}
             <i>{{ email }}</i>
           </p>
-          <p>{{ $t('app.signIn.mailbox') }}</p>
+          <p>{{ $t('app_signIn_mailbox') }}</p>
           <div>
-            {{ $t('app.signIn.receiveEmail') }}
+            {{ $t('app_signIn_receiveEmail') }}
             <span @click="resetSend" :class="{ noClick: time > 0 }" v-if="type === 'reset'"
-              >{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }}s)</i></span
+              >{{ $t('app_signIn_resend') }} <i v-if="time > 0">({{ time }}s)</i></span
             >
             <span @click="send" :class="{ noClick: time > 0 }" v-else
-              >{{ $t('app.signIn.resend') }} <i v-if="time > 0">({{ time }}s)</i></span
+              >{{ $t('app_signIn_resend') }} <i v-if="time > 0">({{ time }}s)</i></span
             >,
 
-            {{ $t('app.signIn.orClick') }}
-            <span @click="backLogin">{{ $t('app.signIn.signIn') }}</span>
+            {{ $t('app_signIn_orClick') }}
+            <span @click="backLogin">{{ $t('app_signIn_signIn') }}</span>
           </div>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default {
         } catch (e) {
           // if (e.response && e.response.msg) {
           //   if (e.response.msg.indexOf('Email already exists')) {
-          //     this.$message.error(this.$t('app.signIn.email_existed'))
+          //     this.$message.error(this.$t('app_signIn_email_existed'))
           //   } else {
           //     this.$message.error(`${e.response.msg}`)
           //   }

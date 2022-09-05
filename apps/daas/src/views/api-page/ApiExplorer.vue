@@ -107,10 +107,10 @@
               />
               <div>
                 <ElButton @click="editOk(scope.row, item.text, item.type)" class="btn-text" type="text" size="small">
-                  {{ $t('dataQuality.save') }}
+                  {{ $t('dataQuality_save') }}
                 </ElButton>
                 <ElButton @click="editCancel(scope.row, item.text)" class="btn-text" type="text" size="small">
-                  {{ $t('dataQuality.cancel') }}
+                  {{ $t('dataQuality_cancel') }}
                 </ElButton>
               </div>
             </div>
@@ -867,8 +867,8 @@ export default {
     // 移除
     async remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.clientName])
-      this.$confirm(message, this.$t('message.prompt'), {
+      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.clientName])
+      this.$confirm(message, this.$t('message_prompt'), {
         type: 'warning'
       }).then(
         await (resFlag => {

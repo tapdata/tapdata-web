@@ -10,8 +10,8 @@
     ></FieldMapping>
     <div class="total mb-2 mt-4">共有 {{ tableData.length }} 个字段</div>
     <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
-      <ElTableColumn width="56" type="index" :label="t('meta_table_index')"> </ElTableColumn>
-      <ElTableColumn prop="field_name" :label="t('meta_table_field_name')">
+      <ElTableColumn width="56" type="index" :label="$t('packages_dag_meta_table_index')"> </ElTableColumn>
+      <ElTableColumn prop="field_name" :label="$t('packages_dag_meta_table_field_name')">
         <template #default="{ row }">
           <span class="flex align-center"
             >{{ row.field_name }}
@@ -19,16 +19,16 @@
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="data_type" :label="t('meta_table_field_type')"> </ElTableColumn>
-      <!--      <ElTableColumn prop="scale" :label="t('meta_table_scale')"> </ElTableColumn>-->
-      <!--      <ElTableColumn prop="precision" :label="t('meta_table_precision')"> </ElTableColumn>-->
-      <ElTableColumn prop="default_value" :label="t('meta_table_default')"> </ElTableColumn>
-      <ElTableColumn prop="is_nullable" :label="t('meta_table_not_null')">
+      <ElTableColumn prop="data_type" :label="$t('packages_dag_meta_table_field_type')"> </ElTableColumn>
+      <!--      <ElTableColumn prop="scale" :label="$t('packages_dag_meta_table_scale')"> </ElTableColumn>-->
+      <!--      <ElTableColumn prop="precision" :label="$t('packages_dag_meta_table_precision')"> </ElTableColumn>-->
+      <ElTableColumn prop="default_value" :label="$t('packages_dag_meta_table_default')"> </ElTableColumn>
+      <ElTableColumn prop="is_nullable" :label="$t('packages_dag_meta_table_not_null')">
         <template #default="{ row }">
-          {{ t(`meta_table_${!row.is_nullable ? 'true' : 'false'}`) }}
+          {{ $t(`meta_table_${!row.is_nullable ? 'true' : 'false'}`) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="comment" :label="t('meta_table_comment')"> </ElTableColumn>
+      <ElTableColumn prop="comment" :label="$t('packages_dag_meta_table_comment')"> </ElTableColumn>
     </ElTable>
   </div>
 </template>
@@ -38,12 +38,10 @@ import { metadataInstancesApi } from '@tap/api'
 import { FieldMapping } from '@tap/field-mapping'
 import { mapGetters, mapState } from 'vuex'
 import { VIcon } from '@tap/component'
-import Locale from '../mixins/locale'
 
 export default {
   name: 'MetaPane',
   components: { VIcon, FieldMapping },
-  mixins: [Locale],
   props: {
     isShow: Boolean
   },

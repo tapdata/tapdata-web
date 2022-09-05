@@ -2,7 +2,7 @@
   <!-- mogo视图 start -->
   <section class="pipeline-list-wrap">
     <el-form :model="model" :rules="rules" ref="form" label-position="top">
-      <el-form-item :label="$t('metadata.details.pipeline.collection')" prop="collection" required>
+      <el-form-item :label="$t('metadata_details_pipeline_collection')" prop="collection" required>
         <el-select v-model="model.collection" size="mini">
           <el-option
             v-for="item in collections"
@@ -17,36 +17,36 @@
           size="mini"
           v-model="model.collection"
           :placeholder="
-            $t('metadata.details.select') +
-            $t('metadata.details.pipeline.collection')
+            $t('metadata_details_select') +
+            $t('metadata_details_pipeline_collection')
           "
         ></el-input> -->
       </el-form-item>
-      <el-form-item :label="$t('metadata.details.pipeline.pipeline')" prop="pipeline" required>
+      <el-form-item :label="$t('metadata_details_pipeline_pipeline')" prop="pipeline" required>
         <el-input
           type="textarea"
           size="mini"
           v-model="model.pipeline"
-          :placeholder="$t('metadata.details.enter') + $t('metadata.details.pipeline.pipeline')"
+          :placeholder="$t('metadata_details_enter') + $t('metadata_details_pipeline_pipeline')"
         ></el-input>
       </el-form-item>
       <el-form-item>
         <div v-show="pipeline_status">
-          {{ $t('metadata.details.pipeline.viewStatus') }}:
+          {{ $t('metadata_details_pipeline_viewStatus') }}:
           {{ pipeline_status }}
         </div>
         <div v-show="pipeline_status == 'failed'">
-          {{ $t('metadata.details.pipeline.FailedMessage') }}:
+          {{ $t('metadata_details_pipeline_FailedMessage') }}:
           {{ pipeline_status }}
         </div>
-        <div>{{ $t('metadata.details.pipeline.penpinSave') }}</div>
+        <div>{{ $t('metadata_details_pipeline_penpinSave') }}</div>
       </el-form-item>
       <el-form-item size="large">
         <div class="btn">
           <el-button type="primary" @click="applicationBtn" size="mini">{{
-            $t('metadata.details.pipeline.apply')
+            $t('metadata_details_pipeline_apply')
           }}</el-button>
-          <el-button type="primary" @click="saveSubmit" size="mini">{{ $t('message.save') }}</el-button>
+          <el-button type="primary" @click="saveSubmit" size="mini">{{ $t('message_save') }}</el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -77,14 +77,14 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('metadata.details.pipeline.collection') + this.$t('metadata.details.pipeline.cnot_Empty')
+            message: this.$t('metadata_details_pipeline_collection') + this.$t('metadata_details_pipeline_cnot_Empty')
           }
         ],
         pipeline: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('metadata.details.pipeline.pipeline') + this.$t('metadata.details.pipeline.cnot_Empty')
+            message: this.$t('metadata_details_pipeline_pipeline') + this.$t('metadata_details_pipeline_cnot_Empty')
           }
         ]
       }
@@ -119,10 +119,10 @@ export default {
     // 应用
     applicationBtn() {
       if (this.pipeline_status === 'succeed') {
-        this.$confirm(this.$t('metadata.details.pipeline.view_tip'), {
+        this.$confirm(this.$t('metadata_details_pipeline_view_tip'), {
           closeOnClickModal: false,
-          confirmButtonText: this.$t('message.confirm'),
-          confirmButtonClass: this.$t('message.cancel'),
+          confirmButtonText: this.$t('message_confirm'),
+          confirmButtonClass: this.$t('message_cancel'),
           showClose: false
         })
           .then(() => {
@@ -161,7 +161,7 @@ export default {
             .then(data => {
               _this.isApplication = data?.task_data.isApplication
               if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
-              this.$message.success(this.$t('metadata.details.pipeline.success'))
+              this.$message.success(this.$t('metadata_details_pipeline_success'))
             })
         }
       })

@@ -105,7 +105,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ $t('dag_processor_node') }}
+              {{ $t('packages_dag_dag_processor_node') }}
             </span>
           </div>
         </template>
@@ -182,24 +182,22 @@ import 'web-core/assets/icons/svg/field_add_del.svg'
 import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
-import mouseDrag from 'web-core/directives/mousedrag'
+import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
-import resize from 'web-core/directives/resize'
+import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { Select } from 'element-ui'
-import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
+import { OverflowTooltip } from '@tap/component'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import NodeIcon from '../NodeIcon'
-import Locale from '../../mixins/locale'
 import { escapeRegExp } from 'lodash'
 import ConnectionType from '../ConnectionType'
 
 export default {
   name: 'LeftSider',
-  mixins: [Locale],
   components: {
     NodeIcon,
     VEmpty,

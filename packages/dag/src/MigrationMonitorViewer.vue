@@ -26,7 +26,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ t('task_preview_status_' + result[0].status) }}
+          {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -100,17 +100,16 @@ import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { allResourceIns } from './nodes/loader'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { titleChange } from 'web-core/mixins/titleChange'
-import { showMessage } from 'web-core/mixins/showMessage'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
 import BottomPanel from './components/monitor/BottomPanel'
-import resize from 'web-core/directives/resize'
+import resize from '@tap/component/src/directives/resize'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import { VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
-import Locale from './mixins/locale'
 import { measurementApi, taskApi } from '@tap/api'
 import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
@@ -124,7 +123,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     VEmpty,
@@ -274,12 +273,12 @@ export default {
     gotoViewer() {},
 
     async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter(node => node.type === 'database')
       if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
+        return this.$t('packages_dag_editor_cell_validate_none_data_node')
       }
 
       await this.validateAllNodes()
@@ -464,7 +463,7 @@ export default {
       this.isSaving = true
       try {
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.t('message_operation_succuess'))
+        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
       } catch (e) {
         this.handleError(e)

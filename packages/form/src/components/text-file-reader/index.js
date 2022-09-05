@@ -1,5 +1,4 @@
 import { defineComponent, ref } from 'vue-demi'
-import Locale from '../../mixins/locale'
 import { useForm, useField } from '@formily/vue'
 
 export const TextFileReader = defineComponent({
@@ -10,7 +9,6 @@ export const TextFileReader = defineComponent({
     const form = formRef.value
     const fileNameField = props.fileNameField ?? `__TAPDATA_UI.${fieldRef.value.props.name}`
     const fileName = ref(props.fileName || form.getValuesIn(fileNameField) || '')
-    const t = Locale.methods.t
     let selectFile = file => {
       if (file) {
         fileName.value = file.name
@@ -48,7 +46,7 @@ export const TextFileReader = defineComponent({
       return (
         <ElInput
           value={fileName.value}
-          placeholder={t('formBuilder_file_placeholder')}
+          placeholder={root.$t('packages_form_formBuilder_file_placeholder')}
           vOn:clear={() => {
             emit('change', null)
             emit('update:fileName', null)
@@ -70,7 +68,7 @@ export const TextFileReader = defineComponent({
                 }
               }}
             >
-              <ElButton>{t('formBuilder_file_button')}</ElButton>
+              <ElButton>{root.$t('packages_form_formBuilder_file_button')}</ElButton>
             </ElUpload>
           </template>
         </ElInput>

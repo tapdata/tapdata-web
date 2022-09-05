@@ -1,6 +1,7 @@
 <template>
-  <div class="line-chart">
-    <Chart ref="chart" :extend="extend"></Chart>
+  <div class="line-chart flex flex-column">
+    <div v-if="title" class="font-color-dark fw-bold">{{ title }}</div>
+    <Chart ref="chart" :extend="extend" class="flex-fill"></Chart>
   </div>
 </template>
 
@@ -194,7 +195,7 @@ export default {
           }
         },
         grid: {
-          top: '20px',
+          top: '8px',
           // top: 0,
           left: 0,
           right: 0,
@@ -229,12 +230,6 @@ export default {
           }
         },
         yAxis: {
-          name: this.title,
-          nameTextStyle: {
-            color: 'rgba(0,0,0,0.6500)',
-            align: 'left',
-            verticalAlign: 'top'
-          },
           axisLine: {
             show: true,
             lineStyle: {

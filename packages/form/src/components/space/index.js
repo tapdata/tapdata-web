@@ -2,7 +2,7 @@ import { defineComponent, watch } from '@vue/composition-api'
 import { h } from '@formily/vue'
 import { stylePrefix } from '../configs'
 import { useFormLayout } from '@formily/element'
-import VDivider from 'web-core/components/VDivider'
+import { VDivider } from '@tap/component'
 import './style.scss'
 
 const spaceSize = {

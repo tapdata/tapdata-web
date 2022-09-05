@@ -17,15 +17,12 @@ import {
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
-import resize from 'web-core/directives/resize'
-import Locale from '../mixins/locale'
+import resize from '@tap/component/src/directives/resize'
 
 export default {
   directives: {
     resize
   },
-
-  mixins: [Locale],
 
   computed: {
     ...mapState('dataflow', ['activeNodeId', 'showConsole']),
@@ -766,7 +763,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.t('message_save_ok'))
+        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true
@@ -1181,8 +1178,8 @@ export default {
     },
 
     async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
-      if (!this.allNodes.length) return this.t('editor_cell_validate_none_data_node')
+      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
+      if (!this.allNodes.length) return this.$t('packages_dag_editor_cell_validate_none_data_node')
 
       await this.validateAllNodes()
 
@@ -1545,7 +1542,7 @@ export default {
             this.$message.error(msg)
           }
         }
-        // this.$message.error(`${this.t('dag_save_fail')} ${names.join('，')}`)
+        // this.$message.error(`${this.$t('packages_dag_dag_save_fail')} ${names.join('，')}`)
       }
       // else if (error?.data?.message) {
       //   this.$message.error(error.data.message)
@@ -1607,9 +1604,9 @@ export default {
 
         this.dataflow.disabledData.stop = true
         await taskApi.stop(this.dataflow.id).catch(e => {
-          this.handleError(e, this.t('message_operation_error'))
+          this.handleError(e, this.$t('packages_dag_message_operation_error'))
         })
-        this.$message.success(this.t('message_operation_succuess'))
+        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
       })
     },
 
@@ -1640,9 +1637,9 @@ export default {
         try {
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.t('message_resetOk'))
+          this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
         } catch (e) {
-          this.handleError(e, this.t('message_resetFailed'))
+          this.handleError(e, this.$t('packages_dag_message_resetFailed'))
         }
       })
     },
@@ -1651,7 +1648,7 @@ export default {
       let message = operateStr + '_confirm_message'
 
       const h = this.$createElement
-      let strArr = this.t('dataFlow.' + message).split('xxx')
+      let strArr = this.$t('packages_dag_dataFlow_' + message).split('xxx')
       let msg = h('p', null, [
         strArr[0],
         h(
@@ -1670,10 +1667,10 @@ export default {
       let failList = data?.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: this.t('dataFlow_multiError_notFound'),
-          6: this.t('dataFlow_multiError_statusError'),
-          7: this.t('dataFlow_multiError_otherError'),
-          8: this.t('dataFlow_multiError_statusError')
+          5: this.$t('packages_dag_dataFlow_multiError_notFound'),
+          6: this.$t('packages_dag_dataFlow_multiError_statusError'),
+          7: this.$t('packages_dag_dataFlow_multiError_otherError'),
+          8: this.$t('packages_dag_dataFlow_multiError_statusError')
         }
         let nameMapping = {}
         this.table.list.forEach(item => {

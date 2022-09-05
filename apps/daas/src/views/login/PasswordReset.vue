@@ -2,9 +2,9 @@
   <LoginPage>
     <section class="page-registry" slot="main">
       <div class="sign-in-panel">
-        <div class="title">{{ $t('app.signIn.modifyPassword') }}</div>
+        <div class="title">{{ $t('app_signIn_modifyPassword') }}</div>
         <div class="tip">
-          {{ $t('app.signIn.newPasswordTip') }}
+          {{ $t('app_signIn_newPasswordTip') }}
         </div>
         <div class="error-tips" v-show="errorMessage">
           <i class="el-icon-warning-outline"></i>
@@ -16,7 +16,7 @@
               v-model="form.email"
               autocomplete="username"
               type="email"
-              :placeholder="$t('app.signIn.email_placeholder')"
+              :placeholder="$t('app_signIn_email_placeholder')"
             ></el-input>
           </el-form-item>
           <el-form-item prop="newPassword">
@@ -24,7 +24,7 @@
               v-model="form.newPassword"
               autocomplete="current-password"
               :type="passwordType"
-              :placeholder="$t('app.signIn.newpassword_placeholder')"
+              :placeholder="$t('app_signIn_newpassword_placeholder')"
               @keyup.13="submit"
             >
               <i
@@ -52,12 +52,12 @@
             </el-row>
           </el-form-item>
           <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
-            {{ $t('app.signIn.nextStep') }}
+            {{ $t('app_signIn_nextStep') }}
           </ElButton>
         </el-form>
         <div class="back-login">
-          {{ $t('app.signIn.rememberPasswords') }}
-          <ElButton type="text" @click="backLogin">{{ $t('app.signIn.backLogin') }}</ElButton>
+          {{ $t('app_signIn_rememberPasswords') }}
+          <ElButton type="text" @click="backLogin">{{ $t('app_signIn_backLogin') }}</ElButton>
         </div>
       </div>
     </section>

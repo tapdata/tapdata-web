@@ -1,17 +1,17 @@
 <template>
   <div class="field-mapping flex flex-column" v-loading="loadingPage">
     <div class="field-mapping__desc text-start lh-base">
-      <strong>{{ t('dag_dialog_field_mapping_table_setting') }}</strong
-      >: {{ t('dag_dialog_field_mapping_tip') }}
+      <strong>{{ $t('packages_fieldMapping_dag_dialog_field_mapping_table_setting') }}</strong
+      >: {{ $t('packages_fieldMapping_dag_dialog_field_mapping_tip') }}
       <div class="float-end mt-5">
         <ElButton
           v-if="modeMapping[transform.mode]['batch_field_rename']"
           size="mini"
           @click="dialogFieldVisible = true"
-          >{{ t('dag_dialog_field_mapping_field_rename') }}</ElButton
+          >{{ $t('packages_fieldMapping_dag_dialog_field_mapping_field_rename') }}</ElButton
         >
         <ElButton v-if="modeMapping[transform.mode]['batch_field_type']" size="mini" @click="handleBatchDataType">
-          {{ t('dag_dialog_field_mapping_change_type_field_rename') }}</ElButton
+          {{ $t('packages_fieldMapping_dag_dialog_field_mapping_change_type_field_rename') }}</ElButton
         >
         <ElButton
           v-if="modeMapping[transform.mode]['batch_rollback']"
@@ -19,7 +19,7 @@
           size="mini"
           type="primary"
           @click="rollbackAll"
-          >{{ t('dag_dialog_field_mapping_rollback_all') }}</ElButton
+          >{{ $t('packages_fieldMapping_dag_dialog_field_mapping_rollback_all') }}</ElButton
         >
       </div>
     </div>
@@ -27,13 +27,13 @@
       <div class="task-form-left flex flex-column">
         <div class="flex mb-2 ml-6">
           <div class="flex">
-            <span class="task-form__text"> {{ t('dag_dialog_field_mapping_search_table') }}：</span>
+            <span class="task-form__text"> {{ $t('packages_fieldMapping_dag_dialog_field_mapping_search_table') }}：</span>
             <ElInput v-model="searchTable" clearable size="mini" @input="search('table')"></ElInput>
           </div>
         </div>
         <div class="mb-2 ml-6" v-if="progress.showProgress">
           {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
-          ><span>{{ t('dag_dialog_field_mapping_loading_schema') }}</span>
+          ><span>{{ $t('packages_fieldMapping_dag_dialog_field_mapping_loading_schema') }}</span>
         </div>
         <ul class="task-form-left__ul flex flex-column">
           <li
@@ -53,7 +53,7 @@
               <div class="target">{{ item.sinkObjectName }}</div>
               <div class="select">
                 {{
-                  `${t('dag_dialog_field_mapping_selected')} ${
+                  `${$t('packages_fieldMapping_dag_dialog_field_mapping_selected')} ${
                     position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
                   }/${item.sourceFieldCount}`
                 }}
@@ -76,7 +76,7 @@
       <div class="main">
         <div class="flex mb-2 ml-2 text-start">
           <div class="flex align-items-center">
-            <span class="task-form__text"> {{ t('dag_dialog_field_mapping_search_field') }} : </span>
+            <span class="task-form__text"> {{ $t('packages_fieldMapping_dag_dialog_field_mapping_search_field') }} : </span>
             <ElInput v-model="searchField" size="mini" @input="search('field')"></ElInput>
           </div>
           <div class="item ml-5">
@@ -86,7 +86,7 @@
               style="padding: 6px 15px"
               @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)"
             >
-              <ElTooltip effect="dark" :content="t('dag_dialog_field_mapping_rollback_field')" placement="top-start">
+              <ElTooltip effect="dark" :content="$t('packages_fieldMapping_dag_dialog_field_mapping_rollback_field')" placement="top-start">
                 <VIcon class="color-primary" size="14">rollback</VIcon>
               </ElTooltip>
             </ElButton>
@@ -100,7 +100,7 @@
           :row-class-name="tableRowClassName"
           v-loading="loading"
         >
-          <ElTableColumn show-overflow-tooltip :label="t('dag_dialog_field_mapping_source_field')" prop="field_name">
+          <ElTableColumn show-overflow-tooltip :label="$t('packages_fieldMapping_dag_dialog_field_mapping_source_field')" prop="field_name">
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
                 >{{ scope.row.field_name }}
@@ -110,12 +110,12 @@
             </template>
           </ElTableColumn>
           <ElTableColumn
-            :label="t('dag_dialog_field_mapping_source_type')"
+            :label="$t('packages_fieldMapping_dag_dialog_field_mapping_source_type')"
             prop="data_type"
             width="150"
           ></ElTableColumn>
           <!--          <ElTableColumn-->
-          <!--            :label="t('dag_dialog_field_mapping_source_precision')"-->
+          <!--            :label="$t('packages_fieldMapping_dag_dialog_field_mapping_source_precision')"-->
           <!--            prop="precision"-->
           <!--            width="150"-->
           <!--          >-->
@@ -124,11 +124,11 @@
           <!--            </template>-->
           <!--          </ElTableColumn>-->
           <!--          <ElTableColumn-->
-          <!--            :label="t('dag_dialog_field_mapping_source_scale')"-->
+          <!--            :label="$t('packages_fieldMapping_dag_dialog_field_mapping_source_scale')"-->
           <!--            prop="scale"-->
           <!--            width="100"-->
           <!--          ></ElTableColumn>-->
-          <ElTableColumn :label="t('dag_dialog_field_mapping_target_field')">
+          <ElTableColumn :label="$t('packages_fieldMapping_dag_dialog_field_mapping_target_field')">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
@@ -142,7 +142,7 @@
               <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="t('dag_dialog_field_mapping_target_type')" width="150">
+          <ElTableColumn :label="$t('packages_fieldMapping_dag_dialog_field_mapping_target_type')" width="150">
             <template slot-scope="scope">
               <!--              <div-->
               <!--                class="cursor-pointer"-->
@@ -158,7 +158,7 @@
               </div>
             </template>
           </ElTableColumn>
-          <!--          <ElTableColumn :label="t('dag_dialog_field_mapping_target_precision')" width="150">-->
+          <!--          <ElTableColumn :label="$t('packages_fieldMapping_dag_dialog_field_mapping_target_precision')" width="150">-->
           <!--            <template slot-scope="scope">-->
           <!--              <div-->
           <!--                class="cursor-pointer"-->
@@ -173,7 +173,7 @@
           <!--              </div>-->
           <!--            </template>-->
           <!--          </ElTableColumn>-->
-          <!--          <ElTableColumn :label="t('dag_dialog_field_mapping_target_scale')" width="100">-->
+          <!--          <ElTableColumn :label="$t('packages_fieldMapping_dag_dialog_field_mapping_target_scale')" width="100">-->
           <!--            <template slot-scope="scope">-->
           <!--              <div-->
           <!--                class="cursor-pointer"-->
@@ -188,7 +188,7 @@
           <!--              </div>-->
           <!--            </template>-->
           <!--          </ElTableColumn>-->
-          <ElTableColumn :label="t('meta_table_default')" width="180">
+          <ElTableColumn :label="$t('packages_fieldMapping_meta_table_default')" width="180">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
@@ -208,20 +208,20 @@
             </template>
           </ElTableColumn>
           <ElTableColumn
-            :label="t('dag_dialog_field_mapping_operate')"
+            :label="$t('packages_fieldMapping_dag_dialog_field_mapping_operate')"
             :width="100"
             v-if="modeMapping[transform.mode]['field_table_ops']"
           >
             <template slot-scope="scope">
               <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)">
-                {{ t('button_delete') }}
+                {{ $t('packages_fieldMapping_button_delete') }}
               </ElLink>
-              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> {{ t('button_reduction') }} </ElLink>
+              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> {{ $t('packages_fieldMapping_button_reduction') }} </ElLink>
             </template>
           </ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
             <i class="el-icon-folder-opened"></i>
-            <span class="ml-1">{{ t('dag_dialog_field_mapping_no_data') }}</span>
+            <span class="ml-1">{{ $t('packages_fieldMapping_dag_dialog_field_mapping_no_data') }}</span>
           </div>
         </ElTable>
       </div>
@@ -247,7 +247,7 @@
                 item.maxPrecision && currentOperationType === 'precision' && item.minPrecision !== item.maxPrecision
               "
             >
-              <div v-if="index === 0">{{ t('dag_dialog_field_mapping_range_precision') }}</div>
+              <div v-if="index === 0">{{ $t('packages_fieldMapping_dag_dialog_field_mapping_range_precision') }}</div>
               <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
@@ -256,7 +256,7 @@
               v-if="item.maxScale && currentOperationType === 'scale' && item.minScale !== item.maxScale"
               style="margin-top: 10px"
             >
-              <div>{{ t('dag_dialog_field_mapping_range_scale') }}</div>
+              <div>{{ $t('packages_fieldMapping_dag_dialog_field_mapping_range_scale') }}</div>
               <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
@@ -274,13 +274,13 @@
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-              <div v-if="index === 0">{{ t('dag_dialog_field_mapping_range_precision') }}</div>
+              <div v-if="index === 0">{{ $t('packages_fieldMapping_dag_dialog_field_mapping_range_precision') }}</div>
               <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
             </div>
             <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
-              <div>{{ t('dag_dialog_field_mapping_range_scale') }}</div>
+              <div>{{ $t('packages_fieldMapping_dag_dialog_field_mapping_range_scale') }}</div>
               <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
@@ -294,14 +294,14 @@
         v-if="['default_value'].includes(currentOperationType)"
       ></ElInput>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="handleClose()">{{ t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="editSave()">{{ t('button_confirm') }}</ElButton>
+        <ElButton @click="handleClose()">{{ $t('packages_fieldMapping_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="editSave()">{{ $t('packages_fieldMapping_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
     <ElDialog
       width="600px"
       append-to-body
-      :title="t('dag_dialog_field_mapping_batch_field_name')"
+      :title="$t('packages_fieldMapping_dag_dialog_field_mapping_batch_field_name')"
       custom-class="field-maping-table-dialog"
       :visible.sync="dialogFieldVisible"
       :close-on-click-modal="false"
@@ -309,24 +309,24 @@
     >
       <div class="table-box">
         <ElForm ref="form" class="table-form" :model="form" label-width="120px">
-          <ElFormItem :label="t('dag_data_node_label_database_link_field')">
+          <ElFormItem :label="$t('packages_fieldMapping_dag_data_node_label_database_link_field')">
             <ElSelect size="mini" v-model="form.fieldsNameTransform">
-              <ElOption :label="t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
-              <ElOption :label="t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
-              <ElOption :label="t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
+              <ElOption :label="$t('packages_fieldMapping_dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('packages_fieldMapping_dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
+              <ElOption :label="$t('packages_fieldMapping_dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
             </ElSelect>
           </ElFormItem>
         </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleFieldClose">{{ t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="handleFieldSave()">{{ t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="handleFieldClose">{{ $t('packages_fieldMapping_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleFieldSave()">{{ $t('packages_fieldMapping_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
     <ElDialog
       width="600px"
       append-to-body
-      :title="t('dag_dialog_field_mapping_batch_change_type')"
+      :title="$t('packages_fieldMapping_dag_dialog_field_mapping_batch_change_type')"
       custom-class="field-maping-table-dialog"
       :visible.sync="dialogDataTypeVisible"
       :close-on-click-modal="false"
@@ -334,10 +334,10 @@
     >
       <div class="table-box flex flex-row mb-3">
         <span class="inline-block font-weight-bold" style="width: 190px">{{
-          t('dag_dialog_field_mapping_batch_change_type_source')
+          $t('packages_fieldMapping_dag_dialog_field_mapping_batch_change_type_source')
         }}</span>
         <span class="inline-block font-weight-bold" style="width: 334px">{{
-          t('dag_dialog_field_mapping_batch_change_type_target')
+          $t('packages_fieldMapping_dag_dialog_field_mapping_batch_change_type_target')
         }}</span>
       </div>
       <div class="table-box flex flex-column">
@@ -402,8 +402,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleDataTypeClose">{{ t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="handleDataTypeSave()">{{ t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="handleDataTypeClose">{{ $t('packages_fieldMapping_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleDataTypeSave()">{{ $t('packages_fieldMapping_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -416,12 +416,10 @@ import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import { delayTrigger } from 'web-core/util'
 import { modeMapping } from './const'
-import Locale from '../mixins/locale'
 
 export default {
   name: 'FieldMappingDialog',
   components: { VIcon },
-  mixins: [Locale],
   props: {
     remoteMethod: Function,
     typeMappingMethod: Function,
@@ -459,11 +457,11 @@ export default {
         default_value: ''
       },
       titleType: {
-        field_name: this.t('dag_dialog_field_mapping_tittle_field_name'),
-        data_type: this.t('dag_dialog_field_mapping_tittle_data_type'),
-        precision: this.t('dag_dialog_field_mapping_tittle_precision'),
-        scale: this.t('dag_dialog_field_mapping_tittle_scale'),
-        default_value: this.t('dag_dialog_field_mapping_tittle_value')
+        field_name: this.$t('packages_fieldMapping_dag_dialog_field_mapping_tittle_field_name'),
+        data_type: this.$t('packages_fieldMapping_dag_dialog_field_mapping_tittle_data_type'),
+        precision: this.$t('packages_fieldMapping_dag_dialog_field_mapping_tittle_precision'),
+        scale: this.$t('packages_fieldMapping_dag_dialog_field_mapping_tittle_scale'),
+        default_value: this.$t('packages_fieldMapping_dag_dialog_field_mapping_tittle_value')
       },
       page: {
         size: 10,
@@ -769,7 +767,7 @@ export default {
         }
       })
       if (!verify) {
-        this.$message.error(this.t('dag_dialog_field_mapping_batch_change_type_error_tip'))
+        this.$message.error(this.$t('packages_fieldMapping_dag_dialog_field_mapping_batch_change_type_error_tip'))
         return
       }
       this.dialogDataTypeVisible = false
@@ -809,8 +807,8 @@ export default {
     /* 恢复默认全部*/
     rollbackAll() {
       this.$confirm(
-        this.t('dag_dialog_field_mapping_error_rollback_all'),
-        this.t('dag_dialog_field_mapping_error_tip'),
+        this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_rollback_all'),
+        this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_tip'),
         {
           type: 'warning',
           zIndex: 9999
@@ -847,7 +845,7 @@ export default {
         let data = JSON.parse(JSON.stringify(this.target))
         let deleteLen = data.filter(v => !v.is_deleted)
         if (deleteLen.length === 0 && this.target?.length > 0) {
-          this.$message.error(this.t('dag_link_field_mapping_error_all_deleted'))
+          this.$message.error(this.$t('packages_fieldMapping_dag_link_field_mapping_error_all_deleted'))
           return //所有字段被删除了 不可以保存任务
         }
         this.$emit('row-click', this.selectRow, this.operations, this.target)
@@ -920,7 +918,7 @@ export default {
     },
     /*恢复默认单表*/
     rollbackTable(name, id) {
-      this.$confirm(this.t('dag_dialog_field_mapping_error_rollback'), this.t('dag_dialog_field_mapping_error_tip'), {
+      this.$confirm(this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_rollback'), this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_tip'), {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
@@ -994,7 +992,7 @@ export default {
         if (isPrecision.length === 0) {
           this.currentTypeRules.forEach(r => {
             if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
-              this.$message.error(this.t('dag_dialog_field_mapping_error_range'))
+              this.$message.error(this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_range'))
               verify = false
             }
           })
@@ -1003,7 +1001,7 @@ export default {
             if (r.minPrecision < r.maxPrecision) {
               if (r.minPrecision > value || value > r.maxPrecision) {
                 verify = false
-                this.$message.error(this.t('dag_dialog_field_mapping_error_range'))
+                this.$message.error(this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_range'))
               }
             }
           })
@@ -1016,7 +1014,7 @@ export default {
         if (isScale.length === 0) {
           this.currentTypeRules.forEach(r => {
             if (r.minScale === r.maxScale && value !== r.maxScale) {
-              this.$message.error(this.t('dag_dialog_field_mapping_error_range'))
+              this.$message.error(this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_range'))
               verify = false
             }
           })
@@ -1025,7 +1023,7 @@ export default {
             if (r.minScale < r.maxScale) {
               if (r.minScale > value || value > r.maxScale) {
                 verify = false
-                this.$message.error(this.t('dag_dialog_field_mapping_error_range'))
+                this.$message.error(this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_range'))
               }
             }
           })
@@ -1162,7 +1160,7 @@ export default {
       let exist = false
       let filterData = this.target.filter(v => value === v.field_name && !v.is_deleted)
       if (filterData.length > 0) {
-        this.$message.error(value + this.t('message_exists_name'))
+        this.$message.error(value + this.$t('packages_fieldMapping_message_exists_name'))
         exist = true
       }
       return exist
@@ -1263,9 +1261,9 @@ export default {
       if (result.checkDataType || result.checkInvalid) {
         if (!hiddenMsg) {
           this.$message.error(
-            `${this.t('dag_dialog_field_mapping_error_save_prefix')}
+            `${this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_save_prefix')}
             ${result.count}
-            ${this.t('dag_dialog_field_mapping_error_save_suffix')}`
+            ${this.$t('packages_fieldMapping_dag_dialog_field_mapping_error_save_suffix')}`
           )
         }
         return {

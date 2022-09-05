@@ -4,7 +4,7 @@ import { defineComponent, h } from 'vue-demi'
 import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
 import json from 'highlight.js/lib/languages/json'
-import Highlight from 'web-core/components/Highlight'
+import { Highlight } from '@tap/component'
 hljs.registerLanguage('sql', sql)
 hljs.registerLanguage('json', json)
 

@@ -316,10 +316,10 @@ export default {
       migrationTotal: '',
       syncTotal: '',
       taskStatusStatistics: [
-        { name: this.$t('app.Home.initialization'), value: 'initializing' },
-        { name: this.$t('app.Home.loadingFinished'), value: 'initialized' },
-        { name: this.$t('app.Home.incremental'), value: 'cdc' },
-        { name: this.$t('app.Home.incrementalLag'), value: 'Lag' }
+        { name: this.$t('app_Home_initialization'), value: 'initializing' },
+        { name: this.$t('app_Home_loadingFinished'), value: 'initialized' },
+        { name: this.$t('app_Home_incremental'), value: 'cdc' },
+        { name: this.$t('app_Home_incrementalLag'), value: 'Lag' }
       ],
       colorMap: {
         running: '#82C647',
@@ -337,9 +337,9 @@ export default {
         stopped: '#FDB01C'
       },
       syncType: {
-        initial_sync: this.$t('dataFlow.initial_sync'),
-        cdc: this.$t('dataFlow.cdc'),
-        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
+        initial_sync: this.$t('dataFlow_initial_sync'),
+        cdc: this.$t('dataFlow_cdc'),
+        'initial_sync+cdc': this.$t('dataFlow_initial_sync') + '+' + this.$t('dataFlow_cdc')
       },
 
       transfer: {

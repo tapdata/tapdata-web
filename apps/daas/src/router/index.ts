@@ -42,7 +42,7 @@ export default i18n => {
         }
       } else {
         Message.error({
-          message: i18n.t('app.signIn.permission_denied')
+          message: i18n.t('app_signIn_permission_denied')
         })
         next(false)
       }

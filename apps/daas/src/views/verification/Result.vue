@@ -75,9 +75,9 @@ export default {
     return {
       loading: false,
       typeMap: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        row_count: this.$t('dataVerification_rowVerify'),
+        field: this.$t('dataVerification_contentVerify'),
+        jointField: this.$t('dataVerification_jointVerify')
       },
       inspect: {},
       resultInfo: {},
