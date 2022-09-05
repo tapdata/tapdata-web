@@ -234,7 +234,9 @@ export default {
     },
     lastPageText: {
       type: String,
-      default: i18n.t('packages_component_src_selectlist_meiyougengduoshu')
+      default: () => {
+        return i18n.t('packages_component_src_selectlist_meiyougengduoshu')
+      }
     },
     menuMinWidth: {
       type: String,

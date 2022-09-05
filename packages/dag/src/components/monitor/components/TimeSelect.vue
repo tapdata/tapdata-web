@@ -49,7 +49,9 @@ export default {
     value: String,
     title: {
       type: String,
-      default: i18n.t('packages_dag_components_timeselect_zhouqi')
+      default: () => {
+        return i18n.t('packages_dag_components_timeselect_zhouqi')
+      }
     },
     options: {
       type: Array,

@@ -43,7 +43,9 @@ export default {
     inputMinWidth: [String, Number],
     placeholder: {
       type: String,
-      default: i18n.t('packages_component_formBuilder_input_placeholderPrefix')
+      default: () => {
+        return i18n.t('packages_component_formBuilder_input_placeholderPrefix')
+      }
     },
     hiddenIcon: Boolean,
     maxlength: {

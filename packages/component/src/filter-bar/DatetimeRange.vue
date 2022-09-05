@@ -39,11 +39,15 @@ export default {
     },
     startPlaceholder: {
       type: String,
-      default: i18n.t('packages_component_filter_bar_datetimerange_kaishishijian')
+      default: () => {
+        return i18n.t('packages_component_filter_bar_datetimerange_kaishishijian')
+      }
     },
     endPlaceholder: {
       type: String,
-      default: i18n.t('packages_component_filter_bar_datetimerange_jieshushijian')
+      default: () => {
+        return i18n.t('packages_component_filter_bar_datetimerange_jieshushijian')
+      }
     },
     range: {
       type: Number

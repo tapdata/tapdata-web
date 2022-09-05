@@ -21,7 +21,9 @@ export default {
   props: {
     title: {
       type: String,
-      default: i18n.t('packages_dag_components_linechart_biaoti')
+      default: () => {
+        return i18n.t('packages_dag_components_linechart_biaoti')
+      }
     },
     data: {
       type: Object,
