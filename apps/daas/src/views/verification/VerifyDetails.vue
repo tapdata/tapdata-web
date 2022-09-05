@@ -49,7 +49,8 @@
           </div>
           <div class="verify-result__line mt-2">
             <span class="line__label">异常数据（行）：</span>
-            <span class="font-color-dark">{{ row.counts || 0 }}</span>
+            <span v-if="row.toBeCompared > 0" class="color-primary"> 校验中</span>
+            <span v-else class="font-color-dark">{{ row.counts || 0 }}</span>
           </div>
         </div>
         <div class="flex justify-content-between pt-4 px-4">
@@ -181,12 +182,20 @@ export default {
       showAdvancedVerification: false,
       row: null,
       detailLoading: false,
-      detailSvg: require('@tap/assets/images/detail-info.svg')
+      detailSvg: require('@tap/assets/images/detail-info.svg'),
+      timeout: null
     }
   },
 
   mounted() {
     this.init()
+    //轮询结果
+    this.timeout = setInterval(() => {
+      this.$refs.table.fetch?.(null, 0, true)
+    }, 30000)
+  },
+  destroyed() {
+    clearInterval(this.timeout)
   },
 
   methods: {
