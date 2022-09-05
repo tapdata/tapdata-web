@@ -65,7 +65,9 @@
               v-else-if="connection[temp.key] && (temp.key === 'shareCdcEnable' || temp.key === 'redoLogParserEnable')"
               class="box-line__value ellipsis"
             >
-              <span>{{ connection[temp.key] ? $t('packages_business_text_open') : $t('packages_business_text_close') }}</span>
+              <span>{{
+                connection[temp.key] ? $t('packages_business_text_open') : $t('packages_business_text_close')
+              }}</span>
             </div>
             <!-- MQ文字转换 end -->
             <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
@@ -78,6 +80,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
@@ -362,7 +366,7 @@ export default {
             setTimeout(() => {
               this.showProgress = false
               this.progress = 0 //加载完成
-              this.$message.success('schema加载完成')
+              this.$message.success(i18n.t('packages_business_connections_preview_schem'))
             }, 1000)
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100

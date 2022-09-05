@@ -389,5 +389,41 @@ export default {
   packages_business_task_info_status_waiting: '待運行',
   packages_business_task_info_status_running: '同步中',
   packages_business_task_info_status_done: '已完成',
-  packages_business_task_info_status_paused: '已暫停'
+  packages_business_task_info_status_paused: '已暫停',
+  packages_business_logs_detailed_sousuowushuju: '搜索無數據',
+  packages_business_logs_index_xiangxi: '詳細',
+  packages_business_logs_index_putong: '普通',
+  packages_business_shared_task_yijingzhiweie: '已經置為[error]',
+  packages_business_shared_task_weishibiederen: '未識別的任務狀態：{val1}',
+  packages_business_connections_databaseform_cicaozuohuidiu: '此操作會丟失當前正在創建的連接',
+  packages_business_connections_databaseform_mingchengguizezhong:
+    '名稱規則：中英開頭，1～100個字符，可包含中英文、數字、中劃線、下劃線、空格',
+  packages_business_connections_databaseform_zhongyingkaitouge:
+    '中英開頭，1～100個字符，可包含中英文、數字、中劃線、下劃線、空格',
+  packages_business_connections_list_renwuzongshu: '任務總數: ',
+  packages_business_connections_list_gailianjieyibei: '該連接已被以下任務調用，請刪除任務或修改配置後重試',
+  packages_business_connections_list_tishi: '提示',
+  packages_business_connections_preview_schem: 'schema加載完成',
+  packages_business_etl_details_caozuoshibaiqing: '操作失敗，請重試',
+  packages_business_etl_details_shifouzhongzhigai: '是否重置該任務？ ',
+  packages_business_etl_details_zhongzhirenwux: '重置任務 xxx 將清除任務同步進度，任務將重新執行',
+  packages_business_etl_details_qiangzhitingzhiren: '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+  packages_business_etl_details_shifouqiangzhiting: '是否強制停止該任務？ ',
+  packages_business_etl_details_zantingrenwux:
+    '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  packages_business_etl_details_shifouzantinggai: '是否暫停該任務？ ',
+  packages_business_etl_details_shanchurenwux: '刪除任務 xxx 後，此任務將無法恢復',
+  packages_business_etl_details_shifoushanchugai: '是否刪除該任務？ ',
+  packages_business_etl_details_renwuXxx:
+    '任務XXX中含有聚合處理節點，任務停止後再次啟動，任務會先進行重置，確定停止？ ',
+  packages_business_etl_details_chushihualeixing: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停?',
+  packages_business_etl_details_miaoshuneirong: '描述內容',
+  packages_business_statistics_index_tongburenwu: '同步任務',
+  packages_business_statistics_index_qianyirenwu: '遷移任務',
+  packages_business_statistics_schedule_cike: '此刻',
+  packages_business_statistics_schedule_shujukushiqu: '數據庫時區',
+  packages_business_statistics_schedule_yonghuliulanqi: '用戶瀏覽器時區',
+  packages_business_statistics_schedule_shijian: '時間：',
+  packages_business_statistics_schedule_qingxuanze: '請選擇',
+  packages_business_statistics_schedule_leixing: '類型：'
 }

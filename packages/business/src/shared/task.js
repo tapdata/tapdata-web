@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { Cookie } from '@tap/shared'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
@@ -143,7 +144,12 @@ export function makeStatusAndDisabled(item) {
   }
 
   if (!(status in STATUS_MAP)) {
-    console.error(`未识别的任务状态：${status}`, '已经置为[error]') // eslint-disable-line
+    console.error(
+      i18n.t('packages_business_shared_task_weishibiederen', {
+        val1: status
+      }),
+      i18n.t('packages_business_shared_task_yijingzhiweie')
+    ) // eslint-disable-line
     item.status = status = 'error'
   }
 

@@ -25,7 +25,7 @@
               <InlineInput
                 :value="task.desc"
                 :icon-config="{ class: 'color-primary' }"
-                :input-props="{ placeholder: '描述内容' }"
+                :input-props="{ placeholder: $t('packages_business_etl_details_miaoshuneirong') }"
                 :min="0"
                 :max="50"
                 type="icon"
@@ -104,6 +104,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 
 import { taskApi, dataFlowsApi } from '@tap/api'
@@ -155,7 +157,8 @@ export default {
       syncTypeMap: {
         initial_sync: this.$t('packages_business_dataFlow_initial_sync'),
         cdc: this.$t('packages_business_dataFlow_cdc'),
-        'initial_sync+cdc': this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
+        'initial_sync+cdc':
+          this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
       },
       list: [],
       loadingObj: {
@@ -296,14 +299,14 @@ export default {
       let title = msgObj.title
       let node = this.task
       if (node.setting && !node.setting.sync_type.includes('cdc')) {
-        message = '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?'
-        title = '重要提醒'
+        message = i18n.t('packages_business_etl_details_chushihualeixing')
+        title = i18n.t('packages_business_dataFlow_importantReminder')
       }
       if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
         const h = this.$createElement
-        let arr = '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？'.split('XXX')
+        let arr = i18n.t('packages_business_etl_details_renwuXxx').split('XXX')
         message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-        title = '重要提醒'
+        title = i18n.t('packages_business_dataFlow_importantReminder')
       }
       resetLoading.stop = true
       this.$confirm(message, title, {
@@ -335,17 +338,17 @@ export default {
     },
     getConfirmMessage(operateStr, name) {
       let map = {
-        delete_confirm_title: '是否删除该任务？',
-        delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+        delete_confirm_title: i18n.t('packages_business_etl_details_shifoushanchugai'),
+        delete_confirm_message: i18n.t('packages_business_etl_details_shanchurenwux'),
 
-        stop_confirm_title: '是否暂停该任务？',
-        stop_confirm_message: '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+        stop_confirm_title: i18n.t('packages_business_etl_details_shifouzantinggai'),
+        stop_confirm_message: i18n.t('packages_business_etl_details_zantingrenwux'),
 
-        force_stop_confirm_title: '是否强制停止该任务？',
-        force_stop_confirm_message: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+        force_stop_confirm_title: i18n.t('packages_business_etl_details_shifouqiangzhiting'),
+        force_stop_confirm_message: i18n.t('packages_business_etl_details_qiangzhitingzhiren'),
 
-        initialize_confirm_title: '是否重置该任务？',
-        initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行'
+        initialize_confirm_title: i18n.t('packages_business_etl_details_shifouzhongzhigai'),
+        initialize_confirm_message: i18n.t('packages_business_etl_details_zhongzhirenwux')
       }
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'
@@ -368,10 +371,14 @@ export default {
       }
     },
     reset(id) {
-      this.$confirm('是否重置该任务？', '重置', {
-        type: 'warning',
-        dangerouslyUseHTMLString: true
-      }).then(flag => {
+      this.$confirm(
+        i18n.t('packages_business_etl_details_shifouzhongzhigai'),
+        i18n.t('packages_business_dataFlow_reset'),
+        {
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }
+      ).then(flag => {
         if (!flag) {
           return
         }
@@ -427,10 +434,10 @@ export default {
       let failList = data.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: '此任务不存在',
-          6: '任务状态不允许这种操作',
-          7: '操作失败，请重试',
-          8: '任务状态不允许这种操作'
+          5: i18n.t('packages_business_dataFlow_multiError_notFound'),
+          6: i18n.t('packages_business_dataFlow_multiError_statusError'),
+          7: i18n.t('packages_business_etl_details_caozuoshibaiqing'),
+          8: i18n.t('packages_business_dataFlow_multiError_statusError')
         }
         this.$message.warning({
           dangerouslyUseHTMLString: true,

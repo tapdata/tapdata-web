@@ -17,10 +17,14 @@
         <!--  里程碑  -->
         <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('packages_business_task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">
+            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
+          </div>
           <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
-              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{ $t('packages_business_button_clear') }}</ElButton>
+              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
+                $t('packages_business_button_clear')
+              }}</ElButton>
               <ElButton size="mini" type="text" @click="handleRollback(scope.row)">{{
                 $t('packages_business_button_rollback')
               }}</ElButton></template
@@ -41,7 +45,9 @@
           :status="task.status"
         ></Overview>
         <div v-if="currentStep.group === 'structure'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('packages_business_task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">
+            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
+          </div>
           <div></div>
           <TableList
             v-if="columns.length"
@@ -58,7 +64,9 @@
           </TableList>
         </div>
         <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('packages_business_task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">
+            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
+          </div>
           <div></div>
           <TableList
             v-if="columns.length"
@@ -77,7 +85,9 @@
                 </ElTooltip></span
               >
               <span v-else
-                >{{ scope.row.totalNum === -1 ? $t('packages_business_task_info_overView_status') : scope.row.totalNum }}
+                >{{
+                  scope.row.totalNum === -1 ? $t('packages_business_task_info_overView_status') : scope.row.totalNum
+                }}
               </span>
             </template>
             <template slot="progress" slot-scope="scope">
@@ -101,10 +111,14 @@
           </el-pagination>
         </div>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('packages_business_task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">
+            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
+          </div>
           <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
-              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{ $t('packages_business_button_clear') }}</ElButton>
+              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
+                $t('packages_business_button_clear')
+              }}</ElButton>
               <ElButton size="mini" type="text" @click="handleRollback(scope.row)">{{
                 $t('packages_business_button_rollback')
               }}</ElButton></template
@@ -120,7 +134,9 @@
       <ElDivider class="my-6"></ElDivider>
       <Overview :info="syncOverViewData" :status="task.status"></Overview>
       <div v-if="currentStep.group === 'structure'" class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark">{{ $t('packages_business_task_info_task_structure') }}{{ $t('packages_business_task_info_info') }}</div>
+        <div class="mb-4 fs-7 font-color-dark">
+          {{ $t('packages_business_task_info_task_structure') }}{{ $t('packages_business_task_info_info') }}
+        </div>
         <div></div>
         <TableList
           v-if="columns.length"
@@ -137,7 +153,9 @@
         </TableList>
       </div>
       <div class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark">{{ $t('packages_business_task_setting_initial_sync') }}{{ $t('packages_business_task_info_info') }}</div>
+        <div class="mb-4 fs-7 font-color-dark">
+          {{ $t('packages_business_task_setting_initial_sync') }}{{ $t('packages_business_task_info_info') }}
+        </div>
         <TableList
           v-if="columns.length"
           :data="syncTableList"
@@ -152,20 +170,27 @@
         </TableList>
       </div>
       <div class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark">{{ $t('packages_business_task_info_task_cdc') }}{{ $t('packages_business_task_info_info') }}</div>
+        <div class="mb-4 fs-7 font-color-dark">
+          {{ $t('packages_business_task_info_task_cdc') }}{{ $t('packages_business_task_info_info') }}
+        </div>
         <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
     </div>
-    <ElDialog width="500px" append-to-body :title="$t('packages_business_button_rollback')" :visible.sync="rollbackVisible">
+    <ElDialog
+      width="500px"
+      append-to-body
+      :title="$t('packages_business_button_rollback')"
+      :visible.sync="rollbackVisible"
+    >
       <ElRow>
         <ElRow :span="8" style="margin-bottom: 10px">
-          <label>类型：</label>
-          <ElSelect v-model="syncPointType" placeholder="请选择">
+          <label>{{ $t('packages_business_statistics_schedule_leixing') }}</label>
+          <ElSelect v-model="syncPointType" :placeholder="$t('packages_business_statistics_schedule_qingxuanze')">
             <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
           </ElSelect>
         </ElRow>
         <ElRow :span="14" v-if="syncPointType !== 'current'">
-          <label>时间：</label>
+          <label>{{ $t('packages_business_statistics_schedule_shijian') }}</label>
           <ElDatePicker
             format="yyyy-MM-dd HH:mm:ss"
             style="width: 70%"
@@ -177,13 +202,17 @@
       </ElRow>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="handleRollbackClose()">{{ $t('packages_business_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="submitRollBack()">{{ $t('packages_business_button_confirm') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="submitRollBack()">{{
+          $t('packages_business_button_confirm')
+        }}</ElButton>
       </span>
     </ElDialog>
   </div>
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 
 import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
@@ -242,15 +271,15 @@ export default {
       rollbackVisible: false,
       options: [
         {
-          label: '用户浏览器时区',
+          label: i18n.t('packages_business_statistics_schedule_yonghuliulanqi'),
           value: 'localTZ'
         },
         {
-          label: '数据库时区',
+          label: i18n.t('packages_business_statistics_schedule_shujukushiqu'),
           value: 'connTZ'
         },
         {
-          label: '此刻',
+          label: i18n.t('packages_business_statistics_schedule_cike'),
           value: 'current'
         }
       ],

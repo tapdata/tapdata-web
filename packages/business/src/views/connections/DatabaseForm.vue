@@ -4,7 +4,9 @@
       <main class="connection-from-main">
         <div class="connection-from-title">
           {{
-            $route.params.id ? this.$t('packages_business_connection_form_edit_connection') : this.$t('packages_business_connection_form_creat_connection')
+            $route.params.id
+              ? this.$t('packages_business_connection_form_edit_connection')
+              : this.$t('packages_business_connection_form_creat_connection')
           }}
         </div>
         <div class="connection-from-label" v-if="$route.params.id">
@@ -66,7 +68,9 @@
         <footer slot="footer" class="footer">
           <div class="footer-btn">
             <el-button size="mini" @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
-            <el-button size="mini" class="test" @click="startTest()">{{ $t('packages_business_connection_list_test_button') }}</el-button>
+            <el-button size="mini" class="test" @click="startTest()">{{
+              $t('packages_business_connection_list_test_button')
+            }}</el-button>
             <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
               {{ $t('packages_business_button_save') }}
             </el-button>
@@ -90,9 +94,9 @@
         <el-form-item prop="rename">
           <el-input v-model="renameData.rename" maxlength="100" show-word-limit></el-input>
         </el-form-item>
-        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
-          >中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
-        >
+        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
+          $t('packages_business_connections_databaseform_zhongyingkaitouge')
+        }}</span>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCancelRename" size="mini">{{ $t('packages_business_button_cancel') }}</el-button>
@@ -105,6 +109,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { action } from '@formily/reactive'
 
 import {
@@ -131,9 +137,14 @@ export default {
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
-        callback(new Error(this.$t('packages_business_dataForm_form_connectionName') + this.$t('packages_business_formBuilder_noneText')))
+        callback(
+          new Error(
+            this.$t('packages_business_dataForm_form_connectionName') +
+              this.$t('packages_business_formBuilder_noneText')
+          )
+        )
       } else if (!checkConnectionName(this.renameData.rename)) {
-        callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
+        callback(new Error(i18n.t('packages_business_connections_databaseform_mingchengguizezhong')))
       } else {
         callback()
       }
@@ -184,7 +195,9 @@ export default {
       logcollectorApi.patchSystemConfig(digSettingForm)
     },
     goBack() {
-      let msg = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
+      let msg = this.$route.params.id
+        ? i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
+        : i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
       // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
 
       this.$confirm(msg, '', {
@@ -665,7 +678,10 @@ export default {
                       colon: false
                     },
                     'x-component': 'Text',
-                    'x-component-props': { icon: 'info', content: this.$t('packages_business_connection_form_source_and_target_tip') },
+                    'x-component-props': {
+                      icon: 'info',
+                      content: this.$t('packages_business_connection_form_source_and_target_tip')
+                    },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {
@@ -683,7 +699,10 @@ export default {
                       colon: false
                     },
                     'x-component': 'Text',
-                    'x-component-props': { icon: 'info', content: this.$t('packages_business_connection_form_source_tip') },
+                    'x-component-props': {
+                      icon: 'info',
+                      content: this.$t('packages_business_connection_form_source_tip')
+                    },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {
@@ -699,7 +718,10 @@ export default {
                       colon: false
                     },
                     'x-component': 'Text',
-                    'x-component-props': { icon: 'info', content: this.$t('packages_business_connection_form_target_tip') },
+                    'x-component-props': {
+                      icon: 'info',
+                      content: this.$t('packages_business_connection_form_target_tip')
+                    },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {

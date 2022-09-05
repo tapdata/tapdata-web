@@ -387,5 +387,46 @@ export default {
   packages_business_task_info_status_waiting: 'Waiting',
   packages_business_task_info_status_running: 'Running',
   packages_business_task_info_status_done: 'Done',
-  packages_business_task_info_status_paused: 'Paused'
+  packages_business_task_info_status_paused: 'Paused',
+  packages_business_logs_detailed_sousuowushuju: 'Search no data',
+  packages_business_logs_index_xiangxi: 'detailed',
+  packages_business_logs_index_putong: 'normal',
+  packages_business_shared_task_yijingzhiweie: 'Already set to [error]',
+  packages_business_shared_task_weishibiederen: 'Unidentified task status: {val1}',
+  packages_business_connections_databaseform_cicaozuohuidiu:
+    'This operation will lose the connection currently being created',
+  packages_business_connections_databaseform_mingchengguizezhong:
+    'Name rules: start with Chinese and English, 1 to 100 characters, can include Chinese and English, numbers, dashes, underscores, spaces',
+  packages_business_connections_databaseform_zhongyingkaitouge:
+    'Begin with Chinese and English, 1 to 100 characters, can include Chinese and English, numbers, underscores, underscores, spaces',
+  packages_business_connections_list_renwuzongshu: 'Total number of tasks: ',
+  packages_business_connections_list_gailianjieyibei:
+    'The connection has been called by the following task, please delete the task or modify the configuration and try again',
+  packages_business_connections_list_tishi: 'Tips',
+  packages_business_connections_preview_schem: 'schema loading completed',
+  packages_business_etl_details_caozuoshibaiqing: 'The operation failed, please try again',
+  packages_business_etl_details_shifouzhongzhigai: 'Reset this task? ',
+  packages_business_etl_details_zhongzhirenwux:
+    'Resetting task xxx will clear the task synchronization progress and the task will be re-executed',
+  packages_business_etl_details_qiangzhitingzhiren:
+    'Forcibly stop the task xxx will immediately interrupt the data transmission force the task to stop quickly and reset the task',
+  packages_business_etl_details_shifouqiangzhiting: 'Would you like to force stop this task? ',
+  packages_business_etl_details_zantingrenwux:
+    'After suspending task xxx, when the table in the task that has not completed full synchronization starts again, it will re-execute full synchronization',
+  packages_business_etl_details_shifouzantinggai: 'Do you want to suspend this task? ',
+  packages_business_etl_details_shanchurenwux: 'After deleting task xxx, this task cannot be restored',
+  packages_business_etl_details_shifoushanchugai: 'Delete this task? ',
+  packages_business_etl_details_renwuXxx:
+    'Task XXX contains aggregation processing nodes. After the task is stopped and restarted, the task will be reset first. Are you sure to stop? ',
+  packages_business_etl_details_chushihualeixing:
+    'If a task of initialization type is restarted after being suspended, the task will be synchronized from the beginning, are you sure to suspend?',
+  packages_business_etl_details_miaoshuneirong: 'description content',
+  packages_business_statistics_index_tongburenwu: 'Sync tasks',
+  packages_business_statistics_index_qianyirenwu: 'Migration tasks',
+  packages_business_statistics_schedule_cike: 'At the moment',
+  packages_business_statistics_schedule_shujukushiqu: 'Database time zone',
+  packages_business_statistics_schedule_yonghuliulanqi: 'User browser time zone',
+  packages_business_statistics_schedule_shijian: 'Time:',
+  packages_business_statistics_schedule_qingxuanze: 'Please select',
+  packages_business_statistics_schedule_leixing: 'Type:'
 }

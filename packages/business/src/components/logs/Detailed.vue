@@ -23,7 +23,9 @@
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="noMore" class="font-color-light text-center pb-4">{{ $t('packages_business_task_info_no_more') }}</div>
+      <div v-show="noMore" class="font-color-light text-center pb-4">
+        {{ $t('packages_business_task_info_no_more') }}
+      </div>
       <ul v-if="logs.length">
         <li class="log-item px-6 font-color-light" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
@@ -31,8 +33,8 @@
           <div class="log-message pl-10" v-html="log.message"></div>
         </li>
       </ul>
-      <div v-else-if="keyword" class="text-center">搜索无数据</div>
-      <div v-else class="text-center">暂无数据</div>
+      <div v-else-if="keyword" class="text-center">{{ $t('packages_business_logs_detailed_sousuowushuju') }}</div>
+      <div v-else class="text-center">{{ $t('packages_business_dag_dialog_field_mapping_no_data') }}</div>
     </div>
   </div>
 </template>

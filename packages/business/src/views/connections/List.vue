@@ -23,7 +23,12 @@
         </ElButton>
       </div>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="$t('packages_business_connection_column_name')">
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="name"
+        min-width="180"
+        :label="$t('packages_business_connection_column_name')"
+      >
         <template slot-scope="scope">
           <span class="connection-name">
             <img class="connection-img mr-2" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
@@ -60,7 +65,11 @@
       <ElTableColumn min-width="140">
         <div slot="header" class="flex align-center">
           <span>{{ $t('packages_business_connection_list_column_schema_status') }}</span>
-          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connection_list_column_schema_status_tips')">
+          <ElTooltip
+            class="ml-2"
+            placement="top"
+            :content="$t('packages_business_connection_list_column_schema_status_tips')"
+          >
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -80,7 +89,9 @@
       </ElTableColumn>
       <ElTableColumn width="220" :label="$t('packages_business_connection_operate')">
         <template slot-scope="scope">
-          <ElButton type="text" @click="testConnection(scope.row)">{{ $t('packages_business_connection_list_test_button') }} </ElButton>
+          <ElButton type="text" @click="testConnection(scope.row)"
+            >{{ $t('packages_business_connection_list_test_button') }}
+          </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
             v-readonlybtn="'datasource_edition'"
@@ -115,9 +126,11 @@
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
-    <ElDialog title="提示" width="40%" :visible.sync="connectionTaskDialog">
-      <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
-      <div class="color-primary mt-2">任务总数: {{ connectionTaskListTotal }}</div>
+    <ElDialog :title="$t('packages_business_connections_list_tishi')" width="40%" :visible.sync="connectionTaskDialog">
+      <span>{{ $t('packages_business_connections_list_gailianjieyibei') }}</span>
+      <div class="color-primary mt-2">
+        {{ $t('packages_business_connections_list_renwuzongshu') }}{{ connectionTaskListTotal }}
+      </div>
       <ul class="mt-4">
         <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
           <el-tooltip :content="item.name" placement="right-start">
@@ -225,7 +238,9 @@ export default {
   created() {
     let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
-      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('packages_business_connection_list_help_doc') + '</a>'
+      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` +
+      this.$t('packages_business_connection_list_help_doc') +
+      '</a>'
 
     this.description = this.$t('packages_business_connection_list_desc') + guideDoc
     //定时轮询
@@ -539,9 +554,16 @@ export default {
       if (!data.status || data.status === null) return
       let status = data.status
       if (status === 'ready') {
-        this.$message.success(this.$t('packages_business_connection_testConnection') + this.$t('packages_business_connection_status_ready'), false)
+        this.$message.success(
+          this.$t('packages_business_connection_testConnection') + this.$t('packages_business_connection_status_ready'),
+          false
+        )
       } else {
-        this.$message.error(this.$t('packages_business_connection_testConnection') + this.$t('packages_business_connection_status_invalid'), false)
+        this.$message.error(
+          this.$t('packages_business_connection_testConnection') +
+            this.$t('packages_business_connection_status_invalid'),
+          false
+        )
       }
       this.buried('connectionTest', '', {
         result: status === 'ready'

@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 
 import { measurementApi, subtaskApi } from '@tap/api'
@@ -152,7 +154,10 @@ export default {
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
       data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
-      data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
+      data.typeText =
+        data.mappingTemplate === 'cluster-clone'
+          ? i18n.t('packages_business_statistics_index_qianyirenwu')
+          : i18n.t('packages_business_statistics_index_tongburenwu')
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = this.formatTime(data.finishTime)
