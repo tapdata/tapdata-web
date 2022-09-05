@@ -13,10 +13,25 @@
             style="width: 240px"
             @input="searchFnc(800)"
           ></ElInput>
-          <el-tooltip class="item" effect="dark" :content="checkProgress.msg" placement="top" v-if="checkProgress">
-            <VIcon v-if="checkProgress.status && ['Timeout', 'Failed'].includes(checkProgress.status)"> info </VIcon>
-          </el-tooltip>
-          <ElButton type="primary" size="mini" :disabled="disableAgainVerify" @click="handleAgainCheck">校验</ElButton>
+          <div>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="checkProgress.msg || 'Timeout'"
+              placement="top"
+              v-if="checkProgress"
+            >
+              <VIcon
+                class="mr-2 iconfont icon"
+                v-if="checkProgress.status && ['Timeout', 'Failed'].includes(checkProgress.status)"
+              >
+                info
+              </VIcon>
+            </el-tooltip>
+            <ElButton type="primary" size="mini" :disabled="disableAgainVerify" @click="handleAgainCheck"
+              >校验</ElButton
+            >
+          </div>
         </div>
         <VTable
           v-model="selection"
@@ -352,6 +367,10 @@ export default {
     .border-start {
       border-left: 1px solid #f2f2f2 !important;
     }
+  }
+  .icon {
+    color: map-get($color, danger);
+    font-size: 16px;
   }
 }
 .verify-list {
