@@ -30,7 +30,7 @@
           @selection-change="handleSelectionChange"
         >
           <template slot="counts" slot-scope="scope">
-            {{ scope.row.counts > 50 ? '校验中' : scope.row.counts }}
+            {{ scope.row.toBeCompared > 0 ? '校验中' : scope.row.counts }}
           </template>
         </VTable>
       </div>
@@ -49,8 +49,7 @@
           </div>
           <div class="verify-result__line mt-2">
             <span class="line__label">异常数据（行）：</span>
-            <span v-if="row.toBeCompared > 0" class="color-primary"> 校验中</span>
-            <span v-else class="font-color-dark">{{ row.counts || 0 }}</span>
+            <span class="font-color-dark">{{ row.counts || 0 }}</span>
           </div>
         </div>
         <div class="flex justify-content-between pt-4 px-4">
