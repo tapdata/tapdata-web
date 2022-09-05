@@ -42,7 +42,8 @@ export default {
   packages_fieldMapping_dag_dialog_field_mapping_tittle_value: 'Modify the default value of the target table field',
   packages_fieldMapping_dag_dialog_field_mapping_batch_change_type_error_tip:
     'Please select the type of source table/target table conversion',
-  packages_fieldMapping_dag_dialog_field_mapping_error_rollback_all: 'Are you sure you want to restore all to the default',
+  packages_fieldMapping_dag_dialog_field_mapping_error_rollback_all:
+    'Are you sure you want to restore all to the default',
   packages_fieldMapping_dag_dialog_field_mapping_error_tip: 'tip',
   packages_fieldMapping_dag_link_field_mapping_error_all_deleted:
     'All fields have been deleted from the current table, and the save operation is not allowed',
@@ -55,5 +56,7 @@ export default {
   packages_fieldMapping_dag_link_button_field_mapping: 'Field mapping',
   packages_fieldMapping_dag_link_button_mapping_configuration: 'Mapping configuration',
   packages_fieldMapping_dataVerify_confirm: 'Confirm',
-  packages_fieldMapping_dag_link_field_mapping_error_no_table: 'Please select the table to be migrated'
+  packages_fieldMapping_dag_link_field_mapping_error_no_table: 'Please select the table to be migrated',
+  packages_fieldMapping_v1_fieldmappingdialog_yiyingwenzimu:
+    'Start with English letters, underscores, only support English, numbers, underscores, limited to 1~50 characters'
 }

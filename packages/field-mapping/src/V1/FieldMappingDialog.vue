@@ -410,6 +410,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VIcon } from '@tap/component'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
@@ -963,7 +965,7 @@ export default {
         option = option[0]
         //字段名限制
         if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
-          this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
+          this.$message.error(i18n.t('packages_fieldMapping_v1_fieldmappingdialog_yiyingwenzimu'))
           return
         }
         if (value === option.field_name && !option.is_deleted) {

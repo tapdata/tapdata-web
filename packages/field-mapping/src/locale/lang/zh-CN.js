@@ -48,9 +48,12 @@ export default {
   packages_fieldMapping_dag_dialog_field_mapping_error_range: '当前值不符合该字段范围',
   packages_fieldMapping_message_exists_name: '名称已存在',
   packages_fieldMapping_dag_dialog_field_mapping_error_save_prefix: '检测到您还有',
-  packages_fieldMapping_dag_dialog_field_mapping_error_save_suffix: '张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',
+  packages_fieldMapping_dag_dialog_field_mapping_error_save_suffix:
+    '张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',
   packages_fieldMapping_dag_link_button_field_mapping: '字段映射',
   packages_fieldMapping_dag_link_button_mapping_configuration: '映射配置',
   packages_fieldMapping_dataVerify_confirm: '确认',
-  packages_fieldMapping_dag_link_field_mapping_error_no_table: '请选择需要迁移的表'
+  packages_fieldMapping_dag_link_field_mapping_error_no_table: '请选择需要迁移的表',
+  packages_fieldMapping_v1_fieldmappingdialog_yiyingwenzimu:
+    '以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符'
 }
