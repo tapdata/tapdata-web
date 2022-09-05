@@ -21,7 +21,7 @@
         </g>
       </svg>
     </div>
-    <p class="empty-desc">暂无数据</p>
+    <p class="empty-desc">{{ $t('packages_component_dag_dialog_field_mapping_no_data') }}</p>
   </div>
 </template>
 

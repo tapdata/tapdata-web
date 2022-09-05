@@ -1,4 +1,6 @@
 <script>
+import i18n from '@tap/i18n'
+
 import mixins from './mixin'
 export default {
   name: 'FbFile',
@@ -27,7 +29,9 @@ export default {
       if (file) {
         this.fileName = file.name
         if (config.maxFileSize && file.size / 1024 > config.maxFileSize) {
-          this.$message.error(`上传文件大小不能超过 ${config.maxFileSize}KB`)
+          this.$message.error(
+            i18n.t('packages_component_form_builder_file_shangchuanwenjianda', { val1: config.maxFileSize })
+          )
         } else {
           let reader = new FileReader()
           let emitInput = val => {

@@ -16,7 +16,7 @@
       :picker-options="endOptions"
       :placeholder="endPlaceholder"
       ref="endTime"
-      title="至"
+      :title="$t('packages_component_filter_bar_datetimerange_zhi')"
       class="none-border"
       @change="changeEnd"
     ></Datetime>
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import Datetime from './Datetime'
 
 export default {
@@ -37,11 +39,11 @@ export default {
     },
     startPlaceholder: {
       type: String,
-      default: '开始时间'
+      default: i18n.t('packages_component_filter_bar_datetimerange_kaishishijian')
     },
     endPlaceholder: {
       type: String,
-      default: '结束时间'
+      default: i18n.t('packages_component_filter_bar_datetimerange_jieshushijian')
     },
     range: {
       type: Number

@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 export default {
   name: 'VEmpty',
   props: {
@@ -80,7 +82,7 @@ export default {
     large: Boolean,
     description: {
       type: String,
-      default: '暂无数据'
+      default: i18n.t('packages_component_dag_dialog_field_mapping_no_data')
     }
   }
 }

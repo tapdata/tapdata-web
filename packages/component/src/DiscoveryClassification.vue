@@ -5,7 +5,7 @@
         <VIcon size="12">add</VIcon>
       </ElButton>
       <div class="title">
-        <span>所有目录</span>
+        <span>{{ $t('packages_component_src_discoveryclassification_suoyoumulu') }}</span>
       </div>
       <!-- v-if="searchFalg" -->
       <div class="search-box">
@@ -45,20 +45,26 @@
               <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
               <ElDropdownMenu slot="dropdown">
                 <ElDropdownItem command="edit">{{ $t('packages_component_classification_editNode') }}</ElDropdownItem>
-                <ElDropdownItem command="delete">{{ $t('packages_component_classification_deleteNode') }}</ElDropdownItem>
+                <ElDropdownItem command="delete">{{
+                  $t('packages_component_classification_deleteNode')
+                }}</ElDropdownItem>
               </ElDropdownMenu>
             </ElDropdown>
           </span>
         </span>
       </ElTree>
       <ElButton v-if="treeData && treeData.length === 0 && isExpand" type="text" @click="showDialog()" class="create">
-        {{ types[0] === 'user' ? $t('packages_component_classification_creatUserGroup') : $t('packages_component_classification_creatDataClassification') }}
+        {{
+          types[0] === 'user'
+            ? $t('packages_component_classification_creatUserGroup')
+            : $t('packages_component_classification_creatDataClassification')
+        }}
       </ElButton>
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
       <ElForm ref="form" :model="dialogConfig" label-width="80px">
-        <ElFormItem label="目录名称">
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
             size="mini"
             v-model="dialogConfig.label"
@@ -67,17 +73,23 @@
             show-word-limit
           ></ElInput>
         </ElFormItem>
-        <ElFormItem label="目录分类" v-if="dialogConfig.isParent">
+        <ElFormItem
+          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+          v-if="dialogConfig.isParent"
+        >
           <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-            <el-option label="资源目录" value="resource"></el-option>
+            <el-option
+              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+              value="resource"
+            ></el-option>
             <!--            <el-option label="任务目录" value="task"></el-option>-->
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="目录描述">
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
             v-model="dialogConfig.desc"
-            placeholder="请输入目录描述"
+            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
           ></ElInput>

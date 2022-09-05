@@ -170,6 +170,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { deepCopy, uniqueArr } from '@tap/shared'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -232,7 +234,7 @@ export default {
     },
     lastPageText: {
       type: String,
-      default: '没有更多数据'
+      default: i18n.t('packages_component_src_selectlist_meiyougengduoshu')
     },
     menuMinWidth: {
       type: String,

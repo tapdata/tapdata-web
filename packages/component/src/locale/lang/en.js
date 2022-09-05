@@ -32,5 +32,19 @@ export default {
   packages_component_formBuilder_noneText: ' is required.',
   packages_component_formBuilder_input_placeholderPrefix: 'Enter ',
   packages_component_common_placeholder_select: 'Please select',
-  packages_component_dag_dialog_field_mapping_no_data: 'No data yet'
+  packages_component_dag_dialog_field_mapping_no_data: 'No data yet',
+  packages_component_src_discoveryclassification_qingshurumulu: 'Please enter a directory description',
+  packages_component_src_discoveryclassification_mulumiaoshu: 'Catalog description',
+  packages_component_src_discoveryclassification_ziyuanmulu: 'Resource directory',
+  packages_component_src_discoveryclassification_mulufenlei: 'Catalog classification',
+  packages_component_src_discoveryclassification_mulumingcheng: 'Directory name',
+  packages_component_src_discoveryclassification_suoyoumulu: 'All directories',
+  packages_component_filter_bar_datetimerange_jieshushijian: 'end time',
+  packages_component_filter_bar_datetimerange_kaishishijian: 'start time',
+  packages_component_filter_bar_datetimerange_zhi: 'to',
+  packages_component_form_builder_file_shangchuanwenjianda: 'The upload file size cannot exceed {val1}KB',
+  packages_component_src_inlineinput_zifuchangduxian: 'Character length limit {val1}-{val2} characters',
+  packages_component_src_inlineinput_baocun: 'Save',
+  packages_component_mixins_showmessage_xiangqing: 'Details',
+  packages_component_src_selectlist_meiyougengduoshu: 'No more data'
 }

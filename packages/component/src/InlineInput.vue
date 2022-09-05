@@ -33,15 +33,19 @@
           size="mini"
           :disabled="disabled"
           @click="save"
-          >保存</ElButton
+          >{{ $t('packages_component_src_inlineinput_baocun') }}</ElButton
         >
-        <ElButton class="inline-input-button" size="mini" @click="cancel">取消</ElButton>
+        <ElButton class="inline-input-button" size="mini" @click="cancel">{{
+          $t('packages_component_button_cancel')
+        }}</ElButton>
       </template>
     </span>
   </div>
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VIcon } from '@tap/component'
 export default {
   components: { VIcon },
@@ -79,7 +83,7 @@ export default {
     },
     tooltip() {
       let { min, max } = this
-      return `字符长度限制${min}-${max}个字符`
+      return i18n.t('packages_component_src_inlineinput_zifuchangduxian', { val1: min, val2: max })
     }
   },
   watch: {
