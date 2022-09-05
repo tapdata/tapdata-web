@@ -202,7 +202,8 @@ export default {
           value: 1,
           objCount: 1,
           parent_id: 1,
-          desc: 1
+          desc: 1,
+          readOnly: 1
         }
       }
       if (this.types[0] === 'user') {
