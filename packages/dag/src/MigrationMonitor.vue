@@ -483,9 +483,15 @@ export default {
     },
 
     handlePageReturn() {
-      this.$router.push({
-        name: 'migrateList'
-      })
+      if (this.dataflow.syncType === 'migrate') {
+        this.$router.push({
+          name: 'migrateList'
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflowList'
+        })
+      }
     },
 
     handleEdit() {
