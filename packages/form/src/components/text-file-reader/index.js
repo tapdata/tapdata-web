@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue-demi'
 import { useForm, useField } from '@formily/vue'
 
@@ -13,7 +14,9 @@ export const TextFileReader = defineComponent({
       if (file) {
         fileName.value = file.name
         if (props.maxFileSize && file.size / 1024 > props.maxFileSize) {
-          root.$message.error(`上传文件大小不能超过 ${props.maxFileSize}KB`)
+          root.$message.error(
+            i18n.t('packages_form_text_file_reader_index_shangchuanwenjianda', { val1: props.maxFileSize })
+          )
         } else {
           let reader = new FileReader()
           if (props.base64) {

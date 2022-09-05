@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="编辑推演结果"
+    :title="$t('packages_form_field_mapping_dialog_bianjituiyanjie')"
     :visible="visible"
     width="70%"
     append-to-body
@@ -10,8 +10,10 @@
   >
     <List v-if="visible" ref="fieldMappingList" :readOnly="false" @updateVisible="updateVisible"></List>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="closeDialog()">取 消</el-button>
-      <el-button type="primary" :loading="loadingSave" @click="save(true)">确 定</el-button>
+      <el-button @click="closeDialog()">{{ $t('packages_form_field_mapping_dialog_quxiao') }}</el-button>
+      <el-button type="primary" :loading="loadingSave" @click="save(true)">{{
+        $t('packages_form_field_mapping_dialog_queding')
+      }}</el-button>
     </span>
   </el-dialog>
 </template>

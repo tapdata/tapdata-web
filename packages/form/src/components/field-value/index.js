@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
@@ -65,8 +66,10 @@ export const FieldValue = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block ml-6">字段名称</span>
-              <span class="flex-1 text inline-block ml-7">字段赋值</span>
+              <span class="flex-1 text inline-block ml-6">
+                {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
+              </span>
+              <span class="flex-1 text inline-block ml-7">{i18n.t('packages_form_field_value_index_ziduanfuzhi')}</span>
               <span class="field-ops inline-block ml-10">
                 <VIcon
                   class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
@@ -127,7 +130,13 @@ export const FieldValue = connect(
               />
             </div>
             <ElDialog
-              title={'字段赋值(' + this.scriptDialog.tableName + '[' + this.scriptDialog.fieldName + '])'}
+              title={
+                i18n.t('packages_form_field_value_index_ziduanfuzhi') +
+                this.scriptDialog.tableName +
+                '[' +
+                this.scriptDialog.fieldName +
+                '])'
+              }
               visible={this.scriptDialog.open}
               append-to-body
               custom-class="scriptDialog"
@@ -145,21 +154,18 @@ export const FieldValue = connect(
                 </ElFormItem>
               </ElForm>
               <div class="example">
-                <div>示例:</div>
+                <div>{i18n.t('packages_form_field_value_index_shili')}</div>
                 <div>var result = "a" + "b" // 字符串拼接, result的结果为 "ab"</div>
                 <div>var result = 1 + 2 // 数字计算, result 的结果为 3</div>
                 <div>var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值</div>
-                <div>
-                  var result = record.isTrue ? true : false // 三元表达式,
-                  result的值根据判断表达式（record.isTrue）的结果为 true 或 false
-                </div>
+                <div>{i18n.t('packages_form_field_value_index_varre')}</div>
               </div>
               <div slot="footer" class="dialog-footer">
                 <ElButton size="mini" onClick={() => (this.scriptDialog.open = false)}>
-                  取消
+                  {i18n.t('packages_form_button_cancel')}
                 </ElButton>
                 <ElButton type="primary" size="mini" onClick={() => this.scriptDialog.fn()}>
-                  确认
+                  {i18n.t('packages_form_dataVerify_confirm')}
                 </ElButton>
               </div>
             </ElDialog>

@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
@@ -92,9 +93,15 @@ export const FieldModType = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block ml-6">字段名称</span>
-              <span class="flex-1 text inline-block ml-10">源字段类型</span>
-              <span class="flex-1 text inline-block pl-11">目标字段类型</span>
+              <span class="flex-1 text inline-block ml-6">
+                {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
+              </span>
+              <span class="flex-1 text inline-block ml-10">
+                {i18n.t('packages_form_field_mod_type_index_yuanziduanleixing')}
+              </span>
+              <span class="flex-1 text inline-block pl-11">
+                {i18n.t('packages_form_field_mod_type_index_mubiaoziduanlei')}
+              </span>
               <span class="field-ops inline-block ml-10">
                 <VIcon
                   class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}

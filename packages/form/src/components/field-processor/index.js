@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, nextTick } from 'vue-demi'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '../index'
@@ -374,14 +375,18 @@ export const FieldRenameProcessor = defineComponent({
     const renderOpNode = ({ row }) => {
       let show = row.isShow ? (
         <span class="text-primary cursor-pointer" onClick={() => doDeleteRow(row)}>
-          屏蔽
+          {i18n.t('packages_form_field_processor_index_pingbi')}
         </span>
       ) : (
         <span class="text-primary cursor-pointer" onClick={() => doShowRow(row)}>
-          恢复
+          {i18n.t('packages_form_field_processor_index_huifu')}
         </span>
       )
-      let disabled = row.isShow ? <span>屏蔽</span> : <span>恢复</span>
+      let disabled = row.isShow ? (
+        <span>{i18n.t('packages_form_field_processor_index_pingbi')}</span>
+      ) : (
+        <span>{i18n.t('packages_form_field_processor_index_huifu')}</span>
+      )
       return props.disabled ? disabled : show
     }
     loadData()
@@ -414,7 +419,7 @@ export const FieldRenameProcessor = defineComponent({
               <div class="flex">
                 <ElInput
                   size="mini"
-                  placeholder="请输入表名"
+                  placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchTable}
@@ -425,7 +430,7 @@ export const FieldRenameProcessor = defineComponent({
             <div class="bg-main flex justify-content-between line-height processor-ml-10">
               <span>
                 <el-checkbox v-model={this.config.checkAll} onChange={this.doCheckAllChange}></el-checkbox>
-                <span class="table-name ml-2">表名</span>
+                <span class="table-name ml-2">{i18n.t('packages_form_field_mapping_list_biaoming')}</span>
               </span>
             </div>
             <div class="task-form-left__ul flex flex-column" v-loading={this.config.loadingNav}>
@@ -446,7 +451,7 @@ export const FieldRenameProcessor = defineComponent({
                           />
                           <div class="select" onClick={() => this.updateView(index)}>
                             <span>
-                              <span>已选中 </span>
+                              <span>{i18n.t('packages_form_dag_dialog_field_mapping_selected')}</span>
                               {item.sourceFieldCount - item.userDeletedNum} /{item.sourceFieldCount}
                             </span>
                           </div>
@@ -489,7 +494,7 @@ export const FieldRenameProcessor = defineComponent({
               <div class="flex">
                 <ElInput
                   size="mini"
-                  placeholder="请输入字段名"
+                  placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchField}
@@ -505,10 +510,10 @@ export const FieldRenameProcessor = defineComponent({
                   }
                   onClick={() => this.doVisible('visible', true)}
                 >
-                  批量操作
+                  {i18n.t('packages_form_field_processor_index_piliangcaozuo')}
                 </ElButton>
                 <ElButton type="text" class="btn-rest mr-2" disabled={this.disabled} onClick={this.doOperationRest}>
-                  重置
+                  {i18n.t('packages_form_button_reset')}
                 </ElButton>
               </div>
             </div>
@@ -522,10 +527,14 @@ export const FieldRenameProcessor = defineComponent({
               onSelection-change={this.doSelectionField}
             >
               <ElTableColumn type="selection" width="55"></ElTableColumn>
-              <ElTableColumn type="index" width="55" label="序号"></ElTableColumn>
+              <ElTableColumn
+                type="index"
+                width="55"
+                label={i18n.t('packages_form_field_mapping_list_xuhao')}
+              ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
-                label="字段名"
+                label={i18n.t('packages_form_dag_dialog_field_mapping_field')}
                 prop="sourceFieldName"
                 scopedSlots={{
                   default: this.renderSourceNode
@@ -533,7 +542,7 @@ export const FieldRenameProcessor = defineComponent({
               ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
-                label="新字段名"
+                label={i18n.t('packages_form_field_processor_index_xinziduanming')}
                 prop="targetFieldName"
                 scopedSlots={{
                   default: this.renderNode
@@ -541,7 +550,7 @@ export const FieldRenameProcessor = defineComponent({
               ></ElTableColumn>
               <ElTableColumn
                 show-overflow-tooltip
-                label="操作"
+                label={i18n.t('packages_form_field_processor_index_caozuo')}
                 prop="isShow"
                 width={'60px'}
                 scopedSlots={{
@@ -555,7 +564,7 @@ export const FieldRenameProcessor = defineComponent({
           </div>
         </div>
         <ElDialog
-          title="修改字段名"
+          title={i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming')}
           width={'30%'}
           visible={this.config.operationVisible}
           append-to-body
@@ -565,38 +574,42 @@ export const FieldRenameProcessor = defineComponent({
             <ElInput v-model={this.config.newFieldName} clearable />
           </FormItem.BaseItem>
           <span slot="footer" className="dialog-footer">
-            <el-button onClick={() => this.doVisible('operationVisible', false)}>取 消</el-button>
+            <el-button onClick={() => this.doVisible('operationVisible', false)}>
+              {i18n.t('packages_form_field_mapping_dialog_quxiao')}
+            </el-button>
             <el-button type="primary" onClick={() => this.doEditNameSave()}>
-              确 定
+              {i18n.t('packages_form_field_mapping_dialog_queding')}
             </el-button>
           </span>
         </ElDialog>
         <ElDialog
-          title="批量操作"
+          title={i18n.t('packages_form_field_processor_index_piliangcaozuo')}
           visible={this.config.visible}
           append-to-body
           before-close={() => this.doVisible('visible', false)}
         >
           <div>
-            <FormItem.BaseItem label="前缀">
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
               <ElInput v-model={this.config.operation.prefix} clearable />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label="后缀">
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
               <ElInput v-model={this.config.operation.suffix} clearable />
             </FormItem.BaseItem>
 
-            <FormItem.BaseItem label="大小写">
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
               <ElSelect v-model={this.config.operation.capitalized}>
-                <ElOption value="" label="不变" />
-                <ElOption value="toUpperCase" label="大写" />
-                <ElOption value="toLowerCase" label="小写" />
+                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
+                <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
+                <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
               </ElSelect>
             </FormItem.BaseItem>
           </div>
           <span slot="footer" class="dialog-footer">
-            <el-button onClick={() => this.doVisible('visible', false)}>取 消</el-button>
+            <el-button onClick={() => this.doVisible('visible', false)}>
+              {i18n.t('packages_form_field_mapping_dialog_quxiao')}
+            </el-button>
             <el-button type="primary" onClick={() => this.doOperationSave()}>
-              确 定
+              {i18n.t('packages_form_field_mapping_dialog_queding')}
             </el-button>
           </span>
         </ElDialog>

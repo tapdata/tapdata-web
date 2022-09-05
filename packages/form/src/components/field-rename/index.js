@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
@@ -61,8 +62,12 @@ export const FieldRename = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block ml-6">源字段名</span>
-              <span class="flex-1 text inline-block">目标字段名</span>
+              <span class="flex-1 text inline-block ml-6">
+                {i18n.t('packages_form_field_rename_index_yuanziduanming')}
+              </span>
+              <span class="flex-1 text inline-block">
+                {i18n.t('packages_form_field_rename_index_mubiaoziduanming')}
+              </span>
               <span class="field-ops  inline-block mr-12">
                 <VIcon
                   class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}

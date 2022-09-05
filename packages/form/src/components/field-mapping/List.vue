@@ -8,7 +8,7 @@
               <ElInput
                 v-model="searchTable"
                 size="mini"
-                placeholder="请输入表名"
+                :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
                 suffix-icon="el-icon-search"
                 clearable
                 @input="getMetadataTransformer(searchTable, 'search')"
@@ -16,7 +16,7 @@
             </div>
           </div>
           <div class="flex bg-main justify-content-between mb-2 pl-2">
-            <span class="table-name ml-1">表名</span>
+            <span class="table-name ml-1">{{ $t('packages_form_field_mapping_list_biaoming') }}</span>
           </div>
           <div class="task-form-left__ul flex flex-column" v-loading="loadingNav">
             <ul v-if="navData.length > 0">
@@ -66,7 +66,7 @@
             <div class="flex">
               <ElInput
                 size="mini"
-                placeholder="请输入字段名"
+                :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
                 suffix-icon="el-icon-search"
                 v-model="searchField"
                 clearable
@@ -88,8 +88,16 @@
             :data="viewTableData"
             v-loading="loadingTable"
           >
-            <ElTableColumn type="index" width="55" label="序号"></ElTableColumn>
-            <ElTableColumn show-overflow-tooltip :label="$t('packages_form_dag_dialog_field_mapping_field')" prop="field_name">
+            <ElTableColumn
+              type="index"
+              width="55"
+              :label="$t('packages_form_field_mapping_list_xuhao')"
+            ></ElTableColumn>
+            <ElTableColumn
+              show-overflow-tooltip
+              :label="$t('packages_form_dag_dialog_field_mapping_field')"
+              prop="field_name"
+            >
               <template #default="{ row }">
                 <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
                   >{{ row.targetFieldName }}

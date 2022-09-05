@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { connect, mapProps } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
@@ -26,8 +27,11 @@ export const ExpressionExample = connect(
         return (
           <div class="expression">
             <div style="color: #888888; font-size: 12px">
-              <h3 style="font-size: 14px; font-weight: bold"> 表达式示例</h3>
-              <p style="text-indent: 2em">筛选出50岁以上的男性或者收入一万以下的30岁以上的人</p>
+              <h3 style="font-size: 14px; font-weight: bold">
+                {' '}
+                {i18n.t('packages_form_example_file_index_biaodashishili')}
+              </h3>
+              <p style="text-indent: 2em">{i18n.t('packages_form_example_file_index_shaixuanchusuiyi')}</p>
               <p style="text-indent: 2em">
                 <span style="color: red">(</span> record.gender <span style="color: #f5af3f">==</span> 0
                 <span style="color: #f5af3f">&&</span> record.age <span style="color: #f5af3f">&gt;</span> 50
@@ -38,52 +42,62 @@ export const ExpressionExample = connect(
                 <span style="color: red">)</span>
               </p>
 
-              <h3 style="font-size: 14px; font-weight: bold">支持的符号</h3>
+              <h3 style="font-size: 14px; font-weight: bold">
+                {i18n.t('packages_form_example_file_index_zhichidefuhao')}
+              </h3>
               <table>
                 <tr>
                   <td style="width: 80px; text-align: center">
                     <span style="color: #f5af3f">&gt;, &lt;</span>
                     <span style="color: #f5af3f"></span>
                   </td>
-                  <td style="width: 140px; text-align: left">大于、小于</td>
+                  <td style="width: 140px; text-align: left">
+                    {i18n.t('packages_form_example_file_index_dayuxiaoyu')}
+                  </td>
 
                   <td style="width: 80px; text-align: center">
                     <span style="color: #f5af3f">&gt;=, &lt;=</span>
                   </td>
-                  <td style="width: 140px; text-align: left">大于等于、小于等于</td>
+                  <td style="width: 140px; text-align: left">
+                    {i18n.t('packages_form_example_file_index_dayudengyuxiao')}
+                  </td>
                 </tr>
                 <tr>
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">==</span>
                   </td>
-                  <td style="width: 140px; text-align: left">等于</td>
+                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_dengyu')}</td>
 
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">!</span>
                   </td>
-                  <td style="width: 140px; text-align: left">非</td>
+                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_fei')}</td>
                 </tr>
                 <tr>
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">&&</span>
                   </td>
-                  <td style="width: 140px; text-align: left">且 </td>
+                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_qie')}</td>
 
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">||</span>
                   </td>
-                  <td style="width: 140px; text-align: left">或</td>
+                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_huo')}</td>
                 </tr>
                 <tr>
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">/^.*$/.test( )</span>
                   </td>
-                  <td style="width: 140px; text-align: left">正则表达式</td>
+                  <td style="width: 140px; text-align: left">
+                    {i18n.t('packages_form_example_file_index_zhengzebiaodashi')}
+                  </td>
 
                   <td style="width: 60px; text-align: center">
                     <span style="color: #f5af3f">( )</span>
                   </td>
-                  <td style="width: 140px; text-align: left">条件分组 </td>
+                  <td style="width: 140px; text-align: left">
+                    {i18n.t('packages_form_example_file_index_tiaojianfenzu')}
+                  </td>
                 </tr>
               </table>
             </div>
