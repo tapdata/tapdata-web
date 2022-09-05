@@ -313,11 +313,14 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
 import { cloneDeep } from 'lodash'
-import axios from 'axios'
+
+import templates from './template'
 
 export default {
   components: { Drawer, VCodeEditor },
@@ -355,7 +358,9 @@ export default {
       debugMethod: 'GET',
       debugResult: '',
 
-      urls: []
+      urls: [],
+
+      templates: templates
     }
   },
   computed: {
@@ -523,7 +528,10 @@ export default {
       this.form.basePath = basePath
       this.form.path = `/api/${basePath}`
       this.form.status = 'pending'
-      this.save()
+      this.$nextTick(() => {
+        // save会校验表单项，不加nextTick会导致验证不通过
+        this.save()
+      })
     },
     // 获取可选数据源类型
     async getDatabaseTypes() {
@@ -574,12 +582,14 @@ export default {
           this.fieldLoading = false
         })
       this.allFields =
-        data?.items?.[0]?.fields?.map(it => ({
-          id: it.id,
-          field_name: it.field_name,
-          originalDataType: it.data_type,
-          comment: ''
-        })) || []
+        data?.items?.[0]?.fields?.map(it => {
+          return Object.assign({}, it, {
+            id: it.id,
+            field_name: it.field_name,
+            originalDataType: it.data_type,
+            comment: ''
+          })
+        }) || []
       // 回显输出结果中被选中的字段
       const fields = this.form.fields || []
       this.$nextTick(() => {
@@ -617,7 +627,12 @@ export default {
       this.$refs?.form?.clearValidate('tableName')
     },
     fieldsChanged(val) {
-      this.form.fields = val
+      this.form.fields = val?.map(it => ({
+        id: it.id,
+        field_name: it.field_name,
+        originalDataType: it.data_type,
+        comment: ''
+      }))
     },
     addItem(key) {
       let map = {
