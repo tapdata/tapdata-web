@@ -207,7 +207,7 @@ export default {
       let params = {
         tables: tables
       }
-      taskApi.autoInspectAgain(this.$route.params.id, params)
+      taskApi.autoInspectAgain(this.$route.params.id, JSON.stringify(params))
     },
 
     remoteMethod({ page }) {
