@@ -299,12 +299,21 @@
 
         <!--  示例代码 -->
         <template v-if="tab === 'debug'">
-          <div class="data-server-panel__title">示例代码</div>
+          <div class="flex position-relative mt-8 mb-4">
+            <div class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark" style="line-height: 36px">
+              示例代码
+            </div>
+            <ElTabs v-model="templateType" class="data-server__tabs flex-1">
+              <ElTabPane label="JAVA" name="java"></ElTabPane>
+              <ElTabPane label="JS" name="javascript"></ElTabPane>
+              <ElTabPane label="PYTHON" name="python"></ElTabPane>
+            </ElTabs>
+          </div>
           <VCodeEditor
             height="280"
-            lang="json"
+            :lang="templateType"
             :options="{ printMargin: false, readOnly: true }"
-            :value="debugResult"
+            :value="templates[templateType]"
           ></VCodeEditor>
         </template>
       </ElForm>
@@ -360,7 +369,8 @@ export default {
 
       urls: [],
 
-      templates: templates
+      templates: templates,
+      templateType: 'java'
     }
   },
   computed: {
@@ -496,9 +506,20 @@ export default {
             tableName,
             tablename: tableName, // 冗余老字段
             basePath,
+            apiVersion: '', // 冗余老字段
+            prefix: '', // 冗余老字段
+            readConcern: '', // 冗余老字段
+            readPreference: '', // 冗余老字段
+            readPreferenceTag: '', // 冗余老字段
+            listtags: [],
 
             paths: [
               {
+                name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage', // 冗余老字段
+                result: 'Page<Document>', // 冗余老字段
+                type: 'preset', // 冗余老字段
+                acl: ['admin'], // 冗余老字段
+
                 method,
                 params,
                 where,
@@ -591,6 +612,9 @@ export default {
             comment: ''
           })
         }) || []
+      if (!this.form.id) {
+        this.form.fields = cloneDeep(this.allFields)
+      }
       // 回显输出结果中被选中的字段
       const fields = this.form.fields || []
       this.$nextTick(() => {
@@ -628,12 +652,7 @@ export default {
       this.$refs?.form?.clearValidate('tableName')
     },
     fieldsChanged(val) {
-      this.form.fields = val?.map(it => ({
-        id: it.id,
-        field_name: it.field_name,
-        originalDataType: it.data_type,
-        comment: ''
-      }))
+      this.form.fields = val
     },
     addItem(key) {
       let map = {
