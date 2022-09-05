@@ -13,6 +13,9 @@
             style="width: 240px"
             @input="searchFnc(800)"
           ></ElInput>
+          <el-tooltip class="item" effect="dark" :content="checkProgress.msg" placement="top" v-if="checkProgress">
+            <VIcon v-if="checkProgress.status && ['Timeout', 'Failed'].includes(checkProgress.status)"> info </VIcon>
+          </el-tooltip>
           <ElButton type="primary" size="mini" :disabled="disableAgainVerify" @click="handleAgainCheck">校验</ElButton>
         </div>
         <VTable
@@ -183,7 +186,8 @@ export default {
       detailLoading: false,
       detailSvg: require('@tap/assets/images/detail-info.svg'),
       timeout: null,
-      disableAgainVerify: false
+      disableAgainVerify: false,
+      checkProgress: ''
     }
   },
 
@@ -242,6 +246,8 @@ export default {
           let check = list.filter(row => row?.toBeCompared > 0) || []
           this.disableAgainVerify = check?.length > 0
         }
+        //是否校验异常
+        this.checkProgress = data?.progress || ''
         return {
           total: data.total,
           data: list
