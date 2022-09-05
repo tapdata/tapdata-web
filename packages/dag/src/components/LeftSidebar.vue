@@ -263,7 +263,7 @@ import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } f
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
-import resize from 'web-core/directives/resize'
+import resize from '@tap/component/src/directives/resize'
 import BaseNode from './BaseNode'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
