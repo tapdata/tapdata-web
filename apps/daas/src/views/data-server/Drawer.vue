@@ -323,13 +323,14 @@
 
 <script>
 import axios from 'axios'
+import { cloneDeep } from 'lodash'
 
 import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
-import { cloneDeep } from 'lodash'
+import Cookie from '@tap/shared/src/cookie'
 
-import templates from './template'
+import getTemplate from './template'
 
 export default {
   components: { Drawer, VCodeEditor },
@@ -369,7 +370,7 @@ export default {
 
       urls: [],
 
-      templates: templates,
+      templates: {},
       templateType: 'java'
     }
   },
@@ -430,10 +431,14 @@ export default {
       }
       let host = this.host
       let _path = this.data.path
+      let baseUrl = host + _path
       this.urls = {
-        POST: `${host}${_path}/find`,
-        GET: `${host}${_path}`,
-        TOKEN: `${host}${_path}`
+        POST: `${baseUrl}/find`,
+        GET: `${baseUrl}`,
+        TOKEN: `${baseUrl}`
+      }
+      if (this.data.status === 'active') {
+        this.templates = getTemplate(baseUrl, Cookie.get('token'))
       }
     },
     getDefaultParams(apiType) {
@@ -562,9 +567,10 @@ export default {
       const data = await databaseTypesApi.get().catch(() => {
         this.databaseTypes = []
       })
-      // this.databaseTypes =
-      //   data?.filter(it => it.capabilities?.some(c => c.id === 'api_server_supported'))?.map(it => it.name) || []
-      this.databaseTypes = data?.map(it => it.name) || []
+      this.databaseTypes =
+        data?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg'].includes(it.pdkId))?.map(it => it.name) ||
+        []
+      // this.databaseTypes = data?.map(it => it.name) || []
     },
     // 获取可选连接
     async getConnectionOptions() {

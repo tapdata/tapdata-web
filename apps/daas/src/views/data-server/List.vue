@@ -11,47 +11,53 @@
       </div>
       <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
       <ElTableColumn show-overflow-tooltip label="服务名称" min-width="180">
-        <template slot-scope="scope">
+        <template #default="{ row }">
           <ElLink
             class="ellipsis"
             type="primary"
             style="display: block; line-height: 20px"
-            @click.stop="showDrawer(scope.row)"
+            @click.stop="showDrawer(row)"
           >
-            {{ scope.row.name }}
+            {{ row.name }}
           </ElLink>
         </template>
       </ElTableColumn>
       <ElTableColumn label="连接类型" min-width="120">
-        <template slot-scope="scope">
-          {{ scope.row.connectionType }}
+        <template #default="{ row }">
+          {{ row.connectionType }}
         </template>
       </ElTableColumn>
       <ElTableColumn show-overflow-tooltip label="连接名称" min-width="200">
-        <template slot-scope="scope">
-          {{ scope.row.connectionName }}
+        <template #default="{ row }">
+          {{ row.connectionName }}
         </template>
       </ElTableColumn>
       <ElTableColumn show-overflow-tooltip label="关联对象" min-width="120">
-        <template slot-scope="scope">
-          {{ scope.row.tableName }}
+        <template #default="{ row }">
+          {{ row.tableName }}
         </template>
       </ElTableColumn>
       <ElTableColumn label="服务状态" min-width="100">
-        <template slot-scope="scope">
-          {{ scope.row.statusFmt }}
+        <template #default="{ row }">
+          {{ row.statusFmt }}
         </template>
       </ElTableColumn>
       <ElTableColumn width="180" :label="$t('connection.operate')">
-        <template slot-scope="scope">
-          <ElButton v-if="scope.row.status === 'pending'" type="text" @click="changeStatus(scope.row)">{{
-            $t('button_public')
+        <template #default="{ row }">
+          <ElButton
+            v-if="row.status !== 'active'"
+            :disabled="row.status !== 'pending'"
+            type="text"
+            @click="changeStatus(row)"
+            >{{ $t('button_public') }}</ElButton
+          >
+          <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
+            $t('button_revoke')
           }}</ElButton>
-          <ElButton v-else type="text" @click="changeStatus(scope.row)">{{ $t('button_revoke') }}</ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
-          <ElButton type="text" @click="output(scope.row)">{{ $t('button_export') }}</ElButton>
+          <ElButton type="text" @click="output(row)">{{ $t('button_export') }}</ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
-          <ElButton type="text" @click="removeServer(scope.row)">{{ $t('button_delete') }}</ElButton>
+          <ElButton type="text" @click="removeServer(row)">{{ $t('button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
