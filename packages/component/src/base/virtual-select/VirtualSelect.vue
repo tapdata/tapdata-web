@@ -162,6 +162,7 @@ import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Locale from '../../mixins/locale'
+import { getValueByPath } from 'element-ui/lib/utils/util'
 
 export default {
   name: 'VirtualSelect',
@@ -289,6 +290,34 @@ export default {
         const index = this.items.findIndex(item => item.value === value)
         this.$refs.virtualScroller.scrollToItem(index)
       }
+    },
+
+    getOption(value) {
+      let option
+      const isObject = Object.prototype.toString.call(value).toLowerCase() === '[object object]'
+      const isNull = Object.prototype.toString.call(value).toLowerCase() === '[object null]'
+      const isUndefined = Object.prototype.toString.call(value).toLowerCase() === '[object undefined]'
+
+      for (let i = this.items.length - 1; i >= 0; i--) {
+        const cachedOption = this.items[i]
+        const isEqual = isObject
+          ? getValueByPath(cachedOption.value, this.valueKey) === getValueByPath(value, this.valueKey)
+          : cachedOption.value === value
+        if (isEqual) {
+          option = { ...cachedOption, currentLabel: cachedOption.label }
+          break
+        }
+      }
+      if (option) return option
+      const label = !isObject && !isNull && !isUndefined ? String(value) : ''
+      let newOption = {
+        value: value,
+        currentLabel: label
+      }
+      if (this.multiple) {
+        newOption.hitState = false
+      }
+      return newOption
     }
   }
 }

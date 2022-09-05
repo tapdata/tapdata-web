@@ -57,7 +57,7 @@
             <ElRadio label="diff">仅显示差异字段</ElRadio>
             <ElRadio label="all">显示完整字段</ElRadio>
           </ElRadioGroup>
-          <ElButton type="primary">导出</ElButton>
+          <!--<ElButton type="primary">导出</ElButton>-->
         </div>
         <div v-loading="detailLoading" class="verify-result__list flex-fill flex flex-column pr-4 pb-6">
           <div class="table__header">
@@ -88,11 +88,11 @@
                   :class="{ 'mt-2': pIndex !== 0 }"
                 >
                   <span class="row__label">{{ pKey + ':' }}</span>
-                  <span class="row__value">{{ pValue }}</span>
+                  <span class="row__value ml-4">{{ pValue }}</span>
                 </div>
                 <div v-for="(sItem, sIndex) in item.sourceData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
-                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
+                  <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
                     sItem.value
                   }}</span>
                 </div>
@@ -105,11 +105,11 @@
                   :class="{ 'mt-2': pIndex !== 0 }"
                 >
                   <span class="row__label">{{ pKey + ':' }}</span>
-                  <span class="row__value">{{ pValue }}</span>
+                  <span class="row__value ml-4">{{ pValue }}</span>
                 </div>
                 <div v-for="(sItem, sIndex) in item.targetData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
-                  <span class="row__value font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
+                  <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
                     sItem.value
                   }}</span>
                 </div>
@@ -265,20 +265,21 @@ export default {
           let items = data.items || []
           this.page.total = data.total || 0
           items.forEach(el => {
-            const { sourceData, targetData, originalKeymap } = el
+            const { sourceData = {}, targetData = {}, originalKeymap } = el
             let obj = {
               id: el.id,
               originalKeymap,
               sourceData: [],
               targetData: []
             }
-            const notPrimaryKeyFields = uniqueArr([...Object.keys(sourceData), ...Object.keys(targetData)]).filter(
-              t => !Object.keys(originalKeymap).includes(t)
-            )
+            const notPrimaryKeyFields = uniqueArr([
+              ...Object.keys(sourceData || {}),
+              ...Object.keys(targetData || {})
+            ]).filter(t => !Object.keys(originalKeymap).includes(t))
             for (let i = 0; i < notPrimaryKeyFields.length; i++) {
               const key = notPrimaryKeyFields[i]
-              const sVal = sourceData[key]
-              const tVal = targetData[key]
+              const sVal = sourceData?.[key]
+              const tVal = targetData?.[key]
               const isDiff = sVal !== tVal
               if (this.showType === 'diff' && !isDiff) {
                 continue
@@ -346,9 +347,5 @@ export default {
 .table__body {
   height: 0;
   overflow-y: auto;
-}
-.row__label {
-  display: inline-block;
-  width: 100px;
 }
 </style>
