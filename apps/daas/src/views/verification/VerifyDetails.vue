@@ -205,9 +205,9 @@ export default {
       if (this.selection?.length === 0) return
       let tables = this.selection.map(row => row.originalTableName)
       let params = {
-        tables: tables
+        tables: JSON.stringify(tables)
       }
-      taskApi.autoInspectAgain(this.$route.params.id, JSON.stringify(params))
+      taskApi.autoInspectAgain(this.$route.params.id, params)
     },
 
     remoteMethod({ page }) {
