@@ -8,7 +8,7 @@
         </div>
         <ElTabs v-model="tab" class="data-server__tabs flex-1" @tab-click="tabChanged">
           <ElTabPane label="配置" name="form"></ElTabPane>
-          <ElTabPane v-if="data.status !== 'generating'" label="调试" name="debug"></ElTabPane>
+          <ElTabPane v-if="data.status === 'active'" label="调试" name="debug"></ElTabPane>
         </ElTabs>
       </div>
       <ElForm
