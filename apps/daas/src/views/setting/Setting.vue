@@ -105,6 +105,31 @@
                 <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
               </span>
             </template>
+            <template v-if="item.category === 'alarm'">
+              <el-row>
+                <el-col :span="12">告警指标</el-col>
+                <el-col :span="12">默认告警规则</el-col>
+              </el-row>
+              <el-row v-for="(childItem, childIndex) in item.items" :key="childIndex">
+                <el-col :span="12">
+                  <span>{{ childItem.key_label }}</span>
+                </el-col>
+                <el-col :span="12">
+                  <span>连续</span>
+                  <el-input v-model="childItem.number" style="width: 100px"></el-input>
+                  个点
+                  <el-select v-model="childItem.symbol" style="width: 100px">
+                    <el-option lable=">=" value=">="></el-option>
+                    <el-option lable=">=" value=">"></el-option>
+                    <el-option lable=">=" value="="></el-option>
+                    <el-option lable="<=" value="<="></el-option>
+                    <el-option lable="<" value="<"></el-option>
+                  </el-select>
+                  <el-input v-model="childItem.time" style="width: 80px"></el-input>
+                  <span>ms时告警</span>
+                </el-col>
+              </el-row>
+            </template>
           </div>
         </div>
 
@@ -312,6 +337,31 @@ export default {
         })
 
         _this.formData.items = vals
+
+        //mock data
+        let node = {
+          category: 'alarm',
+          category_sort: 9,
+          items: [
+            {
+              id: '96',
+              key: 'cdc3',
+              number: 3,
+              symbol: '>=',
+              time: 500,
+              key_label: '任务的增量延迟'
+            },
+            {
+              id: '97',
+              key: 'cdc',
+              number: 3,
+              symbol: '>=',
+              time: 500,
+              key_label: '数据网络耗时'
+            }
+          ]
+        }
+        _this.formData.items.push(node)
       })
       let lincenseData = {
         liceseItems: auth_data,

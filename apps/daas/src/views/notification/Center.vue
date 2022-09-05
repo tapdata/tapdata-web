@@ -12,11 +12,16 @@
             <i class="iconfont icon-lishijilu"></i>
             <span class="content">{{ $t('notify_user_notice') }}</span>
           </li>
+          <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">
+            <i class="iconfont icon-lishijilu"></i>
+            <span class="content">系统告警</span>
+          </li>
         </ul>
       </div>
       <div class="main-panel">
         <SystemNotification v-if="activePanel === 'system'"></SystemNotification>
         <UserNotification v-if="activePanel === 'user'"></UserNotification>
+        <SystemAlarm v-if="activePanel === 'alarm'"></SystemAlarm>
       </div>
     </div>
   </section>
@@ -24,6 +29,7 @@
 <script>
 import SystemNotification from './SystemNotification'
 import UserNotification from './UserNotification'
+import SystemAlarm from './SystemAlarm'
 import { VIcon } from '@tap/component'
 import { mapState } from 'vuex'
 
@@ -31,6 +37,7 @@ export default {
   components: {
     SystemNotification,
     UserNotification,
+    SystemAlarm,
     VIcon
   },
   data() {
