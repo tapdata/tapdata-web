@@ -464,7 +464,6 @@ export default {
       this.form.path = ''
       this.form.basePath = ''
       this.getDatabaseTypes()
-      this.getConnectionOptions()
       let { connectionId, tableName } = this.form
       if (connectionId) {
         this.getTableOptions(connectionId)
@@ -571,14 +570,21 @@ export default {
         data?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg'].includes(it.pdkId))?.map(it => it.name) ||
         []
       // this.databaseTypes = data?.map(it => it.name) || []
+      this.getConnectionOptions()
     },
     // 获取可选连接
     async getConnectionOptions() {
       let filter = {
         fields: { id: true, name: true, connection_type: true, status: true, user_id: true, database_type: true },
         where: {
-          database_type: this.form.connectionType,
-          or: [{ connection_type: 'source_and_target' }, { connection_type: 'target' }]
+          database_type: this.form.connectionType
+            ? this.form.connectionType
+            : {
+                in: this.databaseTypes
+              },
+          connection_type: {
+            in: ['source_and_target', 'target']
+          }
         }
       }
       let type = this.form.connectionType
