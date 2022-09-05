@@ -185,33 +185,33 @@ export default defineComponent({
                     </el-row>
                   </div>
                 </div>
+                <div class="mt-5">
+                  <span class="drawer__header_text inline-block">
+                    {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
+                  </span>
+                  <TableList
+                    class="discovery-page-table"
+                    columns={this.data.columns}
+                    data={this.preview.fields}
+                    has-pagination={false}
+                  ></TableList>
+                </div>
                 {/*<div class="mt-5">*/}
-                {/*  <span class="drawer__header_text inline-block">*/}
-                {/*    {i18n.t('datadiscovery_previewdrawer_shujuxiang')}*/}
-                {/*  </span>*/}
+                {/*  <span class="drawer__header_text inline-block">输入参数</span>*/}
                 {/*  <TableList*/}
-                {/*    class="discovery-page-table"*/}
+                {/*    class="discovery-page-api-table"*/}
                 {/*    columns={this.data.columns}*/}
                 {/*    data={this.preview.fields}*/}
-                {/*    has-pagination={false}*/}
                 {/*  ></TableList>*/}
                 {/*</div>*/}
-                <div class="mt-5">
-                  <span class="drawer__header_text inline-block">输入参数</span>
-                  <TableList
-                    class="discovery-page-api-table"
-                    columns={this.data.columns}
-                    data={this.preview.fields}
-                  ></TableList>
-                </div>
-                <div class="mt-5">
-                  <span class="drawer__header_text inline-block">输出参数</span>
-                  <TableList
-                    class="discovery-page-api-table"
-                    columns={this.data.columns}
-                    data={this.preview.fields}
-                  ></TableList>
-                </div>
+                {/*<div class="mt-5">*/}
+                {/*  <span class="drawer__header_text inline-block">输出参数</span>*/}
+                {/*  <TableList*/}
+                {/*    class="discovery-page-api-table"*/}
+                {/*    columns={this.data.columns}*/}
+                {/*    data={this.preview.fields}*/}
+                {/*  ></TableList>*/}
+                {/*</div>*/}
               </div>
             </div>
           </section>
