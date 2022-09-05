@@ -13,7 +13,7 @@
             style="width: 240px"
             @input="searchFnc(800)"
           ></ElInput>
-          <ElButton type="primary" size="mini" @click="handleAgainCheck">校验</ElButton>
+          <ElButton type="primary" size="mini" :disabled="disableAgainVerify" @click="handleAgainCheck">校验</ElButton>
         </div>
         <VTable
           v-model="selection"
@@ -182,7 +182,8 @@ export default {
       row: null,
       detailLoading: false,
       detailSvg: require('@tap/assets/images/detail-info.svg'),
-      timeout: null
+      timeout: null,
+      disableAgainVerify: false
     }
   },
 
@@ -233,6 +234,11 @@ export default {
         })
         if (!this.row || !list.find(t => JSON.stringify(this.row) === JSON.stringify(t))) {
           this.handleRow(list[0])
+        }
+        //是否可以再次校验
+        if (list?.length > 0) {
+          let check = list.filter(row => row?.toBeCompared > 0) || []
+          this.disableAgainVerify = check?.length > 0
         }
         return {
           total: data.total,
