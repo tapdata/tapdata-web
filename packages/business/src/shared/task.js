@@ -94,7 +94,7 @@ export const STATUS_MAP = {
     i18n: 'status_edit'
   },
   wait_start: {
-    i18n: 'status_wait_start'
+    i18n: 'packages_business_status_wait_start'
   },
   starting: {
     i18n: 'status_starting',

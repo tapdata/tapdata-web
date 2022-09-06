@@ -85,6 +85,9 @@ export default {
   button_btn_next: '下一步',
   button_bulk_import: '批量导入',
   button_bulk_export: '批量导出',
+  button_public: '发布',
+  button_revoke: '撤销',
+  button_submit: '提交',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -167,6 +170,7 @@ export default {
   page_title_data_catalogue_info: '数据目录详情',
   page_title_data_search: '数据搜索',
   page_title_data_service: '数据服务',
+  page_title_data_server_list: '服务管理',
   page_title_api_publish: 'API发布',
   page_title_api_publish_create: '创建API发布',
   page_title_api_publish_edit: '编辑API发布',
@@ -175,9 +179,9 @@ export default {
   page_title_api_client: 'API客户端',
   page_title_api_servers: 'API服务器',
   page_title_api_stat: 'API统计',
-  page_title_api_audit: 'API审计',
+  page_title_api_audit: '服务审计',
   page_title_api_audit_details: '详情',
-  page_title_api_monitor: 'API监控',
+  page_title_api_monitor: '服务监控',
   page_title_system: '系统管理',
   page_title_data_metadata: '元数据管理',
   page_title_schedule: '调度任务',
@@ -569,7 +573,7 @@ export default {
   // api文档及测试
   file_test_generate_code: '生成代码',
 
-  // api审计
+  // 服务审计
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
   apiaudit_visitor: '访问人员',
