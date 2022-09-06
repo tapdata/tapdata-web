@@ -86,6 +86,9 @@ export default {
   button_btn_next: 'Next',
   button_bulk_import: 'Bulk Import',
   button_bulk_export: 'Bulk Export',
+  button_public: 'Public',
+  button_revoke: 'Revoke',
+  button_submit: 'Submit',
 
   query_fuzzy: 'Fuzzy match',
   query_precise: 'Exact match',
@@ -169,6 +172,7 @@ export default {
   page_title_data_catalogue_info: 'Data catalogue details',
   page_title_data_search: 'Data search',
   page_title_data_service: 'Data Service',
+  page_title_data_server_list: 'Server management',
   page_title_api_publish: 'API publish',
   page_title_api_publish_create: 'Create API Publish',
   page_title_api_publish_edit: 'Edit API Publish',
@@ -177,9 +181,9 @@ export default {
   page_title_api_client: 'API client',
   page_title_api_servers: 'API Servers',
   page_title_api_stat: 'API statistics',
-  page_title_api_audit: 'API Audit',
+  page_title_api_audit: 'Server Audit',
   page_title_api_audit_details: 'Details',
-  page_title_api_monitor: 'API monitor',
+  page_title_api_monitor: 'Server monitor',
   page_title_system: 'System',
   page_title_data_metadata: 'Metadata',
   page_title_schedule: 'Scheduling tasks',
@@ -580,7 +584,7 @@ export default {
   // api documentation and testing api文档及测试
   file_test_generate_code: 'Generate code',
 
-  // api audit api审计
+  // server audit 服务审计
   apiaudit_name: 'API name',
   apiaudit_access_type: 'Access Type',
   apiaudit_visitor: 'Visitor',
