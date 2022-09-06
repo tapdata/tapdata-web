@@ -378,16 +378,16 @@ let menuSetting = [
       { name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
-  // {
-  //   name: 'discovery',
-  //   label: 'page_title_data_discovery',
-  //   icon: 'system',
-  //   code: 'system_management',
-  //   children: [
-  //     { name: 'objectList', code: 'datasource_menu', parent: 'object' },
-  //     { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogue' }
-  //   ]
-  // },
+  {
+    name: 'discovery',
+    label: 'page_title_data_discovery',
+    icon: 'system',
+    code: 'system_management',
+    children: [
+      { name: 'objectList', code: 'datasource_menu', parent: 'object' },
+      { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogue' }
+    ]
+  },
   {
     name: 'dataService',
     label: 'page_title_data_service',
