@@ -195,6 +195,22 @@ export default defineComponent({
                     has-pagination={false}
                   ></TableList>
                 </div>
+                {/*<div class="mt-5">*/}
+                {/*  <span class="drawer__header_text inline-block">输入参数</span>*/}
+                {/*  <TableList*/}
+                {/*    class="discovery-page-api-table"*/}
+                {/*    columns={this.data.columns}*/}
+                {/*    data={this.preview.fields}*/}
+                {/*  ></TableList>*/}
+                {/*</div>*/}
+                {/*<div class="mt-5">*/}
+                {/*  <span class="drawer__header_text inline-block">输出参数</span>*/}
+                {/*  <TableList*/}
+                {/*    class="discovery-page-api-table"*/}
+                {/*    columns={this.data.columns}*/}
+                {/*    data={this.preview.fields}*/}
+                {/*  ></TableList>*/}
+                {/*</div>*/}
               </div>
             </div>
           </section>
