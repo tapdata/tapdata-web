@@ -198,13 +198,11 @@ import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog.vue'
 import { TablePage, TaskStatus } from '../../components'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
-import locale from '../../mixins/locale'
 
 let timeout = null
 export default {
   name: 'TaskList',
   components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
-  mixins: [locale],
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
@@ -273,7 +271,7 @@ export default {
     statusOptions() {
       const options = Object.entries(this.STATUS_MAP).map(([status, item]) => {
         return {
-          label: this.t(item.i18n),
+          label: this.$t(item.i18n),
           value: item.in ? item.in.join(',') : status
         }
       })

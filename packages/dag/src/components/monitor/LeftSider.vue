@@ -2,7 +2,9 @@
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box">
-        <TimeSelect :range="$attrs.range" ref="timeSelect" @change="changeTimeSelect"></TimeSelect>
+        <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
+        <VIcon class="color-primary">refresh</VIcon>
+        <Frequency :range="$attrs.range"></Frequency>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box">
         <div class="flex justify-content-between mb-2">
@@ -92,6 +94,57 @@
           ></LineChart>
         </div>
       </div>
+      <div class="info-box">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 font-color-normal">任务事件统计（条）</span>
+        </div>
+        <div v-loading="!eventDataAll" class="flex justify-content-between">
+          <div v-if="eventDataAll">
+            <div>总输入</div>
+            <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+              {{ eventDataAll.inputTotals.toLocaleString() }}
+            </div>
+            <div class="flex justify-content-between mb-2">
+              <span>插入：</span>
+              <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
+            </div>
+            <div class="flex justify-content-between mb-2">
+              <span>更新：</span>
+              <span>{{ eventDataAll.inputUpdateTotal.toLocaleString() }}</span>
+            </div>
+            <div class="flex justify-content-between mb-2">
+              <span>删除：</span>
+              <span>{{ eventDataAll.inputDeleteTotal.toLocaleString() }}</span>
+            </div>
+            <div class="flex justify-content-between">
+              <span>DDL：</span>
+              <span>{{ eventDataAll.inputDdlTotal.toLocaleString() }}</span>
+            </div>
+          </div>
+          <div v-if="eventDataAll">
+            <div>总输出</div>
+            <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+              {{ eventDataAll.outputTotals.toLocaleString() }}
+            </div>
+            <div class="flex justify-content-between mb-2">
+              <span>插入：</span>
+              <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
+            </div>
+            <div class="flex justify-content-between mb-2">
+              <span>更新：</span>
+              <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
+            </div>
+            <div class="flex justify-content-between mb-2">
+              <span>删除：</span>
+              <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
+            </div>
+            <div class="flex justify-content-between">
+              <span>DDL：</span>
+              <span>{{ eventDataAll.outputDdlTotal.toLocaleString() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <ElDialog
@@ -140,6 +193,7 @@ import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import LineChart from './components/LineChart'
 import TimeSelect from './components/TimeSelect'
+import Frequency from './components/Frequency'
 import VIcon from 'web-core/components/VIcon'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
@@ -166,6 +220,7 @@ export default {
   components: {
     LineChart,
     TimeSelect,
+    Frequency,
     VIcon,
     InitialList
   },
@@ -236,6 +291,12 @@ export default {
 
     initialList() {
       return this.$refs?.initialList
+    },
+
+    // 任务事件统计（条）-任务累计
+    eventDataAll() {
+      const data = this.quota.samples?.totalData?.[0]
+      return this.getInputOutput(data)
     }
   },
 
@@ -258,30 +319,24 @@ export default {
     },
 
     getInputOutput(data) {
-      let keyArr = [
-        'inputInsertTotal',
-        'inputUpdateTotal',
-        'inputDeleteTotal',
-        'inputDdlTotal',
-        'inputOthersTotal',
+      let result = {}
+      const inputArr = ['inputInsertTotal', 'inputUpdateTotal', 'inputDeleteTotal', 'inputDdlTotal', 'inputOthersTotal']
+      const outputArr = [
         'outputInsertTotal',
         'outputUpdateTotal',
         'outputDeleteTotal',
         'outputDdlTotal',
         'outputOthersTotal'
       ]
-      let result = {
-        input: {},
-        output: {}
-      }
-      keyArr.forEach(el => {
-        for (let key in result) {
-          let item = result[key]
-          if (el.includes(key)) {
-            item[el.replace(key, '')] = data?.[el] || 0
-          }
-        }
+      ;[...inputArr, ...outputArr].forEach(el => {
+        result[el] = data?.[el] || 0
       })
+      result.inputTotals = inputArr.reduce((total, key) => {
+        return total + result[key] || 0
+      }, 0)
+      result.outputTotals = outputArr.reduce((total, key) => {
+        return total + result[key] || 0
+      }, 0)
       return result
     },
 

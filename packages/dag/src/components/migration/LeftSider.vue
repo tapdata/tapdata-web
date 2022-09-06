@@ -319,15 +319,6 @@ export default {
       const filter = {
         page: this.dbPage,
         size: 20,
-        where: {
-          // database_type: {
-          //   $in: this.database
-          // },
-          connection_type: {
-            like: this.connectionType,
-            options: 'i'
-          }
-        },
         fields: {
           name: 1,
           id: 1,

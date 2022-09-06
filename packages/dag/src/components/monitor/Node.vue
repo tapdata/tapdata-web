@@ -1,94 +1,25 @@
-<template>
-  <DFNode class="position-s" v-bind="$attrs" v-on="$listeners">
-    <div class="node-card rounded-lg px-2 pt-6 mt-n3">
-      <div class="node-card-content p-2">
-        <div class="grid statistic-list">
-          <div v-if="taskType !== 'initial_sync'" class="statistic span-2">
-            <div class="statistic-title">增量时间点</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{{ cdcEventStartTime }}</div>
-            </div>
-          </div>
-
-          <div class="statistic">
-            <div class="statistic-title">耗时</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{{ timeCostAvg }}</div>
-            </div>
-          </div>
-
-          <div class="statistic">
-            <div class="statistic-title">QPS</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{{ outputQps }}</div>
-            </div>
-          </div>
-
-          <div class="statistic">
-            <div class="statistic-title">累计输入事件</div>
-            <div class="statistic-content">
-              <ElTooltip transition="tooltip-fade-in" :content="inputTotal.toLocaleString()">
-                <div class="statistic-value">{{ calcUnit(inputTotal) }}</div>
-              </ElTooltip>
-            </div>
-          </div>
-
-          <div class="statistic">
-            <div class="statistic-title">累计输出事件</div>
-            <div class="statistic-content">
-              <ElTooltip transition="tooltip-fade-in" :content="outputTotal.toLocaleString()">
-                <div class="statistic-value">{{ calcUnit(outputTotal) }}</div>
-              </ElTooltip>
-            </div>
-          </div>
-        </div>
-        <!--        <div v-if="isSource" class="grid statistic-list mt-2">-->
-        <!--          <div v-if="taskType !== 'cdc'" class="statistic">-->
-        <!--            <div class="statistic-title">全量状态</div>-->
-        <!--            <div class="statistic-content">-->
-        <!--              <Chart ref="chart" :extend="initialSyncOption" style="width: 80px; height: 80px"></Chart>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--          <div v-if="taskType !== 'initial_sync'" class="statistic">-->
-        <!--            <div class="statistic-title">增量状态</div>-->
-        <!--            <div class="statistic-content">-->
-        <!--              <Chart ref="chart" :extend="cdcOption" style="width: 80px; height: 80px"></Chart>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </div>-->
-      </div>
-      <div class="node-card-footer flex align-center justify-content-end">
-        <ElTooltip v-if="taskType !== 'cdc' && isSource" :content="initialSyncProcessTip">
-          <ElProgress class="flex-1 mr-3" :show-text="false" :percentage="initialSyncProcess" />
-        </ElTooltip>
-
-        <button @click="$emit('open-detail')" class="icon-btn">
-          <VIcon size="16">menu-left</VIcon>
-        </button>
-      </div>
-    </div>
-  </DFNode>
-</template>
-
 <script>
-import VIcon from 'web-core/components/VIcon'
 import dayjs from 'dayjs'
-
-import { Chart } from '@tap/component'
+import 'dayjs/locale/zh-cn'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { defineComponent, computed, ref, nextTick } from '@vue/composition-api'
+import { VIcon } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
-
 import DFNode from '../DFNode'
 
-export default {
+dayjs.extend(relativeTime)
+dayjs.locale('zh-cn')
+
+export default defineComponent({
   name: 'Node',
   components: {
-    Chart,
     DFNode,
     VIcon
   },
 
   props: {
     node: {},
+    quota: {},
     sample: {
       type: Object,
       default: () => ({
@@ -99,98 +30,104 @@ export default {
         tableTotal: 0
       })
     },
-    taskType: String
+    taskType: String,
+    syncType: String
   },
 
-  data() {
-    return {
-      id: this.$attrs.id,
-      seriesItemMap: {
-        wait: {
-          name: '待进行',
-          color: '#F7D762'
-        },
-        process: {
-          name: '进行中',
-          color: '#88DBDA'
-        },
-        success: {
-          name: '已完成',
-          color: '#82C647'
-        },
-        error: {
-          name: '错误',
-          color: '#EC8181'
-        }
-      },
-
-      initialSyncOption: this.getPieOption(),
-      cdcOption: this.getPieOption()
-    }
-  },
-
-  computed: {
-    nodeStyle() {
-      const [left = 0, top = 0] = this.node.attrs?.position || []
-      return {
-        left: left + 'px',
-        top: top + 'px'
-      }
-    },
-
-    isProcessorNode() {
-      const { type } = this.node
-      return type !== 'database' && type !== 'table'
-    },
-
-    isSource() {
-      const { type, $inputs } = this.node
-      return (type === 'database' || type === 'table') && !$inputs.length
-    },
-
-    isTarget() {
-      const { type, $outputs } = this.node
-      return (type === 'database' || type === 'table') && !$outputs.length
-    },
-
-    showStatus() {
-      const { type, $inputs } = this.node
-      return (type === 'database' || type === 'table') && !$inputs.length
-    },
-
-    cdcEventStartTime() {
-      const val = this.sample.currentEventTimestamp
-      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : '-'
-    },
-
-    initialSyncProcess() {
-      const { snapshotInsertRowTotal = 0, snapshotRowTotal = 0 } = this.sample
-      return snapshotRowTotal ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100) : 0
-    },
-
-    initialSyncProcessTip() {
-      const { snapshotInsertRowTotal, snapshotRowTotal, outputQps } = this.sample
-      return snapshotRowTotal
-        ? snapshotInsertRowTotal === snapshotRowTotal
-          ? '已完成'
-          : `${snapshotInsertRowTotal}/${snapshotRowTotal} | 预计全量完成还需 ${
-              outputQps
-                ? calcTimeUnit(Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000), 2)
-                : '-'
-            }`
+  setup(props, { attrs, listeners, emit, refs }) {
+    const completeTime = computed(() => {
+      const { snapshotInsertRowTotal, snapshotRowTotal, outputQps } = props.sample
+      return outputQps
+        ? calcTimeUnit(Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000), 2)
         : '-'
-    },
+    })
 
-    inputTotal() {
+    const isSource = computed(() => {
+      const { type, $inputs } = props.node
+      return (type === 'database' || type === 'table') && !$inputs.length
+    })
+
+    const isTarget = computed(() => {
+      const { type, $outputs } = props.node
+      return (type === 'database' || type === 'table') && !$outputs.length
+    })
+
+    /**
+     * 是否包含增量阶段（全量+增量、增量）
+     * @type {ComputedRef<boolean>}
+     */
+    const hasCDC = props.taskType !== 'initial_sync'
+
+    const hasInitalSync = props.taskType !== 'cdc'
+
+    /**
+     * 增量时间点
+     * @type {ComputedRef<string|string>}
+     */
+    const cdcEventStartTime = computed(() => {
+      const val = props.sample.currentEventTimestamp
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : '-'
+    })
+
+    /**
+     * 增量时间点（相对）
+     * @type {ComputedRef<string|string>}
+     */
+    const cdcEventStartRelativeTime = computed(() => {
+      const val = props.sample.currentEventTimestamp
+      return val ? dayjs().to(dayjs(val)) : '-'
+    })
+
+    const outputQps = computed(() => {
+      const { outputQps = 0 } = props.sample
+      return outputQps.toLocaleString('zh', {
+        maximumFractionDigits: 3,
+        useGrouping: false
+      })
+    })
+
+    const isProcessor = computed(() => {
+      const { type } = props.node
+      return type !== 'database' && type !== 'table'
+    })
+
+    /**
+     * 耗时
+     * @type {ComputedRef<unknown>}
+     */
+    const timeCostAvg = computed(() => {
+      const { timeCostAvg } = props.sample
+      if (!timeCostAvg) return '-'
+      return calcTimeUnit(timeCostAvg)
+    })
+
+    /**
+     * 全量进度
+     * @type {ComputedRef<number|number>}
+     */
+    const initialSyncProcess = computed(() => {
+      const { snapshotInsertRowTotal = 0, snapshotRowTotal = 0, snapshotTableTotal, tableTotal } = props.sample
+      return snapshotRowTotal ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100) : 0
+    })
+
+    /**
+     * 输入事件
+     * @type {ComputedRef<number>}
+     */
+    const inputTotal = computed(() => {
       return ['inputDdlTotal', 'inputDeleteTotal', 'inputInsertTotal', 'inputOthersTotal', 'inputUpdateTotal'].reduce(
         (total, key) => {
-          return total + this.sample[key] || 0
+          return total + props.sample[key] || 0
         },
         0
       )
-    },
+    })
 
-    outputTotal() {
+    /**
+     * 输出事件
+     * @type {ComputedRef<number>}
+     */
+    const outputTotal = computed(() => {
       return [
         'outputDdlTotal',
         'outputDeleteTotal',
@@ -198,123 +135,241 @@ export default {
         'outputOthersTotal',
         'outputUpdateTotal'
       ].reduce((total, key) => {
-        return total + this.sample[key] || 0
+        return total + props.sample[key] || 0
       }, 0)
-    },
+    })
 
-    initialPieData() {
-      const { snapshotTableTotal, tableTotal } = this.sample
-      return {
-        success: snapshotTableTotal,
-        wait: tableTotal - snapshotTableTotal
+    // 是否显示增量时间点
+    const showCDCAt = computed(() => {
+      return !!props.quota.samples?.totalData?.[0]?.snapshotDoneAt // 全量完成时间点
+    })
+
+    const renderStatistic = () => {
+      if (isSource.value) {
+        return !showCDCAt.value || !hasCDC ? (
+          <div class="statistic flex">
+            <div class="statistic-title">全量完成还需：</div>
+            <div class="statistic-content">
+              <div class="statistic-value">{completeTime.value}</div>
+            </div>
+          </div>
+        ) : (
+          <div class="statistic flex">
+            <div class="statistic-title">增量时间点：</div>
+            <div class="statistic-content">
+              <div class="statistic-value">{cdcEventStartRelativeTime.value}</div>
+            </div>
+          </div>
+        )
       }
-    },
 
-    cdcPieData() {
-      const { tableTotal } = this.sample
-      return {
-        process: tableTotal
+      if (isTarget.value) {
+        return (
+          <div class="statistic flex">
+            <div class="statistic-title">写入耗时：</div>
+            <div class="statistic-content">
+              <div class="statistic-value">{timeCostAvg.value}</div>
+            </div>
+          </div>
+        )
       }
-    },
 
-    timeCostAvg() {
-      const { timeCostAvg } = this.sample
-      if (!timeCostAvg) return '-'
-      return calcTimeUnit(timeCostAvg)
-      // if (!timeCostAvg) return '-'
-      // const duration = dayjs.duration(timeCostAvg)
-      // console.log('duration', duration) // eslint-disable-line
-      // return duration.format('d天h小时m分钟s秒')
-    },
-
-    outputQps() {
-      const { outputQps = 0 } = this.sample
-      return outputQps.toLocaleString('zh', {
-        maximumFractionDigits: 3,
-        useGrouping: false
-      })
+      return (
+        <div class="statistic flex">
+          <div class="statistic-title">处理耗时：</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{timeCostAvg.value}</div>
+          </div>
+        </div>
+      )
     }
-  },
 
-  watch: {
-    initialPieData: {
-      immediate: true,
-      handler(v) {
-        this.seriesHandler(this.initialSyncOption, v, '全量状态')
-      }
-    },
+    const renderPopoverContent = () => {
+      const cdcTime = (
+        <div class="statistic span-2">
+          <div class="statistic-title">增量时间点</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{cdcEventStartTime.value}</div>
+          </div>
+        </div>
+      )
 
-    cdcPieData: {
-      immediate: true,
-      handler(v) {
-        this.seriesHandler(this.cdcOption, v, '增量状态')
-      }
-    }
-  },
+      const processingTime = (
+        <div class="statistic">
+          <div class="statistic-title">处理耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{timeCostAvg.value}</div>
+          </div>
+        </div>
+      )
 
-  methods: {
-    getPieOption() {
-      return {
-        tooltip: {
-          trigger: 'item',
-          backgroundColor: '#364252',
-          borderColor: '#364252',
-          textStyle: {
-            color: '#fff',
-            fontSize: 12
-          },
-          position: 'top',
-          formatter: params => {
-            const { marker, name, value, seriesName } = params || {}
-            let result = `<div>`
-            if (seriesName) {
-              result += `<div class="text-center">${seriesName}</div>`
-            }
-            result += `<span>${marker}</span><span class="pl-2">${name}</span><span class="din-font inline-block text-end" style="width: 60px">${value.toLocaleString()}</span>`
-            result += `</div>`
-            return result
-          }
-        },
-        legend: {
-          show: false
-        },
-        series: [
-          {
-            type: 'pie',
-            radius: ['50%', '80%'],
-            center: ['50%', '50%'],
-            label: { show: false },
-            labelLine: { show: false },
-            data: []
-          }
-        ]
-      }
-    },
+      const readTime = (
+        <div class="statistic">
+          <div class="statistic-title">读取耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{timeCostAvg.value}</div>
+          </div>
+        </div>
+      )
 
-    seriesHandler(option, data, name) {
-      const { seriesItemMap } = this
-      option.series[0].name = name
-      option.series[0].data = Object.entries(data).map(([key, value]) => {
-        return {
-          value,
-          name: seriesItemMap[key].name,
-          itemStyle: {
-            color: seriesItemMap[key].color
-          }
+      // 源全量读取耗时
+      const sourceInitalReadTime = (
+        <div class="statistic">
+          <div class="statistic-title">读取耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">
+              {props.sample.snapshotSourceReadTimeCostAvg
+                ? calcTimeUnit(props.sample.snapshotSourceReadTimeCostAvg)
+                : '-'}
+            </div>
+          </div>
+        </div>
+      )
+
+      // 源增量读取耗时
+      const sourceCDCReadTime = (
+        <div class="statistic">
+          <div class="statistic-title">读取耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">
+              {props.sample.incrementalSourceReadTimeCostAvg
+                ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
+                : '-'}
+            </div>
+          </div>
+        </div>
+      )
+
+      // 目标写入耗时
+      const targetWriteTime = (
+        <div class="statistic">
+          <div class="statistic-title">写入耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">
+              {props.sample.incrementalSourceReadTimeCostAvg
+                ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
+                : '-'}
+            </div>
+          </div>
+        </div>
+      )
+
+      const outputEvent = (
+        <div class="statistic">
+          <div class="statistic-title">累计输出事件</div>
+          <div class="statistic-content">
+            <ElTooltip transition="tooltip-fade-in" content={outputTotal.value.toLocaleString()}>
+              <div class="statistic-value">{calcUnit(outputTotal.value)}</div>
+            </ElTooltip>
+          </div>
+        </div>
+      )
+
+      const inputEvent = (
+        <div class="statistic">
+          <div class="statistic-title">累计输入事件</div>
+          <div class="statistic-content">
+            <ElTooltip transition="tooltip-fade-in" content={inputTotal.value.toLocaleString()}>
+              <div class="statistic-value">{calcUnit(inputTotal.value)}</div>
+            </ElTooltip>
+          </div>
+        </div>
+      )
+
+      const syncProcess = (
+        <div class="statistic">
+          <div class="statistic-title">全量同步进度</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{initialSyncProcess.value}%</div>
+          </div>
+        </div>
+      )
+
+      const qps = (
+        <div class="statistic">
+          <div class="statistic-title">QPS(Q/S)</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{outputQps.value}</div>
+          </div>
+        </div>
+      )
+
+      // 在增量阶段
+      if (hasCDC && showCDCAt.value) {
+        if (isSource.value) {
+          return [cdcTime, inputEvent, outputEvent, sourceCDCReadTime, processingTime, qps]
         }
-      })
-    },
+        if (isProcessor.value) {
+          return [cdcTime, inputEvent, outputEvent, processingTime, qps]
+        }
+        return [cdcTime, inputEvent, outputEvent, targetWriteTime, processingTime, qps]
+      }
 
-    calcUnit() {
-      return calcUnit(...arguments)
+      if (hasInitalSync) {
+        if (isSource.value) {
+          return [syncProcess, qps, inputEvent, outputEvent, sourceInitalReadTime, processingTime]
+        }
+        if (isProcessor.value) {
+          return [inputEvent, outputEvent, processingTime, qps]
+        }
+        return [inputEvent, outputEvent, targetWriteTime, processingTime, qps]
+      }
+    }
+
+    const ifDragStart = ref(false) // 控制popover禁用
+
+    return () => {
+      let nodeProps = { props: { ...attrs }, attrs }
+      return (
+        <DFNode
+          {...nodeProps}
+          class="position-s"
+          on={{
+            ...listeners,
+            'drag-start': (...args) => {
+              ifDragStart.value = true
+              emit('drag-start', ...args)
+            },
+            'drag-stop': (...args) => {
+              ifDragStart.value = false
+              refs.popover?.updatePopper?.() // 更新popover位置
+              emit('drag-stop', ...args)
+            }
+          }}
+        >
+          <el-popover
+            ref="popover"
+            disabled={ifDragStart.value}
+            placement="bottom"
+            width="240"
+            trigger="hover"
+            popper-class="node-statistic-popover rounded-lg"
+          >
+            <div slot="reference" class="node-card rounded-lg px-2 pb-2 pt-6 mt-n3">
+              <div class="flex align-center">
+                <div class="node-card-content p-2 flex-1 rounded-sm">{renderStatistic()}</div>
+                <button onClick={() => emit('open-detail')} class="ml-2 icon-btn">
+                  <VIcon size="16">menu-left</VIcon>
+                </button>
+              </div>
+              {isSource.value && <ElProgress class="mt-2" show-text={false} percentage={initialSyncProcess.value} />}
+            </div>
+
+            <div class="statistic-card">
+              <div class="grid statistic-list">{renderPopoverContent()}</div>
+            </div>
+          </el-popover>
+        </DFNode>
+      )
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
 .node-card {
   position: absolute;
+  min-width: 200px;
   z-index: -1;
   top: 100%;
   left: 50%;
@@ -342,11 +397,16 @@ export default {
 
     &-value {
       display: inline-block;
+      vertical-align: middle;
       color: map-get($fontColor, dark);
-      font-weight: 700;
+      line-height: 1;
+      //font-weight: 700;
       font-size: 14px;
       font-family: DIN;
       white-space: nowrap;
+    }
+
+    &.row {
     }
   }
 }
@@ -373,5 +433,47 @@ export default {
 }
 .span-2 {
   grid-column: span 2 / auto;
+}
+</style>
+
+<style lang="scss">
+.node-statistic-popover {
+  $bg: rgba(54, 66, 82, 0.9);
+  background: $bg;
+  border: 1px solid #f2f2f2;
+
+  &.el-popper[x-placement^='top'] .popper__arrow::after {
+    border-top-color: $bg;
+  }
+
+  &.el-popper[x-placement^='bottom'] .popper__arrow::after {
+    border-bottom-color: $bg;
+  }
+
+  .statistic-list {
+    grid-gap: 4px;
+  }
+
+  .statistic {
+    color: rgba(255, 255, 255, 0.65);
+    &-title {
+      margin-bottom: 4px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    &-value {
+      display: inline-block;
+      color: #fff;
+      line-height: 1;
+      font-weight: 700;
+      font-size: 14px;
+      font-family: DIN;
+      white-space: nowrap;
+    }
+
+    &.row {
+    }
+  }
 }
 </style>

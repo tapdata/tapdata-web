@@ -29,7 +29,7 @@
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
-        <!--        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>-->
+        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload"
           >下载</ElButton
         >
@@ -105,22 +105,24 @@
       <ElForm label-width="120px">
         <ElFormItem label="日志级别：" prop="level">
           <ElSelect v-model="form.level" style="width: 275px">
-            <ElOption v-for="item in checkList" :label="item" :value="item" :key="item"></ElOption>
+            <ElOption v-for="item in checkItems" :label="item.text" :value="item.label" :key="item.label"></ElOption>
           </ElSelect>
         </ElFormItem>
         <template v-if="form.level === 'DEBUG'">
           <ElFormItem label="DEBUG日志参数" prop="param"> </ElFormItem>
           <ElFormItem label="开启时长（秒）" prop="start">
-            <ElInput v-model="form.start" type="number" style="width: 275px"></ElInput>
+            <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
-          <ElFormItem label="开启时长（秒）" prop="max">
-            <ElInput v-model="form.max" type="number" style="width: 275px"></ElInput>
+          <ElFormItem label="最大事件数（条）" prop="max">
+            <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
         </template>
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="handleClose">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="handleSave">{{ $t('button_confirm') }}</ElButton>
+        <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
+          $t('button_confirm')
+        }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -134,7 +136,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import VIcon from 'web-core/components/VIcon'
 import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
 import { VEmpty } from '@tap/component'
-import { monitoringLogsApi } from '@tap/api'
+import { monitoringLogsApi, taskApi } from '@tap/api'
 
 import TimeSelect from './TimeSelect'
 
@@ -163,28 +165,29 @@ export default {
     return {
       activeNodeId: 'all',
       keyword: '',
-      checkList: ['info', 'warn', 'error'],
+      checkList: ['INFO', 'WARN', 'ERROR'],
       checkItems: [
         {
-          label: 'debug',
+          label: 'DEBUG',
           text: 'DEBUG'
         },
         {
-          label: 'info',
+          label: 'INFO',
           text: 'INFO'
         },
         {
-          label: 'warn',
+          label: 'WARN',
           text: 'WARN'
         },
         {
-          label: 'error',
+          label: 'ERROR',
           text: 'ERROR'
         }
       ],
       timer: null,
       downloadLoading: false,
       loading: false,
+      saveLoading: false,
       preLoading: false,
       resetDataTime: null,
       list: [],
@@ -205,9 +208,9 @@ export default {
       },
       isScrollBottom: false,
       form: {
-        level: '',
-        start: 500,
-        max: 500
+        level: 'INFO',
+        intervalCeiling: 500,
+        recordCeiling: 500
       },
       dialog: false,
       timeOptions: [
@@ -287,6 +290,10 @@ export default {
 
     isEnterTimer() {
       return this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
+    },
+
+    logSetting() {
+      return this.dataflow?.logSetting || {}
     }
   },
 
@@ -600,12 +607,43 @@ export default {
     },
 
     handleSetting() {
+      const { level, intervalCeiling, recordCeiling } = this.logSetting
+      if (level) {
+        this.form = {
+          level,
+          intervalCeiling,
+          recordCeiling
+        }
+      }
       this.dialog = true
     },
 
-    handleClose() {},
+    handleClose() {
+      this.dialog = false
+    },
 
-    handleSave() {},
+    handleSave() {
+      const { form } = this
+      let params = {
+        level: form.level
+      }
+      if (form.level === 'DEBUG') {
+        params.intervalCeiling = form.intervalCeiling
+        params.recordCeiling = form.recordCeiling
+      }
+      this.saveLoading = true
+      taskApi
+        .putLogSetting(this.dataflow.id, params)
+        .then(() => {
+          this.$message.success(this.$t('message_save_ok'))
+        })
+        .finally(() => {
+          this.saveLoading = false
+        })
+        .catch(() => {
+          this.$message.error(this.$t('message_save_fail'))
+        })
+    },
 
     getTimeRange(type) {
       let result
