@@ -79,6 +79,7 @@
             <VEmpty large />
           </div>
           <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
+          <TransformLoading :show="transformLoading" />
           <NodePopover
             :popover="nodeMenu"
             @click-node="handleClickNodePopover"
@@ -115,6 +116,7 @@ import { merge } from 'lodash'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
+import TransformLoading from './components/TransformLoading'
 import { VExpandXTransition, VIcon, VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
 import ConsolePanel from './components/migration/ConsolePanel'
@@ -139,7 +141,8 @@ export default {
     TopHeader,
     DFNode,
     LeftSider,
-    VIcon
+    VIcon,
+    TransformLoading
   },
 
   data() {

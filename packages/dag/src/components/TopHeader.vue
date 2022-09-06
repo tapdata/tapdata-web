@@ -189,7 +189,7 @@
       </template>
 
       <ElButton
-        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start)"
+        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
         size="mini"
         class="mx-2"
         type="primary"
@@ -241,7 +241,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
-    ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed', 'showConsole']),
+    ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed', 'showConsole', 'transformLoading']),
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'

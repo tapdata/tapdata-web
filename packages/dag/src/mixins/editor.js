@@ -26,7 +26,7 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId', 'showConsole']),
+    ...mapState('dataflow', ['activeNodeId', 'showConsole', 'transformLoading']),
     ...mapGetters('dataflow', [
       'allNodes',
       'allEdges',
@@ -85,6 +85,7 @@ export default {
       'setActiveType',
       'setFormSchema',
       'setTransformStatus',
+      'setTransformLoading',
       'setEditVersion',
       'copyNodes',
       'pasteNodes',
@@ -1597,14 +1598,9 @@ export default {
     },
 
     handleEditFlush(result) {
-      this.reformDataflow(result.data, true)
-
-      const { opType } = result
-      if (opType === 'transformRate') {
-        // 推演进度
-        this.setTransformStatus(result.transformStatus)
-      } else if (opType === 'updateVersion') {
-        // 版本变化
+      if (result.data) {
+        this.reformDataflow(result.data, true)
+        this.setTransformLoading(!result.data.transformed)
       }
     },
 

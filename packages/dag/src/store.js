@@ -60,6 +60,7 @@ const getState = () => ({
   formSchema: null,
   taskId: null,
   transformStatus: '', //推演状态 loading, error, finished
+  transformLoading: false,
   dag: {
     nodes: [], // 节点数据
     edges: [] // 连线数据
@@ -667,6 +668,10 @@ const mutations = {
    */
   setTransformStatus(state, status) {
     state.transformStatus = status
+  },
+
+  setTransformLoading(state, loading) {
+    state.transformLoading = loading
   },
 
   setDagPromise(state, promise) {
