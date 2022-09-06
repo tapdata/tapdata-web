@@ -180,6 +180,7 @@ export default defineComponent({
             <el-button
               type="primary"
               size="mini"
+              disabled={this.data.currentNode.readOnly}
               onClick={() => {
                 this.handleSourceDrawer()
               }}

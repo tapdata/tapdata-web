@@ -4,6 +4,7 @@
       ref="table"
       row-key="id"
       class="data-flow-list"
+      :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
@@ -11,12 +12,23 @@
           multipleSelection = val
         }
       "
+      @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
+        <el-button
+          v-readonlybtn="'SYNC_category_application'"
+          size="mini"
+          class="btn"
+          v-show="multipleSelection.length > 0"
+          @click="$refs.table.showClassify(handleSelectTag())"
+        >
+          <i class="iconfont icon-biaoqian back-btn-icon"></i>
+          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+        </el-button>
         <el-dropdown
           class="btn"
           @command="handleCommand($event)"
@@ -96,7 +108,12 @@
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" :label="$t('packages_business_column_create_time')" min-width="160" sortable="custom">
+      <el-table-column
+        prop="createTime"
+        :label="$t('packages_business_column_create_time')"
+        min-width="160"
+        sortable="custom"
+      >
         <template #default="{ row }">
           {{ formatTime(row.createTime) }}
         </template>
@@ -156,7 +173,7 @@
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('packages_business_dataFlow_view') }}</el-dropdown-item>
                 <el-dropdown-item v-if="isDaas" v-readonlybtn="'SYNC_job_export'" command="export">{{
-                  $t('dataFlow.dataFlowExport')
+                  $t('dataFlow_dataFlowExport')
                 }}</el-dropdown-item>
                 <el-dropdown-item v-readonlybtn="'SYNC_job_creation'" command="copy"
                   >{{ $t('packages_business_dataFlow_copy') }}
@@ -172,9 +189,9 @@
                 <el-dropdown-item v-readonlybtn="'SYNC_job_delete'" command="del" :disabled="row.btnDisabled.delete">
                   {{ $t('packages_business_button_delete') }}
                 </el-dropdown-item>
-                <!--                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">-->
-                <!--                  {{ $t('packages_business_dataFlow_addTag') }}-->
-                <!--                </el-dropdown-item>-->
+                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
+                  {{ $t('packages_business_dataFlow_addTag') }}
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -242,7 +259,8 @@ export default {
       syncType: {
         initial_sync: this.$t('packages_business_task_info_initial_sync'),
         cdc: this.$t('packages_business_task_info_initial_cdc'),
-        'initial_sync+cdc': this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
+        'initial_sync+cdc':
+          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
       },
       dataFlowId: '',
 
@@ -620,6 +638,33 @@ export default {
       taskApi.copy(node.id).then(() => {
         this.table.fetch()
         this.$message.success(this.$t('packages_business_message_copySuccess'))
+      })
+    },
+    handleSelectTag() {
+      let tagList = {}
+      this.multipleSelection.forEach(row => {
+        if (row.listTagId) {
+          tagList[row.listTagId] = {
+            value: row.listTagValue
+          }
+        }
+      })
+      return tagList
+    },
+    handleOperationClassify(listtags) {
+      let ids = []
+      if (this.dataFlowId) {
+        ids = [this.dataFlowId]
+      } else {
+        ids = this.multipleSelection.map(r => r.id)
+      }
+      let attributes = {
+        id: ids,
+        listtags
+      }
+      taskApi.batchUpdateListtags(attributes).then(() => {
+        this.dataFlowId = ''
+        this.table.fetch()
       })
     },
     setTag(ids, node) {

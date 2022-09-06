@@ -5,18 +5,31 @@
       row-key="id"
       class="data-flow-list"
       :remoteMethod="getData"
+      :classify="isDaas ? { authority: 'SYNC_category_management', types: ['dataflow'] } : null"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
         val => {
           multipleSelection = val
         }
       "
+      @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
+        <el-button
+          v-if="isDaas"
+          v-show="multipleSelection.length > 0"
+          v-readonlybtn="'SYNC_category_application'"
+          size="mini"
+          class="btn message-button-cancel"
+          @click="$refs.table.showClassify(handleSelectTag())"
+        >
+          <i class="iconfont icon-biaoqian back-btn-icon"></i>
+          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+        </el-button>
         <el-dropdown
           class="btn"
           @command="handleCommand($event)"
@@ -42,6 +55,9 @@
             <el-dropdown-item command="initialize" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_batchRest')
             }}</el-dropdown-item>
+            <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
+              {{ $t('packages_business_dataFlow_addTag') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
@@ -101,7 +117,12 @@
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" :label="$t('packages_business_column_create_time')" min-width="160" sortable="createTime">
+      <el-table-column
+        prop="createTime"
+        :label="$t('packages_business_column_create_time')"
+        min-width="160"
+        sortable="createTime"
+      >
         <template #default="{ row }">
           {{ formatTime(row.createTime) }}
         </template>
@@ -176,9 +197,9 @@
                 <el-dropdown-item command="del" :disabled="row.btnDisabled.delete" v-readonlybtn="'SYNC_job_delete'">
                   {{ $t('packages_business_task_list_delete') }}
                 </el-dropdown-item>
-                <!--                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">-->
-                <!--                  {{ $t('packages_business_dataFlow_addTag') }}-->
-                <!--                </el-dropdown-item>-->
+                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">
+                  {{ $t('packages_business_dataFlow_addTag') }}
+                </el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
                   $t('packages_business_dataVerify_dataVerify')
                 }}</el-dropdown-item>
@@ -291,7 +312,8 @@ export default {
       syncType: {
         initial_sync: this.$t('packages_business_dataFlow_initial_sync'),
         cdc: this.$t('packages_business_dataFlow_cdc'),
-        'initial_sync+cdc': this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
+        'initial_sync+cdc':
+          this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
       },
       statusTransformMap: {
         running: this.$t('packages_business_task_list_transform_running'),
@@ -631,6 +653,33 @@ export default {
         this.$message.success(this.$t('packages_business_message_copySuccess'))
       })
     },
+    handleSelectTag() {
+      let tagList = {}
+      this.multipleSelection.forEach(row => {
+        if (row.listTagId) {
+          tagList[row.listTagId] = {
+            value: row.listTagValue
+          }
+        }
+      })
+      return tagList
+    },
+    handleOperationClassify(listtags) {
+      let ids = []
+      if (this.dataFlowId) {
+        ids = [this.dataFlowId]
+      } else {
+        ids = this.multipleSelection.map(r => r.id)
+      }
+      let attributes = {
+        id: ids,
+        listtags
+      }
+      taskApi.batchUpdateListtags(attributes).then(() => {
+        this.dataFlowId = ''
+        this.table.fetch()
+      })
+    },
     setTag(ids, node) {
       this.dataFlowId = node.id
       this.$refs.table.showClassify(node.listTags || [])
@@ -731,11 +780,23 @@ export default {
             title: { label: this.$t('packages_business_task_preview_title'), icon: 'title' },
             createUser: { label: this.$t('packages_business_task_preview_createUser'), icon: 'createUser' },
             sync_type: { label: this.$t('packages_business_task_preview_sync_type'), icon: 'sync_type' },
-            type: { label: this.$t('packages_business_task_preview_type'), icon: 'type', format: val => this.syncType[val] },
+            type: {
+              label: this.$t('packages_business_task_preview_type'),
+              icon: 'type',
+              format: val => this.syncType[val]
+            },
             id: { label: this.$t('packages_business_task_preview_id'), icon: 'id' },
-            createAt: { label: this.$t('packages_business_task_preview_createAt'), icon: 'createAt', format: this.formatTime },
+            createAt: {
+              label: this.$t('packages_business_task_preview_createAt'),
+              icon: 'createAt',
+              format: this.formatTime
+            },
             createTime: { label: this.$t('packages_business_task_preview_createTime'), icon: 'createTime' },
-            startTime: { label: this.$t('packages_business_task_preview_startTime'), icon: 'startTime', format: this.formatTime },
+            startTime: {
+              label: this.$t('packages_business_task_preview_startTime'),
+              icon: 'startTime',
+              format: this.formatTime
+            },
             initStartTime: {
               label: this.$t('packages_business_task_preview_initStartTime'),
               icon: 'initStartTime',
@@ -756,7 +817,11 @@ export default {
               icon: 'taskLastHour',
               format: this.handleTimeConvert
             },
-            eventTime: { label: this.$t('packages_business_task_preview_eventTime'), icon: 'eventTime', format: this.formatTime },
+            eventTime: {
+              label: this.$t('packages_business_task_preview_eventTime'),
+              icon: 'eventTime',
+              format: this.formatTime
+            },
             cdcDelayTime: {
               label: this.$t('packages_business_task_preview_cdcDelayTime'),
               icon: 'cdcDelayTime',
