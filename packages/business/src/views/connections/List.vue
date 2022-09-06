@@ -29,7 +29,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
         </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"

@@ -28,7 +28,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
         </el-button>
         <el-dropdown
           class="btn"
@@ -55,6 +55,9 @@
             <el-dropdown-item command="initialize" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_batchRest')
             }}</el-dropdown-item>
+            <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
+              {{ $t('packages_business_dataFlow_addTag') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
@@ -114,7 +117,12 @@
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" :label="$t('packages_business_column_create_time')" min-width="160" sortable="createTime">
+      <el-table-column
+        prop="createTime"
+        :label="$t('packages_business_column_create_time')"
+        min-width="160"
+        sortable="createTime"
+      >
         <template #default="{ row }">
           {{ formatTime(row.createTime) }}
         </template>
@@ -304,7 +312,8 @@ export default {
       syncType: {
         initial_sync: this.$t('packages_business_dataFlow_initial_sync'),
         cdc: this.$t('packages_business_dataFlow_cdc'),
-        'initial_sync+cdc': this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
+        'initial_sync+cdc':
+          this.$t('packages_business_dataFlow_initial_sync') + '+' + this.$t('packages_business_dataFlow_cdc')
       },
       statusTransformMap: {
         running: this.$t('packages_business_task_list_transform_running'),
@@ -771,11 +780,23 @@ export default {
             title: { label: this.$t('packages_business_task_preview_title'), icon: 'title' },
             createUser: { label: this.$t('packages_business_task_preview_createUser'), icon: 'createUser' },
             sync_type: { label: this.$t('packages_business_task_preview_sync_type'), icon: 'sync_type' },
-            type: { label: this.$t('packages_business_task_preview_type'), icon: 'type', format: val => this.syncType[val] },
+            type: {
+              label: this.$t('packages_business_task_preview_type'),
+              icon: 'type',
+              format: val => this.syncType[val]
+            },
             id: { label: this.$t('packages_business_task_preview_id'), icon: 'id' },
-            createAt: { label: this.$t('packages_business_task_preview_createAt'), icon: 'createAt', format: this.formatTime },
+            createAt: {
+              label: this.$t('packages_business_task_preview_createAt'),
+              icon: 'createAt',
+              format: this.formatTime
+            },
             createTime: { label: this.$t('packages_business_task_preview_createTime'), icon: 'createTime' },
-            startTime: { label: this.$t('packages_business_task_preview_startTime'), icon: 'startTime', format: this.formatTime },
+            startTime: {
+              label: this.$t('packages_business_task_preview_startTime'),
+              icon: 'startTime',
+              format: this.formatTime
+            },
             initStartTime: {
               label: this.$t('packages_business_task_preview_initStartTime'),
               icon: 'initStartTime',
@@ -796,7 +817,11 @@ export default {
               icon: 'taskLastHour',
               format: this.handleTimeConvert
             },
-            eventTime: { label: this.$t('packages_business_task_preview_eventTime'), icon: 'eventTime', format: this.formatTime },
+            eventTime: {
+              label: this.$t('packages_business_task_preview_eventTime'),
+              icon: 'eventTime',
+              format: this.formatTime
+            },
             cdcDelayTime: {
               label: this.$t('packages_business_task_preview_cdcDelayTime'),
               icon: 'cdcDelayTime',

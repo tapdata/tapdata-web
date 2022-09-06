@@ -27,7 +27,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
         </el-button>
         <el-dropdown
           class="btn"
@@ -108,7 +108,12 @@
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" :label="$t('packages_business_column_create_time')" min-width="160" sortable="custom">
+      <el-table-column
+        prop="createTime"
+        :label="$t('packages_business_column_create_time')"
+        min-width="160"
+        sortable="custom"
+      >
         <template #default="{ row }">
           {{ formatTime(row.createTime) }}
         </template>
@@ -168,7 +173,7 @@
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('packages_business_dataFlow_view') }}</el-dropdown-item>
                 <el-dropdown-item v-if="isDaas" v-readonlybtn="'SYNC_job_export'" command="export">{{
-                  $t('dataFlow.dataFlowExport')
+                  $t('dataFlow_dataFlowExport')
                 }}</el-dropdown-item>
                 <el-dropdown-item v-readonlybtn="'SYNC_job_creation'" command="copy"
                   >{{ $t('packages_business_dataFlow_copy') }}
@@ -184,9 +189,9 @@
                 <el-dropdown-item v-readonlybtn="'SYNC_job_delete'" command="del" :disabled="row.btnDisabled.delete">
                   {{ $t('packages_business_button_delete') }}
                 </el-dropdown-item>
-                <!--                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">-->
-                <!--                  {{ $t('packages_business_dataFlow_addTag') }}-->
-                <!--                </el-dropdown-item>-->
+                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
+                  {{ $t('packages_business_dataFlow_addTag') }}
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -254,7 +259,8 @@ export default {
       syncType: {
         initial_sync: this.$t('packages_business_task_info_initial_sync'),
         cdc: this.$t('packages_business_task_info_initial_cdc'),
-        'initial_sync+cdc': this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
+        'initial_sync+cdc':
+          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
       },
       dataFlowId: '',
 
