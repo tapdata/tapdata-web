@@ -573,7 +573,7 @@ export default {
   // api文档及测试
   file_test_generate_code: '生成代码',
 
-  // api审计
+  // 服务审计
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
   apiaudit_visitor: '访问人员',

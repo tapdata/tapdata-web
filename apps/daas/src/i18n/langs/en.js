@@ -584,7 +584,7 @@ export default {
   // api documentation and testing api文档及测试
   file_test_generate_code: 'Generate code',
 
-  // api audit api审计
+  // server audit 服务审计
   apiaudit_name: 'API name',
   apiaudit_access_type: 'Access Type',
   apiaudit_visitor: 'Visitor',

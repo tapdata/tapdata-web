@@ -39,7 +39,7 @@
       </ElTableColumn>
       <ElTableColumn label="服务状态" min-width="100">
         <template #default="{ row }">
-          {{ row.statusFmt }}
+          <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
         </template>
       </ElTableColumn>
       <ElTableColumn width="180" :label="$t('connection.operate')">

@@ -605,18 +605,18 @@ export default [
       {
         path: '/data-server',
         name: 'dataServer',
-        component: () => import('@/views/data-server/List.vue'),
+        component: () => import(/* webpackChunkName: "data-server" */ '@/views/data-server/List.vue'),
         meta: {
           title: 'page_title_data_server_list',
           code: 'API_data_explorer_menu'
         }
       },
-      /* ---------- API审计  ----------*/
+      /* ---------- 服务审计  ----------*/
       {
-        path: '/api-audit',
-        name: 'apiAudit',
+        path: '/data-server-audit',
+        name: 'dataServerAudit',
         component: Parent,
-        redirect: 'api-audit/',
+        redirect: 'data-server-audit/',
         meta: {
           title: 'page_title_api_audit',
           code: 'API_clients_menu'
@@ -624,8 +624,8 @@ export default [
         children: [
           {
             path: '',
-            name: 'apiAuditList',
-            component: () => import(/* webpackChunkName: "api-audit" */ '@/views/api-page/ApiAudit'),
+            name: 'dataServerAuditList',
+            component: () => import(/* webpackChunkName: "data-server-audit" */ '@/views/data-server-audit/List'),
             meta: {
               title: 'page_title_api_audit',
               code: 'API_clients_menu'
@@ -633,8 +633,9 @@ export default [
           },
           {
             path: ':id/details',
-            name: 'apiAuditDetails',
-            component: () => import(/* webpackChunkName: "api-audit-details" */ '@/views/api-page/ApiAuditInfo'),
+            name: 'dataServerAuditDetails',
+            component: () =>
+              import(/* webpackChunkName: "data-server-audit-details" */ '@/views/data-server-audit/Info'),
             meta: {
               title: 'page_title_api_audit_details',
               code: 'API_clients_menu'
