@@ -107,6 +107,9 @@ export default defineComponent({
      */
     const initialSyncProcess = computed(() => {
       const { snapshotInsertRowTotal = 0, snapshotRowTotal = 0, snapshotTableTotal, tableTotal } = props.sample
+      // 复制任务用表数量计算
+      if (props.syncType === 'migrate')
+        return snapshotTableTotal ? Math.round((snapshotTableTotal / tableTotal) * 100) : 0
       return snapshotRowTotal ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100) : 0
     })
 
@@ -197,15 +200,6 @@ export default defineComponent({
       const processingTime = (
         <div class="statistic">
           <div class="statistic-title">处理耗时</div>
-          <div class="statistic-content">
-            <div class="statistic-value">{timeCostAvg.value}</div>
-          </div>
-        </div>
-      )
-
-      const readTime = (
-        <div class="statistic">
-          <div class="statistic-title">读取耗时</div>
           <div class="statistic-content">
             <div class="statistic-value">{timeCostAvg.value}</div>
           </div>
@@ -405,9 +399,6 @@ export default defineComponent({
       font-family: DIN;
       white-space: nowrap;
     }
-
-    &.row {
-    }
   }
 }
 
@@ -451,7 +442,8 @@ export default defineComponent({
   }
 
   .statistic-list {
-    grid-gap: 4px;
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+    gap: 4px;
   }
 
   .statistic {
