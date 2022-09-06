@@ -392,6 +392,8 @@ let menuSetting = [
     code: 'data_publish',
     children: [
       { name: 'dataServer', code: 'API_management_menu', parent: 'dataServer' },
+      { name: 'apiClient', code: 'API_clients_menu', parent: 'apiClient' },
+      { name: 'apiServer', code: 'API_server_menu', parent: 'apiServer' },
       { name: 'dataServerAuditList', code: 'API_server_menu', parent: 'dataServerAudit' },
       { name: 'apiMonitor', code: 'API_server_menu', parent: 'apiMonitor' }
     ]

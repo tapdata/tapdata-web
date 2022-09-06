@@ -611,6 +611,26 @@ export default [
           code: 'API_data_explorer_menu'
         }
       },
+      /* ---------- API客户端  ----------*/
+      {
+        path: '/api-client',
+        name: 'apiClient',
+        component: () => import(/* webpackChunkName: "api-client" */ '@/views/api-page/Applications'),
+        meta: {
+          title: 'page_title_api_client',
+          code: 'API_clients_menu'
+        }
+      },
+      /* ---------- API服务端  ----------*/
+      {
+        path: '/api-servers',
+        name: 'apiServer',
+        component: () => import(/* webpackChunkName: "api-server" */ '@/views/api-page/ApiServer'),
+        meta: {
+          title: 'page_title_api_servers',
+          code: 'API_server_menu'
+        }
+      },
       /* ---------- 服务审计  ----------*/
       {
         path: '/data-server-audit',
