@@ -56,9 +56,9 @@ export default defineComponent({
      * 是否包含增量阶段（全量+增量、增量）
      * @type {ComputedRef<boolean>}
      */
-    const hasCDC = computed(() => {
-      return props.taskType !== 'initial_sync'
-    })
+    const hasCDC = props.taskType !== 'initial_sync'
+
+    const hasInitalSync = props.taskType !== 'cdc'
 
     /**
      * 增量时间点
@@ -184,6 +184,138 @@ export default defineComponent({
       )
     }
 
+    const renderPopoverContent = () => {
+      const cdcTime = (
+        <div class="statistic span-2">
+          <div class="statistic-title">增量时间点</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{cdcEventStartTime.value}</div>
+          </div>
+        </div>
+      )
+
+      const processingTime = (
+        <div class="statistic">
+          <div class="statistic-title">处理耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{timeCostAvg.value}</div>
+          </div>
+        </div>
+      )
+
+      const readTime = (
+        <div class="statistic">
+          <div class="statistic-title">读取耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{timeCostAvg.value}</div>
+          </div>
+        </div>
+      )
+
+      // 源全量读取耗时
+      const sourceInitalReadTime = (
+        <div class="statistic">
+          <div class="statistic-title">读取耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">
+              {props.sample.snapshotSourceReadTimeCostAvg
+                ? calcTimeUnit(props.sample.snapshotSourceReadTimeCostAvg)
+                : '-'}
+            </div>
+          </div>
+        </div>
+      )
+
+      // 源增量读取耗时
+      const sourceCDCReadTime = (
+        <div class="statistic">
+          <div class="statistic-title">读取耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">
+              {props.sample.incrementalSourceReadTimeCostAvg
+                ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
+                : '-'}
+            </div>
+          </div>
+        </div>
+      )
+
+      // 目标写入耗时
+      const targetWriteTime = (
+        <div class="statistic">
+          <div class="statistic-title">写入耗时</div>
+          <div class="statistic-content">
+            <div class="statistic-value">
+              {props.sample.incrementalSourceReadTimeCostAvg
+                ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
+                : '-'}
+            </div>
+          </div>
+        </div>
+      )
+
+      const outputEvent = (
+        <div class="statistic">
+          <div class="statistic-title">累计输出事件</div>
+          <div class="statistic-content">
+            <ElTooltip transition="tooltip-fade-in" content={outputTotal.value.toLocaleString()}>
+              <div class="statistic-value">{calcUnit(outputTotal.value)}</div>
+            </ElTooltip>
+          </div>
+        </div>
+      )
+
+      const inputEvent = (
+        <div class="statistic">
+          <div class="statistic-title">累计输入事件</div>
+          <div class="statistic-content">
+            <ElTooltip transition="tooltip-fade-in" content={inputTotal.value.toLocaleString()}>
+              <div class="statistic-value">{calcUnit(inputTotal.value)}</div>
+            </ElTooltip>
+          </div>
+        </div>
+      )
+
+      const syncProcess = (
+        <div class="statistic">
+          <div class="statistic-title">全量同步进度</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{initialSyncProcess.value}%</div>
+          </div>
+        </div>
+      )
+
+      const qps = (
+        <div class="statistic">
+          <div class="statistic-title">QPS(Q/S)</div>
+          <div class="statistic-content">
+            <div class="statistic-value">{outputQps.value}</div>
+          </div>
+        </div>
+      )
+
+      // 在增量阶段
+      if (hasCDC && showCDCAt.value) {
+        if (isSource.value) {
+          return [cdcTime, inputEvent, outputEvent, sourceCDCReadTime, processingTime, qps]
+        }
+        if (isProcessor.value) {
+          return [cdcTime, inputEvent, outputEvent, processingTime, qps]
+        }
+        return [cdcTime, inputEvent, outputEvent, targetWriteTime, processingTime, qps]
+      }
+
+      if (hasInitalSync) {
+        if (isSource.value) {
+          return [syncProcess, qps, inputEvent, outputEvent, sourceInitalReadTime, processingTime]
+        }
+        if (isProcessor.value) {
+          return [inputEvent, outputEvent, processingTime, qps]
+        }
+        return [inputEvent, outputEvent, targetWriteTime, processingTime, qps]
+      }
+    }
+
     const ifDragStart = ref(false) // 控制popover禁用
 
     return () => {
@@ -224,62 +356,7 @@ export default defineComponent({
             </div>
 
             <div class="statistic-card">
-              <div class="grid statistic-list">
-                {hasCDC.value && showCDCAt.value && (
-                  <div class="statistic span-2">
-                    <div class="statistic-title">增量时间点</div>
-                    <div class="statistic-content">
-                      <div class="statistic-value">{cdcEventStartTime.value}</div>
-                    </div>
-                  </div>
-                )}
-
-                <div class="statistic">
-                  <div class="statistic-title">全量同步进度</div>
-                  <div class="statistic-content">
-                    <div class="statistic-value">{initialSyncProcess.value}%</div>
-                  </div>
-                </div>
-
-                <div class="statistic">
-                  <div class="statistic-title">QPS(Q/S)</div>
-                  <div class="statistic-content">
-                    <div class="statistic-value">{outputQps.value}</div>
-                  </div>
-                </div>
-
-                <div class="statistic">
-                  <div class="statistic-title">累计输入事件</div>
-                  <div class="statistic-content">
-                    <ElTooltip transition="tooltip-fade-in" content={inputTotal.value.toLocaleString()}>
-                      <div class="statistic-value">{calcUnit(inputTotal.value)}</div>
-                    </ElTooltip>
-                  </div>
-                </div>
-
-                <div class="statistic">
-                  <div class="statistic-title">累计输出事件</div>
-                  <div class="statistic-content">
-                    <ElTooltip transition="tooltip-fade-in" content={outputTotal.value.toLocaleString()}>
-                      <div class="statistic-value">{calcUnit(outputTotal.value)}</div>
-                    </ElTooltip>
-                  </div>
-                </div>
-
-                <div class="statistic">
-                  <div class="statistic-title">读取耗时</div>
-                  <div class="statistic-content">
-                    <div class="statistic-value">{timeCostAvg.value}</div>
-                  </div>
-                </div>
-
-                <div class="statistic">
-                  <div class="statistic-title">处理耗时</div>
-                  <div class="statistic-content">
-                    <div class="statistic-value">{timeCostAvg.value}</div>
-                  </div>
-                </div>
-              </div>
+              <div class="grid statistic-list">{renderPopoverContent()}</div>
             </div>
           </el-popover>
         </DFNode>
