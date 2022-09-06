@@ -439,7 +439,7 @@ export default {
     // 删除列表
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.name])
+      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.name])
       this.$confirm(message, {
         type: 'warning'
       }).then(resFlag => {

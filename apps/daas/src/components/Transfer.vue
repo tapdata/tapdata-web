@@ -1,16 +1,16 @@
 <template>
   <section class="tapdata-transfer-wrap">
     <div class="box-btn" v-show="!showOperationBtn">
-      <el-button class="e-button" size="mini" @click="dialogVisible = true">{{ $t('dataFlow.changeName') }} </el-button>
+      <el-button class="e-button" size="mini" @click="dialogVisible = true">{{ $t('dataFlow_changeName') }} </el-button>
       <el-button size="mini" class="e-button" @click="handleReduction"
-        >{{ $t('editor.cell.link.reduction') }}
+        >{{ $t('editor_cell_link_reduction') }}
       </el-button>
     </div>
     <el-transfer
       filterable
       :titles="titles"
       :filter-method="filterMethod"
-      :filter-placeholder="$t('editor.cell.link.searchContent')"
+      :filter-placeholder="$t('editor_cell_link_searchContent')"
       v-model="selectSourceArr"
       :data="sourceData"
       @change="handleChangeTransfer"
@@ -32,7 +32,7 @@
         filterable
         :titles="transferTitles"
         :filter-method="filterMethod"
-        :filter-placeholder="$t('editor.cell.link.searchContent')"
+        :filter-placeholder="$t('editor_cell_link_searchContent')"
         v-model="selectSourceFileArr"
         :data="sourceFileData"
         @change="handleChangeFileTransfer"
@@ -60,12 +60,12 @@
         </span>
       </el-transfer>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelFileOperations">{{ $t('dataVerify.cancel') }}</el-button>
-        <el-button type="primary" @click="saveFileOperations">{{ $t('dataVerify.confirm') }}</el-button>
+        <el-button @click="cancelFileOperations">{{ $t('dataVerify_cancel') }}</el-button>
+        <el-button type="primary" @click="saveFileOperations">{{ $t('dataVerify_confirm') }}</el-button>
       </div>
     </el-dialog>
     <el-dialog
-      :title="$t('editor.cell.link.batchRename')"
+      :title="$t('editor_cell_link_batchRename')"
       :visible.sync="dialogVisible"
       :modal-append-to-body="false"
       custom-class="databaseLinkDialog"
@@ -74,14 +74,14 @@
       <el-form :rules="rules" ref="form" :model="formData">
         <el-row :gutter="80" class="e-row">
           <el-col :span="12">
-            <el-form-item :label="$t('editor.cell.link.prefixPlaceholder')" prop="table_prefix">
+            <el-form-item :label="$t('editor_cell_link_prefixPlaceholder')" prop="table_prefix">
               <el-input
                 v-model="formData.table_prefix"
                 autocomplete="off"
                 maxlength="50"
                 show-word-limit
                 size="mini"
-                :placeholder="$t('editor.cell.link.prefixPlaceholder')"
+                :placeholder="$t('editor_cell_link_prefixPlaceholder')"
               ></el-input>
             </el-form-item>
             <div class="tip">
@@ -90,14 +90,14 @@
             </div>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="$t('editor.cell.link.suffixPlaceholder')" prop="table_suffix">
+            <el-form-item :label="$t('editor_cell_link_suffixPlaceholder')" prop="table_suffix">
               <el-input
                 v-model="formData.table_suffix"
                 autocomplete="off"
                 maxlength="50"
                 show-word-limit
                 size="mini"
-                :placeholder="$t('editor.cell.link.suffixPlaceholder')"
+                :placeholder="$t('editor_cell_link_suffixPlaceholder')"
               ></el-input>
             </el-form-item>
             <div class="tip">
@@ -107,11 +107,11 @@
         </el-row>
       </el-form>
       <div class="text">
-        {{ `${$t('editor.cell.link.tableNameExample')}: ${formData.table_prefix}tablename${formData.table_suffix}` }}
+        {{ `${$t('editor_cell_link_tableNameExample')}: ${formData.table_prefix}tablename${formData.table_suffix}` }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel">{{ $t('dataVerify.cancel') }} </el-button>
-        <el-button type="primary" @click="changeName">{{ $t('dataVerify.confirm') }} </el-button>
+        <el-button @click="handleCancel">{{ $t('dataVerify_cancel') }} </el-button>
+        <el-button type="primary" @click="changeName">{{ $t('dataVerify_confirm') }} </el-button>
       </div>
     </el-dialog>
   </section>
@@ -151,7 +151,7 @@ export default {
       showOperationBtn: false,
       sourceData: [],
       selectSourceArr: [],
-      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
+      titles: [this.$t('editor_cell_link_migrationObjece'), this.$t('editor_cell_link_chosen')],
       formData: {
         table_prefix: '',
         table_suffix: ''
@@ -345,7 +345,7 @@ export default {
         v => option.label === v.label && this.selectSourceFileArr.includes(v.key)
       )
       if (filterData.length > 1) {
-        this.$message.error(option.label + this.$t('message.exists_name'))
+        this.$message.error(option.label + this.$t('message_exists_name'))
         exist = true
       }
       return exist

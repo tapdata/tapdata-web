@@ -14,7 +14,7 @@
           :class="{ active: !nodeId }"
           @click="toggleNode()"
         >
-          <VIcon size="20" class="mr-1">folder</VIcon>全部日志
+          <VIcon size="20" class="mr-1">folder</VIcon>{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
         </div>
         <div
           v-for="node in nodeList"
@@ -52,7 +52,7 @@
             :class="ifAuto || loading ? 'flex' : 'none'"
           ><svg viewBox="25 25 50 50" class="circular">
               <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
-            </svg><span class="ml-1 font-color-light">加载中</span>
+            </svg><span class="ml-1 font-color-light">{{$t('packages_dag_loading')}}</span>
           </pre>
         </code>
       </div>
@@ -62,12 +62,10 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import 'web-core/directives/resize/index.scss'
-import resize from 'web-core/directives/resize'
-import Locale from '../../mixins/locale'
-import VIcon from 'web-core/components/VIcon'
+import '@tap/component/src/directives/resize/index.scss'
+import resize from '@tap/component/src/directives/resize'
 import { taskApi } from '@tap/api'
-import { VEmpty } from '@tap/component'
+import { VEmpty, VIcon } from '@tap/component'
 import NodeIcon from '../NodeIcon'
 
 export default {
@@ -76,8 +74,6 @@ export default {
   directives: {
     resize
   },
-
-  mixins: [Locale],
 
   components: { VEmpty, NodeIcon, VIcon },
 

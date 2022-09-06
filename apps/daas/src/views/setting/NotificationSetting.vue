@@ -84,7 +84,7 @@
         </ul>
       </section>
       <section class="run-notification" v-show="agentNotification && agentNotification.length > 0">
-        <span class="title">{{ $t('notification.agentNotice') }}</span>
+        <span class="title">{{ $t('notification_agentNotice') }}</span>
         <ul>
           <li v-for="(item, index) in agentNotification" :key="index">
             <span class="label">{{ notificationMAP[item.label] }}</span>
@@ -101,7 +101,7 @@
         size="mini"
         type="primary"
         :disabled="!runNotification || !systemNotification || !agentNotification"
-        >{{ $t('dataForm.submit') }}</ElButton
+        >{{ $t('dataForm_submit') }}</ElButton
       >
     </div>
     <!-- <div class="notification-main">

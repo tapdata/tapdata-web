@@ -5,7 +5,7 @@
         <VIcon size="12">add</VIcon>
       </ElButton>
       <div class="title">
-        <span>所有目录</span>
+        <span>{{ $t('packages_component_src_discoveryclassification_suoyoumulu') }}</span>
       </div>
       <!-- v-if="searchFalg" -->
       <div class="search-box">
@@ -44,49 +44,61 @@
             <ElDropdown size="mini" @command="handleRowCommand($event, node)">
               <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
               <ElDropdownMenu slot="dropdown">
-                <ElDropdownItem command="edit">{{ $t('classification.editNode') }}</ElDropdownItem>
-                <ElDropdownItem command="delete">{{ $t('classification.deleteNode') }}</ElDropdownItem>
+                <ElDropdownItem command="edit">{{ $t('packages_component_classification_editNode') }}</ElDropdownItem>
+                <ElDropdownItem command="delete">{{
+                  $t('packages_component_classification_deleteNode')
+                }}</ElDropdownItem>
               </ElDropdownMenu>
             </ElDropdown>
           </span>
         </span>
       </ElTree>
       <ElButton v-if="treeData && treeData.length === 0 && isExpand" type="text" @click="showDialog()" class="create">
-        {{ types[0] === 'user' ? $t('classification.creatUserGroup') : $t('classification.creatDataClassification') }}
+        {{
+          types[0] === 'user'
+            ? $t('packages_component_classification_creatUserGroup')
+            : $t('packages_component_classification_creatDataClassification')
+        }}
       </ElButton>
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
       <ElForm ref="form" :model="dialogConfig" label-width="80px">
-        <ElFormItem label="目录名称">
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
             size="mini"
             v-model="dialogConfig.label"
-            :placeholder="$t('classification.nodeName')"
+            :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
           ></ElInput>
         </ElFormItem>
-        <ElFormItem label="目录分类" v-if="dialogConfig.isParent">
+        <ElFormItem
+          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+          v-if="dialogConfig.isParent"
+        >
           <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-            <el-option label="资源目录" value="resource"></el-option>
+            <el-option
+              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+              value="resource"
+            ></el-option>
             <!--            <el-option label="任务目录" value="task"></el-option>-->
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="目录描述">
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
             v-model="dialogConfig.desc"
-            placeholder="请输入目录描述"
+            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
           ></ElInput>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('button_confirm') }}
+          {{ $t('packages_component_button_confirm') }}
         </ElButton>
       </span>
     </ElDialog>
@@ -355,9 +367,9 @@ export default {
         title:
           type === 'add'
             ? node
-              ? this.$t('classification.addChildernNode')
-              : this.$t('classification.addNode')
-            : this.$t('classification.editNode')
+              ? this.$t('packages_component_classification_addChildernNode')
+              : this.$t('packages_component_classification_addNode')
+            : this.$t('packages_component_classification_editNode')
       }
     },
     hideDialog() {
@@ -374,14 +386,14 @@ export default {
       let method = 'post'
 
       if (!value || value.trim() === '') {
-        this.$message.error(this.$t('classification.nodeName'))
+        this.$message.error(this.$t('packages_component_classification_nodeName'))
         return
       }
 
       if (this.types[0] === 'user') {
         let nameExist = await this.checkName(value)
         if (nameExist) {
-          return this.$message.error(this.$t('classification.nameExist'))
+          return this.$message.error(this.$t('packages_component_classification_nameExist'))
         }
         let params = {
           name: value
@@ -432,9 +444,9 @@ export default {
     },
     deleteNode(id) {
       let that = this
-      this.$confirm(this.$t('classification.deteleMessage'), {
-        confirmButtonText: this.$t('message.delete'),
-        cancelButtonText: this.$t('message.cancel'),
+      this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
+        confirmButtonText: this.$t('packages_component_message_delete'),
+        cancelButtonText: this.$t('packages_component_message_cancel'),
         type: 'warning',
         closeOnClickModal: false
       }).then(resFlag => {

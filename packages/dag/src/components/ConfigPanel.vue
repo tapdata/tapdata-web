@@ -20,7 +20,7 @@
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
         <!--属性设置-->
-        <ElTabPane :label="t('dag_property_setting')">
+        <ElTabPane :label="$t('packages_dag_dag_property_setting')">
           <FormPanel
             v-on="$listeners"
             v-bind="$attrs"
@@ -29,7 +29,7 @@
           ></FormPanel>
         </ElTabPane>
         <!--元数据-->
-        <ElTabPane :label="t('dag_meta_data')">
+        <ElTabPane :label="$t('packages_dag_dag_meta_data')">
           <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
         </ElTabPane>
         <!--<ElTabPane label="数据详情">
@@ -45,16 +45,15 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import 'web-core/directives/resize/index.scss'
-import resize from 'web-core/directives/resize'
+import '@tap/component/src/directives/resize/index.scss'
+import resize from '@tap/component/src/directives/resize'
 import FormPanel from './FormPanel'
 import SettingPanel from './SettingPanel'
 import MetaPane from './MetaPane'
 import { VIcon } from '@tap/component'
-import focusSelect from 'web-core/directives/focusSelect'
+import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeIcon from './NodeIcon'
 import { TextEditable } from '@tap/component'
-import Locale from '../mixins/locale'
 
 export default {
   name: 'ConfigPanel',
@@ -63,8 +62,6 @@ export default {
     resize,
     focusSelect
   },
-
-  mixins: [Locale],
 
   props: {
     onlyNode: Boolean

@@ -12,13 +12,13 @@
     >
       <template slot="status" slot-scope="scope">
         <span :class="['status-' + scope.row.status, 'status-block']">
-          {{ $t('task_preview_status_' + scope.row.status) }}
+          {{ $t('packages_business_task_preview_status_' + scope.row.status) }}
         </span>
       </template>
       <template slot="schemaHeader">
         <div>
-          {{ $t('connection_list_column_schema_status') }}
-          <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
+          {{ $t('packages_business_connection_list_column_schema_status') }}
+          <ElTooltip placement="top" :content="$t('packages_business_connection_list_column_schema_status_tips')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -32,7 +32,7 @@
             type="text"
             @click="start(scope.row, arguments[0])"
           >
-            {{ $t('task_button_start') }}
+            {{ $t('packages_business_task_button_start') }}
           </VButton>
           <ElDivider direction="vertical"></ElDivider>
           <VButton
@@ -42,7 +42,7 @@
             type="text"
             @click="stop(scope.row, arguments[0])"
           >
-            {{ $t('task_button_stop') }}
+            {{ $t('packages_business_task_button_stop') }}
           </VButton>
           <ElDivider direction="vertical"></ElDivider>
           <VButton
@@ -52,11 +52,11 @@
             type="text"
             @click="renew(scope.row, arguments[0])"
           >
-            {{ $t('task_button_reset') }}
+            {{ $t('packages_business_task_button_reset') }}
           </VButton>
           <ElDivider direction="vertical"></ElDivider>
           <VButton auto-loading inner-loading type="text" @click="toStatistics(scope.row)">{{
-            $t('page_title_task_stat')
+            $t('packages_business_page_title_task_stat')
           }}</VButton>
         </div>
       </template>
@@ -87,16 +87,16 @@ export default {
       fetchTimer: null,
       columns: [
         {
-          label: this.$t('task_info_subtasks_name'),
+          label: this.$t('packages_business_task_info_subtasks_name'),
           prop: 'name'
         },
         {
-          label: this.$t('task_info_subtasks_status'),
+          label: this.$t('packages_business_task_info_subtasks_status'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: this.$t('column_operation'),
+          label: this.$t('packages_business_column_operation'),
           prop: 'operation',
           slotName: 'operation'
         }
@@ -170,7 +170,7 @@ export default {
       subtaskApi
         .start(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -179,7 +179,7 @@ export default {
       subtaskApi
         .stop(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -188,7 +188,7 @@ export default {
       subtaskApi
         .renew(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -197,7 +197,7 @@ export default {
       subtaskApi
         .pause(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)

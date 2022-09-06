@@ -3,13 +3,14 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
 import { Path } from '@formily/path'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import { debounce } from 'lodash'
 import FormRender from './FormRender'
-import Locale from '../mixins/locale'
 
 const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
@@ -28,8 +29,6 @@ export default {
   },
 
   components: { FormRender },
-
-  mixins: [Locale],
 
   data() {
     return {
@@ -75,7 +74,7 @@ export default {
   watch: {
     stateIsReadonly(v) {
       // eslint-disable-next-line no-console
-      console.log('监听：stateIsReadonly', v)
+      console.log(i18n.t('packages_dag_components_formpanel_jiantingsta'), v)
       this.form.setState({ disabled: v })
     },
 
@@ -98,7 +97,7 @@ export default {
           if (node) {
             const result = await validateBySchema(node.__Ctor.formSchema, node, this.scope)
             // eslint-disable-next-line no-console
-            console.log('上一个激活的节点校验结果', result)
+            console.log(i18n.t('packages_dag_components_formpanel_shangyigejihuo'), result)
           }
 
           if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
@@ -119,7 +118,7 @@ export default {
           console.log('🤖️ node.$inputs', this.node.name, v)
           if ($inputs && $inputs.value.join(',') !== v.join(',')) {
             // eslint-disable-next-line no-console
-            console.log('👷 更新$inputs', $inputs.value)
+            console.log(i18n.t('packages_dag_components_formpanel_gengxininp'), $inputs.value)
             this.form.setValuesIn('$inputs', [...v])
             this.$emit('update:InputsOrOutputs')
           }
@@ -133,7 +132,7 @@ export default {
           console.log('🤖️ node.$outputs', this.node.name, v)
           if ($outputs && $outputs.value.join(',') !== v.join(',')) {
             // eslint-disable-next-line no-console
-            console.log('👷 更新$outputs', $outputs.value, v)
+            console.log(i18n.t('packages_dag_components_formpanel_gengxinout'), $outputs.value, v)
             this.form.setValuesIn('$outputs', [...v])
             this.$emit('update:InputsOrOutputs')
           }
@@ -242,39 +241,39 @@ export default {
             },
             properties: {
               flowEngineVersion: {
-                title: this.t('dataFlow_flowEngineVersion'),
+                title: this.$t('packages_dag_dataFlow_flowEngineVersion'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 default: 'Data_Flow_Engine_V1',
                 enum: [
                   {
-                    label: this.t('dataFlow_flowEngineV1'),
+                    label: this.$t('packages_dag_dataFlow_flowEngineV1'),
                     value: 'Data_Flow_Engine_V1'
                   },
                   {
-                    label: this.t('dataFlow_jetFlowEngineV2'),
+                    label: this.$t('packages_dag_dataFlow_jetFlowEngineV2'),
                     value: 'Jet_Flow_Engine_V2'
                   }
                 ]
               },
               sync_type: {
-                title: '同步类型',
+                title: i18n.t('packages_dag_task_setting_sync_type'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
                 // default: 'initial_sync+cdc',
                 enum: [
                   {
-                    label: '全量+增量',
+                    label: i18n.t('packages_dag_components_formpanel_quanliangzengliang'),
                     value: 'initial_sync+cdc'
                   },
                   {
-                    label: '全量',
+                    label: i18n.t('packages_dag_task_setting_initial_sync'),
                     value: 'initial_sync'
                   },
                   {
-                    label: '增量',
+                    label: i18n.t('packages_dag_task_setting_cdc'),
                     value: 'cdc'
                   }
                 ],
@@ -288,55 +287,55 @@ export default {
                 }
               },
               cdcEngineFilter: {
-                title: '启用引擎过滤',
+                title: i18n.t('packages_dag_task_setting_cdc_engine_filter'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
               },
               stopOnError: {
-                title: '遇到错误停止',
+                title: i18n.t('packages_dag_task_setting_stop_on_error'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
                 // default: true
               },
               needToCreateIndex: {
-                title: '自动创建索引',
+                title: i18n.t('packages_dag_task_setting_automatic_index'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
                 // default: true
               },
               isOpenAutoDDL: {
-                title: '自动处理DDL',
+                title: i18n.t('packages_dag_components_formpanel_zidongchuliD'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
               },
               noPrimaryKey: {
-                title: '支持无主键同步',
+                title: i18n.t('packages_dag_components_formpanel_zhichiwuzhujian'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
               },
               isSerialMode: {
-                title: '增量数据处理机制',
+                title: i18n.t('packages_dag_components_formpanel_zengliangshujuchu'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 enum: [
                   {
-                    label: '批量',
+                    label: i18n.t('packages_dag_components_formpanel_piliang'),
                     value: false
                   },
                   {
-                    label: '逐条',
+                    label: i18n.t('packages_dag_components_formpanel_zhutiao'),
                     value: true
                   }
                 ]
               },
               cdcFetchSize: {
-                title: '增量批次读取条数',
+                title: i18n.t('packages_dag_components_formpanel_zengliangpicidu'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
@@ -347,24 +346,24 @@ export default {
                 // default: 1
               },
               distinctWriteType: {
-                title: '去重写入机制',
+                title: i18n.t('packages_dag_task_setting_distinct_write_type'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 enum: [
                   {
-                    label: this.t('dataFlow_setting_intellect'),
+                    label: this.$t('packages_dag_dataFlow_setting_intellect'),
                     value: 'intellect'
                   },
                   {
-                    label: this.t('dataFlow_setting_compel'),
+                    label: this.$t('packages_dag_dataFlow_setting_compel'),
                     value: 'compel'
                   }
                 ]
                 // default: 'intellect'
               },
               emailWaring: {
-                title: '发送邮件',
+                title: i18n.t('packages_dag_components_formpanel_fasongyoujian'),
                 type: 'object',
                 'x-decorator': 'FormItem',
                 properties: {
@@ -373,7 +372,7 @@ export default {
                     'x-component': 'Checkbox',
                     'x-component-props': {
                       option: {
-                        label: '当任务停止'
+                        label: i18n.t('packages_dag_components_formpanel_dangrenwutingzhi')
                       }
                     }
                   },
@@ -382,7 +381,7 @@ export default {
                     'x-component': 'Checkbox',
                     'x-component-props': {
                       option: {
-                        label: '当任务出错'
+                        label: i18n.t('packages_dag_components_formpanel_dangrenwuchucuo')
                       }
                     }
                   },
@@ -391,7 +390,7 @@ export default {
                     'x-component': 'Checkbox',
                     'x-component-props': {
                       option: {
-                        label: '当任务被编辑'
+                        label: i18n.t('packages_dag_components_formpanel_dangrenwubeibian')
                       }
                     }
                   },
@@ -400,31 +399,31 @@ export default {
                     'x-component': 'Checkbox',
                     'x-component-props': {
                       option: {
-                        label: '当任务开启'
+                        label: i18n.t('packages_dag_components_formpanel_dangrenwukaiqi')
                       }
                     }
                   }
                 }
               },
               readShareLogMode: {
-                title: '共享增量读取的模式',
+                title: i18n.t('packages_dag_task_setting_share_cdc_mode'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 enum: [
                   {
-                    label: '流式读取',
+                    label: i18n.t('packages_dag_components_formpanel_liushiduqu'),
                     value: 'STREAMING'
                   },
                   {
-                    label: '轮询读取',
+                    label: i18n.t('packages_dag_components_formpanel_lunxunduqu'),
                     value: 'POLLING'
                   }
                 ]
                 // default: 'STREAMING'
               },
               increment: {
-                title: '自动创建索引',
+                title: i18n.t('packages_dag_task_setting_automatic_index'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
@@ -438,7 +437,7 @@ export default {
                 }
               },
               isSchedule: {
-                title: '定期调度任务',
+                title: i18n.t('packages_dag_task_setting_is_schedule'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
@@ -457,7 +456,7 @@ export default {
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
                 'x-component-props': {
-                  placeholder: '请输入调度表达式'
+                  placeholder: i18n.t('packages_dag_task_setting_cron_expression')
                 },
                 'x-reactions': {
                   dependencies: ['sync_type', 'isSchedule'],
@@ -469,7 +468,7 @@ export default {
                 }
               },
               readCdcInterval: {
-                title: '增量同步间隔',
+                title: i18n.t('packages_dag_components_formpanel_zengliangtongbujian'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
@@ -478,7 +477,7 @@ export default {
                 }
               },
               readBatchSize: {
-                title: '每次读取数量',
+                title: i18n.t('packages_dag_components_formpanel_meiciduqushu'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
@@ -488,7 +487,7 @@ export default {
                 // default: 100
               },
               processorConcurrency: {
-                title: '处理器线程数',
+                title: i18n.t('packages_dag_task_setting_processorThreadNum'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
@@ -499,7 +498,7 @@ export default {
                 // default: 1
               },
               cdcConcurrency: {
-                title: '增量同步并发写入',
+                title: i18n.t('packages_dag_task_setting_cdc_concurrency'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
@@ -514,7 +513,7 @@ export default {
                 }
               },
               transformerConcurrency: {
-                title: '目标写入线程数',
+                title: i18n.t('packages_dag_task_setting_transformer_concurrency'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
@@ -533,7 +532,7 @@ export default {
                 // default: 8
               },
               syncPoints: {
-                title: '增量采集开始时刻',
+                title: i18n.t('packages_dag_task_setting_sync_point'),
                 type: 'array',
                 'x-decorator': 'FormItem',
                 'x-component': 'ArrayItems',
@@ -565,19 +564,19 @@ export default {
                             },
                             'x-component': 'Select',
                             'x-component-props': {
-                              placeholder: '请选择'
+                              placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze')
                             },
                             enum: [
                               {
-                                label: this.t('dataFlow_SyncInfo_localTZType'),
+                                label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
                                 value: 'localTZ'
                               },
                               {
-                                label: this.t('dataFlow_SyncInfo_connTZType'),
+                                label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
                                 value: 'connTZ'
                               },
                               {
-                                label: this.t('dataFlow_SyncInfo_currentType'),
+                                label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
                                 value: 'current'
                               }
                             ]
@@ -611,19 +610,19 @@ export default {
                 ]*/
               },
               cdcShareFilterOnServer: {
-                title: '共享挖掘日志过滤',
+                title: i18n.t('packages_dag_components_formpanel_gongxiangwajueri'),
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
               },
               maxTransactionLength: {
-                title: '事务最大时长(小时)',
+                title: i18n.t('packages_dag_components_formpanel_shiwuzuidashi'),
                 type: 'number',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber'
               },
               lagTime: {
-                title: '增量滞后判断时间设置(秒)',
+                title: i18n.t('packages_dag_components_formpanel_zengliangzhihoupan'),
                 type: 'void',
                 'x-decorator': 'FormItem',
                 'x-component': 'Space',

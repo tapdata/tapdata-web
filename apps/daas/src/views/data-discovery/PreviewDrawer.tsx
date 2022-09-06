@@ -1,7 +1,6 @@
 import i18n from '@/i18n'
 import { defineComponent, reactive, ref } from '@vue/composition-api'
-import { TableList } from '@tap/component'
-import OverflowTooltip from 'web-core/components/overflow-tooltip'
+import { TableList, OverflowTooltip } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import './index.scss'
 import dayjs from 'dayjs'

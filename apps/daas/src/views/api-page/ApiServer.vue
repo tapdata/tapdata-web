@@ -78,8 +78,8 @@
     >
       <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="createServer()" size="small">{{ $t('message.confirm') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message_cancel') }}</el-button>
+        <el-button type="primary" @click="createServer()" size="small">{{ $t('message_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -189,7 +189,7 @@ export default {
     // 移除
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.clientName])
+      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.clientName])
       this.$confirm(message, '', {
         type: 'warning'
       }).then(resFlag => {

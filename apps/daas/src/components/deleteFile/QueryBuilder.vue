@@ -2,10 +2,10 @@
   <div class="e-qb">
     <el-tabs type="border-card" v-model="value.filterType">
       <el-tab-pane name="field" :disabled="disabled">
-        <span slot="label"> {{ $t('editor.cell.data_node.collection.form.filter.fieldFilter') }}</span>
+        <span slot="label"> {{ $t('editor_cell_data_node_collection_form_filter_fieldFilter') }}</span>
         <el-form-item
           v-if="!value.noFieldFilter"
-          :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')"
+          :placeholder="$t('editor_cell_data_node_collection_form_filter_allField')"
         >
           <el-select v-model="value.fieldFilterType" size="mini">
             <el-option
@@ -20,8 +20,8 @@
           v-if="value.fieldFilterType !== 'keepAllFields'"
           :placeholder="
             value.fieldFilterType === 'retainedField'
-              ? $t('editor.cell.data_node.collection.form.fieldFilter.placeholderKeep')
-              : $t('editor.cell.data_node.collection.form.fieldFilter.placeholderDelete')
+              ? $t('editor_cell_data_node_collection_form_fieldFilter_placeholderKeep')
+              : $t('editor_cell_data_node_collection_form_fieldFilter_placeholderDelete')
           "
         >
           <el-select
@@ -37,7 +37,7 @@
         </el-form-item>
         <div class="fiflter">
           <div v-if="!value.noLineLimit" class="rowSlot">
-            <span slot="prepend">{{ $t('editor.cell.data_node.collection.form.filter.rowLimit') }}</span>
+            <span slot="prepend">{{ $t('editor_cell_data_node_collection_form_filter_rowLimit') }}</span>
             <el-select v-model="value.limitLines" size="mini" class="e-select">
               <el-option
                 v-for="item in rowNumberList"
@@ -53,10 +53,10 @@
           </el-row>
           <el-row v-if="databaseType != 'mongodb' && value.conditions.length == 0">
             <el-button plain class="el-button--small" size="mini" @click="addCond('cond')"
-              >+{{ $t('queryBuilder.addCond') }}</el-button
+              >+{{ $t('queryBuilder_addCond') }}</el-button
             >
             <el-button plain class="el-button--small" size="mini" @click="addCond('group')"
-              >+({{ $t('queryBuilder.addCond') }})</el-button
+              >+({{ $t('queryBuilder_addCond') }})</el-button
             >
           </el-row>
           <el-row v-if="databaseType != 'mongodb' && value.conditions.length > 0" style="padding-bottom: 10px">
@@ -79,10 +79,10 @@
       </el-tab-pane>
       <el-tab-pane name="sql" :disabled="disabled">
         <span v-if="databaseType != 'mongodb'" slot="label">
-          {{ $t('editor.cell.data_node.collection.form.filter.sqlFilter') }}</span
+          {{ $t('editor_cell_data_node_collection_form_filter_sqlFilter') }}</span
         >
         <span v-if="databaseType == 'mongodb'" slot="label">
-          {{ $t('editor.cell.data_node.collection.form.filter.mqlFilter') }}</span
+          {{ $t('editor_cell_data_node_collection_form_filter_mqlFilter') }}</span
         >
         <el-form-item prop="sql">
           <el-input
@@ -91,8 +91,8 @@
             v-model="value.editSql"
             :placeholder="
               databaseType == 'mongodb'
-                ? $t('editor.cell.data_node.table.form.custom_sql.mplaceholder')
-                : $t('editor.cell.data_node.table.form.custom_sql.placeholder')
+                ? $t('editor_cell_data_node_table_form_custom_sql_mplaceholder')
+                : $t('editor_cell_data_node_table_form_custom_sql_placeholder')
             "
             size="mini"
           ></el-input>
@@ -100,12 +100,12 @@
 
         <el-form-item
           v-if="databaseType != 'mongodb'"
-          :label="$t('editor.cell.data_node.table.form.initial_offset.label')"
+          :label="$t('editor_cell_data_node_table_form_initial_offset_label')"
         >
           <el-input
             :value="initialOffset"
             @input="$emit('update:initialOffset', $event)"
-            :placeholder="$t('editor.cell.data_node.table.form.initial_offset.placeholder')"
+            :placeholder="$t('editor_cell_data_node_table_form_initial_offset_placeholder')"
             size="mini"
           ></el-input>
         </el-form-item>
@@ -181,29 +181,29 @@ export default {
       sqlWhere: '',
       filterTypeOptions: [
         {
-          label: this.$t('editor.cell.data_node.collection.form.filter.allField'),
+          label: this.$t('editor_cell_data_node_collection_form_filter_allField'),
           value: 'keepAllFields'
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.retainedField'),
+          label: this.$t('editor_cell_data_node_collection_form_fieldFilterType_retainedField'),
           value: 'retainedField'
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.fieldFilterType.deleteField'),
+          label: this.$t('editor_cell_data_node_collection_form_fieldFilterType_deleteField'),
           value: 'deleteField'
         }
       ],
       rowNumberList: [
         {
-          label: this.$t('editor.cell.data_node.collection.form.filter.allRows'),
+          label: this.$t('editor_cell_data_node_collection_form_filter_allRows'),
           value: 'all'
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.filter.oneThousandRows'),
+          label: this.$t('editor_cell_data_node_collection_form_filter_oneThousandRows'),
           value: 1000
         },
         {
-          label: this.$t('editor.cell.data_node.collection.form.filter.tenThousandRows'),
+          label: this.$t('editor_cell_data_node_collection_form_filter_tenThousandRows'),
           value: 10000
         }
       ]

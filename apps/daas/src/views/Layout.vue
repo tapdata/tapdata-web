@@ -9,7 +9,7 @@
           $t('app_license_expire_warning', [licenseExpire])
         }}</span>
         <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
-          {{ $t('dataFlow.createNew') }}
+          {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
         <ElDropdown
@@ -23,7 +23,7 @@
             <VIcon size="16">wenda</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
+            <ElDropdownItem command="help">{{ $t('app_document') }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
         <ElDropdown
@@ -45,9 +45,7 @@
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
           <span class="icon-btn py-1 px-3">
-            <VIcon size="18">{{
-              { zh_CN: 'language-zh-CN', en_US: 'language-en', zh_TW: 'language-zh-TW' }[lang]
-            }}</VIcon>
+            <VIcon size="16">{{ 'language-' + lang }}</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
@@ -62,13 +60,13 @@
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem command="account">{{ $t('app.account') }}</ElDropdownItem>
-            <ElDropdownItem command="version">{{ $t('app.version') }}</ElDropdownItem>
+            <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
+            <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
             <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
             <ElDropdownItem v-if="$getSettingByKey('SHOW_HOME_BUTTON')" command="home">
-              {{ $t('app.home') }}
+              {{ $t('app_home') }}
             </ElDropdownItem>
-            <ElDropdownItem command="signOut">{{ $t('app.signOut') }}</ElDropdownItem>
+            <ElDropdownItem command="signOut">{{ $t('app_signOut') }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
       </div>
@@ -349,15 +347,18 @@
 </style>
 
 <script>
+import dayjs from 'dayjs'
+
+import Cookie from '@tap/shared/src/cookie'
+import { VIcon } from '@tap/component'
+import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { usersApi, timeStampApi, licensesApi } from '@tap/api'
+
 import CustomerService from '@/components/CustomerService'
 import newDataFlow from '@/components/newDataFlow'
+import PageHeader from '@/components/PageHeader'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
-import Cookie from '@tap/shared/src/cookie'
-import PageHeader from '@/components/PageHeader'
-import { VIcon } from '@tap/component'
-import dayjs from 'dayjs'
-import { usersApi, timeStampApi, licensesApi } from '@tap/api'
 
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
@@ -421,12 +422,8 @@ export default {
       IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
 
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-      languages: {
-        zh_CN: '中文 (简)',
-        en_US: 'English',
-        zh_TW: '中文 (繁)'
-      },
-      lang: Cookie.get('lang') || 'en_US',
+      languages: langMenu,
+      lang: getCurrentLanguage(),
       settingVisibility:
         this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
       settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
@@ -591,7 +588,7 @@ export default {
           window.open('https://tapdata.net/', '_blank')
           break
         case 'signOut':
-          this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut'), {
+          this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {
             type: 'warning'
           }).then(resFlag => {
             if (!resFlag) {
@@ -623,7 +620,8 @@ export default {
       })
     },
     changeLanguage(lang) {
-      Cookie.set('lang', lang)
+      setCurrentLanguage(lang, this.$i18n)
+      this.lang = lang
       location.reload()
     },
 

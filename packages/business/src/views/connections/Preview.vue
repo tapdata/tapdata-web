@@ -15,13 +15,13 @@
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
           <el-button type="primary" size="mini" class="flex-fill min-w-0" @click="reload()">
-            {{ $t('connection_preview_load_schema') }}
+            {{ $t('packages_business_connection_preview_load_schema') }}
           </el-button>
           <el-button class="flex-fill min-w-0" size="mini" @click="edit()">
-            {{ $t('connection_preview_edit') }}
+            {{ $t('packages_business_connection_preview_edit') }}
           </el-button>
           <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
-            {{ $t('connection_preview_test') }}
+            {{ $t('packages_business_connection_preview_test') }}
           </el-button>
         </div>
         <el-progress
@@ -65,7 +65,9 @@
               v-else-if="connection[temp.key] && (temp.key === 'shareCdcEnable' || temp.key === 'redoLogParserEnable')"
               class="box-line__value ellipsis"
             >
-              <span>{{ connection[temp.key] ? $t('text_open') : $t('text_close') }}</span>
+              <span>{{
+                connection[temp.key] ? $t('packages_business_text_open') : $t('packages_business_text_close')
+              }}</span>
             </div>
             <!-- MQ文字转换 end -->
             <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
@@ -78,6 +80,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
@@ -113,10 +117,10 @@ export default {
         }
       },
       kafkaACK: {
-        0: this.$t('connection_preview_no_sure'),
-        '-1': this.$t('connection_preview_master_partition'),
-        1: this.$t('connection_preview_master_partition'),
-        all: this.$t('connection_preview_isr_partition')
+        0: this.$t('packages_business_connection_preview_no_sure'),
+        '-1': this.$t('packages_business_connection_preview_master_partition'),
+        1: this.$t('packages_business_connection_preview_master_partition'),
+        all: this.$t('packages_business_connection_preview_isr_partition')
       },
       list: [],
       mqType: {
@@ -130,7 +134,7 @@ export default {
             icon: 'time',
             items: [
               {
-                label: this.$t('connection_preview_load_schema'),
+                label: this.$t('packages_business_connection_preview_load_schema'),
                 key: 'last_updated'
               }
             ]
@@ -139,7 +143,7 @@ export default {
             icon: 'database',
             items: [
               {
-                label: this.$t('connection_form_database_address'),
+                label: this.$t('packages_business_connection_form_database_address'),
                 key: 'database_host'
               }
             ]
@@ -148,7 +152,7 @@ export default {
             icon: 'port',
             items: [
               {
-                label: this.$t('connection_form_port'),
+                label: this.$t('packages_business_connection_form_port'),
                 key: 'database_port'
               }
             ]
@@ -157,7 +161,7 @@ export default {
             icon: 'name',
             items: [
               {
-                label: this.$t('connection_form_database_name'),
+                label: this.$t('packages_business_connection_form_database_name'),
                 key: 'database_name'
               }
             ]
@@ -166,7 +170,7 @@ export default {
             icon: 'database-user-name',
             items: [
               {
-                label: this.$t('connection_form_database_username'),
+                label: this.$t('packages_business_connection_form_database_username'),
                 key: 'database_username'
               }
             ]
@@ -175,7 +179,7 @@ export default {
             icon: 'connect_schema',
             items: [
               {
-                label: this.$t('dataForm.form.databaseOwner'),
+                label: this.$t('packages_business_dataForm_form_databaseOwner'),
                 key: 'database_owner'
               }
             ]
@@ -184,7 +188,7 @@ export default {
             icon: 'additional-string',
             items: [
               {
-                label: this.$t('connection_form_additional_string'),
+                label: this.$t('packages_business_connection_form_additional_string'),
                 key: 'additionalString'
               }
             ]
@@ -193,7 +197,7 @@ export default {
             icon: 'origin-time',
             items: [
               {
-                label: this.$t('connection_form_timezone'),
+                label: this.$t('packages_business_connection_form_timezone'),
                 key: 'database_datetype_without_timezone'
               }
             ]
@@ -202,7 +206,7 @@ export default {
           //   icon: 'connect_shared_mining',
           //   items: [
           //     {
-          //       label: this.$t('connection_form_shared_mining'),
+          //       label: this.$t('packages_business_connection_form_shared_mining'),
           //       key: 'shareCdcEnable'
           //     }
           //   ]
@@ -211,7 +215,7 @@ export default {
           //   icon: 'connect_journal',
           //   items: [
           //     {
-          //       label: this.$t('connection_form_oracle_redoLog_parser'),
+          //       label: this.$t('packages_business_connection_form_oracle_redoLog_parser'),
           //       key: 'redoLogParserEnable'
           //     }
           //   ]
@@ -310,10 +314,10 @@ export default {
     async reload() {
       this.checkAgent(() => {
         let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
-          confirmButtonText: this.$t('message.confirm'),
-          cancelButtonText: this.$t('message.cancel'),
+          title: this.$t('packages_business_connection_reloadTittle'),
+          Message: this.$t('packages_business_connection_reloadMsg'),
+          confirmButtonText: this.$t('packages_business_message_confirm'),
+          cancelButtonText: this.$t('packages_business_message_cancel'),
           name: this.connection.name,
           id: this.connection.id
         }
@@ -362,7 +366,7 @@ export default {
             setTimeout(() => {
               this.showProgress = false
               this.progress = 0 //加载完成
-              this.$message.success('schema加载完成')
+              this.$message.success(i18n.t('packages_business_connections_preview_schem'))
             }, 1000)
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100

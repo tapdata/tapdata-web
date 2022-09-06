@@ -23,16 +23,16 @@
           class="search-input ml-4"
           v-model="keyword"
           prefix-icon="el-icon-search"
-          placeholder="请输入日志内容…"
+          :placeholder="$t('packages_dag_components_log_qingshururizhi')"
           size="mini"
           clearable
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
         <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>
-        <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload"
-          >下载</ElButton
-        >
+        <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
+          $t('packages_dag_components_log_xiazai')
+        }}</ElButton>
       </div>
       <div class="level-line ml-4">
         <ElCheckboxGroup
@@ -62,13 +62,17 @@
               </div>
               <ElAlert
                 v-show="showNoMore"
-                :title="$t('customer_logs_no_more_data')"
+                :title="$t('packages_dag_customer_logs_no_more_data')"
                 type="info"
                 class="no-more__alert position-absolute py-1 px-2"
               ></ElAlert>
               <VEmpty
                 v-if="!list.length"
-                :description="keyword ? $t('customer_logs_no_search_data') : $t('dag_dialog_field_mapping_no_data')"
+                :description="
+                  keyword
+                    ? $t('packages_dag_customer_logs_no_search_data')
+                    : $t('packages_dag_dag_dialog_field_mapping_no_data')
+                "
               />
             </div>
           </template>
@@ -96,32 +100,32 @@
     </div>
 
     <ElDialog
-      title="日志等级设置"
+      :title="$t('packages_dag_components_log_rizhidengjishe')"
       width="437px"
       :visible.sync="dialog"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <ElForm label-width="120px">
-        <ElFormItem label="日志级别：" prop="level">
+        <ElFormItem :label="$t('packages_dag_components_log_rizhijibie')" prop="level">
           <ElSelect v-model="form.level" style="width: 275px">
             <ElOption v-for="item in checkItems" :label="item.text" :value="item.label" :key="item.label"></ElOption>
           </ElSelect>
         </ElFormItem>
         <template v-if="form.level === 'DEBUG'">
-          <ElFormItem label="DEBUG日志参数" prop="param"> </ElFormItem>
-          <ElFormItem label="开启时长（秒）" prop="start">
+          <ElFormItem :label="$t('packages_dag_components_log_debug')" prop="param"> </ElFormItem>
+          <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
             <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
-          <ElFormItem label="最大事件数（条）" prop="max">
+          <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="max">
             <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
         </template>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleClose">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="handleClose">{{ $t('packages_dag_button_cancel') }}</ElButton>
         <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
-          $t('button_confirm')
+          $t('packages_dag_button_confirm')
         }}</ElButton>
       </span>
     </ElDialog>
@@ -129,13 +133,14 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
-import VIcon from 'web-core/components/VIcon'
 import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
-import { VEmpty } from '@tap/component'
+import { VEmpty, VIcon } from '@tap/component'
 import { monitoringLogsApi, taskApi } from '@tap/api'
 
 import TimeSelect from './TimeSelect'
@@ -215,23 +220,23 @@ export default {
       dialog: false,
       timeOptions: [
         {
-          label: '全部',
+          label: i18n.t('packages_dag_components_log_quanbu'),
           value: 'full'
         },
         {
-          label: '最近6个小时',
+          label: i18n.t('packages_dag_components_log_zuijingexiaoshi'),
           value: '6h'
         },
         {
-          label: '最新1天',
+          label: i18n.t('packages_dag_components_log_zuixintian'),
           value: '1d'
         },
         {
-          label: '最近3天',
+          label: i18n.t('packages_dag_components_log_zuijintian'),
           value: '3d'
         },
         {
-          label: '自定义时间',
+          label: i18n.t('packages_dag_components_log_zidingyishijian'),
           type: 'custom',
           value: 'custom'
         }
@@ -250,7 +255,7 @@ export default {
     items() {
       return [
         {
-          label: '全部日志',
+          label: i18n.t('packages_dag_components_log_quanburizhi'),
           value: 'all'
         },
         ...this.allNodes.map(t => {
@@ -320,11 +325,11 @@ export default {
       if (this.$route.name === 'MigrationMonitorViewer') {
         this.timeOptions = [
           {
-            label: '全部',
+            label: i18n.t('packages_dag_components_log_quanbu'),
             value: 'full'
           },
           {
-            label: '自定义时间',
+            label: i18n.t('packages_dag_components_log_zidingyishijian'),
             type: 'custom',
             value: 'custom'
           }
@@ -599,7 +604,7 @@ export default {
           downloadBlob(data)
         })
         .catch(() => {
-          this.$message.error('下载失败')
+          this.$message.error(i18n.t('packages_dag_components_log_xiazaishibai'))
         })
         .finally(() => {
           this.downloadLoading = false

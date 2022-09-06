@@ -13,24 +13,24 @@
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
         <span class="ml-6 font-color-light">
-          {{ $t('task_monitor_founder') }}：<span class="font-color-dark">{{ task.creator }}</span>
+          {{ $t('packages_business_task_monitor_founder') }}：<span class="font-color-dark">{{ task.creator }}</span>
         </span>
         <span class="mx-6 font-color-light">
-          {{ $t('task_info_start_time') }}：<span class="font-color-dark">{{ formatTime(task.startTime) || '-' }}</span>
+          {{ $t('packages_business_task_info_start_time') }}：<span class="font-color-dark">{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
       <div class="operation">
         <ElButton type="primary" :disabled="startDisabled" @click="start(task, arguments[0])">
           <VIcon size="12">start-fill</VIcon>
-          <span class="ml-1">{{ $t('task_button_start') }}</span>
+          <span class="ml-1">{{ $t('packages_business_task_button_start') }}</span>
         </ElButton>
         <ElButton type="danger" :disabled="stopDisabled" @click="stop(task, arguments[0])">
           <VIcon size="12">pause-fill</VIcon>
-          <span class="ml-1">{{ $t('task_button_stop') }}</span>
+          <span class="ml-1">{{ $t('packages_business_task_button_stop') }}</span>
         </ElButton>
         <!--        <ElButton :disabled="editDisabled" @click="edit">-->
         <!--          <VIcon size="12">edit-fill</VIcon>-->
-        <!--          <span class="ml-1">{{ $t('button_edit') }}</span>-->
+        <!--          <span class="ml-1">{{ $t('packages_business_button_edit') }}</span>-->
         <!--        </ElButton>-->
       </div>
     </div>
@@ -39,21 +39,21 @@
         v-if="stagesItems.length"
         v-model="selectedStage"
         :items="stagesItems"
-        :inner-label="$t('task_info_node')"
+        :inner-label="$t('packages_business_task_info_node')"
         none-border
         last-page-text=""
         clearable
         menu-min-width="240px"
-        :placeholder="$t('task_info_select_node')"
+        :placeholder="$t('packages_business_task_info_select_node')"
         @change="changeStageFnc"
       ></SelectList>
       <SelectList
         v-model="selectedTime"
         :items="selectedTimeItems"
-        :inner-label="$t('task_info_cycle')"
+        :inner-label="$t('packages_business_task_info_cycle')"
         none-border
         last-page-text=""
-        :placeholder="$t('task_info_select_period')"
+        :placeholder="$t('packages_business_task_info_select_period')"
         @change="changePeriodFnc"
       ></SelectList>
       <DatetimeRange
@@ -67,10 +67,10 @@
       <SelectList
         v-model="selectedRate"
         :items="selectedRateItems"
-        :inner-label="$t('task_info_frequency')"
+        :inner-label="$t('packages_business_task_info_frequency')"
         none-border
         last-page-text=""
-        :placeholder="$t('task_info_select_frequency')"
+        :placeholder="$t('packages_business_task_info_select_frequency')"
         @change="changeRateFnc"
       ></SelectList>
     </div>
@@ -78,7 +78,7 @@
       <div class="px-4 py-6 grey-background" style="min-width: 220px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
-          <span class="font-color-light">{{ $t('task_monitor_total_input') }}</span>
+          <span class="font-color-light">{{ $t('packages_business_task_monitor_total_input') }}</span>
         </div>
         <ElTooltip :content="overData.inputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
@@ -88,7 +88,7 @@
 
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
-          <span class="font-color-light">{{ $t('task_monitor_total_output') }}</span>
+          <span class="font-color-light">{{ $t('packages_business_task_monitor_total_output') }}</span>
         </div>
         <ElTooltip :content="overData.outputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">
@@ -97,7 +97,7 @@
         </ElTooltip>
         <div class="flex justify-content-between text-center">
           <div>
-            <div class="mb-3 font-color-light">{{ $t('task_monitor_total_insert') }}</div>
+            <div class="mb-3 font-color-light">{{ $t('packages_business_task_monitor_total_insert') }}</div>
             <ElTooltip :content="overData.insertedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ toThousandsUnit(overData.insertedTotal) }}
@@ -105,7 +105,7 @@
             </ElTooltip>
           </div>
           <div>
-            <div class="mb-3 font-color-light">{{ $t('task_monitor_total_update') }}</div>
+            <div class="mb-3 font-color-light">{{ $t('packages_business_task_monitor_total_update') }}</div>
             <ElTooltip :content="overData.updatedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ toThousandsUnit(overData.updatedTotal) }}
@@ -113,7 +113,7 @@
             </ElTooltip>
           </div>
           <div>
-            <div class="mb-3 font-color-light">{{ $t('task_monitor_total_delete') }}</div>
+            <div class="mb-3 font-color-light">{{ $t('packages_business_task_monitor_total_delete') }}</div>
             <ElTooltip :content="overData.deletedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ toThousandsUnit(overData.deletedTotal) }}
@@ -130,7 +130,7 @@
           v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background justify-content-center"
         >
-          <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_full_progress') }}</div>
+          <div class="fw-bold right-box-text font-color-dark">{{ $t('packages_business_task_info_full_progress') }}</div>
           <div class="flex flex-column justify-content-center">
             <div
               v-if="syncData.progress"
@@ -149,16 +149,16 @@
               </div>
             </div>
             <div class="py-2 fs-8 font-color-light" v-else>
-              {{ $t('migrate_no_progress_statistics_yet') }}
+              {{ $t('packages_business_migrate_no_progress_statistics_yet') }}
             </div>
             <div v-if="syncData.progress === 100" class="right-box-text font-color-light mt-1">
-              {{ $t('task_info_full_time') }}：{{ formatTime(syncData.endTs) }}
+              {{ $t('packages_business_task_info_full_time') }}：{{ formatTime(syncData.endTs) }}
             </div>
             <div v-else class="right-box-text font-color-light mt-1">
               {{
-                $t('task_monitor_full_completion_time') +
+                $t('packages_business_task_monitor_full_completion_time') +
                 '：' +
-                (handleTime(syncData.finishDuration) || $t('task_info_calculating'))
+                (handleTime(syncData.finishDuration) || $t('packages_business_task_info_calculating'))
               }}
             </div>
           </div>
@@ -167,7 +167,7 @@
           v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background justify-content-center"
         >
-          <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_incremental_delay') }}</div>
+          <div class="fw-bold right-box-text font-color-dark">{{ $t('packages_business_task_info_incremental_delay') }}</div>
           <div class="flex flex-column justify-content-center">
             <div
               v-if="writeData.replicateLag"
@@ -177,10 +177,10 @@
               {{ formatMs(writeData.replicateLag) }}
             </div>
             <div class="py-2 fs-8 font-color-light" v-else>
-              {{ $t('migrate_no_latency_statistics_yet') }}
+              {{ $t('packages_business_migrate_no_latency_statistics_yet') }}
             </div>
             <div class="right-box-text font-color-light mt-1" v-if="writeData.cdcTime">
-              {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
+              {{ $t('packages_business_task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
             </div>
           </div>
         </div>
@@ -306,7 +306,7 @@ export default {
         series: [
           {
             type: 'line',
-            name: this.$t('task_info_input'),
+            name: this.$t('packages_business_task_info_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
               width: 1
@@ -322,7 +322,7 @@ export default {
           },
           {
             type: 'line',
-            name: this.$t('task_info_output'),
+            name: this.$t('packages_business_task_info_output'),
             lineStyle: {
               color: 'rgba(118, 205, 238, 1)',
               width: 1
@@ -355,42 +355,42 @@ export default {
       endTs: '', // 预计完成时间
       selectedTimeItems: [
         {
-          label: this.$t('task_info_default'),
+          label: this.$t('packages_business_task_info_default'),
           value: 'default',
           spacing: 0
         },
         {
-          label: this.$t('task_info_five_min'),
+          label: this.$t('packages_business_task_info_five_min'),
           value: '5min',
           spacing: 5 * 60 * 1000
         },
         {
-          label: this.$t('task_info_fifteen_min'),
+          label: this.$t('packages_business_task_info_fifteen_min'),
           value: '15min',
           spacing: 15 * 60 * 1000
         },
         {
-          label: this.$t('task_info_thirty_min'),
+          label: this.$t('packages_business_task_info_thirty_min'),
           value: '30min',
           spacing: 30 * 60 * 1000
         },
         {
-          label: this.$t('task_info_last_hour'),
+          label: this.$t('packages_business_task_info_last_hour'),
           value: '60min',
           spacing: 60 * 60 * 1000
         },
         {
-          label: this.$t('task_info_custom_time'),
+          label: this.$t('packages_business_task_info_custom_time'),
           value: 'custom'
         }
       ],
       selectedRateItems: [
         {
-          label: this.$t('task_info_five_seconds'),
+          label: this.$t('packages_business_task_info_five_seconds'),
           value: 'second'
         },
         {
-          label: this.$t('task_info_one_min'),
+          label: this.$t('packages_business_task_info_one_min'),
           value: 'minute'
         }
       ],
@@ -474,17 +474,17 @@ export default {
           }
         }
         if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-          r = 1 + this.$t('taskProgress.m')
+          r = 1 + this.$t('packages_business_taskProgress_m')
         }
-        // r = parseInt(s) + i18n.t('timeToLive.s')
+        // r = parseInt(s) + this.$t('packages_business_timeToLive_s')
         if (m > 0) {
-          r = parseInt(m) + this.$t('taskProgress.m')
+          r = parseInt(m) + this.$t('packages_business_taskProgress_m')
         }
         if (h > 0) {
-          r = parseInt(h) + this.$t('taskProgress.h') + r
+          r = parseInt(h) + this.$t('packages_business_taskProgress_h') + r
         }
         if (d > 0) {
-          r = parseInt(d) + this.$t('taskProgress.d') + r
+          r = parseInt(d) + this.$t('packages_business_taskProgress_d') + r
         }
         return r
       }
@@ -758,7 +758,7 @@ export default {
       subtaskApi
         .start(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -767,7 +767,7 @@ export default {
       subtaskApi
         .stop(row.id)
         .then(data => {
-          this.$message.success(data?.message || this.$t('message_operation_succuess'))
+          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -783,18 +783,18 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          `<p>${this.$t('task_list_edit_tip')}<span style="color:#409EFF">${this.$t('task_list_edit_tip1')}</span>、` +
-            `<span style="color:#409EFF">${this.$t('task_list_node_attr')}</span>、` +
-            `<span style="color:#409EFF">${this.$t('task_list_matching_releation')}</span>,` +
-            `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
+          `<p>${this.$t('packages_business_task_list_edit_tip')}<span style="color:#409EFF">${this.$t('packages_business_task_list_edit_tip1')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('packages_business_task_list_node_attr')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('packages_business_task_list_matching_releation')}</span>,` +
+            `${this.$t('packages_business_task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
               'task_list_edit_reset'
-            )}</span>${this.$t('task_list_edit_tip3')}</p>`,
-          this.$t('task_important_reminder'),
+            )}</span>${this.$t('packages_business_task_list_edit_tip3')}</p>`,
+          this.$t('packages_business_task_important_reminder'),
           {
             dangerouslyUseHTMLString: true,
             customClass: 'dataflow-clickTip',
-            cancelButtonText: this.$t('button_cancel'),
-            confirmButtonText: this.$t('task_list_continue_edit'),
+            cancelButtonText: this.$t('packages_business_button_cancel'),
+            confirmButtonText: this.$t('packages_business_task_list_continue_edit'),
             type: 'warning'
           }
         ).then(resFlag => {

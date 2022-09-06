@@ -1,13 +1,16 @@
+import i18n from '@tap/i18n'
 import Vue from 'vue'
-import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
-import { taskApi, customNodeApi } from '@tap/api'
 import { debounce } from 'lodash'
-import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
 import { setValidateLanguage } from '@formily/core'
+
+import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
+import { taskApi, customNodeApi } from '@tap/api'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+
+import { AddDagCommand } from './command'
 import { CustomProcessor } from './nodes/extends/CustomProcessor'
-import Cookie from '@tap/shared/src/cookie'
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
@@ -34,12 +37,6 @@ const findByCod = (arr, cond) => {
       return flag
     }
   })
-}
-
-const langMap = {
-  zh_CN: 'zh-CN',
-  zh_TW: 'zh-TW',
-  en_US: 'en-US'
 }
 
 const getState = () => ({
@@ -199,9 +196,7 @@ const getters = {
   hasNodeError: state => id => state.nodeErrorState[id],
 
   language: () => {
-    let lang = Cookie.get('lang')
-    lang = lang ? lang.replace('-', '_') : 'en_US'
-    if (lang) return langMap[lang].toLocaleLowerCase()
+    return getCurrentLanguage()
   },
 
   getMessage: (state, getters) => (token, locales) => {
@@ -329,7 +324,7 @@ const mutations = {
   setActiveNode(state, nodeId) {
     if (!nodeId || state.activeNodeId !== nodeId) {
       // eslint-disable-next-line no-console
-      console.log('清空节点输入输出的监听')
+      console.log(i18n.t('packages_dag_src_store_qingkongjiedianshu'))
       state.nodeInputsWatcher?.()
       state.nodeOutputsWatcher?.()
     }
@@ -436,7 +431,7 @@ const mutations = {
     const { conditions } = updateInformation
 
     if (node === undefined || node === null) {
-      throw new Error('未找到节点')
+      throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
     let target = find(node, nameParts, conditions)
@@ -453,7 +448,7 @@ const mutations = {
     const { conditions = [] } = updateInformation
 
     if (node === undefined || node === null) {
-      throw new Error('未找到节点')
+      throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
     let target = find(node, nameParts, conditions)
@@ -467,7 +462,7 @@ const mutations = {
     const node = state.dag.nodes.find(node => node.id === updateInformation.id)
 
     if (node === undefined || node === null) {
-      throw new Error('未找到节点')
+      throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
     state.stateIsDirty = true
@@ -822,7 +817,7 @@ const mutations = {
   },
 
   setValidateLanguage() {
-    setValidateLanguage(langMap[Cookie.get('lang')])
+    setValidateLanguage(getCurrentLanguage())
   },
 
   setNodeInputsWatcher(state, watcher) {

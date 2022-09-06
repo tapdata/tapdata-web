@@ -95,6 +95,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSider from './components/migration/LeftSider'
@@ -102,20 +104,19 @@ import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
 import { NODE_PREFIX } from './constants'
 import { allResourceIns } from './nodes/loader'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { titleChange } from 'web-core/mixins/titleChange'
-import { showMessage } from 'web-core/mixins/showMessage'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
 import { taskApi } from '@tap/api'
-import resize from 'web-core/directives/resize'
+import resize from '@tap/component/src/directives/resize'
 import { merge } from 'lodash'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
 import { VExpandXTransition, VIcon, VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
-import Locale from './mixins/locale'
 import ConsolePanel from './components/migration/ConsolePanel'
 import { DEFAULT_SETTINGS } from './constants'
 
@@ -126,7 +127,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     ConsolePanel,
@@ -193,7 +194,7 @@ export default {
     },
 
     'dataflow.status'(v) {
-      console.log('状态监听', v) // eslint-disable-line
+      console.log(i18n.t('packages_dag_src_migrationeditor_zhuangtaijianting'), v) // eslint-disable-line
       if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
         // this.$refs.console?.loadData()
         if (v === 'running') {
@@ -235,15 +236,15 @@ export default {
     initNodeType() {
       this.addProcessorNode([
         {
-          name: '表编辑',
+          name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
           type: 'table_rename_processor'
         },
         {
-          name: '字段编辑',
+          name: i18n.t('packages_dag_src_migrationeditor_ziduanbianji'),
           type: 'migrate_field_rename_processor'
         },
         {
-          name: 'JS处理',
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor'
         }
       ])
@@ -298,12 +299,12 @@ export default {
     },
 
     /*async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const dataNodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
       // if (dataNodes.length < 2) {
-      //   return this.t('editor_cell_validate_none_data_node')
+      //   return this.$t('packages_dag_editor_cell_validate_none_data_node')
       // }
 
       await this.validateAllNodes()
@@ -386,14 +387,14 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        // this.$message.success(this.t('message_save_ok'))
+        // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
         })
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error('任务保存出错', e)
+        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
         this.handleError(e)
       }
       this.isSaving = false
@@ -462,7 +463,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.t('message_save_ok'))
+        !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true

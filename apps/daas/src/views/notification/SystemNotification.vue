@@ -174,51 +174,51 @@ export default {
       msgOptions: [
         {
           value: 'deleted',
-          label: this.$t('notification.jobDeleted')
+          label: this.$t('notification_jobDeleted')
         },
         {
           value: 'paused',
-          label: this.$t('notification.jobPaused')
+          label: this.$t('notification_jobPaused')
         },
         {
           value: 'stoppedByError',
-          label: this.$t('notification.stoppedByError')
+          label: this.$t('notification_stoppedByError')
         },
         {
           value: 'jobStateError',
-          label: this.$t('notification.jobStateError')
+          label: this.$t('notification_jobStateError')
         },
         {
           value: 'jobEncounterError',
-          label: this.$t('notification.jobEncounterError')
+          label: this.$t('notification_jobEncounterError')
         },
         {
           value: 'CDCLag',
-          label: this.$t('notification.CDCLag')
+          label: this.$t('notification_CDCLag')
         },
         {
           value: 'JobDDL',
-          label: this.$t('notification.DDL')
+          label: this.$t('notification_DDL')
         },
         {
           value: 'connectionInterrupted',
-          label: this.$t('notification.serverDisconnected')
+          label: this.$t('notification_serverDisconnected')
         },
         {
           value: 'manageSeverStartedSuccessfully',
-          label: this.$t('notification.agentStarted')
+          label: this.$t('notification_agentStarted')
         },
         {
           value: 'manageSeverStoppedSuccessfully',
-          label: this.$t('notification.agentStopped')
+          label: this.$t('notification_agentStopped')
         },
         {
           value: 'newSeverCreatedSuccessfully',
-          label: this.$t('notification.agentCreated')
+          label: this.$t('notification_agentCreated')
         },
         {
           value: 'newSeverDeletedSuccessfully',
-          label: this.$t('notification.agentDeleted')
+          label: this.$t('notification_agentDeleted')
         }
       ],
       typeMap: TYPEMAP,

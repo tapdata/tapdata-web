@@ -8,7 +8,7 @@
               <template v-if="collapseMode === 'db'">
                 <span class="flex-1 user-select-none text-truncate flex align-center">
                   <!--连接-->
-                  {{ t('dag_connection') }}
+                  {{ $t('packages_dag_dag_connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
                 <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
@@ -24,7 +24,8 @@
               <ElInput
                 v-model="dbSearchTxt"
                 ref="dbInput"
-                :placeholder="t('connection_name_search_placeholder')"
+                class="header__input"
+                :placeholder="$t('packages_dag_connection_name_search_placeholder')"
                 size="mini"
                 clearable
                 @keydown.native.stop
@@ -92,7 +93,7 @@
                   </div>
                   <VEmpty v-if="!dbList.length" />
                   <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ t('loading') }}<span class="dotting"></span>
+                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
                   </div>
                 </div>
               </ElSkeleton>
@@ -105,14 +106,14 @@
         <div class="tb-header flex align-center px-4">
           <span class="flex-1 user-select-none text-truncate flex align-center">
             <!--表-->
-            {{ t('dag_table') }}
+            {{ $t('packages_dag_dag_table') }}
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
           <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
             >search-outline</VIcon
           >
-          <ElTooltip :content="t('dag_create_table_as_node')" placement="top">
+          <ElTooltip :content="$t('dag_create_table_as_node')" placement="top">
             <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
           </ElTooltip>
         </div>
@@ -122,7 +123,7 @@
             <ElInput
               v-model="tbSearchTxt"
               ref="tbInput"
-              :placeholder="t('table_name_search_placeholder')"
+              :placeholder="$t('table_name_search_placeholder')"
               size="mini"
               clearable
               @keydown.native.stop
@@ -170,7 +171,7 @@
                   </div>
                   <VEmpty v-if="!tbList.length" />
                   <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ t('loading') }}<span class="dotting"></span>
+                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
                   </div>
                 </div>
               </div>
@@ -186,7 +187,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ t('dag_processor_node') }}
+              {{ $t('packages_dag_dag_processor_node') }}
             </span>
           </div>
         </template>
@@ -223,7 +224,7 @@
     <!-- E 节点拖拽元素 -->
 
     <ElDialog
-      title="选择数据源类型"
+      :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
       width="1030px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"
@@ -259,16 +260,14 @@ import { Select } from 'element-ui'
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
-import { VIcon, VEmpty } from '@tap/component'
+import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
-import mouseDrag from 'web-core/directives/mousedrag'
-import resize from 'web-core/directives/resize'
-import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
+import mouseDrag from '@tap/component/src/directives/mousedrag'
+import resize from '@tap/component/src/directives/resize'
 import BaseNode from './BaseNode'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
 import ConnectionType from './ConnectionType'
-import Locale from '../mixins/locale'
 
 export default {
   name: 'LeftSidebar',
@@ -284,8 +283,6 @@ export default {
     ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar
   },
-
-  mixins: [Locale],
 
   data() {
     return {
@@ -330,8 +327,8 @@ export default {
 
       dialogData: {
         type: 'table',
-        title: this.t('dialog_createTable'),
-        placeholder: this.t('dialog_placeholderTable'),
+        title: this.$t('packages_dag_dialog_createTable'),
+        placeholder: this.$t('packages_dag_dialog_placeholderTable'),
         visible: false
       }
     }

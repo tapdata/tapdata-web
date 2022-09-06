@@ -21,9 +21,9 @@
       :picker-options="pickerOptions"
       ref="datetime"
       type="datetimerange"
-      range-separator="至"
-      start-placeholder="开始日期"
-      end-placeholder="结束日期"
+      :range-separator="$t('packages_dag_components_timeselect_zhi')"
+      :start-placeholder="$t('packages_dag_components_timeselect_kaishiriqi')"
+      :end-placeholder="$t('packages_dag_components_timeselect_jieshuriqi')"
       format="yyyy-MM-dd HH:mm"
       value-format="timestamp"
       class="el-date-picker position-absolute overflow-hidden p-0 m-0"
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 
 import { VIcon } from '@tap/component'
@@ -47,29 +49,31 @@ export default {
     value: String,
     title: {
       type: String,
-      default: '周期'
+      default: () => {
+        return i18n.t('packages_dag_components_timeselect_zhouqi')
+      }
     },
     options: {
       type: Array,
       default: () => [
         {
-          label: '最近5分钟',
+          label: i18n.t('packages_dag_components_timeselect_zuijinfenzhong'),
           value: '5m'
         },
         {
-          label: '最新1小时',
+          label: i18n.t('packages_dag_components_timeselect_zuixinxiaoshi'),
           value: '1h'
         },
         {
-          label: '最近1天',
+          label: i18n.t('packages_dag_components_timeselect_zuijintian'),
           value: '1d'
         },
         {
-          label: '任务全周期',
+          label: i18n.t('packages_dag_components_timeselect_renwuquanzhouqi'),
           value: 'full'
         },
         {
-          label: '自定义时间',
+          label: i18n.t('packages_dag_components_log_zidingyishijian'),
           type: 'custom',
           value: 'custom'
         }

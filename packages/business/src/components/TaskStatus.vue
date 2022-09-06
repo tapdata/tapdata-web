@@ -1,19 +1,17 @@
 <template>
   <span v-if="show" class="status-block" :class="['status-' + task.status]">
-    {{ t(STATUS_MAP[task.status].i18n) }}
+    {{ $t(STATUS_MAP[task.status].i18n) }}
   </span>
 </template>
 
 <script>
 import { STATUS_MAP } from '../shared'
-import locale from '../mixins/locale'
 
 export default {
   name: 'TaskStatus',
   props: {
     task: Object
   },
-  mixins: [locale],
   data() {
     return {
       STATUS_MAP

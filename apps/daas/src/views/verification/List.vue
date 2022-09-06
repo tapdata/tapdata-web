@@ -32,7 +32,7 @@
         </ElButton>
       </div>
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyJobName')" min-width="250" show-overflow-tooltip>
+      <el-table-column :label="$t('dataVerification_verifyJobName')" min-width="250" show-overflow-tooltip>
         <template slot-scope="scope">
           <div class="ellipsis">{{ scope.row.name }}</div>
           <div class="font-color-slight">
@@ -40,8 +40,8 @@
               >{{ inspectMethod[scope.row.inspectMethod] }} (
               {{
                 scope.row.mode === 'manual'
-                  ? $t('dataVerification.singleVerify')
-                  : $t('dataVerification.repeatingVerify')
+                  ? $t('dataVerification_singleVerify')
+                  : $t('dataVerification_repeatingVerify')
               }}
               )
             </span>
@@ -55,7 +55,7 @@
         align="center"
         :label="$t('verify_history_source_total_rows')"
       ></el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyResult')" min-width="180">
+      <el-table-column :label="$t('dataVerification_verifyResult')" min-width="180">
         <template slot-scope="scope">
           <div class="flex align-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
@@ -63,13 +63,13 @@
                 <i class="data-verify__icon el-icon-error"></i>
 
                 <span v-if="scope.row.inspectMethod === 'row_count'">
-                  {{ $t('dataVerification.inconsistent') }}
+                  {{ $t('dataVerification_inconsistent') }}
                 </span>
-                <span v-else> {{ $t('dataVerification.contConsistent') }}{{ scope.row.difference_number }} </span>
+                <span v-else> {{ $t('dataVerification_contConsistent') }}{{ scope.row.difference_number }} </span>
               </div>
               <div v-else class="data-verify__status success">
                 <i class="data-verify__icon el-icon-success"></i>
-                <span>{{ $t('dataVerification.consistent') }}</span>
+                <span>{{ $t('dataVerification_consistent') }}</span>
               </div>
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
@@ -87,7 +87,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyStatus')" min-width="120" prop="status">
+      <el-table-column :label="$t('dataVerification_verifyStatus')" min-width="120" prop="status">
         <template slot-scope="scope">
           <span>{{ statusMap[scope.row.status] }}</span>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
@@ -96,12 +96,12 @@
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('dataVerification.verifyTime')"
+        :label="$t('dataVerification_verifyTime')"
         prop="lastStartTime"
         sortable="lastStartTime"
         min-width="150"
       ></el-table-column>
-      <el-table-column :label="$t('dataVerification.operation')" width="260">
+      <el-table-column :label="$t('dataVerification_operation')" width="260">
         <template slot-scope="scope">
           <ElLink
             v-readonlybtn="'verify_job_edition'"
@@ -176,17 +176,17 @@ export default {
       loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
       order: 'lastStartTime DESC',
       inspectMethod: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify'),
+        row_count: this.$t('dataVerification_rowVerify'),
+        field: this.$t('dataVerification_contentVerify'),
+        jointField: this.$t('dataVerification_jointVerify'),
         cdcCount: '动态校验'
       },
       statusMap: {
-        waiting: this.$t('dataVerification.waiting'),
-        scheduling: this.$t('dataVerification.scheduling'),
-        error: this.$t('dataVerification.error'),
-        done: this.$t('dataVerification.done'),
-        running: this.$t('dataVerification.running')
+        waiting: this.$t('dataVerification_waiting'),
+        scheduling: this.$t('dataVerification_scheduling'),
+        error: this.$t('dataVerification_error'),
+        done: this.$t('dataVerification_done'),
+        running: this.$t('dataVerification_running')
       },
       validList: [
         { label: this.$t('select_option_all'), value: '' },
@@ -346,22 +346,22 @@ export default {
           { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
         )
         .then(() => {
-          this.$message.success(this.$t('dataVerification.startVerify'))
+          this.$message.success(this.$t('dataVerification_startVerify'))
           this.table.fetch()
         })
     },
     remove(id, row) {
       let name = row.name
-      this.$confirm(`${this.$t('dataVerification.deleteMessage')} ${name}?`, this.$t('dataFlow.importantReminder'), {
-        confirmButtonText: this.$t('classification.deleteNode'),
-        cancelButtonText: this.$t('message.cancel'),
+      this.$confirm(`${this.$t('dataVerification_deleteMessage')} ${name}?`, this.$t('dataFlow_importantReminder'), {
+        confirmButtonText: this.$t('classification_deleteNode'),
+        cancelButtonText: this.$t('message_cancel'),
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
           return
         }
         inspectApi.delete(id).then(() => {
-          this.$message.success(this.$t('message.deleteOK'))
+          this.$message.success(this.$t('message_deleteOK'))
           this.table.fetch()
         })
       })
@@ -377,7 +377,7 @@ export default {
           })
         } else {
           this.$message.info(
-            this.$t('dataVerification.checkStatusPre') + data.status + this.$t('dataVerification.checkStatusSuffix')
+            this.$t('dataVerification_checkStatusPre') + data.status + this.$t('dataVerification_checkStatusSuffix')
           )
         }
       })

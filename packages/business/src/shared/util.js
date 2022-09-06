@@ -1,23 +1,23 @@
-import locale from '../locale'
+import i18n from '@tap/i18n'
 
 // 毫秒换算成时分秒
 export const formatMs = (msTime = 0, type = 'time') => {
   let time = msTime / 1000
   let arr = []
   arr.push({
-    label: locale.t('task_info_d'),
+    label: i18n.t('packages_business_task_info_d'),
     value: Math.floor(time / 60 / 60 / 24)
   }) // day
   arr.push({
-    label: locale.t('task_info_h'),
+    label: i18n.t('packages_business_task_info_h'),
     value: Math.floor(time / 60 / 60) % 24
   }) // hour
   arr.push({
-    label: locale.t('task_info_m'),
+    label: i18n.t('packages_business_task_info_m'),
     value: Math.floor(time / 60) % 60
   }) // minute
   arr.push({
-    label: locale.t('task_info_s'),
+    label: i18n.t('packages_business_task_info_s'),
     value: Math.floor(time) % 60
   }) // second
   let result = ''
@@ -34,7 +34,7 @@ export const formatMs = (msTime = 0, type = 'time') => {
     }
   })
   if (!result) {
-    result = msTime + locale.t('task_info_ms')
+    result = msTime + i18n.t('packages_business_task_info_ms')
   }
   return result
 }

@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { useForm } from '@formily/vue'
 import { getComponentByTag } from './utils'
 
@@ -25,7 +26,7 @@ export const AddDatabaseBtn = {
           }
         }
       },
-      '新建'
+      i18n.t('packages_form_components_adddatabasebtn_xinjian')
     )
   }
 }

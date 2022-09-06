@@ -8,7 +8,7 @@
               <template>
                 <span class="flex-1 user-select-none text-truncate flex align-center">
                   <!--连接-->
-                  {{ t('dag_connection') }}
+                  {{ $t('packages_dag_dag_connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
                 <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
@@ -23,7 +23,7 @@
               <ElInput
                 v-model="dbSearchTxt"
                 ref="dbInput"
-                :placeholder="t('connection_name_search_placeholder')"
+                :placeholder="$t('connection_name_search_placeholder')"
                 size="mini"
                 clearable
                 @keydown.native.stop
@@ -89,7 +89,7 @@
                   </div>
                   <VEmpty v-if="!dbList.length" />
                   <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ t('loading') }}<span class="dotting"></span>
+                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
                   </div>
                 </div>
               </ElSkeleton>
@@ -105,7 +105,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ $t('dag_processor_node') }}
+              {{ $t('packages_dag_dag_processor_node') }}
             </span>
           </div>
         </template>
@@ -148,7 +148,7 @@
     <!-- E 节点拖拽元素 -->
 
     <ElDialog
-      title="选择数据源类型"
+      :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
       width="1030px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"
@@ -182,24 +182,22 @@ import 'web-core/assets/icons/svg/field_add_del.svg'
 import 'web-core/assets/icons/svg/field_rename.svg'
 import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
-import mouseDrag from 'web-core/directives/mousedrag'
+import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
-import resize from 'web-core/directives/resize'
+import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { Select } from 'element-ui'
-import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
+import { OverflowTooltip } from '@tap/component'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import NodeIcon from '../NodeIcon'
-import Locale from '../../mixins/locale'
 import { escapeRegExp } from 'lodash'
 import ConnectionType from '../ConnectionType'
 
 export default {
   name: 'LeftSider',
-  mixins: [Locale],
   components: {
     NodeIcon,
     VEmpty,

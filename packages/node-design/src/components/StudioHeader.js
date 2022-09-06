@@ -1,7 +1,7 @@
 import { useCustomNode, useDesigner, useWorkbench } from '../hooks'
 import { defineComponent, watch, ref } from 'vue-demi'
 import { VIcon } from '@tap/component'
-import focusSelect from 'web-core/directives/focusSelect'
+import focusSelect from '@tap/component/src/directives/focusSelect'
 import { transformToTreeNode } from '../core'
 import { customNodeApi } from '@tap/api'
 import { IconWidget } from './widgets'

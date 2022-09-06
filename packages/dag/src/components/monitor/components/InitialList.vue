@@ -1,13 +1,17 @@
 <template>
   <ElDialog
-    title="全量信息详情"
+    :title="$t('packages_dag_components_initiallist_quanliangxinxixiang')"
     width="774px"
     :visible.sync="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
     @close="$emit('input', false)"
   >
-    <ElTooltip transition="tooltip-fade-in" content="点击刷新" class="refresh-tooltip">
+    <ElTooltip
+      transition="tooltip-fade-in"
+      :content="$t('packages_dag_components_initiallist_dianjishuaxin')"
+      class="refresh-tooltip"
+    >
       <VIcon class="color-primary cursor-pointer" size="12" @click="startLoadData">icon_table_selector_load</VIcon>
     </ElTooltip>
     <VTable :remoteMethod="remoteMethod" :columns="columns" height="100%" ref="table" class="table-list">
@@ -24,6 +28,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VTable } from '@tap/component'
 import { measurementApi } from '@tap/api'
 
@@ -45,30 +51,30 @@ export default {
       visible: false,
       statusMap: {
         NOT_START: {
-          text: '未开始',
+          text: i18n.t('packages_dag_components_initiallist_weikaishi'),
           type: 'waiting'
         },
         PAUSE: {
-          text: '已停止',
+          text: i18n.t('packages_dag_task_preview_status_stop'),
           type: 'pause'
         },
         DONE: {
-          text: '已完成',
+          text: i18n.t('packages_dag_task_preview_status_complete'),
           type: 'finish'
         },
         ING: {
-          text: '同步中',
+          text: i18n.t('packages_dag_components_initiallist_tongbuzhong'),
           type: 'running'
         }
       },
       columns: [
         {
-          label: '源表名',
+          label: i18n.t('packages_dag_components_initiallist_yuanbiaoming'),
           prop: 'originTable',
           width: 180
         },
         {
-          label: '目标表名',
+          label: i18n.t('packages_dag_components_initiallist_mubiaobiaoming'),
           prop: 'targetTable',
           width: 180
         },
@@ -79,12 +85,12 @@ export default {
         //   width: 80
         // },
         {
-          label: '数据同步',
+          label: i18n.t('packages_dag_components_initiallist_shujutongbu'),
           prop: 'progress',
           slotName: 'progress'
         },
         {
-          label: '全量同步状态',
+          label: i18n.t('packages_dag_components_initiallist_quanliangtongbuzhuang'),
           prop: 'syncStatus',
           slotName: 'syncStatus',
           width: 100

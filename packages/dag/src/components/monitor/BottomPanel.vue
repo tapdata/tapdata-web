@@ -3,10 +3,10 @@
     <Log v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
     <div v-else class="panel-header flex pr-4 h-100">
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column">
-        <ElTabPane label="日志" name="log">
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
           <Log v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
         </ElTabPane>
-        <ElTabPane label="运行记录" name="record">
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
         </ElTabPane>
         <ElTabPane label="告警列表" name="alert">
@@ -22,11 +22,10 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 
-import 'web-core/directives/resize/index.scss'
-import resize from 'web-core/directives/resize'
-import focusSelect from 'web-core/directives/focusSelect'
+import '@tap/component/src/directives/resize/index.scss'
+import resize from '@tap/component/src/directives/resize'
+import focusSelect from '@tap/component/src/directives/focusSelect'
 
-import Locale from '../../mixins/locale'
 import Log from './components/Log'
 import Record from './components/Record'
 import Alert from './components/Alert'
@@ -40,8 +39,6 @@ export default {
     resize,
     focusSelect
   },
-
-  mixins: [Locale],
 
   props: {
     onlyLog: {

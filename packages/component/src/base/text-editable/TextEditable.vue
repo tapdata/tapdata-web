@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VIcon } from '@tap/component'
 
 export default {
@@ -41,7 +43,9 @@ export default {
     inputMinWidth: [String, Number],
     placeholder: {
       type: String,
-      default: '请输入'
+      default: () => {
+        return i18n.t('packages_component_formBuilder_input_placeholderPrefix')
+      }
     },
     hiddenIcon: Boolean,
     maxlength: {

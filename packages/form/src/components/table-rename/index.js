@@ -1,9 +1,9 @@
+import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, set, del, computed } from 'vue-demi'
 import { useForm } from '@formily/vue'
 import { FormItem } from '../index'
 import { observer } from '@formily/reactive-vue'
-import EmptyItem from 'web-core/components/EmptyItem'
-import { VIcon } from '@tap/component'
+import { VIcon, EmptyItem } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { observe } from '@formily/reactive'
 // import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -157,7 +157,7 @@ export const TableRename = observer(
     render() {
       return (
         <div class="table-rename">
-          <FormItem.BaseItem label="搜索表名">
+          <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}>
             <ElInput
               v-model={this.config.search}
               disabled={this.disabled}
@@ -172,11 +172,11 @@ export const TableRename = observer(
             style={this.listStyle}
           >
             <div class="name-list-header flex flex-shrink-0">
-              <div class="name-list-title px-4">原表名</div>
-              <div class="name-list-title pl-5 pr-4">新表名</div>
+              <div class="name-list-title px-4">{i18n.t('packages_form_table_rename_index_yuanbiaoming')}</div>
+              <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
               <div class="name-list-header-extra px-4">
                 <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
-                  重置
+                  {i18n.t('packages_form_button_reset')}
                 </ElButton>
               </div>
             </div>
@@ -254,33 +254,33 @@ export const TableRename = observer(
           </div>
 
           <div class="border border-form p-4 mt-4 rounded-2">
-            <div class="font-color-light">以下操作仅对已搜索出来的原表名生效</div>
-            <FormItem.BaseItem label="替换">
+            <div class="font-color-light">{i18n.t('packages_form_table_rename_index_yixiacaozuojin')}</div>
+            <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
               <div class="flex">
                 <ElInput v-model={this.config.replaceBefore} disabled={this.disabled} clearable />
-                <div class="px-4 text-nowrap font-color-light">改为</div>
+                <div class="px-4 text-nowrap font-color-light">{i18n.t('packages_form_table_rename_index_gaiwei')}</div>
                 <ElInput v-model={this.config.replaceAfter} disabled={this.disabled} clearable />
               </div>
             </FormItem.BaseItem>
-            <FormItem.BaseItem label="前缀">
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
               <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label="后缀">
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
               <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable />
             </FormItem.BaseItem>
-            <FormItem.BaseItem label="大小写">
+            <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
               <ElSelect v-model={this.config.transferCase} disabled={this.disabled}>
-                <ElOption value="" label="不变" />
-                <ElOption value="toUpperCase" label="大写" />
-                <ElOption value="toLowerCase" label="小写" />
+                <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
+                <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
+                <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
               </ElSelect>
             </FormItem.BaseItem>
             <div class="mt-4">
               <ElButton onClick={this.doModify} disabled={this.disabled} size="small" type="primary">
-                应用
+                {i18n.t('packages_form_table_rename_index_yingyong')}
               </ElButton>
               <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
-                清空
+                {i18n.t('packages_form_table_rename_index_qingkong')}
               </ElButton>
             </div>
           </div>

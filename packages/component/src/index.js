@@ -1,4 +1,4 @@
-import locale from './locale'
+import langs from './locale'
 
 // base
 import VirtualTransfer from './base/virtual-transfer'
@@ -8,6 +8,11 @@ import VTable from './base/v-table'
 import VCodeEditor from './base/VCodeEditor.vue'
 import VIcon from './base/VIcon.vue'
 import VStep from './base/VStep.vue'
+import VSelect from './base/VSelect.vue'
+import VDivider from './base/VDivider.vue'
+import EmptyItem from './base/EmptyItem.vue'
+import VButton from './base/VButton.vue'
+import Highlight from './base/Highlight.js'
 import Classification from './Classification.vue'
 import DiscoveryClassification from './DiscoveryClassification'
 import FilterBar from './filter-bar'
@@ -22,10 +27,16 @@ import InlineInput from './InlineInput.vue'
 import Chart from './chart'
 import MqTransfer from './mq-transfer'
 import JsEditor from './JsEditor.vue'
+import OverflowTooltip from './overflow-tooltip'
 export {
-  locale,
+  langs,
   VIcon,
   VStep,
+  VSelect,
+  VDivider,
+  EmptyItem,
+  VButton,
+  Highlight,
   VirtualTransfer,
   VirtualTransferPanel,
   VirtualSelect,
@@ -42,7 +53,8 @@ export {
   Drawer,
   TableList,
   InlineInput,
-  DiscoveryClassification
+  DiscoveryClassification,
+  OverflowTooltip
 }
 
 export * from './base'

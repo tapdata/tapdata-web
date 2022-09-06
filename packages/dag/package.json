@@ -21,7 +21,7 @@
     "@tap/field-mapping": "workspace:^1.0.0",
     "@tap/form": "workspace:^1.0.0",
     "@tap/shared": "workspace:^1.0.0",
-    "@tap/locale": "workspace:^1.0.0",
+    "@tap/i18n": "workspace:^1.0.0",
     "dagre": "^0.8.5",
     "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",

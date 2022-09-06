@@ -1,19 +1,20 @@
+import i18n from '@tap/i18n'
 import { defineComponent, ref, onMounted } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useForm, useField } from '@formily/vue'
 
 const EVENT_MAP = {
-  alter_field_name_event: '修改字段名',
-  alter_field_attributes_event: '修改字段属性',
-  create_table_event: '创建表',
-  drop_table_event: '删除表',
-  clear_table_event: '清空表',
-  alter_primary_key_event: '修改主键',
-  drop_field_event: '删除字段',
-  new_field_event: '新增字段',
-  alter_table_charset_event: '修改表字符集',
-  alter_database_timezone_event: '修改数据库时区',
-  rename_table_event: '修改表名'
+  alter_field_name_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming'),
+  alter_field_attributes_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanshu'),
+  create_table_event: i18n.t('packages_form_ddl_event_checkbox_index_chuangjianbiao'),
+  drop_table_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchubiao'),
+  clear_table_event: i18n.t('packages_form_ddl_event_checkbox_index_qingkongbiao'),
+  alter_primary_key_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaizhujian'),
+  drop_field_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchuziduan'),
+  new_field_event: i18n.t('packages_form_ddl_event_checkbox_index_xinzengziduan'),
+  alter_table_charset_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaozifu'),
+  alter_database_timezone_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaishujuku'),
+  rename_table_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaoming')
 }
 
 export const DdlEventCheckbox = observer(
@@ -112,7 +113,10 @@ export const DdlEventList = observer(
             {list.value.length
               ? list.value.map((item, i) => {
                   return [
-                    <div class={['font-color-light mb-2 lh-1', { 'mt-2': i > 0 }]}>来自源连接：{item.source}</div>,
+                    <div class={['font-color-light mb-2 lh-1', { 'mt-2': i > 0 }]}>
+                      {i18n.t('packages_form_ddl_event_checkbox_index_laiziyuanlianjie')}
+                      {item.source}
+                    </div>,
                     <div class="flex flex-wrap gap-1">
                       {item.events.map(name => (
                         <ElTag type="info" effect="light">
@@ -122,7 +126,7 @@ export const DdlEventList = observer(
                     </div>
                   ]
                 })
-              : '目标暂不支持DDL'}
+              : i18n.t('packages_form_ddl_event_checkbox_index_mubiaozanbuzhi')}
           </div>
         )
       }

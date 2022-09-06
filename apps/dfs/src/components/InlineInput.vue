@@ -79,15 +79,21 @@ export default {
     },
     editText: {
       type: String,
-      default: i18n.t('button_edit')
+      default: () => {
+        return i18n.t('button_edit')
+      }
     },
     saveText: {
       type: String,
-      default: i18n.t('button_save')
+      default: () => {
+        return i18n.t('button_save')
+      }
     },
     cancelText: {
       type: String,
-      default: i18n.t('button_cancel')
+      default: () => {
+        return i18n.t('button_cancel')
+      }
     }
   },
   data() {

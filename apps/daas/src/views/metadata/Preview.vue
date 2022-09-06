@@ -3,7 +3,7 @@
     <TablePage ref="table" row-key="id" class="metadata-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="operation">
         <el-button class="btn btn-create" size="mini" @click="handleQuery">
-          <span>{{ $t('metadata.details.query') }}</span>
+          <span>{{ $t('metadata_details_query') }}</span>
         </el-button>
       </div>
       <!-- <el-table ref="table" class="metadata-list" :data="previewTableData"> -->

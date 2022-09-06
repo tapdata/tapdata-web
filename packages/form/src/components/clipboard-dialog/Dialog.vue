@@ -1,9 +1,11 @@
 <template>
   <div>
-    <el-button class="float-end" type="text" @click="visible = true">获取创建命令</el-button>
+    <el-button class="float-end" type="text" @click="visible = true">{{
+      $t('packages_form_clipboard_dialog_dialog_huoquchuangjianming')
+    }}</el-button>
     <el-dialog :visible.sync="visible" width="50%" append-to-body :close-on-click-modal="false">
       <div slot="title">
-        <span class="mr-2">创建命令</span>
+        <span class="mr-2">{{ $t('packages_form_clipboard_dialog_dialog_chuangjianmingling') }}</span>
         <ClipboardButton :tooltip="tooltip" :finishTooltip="finishTooltip" :content="sql"></ClipboardButton>
       </div>
       <VCodeEditor
@@ -18,6 +20,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VCodeEditor } from '@tap/component'
 import ClipboardButton from '../clipboard-button'
 
@@ -28,8 +32,8 @@ export default {
     return {
       visible: false,
       sql: 'CREATE TABLE Persons',
-      tooltip: '复制创建命令',
-      finishTooltip: '已复制',
+      tooltip: i18n.t('packages_form_clipboard_dialog_dialog_fuzhichuangjianming'),
+      finishTooltip: i18n.t('packages_form_clipboard_dialog_dialog_yifuzhi'),
       options: {
         readOnly: true
       }

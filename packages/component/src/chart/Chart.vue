@@ -15,7 +15,6 @@ import {
   DataZoomComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
-import Locale from '../mixins/locale'
 
 use([
   CanvasRenderer,
@@ -33,7 +32,6 @@ use([
 export default {
   name: 'Chart',
   components: { VChart },
-  mixins: [Locale],
   props: {
     type: {
       type: String

@@ -3,24 +3,24 @@
     <div class="table-page-operation-bar">
       <el-button type="primary" size="mini" class="btn btn-create" @click="openCreateDialog">
         <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-        <span>{{ $t('metadata.details.validation.create') }}</span>
+        <span>{{ $t('metadata_details_validation_create') }}</span>
       </el-button>
     </div>
 
     <!-- 数据验证表格 start -->
     <el-table ref="table" class="table-page-table" :data="validationTableData">
-      <el-table-column :label="$t('metadata.details.validation.field_name')" prop="field_name"> </el-table-column>
-      <el-table-column :label="$t('metadata.details.validation.rule')" prop="rule">
+      <el-table-column :label="$t('metadata_details_validation_field_name')" prop="field_name"> </el-table-column>
+      <el-table-column :label="$t('metadata_details_validation_rule')" prop="rule">
         <template slot-scope="scope">
           {{ scope.row.rule_def && scope.row.rule_def.rules ? scope.row.rule_def.rules : '' }}
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('metadata.details.opera')" width="120">
+      <el-table-column :label="$t('metadata_details_opera')" width="120">
         <template slot-scope="scope">
           <!-- v-if="scope.row.name !== '_id_' && scope.row.status === 'created'" -->
           <el-button size="mini" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
-            $t('button.delete')
+            $t('button_delete')
           }}</el-button>
         </template>
       </el-table-column>
@@ -30,32 +30,32 @@
     <el-dialog
       width="660px"
       custom-class="create-dialog"
-      :title="$t('metadata.details.validation.create')"
+      :title="$t('metadata_details_validation_create')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
       <!-- 数据验证弹窗表单 start -->
       <el-form ref="form" :model="createForm" class="dataRule-form">
-        <el-form-item :label="$t('metadata.details.validation.field_name')">
+        <el-form-item :label="$t('metadata_details_validation_field_name')">
           <el-select
             v-model="createForm.field_name"
             size="mini"
             filterable
             allow-create
             default-first-option
-            :placeholder="$t('dataRule.pleaseSelect') + $t('metadata.details.validation.field_name')"
+            :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_validation_field_name')"
           >
             <el-option v-for="item in fieldsArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('metadata.details.validation.ruleTem')">
+        <el-form-item :label="$t('metadata_details_validation_ruleTem')">
           <el-select
             v-model="createForm.rule_def"
             size="mini"
             filterable
             default-first-option
             clearable
-            :placeholder="$t('dataRule.pleaseSelect') + $t('metadata.details.validation.ruleTem')"
+            :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_validation_ruleTem')"
           >
             <el-option-group v-for="group in rulesArr" :key="group.label" :label="group.label">
               <el-option v-for="item in group.rulesData" :key="item.name" :label="item.name" :value="item.name">
@@ -63,7 +63,7 @@
             </el-option-group>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('dataRule.rule')" required>
+        <el-form-item :label="$t('dataRule_rule')" required>
           <div class="template-box">
             <el-row>
               <el-col :span="0"></el-col>
@@ -71,7 +71,7 @@
                 <el-form-item
                   :rules="{
                     required: true,
-                    message: $t('dictionary.isMappedvalue'),
+                    message: $t('dictionary_isMappedvalue'),
                     trigger: 'blur'
                   }"
                 >
@@ -79,7 +79,7 @@
                     v-model="createForm.ruleType"
                     clearable
                     size="mini"
-                    :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.classification')"
+                    :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_classification')"
                   >
                     <el-option
                       v-for="item in ruleTypes"
@@ -97,7 +97,7 @@
                     prop="rule.checked"
                     :rules="{
                       required: true,
-                      message: $t('dataRule.data_type_required'),
+                      message: $t('dataRule_data_type_required'),
                       trigger: 'blur'
                     }"
                   >
@@ -111,14 +111,14 @@
                     prop="rule.dataType"
                     :rules="{
                       required: true,
-                      message: $t('dataRule.data_type_required'),
+                      message: $t('dataRule_data_type_required'),
                       trigger: 'blur'
                     }"
                   >
                     <el-select
                       v-model="createForm.rule.dataType"
                       size="mini"
-                      :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.classification')"
+                      :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_classification')"
                     >
                       <el-option
                         v-for="item in dataTypes"
@@ -136,14 +136,14 @@
                     prop="rule.dataRegex"
                     :rules="{
                       required: true,
-                      message: $t('dataRule.data_regex_required'),
+                      message: $t('dataRule_data_regex_required'),
                       trigger: 'blur'
                     }"
                   >
                     <el-input
                       v-model="createForm.rule.dataRegex"
                       size="mini"
-                      :placeholder="$t('dataRule.pleaseInput') + $t('dataRule.data_Regex')"
+                      :placeholder="$t('dataRule_pleaseInput') + $t('dataRule_data_Regex')"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -154,14 +154,14 @@
                     prop="rule.enumData"
                     :rules="{
                       required: true,
-                      message: $t('dataRule.enum_required'),
+                      message: $t('dataRule_enum_required'),
                       trigger: 'blur'
                     }"
                   >
                     <el-input
                       v-model="createForm.rule.enumData"
                       size="mini"
-                      :placeholder="$t('dataRule.pleaseInput') + $t('dataRule.data_Enum')"
+                      :placeholder="$t('dataRule_pleaseInput') + $t('dataRule_data_Enum')"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -172,14 +172,14 @@
                     prop="rule.gt"
                     :rules="{
                       required: true,
-                      message: $t('dataRule.required'),
+                      message: $t('dataRule_required'),
                       trigger: 'blur'
                     }"
                   >
                     <el-select
                       v-model="createForm.rule.gt"
                       size="mini"
-                      :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.greater_that')"
+                      :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_greater_that')"
                     >
                       <el-option label=">" value="gt"></el-option>
                       <el-option label=">=" value="gte"></el-option>
@@ -193,7 +193,7 @@
                     <el-input
                       v-model.number="createForm.rule.gtData"
                       size="mini"
-                      :placeholder="$t('dataRule.pleaseNum')"
+                      :placeholder="$t('dataRule_pleaseNum')"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -203,14 +203,14 @@
                     prop="rule.lt"
                     :rules="{
                       required: true,
-                      message: $t('dataRule.required'),
+                      message: $t('dataRule_required'),
                       trigger: 'blur'
                     }"
                   >
                     <el-select
                       v-model="createForm.rule.lt"
                       size="mini"
-                      :placeholder="$t('dataRule.pleaseSelect') + $t('dataRule.less_that')"
+                      :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_less_that')"
                     >
                       <el-option label="<" value="lt"></el-option>
                       <el-option label="<=" value="lte"></el-option>
@@ -224,7 +224,7 @@
                     <el-input
                       v-model.number="createForm.rule.ltData"
                       size="mini"
-                      :placeholder="$t('dataRule.pleaseNum')"
+                      :placeholder="$t('dataRule_pleaseNum')"
                     ></el-input>
                   </el-form-item>
                 </el-col>
@@ -235,8 +235,8 @@
       </el-form>
       <!-- 数据验证弹窗表单 end -->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="small">{{ $t('message_cancel') }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message_confirm') }}</el-button>
       </span>
     </el-dialog>
     <!-- 数据验证弹窗 end -->
@@ -256,14 +256,14 @@ export default {
     // 范围校验
     let validateisGt = (rule, value, callback) => {
       if (value === 'none' || parseFloat(value) > parseFloat(this.createForm.rule.ltData)) {
-        callback(new Error(this.$t('dataRule.correct_rules')))
+        callback(new Error(this.$t('dataRule_correct_rules')))
       } else {
         callback()
       }
     }
     let validateisLt = (rule, value, callback) => {
       if (value === 'none' || parseFloat(this.createForm.rule.gtData) > parseFloat(value)) {
-        callback(new Error(this.$t('dataRule.correct_rules')))
+        callback(new Error(this.$t('dataRule_correct_rules')))
       } else {
         callback()
       }
@@ -291,51 +291,51 @@ export default {
         }
       },
       ruleTypes: [
-        { label: this.$t('dataRule.data_type'), value: 'type' },
-        { label: this.$t('dataRule.data_Range'), value: 'range' },
-        { label: this.$t('dataRule.data_Enum'), value: 'enum' },
-        { label: this.$t('dataRule.data_Regex'), value: 'regex' },
-        { label: this.$t('dataRule.data_Nullable'), value: 'nullable' }
+        { label: this.$t('dataRule_data_type'), value: 'type' },
+        { label: this.$t('dataRule_data_Range'), value: 'range' },
+        { label: this.$t('dataRule_data_Enum'), value: 'enum' },
+        { label: this.$t('dataRule_data_Regex'), value: 'regex' },
+        { label: this.$t('dataRule_data_Nullable'), value: 'nullable' }
       ],
       dataTypes: [
-        { label: this.$t('dataRule.dataType.baseFloating'), value: 'double' },
-        { label: this.$t('dataRule.dataType.baseObject'), value: 'Object' },
-        { label: this.$t('dataRule.dataType.baseString'), value: 'string' },
-        { label: this.$t('dataRule.dataType.baseArray'), value: 'array' },
+        { label: this.$t('dataRule_dataType_baseFloating'), value: 'double' },
+        { label: this.$t('dataRule_dataType_baseObject'), value: 'Object' },
+        { label: this.$t('dataRule_dataType_baseString'), value: 'string' },
+        { label: this.$t('dataRule_dataType_baseArray'), value: 'array' },
         {
-          label: this.$t('dataRule.dataType.baseBinarydata'),
+          label: this.$t('dataRule_dataType_baseBinarydata'),
           value: 'binData'
         },
         {
-          label: this.$t('dataRule.dataType.baseUndefined'),
+          label: this.$t('dataRule_dataType_baseUndefined'),
           value: 'undefined'
         },
         { label: 'ObjectId', value: 'objectId' },
-        { label: this.$t('dataRule.dataType.baseBoolean'), value: 'bool' },
-        { label: this.$t('dataRule.dataType.basedate'), value: 'date' },
-        { label: this.$t('dataRule.dataType.baseNull'), value: 'null' },
+        { label: this.$t('dataRule_dataType_baseBoolean'), value: 'bool' },
+        { label: this.$t('dataRule_dataType_basedate'), value: 'date' },
+        { label: this.$t('dataRule_dataType_baseNull'), value: 'null' },
         {
-          label: this.$t('dataRule.dataType.baseRegularexpression'),
+          label: this.$t('dataRule_dataType_baseRegularexpression'),
           value: 'regex'
         },
         { label: 'JavaScript', value: 'javascript' },
         { label: 'JavaScript (with scope)', value: 'javascriptWithScope' },
-        { label: this.$t('dataRule.dataType.baseShorttype'), value: 'int' },
+        { label: this.$t('dataRule_dataType_baseShorttype'), value: 'int' },
         {
-          label: this.$t('dataRule.dataType.baseTimestamp'),
+          label: this.$t('dataRule_dataType_baseTimestamp'),
           value: 'timestamp'
         },
-        { label: this.$t('dataRule.dataType.baseLonginteger'), value: 'long' },
+        { label: this.$t('dataRule_dataType_baseLonginteger'), value: 'long' },
         { label: 'Decimal128', value: 'decimal' }
       ],
       gtDataRules: [
         {
           required: true,
-          message: this.$t('dataRule.required')
+          message: this.$t('dataRule_required')
         },
         {
           type: 'number',
-          message: this.$t('dataRule.pleaseNum')
+          message: this.$t('dataRule_pleaseNum')
         },
         {
           validator: validateisGt,
@@ -345,11 +345,11 @@ export default {
       ltDataRules: [
         {
           required: true,
-          message: this.$t('dataRule.required')
+          message: this.$t('dataRule_required')
         },
         {
           type: 'number',
-          message: this.$t('dataRule.pleaseNum')
+          message: this.$t('dataRule_pleaseNum')
         },
         {
           validator: validateisLt,
@@ -422,7 +422,7 @@ export default {
           })
           for (let [key, value] of Object.entries(groupData)) {
             if (key === '__ungroup') {
-              key = _this.$t('metadata.details.validation.ungrouped')
+              key = _this.$t('metadata_details_validation_ungrouped')
             }
             _this.rulesArr.push({ label: key, rulesData: value })
           }
@@ -464,7 +464,7 @@ export default {
 
           if (_this.createForm.ruleType === 'range') {
             if (_this.createForm.rule.gt === _this.createForm.rule.lt) {
-              _this.$message.error(_this.$t('dataRule.gt_lt_none'))
+              _this.$message.error(_this.$t('dataRule_gt_lt_none'))
               return false
             }
             _this.createForm.gtData = _this.createForm.rule.gt === 'none' ? '0' : _this.createForm.rule.gtData
@@ -564,7 +564,7 @@ export default {
     remove(item) {
       const h = this.$createElement
       let _this = this
-      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.field_name])
+      let message = h('p', [this.$t('message_deleteOrNot') + ' ' + item.field_name])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
@@ -581,7 +581,7 @@ export default {
             })
           _this.validationTableData.splice(idx, 1)
           this.doSave()
-          this.$message.success(this.$t('message.deleteOK'))
+          this.$message.success(this.$t('message_deleteOK'))
         }
       })
     }

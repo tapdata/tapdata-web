@@ -1,9 +1,12 @@
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { defineComponent, computed, ref, nextTick } from '@vue/composition-api'
+import { defineComponent, computed, ref } from '@vue/composition-api'
 import { VIcon } from '@tap/component'
+
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import DFNode from '../DFNode'
 

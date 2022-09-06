@@ -16,7 +16,9 @@
       </template>
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns" v-if="dataflow.taskRecordId !== scope.row.taskRecordId">
-          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">详情</ElButton>
+          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
+            $t('packages_dag_components_record_xiangqing')
+          }}</ElButton>
         </div>
       </template>
     </VTable>
@@ -24,6 +26,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VTable } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { TaskStatus } from '@tap/business'
@@ -44,36 +48,36 @@ export default {
     return {
       columns: [
         {
-          label: '运行开始时间',
+          label: i18n.t('packages_dag_components_record_yunxingkaishishi'),
           prop: 'startDate',
           dataType: 'time'
         },
         {
-          label: '运行结束时间',
+          label: i18n.t('packages_dag_components_record_yunxingjieshushi'),
           prop: 'endDate',
           dataType: 'time'
         },
         {
-          label: '操作人',
+          label: i18n.t('packages_dag_components_record_caozuoren'),
           prop: 'operator'
         },
         {
-          label: '运行结果',
+          label: i18n.t('packages_dag_components_record_yunxingjieguo'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '输入事件总量',
+          label: i18n.t('packages_dag_components_record_shurushijianzong'),
           prop: 'inputTotal',
           dataType: 'number'
         },
         {
-          label: '输出事件总量',
+          label: i18n.t('packages_dag_components_record_shuchushijianzong'),
           prop: 'outputTotal',
           dataType: 'number'
         },
         {
-          label: '操作',
+          label: i18n.t('packages_dag_components_record_caozuo'),
           slotName: 'operation'
         }
       ]

@@ -17,12 +17,16 @@
         <!--  里程碑  -->
         <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">
+            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
+          </div>
           <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
-              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{ $t('button_clear') }}</ElButton>
+              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
+                $t('packages_business_button_clear')
+              }}</ElButton>
               <ElButton size="mini" type="text" @click="handleRollback(scope.row)">{{
-                $t('button_rollback')
+                $t('packages_business_button_rollback')
               }}</ElButton></template
             >
           </TableList>
@@ -41,7 +45,9 @@
           :status="task.status"
         ></Overview>
         <div v-if="currentStep.group === 'structure'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">
+            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
+          </div>
           <div></div>
           <TableList
             v-if="columns.length"
@@ -58,7 +64,9 @@
           </TableList>
         </div>
         <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">
+            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
+          </div>
           <div></div>
           <TableList
             v-if="columns.length"
@@ -71,13 +79,15 @@
           >
             <template slot="totalNum" slot-scope="scope">
               <span v-if="scope.row.totalNum === -2">
-                <span>{{ $t('task_info_overView_error_msg') }} </span>
+                <span>{{ $t('packages_business_task_info_overView_error_msg') }} </span>
                 <ElTooltip placement="top" :content="scope.row.errorMsg">
                   <VIcon class="link-danger cursor-pointer" size="14">error</VIcon>
                 </ElTooltip></span
               >
               <span v-else
-                >{{ scope.row.totalNum === -1 ? $t('task_info_overView_status') : scope.row.totalNum }}
+                >{{
+                  scope.row.totalNum === -1 ? $t('packages_business_task_info_overView_status') : scope.row.totalNum
+                }}
               </span>
             </template>
             <template slot="progress" slot-scope="scope">
@@ -85,7 +95,7 @@
             </template>
             <template slot="status" slot-scope="scope">
               <span :class="['status-' + scope.row.status, 'status-block', 'mr-2']">
-                {{ $t('task_info_status_' + scope.row.status) }}
+                {{ $t('packages_business_task_info_status_' + scope.row.status) }}
               </span>
             </template>
           </TableList>
@@ -100,12 +110,16 @@
           </el-pagination>
         </div>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">
+            {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
+          </div>
           <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
-              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{ $t('button_clear') }}</ElButton>
+              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
+                $t('packages_business_button_clear')
+              }}</ElButton>
               <ElButton size="mini" type="text" @click="handleRollback(scope.row)">{{
-                $t('button_rollback')
+                $t('packages_business_button_rollback')
               }}</ElButton></template
             >
           </TableList>
@@ -119,7 +133,9 @@
       <ElDivider class="my-6"></ElDivider>
       <Overview :info="syncOverViewData" :status="task.status"></Overview>
       <div v-if="currentStep.group === 'structure'" class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark">{{ $t('task_info_task_structure') }}{{ $t('task_info_info') }}</div>
+        <div class="mb-4 fs-7 font-color-dark">
+          {{ $t('packages_business_task_info_task_structure') }}{{ $t('packages_business_task_info_info') }}
+        </div>
         <div></div>
         <TableList
           v-if="columns.length"
@@ -136,7 +152,9 @@
         </TableList>
       </div>
       <div class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark">{{ $t('task_setting_initial_sync') }}{{ $t('task_info_info') }}</div>
+        <div class="mb-4 fs-7 font-color-dark">
+          {{ $t('packages_business_task_setting_initial_sync') }}{{ $t('packages_business_task_info_info') }}
+        </div>
         <TableList
           v-if="columns.length"
           :data="syncTableList"
@@ -151,20 +169,27 @@
         </TableList>
       </div>
       <div class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark">{{ $t('task_info_task_cdc') }}{{ $t('task_info_info') }}</div>
+        <div class="mb-4 fs-7 font-color-dark">
+          {{ $t('packages_business_task_info_task_cdc') }}{{ $t('packages_business_task_info_info') }}
+        </div>
         <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
     </div>
-    <ElDialog width="500px" append-to-body :title="$t('button_rollback')" :visible.sync="rollbackVisible">
+    <ElDialog
+      width="500px"
+      append-to-body
+      :title="$t('packages_business_button_rollback')"
+      :visible.sync="rollbackVisible"
+    >
       <ElRow>
         <ElRow :span="8" style="margin-bottom: 10px">
-          <label>类型：</label>
-          <ElSelect v-model="syncPointType" placeholder="请选择">
+          <label>{{ $t('packages_business_statistics_schedule_leixing') }}</label>
+          <ElSelect v-model="syncPointType" :placeholder="$t('packages_business_statistics_schedule_qingxuanze')">
             <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
           </ElSelect>
         </ElRow>
         <ElRow :span="14" v-if="syncPointType !== 'current'">
-          <label>时间：</label>
+          <label>{{ $t('packages_business_statistics_schedule_shijian') }}</label>
           <ElDatePicker
             format="yyyy-MM-dd HH:mm:ss"
             style="width: 70%"
@@ -175,14 +200,18 @@
         </ElRow>
       </ElRow>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleRollbackClose()">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="submitRollBack()">{{ $t('button_confirm') }}</ElButton>
+        <ElButton size="mini" @click="handleRollbackClose()">{{ $t('packages_business_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="submitRollBack()">{{
+          $t('packages_business_button_confirm')
+        }}</ElButton>
       </span>
     </ElDialog>
   </div>
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 
 import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
@@ -228,27 +257,27 @@ export default {
       statusMap: {
         done: {
           color: '',
-          text: this.$t('task_info_synced')
+          text: this.$t('packages_business_task_info_synced')
         }
       },
       groupMap: {
-        init: this.$t('task_info_task_init'),
-        structure: this.$t('task_info_task_structure'),
-        cdc: this.$t('task_info_task_cdc'),
-        initial_sync: this.$t('task_setting_initial_sync')
+        init: this.$t('packages_business_task_info_task_init'),
+        structure: this.$t('packages_business_task_info_task_structure'),
+        cdc: this.$t('packages_business_task_info_task_cdc'),
+        initial_sync: this.$t('packages_business_task_setting_initial_sync')
       },
       rollbackVisible: false,
       options: [
         {
-          label: '用户浏览器时区',
+          label: i18n.t('packages_business_statistics_schedule_yonghuliulanqi'),
           value: 'localTZ'
         },
         {
-          label: '数据库时区',
+          label: i18n.t('packages_business_statistics_schedule_shujukushiqu'),
           value: 'connTZ'
         },
         {
-          label: '此刻',
+          label: i18n.t('packages_business_statistics_schedule_cike'),
           value: 'current'
         }
       ],
@@ -343,20 +372,20 @@ export default {
       // 结构迁移
       this.structureColumns = [
         {
-          label: this.$t('task_info_source_database'),
+          label: this.$t('packages_business_task_info_source_database'),
           prop: 'connectionName'
         },
         {
-          label: this.$t('task_info_source_table'),
+          label: this.$t('packages_business_task_info_source_table'),
           prop: 'table'
         },
         {
-          label: this.$t('task_info_schedule'),
+          label: this.$t('packages_business_task_info_schedule'),
           prop: 'schedule',
           slotName: 'schedule'
         },
         {
-          label: this.$t('task_monitor_status'),
+          label: this.$t('packages_business_task_monitor_status'),
           prop: 'status',
           slotName: 'status'
         }
@@ -364,32 +393,32 @@ export default {
       // 增量同步
       this.cdcColumns = [
         {
-          label: this.$t('task_info_srcName'),
+          label: this.$t('packages_business_task_info_srcName'),
           prop: 'srcName'
         },
         {
-          label: this.$t('task_info_srcTableName'),
+          label: this.$t('packages_business_task_info_srcTableName'),
           prop: 'srcTableName'
         },
         {
-          label: this.$t('task_info_tgtName'),
+          label: this.$t('packages_business_task_info_tgtName'),
           prop: 'tgtName'
         },
         {
-          label: this.$t('task_info_tgtTableName'),
+          label: this.$t('packages_business_task_info_tgtTableName'),
           prop: 'tgtTableName'
         },
         {
-          label: this.$t('task_info_cdc_delay'),
+          label: this.$t('packages_business_task_info_cdc_delay'),
           prop: 'delay'
         },
         {
-          label: this.$t('task_info_cdc_time'),
+          label: this.$t('packages_business_task_info_cdc_time'),
           prop: 'cdcTime',
           dataType: 'time'
         },
         {
-          label: this.$t('column_operation'),
+          label: this.$t('packages_business_column_operation'),
           prop: 'operation',
           slotName: 'operation'
         }
@@ -397,40 +426,40 @@ export default {
       // 全量同步
       this.columns = [
         {
-          label: this.$t('task_info_srcName'),
+          label: this.$t('packages_business_task_info_srcName'),
           prop: 'srcName'
         },
         {
-          label: this.$t('task_info_source_table'),
+          label: this.$t('packages_business_task_info_source_table'),
           prop: 'srcTableName'
         },
         {
-          label: this.$t('task_info_data_row'),
+          label: this.$t('packages_business_task_info_data_row'),
           prop: 'totalNum',
           slotName: 'totalNum'
         },
         {
-          label: this.$t('task_info_tgtName'),
+          label: this.$t('packages_business_task_info_tgtName'),
           prop: 'tgtName',
           width: 150
         },
         {
-          label: this.$t('task_info_target_table'),
+          label: this.$t('packages_business_task_info_target_table'),
           prop: 'tgtTableName',
           showOverflowTooltip: true,
           width: 200
         },
         {
-          label: this.$t('task_info_amount_sync_data'),
+          label: this.$t('packages_business_task_info_amount_sync_data'),
           prop: 'finishNumber'
         },
         {
-          label: this.$t('task_info_schedule'),
+          label: this.$t('packages_business_task_info_schedule'),
           prop: 'progress',
           slotName: 'progress'
         },
         {
-          label: this.$t('task_monitor_status'),
+          label: this.$t('packages_business_task_monitor_status'),
           prop: 'status',
           slotName: 'status'
         }
@@ -446,12 +475,12 @@ export default {
     getSearchItems() {
       this.filterItems = [
         {
-          label: this.$t('task_info_table_name'),
+          label: this.$t('packages_business_task_info_table_name'),
           key: 'tableName',
           type: 'input'
         },
         {
-          label: this.$t('task_monitor_status'),
+          label: this.$t('packages_business_task_monitor_status'),
           key: 'type',
           type: 'select',
           items: []
@@ -550,17 +579,17 @@ export default {
           }
         }
         if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-          r = 1 + this.$t('taskProgress.m')
+          r = 1 + this.$t('packages_business_taskProgress_m')
         }
-        // r = parseInt(s) + i18n.t('timeToLive.s')
+        // r = parseInt(s) + this.$t('packages_business_timeToLive_s')
         if (m > 0) {
-          r = parseInt(m) + this.$t('taskProgress.m')
+          r = parseInt(m) + this.$t('packages_business_taskProgress_m')
         }
         if (h > 0) {
-          r = parseInt(h) + this.$t('taskProgress.h') + r
+          r = parseInt(h) + this.$t('packages_business_taskProgress_h') + r
         }
         if (d > 0) {
-          r = parseInt(d) + this.$t('taskProgress.d') + r
+          r = parseInt(d) + this.$t('packages_business_taskProgress_d') + r
         }
         return r
       }
@@ -573,7 +602,7 @@ export default {
     },
     handleClear(row) {
       subtaskApi.clearIncrease(this.id, row.srcId, row.tgtId).then(() => {
-        this.$message.success(this.$t('message_update_success'))
+        this.$message.success(this.$t('packages_business_message_update_success'))
       })
     },
     handleRollback(row) {
@@ -600,7 +629,7 @@ export default {
       }
       subtaskApi.rollbackIncrease(this.id, this.currentRow.srcId, this.currentRow.tgtId, params).then(() => {
         this.rollbackVisible = false
-        this.$message.success(this.$t('message_update_success'))
+        this.$message.success(this.$t('packages_business_message_update_success'))
       })
     }
   }

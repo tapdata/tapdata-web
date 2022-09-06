@@ -1,25 +1,27 @@
 <template>
   <div class="event-chart">
     <ElRadioGroup v-if="showAll" v-model="dataType" size="mini" class="event-chart__radio" @change="loadBarData">
-      <ElRadioButton :label="0">任务运行累计</ElRadioButton>
-      <ElRadioButton :label="1">所选周期累计</ElRadioButton>
+      <ElRadioButton :label="0">{{ $t('packages_dag_components_eventchart_renwuyunxinglei') }}</ElRadioButton>
+      <ElRadioButton :label="1">{{ $t('packages_dag_components_eventchart_suoxuanzhouqilei') }}</ElRadioButton>
     </ElRadioGroup>
     <div v-if="total" class="total-line flex align-items-center">
       <ElTooltip transition="tooltip-fade-in" :content="total.input.toLocaleString()">
         <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.input) }}</span>
       </ElTooltip>
-      <span class="ml-2">总输入</span>
+      <span class="ml-2">{{ $t('packages_dag_components_eventchart_zongshuru') }}</span>
       <ElDivider direction="vertical" class="divider mx-4"></ElDivider>
       <ElTooltip transition="tooltip-fade-in" :content="total.output.toLocaleString()">
         <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.output) }}</span>
       </ElTooltip>
-      <span class="ml-2">总输出</span>
+      <span class="ml-2">{{ $t('packages_dag_components_eventchart_zongshuchu') }}</span>
     </div>
     <Chart :extend="options" :style="{ height }"></Chart>
   </div>
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { Chart } from '@tap/component'
 import { calcUnit } from '@tap/shared'
 
@@ -33,7 +35,10 @@ export default {
     },
     yData: {
       type: Array,
-      default: () => ['总输入', '总输出']
+      default: () => [
+        i18n.t('packages_dag_components_eventchart_zongshuru'),
+        i18n.t('packages_dag_components_eventchart_zongshuchu')
+      ]
     },
     height: {
       type: String,
@@ -147,17 +152,17 @@ export default {
       this.total.output = eval(Object.values(outData).join('+'))
       let arr = [
         {
-          label: '插入',
+          label: i18n.t('packages_dag_components_eventchart_charu'),
           key: 'InsertTotal',
           color: '#88DBDA'
         },
         {
-          label: '更新',
+          label: i18n.t('packages_dag_components_eventchart_gengxin'),
           key: 'UpdateTotal',
           color: '#6ACA26'
         },
         {
-          label: '删除',
+          label: i18n.t('packages_dag_button_delete'),
           key: 'DeleteTotal',
           color: '#FDD746'
         },
@@ -167,7 +172,7 @@ export default {
           color: '#B682CE'
         },
         {
-          label: '其他',
+          label: i18n.t('packages_dag_components_eventchart_qita'),
           key: 'OthersTotal',
           color: '#00A1F1'
         }

@@ -1,6 +1,7 @@
+import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue-demi'
 import { metadataInstancesApi } from '@tap/api'
-import OverflowTooltip from 'web-core/components/overflow-tooltip'
+import { OverflowTooltip } from '@tap/component'
 import './style.scss'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -37,7 +38,7 @@ export const TableListCard = observer(
         return (
           <ElCard class="table-list-card" shadow="never">
             <div slot="header" class="clearfix">
-              <span>表名</span>
+              <span>{i18n.t('packages_form_field_mapping_list_biaoming')}</span>
               {!loading.value && <span class="font-color-light float-end">{list.value.length}</span>}
             </div>
             <RecycleScroller

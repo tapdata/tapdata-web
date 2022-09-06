@@ -6,9 +6,9 @@
       ref="leftPanel"
       class="flex-1"
       :data="sourceData"
-      :title="titles[0] || t('transfer_titles.0')"
+      :title="titles[0] || $t('packages_component_transfer_titles_0')"
       :default-checked="leftDefaultChecked"
-      :placeholder="filterPlaceholder || t('filter_placeholder')"
+      :placeholder="filterPlaceholder || $t('packages_component_filter_placeholder')"
       @checked-change="onSourceCheckedChange"
     >
       <slot name="left" :option="option"></slot>
@@ -67,9 +67,9 @@
         ref="rightPanel"
         class="w-100 mb-4"
         :data="rightTopData"
-        :title="titles[1] || t('transfer_titles.1')"
+        :title="titles[1] || $t('packages_component_transfer_titles_1')"
         :default-checked="rightTopDefaultChecked"
-        :placeholder="filterPlaceholder || t('filter_placeholder')"
+        :placeholder="filterPlaceholder || $t('packages_component_filter_placeholder')"
         @checked-change="onTargetCheckedChange('top', ...arguments)"
       >
         <slot name="right" :option="option"></slot>
@@ -81,9 +81,9 @@
         ref="rightPanel"
         class="w-100"
         :data="rightBottomData"
-        :title="titles[2] || t('transfer_titles.1')"
+        :title="titles[2] || $t('packages_component_transfer_titles_1')"
         :default-checked="rightBottomDefaultChecked"
-        :placeholder="filterPlaceholder || t('filter_placeholder')"
+        :placeholder="filterPlaceholder || $t('packages_component_filter_placeholder')"
         @checked-change="onTargetCheckedChange('bottom', ...arguments)"
       >
         <slot name="right" :option="option"></slot>
@@ -96,13 +96,11 @@
 <script>
 import { Transfer } from 'element-ui'
 import { VirtualTransferPanel } from '@tap/component'
-import Locale from '../mixins/locale'
 
 export default {
   name: 'MqTransfer',
   components: { VirtualTransferPanel },
   extends: Transfer,
-  mixins: [Locale],
   props: {
     topValue: {
       type: Array,

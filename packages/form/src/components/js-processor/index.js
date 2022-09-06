@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, onUnmounted } from 'vue-demi'
 import { FormItem, JsEditor } from '../index'
 import { VCodeEditor, VirtualSelect } from '@tap/component'
@@ -87,12 +88,12 @@ export const JsProcessor = observer(
         queryTimes++
         clearTimeout(timer)
         if (queryTimes > 5) {
-          runningText.value = '仍在拼命加载中，请耐心等待'
+          runningText.value = i18n.t('packages_form_js_processor_index_rengzaipinmingjia')
         }
 
         if (queryTimes > 10) {
           resetQuery()
-          root.$message.error('请求超时，请重试')
+          root.$message.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
           return
         }
         handleQuery()
@@ -123,7 +124,7 @@ export const JsProcessor = observer(
         editorProps.options.readOnly = props.disabled
         return (
           <div class="js-processor font-color-light">
-            <FormItem.BaseItem asterisk label="脚本">
+            <FormItem.BaseItem asterisk label={i18n.t('packages_form_js_processor_index_jiaoben')}>
               <JsEditor
                 value={props.value}
                 onChange={val => {
@@ -139,7 +140,7 @@ export const JsProcessor = observer(
               />
             </FormItem.BaseItem>
 
-            <FormItem.BaseItem label="模型声明">
+            <FormItem.BaseItem label={i18n.t('packages_form_js_processor_index_moxingshengming')}>
               <JsEditor
                 value={form.values.declareScript}
                 onChange={val => {
@@ -154,7 +155,13 @@ export const JsProcessor = observer(
             </FormItem.BaseItem>
 
             <div class="flex align-center">
-              <FormItem.BaseItem asterisk class="flex-1 mr-4" label="选择表" layout="horizontal" feedbackLayout="none">
+              <FormItem.BaseItem
+                asterisk
+                class="flex-1 mr-4"
+                label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
+                layout="horizontal"
+                feedbackLayout="none"
+              >
                 <VirtualSelect
                   value={params.tableName}
                   filterable
@@ -168,7 +175,11 @@ export const JsProcessor = observer(
                 />
               </FormItem.BaseItem>
               <div class="flex-1 flex justify-content-between">
-                <FormItem.BaseItem label="数据行数" layout="horizontal" feedbackLayout="none">
+                <FormItem.BaseItem
+                  label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
+                  layout="horizontal"
+                  feedbackLayout="none"
+                >
                   <ElInputNumber
                     style="width: 100px;"
                     value={params.rows}
@@ -186,13 +197,13 @@ export const JsProcessor = observer(
                   type="primary"
                   size="small"
                 >
-                  试运行
+                  {i18n.t('packages_form_js_processor_index_shiyunxing')}
                 </ElButton>
               </div>
             </div>
 
             <div class="flex" v-loading={running.value} element-loading-text={runningText.value}>
-              <FormItem.BaseItem class="flex-1 mr-4" label="调试输入">
+              <FormItem.BaseItem class="flex-1 mr-4" label={i18n.t('packages_form_js_processor_index_tiaoshishuru')}>
                 <VCodeEditor
                   class="border rounded-2 py-0"
                   value={inputRef.value}
@@ -203,7 +214,7 @@ export const JsProcessor = observer(
                 ></VCodeEditor>
               </FormItem.BaseItem>
 
-              <FormItem.BaseItem class="flex-1" label="结果输出">
+              <FormItem.BaseItem class="flex-1" label={i18n.t('packages_form_js_processor_index_jieguoshuchu')}>
                 <VCodeEditor
                   class="border rounded-2 py-0"
                   value={outputRef.value}

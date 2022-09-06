@@ -27,7 +27,7 @@
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ t('task_preview_status_' + result[0].status) }}
+          {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
         </span>
       </template>
     </TopHeader>
@@ -52,7 +52,7 @@
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ t('task_preview_status_' + result[0].status) }}
+              {{ $t('packages_dag_task_preview_status_' + result[0].status) }}
             </span>
           </template>
         </LeftSider>
@@ -143,16 +143,17 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
 
-import { VExpandXTransition, VEmpty } from '@tap/component'
+import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
 import { measurementApi, taskApi } from '@tap/api'
-import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { titleChange } from 'web-core/mixins/titleChange'
-import { showMessage } from 'web-core/mixins/showMessage'
-import resize from 'web-core/directives/resize'
-import VIcon from 'web-core/components/VIcon'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
+import resize from '@tap/component/src/directives/resize'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -166,7 +167,6 @@ import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
-import Locale from './mixins/locale'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
@@ -178,7 +178,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor, Locale],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     VExpandXTransition,
@@ -339,12 +339,12 @@ export default {
     gotoViewer() {},
 
     async validate() {
-      if (!this.dataflow.name) return this.t('editor_cell_validate_empty_name')
+      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter(node => node.type === 'database')
       if (tableNode.length < 2) {
-        return this.t('editor_cell_validate_none_data_node')
+        return this.$t('packages_dag_editor_cell_validate_none_data_node')
       }
 
       await this.validateAllNodes()
@@ -378,17 +378,24 @@ export default {
 
         if (!sourceMap[id] && !targetMap[id]) {
           // 存在没有连线的节点
-          someErrorMsg = `「 ${node.name} 」没有任何连线`
+          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+            val1: node.name
+          })
           return true
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
+          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+            val1: node.name,
+            val2: minInputs
+          })
           return true
         }
 
         if (this.hasNodeError(id)) {
-          someErrorMsg = `「 ${node.name} 」配置异常`
+          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
+            val1: node.name
+          })
           return true
         }
       })
@@ -398,7 +405,7 @@ export default {
       // 根据任务类型(全量、增量),检查不支持此类型的节点
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = '全量+增量'
+        typeName = i18n.t('packages_dag_components_formpanel_quanliangzengliang')
         tableNode.forEach(node => {
           if (
             sourceMap[node.id] &&
@@ -407,36 +414,36 @@ export default {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: '该节点不支持' + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
             })
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
-        typeName = '全量'
+        typeName = i18n.t('packages_dag_task_setting_initial_sync')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: '该节点不支持' + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
             })
           }
         })
       } else if (this.dataflow.type === 'cdc') {
-        typeName = '增量'
+        typeName = i18n.t('packages_dag_task_setting_cdc')
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: '该节点不支持' + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi') + typeName
             })
           }
         })
       }
 
       if (nodeNames.length) {
-        someErrorMsg = `存在不支持${typeName}的节点`
+        someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_cunzaibuzhichi', { val1: typeName })
       }
 
       const accessNodeProcessIdArr = [
@@ -460,7 +467,10 @@ export default {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
+                msg: i18n.t('packages_dag_src_migrationmonitor_gaijiedianbuzhi', {
+                  val1: agent.hostName,
+                  val2: agent.ip
+                })
               })
               isError = true
             }
@@ -519,7 +529,7 @@ export default {
       this.isSaving = true
       try {
         await taskApi.start(this.dataflow.id)
-        this.$message.success(this.t('message_operation_succuess'))
+        this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
         this.loadDataflow(this.dataflow?.id)
       } catch (e) {
@@ -835,10 +845,11 @@ export default {
         try {
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.t('message_resetOk'))
+          this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
+          // this.init()
           this.loadDataflow(this.dataflow?.id)
         } catch (e) {
-          this.handleError(e, this.t('message_resetFailed'))
+          this.handleError(e, this.$t('packages_dag_message_resetFailed'))
         }
       })
     },

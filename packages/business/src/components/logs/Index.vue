@@ -2,14 +2,14 @@
   <div class="debug-logs">
     <CustomerLogs v-if="logsType === 'normal'" :id="id">
       <ElRadioGroup v-if="showAll" v-model="logsType" size="mini">
-        <ElRadioButton label="normal">普通</ElRadioButton>
-        <ElRadioButton label="detailed">详细</ElRadioButton>
+        <ElRadioButton label="normal">{{ $t('packages_business_logs_index_putong') }}</ElRadioButton>
+        <ElRadioButton label="detailed">{{ $t('packages_business_logs_index_xiangxi') }}</ElRadioButton>
       </ElRadioGroup>
     </CustomerLogs>
     <TechnologyLogs v-if="logsType === 'detailed'" :id="id">
       <ElRadioGroup v-if="showAll" v-model="logsType" size="mini">
-        <ElRadioButton label="normal">普通</ElRadioButton>
-        <ElRadioButton label="detailed">详细</ElRadioButton>
+        <ElRadioButton label="normal">{{ $t('packages_business_logs_index_putong') }}</ElRadioButton>
+        <ElRadioButton label="detailed">{{ $t('packages_business_logs_index_xiangxi') }}</ElRadioButton>
       </ElRadioGroup>
     </TechnologyLogs>
   </div>

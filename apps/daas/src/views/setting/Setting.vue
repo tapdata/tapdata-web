@@ -1,7 +1,7 @@
 <template>
   <section class="setting-list-wrap">
     <div class="setting-list-box">
-      <ul class="setting-nav" :style="lang === 'en_US' ? '280px' : '160px'">
+      <ul class="setting-nav" :style="lang === 'en' ? '280px' : '160px'">
         <li
           v-for="(item, index) in formData.items"
           :key="index"
@@ -204,7 +204,7 @@
       </el-row>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" type="primary" @click="emailTemplateDialog = false">{{
-          $t('message.confirm')
+          $t('message_confirm')
         }}</el-button>
       </div>
     </el-dialog>
@@ -213,6 +213,7 @@
 <script>
 import { uniq, find } from 'lodash'
 import { VIcon } from '@tap/component'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
 
@@ -229,7 +230,7 @@ export default {
       alarmData: {}, //告警数据
       activeTab: 0,
       activePanel: 'Log',
-      lang: Cookie.get('lang') || 'en_US',
+      lang: getCurrentLanguage(),
       emailTabs: [
         {
           label: this.$t('setting_Email_Template_Running'),

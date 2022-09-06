@@ -1,9 +1,10 @@
+import i18n from '@tap/i18n'
 import { registerValidateRules } from '@formily/core'
 import { createSchemaField } from '@formily/vue'
 import cronParse from 'cron-parser'
 import * as components from './components'
 import { composeExport } from '@formily/element/lib/__builtins__'
-import locale from './locale'
+import langs from './locale'
 import './style.scss'
 
 registerValidateRules({
@@ -15,7 +16,7 @@ registerValidateRules({
     } catch (e) {
       console.log('cron-rule', e) // eslint-disable-line
     }
-    return rule.message || 'Cron表达式格式有误'
+    return rule.message || i18n.t('packages_form_src_index_cronbiao')
   }
 })
 
@@ -23,6 +24,6 @@ const { SchemaField } = createSchemaField({
   components
 })
 
-export { SchemaField, composeExport, locale }
+export { SchemaField, composeExport, langs }
 
 export * from './components'

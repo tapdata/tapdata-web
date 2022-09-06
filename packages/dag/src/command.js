@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import Vue from 'vue'
 import { NODE_PREFIX } from './constants'
 
@@ -49,11 +50,11 @@ class CommandManager {
  */
 class Command {
   exec() {
-    throw new Error('请实现exec方法！')
+    throw new Error(i18n.t('packages_dag_src_command_qingshixianex'))
   }
 
   undo() {
-    throw new Error('请实现undo方法！')
+    throw new Error(i18n.t('packages_dag_src_command_qingshixianun'))
   }
 }
 

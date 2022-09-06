@@ -2,22 +2,22 @@
   <ElDialog
     width="600px"
     custom-class="import-upload-dialog"
-    :title="$t('modules_dialog_import_title')"
+    :title="$t('packages_business_modules_dialog_import_title')"
     :close-on-click-modal="false"
     :visible.sync="dialogVisible"
     :before-close="handleClose"
   >
     <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
-      <ElFormItem :label="$t('modules_dialog_condition') + ':'">
-        <el-radio v-model="importForm.upsert" :label="1">{{ $t('modules_dialog_overwrite_data') }}</el-radio>
-        <el-radio v-model="importForm.upsert" :label="0">{{ $t('modules_dialog_skip_data') }}</el-radio>
+      <ElFormItem :label="$t('packages_business_modules_dialog_condition') + ':'">
+        <el-radio v-model="importForm.upsert" :label="1">{{ $t('packages_business_modules_dialog_overwrite_data') }}</el-radio>
+        <el-radio v-model="importForm.upsert" :label="0">{{ $t('packages_business_modules_dialog_skip_data') }}</el-radio>
       </ElFormItem>
-      <!--      <ElFormItem :label="$t('modules_dialog_group') + ':'">-->
+      <!--      <ElFormItem :label="$t('packages_business_modules_dialog_group') + ':'">-->
       <!--        <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">-->
       <!--          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>-->
       <!--        </ElSelect>-->
       <!--      </ElFormItem>-->
-      <ElFormItem :label="$t('modules_dialog_file') + ':'">
+      <ElFormItem :label="$t('packages_business_modules_dialog_file') + ':'">
         <ElUpload
           class="upload-demo"
           ref="upload"
@@ -30,14 +30,14 @@
         >
           <ElLink type="primary" plain slot="trigger" size="mini">
             <VIcon class="mr-1 link-primary">upload</VIcon>
-            {{ $t('modules_dialog_upload_files') }}</ElLink
+            {{ $t('packages_business_modules_dialog_upload_files') }}</ElLink
           >
         </ElUpload>
       </ElFormItem>
     </ElForm>
     <span slot="footer" class="dialog-footer">
-      <ElButton @click="handleClose" size="mini">{{ $t('button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('button_confirm') }}</ElButton>
+      <ElButton @click="handleClose" size="mini">{{ $t('packages_business_button_cancel') }}</ElButton>
+      <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('packages_business_button_confirm') }}</ElButton>
     </span>
   </ElDialog>
 </template>
@@ -124,9 +124,9 @@ export default {
 
     handleSuccess(response) {
       if (response.code === '110500' || response.code === '110401') {
-        this.$message.error(this.$t('message_upload_fail'))
+        this.$message.error(this.$t('packages_business_message_upload_fail'))
       } else {
-        this.$message.success(this.$t('message_upload_success'))
+        this.$message.success(this.$t('packages_business_message_upload_success'))
       }
     },
 

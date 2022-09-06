@@ -4,30 +4,32 @@
       <main class="connection-from-main">
         <div class="connection-from-title">
           {{
-            $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
+            $route.params.id
+              ? this.$t('packages_business_connection_form_edit_connection')
+              : this.$t('packages_business_connection_form_creat_connection')
           }}
         </div>
         <div class="connection-from-label" v-if="$route.params.id">
-          <label class="label">{{ $t('connection_form_connection_name') }}: </label>
+          <label class="label">{{ $t('packages_business_connection_form_connection_name') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
             </div>
             <div class="content ml-2">{{ model.name }}</div>
             <div class="addBtn cursor-pointer color-primary ml-2" @click="dialogEditNameVisible = true">
-              {{ $t('connection_form_rename') }}
+              {{ $t('packages_business_connection_form_rename') }}
             </div>
           </div>
         </div>
         <div class="connection-from-label" v-else>
-          <label class="label">{{ $t('connection_form_data_source_type') }}:</label>
+          <label class="label">{{ $t('packages_business_connection_form_data_source_type') }}:</label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
             </div>
             <span class="ml-2">{{ pdkOptions.name }}</span>
             <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
-              {{ $t('connection_form_change') }}
+              {{ $t('packages_business_connection_form_change') }}
             </el-button>
           </div>
         </div>
@@ -45,19 +47,19 @@
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
                 <span>
-                  {{ $t('connection.status.invalid') }}
+                  {{ $t('packages_business_connection_status_invalid') }}
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
                 <i class="el-icon-success"></i>
                 <span>
-                  {{ $t('connection.status.ready') }}
+                  {{ $t('packages_business_connection_status_ready') }}
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
                 <i class="el-icon-warning"></i>
                 <span>
-                  {{ $t('connection.status.testing') }}
+                  {{ $t('packages_business_connection_status_testing') }}
                 </span>
               </span>
             </span>
@@ -65,10 +67,12 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn">
-            <el-button size="mini" @click="goBack()">{{ $t('button_back') }}</el-button>
-            <el-button size="mini" class="test" @click="startTest()">{{ $t('connection_list_test_button') }}</el-button>
+            <el-button size="mini" @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
+            <el-button size="mini" class="test" @click="startTest()">{{
+              $t('packages_business_connection_list_test_button')
+            }}</el-button>
             <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
-              {{ $t('button_save') }}
+              {{ $t('packages_business_button_save') }}
             </el-button>
           </div>
         </footer>
@@ -81,7 +85,7 @@
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
     <el-dialog
-      :title="$t('connection.rename')"
+      :title="$t('packages_business_connection_rename')"
       :close-on-click-modal="false"
       :visible.sync="dialogEditNameVisible"
       width="30%"
@@ -90,14 +94,14 @@
         <el-form-item prop="rename">
           <el-input v-model="renameData.rename" maxlength="100" show-word-limit></el-input>
         </el-form-item>
-        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
-          >中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
-        >
+        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
+          $t('packages_business_connections_databaseform_zhongyingkaitouge')
+        }}</span>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</el-button>
+        <el-button @click="handleCancelRename" size="mini">{{ $t('packages_business_button_cancel') }}</el-button>
         <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('button_confirm')
+          $t('packages_business_button_confirm')
         }}</el-button>
       </span>
     </el-dialog>
@@ -105,9 +109,19 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { action } from '@formily/reactive'
 
-import { clusterApi, connectionsApi, databaseTypesApi, logcollectorApi, pdkApi, settingsApi } from '@tap/api'
+import {
+  clusterApi,
+  connectionsApi,
+  databaseTypesApi,
+  logcollectorApi,
+  pdkApi,
+  settingsApi,
+  commandApi
+} from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import Test from './Test'
@@ -123,9 +137,14 @@ export default {
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
-        callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
+        callback(
+          new Error(
+            this.$t('packages_business_dataForm_form_connectionName') +
+              this.$t('packages_business_formBuilder_noneText')
+          )
+        )
       } else if (!checkConnectionName(this.renameData.rename)) {
-        callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
+        callback(new Error(i18n.t('packages_business_connections_databaseform_mingchengguizezhong')))
       } else {
         callback()
       }
@@ -176,12 +195,14 @@ export default {
       logcollectorApi.patchSystemConfig(digSettingForm)
     },
     goBack() {
-      let msg = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
+      let msg = this.$route.params.id
+        ? i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
+        : i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
       // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
 
       this.$confirm(msg, '', {
-        confirmButtonText: this.$t('connection_form_give_up'),
-        cancelButtonText: this.$t('button_cancel'),
+        confirmButtonText: this.$t('packages_business_connection_form_give_up'),
+        cancelButtonText: this.$t('packages_business_button_cancel'),
         type: 'warning',
         showClose: false
       }).then(resFlag => {
@@ -247,7 +268,7 @@ export default {
             this.buried('connectionSubmit', '', {
               result: true
             })
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('packages_business_message_saveOK'))
             if (this.$route.query.step) {
               this.$router.push({
                 name: 'connections',
@@ -265,7 +286,7 @@ export default {
             this.buried('connectionSubmit', '', {
               result: false
             })
-            this.$message.error(err?.data?.message || this.$t('message.saveFail'))
+            this.$message.error(err?.data?.message || this.$t('packages_business_message_saveFail'))
           })
           .finally(() => {
             this.submitBtnLoading = false
@@ -341,7 +362,7 @@ export default {
                 }
               })
               this.$refs['renameForm'].clearValidate()
-              this.$message.success(this.$t('message_save_ok'))
+              this.$message.success(this.$t('packages_business_message_save_ok'))
               this.dialogEditNameVisible = false
             })
             .catch(err => {
@@ -350,12 +371,12 @@ export default {
               this.editBtnLoading = false
               if (err && err.response) {
                 if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(this.$t('dataForm.error.connectionNameExist'))
+                  this.$message.error(this.$t('packages_business_dataForm_error_connectionNameExist'))
                 } else {
                   this.$message.error(err.response.msg)
                 }
               } else {
-                this.$message.error(this.$t('dataForm.saveFail'))
+                this.$message.error(this.$t('packages_business_dataForm_saveFail'))
               }
             })
         }
@@ -378,24 +399,24 @@ export default {
       this.pdkOptions = data || {}
       let connectionTypeJson = {
         type: 'string',
-        title: this.$t('connection_form_connection_type'),
+        title: this.$t('packages_business_connection_form_connection_type'),
         required: true,
         default: this.pdkOptions.connectionType || 'source_and_target',
         enum: [
           {
-            label: this.$t('connection_form_source_and_target'),
+            label: this.$t('packages_business_connection_form_source_and_target'),
             value: 'source_and_target',
-            tip: this.$t('connection_form_source_and_target_tip')
+            tip: this.$t('packages_business_connection_form_source_and_target_tip')
           },
           {
-            label: this.$t('connection_form_source'),
+            label: this.$t('packages_business_connection_form_source'),
             value: 'source',
-            tip: this.$t('connection_form_source_tip')
+            tip: this.$t('packages_business_connection_form_source_tip')
           },
           {
-            label: this.$t('connection_form_target'),
+            label: this.$t('packages_business_connection_form_target'),
             value: 'target',
-            tip: this.$t('connection_form_target_tip')
+            tip: this.$t('packages_business_connection_form_target_tip')
           }
         ],
         'x-decorator': 'FormItem',
@@ -410,17 +431,17 @@ export default {
       if (this.pdkOptions.connectionType === 'source') {
         connectionTypeJson.enum = [
           {
-            label: this.$t('connection_form_source'),
+            label: this.$t('packages_business_connection_form_source'),
             value: 'source',
-            tip: this.$t('connection_form_source_tip')
+            tip: this.$t('packages_business_connection_form_source_tip')
           }
         ]
       } else if (this.pdkOptions.connectionType === 'target') {
         connectionTypeJson.enum = [
           {
-            label: this.$t('connection_form_target'),
+            label: this.$t('packages_business_connection_form_target'),
             value: 'target',
-            tip: this.$t('connection_form_target_tip')
+            tip: this.$t('packages_business_connection_form_target_tip')
           }
         ]
       }
@@ -444,14 +465,14 @@ export default {
         END.properties.__TAPDATA.properties.shareCdcEnable = {
           type: 'boolean',
           default: false,
-          title: this.$t('connection_form_shared_mining'),
+          title: this.$t('packages_business_connection_form_shared_mining'),
           'x-decorator': 'FormItem',
           'x-decorator-props': {
-            tooltip: this.$t('connection_form_shared_mining_tip')
+            tooltip: this.$t('packages_business_connection_form_shared_mining_tip')
           },
           'x-component': 'Switch',
           'x-component-props': {
-            placeholder: this.$t('connection_form_shared_mining_tip')
+            placeholder: this.$t('packages_business_connection_form_shared_mining_tip')
           }
         }
         // 共享挖掘设置
@@ -481,7 +502,7 @@ export default {
             },
             persistenceMongodb_collection: {
               type: 'string',
-              title: this.$t('share_form_setting_table_name'),
+              title: this.$t('packages_business_share_form_setting_table_name'),
               required: true,
               'x-decorator': 'FormItem',
               'x-component': 'Input',
@@ -496,37 +517,37 @@ export default {
             },
             share_cdc_ttl_day: {
               type: 'string',
-              title: this.$t('share_form_setting_log_time'),
+              title: this.$t('packages_business_share_form_setting_log_time'),
               required: true,
               'x-decorator': 'FormItem',
               default: 3,
               enum: [
                 {
-                  label: 1 + this.$t('share_form_edit_day'),
+                  label: 1 + this.$t('packages_business_share_form_edit_day'),
                   value: 1
                 },
                 {
-                  label: 2 + this.$t('share_form_edit_day'),
+                  label: 2 + this.$t('packages_business_share_form_edit_day'),
                   value: 2
                 },
                 {
-                  label: 3 + this.$t('share_form_edit_day'),
+                  label: 3 + this.$t('packages_business_share_form_edit_day'),
                   value: 3
                 },
                 {
-                  label: 4 + this.$t('share_form_edit_day'),
+                  label: 4 + this.$t('packages_business_share_form_edit_day'),
                   value: 4
                 },
                 {
-                  label: 5 + this.$t('share_form_edit_day'),
+                  label: 5 + this.$t('packages_business_share_form_edit_day'),
                   value: 5
                 },
                 {
-                  label: 6 + this.$t('share_form_edit_day'),
+                  label: 6 + this.$t('packages_business_share_form_edit_day'),
                   value: 6
                 },
                 {
-                  label: 7 + this.$t('share_form_edit_day'),
+                  label: 7 + this.$t('packages_business_share_form_edit_day'),
                   value: 7
                 }
               ],
@@ -572,7 +593,7 @@ export default {
       //       'x-decorator': 'FormItem',
       //       'x-component': 'Input.TextArea',
       //       'x-component-props': {
-      //         placeholder: this.$t('connection_form_database_owner_tip')
+      //         placeholder: this.$t('packages_business_connection_form_database_owner_tip')
       //       },
       //       'x-decorator-props': {
       //         colon: false
@@ -591,16 +612,16 @@ export default {
       // }
       END.properties.__TAPDATA.properties.accessNodeType = {
         type: 'string',
-        title: this.$t('connection_form_access_node'),
+        title: this.$t('packages_business_connection_form_access_node'),
         default: 'AUTOMATIC_PLATFORM_ALLOCATION',
         'x-decorator': 'FormItem',
         'x-decorator-props': {
-          tooltip: this.$t('connection_form_access_node_tip')
+          tooltip: this.$t('packages_business_connection_form_access_node_tip')
         },
         'x-component': 'Select',
         enum: [
-          { label: this.$t('connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-          { label: this.$t('connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+          { label: this.$t('packages_business_connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+          { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
         ],
         'x-reactions': [
           {
@@ -643,7 +664,7 @@ export default {
                 properties: {
                   name: {
                     type: 'string',
-                    title: this.$t('connection_form_connection_name'),
+                    title: this.$t('packages_business_connection_form_connection_name'),
                     required: true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Input'
@@ -657,7 +678,10 @@ export default {
                       colon: false
                     },
                     'x-component': 'Text',
-                    'x-component-props': { icon: 'info', content: this.$t('connection_form_source_and_target_tip') },
+                    'x-component-props': {
+                      icon: 'info',
+                      content: this.$t('packages_business_connection_form_source_and_target_tip')
+                    },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {
@@ -675,7 +699,10 @@ export default {
                       colon: false
                     },
                     'x-component': 'Text',
-                    'x-component-props': { icon: 'info', content: this.$t('connection_form_source_tip') },
+                    'x-component-props': {
+                      icon: 'info',
+                      content: this.$t('packages_business_connection_form_source_tip')
+                    },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {
@@ -691,7 +718,10 @@ export default {
                       colon: false
                     },
                     'x-component': 'Text',
-                    'x-component-props': { icon: 'info', content: this.$t('connection_form_target_tip') },
+                    'x-component-props': {
+                      icon: 'info',
+                      content: this.$t('packages_business_connection_form_target_tip')
+                    },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {
@@ -736,6 +766,33 @@ export default {
               }
             }) || []
           )
+        },
+        loadCommand: async filter => {
+          const { pdkId, group, version } = this.pdkOptions
+          const { $values, command, page, size } = filter
+          let params = {
+            pdkId,
+            group,
+            version,
+            connectionConfig: $values,
+            command: command,
+            action: 'list',
+            argMap: {
+              page,
+              size
+            }
+          }
+          const searchLabel = filter.where?.label
+          if (searchLabel) {
+            params.action = 'search'
+            params.argMap.key = searchLabel?.like
+          }
+          try {
+            let result = await commandApi.codding(params)
+            return result
+          } catch (e) {
+            return { total: 0, items: [] }
+          }
         }
       }
       this.schemaData = result

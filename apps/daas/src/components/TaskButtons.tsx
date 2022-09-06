@@ -24,7 +24,7 @@ export default defineComponent({
     const getConfirmMessage = operateStr => {
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'
-      let strArr = $t('dataFlow.' + message).split('xxx')
+      let strArr = $t('dataFlow_' + message).split('xxx')
       let msg = `
         <p>
           ${strArr[0]}
@@ -33,7 +33,7 @@ export default defineComponent({
         </p>`
       return {
         msg,
-        title: $t('dataFlow.' + title)
+        title: $t('dataFlow_' + title)
       }
     }
     // 启动任务

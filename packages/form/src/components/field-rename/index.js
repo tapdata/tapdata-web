@@ -1,16 +1,15 @@
+import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import { VIcon } from '@tap/component'
 import { convertSchemaToTreeData } from './util'
 import './index.scss'
-import Locale from '../../mixins/locale'
 
 export const FieldRename = connect(
   observer(
     defineComponent({
       props: ['loading', 'options', 'disabled'],
-      mixins: [Locale],
       setup() {
         const formRef = useForm()
         const form = formRef.value
@@ -63,8 +62,12 @@ export const FieldRename = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block ml-6">源字段名</span>
-              <span class="flex-1 text inline-block">目标字段名</span>
+              <span class="flex-1 text inline-block ml-6">
+                {i18n.t('packages_form_field_rename_index_yuanziduanming')}
+              </span>
+              <span class="flex-1 text inline-block">
+                {i18n.t('packages_form_field_rename_index_mubiaoziduanming')}
+              </span>
               <span class="field-ops  inline-block mr-12">
                 <VIcon
                   class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
@@ -255,7 +258,7 @@ export const FieldRename = connect(
           if (node && node.parent && node.parent.childNodes) {
             let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
             if (parentNode && parentNode.length === 2) {
-              this.$message.error(data.field_name + this.t('message_exists_name'))
+              this.$message.error(data.field_name + this.$t('packages_form_message_exists_name'))
               exist = true
             }
           }

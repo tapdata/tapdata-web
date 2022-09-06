@@ -6,7 +6,7 @@
   >
     <NodeIcon v-if="activeNode" class="config-node-icon" :node="activeNode" />
     <ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
-      <ElTabPane label="配置">
+      <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')">
         <FormPanel
           v-show="activeType !== 'settings'"
           v-on="$listeners"
@@ -20,7 +20,7 @@
           }"
         />
       </ElTabPane>
-      <ElTabPane v-if="showSchemaPanel" label="模型">
+      <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')">
         <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
       </ElTabPane>
     </ElTabs>
@@ -28,7 +28,7 @@
     <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
       <div class="panel-header flex align-center px-4 border-bottom">
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
-          {{ t('task_stetting_basic_setting') }}
+          {{ $t('packages_dag_task_stetting_basic_setting') }}
         </div>
         <!--<VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>-->
       </div>
@@ -42,15 +42,15 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import 'web-core/directives/resize/index.scss'
-import resize from 'web-core/directives/resize'
+import '@tap/component/src/directives/resize/index.scss'
+import resize from '@tap/component/src/directives/resize'
 import FormPanel from '../FormPanel'
 import { VIcon } from '@tap/component'
-import focusSelect from 'web-core/directives/focusSelect'
+import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import MetaPane from '../MetaPane'
-import Locale from '../../mixins/locale'
+import { TextEditable } from '@tap/component'
 
 export default {
   name: 'ConfigPanel',
@@ -59,8 +59,6 @@ export default {
     resize,
     focusSelect
   },
-
-  mixins: [Locale],
 
   props: {
     onlySetting: Boolean,

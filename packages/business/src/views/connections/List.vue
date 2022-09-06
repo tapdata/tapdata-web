@@ -19,11 +19,16 @@
           size="mini"
           @click="checkTestConnectionAvailable"
         >
-          <span> {{ $t('connection.createNewDataSource') }}</span>
+          <span> {{ $t('packages_business_connection_createNewDataSource') }}</span>
         </ElButton>
       </div>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="180" :label="t('connection_column_name')">
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="name"
+        min-width="180"
+        :label="$t('packages_business_connection_column_name')"
+      >
         <template slot-scope="scope">
           <span class="connection-name">
             <img class="connection-img mr-2" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
@@ -38,29 +43,33 @@
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('connection.connectionInfo')" min-width="200">
+      <ElTableColumn show-overflow-tooltip :label="$t('packages_business_connection_connectionInfo')" min-width="200">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" min-width="80">
+      <ElTableColumn prop="status" :label="$t('packages_business_connection_dataBaseStatus')" min-width="80">
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
-              {{ $t('connection.status.' + row.status) }}
+              {{ $t('packages_business_connection_status_' + row.status) }}
             </span>
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="120" :label="$t('connection.connectionType')">
+      <ElTableColumn prop="connection_type" min-width="120" :label="$t('packages_business_connection_connectionType')">
         <template slot-scope="scope">
-          {{ $t('connection.type.' + scope.row.connection_type) }}
+          {{ $t('packages_business_connection_type_' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="140">
         <div slot="header" class="flex align-center">
-          <span>{{ $t('connection_list_column_schema_status') }}</span>
-          <ElTooltip class="ml-2" placement="top" :content="$t('connection_list_column_schema_status_tips')">
+          <span>{{ $t('packages_business_connection_list_column_schema_status') }}</span>
+          <ElTooltip
+            class="ml-2"
+            placement="top"
+            :content="$t('packages_business_connection_list_column_schema_status_tips')"
+          >
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -72,22 +81,24 @@
         prop="last_updated"
         sortable="last_updated"
         min-width="150"
-        :label="$t('connection.lastUpdateTime')"
+        :label="$t('packages_business_connection_lastUpdateTime')"
       >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="220" :label="$t('connection.operate')">
+      <ElTableColumn width="220" :label="$t('packages_business_connection_operate')">
         <template slot-scope="scope">
-          <ElButton type="text" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElButton>
+          <ElButton type="text" @click="testConnection(scope.row)"
+            >{{ $t('packages_business_connection_list_test_button') }}
+          </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
             v-readonlybtn="'datasource_edition'"
             type="text"
             :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
             @click="edit(scope.row.id, scope.row)"
-            >{{ $t('button_edit') }}
+            >{{ $t('packages_business_button_edit') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
           <ElButton
@@ -95,7 +106,7 @@
             type="text"
             :loading="scope.row.copyLoading"
             @click="copy(scope.row)"
-            >{{ $t('button_copy') }}
+            >{{ $t('packages_business_button_copy') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
           <ElButton
@@ -103,7 +114,7 @@
             type="text"
             :disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}
+            >{{ $t('packages_business_button_delete') }}
           </ElButton>
         </template>
       </ElTableColumn>
@@ -115,9 +126,11 @@
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
-    <ElDialog title="提示" width="40%" :visible.sync="connectionTaskDialog">
-      <span>该连接已被以下任务调用，请删除任务或修改配置后重试</span>
-      <div class="color-primary mt-2">任务总数: {{ connectionTaskListTotal }}</div>
+    <ElDialog :title="$t('packages_business_connections_list_tishi')" width="40%" :visible.sync="connectionTaskDialog">
+      <span>{{ $t('packages_business_connections_list_gailianjieyibei') }}</span>
+      <div class="color-primary mt-2">
+        {{ $t('packages_business_connections_list_renwuzongshu') }}{{ connectionTaskListTotal }}
+      </div>
       <ul class="mt-4">
         <li v-for="item in connectionTaskList" :key="item.id" @click="goTaskList(item)">
           <el-tooltip :content="item.name" placement="right-start">
@@ -141,14 +154,12 @@ import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
-import Locale from '../../mixins/locale'
 
 let timeout = null
 
 export default {
   components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   inject: ['checkAgent', 'buried'],
-  mixins: [Locale],
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
@@ -164,37 +175,37 @@ export default {
       order: 'last_updated DESC',
       databaseModelOptions: [
         {
-          label: this.$t('select_option_all'),
+          label: this.$t('packages_business_select_option_all'),
           value: ''
         },
         {
-          label: this.$t('connection_list_source'),
+          label: this.$t('packages_business_connection_list_source'),
           value: 'source'
         },
         {
-          label: this.$t('connection_list_target'),
+          label: this.$t('packages_business_connection_list_target'),
           value: 'target'
         },
         {
-          label: this.$t('connection_list_source_and_target'),
+          label: this.$t('packages_business_connection_list_source_and_target'),
           value: 'source_and_target'
         }
       ],
       databaseStatusOptions: [
         {
-          label: this.$t('select_option_all'),
+          label: this.$t('packages_business_select_option_all'),
           value: ''
         },
         {
-          label: this.$t('connection_list_efficient'),
+          label: this.$t('packages_business_connection_list_efficient'),
           value: 'ready'
         },
         {
-          label: this.$t('connection_list_invalidation'),
+          label: this.$t('packages_business_connection_list_invalidation'),
           value: 'invalid'
         },
         {
-          label: this.$t('connection_list_testing'),
+          label: this.$t('packages_business_connection_list_testing'),
           value: 'testing'
         }
       ],
@@ -227,9 +238,11 @@ export default {
   created() {
     let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
-      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('connection_list_help_doc') + '</a>'
+      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` +
+      this.$t('packages_business_connection_list_help_doc') +
+      '</a>'
 
-    this.description = this.$t('connection_list_desc') + guideDoc
+    this.description = this.$t('packages_business_connection_list_desc') + guideDoc
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -392,19 +405,19 @@ export default {
         )
         .then(() => {
           this.table.fetch()
-          this.$message.success(this.$t('connection.copyMsg'))
+          this.$message.success(this.$t('packages_business_connection_copyMsg'))
         })
       // .catch(err => {
       //   if (err && err.response) {
       //     if (err.response.msg === 'duplicate source') {
-      //       this.$message.error(this.$t('connection.copyFailedMsg'))
+      //       this.$message.error(this.$t('packages_business_connection_copyFailedMsg'))
       //     }
       //   }
       // })
     },
     remove(row) {
       const h = this.$createElement
-      let strArr = this.$t('connection.deteleDatabaseMsg').split('xxx')
+      let strArr = this.$t('packages_business_connection_deteleDatabaseMsg').split('xxx')
       let msg = h('p', null, [
         strArr[0],
         h(
@@ -430,9 +443,9 @@ export default {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
               if (jobs.length > 0 || modules.length > 0) {
-                this.$message.error(this.$t('connection.checkMsg'))
+                this.$message.error(this.$t('packages_business_connection_checkMsg'))
               } else {
-                this.$message.success(this.$t('message.deleteOK'))
+                this.$message.success(this.$t('packages_business_message_deleteOK'))
                 this.table.fetch()
               }
             })
@@ -481,7 +494,7 @@ export default {
       }
       connectionsApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
-        this.$message.success(this.$t('message_save_ok'))
+        this.$message.success(this.$t('packages_business_message_save_ok'))
       })
     },
     //选择创建类型
@@ -541,9 +554,16 @@ export default {
       if (!data.status || data.status === null) return
       let status = data.status
       if (status === 'ready') {
-        this.$message.success(this.$t('connection.testConnection') + this.$t('connection.status.ready'), false)
+        this.$message.success(
+          this.$t('packages_business_connection_testConnection') + this.$t('packages_business_connection_status_ready'),
+          false
+        )
       } else {
-        this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false)
+        this.$message.error(
+          this.$t('packages_business_connection_testConnection') +
+            this.$t('packages_business_connection_status_invalid'),
+          false
+        )
       }
       this.buried('connectionTest', '', {
         result: status === 'ready'
@@ -553,20 +573,20 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: this.$t('connection_list_status'),
+          label: this.$t('packages_business_connection_list_status'),
           key: 'status',
           type: 'select-inner',
           items: this.databaseStatusOptions,
           selectedWidth: '200px'
         },
         {
-          label: this.$t('connection_list_type'),
+          label: this.$t('packages_business_connection_list_type'),
           key: 'databaseModel',
           type: 'select-inner',
           items: this.databaseModelOptions
         },
         {
-          label: this.$t('connection_list_form_database_type'),
+          label: this.$t('packages_business_connection_list_form_database_type'),
           key: 'databaseType',
           type: 'select-inner',
           menuMinWidth: '250px',
@@ -580,7 +600,7 @@ export default {
             )
             //默认全部
             let all = {
-              name: this.$t('select_option_all'),
+              name: this.$t('packages_business_select_option_all'),
               type: ''
             }
             databaseTypeOptions.unshift(all)
@@ -593,7 +613,7 @@ export default {
           }
         },
         {
-          placeholder: this.$t('connection_list_name'),
+          placeholder: this.$t('packages_business_connection_list_name'),
           key: 'keyword',
           type: 'input'
         }

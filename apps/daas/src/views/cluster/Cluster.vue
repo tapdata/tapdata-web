@@ -12,14 +12,14 @@
               size="mini"
               v-model="sourch"
               :debounce="800"
-              :placeholder="$t('cluster.placeholderServer')"
+              :placeholder="$t('cluster_placeholderServer')"
               @input="getDataApi"
             >
             </el-input>
           </li>
           <li>
             <el-button type="text" class="restBtn" size="mini" @click="rest()">
-              {{ $t('button.reset') }}
+              {{ $t('button_reset') }}
             </el-button>
           </li>
         </ul> -->
@@ -242,7 +242,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      :title="$t('cluster.agentSetting')"
+      :title="$t('cluster_agentSetting')"
       custom-class="serverDialog"
       :visible.sync="editAgentDialog"
       :lock-scroll="false"

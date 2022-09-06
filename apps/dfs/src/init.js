@@ -13,6 +13,8 @@ import store from '@/store'
 import { errorConfirmFnc } from '@/util'
 import VConfirm from '@/components/v-confirm'
 import { startTimeOnSite, startTimeOnPage } from '@/plugins/buried'
+import { VIcon, VButton } from '@tap/component'
+import FormBuilder from '@tap/component/src/form-builder'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -27,6 +29,10 @@ VueRouter.prototype.replace = function replace(location) {
 }
 Vue.use(VueRouter)
 Vue.use(TapdataWebCore)
+Vue.use(FormBuilder)
+
+Vue.component(VIcon.name, VIcon)
+Vue.component(VButton.name, VButton)
 
 Vue.prototype.$confirm = (message, title, options) => {
   return new Promise((resolve, reject) => {

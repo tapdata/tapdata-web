@@ -10,13 +10,15 @@
     <div>
       <ElInput v-model="current"></ElInput>
       <div class="btn-row">
-        <ElButton type="primary" @click="confirm">{{ $t('gl_button_confirm') }}</ElButton>
-        <ElButton @click="cancel">{{ $t('gl_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="confirm">{{ $t('packages_component_gl_button_confirm') }}</ElButton>
+        <ElButton @click="cancel">{{ $t('packages_component_gl_button_cancel') }}</ElButton>
       </div>
     </div>
     <div slot="reference" class="inner-select">
       <span v-if="!!label" class="inner-select__title">{{ label }}</span>
-      <span :class="['inner-select__value', { placeholder: !value }]">{{ value || '请输入' }}</span>
+      <span :class="['inner-select__value', { placeholder: !value }]">{{
+        value || $t('packages_component_formBuilder_input_placeholderPrefix')
+      }}</span>
       <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
     </div>

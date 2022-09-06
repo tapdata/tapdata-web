@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapGetters } from 'vuex'
 import { createForm } from '@formily/core'
 // import { observable } from '@formily/reactive'
@@ -10,19 +12,17 @@ import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
 import { taskApi } from '@tap/api'
-import Locale from '../../mixins/locale'
 
 export default observer({
   name: 'SettingPanel',
   components: { FormRender },
-  mixins: [Locale],
   props: {
     settings: Object,
     scope: Object
   },
 
   data() {
-    let repeatNameMessage = this.t('task_form_error_name_duplicate')
+    let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
     this.getAllNode()
     let values = this.settings
     return {
@@ -41,7 +41,7 @@ export default observer({
             type: 'void',
             properties: {
               name: {
-                title: this.t('task_stetting_name'), //任务名称
+                title: this.$t('packages_dag_task_stetting_name'), //任务名称
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
@@ -59,28 +59,28 @@ export default observer({
                   }}}`
               },
               type: {
-                title: this.t('task_setting_sync_type'),
+                title: this.$t('packages_dag_task_setting_sync_type'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
                 default: 'initial_sync+cdc',
                 enum: [
                   {
-                    label: this.t('task_setting_initial_sync_cdc'), //全量+增量
+                    label: this.$t('packages_dag_task_setting_initial_sync_cdc'), //全量+增量
                     value: 'initial_sync+cdc'
                   },
                   {
-                    label: this.t('task_setting_initial_sync'), //全量
+                    label: this.$t('packages_dag_task_setting_initial_sync'), //全量
                     value: 'initial_sync'
                   },
                   {
-                    label: this.t('task_setting_cdc'), //增量
+                    label: this.$t('packages_dag_task_setting_cdc'), //增量
                     value: 'cdc'
                   }
                 ]
               },
               desc: {
-                title: this.t('task_stetting_desc'), //任务描述
+                title: this.$t('packages_dag_task_stetting_desc'), //任务描述
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input.TextArea',
@@ -98,11 +98,11 @@ export default observer({
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: this.t('task_stetting_most_setting')
+                      title: this.$t('packages_dag_task_stetting_most_setting')
                     },
                     properties: {
                       planStartDateFlag: {
-                        title: this.t('task_setting_plan_start_date'), //计划时间
+                        title: this.$t('packages_dag_task_setting_plan_start_date'), //计划时间
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
@@ -145,10 +145,10 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Input.TextArea',
                         'x-component-props': {
-                          placeholder: this.t('task_setting_cron_expression')
+                          placeholder: this.$t('packages_dag_task_setting_cron_expression')
                         },
                         'x-decorator-props': {
-                          tooltip: this.t('task_setting_cron_tip')
+                          tooltip: this.$t('packages_dag_task_setting_cron_tip')
                         },
                         'x-reactions': {
                           dependencies: ['type', 'planStartDateFlag'],
@@ -160,11 +160,11 @@ export default observer({
                         }
                       },*/
                       syncPoints: {
-                        title: this.t('task_setting_sync_point'), //增量采集开始时刻
+                        title: this.$t('packages_dag_task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',
                         default: [{ type: 'current', date: '' }],
                         'x-decorator-props': {
-                          tooltip: this.t('task_setting_syncPoint_tip')
+                          tooltip: this.$t('packages_dag_task_setting_syncPoint_tip')
                         },
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
@@ -183,21 +183,21 @@ export default observer({
                               type: 'string',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: '请选择',
+                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze'),
                                 style: 'margin-bottom:10px'
                               },
                               default: 'current',
                               enum: [
                                 {
-                                  label: this.t('dataFlow_SyncInfo_localTZType'),
+                                  label: this.$t('packages_dag_dataFlow_SyncInfo_localTZType'),
                                   value: 'localTZ'
                                 },
                                 {
-                                  label: this.t('dataFlow_SyncInfo_connTZType'),
+                                  label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
                                   value: 'connTZ'
                                 },
                                 {
-                                  label: this.t('dataFlow_SyncInfo_currentType'),
+                                  label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
                                   value: 'current'
                                 }
                               ]
@@ -224,21 +224,21 @@ export default observer({
                         }
                       },
                       // isAutoCreateIndexS: {
-                      //   title: this.t('task_setting_automatic_index'), //自动创建索引
+                      //   title: this.$t('packages_dag_task_setting_automatic_index'), //自动创建索引
                       //   type: 'boolean',
                       //   'x-decorator': 'FormItem',
                       //   'x-component': 'Switch',
                       //   default: true
                       // },
                       // isStopOnError: {
-                      //   title: this.t('task_setting_stop_on_error'), //遇到错误停止
+                      //   title: this.$t('packages_dag_task_setting_stop_on_error'), //遇到错误停止
                       //   type: 'boolean',
                       //   default: true,
                       //   'x-decorator': 'FormItem',
                       //   'x-component': 'Switch'
                       // },
                       shareCdcEnable: {
-                        title: this.t('connection_form_shared_mining'), //共享挖掘日志过滤
+                        title: this.$t('packages_dag_connection_form_shared_mining'), //共享挖掘日志过滤
                         type: 'boolean',
                         default: false,
                         'x-decorator': 'FormItem',
@@ -253,18 +253,17 @@ export default observer({
                         }
                       },
                       isAutoInspect: {
-                        title: this.t('task_list_verify'),
+                        title: this.$t('packages_dag_task_list_verify'),
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip:
-                            '当任务符合以下情况下，即使开启开关任务也不会进行校验\n 1.添加了中间处理节点\n 2.源连接不支持校验\n 3.目标连接不支持校验'
+                          tooltip: i18n.t('packages_dag_migration_settingpanel_dangrenwufuhe')
                         },
                         'x-component': 'Switch'
                       },
                       increSyncConcurrency: {
-                        title: this.t('task_setting_cdc_concurrency'),
+                        title: this.$t('packages_dag_task_setting_cdc_concurrency'),
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
@@ -272,7 +271,7 @@ export default observer({
                       },
                       increHysteresisSpace: {
                         type: 'void',
-                        title: this.t('task_setting_lag_time'),
+                        title: this.$t('packages_dag_task_setting_lag_time'),
                         'x-decorator': 'FormItem',
                         'x-component': 'Space',
                         properties: {
@@ -285,7 +284,7 @@ export default observer({
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               feedbackLayout: 'none',
-                              addonAfter: '秒'
+                              addonAfter: i18n.t('packages_dag_dag_data_setting_second')
                             },
                             'x-component': 'InputNumber',
                             'x-component-props': {
@@ -304,13 +303,13 @@ export default observer({
                       },
                       processorThreadNum: {
                         type: 'number',
-                        title: this.t('task_setting_processorThreadNum'),
+                        title: this.$t('packages_dag_task_setting_processorThreadNum'),
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber'
                       },
                       increOperationModeSpace: {
                         type: 'void',
-                        title: this.t('task_setting_increOperationMode'),
+                        title: this.$t('packages_dag_task_setting_increOperationMode'),
                         'x-decorator': 'FormItem',
                         'x-component': 'Space',
                         properties: {
@@ -318,8 +317,8 @@ export default observer({
                             type: 'boolean',
                             'x-component': 'Select',
                             enum: [
-                              { label: '批量', value: false },
-                              { label: '逐条', value: true }
+                              { label: i18n.t('packages_dag_components_formpanel_piliang'), value: false },
+                              { label: i18n.t('packages_dag_components_formpanel_zhutiao'), value: true }
                             ]
                           },
                           increaseReadSize: {
@@ -341,13 +340,19 @@ export default observer({
                       },
                       accessNodeType: {
                         type: 'string',
-                        title: this.$t('connection_form_access_node'),
+                        title: this.$t('packages_dag_connection_form_access_node'),
                         default: 'AUTOMATIC_PLATFORM_ALLOCATION',
                         'x-decorator': 'FormItem',
                         'x-component': 'Select',
                         enum: [
-                          { label: this.$t('connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-                          { label: this.$t('connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                          {
+                            label: this.$t('packages_dag_connection_form_automatic'),
+                            value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+                          },
+                          {
+                            label: this.$t('packages_dag_connection_form_manual'),
+                            value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                          }
                         ],
                         'x-reactions': [
                           {

@@ -1,7 +1,7 @@
 <template>
   <div class="account" v-loading="loading">
     <div class="setting-right">
-      <div class="title">{{ $t('account.accountSettings') }}</div>
+      <div class="title">{{ $t('account_accountSettings') }}</div>
       <ul class="content">
         <li v-for="item in infoList" :key="item.key">
           <span class="label">{{ item.label }}</span>
@@ -17,7 +17,7 @@
     </div>
     <!-- 修改密码 -->
     <el-dialog
-      :title="$t('account.changePassword')"
+      :title="$t('account_changePassword')"
       :visible.sync="passwordDialogFalg"
       :close-on-click-modal="false"
       width="600px"
@@ -27,7 +27,7 @@
           <el-input
             :type="oldPasswordType"
             v-model="pwd.oldPassword"
-            :placeholder="$t('account.currentPassword')"
+            :placeholder="$t('account_currentPassword')"
             autocomplete="off"
           >
             <i
@@ -43,7 +43,7 @@
           <el-input
             v-model="pwd.newPassword"
             :type="newPasswordType"
-            :placeholder="$t('account.newPassword')"
+            :placeholder="$t('account_newPassword')"
             autocomplete="off"
           >
             <i
@@ -59,7 +59,7 @@
           <el-input
             v-model="pwd.comfirmPassword"
             :type="comfirmPasswordType"
-            :placeholder="$t('account.confirmPassword')"
+            :placeholder="$t('account_confirmPassword')"
             autocomplete="off"
           >
             <i
@@ -73,31 +73,31 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" size="mini" @click="save">{{ $t('app.save') }}</el-button>
+        <el-button type="primary" size="mini" @click="save">{{ $t('app_save') }}</el-button>
       </div>
     </el-dialog>
     <!-- 修改邮箱 -->
     <el-dialog
-      :title="$t('account.changeEmail')"
+      :title="$t('account_changeEmail')"
       :visible.sync="emailDialogFalg"
       :close-on-click-modal="false"
       width="600px"
     >
       <el-form :model="form" class="form">
         <el-form-item>
-          <el-input v-model="form.newEmail" :placeholder="$t('account.enterMailbox')" autocomplete="off" min></el-input>
+          <el-input v-model="form.newEmail" :placeholder="$t('account_enterMailbox')" autocomplete="off" min></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="form.password" :placeholder="$t('account.enterNewMailbox')" autocomplete="off"></el-input>
+          <el-input v-model="form.password" :placeholder="$t('account_enterNewMailbox')" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" size="mini" @click="send">{{ $t('account.sendEmail') }}</el-button>
+        <el-button type="primary" size="mini" @click="send">{{ $t('account_sendEmail') }}</el-button>
       </div>
     </el-dialog>
     <!-- 用户名称 -->
     <el-dialog
-      :title="$t('account.changeUsername')"
+      :title="$t('account_changeUsername')"
       :visible.sync="usernameDialogFalg"
       :close-on-click-modal="false"
       width="600px"
@@ -106,7 +106,7 @@
         <el-form-item>
           <el-input
             v-model="userName"
-            :placeholder="$t('account.newUsername')"
+            :placeholder="$t('account_newUsername')"
             maxlength="100"
             show-word-limit
             autocomplete="off"
@@ -114,7 +114,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" size="mini" @click="confirm">{{ $t('dialog.downAgent.ok') }}</el-button>
+        <el-button type="primary" size="mini" @click="confirm">{{ $t('dialog_downAgent_ok') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -131,7 +131,7 @@ export default {
 
     let validateNewPassword = (rule, value, callback) => {
       if (value === this.pwd.oldPassword) {
-        callback(new Error(this.$t('account.samePawTip')))
+        callback(new Error(this.$t('account_samePawTip')))
       } else {
         callback()
       }
@@ -140,7 +140,7 @@ export default {
     let validateisCN = (rule, value, callback) => {
       const passwordReg = /[\s\u4E00-\u9FA5]/
       if (passwordReg.test(value)) {
-        callback(new Error(this.$t('account.passwordNotCN')))
+        callback(new Error(this.$t('account_passwordNotCN')))
       } else {
         callback()
       }
@@ -148,7 +148,7 @@ export default {
     //此处即表单发送之前验证  验证新密码与再次确认
     let validateNewPassword2 = (rule, value, callback) => {
       if (value !== this.pwd.newPassword) {
-        callback(new Error(this.$t('account.newPawInconsistent')))
+        callback(new Error(this.$t('account_newPawInconsistent')))
       } else {
         callback()
       }
@@ -167,25 +167,25 @@ export default {
       userName: '',
       infoList: [
         {
-          label: this.$t('account.email'),
+          label: this.$t('account_email'),
           value: '',
           key: 'email',
           icon: this.$t('button_revise')
         },
         {
-          label: this.$t('account.userName'),
+          label: this.$t('account_userName'),
           value: '',
           key: 'username',
           icon: this.$t('button_revise')
         },
         {
-          label: this.$t('account.password'),
+          label: this.$t('account_password'),
           value: '******',
           key: 'password',
           icon: this.$t('button_revise')
         },
         {
-          label: this.$t('account.accessCode'),
+          label: this.$t('account_accessCode'),
           value: '',
           key: 'accessCode',
           icon: this.$t('button_refresh')
@@ -206,12 +206,12 @@ export default {
         oldPassword: [
           {
             required: true,
-            message: this.$t('account.currentPassword'),
+            message: this.$t('account_currentPassword'),
             trigger: 'blur'
           },
           {
             min: 5,
-            message: this.$t('app.signIn.password_invalid'),
+            message: this.$t('app_signIn_password_invalid'),
             trigger: 'blur'
           },
           {
@@ -223,7 +223,7 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('account.newPassword')
+            message: this.$t('account_newPassword')
           },
           {
             validator: validateNewPassword,
@@ -231,7 +231,7 @@ export default {
           },
           {
             min: 5,
-            message: this.$t('app.signIn.password_invalid'),
+            message: this.$t('app_signIn_password_invalid'),
             trigger: 'blur'
           },
           {
@@ -242,7 +242,7 @@ export default {
         comfirmPassword: [
           {
             required: true,
-            message: this.$t('account.confirmPassword'),
+            message: this.$t('account_confirmPassword'),
             trigger: 'blur'
           },
           {
@@ -300,21 +300,21 @@ export default {
       }
       if (this.userName) {
         usersApi.patch(parmas).then(() => {
-          this.$message.success(this.$t('account.nameModifySuccess'))
+          this.$message.success(this.$t('account_nameModifySuccess'))
           this.usernameDialogFalg = false
           this.handleGetData()
         })
         // .catch(e => {
         //   if (e.response && e.response.msg) {
         //     if (e.response.msg.indexOf('User already exists')) {
-        //       this.$message.error(this.$t('account.has_username'))
+        //       this.$message.error(this.$t('account_has_username'))
         //     } else {
-        //       this.$message.error(this.$t('account.editFail'))
+        //       this.$message.error(this.$t('account_editFail'))
         //     }
         //   }
         // })
       } else {
-        this.$message.error(this.$t('account.user_null'))
+        this.$message.error(this.$t('account_user_null'))
       }
     },
 
@@ -327,7 +327,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           usersApi.changePassword(parmas).then(() => {
-            this.$message.success(this.$t('account.pawSaveSuccess'))
+            this.$message.success(this.$t('account_pawSaveSuccess'))
             this.passwordDialogFalg = false
             Cookie.remove('token')
             Cookie.remove('user_id')
@@ -337,7 +337,7 @@ export default {
           })
           // .catch(e => {
           //   if (e.response && e.response.msg === 'Invalid current password') {
-          //     this.$message.error(this.$t('account.currerPawErrorTip'))
+          //     this.$message.error(this.$t('account_currerPawErrorTip'))
           //   }
           // })
         }

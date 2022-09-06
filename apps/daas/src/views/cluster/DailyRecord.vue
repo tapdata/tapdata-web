@@ -3,9 +3,9 @@
     <TablePage ref="table" row-key="id" class="clusterManagement-list" :remoteMethod="getDataApi">
       <div class="header" slot="header">
         <div class="page-header-title">
-          <span class="title">{{ $t('cluster.statusLog') }}</span>
+          <span class="title">{{ $t('cluster_statusLog') }}</span>
           <div class="serviceCluMangeBtn" @click="goClusterManagement">
-            {{ $t('cluster.serviceCluMange') }}
+            {{ $t('cluster_serviceCluMange') }}
           </div>
         </div>
       </div>
@@ -16,8 +16,8 @@
               type="daterange"
               size="mini"
               range-separator="-"
-              :start-placeholder="$t('cluster.selectDate')"
-              :end-placeholder="$t('cluster.selectDate')"
+              :start-placeholder="$t('cluster_selectDate')"
+              :end-placeholder="$t('cluster_selectDate')"
               :value="[searchParams.startDate, searchParams.closeDate]"
               @change="handleChangeDate"
             ></el-date-picker>
@@ -26,7 +26,7 @@
             <el-select
               v-model="searchParams.ip"
               size="mini"
-              :placeholder="$t('cluster.placeholderSelect')"
+              :placeholder="$t('cluster_placeholderSelect')"
               @input="table.fetch(1)"
             >
               <el-option v-for="item in ipList" :label="item.value" :value="item.value" :key="item.value"></el-option>
@@ -36,7 +36,7 @@
             <el-select
               v-model="searchParams.serverType"
               size="mini"
-              :placeholder="$t('cluster.placeholderSelect')"
+              :placeholder="$t('cluster_placeholderSelect')"
               @input="table.fetch(1)"
             >
               <el-option
@@ -51,7 +51,7 @@
             <el-select
               v-model="searchParams.level"
               size="mini"
-              :placeholder="$t('cluster.placeholderSelect')"
+              :placeholder="$t('cluster_placeholderSelect')"
               @input="table.fetch(1)"
             >
               <el-option
@@ -64,27 +64,27 @@
           </li>
           <li>
             <el-button type="text" class="restBtn" size="mini" @click="rest()">
-              {{ $t('button.reset') }}
+              {{ $t('button_reset') }}
             </el-button>
           </li>
         </ul>
       </div>
       <el-table-column
         prop="last_updated"
-        :label="$t('cluster.time')"
+        :label="$t('cluster_time')"
         :formatter="dateFormat"
         width="260"
       ></el-table-column>
-      <el-table-column prop="hostname" :label="$t('cluster.hostName')" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="ip" :label="$t('cluster.ipAddress')" width="150"></el-table-column>
-      <el-table-column prop="uuid" :label="$t('cluster.uniqueEncode')" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="threadName" :label="$t('cluster.serviceType')" width="100"></el-table-column>
-      <el-table-column prop="level" :label="$t('cluster.level')" width="100">
+      <el-table-column prop="hostname" :label="$t('cluster_hostName')" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="ip" :label="$t('cluster_ipAddress')" width="150"></el-table-column>
+      <el-table-column prop="uuid" :label="$t('cluster_uniqueEncode')" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="threadName" :label="$t('cluster_serviceType')" width="100"></el-table-column>
+      <el-table-column prop="level" :label="$t('cluster_level')" width="100">
         <template slot-scope="scope">
           <span :class="scope.row.level === 'ERROR' ? 'red' : ''" disable-transitions>{{ scope.row.level }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="message" :label="$t('cluster.logs')" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="message" :label="$t('cluster_logs')" :show-overflow-tooltip="true"></el-table-column>
     </TablePage>
   </section>
 </template>

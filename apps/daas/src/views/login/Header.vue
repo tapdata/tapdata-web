@@ -9,33 +9,25 @@
           </span>
         </div>
       </div>
-      <!-- <div class="slogan">{{ $t('app.signIn.slogan') }}</div> -->
+      <!-- <div class="slogan">{{ $t('app_signIn_slogan') }}</div> -->
     </header>
   </div>
 </template>
 <script>
-import Cookie from '@tap/shared/src/cookie'
+import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+
 export default {
   name: 'LoginHeader',
   data() {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-      languages: {
-        zh_CN: '中文 (简)',
-        en_US: 'English',
-        zh_TW: '中文 (繁)'
-      },
-      lang: Cookie.get('lang')
+      languages: langMenu,
+      lang: getCurrentLanguage()
     }
   },
   methods: {
     langChange(lang) {
-      Cookie.set('lang', lang)
-      this.$i18n.locale = {
-        zh_CN: 'zh-CN',
-        zh_TW: 'zh-TW',
-        en_US: 'en'
-      }[lang]
+      setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
     }
   }

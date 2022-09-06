@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    title="节点详情"
+    :title="$t('packages_dag_components_nodedetaildialog_jiedianxiangqing')"
     width="774px"
     :visible.sync="visible"
     :close-on-click-modal="false"
@@ -9,7 +9,7 @@
   >
     <div class="flex mb-4 align-items-center">
       <div class="select__row flex align-items-center" @click.stop="handleSelect">
-        <span>节点</span>
+        <span>{{ $t('packages_dag_components_nodedetaildialog_jiedian') }}</span>
         <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init">
           <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value"></ElOption>
         </ElSelect>
@@ -18,30 +18,34 @@
     </div>
     <div class="flex justify-content-between">
       <div v-loading="loading" class="chart-box rounded-2" :class="{ 'w-100': !isSource && !isTarget }">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">事件统计</div>
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+          {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
+        </div>
         <div class="chart-box__content px-4 pb-2">
           <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
         </div>
       </div>
       <div v-if="isSource" v-loading="loading" class="chart-box rounded-2 flex flex-column">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">同步状态</div>
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+          {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
+        </div>
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <div class="text-center pb-10 w-100">
             <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(sourceData.tcpPing, 2) }}</div>
-              <div>TCP连接耗时</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_tcPlianjie') }}</div>
             </div>
             <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1 din-font">
                 {{ calcTimeUnit(sourceData.connectPing, 2) }}
               </div>
-              <div>协议连接耗时</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_xieyilianjiehao') }}</div>
             </div>
             <div>
               <div class="font-color-normal fw-bold mb-1 din-font">
                 {{ formatTime(sourceData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}
               </div>
-              <div>增量时间点</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</div>
             </div>
           </div>
         </div>
@@ -52,30 +56,32 @@
         :class="{ 'w-100': !isSource && !isTarget }"
         class="chart-box rounded-2 flex flex-column"
       >
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">连接状态</div>
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+          {{ $t('packages_dag_components_nodedetaildialog_lianjiezhuangtai') }}
+        </div>
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <div class="text-center pb-10 w-100">
             <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(targetData.tcpPing, 2) }}</div>
-              <div>TCP连接耗时</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_tcPlianjie') }}</div>
             </div>
             <div class="mb-4">
               <div class="font-color-normal fw-bold mb-1 din-font">
                 {{ calcTimeUnit(targetData.connectPing, 2) }}
               </div>
-              <div>协议连接耗时</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_xieyilianjiehao') }}</div>
             </div>
             <div>
               <div class="font-color-normal fw-bold mb-1 din-font">
                 {{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}
               </div>
-              <div>增量时间点</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="my-4">性能指标</div>
+    <div class="my-4">{{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}</div>
     <div class="flex justify-content-between">
       <div v-loading="loading" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">QPS</div>
@@ -90,14 +96,16 @@
         </div>
       </div>
       <div v-loading="loading" class="chart-box rounded-2">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">处理耗时</div>
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+          {{ $t('packages_dag_components_nodedetaildialog_chulihaoshi') }}
+        </div>
         <div class="chart-box__content p-4">
           <LineChart
             :data="delayData"
             :time-format="timeFormat"
             :color="['#2C65FF']"
             time-value
-            title="增量延迟"
+            :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
             ref="delayLineChart"
           ></LineChart>
         </div>
@@ -107,6 +115,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 
@@ -192,7 +202,10 @@ export default {
       const { time = [] } = this.quota
       return {
         x: time,
-        name: ['输入', '输出'],
+        name: [
+          i18n.t('packages_dag_components_nodedetaildialog_shuru'),
+          i18n.t('packages_dag_components_nodedetaildialog_shuchu')
+        ],
         value: [qps || inputQps, qps || outputQps]
       }
     },

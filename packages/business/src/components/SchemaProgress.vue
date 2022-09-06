@@ -28,10 +28,10 @@ export default {
       if (data.loadFieldsStatus === 'finished') {
         let loadTime = data.loadSchemaDate
         schemaInfo = {
-          text: this.$t('schema_progress_status_success'),
+          text: this.$t('packages_business_schema_progress_status_success'),
           icon: 'success',
           color: 'success',
-          tips: loadTime ? this.$t('schema_progress_load_time', [dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss')]) : ''
+          tips: loadTime ? this.$t('packages_business_schema_progress_load_time', [dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss')]) : ''
         }
       } else if (data.loadFieldsStatus === 'loading') {
         let process = (data.loadCount * 100) / data.tableCount || 0
@@ -42,7 +42,7 @@ export default {
         }
       } else if (data.loadFieldsStatus) {
         schemaInfo = {
-          text: this.$t('schema_progress_status_error'),
+          text: this.$t('packages_business_schema_progress_status_error'),
           icon: 'error',
           color: 'danger'
         }
@@ -61,11 +61,11 @@ export default {
           },
           [this.data.loadFieldErrMsg]
         ),
-        this.$t('schema_progress_dialog_error_title'),
+        this.$t('packages_business_schema_progress_dialog_error_title'),
         {
           type: 'error',
           customClass: 'schema-error-dialog',
-          confirmButtonText: this.$t('button_close')
+          confirmButtonText: this.$t('packages_business_button_close')
         }
       )
     }

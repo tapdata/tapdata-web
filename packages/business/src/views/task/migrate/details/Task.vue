@@ -10,7 +10,7 @@
     >
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{ $t('button_details') }}</ElButton>
+          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{ $t('packages_business_button_details') }}</ElButton>
         </div>
       </template>
     </TableList>
@@ -38,20 +38,20 @@ export default {
       fetchTimer: null,
       columns: [
         {
-          label: this.$t('task_monitor_mining_task_name'),
+          label: this.$t('packages_business_task_monitor_mining_task_name'),
           prop: 'name',
           slotName: 'name'
         },
         {
-          label: this.$t('task_monitor_mining_task_point_time'),
+          label: this.$t('packages_business_task_monitor_mining_task_point_time'),
           prop: 'pointTime'
         },
         {
-          label: this.$t('task_monitor_mining_task_status'),
+          label: this.$t('packages_business_task_monitor_mining_task_status'),
           prop: 'status'
         },
         {
-          label: this.$t('column_operation'),
+          label: this.$t('packages_business_column_operation'),
           prop: 'operation',
           slotName: 'operation'
         }

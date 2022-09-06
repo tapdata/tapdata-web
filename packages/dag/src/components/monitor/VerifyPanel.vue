@@ -5,7 +5,7 @@
     :class="{ flex: isShow, 'show-verify': isShow }"
   >
     <div class="flex justify-content-between align-items-center p-4">
-      <span class="font-color-normal fw-bold fs-7">任务校验</span>
+      <span class="font-color-normal fw-bold fs-7">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
       <VIcon size="16" class="cursor-pointer" @click="$emit('showVerify')">close</VIcon>
     </div>
     <div class="px-4 pb-4 border-bottom">
@@ -13,23 +13,27 @@
     </div>
     <div class="flex justify-content-between align-items-center px-4 pt-4">
       <div class="flex align-items-center font-color-normal fw-bold fs-7">
-        <span>问题表清单</span>
+        <span>{{ $t('packages_dag_monitor_verifypanel_wentibiaoqingdan') }}</span>
         <ElTooltip
           :value="hasNew"
           transition="tooltip-fade-in"
-          :content="hasNew ? '检测到新数据，请点击刷新' : '点击刷新'"
+          :content="
+            hasNew
+              ? $t('packages_dag_monitor_verifypanel_jiancedaoxinshu')
+              : $t('packages_dag_components_initiallist_dianjishuaxin')
+          "
         >
           <VIcon class="ml-2 color-primary cursor-pointer" size="9" @click="search">icon_table_selector_load</VIcon>
         </ElTooltip>
       </div>
-      <ElTooltip v-if="!!total" transition="tooltip-fade-in" content="列表">
+      <ElTooltip v-if="!!total" transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
         <VIcon size="16" class="cursor-pointer" @click="$emit('verifyDetails')">menu-left</VIcon>
       </ElTooltip>
     </div>
     <div class="px-4 py-2">
       <ElInput
         v-model="keyword"
-        placeholder="请输入搜索内容"
+        :placeholder="$t('packages_dag_monitor_verifypanel_qingshurusousuo')"
         prefix-icon="el-icon-search"
         size="mini"
         clearable
@@ -54,31 +58,35 @@
           <div class="before-scroll-content text-center font-color-light py-1">
             <VEmpty
               v-if="!list.length"
-              :description="keyword ? $t('customer_logs_no_search_data') : $t('dag_dialog_field_mapping_no_data')"
+              :description="
+                keyword
+                  ? $t('packages_dag_customer_logs_no_search_data')
+                  : $t('packages_dag_dag_dialog_field_mapping_no_data')
+              "
             />
             <div v-show="moreLoading">
               <i class="el-icon-loading"></i>
             </div>
-            <div v-show="!moreLoading && noMore">{{ $t('customer_logs_no_more_data') }}</div>
+            <div v-show="!moreLoading && noMore">{{ $t('packages_dag_customer_logs_no_more_data') }}</div>
           </div>
         </template>
         <template #default="{ item, index, active }">
           <DynamicScrollerItem :item="item" :active="active" :data-index="index" :size-dependencies="[item.id]">
             <div class="px-4 py-2 user-select-none border-bottom">
               <div class="flex justify-content-between mb-2">
-                <span>连接名：</span>
+                <span>{{ $t('packages_dag_monitor_verifypanel_lianjieming') }}</span>
                 <ElLink type="primary" @click="$emit('connectionList', item.sourceConnName)">{{
                   item.sourceConnName
                 }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
-                <span>表名：</span>
+                <span>{{ $t('packages_dag_monitor_verifypanel_biaoming') }}</span>
                 <ElLink type="primary" @click="$emit('verifyDetails', item.originalTableName)">{{
                   item.originalTableName
                 }}</ElLink>
               </div>
               <div class="flex justify-content-between mb-2">
-                <span>异常数据（行）：</span>
+                <span>{{ $t('packages_dag_monitor_verifypanel_yichangshujuhang') }}</span>
                 <span>{{ item.counts }}</span>
               </div>
             </div>
@@ -90,6 +98,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
 import { debounce } from 'lodash'
@@ -99,14 +109,10 @@ import { calcUnit, deepCopy } from '@tap/shared'
 import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 
-import Locale from '../../mixins/locale'
-
 export default {
   name: 'VerifyPanel',
 
   components: { Chart, DynamicScroller, DynamicScrollerItem, VEmpty },
-
-  mixins: [Locale],
 
   props: {
     dataflow: Object,
@@ -154,19 +160,19 @@ export default {
       }
       let arr = [
         {
-          name: '校验一致',
+          name: i18n.t('packages_dag_monitor_verifypanel_jiaoyanyizhi'),
           key: 'passed',
           value: 0,
           color: '#82C647'
         },
         {
-          name: '校验不一致',
+          name: i18n.t('packages_dag_monitor_verifypanel_jiaoyanbuyizhi'),
           key: 'diffTables',
           value: 0,
           color: '#F7D762'
         },
         {
-          name: '不支持校验',
+          name: i18n.t('packages_dag_monitor_verifypanel_buzhichijiaoyan'),
           key: 'ignore',
           value: 0,
           color: '#88DBDA'
@@ -279,7 +285,7 @@ export default {
 
     getPieOptions(data) {
       const total = eval(data.map(t => t.value).join('+'))
-      const totalText = '总计'
+      const totalText = i18n.t('packages_dag_monitor_verifypanel_zongji')
       let options = {
         tooltip: {
           trigger: 'item',
@@ -328,7 +334,7 @@ export default {
         },
         series: [
           {
-            name: '任务校验',
+            name: i18n.t('packages_dag_monitor_leftsider_renwujiaoyan'),
             type: 'pie',
             radius: ['55%', '90%'],
             center: ['20%', '50%'],

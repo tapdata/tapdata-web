@@ -1,17 +1,16 @@
+import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import { VIcon } from '@tap/component'
 import { convertSchemaToTreeData, uuid } from '../field-rename/util'
 import '../field-rename/index.scss'
-import Locale from '../../mixins/locale'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldAddDel = connect(
   observer(
     defineComponent({
       props: ['loading', 'options', 'disabled'],
-      mixins: [Locale],
       setup() {
         const formRef = useForm()
         const form = formRef.value
@@ -76,7 +75,9 @@ export const FieldAddDel = connect(
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
-              <span class="flex-1 text inline-block ml-6">字段名称</span>
+              <span class="flex-1 text inline-block ml-6">
+                {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
+              </span>
               <span class="field-ops inline-block ml-10">
                 <VIcon
                   class={[
@@ -380,7 +381,7 @@ export const FieldAddDel = connect(
             (parentNode && parentNode.length >= 1 && name === 'newFieldName') ||
             (parentNode && parentNode.length > 1 && name !== 'newFieldName')
           ) {
-            this.$message.error(name + this.t('message_exists_name'))
+            this.$message.error(name + this.$t('packages_form_message_exists_name'))
             exist = true
           }
           return exist

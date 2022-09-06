@@ -84,7 +84,7 @@
           size="mini"
           @click="openCreateDialog"
         >
-          <span>{{ $t('user.creatUser') }}</span>
+          <span>{{ $t('user_creatUser') }}</span>
         </el-button>
       </div>
       <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
@@ -693,7 +693,7 @@ export default {
             usersApi
               .delete(item.id)
               .then(() => {
-                this.$message.success(this.$t('message.deleteOK'))
+                this.$message.success(this.$t('message_deleteOK'))
                 this.table.fetch()
                 done()
               })
