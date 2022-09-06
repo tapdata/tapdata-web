@@ -740,7 +740,7 @@ export default {
           this.debugResult = result
         })
         if (result) {
-          this.debugResult = JSON.stringify(result.response.data, null, 2)
+          this.debugResult = JSON.stringify(result?.data, null, 2)
         }
       }
     }
