@@ -191,7 +191,9 @@
       <div class="selector-panel__footer">
         <div v-if="Object.keys(errorTables).length" class="selector-error flex align-center">
           <span class="color-danger">*{{ $t('packages_form_component_table_selector_error') }}</span>
-          <ElLink class="ml-2" type="primary" @click="autofix">{{ $t('packages_form_component_table_selector_autofix') }}</ElLink>
+          <ElLink class="ml-2" type="primary" @click="autofix">{{
+            $t('packages_form_component_table_selector_autofix')
+          }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
           <!--          <ElButton @click="changeSeletedMode()">{{ $t('packages_form_button_cancel') }}</ElButton>-->
@@ -354,7 +356,8 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 
 import { metadataInstancesApi, connectionsApi, workerApi } from '@tap/api'
-import { VIcon, OverflowTooltip } from '@tap/component'
+import OverflowTooltip from '@tap/component/src/overflow-tooltip'
+import VIcon from '@tap/component/src/base/VIcon'
 import ConnectionTest from '@tap/business/src/views/connections/Test'
 
 export default {
