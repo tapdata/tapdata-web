@@ -79,6 +79,24 @@
           </div>
         </div>
       </el-tab-pane>
+      <el-tab-pane class="tab-item" label="告警通知" name="alarm" v-loading="loading">
+        <div class="tab-item-container">
+          <ul class="tab-list notification-list" v-if="userOperations.length">
+            <li class="notification-item" v-for="record in userOperations" :key="record.id">
+              <UserOperation :record="record"></UserOperation>
+              <div class="item-time">
+                {{ record.createTimeFmt }}
+              </div>
+            </li>
+          </ul>
+          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
     </el-tabs>
   </el-popover>
 </template>
@@ -275,7 +293,7 @@ export default {
       border-bottom: 1px solid map-get($borderColor, light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
-          width: 200px;
+          width: 270px;
         }
       }
       .el-tabs__item {
