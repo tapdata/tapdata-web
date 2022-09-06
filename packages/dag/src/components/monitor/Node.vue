@@ -1,12 +1,11 @@
 <script>
-import i18n from '@tap/i18n'
-
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { defineComponent, computed, ref } from '@vue/composition-api'
-import { VIcon } from '@tap/component'
 
+import i18n from '@tap/i18n'
+import { VIcon } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import DFNode from '../DFNode'
 
@@ -161,7 +160,9 @@ export default defineComponent({
           </div>
         ) : (
           <div class="statistic flex">
-            <div class="statistic-title">增量时间点：</div>
+            <div class="statistic-title">
+              {i18n.t('packages_dag_components_nodedetaildialog_zengliangshijiandian')}：
+            </div>
             <div class="statistic-content">
               <div class="statistic-value">{cdcEventStartRelativeTime.value}</div>
             </div>
@@ -193,7 +194,7 @@ export default defineComponent({
     const renderPopoverContent = () => {
       const cdcTime = (
         <div class="statistic span-2">
-          <div class="statistic-title">增量时间点</div>
+          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_zengliangshijiandian')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{cdcEventStartTime.value}</div>
           </div>
@@ -253,7 +254,7 @@ export default defineComponent({
 
       const outputEvent = (
         <div class="statistic">
-          <div class="statistic-title">累计输出事件</div>
+          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_leijishuchushi')}</div>
           <div class="statistic-content">
             <ElTooltip transition="tooltip-fade-in" content={outputTotal.value.toLocaleString()}>
               <div class="statistic-value">{calcUnit(outputTotal.value)}</div>
@@ -264,7 +265,7 @@ export default defineComponent({
 
       const inputEvent = (
         <div class="statistic">
-          <div class="statistic-title">累计输入事件</div>
+          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_leijishurushi')}</div>
           <div class="statistic-content">
             <ElTooltip transition="tooltip-fade-in" content={inputTotal.value.toLocaleString()}>
               <div class="statistic-value">{calcUnit(inputTotal.value)}</div>
