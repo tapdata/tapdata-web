@@ -1593,6 +1593,8 @@ export default {
   setting_the_before_field_contains_a_field_for_each_table_column_and_the_value_that_was_in_that_column_before_the_update_operation_:
     'before字段包含每個表列的字段以及更新操作之前該列中的值。 ',
   setting_Job_heart_timeout: '同步任務心跳超時（毫秒）',
+  setting_retry_interval_second: '重試間隔(秒)',
+  setting_max_retry_time_minute: '最大重試時間(分鐘)',
   setting_job_cdc_share_mode: '增量同步任務共享模式',
   setting_job_cdc_share_mode_doc: '在增量同步階段，會根據日誌採集任務是否可用，自動採用共享模式。影響的數據庫：Oracle',
   setting_job_cdc_share_only: '增量任務強制使用共享模式',

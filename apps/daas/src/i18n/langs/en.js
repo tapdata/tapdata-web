@@ -1599,6 +1599,8 @@ export default {
     'Cache a copy of the overall data before modification and merge it into the target data set',
   setting_Store_job_script_processor_log_to_cloud: 'Whether to transfer task logs to the cloud',
   setting_Validator_to_validate_data__s_sample_rate: 'Validation data sampling rate',
+  setting_retry_interval_second: 'Retry Interval(Second)',
+  setting_max_retry_time_minute: 'Maximum Retry Time(Minute)',
   setting_Process_message_mode__consistency_fast: 'Message processing mode consistency/fast',
   setting_Worker_can_execute_the_nums_of_Jobs: 'The process can perform multiple tasks',
   setting_Worker_heartbeat_expire_time: 'Process heartbeat period time',

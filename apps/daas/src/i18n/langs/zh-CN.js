@@ -1544,6 +1544,8 @@ export default {
     '缓存一份修改前的整体数据，合并到目标数据集中',
   setting_Store_job_script_processor_log_to_cloud: '是否传输任务日志到云端',
   setting_Validator_to_validate_data__s_sample_rate: '校验数据采样率',
+  setting_retry_interval_second: '重试间隔(秒)',
+  setting_max_retry_time_minute: '最大重试时间(分钟)',
   setting_Process_message_mode__consistency_fast: '消息处理模式 consistency/fast',
   setting_Worker_can_execute_the_nums_of_Jobs: '进程可以执行多个任务',
   setting_Worker_heartbeat_expire_time: '进程心跳过期时间',
