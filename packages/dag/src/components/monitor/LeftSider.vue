@@ -3,8 +3,10 @@
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box">
         <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
-        <VIcon class="color-primary">refresh</VIcon>
         <Frequency :range="$attrs.range" @change="changeFrequency"></Frequency>
+        <ElTooltip transition="tooltip-fade-in" content="刷新">
+          <VIcon class="color-primary" @click="$emit('init')">refresh</VIcon>
+        </ElTooltip>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box">
         <div class="flex justify-content-between mb-2">
@@ -44,13 +46,12 @@
             }}</span>
           </div>
         </template>
-        <div
-          v-if="dataflow.type !== 'initial_sync' && initialData.snapshotDoneAt"
-          class="mb-2 flex justify-content-between"
-        >
-          <span>最大增量延迟：</span>
-          <span>{{ calcTimeUnit(initialData.replicateLag, 1) }}</span>
-        </div>
+        <template v-if="dataflow.type !== 'initial_sync'">
+          <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
+            <span>最大增量延迟：</span>
+            <span>{{ calcTimeUnit(initialData.replicateLag, 1) }}</span>
+          </div>
+        </template>
       </div>
       <div v-if="verifyTotals" class="info-box">
         <div class="flex justify-content-between mb-2">

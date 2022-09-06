@@ -146,24 +146,6 @@
 
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElTooltip v-if="!hideMenus.includes('verify')" transition="tooltip-fade-in">
-        <div v-if="!dataflow.canOpenInspect" slot="content">
-          <p>{{ $t('packages_dag_monitor_topheader_dangqianrenwuzan') }}</p>
-          <p>{{ $t('packages_dag_monitor_topheader_tianjialezhongjian') }}</p>
-          <p>{{ $t('packages_dag_monitor_topheader_yuanlianjiebuzhi') }}</p>
-          <p>{{ $t('packages_dag_monitor_topheader_mubiaolianjiebu') }}</p>
-        </div>
-        <div v-else>{{ $t('packages_dag_monitor_topheader_dakaijiaoyan') }}</div>
-        <button
-          v-if="dataflow.canOpenInspect"
-          :class="{ active: activeType === 'verify' }"
-          class="icon-btn"
-          @click="$emit('showVerify')"
-        >
-          <VIcon size="16">verify-list</VIcon>
-        </button>
-        <span v-else class="icon-btn disabled"><VIcon size="16">verify-list</VIcon></span>
-      </ElTooltip>
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
@@ -180,14 +162,6 @@
           @click="$emit('edit')"
         >
           {{ $t('packages_dag_button_edit') }}
-        </ElButton>
-        <ElButton
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit"
-          size="mini"
-          class="mx-2"
-          @click="$emit('edit')"
-        >
-          {{ $t('button_edit') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
