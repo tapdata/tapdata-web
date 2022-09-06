@@ -357,7 +357,7 @@ export default {
       databaseTypes: null,
       connectionOptions: null,
       tableOptions: [],
-      typeOptions: ['number', 'string', 'boolean', 'data', 'datetime', 'time'],
+      typeOptions: ['number', 'string', 'boolean', 'date', 'datetime', 'time'],
       operatorOptions: ['>', '==', '<', '>=', '<=', '!=', 'like'],
       conditionOptions: ['null', 'and', 'or'],
       allFields: [],
