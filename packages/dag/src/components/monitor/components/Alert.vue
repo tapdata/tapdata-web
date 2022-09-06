@@ -76,9 +76,8 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import VIcon from 'web-core/components/VIcon'
 import { taskApi } from '@tap/api'
-import { VTable } from '@tap/component'
+import { VTable, VIcon } from '@tap/component'
 
 export default {
   name: 'Alert',
