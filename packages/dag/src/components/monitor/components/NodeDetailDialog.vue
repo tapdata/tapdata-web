@@ -35,21 +35,21 @@
         </div>
         <div class="chart-box__content p-6 fs-8">
           <template v-if="dataflow.type !== 'cdc'">
-            <div class="mb-2 flex justify-content-between">
+            <div class="mb-4 flex justify-content-between">
               <span>全量开始时间：</span>
               <span>{{ initialData.snapshotStartAt }}</span>
             </div>
-            <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
+            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
               <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
               <span>{{ initialData.snapshotDoneAt }}</span>
             </div>
-            <div v-else class="mb-2 flex justify-content-between">
+            <div v-else class="mb-4 flex justify-content-between">
               <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
               <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
                 <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
               </ElTooltip>
             </div>
-            <div class="mb-2 flex align-items-center">
+            <div class="mb-4 flex align-items-center">
               <span class="mr-2">全量同步进度</span>
               <ElProgress
                 class="flex-1 my-2"
@@ -73,29 +73,11 @@
             </div>
           </template>
           <template v-if="dataflow.type !== 'initial_sync'">
-            <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
-              <span>最大增量延迟：</span>
-              <span>{{ calcTimeUnit(initialData.replicateLag, 1) }}</span>
+            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+              <span>增量时间点：</span>
+              <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
           </template>
-          <!--          <div class="text-center pb-10 w-100">-->
-          <!--            <div class="mb-4">-->
-          <!--              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(sourceData.tcpPing, 2) }}</div>-->
-          <!--              <div>{{ $t('packages_dag_components_nodedetaildialog_tcPlianjie') }}</div>-->
-          <!--            </div>-->
-          <!--            <div class="mb-4">-->
-          <!--              <div class="font-color-normal fw-bold mb-1 din-font">-->
-          <!--                {{ calcTimeUnit(sourceData.connectPing, 2) }}-->
-          <!--              </div>-->
-          <!--              <div>{{ $t('packages_dag_components_nodedetaildialog_xieyilianjiehao') }}</div>-->
-          <!--            </div>-->
-          <!--            <div>-->
-          <!--              <div class="font-color-normal fw-bold mb-1 din-font">-->
-          <!--                {{ formatTime(sourceData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}-->
-          <!--              </div>-->
-          <!--              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</div>-->
-          <!--            </div>-->
-          <!--          </div>-->
         </div>
       </div>
       <div
@@ -105,27 +87,15 @@
         class="chart-box rounded-2 flex flex-column"
       >
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-          {{ $t('packages_dag_components_nodedetaildialog_lianjiezhuangtai') }}
+          {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
         </div>
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
-          <div class="text-center pb-10 w-100">
-            <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(targetData.tcpPing, 2) }}</div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_tcPlianjie') }}</div>
+          <template v-if="dataflow.type !== 'initial_sync'">
+            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+              <span>增量时间点：</span>
+              <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
-            <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ calcTimeUnit(targetData.connectPing, 2) }}
-              </div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_xieyilianjiehao') }}</div>
-            </div>
-            <div>
-              <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}
-              </div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</div>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -403,7 +373,7 @@ export default {
     getFilter() {
       const { id: taskId, taskRecordId } = this.dataflow || {}
       const nodeId = this.selected
-      const [startAt, endAt] = this.quotaTime
+      const [startAt, endAt] = this.quotaTimeType === 'custome' ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
       let params = {
         startAt,
         endAt,
