@@ -13,20 +13,43 @@
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
-        <div v-if="initialData.snapshotDoneAt" class="mb-2">
-          <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
-          <span>{{ initialData.snapshotDoneAt }}</span>
-        </div>
-        <div v-else class="mb-2">
-          <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
-          <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-            <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
-          </ElTooltip>
-        </div>
-        <div class="mb-4 flex align-items-center">
-          <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_biaotongbuzongjin') }}</span>
-          <ElProgress class="flex-1 my-2" :show-text="false" :percentage="totalDataPercentage" />
-          <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+        <template v-if="dataflow.type !== 'cdc'">
+          <div class="mb-2 flex justify-content-between">
+            <span>全量开始时间：</span>
+            <span>{{ initialData.snapshotStartAt }}</span>
+          </div>
+          <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
+            <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
+            <span>{{ initialData.snapshotDoneAt }}</span>
+          </div>
+          <div v-else class="mb-2 flex justify-content-between">
+            <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
+            <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
+              <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
+            </ElTooltip>
+          </div>
+          <div class="mb-2 flex align-items-center">
+            <span class="mr-2">全量同步进度</span>
+            <ElProgress class="flex-1 my-2" :show-text="false" style="width: 150px" :percentage="totalDataPercentage" />
+            <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+          </div>
+          <div
+            v-if="dataflow.syncType === 'migrate' && !initialData.snapshotDoneAt"
+            class="mb-4 flex align-items-center"
+          >
+            <span class="mr-2">当前表同步进度</span>
+            <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
+            <span class="ml-2">{{
+              (totalData.currentSnapshotTableInsertRowTotal || 0) + '/' + (totalData.currentSnapshotTableRowTotal || 0)
+            }}</span>
+          </div>
+        </template>
+        <div
+          v-if="dataflow.type !== 'initial_sync' && initialData.snapshotDoneAt"
+          class="mb-2 flex justify-content-between"
+        >
+          <span>最大增量延迟：</span>
+          <span>{{ calcTimeUnit(initialData.replicateLag, 1) }}</span>
         </div>
       </div>
       <div v-if="verifyTotals" class="info-box">
@@ -77,7 +100,7 @@
         </div>
         <div class="mb-2" style="height: 140px">
           <LineChart
-            :data="delayData"
+            :data="replicateLagData"
             :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
             :color="['#2C65FF']"
             :time-format="timeFormat"
@@ -85,45 +108,10 @@
             class="h-100"
           ></LineChart>
         </div>
-        <div style="height: 140px">
+        <div class="mb-2" style="height: 140px">
           <LineChart
             :data="delayData"
             :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
-            :color="['#2C65FF']"
-            :time-format="timeFormat"
-            time-value
-            class="h-100"
-          ></LineChart>
-        </div>
-        <div class="flex justify-content-between mb-2">
-          <span class="fs-7 fw-bold font-color-normal">性能指标</span>
-          <ElTooltip transition="tooltip-fade-in" content="放大">
-            <VIcon @click.stop="toFullscreen">enlarge</VIcon>
-          </ElTooltip>
-        </div>
-        <div class="mb-2" style="height: 140px">
-          <LineChart
-            :data="qpsData"
-            :color="['#26CF6C', '#2C65FF']"
-            title="QPS（Q/S）"
-            :time-format="timeFormat"
-            class="h-100"
-          ></LineChart>
-        </div>
-        <div class="mb-2" style="height: 140px">
-          <LineChart
-            :data="delayData"
-            title="增量延迟"
-            :color="['#2C65FF']"
-            :time-format="timeFormat"
-            time-value
-            class="h-100"
-          ></LineChart>
-        </div>
-        <div style="height: 140px">
-          <LineChart
-            :data="delayData"
-            title="处理耗时（ms）"
             :color="['#2C65FF']"
             :time-format="timeFormat"
             time-value
@@ -219,21 +207,6 @@
 
 <script>
 import i18n from '@tap/i18n'
-
-import 'web-core/assets/icons/svg/magnify.svg'
-import 'web-core/assets/icons/svg/table.svg'
-import 'web-core/assets/icons/svg/javascript.svg'
-import 'web-core/assets/icons/svg/joint-cache.svg'
-import 'web-core/assets/icons/svg/row-filter.svg'
-import 'web-core/assets/icons/svg/aggregator.svg'
-import 'web-core/assets/icons/svg/field-processor.svg'
-import 'web-core/assets/icons/svg/join.svg'
-import 'web-core/assets/icons/svg/custom-node.svg'
-import 'web-core/assets/icons/svg/merge_table.svg'
-import 'web-core/assets/icons/svg/field_calc.svg'
-import 'web-core/assets/icons/svg/field_add_del.svg'
-import 'web-core/assets/icons/svg/field_rename.svg'
-import 'web-core/assets/icons/svg/field_mod_type.svg'
 import LineChart from './components/LineChart'
 import TimeSelect from './components/TimeSelect'
 import { VIcon } from '@tap/component'
@@ -298,7 +271,7 @@ export default {
       }
     },
 
-    // 增量延迟
+    // 处理耗时
     delayData() {
       const data = this.quota.samples?.lineChartData?.[0]
       const { time = [] } = this.quota
@@ -313,14 +286,38 @@ export default {
         value: data.timeCostAvg
       }
     },
+    // 增量延迟
+    replicateLagData() {
+      const data = this.quota.samples?.lineChartData?.[0]
+      const { time = [] } = this.quota
+      if (!data) {
+        return {
+          x: [],
+          value: []
+        }
+      }
+      return {
+        x: time,
+        value: data.replicateLag
+      }
+    },
 
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, outputQps = 0, snapshotDoneAt } = data
+      const {
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        outputQps = 0,
+        snapshotDoneAt,
+        snapshotStartAt,
+        replicateLag
+      } = data
       const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
       return {
-        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss') : '',
+        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        replicateLag: replicateLag,
         finishDuration: time
       }
     },
@@ -333,6 +330,13 @@ export default {
     totalDataPercentage() {
       const { tableTotal, snapshotTableTotal } = this.totalData
       return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
+    },
+
+    currentTotalDataPercentage() {
+      const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } = this.totalData
+      return currentSnapshotTableRowTotal
+        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
+        : 0
     },
 
     initialList() {

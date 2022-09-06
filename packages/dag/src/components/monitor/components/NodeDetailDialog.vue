@@ -15,6 +15,7 @@
         </ElSelect>
       </div>
       <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
+      <Frequency :range="$attrs.range" @change="changeFrequency"></Frequency>
     </div>
     <div class="flex justify-content-between">
       <div v-loading="loading" class="chart-box rounded-2" :class="{ 'w-100': !isSource && !isTarget }">
@@ -90,7 +91,6 @@
             :data="qpsData"
             :color="['#26CF6C', '#2C65FF']"
             :time-format="timeFormat"
-            title="QPS（Q/S）"
             ref="qpsLineChart"
           ></LineChart>
         </div>
@@ -105,7 +105,6 @@
             :time-format="timeFormat"
             :color="['#2C65FF']"
             time-value
-            :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
             ref="delayLineChart"
           ></LineChart>
         </div>
@@ -158,7 +157,8 @@ export default {
       timeFormat: 'HH:mm:ss',
       quotaTime: [],
       quotaTimeType: '5m',
-      loading: false
+      loading: false,
+      refreshRate: 5000
     }
   },
 
@@ -290,7 +290,7 @@ export default {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
         this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running' && this.loadQuotaData()
-      }, 5000)
+      }, this.refreshRate)
       this.loadQuotaData(true)
       this.$nextTick(() => {
         this.$refs.qpsLineChart?.reset?.()
@@ -441,6 +441,11 @@ export default {
     changeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
       this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.init()
+    },
+
+    changeFrequency(val) {
+      this.refreshRate = val
       this.init()
     },
 

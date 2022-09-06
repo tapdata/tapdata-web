@@ -244,9 +244,7 @@ export default defineComponent({
           <div class="statistic-title">写入耗时</div>
           <div class="statistic-content">
             <div class="statistic-value">
-              {props.sample.incrementalSourceReadTimeCostAvg
-                ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
-                : '-'}
+              {props.sample.targetWriteTimeCostAvg ? calcTimeUnit(props.sample.targetWriteTimeCostAvg) : '-'}
             </div>
           </div>
         </div>

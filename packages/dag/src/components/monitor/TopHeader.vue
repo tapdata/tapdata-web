@@ -17,17 +17,17 @@
         <div class="ml-4">
           <span>{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
         </div>
-        <div class="ml-4">
+        <div v-if="agentData" class="ml-4">
           <span>%CPU：</span>
-          <span>121.9</span>
+          <span>{{ agentData.cpuUsage }}</span>
         </div>
         <div class="ml-4">
           <span>%MEM：</span>
-          <span>72.8</span>
+          <span>{{ agentData.memoryRate }}</span>
         </div>
         <div class="ml-4">
           <span>GC：</span>
-          <span>89%</span>
+          <span>{{ agentData.gcRate }}</span>
         </div>
       </div>
     </div>
@@ -251,7 +251,8 @@ export default {
     hideMenus: {
       type: Array,
       default: () => []
-    }
+    },
+    quota: Object
   },
 
   components: { VIcon, TextEditable, TaskStatus, VDivider },
@@ -290,6 +291,16 @@ export default {
     stopTime() {
       const { stopTime } = this.dataflow
       return stopTime ? dayjs(stopTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+
+    agentData() {
+      const data = this.quota?.samples?.agentData?.[0] || {}
+      const { cpuUsage, gcRate, memoryRate } = data
+      return {
+        cpuUsage: typeof cpuUsage === 'number' ? cpuUsage.toFixed(2).toLocaleString() : '',
+        memoryRate: typeof memoryRate === 'number' ? memoryRate.toFixed(2).toLocaleString() : '',
+        gcRate: typeof gcRate === 'number' ? gcRate.toFixed(5) * 100 + '%' : ''
+      }
     }
   },
 
