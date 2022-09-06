@@ -4,7 +4,6 @@ const VerificationHistory = () => import(/* webpackChunkName: "verification-hist
 const VerificationResult = () => import(/* webpackChunkName: "verification-result" */ '@/views/verification/Result')
 const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
 const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
-const ApiPublishForm = () => import(/* webpackChunkName: "api-publish-form" */ '@/views/api-page/api-publish/Form')
 const DagEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
   return Editor
@@ -602,45 +601,6 @@ export default [
           }
         ]
       },
-      /* ---------- API发布  ----------*/
-      {
-        path: '/api-publish',
-        name: 'apiPublish',
-        component: Parent,
-        redirect: 'api-publish/',
-        meta: {
-          title: 'page_title_api_publish'
-        },
-        children: [
-          {
-            path: '',
-            name: 'apiPublishList',
-            component: () => import(/* webpackChunkName: "api-publish" */ '@/views/api-page/api-publish/List'),
-            meta: {
-              title: 'page_title_api_publish',
-              code: 'API_management_menu'
-            }
-          },
-          {
-            path: 'create',
-            name: 'apiPublishCreate',
-            component: ApiPublishForm,
-            meta: {
-              title: 'page_title_api_publish_create',
-              code: 'API_creation'
-            }
-          },
-          {
-            path: ':id/edit',
-            name: 'apiPublishEdit',
-            component: ApiPublishForm,
-            meta: {
-              title: 'page_title_api_publish_edit',
-              code: 'API_edition'
-            }
-          }
-        ]
-      },
       /* ---------- 数据服务管理  ----------*/
       {
         path: '/data-server',
@@ -649,46 +609,6 @@ export default [
         meta: {
           title: 'page_title_data_server_list',
           code: 'API_data_explorer_menu'
-        }
-      },
-      /* ---------- API浏览  ----------*/
-      {
-        path: '/api-browse',
-        name: 'apiExplorer',
-        component: () => import(/* webpackChunkName: "api-explorer" */ '@/views/api-page/ApiExplorer'),
-        meta: {
-          title: 'page_title_api_browse',
-          code: 'API_data_explorer_menu'
-        }
-      },
-      /* ---------- API测试  ----------*/
-      {
-        path: '/api-test',
-        name: 'apiDocAndTest',
-        component: () => import(/* webpackChunkName: "api-doc-and-test" */ '@/views/api-page/ApiDocAndTest'),
-        meta: {
-          title: 'page_title_api_test',
-          code: 'API_doc_&_test_menu'
-        }
-      },
-      /* ---------- API客户端  ----------*/
-      {
-        path: '/api-client',
-        name: 'apiClient',
-        component: () => import(/* webpackChunkName: "api-client" */ '@/views/api-page/Applications'),
-        meta: {
-          title: 'page_title_api_client',
-          code: 'API_clients_menu'
-        }
-      },
-      /* ---------- API服务端  ----------*/
-      {
-        path: '/api-servers',
-        name: 'apiServer',
-        component: () => import(/* webpackChunkName: "api-server" */ '@/views/api-page/ApiServer'),
-        meta: {
-          title: 'page_title_api_servers',
-          code: 'API_server_menu'
         }
       },
       /* ---------- API审计  ----------*/
