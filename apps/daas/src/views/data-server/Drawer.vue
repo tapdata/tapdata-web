@@ -229,9 +229,9 @@
                   :label="opt.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect v-model="form.sort[index].operator" size="mini" class="mr-4">
-                <ElOption value="asc" label="asc"></ElOption>
-                <ElOption value="desc" label="desc"></ElOption>
+              <ElSelect v-model="form.sort[index].type" size="mini" class="mr-4">
+                <ElOption value="asc" label="ASC"></ElOption>
+                <ElOption value="desc" label="DESC"></ElOption>
               </ElSelect>
               <i class="el-icon-remove icon-button" @click="removeItem('sort', index)"></i>
             </li>
@@ -292,7 +292,7 @@
           <VCodeEditor
             height="280"
             lang="json"
-            :options="{ printMargin: false, readOnly: true }"
+            :options="{ printMargin: false, readOnly: true, wrap: 'free' }"
             :value="debugResult"
           ></VCodeEditor>
         </template>
@@ -312,7 +312,7 @@
           <VCodeEditor
             height="280"
             :lang="templateType"
-            :options="{ printMargin: false, readOnly: true }"
+            :options="{ printMargin: false, readOnly: true, wrap: 'free' }"
             :value="templates[templateType]"
           ></VCodeEditor>
         </template>
@@ -325,10 +325,9 @@
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
-import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi } from '@tap/api'
+import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi, applicationApi } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
-import Cookie from '@tap/shared/src/cookie'
 
 import getTemplate from './template'
 
@@ -371,7 +370,9 @@ export default {
       urls: [],
 
       templates: {},
-      templateType: 'java'
+      templateType: 'java',
+
+      token: ''
     }
   },
   computed: {
@@ -385,6 +386,10 @@ export default {
       this.tab = 'form'
       this.visible = true
       this.isEdit = false
+      this.debugParams = null
+      this.debugMethod = 'GET'
+      this.debugResult = ''
+
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
       if (!this.data.id) {
@@ -438,7 +443,9 @@ export default {
         TOKEN: `${baseUrl}`
       }
       if (this.data.status === 'active') {
-        this.templates = getTemplate(baseUrl, Cookie.get('token'))
+        this.getAPIServerToken(token => {
+          this.templates = getTemplate(baseUrl, token)
+        })
       }
     },
     getDefaultParams(apiType) {
@@ -680,25 +687,61 @@ export default {
     removeItem(key, index) {
       this.form[key].splice(index, 1)
     },
-    async debugData() {
-      let http = axios.create({
-        headers: {}
+    async getAPIServerToken(callback) {
+      const clientInfo = await applicationApi.get({
+        filter: JSON.stringify({
+          where: {
+            clientName: 'Data Explorer'
+          }
+        })
       })
+      const clientInfoItem = clientInfo?.items?.[0] || {}
+
+      const paramsStr =
+        'grant_type=client_credentials&client_id=' + clientInfoItem.id + '&client_secret=' + clientInfoItem.clientSecret
+      const result = await axios.create().post('/oauth/token', paramsStr)
+      const token = result?.data?.access_token || ''
+      this.token = token
+      callback && callback(token)
+    },
+    async debugData() {
+      let http = axios.create()
       let params = this.debugParams
       let method = this.debugMethod
-      let url = this.urls[this.debugMethod]
-      if (method === 'GET') {
-        params = {
-          params: params
+      if (method === 'TOKEN') {
+        this.debugResult = JSON.stringify(
+          {
+            access_token: this.token,
+            expires_in: 1209599,
+            scope: 'admin',
+            token_type: 'Bearer'
+          },
+          null,
+          2
+        )
+      } else {
+        let url = this.urls[this.debugMethod] + '?access_token=' + this.token
+        for (const key in params) {
+          const value = params[key]
+          if (value) {
+            params[key] = encodeURIComponent(value)
+          } else {
+            delete params[key]
+          }
         }
-      }
-      let result = await http[method.toLowerCase()](url, params).catch(error => {
-        let result = error?.response?.data
-        result = result ? JSON.stringify(result, null, 2) : ''
-        this.debugResult = result
-      })
-      if (result) {
-        this.debugResult = result
+        if (method === 'GET') {
+          params = {
+            params: params
+          }
+        }
+        let result = await http[method.toLowerCase()](url, params).catch(error => {
+          let result = error?.response?.data
+          result = result ? JSON.stringify(result, null, 2) : ''
+          this.debugResult = result
+        })
+        if (result) {
+          this.debugResult = JSON.stringify(result.response.data, null, 2)
+        }
       }
     }
   }
