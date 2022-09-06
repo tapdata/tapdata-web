@@ -25,7 +25,9 @@ export default {
     value: String,
     title: {
       type: String,
-      default: '刷新频率'
+      default: () => {
+        return '刷新频率'
+      }
     },
     options: {
       type: Array,
@@ -88,7 +90,7 @@ export default {
 
   methods: {
     changeFnc(value) {
-      console.log('changeFnc', value)
+      this.$emit('change', value)
     }
   }
 }

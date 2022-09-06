@@ -4,7 +4,7 @@
       <div class="info-box">
         <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
         <VIcon class="color-primary">refresh</VIcon>
-        <Frequency :range="$attrs.range"></Frequency>
+        <Frequency :range="$attrs.range" @change="changeFrequency"></Frequency>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box">
         <div class="flex justify-content-between mb-2">
@@ -135,49 +135,53 @@
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">任务事件统计（条）</span>
         </div>
-        <div v-loading="!eventDataAll" class="flex justify-content-between">
-          <div v-if="eventDataAll">
+        <div v-loading="!eventDataAll" class="flex">
+          <div v-if="eventDataAll" class="w-50 pr-4">
             <div>总输入</div>
             <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
               {{ eventDataAll.inputTotals.toLocaleString() }}
             </div>
-            <div class="flex justify-content-between mb-2">
+            <div class="mb-2">
               <span>插入：</span>
               <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
             </div>
-            <div class="flex justify-content-between mb-2">
+            <div class="mb-2">
               <span>更新：</span>
               <span>{{ eventDataAll.inputUpdateTotal.toLocaleString() }}</span>
             </div>
-            <div class="flex justify-content-between mb-2">
+            <div class="mb-2">
               <span>删除：</span>
               <span>{{ eventDataAll.inputDeleteTotal.toLocaleString() }}</span>
             </div>
-            <div class="flex justify-content-between">
+            <div>
               <span>DDL：</span>
               <span>{{ eventDataAll.inputDdlTotal.toLocaleString() }}</span>
             </div>
           </div>
-          <div v-if="eventDataAll">
-            <div>总输出</div>
-            <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
-              {{ eventDataAll.outputTotals.toLocaleString() }}
-            </div>
-            <div class="flex justify-content-between mb-2">
-              <span>插入：</span>
-              <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
-            </div>
-            <div class="flex justify-content-between mb-2">
-              <span>更新：</span>
-              <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
-            </div>
-            <div class="flex justify-content-between mb-2">
-              <span>删除：</span>
-              <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
-            </div>
-            <div class="flex justify-content-between">
-              <span>DDL：</span>
-              <span>{{ eventDataAll.outputDdlTotal.toLocaleString() }}</span>
+
+          <div v-if="eventDataAll" class="output-item flex w-50">
+            <div class="output-item__divider"></div>
+            <div class="ml-4">
+              <div>总输出</div>
+              <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+                {{ eventDataAll.outputTotals.toLocaleString() }}
+              </div>
+              <div class="mb-2">
+                <span>插入：</span>
+                <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
+              </div>
+              <div class="mb-2">
+                <span>更新：</span>
+                <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
+              </div>
+              <div class="mb-2">
+                <span>删除：</span>
+                <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
+              </div>
+              <div>
+                <span>DDL：</span>
+                <span>{{ eventDataAll.outputDdlTotal.toLocaleString() }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -352,6 +356,10 @@ export default {
       this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
     },
 
+    changeFrequency(val) {
+      this.$emit('changeFrequency', val)
+    },
+
     toFullscreen() {
       this.lineChartDialog = true
     },
@@ -461,5 +469,10 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+}
+.output-item__divider {
+  margin-top: 40px;
+  border-right: 1px solid #f2f2f2;
+  height: calc(100% - 40px);
 }
 </style>

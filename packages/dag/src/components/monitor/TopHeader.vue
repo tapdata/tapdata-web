@@ -87,43 +87,6 @@
         </button>
       </ElTooltip>
     </div>
-  <header class="layout-header border-bottom p-4">
-    <div>
-      <div class="flex align-items-center">
-        <button @click="$emit('page-return')" class="icon-btn">
-          <VIcon size="18">left</VIcon>
-        </button>
-        <TextEditable
-          v-model="name"
-          :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-          max-width="260"
-          @change="onNameInputChange"
-        />
-        <span class="ml-4">{{ syncType[dataflow.type] }}</span>
-        <TaskStatus :task="dataflow" class="ml-4" />
-      </div>
-      <div class="flex align-items-center font-color-light">
-        <div class="ml-10 pl-1">
-          <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
-          <span>{{ stopTime }}</span>
-        </div>
-        <div class="ml-4">
-          <span>{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
-        </div>
-        <div class="ml-4">
-          <span>%CPU：</span>
-          <span>121.9</span>
-        </div>
-        <div class="ml-4">
-          <span>%MEM：</span>
-          <span>72.8</span>
-        </div>
-        <div class="ml-4">
-          <span>GC：</span>
-          <span>89%</span>
-        </div>
-      </div>
-    </div>
 
     <div class="operation-center flex align-center">
       <!--自动布局-->

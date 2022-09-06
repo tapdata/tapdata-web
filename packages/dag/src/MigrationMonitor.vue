@@ -49,6 +49,7 @@
           @add-node="handleAddNode"
           @toggle-expand="handleToggleExpand"
           @changeTimeSelect="handleChangeTimeSelect"
+          @changeFrequency="handleChangeFrequency"
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
@@ -234,7 +235,8 @@ export default {
       timeFormat: 'HH:mm:ss',
       dagData: null,
       verifyData: null,
-      verifyTotals: null
+      verifyTotals: null,
+      refreshRate: 5000
     }
   },
 
@@ -303,7 +305,7 @@ export default {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
         this.isEnterTimer && this.startLoadData()
-      }, 5000)
+      }, this.refreshRate)
       this.startLoadData()
     },
 
@@ -773,6 +775,11 @@ export default {
     handleChangeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
       this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.init()
+    },
+
+    handleChangeFrequency(val) {
+      this.refreshRate = val
       this.init()
     },
 
