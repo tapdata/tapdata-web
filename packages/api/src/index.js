@@ -138,6 +138,9 @@ const monitoringLogsApi = new MonitoringLogs()
 import Discovery from './Discovery'
 const discoveryApi = new Discovery()
 
+import AlarmRule from './AlarmRule'
+const alarmRuleApi = new AlarmRule()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -184,7 +187,8 @@ export {
   metadataTransformerApi,
   functionApi,
   monitoringLogsApi,
-  discoveryApi
+  discoveryApi,
+  alarmRuleApi
 }
 export * from './ApiClient'
 
