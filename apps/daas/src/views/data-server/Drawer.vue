@@ -198,7 +198,14 @@
                 ></ElOption>
               </ElSelect>
               <ElSelect v-model="form.where[index].condition" size="mini" class="mr-4">
-                <ElOption v-for="item in conditionOptions" :key="item" :value="item" :label="item"></ElOption>
+                <template v-for="item in conditionOptions">
+                  <ElOption
+                    v-if="item !== 'null' || index === form.where.length - 1"
+                    :key="item"
+                    :value="item"
+                    :label="item"
+                  ></ElOption>
+                </template>
               </ElSelect>
               <i class="el-icon-remove icon-button" @click="removeItem('where', index)"></i>
             </li>
@@ -440,7 +447,7 @@ export default {
       this.urls = {
         POST: `${baseUrl}/find`,
         GET: `${baseUrl}`,
-        TOKEN: `${baseUrl}`
+        TOKEN: `${location.origin + location.pathname}oauth/token`
       }
       if (this.data.status === 'active') {
         this.getAPIServerToken(token => {
@@ -679,8 +686,15 @@ export default {
     addItem(key) {
       let map = {
         params: { name: '', type: 'string', description: '', defaultvalue: '' },
-        where: { fieldName: '', parameter: '', operator: '>', condition: 'null' },
+        where: { fieldName: '', parameter: '', operator: '>', condition: 'and' },
         sort: { fieldName: '', type: 'asc' }
+      }
+      if (key === 'where') {
+        let list = this.form.where
+        let lastItem = list[list.length - 1]
+        if (list.length && lastItem.condition === 'null') {
+          lastItem.condition = 'and'
+        }
       }
       this.form[key].push(cloneDeep(map[key]))
     },
@@ -723,9 +737,7 @@ export default {
         let url = this.urls[this.debugMethod] + '?access_token=' + this.token
         for (const key in params) {
           const value = params[key]
-          if (value) {
-            params[key] = encodeURIComponent(value)
-          } else {
+          if (!value) {
             delete params[key]
           }
         }
