@@ -847,6 +847,17 @@ export default [
               code: 'system_settings_menu',
               isNotAside: true
             }
+          },
+          /* ---------- 告警设置  ----------*/
+          {
+            path: 'alarmSetting',
+            name: 'alarmSetting',
+            component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/AlarmNotification'),
+            meta: {
+              title: 'page_title_setting',
+              code: 'system_settings_menu',
+              isNotAside: true
+            }
           }
         ]
       },
