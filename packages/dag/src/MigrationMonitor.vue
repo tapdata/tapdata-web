@@ -520,6 +520,13 @@ export default {
     },
 
     handleEdit() {
+      if (this.dataflow.syncType === 'sync') {
+        this.$router.push({
+          name: 'DataflowEditor',
+          params: { id: this.dataflow.id }
+        })
+        return
+      }
       this.$router.push({
         name: 'MigrateEditor',
         params: { id: this.dataflow.id }
