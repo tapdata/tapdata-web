@@ -641,6 +641,7 @@ export default {
         .putLogSetting(this.dataflow.id, params)
         .then(() => {
           this.$message.success(this.$t('message_save_ok'))
+          this.dialog = false
         })
         .finally(() => {
           this.saveLoading = false

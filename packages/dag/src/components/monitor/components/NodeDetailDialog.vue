@@ -21,7 +21,7 @@
       </ElTooltip>
     </div>
     <div class="flex justify-content-between">
-      <div v-loading="loading" class="chart-box rounded-2" :class="{ 'w-100': !isSource && !isTarget }">
+      <div v-loading="loading" class="chart-box rounded-2" :class="{ 'w-100': chartBoxWidth100 }">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
           {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
         </div>
@@ -37,7 +37,7 @@
           <template v-if="dataflow.type !== 'cdc'">
             <div class="mb-4 flex justify-content-between">
               <span>全量开始时间：</span>
-              <span>{{ initialData.snapshotStartAt }}</span>
+              <span>{{ initialData.snapshotStartAt || '-' }}</span>
             </div>
             <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
               <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
@@ -57,10 +57,10 @@
                 style="width: 150px"
                 :percentage="totalDataPercentage"
               />
-              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+              <span class="ml-2">{{ totalData.snapshotInsertRowTotal + '/' + totalData.snapshotRowTotal }}</span>
             </div>
             <div
-              v-if="dataflow.syncType === 'migrate' && !initialData.snapshotDoneAt"
+              v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
               class="mb-4 flex align-items-center"
             >
               <span class="mr-2">当前表同步进度</span>
@@ -316,13 +316,23 @@ export default {
     },
 
     totalData() {
-      const { tableTotal = 0, snapshotTableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
-      return { tableTotal, snapshotTableTotal }
+      const {
+        snapshotInsertRowTotal = 0,
+        snapshotRowTotal = 0,
+        currentSnapshotTableInsertRowTotal = 0,
+        currentSnapshotTableRowTotal = 0
+      } = this.quota.samples?.totalData?.[0] || {}
+      return {
+        snapshotInsertRowTotal,
+        snapshotRowTotal,
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal
+      }
     },
 
     totalDataPercentage() {
-      const { tableTotal, snapshotTableTotal } = this.totalData
-      return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
+      const { snapshotInsertRowTotal, snapshotRowTotal } = this.totalData
+      return snapshotInsertRowTotal && snapshotRowTotal ? (snapshotInsertRowTotal / snapshotRowTotal) * 100 : 0
     },
 
     currentTotalDataPercentage() {
@@ -330,6 +340,11 @@ export default {
       return currentSnapshotTableRowTotal
         ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
         : 0
+    },
+
+    chartBoxWidth100() {
+      const { isSource, isTarget } = this
+      return !isSource && !isTarget
     }
   },
 
@@ -413,7 +428,8 @@ export default {
               'currentSnapshotTableRowTotal',
               'currentSnapshotTableInsertRowTotal',
               'replicateLag',
-              'snapshotStartAt'
+              'snapshotStartAt',
+              'snapshotDoneAt'
             ],
             //
             type: 'instant' // 瞬时值
