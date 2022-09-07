@@ -346,7 +346,7 @@ export default {
       const txt = escapeRegExp(this.dbSearchTxt.trim())
 
       if (txt) {
-        filter.where.name = { like: txt, options: 'i' }
+        filter.where = { name: { like: txt, options: 'i' } }
       }
 
       return { filter: JSON.stringify(filter) }

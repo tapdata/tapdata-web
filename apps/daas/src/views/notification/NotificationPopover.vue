@@ -79,6 +79,38 @@
           </div>
         </div>
       </el-tab-pane>
+      <el-tab-pane class="tab-item" label="告警通知" name="alarm" v-loading="loading">
+        <div class="tab-item-container">
+          <ul class="tab-list notification-list" v-if="alarmData.length">
+            <li class="notification-item" v-for="(item, index) in alarmData" :key="index" @click="handleRead(item.id)">
+              <div class="flex flex-row">
+                <div class="mr-1">
+                  <span class="unread-1zPaAXtSu inline-block"></span>
+                </div>
+                <div>
+                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
+                  <span>{{ systemMap[item.system] }} </span>
+                  <span class="cursor-pointer px-1 primary" @click="handleGo(item)">
+                    {{ item.serverName }}
+                  </span>
+                  <template>
+                    <span>{{ item.msg }}</span>
+                  </template>
+                  <div class="item-time">
+                    <span>{{ item.createTime }}</span>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
     </el-tabs>
   </el-popover>
 </template>
@@ -107,7 +139,11 @@ export default {
       colorMap: {
         ERROR: '#D44D4D',
         WARN: '#FF7D00',
-        INFO: '#2c65ff'
+        INFO: '#2c65ff',
+        Emergency: '#D44D4D',
+        Critical: '#FF7D00',
+        Normal: '#2c65ff',
+        Warning: '#C39700'
       },
       typeMap: TYPEMAP,
       systemMap: {
@@ -117,9 +153,56 @@ export default {
         agent: this.$t('notify_manage_sever'),
         inspect: this.$t('notify_inspect'),
         JobDDL: this.$t('notify_ddl_deal'),
-        system: this.$t('notify_system')
+        system: this.$t('notify_system'),
+        Agent: 'Agent'
       },
-      userOperations: []
+      userOperations: [],
+      alarmData: [
+        {
+          level: 'Emergency',
+          createTime: '2022-08-25T06:50:44Z',
+          id: '63071bc48eefa8002ee2dfce',
+          msg: '已停止，当前无可用Agent，请尽快处理',
+          read: false,
+          serverName: 'Agent1',
+          sourceId: '63071b658eefa8002ee2df55',
+          system: 'Agent',
+          title: ''
+        },
+        {
+          level: 'Warning',
+          createTime: '2022-08-25T06:50:44Z',
+          id: '63071bc48eefa8002ee2dfce',
+          msg: '的增量延迟大于2分钟，已持续30分钟，请关注',
+          read: false,
+          serverName: '新任务@14:49:09',
+          sourceId: '63071b658eefa8002ee2df55',
+          system: 'migration',
+          title: ''
+        },
+        {
+          level: 'Critical',
+          createTime: '2022-08-25T06:50:44Z',
+          id: '63071bc48eefa8002ee2dfce',
+          msg: '已停止，当前2个可用Agent，请关注',
+          read: false,
+          serverName: 'Agent2',
+          sourceId: '63071b658eefa8002ee2df55',
+          system: 'Agent',
+          title: ''
+        },
+        {
+          level: 'Normal',
+          createTime: '2022-08-25T06:50:44Z',
+          id: '63071bc48eefa8002ee2dfce',
+          msg: '已停止，当前2个可用Agent，请关注',
+          read: false,
+          serverName: 'Agent3',
+          sourceId: '63071b658eefa8002ee2df55',
+          system: 'Agent',
+          title: ''
+        }
+      ]
     }
   },
   computed: mapState({
@@ -275,7 +358,7 @@ export default {
       border-bottom: 1px solid map-get($borderColor, light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
-          width: 200px;
+          width: 270px;
         }
       }
       .el-tabs__item {
