@@ -278,6 +278,11 @@ export default {
     }
   },
 
+  created() {
+    // 进入监控只读
+    this.setStateReadonly(true)
+  },
+
   mounted() {
     this.setValidateLanguage()
     this.initNodeType()
