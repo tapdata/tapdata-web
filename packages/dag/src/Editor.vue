@@ -260,10 +260,9 @@ export default {
     gotoViewer() {
       this.$router
         .push({
-          name: 'DataflowViewer',
+          name: 'TaskMonitor',
           params: {
-            id: this.dataflow.id,
-            action: 'dataflowViewer'
+            id: this.dataflow.id
           }
         })
         .catch(() => {
