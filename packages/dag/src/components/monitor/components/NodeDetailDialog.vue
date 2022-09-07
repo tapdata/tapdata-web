@@ -91,7 +91,7 @@
         </div>
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <template v-if="dataflow.type !== 'initial_sync'">
-            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+            <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
               <span>增量时间点：</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
