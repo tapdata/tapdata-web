@@ -59,7 +59,7 @@
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
-            <VIcon @click.stop="toInitialList">menu-left</VIcon>
+            <VIcon @click.stop="$emit('verifyDetails')">menu-left</VIcon>
           </ElTooltip>
         </div>
         <div class="flex justify-content-between mb-2">
