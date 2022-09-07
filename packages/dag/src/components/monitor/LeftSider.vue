@@ -12,7 +12,7 @@
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_quanliangxinxi') }}</span>
+          <span class="fw-bold fs-7 font-color-normal">同步信息</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
