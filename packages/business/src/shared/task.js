@@ -91,29 +91,29 @@ export function getNodeIconSrc(node) {
 
 export const STATUS_MAP = {
   edit: {
-    i18n: 'status_edit'
+    i18n: 'packages_business_status_edit'
   },
   wait_start: {
     i18n: 'packages_business_status_wait_start'
   },
   starting: {
-    i18n: 'status_starting',
+    i18n: 'packages_business_status_starting',
     in: ['preparing', 'scheduling', 'wait_run']
   },
   running: {
-    i18n: 'status_running'
+    i18n: 'packages_business_status_running'
   },
   complete: {
-    i18n: 'status_complete'
+    i18n: 'packages_business_status_complete'
   },
   stopping: {
-    i18n: 'status_stopping'
+    i18n: 'packages_business_status_stopping'
   },
   stop: {
-    i18n: 'status_stop'
+    i18n: 'packages_business_status_stop'
   },
   error: {
-    i18n: 'status_error',
+    i18n: 'packages_business_status_error',
     in: ['schedule_failed', 'error']
   }
 }
