@@ -105,6 +105,31 @@
                 <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
               </span>
             </template>
+            <template v-if="item.category === 'alarm'">
+              <el-row class="mb-4">
+                <el-col :span="12">告警指标</el-col>
+                <el-col :span="12">默认告警规则</el-col>
+              </el-row>
+              <el-row class="mb-4" v-for="(childItem, childIndex) in item.items" :key="childIndex">
+                <el-col :span="8">
+                  <span>{{ childItem.key }}</span>
+                </el-col>
+                <el-col :span="16">
+                  <span class="mr-2">连续</span>
+                  <el-input-number :controls="false" style="width: 100px" v-model="childItem.point"></el-input-number>
+                  <span class="ml-2 mr-2"> 个点</span>
+                  <el-select style="width: 100px" class="mr-2" v-model="childItem.equalsFlag">
+                    <el-option lable=">=" value=">="></el-option>
+                    <el-option lable=">=" value=">"></el-option>
+                    <el-option lable=">=" value="="></el-option>
+                    <el-option lable="<=" value="<="></el-option>
+                    <el-option lable="<" value="<"></el-option>
+                  </el-select>
+                  <el-input-number :controls="false" v-model="childItem.ms" style="width: 80px"></el-input-number>
+                  <span class="ml-2">ms时告警</span>
+                </el-col>
+              </el-row>
+            </template>
           </div>
         </div>
 
@@ -188,8 +213,9 @@
 <script>
 import { uniq, find } from 'lodash'
 import { VIcon } from '@tap/component'
-import { licensesApi, settingsApi } from '@tap/api'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+import Cookie from '@tap/shared/src/cookie'
+import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
 
 export default {
   name: 'Setting',
@@ -201,6 +227,7 @@ export default {
       formData: {
         items: []
       },
+      alarmData: {}, //告警数据
       activeTab: 0,
       activePanel: 'Log',
       lang: getCurrentLanguage(),
@@ -310,8 +337,32 @@ export default {
         vals.sort((a, b) => {
           return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
         })
-
         _this.formData.items = vals
+
+        //mock data
+        let node = {
+          category: 'alarm',
+          category_sort: 9,
+          items: [
+            {
+              id: '96',
+              key: 'cdc3',
+              number: 3,
+              symbol: '>=',
+              time: 500,
+              key_label: '任务的增量延迟'
+            },
+            {
+              id: '97',
+              key: 'cdc',
+              number: 3,
+              symbol: '>=',
+              time: 500,
+              key_label: '数据网络耗时'
+            }
+          ]
+        }
+        _this.formData.items.push(node)
       })
       let lincenseData = {
         liceseItems: auth_data,
@@ -319,6 +370,16 @@ export default {
         category: 'license'
       }
       _this.formData.items.push(lincenseData)
+    },
+    //告警设置 单独请求接口 单独提交数据
+    getAlarmData() {
+      alarmRuleApi.find().then(data => {
+        this.alarmData = {
+          category: 'alarm',
+          items: data
+        }
+        this.formData.items.push(this.alarmData)
+      })
     },
     // 保存
     save() {
@@ -412,7 +473,7 @@ export default {
       overflow-y: auto;
     }
     .item {
-      width: 800px;
+      // width: 800px;
       margin-bottom: 20px;
       .title {
         display: inline-block;
@@ -431,15 +492,13 @@ export default {
         }
       }
       .box {
+        width: 800px;
         .el-form-item {
           margin-bottom: 22px;
           .el-form-item__label {
             padding-bottom: 0;
             line-height: 28px;
           }
-          // .el-input__inner {
-          //   width: 500px;
-          // }
           .el-select {
             width: 100%;
           }

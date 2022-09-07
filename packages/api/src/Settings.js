@@ -30,5 +30,15 @@ export default class Settings extends Http {
     if (typeof where === 'object') where = JSON.stringify(where)
     return this.axios.post(this.url + '/enterpriseUpdate?where=' + encodeURIComponent(where), attributes)
   }
+
+  findAlarm() {
+    return this.axios.get(`${this.url}/alarm_find`)
+  }
+  saveAlarm(params) {
+    return this.axios.post(`${this.url}/alarm_save`, params)
+  }
+  updateAlarm(params) {
+    return this.axios.patch(`${this.url}/alarm_update`, params)
+  }
 }
 export { Settings }

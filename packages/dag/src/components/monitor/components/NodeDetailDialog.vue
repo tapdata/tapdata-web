@@ -15,9 +15,13 @@
         </ElSelect>
       </div>
       <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
+      <Frequency :range="$attrs.range" @change="changeFrequency"></Frequency>
+      <ElTooltip transition="tooltip-fade-in" content="刷新">
+        <VIcon class="color-primary" @click="init">refresh</VIcon>
+      </ElTooltip>
     </div>
     <div class="flex justify-content-between">
-      <div v-loading="loading" class="chart-box rounded-2" :class="{ 'w-100': !isSource && !isTarget }">
+      <div v-loading="loading" class="chart-box rounded-2" :class="{ 'w-100': chartBoxWidth100 }">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
           {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
         </div>
@@ -29,25 +33,51 @@
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
           {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
         </div>
-        <div class="chart-box__content p-4 flex-fill flex align-items-center">
-          <div class="text-center pb-10 w-100">
-            <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(sourceData.tcpPing, 2) }}</div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_tcPlianjie') }}</div>
+        <div class="chart-box__content p-6 fs-8">
+          <template v-if="dataflow.type !== 'cdc'">
+            <div class="mb-4 flex justify-content-between">
+              <span>全量开始时间：</span>
+              <span>{{ initialData.snapshotStartAt || '-' }}</span>
             </div>
-            <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ calcTimeUnit(sourceData.connectPing, 2) }}
-              </div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_xieyilianjiehao') }}</div>
+            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+              <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
+              <span>{{ initialData.snapshotDoneAt }}</span>
             </div>
-            <div>
-              <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ formatTime(sourceData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}
-              </div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</div>
+            <div v-else class="mb-4 flex justify-content-between">
+              <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
+              <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
+                <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
+              </ElTooltip>
             </div>
-          </div>
+            <div class="mb-4 flex align-items-center">
+              <span class="mr-2">全量同步进度</span>
+              <ElProgress
+                class="flex-1 my-2"
+                :show-text="false"
+                style="width: 150px"
+                :percentage="totalDataPercentage"
+              />
+              <span class="ml-2">{{ totalData.snapshotInsertRowTotal + '/' + totalData.snapshotRowTotal }}</span>
+            </div>
+            <div
+              v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
+              class="mb-4 flex align-items-center"
+            >
+              <span class="mr-2">当前表同步进度</span>
+              <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
+              <span class="ml-2">{{
+                (totalData.currentSnapshotTableInsertRowTotal || 0) +
+                '/' +
+                (totalData.currentSnapshotTableRowTotal || 0)
+              }}</span>
+            </div>
+          </template>
+          <template v-if="dataflow.type !== 'initial_sync'">
+            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+              <span>增量时间点：</span>
+              <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
+            </div>
+          </template>
         </div>
       </div>
       <div
@@ -57,27 +87,15 @@
         class="chart-box rounded-2 flex flex-column"
       >
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-          {{ $t('packages_dag_components_nodedetaildialog_lianjiezhuangtai') }}
+          {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
         </div>
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
-          <div class="text-center pb-10 w-100">
-            <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1 din-font">{{ calcTimeUnit(targetData.tcpPing, 2) }}</div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_tcPlianjie') }}</div>
+          <template v-if="dataflow.type !== 'initial_sync'">
+            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+              <span>增量时间点：</span>
+              <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
-            <div class="mb-4">
-              <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ calcTimeUnit(targetData.connectPing, 2) }}
-              </div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_xieyilianjiehao') }}</div>
-            </div>
-            <div>
-              <div class="font-color-normal fw-bold mb-1 din-font">
-                {{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}
-              </div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</div>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -90,7 +108,6 @@
             :data="qpsData"
             :color="['#26CF6C', '#2C65FF']"
             :time-format="timeFormat"
-            title="QPS（Q/S）"
             ref="qpsLineChart"
           ></LineChart>
         </div>
@@ -105,7 +122,6 @@
             :time-format="timeFormat"
             :color="['#2C65FF']"
             time-value
-            :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
             ref="delayLineChart"
           ></LineChart>
         </div>
@@ -126,12 +142,13 @@ import { calcTimeUnit } from '@tap/shared'
 import EventChart from './EventChart'
 import LineChart from './LineChart'
 import TimeSelect from './TimeSelect'
+import Frequency from './Frequency'
 import { TIME_FORMAT_MAP, getTimeGranularity } from '../util'
 
 export default {
   name: 'NodeDetailDialog',
 
-  components: { EventChart, LineChart, TimeSelect },
+  components: { EventChart, LineChart, TimeSelect, Frequency },
 
   props: {
     value: {
@@ -158,7 +175,8 @@ export default {
       timeFormat: 'HH:mm:ss',
       quotaTime: [],
       quotaTimeType: '5m',
-      loading: false
+      loading: false,
+      refreshRate: 5000
     }
   },
 
@@ -220,10 +238,20 @@ export default {
         }
       }
       const { time = [] } = this.quota
-      return {
+      const { isSource, isTarget } = this
+      let result = {
         x: time,
+        name: ['处理耗时'],
         value: data.timeCostAvg
       }
+      if (isSource) {
+        result.name = ['处理耗时', '平均读取耗时', '增量读取延迟']
+        result.value = [data.timeCostAvg, data.snapshotSourceReadTimeCostAvg, data.incrementalSourceReadTimeCostAvg]
+      } else if (isTarget) {
+        result.name = ['处理耗时', '写入耗时']
+        result.value = [data.timeCostAvg, data.targetWriteTimeCostAvg]
+      }
+      return result
     },
 
     // 源节点-同步状态
@@ -266,6 +294,57 @@ export default {
     isTarget() {
       const { type, $outputs } = this.node
       return (type === 'database' || type === 'table') && !$outputs.length
+    },
+
+    initialData() {
+      const data = this.quota.samples?.totalData?.[0] || {}
+      const {
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        outputQps = 0,
+        snapshotDoneAt,
+        snapshotStartAt,
+        replicateLag
+      } = data
+      const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
+      return {
+        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        replicateLag: replicateLag,
+        finishDuration: time
+      }
+    },
+
+    totalData() {
+      const {
+        snapshotInsertRowTotal = 0,
+        snapshotRowTotal = 0,
+        currentSnapshotTableInsertRowTotal = 0,
+        currentSnapshotTableRowTotal = 0
+      } = this.quota.samples?.totalData?.[0] || {}
+      return {
+        snapshotInsertRowTotal,
+        snapshotRowTotal,
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal
+      }
+    },
+
+    totalDataPercentage() {
+      const { snapshotInsertRowTotal, snapshotRowTotal } = this.totalData
+      return snapshotInsertRowTotal && snapshotRowTotal ? (snapshotInsertRowTotal / snapshotRowTotal) * 100 : 0
+    },
+
+    currentTotalDataPercentage() {
+      const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } = this.totalData
+      return currentSnapshotTableRowTotal
+        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
+        : 0
+    },
+
+    chartBoxWidth100() {
+      const { isSource, isTarget } = this
+      return !isSource && !isTarget
     }
   },
 
@@ -290,7 +369,7 @@ export default {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
         this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running' && this.loadQuotaData()
-      }, 5000)
+      }, this.refreshRate)
       this.loadQuotaData(true)
       this.$nextTick(() => {
         this.$refs.qpsLineChart?.reset?.()
@@ -309,7 +388,7 @@ export default {
     getFilter() {
       const { id: taskId, taskRecordId } = this.dataflow || {}
       const nodeId = this.selected
-      const [startAt, endAt] = this.quotaTime
+      const [startAt, endAt] = this.quotaTimeType === 'custome' ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
       let params = {
         startAt,
         endAt,
@@ -345,7 +424,13 @@ export default {
               'tableTotal',
               'snapshotTableTotal',
               'snapshotRowTotal',
-              'snapshotInsertRowTotal'
+              'snapshotInsertRowTotal',
+              'currentSnapshotTableRowTotal',
+              'currentSnapshotTableInsertRowTotal',
+              'replicateLag',
+              'snapshotStartAt',
+              'snapshotDoneAt',
+              'outputQps'
             ],
             //
             type: 'instant' // 瞬时值
@@ -385,7 +470,15 @@ export default {
               taskRecordId,
               nodeId
             },
-            fields: ['qps', 'inputQps', 'outputQps', 'timeCostAvg'],
+            fields: [
+              'qps',
+              'inputQps',
+              'outputQps',
+              'timeCostAvg',
+              'snapshotSourceReadTimeCostAvg',
+              'incrementalSourceReadTimeCostAvg',
+              'targetWriteTimeCostAvg'
+            ],
             type: 'continuous' // 连续数据
           }
         }
@@ -441,6 +534,11 @@ export default {
     changeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
       this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.init()
+    },
+
+    changeFrequency(val) {
+      this.refreshRate = val
       this.init()
     },
 
@@ -503,6 +601,7 @@ export default {
   padding: 0 4px 0 0;
   height: 28px;
   cursor: pointer;
+  white-space: nowrap;
   &:hover {
     background: #eef3ff;
   }

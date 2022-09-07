@@ -14,7 +14,7 @@
       >
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
-      <VIcon class="color-primary ml-1" @click="openPicker">timer</VIcon>
+      <VIcon size="14" class="color-primary ml-1" @click="openPicker">timer</VIcon>
     </div>
     <ElDatePicker
       v-model="time"
@@ -67,6 +67,10 @@ export default {
         {
           label: i18n.t('packages_dag_components_timeselect_zuijintian'),
           value: '1d'
+        },
+        {
+          label: '任务最近一次启动至今',
+          value: 'lastStart'
         },
         {
           label: i18n.t('packages_dag_components_timeselect_renwuquanzhouqi'),

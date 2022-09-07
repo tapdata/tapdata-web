@@ -674,7 +674,7 @@ export default {
 
     handleDetail() {
       this.$router.push({
-        name: 'dataflowStatistics',
+        name: 'TaskMonitor',
         params: {
           id: this.dataflow.id
         }

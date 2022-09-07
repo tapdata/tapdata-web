@@ -42,6 +42,11 @@ export default {
           key: 'notificationSetting'
         },
         {
+          icon: 'bells',
+          name: '告警设置',
+          key: 'alarmSetting'
+        },
+        {
           icon: 'account',
           name: this.$t('account_accountSettings'),
           key: 'accountSetting'

@@ -150,5 +150,9 @@ export default class Task extends Http {
   autoInspectAgain(taskId, params) {
     return this.axios.post(this.url + `/${taskId}/auto-inspect-again`, params)
   }
+
+  putLogSetting(taskId, params) {
+    return this.axios.put(this.url + `/logSetting/${taskId}`, params)
+  }
 }
 export { Task }

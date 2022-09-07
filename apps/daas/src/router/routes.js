@@ -129,6 +129,15 @@ export default [
       code: 'Data_SYNC_menu'
     }
   },
+  {
+    path: '/dataflow/monitor/:id',
+    name: 'TaskMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'Data_SYNC_menu'
+    }
+  },
 
   {
     path: '/migrate/editor',
@@ -784,6 +793,17 @@ export default [
             path: 'settings',
             name: 'settings',
             component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/Setting'),
+            meta: {
+              title: 'page_title_setting',
+              code: 'system_settings_menu',
+              isNotAside: true
+            }
+          },
+          /* ---------- 告警设置  ----------*/
+          {
+            path: 'alarmSetting',
+            name: 'alarmSetting',
+            component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/AlarmNotification'),
             meta: {
               title: 'page_title_setting',
               code: 'system_settings_menu',

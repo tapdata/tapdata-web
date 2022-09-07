@@ -728,11 +728,11 @@ export default {
         name: 'function'
       })
     },
-    toDetail(row = {}) {
+    toDetail({ id }) {
       this.$router.push({
-        name: 'MigrationMonitor',
+        name: 'TaskMonitor',
         params: {
-          id: row.id
+          id
         }
       })
     },

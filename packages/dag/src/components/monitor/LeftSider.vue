@@ -1,33 +1,61 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
-      <div class="info-box">
-        <TimeSelect :range="$attrs.range" ref="timeSelect" @change="changeTimeSelect"></TimeSelect>
+      <div class="info-box flex justify-content-between align-items-center">
+        <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
+        <ElDivider direction="vertical" class="mx-1"></ElDivider>
+        <ElTooltip transition="tooltip-fade-in" content="刷新" class="mt-n1">
+          <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
+        </ElTooltip>
+        <ElDivider direction="vertical" class="mx-1"></ElDivider>
+        <Frequency :range="$attrs.range" style="width: 136px" @change="changeFrequency"></Frequency>
       </div>
-      <div v-if="dataflow.type !== 'cdc'" class="info-box">
+      <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_quanliangxinxi') }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
         </div>
-        <div v-if="initialData.snapshotDoneAt" class="mb-2">
-          <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
-          <span>{{ initialData.snapshotDoneAt }}</span>
-        </div>
-        <div v-else class="mb-2">
-          <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
-          <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-            <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
-          </ElTooltip>
-        </div>
-        <div class="mb-4 flex align-items-center">
-          <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_biaotongbuzongjin') }}</span>
-          <ElProgress class="flex-1 my-2" :show-text="false" :percentage="totalDataPercentage" />
-          <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
-        </div>
+        <template v-if="dataflow.type !== 'cdc'">
+          <div class="mb-2 flex justify-content-between">
+            <span class="sync-info-item__title">全量开始时间：</span>
+            <span>{{ initialData.snapshotStartAt || '-' }}</span>
+          </div>
+          <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
+            <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
+            <span>{{ initialData.snapshotDoneAt }}</span>
+          </div>
+          <div v-else class="mb-2 flex justify-content-between">
+            <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
+            <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
+              <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
+            </ElTooltip>
+          </div>
+          <div class="mb-2 flex align-items-center">
+            <span class="mr-2 sync-info-item__title">全量同步进度</span>
+            <ElProgress class="flex-1 my-2" :show-text="false" style="width: 150px" :percentage="totalDataPercentage" />
+            <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+          </div>
+          <div
+            v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
+            class="mb-4 flex align-items-center"
+          >
+            <span class="mr-2 sync-info-item__title">当前表同步进度</span>
+            <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
+            <span class="ml-2">{{
+              (totalData.currentSnapshotTableInsertRowTotal || 0) + '/' + (totalData.currentSnapshotTableRowTotal || 0)
+            }}</span>
+          </div>
+        </template>
+        <template v-if="dataflow.type !== 'initial_sync'">
+          <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
+            <span>最大增量延迟：</span>
+            <span>{{ calcTimeUnit(initialData.replicateLag, 1) }}</span>
+          </div>
+        </template>
       </div>
-      <div v-if="verifyTotals" class="info-box">
+      <div v-if="dataflow.canOpenInspect && verifyTotals" class="info-box">
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
@@ -75,7 +103,7 @@
         </div>
         <div class="mb-2" style="height: 140px">
           <LineChart
-            :data="delayData"
+            :data="replicateLagData"
             :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
             :color="['#2C65FF']"
             :time-format="timeFormat"
@@ -83,7 +111,7 @@
             class="h-100"
           ></LineChart>
         </div>
-        <div style="height: 140px">
+        <div class="mb-2" style="height: 140px">
           <LineChart
             :data="delayData"
             :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
@@ -92,6 +120,61 @@
             time-value
             class="h-100"
           ></LineChart>
+        </div>
+      </div>
+      <div class="info-box">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 font-color-normal">任务事件统计（条）</span>
+        </div>
+        <div v-loading="!eventDataAll" class="flex">
+          <div v-if="eventDataAll" class="w-50 pr-4">
+            <div>总输入</div>
+            <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+              {{ eventDataAll.inputTotals.toLocaleString() }}
+            </div>
+            <div class="mb-2">
+              <span>插入：</span>
+              <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
+            </div>
+            <div class="mb-2">
+              <span>更新：</span>
+              <span>{{ eventDataAll.inputUpdateTotal.toLocaleString() }}</span>
+            </div>
+            <div class="mb-2">
+              <span>删除：</span>
+              <span>{{ eventDataAll.inputDeleteTotal.toLocaleString() }}</span>
+            </div>
+            <div>
+              <span>DDL：</span>
+              <span>{{ eventDataAll.inputDdlTotal.toLocaleString() }}</span>
+            </div>
+          </div>
+
+          <div v-if="eventDataAll" class="output-item flex w-50">
+            <div class="output-item__divider"></div>
+            <div class="ml-4">
+              <div>总输出</div>
+              <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+                {{ eventDataAll.outputTotals.toLocaleString() }}
+              </div>
+              <div class="mb-2">
+                <span>插入：</span>
+                <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
+              </div>
+              <div class="mb-2">
+                <span>更新：</span>
+                <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
+              </div>
+              <div class="mb-2">
+                <span>删除：</span>
+                <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
+              </div>
+              <div>
+                <span>DDL：</span>
+                <span>{{ eventDataAll.outputDdlTotal.toLocaleString() }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -111,11 +194,20 @@
         style="height: 200px"
       ></LineChart>
       <LineChart
-        :data="delayData"
+        :data="replicateLagData"
+        :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
         :color="['#2C65FF']"
         :time-format="timeFormat"
         time-value
-        :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
+        class="mt-8"
+        style="height: 200px"
+      ></LineChart>
+      <LineChart
+        :data="delayData"
+        :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
+        :color="['#2C65FF']"
+        :time-format="timeFormat"
+        time-value
         class="mt-8"
         style="height: 200px"
       ></LineChart>
@@ -127,24 +219,10 @@
 
 <script>
 import i18n from '@tap/i18n'
-
-import 'web-core/assets/icons/svg/magnify.svg'
-import 'web-core/assets/icons/svg/table.svg'
-import 'web-core/assets/icons/svg/javascript.svg'
-import 'web-core/assets/icons/svg/joint-cache.svg'
-import 'web-core/assets/icons/svg/row-filter.svg'
-import 'web-core/assets/icons/svg/aggregator.svg'
-import 'web-core/assets/icons/svg/field-processor.svg'
-import 'web-core/assets/icons/svg/join.svg'
-import 'web-core/assets/icons/svg/custom-node.svg'
-import 'web-core/assets/icons/svg/merge_table.svg'
-import 'web-core/assets/icons/svg/field_calc.svg'
-import 'web-core/assets/icons/svg/field_add_del.svg'
-import 'web-core/assets/icons/svg/field_rename.svg'
-import 'web-core/assets/icons/svg/field_mod_type.svg'
 import LineChart from './components/LineChart'
 import TimeSelect from './components/TimeSelect'
 import { VIcon } from '@tap/component'
+import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
 import { calcTimeUnit } from '@tap/shared'
@@ -156,13 +234,21 @@ export default {
     quota: Object,
     verifyTotals: {
       type: Object,
-      default: () => {}
+      default: () => {
+        return {
+          diffRecords: 0,
+          diffTables: 0,
+          totals: 0,
+          ignore: 0
+        }
+      }
     },
     timeFormat: String
   },
   components: {
     LineChart,
     TimeSelect,
+    Frequency,
     VIcon,
     InitialList
   },
@@ -197,7 +283,7 @@ export default {
       }
     },
 
-    // 增量延迟
+    // 处理耗时
     delayData() {
       const data = this.quota.samples?.lineChartData?.[0]
       const { time = [] } = this.quota
@@ -212,21 +298,50 @@ export default {
         value: data.timeCostAvg
       }
     },
+    // 增量延迟
+    replicateLagData() {
+      const data = this.quota.samples?.lineChartData?.[0]
+      const { time = [] } = this.quota
+      if (!data) {
+        return {
+          x: [],
+          value: []
+        }
+      }
+      return {
+        x: time,
+        value: data.replicateLag
+      }
+    },
 
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, outputQps = 0, snapshotDoneAt } = data
+      const {
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        outputQps = 0,
+        snapshotDoneAt,
+        snapshotStartAt,
+        replicateLag
+      } = data
       const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
       return {
-        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss') : '',
+        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        replicateLag: replicateLag,
         finishDuration: time
       }
     },
 
     totalData() {
-      const { tableTotal = 0, snapshotTableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
-      return { tableTotal, snapshotTableTotal }
+      const {
+        tableTotal = 0,
+        snapshotTableTotal = 0,
+        currentSnapshotTableInsertRowTotal = 0,
+        currentSnapshotTableRowTotal = 0
+      } = this.quota.samples?.totalData?.[0] || {}
+      return { tableTotal, snapshotTableTotal, currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal }
     },
 
     totalDataPercentage() {
@@ -234,8 +349,21 @@ export default {
       return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
     },
 
+    currentTotalDataPercentage() {
+      const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } = this.totalData
+      return currentSnapshotTableRowTotal
+        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
+        : 0
+    },
+
     initialList() {
       return this.$refs?.initialList
+    },
+
+    // 任务事件统计（条）-任务累计
+    eventDataAll() {
+      const data = this.quota.samples?.totalData?.[0]
+      return this.getInputOutput(data)
     }
   },
 
@@ -249,6 +377,10 @@ export default {
       this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
     },
 
+    changeFrequency(val) {
+      this.$emit('changeFrequency', val)
+    },
+
     toFullscreen() {
       this.lineChartDialog = true
     },
@@ -258,30 +390,24 @@ export default {
     },
 
     getInputOutput(data) {
-      let keyArr = [
-        'inputInsertTotal',
-        'inputUpdateTotal',
-        'inputDeleteTotal',
-        'inputDdlTotal',
-        'inputOthersTotal',
+      let result = {}
+      const inputArr = ['inputInsertTotal', 'inputUpdateTotal', 'inputDeleteTotal', 'inputDdlTotal', 'inputOthersTotal']
+      const outputArr = [
         'outputInsertTotal',
         'outputUpdateTotal',
         'outputDeleteTotal',
         'outputDdlTotal',
         'outputOthersTotal'
       ]
-      let result = {
-        input: {},
-        output: {}
-      }
-      keyArr.forEach(el => {
-        for (let key in result) {
-          let item = result[key]
-          if (el.includes(key)) {
-            item[el.replace(key, '')] = data?.[el] || 0
-          }
-        }
+      ;[...inputArr, ...outputArr].forEach(el => {
+        result[el] = data?.[el] || 0
       })
+      result.inputTotals = inputArr.reduce((total, key) => {
+        return total + result[key] || 0
+      }, 0)
+      result.outputTotals = outputArr.reduce((total, key) => {
+        return total + result[key] || 0
+      }, 0)
       return result
     },
 
@@ -364,5 +490,14 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+}
+.output-item__divider {
+  margin-top: 40px;
+  border-right: 1px solid #f2f2f2;
+  height: calc(100% - 40px);
+}
+.sync-info-item__title {
+  display: inline-block;
+  width: 110px;
 }
 </style>

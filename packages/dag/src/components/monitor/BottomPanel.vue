@@ -9,6 +9,9 @@
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
         </ElTabPane>
+        <!--        <ElTabPane label="告警列表" name="alert">-->
+        <!--          <Alert v-if="currentTab === 'alert'" v-bind="$attrs" :currentTab="currentTab"></Alert>-->
+        <!--        </ElTabPane>-->
       </ElTabs>
 
       <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
@@ -25,11 +28,12 @@ import focusSelect from '@tap/component/src/directives/focusSelect'
 
 import Log from './components/Log'
 import Record from './components/Record'
+import Alert from './components/Alert'
 
 export default {
   name: 'ConfigPanel',
 
-  components: { Log, Record },
+  components: { Log, Record, Alert },
 
   directives: {
     resize,

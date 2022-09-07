@@ -8,6 +8,7 @@
       :dataflow="dataflow"
       :scale="scale"
       :showBottomPanel="showBottomPanel"
+      :quota="quota"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -24,6 +25,7 @@
       @forceStop="handleForceStop"
       @reset="handleReset"
       @edit="handleEdit"
+      @load-data="init"
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
@@ -49,6 +51,7 @@
           @add-node="handleAddNode"
           @toggle-expand="handleToggleExpand"
           @changeTimeSelect="handleChangeTimeSelect"
+          @changeFrequency="handleChangeFrequency"
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
@@ -81,7 +84,9 @@
                 'options-active': nodeMenu.typeId === n.id
               }"
               :task-type="dataflow.type"
+              :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
+              :quota="quota"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -232,7 +237,8 @@ export default {
       timeFormat: 'HH:mm:ss',
       dagData: null,
       verifyData: null,
-      verifyTotals: null
+      verifyTotals: null,
+      refreshRate: 5000
     }
   },
 
@@ -301,12 +307,22 @@ export default {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
         this.isEnterTimer && this.startLoadData()
-      }, 5000)
+      }, this.refreshRate)
       this.startLoadData()
     },
 
-    startLoadData() {
+    async startLoadData() {
       // 根据周期类型，计算时间范围
+      if (this.quotaTimeType === 'lastStart') {
+        const { id: taskId } = this.dataflow || {}
+        let filter = {}
+        await taskApi.records(taskId, filter).then(data => {
+          const lastStartDate = data.items?.[0]?.startDate
+          if (lastStartDate) {
+            this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
+          }
+        })
+      }
       if (this.quotaTimeType !== 'custom') {
         this.quotaTime = this.getTimeRange(this.quotaTimeType)
       }
@@ -492,9 +508,15 @@ export default {
     },
 
     handlePageReturn() {
-      this.$router.push({
-        name: 'migrateList'
-      })
+      if (this.dataflow.syncType === 'migrate') {
+        this.$router.push({
+          name: 'migrateList'
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflowList'
+        })
+      }
     },
 
     handleEdit() {
@@ -531,7 +553,7 @@ export default {
     },
 
     getQuotaFilter() {
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      const { id: taskId, taskRecordId, agentId } = this.dataflow || {}
       const [startAt, endAt] = this.quotaTime
       let params = {
         startAt,
@@ -565,7 +587,11 @@ export default {
               'snapshotDoneAt',
               'snapshotRowTotal',
               'snapshotInsertRowTotal',
-              'outputQps'
+              'outputQps',
+              'currentSnapshotTableRowTotal',
+              'currentSnapshotTableInsertRowTotal',
+              'replicateLag',
+              'snapshotStartAt'
             ],
             type: 'instant' // 瞬时值
           },
@@ -597,7 +623,7 @@ export default {
               taskId,
               taskRecordId
             },
-            fields: ['inputQps', 'outputQps', 'timeCostAvg'],
+            fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag'],
             type: 'continuous' // 连续数据
           },
           // dag数据
@@ -630,9 +656,21 @@ export default {
               'snapshotRowTotal',
               'snapshotInsertRowTotal',
               'snapshotTableTotal',
-              'tableTotal'
+              'tableTotal',
+              'snapshotSourceReadTimeCostAvg',
+              'incrementalSourceReadTimeCostAvg',
+              'targetWriteTimeCostAvg'
             ],
             type: 'instant' // 瞬时值
+          },
+          agentData: {
+            tags: {
+              type: 'engine',
+              engineId: agentId
+            },
+            endAt: Date.now(),
+            fields: ['memoryRate', 'cpuUsage', 'gcRate'],
+            type: 'instant'
           }
         }
       }
@@ -640,6 +678,7 @@ export default {
     },
 
     getParams() {
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       let params = {
         quota: {
           uri: '/api/measurement/query/v2',
@@ -649,6 +688,13 @@ export default {
           uri: `/api/task/auto-inspect-totals`,
           param: {
             id: this.dataflow.id
+          }
+        },
+        logTotals: {
+          uri: '/api/MonitoringLogs/count',
+          param: {
+            taskId,
+            taskRecordId
           }
         }
       }
@@ -768,6 +814,11 @@ export default {
       this.init()
     },
 
+    handleChangeFrequency(val) {
+      this.refreshRate = val
+      this.init()
+    },
+
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
@@ -784,6 +835,9 @@ export default {
           break
         case '1d':
           result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
+          break
+        case 'lastStart':
+          result = [this.dataflow.lastStartDate, endTimestamp]
           break
         case 'full':
           result = [this.firstStartTime, endTimestamp]

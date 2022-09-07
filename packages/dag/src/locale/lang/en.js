@@ -250,7 +250,7 @@ export default {
   packages_dag_components_timeselect_jieshuriqi: 'End date',
   packages_dag_components_timeselect_kaishiriqi: 'Start date',
   packages_dag_components_timeselect_zhi: 'to',
-  packages_dag_monitor_leftsider_chulihaoshim: 'Processing time (ms)',
+  packages_dag_monitor_leftsider_chulihaoshim: 'Processing time',
   packages_dag_monitor_leftsider_buzhichijiaoyan: 'Tables that do not support verification:',
   packages_dag_monitor_leftsider_jiaoyanbuyizhi: 'Check inconsistent tables:',
   packages_dag_monitor_leftsider_chayizongxingshu: 'Difference total lines:',

@@ -29,7 +29,7 @@
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
-        <!--        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>-->
+        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
           $t('packages_dag_components_log_xiazai')
         }}</ElButton>
@@ -109,22 +109,24 @@
       <ElForm label-width="120px">
         <ElFormItem :label="$t('packages_dag_components_log_rizhijibie')" prop="level">
           <ElSelect v-model="form.level" style="width: 275px">
-            <ElOption v-for="item in checkList" :label="item" :value="item" :key="item"></ElOption>
+            <ElOption v-for="item in checkItems" :label="item.text" :value="item.label" :key="item.label"></ElOption>
           </ElSelect>
         </ElFormItem>
         <template v-if="form.level === 'DEBUG'">
           <ElFormItem :label="$t('packages_dag_components_log_debug')" prop="param"> </ElFormItem>
           <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
-            <ElInput v-model="form.start" type="number" style="width: 275px"></ElInput>
+            <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
           <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="max">
-            <ElInput v-model="form.max" type="number" style="width: 275px"></ElInput>
+            <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
         </template>
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="handleClose">{{ $t('packages_dag_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="handleSave">{{ $t('packages_dag_button_confirm') }}</ElButton>
+        <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
+          $t('packages_dag_button_confirm')
+        }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -139,7 +141,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
 import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
 import { VEmpty, VIcon } from '@tap/component'
-import { monitoringLogsApi } from '@tap/api'
+import { monitoringLogsApi, taskApi } from '@tap/api'
 
 import TimeSelect from './TimeSelect'
 
@@ -168,28 +170,29 @@ export default {
     return {
       activeNodeId: 'all',
       keyword: '',
-      checkList: ['info', 'warn', 'error'],
+      checkList: ['INFO', 'WARN', 'ERROR'],
       checkItems: [
         {
-          label: 'debug',
+          label: 'DEBUG',
           text: 'DEBUG'
         },
         {
-          label: 'info',
+          label: 'INFO',
           text: 'INFO'
         },
         {
-          label: 'warn',
+          label: 'WARN',
           text: 'WARN'
         },
         {
-          label: 'error',
+          label: 'ERROR',
           text: 'ERROR'
         }
       ],
       timer: null,
       downloadLoading: false,
       loading: false,
+      saveLoading: false,
       preLoading: false,
       resetDataTime: null,
       list: [],
@@ -210,9 +213,9 @@ export default {
       },
       isScrollBottom: false,
       form: {
-        level: '',
-        start: 500,
-        max: 500
+        level: 'INFO',
+        intervalCeiling: 500,
+        recordCeiling: 500
       },
       dialog: false,
       timeOptions: [
@@ -292,6 +295,10 @@ export default {
 
     isEnterTimer() {
       return this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
+    },
+
+    logSetting() {
+      return this.dataflow?.logSetting || {}
     }
   },
 
@@ -605,12 +612,44 @@ export default {
     },
 
     handleSetting() {
+      const { level, intervalCeiling, recordCeiling } = this.logSetting
+      if (level) {
+        this.form = {
+          level,
+          intervalCeiling,
+          recordCeiling
+        }
+      }
       this.dialog = true
     },
 
-    handleClose() {},
+    handleClose() {
+      this.dialog = false
+    },
 
-    handleSave() {},
+    handleSave() {
+      const { form } = this
+      let params = {
+        level: form.level
+      }
+      if (form.level === 'DEBUG') {
+        params.intervalCeiling = form.intervalCeiling
+        params.recordCeiling = form.recordCeiling
+      }
+      this.saveLoading = true
+      taskApi
+        .putLogSetting(this.dataflow.id, params)
+        .then(() => {
+          this.$message.success(this.$t('message_save_ok'))
+          this.dialog = false
+        })
+        .finally(() => {
+          this.saveLoading = false
+        })
+        .catch(() => {
+          this.$message.error(this.$t('message_save_fail'))
+        })
+    },
 
     getTimeRange(type) {
       let result
@@ -628,6 +667,9 @@ export default {
           break
         case '3d':
           result = [endTimestamp - 3 * 24 * 60 * 60 * 1000, endTimestamp]
+          break
+        case 'lastStart':
+          result = [this.dataflow.lastStartDate, endTimestamp]
           break
         case 'full':
           result = [this.firstStartTime, endTimestamp]
