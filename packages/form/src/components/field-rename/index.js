@@ -68,7 +68,7 @@ export const FieldRename = connect(
               <span class="flex-1 text inline-block">
                 {i18n.t('packages_form_field_rename_index_mubiaoziduanming')}
               </span>
-              <span class="field-ops  inline-block mr-12">
+              <span class="field-ops  inline-block mr-4">
                 <VIcon
                   class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
