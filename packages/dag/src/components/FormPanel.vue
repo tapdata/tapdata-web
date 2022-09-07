@@ -692,6 +692,7 @@ export default {
         id: form.values.id,
         properties: JSON.parse(JSON.stringify(formValues))
       })
+      console.trace('updateDag') // eslint-disable-line
       this.updateDag()
       this.confirmNodeHasError()
     },

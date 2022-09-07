@@ -217,7 +217,7 @@ const getters = {
 
 // actions
 const actions = {
-  updateDag: async ({ state, commit }) => {
+  updateDag: debounce(async function ({ state, commit }) {
     if (!state.taskId || state.stateIsReadonly) return
     commit('toggleTaskSaving', true)
     const data = await taskApi.patch({
@@ -227,10 +227,11 @@ const actions = {
     })
     commit('setEditVersion', data.editVersion)
     commit('toggleTaskSaving', false)
-  },
+  }, 50),
 
   async addNodeAsync({ dispatch, commit }, nodeData) {
     commit('addNode', nodeData)
+    console.trace('updateDag') // eslint-disable-line
     await dispatch('updateDag')
   },
 

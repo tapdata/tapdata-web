@@ -559,9 +559,9 @@ export default {
         this.setStateDirty(false)
         this.setStateReadonly(false)
         this.stopDagWatch = this.$watch(
-          () => [this.allNodes.length, this.allEdges.length],
+          () => this.allNodes.length + this.allEdges.length,
           () => {
-            console.log(i18n.t('packages_dag_mixins_editor_initV')) // eslint-disable-line
+            console.trace('updateDag') // eslint-disable-line
             this.updateDag()
           }
         )
@@ -591,12 +591,12 @@ export default {
           // 检查任务是否可编辑
           if (this.checkGotoViewer()) return // 跳转到viewer不需要继续往下走
         } else {
-          await this.newDataflow()
+          return await this.newDataflow()
         }
         this.stopDagWatch = this.$watch(
-          () => [this.allNodes.length, this.allEdges.length],
+          () => this.allNodes.length + this.allEdges.length,
           () => {
-            console.log(i18n.t('packages_dag_mixins_editor_initV')) // eslint-disable-line
+            console.trace('updateDag') // eslint-disable-line
             this.updateDag()
           }
         )
