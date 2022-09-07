@@ -787,9 +787,20 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 --------------------------*/
 .el-tabs__item {
   user-select: none;
+  font-weight: 400;
+  padding: 0 16px;
+  color: map-get($fontColor, light);
+  line-height: 36px;
+  height: 36px;
 }
 .el-tabs__nav-wrap::after {
   height: 1px;
+}
+.el-tabs__item.is-active {
+  font-weight: 500;
+}
+.el-tabs__nav-wrap.is-top {
+  padding: 0 16px;
 }
 
 /* Collapse

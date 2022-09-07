@@ -179,7 +179,8 @@
 </template>
 
 <script>
-import { VIcon, OverflowTooltip } from '@tap/component'
+import { VIcon } from '@tap/component'
+import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
