@@ -668,6 +668,9 @@ export default {
         case '3d':
           result = [endTimestamp - 3 * 24 * 60 * 60 * 1000, endTimestamp]
           break
+        case 'lastStart':
+          result = [this.dataflow.lastStartDate, endTimestamp]
+          break
         case 'full':
           result = [this.firstStartTime, endTimestamp]
           break

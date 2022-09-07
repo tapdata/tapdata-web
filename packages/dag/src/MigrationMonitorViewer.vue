@@ -704,6 +704,9 @@ export default {
         case '1d':
           result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
           break
+        case 'lastStart':
+          result = [this.dataflow.lastStartDate, endTimestamp]
+          break
         case 'full':
           result = [this.firstStartTime, endTimestamp]
           break

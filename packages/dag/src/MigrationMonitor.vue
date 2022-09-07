@@ -312,6 +312,14 @@ export default {
 
     startLoadData() {
       // 根据周期类型，计算时间范围
+      const { id: taskId } = this.dataflow || {}
+      let filter = {}
+      taskApi.records(taskId, filter).then(data => {
+        const lastStartDate = data.items?.[0]?.startDate
+        if (lastStartDate) {
+          this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
+        }
+      })
       if (this.quotaTimeType !== 'custom') {
         this.quotaTime = this.getTimeRange(this.quotaTimeType)
       }
@@ -824,6 +832,9 @@ export default {
           break
         case '1d':
           result = [endTimestamp - 24 * 60 * 60 * 1000, endTimestamp]
+          break
+        case 'lastStart':
+          result = [this.dataflow.lastStartDate, endTimestamp]
           break
         case 'full':
           result = [this.firstStartTime, endTimestamp]

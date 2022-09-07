@@ -69,6 +69,10 @@ export default {
           value: '1d'
         },
         {
+          label: '任务最近一次启动至今',
+          value: 'lastStart'
+        },
+        {
           label: i18n.t('packages_dag_components_timeselect_renwuquanzhouqi'),
           value: 'full'
         },
