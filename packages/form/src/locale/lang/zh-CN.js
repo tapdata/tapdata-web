@@ -110,7 +110,7 @@ export default {
   packages_form_field_value_index_varre:
     'var result = record.isTrue ? true : false // 三元表达式,\n                  result的值根据判断表达式（record.isTrue）的结果为 true 或 false',
   packages_form_field_value_index_shili: '示例:',
-  packages_form_field_value_index_ziduanfuzhi: '字段赋值(',
+  packages_form_field_value_index_ziduanfuzhi: '字段赋值',
   packages_form_js_processor_index_jieguoshuchu: '结果输出',
   packages_form_js_processor_index_tiaoshishuru: '调试输入',
   packages_form_js_processor_index_shiyunxing: '试运行',

@@ -93,10 +93,10 @@ export const FieldModType = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block ml-6">
+              <span class="flex-1 text inline-block  ml-6">
                 {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
               </span>
-              <span class="flex-1 text inline-block ml-10">
+              <span class="flex-1 text inline-block  ml-10">
                 {i18n.t('packages_form_field_mod_type_index_yuanziduanleixing')}
               </span>
               <span class="flex-1 text inline-block pl-11">
@@ -127,7 +127,7 @@ export const FieldModType = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="flex-1 inline-block">{data.field_name}</span>
+                      <span class="flex-1 inline-block ellipsis">{data.field_name}</span>
                       <span class="flex-1 inline-block">{data.type}</span>
                       <ElSelect
                         v-model={data.data_type}

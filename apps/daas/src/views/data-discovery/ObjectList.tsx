@@ -115,7 +115,7 @@ export default defineComponent({
       return (
         <div class="cursor-pointer">
           <span
-            class="col-new-field-name inline-block ellipsis align-middle  mr-4 "
+            class="col-new-field-name inline-block ellipsis align-middle color-primary  mr-4 "
             onClick={event => {
               event.stopPropagation()
               handlePreview(row)

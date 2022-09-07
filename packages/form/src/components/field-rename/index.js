@@ -107,10 +107,10 @@ export const FieldRename = connect(
                 scopedSlots={{
                   default: ({ node, data }) => (
                     <span
-                      class="tree-node flex flex-1 justify-content-center align-items flex-row"
+                      class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden"
                       slot-scope="{ node, data }"
                     >
-                      <span class="flex-1 text__inner inline-block">
+                      <span class="flex-1 text__inner inline-block ellipsis">
                         {data.original_field_name}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
@@ -120,7 +120,7 @@ export const FieldRename = connect(
                           ''
                         )}
                       </span>
-                      <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
+                      <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label', 'ellipsis']}>
                         {data.level === 1 ? (
                           <ElInput
                             class={[

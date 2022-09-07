@@ -92,10 +92,10 @@ export const FieldValue = connect(
                 scopedSlots={{
                   default: ({ node, data }) => (
                     <span
-                      class="tree-node flex flex-1 justify-content-center align-items flex-row"
+                      class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden"
                       slot-scope="{ node, data }"
                     >
-                      <span class="field-name inline-block">
+                      <span class="field-name inline-block ellipsis">
                         {data.field_name}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
@@ -105,7 +105,7 @@ export const FieldValue = connect(
                           ''
                         )}
                       </span>
-                      <span class="field-name inline-block">{data.script}</span>
+                      <span class="field-name inline-block ellipsis">{data.script}</span>
                       <span class="e-ops">
                         <ElButton
                           type="text"
