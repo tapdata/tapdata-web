@@ -13,7 +13,25 @@
             style="width: 240px"
             @input="searchFnc(800)"
           ></ElInput>
-          <!--          <ElButton type="primary" size="mini">校验</ElButton>-->
+          <div>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="checkProgress.msg || 'Timeout'"
+              placement="top"
+              v-if="checkProgress"
+            >
+              <VIcon
+                class="mr-2 iconfont icon"
+                v-if="checkProgress.status && ['Timeout', 'Failed'].includes(checkProgress.status)"
+              >
+                info
+              </VIcon>
+            </el-tooltip>
+            <ElButton type="primary" size="mini" :disabled="disableAgainVerify" @click="handleAgainCheck"
+              >校验</ElButton
+            >
+          </div>
         </div>
         <VTable
           v-model="selection"
@@ -30,7 +48,7 @@
           @selection-change="handleSelectionChange"
         >
           <template slot="counts" slot-scope="scope">
-            {{ scope.row.counts > 50 ? '校验中' : scope.row.counts }}
+            {{ scope.row.toBeCompared > 0 ? '校验中' : scope.row.counts }}
           </template>
         </VTable>
       </div>
@@ -181,12 +199,22 @@ export default {
       showAdvancedVerification: false,
       row: null,
       detailLoading: false,
-      detailSvg: require('@tap/assets/images/detail-info.svg')
+      detailSvg: require('@tap/assets/images/detail-info.svg'),
+      timeout: null,
+      disableAgainVerify: false,
+      checkProgress: ''
     }
   },
 
   mounted() {
     this.init()
+    //轮询结果
+    this.timeout = setInterval(() => {
+      this.$refs.table.fetch?.(null, 0, true)
+    }, 30000)
+  },
+  destroyed() {
+    clearInterval(this.timeout)
   },
 
   methods: {
@@ -199,6 +227,17 @@ export default {
       delayTrigger(() => {
         this.$refs.table.fetch?.()
       }, debounce)
+    },
+    //再次校验
+    handleAgainCheck() {
+      if (this.selection?.length === 0) return
+      let tables = this.selection.map(row => row.originalTableName)
+      let params = {
+        tables: tables
+      }
+      taskApi.autoInspectAgain(this.$route.params.id, params).then(() => {
+        this.disableAgainVerify = true // 发起再次校验后 不能再校验
+      })
     },
 
     remoteMethod({ page }) {
@@ -217,6 +256,13 @@ export default {
         if (!this.row || !list.find(t => JSON.stringify(this.row) === JSON.stringify(t))) {
           this.handleRow(list[0])
         }
+        //是否可以再次校验
+        if (list?.length > 0) {
+          let check = list.filter(row => row?.toBeCompared > 0) || []
+          this.disableAgainVerify = check?.length > 0
+        }
+        //是否校验异常
+        this.checkProgress = data?.progress || ''
         return {
           total: data.total,
           data: list
@@ -321,6 +367,10 @@ export default {
     .border-start {
       border-left: 1px solid #f2f2f2 !important;
     }
+  }
+  .icon {
+    color: map-get($color, danger);
+    font-size: 16px;
   }
 }
 .verify-list {
