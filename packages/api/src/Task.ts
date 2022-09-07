@@ -146,5 +146,9 @@ export default class Task extends Http {
   autoInspectTotals(params) {
     return this.axios.post(this.url + `/auto-inspect-totals`, params)
   }
+  //再次校验
+  autoInspectAgain(taskId, params) {
+    return this.axios.post(this.url + `/${taskId}/auto-inspect-again`, params)
+  }
 }
 export { Task }

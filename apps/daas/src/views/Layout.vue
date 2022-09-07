@@ -378,28 +378,26 @@ let menuSetting = [
       { name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
-  // {
-  //   name: 'discovery',
-  //   label: 'page_title_data_discovery',
-  //   icon: 'system',
-  //   code: 'system_management',
-  //   children: [
-  //     { name: 'objectList', code: 'datasource_menu', parent: 'object' },
-  //     { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogue' }
-  //   ]
-  // },
+  {
+    name: 'discovery',
+    label: 'page_title_data_discovery',
+    icon: 'system',
+    code: 'system_management',
+    children: [
+      { name: 'objectList', code: 'datasource_menu', parent: 'object' },
+      { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogue' }
+    ]
+  },
   {
     name: 'dataService',
     label: 'page_title_data_service',
     icon: 'connection',
     code: 'data_publish',
     children: [
-      { name: 'apiPublishList', code: 'API_management_menu', parent: 'apiPublish' },
-      { name: 'apiExplorer', code: 'API_data_explorer_menu', parent: 'apiExplorer' },
-      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu', parent: 'apiDocAndTest' },
+      { name: 'dataServer', code: 'API_management_menu', parent: 'dataServer' },
       { name: 'apiClient', code: 'API_clients_menu', parent: 'apiClient' },
       { name: 'apiServer', code: 'API_server_menu', parent: 'apiServer' },
-      { name: 'apiAuditList', code: 'API_server_menu', parent: 'apiAudit' },
+      { name: 'dataServerAuditList', code: 'API_server_menu', parent: 'dataServerAudit' },
       { name: 'apiMonitor', code: 'API_server_menu', parent: 'apiMonitor' }
     ]
   },

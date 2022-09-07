@@ -422,11 +422,6 @@ export default {
       const filter = {
         page: this.dbPage,
         size: 20,
-        where: {
-          // database_type: {
-          //   $in: this.database
-          // }
-        },
         fields: {
           name: 1,
           id: 1,
@@ -456,7 +451,7 @@ export default {
 
       const txt = escapeRegExp(this.dbSearchTxt.trim())
       if (txt) {
-        filter.where.name = { like: txt, options: 'i' }
+        filter.where = { name: { like: txt, options: 'i' } }
       }
 
       return { filter: JSON.stringify(filter) }
