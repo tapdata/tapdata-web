@@ -67,11 +67,11 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId', 'taskSaving', 'stateIsDirty']),
+    ...mapState('dataflow', ['activeNodeId', 'taskSaving', 'stateIsDirty', 'transformLoading']),
     ...mapGetters('dataflow', ['activeNode']),
 
     showLoading() {
-      return this.loading || this.transformStatus === 'loading'
+      return this.loading
     }
   },
 
@@ -95,9 +95,9 @@ export default {
         this.checkNodeType()
       }
     },
-
-    transformStatus(v) {
-      if (v === 'finished') {
+    // 推演加载完成后，主动请求最新模型
+    transformLoading(v) {
+      if (!v && this.isShow) {
         this.loadFields()
       }
     },
