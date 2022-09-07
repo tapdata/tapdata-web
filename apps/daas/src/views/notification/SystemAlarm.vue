@@ -17,12 +17,12 @@
         </el-button>
       </div>
       <el-table-column type="selection"></el-table-column>
-      <el-table-column label="告警级别" prop="delayTime"></el-table-column>
-      <el-table-column label="告警状态" prop="createTime" min-width="150" sortable> </el-table-column>
-      <el-table-column label="告警对象" prop="status"></el-table-column>
-      <el-table-column label="告警描述" prop="status"></el-table-column>
-      <el-table-column label="告警首次发生时间" prop="createTime"></el-table-column>
-      <el-table-column label="告警最近发生时间" prop="createTime"></el-table-column>
+      <el-table-column label="告警级别" prop="level"></el-table-column>
+      <el-table-column label="告警状态" prop="status" min-width="150" sortable> </el-table-column>
+      <el-table-column label="告警对象" prop="name"></el-table-column>
+      <el-table-column label="告警描述" prop="summary"></el-table-column>
+      <el-table-column label="告警首次发生时间" prop="firstOccurrenceTime"></el-table-column>
+      <el-table-column label="告警最近发生时间" prop="lastOccurrenceTime"></el-table-column>
       <el-table-column fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
           <el-button type="text">关闭</el-button>
@@ -36,8 +36,8 @@
 
 <script>
 import { FilterBar } from '@tap/component'
-import { makeStatusAndDisabled, TablePage } from '@tap/business'
-import { notificationApi } from '@tap/api'
+import { TablePage } from '@tap/business'
+import { alarmApi } from '@tap/api'
 import { TYPEMAP } from './tyepMap'
 import dayjs from 'dayjs'
 
@@ -102,7 +102,7 @@ export default {
         limit: this.pagesize,
         skip: (this.currentPage - 1) * this.pagesize
       }
-      return notificationApi.get({ filter: JSON.stringify(filter) }).then(data => {
+      return alarmApi.get({ filter: JSON.stringify(filter) }).then(data => {
         let list = data?.items || []
         return {
           total: data?.total || 0,

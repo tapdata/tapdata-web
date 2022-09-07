@@ -214,7 +214,6 @@
 import { uniq, find } from 'lodash'
 import { VIcon } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
-import Cookie from '@tap/shared/src/cookie'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
 
 export default {
@@ -338,31 +337,6 @@ export default {
           return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
         })
         _this.formData.items = vals
-
-        //mock data
-        let node = {
-          category: 'alarm',
-          category_sort: 9,
-          items: [
-            {
-              id: '96',
-              key: 'cdc3',
-              number: 3,
-              symbol: '>=',
-              time: 500,
-              key_label: '任务的增量延迟'
-            },
-            {
-              id: '97',
-              key: 'cdc',
-              number: 3,
-              symbol: '>=',
-              time: 500,
-              key_label: '数据网络耗时'
-            }
-          ]
-        }
-        _this.formData.items.push(node)
       })
       let lincenseData = {
         liceseItems: auth_data,
