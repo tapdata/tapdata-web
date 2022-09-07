@@ -429,7 +429,8 @@ export default {
               'currentSnapshotTableInsertRowTotal',
               'replicateLag',
               'snapshotStartAt',
-              'snapshotDoneAt'
+              'snapshotDoneAt',
+              'outputQps'
             ],
             //
             type: 'instant' // 瞬时值
