@@ -310,16 +310,18 @@ export default {
       this.startLoadData()
     },
 
-    startLoadData() {
+    async startLoadData() {
       // 根据周期类型，计算时间范围
-      const { id: taskId } = this.dataflow || {}
-      let filter = {}
-      taskApi.records(taskId, filter).then(data => {
-        const lastStartDate = data.items?.[0]?.startDate
-        if (lastStartDate) {
-          this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
-        }
-      })
+      if (this.quotaTimeType === 'lastStart') {
+        const { id: taskId } = this.dataflow || {}
+        let filter = {}
+        await taskApi.records(taskId, filter).then(data => {
+          const lastStartDate = data.items?.[0]?.startDate
+          if (lastStartDate) {
+            this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
+          }
+        })
+      }
       if (this.quotaTimeType !== 'custom') {
         this.quotaTime = this.getTimeRange(this.quotaTimeType)
       }
