@@ -244,7 +244,7 @@ export default {
   packages_dag_components_timeselect_jieshuriqi: '结束日期',
   packages_dag_components_timeselect_kaishiriqi: '开始日期',
   packages_dag_components_timeselect_zhi: '至',
-  packages_dag_monitor_leftsider_chulihaoshim: '处理耗时（ms）',
+  packages_dag_monitor_leftsider_chulihaoshim: '处理耗时',
   packages_dag_monitor_leftsider_buzhichijiaoyan: '不支持校验的表：',
   packages_dag_monitor_leftsider_jiaoyanbuyizhi: '校验不一致的表：',
   packages_dag_monitor_leftsider_chayizongxingshu: '差异总行数：',

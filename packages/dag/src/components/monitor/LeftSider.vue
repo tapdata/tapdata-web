@@ -1,12 +1,19 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
-      <div class="info-box">
-        <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
-        <Frequency :range="$attrs.range" @change="changeFrequency"></Frequency>
-        <ElTooltip transition="tooltip-fade-in" content="刷新">
-          <VIcon class="color-primary" @click="$emit('init')">refresh</VIcon>
+      <div class="info-box flex justify-content-between align-items-center">
+        <TimeSelect
+          :range="$attrs.range"
+          ref="timeSelect"
+          class="mb-1"
+          @change="changeTimeSelect"
+        ></TimeSelect>
+        <ElDivider direction="vertical" class="mx-1"></ElDivider>
+        <ElTooltip transition="tooltip-fade-in" content="刷新" class="mt-n1">
+          <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
         </ElTooltip>
+        <ElDivider direction="vertical" class="mx-1"></ElDivider>
+        <Frequency :range="$attrs.range" style="width: 136px" @change="changeFrequency"></Frequency>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box">
         <div class="flex justify-content-between mb-2">
@@ -192,11 +199,20 @@
         style="height: 200px"
       ></LineChart>
       <LineChart
-        :data="delayData"
+        :data="replicateLagData"
+        :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
         :color="['#2C65FF']"
         :time-format="timeFormat"
         time-value
-        :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
+        class="mt-8"
+        style="height: 200px"
+      ></LineChart>
+      <LineChart
+        :data="delayData"
+        :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
+        :color="['#2C65FF']"
+        :time-format="timeFormat"
+        time-value
         class="mt-8"
         style="height: 200px"
       ></LineChart>
