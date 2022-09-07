@@ -2,12 +2,7 @@
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="info-box flex justify-content-between align-items-center">
-        <TimeSelect
-          :range="$attrs.range"
-          ref="timeSelect"
-          class="mb-1"
-          @change="changeTimeSelect"
-        ></TimeSelect>
+        <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
         <ElTooltip transition="tooltip-fade-in" content="刷新" class="mt-n1">
           <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
@@ -15,7 +10,7 @@
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
         <Frequency :range="$attrs.range" style="width: 136px" @change="changeFrequency"></Frequency>
       </div>
-      <div v-if="dataflow.type !== 'cdc'" class="info-box">
+      <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_quanliangxinxi') }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
@@ -24,21 +19,21 @@
         </div>
         <template v-if="dataflow.type !== 'cdc'">
           <div class="mb-2 flex justify-content-between">
-            <span>全量开始时间：</span>
-            <span>{{ initialData.snapshotStartAt }}</span>
+            <span class="sync-info-item__title">全量开始时间：</span>
+            <span>{{ initialData.snapshotStartAt || '-' }}</span>
           </div>
           <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
-            <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
+            <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
             <span>{{ initialData.snapshotDoneAt }}</span>
           </div>
           <div v-else class="mb-2 flex justify-content-between">
-            <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
+            <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
             <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
               <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
             </ElTooltip>
           </div>
           <div class="mb-2 flex align-items-center">
-            <span class="mr-2">全量同步进度</span>
+            <span class="mr-2 sync-info-item__title">全量同步进度</span>
             <ElProgress class="flex-1 my-2" :show-text="false" style="width: 150px" :percentage="totalDataPercentage" />
             <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
           </div>
@@ -46,7 +41,7 @@
             v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
             class="mb-4 flex align-items-center"
           >
-            <span class="mr-2">当前表同步进度</span>
+            <span class="mr-2 sync-info-item__title">当前表同步进度</span>
             <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
             <span class="ml-2">{{
               (totalData.currentSnapshotTableInsertRowTotal || 0) + '/' + (totalData.currentSnapshotTableRowTotal || 0)
@@ -500,5 +495,9 @@ export default {
   margin-top: 40px;
   border-right: 1px solid #f2f2f2;
   height: calc(100% - 40px);
+}
+.sync-info-item__title {
+  display: inline-block;
+  width: 110px;
 }
 </style>
