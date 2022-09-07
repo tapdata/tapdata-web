@@ -144,9 +144,6 @@ const commandApi = new Command()
 import AlarmRule from './AlarmRule'
 const alarmRuleApi = new AlarmRule()
 
-import Alarm from './Alarm'
-const alarmApi = new Alarm()
-
 export {
   connectionsApi,
   databaseTypesApi,
@@ -195,8 +192,7 @@ export {
   monitoringLogsApi,
   discoveryApi,
   commandApi,
-  alarmRuleApi,
-  alarmApi
+  alarmRuleApi
 }
 export * from './ApiClient'
 
