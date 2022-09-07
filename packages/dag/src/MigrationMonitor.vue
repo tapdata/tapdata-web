@@ -702,14 +702,14 @@ export default {
           param: {
             id: this.dataflow.id
           }
-        },
-        logTotals: {
-          uri: '/api/MonitoringLogs/count',
-          param: {
-            taskId,
-            taskRecordId
-          }
         }
+        // logTotals: {
+        //   uri: '/api/MonitoringLogs/count',
+        //   param: {
+        //     taskId,
+        //     taskRecordId
+        //   }
+        // }
       }
       const $verifyPanel = this.$refs.verifyPanel
       if ($verifyPanel) {
