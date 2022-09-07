@@ -423,9 +423,12 @@ export default observer({
           this.settings.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
           this.settings.accessNodeProcessId = currentId && arr.includes(currentId) ? currentId : arr[0]
         }
-        this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
-          disabled: size === 1
-        })
+        if (!this.stateIsReadonly) {
+          // 只在编辑模式下禁用或启用
+          this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+            disabled: size === 1
+          })
+        }
       },
       immediate: true
     },
