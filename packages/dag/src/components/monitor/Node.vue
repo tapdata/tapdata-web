@@ -213,7 +213,7 @@ export default defineComponent({
       // 源全量读取耗时
       const sourceInitalReadTime = (
         <div class="statistic">
-          <div class="statistic-title">读取耗时</div>
+          <div class="statistic-title">平均读取耗时</div>
           <div class="statistic-content">
             <div class="statistic-value">
               {props.sample.snapshotSourceReadTimeCostAvg
@@ -227,7 +227,7 @@ export default defineComponent({
       // 源增量读取耗时
       const sourceCDCReadTime = (
         <div class="statistic">
-          <div class="statistic-title">读取耗时</div>
+          <div class="statistic-title">增量读取延迟</div>
           <div class="statistic-content">
             <div class="statistic-value">
               {props.sample.incrementalSourceReadTimeCostAvg
@@ -244,9 +244,7 @@ export default defineComponent({
           <div class="statistic-title">写入耗时</div>
           <div class="statistic-content">
             <div class="statistic-value">
-              {props.sample.incrementalSourceReadTimeCostAvg
-                ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
-                : '-'}
+              {props.sample.targetWriteTimeCostAvg ? calcTimeUnit(props.sample.targetWriteTimeCostAvg) : '-'}
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@
       :dataflow="dataflow"
       :scale="scale"
       :showBottomPanel="showBottomPanel"
+      :quota="quota"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -541,7 +542,7 @@ export default {
     },
 
     getQuotaFilter() {
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      const { id: taskId, taskRecordId, agentId } = this.dataflow || {}
       const [startAt, endAt] = this.quotaTime
       let params = {
         startAt,
@@ -575,7 +576,11 @@ export default {
               'snapshotDoneAt',
               'snapshotRowTotal',
               'snapshotInsertRowTotal',
-              'outputQps'
+              'outputQps',
+              'currentSnapshotTableRowTotal',
+              'currentSnapshotTableInsertRowTotal',
+              'replicateLag',
+              'snapshotStartAt'
             ],
             type: 'instant' // 瞬时值
           },
@@ -607,7 +612,7 @@ export default {
               taskId,
               taskRecordId
             },
-            fields: ['inputQps', 'outputQps', 'timeCostAvg'],
+            fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag'],
             type: 'continuous' // 连续数据
           },
           // dag数据
@@ -640,9 +645,21 @@ export default {
               'snapshotRowTotal',
               'snapshotInsertRowTotal',
               'snapshotTableTotal',
-              'tableTotal'
+              'tableTotal',
+              'snapshotSourceReadTimeCostAvg',
+              'incrementalSourceReadTimeCostAvg',
+              'targetWriteTimeCostAvg'
             ],
             type: 'instant' // 瞬时值
+          },
+          agentData: {
+            tags: {
+              type: 'engine',
+              engineId: agentId
+            },
+            endAt: Date.now(),
+            fields: ['memoryRate', 'cpuUsage', 'gcRate'],
+            type: 'instant'
           }
         }
       }
@@ -650,6 +667,7 @@ export default {
     },
 
     getParams() {
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       let params = {
         quota: {
           uri: '/api/measurement/query/v2',
@@ -659,6 +677,13 @@ export default {
           uri: `/api/task/auto-inspect-totals`,
           param: {
             id: this.dataflow.id
+          }
+        },
+        logTotals: {
+          uri: '/api/MonitoringLogs/count',
+          param: {
+            taskId,
+            taskRecordId
           }
         }
       }

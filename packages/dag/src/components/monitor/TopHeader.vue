@@ -17,17 +17,17 @@
         <div class="ml-4">
           <span>{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
         </div>
-        <div class="ml-4">
+        <div v-if="agentData" class="ml-4">
           <span>%CPU：</span>
-          <span>121.9</span>
+          <span>{{ agentData.cpuUsage }}</span>
         </div>
         <div class="ml-4">
           <span>%MEM：</span>
-          <span>72.8</span>
+          <span>{{ agentData.memoryRate }}</span>
         </div>
         <div class="ml-4">
           <span>GC：</span>
-          <span>89%</span>
+          <span>{{ agentData.gcRate }}</span>
         </div>
       </div>
     </div>
@@ -146,24 +146,6 @@
 
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElTooltip v-if="!hideMenus.includes('verify')" transition="tooltip-fade-in">
-        <div v-if="!dataflow.canOpenInspect" slot="content">
-          <p>{{ $t('packages_dag_monitor_topheader_dangqianrenwuzan') }}</p>
-          <p>{{ $t('packages_dag_monitor_topheader_tianjialezhongjian') }}</p>
-          <p>{{ $t('packages_dag_monitor_topheader_yuanlianjiebuzhi') }}</p>
-          <p>{{ $t('packages_dag_monitor_topheader_mubiaolianjiebu') }}</p>
-        </div>
-        <div v-else>{{ $t('packages_dag_monitor_topheader_dakaijiaoyan') }}</div>
-        <button
-          v-if="dataflow.canOpenInspect"
-          :class="{ active: activeType === 'verify' }"
-          class="icon-btn"
-          @click="$emit('showVerify')"
-        >
-          <VIcon size="16">verify-list</VIcon>
-        </button>
-        <span v-else class="icon-btn disabled"><VIcon size="16">verify-list</VIcon></span>
-      </ElTooltip>
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
@@ -180,14 +162,6 @@
           @click="$emit('edit')"
         >
           {{ $t('packages_dag_button_edit') }}
-        </ElButton>
-        <ElButton
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit"
-          size="mini"
-          class="mx-2"
-          @click="$emit('edit')"
-        >
-          {{ $t('button_edit') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
@@ -251,7 +225,8 @@ export default {
     hideMenus: {
       type: Array,
       default: () => []
-    }
+    },
+    quota: Object
   },
 
   components: { VIcon, TextEditable, TaskStatus, VDivider },
@@ -290,6 +265,16 @@ export default {
     stopTime() {
       const { stopTime } = this.dataflow
       return stopTime ? dayjs(stopTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+
+    agentData() {
+      const data = this.quota?.samples?.agentData?.[0] || {}
+      const { cpuUsage, gcRate, memoryRate } = data
+      return {
+        cpuUsage: typeof cpuUsage === 'number' ? cpuUsage.toFixed(2).toLocaleString() : '',
+        memoryRate: typeof memoryRate === 'number' ? memoryRate.toFixed(2).toLocaleString() : '',
+        gcRate: typeof gcRate === 'number' ? gcRate.toFixed(5) * 100 + '%' : ''
+      }
     }
   },
 
