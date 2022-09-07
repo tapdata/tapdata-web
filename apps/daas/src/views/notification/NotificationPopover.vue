@@ -79,38 +79,38 @@
           </div>
         </div>
       </el-tab-pane>
-      <!--      <el-tab-pane class="tab-item" label="告警通知" name="alarm" v-loading="loading">-->
-      <!--        <div class="tab-item-container">-->
-      <!--          <ul class="tab-list notification-list" v-if="alarmData.length">-->
-      <!--            <li class="notification-item" v-for="(item, index) in alarmData" :key="index" @click="handleRead(item.id)">-->
-      <!--              <div class="flex flex-row">-->
-      <!--                <div class="mr-1">-->
-      <!--                  <span class="unread-1zPaAXtSu inline-block"></span>-->
-      <!--                </div>-->
-      <!--                <div>-->
-      <!--                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>-->
-      <!--                  <span>{{ systemMap[item.system] }} </span>-->
-      <!--                  <span class="cursor-pointer px-1 primary" @click="handleGo(item)">-->
-      <!--                    {{ item.serverName }}-->
-      <!--                  </span>-->
-      <!--                  <template>-->
-      <!--                    <span>{{ item.msg }}</span>-->
-      <!--                  </template>-->
-      <!--                  <div class="item-time">-->
-      <!--                    <span>{{ item.createTime }}</span>-->
-      <!--                  </div>-->
-      <!--                </div>-->
-      <!--              </div>-->
-      <!--            </li>-->
-      <!--          </ul>-->
-      <!--          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">-->
-      <!--            <div>-->
-      <!--              <VIcon size="76">no-notice</VIcon>-->
-      <!--              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>-->
-      <!--            </div>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </el-tab-pane>-->
+      <el-tab-pane class="tab-item" label="告警通知" name="alarm" v-loading="loading">
+        <div class="tab-item-container">
+          <ul class="tab-list notification-list" v-if="alarmData.length">
+            <li class="notification-item" v-for="(item, index) in alarmData" :key="index" @click="handleRead(item.id)">
+              <div class="flex flex-row">
+                <div class="mr-1">
+                  <span class="unread-1zPaAXtSu inline-block"></span>
+                </div>
+                <div>
+                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
+                  <span>{{ systemMap[item.system] }} </span>
+                  <span class="cursor-pointer px-1 primary" @click="handleGo(item)">
+                    {{ item.serverName }}
+                  </span>
+                  <template>
+                    <span>{{ item.msg }}</span>
+                  </template>
+                  <div class="item-time">
+                    <span>{{ item.createTime }}</span>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
     </el-tabs>
   </el-popover>
 </template>

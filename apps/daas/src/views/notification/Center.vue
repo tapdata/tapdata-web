@@ -12,10 +12,10 @@
             <i class="iconfont icon-lishijilu"></i>
             <span class="content">{{ $t('notify_user_notice') }}</span>
           </li>
-          <!--          <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">-->
-          <!--            <i class="iconfont icon-lishijilu"></i>-->
-          <!--            <span class="content">系统告警</span>-->
-          <!--          </li>-->
+          <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">
+            <i class="iconfont icon-lishijilu"></i>
+            <span class="content">系统告警</span>
+          </li>
         </ul>
       </div>
       <div class="main-panel">

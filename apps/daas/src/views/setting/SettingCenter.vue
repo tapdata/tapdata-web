@@ -41,11 +41,11 @@ export default {
           name: this.$t('notify_setting'),
           key: 'notificationSetting'
         },
-        // {
-        //   icon: 'bells',
-        //   name: '告警设置',
-        //   key: 'alarmSetting'
-        // },
+        {
+          icon: 'bells',
+          name: '告警设置',
+          key: 'alarmSetting'
+        },
         {
           icon: 'account',
           name: this.$t('account_accountSettings'),
