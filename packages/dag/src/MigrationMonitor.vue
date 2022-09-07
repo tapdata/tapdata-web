@@ -52,6 +52,7 @@
           @toggle-expand="handleToggleExpand"
           @changeTimeSelect="handleChangeTimeSelect"
           @changeFrequency="handleChangeFrequency"
+          @verifyDetails="handleVerifyDetails"
         >
           <template #status="{ result }">
             <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">

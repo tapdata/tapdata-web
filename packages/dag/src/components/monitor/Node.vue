@@ -108,10 +108,9 @@ export default defineComponent({
      * @type {ComputedRef<number|number>}
      */
     const initialSyncProcess = computed(() => {
-      const { snapshotInsertRowTotal = 0, snapshotRowTotal = 0, snapshotTableTotal, tableTotal } = props.sample
+      const { snapshotInsertRowTotal = 0, snapshotRowTotal = 0, snapshotTableTotal = 0, tableTotal = 0 } = props.sample
       // 复制任务用表数量计算
-      if (props.syncType === 'migrate')
-        return snapshotTableTotal ? Math.round((snapshotTableTotal / tableTotal) * 100) : 0
+      if (props.syncType === 'migrate') return tableTotal ? Math.round((snapshotTableTotal / tableTotal) * 100) : 0
       return snapshotRowTotal ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100) : 0
     })
 
