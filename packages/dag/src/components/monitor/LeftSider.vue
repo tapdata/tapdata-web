@@ -36,7 +36,7 @@
             <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
           </div>
           <div
-            v-if="dataflow.syncType === 'migrate' && !initialData.snapshotDoneAt"
+            v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
             class="mb-4 flex align-items-center"
           >
             <span class="mr-2">当前表同步进度</span>
@@ -324,8 +324,13 @@ export default {
     },
 
     totalData() {
-      const { tableTotal = 0, snapshotTableTotal = 0 } = this.quota.samples?.totalData?.[0] || {}
-      return { tableTotal, snapshotTableTotal }
+      const {
+        tableTotal = 0,
+        snapshotTableTotal = 0,
+        currentSnapshotTableInsertRowTotal = 0,
+        currentSnapshotTableRowTotal = 0
+      } = this.quota.samples?.totalData?.[0] || {}
+      return { tableTotal, snapshotTableTotal, currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal }
     },
 
     totalDataPercentage() {
