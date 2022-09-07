@@ -71,6 +71,8 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large />
           </div>
+          <TransformLoading :show="transformLoading" />
+
           <NodePopover
             :popover="nodeMenu"
             @click-node="handleClickNodePopover"
@@ -106,6 +108,7 @@ import dagre from 'dagre'
 import { merge } from 'lodash'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
+import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
 import { DEFAULT_SETTINGS } from './constants'
 import { mapMutations } from 'vuex'
@@ -123,7 +126,8 @@ export default {
     PaperScroller,
     TopHeader,
     DFNode,
-    LeftSidebar
+    LeftSidebar,
+    TransformLoading
   },
 
   data() {
