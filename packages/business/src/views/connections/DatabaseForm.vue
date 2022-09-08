@@ -120,7 +120,8 @@ import {
   logcollectorApi,
   pdkApi,
   settingsApi,
-  commandApi
+  commandApi,
+  proxyApi
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
@@ -152,6 +153,7 @@ export default {
     return {
       rules: [],
       id: '',
+      commandCallbackFunctionId: '',
       visible: false,
       showSystemConfig: false,
       model: {
@@ -260,8 +262,9 @@ export default {
           params.id = id
           promise = connectionsApi.updateById(id, params)
         } else {
+          const { commandCallbackFunctionId } = this
           params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-          promise = connectionsApi.post(params)
+          promise = connectionsApi.create(params, { id: commandCallbackFunctionId })
         }
         promise
           .then(() => {
@@ -396,6 +399,7 @@ export default {
       const pdkHash = this.$route.query?.pdkHash
       const data = await databaseTypesApi.pdkHash(pdkHash)
       let id = this.id || this.$route.params.id
+      this.commandCallbackFunctionId = await proxyApi.getId()
       this.pdkOptions = data || {}
       let connectionTypeJson = {
         type: 'string',
@@ -756,6 +760,22 @@ export default {
             )
           }
         },
+        useAsyncDataSourceByConfig: (config, ...serviceParams) => {
+          // withoutField: 不往service方法传field参数
+          const { service, fieldName = 'dataSource', withoutField = false } = config
+          return field => {
+            field.loading = true
+            let fetch = withoutField ? service(...serviceParams) : service(field, ...serviceParams)
+            fetch.then(
+              action.bound(data => {
+                if (fieldName === 'value') {
+                  field.setValue(data)
+                } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
         loadAccessNode: async () => {
           const data = await clusterApi.findAccessNodeInfo()
           return (
@@ -793,6 +813,17 @@ export default {
           } catch (e) {
             return { total: 0, items: [] }
           }
+        },
+        getToken: async (field, params, $form) => {
+          const filter = {
+            subscribeId: `source#${this.pdkOptions.pdkHash}`,
+            service: 'engine',
+            expireSeconds: 100000000
+          }
+          proxyApi.subscribe(filter).then(data => {
+            const str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
+            $form.setValuesIn(field.name, str)
+          })
         }
       }
       this.schemaData = result
