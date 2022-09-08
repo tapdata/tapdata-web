@@ -423,10 +423,11 @@ export default {
           console.log('loadList-filter', filter)
           try {
             const { $values = {}, command, where = {}, page, size } = filter
-            const { nodeConfig, attrs = {} } = $values
+            const { nodeConfig, connectionId, attrs = {} } = $values
             const search = where.label?.like
             let params = {
               pdkHash: attrs.pdkHash,
+              connectionId,
               nodeConfig,
               command,
               action: search ? 'search' : 'list',
@@ -437,7 +438,7 @@ export default {
               }
             }
             let result = await proxyApi.command(params)
-            if (!result.data) {
+            if (!result.items) {
               return { items: [], total: 0 }
             }
             return result
