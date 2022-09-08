@@ -5352,5 +5352,54 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         }
       ]
     }
+  },
+  '/api/ExternalStorage/:id': {
+    reqId: '0053e18d-26a1-48a6-ad11-f7c4a41b54d8',
+    ts: 1652415699139,
+    code: 'ok',
+    data: {
+      canDelete: '@boolean',
+      createUser: '@name',
+      canEdit: '@boolean',
+      name: '@name',
+      user_id: '@id',
+      'type|1': ['mongodb', 'rocksdb', 'memory'],
+      ttlDay: 10,
+      id: '@id',
+      customId: '@id',
+      lastUpdBy: '@id',
+      createTime: '2015-07-04 19:26:45',
+      table: '@name',
+      defaultStorage: '@boolean',
+      last_updated: '2015-07-04 19:26:45',
+      uri: '@url'
+    }
+  },
+  '/api/ExternalStorage': {
+    reqId: '0053e18d-26a1-48a6-ad11-f7c4a41b54d8',
+    ts: 1652415699139,
+    code: 'ok',
+    data: {
+      total: 400,
+      'items|0-10': [
+        {
+          canDelete: '@boolean',
+          createUser: '@name',
+          canEdit: '@boolean',
+          name: '@name',
+          user_id: '@id',
+          'type|1': ['mongodb', 'rocksdb', 'memory'],
+          ttlDay: 10,
+          id: '@id',
+          customId: '@id',
+          lastUpdBy: '@id',
+          createTime: '2015-07-04 19:26:45',
+          table: '@name',
+          defaultStorage: '@boolean',
+          last_updated: '2015-07-04 19:26:45',
+          uri: '@url'
+        }
+      ]
+    }
   }
 })

@@ -618,6 +618,15 @@ export default [
           code: 'Cluster_management_menu'
         }
       },
+      {
+        path: '/external-storage',
+        name: 'externalStorage',
+        component: () => import(/* webpackChunkName: "external-storage" */ '@/views/external-storage/List'),
+        meta: {
+          title: 'page_title_external_storage',
+          code: ''
+        }
+      },
       /* ---------- 用户管理  ----------*/
       // {
       //   path: '/user',

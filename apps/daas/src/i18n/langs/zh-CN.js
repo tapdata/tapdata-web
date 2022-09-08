@@ -189,6 +189,7 @@ export default {
   page_title_back_menu: '返回菜单',
   page_title_custom_node: '自定义节点',
   page_title_account: '个人设置',
+  page_title_external_storage: '外存管理',
 
   // 通用组件
   // -- 多表选择器

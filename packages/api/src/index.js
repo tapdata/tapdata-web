@@ -144,6 +144,9 @@ const commandApi = new Command()
 import AlarmRule from './AlarmRule'
 const alarmRuleApi = new AlarmRule()
 
+import ExternalStorage from './ExternalStorage'
+const externalStorageApi = new ExternalStorage()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -192,7 +195,8 @@ export {
   monitoringLogsApi,
   discoveryApi,
   commandApi,
-  alarmRuleApi
+  alarmRuleApi,
+  externalStorageApi
 }
 export * from './ApiClient'
 
