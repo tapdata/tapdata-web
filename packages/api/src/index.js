@@ -144,6 +144,9 @@ const commandApi = new Command()
 import AlarmRule from './AlarmRule'
 const alarmRuleApi = new AlarmRule()
 
+import Proxy from './Proxy'
+const proxyApi = new Proxy()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -192,7 +195,8 @@ export {
   monitoringLogsApi,
   discoveryApi,
   commandApi,
-  alarmRuleApi
+  alarmRuleApi,
+  proxyApi
 }
 export * from './ApiClient'
 
