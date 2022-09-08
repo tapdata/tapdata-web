@@ -129,7 +129,7 @@ import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
-import { checkConnectionName } from '@tap/shared'
+import { checkConnectionName, isEmpty } from '@tap/shared'
 
 export default {
   name: 'DatabaseForm',
@@ -819,13 +819,14 @@ export default {
         loadCommandList: async (filter, val) => {
           console.log('loadList-filter', filter, val)
           try {
-            const { $values = {}, command, where = {}, page, size } = filter
+            const { $values, command, where = {}, page, size } = filter
             const { pdkHash, id } = this.pdkOptions
+            const { __TAPDATA, ...formValues } = $values
             const search = where.label?.like
             let params = {
               pdkHash,
               connectionId: id || this.commandCallbackFunctionId,
-              connectionConfig: $values,
+              connectionConfig: isEmpty(formValues) ? this.model?.config || {} : formValues,
               command,
               type: 'connection',
               action: search ? 'search' : 'list',
@@ -835,14 +836,13 @@ export default {
                 size: 1000
               }
             }
-            if (!pdkHash) {
+            if (!params.pdkHash || !params.connectionId) {
               return { items: [], total: 0 }
             }
             let result = await proxyApi.command(params)
             if (!result.items) {
               return { items: [], total: 0 }
             }
-            console.log('result', result)
             return result
           } catch (e) {
             console.log('catch', e) // eslint-disable-line
