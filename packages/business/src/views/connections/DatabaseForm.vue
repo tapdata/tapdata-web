@@ -816,6 +816,39 @@ export default {
             return { total: 0, items: [] }
           }
         },
+        loadCommandList: async (filter, val) => {
+          console.log('loadList-filter', filter, val)
+          try {
+            const { $values = {}, command, where = {}, page, size } = filter
+            const { pdkHash, id } = this.pdkOptions
+            const search = where.label?.like
+            let params = {
+              pdkHash,
+              connectionId: id || this.commandCallbackFunctionId,
+              connectionConfig: $values,
+              command,
+              type: 'connection',
+              action: search ? 'search' : 'list',
+              argMap: {
+                key: search,
+                page,
+                size: 1000
+              }
+            }
+            if (!pdkHash) {
+              return { items: [], total: 0 }
+            }
+            let result = await proxyApi.command(params)
+            if (!result.items) {
+              return { items: [], total: 0 }
+            }
+            console.log('result', result)
+            return result
+          } catch (e) {
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
+          }
+        },
         getToken: async (field, params, $form) => {
           const filter = {
             subscribeId: `source#${this.pdkOptions.pdkHash}`,
