@@ -692,9 +692,10 @@ export default {
         id: form.values.id,
         properties: JSON.parse(JSON.stringify(formValues))
       })
-      console.trace('updateDag') // eslint-disable-line
+      // console.trace('updateDag') // eslint-disable-line
       this.updateDag()
-      this.confirmNodeHasError()
+      clearTimeout(this.confirmTimer)
+      this.confirmTimer = setTimeout(() => this.confirmNodeHasError(), 10)
     },
 
     // 绑定表单事件

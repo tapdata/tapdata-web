@@ -404,5 +404,8 @@ export default {
   packages_dag_nodes_targetdatabase_baochimubiaoduan: '保持目標端原有表結構，清除數據',
   packages_dag_nodes_targetdatabase_jiedianmiaoshu: '節點描述',
   packages_dag_src_store_weizhaodaojiedian: '未找到節點',
-  packages_dag_src_store_qingkongjiedianshu: '清空節點輸入輸出的監聽'
+  packages_dag_src_store_qingkongjiedianshu: '清空節點輸入輸出的監聽',
+  packages_dag_node_none_input: '「 {val1} 」至少需要{val2}個源節點',
+  packages_dag_node_none_output: '「 {val1} 」至少需要{val2}個目標節點',
+  packages_dag_node_none_connection: '「 {val1} 」沒有任何連線'
 }
