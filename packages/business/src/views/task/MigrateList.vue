@@ -179,9 +179,6 @@
                 <!--                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">-->
                 <!--                  {{ $t('dataFlow.addTag') }}-->
                 <!--                </el-dropdown-item>-->
-                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('dataVerify.dataVerify')
-                }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
