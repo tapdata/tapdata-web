@@ -191,6 +191,7 @@ export default {
   page_title_back_menu: 'Back menu',
   page_title_custom_node: 'Custom Nodes',
   page_title_account: 'Personal settings',
+  page_title_external_storage: 'External storage',
 
   // 通用组件
   // -- 多表选择器
