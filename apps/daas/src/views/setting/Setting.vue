@@ -106,29 +106,25 @@
               </span>
             </template>
             <template v-if="item.category === 'alarm'">
-              <el-row class="mb-4">
-                <el-col :span="12">告警指标</el-col>
-                <el-col :span="12">默认告警规则</el-col>
-              </el-row>
-              <el-row class="mb-4" v-for="(childItem, childIndex) in item.items" :key="childIndex">
-                <el-col :span="8">
-                  <span>{{ childItem.key }}</span>
-                </el-col>
-                <el-col :span="16">
+              <VTable ref="table" class="table-list" :data="alarmData" :columns="columns" :hasPagination="false">
+                <template slot="keySlot" slot-scope="scope">
+                  <span>{{ scope.row.key }}</span>
+                </template>
+                <template slot="valueSlot" slot-scope="scope">
                   <span class="mr-2">连续</span>
-                  <el-input-number :controls="false" style="width: 100px" v-model="childItem.point"></el-input-number>
+                  <el-input-number :controls="false" style="width: 100px" v-model="scope.row.point"></el-input-number>
                   <span class="ml-2 mr-2"> 个点</span>
-                  <el-select style="width: 100px" class="mr-2" v-model="childItem.equalsFlag">
+                  <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
                     <el-option lable=">=" value=">="></el-option>
                     <el-option lable=">=" value=">"></el-option>
                     <el-option lable=">=" value="="></el-option>
                     <el-option lable="<=" value="<="></el-option>
                     <el-option lable="<" value="<"></el-option>
                   </el-select>
-                  <el-input-number :controls="false" v-model="childItem.ms" style="width: 80px"></el-input-number>
+                  <el-input-number :controls="false" v-model="scope.row.ms" style="width: 80px"></el-input-number>
                   <span class="ml-2">ms时告警</span>
-                </el-col>
-              </el-row>
+                </template>
+              </VTable>
             </template>
           </div>
         </div>
@@ -212,14 +208,13 @@
 </template>
 <script>
 import { uniq, find } from 'lodash'
-import { VIcon } from '@tap/component'
+import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
-import Cookie from '@tap/shared/src/cookie'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
 
 export default {
   name: 'Setting',
-  components: { VIcon },
+  components: { VIcon, VTable },
   data() {
     return {
       liceseItems: [],
@@ -253,6 +248,16 @@ export default {
           status: 'CDC Lag'
         },
         { label: this.$t('setting_Email_Template_DDL') }
+      ],
+      columns: [
+        {
+          label: '告警指标',
+          slotName: 'keySlot'
+        },
+        {
+          label: '告警指标',
+          slotName: 'valueSlot'
+        }
       ]
     }
   },
@@ -338,31 +343,7 @@ export default {
           return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
         })
         _this.formData.items = vals
-
-        //mock data
-        let node = {
-          category: 'alarm',
-          category_sort: 9,
-          items: [
-            {
-              id: '96',
-              key: 'cdc3',
-              number: 3,
-              symbol: '>=',
-              time: 500,
-              key_label: '任务的增量延迟'
-            },
-            {
-              id: '97',
-              key: 'cdc',
-              number: 3,
-              symbol: '>=',
-              time: 500,
-              key_label: '数据网络耗时'
-            }
-          ]
-        }
-        _this.formData.items.push(node)
+        this.getAlarmData()
       })
       let lincenseData = {
         liceseItems: auth_data,
@@ -374,11 +355,38 @@ export default {
     //告警设置 单独请求接口 单独提交数据
     getAlarmData() {
       alarmRuleApi.find().then(data => {
-        this.alarmData = {
+        data = [
+          {
+            key: 'Duis',
+            equalsFlag: 95,
+            point: 25,
+            ms: 21
+          },
+          {
+            key: 'aute in dolor',
+            point: 35,
+            ms: 55,
+            equalsFlag: 33
+          },
+          {
+            ms: 73,
+            equalsFlag: 32,
+            key: 'fugiat exercitation sit',
+            point: 20
+          },
+          {
+            key: 'velit anim ut',
+            ms: 33,
+            equalsFlag: 89,
+            point: 56
+          }
+        ]
+        this.alarmData = data
+        let node = {
           category: 'alarm',
-          items: data
+          category_sort: 9
         }
-        this.formData.items.push(this.alarmData)
+        this.formData.items.push(node)
       })
     },
     // 保存

@@ -81,9 +81,6 @@ export default {
     }
   },
   methods: {
-    handleSetting() {
-      this.$router.push({ name: 'notificationSetting' })
-    },
     getData() {
       let { search, msg } = this.searchParams
       let where = {}
@@ -112,80 +109,6 @@ export default {
           })
         }
       })
-    },
-    handleRead(item) {
-      let read = this.read
-      if (!item.read) {
-        notificationApi.patch({ read: true, id: item.id }).then(() => {
-          this.read = read
-          this.$root.$emit('notificationUpdate')
-          let msg = {
-            type: 'notification'
-          }
-          this.$ws.ready(() => {
-            this.$ws.send(msg)
-          }, true)
-        })
-      }
-    },
-    // 标记本页已读
-    handlePageRead() {
-      let ids = []
-      this.listData.map(item => {
-        ids.push(item.id)
-      })
-      let id = {
-        inq: ids
-      }
-
-      let data = {
-        read: true,
-        id
-      }
-      let read = this.read
-      notificationApi.pageRead(data).then(() => {
-        // this.getUnreadNum() //未读消息数量
-        this.getData()
-        this.read = read
-        this.$root.$emit('notificationUpdate')
-        let msg = {
-          type: 'notification'
-        }
-        this.$ws.ready(() => {
-          this.$ws.send(msg)
-        }, true)
-      })
-    },
-
-    // 标记全部已读
-    handleAllRead() {
-      let where = {}
-      // let data = {
-      //   read: true
-      // }
-      where = JSON.stringify(where)
-      let read = this.read
-      notificationApi.readAll(where).then(() => {
-        // this.getUnreadNum() //未读消息数量
-        this.getData()
-        this.read = read
-        this.$root.$emit('notificationUpdate')
-        let msg = {
-          type: 'notification'
-        }
-        this.$ws.ready(() => {
-          this.$ws.send(msg)
-        }, true)
-      })
-    },
-    handleClick(tab) {
-      this.currentPage = 1
-      if (tab.name === 'first') {
-        this.read = true // 全部信息
-      } else {
-        this.read = false //未读
-      }
-      this.getData()
     },
     getFilterItems() {
       this.filterItems = [
