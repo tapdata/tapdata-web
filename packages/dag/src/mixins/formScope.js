@@ -419,8 +419,8 @@ export default {
           return data
         },
 
-        loadCommandList: async filter => {
-          console.log('loadList-filter', filter)
+        loadCommandList: async (filter, val) => {
+          console.log('loadList-filter', filter, val)
           try {
             const { $values = {}, command, where = {}, page, size } = filter
             const { nodeConfig, connectionId, attrs = {} } = $values
@@ -430,11 +430,12 @@ export default {
               connectionId,
               nodeConfig,
               command,
+              type: 'node',
               action: search ? 'search' : 'list',
               argMap: {
                 key: search,
                 page,
-                size
+                size: 1000
               }
             }
             let result = await proxyApi.command(params)
