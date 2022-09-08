@@ -399,8 +399,10 @@ export default {
       const pdkHash = this.$route.query?.pdkHash
       const data = await databaseTypesApi.pdkHash(pdkHash)
       let id = this.id || this.$route.params.id
-      this.commandCallbackFunctionId = await proxyApi.getId()
       this.pdkOptions = data || {}
+      if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
+        this.commandCallbackFunctionId = await proxyApi.getId()
+      }
       let connectionTypeJson = {
         type: 'string',
         title: this.$t('packages_business_connection_form_connection_type'),
