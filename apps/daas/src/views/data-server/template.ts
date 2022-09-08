@@ -3,8 +3,10 @@ module.exports = function (url, token) {
   String url = "{{url}}";
   String access_token = "{{access_token}}";
   String param = "";
-  doGet(url, access_token, param);
-  doPost(url, access_token, param);
+  String result1 = doGet(url, access_token, param);
+  System.out.println(result1);
+  String result2 = doPost(url+"/find", access_token, param);
+  System.out.println(result2);
 }
 	
 public static String doGet(String url, String access_token, String param) {
@@ -92,12 +94,15 @@ post(url + '/find?access_token='+access_token,{}).then(data=>{
     .replace('{{access_token}}', token)
   let pythonTemplate = `import requests
 
-url = '{{url}}'
+url = "{{url}}"
 access_token = "{{access_token}}";
-param = ''
-ret = requests.get(url,params=param)
-ret=r=requests.post(url=url,json=param,headers=access_token)
-print(ret)`
+param = {} # for example: param={'page':1,'limit':20}
+headers = {'access_token': access_token}
+
+result1 = requests.get(url, params=param, headers=headers)	
+print(result1.text)
+result2 = requests.post(url + "/find", json=param, headers=headers)
+print(result2.text)`
     .replace('{{url}}', url)
     .replace('{{access_token}}', token)
   return {
