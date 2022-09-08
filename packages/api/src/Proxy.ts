@@ -12,5 +12,9 @@ export default class Proxy extends Http {
   subscribe(params) {
     return this.axios.post(`${this.url}/subscribe`, params)
   }
+
+  command(params) {
+    return this.axios.post(`${this.url}/command`, params)
+  }
 }
 export { Proxy }

@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
@@ -417,6 +417,34 @@ export default {
           const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
           return data
+        },
+
+        loadCommandList: async filter => {
+          console.log('loadList-filter', filter)
+          try {
+            const { $values = {}, command, where = {}, page, size } = filter
+            const { nodeConfig, attrs = {} } = $values
+            const search = where.label?.like
+            let params = {
+              pdkHash: attrs.pdkHash,
+              nodeConfig,
+              command,
+              action: search ? 'search' : 'list',
+              argMap: {
+                key: search,
+                page,
+                size
+              }
+            }
+            let result = await proxyApi.command(params)
+            if (!result.data) {
+              return { items: [], total: 0 }
+            }
+            return result
+          } catch (e) {
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
+          }
         },
 
         useHandleWithForm: (handle, form) => {
