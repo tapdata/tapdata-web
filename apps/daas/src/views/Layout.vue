@@ -371,7 +371,6 @@ let menuSetting = [
     children: [
       { name: 'migrateList', code: 'Data_SYNC_menu', parent: 'migrate' },
       { name: 'dataflowList', code: 'Data_SYNC_menu', parent: 'dataflow' },
-      // { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
       { name: 'sharedMiningList', code: 'log_collector_menu', parent: 'sharedMining' },
       { name: 'functionList', code: 'SYNC_Function_management', parent: 'function' },
       { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' },
@@ -550,11 +549,6 @@ export default {
         case 'setting':
           this.$router.push({
             name: 'notificationSetting'
-          })
-          break
-        case 'verifySetting':
-          this.$router.push({
-            name: 'dataVerifySetting'
           })
           break
         case 'newDataFlow':

@@ -1,7 +1,4 @@
 import Parent from './Parent'
-const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
-const VerificationHistory = () => import(/* webpackChunkName: "verification-history" */ '@/views/verification/History')
-const VerificationResult = () => import(/* webpackChunkName: "verification-result" */ '@/views/verification/Result')
 const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
 const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
 const DagEditor = async () => {
@@ -365,100 +362,6 @@ export default [
                 }
               }
             ]
-          }
-        ]
-      },
-      /* ---------- 数据校验  ----------*/
-      {
-        path: '/dataVerification',
-        name: 'dataVerification',
-        component: Parent,
-        redirect: 'dataVerification/',
-        meta: {
-          title: 'page_title_data_verification'
-        },
-        children: [
-          {
-            path: '',
-            name: 'dataVerificationList',
-            component: () => import(/* webpackChunkName: "verification-list" */ '@/views/verification/List'),
-            meta: {
-              title: 'page_title_data_verification',
-              code: 'Data_verify_menu'
-            }
-          },
-          {
-            path: 'create',
-            name: 'dataVerificationCreate',
-            component: VerificationForm,
-            meta: {
-              title: 'page_title_task_create',
-              code: 'verify_job_creation'
-            }
-          },
-          {
-            path: ':id/edit',
-            name: 'dataVerificationEdit',
-            component: VerificationForm,
-            meta: {
-              title: 'page_title_task_edit',
-              code: 'verify_job_edition'
-            }
-          },
-          {
-            path: ':id/details',
-            name: 'dataVerifyDetails',
-            component: () => import(/* webpackChunkName: "verification-details" */ '@/views/verification/Details'),
-            meta: {
-              title: 'page_title_task_details',
-              code: 'Data_verify'
-            }
-          },
-          {
-            path: ':id/history',
-            name: 'dataVerifyHistory',
-            component: VerificationHistory,
-            meta: {
-              title: 'page_title_data_verification_history',
-              code: 'Data_verify'
-            }
-          },
-          {
-            path: '/dataVerifyResult/:id/history',
-            name: 'VerifyDiffHistory',
-            component: VerificationHistory,
-            meta: {
-              title: 'page_title_diff_verification_history',
-              code: 'Data_verify'
-            }
-          },
-          {
-            path: '/dataVerifyResult/:id/details',
-            name: 'VerifyDiffDetails',
-            component: VerificationResult,
-            meta: {
-              title: 'page_title_diff_verification_details',
-              code: 'Data_verify'
-            }
-          },
-          {
-            path: '/dataVerifyResult/:id',
-            name: 'dataVerifyResult',
-            component: VerificationResult,
-            meta: {
-              title: 'page_title_data_verification_result',
-              code: 'Data_verify'
-            }
-          },
-          {
-            path: ':id/verifyDetails',
-            name: 'VerifyDetails',
-            component: () => import(/* webpackChunkName: "etl-list" */ '@/views/verification/VerifyDetails'),
-            meta: {
-              title: 'page_title_data_verify_details',
-              code: 'Data_verify',
-              isNotAside: true
-            }
           }
         ]
       },

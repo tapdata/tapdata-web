@@ -104,6 +104,16 @@ export default defineComponent({
     })
 
     /**
+     * 目标写入耗时
+     * @type {ComputedRef<unknown>}
+     */
+    const targetWriteTimeCostAvg = computed(() => {
+      const { targetWriteTimeCostAvg } = props.sample
+      if (!targetWriteTimeCostAvg) return '-'
+      return calcTimeUnit(targetWriteTimeCostAvg)
+    })
+
+    /**
      * 全量进度
      * @type {ComputedRef<number|number>}
      */
@@ -174,7 +184,7 @@ export default defineComponent({
           <div class="statistic flex">
             <div class="statistic-title">写入耗时：</div>
             <div class="statistic-content">
-              <div class="statistic-value">{timeCostAvg.value}</div>
+              <div class="statistic-value">{targetWriteTimeCostAvg.value}</div>
             </div>
           </div>
         )

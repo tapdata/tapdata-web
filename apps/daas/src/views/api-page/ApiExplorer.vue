@@ -107,10 +107,10 @@
               />
               <div>
                 <ElButton @click="editOk(scope.row, item.text, item.type)" class="btn-text" type="text" size="small">
-                  {{ $t('dataQuality_save') }}
+                  {{ $t('button_save') }}
                 </ElButton>
                 <ElButton @click="editCancel(scope.row, item.text)" class="btn-text" type="text" size="small">
-                  {{ $t('dataQuality_cancel') }}
+                  {{ $t('button_cancel') }}
                 </ElButton>
               </div>
             </div>
