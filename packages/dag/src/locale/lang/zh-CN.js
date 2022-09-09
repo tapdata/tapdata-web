@@ -408,5 +408,6 @@ export default {
   dag_dialog_field_mapping_no_data: '暂无数据',
   packages_dag_node_none_input: '“ {val1} ”至少需要{val2}个源节点',
   packages_dag_node_none_output: '“ {val1} ”至少需要{val2}个目标节点',
-  packages_dag_node_none_connection: '“ {val1} ”没有任何连线'
+  packages_dag_node_none_connection: '“ {val1} ”没有任何连线',
+  packages_dag_external_storage: '外存配置'
 }
