@@ -425,5 +425,26 @@ export default {
   packages_business_statistics_schedule_yonghuliulanqi: '用戶瀏覽器時區',
   packages_business_statistics_schedule_shijian: '時間：',
   packages_business_statistics_schedule_qingxuanze: '請選擇',
-  packages_business_statistics_schedule_leixing: '類型：'
+  packages_business_statistics_schedule_leixing: '類型：',
+
+  packages_business_dataFlow_delete_confirm_title: '是否刪除該任務？',
+  packages_business_dataFlow_delete_confirm_message: '刪除任務 xxx 後，此任務將無法恢復',
+  packages_business_dataFlow_bulk_delete_confirm_title: '是否批量刪除任務？',
+  packages_business_dataFlow_bulk_delete_confirm_message: '批量刪除任務後，任務將無法恢復',
+  packages_business_dataFlow_stop_confirm_title: '是否暫停該任務？',
+  packages_business_dataFlow_stop_confirm_message:
+    '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  packages_business_dataFlow_bulk_stop_confirm_title: '是否批量暫停任務？',
+  packages_business_dataFlow_bulk_stop_confirm_message:
+    '批量暫停任務後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  packages_business_dataFlow_force_stop_confirm_title: '是否強制停止該任務？',
+  packages_business_dataFlow_force_stop_confirm_message:
+    '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+  packages_business_dataFlow_bulk_force_stop_confirm_title: '是否批量強制停止任務？',
+  packages_business_dataFlow_bulk_force_stop_confirm_message:
+    '批量強制停止任務將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+  packages_business_dataFlow_initialize_confirm_title: '是否重置該任務？',
+  packages_business_dataFlow_initialize_confirm_message: '重置任務 xxx 將清除任務同步進度，任務將重新執行',
+  packages_business_dataFlow_bulk_initialize_confirm_title: '是否批量重置任務？',
+  packages_business_dataFlow_bulk_initialize_confirm_message: '批量重置任務將清除任務同步進度，任務將重新執行'
 }
