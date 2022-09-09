@@ -262,7 +262,11 @@ export default {
     },
 
     isEnterTimer() {
-      return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
+      return (
+        this.quotaTimeType !== 'custom' &&
+        !this.nodeDetailDialog &&
+        ['running', 'stopping'].includes(this.dataflow?.status)
+      )
     }
   },
 
