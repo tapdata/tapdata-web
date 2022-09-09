@@ -131,7 +131,7 @@ const BUTTON_WITH_STATUS = {
   delete: ['edit', 'wait_start', 'complete', 'error', 'stop'],
   stop: ['running'],
   forceStop: ['stopping'],
-  reset: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  reset: ['wait_start', 'complete', 'error', 'stop'],
   monitor: ['running', 'complete', 'error', 'stop', 'stopping']
 }
 
