@@ -5,7 +5,13 @@
         <button @click="$emit('page-return')" class="icon-btn">
           <VIcon size="18">left</VIcon>
         </button>
-        <TextEditable v-model="name" placeholder="请输入任务名称" max-width="260" @change="onNameInputChange" />
+        <TextEditable
+          v-model="name"
+          placeholder="请输入任务名称"
+          max-width="260"
+          readonly
+          @change="onNameInputChange"
+        />
         <span class="ml-4">{{ syncType[dataflow.type] }}</span>
         <TaskStatus :task="dataflow" class="ml-4" />
       </div>
