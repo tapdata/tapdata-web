@@ -25,16 +25,13 @@ export default observer({
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
     this.getAllNode()
     let values = this.settings
-    const { useAsyncDataSourceByConfig, loadExternalStorage } = this.scope
     return {
       formScope: {
         checkName: value => {
           return new Promise(resolve => {
             this.handleCheckName(resolve, value)
           })
-        },
-        useAsyncDataSourceByConfig,
-        loadExternalStorage
+        }
       },
 
       schema: {
@@ -254,30 +251,6 @@ export default observer({
                             }
                           }
                         }
-                      },
-                      externalStorageId: {
-                        title: this.$t('packages_dag_external_storage'), //外存配置
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Select',
-                        'x-reactions': [
-                          {
-                            dependencies: ['shareCdcEnable'],
-                            fulfill: {
-                              state: {
-                                visible: '{{$deps[0]}}'
-                              }
-                            }
-                          },
-                          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
-                          {
-                            fulfill: {
-                              state: {
-                                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-                              }
-                            }
-                          }
-                        ]
                       },
                       isAutoInspect: {
                         title: this.$t('packages_dag_task_list_verify'),
