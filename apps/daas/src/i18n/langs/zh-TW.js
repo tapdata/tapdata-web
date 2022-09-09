@@ -148,6 +148,8 @@ export default {
   page_title_task_stat: '任務統計',
   page_title_run_monitor: '運行監控',
   page_title_data_develop: '數據開發',
+  page_title_data_verify: '數據校驗',
+  page_title_data_verify_details: '校驗詳情',
   page_title_shared_mining: '共享挖掘',
   page_title_shared_mining_details: '挖掘詳情',
   page_title_function: '函數管理',
