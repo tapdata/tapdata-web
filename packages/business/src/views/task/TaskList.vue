@@ -344,7 +344,8 @@ export default {
         agentId: true,
         statuses: true,
         type: true,
-        desc: true
+        desc: true,
+        listtags: true
       }
       if (keyword && keyword.trim()) {
         where.name = { like: toRegExp(keyword), options: 'i' }
@@ -637,9 +638,9 @@ export default {
     handleSelectTag() {
       let tagList = {}
       this.multipleSelection.forEach(row => {
-        if (row.listTagId) {
-          tagList[row.listTagId] = {
-            value: row.listTagValue
+        if (row.listtags && row.listtags.length > 0) {
+          tagList[row.listtags[0].id] = {
+            value: row.listtags[0].value
           }
         }
       })

@@ -177,16 +177,19 @@ export default defineComponent({
             ></FilterBar>
           </template>
           <template slot="operation">
-            <el-button
-              type="primary"
-              size="mini"
-              disabled={this.data.currentNode.readOnly}
-              onClick={() => {
-                this.handleSourceDrawer()
-              }}
-            >
-              <span>{i18n.t('datadiscovery_catalogue_ziyuanbangding')}</span>
-            </el-button>
+            {this.data.currentNode.readOnly ? (
+              ' '
+            ) : (
+              <el-button
+                type="primary"
+                size="mini"
+                onClick={() => {
+                  this.handleSourceDrawer()
+                }}
+              >
+                <span>{i18n.t('datadiscovery_catalogue_ziyuanbangding')}</span>
+              </el-button>
+            )}
           </template>
           <el-table-column
             label={i18n.t('metadata_name')}
