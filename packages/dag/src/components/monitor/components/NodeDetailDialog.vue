@@ -57,7 +57,7 @@
                 style="width: 150px"
                 :percentage="totalDataPercentage"
               />
-              <span class="ml-2">{{ totalData.snapshotInsertRowTotal + '/' + totalData.snapshotRowTotal }}</span>
+              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
             </div>
             <div
               v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
@@ -73,7 +73,7 @@
             </div>
           </template>
           <template v-if="dataflow.type !== 'initial_sync'">
-            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+            <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
               <span>增量时间点：</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
@@ -89,9 +89,9 @@
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
           {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
         </div>
-        <div class="chart-box__content p-4 flex-fill flex align-items-center">
+        <div class="chart-box__content p-6 fs-8 flex flex-column align-items-center flex-fill justify-content-center">
           <template v-if="dataflow.type !== 'initial_sync'">
-            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+            <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
               <span>增量时间点：</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
@@ -114,7 +114,22 @@
       </div>
       <div v-loading="loading" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-          {{ $t('packages_dag_components_nodedetaildialog_chulihaoshi') }}
+          <span class="mr-2">{{ delayLineTitle }}</span>
+          <ElTooltip transition="tooltip-fade-in">
+            <VIcon class="color-primary" @click="init">info</VIcon>
+            <div v-if="isSource" slot="content">
+              <div>处理耗时：源节点从源数据库读取到事件后完成处理花费的时间</div>
+              <div>平均读取耗时：源节点从源库读取事件花费的平均时间</div>
+              <div>增量读取延迟：源节点读取增量事件的平均延迟时间</div>
+            </div>
+            <div v-else-if="isTarget" slot="content">
+              <div>处理耗时：当前节点处理事件的平均耗时</div>
+              <div>写入耗时：当前目标节点写入数据到目标数据库的耗时</div>
+            </div>
+            <div v-else slot="content">
+              <div>处理耗时：当前节点处理事件的平均耗时</div>
+            </div>
+          </ElTooltip>
         </div>
         <div class="chart-box__content p-4">
           <LineChart
@@ -228,6 +243,28 @@ export default {
       }
     },
 
+    delayLineTitle() {
+      const { isSource, isTarget } = this
+      let result = '处理耗时'
+      if (isSource) {
+        result = '读取/处理耗时'
+      } else if (isTarget) {
+        result = '处理/写入耗时'
+      }
+      return result
+    },
+
+    delayLineInfo() {
+      const { isSource, isTarget } = this
+      let result = '处理耗时'
+      if (isSource) {
+        result = '读取/处理耗时'
+      } else if (isTarget) {
+        result = '处理/写入耗时'
+      }
+      return result
+    },
+
     // 增量延迟
     delayData() {
       const data = this.quota.samples?.lineChartData?.[0]
@@ -317,12 +354,16 @@ export default {
 
     totalData() {
       const {
+        snapshotTableTotal = 0,
+        tableTotal = 0,
         snapshotInsertRowTotal = 0,
         snapshotRowTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
         currentSnapshotTableRowTotal = 0
       } = this.quota.samples?.totalData?.[0] || {}
       return {
+        snapshotTableTotal,
+        tableTotal,
         snapshotInsertRowTotal,
         snapshotRowTotal,
         currentSnapshotTableInsertRowTotal,
@@ -331,8 +372,8 @@ export default {
     },
 
     totalDataPercentage() {
-      const { snapshotInsertRowTotal, snapshotRowTotal } = this.totalData
-      return snapshotInsertRowTotal && snapshotRowTotal ? (snapshotInsertRowTotal / snapshotRowTotal) * 100 : 0
+      const { snapshotTableTotal, tableTotal } = this.totalData
+      return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
     },
 
     currentTotalDataPercentage() {

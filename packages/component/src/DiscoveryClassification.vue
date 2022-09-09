@@ -35,7 +35,7 @@
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <span class="table-label"
-            >{{ data.value }}<span class="count-label mr-2">({{ data.objCount }})</span></span
+            >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
           >
           <span class="btn-menu" v-if="!data.readOnly">
             <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
@@ -313,6 +313,10 @@ export default {
             children.push(it)
             map[it.parent_id] = children
           } else {
+            //默认目录国际化
+            if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
+              it.value = '默认目录（技术）'
+            }
             nodes.push(it)
           }
         })

@@ -4,7 +4,7 @@
     class="config-panel border-start flex-column"
     :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
   >
-    <NodeIcon v-if="activeNode" class="config-node-icon" :node="activeNode" />
+    <NodeIcon v-if="activeNode" v-show="activeType === 'node'" class="config-node-icon" :node="activeNode" />
     <ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
       <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')">
         <FormPanel

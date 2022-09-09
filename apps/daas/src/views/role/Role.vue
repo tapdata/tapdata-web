@@ -186,7 +186,7 @@
         </ul>
       </div>
       <div class="btn">
-        <el-button size="mini" @click="back">{{ $t('dataVerify_back') }} </el-button>
+        <el-button size="mini" @click="back">{{ $t('button_back') }} </el-button>
         <el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')"
           >{{ $t('app_save') }}
         </el-button>

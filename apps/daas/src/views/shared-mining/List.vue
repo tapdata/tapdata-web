@@ -4,11 +4,11 @@
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
-      <div slot="operation">
+      <!-- <div slot="operation">
         <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
-      </div>
+      </div> -->
       <el-table-column min-width="250" :label="$t('share_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}

@@ -1,9 +1,10 @@
 import i18n from '@tap/i18n'
-import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { isPlainObj } from '@tap/shared'
 import { merge, isEqual, escapeRegExp } from 'lodash'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
+import { externalStorageApi } from '@tap/api'
+import { isPlainObj } from '@tap/shared'
 
 export default {
   data() {
@@ -935,6 +936,21 @@ export default {
 
         addDeclaredCompleterForSync: tools => {
           addDeclaredCompleter(tools, 'tapTable')
+        },
+
+        async loadExternalStorage() {
+          try {
+            const { items = [] } = await externalStorageApi.get()
+            return items.map(item => {
+              return {
+                label: item.name,
+                value: item.id,
+                isDefault: item.defaultStorage
+              }
+            })
+          } catch (e) {
+            return []
+          }
         }
       }
     }

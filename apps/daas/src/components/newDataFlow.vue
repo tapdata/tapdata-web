@@ -47,12 +47,11 @@
         :gutter="20"
         v-show="
           ($has('datasource_menu') && $has('datasource_creation')) ||
-          ($has('API_management_menu') && $has('API_creation')) ||
-          ($has('Data_verify_menu') && $has('verify_job_creation'))
+          ($has('API_management_menu') && $has('API_creation'))
         "
       >
         <ElCol
-          :span="8"
+          :span="12"
           class="more-col"
           v-if="$has('datasource_menu') && $has('datasource_creation')"
           :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
@@ -72,7 +71,7 @@
           </div>
         </ElCol>
         <ElCol
-          :span="8"
+          :span="12"
           class="more-col"
           v-if="$has('API_management_menu') && $has('API_creation')"
           :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
@@ -86,24 +85,6 @@
             </div>
             <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
               {{ $t('new_create_api_desc') }}
-            </div>
-          </div>
-        </ElCol>
-        <ElCol
-          :span="8"
-          class="more-col"
-          v-if="$has('Data_verify_menu') && $has('verify_job_creation')"
-          :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
-        >
-          <div class="more-col-box p-4" @click="handleDataVerification">
-            <div class="fs-7 pb-4 font-color-dark">
-              <div class="flex align-items-center flex-row">
-                <img src="../assets/images/new/Console_icon_data_verification.svg" alt="" />
-                <span class="pl-2 fw-sub">{{ $t('new_data_valid') }}</span>
-              </div>
-            </div>
-            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
-              {{ $t('new_data_valid_desc') }}
             </div>
           </div>
         </ElCol>
@@ -204,16 +185,7 @@ export default {
     //跳转发布api
     handleModules() {
       let routeUrl = this.$router.resolve({
-        name: 'apiPublishCreate'
-      })
-      window.open(routeUrl.href, '_blank')
-      this.handleClose()
-    },
-
-    // 跳转数据校验
-    handleDataVerification() {
-      let routeUrl = this.$router.resolve({
-        name: 'dataVerificationCreate'
+        name: 'dataServer'
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()

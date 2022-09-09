@@ -200,9 +200,6 @@
                 <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">
                   {{ $t('packages_business_dataFlow_addTag') }}
                 </el-dropdown-item>
-                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('packages_business_dataVerify_dataVerify')
-                }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -639,12 +636,6 @@ export default {
           .finally(() => {
             this.restLoading = false
           })
-      })
-    },
-    validate(ids, node) {
-      this.$router.push({
-        name: 'dataVerification',
-        query: { name: node.name, id: node.id }
       })
     },
     copy(ids, node) {

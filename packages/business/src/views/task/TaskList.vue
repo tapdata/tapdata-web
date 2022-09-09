@@ -628,12 +628,6 @@ export default {
           })
       })
     },
-    validate(ids, node) {
-      this.$router.push({
-        name: 'dataVerification',
-        query: { name: node.name, id: node.id }
-      })
-    },
     copy(ids, node) {
       taskApi.copy(node.id).then(() => {
         this.table.fetch()

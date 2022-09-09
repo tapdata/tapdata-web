@@ -29,7 +29,7 @@
               </VIcon>
             </el-tooltip>
             <ElButton type="primary" size="mini" :disabled="disableAgainVerify" @click="handleAgainCheck"
-              >校验</ElButton
+            >校验</ElButton
             >
           </div>
         </div>
@@ -58,8 +58,8 @@
           <div class="verify-result__line mt-2">
             <span class="line__label">源表：</span>
             <span class="font-color-dark">{{
-              (row.originalTableName || '-') + '/' + (row.sourceConnName || '-')
-            }}</span>
+                (row.originalTableName || '-') + '/' + (row.sourceConnName || '-')
+              }}</span>
           </div>
           <div class="verify-result__line mt-2">
             <span class="line__label">目标表：</span>
@@ -111,8 +111,8 @@
                 <div v-for="(sItem, sIndex) in item.sourceData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
-                    sItem.value
-                  }}</span>
+                      sItem.value
+                    }}</span>
                 </div>
               </ElCol>
               <ElCol :span="12">
@@ -128,8 +128,8 @@
                 <div v-for="(sItem, sIndex) in item.targetData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
-                    sItem.value
-                  }}</span>
+                      sItem.value
+                    }}</span>
                 </div>
               </ElCol>
             </ElRow>

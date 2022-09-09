@@ -1,3 +1,13 @@
 .formily-element-form-item-label-tooltip * {
   cursor: pointer;
 }
+
+.formily-element-form-collapse.el-collapse.inset {
+  .el-collapse-item__header {
+    padding-left: 16px;
+  }
+  .el-collapse-item__content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

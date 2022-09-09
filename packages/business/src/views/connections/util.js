@@ -52,7 +52,7 @@ export const getConnectionIcon = pdkHash => {
   if (pdkHash) {
     const token = Cookie.get('token')
     let baseUrl = axios.defaults.baseURL
-    return baseUrl + `api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`
+    return (baseUrl + `/api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`).replace('//', '/')
   } else {
     return ''
   }

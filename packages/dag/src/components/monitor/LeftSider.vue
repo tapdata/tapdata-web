@@ -8,7 +8,12 @@
           <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
         </ElTooltip>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
-        <Frequency :range="$attrs.range" style="width: 136px" @change="changeFrequency"></Frequency>
+        <Frequency
+          :range="$attrs.range"
+          style="width: 136px"
+          class="flex-shrink-0"
+          @change="changeFrequency"
+        ></Frequency>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
