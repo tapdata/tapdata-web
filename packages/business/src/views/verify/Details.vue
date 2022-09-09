@@ -1,7 +1,7 @@
 <template>
   <section class="verify-details">
     <div class="verify-details__wrap flex font-color-light h-100">
-      <div class="verify-list flex flex-column p-6" :class="{ 'w-100': !row }">
+      <div class="verify-list flex flex-column p-6">
         <div class="verify-list__header flex justify-content-between mb-2">
           <ElInput
             class="search-input"
@@ -29,7 +29,7 @@
               </VIcon>
             </el-tooltip>
             <ElButton type="primary" size="mini" :disabled="disableAgainVerify" @click="handleAgainCheck"
-            >校验</ElButton
+              >校验</ElButton
             >
           </div>
         </div>
@@ -52,22 +52,27 @@
           </template>
         </VTable>
       </div>
-      <div v-if="row" class="verify-result flex flex-column flex-fit border-start">
+      <div class="verify-result flex flex-column flex-fit border-start">
         <div class="verify-result__title pt-6 px-4 fs-7 fw-bold font-color-dark">校验结果</div>
         <div class="px-4 pb-4 border-bottom">
           <div class="verify-result__line mt-2">
             <span class="line__label">源表：</span>
-            <span class="font-color-dark">{{
-                (row.originalTableName || '-') + '/' + (row.sourceConnName || '-')
-              }}</span>
+            <span v-if="row" class="font-color-dark">{{
+              (row.originalTableName || '-') + '/' + (row.sourceConnName || '-')
+            }}</span>
+            <span v-else>-</span>
           </div>
           <div class="verify-result__line mt-2">
             <span class="line__label">目标表：</span>
-            <span class="font-color-dark">{{ (row.targetTableName || '-') + '/' + (row.targetConnName || '-') }}</span>
+            <span v-if="row" class="font-color-dark">{{
+              (row.targetTableName || '-') + '/' + (row.targetConnName || '-')
+            }}</span>
+            <span v-else>-</span>
           </div>
           <div class="verify-result__line mt-2">
             <span class="line__label">异常数据（行）：</span>
-            <span class="font-color-dark">{{ row.counts || 0 }}</span>
+            <span v-if="row" class="font-color-dark">{{ row.counts || 0 }}</span>
+            <span v-else>-</span>
           </div>
         </div>
         <div class="flex justify-content-between pt-4 px-4">
@@ -111,8 +116,8 @@
                 <div v-for="(sItem, sIndex) in item.sourceData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
-                      sItem.value
-                    }}</span>
+                    sItem.value
+                  }}</span>
                 </div>
               </ElCol>
               <ElCol :span="12">
@@ -128,8 +133,8 @@
                 <div v-for="(sItem, sIndex) in item.targetData" :key="sIndex" class="mt-2">
                   <span class="row__label">{{ sItem.label }}:</span>
                   <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.isDiff }">{{
-                      sItem.value
-                    }}</span>
+                    sItem.value
+                  }}</span>
                 </div>
               </ElCol>
             </ElRow>
