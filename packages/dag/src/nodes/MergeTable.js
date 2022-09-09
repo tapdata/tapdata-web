@@ -23,9 +23,29 @@ export class MergeTable extends NodeType {
         'x-display': 'hidden'
       },
 
+      externalStorageId: {
+        title: '外存配置', //外存配置
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-reactions': [
+          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+          {
+            fulfill: {
+              state: {
+                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+              }
+            }
+          }
+        ]
+      },
+
       mergeProperties: {
+        title: '主从配置',
         type: 'array',
         required: true,
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {},
         'x-component': 'MergeTableTree',
         'x-component-props': {
           treeWidth: 200,
