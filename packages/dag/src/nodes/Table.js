@@ -182,9 +182,6 @@ export class Table extends NodeType {
         type: 'string',
         title: '所属agent',
         'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          wrapperWidth: 320
-        },
         'x-component': 'PreviewText.Input',
         'x-component-props': {
           content:
@@ -211,6 +208,14 @@ export class Table extends NodeType {
         'x-component': 'FormCollapse',
         'x-component-props': {
           class: 'inset'
+        },
+        'x-reactions': {
+          dependencies: ['$inputs', '$outputs'],
+          fulfill: {
+            state: {
+              display: '{{$deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
+            }
+          }
         },
         properties: {
           tab1: {

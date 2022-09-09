@@ -96,9 +96,6 @@ $headerBg: #fff;
       flex: 1;
       > form {
         height: 100%;
-        > .formily-element-space {
-          height: 100%;
-        }
       }
     }
 
