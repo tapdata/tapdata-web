@@ -425,5 +425,25 @@ export default {
   packages_business_statistics_schedule_yonghuliulanqi: '用户浏览器时区',
   packages_business_statistics_schedule_shijian: '时间：',
   packages_business_statistics_schedule_qingxuanze: '请选择',
-  packages_business_statistics_schedule_leixing: '类型：'
+  packages_business_statistics_schedule_leixing: '类型：',
+
+  packages_business_dataFlow_delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+  packages_business_dataFlow_bulk_delete_confirm_title: '是否批量删除任务？',
+  packages_business_dataFlow_bulk_delete_confirm_message: '批量删除任务后，任务将无法恢复',
+  packages_business_dataFlow_stop_confirm_title: '是否暂停该任务？',
+  packages_business_dataFlow_stop_confirm_message:
+    '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+  packages_business_dataFlow_bulk_stop_confirm_title: '是否批量暂停任务？',
+  packages_business_dataFlow_bulk_stop_confirm_message:
+    '批量暂停任务后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+  packages_business_dataFlow_force_stop_confirm_title: '是否强制停止该任务？',
+  packages_business_dataFlow_force_stop_confirm_message:
+    '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+  packages_business_dataFlow_bulk_force_stop_confirm_title: '是否批量强制停止任务？',
+  packages_business_dataFlow_bulk_force_stop_confirm_message:
+    '批量强制停止任务将立即中断数据传输强制任务快速停止，并重置该任务',
+  packages_business_dataFlow_initialize_confirm_title: '是否重置该任务？',
+  packages_business_dataFlow_initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行',
+  packages_business_dataFlow_bulk_initialize_confirm_title: '是否批量重置任务？',
+  packages_business_dataFlow_bulk_initialize_confirm_message: '批量重置任务将清除任务同步进度，任务将重新执行'
 }
