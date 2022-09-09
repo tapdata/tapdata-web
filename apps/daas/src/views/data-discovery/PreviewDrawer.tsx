@@ -1,7 +1,8 @@
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref } from '@vue/composition-api'
+import { defineComponent, reactive, ref, nextTick } from '@vue/composition-api'
 import { TableList, OverflowTooltip } from '@tap/component'
 import { discoveryApi } from '@tap/api'
+import { delayTrigger } from '@/utils/util'
 import './index.scss'
 import dayjs from 'dayjs'
 
@@ -11,6 +12,7 @@ export default defineComponent({
     const data = reactive({
       activeName: 'first',
       activeUser: 'admin',
+      search: '',
       currentRow: '',
       loading: false,
       columns: [
@@ -65,6 +67,21 @@ export default defineComponent({
       }
       return data
     }
+    // const search = () => {
+    //   nextTick(() => {
+    //     delayTrigger(() => {
+    //       if (data.search.trim()) {
+    //         data.search = data.search.trim().toString() //去空格
+    //         let data = preview.value
+    //         let fields = data.fields
+    //         fields = fields.filter(v => {
+    //           let str = (v.field_name + '' + v.t_field_name).toLowerCase()
+    //           return str.indexOf(data.search.toLowerCase()) > -1
+    //         })
+    //       }
+    //     }, 100)
+    //   })
+    // }
     const loadData = row => {
       data.currentRow = row
       if (data.activeName === 'first') {
@@ -185,9 +202,18 @@ export default defineComponent({
                   </div>
                 </div>
                 <div class="mt-5">
-                  <span class="drawer__header_text inline-block">
-                    {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
-                  </span>
+                  <div class="flex justify-content-between align-items-center">
+                    <span class="drawer__header_text inline-block">
+                      {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
+                    </span>
+                    {/*<el-input*/}
+                    {/*  class="mb-3"*/}
+                    {/*  style="width:200px"*/}
+                    {/*  placeholder="请输入名称"*/}
+                    {/*  suffix-icon="el-icon-search"*/}
+                    {/*  v-modek={this.data.search}*/}
+                    {/*></el-input>*/}
+                  </div>
                   <TableList
                     class="discovery-page-table"
                     columns={this.data.columns}
