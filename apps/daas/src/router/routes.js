@@ -50,6 +50,11 @@ const MigrateDetails = async () => {
   return MigrateDetails
 }
 
+const VerifyDetails = async () => {
+  const { VerifyDetails } = await import('@tap/business')
+  return VerifyDetails
+}
+
 export default [
   {
     path: '/login',
@@ -362,6 +367,29 @@ export default [
                 }
               }
             ]
+          }
+        ]
+      },
+      /* ---------- 数据校验  ----------*/
+      {
+        path: '/verify',
+        name: 'verify',
+        component: Parent,
+        redirect: 'verify/',
+        meta: {
+          title: 'page_title_data_verify',
+          doNotJump: true
+        },
+        children: [
+          {
+            path: ':id/details',
+            name: 'VerifyDetails',
+            component: VerifyDetails,
+            meta: {
+              title: 'page_title_data_verify_details',
+              code: 'Data_verify',
+              isNotAside: true
+            }
           }
         ]
       },
