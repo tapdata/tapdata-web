@@ -78,16 +78,20 @@ export default {
           if (/^\/.*\/$/.test(route.path)) {
             data.pop()
           }
+          let to = {
+            name:
+              route.name === this.$route.name
+                ? null
+                : ['settingCenter', 'notification'].includes(route.name)
+                ? 'layout'
+                : route.name
+          }
+          if (route.meta?.doNotJump) {
+            to = null
+          }
           data.push({
             name: this.$t(route.meta?.title),
-            to: {
-              name:
-                route.name === this.$route.name
-                  ? null
-                  : ['settingCenter', 'notification'].includes(route.name)
-                  ? 'layout'
-                  : route.name
-            }
+            to
           })
         })
       }
