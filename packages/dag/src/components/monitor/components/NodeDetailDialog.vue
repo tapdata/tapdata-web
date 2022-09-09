@@ -113,11 +113,24 @@
         </div>
       </div>
       <div v-loading="loading" class="chart-box rounded-2">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">{{ delayLineTitle }}</div>
-        <!--          <span>{{ delayLineTitle }}</span>-->
-        <!--          <ElTooltip transition="tooltip-fade-in" content="刷新">-->
-        <!--            <VIcon class="color-primary" @click="init">refresh</VIcon>-->
-        <!--          </ElTooltip>-->
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+          <span class="mr-2">{{ delayLineTitle }}</span>
+          <ElTooltip transition="tooltip-fade-in">
+            <VIcon class="color-primary" @click="init">info</VIcon>
+            <div v-if="isSource" slot="content">
+              <div>处理耗时：源节点从源数据库读取到事件后完成处理花费的时间</div>
+              <div>平均读取耗时：源节点从源库读取事件花费的平均时间</div>
+              <div>增量读取延迟：源节点读取增量事件的平均延迟时间</div>
+            </div>
+            <div v-else-if="isTarget" slot="content">
+              <div>处理耗时：当前节点处理事件的平均耗时</div>
+              <div>写入耗时：当前目标节点写入数据到目标数据库的耗时</div>
+            </div>
+            <div v-else slot="content">
+              <div>处理耗时：当前节点处理事件的平均耗时</div>
+            </div>
+          </ElTooltip>
+        </div>
         <div class="chart-box__content p-4">
           <LineChart
             :data="delayData"
@@ -231,6 +244,17 @@ export default {
     },
 
     delayLineTitle() {
+      const { isSource, isTarget } = this
+      let result = '处理耗时'
+      if (isSource) {
+        result = '读取/处理耗时'
+      } else if (isTarget) {
+        result = '处理/写入耗时'
+      }
+      return result
+    },
+
+    delayLineInfo() {
       const { isSource, isTarget } = this
       let result = '处理耗时'
       if (isSource) {
