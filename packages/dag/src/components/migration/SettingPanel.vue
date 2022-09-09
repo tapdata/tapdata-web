@@ -287,7 +287,14 @@ export default observer({
                         'x-decorator-props': {
                           tooltip: i18n.t('packages_dag_migration_settingpanel_dangrenwufuhe')
                         },
-                        'x-component': 'Switch'
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible: '{{$values.syncType === "migrate"}}'
+                            }
+                          }
+                        }
                       },
                       increSyncConcurrency: {
                         title: this.$t('packages_dag_task_setting_cdc_concurrency'),
