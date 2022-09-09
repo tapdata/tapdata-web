@@ -32,6 +32,9 @@
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
+        <ElFormItem v-if="form.type === 'mongodb'" label="外存表名" prop="table">
+          <ElInput v-model="form.table"></ElInput>
+        </ElFormItem>
         <ElFormItem label="存储路径" prop="uri">
           <ElInput v-model="form.uri" type="textarea" resize="none"></ElInput>
         </ElFormItem>
@@ -57,6 +60,13 @@ import { FilterBar } from '@tap/component'
 export default {
   components: { TablePage, FilterBar },
   data() {
+    var checkTable = (rule, value, callback) => {
+      if (this.form.type === 'mongodb' && value === '') {
+        callback(new Error('请输入外存表名称'))
+      } else {
+        callback()
+      }
+    }
     return {
       loading: false,
       filterItems: [],
@@ -74,7 +84,8 @@ export default {
       form: {},
       rules: {
         name: [{ required: true, message: '请输入外存名称', trigger: 'blur' }],
-        uri: [{ required: true, message: '请输入存储路径', trigger: 'blur' }]
+        uri: [{ required: true, message: '请输入存储路径', trigger: 'blur' }],
+        table: [{ validator: checkTable, trigger: 'blur' }]
       }
     }
   },
@@ -155,6 +166,7 @@ export default {
         : {
             name: '',
             type: 'mongodb',
+            table: '',
             uri: '',
             defaultStorage: false
           }
@@ -166,11 +178,12 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
-          let { id, name, type, uri, defaultStorage } = this.form
+          let { id, name, type, table, uri, defaultStorage } = this.form
           let params = {
             id,
             name,
             type,
+            table,
             uri,
             defaultStorage
           }
