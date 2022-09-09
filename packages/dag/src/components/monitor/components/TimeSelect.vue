@@ -322,10 +322,11 @@ export default {
 }
 .is-time {
   //flex: 1;
-  width: 260px;
+  //width: 260px;
 }
 .picker__item {
   padding: 0 4px;
+  border-radius: 2px;
   &:hover {
     background: #eef3ff;
   }
