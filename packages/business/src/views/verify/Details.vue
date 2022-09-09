@@ -28,7 +28,12 @@
                 info
               </VIcon>
             </el-tooltip>
-            <ElButton type="primary" size="mini" :disabled="disableAgainVerify" @click="handleAgainCheck"
+            <ElButton
+              type="primary"
+              size="mini"
+              :disabled="!selection.length || verifyLoading"
+              :loading="verifyLoading"
+              @click="handleAgainCheck"
               >校验</ElButton
             >
           </div>
@@ -206,7 +211,7 @@ export default {
       detailLoading: false,
       detailSvg: require('@tap/assets/images/detail-info.svg'),
       timeout: null,
-      disableAgainVerify: false,
+      verifyLoading: false,
       checkProgress: ''
     }
   },
@@ -241,7 +246,7 @@ export default {
         tables: tables
       }
       taskApi.autoInspectAgain(this.$route.params.id, params).then(() => {
-        this.disableAgainVerify = true // 发起再次校验后 不能再校验
+        this.verifyLoading = true // 发起再次校验后 不能再校验
       })
     },
 
@@ -264,7 +269,7 @@ export default {
         //是否可以再次校验
         if (list?.length > 0) {
           let check = list.filter(row => row?.toBeCompared > 0) || []
-          this.disableAgainVerify = check?.length > 0
+          this.verifyLoading = check?.length > 0
         }
         //是否校验异常
         this.checkProgress = data?.progress || ''

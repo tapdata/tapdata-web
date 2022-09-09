@@ -15,7 +15,7 @@
     <div class="main flex-fill flex flex-column pt-5">
       <div class="flex ml-4 mb-4 align-items-center">
         <div>
-          <span>告警级别</span>
+          <span>{{ $t('packages_dag_components_alert_gaojingjibie') }}</span>
           <ElSelect
             v-model="form.level"
             :popper-append-to-body="false"
@@ -33,7 +33,7 @@
           </ElSelect>
         </div>
         <div class="ml-4">
-          <span>告警状态</span>
+          <span>{{ $t('packages_dag_components_alert_gaojingzhuangtai') }}</span>
           <ElSelect
             v-model="form.status"
             :popper-append-to-body="false"
@@ -64,8 +64,8 @@
       >
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text">关闭</ElButton>
-            <ElButton size="mini" type="text">日志</ElButton>
+            <ElButton size="mini" type="text">{{ $t('packages_dag_components_alert_guanbi') }}</ElButton>
+            <ElButton size="mini" type="text">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton>
           </div>
         </template>
       </VTable>
@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapGetters } from 'vuex'
 
 import { taskApi } from '@tap/api'
@@ -109,7 +111,7 @@ export default {
       },
       levelItems: [
         {
-          label: '全部',
+          label: i18n.t('packages_dag_components_log_quanbu'),
           value: 'all'
         },
         {
@@ -135,52 +137,52 @@ export default {
       ],
       statusItems: [
         {
-          label: '全部',
+          label: i18n.t('packages_dag_components_log_quanbu'),
           value: 'all'
         },
         {
-          label: '进行中',
+          label: i18n.t('packages_dag_monitor_node_jinhangzhong'),
           value: 'open'
         },
         {
-          label: '已关闭',
+          label: i18n.t('packages_dag_components_alert_yiguanbi'),
           value: 'closed'
         },
         {
-          label: '恢复',
+          label: i18n.t('packages_dag_components_alert_huifu'),
           value: 'recovery'
         }
       ],
       columns: [
         {
-          label: '告警级别',
+          label: i18n.t('packages_dag_components_alert_gaojingjibie'),
           prop: 'level'
         },
         {
-          label: '告警状态',
+          label: i18n.t('packages_dag_components_alert_gaojingzhuangtai'),
           prop: 'status'
         },
         {
-          label: '告警描述',
+          label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
           prop: 'summary'
         },
         {
-          label: '告警首次发生时间',
+          label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
           prop: 'first_occurrence_time',
           dataType: 'time'
         },
         {
-          label: '告警最近发生时间',
+          label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'first_occurrence_time',
           dataType: 'time'
         },
         {
-          label: '告警发生次数',
+          label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
           prop: 'tally',
           dataType: 'number'
         },
         {
-          label: '操作',
+          label: i18n.t('packages_dag_components_record_caozuo'),
           slotName: 'operation'
         }
       ]
@@ -193,7 +195,7 @@ export default {
     items() {
       return [
         {
-          label: '全部日志',
+          label: i18n.t('packages_dag_migration_consolepanel_quanburizhi'),
           value: 'all'
         },
         ...this.allNodes.map(t => {
@@ -226,7 +228,7 @@ export default {
               first_occurrence_time: '2022-06-10 12:00:00',
               last_occurrence_time: '2022-06-10 12:00:00',
               tally: 1020,
-              summary: '当前任务已报错停止，请关注!'
+              summary: i18n.t('packages_dag_components_alert_dangqianrenwuyi')
             },
             {
               status: 'closed',
@@ -234,7 +236,7 @@ export default {
               first_occurrence_time: '2022-06-10 12:00:00',
               last_occurrence_time: '2022-06-10 12:00:00',
               tally: 129321939,
-              summary: '当前任务已报错停止，请关注!'
+              summary: i18n.t('packages_dag_components_alert_dangqianrenwuyi')
             },
             {
               status: 'recovery',
@@ -242,7 +244,7 @@ export default {
               first_occurrence_time: '2022-06-10 12:00:00',
               last_occurrence_time: '2022-06-10 12:00:00',
               tally: 129321939,
-              summary: '当前任务已报错停止，请关注!'
+              summary: i18n.t('packages_dag_components_alert_dangqianrenwuyi')
             }
           ]
         }

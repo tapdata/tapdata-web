@@ -148,7 +148,7 @@
           <el-table-column prop="status" :label="$t('api_monitor_total_api_list_status')">
             <template #default="{ row }">
               <span :class="['status-' + row.status, 'status-block', 'mr-2']">
-                {{ $t('api_monitor_total_api_list_status_' + row.status) }}
+                {{ getStatusLabel(row.status) }}
               </span>
             </template>
           </el-table-column>
@@ -236,7 +236,8 @@ export default {
       statusOptions: [
         { label: this.$t('task_list_status_all'), value: '' },
         { label: this.$t('api_monitor_total_api_list_status_active'), value: 'active' },
-        { label: this.$t('api_monitor_total_api_list_status_pending'), value: 'pending' }
+        { label: this.$t('api_monitor_total_api_list_status_pending'), value: 'pending' },
+        { label: this.$t('api_monitor_total_api_list_status_generating'), value: 'generating' }
       ]
     }
   },
@@ -478,6 +479,10 @@ export default {
           }
         })
       }
+    },
+
+    getStatusLabel(status) {
+      return this.statusOptions.find(t => t.value === status)?.label
     }
   }
 }

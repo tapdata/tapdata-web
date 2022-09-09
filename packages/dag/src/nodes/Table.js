@@ -182,9 +182,6 @@ export class Table extends NodeType {
         type: 'string',
         title: '所属agent',
         'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          wrapperWidth: 320
-        },
         'x-component': 'PreviewText.Input',
         'x-component-props': {
           content:
