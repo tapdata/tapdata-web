@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 export default {
   name: 'Frequency',
 
@@ -26,7 +28,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return '刷新频率'
+        return i18n.t('packages_dag_components_frequency_shuaxinpinlu')
       }
     },
     options: {

@@ -7,7 +7,7 @@
         </button>
         <TextEditable
           v-model="name"
-          placeholder="请输入任务名称"
+          :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
           max-width="260"
           readonly
           @change="onNameInputChange"
@@ -93,7 +93,7 @@
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="日志">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
           <VIcon size="16">list</VIcon>
         </button>
