@@ -91,7 +91,7 @@
         <div class="flex justify-content-between mb-2">
           <span>{{ $t('packages_dag_monitor_leftsider_jiaoyanbuyizhi') }}</span>
           <span v-if="verifyTotals.diffTables">
-            <span>{{ verifyTotals.diffTables }}</span>
+            <span :class="{ 'color-danger': verifyTotals.diffTables }">{{ verifyTotals.diffTables }}</span>
             <span>/</span>
             <span>{{ verifyTotals.totals }}</span>
           </span>
@@ -100,7 +100,7 @@
         <div class="flex justify-content-between">
           <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_buzhichijiaoyan') }}</span>
           <span v-if="verifyTotals.ignore">
-            <span>{{ verifyTotals.ignore }}</span>
+            <span :class="{ 'color-danger': verifyTotals.ignore }">{{ verifyTotals.ignore }}</span>
             <span>/</span>
             <span>{{ verifyTotals.totals }}</span>
           </span>
