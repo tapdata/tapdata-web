@@ -386,7 +386,7 @@ export default [
             name: 'VerifyDetails',
             component: VerifyDetails,
             meta: {
-              title: 'page_title_data_verify_details',
+              title: 'page_title_data_difference_details',
               code: 'Data_verify',
               isNotAside: true
             }

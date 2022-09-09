@@ -120,7 +120,8 @@ import {
   logcollectorApi,
   pdkApi,
   settingsApi,
-  commandApi
+  commandApi,
+  externalStorageApi
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
@@ -482,84 +483,29 @@ export default {
         if (shareFlag) {
           this.showSystemConfig = true
           let config = {
-            persistenceMongodb_uri_db: {
+            externalStorageId: {
+              title: this.$t('packages_dag_external_storage'), //外存配置
               type: 'string',
-              title: this.$t('MongoDB URI'),
-              required: true,
               'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-component-props': {
-                type: 'textarea'
-              },
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            },
-            persistenceMongodb_collection: {
-              type: 'string',
-              title: this.$t('packages_business_share_form_setting_table_name'),
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
-              }
-            },
-            share_cdc_ttl_day: {
-              type: 'string',
-              title: this.$t('packages_business_share_form_setting_log_time'),
-              required: true,
-              'x-decorator': 'FormItem',
-              default: 3,
-              enum: [
-                {
-                  label: 1 + this.$t('packages_business_share_form_edit_day'),
-                  value: 1
-                },
-                {
-                  label: 2 + this.$t('packages_business_share_form_edit_day'),
-                  value: 2
-                },
-                {
-                  label: 3 + this.$t('packages_business_share_form_edit_day'),
-                  value: 3
-                },
-                {
-                  label: 4 + this.$t('packages_business_share_form_edit_day'),
-                  value: 4
-                },
-                {
-                  label: 5 + this.$t('packages_business_share_form_edit_day'),
-                  value: 5
-                },
-                {
-                  label: 6 + this.$t('packages_business_share_form_edit_day'),
-                  value: 6
-                },
-                {
-                  label: 7 + this.$t('packages_business_share_form_edit_day'),
-                  value: 7
-                }
-              ],
               'x-component': 'Select',
-              'x-reactions': {
-                dependencies: ['__TAPDATA.shareCdcEnable'],
-                fulfill: {
-                  state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+              'x-reactions': [
+                {
+                  dependencies: ['__TAPDATA.shareCdcEnable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" : "hidden"}}'
+                    }
+                  }
+                },
+                '{{useAsyncDataSource(loadExternalStorage)}}',
+                {
+                  fulfill: {
+                    state: {
+                      value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+                    }
                   }
                 }
-              }
+              ]
             }
           }
           END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
@@ -792,6 +738,20 @@ export default {
             return result
           } catch (e) {
             return { total: 0, items: [] }
+          }
+        },
+        async loadExternalStorage() {
+          try {
+            const { items = [] } = await externalStorageApi.get()
+            return items.map(item => {
+              return {
+                label: item.name,
+                value: item.id,
+                isDefault: item.defaultStorage
+              }
+            })
+          } catch (e) {
+            return []
           }
         }
       }
