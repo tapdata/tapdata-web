@@ -2,11 +2,17 @@
   <section class="flex flex-1 flex-column ml-4 mr-4">
     <header class="mb-4 mt-4">任务告警设置</header>
     <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
-      <template slot="systemNotify" slot-scope="scope">
-        <el-switch v-model="scope.row.systemNotify"></el-switch>
+      <template slot="key" slot-scope="scope">
+        <span>{{ keyMapping[scope.row.key] }}</span>
       </template>
-      <template slot="emailNotify" slot-scope="scope">
-        <el-switch v-model="scope.row.emailNotify"></el-switch>
+      <template slot="notify" slot-scope="scope">
+        <div class="flex">
+          <el-switch class="mr-4" v-model="scope.row.open"></el-switch>
+          <el-checkbox-group v-model="scope.row.notify">
+            <el-checkbox value="SYSTEM">系统通知</el-checkbox>
+            <el-checkbox value="EMAIL">邮件通知</el-checkbox>
+          </el-checkbox-group>
+        </div>
       </template>
       <template slot="interval" slot-scope="scope">
         <el-input-number :controls="false" style="width: 100px" v-model="scope.row.interval"></el-input-number>
@@ -38,17 +44,12 @@ export default {
       columns: [
         {
           label: '描述',
-          prop: 'key'
+          slotName: 'key'
         },
         {
-          label: '系统通知',
-          prop: 'systemNotify',
-          slotName: 'systemNotify'
-        },
-        {
-          label: '邮件通知',
-          prop: 'emailNotify',
-          slotName: 'emailNotify'
+          label: '告警通知',
+          prop: 'notify',
+          slotName: 'notify'
         },
         {
           label: '发送间隔',
@@ -56,6 +57,19 @@ export default {
           slotName: 'interval'
         }
       ],
+      keyMapping: {
+        TASK_STATUS_ERROR: '当任务遇到错误时',
+        TASK_INSPECT_ERROR: '当任务校验出错时',
+        TASK_FULL_COMPLETE: '当任务全量完成时',
+        TASK_INCREMENT_COMPLETE: '当任务增量完成时',
+        TASK_STATUS_STOP: '当任务停止时',
+        TASK_INCREMENT_DELAY: '当任务的增量延迟',
+        DATANODE_CANNOT_CONNECT: '当数据无法网路连接耗时',
+        DATANODE_HTTP_CONNECT_CONSUME: '当数据源网路连接耗时',
+        DATANODE_TCP_CONNECT_CONSUME: '当数据源协议连接耗时',
+        DATANODE_AVERAGE_HANDLE_CONSUME: '当数据源节点的平均处理耗时',
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: '当节点的平均处理耗时'
+      },
       tableData: []
     }
   },

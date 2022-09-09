@@ -28,5 +28,8 @@ export default class Notification extends Http {
   readAll(params) {
     return this.axios.post(this.url + '/readAll', params)
   }
+  list() {
+    return this.axios.get(this.url + '/list')
+  }
 }
 export { Notification }

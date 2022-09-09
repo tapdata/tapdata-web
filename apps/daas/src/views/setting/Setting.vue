@@ -108,7 +108,7 @@
             <template v-if="item.category === 'alarm'">
               <VTable ref="table" class="table-list" :data="alarmData" :columns="columns" :hasPagination="false">
                 <template slot="keySlot" slot-scope="scope">
-                  <span>{{ scope.row.key }}</span>
+                  <span>{{ keyMapping[scope.row.key] }}</span>
                 </template>
                 <template slot="valueSlot" slot-scope="scope">
                   <span class="mr-2">连续</span>
@@ -249,6 +249,13 @@ export default {
         },
         { label: this.$t('setting_Email_Template_DDL') }
       ],
+      keyMapping: {
+        TASK_INCREMENT_DELAY: '任务的增量延迟',
+        DATANODE_HTTP_CONNECT_CONSUME: '数据源网路连接耗时',
+        DATANODE_TCP_CONNECT_CONSUME: '数据源协议连接耗时',
+        DATANODE_AVERAGE_HANDLE_CONSUME: '数据源节点的平均处理耗时',
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: '处理节点的平均处理耗时'
+      },
       columns: [
         {
           label: '告警指标',
@@ -355,32 +362,6 @@ export default {
     //告警设置 单独请求接口 单独提交数据
     getAlarmData() {
       alarmRuleApi.find().then(data => {
-        data = [
-          {
-            key: 'Duis',
-            equalsFlag: 95,
-            point: 25,
-            ms: 21
-          },
-          {
-            key: 'aute in dolor',
-            point: 35,
-            ms: 55,
-            equalsFlag: 33
-          },
-          {
-            ms: 73,
-            equalsFlag: 32,
-            key: 'fugiat exercitation sit',
-            point: 20
-          },
-          {
-            key: 'velit anim ut',
-            ms: 33,
-            equalsFlag: 89,
-            point: 56
-          }
-        ]
         this.alarmData = data
         let node = {
           category: 'alarm',
@@ -391,6 +372,13 @@ export default {
     },
     // 保存
     save() {
+      if (this.activePanel === 'alarm') {
+        //告警设置单独保存
+        alarmRuleApi.save(this.alarmData).then(() => {
+          this.$message.success(this.$t('message_save_ok'))
+        })
+        return
+      }
       let settingData = []
       this.formData.items.filter(item => {
         item.items.forEach(childItem => {
