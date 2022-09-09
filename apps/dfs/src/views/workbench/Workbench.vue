@@ -123,7 +123,7 @@
 <script>
 import i18n from '@/i18n'
 
-import { connectionApi, taskApi } from '@tap/api'
+import { connectionsApi, taskApi } from '@tap/api'
 import { VIcon, Chart } from '@tap/component'
 import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
@@ -314,11 +314,11 @@ export default {
       const connectionLoading = this.$loading({
         target: this.$refs.connection?.[0]
       })
-      const data = await connectionApi.getStats().finally(() => {
+      const data = await connectionsApi.getStats().finally(() => {
         connectionLoading.close()
       })
       let agentList = this.agentList
-      const stats = data.connectionStats
+      const stats = data || {}
       if (stats) {
         agentList[1].value = stats.total
         agentList[1].list[0].value = stats.ready || 0
