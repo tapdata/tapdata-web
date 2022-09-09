@@ -451,5 +451,23 @@ export default {
     'Resetting task xxx will clear the task synchronization progress and the task will be executed again',
   packages_business_dataFlow_bulk_initialize_confirm_title: 'Do you want to reset tasks in bulk? ',
   packages_business_dataFlow_bulk_initialize_confirm_message:
-    'Resetting the task in batches will clear the task synchronization progress, and the task will be executed again'
+    'Resetting the task in batches will clear the task synchronization progress, and the task will be executed again',
+  packages_business_connections_databaseform_zidingyi: 'custom',
+  packages_business_connections_databaseform_duixiangshouji: 'Object collection',
+  packages_business_verify_details_yichangshuju: 'Exception data',
+  packages_business_verify_details_mubiaobiaoming: 'target table name',
+  packages_business_verify_details_yuanbiaoming: 'Source table name',
+  packages_business_verify_details_gongxijiaoyanjie:
+    'Congratulations~ The content of the source table of the verification result is exactly the same as that of the target table, and there is no error record',
+  packages_business_verify_details_mubiaobiaoziduan: 'Target table field: value',
+  packages_business_verify_details_yuanbiaoziduanzhi: 'Source table field: value',
+  packages_business_verify_details_xianshiwanzhengzi: 'Show full fields',
+  packages_business_verify_details_jinxianshichayi: 'Show only difference fields',
+  packages_business_verify_details_yichangshujuhang: 'Exception data (row):',
+  packages_business_verify_details_mubiaobiao: 'Target table:',
+  packages_business_verify_details_yuanbiao: 'Source table:',
+  packages_business_verify_details_jiaoyanjieguo: 'Verification result',
+  packages_business_verify_details_jiaoyanzhong: 'Verifying',
+  packages_business_verify_details_jiaoyan: 'Verify',
+  packages_business_verify_details_qingshurubiaoming: 'Please enter the table name...'
 }

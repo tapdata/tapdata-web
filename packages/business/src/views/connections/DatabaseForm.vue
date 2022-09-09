@@ -483,29 +483,109 @@ export default {
         if (shareFlag) {
           this.showSystemConfig = true
           let config = {
-            externalStorageId: {
-              title: this.$t('packages_dag_external_storage'), //外存配置
+            // TODO 按时屏蔽外存功能
+            // externalStorageId: {
+            //   title: this.$t('packages_dag_external_storage'), //外存配置
+            //   type: 'string',
+            //   'x-decorator': 'FormItem',
+            //   'x-component': 'Select',
+            //   'x-reactions': [
+            //     {
+            //       dependencies: ['__TAPDATA.shareCdcEnable'],
+            //       fulfill: {
+            //         state: {
+            //           display: '{{$deps[0] ? "visible" : "hidden"}}'
+            //         }
+            //       }
+            //     },
+            //     '{{useAsyncDataSource(loadExternalStorage)}}',
+            //     {
+            //       fulfill: {
+            //         state: {
+            //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+            //         }
+            //       }
+            //     }
+            //   ]
+            // },
+            persistenceMongodb_uri_db: {
               type: 'string',
+              title: this.$t('MongoDB URI'),
+              required: true,
               'x-decorator': 'FormItem',
-              'x-component': 'Select',
-              'x-reactions': [
-                {
-                  dependencies: ['__TAPDATA.shareCdcEnable'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] ? "visible" : "hidden"}}'
-                    }
-                  }
-                },
-                '{{useAsyncDataSource(loadExternalStorage)}}',
-                {
-                  fulfill: {
-                    state: {
-                      value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-                    }
+              'x-component': 'Input',
+              'x-component-props': {
+                type: 'textarea'
+              },
+              'x-reactions': {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
                   }
                 }
-              ]
+              }
+            },
+            persistenceMongodb_collection: {
+              type: 'string',
+              title: this.$t('packages_business_share_form_setting_table_name'),
+              required: true,
+              'x-decorator': 'FormItem',
+              'x-component': 'Input',
+              'x-reactions': {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+                  }
+                }
+              }
+            },
+            share_cdc_ttl_day: {
+              type: 'string',
+              title: this.$t('packages_business_share_form_setting_log_time'),
+              required: true,
+              'x-decorator': 'FormItem',
+              default: 3,
+              enum: [
+                {
+                  label: 1 + this.$t('packages_business_share_form_edit_day'),
+                  value: 1
+                },
+                {
+                  label: 2 + this.$t('packages_business_share_form_edit_day'),
+                  value: 2
+                },
+                {
+                  label: 3 + this.$t('packages_business_share_form_edit_day'),
+                  value: 3
+                },
+                {
+                  label: 4 + this.$t('packages_business_share_form_edit_day'),
+                  value: 4
+                },
+                {
+                  label: 5 + this.$t('packages_business_share_form_edit_day'),
+                  value: 5
+                },
+                {
+                  label: 6 + this.$t('packages_business_share_form_edit_day'),
+                  value: 6
+                },
+                {
+                  label: 7 + this.$t('packages_business_share_form_edit_day'),
+                  value: 7
+                }
+              ],
+              'x-component': 'Select',
+              'x-reactions': {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
+                  }
+                }
+              }
             }
           }
           END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
@@ -519,16 +599,16 @@ export default {
           loadAllTables: {
             type: 'boolean',
             default: true,
-            title: '对象收集',
+            title: i18n.t('packages_business_connections_databaseform_duixiangshouji'),
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: '全部',
+                label: i18n.t('packages_business_select_option_all'),
                 value: true
               },
               {
-                label: '自定义',
+                label: i18n.t('packages_business_connections_databaseform_zidingyi'),
                 value: false
               }
             ]
