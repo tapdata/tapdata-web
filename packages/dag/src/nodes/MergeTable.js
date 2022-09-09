@@ -22,23 +22,23 @@ export class MergeTable extends NodeType {
         type: 'array',
         'x-display': 'hidden'
       },
-
-      externalStorageId: {
-        title: '外存配置', //外存配置
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        'x-reactions': [
-          '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
-          {
-            fulfill: {
-              state: {
-                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-              }
-            }
-          }
-        ]
-      },
+      // TODO 按时屏蔽外存功能
+      // externalStorageId: {
+      //   title: '外存配置', //外存配置
+      //   type: 'string',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Select',
+      //   'x-reactions': [
+      //     '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true})}}',
+      //     {
+      //       fulfill: {
+      //         state: {
+      //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+      //         }
+      //       }
+      //     }
+      //   ]
+      // },
 
       mergeProperties: {
         title: '主从配置',
