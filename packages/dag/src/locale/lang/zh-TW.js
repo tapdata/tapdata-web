@@ -407,5 +407,6 @@ export default {
   packages_dag_src_store_qingkongjiedianshu: '清空節點輸入輸出的監聽',
   packages_dag_node_none_input: '「 {val1} 」至少需要{val2}個源節點',
   packages_dag_node_none_output: '「 {val1} 」至少需要{val2}個目標節點',
-  packages_dag_node_none_connection: '「 {val1} 」沒有任何連線'
+  packages_dag_node_none_connection: '「 {val1} 」沒有任何連線',
+  packages_dag_external_storage: '外存配置'
 }
