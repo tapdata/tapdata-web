@@ -440,5 +440,7 @@ export default {
   packages_dag_monitor_leftsider_renwushijiantong: '任务事件统计（条）',
   packages_dag_monitor_leftsider_chayixiangqing: '差异详情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延迟：',
-  packages_dag_monitor_leftsider_tongbuxinxi: '同步信息'
+  packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
+  packages_dag_node_only_as_source: '该节点「{val1}」仅支持作为源',
+  packages_dag_node_only_as_target: '该节点「{val1}」仅支持作为目标'
 }

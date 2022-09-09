@@ -164,7 +164,7 @@ export default {
       if (!allowSource || (connectionType && !connectionType.includes('target'))) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianta', {
+            i18n.t('packages_dag_node_only_as_source', {
               val1: target.name
             })
           )
@@ -180,7 +180,7 @@ export default {
       if (!allowTarget || (connectionType && !connectionType.includes('source'))) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianso', {
+            i18n.t('packages_dag_node_only_as_target', {
               val1: source.name
             })
           )
