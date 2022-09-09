@@ -414,7 +414,7 @@ export default {
   packages_dag_nodes_targetdatabase_jiedianmiaoshu: 'node description',
   packages_dag_src_store_weizhaodaojiedian: 'node not found',
   packages_dag_src_store_qingkongjiedianshu: 'Clear the monitoring of node input and output',
-  packages_dag_node_none_input: '「 {val1} 」至少需要{val2}個源節點',
-  packages_dag_node_none_output: '「 {val1} 」至少需要{val2}個目標節點',
-  packages_dag_node_none_connection: '「 {val1} 」沒有任何連線'
+  packages_dag_node_none_input: '「 {val1} 」At least {val2} source nodes are required',
+  packages_dag_node_none_output: '「 {val1} 」At least {val2} target nodes are required',
+  packages_dag_node_none_connection: '「 {val1} 」 no connection'
 }
