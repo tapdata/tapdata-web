@@ -151,7 +151,7 @@ export default {
   page_title_run_monitor: 'Run Monitor',
   page_title_data_develop: 'Data Development',
   page_title_data_verify: 'Data verification',
-  page_title_data_verify_details: 'Verify details',
+  page_title_data_difference_details: 'Difference details',
   page_title_shared_mining: 'Shared Mining',
   page_title_shared_mining_details: 'Mining details',
   page_title_function: 'Function',

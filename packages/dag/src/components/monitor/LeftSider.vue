@@ -60,32 +60,37 @@
           </div>
         </template>
       </div>
-      <div v-if="dataflow.canOpenInspect && verifyTotals" class="info-box">
+      <div
+        v-if="dataflow.syncType === 'migrate' && dataflow.isAutoInspect && dataflow.canOpenInspect && verifyTotals"
+        class="info-box"
+      >
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
+          <ElTooltip transition="tooltip-fade-in" content="差异详情">
             <VIcon @click.stop="$emit('verifyDetails')">menu-left</VIcon>
           </ElTooltip>
         </div>
         <div class="flex justify-content-between mb-2">
           <span>{{ $t('packages_dag_monitor_leftsider_chayizongxingshu') }}</span>
-          <span class="color-danger">{{ verifyTotals.diffRecords }}</span>
+          <span :class="{ 'color-danger': verifyTotals.diffRecords }">{{ verifyTotals.diffRecords }}</span>
         </div>
         <div class="flex justify-content-between mb-2">
           <span>{{ $t('packages_dag_monitor_leftsider_jiaoyanbuyizhi') }}</span>
-          <span>
+          <span v-if="verifyTotals.diffTables">
             <span>{{ verifyTotals.diffTables }}</span>
             <span>/</span>
             <span>{{ verifyTotals.totals }}</span>
           </span>
+          <span v-else>0</span>
         </div>
         <div class="flex justify-content-between">
           <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_buzhichijiaoyan') }}</span>
-          <span>
+          <span v-if="verifyTotals.ignore">
             <span>{{ verifyTotals.ignore }}</span>
             <span>/</span>
             <span>{{ verifyTotals.totals }}</span>
           </span>
+          <span v-else>0</span>
         </div>
       </div>
       <div class="info-box">
