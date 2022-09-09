@@ -9,8 +9,8 @@
         <div class="flex">
           <el-switch class="mr-4" v-model="scope.row.open"></el-switch>
           <el-checkbox-group v-model="scope.row.notify">
-            <el-checkbox value="SYSTEM">系统通知</el-checkbox>
-            <el-checkbox value="EMAIL">邮件通知</el-checkbox>
+            <el-checkbox label="SYSTEM">系统通知</el-checkbox>
+            <el-checkbox label="EMAIL">邮件通知</el-checkbox>
           </el-checkbox-group>
         </div>
       </template>
