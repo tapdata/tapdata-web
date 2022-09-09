@@ -21,14 +21,20 @@
           <span>{{ stopTime }}</span>
         </div>
         <div class="ml-4">
-          <span>{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
+          <OverflowTooltip
+            class="text-truncate"
+            placement="right"
+            :text="dataflow.agentId || dataflow.agentName || '-'"
+            :open-delay="400"
+            style="width: 65px"
+          />
         </div>
         <div v-if="agentData" class="ml-4">
-          <span>%CPU：</span>
+          <span>CPU：</span>
           <span>{{ agentData.cpuUsage }}</span>
         </div>
         <div class="ml-4">
-          <span>%MEM：</span>
+          <span>MEM：</span>
           <span>{{ agentData.memoryRate }}</span>
         </div>
         <div class="ml-4">
@@ -214,7 +220,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
 
 import focusSelect from '@tap/component/src/directives/focusSelect'
-import { TextEditable, VIcon, VDivider } from '@tap/component'
+import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 
 export default {
@@ -235,7 +241,7 @@ export default {
     quota: Object
   },
 
-  components: { VIcon, TextEditable, TaskStatus, VDivider },
+  components: { VIcon, TextEditable, TaskStatus, VDivider, OverflowTooltip },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -277,9 +283,18 @@ export default {
       const data = this.quota?.samples?.agentData?.[0] || {}
       const { cpuUsage, gcRate, memoryRate } = data
       return {
-        cpuUsage: typeof cpuUsage === 'number' ? cpuUsage.toFixed(2).toLocaleString() : '',
-        memoryRate: typeof memoryRate === 'number' ? memoryRate.toFixed(2).toLocaleString() : '',
-        gcRate: typeof gcRate === 'number' ? gcRate.toFixed(5) * 100 + '%' : ''
+        cpuUsage:
+          typeof cpuUsage === 'number'
+            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : '',
+        memoryRate:
+          typeof memoryRate === 'number'
+            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : '',
+        gcRate:
+          typeof gcRate === 'number'
+            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : ''
       }
     }
   },
