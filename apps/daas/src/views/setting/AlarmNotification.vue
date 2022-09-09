@@ -1,5 +1,5 @@
 <template>
-  <section class="flex flex-1 flex-column ml-4 mr-4">
+  <section class="flex flex-1 flex-column ml-4 mr-4 overflow-hidden">
     <header class="mb-4 mt-4">任务告警设置</header>
     <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
       <template slot="key" slot-scope="scope">
