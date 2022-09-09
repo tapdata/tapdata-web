@@ -13,10 +13,10 @@
       <ElTableColumn show-overflow-tooltip min-width="100" label="外存类型" prop="typeFmt"></ElTableColumn>
       <ElTableColumn show-overflow-tooltip min-width="300" label="外存信息" prop="uri"></ElTableColumn>
       <ElTableColumn show-overflow-tooltip min-width="120" label="创建时间" prop="createTimeFmt"></ElTableColumn>
-      <ElTableColumn width="180" :label="$t('column_operation')">
+      <ElTableColumn width="120" :label="$t('column_operation')">
         <template #default="{ row }">
-          <ElButton type="text" :disabled="!row.canEdit" @click="openDialog(row)">{{ $t('button_edit') }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <!-- <ElButton type="text" :disabled="!row.canEdit" @click="openDialog(row)">{{ $t('button_edit') }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider> -->
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{ $t('button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
