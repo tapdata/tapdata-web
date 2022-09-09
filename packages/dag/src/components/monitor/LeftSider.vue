@@ -66,7 +66,7 @@
       >
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
-          <ElTooltip transition="tooltip-fade-in" content="差异详情">
+          <ElTooltip v-if="verifyTotals.diffTables" transition="tooltip-fade-in" content="差异详情">
             <VIcon @click.stop="$emit('verifyDetails')">menu-left</VIcon>
           </ElTooltip>
         </div>
