@@ -445,6 +445,7 @@ export default {
   api_monitor_total_api_list_transitQuantity: 'API access transfer volume',
   api_monitor_total_api_list_status_active: 'Active',
   api_monitor_total_api_list_status_pending: 'Pending',
+  api_monitor_total_api_list_status_generating: 'Generating',
   api_monitor_detail_visitTotalCount: 'Number of API visits',
   api_monitor_detail_visitQuantity: 'API transfer amount',
   api_monitor_detail_timeConsuming: 'API access time',
