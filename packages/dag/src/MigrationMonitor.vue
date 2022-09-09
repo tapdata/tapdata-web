@@ -753,8 +753,14 @@ export default {
       this.verifyData = data
     },
 
-    loadVerifyTotals(data) {
-      this.verifyTotals = data
+    loadVerifyTotals(data = {}) {
+      const { diffRecords = 0, diffTables = 0, totals = 0, ignore = 0 } = data
+      this.verifyTotals = {
+        diffRecords,
+        diffTables,
+        totals,
+        ignore
+      }
     },
 
     getDagData(data = []) {
