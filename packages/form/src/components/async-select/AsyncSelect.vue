@@ -245,7 +245,12 @@ export default {
     remote: {
       type: Boolean,
       default: true
-    }
+    },
+    lazy: {
+      type: Boolean,
+      default: false
+    },
+    currentLabel: String
   },
 
   data() {
@@ -285,8 +290,8 @@ export default {
       if (this.showLoading) {
         return this.loadingTxt
       } else {
-        if (this.remote && this.query === '' && this.options.length === 0) return false
-        if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
+        if (this.remote && this.query === '' && this.items.length === 0) return false
+        if (this.filterable && this.query && this.items.length > 0 && this.filteredOptionsCount === 0) {
           return this.noMatchText || this.$t('packages_form_el_select_noMatch')
         }
         if (this.total === 0) {
@@ -316,11 +321,17 @@ export default {
         this.query = ''
         await this.loadData()
       }
+    },
+
+    visible(v) {
+      if (this.lazy && !this.items.length && v) {
+        this.loadData()
+      }
     }
   },
 
   async created() {
-    await this.loadData()
+    if (!this.lazy) await this.loadData()
   },
 
   methods: {
@@ -367,12 +378,12 @@ export default {
       }
       optionData && this.onLoadOption?.(optionData)
       if (option || notNew) return option
-      const label = !isObject && !isNull && !isUndefined ? String(value) : ''
+      const label = this.currentLabel || (!isObject && !isNull && !isUndefined ? String(value) : '')
       let newOption = {
         value: value,
         currentLabel: label
       }
-      if (this.itemType === 'object' && this.total > 0 && !!value) {
+      if (this.itemType === 'object' && this.total > 0 && !!value && !this.lazy) {
         this.loadingOption = true
         newOption = (await this.loadOption(value)) || newOption
         this.loadingOption = false
@@ -526,6 +537,7 @@ export default {
     },
 
     handleOptionSelect(option, byClick) {
+      this.$emit('option-select', option, byClick)
       if (this.multiple) {
         const value = (this.value || []).slice()
         const optionIndex = this.getValueIndex(value, option.value)
