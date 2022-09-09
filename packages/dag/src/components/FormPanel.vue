@@ -138,29 +138,6 @@ export default {
           }
         })
       )
-    },
-
-    // 监听连线变动
-    'allEdges.length'() {
-      if (!this.node) return
-      if (this.form.getFieldState('isSource')) {
-        // 节点关心isSource
-        this.form.setFieldState('isSource', state => {
-          this.scope.isSource(state)
-        })
-      }
-      if (this.form.getFieldState('isTarget')) {
-        // 节点关心isTarget
-        this.form.setFieldState('isTarget', state => {
-          this.scope.isTarget(state)
-        })
-      }
-      if (this.form.getFieldState('sourceNode')) {
-        // 节点关心sourceNode
-        this.form.setFieldState('sourceNode', state => {
-          this.scope.getSourceNode(state)
-        })
-      }
     }
   },
 
@@ -212,12 +189,6 @@ export default {
         this.schema = {
           type: 'object',
           properties: {
-            // 自定节点附加属性
-            sourceNode: {
-              type: 'array',
-              'x-visible': false,
-              'x-reactions': '{{getSourceNode}}'
-            },
             form: JSON.parse(JSON.stringify(schema.schema))
           }
         }
