@@ -200,10 +200,8 @@ export default {
     },
     getData(cb) {
       let where = {}
-      if (this.types.length) {
-        where.item_type = {
-          $in: this.types
-        }
+      where.item_type = {
+        $nin: ['database', 'dataflow', 'api']
       }
       let filter = {
         where,
