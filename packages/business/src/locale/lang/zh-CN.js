@@ -445,5 +445,22 @@ export default {
   packages_business_dataFlow_initialize_confirm_title: '是否重置该任务？',
   packages_business_dataFlow_initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行',
   packages_business_dataFlow_bulk_initialize_confirm_title: '是否批量重置任务？',
-  packages_business_dataFlow_bulk_initialize_confirm_message: '批量重置任务将清除任务同步进度，任务将重新执行'
+  packages_business_dataFlow_bulk_initialize_confirm_message: '批量重置任务将清除任务同步进度，任务将重新执行',
+  packages_business_connections_databaseform_zidingyi: '自定义',
+  packages_business_connections_databaseform_duixiangshouji: '对象收集',
+  packages_business_verify_details_yichangshuju: '异常数据',
+  packages_business_verify_details_mubiaobiaoming: '目标表名',
+  packages_business_verify_details_yuanbiaoming: '源表名',
+  packages_business_verify_details_gongxijiaoyanjie: '恭喜~校验结果源表与目标表内容完全一致，没有错误记录',
+  packages_business_verify_details_mubiaobiaoziduan: '目标表字段：值',
+  packages_business_verify_details_yuanbiaoziduanzhi: '源表字段：值',
+  packages_business_verify_details_xianshiwanzhengzi: '显示完整字段',
+  packages_business_verify_details_jinxianshichayi: '仅显示差异字段',
+  packages_business_verify_details_yichangshujuhang: '异常数据（行）：',
+  packages_business_verify_details_mubiaobiao: '目标表：',
+  packages_business_verify_details_yuanbiao: '源表：',
+  packages_business_verify_details_jiaoyanjieguo: '校验结果',
+  packages_business_verify_details_jiaoyanzhong: '校验中',
+  packages_business_verify_details_jiaoyan: '校验',
+  packages_business_verify_details_qingshurubiaoming: '请输入表名…'
 }

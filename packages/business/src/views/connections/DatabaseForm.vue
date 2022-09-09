@@ -519,16 +519,16 @@ export default {
           loadAllTables: {
             type: 'boolean',
             default: true,
-            title: '对象收集',
+            title: i18n.t('packages_business_connections_databaseform_duixiangshouji'),
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: '全部',
+                label: i18n.t('packages_business_select_option_all'),
                 value: true
               },
               {
-                label: '自定义',
+                label: i18n.t('packages_business_connections_databaseform_zidingyi'),
                 value: false
               }
             ]

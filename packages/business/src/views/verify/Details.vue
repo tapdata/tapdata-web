@@ -7,7 +7,7 @@
             class="search-input"
             v-model="keyword"
             prefix-icon="el-icon-search"
-            placeholder="请输入表名…"
+            :placeholder="$t('packages_business_verify_details_qingshurubiaoming')"
             size="mini"
             clearable
             style="width: 240px"
@@ -34,7 +34,7 @@
               :disabled="!selection.length || verifyLoading"
               :loading="verifyLoading"
               @click="handleAgainCheck"
-              >校验</ElButton
+              >{{ $t('packages_business_verify_details_jiaoyan') }}</ElButton
             >
           </div>
         </div>
@@ -53,37 +53,39 @@
           @selection-change="handleSelectionChange"
         >
           <template slot="counts" slot-scope="scope">
-            {{ scope.row.toBeCompared > 0 ? '校验中' : scope.row.counts }}
+            {{ scope.row.toBeCompared > 0 ? $t('packages_business_verify_details_jiaoyanzhong') : scope.row.counts }}
           </template>
         </VTable>
       </div>
       <div class="verify-result flex flex-column flex-fit border-start">
-        <div class="verify-result__title pt-6 px-4 fs-7 fw-bold font-color-dark">校验结果</div>
+        <div class="verify-result__title pt-6 px-4 fs-7 fw-bold font-color-dark">
+          {{ $t('packages_business_verify_details_jiaoyanjieguo') }}
+        </div>
         <div class="px-4 pb-4 border-bottom">
           <div class="verify-result__line mt-2">
-            <span class="line__label">源表：</span>
+            <span class="line__label">{{ $t('packages_business_verify_details_yuanbiao') }}</span>
             <span v-if="row" class="font-color-dark">{{
               (row.originalTableName || '-') + '/' + (row.sourceConnName || '-')
             }}</span>
             <span v-else>-</span>
           </div>
           <div class="verify-result__line mt-2">
-            <span class="line__label">目标表：</span>
+            <span class="line__label">{{ $t('packages_business_verify_details_mubiaobiao') }}</span>
             <span v-if="row" class="font-color-dark">{{
               (row.targetTableName || '-') + '/' + (row.targetConnName || '-')
             }}</span>
             <span v-else>-</span>
           </div>
           <div class="verify-result__line mt-2">
-            <span class="line__label">异常数据（行）：</span>
+            <span class="line__label">{{ $t('packages_business_verify_details_yichangshujuhang') }}</span>
             <span v-if="row" class="font-color-dark">{{ row.counts || 0 }}</span>
             <span v-else>-</span>
           </div>
         </div>
         <div class="flex justify-content-between pt-4 px-4">
           <ElRadioGroup v-model="showType" :disabled="detailLoading" @change="fetch(page.current)">
-            <ElRadio label="diff">仅显示差异字段</ElRadio>
-            <ElRadio label="all">显示完整字段</ElRadio>
+            <ElRadio label="diff">{{ $t('packages_business_verify_details_jinxianshichayi') }}</ElRadio>
+            <ElRadio label="all">{{ $t('packages_business_verify_details_xianshiwanzhengzi') }}</ElRadio>
           </ElRadioGroup>
           <!--<ElButton type="primary">导出</ElButton>-->
         </div>
@@ -94,10 +96,10 @@
               style="height: 54px; background: #fafafa; border-radius: 4px 4px 0 0"
             >
               <ElCol :span="12">
-                <span>源表字段：值</span>
+                <span>{{ $t('packages_business_verify_details_yuanbiaoziduanzhi') }}</span>
               </ElCol>
               <ElCol :span="12">
-                <span>目标表字段：值</span>
+                <span>{{ $t('packages_business_verify_details_mubiaobiaoziduan') }}</span>
               </ElCol>
             </ElRow>
           </div>
@@ -146,7 +148,7 @@
           </div>
           <div v-else class="table__body flex-fill flex flex-column justify-content-center text-center">
             <img :src="detailSvg" width="160" class="mx-auto" />
-            <span class="mt-4">恭喜~校验结果源表与目标表内容完全一致，没有错误记录</span>
+            <span class="mt-4">{{ $t('packages_business_verify_details_gongxijiaoyanjie') }}</span>
           </div>
           <ElPagination
             class="result-view-pagination"
@@ -167,6 +169,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { delayTrigger, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { taskApi } from '@tap/api'
@@ -185,16 +189,16 @@ export default {
           type: 'selection'
         },
         {
-          label: '源表名',
+          label: i18n.t('packages_business_verify_details_yuanbiaoming'),
           prop: 'originalTableName'
         },
         {
-          label: '目标表名',
+          label: i18n.t('packages_business_verify_details_mubiaobiaoming'),
           prop: 'targetTableName',
           default: '-'
         },
         {
-          label: '异常数据',
+          label: i18n.t('packages_business_verify_details_yichangshuju'),
           prop: 'counts',
           slotName: 'counts'
         }
