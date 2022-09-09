@@ -477,39 +477,34 @@ export default {
           }
         }
         // 共享挖掘设置
-        let shareFlag = await Promise.all([logcollectorApi.check(), logcollectorApi.getSystemConfig()]).then(
-          ([check, data]) => check && !data?.persistenceMongodb_uri_db
-        )
-        if (shareFlag) {
-          this.showSystemConfig = true
-          let config = {
-            externalStorageId: {
-              title: this.$t('packages_dag_external_storage'), //外存配置
-              type: 'string',
-              'x-decorator': 'FormItem',
-              'x-component': 'Select',
-              'x-reactions': [
-                {
-                  dependencies: ['__TAPDATA.shareCdcEnable'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] ? "visible" : "hidden"}}'
-                    }
-                  }
-                },
-                '{{useAsyncDataSource(loadExternalStorage)}}',
-                {
-                  fulfill: {
-                    state: {
-                      value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-                    }
+        this.showSystemConfig = true
+        let config = {
+          externalStorageId: {
+            title: this.$t('packages_dag_external_storage'), //外存配置
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-reactions': [
+              {
+                dependencies: ['__TAPDATA.shareCdcEnable'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] ? "visible" : "hidden"}}'
                   }
                 }
-              ]
-            }
+              },
+              '{{useAsyncDataSource(loadExternalStorage)}}',
+              {
+                fulfill: {
+                  state: {
+                    value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+                  }
+                }
+              }
+            ]
           }
-          END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
         }
+        END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
       }
 
       // 是否支持包含表
