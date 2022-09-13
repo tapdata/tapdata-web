@@ -699,6 +699,9 @@ export default {
     background: rgba(44, 101, 255, 0.05);
   }
 }
+.main {
+  width: 0;
+}
 .white-space-pre {
   white-space: pre;
 }
@@ -715,6 +718,9 @@ export default {
     }
     .empty-wrap {
       margin: 24px 0;
+    }
+    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
+      overflow: visible;
     }
   }
 }
