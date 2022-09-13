@@ -406,7 +406,7 @@ export default defineComponent({
       color: map-get($fontColor, dark);
       line-height: 1;
       //font-weight: 700;
-      font-size: 14px;
+      font-size: 12px;
       font-family: DIN;
       white-space: nowrap;
     }
