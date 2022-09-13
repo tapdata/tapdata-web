@@ -26,7 +26,14 @@ const MigrationMonitor = async () => {
   const { MigrationMonitor } = await import('@tap/dag')
   return MigrationMonitor
 }
-
+const EtlDetails = async () => {
+  const { EtlDetails } = await import('@tap/business')
+  return EtlDetails
+}
+const EtlStatistics = async () => {
+  const { EtlStatistics } = await import('@tap/business')
+  return EtlStatistics
+}
 const routes = [
   {
     path: '/',
@@ -141,6 +148,34 @@ const routes = [
           }
         ]
       },
+      {
+        path: '/etl',
+        name: 'dataflowList',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/EtlList.tsx'),
+        meta: {
+          title: i18n.t('task_manage_etl'),
+          icon: 'task'
+        },
+        children: [
+          {
+            path: 'statistics/:id',
+            name: 'dataflowStatistics',
+            component: EtlStatistics,
+            meta: {
+              title: i18n.t('tap_task_details')
+            }
+          },
+          {
+            path: 'details/:id',
+            name: 'dataflowDetails',
+            component: EtlDetails,
+            meta: {
+              title: i18n.t('tap_task_details')
+            }
+          }
+        ]
+      },
+
       {
         path: '/operationLog',
         name: 'OperationLog',

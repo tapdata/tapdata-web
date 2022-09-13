@@ -96,6 +96,11 @@ export default {
           icon: 'task'
         },
         {
+          name: 'dataflowList',
+          title: $t('task_manage_etl') + ' Beta',
+          icon: 'task'
+        },
+        {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'

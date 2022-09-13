@@ -234,7 +234,7 @@
 import dayjs from 'dayjs'
 
 import { taskApi } from '@tap/api'
-import { FilterBar, Drawer } from '@tap/component'
+import { VIcon, FilterBar, Drawer } from '@tap/component'
 import { toRegExp } from '@tap/shared'
 
 import SkipError from './SkipError'
@@ -246,7 +246,7 @@ import locale from '../../mixins/locale'
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, SkipError, Drawer, Upload, TaskStatus },
+  components: { VIcon, FilterBar, TablePage, SkipError, Drawer, Upload, TaskStatus },
   mixins: [locale],
   data() {
     return {
