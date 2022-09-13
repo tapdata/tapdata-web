@@ -69,7 +69,7 @@
             :placeholder="$t('shared_cache_placeholder_fields')"
           ></FieldSelector>
         </ElFormItem>
-        <ElFormItem prop="maxMemory" :placeholder="$t('shared_cache_placeholder_max_memory')">
+        <ElFormItem prop="maxMemory">
           <template slot="label">
             <span>{{ $t('shared_cache_max_memory') }}</span>
             <el-tooltip placement="top" :content="$t('shared_cache_max_memory_tooltip')">
@@ -80,12 +80,23 @@
           <ElInputNumber
             v-model="form.maxMemory"
             style="width: 200px"
+            controls-position="right"
             :min="1"
             :max="999999999"
-            controls-position="right"
           ></ElInputNumber>
           <span class="ml-1">M</span>
         </ElFormItem>
+        <!-- // TODO 按时屏蔽外存功能 -->
+        <!-- <ElFormItem prop="externalStorageId" label="外存配置">
+          <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
+            <ElOption
+              v-for="opt in externalStorageOptions"
+              :key="opt.value"
+              :value="opt.value"
+              :label="opt.label"
+            ></ElOption>
+          </ElSelect>
+        </ElFormItem> -->
         <ElFormItem>
           <template slot="label">
             <span>{{ $t('shared_cache_code') }}</span>
@@ -123,7 +134,7 @@
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
 import CodeView from './CodeView.vue'
-import { sharedCacheApi, metadataInstancesApi, connectionsApi } from '@tap/api'
+import { sharedCacheApi, metadataInstancesApi, connectionsApi, externalStorageApi } from '@tap/api'
 
 export default {
   components: { VirtualSelect, FieldSelector, CodeView },
@@ -136,13 +147,18 @@ export default {
         tableName: '',
         cacheKeys: '',
         fields: '',
-        maxMemory: 500
+        maxMemory: 500,
+        externalStorageId: ''
       },
       connectionOptions: [],
+      externalStorageOptions: null,
+
       tableOptions: [],
-      fieldOptions: [],
       tableOptionsLoading: false,
+
+      fieldOptions: [],
       fieldOptionsLoading: false,
+
       rules: {
         name: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_name') }],
         connectionId: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_connection') }],
@@ -150,11 +166,16 @@ export default {
         cacheKeys: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_keys') }],
         fields: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_fields') }],
         maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }]
+        // TODO 按时屏蔽外存功能
+        // externalStorageId: [
+        //   { required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_external_storage') }
+        // ]
       }
     }
   },
   created() {
     this.getConnectionOptions()
+    this.getExternalStorageOptions()
     let id = this.$route.params.id
     if (id) {
       this.getData(id)
@@ -173,7 +194,8 @@ export default {
             tableName: data.tableName,
             cacheKeys: data.cacheKeys,
             fields: data.fields?.join(',') || '',
-            maxMemory: data.maxMemory
+            maxMemory: data.maxMemory,
+            externalStorageId: data.externalStorageId
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
@@ -181,6 +203,22 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    async getExternalStorageOptions() {
+      const data = await externalStorageApi.get().catch(() => {
+        this.externalStorageOptions = []
+      })
+      let defaultStorageId = ''
+      this.externalStorageOptions =
+        data?.items?.map(it => {
+          if (it.defaultStorage) {
+            defaultStorageId = it.id
+          }
+          return { label: it.name, value: it.id }
+        }) || []
+      if (!this.$route.params.id) {
+        this.form.externalStorageId = defaultStorageId
+      }
     },
     getConnectionOptions() {
       let filter = {
@@ -263,7 +301,7 @@ export default {
     submit() {
       this.$refs.form.validate(flag => {
         if (flag) {
-          let { name, connectionId, tableName, cacheKeys, fields, maxMemory } = this.form
+          let { name, connectionId, tableName, cacheKeys, fields, maxMemory, externalStorageId } = this.form
           let id = this.$route.params.id
           let params = {
             id,
@@ -281,7 +319,8 @@ export default {
                 },
                 {
                   cacheKeys: cacheKeys,
-                  maxMemory: maxMemory
+                  maxMemory: maxMemory,
+                  externalStorageId
                 }
               ],
               edges: []

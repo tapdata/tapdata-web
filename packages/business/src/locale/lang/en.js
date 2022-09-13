@@ -428,5 +428,46 @@ export default {
   packages_business_statistics_schedule_yonghuliulanqi: 'User browser time zone',
   packages_business_statistics_schedule_shijian: 'Time:',
   packages_business_statistics_schedule_qingxuanze: 'Please select',
-  packages_business_statistics_schedule_leixing: 'Type:'
+  packages_business_statistics_schedule_leixing: 'Type:',
+
+  packages_business_dataFlow_delete_confirm_Title: 'Delete the task? ',
+  packages_business_dataFlow_delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
+  packages_business_dataFlow_bulk_delete_confirm_Title: 'Delete tasks in batch? ',
+  packages_business_dataFlow_bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
+  packages_business_dataFlow_stop_confirm_title: 'Do you want to suspend this task? ',
+  packages_business_dataFlow_stop_confirm_message:
+    'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
+  packages_business_dataFlow_bulk_stop_confirm_title: 'Do you want to pause tasks in bulk? ',
+  packages_business_dataFlow_bulk_stop_confirm_message:
+    'After the task is paused in batch, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
+  packages_business_dataFlow_force_stop_confirm_title: 'Do you want to force stop this task? ',
+  packages_business_dataFlow_force_stop_confirm_message:
+    'Forcibly stop the task xxx will immediately interrupt the data transmission, force the task to stop quickly, and reset the task',
+  packages_business_dataFlow_bulk_force_stop_confirm_title: 'Do you want to force stop tasks in batches? ',
+  packages_business_dataFlow_bulk_force_stop_confirm_message:
+    'The batch forced stop task will immediately interrupt the data transmission to force the task to stop quickly and reset the task',
+  packages_business_dataFlow_initialize_confirm_title: 'Do you want to reset this task? ',
+  packages_business_dataFlow_initialize_confirm_message:
+    'Resetting task xxx will clear the task synchronization progress and the task will be executed again',
+  packages_business_dataFlow_bulk_initialize_confirm_title: 'Do you want to reset tasks in bulk? ',
+  packages_business_dataFlow_bulk_initialize_confirm_message:
+    'Resetting the task in batches will clear the task synchronization progress, and the task will be executed again',
+  packages_business_connections_databaseform_zidingyi: 'custom',
+  packages_business_connections_databaseform_duixiangshouji: 'Object collection',
+  packages_business_verify_details_yichangshuju: 'Exception data',
+  packages_business_verify_details_mubiaobiaoming: 'target table name',
+  packages_business_verify_details_yuanbiaoming: 'Source table name',
+  packages_business_verify_details_gongxijiaoyanjie:
+    'Congratulations~ The content of the source table of the verification result is exactly the same as that of the target table, and there is no error record',
+  packages_business_verify_details_mubiaobiaoziduan: 'Target table field: value',
+  packages_business_verify_details_yuanbiaoziduanzhi: 'Source table field: value',
+  packages_business_verify_details_xianshiwanzhengzi: 'Show full fields',
+  packages_business_verify_details_jinxianshichayi: 'Show only difference fields',
+  packages_business_verify_details_yichangshujuhang: 'Exception data (row):',
+  packages_business_verify_details_mubiaobiao: 'Target table:',
+  packages_business_verify_details_yuanbiao: 'Source table:',
+  packages_business_verify_details_jiaoyanjieguo: 'Verification result',
+  packages_business_verify_details_jiaoyanzhong: 'Verifying',
+  packages_business_verify_details_jiaoyan: 'Verify',
+  packages_business_verify_details_qingshurubiaoming: 'Please enter the table name...'
 }

@@ -25,7 +25,6 @@
       @forceStop="handleForceStop"
       @reset="handleReset"
       @edit="handleEdit"
-      @load-data="init"
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
@@ -46,6 +45,7 @@
           :verifyTotals="verifyTotals"
           :timeFormat="timeFormat"
           :range="[firstStartTime, lastStopTime || Date.now()]"
+          @load-data="init"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
@@ -262,7 +262,11 @@ export default {
     },
 
     isEnterTimer() {
-      return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
+      return (
+        this.quotaTimeType !== 'custom' &&
+        !this.nodeDetailDialog &&
+        ['running', 'stopping'].includes(this.dataflow?.status)
+      )
     }
   },
 
@@ -276,6 +280,11 @@ export default {
       }
       this.toggleConnectionRun(v1 === 'running')
     }
+  },
+
+  created() {
+    // 进入监控只读
+    this.setStateReadonly(true)
   },
 
   mounted() {
@@ -697,14 +706,14 @@ export default {
           param: {
             id: this.dataflow.id
           }
-        },
-        logTotals: {
-          uri: '/api/MonitoringLogs/count',
-          param: {
-            taskId,
-            taskRecordId
-          }
         }
+        // logTotals: {
+        //   uri: '/api/MonitoringLogs/count',
+        //   param: {
+        //     taskId,
+        //     taskRecordId
+        //   }
+        // }
       }
       const $verifyPanel = this.$refs.verifyPanel
       if ($verifyPanel) {
@@ -748,8 +757,14 @@ export default {
       this.verifyData = data
     },
 
-    loadVerifyTotals(data) {
-      this.verifyTotals = data
+    loadVerifyTotals(data = {}) {
+      const { diffRecords = 0, diffTables = 0, totals = 0, ignore = 0 } = data
+      this.verifyTotals = {
+        diffRecords,
+        diffTables,
+        totals,
+        ignore
+      }
     },
 
     getDagData(data = []) {

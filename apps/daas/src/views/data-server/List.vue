@@ -42,7 +42,7 @@
           <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn width="180" :label="$t('connection.operate')">
+      <ElTableColumn width="180" :label="$t('column_operation')">
         <template #default="{ row }">
           <ElButton
             v-if="row.status !== 'active'"
@@ -54,9 +54,9 @@
           <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
             $t('button_revoke')
           }}</ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
+          <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" @click="output(row)">{{ $t('button_export') }}</ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
+          <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" @click="removeServer(row)">{{ $t('button_delete') }}</ElButton>
         </template>
       </ElTableColumn>

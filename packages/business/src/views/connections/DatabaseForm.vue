@@ -120,7 +120,8 @@ import {
   logcollectorApi,
   pdkApi,
   settingsApi,
-  commandApi
+  commandApi,
+  externalStorageApi
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
@@ -482,6 +483,31 @@ export default {
         if (shareFlag) {
           this.showSystemConfig = true
           let config = {
+            // TODO 按时屏蔽外存功能
+            // externalStorageId: {
+            //   title: this.$t('packages_dag_external_storage'), //外存配置
+            //   type: 'string',
+            //   'x-decorator': 'FormItem',
+            //   'x-component': 'Select',
+            //   'x-reactions': [
+            //     {
+            //       dependencies: ['__TAPDATA.shareCdcEnable'],
+            //       fulfill: {
+            //         state: {
+            //           display: '{{$deps[0] ? "visible" : "hidden"}}'
+            //         }
+            //       }
+            //     },
+            //     '{{useAsyncDataSource(loadExternalStorage)}}',
+            //     {
+            //       fulfill: {
+            //         state: {
+            //           value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
+            //         }
+            //       }
+            //     }
+            //   ]
+            // },
             persistenceMongodb_uri_db: {
               type: 'string',
               title: this.$t('MongoDB URI'),
@@ -573,16 +599,16 @@ export default {
           loadAllTables: {
             type: 'boolean',
             default: true,
-            title: '对象收集',
+            title: i18n.t('packages_business_connections_databaseform_duixiangshouji'),
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: '全部',
+                label: i18n.t('packages_business_select_option_all'),
                 value: true
               },
               {
-                label: '自定义',
+                label: i18n.t('packages_business_connections_databaseform_zidingyi'),
                 value: false
               }
             ]
@@ -792,6 +818,20 @@ export default {
             return result
           } catch (e) {
             return { total: 0, items: [] }
+          }
+        },
+        async loadExternalStorage() {
+          try {
+            const { items = [] } = await externalStorageApi.get()
+            return items.map(item => {
+              return {
+                label: item.name,
+                value: item.id,
+                isDefault: item.defaultStorage
+              }
+            })
+          } catch (e) {
+            return []
           }
         }
       }

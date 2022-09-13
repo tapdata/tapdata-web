@@ -425,5 +425,43 @@ export default {
   packages_business_statistics_schedule_yonghuliulanqi: '用戶瀏覽器時區',
   packages_business_statistics_schedule_shijian: '時間：',
   packages_business_statistics_schedule_qingxuanze: '請選擇',
-  packages_business_statistics_schedule_leixing: '類型：'
+  packages_business_statistics_schedule_leixing: '類型：',
+
+  packages_business_dataFlow_delete_confirm_title: '是否刪除該任務？',
+  packages_business_dataFlow_delete_confirm_message: '刪除任務 xxx 後，此任務將無法恢復',
+  packages_business_dataFlow_bulk_delete_confirm_title: '是否批量刪除任務？',
+  packages_business_dataFlow_bulk_delete_confirm_message: '批量刪除任務後，任務將無法恢復',
+  packages_business_dataFlow_stop_confirm_title: '是否暫停該任務？',
+  packages_business_dataFlow_stop_confirm_message:
+    '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  packages_business_dataFlow_bulk_stop_confirm_title: '是否批量暫停任務？',
+  packages_business_dataFlow_bulk_stop_confirm_message:
+    '批量暫停任務後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  packages_business_dataFlow_force_stop_confirm_title: '是否強制停止該任務？',
+  packages_business_dataFlow_force_stop_confirm_message:
+    '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+  packages_business_dataFlow_bulk_force_stop_confirm_title: '是否批量強制停止任務？',
+  packages_business_dataFlow_bulk_force_stop_confirm_message:
+    '批量強制停止任務將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+  packages_business_dataFlow_initialize_confirm_title: '是否重置該任務？',
+  packages_business_dataFlow_initialize_confirm_message: '重置任務 xxx 將清除任務同步進度，任務將重新執行',
+  packages_business_dataFlow_bulk_initialize_confirm_title: '是否批量重置任務？',
+  packages_business_dataFlow_bulk_initialize_confirm_message: '批量重置任務將清除任務同步進度，任務將重新執行',
+  packages_business_connections_databaseform_zidingyi: '自定義',
+  packages_business_connections_databaseform_duixiangshouji: '對象收集',
+  packages_business_verify_details_yichangshuju: '異常數據',
+  packages_business_verify_details_mubiaobiaoming: '目標表名',
+  packages_business_verify_details_yuanbiaoming: '源表名',
+  packages_business_verify_details_gongxijiaoyanjie: '恭喜~校驗結果源表與目標表內容完全一致，沒有錯誤記錄',
+  packages_business_verify_details_mubiaobiaoziduan: '目標表字段：值',
+  packages_business_verify_details_yuanbiaoziduanzhi: '源表字段：值',
+  packages_business_verify_details_xianshiwanzhengzi: '顯示完整字段',
+  packages_business_verify_details_jinxianshichayi: '僅顯示差異字段',
+  packages_business_verify_details_yichangshujuhang: '異常數據（行）：',
+  packages_business_verify_details_mubiaobiao: '目標表：',
+  packages_business_verify_details_yuanbiao: '源表：',
+  packages_business_verify_details_jiaoyanjieguo: '校驗結果',
+  packages_business_verify_details_jiaoyanzhong: '校驗中',
+  packages_business_verify_details_jiaoyan: '校驗',
+  packages_business_verify_details_qingshurubiaoming: '請輸入表名…'
 }

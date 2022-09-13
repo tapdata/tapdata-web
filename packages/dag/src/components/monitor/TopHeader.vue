@@ -5,7 +5,13 @@
         <button @click="$emit('page-return')" class="icon-btn">
           <VIcon size="18">left</VIcon>
         </button>
-        <TextEditable v-model="name" placeholder="请输入任务名称" max-width="260" @change="onNameInputChange" />
+        <TextEditable
+          v-model="name"
+          :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+          max-width="260"
+          readonly
+          @change="onNameInputChange"
+        />
         <span class="ml-4">{{ syncType[dataflow.type] }}</span>
         <TaskStatus :task="dataflow" class="ml-4" />
       </div>
@@ -15,14 +21,20 @@
           <span>{{ stopTime }}</span>
         </div>
         <div class="ml-4">
-          <span>{{ dataflow.agentId || dataflow.agentName || '-' }}</span>
+          <OverflowTooltip
+            class="text-truncate"
+            placement="right"
+            :text="dataflow.agentId || dataflow.agentName || '-'"
+            :open-delay="400"
+            style="width: 65px"
+          />
         </div>
         <div v-if="agentData" class="ml-4">
-          <span>%CPU：</span>
+          <span>CPU：</span>
           <span>{{ agentData.cpuUsage }}</span>
         </div>
         <div class="ml-4">
-          <span>%MEM：</span>
+          <span>MEM：</span>
           <span>{{ agentData.memoryRate }}</span>
         </div>
         <div class="ml-4">
@@ -81,7 +93,7 @@
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="日志">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
           <VIcon size="16">list</VIcon>
         </button>
@@ -208,7 +220,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
 
 import focusSelect from '@tap/component/src/directives/focusSelect'
-import { TextEditable, VIcon, VDivider } from '@tap/component'
+import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 
 export default {
@@ -229,7 +241,7 @@ export default {
     quota: Object
   },
 
-  components: { VIcon, TextEditable, TaskStatus, VDivider },
+  components: { VIcon, TextEditable, TaskStatus, VDivider, OverflowTooltip },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -271,9 +283,18 @@ export default {
       const data = this.quota?.samples?.agentData?.[0] || {}
       const { cpuUsage, gcRate, memoryRate } = data
       return {
-        cpuUsage: typeof cpuUsage === 'number' ? cpuUsage.toFixed(2).toLocaleString() : '',
-        memoryRate: typeof memoryRate === 'number' ? memoryRate.toFixed(2).toLocaleString() : '',
-        gcRate: typeof gcRate === 'number' ? gcRate.toFixed(5) * 100 + '%' : ''
+        cpuUsage:
+          typeof cpuUsage === 'number'
+            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : '',
+        memoryRate:
+          typeof memoryRate === 'number'
+            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : '',
+        gcRate:
+          typeof gcRate === 'number'
+            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : ''
       }
     }
   },

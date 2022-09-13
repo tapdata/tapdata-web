@@ -63,9 +63,6 @@ const mutations = {
   tableFlows(state, payload) {
     state.tableFlows = payload
   },
-  dataVerification(state, payload) {
-    state.dataVerification = payload
-  },
   notification(state, payload) {
     state.notification = payload
   },

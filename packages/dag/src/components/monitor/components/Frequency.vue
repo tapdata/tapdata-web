@@ -1,6 +1,6 @@
 <template>
   <div class="time-select__picker">
-    <div class="picker__item inline-flex align-items-center cursor-pointer">
+    <div class="picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
         v-model="period"
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 export default {
   name: 'Frequency',
 
@@ -26,7 +28,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return '刷新频率'
+        return i18n.t('packages_dag_components_frequency_shuaxinpinlu')
       }
     },
     options: {
@@ -91,6 +93,10 @@ export default {
   methods: {
     changeFnc(value) {
       this.$emit('change', value)
+    },
+
+    openSelect() {
+      this.$refs.select?.$el?.click()
     }
   }
 }
@@ -124,6 +130,7 @@ export default {
 }
 .picker__item {
   padding: 0 4px;
+  border-radius: 2px;
   &:hover {
     background: #eef3ff;
   }
