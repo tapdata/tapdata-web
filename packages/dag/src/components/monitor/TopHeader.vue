@@ -48,62 +48,6 @@
       <!--自动布局-->
       <ElTooltip
         transition="tooltip-fade-in"
-        :content="$t('button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
-      >
-        <button @click="$emit('auto-layout')" class="icon-btn">
-          <VIcon size="20">auto-layout</VIcon>
-        </button>
-      </ElTooltip>
-      <VDivider class="mx-3" vertical inset></VDivider>
-      <!--缩小-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out') + `(${commandCode} -)`">
-        <button @click="$emit('zoom-out')" class="icon-btn">
-          <VIcon size="20">remove-outline</VIcon>
-        </button>
-      </ElTooltip>
-      <div class="choose-size mx-2">
-        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
-          <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
-          <div class="choose-list p-2">
-            <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">{{ $t('button_zoom_out') }}</span>
-              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
-            </div>
-            <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">{{ $t('button_zoom_in') }}</span>
-              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
-            </div>
-            <VDivider class="my-2"></VDivider>
-            <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
-              {{ val * 100 }}%
-            </div>
-          </div>
-        </ElPopover>
-      </div>
-      <!--放大-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_in') + `(${commandCode} +)`">
-        <button @click="$emit('zoom-in')" class="icon-btn">
-          <VIcon size="20">add-outline</VIcon>
-        </button>
-      </ElTooltip>
-      <VDivider class="mx-3" vertical inset></VDivider>
-      <!--设置-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
-        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
-          <VIcon size="20">setting-outline</VIcon>
-        </button>
-      </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
-        <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
-          <VIcon size="16">list</VIcon>
-        </button>
-      </ElTooltip>
-    </div>
-
-    <div class="operation-center flex align-center">
-      <!--自动布局-->
-      <ElTooltip
-        transition="tooltip-fade-in"
         :content="$t('packages_dag_button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
       >
         <button @click="$emit('auto-layout')" class="icon-btn">
