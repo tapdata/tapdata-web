@@ -452,5 +452,6 @@ export default {
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任务平均每秒处理的输入事件数和输出事件数',
   packages_dag_components_nodedetaildialog_zengliangduquyan2:
     '增量读取延迟：增量阶段下增量事件从生成到被读取到任务开始处理的延迟时间',
-  packages_dag_components_nodedetaildialog_pingjunduquhao2: '平均读取耗时：全量阶段下读取每条数据的平均耗时'
+  packages_dag_components_nodedetaildialog_pingjunduquhao2: '平均读取耗时：全量阶段下读取每条数据的平均耗时',
+  packages_dag_components_log_zuidashijianshu: '最大事件数（条）'
 }

@@ -119,7 +119,7 @@
           <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
             <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="max">
+          <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')" prop="max">
             <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
         </template>
