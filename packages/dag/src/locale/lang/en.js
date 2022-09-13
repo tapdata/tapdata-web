@@ -453,6 +453,8 @@ export default {
   packages_dag_monitor_leftsider_chayixiangqing: 'Difference details',
   packages_dag_monitor_leftsider_zuidazengliangyan: 'Maximum incremental delay:',
   packages_dag_monitor_leftsider_tongbuxinxi: 'Sync information',
+  packages_dag_node_only_as_source: 'This node({val1}) is only supported as a source',
+  packages_dag_node_only_as_target: 'This node({val1}) is only supported as a target'
   packages_dag_components_nodedetaildialog_dangqianjiedianchu:
     'The average time spent processing events by the current node',
   packages_dag_components_nodedetaildialog_dangqianjiedianping:

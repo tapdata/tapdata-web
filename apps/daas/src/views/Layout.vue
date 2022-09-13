@@ -406,8 +406,8 @@ let menuSetting = [
     icon: 'system',
     code: 'system_management',
     children: [
-      { name: 'clusterManagement', code: 'Cluster_management_menu' },
-      { name: 'externalStorage', code: '' }
+      { name: 'clusterManagement', code: 'Cluster_management_menu' }
+      // { name: 'externalStorage', code: '' }
       // { name: 'users', code: 'user_management_menu', parent: 'migrate' },
       // { name: 'roleList', code: 'role_management_menu', parent: 'migrate' }
     ]

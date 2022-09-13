@@ -209,6 +209,14 @@ export class Table extends NodeType {
         'x-component-props': {
           class: 'inset'
         },
+        'x-reactions': {
+          dependencies: ['$inputs', '$outputs'],
+          fulfill: {
+            state: {
+              display: '{{$deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
+            }
+          }
+        },
         properties: {
           tab1: {
             type: 'void',

@@ -24,7 +24,6 @@
         node-key="id"
         highlight-current
         :props="props"
-        :expand-on-click-node="false"
         :data="treeData"
         :default-expanded-keys="expandedKeys"
         :filter-node-method="filterNode"
@@ -34,9 +33,11 @@
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <span class="table-label"
-            >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
-          >
+          <el-tooltip :content="`${data.value} (${data.objCount})`" placement="right" :open-delay="400">
+            <span class="table-label"
+              >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
+            >
+          </el-tooltip>
           <span class="btn-menu" v-if="!data.readOnly">
             <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
               ><VIcon size="12" class="color-primary">add</VIcon></ElButton
@@ -200,10 +201,8 @@ export default {
     },
     getData(cb) {
       let where = {}
-      if (this.types.length) {
-        where.item_type = {
-          $in: this.types
-        }
+      where.item_type = {
+        $nin: ['database', 'dataflow', 'api']
       }
       let filter = {
         where,
