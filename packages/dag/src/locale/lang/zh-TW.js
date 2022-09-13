@@ -439,5 +439,12 @@ export default {
   packages_dag_monitor_leftsider_renwushijiantong: '任務事件統計（條）',
   packages_dag_monitor_leftsider_chayixiangqing: '差異詳情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延遲：',
-  packages_dag_monitor_leftsider_tongbuxinxi: '同步信息'
+  packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
+  packages_dag_components_nodedetaildialog_dangqianjiedianchu: '當前節點處理事件的平均耗時',
+  packages_dag_components_nodedetaildialog_dangqianjiedianping: '當前節點平均每秒處理的輸入事件數和輸出事件數',
+  packages_dag_monitor_leftsider_renwuchuliwan:
+    '任務處理完成一條新產生事件需要消耗的總時間，當有多個目標時只統計最大的處理耗時',
+  packages_dag_monitor_leftsider_shijiancongyuanku:
+    '事件從源庫生成到經任務處理完成寫入目標的延遲時間，當有多個目標時只統計最大的增量延遲時間',
+  packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任務平均每秒處理的輸入事件數和輸出事件數'
 }

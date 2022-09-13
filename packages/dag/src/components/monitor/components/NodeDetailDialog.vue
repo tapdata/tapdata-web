@@ -102,7 +102,16 @@
     <div class="my-4">{{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}</div>
     <div class="flex justify-content-between">
       <div v-loading="loading" class="chart-box rounded-2">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">QPS</div>
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+          <span class="mr-2">QPS</span>
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="$t('packages_dag_components_nodedetaildialog_dangqianjiedianping')"
+          >
+            <VIcon class="color-primary">info</VIcon>
+          </ElTooltip>
+        </div>
         <div class="chart-box__content p-4">
           <LineChart
             :data="qpsData"
@@ -115,19 +124,19 @@
       <div v-loading="loading" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
           <span class="mr-2">{{ delayLineTitle }}</span>
-          <ElTooltip transition="tooltip-fade-in">
-            <VIcon class="color-primary" @click="init">info</VIcon>
+          <ElTooltip transition="tooltip-fade-in" placement="top">
+            <VIcon class="color-primary">info</VIcon>
             <div v-if="isSource" slot="content">
               <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshiyuan') }}</div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_pingjunduquhao') }}</div>
-              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangduquyan') }}</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_pingjunduquhao2') }}</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangduquyan2') }}</div>
             </div>
             <div v-else-if="isTarget" slot="content">
               <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}</div>
               <div>{{ $t('packages_dag_components_nodedetaildialog_xieruhaoshidang') }}</div>
             </div>
             <div v-else slot="content">
-              <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_dangqianjiedianchu') }}</div>
             </div>
           </ElTooltip>
         </div>
@@ -422,6 +431,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.qpsLineChart?.reset?.()
         this.$refs.delayLineChart?.reset?.()
+        this.$refs.delayLineChart?.clear?.()
       })
     },
 

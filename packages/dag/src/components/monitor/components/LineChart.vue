@@ -291,6 +291,9 @@ export default {
     },
     reset() {
       this.end = 100
+    },
+    clear() {
+      this.$refs.chart.chart?.chart?.clear()
     }
   }
 }
