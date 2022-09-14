@@ -3,29 +3,47 @@
     <div class="notification-head pt-8 pb-4 px-6">
       <div class="title font-color-dark fs-7">系统告警</div>
     </div>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName">
       <el-tab-pane label="全部告警" name="first"></el-tab-pane>
       <el-tab-pane label="系统告警" name="second"></el-tab-pane>
     </el-tabs>
-    <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
+    <TablePage
+      ref="table"
+      row-key="id+indexName"
+      class="share-list"
+      :remoteMethod="getData"
+      @selection-change="
+        val => {
+          multipleSelection = val
+        }
+      "
+    >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
-        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">
+        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleClose">
           <span>关闭</span>
         </el-button>
       </div>
       <el-table-column type="selection"></el-table-column>
-      <el-table-column label="告警级别" prop="level"></el-table-column>
-      <el-table-column label="告警状态" prop="status" min-width="150" sortable> </el-table-column>
+      <el-table-column label="告警级别" prop="level">
+        <template #default="{ row }">
+          <span class="status-block" :class="['status-' + row.level]"> {{ row.level }} </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="告警状态" prop="status">
+        <template #default="{ row }">
+          <span> {{ typeMap[row.status] }} </span>
+        </template>
+      </el-table-column>
       <el-table-column label="告警对象" prop="name"></el-table-column>
-      <el-table-column label="告警描述" prop="summary"></el-table-column>
+      <el-table-column label="告警描述" prop="summary" min-width="150"></el-table-column>
       <el-table-column label="告警首次发生时间" prop="firstOccurrenceTime"></el-table-column>
       <el-table-column label="告警最近发生时间" prop="lastOccurrenceTime"></el-table-column>
       <el-table-column fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
-          <el-button type="text">关闭</el-button>
+          <el-button type="text" @click="handleClose(row.id)">关闭</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button type="text">日志</el-button>
         </template>
@@ -38,7 +56,6 @@
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
 import { alarmApi } from '@tap/api'
-import { TYPEMAP } from './tyepMap'
 import dayjs from 'dayjs'
 
 export default {
@@ -48,27 +65,25 @@ export default {
       filterItems: [],
       activeName: 'first',
       listData: [],
+      multipleSelection: [],
       read: true,
       loading: false,
+      loadingConfig: false,
       searchParams: {
-        search: '',
-        msg: ''
+        status: '',
+        time: '',
+        keyword: ''
       },
-      colorMap: {
-        ERROR: '#D44D4D',
-        WARN: '#FF7D00',
-        INFO: '#2c65ff'
+      typeMap: {
+        ING: '进行中',
+        RECOVER: '恢复',
+        CLOESE: '关闭'
       },
-      typeMap: TYPEMAP,
       count: ''
     }
   },
   created() {
-    this.getData()
     this.getFilterItems()
-    this.$root.$on('notificationUpdate', () => {
-      this.getData()
-    })
   },
   computed: {
     table() {
@@ -77,34 +92,40 @@ export default {
   },
   watch: {
     '$route.query'() {
+      this.searchParams = this.$route.query
       this.table.fetch(1)
     }
   },
   methods: {
-    getData() {
-      let { search, msg } = this.searchParams
-      let where = {}
-      if (!this.read) {
-        where.read = false
+    getData({ page }) {
+      let { status, time, keyword, start, end } = this.searchParams
+      let { current, size } = page
+      let where = {
+        page: current,
+        size: size
       }
-      if (search || search !== '') {
-        where.level = search
+      if (status || status !== '') {
+        where.status = status
       }
-      if (msg || msg !== '') {
-        where.msg = msg
+      if (keyword || keyword !== '') {
+        where.keyword = keyword
       }
-      let filter = {
-        where,
-        order: 'createTime DESC',
-        limit: this.pagesize,
-        skip: (this.currentPage - 1) * this.pagesize
+      if (time || time !== '') {
+        where.time = time
       }
-      return alarmApi.get({ filter: JSON.stringify(filter) }).then(data => {
+      if (start) {
+        where.start = start
+      }
+      if (end) {
+        where.end = end
+      }
+      return alarmApi.list(where).then(data => {
         let list = data?.items || []
         return {
           total: data?.total || 0,
           data: list.map(item => {
-            item.logTime = dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
+            item.firstOccurrenceTime = dayjs(item.firstOccurrenceTime).format('YYYY-MM-DD HH:mm:ss')
+            item.lastOccurrenceTime = dayjs(item.lastOccurrenceTime).format('YYYY-MM-DD HH:mm:ss')
             return item
           })
         }
@@ -114,22 +135,44 @@ export default {
       this.filterItems = [
         {
           label: '告警状态',
-          key: 'search',
+          key: 'status',
           type: 'select-inner',
-          items: this.options,
+          items: [
+            {
+              label: '进行中',
+              value: 'ING'
+            },
+            {
+              label: '恢复',
+              value: 'RECOVER'
+            },
+            {
+              label: '关闭',
+              value: 'CLOESED'
+            }
+          ],
           selectedWidth: '200px'
         },
         {
-          label: '告警时间',
-          key: 'msg',
-          type: 'select-inner',
-          items: this.msgOptions
+          title: '告警时间',
+          type: 'datetimerange',
+          key: 'start,end'
         },
         {
           key: 'keyword',
           type: 'input'
         }
       ]
+    },
+    handleClose(id) {
+      let ids = id[0]
+      if (this.multipleSelection?.length > 0) {
+        ids = this.multipleSelection.map(item => item.id)
+      }
+      alarmApi.close(ids).then(() => {
+        this.$message.success('关闭成功')
+        this.table.fetch(1)
+      })
     }
   }
 }
@@ -151,6 +194,39 @@ export default {
       margin-right: 10px;
       width: 200px;
     }
+  }
+  .status-block {
+    display: inline-block;
+    min-width: 60px;
+    padding: 3px 10px;
+    text-align: center;
+    font-weight: 500;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .status-RECOVERY {
+    color: #178061;
+    background-color: #c4f3cb;
+  }
+  .status-EMERGENCY {
+    color: #d44d4d;
+    background-color: #ffecec;
+  }
+  .status-INFO {
+    color: #0083c7;
+    background-color: #d1eefd;
+  }
+  .status-NORMAL {
+    color: #2c65ff;
+    background-color: #ddebff;
+  }
+  .status-WARNING {
+    color: #c39700;
+    background-color: #fdf1c8;
+  }
+  .status-CRITICAL {
+    color: #c88500;
+    background-color: #ffe4ae;
   }
 }
 </style>

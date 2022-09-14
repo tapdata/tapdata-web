@@ -1,4 +1,5 @@
 import Http from './Http'
+import { isPlainObj } from '@tap/shared'
 export default class AlarmAPI extends Http {
   constructor() {
     super('/api/alarm')
@@ -7,8 +8,15 @@ export default class AlarmAPI extends Http {
     return this.axios.get(`${this.url}/list_task`)
   }
 
-  list() {
-    return this.axios.post(`${this.url}/list`)
+  list(params) {
+    const config = { params }
+    if (isPlainObj(params)) {
+      Object.assign(config, params)
+    }
+    return this.axios.get(`${this.url}/list`, config)
+  }
+  close(ids) {
+    return this.axios.post(`${this.url}/close?ids=${ids}`)
   }
 }
 export { AlarmAPI }
