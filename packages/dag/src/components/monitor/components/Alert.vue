@@ -8,7 +8,7 @@
         class="filter-items__item flex justify-content-between align-items-center"
         @click="changeItem(item)"
       >
-        <span>{{ item.label }}</span>
+        <span>{{ `${item.label}(${item.num})` }}</span>
         <VIcon>arrow-right</VIcon>
       </div>
     </div>
@@ -23,6 +23,7 @@
             class="ml-2 dark"
             size="mini"
             ref="select"
+            @change="getList"
           >
             <ElOption
               v-for="(item, index) in levelItems"
@@ -41,6 +42,7 @@
             class="ml-2 dark"
             size="mini"
             ref="select"
+            @change="getList"
           >
             <ElOption
               v-for="(item, index) in statusItems"
@@ -52,8 +54,8 @@
         </div>
       </div>
       <VTable
-        :remoteMethod="remoteMethod"
         :columns="columns"
+        :data="list"
         :page-options="{
           layout: 'total, ->, prev, pager, next, sizes, jumper'
         }"
@@ -62,7 +64,12 @@
         class="table-list"
         hide-on-single-page
       >
-        <template slot="operation" slot-scope="scope">
+        <template slot="levelSlot" slot-scope="scope">
+          <span :class="['status-' + scope.row.levelType, 'status-block']">
+            {{ scope.row.levelLabel }}
+          </span>
+        </template>
+        <template slot="operation" slot-scope="scope" fixed="right">
           <div class="operate-columns">
             <ElButton size="mini" type="text">{{ $t('packages_dag_components_alert_guanbi') }}</ElButton>
             <ElButton size="mini" type="text">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton>
@@ -78,8 +85,8 @@ import i18n from '@tap/i18n'
 
 import { mapGetters } from 'vuex'
 
-import { taskApi } from '@tap/api'
 import { VIcon, VTable } from '@tap/component'
+import { alarmLevel, alarmStatus } from '@tap/dag/src/shared/const'
 
 export default {
   name: 'Alert',
@@ -99,6 +106,12 @@ export default {
           items: []
         }
       }
+    },
+    alarmData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
 
@@ -106,153 +119,138 @@ export default {
     return {
       activeNodeId: 'all',
       form: {
-        level: 'all',
-        status: 'all'
+        level: '',
+        status: ''
       },
-      levelItems: [
-        {
-          label: i18n.t('packages_dag_components_log_quanbu'),
-          value: 'all'
-        },
-        {
-          label: 'Emergency',
-          value: 'Emergency'
-        },
-        {
-          label: 'Critical',
-          value: 'Critical'
-        },
-        {
-          label: 'Warning',
-          value: 'Warning'
-        },
-        {
-          label: 'Normal',
-          value: 'Normal'
-        },
-        {
-          label: 'Recovery',
-          value: 'Recovery'
-        }
-      ],
-      statusItems: [
-        {
-          label: i18n.t('packages_dag_components_log_quanbu'),
-          value: 'all'
-        },
-        {
-          label: i18n.t('packages_dag_monitor_node_jinhangzhong'),
-          value: 'open'
-        },
-        {
-          label: i18n.t('packages_dag_components_alert_yiguanbi'),
-          value: 'closed'
-        },
-        {
-          label: i18n.t('packages_dag_components_alert_huifu'),
-          value: 'recovery'
-        }
-      ],
       columns: [
         {
           label: i18n.t('packages_dag_components_alert_gaojingjibie'),
-          prop: 'level'
+          prop: 'level',
+          slotName: 'levelSlot',
+          width: 120
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzhuangtai'),
-          prop: 'status'
+          prop: 'statusLabel',
+          width: 80
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
           prop: 'summary'
         },
-        {
-          label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
-          prop: 'first_occurrence_time',
-          dataType: 'time'
-        },
+        // {
+        //   label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
+        //   prop: 'first_occurrence_time',
+        //   dataType: 'time'
+        // },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
-          prop: 'first_occurrence_time',
-          dataType: 'time'
+          prop: 'lastOccurrenceTime',
+          dataType: 'time',
+          width: 150
         },
-        {
-          label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
-          prop: 'tally',
-          dataType: 'number'
-        },
+        // {
+        //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
+        //   prop: 'tally',
+        //   dataType: 'number'
+        // },
         {
           label: i18n.t('packages_dag_components_record_caozuo'),
-          slotName: 'operation'
+          slotName: 'operation',
+          fixed: 'right',
+          width: 150
         }
-      ]
+      ],
+      list: []
     }
   },
 
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
+    levelItems() {
+      let result = [
+        {
+          label: i18n.t('packages_dag_components_log_quanbu'),
+          value: ''
+        }
+      ]
+      for (let key in alarmLevel) {
+        result.push({
+          label: alarmLevel[key].text,
+          value: key
+        })
+      }
+      return result
+    },
+
+    statusItems() {
+      let result = [
+        {
+          label: i18n.t('packages_dag_components_log_quanbu'),
+          value: ''
+        }
+      ]
+      for (let key in alarmStatus) {
+        result.push({
+          label: alarmStatus[key].text,
+          value: key
+        })
+      }
+      return result
+    },
+
     items() {
+      const nodeMap = this.alarmData?.nodeInfos.reduce((cur, next) => {
+        return { ...cur, [next.nodeId]: next }
+      }, {})
+      const totals = this.alarmData?.nodeInfos.reduce((cur, next) => {
+        return cur + (next.num || 0)
+      }, 0)
       return [
         {
-          label: i18n.t('packages_dag_migration_consolepanel_quanburizhi'),
-          value: 'all'
+          label: '全部告警',
+          value: 'all',
+          num: totals
         },
         ...this.allNodes.map(t => {
           return {
             label: t.name,
             value: t.id,
             source: t.$outputs.length > 0,
-            target: t.$inputs.length > 0
+            target: t.$inputs.length > 0,
+            num: nodeMap[t.id]?.num || 0
           }
         })
       ]
     }
   },
 
-  methods: {
-    remoteMethod({ page }) {
-      const { current, size } = page
-      const { id: taskId } = this.dataflow || {}
-      let filter = {
-        limit: size,
-        skip: size * (current - 1)
-      }
-      return taskApi.records(taskId, filter).then(data => {
-        return {
-          total: 2,
-          data: [
-            {
-              status: 'open',
-              level: 'Emergency',
-              first_occurrence_time: '2022-06-10 12:00:00',
-              last_occurrence_time: '2022-06-10 12:00:00',
-              tally: 1020,
-              summary: i18n.t('packages_dag_components_alert_dangqianrenwuyi')
-            },
-            {
-              status: 'closed',
-              level: 'Critical',
-              first_occurrence_time: '2022-06-10 12:00:00',
-              last_occurrence_time: '2022-06-10 12:00:00',
-              tally: 129321939,
-              summary: i18n.t('packages_dag_components_alert_dangqianrenwuyi')
-            },
-            {
-              status: 'recovery',
-              level: 'Warning',
-              first_occurrence_time: '2022-06-10 12:00:00',
-              last_occurrence_time: '2022-06-10 12:00:00',
-              tally: 129321939,
-              summary: i18n.t('packages_dag_components_alert_dangqianrenwuyi')
-            }
-          ]
-        }
-      })
-    },
+  mounted() {
+    this.getList()
+  },
 
-    fetch() {
-      this.$refs.table.fetch()
+  methods: {
+    getList() {
+      let data = this.alarmData?.alarmList
+      const { activeNodeId } = this
+      const { level, status } = this.form
+      if (activeNodeId !== 'all') {
+        data = data.filter(t => t.nodeId === activeNodeId)
+      }
+      if (level) {
+        data = data.filter(t => t.level === level)
+      }
+      if (status) {
+        data = data.filter(t => t.status === status)
+      }
+      this.list =
+        data.map(t => {
+          t.levelLabel = alarmLevel[t.level].text
+          t.levelType = alarmLevel[t.level].type
+          t.statusLabel = alarmStatus[t.status].text
+          return t
+        }) || []
     },
 
     changeItem(item) {
@@ -260,7 +258,7 @@ export default {
         return
       }
       this.activeNodeId = item.value
-      this.fetch()
+      this.getList()
     }
   }
 }
@@ -281,6 +279,9 @@ export default {
   &.active {
     background: rgba(44, 101, 255, 0.05);
   }
+}
+.main {
+  width: 0;
 }
 .white-space-nowrap {
   white-space: nowrap;

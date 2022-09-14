@@ -32,6 +32,12 @@ export default defineComponent({
         tableTotal: 0
       })
     },
+    alarmData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
     taskType: String,
     syncType: String
   },

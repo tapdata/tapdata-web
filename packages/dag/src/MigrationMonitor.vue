@@ -88,6 +88,7 @@
               :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
               :quota="quota"
+              :alarmData="alarmData"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -109,6 +110,7 @@
             minHeight: 328
           }"
           :dataflow="dataflow"
+          :alarmData="alarmData"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
@@ -174,6 +176,7 @@ import editor from './mixins/editor'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
+import { alarmLevelSort } from './shared/const'
 
 export default {
   name: 'MigrationMonitor',
@@ -760,8 +763,31 @@ export default {
       this.verifyTotals = data
     },
 
-    loadAlarmData(data) {
-      this.alarmData = data
+    loadAlarmData(data = {}) {
+      const { alarmNum = {}, nodeInfos = [], alarmList = [] } = data
+      const { alert = 0, error = 0 } = alarmNum
+      const nodes = alarmList
+        .filter(t => t.nodeId && t.level)
+        .reduce((cur, next) => {
+          const index = alarmLevelSort.indexOf(cur[next.nodeId]?.level)
+          return {
+            ...cur,
+            [next.nodeId]: index !== -1 && index < alarmLevelSort.indexOf(next.level) ? cur[next.nodeId] : next
+          }
+        }, {})
+      this.alarmData = {
+        alarmNum: {
+          alert,
+          error
+        },
+        nodeInfos: nodeInfos.map(t => {
+          return Object.assign({}, t, {
+            num: t.num || 0
+          })
+        }),
+        alarmList,
+        nodes
+      }
     },
 
     getDagData(data = []) {
