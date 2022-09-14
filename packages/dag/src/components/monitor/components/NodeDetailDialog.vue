@@ -16,7 +16,7 @@
       </div>
       <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
       <Frequency :range="$attrs.range" @change="changeFrequency"></Frequency>
-      <ElTooltip transition="tooltip-fade-in" content="刷新">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_components_nodedetaildialog_shuaxin')">
         <VIcon class="color-primary" @click="init">refresh</VIcon>
       </ElTooltip>
     </div>
@@ -36,7 +36,7 @@
         <div class="chart-box__content p-6 fs-8">
           <template v-if="dataflow.type !== 'cdc'">
             <div class="mb-4 flex justify-content-between">
-              <span>全量开始时间：</span>
+              <span>{{ $t('packages_dag_components_nodedetaildialog_quanliangkaishishi') }}</span>
               <span>{{ initialData.snapshotStartAt || '-' }}</span>
             </div>
             <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
@@ -50,7 +50,7 @@
               </ElTooltip>
             </div>
             <div class="mb-4 flex align-items-center">
-              <span class="mr-2">全量同步进度</span>
+              <span class="mr-2">{{ $t('packages_dag_components_nodedetaildialog_quanliangtongbujin') }}</span>
               <ElProgress
                 class="flex-1 my-2"
                 :show-text="false"
@@ -63,7 +63,7 @@
               v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
               class="mb-4 flex align-items-center"
             >
-              <span class="mr-2">当前表同步进度</span>
+              <span class="mr-2">{{ $t('packages_dag_components_nodedetaildialog_dangqianbiaotongbu') }}</span>
               <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
               <span class="ml-2">{{
                 (totalData.currentSnapshotTableInsertRowTotal || 0) +
@@ -74,7 +74,7 @@
           </template>
           <template v-if="dataflow.type !== 'initial_sync'">
             <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
-              <span>增量时间点：</span>
+              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
           </template>
@@ -92,7 +92,7 @@
         <div class="chart-box__content p-4 flex-fill flex align-items-center">
           <template v-if="dataflow.type !== 'initial_sync'">
             <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
-              <span>增量时间点：</span>
+              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
           </template>
@@ -241,14 +241,21 @@ export default {
       const { isSource, isTarget } = this
       let result = {
         x: time,
-        name: ['处理耗时'],
+        name: [i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')],
         value: data.timeCostAvg
       }
       if (isSource) {
-        result.name = ['处理耗时', '平均读取耗时', '增量读取延迟']
+        result.name = [
+          i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
+          i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao'),
+          i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')
+        ]
         result.value = [data.timeCostAvg, data.snapshotSourceReadTimeCostAvg, data.incrementalSourceReadTimeCostAvg]
       } else if (isTarget) {
-        result.name = ['处理耗时', '写入耗时']
+        result.name = [
+          i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
+          i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi')
+        ]
         result.value = [data.timeCostAvg, data.targetWriteTimeCostAvg]
       }
       return result

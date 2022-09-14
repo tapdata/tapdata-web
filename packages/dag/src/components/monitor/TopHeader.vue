@@ -5,7 +5,12 @@
         <button @click="$emit('page-return')" class="icon-btn">
           <VIcon size="18">left</VIcon>
         </button>
-        <TextEditable v-model="name" placeholder="请输入任务名称" max-width="260" @change="onNameInputChange" />
+        <TextEditable
+          v-model="name"
+          :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+          max-width="260"
+          @change="onNameInputChange"
+        />
         <span class="ml-4">{{ syncType[dataflow.type] }}</span>
         <TaskStatus :task="dataflow" class="ml-4" />
       </div>
@@ -81,7 +86,7 @@
           <VIcon size="20">setting-outline</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="日志">
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
           <VIcon size="16">list</VIcon>
         </button>

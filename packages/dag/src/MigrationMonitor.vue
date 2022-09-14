@@ -239,6 +239,7 @@ export default {
       dagData: null,
       verifyData: null,
       verifyTotals: null,
+      alarmData: null,
       refreshRate: 5000
     }
   },
@@ -704,6 +705,12 @@ export default {
             taskId,
             taskRecordId
           }
+        },
+        alarmData: {
+          uri: '/api/alarm/list_task',
+          param: {
+            taskId
+          }
         }
       }
       const $verifyPanel = this.$refs.verifyPanel
@@ -724,7 +731,8 @@ export default {
         const map = {
           quota: this.loadQuotaData,
           verify: this.loadVerifyData,
-          verifyTotals: this.loadVerifyTotals
+          verifyTotals: this.loadVerifyTotals,
+          alarmData: this.loadAlarmData
         }
         for (let key in data) {
           const item = data[key]
@@ -750,6 +758,10 @@ export default {
 
     loadVerifyTotals(data) {
       this.verifyTotals = data
+    },
+
+    loadAlarmData(data) {
+      this.alarmData = data
     },
 
     getDagData(data = []) {

@@ -29,7 +29,9 @@
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">设置</ElButton>
+        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">{{
+          $t('packages_dag_button_setting')
+        }}</ElButton>
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
           $t('packages_dag_components_log_xiazai')
         }}</ElButton>
