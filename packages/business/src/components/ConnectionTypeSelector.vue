@@ -50,9 +50,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
-import Cookie from '@tap/shared/src/cookie'
 import { getConnectionIcon } from '../views/connections/util'
 
 export default {

@@ -47,7 +47,7 @@
         <RouterView></RouterView>
       </ElMain>
     </ElContainer>
-    <ConnectionTypeDialog v-model="dialogVisible" @select="createConnection"></ConnectionTypeDialog>
+    <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
   </ElContainer>
@@ -158,12 +158,16 @@ export default {
     }
   },
   methods: {
-    createConnection(type) {
+    createConnection(item) {
       this.dialogVisible = false
       buried('connectionCreate')
+      const { pdkHash } = item
+      let query = {
+        pdkHash
+      }
       this.$router.push({
-        name: 'ConnectionCreate',
-        query: { databaseType: type }
+        name: 'connectionCreate',
+        query
       })
     },
     showGuide() {

@@ -21,7 +21,6 @@
 import { databaseTypesApi } from '@tap/api'
 
 import { ConnectionTypeSelector } from '../../components'
-import { getImgByType } from './util'
 
 export default {
   name: 'DatasourceDialog',
@@ -58,7 +57,6 @@ export default {
     this.getDatabaseType()
   },
   methods: {
-    getImgByType,
     handleClose() {
       this.$emit('dialogVisible', false)
       this.$emit('update:dialogVisible', false)
