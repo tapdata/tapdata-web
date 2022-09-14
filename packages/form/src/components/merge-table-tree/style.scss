@@ -1,11 +1,11 @@
 .merge-table-tree-space {
-  overflow: hidden;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  padding: 16px;
-  bottom: 0;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(221, 221, 221, 0.4);
+
+  hr.v-divider {
+    border-color: rgba(221, 221, 221, 0.4);
+  }
 
   .formily-element-space-item {
     overflow-y: auto;

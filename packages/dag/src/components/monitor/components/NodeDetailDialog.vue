@@ -57,7 +57,7 @@
                 style="width: 150px"
                 :percentage="totalDataPercentage"
               />
-              <span class="ml-2">{{ totalData.snapshotInsertRowTotal + '/' + totalData.snapshotRowTotal }}</span>
+              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
             </div>
             <div
               v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
@@ -73,7 +73,7 @@
             </div>
           </template>
           <template v-if="dataflow.type !== 'initial_sync'">
-            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+            <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
               <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
@@ -89,9 +89,9 @@
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
           {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
         </div>
-        <div class="chart-box__content p-4 flex-fill flex align-items-center">
+        <div class="chart-box__content p-6 fs-8 flex flex-column align-items-center flex-fill justify-content-center">
           <template v-if="dataflow.type !== 'initial_sync'">
-            <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
+            <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
               <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
@@ -114,7 +114,22 @@
       </div>
       <div v-loading="loading" class="chart-box rounded-2">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-          {{ $t('packages_dag_components_nodedetaildialog_chulihaoshi') }}
+          <span class="mr-2">{{ delayLineTitle }}</span>
+          <ElTooltip transition="tooltip-fade-in">
+            <VIcon class="color-primary" @click="init">info</VIcon>
+            <div v-if="isSource" slot="content">
+              <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshiyuan') }}</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_pingjunduquhao') }}</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangduquyan') }}</div>
+            </div>
+            <div v-else-if="isTarget" slot="content">
+              <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}</div>
+              <div>{{ $t('packages_dag_components_nodedetaildialog_xieruhaoshidang') }}</div>
+            </div>
+            <div v-else slot="content">
+              <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}</div>
+            </div>
+          </ElTooltip>
         </div>
         <div class="chart-box__content p-4">
           <LineChart
@@ -228,6 +243,28 @@ export default {
       }
     },
 
+    delayLineTitle() {
+      const { isSource, isTarget } = this
+      let result = i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')
+      if (isSource) {
+        result = i18n.t('packages_dag_components_nodedetaildialog_duquchulihao')
+      } else if (isTarget) {
+        result = i18n.t('packages_dag_components_nodedetaildialog_chulixieruhao')
+      }
+      return result
+    },
+
+    delayLineInfo() {
+      const { isSource, isTarget } = this
+      let result = i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')
+      if (isSource) {
+        result = i18n.t('packages_dag_components_nodedetaildialog_duquchulihao')
+      } else if (isTarget) {
+        result = i18n.t('packages_dag_components_nodedetaildialog_chulixieruhao')
+      }
+      return result
+    },
+
     // 增量延迟
     delayData() {
       const data = this.quota.samples?.lineChartData?.[0]
@@ -324,12 +361,16 @@ export default {
 
     totalData() {
       const {
+        snapshotTableTotal = 0,
+        tableTotal = 0,
         snapshotInsertRowTotal = 0,
         snapshotRowTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
         currentSnapshotTableRowTotal = 0
       } = this.quota.samples?.totalData?.[0] || {}
       return {
+        snapshotTableTotal,
+        tableTotal,
         snapshotInsertRowTotal,
         snapshotRowTotal,
         currentSnapshotTableInsertRowTotal,
@@ -338,8 +379,8 @@ export default {
     },
 
     totalDataPercentage() {
-      const { snapshotInsertRowTotal, snapshotRowTotal } = this.totalData
-      return snapshotInsertRowTotal && snapshotRowTotal ? (snapshotInsertRowTotal / snapshotRowTotal) * 100 : 0
+      const { snapshotTableTotal, tableTotal } = this.totalData
+      return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
     },
 
     currentTotalDataPercentage() {

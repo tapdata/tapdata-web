@@ -46,6 +46,7 @@
           :verifyTotals="verifyTotals"
           :timeFormat="timeFormat"
           :range="[firstStartTime, lastStopTime || Date.now()]"
+          @load-data="init"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
@@ -266,7 +267,11 @@ export default {
     },
 
     isEnterTimer() {
-      return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
+      return (
+        this.quotaTimeType !== 'custom' &&
+        !this.nodeDetailDialog &&
+        ['running', 'stopping'].includes(this.dataflow?.status)
+      )
     }
   },
 
@@ -282,11 +287,17 @@ export default {
     }
   },
 
+  created() {
+    // 进入监控只读
+    this.setStateReadonly(true)
+  },
+
   mounted() {
     this.setValidateLanguage()
     this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
+        this.initConnectionType()
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
@@ -759,8 +770,14 @@ export default {
       this.verifyData = data
     },
 
-    loadVerifyTotals(data) {
-      this.verifyTotals = data
+    loadVerifyTotals(data = {}) {
+      const { diffRecords = 0, diffTables = 0, totals = 0, ignore = 0 } = data
+      this.verifyTotals = {
+        diffRecords,
+        diffTables,
+        totals,
+        ignore
+      }
     },
 
     loadAlarmData(data = {}) {
@@ -956,6 +973,22 @@ export default {
       } else {
         this.jsPlumbIns.select().removeClass('running')
       }
+    },
+
+    /**
+     * 初始化连接样式【告警、错误】
+     */
+    initConnectionType() {
+      this.jsPlumbIns.registerConnectionTypes({
+        error: {
+          paintStyle: { stroke: '#D44D4D' },
+          hoverPaintStyle: { stroke: '#D44D4D' }
+        },
+        warn: {
+          paintStyle: { stroke: '#FF932C' },
+          hoverPaintStyle: { stroke: '#FF932C' }
+        }
+      })
     }
   }
 }

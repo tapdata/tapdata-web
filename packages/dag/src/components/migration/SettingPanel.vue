@@ -260,7 +260,14 @@ export default observer({
                         'x-decorator-props': {
                           tooltip: i18n.t('packages_dag_migration_settingpanel_dangrenwufuhe')
                         },
-                        'x-component': 'Switch'
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible: '{{$values.syncType === "migrate"}}'
+                            }
+                          }
+                        }
                       },
                       increSyncConcurrency: {
                         title: this.$t('packages_dag_task_setting_cdc_concurrency'),
@@ -423,9 +430,12 @@ export default observer({
           this.settings.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
           this.settings.accessNodeProcessId = currentId && arr.includes(currentId) ? currentId : arr[0]
         }
-        this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
-          disabled: size === 1
-        })
+        if (!this.stateIsReadonly) {
+          // 只在编辑模式下禁用或启用
+          this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+            disabled: size === 1
+          })
+        }
       },
       immediate: true
     },

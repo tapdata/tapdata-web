@@ -282,7 +282,13 @@ export class Database extends NodeType {
           collapse: {
             type: 'void',
             'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              class: 'mt-2 mx-n4'
+            },
             'x-component': 'FormCollapse',
+            'x-component-props': {
+              class: 'inset'
+            },
             properties: {
               tab1: {
                 type: 'void',

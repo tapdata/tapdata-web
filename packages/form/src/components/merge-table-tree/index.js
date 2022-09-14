@@ -3,6 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { h as createElement, useFieldSchema, useForm, RecursionField } from '@formily/vue'
 import { observe } from '@formily/reactive'
 import { Space } from '../space'
+import { FormItem } from '@formily/element'
 import './style.scss'
 import { getNodeIconSrc } from '@tap/business'
 import { metadataInstancesApi } from '@tap/api'
@@ -221,21 +222,23 @@ export const MergeTableTree = observer(
             inline={false}
             colSpan={['unset', 1]}
           >
-            <ElTree
-              ref="tree"
-              style={treeStyle.value}
-              data={treeRef.value}
-              nodeKey="id"
-              defaultExpandAll={true}
-              highlightCurrent={true}
-              expandOnClickNode={false}
-              draggable={true}
-              scopedSlots={{
-                default: renderNode
-              }}
-              vOn:current-change={handleCurrentChange}
-              vOn:node-drop={handleNodeDrop}
-            />
+            <FormItem.BaseItem label="表名称(支持拖拽)" tooltip="表之间可通过拖拽嵌套，确定主从关系">
+              <ElTree
+                ref="tree"
+                style={treeStyle.value}
+                data={treeRef.value}
+                nodeKey="id"
+                defaultExpandAll={true}
+                highlightCurrent={true}
+                expandOnClickNode={false}
+                draggable={true}
+                scopedSlots={{
+                  default: renderNode
+                }}
+                vOn:current-change={handleCurrentChange}
+                vOn:node-drop={handleNodeDrop}
+              />
+            </FormItem.BaseItem>
             <div>
               {currentPath.value &&
                 createElement(

@@ -12,7 +12,12 @@
           <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
         </ElTooltip>
         <ElDivider direction="vertical" class="mx-1"></ElDivider>
-        <Frequency :range="$attrs.range" style="width: 136px" @change="changeFrequency"></Frequency>
+        <Frequency
+          :range="$attrs.range"
+          style="width: 136px"
+          class="flex-shrink-0"
+          @change="changeFrequency"
+        ></Frequency>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
@@ -65,32 +70,41 @@
           </div>
         </template>
       </div>
-      <div v-if="dataflow.canOpenInspect && verifyTotals" class="info-box">
+      <div
+        v-if="dataflow.syncType === 'migrate' && dataflow.isAutoInspect && dataflow.canOpenInspect && verifyTotals"
+        class="info-box"
+      >
         <div class="flex justify-content-between mb-2">
           <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
+          <ElTooltip
+            v-if="verifyTotals.diffTables"
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_monitor_leftsider_chayixiangqing')"
+          >
             <VIcon @click.stop="$emit('verifyDetails')">menu-left</VIcon>
           </ElTooltip>
         </div>
         <div class="flex justify-content-between mb-2">
           <span>{{ $t('packages_dag_monitor_leftsider_chayizongxingshu') }}</span>
-          <span class="color-danger">{{ verifyTotals.diffRecords }}</span>
+          <span :class="{ 'color-danger': verifyTotals.diffRecords }">{{ verifyTotals.diffRecords }}</span>
         </div>
         <div class="flex justify-content-between mb-2">
           <span>{{ $t('packages_dag_monitor_leftsider_jiaoyanbuyizhi') }}</span>
-          <span>
-            <span>{{ verifyTotals.diffTables }}</span>
+          <span v-if="verifyTotals.diffTables">
+            <span :class="{ 'color-danger': verifyTotals.diffTables }">{{ verifyTotals.diffTables }}</span>
             <span>/</span>
             <span>{{ verifyTotals.totals }}</span>
           </span>
+          <span v-else>0</span>
         </div>
         <div class="flex justify-content-between">
           <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_buzhichijiaoyan') }}</span>
-          <span>
-            <span>{{ verifyTotals.ignore }}</span>
+          <span v-if="verifyTotals.ignore">
+            <span :class="{ 'color-danger': verifyTotals.ignore }">{{ verifyTotals.ignore }}</span>
             <span>/</span>
             <span>{{ verifyTotals.totals }}</span>
           </span>
+          <span v-else>0</span>
         </div>
       </div>
       <div class="info-box">

@@ -200,9 +200,6 @@
                 <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">
                   {{ $t('packages_business_dataFlow_addTag') }}
                 </el-dropdown-item>
-                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('packages_business_dataVerify_dataVerify')
-                }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -389,7 +386,8 @@ export default {
         agentId: true,
         statuses: true,
         type: true,
-        desc: true
+        desc: true,
+        listtags: true
       }
       let where = {
         syncType: 'migrate'
@@ -641,12 +639,6 @@ export default {
           })
       })
     },
-    validate(ids, node) {
-      this.$router.push({
-        name: 'dataVerification',
-        query: { name: node.name, id: node.id }
-      })
-    },
     copy(ids, node) {
       taskApi.copy(node.id).then(() => {
         this.table.fetch()
@@ -656,9 +648,9 @@ export default {
     handleSelectTag() {
       let tagList = {}
       this.multipleSelection.forEach(row => {
-        if (row.listTagId) {
-          tagList[row.listTagId] = {
-            value: row.listTagValue
+        if (row.listtags && row.listtags.length > 0) {
+          tagList[row.listtags[0].id] = {
+            value: row.listtags[0].value
           }
         }
       })

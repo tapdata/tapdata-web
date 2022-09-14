@@ -164,7 +164,7 @@ export default {
       if (!allowSource || (connectionType && !connectionType.includes('target'))) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianta', {
+            i18n.t('packages_dag_node_only_as_source', {
               val1: target.name
             })
           )
@@ -180,7 +180,7 @@ export default {
       if (!allowTarget || (connectionType && !connectionType.includes('source'))) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianso', {
+            i18n.t('packages_dag_node_only_as_target', {
               val1: source.name
             })
           )
@@ -1008,14 +1008,14 @@ export default {
         const outputNum = node.$outputs.length
 
         if (this.hasNodeError(id)) {
-          someErrorMsg = i18n.t('packages_dag_mixins_editor_noden', {
+          someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name
           })
           return true
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = i18n.t('packages_dag_mixins_editor_noden', {
+          someErrorMsg = i18n.t('packages_dag_node_none_input', {
             val1: node.name,
             val2: minInputs
           })
@@ -1023,7 +1023,7 @@ export default {
         }
 
         if (outputNum < minOutputs) {
-          someErrorMsg = i18n.t('packages_dag_mixins_editor_noden', {
+          someErrorMsg = i18n.t('packages_dag_node_none_output', {
             val1: node.name,
             val2: minOutputs
           })
@@ -1032,7 +1032,7 @@ export default {
 
         if (!inputNum && !outputNum) {
           // 存在没有连线的节点
-          someErrorMsg = i18n.t('packages_dag_mixins_editor_noden', {
+          someErrorMsg = i18n.t('packages_dag_node_none_connection', {
             val1: node.name
           })
           return true

@@ -6,28 +6,15 @@ import { AllLocales } from '../../locales'
 
 export const Select = FormSelect
 
-Select.Behavior = createBehavior(
-  {
-    name: 'Select',
-    extends: ['Field'],
-    selector: node => node.props['x-component'] === 'Select',
-    designerProps: {
-      propsSchema: createFieldSchema(AllSchemas.Select, null, true)
-    },
-    designerLocales: AllLocales.Select
+Select.Behavior = createBehavior({
+  name: 'Select',
+  extends: ['Field'],
+  selector: node => node.props['x-component'] === 'Select',
+  designerProps: {
+    propsSchema: createFieldSchema(AllSchemas.Select, null, true)
   },
-  {
-    name: 'Select.Field',
-    extends: ['Field'],
-    selector: node => {
-      return node.props['x-component'] === 'Select' && node.props['x-reactions']?.includes?.('loadSourceNodeFieldNames')
-    },
-    designerProps: {
-      propsSchema: createFieldSchema(AllSchemas.Select)
-    },
-    designerLocales: AllLocales.FieldSelect
-  }
-)
+  designerLocales: AllLocales.Select
+})
 
 Select.Resource = createResource({
   icon: 'SelectSource',

@@ -446,5 +446,20 @@ export default {
   packages_dag_shared_const_jinggao: 'Warning',
   packages_dag_shared_const_yiban: 'General',
   packages_dag_shared_const_yihuifu: 'Restored',
-  packages_dag_shared_const_gaojingzhong: 'Alarming'
+  packages_dag_shared_const_gaojingzhong: 'Alarming',
+  packages_dag_monitor_leftsider_chayixiangqing: 'Difference details',
+  packages_dag_components_nodedetaildialog_chulixieruhao: 'Processing/writing time',
+  packages_dag_components_nodedetaildialog_duquchulihao: 'Reading/processing time',
+  packages_dag_components_nodedetaildialog_chulihaoshidang:
+    'Processing time: the average time for the current node to process events',
+  packages_dag_components_nodedetaildialog_xieruhaoshidang:
+    'Writing time: the time it takes for the current target node to write data to the target database',
+  packages_dag_components_nodedetaildialog_chulihaoshiyuan:
+    'Processing time: the time it takes for the source node to complete the processing after reading the event from the source database',
+  packages_dag_node_only_as_source: 'This node({val1}) is only supported as a source',
+  packages_dag_node_only_as_target: 'This node({val1}) is only supported as a target',
+  packages_dag_node_none_input: '「 {val1} 」At least {val2} source nodes are required',
+  packages_dag_node_none_output: '「 {val1} 」At least {val2} target nodes are required',
+  packages_dag_node_none_connection: '「 {val1} 」 no connection',
+  packages_dag_external_storage: 'External storage'
 }

@@ -8,7 +8,7 @@
         class="filter-items__item flex justify-content-between align-items-center"
         @click="changeItem(item)"
       >
-        <span>{{ item.label }}</span>
+        <OverflowTooltip class="text-truncate" placement="right" :text="item.label" :open-delay="400" />
         <VIcon>arrow-right</VIcon>
       </div>
     </div>
@@ -142,7 +142,7 @@ import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
 import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
-import { VEmpty, VIcon } from '@tap/component'
+import { VEmpty, VIcon, OverflowTooltip } from '@tap/component'
 import { monitoringLogsApi, taskApi } from '@tap/api'
 
 import TimeSelect from './TimeSelect'
@@ -150,7 +150,7 @@ import TimeSelect from './TimeSelect'
 export default {
   name: 'Log',
 
-  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty },
+  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, OverflowTooltip },
 
   props: {
     dataflow: {

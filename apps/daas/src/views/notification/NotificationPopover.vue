@@ -236,19 +236,6 @@ export default {
             }
           })
           break
-        case 'inspect':
-          if (item.msg !== 'inspectDelete') {
-            let url = ''
-            let route = this.$router.resolve({
-              name: 'dataVerifyDetails',
-              params: {
-                id: item.inspectId
-              }
-            })
-            url = route.href
-            window.open(url, '_blank')
-          }
-          break
         case 'agent':
           this.$router.push({
             name: 'clusterManagement'

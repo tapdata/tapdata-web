@@ -144,6 +144,9 @@ const commandApi = new Command()
 import AlarmRule from './AlarmRule'
 const alarmRuleApi = new AlarmRule()
 
+import ExternalStorage from './ExternalStorage'
+const externalStorageApi = new ExternalStorage()
+
 import Alarm from './Alarm'
 const alarmApi = new Alarm()
 
@@ -196,7 +199,8 @@ export {
   discoveryApi,
   commandApi,
   alarmRuleApi,
-  alarmApi
+  alarmApi,
+  externalStorageApi
 }
 export * from './ApiClient'
 

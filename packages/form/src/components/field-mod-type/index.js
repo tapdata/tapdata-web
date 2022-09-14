@@ -200,7 +200,9 @@ export const FieldModType = connect(
         handleDataType(node, data) {
           console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id)
-          let ops = this.operations.filter(v => v.id === data.id && v.op === 'CONVERT')
+          let ops = this.operations.filter(
+            v => (v.id === data.id || data?.oldIdList.findIndex(t => t === v.id) > -1) && v.op === 'CONVERT'
+          )
           let op
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
