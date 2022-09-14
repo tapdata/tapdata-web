@@ -174,9 +174,9 @@
                 <!--                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">-->
                 <!--                  {{ $t('dataFlow.addTag') }}-->
                 <!--                </el-dropdown-item>-->
-                <el-dropdown-item v-readonlybtn="'Data_verify'" command="validate">{{
+                <!-- <el-dropdown-item v-readonlybtn="'Data_verify'" command="validate">{{
                   $t('dataVerify.dataVerify')
-                }}</el-dropdown-item>
+                }}</el-dropdown-item> -->
               </el-dropdown-menu>
             </el-dropdown>
           </div>

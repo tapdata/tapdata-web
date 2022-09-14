@@ -139,11 +139,19 @@ const routes = [
         },
         children: [
           {
+            path: 'details/:id',
+            name: 'MigrateDetails',
+            component: MigrateDetails,
+            meta: {
+              title: i18n.t('tap_task_details')
+            }
+          },
+          {
             path: 'Statistics',
             name: 'MigrateStatistics',
             component: MigrateDetails,
             meta: {
-              title: i18n.t('tap_task_details')
+              title: i18n.t('tap_monitor')
             }
           }
         ]
@@ -158,19 +166,19 @@ const routes = [
         },
         children: [
           {
-            path: 'statistics/:id',
-            name: 'dataflowStatistics',
-            component: EtlStatistics,
-            meta: {
-              title: i18n.t('tap_task_details')
-            }
-          },
-          {
             path: 'details/:id',
             name: 'dataflowDetails',
             component: EtlDetails,
             meta: {
               title: i18n.t('tap_task_details')
+            }
+          },
+          {
+            path: 'statistics/:id',
+            name: 'dataflowStatistics',
+            component: EtlStatistics,
+            meta: {
+              title: i18n.t('tap_monitor')
             }
           }
         ]
