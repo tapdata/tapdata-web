@@ -57,16 +57,18 @@ export const SHARECDC_MAP = {
   stopping: { text: i18n.t('packages_business_status_stopping'), icon: 'stopping', type: 'warning' }
 }
 
-export const alarmStatus = {
-  ING: { text: i18n.t('packages_dag_shared_const_gaojingzhong'), type: 'ING' },
-  RECOVER: { text: i18n.t('packages_dag_shared_const_yihuifu'), type: 'success' },
+export const ALARM_STATUS_MAP = {
+  ING: { text: i18n.t('packages_dag_shared_const_gaojingzhong'), type: 'waiting' },
+  RECOVER: { text: i18n.t('packages_dag_shared_const_yihuifu'), type: 'finish' },
   CLOESE: { text: i18n.t('packages_dag_components_alert_yiguanbi'), type: 'success' }
 }
 
-export const alarmLevel = {
-  RECOVERY: { text: i18n.t('packages_dag_components_alert_huifu'), type: 'success' },
-  NORMAL: { text: i18n.t('packages_dag_shared_const_yiban'), type: 'lprimary' },
-  WARNING: { text: i18n.t('packages_dag_shared_const_jinggao'), type: 'warning' },
-  CRITICAL: { text: i18n.t('packages_dag_shared_const_yanzhong'), type: 'warning' },
-  EMERGENCY: { text: i18n.t('packages_dag_shared_const_jinji'), type: 'danger' }
+export const ALARM_LEVEL_MAP = {
+  RECOVERY: { text: i18n.t('packages_dag_components_alert_huifu'), type: 'finish' },
+  NORMAL: { text: i18n.t('packages_dag_shared_const_yiban'), type: 'edit' },
+  WARNING: { text: i18n.t('packages_dag_shared_const_jinggao'), type: 'waiting' },
+  CRITICAL: { text: i18n.t('packages_dag_shared_const_yanzhong'), type: 'stop' },
+  EMERGENCY: { text: i18n.t('packages_dag_shared_const_jinji'), type: 'error' }
 }
+
+export const ALARM_LEVEL_SORT = ['EMERGENCY', 'CRITICAL', 'WARNING', 'NORMAL', 'RECOVERY']

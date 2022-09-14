@@ -160,6 +160,7 @@ import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
+import { ALARM_LEVEL_SORT } from '@tap/business'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -176,7 +177,6 @@ import editor from './mixins/editor'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
-import { alarmLevelSort } from './shared/const'
 
 export default {
   name: 'MigrationMonitor',
@@ -769,10 +769,10 @@ export default {
       const nodes = alarmList
         .filter(t => t.nodeId && t.level)
         .reduce((cur, next) => {
-          const index = alarmLevelSort.indexOf(cur[next.nodeId]?.level)
+          const index = ALARM_LEVEL_SORT.indexOf(cur[next.nodeId]?.level)
           return {
             ...cur,
-            [next.nodeId]: index !== -1 && index < alarmLevelSort.indexOf(next.level) ? cur[next.nodeId] : next
+            [next.nodeId]: index !== -1 && index < ALARM_LEVEL_SORT.indexOf(next.level) ? cur[next.nodeId] : next
           }
         }, {})
       this.alarmData = {

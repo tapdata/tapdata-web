@@ -86,7 +86,7 @@ import i18n from '@tap/i18n'
 import { mapGetters } from 'vuex'
 
 import { VIcon, VTable } from '@tap/component'
-import { alarmLevel, alarmStatus } from '@tap/dag/src/shared/const'
+import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
 
 export default {
   name: 'Alert',
@@ -175,9 +175,9 @@ export default {
           value: ''
         }
       ]
-      for (let key in alarmLevel) {
+      for (let key in ALARM_LEVEL_MAP) {
         result.push({
-          label: alarmLevel[key].text,
+          label: ALARM_LEVEL_MAP[key].text,
           value: key
         })
       }
@@ -191,9 +191,9 @@ export default {
           value: ''
         }
       ]
-      for (let key in alarmStatus) {
+      for (let key in ALARM_STATUS_MAP) {
         result.push({
-          label: alarmStatus[key].text,
+          label: ALARM_STATUS_MAP[key].text,
           value: key
         })
       }
@@ -246,9 +246,9 @@ export default {
       }
       this.list =
         data.map(t => {
-          t.levelLabel = alarmLevel[t.level].text
-          t.levelType = alarmLevel[t.level].type
-          t.statusLabel = alarmStatus[t.status].text
+          t.levelLabel = ALARM_LEVEL_MAP[t.level].text
+          t.levelType = ALARM_LEVEL_MAP[t.level].type
+          t.statusLabel = ALARM_STATUS_MAP[t.status].text
           return t
         }) || []
     },
