@@ -1,4 +1,5 @@
 import Http from './Http'
+import { isPlainObj } from '@tap/shared'
 export default class Notification extends Http {
   constructor() {
     super('/api/Messages')
@@ -28,8 +29,12 @@ export default class Notification extends Http {
   readAll(params) {
     return this.axios.post(this.url + '/readAll', params)
   }
-  list() {
-    return this.axios.get(this.url + '/list')
+  list(params) {
+    const config = { params }
+    if (isPlainObj(params)) {
+      Object.assign(config, params)
+    }
+    return this.axios.get(this.url + '/list', config)
   }
 }
 export { Notification }

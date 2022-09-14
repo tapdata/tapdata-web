@@ -36,54 +36,11 @@
         :key="item.id"
         @click="handleRead(item)"
       >
-        <div class="list-item-content" v-if="item.msg === 'JobDDL'">
+        <div class="list-item-content">
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-            <span>{{ systemMap[item.system] }}</span>
-            <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
-            <ElLink v-if="item.msg === 'deleted'">
-              {{ `${item.serverName} ` }}
-            </ElLink>
-            <ElLink type="primary" v-else class="link-primary cursor-pointer" @click="handleGo(item)">
-              {{ `${item.serverName} , ` }}
-            </ElLink>
-
-            <!-- </router-link> -->
-            <span>
-              {{
-                `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
-                  item.databaseName
-                } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
-              }}
-            </span>
-            <el-tooltip :content="item.sql" placement="top">
-              <span>
-                {{ `DDL SQL : ${item.sql}` }}
-              </span>
-            </el-tooltip>
-          </div>
-          <div class="list-item-time">
-            <span>{{ item.createTime }}</span>
-          </div>
-        </div>
-        <div class="list-item-content" v-else>
-          <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
-          <div class="list-item-desc">
-            <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-            <span>{{ systemMap[item.system] }}</span>
-            <span v-if="item.msg === 'deleted'">
-              {{ `${item.serverName} ` }}
-            </span>
-            <ElLink v-else type="primary" class="cursor-pointer px-1" @click="handleGo(item)">
-              {{ item.serverName }}
-            </ElLink>
-            <span>{{ typeMap[item.msg] }}</span>
-            <!-- <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span> -->
-            <span v-if="item.restDay">{{ item.restDay }} {{ $t('notify_day') }}</span>
-          </div>
-          <div class="list-item-time">
-            <span>{{ item.createTime }}</span>
+            <span>{{ item.title }}</span>
           </div>
         </div>
       </li>
@@ -133,9 +90,10 @@ export default {
       pagesize: 20,
       total: 0,
       colorMap: {
-        ERROR: '#D44D4D',
-        WARN: '#FF7D00',
-        INFO: '#2c65ff'
+        EMERGENCY: '#D44D4D',
+        WARNING: '#FF7D00',
+        INFO: '#2c65ff',
+        CRITICAL: '#c88500'
       },
       systemMap: {
         sync: this.$t('notify_sync'),
@@ -217,45 +175,23 @@ export default {
   created() {
     this.getData()
     this.getFilterItems()
-    this.$root.$on('notificationUpdate', () => {
-      this.getData()
-    })
   },
   methods: {
-    handleSetting() {
-      this.$router.push({ name: 'notificationSetting' })
-    },
     getData() {
-      let { search, msg } = this.searchParams
-      let where = {}
+      let where = {
+        msgType: 'ALARM',
+        page: this.currentPage,
+        size: this.pagesize
+      }
       if (!this.read) {
         where.read = false
       }
-      if (search || search !== '') {
-        where.level = search
-      }
-      if (msg || msg !== '') {
-        where.msg = msg
-      }
-      let filter = {
-        where,
-        order: 'createTime DESC',
-        limit: this.pagesize,
-        skip: (this.currentPage - 1) * this.pagesize
-      }
-
       this.loading = true
       notificationApi
-        .get({ filter: JSON.stringify(filter) })
+        .list(where)
         .then(data => {
           this.listData = data?.items || []
           this.total = data?.total || 0
-          //格式化日期
-          if (this.listData && this.listData.length > 0) {
-            this.listData.map(item => {
-              item['createTime'] = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
-            })
-          }
         })
         .finally(() => {
           this.loading = false
@@ -270,38 +206,18 @@ export default {
       this.pagesize = psize
       this.getData()
     },
-    getCount(read) {
-      let where = {}
-      if (read === false) {
-        where.read = false
-      }
-      if (this.searchParams.search || this.searchParams.search !== '') {
-        where.level = this.searchParams.search
-      }
-      if (this.searchParams.msg || this.searchParams.msg !== '') {
-        where.msg = this.searchParams.msg
-      }
-      notificationApi
-        .count({ where: JSON.stringify(where) })
-        .then(data => {
-          this.total = data?.count
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
     handleRead(item) {
       let read = this.read
       if (!item.read) {
         notificationApi.patch({ read: true, id: item.id }).then(() => {
           this.read = read
-          this.$root.$emit('notificationUpdate')
           let msg = {
             type: 'notification'
           }
           this.$ws.ready(() => {
             this.$ws.send(msg)
           }, true)
+          this.getData()
         })
       }
     },
@@ -364,46 +280,6 @@ export default {
       }
       this.getData()
     },
-    handleGo(item) {
-      switch (item.system) {
-        case 'migration':
-          this.$router.push({
-            name: 'MigrateEditor',
-            params: {
-              id: item.sourceId
-            }
-          })
-          break
-        case 'sync':
-          this.$router.push({
-            name: 'DataflowEditor',
-            query: {
-              id: item.sourceId,
-              isMoniting: true,
-              mapping: item.mappingTemplate
-            }
-          })
-          break
-        case 'inspect':
-          if (item.msg !== 'inspectDelete') {
-            let url = ''
-            let route = this.$router.resolve({
-              name: 'dataVerifyDetails',
-              params: {
-                id: item.inspectId
-              }
-            })
-            url = route.href
-            window.open(url, '_blank')
-          }
-          break
-        case 'agent':
-          this.$router.push({
-            name: 'clusterManagement'
-          })
-          break
-      }
-    },
     getFilterItems() {
       this.filterItems = [
         {
@@ -412,14 +288,11 @@ export default {
           type: 'select-inner',
           items: this.options,
           selectedWidth: '200px'
-        },
-        {
-          label: this.$t('notify_notice_type'),
-          key: 'msg',
-          type: 'select-inner',
-          items: this.msgOptions
         }
       ]
+    },
+    handleSetting() {
+      this.$router.push({ name: 'alarmSetting' })
     }
   }
 }

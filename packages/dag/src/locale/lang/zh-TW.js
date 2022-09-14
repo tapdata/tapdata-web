@@ -408,6 +408,8 @@ export default {
   packages_dag_node_none_input: '「 {val1} 」至少需要{val2}個源節點',
   packages_dag_node_none_output: '「 {val1} 」至少需要{val2}個目標節點',
   packages_dag_node_none_connection: '「 {val1} 」沒有任何連線',
+  packages_dag_node_only_as_source: '該節點「{val1}」僅支持作為源',
+  packages_dag_node_only_as_target: '該節點「{val1}」僅支持作為目標',
   packages_dag_external_storage: '外存配置',
   packages_dag_components_alert_dangqianrenwuyi: '當前任務已報錯停止，請關注!',
   packages_dag_components_alert_gaojingfashengci: '告警發生次數',
@@ -428,6 +430,7 @@ export default {
   packages_dag_components_nodedetaildialog_chulihaoshidang: '處理耗時：當前節點處理事件的平均耗時',
   packages_dag_components_nodedetaildialog_xieruhaoshidang: '寫入耗時：當前目標節點寫入數據到目標數據庫的耗時',
   packages_dag_components_nodedetaildialog_chulihaoshiyuan: '處理耗時：源節點從源數據庫讀取到事件後完成處理花費的時間',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian2: '增量時間點：',
   packages_dag_components_nodedetaildialog_dangqianbiaotongbu: '當前表同步進度',
   packages_dag_components_nodedetaildialog_quanliangtongbujin: '全量同步進度',
   packages_dag_components_nodedetaildialog_quanliangkaishishi: '全量開始時間：',
@@ -440,6 +443,10 @@ export default {
   packages_dag_monitor_leftsider_chayixiangqing: '差異詳情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延遲：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
-  packages_dag_node_only_as_source: '該節點「{val1}」僅支持作為源',
-  packages_dag_node_only_as_target: '該節點「{val1}」僅支持作為目標'
+  packages_dag_shared_const_jinji: '緊急',
+  packages_dag_shared_const_yanzhong: '嚴重',
+  packages_dag_shared_const_jinggao: '警告',
+  packages_dag_shared_const_yiban: '一般',
+  packages_dag_shared_const_yihuifu: '已恢復',
+  packages_dag_shared_const_gaojingzhong: '告警中'
 }

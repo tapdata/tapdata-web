@@ -74,7 +74,7 @@
           </template>
           <template v-if="dataflow.type !== 'initial_sync'">
             <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
-              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</span>
+              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
           </template>
@@ -92,7 +92,7 @@
         <div class="chart-box__content p-6 fs-8 flex flex-column align-items-center flex-fill justify-content-center">
           <template v-if="dataflow.type !== 'initial_sync'">
             <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
-              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</span>
+              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
           </template>

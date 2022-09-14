@@ -79,7 +79,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane class="tab-item" label="告警通知" name="alarm" v-loading="loading">
+      <el-tab-pane class="tab-item" label="告警通知" name="alarm" v-loading="loadingAlarm">
         <div class="tab-item-container">
           <ul class="tab-list notification-list" v-if="alarmData.length">
             <li class="notification-item" v-for="(item, index) in alarmData" :key="index" @click="handleRead(item.id)">
@@ -94,11 +94,8 @@
                     {{ item.serverName }}
                   </span>
                   <template>
-                    <span>{{ item.msg }}</span>
+                    <span>{{ item.title }}</span>
                   </template>
-                  <div class="item-time">
-                    <span>{{ item.createTime }}</span>
-                  </div>
                 </div>
               </div>
             </li>
@@ -134,16 +131,16 @@ export default {
     return {
       // unRead: 0,
       loading: false,
+      loadingAlarm: false,
       activeTab: 'system',
       listData: [],
       colorMap: {
         ERROR: '#D44D4D',
         WARN: '#FF7D00',
         INFO: '#2c65ff',
-        Emergency: '#D44D4D',
-        Critical: '#FF7D00',
-        Normal: '#2c65ff',
-        Warning: '#C39700'
+        EMERGENCY: '#D44D4D',
+        WARNING: '#FF7D00',
+        CRITICAL: '#c88500'
       },
       typeMap: TYPEMAP,
       systemMap: {
@@ -157,52 +154,7 @@ export default {
         Agent: 'Agent'
       },
       userOperations: [],
-      alarmData: [
-        {
-          level: 'Emergency',
-          createTime: '2022-08-25T06:50:44Z',
-          id: '63071bc48eefa8002ee2dfce',
-          msg: '已停止，当前无可用Agent，请尽快处理',
-          read: false,
-          serverName: 'Agent1',
-          sourceId: '63071b658eefa8002ee2df55',
-          system: 'Agent',
-          title: ''
-        },
-        {
-          level: 'Warning',
-          createTime: '2022-08-25T06:50:44Z',
-          id: '63071bc48eefa8002ee2dfce',
-          msg: '的增量延迟大于2分钟，已持续30分钟，请关注',
-          read: false,
-          serverName: '新任务@14:49:09',
-          sourceId: '63071b658eefa8002ee2df55',
-          system: 'migration',
-          title: ''
-        },
-        {
-          level: 'Critical',
-          createTime: '2022-08-25T06:50:44Z',
-          id: '63071bc48eefa8002ee2dfce',
-          msg: '已停止，当前2个可用Agent，请关注',
-          read: false,
-          serverName: 'Agent2',
-          sourceId: '63071b658eefa8002ee2df55',
-          system: 'Agent',
-          title: ''
-        },
-        {
-          level: 'Normal',
-          createTime: '2022-08-25T06:50:44Z',
-          id: '63071bc48eefa8002ee2dfce',
-          msg: '已停止，当前2个可用Agent，请关注',
-          read: false,
-          serverName: 'Agent3',
-          sourceId: '63071b658eefa8002ee2df55',
-          system: 'Agent',
-          title: ''
-        }
-      ]
+      alarmData: []
     }
   },
   computed: mapState({
@@ -299,6 +251,9 @@ export default {
       if (this.activeTab === 'user') {
         this.getUserOperations()
       }
+      if (this.activeTab === 'alarm') {
+        this.getAlarmData()
+      }
     },
     getUserOperations() {
       this.loading = true
@@ -324,6 +279,19 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    getAlarmData() {
+      let where = {
+        msgType: 'ALARM',
+        page: 1,
+        size: 20,
+        read: false
+      }
+      this.loadingAlarm = true
+      notificationApi.list(where).then(data => {
+        this.alarmData = data?.items || []
+        this.loadingAlarm = false
+      })
     },
     toCenter() {
       if (this.$route.name === 'notification') {

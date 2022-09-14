@@ -414,10 +414,6 @@ export default {
   packages_dag_nodes_targetdatabase_jiedianmiaoshu: 'node description',
   packages_dag_src_store_weizhaodaojiedian: 'node not found',
   packages_dag_src_store_qingkongjiedianshu: 'Clear the monitoring of node input and output',
-  packages_dag_node_none_input: '「 {val1} 」At least {val2} source nodes are required',
-  packages_dag_node_none_output: '「 {val1} 」At least {val2} target nodes are required',
-  packages_dag_node_none_connection: '「 {val1} 」 no connection',
-  packages_dag_external_storage: 'External storage',
   packages_dag_components_alert_dangqianrenwuyi:
     'The current task has been stopped with an error, please pay attention!',
   packages_dag_components_alert_gaojingfashengci: 'Number of alarm occurrences',
@@ -433,14 +429,7 @@ export default {
   packages_dag_components_nodedetaildialog_xieruhaoshi: 'Writing time',
   packages_dag_components_nodedetaildialog_zengliangduquyan: 'Incremental read latency',
   packages_dag_components_nodedetaildialog_pingjunduquhao: 'Average read time',
-  packages_dag_components_nodedetaildialog_chulixieruhao: 'Processing/writing time',
-  packages_dag_components_nodedetaildialog_duquchulihao: 'Reading/processing time',
-  packages_dag_components_nodedetaildialog_chulihaoshidang:
-    'Processing time: the average time for the current node to process events',
-  packages_dag_components_nodedetaildialog_xieruhaoshidang:
-    'Writing time: the time it takes for the current target node to write data to the target database',
-  packages_dag_components_nodedetaildialog_chulihaoshiyuan:
-    'Processing time: the time it takes for the source node to complete the processing after reading the event from the source database',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian2: 'Incremental time point:',
   packages_dag_components_nodedetaildialog_dangqianbiaotongbu: 'Current table synchronization progress',
   packages_dag_components_nodedetaildialog_quanliangtongbujin: 'Full synchronization progress',
   packages_dag_components_nodedetaildialog_quanliangkaishishi: 'Full start time:',
@@ -450,9 +439,28 @@ export default {
   packages_dag_monitor_leftsider_gengxin: 'Update:',
   packages_dag_monitor_leftsider_charu: 'Insert:',
   packages_dag_monitor_leftsider_renwushijiantong: 'Task event statistics (strips)',
-  packages_dag_monitor_leftsider_chayixiangqing: 'Difference details',
   packages_dag_monitor_leftsider_zuidazengliangyan: 'Maximum incremental delay:',
   packages_dag_monitor_leftsider_tongbuxinxi: 'Sync information',
+  packages_dag_shared_const_jinji: 'urgent',
+  packages_dag_shared_const_yanzhong: 'serious',
+  packages_dag_shared_const_jinggao: 'Warning',
+  packages_dag_shared_const_yiban: 'General',
+  packages_dag_shared_const_yihuifu: 'Restored',
+  packages_dag_shared_const_gaojingzhong: 'Alarming',
+  packages_dag_monitor_leftsider_chayixiangqing: 'Difference details',
+  packages_dag_components_nodedetaildialog_chulixieruhao: 'Processing/writing time',
+  packages_dag_components_nodedetaildialog_duquchulihao: 'Reading/processing time',
+  packages_dag_components_nodedetaildialog_chulihaoshidang:
+    'Processing time: the average time for the current node to process events',
+  packages_dag_components_nodedetaildialog_xieruhaoshidang:
+    'Writing time: the time it takes for the current target node to write data to the target database',
+  packages_dag_components_nodedetaildialog_chulihaoshiyuan:
+    'Processing time: the time it takes for the source node to complete the processing after reading the event from the source database',
   packages_dag_node_only_as_source: 'This node({val1}) is only supported as a source',
-  packages_dag_node_only_as_target: 'This node({val1}) is only supported as a target'
+  packages_dag_node_only_as_target: 'This node({val1}) is only supported as a target',
+  packages_dag_node_none_input: '「 {val1} 」At least {val2} source nodes are required',
+  packages_dag_node_none_output: '「 {val1} 」At least {val2} target nodes are required',
+  packages_dag_node_none_connection: '「 {val1} 」 no connection',
+  packages_dag_external_storage: 'External storage'
+
 }

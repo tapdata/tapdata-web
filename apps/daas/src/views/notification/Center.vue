@@ -65,27 +65,40 @@ export default {
   },
   methods: {
     selectPanel(name) {
-      if (name === 'system') {
-        this.$router.push({
-          name: 'systemNotification',
-          query: {
-            type: name
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'userNotification',
-          query: {
-            type: name
-          }
-        })
+      switch (name) {
+        case 'system':
+          this.$router.push({
+            name: 'systemNotification',
+            query: {
+              type: name
+            }
+          })
+          break
+        case 'user':
+          this.$router.push({
+            name: 'userNotification',
+            query: {
+              type: name
+            }
+          })
+          break
+        case 'alarmNotice':
+          this.$router.push({
+            name: 'alarmNotification',
+            query: {
+              type: name
+            }
+          })
+          break
+        case 'alarm':
+          this.$router.push({
+            name: 'systemAlarm',
+            query: {
+              type: name
+            }
+          })
+          break
       }
-      // this.$router.replace({
-      //   name: 'notification',
-      //   query: {
-      //     type: name
-      //   }
-      // })
     }
   }
 }

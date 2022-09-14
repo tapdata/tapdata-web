@@ -496,15 +496,8 @@ export default {
       result.forEach(row => {
         row.levelText = `[${row.level}]`
         row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
-        row.dataText = row.data?.length
-          ? JSON.stringify(
-              row.data.map(t => {
-                return {
-                  eventId: t.eventId
-                }
-              })
-            )
-          : ''
+        row.message = row.message.slice(0, 3000)
+        row.dataText = row.data?.length ? JSON.stringify(row.data.slice(0, 100)) : ''
         arr.forEach(el => {
           row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
         })

@@ -409,6 +409,8 @@ export default {
   packages_dag_node_none_input: '“ {val1} ”至少需要{val2}个源节点',
   packages_dag_node_none_output: '“ {val1} ”至少需要{val2}个目标节点',
   packages_dag_node_none_connection: '“ {val1} ”没有任何连线',
+  packages_dag_node_only_as_source: '该节点「{val1}」仅支持作为源',
+  packages_dag_node_only_as_target: '该节点「{val1}」仅支持作为目标',
   packages_dag_external_storage: '外存配置',
   packages_dag_components_alert_dangqianrenwuyi: '当前任务已报错停止，请关注!',
   packages_dag_components_alert_gaojingfashengci: '告警发生次数',
@@ -424,6 +426,7 @@ export default {
   packages_dag_components_nodedetaildialog_xieruhaoshi: '写入耗时',
   packages_dag_components_nodedetaildialog_zengliangduquyan: '增量读取延迟',
   packages_dag_components_nodedetaildialog_pingjunduquhao: '平均读取耗时',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian2: '增量时间点：',
   packages_dag_components_nodedetaildialog_chulixieruhao: '处理/写入耗时',
   packages_dag_components_nodedetaildialog_duquchulihao: '读取/处理耗时',
   packages_dag_components_nodedetaildialog_chulihaoshidang: '处理耗时：当前节点处理事件的平均耗时',
@@ -441,6 +444,10 @@ export default {
   packages_dag_monitor_leftsider_chayixiangqing: '差异详情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延迟：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
-  packages_dag_node_only_as_source: '该节点「{val1}」仅支持作为源',
-  packages_dag_node_only_as_target: '该节点「{val1}」仅支持作为目标'
+  packages_dag_shared_const_jinji: '紧急',
+  packages_dag_shared_const_yanzhong: '严重',
+  packages_dag_shared_const_jinggao: '警告',
+  packages_dag_shared_const_yiban: '一般',
+  packages_dag_shared_const_yihuifu: '已恢复',
+  packages_dag_shared_const_gaojingzhong: '告警中'
 }
