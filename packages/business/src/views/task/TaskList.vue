@@ -208,7 +208,7 @@
 import dayjs from 'dayjs'
 
 import { taskApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
+import { VIcon, FilterBar } from '@tap/component'
 import { toRegExp } from '@tap/shared'
 
 import SkipError from './SkipError'
@@ -219,7 +219,7 @@ import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
+  components: { VIcon, FilterBar, TablePage, SkipError, Upload, TaskStatus },
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',

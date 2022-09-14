@@ -106,10 +106,6 @@ const responseInterceptor = response => {
     // 从请求池清除掉错误请求
     removePending(response.config)
 
-    if (response?.config?.responseType === 'blob') {
-      return resolve(response.data)
-    }
-
     let data = response?.data
     let code = data?.code
     if (code === 'ok') {

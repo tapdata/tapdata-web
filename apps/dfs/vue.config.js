@@ -112,6 +112,13 @@ module.exports = {
           { name: 'removeTitle', active: true },
           { name: 'removeStyleElement', active: true },
           {
+            name: 'removeAttributesBySelector',
+            params: {
+              selector: ":not(path[fill='none'])",
+              attributes: ['fill']
+            }
+          },
+          {
             name: 'removeAttrs',
             active: true,
             params: {
