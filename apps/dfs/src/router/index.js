@@ -36,22 +36,6 @@ const EtlStatistics = async () => {
 }
 const routes = [
   {
-    path: '/dataflow/editor/:id',
-    name: 'DataflowEditor',
-    component: DagEditor,
-    meta: {
-      title: i18n.t('task_manage_etl')
-    }
-  },
-  {
-    path: '/dataflow/viewer/:id',
-    name: 'DataflowViewer',
-    component: DagEditor,
-    meta: {
-      title: i18n.t('task_manage_etl')
-    }
-  },
-  {
     path: '/',
     component: Layout,
     meta: {},
@@ -271,7 +255,18 @@ const routes = [
   {
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
-    component: DagEditor
+    component: DagEditor,
+    meta: {
+      title: i18n.t('task_manage_etl')
+    }
+  },
+  {
+    path: '/dataflow/viewer/:id',
+    name: 'DataflowViewer',
+    component: DagEditor,
+    meta: {
+      title: i18n.t('task_manage_etl')
+    }
   },
   {
     path: '/migrate/editor',
