@@ -39,7 +39,7 @@
         <div class="list-item-content">
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
           <div class="list-item-desc">
-            <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
+            <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
             <span>{{ item.title }}</span>
           </div>
         </div>
@@ -67,9 +67,8 @@
 </template>
 
 <script>
-import { TYPEMAP } from './tyepMap'
 import { SelectList } from '@tap/component'
-import dayjs from 'dayjs'
+import { ALARM_LEVEL_MAP } from '@tap/business'
 import { notificationApi } from '@tap/api'
 
 export default {
@@ -89,21 +88,6 @@ export default {
       currentPage: 1,
       pagesize: 20,
       total: 0,
-      colorMap: {
-        EMERGENCY: '#D44D4D',
-        WARNING: '#FF7D00',
-        INFO: '#2c65ff',
-        CRITICAL: '#c88500'
-      },
-      systemMap: {
-        sync: this.$t('notify_sync'),
-        migration: this.$t('notify_migration'),
-        dataFlow: this.$t('notify_data_flow'),
-        agent: this.$t('notify_manage_sever'),
-        inspect: this.$t('notify_inspect'),
-        JobDDL: this.$t('notify_ddl_deal'),
-        system: this.$t('notify_system')
-      },
       options: [
         {
           value: 'ERROR',
@@ -117,59 +101,7 @@ export default {
           value: 'INFO',
           label: 'INFO'
         }
-      ],
-      msgOptions: [
-        {
-          value: 'deleted',
-          label: this.$t('notification_jobDeleted')
-        },
-        {
-          value: 'paused',
-          label: this.$t('notification_jobPaused')
-        },
-        {
-          value: 'stoppedByError',
-          label: this.$t('notification_stoppedByError')
-        },
-        {
-          value: 'jobStateError',
-          label: this.$t('notification_jobStateError')
-        },
-        {
-          value: 'jobEncounterError',
-          label: this.$t('notification_jobEncounterError')
-        },
-        {
-          value: 'CDCLag',
-          label: this.$t('notification_CDCLag')
-        },
-        {
-          value: 'JobDDL',
-          label: this.$t('notification_DDL')
-        },
-        {
-          value: 'connectionInterrupted',
-          label: this.$t('notification_serverDisconnected')
-        },
-        {
-          value: 'manageSeverStartedSuccessfully',
-          label: this.$t('notification_agentStarted')
-        },
-        {
-          value: 'manageSeverStoppedSuccessfully',
-          label: this.$t('notification_agentStopped')
-        },
-        {
-          value: 'newSeverCreatedSuccessfully',
-          label: this.$t('notification_agentCreated')
-        },
-        {
-          value: 'newSeverDeletedSuccessfully',
-          label: this.$t('notification_agentDeleted')
-        }
-      ],
-      typeMap: TYPEMAP,
-      count: ''
+      ]
     }
   },
   created() {
@@ -190,7 +122,12 @@ export default {
       notificationApi
         .list(where)
         .then(data => {
-          this.listData = data?.items || []
+          let list = data?.items || []
+          this.listData = list.map(item => {
+            item.levelLabel = ALARM_LEVEL_MAP[item.level].text
+            item.levelType = ALARM_LEVEL_MAP[item.level].type
+            return item
+          })
           this.total = data?.total || 0
         })
         .finally(() => {
