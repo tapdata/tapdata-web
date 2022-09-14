@@ -89,10 +89,6 @@
                 </div>
                 <div>
                   <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-                  <span>{{ systemMap[item.system] }} </span>
-                  <span class="cursor-pointer px-1 primary" @click="handleGo(item)">
-                    {{ item.serverName }}
-                  </span>
                   <template>
                     <span>{{ item.title }}</span>
                   </template>
@@ -117,6 +113,7 @@ import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
 import { VIcon } from '@tap/component'
+import { alarmStatus, alarmLevel } from '@tap/shared'
 import { uniqueArr } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'

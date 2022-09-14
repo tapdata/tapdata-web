@@ -5,7 +5,6 @@
     </div>
     <el-tabs v-model="activeName">
       <el-tab-pane label="全部告警" name="first"></el-tab-pane>
-      <el-tab-pane label="系统告警" name="second"></el-tab-pane>
     </el-tabs>
     <TablePage
       ref="table"
