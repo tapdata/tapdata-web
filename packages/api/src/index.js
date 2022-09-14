@@ -199,7 +199,7 @@ export {
   discoveryApi,
   commandApi,
   alarmRuleApi,
-  externalStorageApi
+  externalStorageApi,
   proxyApi
 }
 export * from './ApiClient'
