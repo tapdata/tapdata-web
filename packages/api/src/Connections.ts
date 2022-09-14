@@ -42,6 +42,10 @@ export default class Connections extends Http {
   checkConnectionTask(id: string) {
     return this.axios.get(`${this.url}/task/` + id + '/10')
   }
+
+  getStats() {
+    return this.axios.get(this.url + '/stats')
+  }
 }
 
 export { Connections }

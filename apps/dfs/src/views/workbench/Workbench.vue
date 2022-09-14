@@ -123,8 +123,8 @@
 <script>
 import i18n from '@/i18n'
 
-import { VIcon } from '@tap/component'
-import { Chart } from '@tap/component'
+import { connectionsApi, taskApi } from '@tap/api'
+import { VIcon, Chart } from '@tap/component'
 import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 
@@ -288,7 +288,8 @@ export default {
   methods: {
     init() {
       this.loadAgent() // agent
-      this.loadConnection() // 连接、任务
+      this.getConnectionStats() // 任务
+      this.getTaskStats() // 任务
       this.loadNotices() // 通知公告
       this.loadBarData()
     },
@@ -308,38 +309,38 @@ export default {
           loading.close()
         })
     },
-    loadConnection() {
-      let agentList = this.agentList
+    // 获取连接数据
+    async getConnectionStats() {
       const connectionLoading = this.$loading({
         target: this.$refs.connection?.[0]
       })
+      const data = await connectionsApi.getStats().finally(() => {
+        connectionLoading.close()
+      })
+      let agentList = this.agentList
+      const stats = data || {}
+      if (stats) {
+        agentList[1].value = stats.total
+        agentList[1].list[0].value = stats.ready || 0
+        agentList[1].list[1].value = stats.invalid || 0
+      }
+    },
+    // 获取任务数据
+    async getTaskStats() {
       const taskLoading = this.$loading({
         target: this.$refs.task?.[0]
       })
-      this.$axios
-        .get('tm/api/DataFlows/chart')
-        .then(data => {
-          // 连接
-          const chart8 = data.chart8
-          if (chart8) {
-            agentList[1].value = chart8.total
-            agentList[1].list[0].value = chart8.ready || 0
-            agentList[1].list[1].value = chart8.invalid || 0
-          }
-
-          // 任务
-          const chart9 = data.chart9
-          if (chart9) {
-            agentList[2].value = chart9.total
-            agentList[2].list[0].value = chart9.initial_sync || 0
-            agentList[2].list[1].value = chart9.cdc || 0
-            agentList[2].list[2].value = chart9['initial_sync+cdc'] || 0
-          }
-        })
-        .finally(() => {
-          connectionLoading.close()
-          taskLoading.close()
-        })
+      const data = await taskApi.getStats().finally(() => {
+        taskLoading.close()
+      })
+      let agentList = this.agentList
+      const stats = data.taskTypeStats
+      if (stats) {
+        agentList[2].value = stats.total
+        agentList[2].list[0].value = stats.initial_sync || 0
+        agentList[2].list[1].value = stats.cdc || 0
+        agentList[2].list[2].value = stats['initial_sync+cdc'] || 0
+      }
     },
     loadNotices() {
       this.notices = [
@@ -427,7 +428,7 @@ export default {
     },
     createTask() {
       this.$router.push({
-        name: 'DataflowCreate'
+        name: 'MigrateCreate'
       })
     },
     createConnection() {
@@ -496,7 +497,6 @@ export default {
 .main-title,
 .aside-title {
   font-size: 18px;
-  height: 24px;
   line-height: 24px;
 }
 // 快速开始
