@@ -18,7 +18,7 @@
       <div class="flex align-items-center font-color-light">
         <div class="ml-10 pl-1">
           <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
-          <span>{{ stopTime }}</span>
+          <span>{{ startTime }}</span>
         </div>
         <div class="ml-4">
           <OverflowTooltip
@@ -218,9 +218,9 @@ export default {
       return Math.round(this.scale * 100) + '%'
     },
 
-    stopTime() {
-      const { stopTime } = this.dataflow
-      return stopTime ? dayjs(stopTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+    startTime() {
+      const { startTime } = this.dataflow
+      return startTime ? dayjs(startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
 
     agentData() {
