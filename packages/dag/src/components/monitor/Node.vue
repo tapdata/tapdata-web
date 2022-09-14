@@ -517,6 +517,9 @@ export default defineComponent({
       box-shadow: 0 0 0 2px rgba(255, 147, 44, 0.3);
     }
   }
+  .statistic-value {
+    color: #ff932c;
+  }
 }
 
 .alarm-error::v-deep {
@@ -526,6 +529,9 @@ export default defineComponent({
     &.selected {
       box-shadow: 0 0 0 2px rgba(212, 77, 77, 0.3);
     }
+  }
+  .statistic-value {
+    color: #d44d4d;
   }
 }
 </style>
