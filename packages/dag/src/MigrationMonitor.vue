@@ -292,6 +292,7 @@ export default {
     this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
+        this.initConnectionType()
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
@@ -933,6 +934,22 @@ export default {
       } else {
         this.jsPlumbIns.select().removeClass('running')
       }
+    },
+
+    /**
+     * 初始化连接样式【告警、错误】
+     */
+    initConnectionType() {
+      this.jsPlumbIns.registerConnectionTypes({
+        error: {
+          paintStyle: { stroke: '#D44D4D' },
+          hoverPaintStyle: { stroke: '#D44D4D' }
+        },
+        warn: {
+          paintStyle: { stroke: '#FF932C' },
+          hoverPaintStyle: { stroke: '#FF932C' }
+        }
+      })
     }
   }
 }
