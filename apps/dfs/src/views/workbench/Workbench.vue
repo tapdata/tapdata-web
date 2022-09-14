@@ -428,7 +428,7 @@ export default {
     },
     createTask() {
       this.$router.push({
-        name: 'DataflowCreate'
+        name: 'MigrateCreate'
       })
     },
     createConnection() {
