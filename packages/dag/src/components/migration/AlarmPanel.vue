@@ -31,6 +31,8 @@ export default observer({
         return { ...cur, [next.key]: Object.assign({}, next, alarmRulesMap[next.key]) }
       }, {}) || {}
     return {
+      formScope: {},
+
       schema: {
         type: 'object',
         properties: {
