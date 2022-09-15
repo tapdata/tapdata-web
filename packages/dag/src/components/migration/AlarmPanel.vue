@@ -21,7 +21,6 @@ export default observer({
   },
 
   data() {
-    this.getAllNode()
     const { alarmSettings = [], alarmRules = [] } = this.settings
     const alarmRulesMap =
       alarmRules.reduce((cur, next) => {
@@ -31,16 +30,7 @@ export default observer({
       alarmSettings.reduce((cur, next) => {
         return { ...cur, [next.key]: Object.assign({}, next, alarmRulesMap[next.key]) }
       }, {}) || {}
-    console.log('values', values, JSON.stringify(values))
     return {
-      formScope: {
-        checkName: value => {
-          return new Promise(resolve => {
-            this.handleCheckName(resolve, value)
-          })
-        }
-      },
-
       schema: {
         type: 'object',
         properties: {
@@ -246,71 +236,17 @@ export default observer({
     }
   },
 
-  created() {
-    // this.form.setState({ disabled: this.stateIsReadonly })
-  },
-
   methods: {
-    handleCheckName: debounce(function (resolve, value) {
-      taskApi.checkName(value, this.settings.id || '').then(data => {
-        resolve(data)
-      })
-    }, 500),
-    // 获取所有节点
-    getAllNode() {
-      let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
-      }
-      const allNodes = this.$store.getters['dataflow/allNodes']
-      const oldPoints = this.settings.syncPoints
-      const oldPointsMap = oldPoints?.length
-        ? oldPoints.reduce((map, point) => {
-            if (point.connectionId) map[point.connectionId] = point
-            return map
-          }, {})
-        : {}
-      const connectionMap = allNodes
-        .filter(node => node.$outputs.length && !node.$inputs.length)
-        .reduce((map, node) => {
-          const { connectionId } = node
-          const item = (map[connectionId] = {
-            connectionId,
-            connectionName: node.attrs.connectionName,
-            pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-            dateTime: '',
-            timeZone: systemTimeZone
-          })
-          if (oldPointsMap[connectionId]) {
-            const old = oldPointsMap[connectionId]
-            Object.assign(item, {
-              pointType: old.pointType,
-              dateTime: old.dateTime
-            })
-          }
-          return map
-        }, {})
-
-      this.settings.syncPoints = Object.values(connectionMap)
-    },
-
     // 绑定表单事件
     useEffects() {
       onFormInputChange(form => {
         const values = JSON.parse(JSON.stringify(form.values))
-        console.log('🚄onFormInputChange', values)
-        // this.updateNodeProps(form)
         this.saveTaskSettings(values)
       })
     },
 
     saveTaskSettings: debounce(function (values) {
       const { id, alarmSettings, alarmRules } = this.settings
-      console.log('saveTaskSettings--start', values)
-      console.log('id', id, alarmSettings, alarmRules)
       let alarmSettingsNew = cloneDeep(alarmSettings)
       let alarmRulesNew = cloneDeep(alarmRules)
       alarmSettingsNew.forEach(el => {
@@ -323,16 +259,11 @@ export default observer({
           el[key] = values[el.key][key]
         }
       })
-      console.log('alarmSettingsNew', alarmSettingsNew)
-      console.log('alarmRulesNew', alarmRulesNew)
-      // taskApi.checkName(value, this.settings.id || '').then(data => {
-      //   resolve(data)
-      // })
-      // taskApi.patch({
-      //   id,
-      //   alarmSettings,
-      //   alarmRules
-      // })
+      taskApi.patch({
+        id,
+        alarmSettings: alarmSettingsNew,
+        alarmRules: alarmRulesNew
+      })
     }, 500)
   }
 })
