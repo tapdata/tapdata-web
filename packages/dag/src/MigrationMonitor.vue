@@ -89,7 +89,7 @@
               :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
               :quota="quota"
-              :alarmData="alarmData"
+              :alarm="alarmData ? alarmData.nodeInfos[n.id] : undefined"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -105,7 +105,7 @@
             <VEmpty large></VEmpty>
           </div>
 
-          <AlarmStatistics></AlarmStatistics>
+          <AlarmStatistics :alarm-num="alarmData ? alarmData.alarmNum : undefined" />
         </main>
         <BottomPanel
           v-if="dataflow && dataflow.status && showBottomPanel"
@@ -297,6 +297,7 @@ export default {
   },
 
   mounted() {
+    console.log('enterMonitor') // eslint-disable-line
     this.setValidateLanguage()
     this.initNodeType()
     this.jsPlumbIns.ready(async () => {
