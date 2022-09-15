@@ -89,7 +89,7 @@
               :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
               :quota="quota"
-              :alarm="alarmData ? alarmData.nodeInfos[n.id] : undefined"
+              :alarm="alarmData ? alarmData.nodes[n.id] : undefined"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
