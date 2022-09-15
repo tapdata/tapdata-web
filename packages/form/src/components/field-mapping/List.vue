@@ -405,15 +405,16 @@ export default {
       let id = this.dataFlow?.id || this.dataFlow?.taskId
       let data = {
         taskId: id,
+        nodeId: this.dataFlow?.nodeId,
         tableName: this.selectRow?.sourceObjectName,
         fields: this.editFields || []
       }
       metadataInstancesApi.saveTable(data).then(() => {
-        this.$emit('updateVisible')
+        if (val) {
+          this.closeDialog()
+          this.$emit('updateVisible')
+        }
       })
-      if (val) {
-        this.closeDialog()
-      }
     },
     closeDialog() {
       this.searchField = ''
