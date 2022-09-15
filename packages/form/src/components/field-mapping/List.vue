@@ -405,6 +405,7 @@ export default {
       let id = this.dataFlow?.id || this.dataFlow?.taskId
       let data = {
         taskId: id,
+        nodeId: this.dataFlow?.nodeId,
         tableName: this.selectRow?.sourceObjectName,
         fields: this.editFields || []
       }
