@@ -17,6 +17,7 @@
         <TimeSelect
           :options="timeOptions"
           :range="[firstStartTime, lastStopTime || Date.now()]"
+          ref="timeSelect"
           @change="changeTime"
         ></TimeSelect>
         <ElInput

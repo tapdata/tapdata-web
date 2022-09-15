@@ -10,7 +10,7 @@
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
         </ElTabPane>
         <ElTabPane label="告警列表" name="alert">
-          <Alert v-if="currentTab === 'alert'" v-bind="$attrs" :currentTab="currentTab"></Alert>
+          <Alert v-if="currentTab === 'alert'" v-bind="$attrs" :currentTab="currentTab" @change-tab="changeTab"></Alert>
         </ElTabPane>
       </ElTabs>
 
@@ -88,6 +88,20 @@ export default {
 
     getLogRef() {
       return this.$refs.log
+    },
+
+    changeTab(tab, data) {
+      this.currentTab = tab
+      this.$nextTick(() => {
+        if (tab === 'log') {
+          data.nodeId &&
+            this.getLogRef()?.changeItem({
+              value: data.nodeId
+            })
+          data.lastOccurrenceTime &&
+            this.getLogRef()?.$refs.timeSelect.changeTime([new Date(data.lastOccurrenceTime).getTime(), Date.now()])
+        }
+      })
     }
   }
 }

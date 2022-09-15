@@ -8,8 +8,11 @@
         class="filter-items__item flex justify-content-between align-items-center"
         @click="changeItem(item)"
       >
-        <span>{{ `${item.label}(${item.num})` }}</span>
-        <VIcon>arrow-right</VIcon>
+        <div class="flex flex-fill w-0" style="width: 0">
+          <OverflowTooltip class="text-truncate" placement="right" :text="item.label" :open-delay="400" />
+          <span class="ml-1">{{ `(${item.num})` }}</span>
+        </div>
+        <div><VIcon>arrow-right</VIcon></div>
       </div>
     </div>
     <div class="main flex-fill flex flex-column pt-5">
@@ -71,8 +74,12 @@
         </template>
         <template slot="operation" slot-scope="scope" fixed="right">
           <div class="operate-columns">
-            <ElButton size="mini" type="text">{{ $t('packages_dag_components_alert_guanbi') }}</ElButton>
-            <ElButton size="mini" type="text">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton>
+            <ElButton size="mini" type="text" @click="handleClose(scope.row)">{{
+              $t('packages_dag_components_alert_guanbi')
+            }}</ElButton>
+            <ElButton size="mini" type="text" @click="handleLog(scope.row)">{{
+              $t('packages_dag_monitor_bottompanel_rizhi')
+            }}</ElButton>
           </div>
         </template>
       </VTable>
@@ -85,13 +92,14 @@ import i18n from '@tap/i18n'
 
 import { mapGetters } from 'vuex'
 
-import { VIcon, VTable } from '@tap/component'
+import { VIcon, VTable, OverflowTooltip } from '@tap/component'
 import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
+import { alarmApi } from '@tap/api'
 
 export default {
   name: 'Alert',
 
-  components: { VIcon, VTable },
+  components: { VIcon, VTable, OverflowTooltip },
 
   props: {
     dataflow: {
@@ -202,27 +210,31 @@ export default {
     },
 
     items() {
-      const nodeMap = this.alarmData?.nodeInfos.reduce((cur, next) => {
-        return { ...cur, [next.nodeId]: next }
-      }, {})
-      const totals = this.alarmData?.nodeInfos.reduce((cur, next) => {
-        return cur + (next.num || 0)
-      }, 0)
+      const nodeMap =
+        this.alarmData?.nodeInfos?.reduce((cur, next) => {
+          return { ...cur, [next.nodeId]: next }
+        }, {}) || {}
+      const totals =
+        this.alarmData?.nodeInfos?.reduce((cur, next) => {
+          return cur + (next.num || 0)
+        }, 0) || 0
       return [
         {
           label: '全部告警',
           value: 'all',
           num: totals
         },
-        ...this.allNodes.map(t => {
-          return {
-            label: t.name,
-            value: t.id,
-            source: t.$outputs.length > 0,
-            target: t.$inputs.length > 0,
-            num: nodeMap[t.id]?.num || 0
-          }
-        })
+        ...this.allNodes
+          .map(t => {
+            return {
+              label: t.name,
+              value: t.id,
+              source: t.$outputs.length > 0,
+              target: t.$inputs.length > 0,
+              num: nodeMap[t.id]?.num || 0
+            }
+          })
+          .filter(t => t.num)
       ]
     }
   },
@@ -233,7 +245,7 @@ export default {
 
   methods: {
     getList() {
-      let data = this.alarmData?.alarmList
+      let data = this.alarmData?.alarmList || []
       const { activeNodeId } = this
       const { level, status } = this.form
       if (activeNodeId !== 'all') {
@@ -260,6 +272,17 @@ export default {
       }
       this.activeNodeId = item.value
       this.getList()
+    },
+
+    handleClose(row = {}) {
+      alarmApi.close([row.id]).then(() => {
+        this.$message.success('关闭成功')
+        this.getList()
+      })
+    },
+
+    handleLog(row = {}) {
+      this.$emit('change-tab', 'log', row)
     }
   }
 }
