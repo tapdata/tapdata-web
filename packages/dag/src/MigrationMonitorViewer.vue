@@ -209,6 +209,10 @@ export default {
     }
   },
 
+  created() {
+    this.setStateReadonly(true)
+  },
+
   mounted() {
     this.setValidateLanguage()
     this.initNodeType()
