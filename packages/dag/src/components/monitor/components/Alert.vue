@@ -77,7 +77,9 @@
             <ElButton size="mini" type="text" @click="handleClose(scope.row)">{{
               $t('packages_dag_components_alert_guanbi')
             }}</ElButton>
-            <ElButton size="mini" type="text">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton>
+            <ElButton size="mini" type="text" @click="handleLog(scope.row)">{{
+              $t('packages_dag_monitor_bottompanel_rizhi')
+            }}</ElButton>
           </div>
         </template>
       </VTable>
@@ -277,6 +279,10 @@ export default {
         this.$message.success('关闭成功')
         this.getList()
       })
+    },
+
+    handleLog(row = {}) {
+      this.$emit('change-tab', 'log', row)
     }
   }
 }
