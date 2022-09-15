@@ -104,6 +104,8 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large></VEmpty>
           </div>
+
+          <AlarmStatistics></AlarmStatistics>
         </main>
         <BottomPanel
           v-if="dataflow && dataflow.status && showBottomPanel"
@@ -178,6 +180,7 @@ import editor from './mixins/editor'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
+import AlarmStatistics from './components/monitor/components/AlarmStatistics'
 
 export default {
   name: 'MigrationMonitor',
@@ -189,6 +192,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    AlarmStatistics,
     VExpandXTransition,
     VEmpty,
     ConfigPanel,

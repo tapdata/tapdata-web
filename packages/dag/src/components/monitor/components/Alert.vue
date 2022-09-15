@@ -145,7 +145,8 @@ export default {
           prop: 'summary'
         },
         // {
-        //   label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
+        //   label: i
+        //   18n.t('packages_dag_components_alert_gaojingshoucifa'),
         //   prop: 'first_occurrence_time',
         //   dataType: 'time'
         // },

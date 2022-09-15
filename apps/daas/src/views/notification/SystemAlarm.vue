@@ -26,25 +26,39 @@
         </el-button>
       </div>
       <el-table-column type="selection"></el-table-column>
-      <el-table-column label="告警级别" prop="level">
+      <el-table-column :label="$t('packages_dag_components_alert_gaojingjibie')" prop="level">
         <template #default="{ row }">
-          <span class="status-block" :class="['status-' + row.level]"> {{ row.level }} </span>
+          <span :class="['status-' + row.levelType, 'status-block']">
+            {{ row.levelLabel }}
+          </span>
         </template>
       </el-table-column>
-      <el-table-column label="告警状态" prop="status">
+      <el-table-column :label="$t('packages_dag_components_alert_gaojingzhuangtai')" prop="status">
         <template #default="{ row }">
-          <span> {{ typeMap[row.status] }} </span>
+          <span> {{ row.statusLabel }} </span>
         </template>
       </el-table-column>
       <el-table-column label="告警对象" prop="name"></el-table-column>
-      <el-table-column label="告警描述" prop="summary" min-width="150"></el-table-column>
-      <el-table-column label="告警首次发生时间" prop="firstOccurrenceTime"></el-table-column>
-      <el-table-column label="告警最近发生时间" prop="lastOccurrenceTime"></el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingmiaoshu')"
+        prop="summary"
+        min-width="150"
+      ></el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingshoucifa')"
+        prop="firstOccurrenceTime"
+      ></el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
+        prop="lastOccurrenceTime"
+      ></el-table-column>
       <el-table-column fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
-          <el-button type="text" @click="handleClose(row.id)">关闭</el-button>
+          <el-button type="text" @click="handleClose(row.id)">{{
+            $t('packages_dag_components_alert_guanbi')
+          }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button type="text">日志</el-button>
+          <el-button type="text">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>
         </template>
       </el-table-column>
     </TablePage>
@@ -53,7 +67,7 @@
 
 <script>
 import { FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
+import { TablePage, ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
 import { alarmApi } from '@tap/api'
 import dayjs from 'dayjs'
 
@@ -72,11 +86,6 @@ export default {
         status: '',
         time: '',
         keyword: ''
-      },
-      typeMap: {
-        ING: '进行中',
-        RECOVER: '恢复',
-        CLOESE: '关闭'
       },
       count: ''
     }
@@ -123,8 +132,15 @@ export default {
         return {
           total: data?.total || 0,
           data: list.map(item => {
-            item.firstOccurrenceTime = dayjs(item.firstOccurrenceTime).format('YYYY-MM-DD HH:mm:ss')
-            item.lastOccurrenceTime = dayjs(item.lastOccurrenceTime).format('YYYY-MM-DD HH:mm:ss')
+            item.firstOccurrenceTime = item.firstOccurrenceTime
+              ? dayjs(item.firstOccurrenceTime).format('YYYY-MM-DD HH:mm:ss')
+              : ''
+            item.lastOccurrenceTime = item.lastOccurrenceTime
+              ? dayjs(item.lastOccurrenceTime).format('YYYY-MM-DD HH:mm:ss')
+              : ''
+            item.levelLabel = ALARM_LEVEL_MAP[item.level].text
+            item.levelType = ALARM_LEVEL_MAP[item.level].type
+            item.statusLabel = ALARM_STATUS_MAP[item.status].text
             return item
           })
         }
@@ -202,30 +218,6 @@ export default {
     font-weight: 500;
     border-radius: 4px;
     box-sizing: border-box;
-  }
-  .status-RECOVERY {
-    color: #178061;
-    background-color: #c4f3cb;
-  }
-  .status-EMERGENCY {
-    color: #d44d4d;
-    background-color: #ffecec;
-  }
-  .status-INFO {
-    color: #0083c7;
-    background-color: #d1eefd;
-  }
-  .status-NORMAL {
-    color: #2c65ff;
-    background-color: #ddebff;
-  }
-  .status-WARNING {
-    color: #c39700;
-    background-color: #fdf1c8;
-  }
-  .status-CRITICAL {
-    color: #c88500;
-    background-color: #ffe4ae;
   }
 }
 </style>

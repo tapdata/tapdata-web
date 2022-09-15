@@ -88,7 +88,7 @@
                   <span class="unread-1zPaAXtSu inline-block"></span>
                 </div>
                 <div>
-                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
+                  <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
                   <template>
                     <span>{{ item.title }}</span>
                   </template>
@@ -117,6 +117,7 @@ import { uniqueArr } from '@/utils/util'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
 import { userLogsApi, notificationApi } from '@tap/api'
+import { ALARM_LEVEL_MAP } from '@tap/business'
 
 export default {
   components: {
@@ -133,10 +134,7 @@ export default {
       colorMap: {
         ERROR: '#D44D4D',
         WARN: '#FF7D00',
-        INFO: '#2c65ff',
-        EMERGENCY: '#D44D4D',
-        WARNING: '#FF7D00',
-        CRITICAL: '#c88500'
+        INFO: '#2c65ff'
       },
       typeMap: TYPEMAP,
       systemMap: {
@@ -285,7 +283,13 @@ export default {
       }
       this.loadingAlarm = true
       notificationApi.list(where).then(data => {
-        this.alarmData = data?.items || []
+        let list = data?.items || []
+        this.alarmData = list.map(item => {
+          item.levelLabel = ALARM_LEVEL_MAP[item.level].text
+          item.levelType = ALARM_LEVEL_MAP[item.level].type
+          return item
+        })
+
         this.loadingAlarm = false
       })
     },

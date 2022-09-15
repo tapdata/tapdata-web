@@ -24,38 +24,6 @@ const clearConnectionAlarm = endpoint => {
   })
 }
 
-const checkAlarm = (props, refs) => {
-  let level
-  const endpoint = refs.dfNode.targetPoint
-  if (!endpoint) return
-
-  const alarm = props.alarm
-  clearConnectionAlarm(endpoint)
-
-  if (alarm) {
-    let alarmLevel = alarm.level
-    if (['EMERGENY', 'CRITICAL'].includes(alarmLevel)) {
-      level = 'error'
-    } else if (['WARNING', 'NORMAL'].includes(alarmLevel)) {
-      level = 'warn'
-    }
-  }
-
-  level && setConnectionAlarm(endpoint, level)
-  return level
-}
-
-const initAlarm = (props, refs) => {
-  const nodeAlarmLevel = ref('')
-  watch(
-    () => props.alarm,
-    () => {
-      nodeAlarmLevel.value = checkAlarm(props, refs)
-    }
-  )
-  return nodeAlarmLevel
-}
-
 export default defineComponent({
   name: 'Node',
   components: {
