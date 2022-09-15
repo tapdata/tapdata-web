@@ -10,7 +10,13 @@
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
         </ElTabPane>
         <ElTabPane label="告警列表" name="alert">
-          <Alert v-if="currentTab === 'alert'" v-bind="$attrs" :currentTab="currentTab" @change-tab="changeTab"></Alert>
+          <Alert
+            v-if="currentTab === 'alert'"
+            v-bind="$attrs"
+            :currentTab="currentTab"
+            @change-tab="changeTab"
+            @load-data="$emit('load-data')"
+          ></Alert>
         </ElTabPane>
       </ElTabs>
 
