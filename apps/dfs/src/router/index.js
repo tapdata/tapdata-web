@@ -26,6 +26,10 @@ const MigrationMonitor = async () => {
   const { MigrationMonitor } = await import('@tap/dag')
   return MigrationMonitor
 }
+const MigrationMonitorViewer = async () => {
+  const { MigrationMonitorViewer } = await import('@tap/dag')
+  return MigrationMonitorViewer
+}
 const EtlDetails = async () => {
   const { EtlDetails } = await import('@tap/business')
   return EtlDetails
@@ -290,6 +294,15 @@ const routes = [
     component: MigrationEditor,
     meta: {
       title: 'tap_edit_task'
+    }
+  },
+  {
+    path: '/migrate/monitor-record/:id',
+    name: 'MigrationMonitorViewer',
+    component: MigrationMonitorViewer,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'Data_SYNC_menu'
     }
   }
 ]
