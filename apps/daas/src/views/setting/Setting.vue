@@ -105,27 +105,6 @@
                 <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
               </span>
             </template>
-            <template v-if="item.category === 'alarm'">
-              <VTable ref="table" class="table-list" :data="alarmData" :columns="columns" :hasPagination="false">
-                <template slot="keySlot" slot-scope="scope">
-                  <span>{{ keyMapping[scope.row.key] }}</span>
-                </template>
-                <template slot="valueSlot" slot-scope="scope">
-                  <span class="mr-2">连续</span>
-                  <el-input-number :controls="false" style="width: 100px" v-model="scope.row.point"></el-input-number>
-                  <span class="ml-2 mr-2"> 个点</span>
-                  <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
-                    <el-option lable=">=" value=">="></el-option>
-                    <el-option lable=">=" value=">"></el-option>
-                    <el-option lable=">=" value="="></el-option>
-                    <el-option lable="<=" value="<="></el-option>
-                    <el-option lable="<" value="<"></el-option>
-                  </el-select>
-                  <el-input-number :controls="false" v-model="scope.row.ms" style="width: 80px"></el-input-number>
-                  <span class="ml-2">ms时告警</span>
-                </template>
-              </VTable>
-            </template>
           </div>
         </div>
 
@@ -214,7 +193,7 @@ import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
 
 export default {
   name: 'Setting',
-  components: { VIcon, VTable },
+  components: { VIcon },
   data() {
     return {
       liceseItems: [],
@@ -222,7 +201,6 @@ export default {
       formData: {
         items: []
       },
-      alarmData: {}, //告警数据
       activeTab: 0,
       activePanel: 'Log',
       lang: getCurrentLanguage(),
@@ -350,7 +328,6 @@ export default {
           return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
         })
         _this.formData.items = vals
-        this.getAlarmData()
       })
       let lincenseData = {
         liceseItems: auth_data,
@@ -359,26 +336,8 @@ export default {
       }
       _this.formData.items.push(lincenseData)
     },
-    //告警设置 单独请求接口 单独提交数据
-    getAlarmData() {
-      alarmRuleApi.find().then(data => {
-        this.alarmData = data
-        let node = {
-          category: 'alarm',
-          category_sort: 9
-        }
-        this.formData.items.push(node)
-      })
-    },
     // 保存
     save() {
-      if (this.activePanel === 'alarm') {
-        //告警设置单独保存
-        alarmRuleApi.save(this.alarmData).then(() => {
-          this.$message.success(this.$t('message_save_ok'))
-        })
-        return
-      }
       let settingData = []
       this.formData.items.filter(item => {
         item.items.forEach(childItem => {
