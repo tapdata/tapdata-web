@@ -410,11 +410,11 @@ export default {
         fields: this.editFields || []
       }
       metadataInstancesApi.saveTable(data).then(() => {
-        this.$emit('updateVisible')
+        if (val) {
+          this.closeDialog()
+          this.$emit('updateVisible')
+        }
       })
-      if (val) {
-        this.closeDialog()
-      }
     },
     closeDialog() {
       this.searchField = ''
