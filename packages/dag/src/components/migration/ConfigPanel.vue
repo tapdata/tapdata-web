@@ -28,13 +28,19 @@
     <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
       <div class="panel-header flex align-center px-4 border-bottom">
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
-          {{ $t('packages_dag_task_stetting_basic_setting') }}
+          <!--          {{ $t('packages_dag_task_stetting_basic_setting') }}-->
+          <ElTabs ref="tabs" v-model="titleCurrentTab" class="config-tabs">
+            <ElTabPane :label="$t('packages_dag_task_stetting_basic_setting')"></ElTabPane>
+            <ElTabPane label="告警设置"></ElTabPane>
+          </ElTabs>
         </div>
         <!--<VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>-->
       </div>
-
-      <div class="panel-content flex-1">
+      <div v-if="titleCurrentTab === '0'" class="panel-content flex-1">
         <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
+      </div>
+      <div v-else-if="titleCurrentTab === '1'" class="panel-content flex-1">
+        <AlarmPanel v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
       </div>
     </div>
   </section>
@@ -51,6 +57,7 @@ import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import MetaPane from '../MetaPane'
 import { TextEditable } from '@tap/component'
+import AlarmPanel from './AlarmPanel'
 
 export default {
   name: 'ConfigPanel',
@@ -72,11 +79,12 @@ export default {
   data() {
     return {
       currentTab: '0',
+      titleCurrentTab: '0',
       name: this.activeNode?.name
     }
   },
 
-  components: { MetaPane, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
+  components: { MetaPane, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel, AlarmPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
@@ -195,7 +203,7 @@ $headerHeight: 40px;
   will-change: width;
 
   &.show-settings {
-    width: 320px;
+    width: 440px;
   }
 
   &-close {
@@ -250,7 +258,7 @@ $headerHeight: 40px;
       > .el-tabs__header {
         margin: 0;
         .el-tabs__nav-wrap {
-          padding-left: 52px;
+          padding-left: 0;
           padding-right: 16px;
 
           &::after {
