@@ -32,7 +32,7 @@ let pages = {
 module.exports = {
   pages,
   lintOnSave: true,
-  publicPath: '/console',
+  publicPath: '/console/v3',
   productionSourceMap: false,
 
   devServer: {
