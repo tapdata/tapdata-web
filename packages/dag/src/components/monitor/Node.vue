@@ -345,7 +345,7 @@ export default defineComponent({
     const alarmLevel = computed(() => {
       if (!props.alarm) return
       const alarmLevel = props.alarm.level
-      if (['EMERGENY', 'CRITICAL'].includes(alarmLevel)) {
+      if (['EMERGENCY', 'CRITICAL'].includes(alarmLevel)) {
         return 'error'
       } else if (['WARNING', 'NORMAL'].includes(alarmLevel)) {
         return 'warn'
@@ -397,7 +397,7 @@ export default defineComponent({
             trigger="hover"
             popper-class="node-statistic-popover rounded-lg"
           >
-            <div slot="reference" class="node-card rounded-lg px-2 pb-2 pt-6 mt-n3">
+            <div slot="reference" class="node-card rounded-lg px-2 pb-2 pt-4 mt-n2">
               <div class="flex align-center">
                 <div class="node-card-content p-2 flex-1 rounded-sm">{renderStatistic()}</div>
                 <button onClick={() => emit('open-detail')} class="ml-2 icon-btn">

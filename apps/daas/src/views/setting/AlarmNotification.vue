@@ -1,6 +1,9 @@
 <template>
   <section class="flex flex-1 flex-column ml-4 mr-4 overflow-hidden">
-    <header class="mb-4 mt-4">任务告警设置</header>
+    <header class="flex justify-content-between mb-4 mt-4">
+      <div>任务告警设置</div>
+      <div class="color-primary" @click="showAlarmRlues">默认告警规则</div>
+    </header>
     <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
       <template slot="key" slot-scope="scope">
         <span>{{ keyMapping[scope.row.key] }}</span>
@@ -30,12 +33,40 @@
       <el-button size="mini" @click="remoteMethod()">取消</el-button>
       <el-button size="mini" type="primary" @click="save()">保存</el-button>
     </footer>
+    <el-dialog title="任务默认告警规则设置" width="70%" :visible.sync="alarmRulesVisible">
+      <div class="mb-4">
+        此处告警规则设置为系统全局告警规则设置，任务运行监控页面的告警规则设置优先级高于系统全局设置
+      </div>
+      <VTable ref="table" class="table-list" :data="alarmData" :columns="alarmRulesColumns" :hasPagination="false">
+        <template slot="keySlot" slot-scope="scope">
+          <span>{{ keyMapping[scope.row.key] }}</span>
+        </template>
+        <template slot="valueSlot" slot-scope="scope">
+          <span class="mr-2">连续</span>
+          <el-input-number :controls="false" style="width: 100px" v-model="scope.row.point"></el-input-number>
+          <span class="ml-2 mr-2"> 个点</span>
+          <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
+            <el-option lable=">=" value=">="></el-option>
+            <el-option lable=">=" value=">"></el-option>
+            <el-option lable=">=" value="="></el-option>
+            <el-option lable="<=" value="<="></el-option>
+            <el-option lable="<" value="<"></el-option>
+          </el-select>
+          <el-input-number :controls="false" v-model="scope.row.ms" style="width: 80px"></el-input-number>
+          <span class="ml-2">ms时告警</span>
+        </template>
+      </VTable>
+      <footer class="flex justify-content-end mt-4">
+        <el-button size="mini" @click="alarmRulesVisible = false">取消</el-button>
+        <el-button size="mini" type="primary" @click="saveAlarmRules()">保存</el-button>
+      </footer>
+    </el-dialog>
   </section>
 </template>
 
 <script>
 import { VTable } from '@tap/component'
-import { settingsApi } from '@tap/api'
+import { alarmRuleApi, settingsApi } from '@tap/api'
 export default {
   name: 'AlarmNotification',
   components: { VTable },
@@ -70,6 +101,18 @@ export default {
         DATANODE_AVERAGE_HANDLE_CONSUME: '当数据源节点的平均处理耗时',
         PROCESSNODE_AVERAGE_HANDLE_CONSUME: '当节点的平均处理耗时'
       },
+      alarmRulesColumns: [
+        {
+          label: '告警指标',
+          slotName: 'keySlot'
+        },
+        {
+          label: '告警指标',
+          slotName: 'valueSlot'
+        }
+      ],
+      alarmRulesVisible: false,
+      alarmData: [],
       tableData: []
     }
   },
@@ -85,6 +128,22 @@ export default {
     save() {
       settingsApi.saveAlarm(this.tableData).then(() => {
         this.$message.success('保存成功')
+      })
+    },
+    showAlarmRlues() {
+      this.alarmRulesVisible = true
+      this.getAlarmData()
+    },
+    //告警设置 单独请求接口 单独提交数据
+    getAlarmData() {
+      alarmRuleApi.find().then(data => {
+        this.alarmData = data
+      })
+    },
+    saveAlarmRules() {
+      //告警设置单独保存
+      alarmRuleApi.save(this.alarmData).then(() => {
+        this.$message.success(this.$t('message_save_ok'))
       })
     }
   }
