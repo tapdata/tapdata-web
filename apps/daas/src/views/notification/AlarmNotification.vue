@@ -1,7 +1,7 @@
 <template>
   <div class="system-notification" v-loading="loading">
     <div class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">告警通知</div>
+      <div class="title font-color-dark fs-7">{{$t('daas_notification_alarmnotification_gaojingtongzhi')}}</div>
     </div>
 
     <el-tabs v-model="activeName" @tab-click="handleClick">

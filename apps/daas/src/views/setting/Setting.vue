@@ -186,6 +186,8 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import { uniq, find } from 'lodash'
 import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
@@ -228,19 +230,19 @@ export default {
         { label: this.$t('setting_Email_Template_DDL') }
       ],
       keyMapping: {
-        TASK_INCREMENT_DELAY: '任务的增量延迟',
-        DATANODE_HTTP_CONNECT_CONSUME: '数据源网路连接耗时',
-        DATANODE_TCP_CONNECT_CONSUME: '数据源协议连接耗时',
-        DATANODE_AVERAGE_HANDLE_CONSUME: '数据源节点的平均处理耗时',
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: '处理节点的平均处理耗时'
+        TASK_INCREMENT_DELAY: i18n.t('daas_setting_setting_renwudezengliang'),
+        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanwanglu'),
+        DATANODE_TCP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanxieyi'),
+        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_shujuyuanjiedian'),
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_chulijiediande')
       },
       columns: [
         {
-          label: '告警指标',
+          label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'keySlot'
         },
         {
-          label: '告警指标',
+          label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'valueSlot'
         }
       ]
