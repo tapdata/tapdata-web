@@ -22,30 +22,19 @@ export default observer({
   },
 
   data() {
-    const { alarmSettings = [], alarmRules = [] } = this.settings
-    const alarmRulesMap =
-      alarmRules.reduce((cur, next) => {
-        return { ...cur, [next.key]: next }
-      }, {}) || {}
-    let values =
-      alarmSettings.reduce((cur, next) => {
-        return { ...cur, [next.key]: Object.assign({}, next, alarmRulesMap[next.key]) }
-      }, {}) || {}
     return {
       formScope: {},
 
       schema: null,
 
       form: createForm({
-        // disabled: this.stateIsReadonly,
-        values,
         effects: this.useEffects
       })
     }
   },
 
   computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes'])
+    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes', 'activeNode', 'allEdges'])
   },
 
   watch: {
@@ -55,11 +44,13 @@ export default observer({
 
     nodeType() {
       this.loadSchema()
+      this.loadSchemaForm()
     }
   },
 
   mounted() {
     this.loadSchema()
+    this.loadSchemaForm()
   },
 
   methods: {
@@ -67,11 +58,16 @@ export default observer({
     useEffects() {
       onFormInputChange(form => {
         const values = JSON.parse(JSON.stringify(form.values))
+        // 节点类型
+        if (['source', 'target', 'process'].includes(this.nodeType)) {
+          this.saveNodeSettings(values)
+          return
+        }
         this.saveTaskSettings(values)
       })
     },
 
-    saveTaskSettings: debounce(function (values) {
+    saveTaskSettings: debounce(values => {
       const { id, alarmSettings, alarmRules } = this.settings
       let alarmSettingsNew = cloneDeep(alarmSettings)
       let alarmRulesNew = cloneDeep(alarmRules)
@@ -92,43 +88,36 @@ export default observer({
       })
     }, 500),
 
+    saveNodeSettings: debounce(values => {
+      const { id } = this.settings
+      let nodes = cloneDeep(this.allNodes)
+      let findOne = nodes?.find(t => t.id === this.activeNode?.id) || {}
+      let alarmSettings = findOne.alarmSettings || []
+      let alarmRules = findOne.alarmRules || []
+      alarmSettings.forEach(el => {
+        for (let key in el) {
+          el[key] = values[el.key][key]
+        }
+      })
+      alarmRules.forEach(el => {
+        for (let key in el) {
+          el[key] = values[el.key][key]
+        }
+      })
+      taskApi.patch({
+        id,
+        dag: {
+          edges: this.allEdges,
+          nodes
+        }
+      })
+    }, 500),
+
     loadSchema() {
-      switch (this.nodeType) {
+      const { nodeType } = this
+      this.schema = null
+      switch (nodeType) {
         case 'source':
-          this.schema = {
-            type: 'object',
-            properties: {
-              layout: {
-                type: 'void',
-                properties: {
-                  'TASK_STATUS_ERROR.open': this.getSwitch('源数据源无法连接告警'),
-                  'TASK_STATUS_ERROR.notify': this.getCheckboxGroup(),
-                  'TASK_INSPECT_ERROR.open': this.getSwitch('源数据源网络连接耗时告警'),
-                  'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup(),
-                  space1: this.getSpace(
-                    'TASK_INCREMENT_DELAY.point',
-                    'TASK_INCREMENT_DELAY.equalsFlag',
-                    'TASK_INCREMENT_DELAY.ms'
-                  ),
-                  'TASK_FULL_COMPLETE.open': this.getSwitch('源数据源协议连接耗时告警'),
-                  'TASK_FULL_COMPLETE.notify': this.getCheckboxGroup(),
-                  space2: this.getSpace(
-                    'TASK_INCREMENT_DELAY.point',
-                    'TASK_INCREMENT_DELAY.equalsFlag',
-                    'TASK_INCREMENT_DELAY.ms'
-                  ),
-                  'TASK_INCREMENT_COMPLETE.open': this.getSwitch('源节点平均处理耗时告警'),
-                  'TASK_INCREMENT_COMPLETE.notify': this.getCheckboxGroup(),
-                  space3: this.getSpace(
-                    'TASK_INCREMENT_DELAY.point',
-                    'TASK_INCREMENT_DELAY.equalsFlag',
-                    'TASK_INCREMENT_DELAY.ms'
-                  )
-                }
-              }
-            }
-          }
-          break
         case 'target':
           this.schema = {
             type: 'object',
@@ -136,28 +125,28 @@ export default observer({
               layout: {
                 type: 'void',
                 properties: {
-                  'TASK_STATUS_ERROR1.open': this.getSwitch('目标数据源无法连接告警'),
-                  'TASK_STATUS_ERROR1.notify': this.getCheckboxGroup(),
-                  'TASK_INSPECT_ERROR1.open': this.getSwitch('目标数据源网络连接耗时告警'),
-                  'TASK_INSPECT_ERROR1.notify': this.getCheckboxGroup(),
+                  'DATANODE_CANNOT_CONNECT.open': this.getSwitch('数据源无法连接告警'),
+                  'DATANODE_CANNOT_CONNECT.notify': this.getCheckboxGroup(),
+                  'DATANODE_HTTP_CONNECT_CONSUME.open': this.getSwitch('数据源网络连接耗时告警'),
+                  'DATANODE_HTTP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
                   space1: this.getSpace(
-                    'TASK_INCREMENT_DELAY.point',
-                    'TASK_INCREMENT_DELAY.equalsFlag',
-                    'TASK_INCREMENT_DELAY.ms'
+                    'DATANODE_HTTP_CONNECT_CONSUME.point',
+                    'DATANODE_HTTP_CONNECT_CONSUME.equalsFlag',
+                    'DATANODE_HTTP_CONNECT_CONSUME.ms'
                   ),
-                  'TASK_FULL_COMPLETE1.open': this.getSwitch('目标数据源协议连接耗时告警'),
-                  'TASK_FULL_COMPLETE1.notify': this.getCheckboxGroup(),
+                  'DATANODE_TCP_CONNECT_CONSUME.open': this.getSwitch('数据源协议连接耗时告警'),
+                  'DATANODE_TCP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
                   space2: this.getSpace(
-                    'TASK_INCREMENT_DELAY1.point',
-                    'TASK_INCREMENT_DELAY1.equalsFlag',
-                    'TASK_INCREMENT_DELAY1.ms'
+                    'DATANODE_TCP_CONNECT_CONSUME.point',
+                    'DATANODE_TCP_CONNECT_CONSUME.equalsFlag',
+                    'DATANODE_TCP_CONNECT_CONSUME.ms'
                   ),
-                  'TASK_INCREMENT_COMPLETE1.open': this.getSwitch('目标节点平均处理耗时告警'),
-                  'TASK_INCREMENT_COMPLETE1.notify': this.getCheckboxGroup(),
+                  'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch('节点平均处理耗时告警'),
+                  'DATANODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(),
                   space3: this.getSpace(
-                    'TASK_INCREMENT_DELAY1.point',
-                    'TASK_INCREMENT_DELAY1.equalsFlag',
-                    'TASK_INCREMENT_DELAY1.ms'
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.point',
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.ms'
                   )
                 }
               }
@@ -171,12 +160,12 @@ export default observer({
               layout: {
                 type: 'void',
                 properties: {
-                  'TASK_STATUS_ERROR.open': this.getSwitch('节点平均处理耗时告警'),
-                  'TASK_STATUS_ERROR.notify': this.getCheckboxGroup(),
+                  'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch('节点平均处理耗时告警'),
+                  'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(),
                   space1: this.getSpace(
-                    'TASK_INCREMENT_DELAY.point',
-                    'TASK_INCREMENT_DELAY.equalsFlag',
-                    'TASK_INCREMENT_DELAY.ms'
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.point',
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.ms'
                   )
                 }
               }
@@ -213,6 +202,25 @@ export default observer({
           }
           break
       }
+    },
+
+    loadSchemaForm() {
+      let { alarmSettings = [], alarmRules = [] } = this.settings
+      // 节点类型
+      if (['source', 'target', 'process'].includes(this.nodeType)) {
+        const findOne = this.allNodes?.find(t => t.id === this.activeNode?.id) || {}
+        alarmSettings = findOne.alarmSettings || []
+        alarmRules = findOne.alarmRules || []
+      }
+      const alarmRulesMap =
+        alarmRules.reduce((cur, next) => {
+          return { ...cur, [next.key]: next }
+        }, {}) || {}
+      let values =
+        alarmSettings.reduce((cur, next) => {
+          return { ...cur, [next.key]: Object.assign({}, next, alarmRulesMap[next.key]) }
+        }, {}) || {}
+      this.form.setValues(values)
     },
 
     getSwitch(title) {
@@ -293,7 +301,7 @@ export default observer({
       }
       result.properties[key1] = this.getInputNumber('连续')
       result.properties[key2] = this.getSelect('个点')
-      result.properties[key3] = this.getInputNumber('连续')
+      result.properties[key3] = this.getInputNumber()
       result.properties.ms = {
         title: 'ms',
         type: 'void',
