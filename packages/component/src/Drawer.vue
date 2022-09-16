@@ -29,11 +29,11 @@ export default {
       document.body.appendChild(this.$el)
     }
     this.resize()
-    document.getElementById('app').addEventListener('mousedown', this.blur)
+    document.getElementById('app').addEventListener('mouseup', this.blur)
   },
   destroyed() {
     this?.$el?.parentNode?.removeChild(this.$el)
-    document.getElementById('app').removeEventListener('mousedown', this.blur)
+    document.getElementById('app').removeEventListener('mouseup', this.blur)
   },
   methods: {
     resize() {
