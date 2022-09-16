@@ -1,8 +1,10 @@
 <template>
   <section class="flex flex-1 flex-column ml-4 mr-4 overflow-hidden">
     <header class="flex justify-content-between mb-4 mt-4">
-      <div>任务告警设置</div>
-      <div class="color-primary cursor-pointer" @click="showAlarmRlues">默认告警规则</div>
+      <div>{{ $t('daas_setting_alarmnotification_renwugaojingshe') }}</div>
+      <div class="color-primary cursor-pointer" @click="showAlarmRlues">
+        {{ $t('daas_setting_alarmnotification_morengaojinggui') }}
+      </div>
     </header>
     <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
       <template slot="key" slot-scope="scope">
@@ -12,56 +14,60 @@
         <div class="flex">
           <el-switch style="margin-right: 80px" v-model="scope.row.open"></el-switch>
           <el-checkbox-group v-model="scope.row.notify">
-            <el-checkbox label="SYSTEM">系统通知</el-checkbox>
-            <el-checkbox label="EMAIL">邮件通知</el-checkbox>
+            <el-checkbox label="SYSTEM">{{ $t('notify_system_notice') }}</el-checkbox>
+            <el-checkbox label="EMAIL">{{ $t('notify_email_notice') }}</el-checkbox>
           </el-checkbox-group>
         </div>
       </template>
       <template slot="interval" slot-scope="scope">
         <el-input-number :controls="false" style="width: 100px" v-model="scope.row.interval"></el-input-number>
         <el-select style="width: 100px" class="ml-2" v-model="scope.row.unit">
-          <el-option label="毫秒" value="MS"></el-option>
-          <el-option label="秒" value="SECOND"></el-option>
-          <el-option label="分" value="MINUTE"></el-option>
-          <el-option label="小时" value="HOUR"></el-option>
-          <el-option label="天" value="DAY"></el-option>
-          <el-option label="周" value="WEEK"></el-option>
+          <el-option :label="$t('task_info_ms')" value="MS"></el-option>
+          <el-option :label="$t('dag_data_setting_second')" value="SECOND"></el-option>
+          <el-option :label="$t('dataFlow_min')" value="MINUTE"></el-option>
+          <el-option :label="$t('dag_data_setting_hour')" value="HOUR"></el-option>
+          <el-option :label="$t('task_info_d')" value="DAY"></el-option>
+          <el-option :label="$t('timeToLive_w')" value="WEEK"></el-option>
         </el-select>
       </template>
     </VTable>
     <footer class="flex justify-content-end mb-4">
-      <el-button size="mini" @click="remoteMethod()">取消</el-button>
-      <el-button size="mini" type="primary" @click="save()">保存</el-button>
+      <el-button size="mini" @click="remoteMethod()">{{ $t('button_cancel') }}</el-button>
+      <el-button size="mini" type="primary" @click="save()">{{ $t('button_save') }}</el-button>
     </footer>
-    <el-dialog title="任务默认告警规则设置" width="70%" :visible.sync="alarmRulesVisible">
-      <div class="mb-4">
-        此处告警规则设置为系统全局告警规则设置，任务运行监控页面的告警规则设置优先级高于系统全局设置
-      </div>
+    <el-dialog
+      :title="$t('daas_setting_alarmnotification_renwumorengao')"
+      width="70%"
+      :visible.sync="alarmRulesVisible"
+    >
+      <div class="mb-4">{{ $t('daas_setting_alarmnotification_cichugaojinggui') }}</div>
       <VTable ref="table" class="table-list" :data="alarmData" :columns="alarmRulesColumns" :hasPagination="false">
         <template slot="keySlot" slot-scope="scope">
           <span>{{ keyMapping[scope.row.key] }}</span>
         </template>
         <template slot="valueSlot" slot-scope="scope">
-          <span class="mr-2">连续</span>
+          <span class="mr-2">{{ $t('daas_setting_alarmnotification_lianxu') }}</span>
           <el-input-number :controls="false" style="width: 100px" v-model="scope.row.point"></el-input-number>
-          <span class="ml-2 mr-2"> 个点</span>
+          <span class="ml-2 mr-2"> {{ $t('daas_setting_alarmnotification_gedian') }}</span>
           <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
             <el-option label=">=" :value="1"></el-option>
             <el-option label="<=" :value="-1"></el-option>
           </el-select>
           <el-input-number :controls="false" v-model="scope.row.ms" style="width: 80px"></el-input-number>
-          <span class="ml-2">ms时告警</span>
+          <span class="ml-2">{{ $t('daas_setting_alarmnotification_msshigaojing') }}</span>
         </template>
       </VTable>
       <footer class="flex justify-content-end mt-4">
-        <el-button size="mini" @click="alarmRulesVisible = false">取消</el-button>
-        <el-button size="mini" type="primary" @click="saveAlarmRules()">保存</el-button>
+        <el-button size="mini" @click="alarmRulesVisible = false">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveAlarmRules()">{{ $t('button_save') }}</el-button>
       </footer>
     </el-dialog>
   </section>
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { VTable } from '@tap/component'
 import { alarmRuleApi, settingsApi } from '@tap/api'
 export default {
@@ -71,40 +77,40 @@ export default {
     return {
       columns: [
         {
-          label: '描述',
+          label: i18n.t('module_form_describtion'),
           slotName: 'key'
         },
         {
-          label: '告警通知',
+          label: i18n.t('daas_notification_alarmnotification_gaojingtongzhi'),
           prop: 'notify',
           slotName: 'notify'
         },
         {
-          label: '发送间隔',
+          label: i18n.t('notify_noticeInterval'),
           prop: 'interval',
           slotName: 'interval'
         }
       ],
       keyMapping: {
-        TASK_STATUS_ERROR: '当任务遇到错误时',
-        TASK_INSPECT_ERROR: '当任务校验出错时',
-        TASK_FULL_COMPLETE: '当任务全量完成时',
-        TASK_INCREMENT_COMPLETE: '当任务增量完成时',
-        TASK_STATUS_STOP: '当任务停止时',
-        TASK_INCREMENT_DELAY: '当任务的增量延迟',
-        DATANODE_CANNOT_CONNECT: '当数据无法网路连接耗时',
-        DATANODE_HTTP_CONNECT_CONSUME: '当数据源网路连接耗时',
-        DATANODE_TCP_CONNECT_CONSUME: '当数据源协议连接耗时',
-        DATANODE_AVERAGE_HANDLE_CONSUME: '当数据源节点的平均处理耗时',
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: '当节点的平均处理耗时'
+        TASK_STATUS_ERROR: i18n.t('daas_setting_alarmnotification_dangrenwuyudao'),
+        TASK_INSPECT_ERROR: i18n.t('daas_setting_alarmnotification_dangrenwujiaoyan'),
+        TASK_FULL_COMPLETE: i18n.t('daas_setting_alarmnotification_dangrenwuquanliang'),
+        TASK_INCREMENT_COMPLETE: i18n.t('daas_setting_alarmnotification_dangrenwuzengliang'),
+        TASK_STATUS_STOP: i18n.t('daas_setting_alarmnotification_dangrenwutingzhi'),
+        TASK_INCREMENT_DELAY: i18n.t('daas_setting_alarmnotification_dangrenwudezeng'),
+        DATANODE_CANNOT_CONNECT: i18n.t('daas_setting_alarmnotification_dangshujuwufa'),
+        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('daas_setting_alarmnotification_dangshujuyuanwang'),
+        DATANODE_TCP_CONNECT_CONSUME: i18n.t('daas_setting_alarmnotification_dangshujuyuanxie'),
+        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_alarmnotification_dangshujuyuanjie'),
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_alarmnotification_dangjiediandeping')
       },
       alarmRulesColumns: [
         {
-          label: '告警指标',
+          label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'keySlot'
         },
         {
-          label: '告警指标',
+          label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'valueSlot'
         }
       ],
@@ -124,7 +130,7 @@ export default {
     },
     save() {
       settingsApi.saveAlarm(this.tableData).then(() => {
-        this.$message.success('保存成功')
+        this.$message.success(i18n.t('message_save_ok'))
       })
     },
     showAlarmRlues() {

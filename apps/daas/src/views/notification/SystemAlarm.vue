@@ -1,10 +1,10 @@
 <template>
   <div class="system-notification" v-loading="loading">
     <div class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">系统告警</div>
+      <div class="title font-color-dark fs-7">{{ $t('daas_notification_center_xitonggaojing') }}</div>
     </div>
     <el-tabs v-model="activeName">
-      <el-tab-pane label="全部告警" name="first"></el-tab-pane>
+      <el-tab-pane :label="$t('daas_notification_systemalarm_quanbugaojing')" name="first"></el-tab-pane>
     </el-tabs>
     <TablePage
       ref="table"
@@ -22,7 +22,7 @@
       </template>
       <div slot="operation">
         <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleClose">
-          <span>关闭</span>
+          <span>{{ $t('text_close') }}</span>
         </el-button>
       </div>
       <el-table-column type="selection"></el-table-column>
@@ -38,7 +38,7 @@
           <span> {{ row.statusLabel }} </span>
         </template>
       </el-table-column>
-      <el-table-column label="告警对象" prop="name"></el-table-column>
+      <el-table-column :label="$t('daas_notification_systemalarm_gaojingduixiang')" prop="name"></el-table-column>
       <el-table-column
         :label="$t('packages_dag_components_alert_gaojingmiaoshu')"
         prop="summary"
@@ -66,6 +66,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { FilterBar } from '@tap/component'
 import { TablePage, ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
 import { alarmApi } from '@tap/api'
@@ -149,27 +151,27 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: '告警状态',
+          label: i18n.t('daas_notification_systemalarm_gaojingzhuangtai'),
           key: 'status',
           type: 'select-inner',
           items: [
             {
-              label: '进行中',
+              label: i18n.t('task_info_progress'),
               value: 'ING'
             },
             {
-              label: '恢复',
+              label: i18n.t('task_button_recover'),
               value: 'RECOVER'
             },
             {
-              label: '关闭',
+              label: i18n.t('text_close'),
               value: 'CLOESED'
             }
           ],
           selectedWidth: '200px'
         },
         {
-          title: '告警时间',
+          title: i18n.t('daas_notification_systemalarm_gaojingshijian'),
           type: 'datetimerange',
           key: 'start,end'
         },
@@ -185,7 +187,7 @@ export default {
         ids = this.multipleSelection.map(item => item.id)
       }
       alarmApi.close(ids).then(() => {
-        this.$message.success('关闭成功')
+        this.$message.success(i18n.t('daas_notification_systemalarm_guanbichenggong'))
         this.table.fetch(1)
       })
     }

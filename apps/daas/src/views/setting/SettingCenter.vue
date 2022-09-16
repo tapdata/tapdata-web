@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { VIcon } from '@tap/component'
 export default {
   components: { VIcon },
@@ -43,7 +45,7 @@ export default {
         },
         {
           icon: 'bells',
-          name: '告警设置',
+          name: i18n.t('daas_setting_settingcenter_gaojingshezhi'),
           key: 'alarmSetting'
         },
         {
