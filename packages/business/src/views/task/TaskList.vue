@@ -189,9 +189,9 @@
                 <el-dropdown-item v-readonlybtn="'SYNC_job_delete'" command="del" :disabled="row.btnDisabled.delete">
                   {{ $t('packages_business_button_delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
+                <!-- <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
                   {{ $t('packages_business_dataFlow_addTag') }}
-                </el-dropdown-item>
+                </el-dropdown-item> -->
               </el-dropdown-menu>
             </el-dropdown>
           </div>
