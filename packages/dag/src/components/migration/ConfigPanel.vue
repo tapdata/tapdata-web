@@ -23,6 +23,9 @@
       <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')">
         <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
       </ElTabPane>
+      <ElTabPane v-if="isMonitor" label="告警设置">
+        <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === '2'" />
+      </ElTabPane>
     </ElTabs>
 
     <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
@@ -94,6 +97,16 @@ export default {
 
     isMonitor() {
       return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
+    },
+
+    nodeType() {
+      const { type, $inputs, $outputs } = this.activeNode || {}
+      if (type === 'database' || type === 'table') {
+        if (!$inputs.length) return 'source'
+        if (!$outputs.length) return 'target'
+        return 'process'
+      }
+      return 'process'
     }
   },
 
