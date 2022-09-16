@@ -157,6 +157,7 @@ export default {
             this.$emit('input', this.getValue())
             this.$router.replace({
               name: this.$route.name,
+              params: this.$route.params,
               query: this.getValue()
             })
           }, item.debounce)

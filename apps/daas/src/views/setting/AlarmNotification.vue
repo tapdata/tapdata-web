@@ -146,6 +146,7 @@ export default {
     saveAlarmRules() {
       //告警设置单独保存
       alarmRuleApi.save(this.alarmData).then(() => {
+        this.alarmRulesVisible = false
         this.$message.success(this.$t('message_save_ok'))
       })
     }

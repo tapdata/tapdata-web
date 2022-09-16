@@ -57,7 +57,7 @@ export default {
   }),
   watch: {
     $route(route) {
-      this.activePanel = route.query.type || 'system'
+      this.activePanel = route.query.type || route.params.type || 'system'
     }
   },
   created() {
@@ -93,6 +93,9 @@ export default {
         case 'alarm':
           this.$router.push({
             name: 'systemAlarm',
+            params: {
+              type: name
+            },
             query: {
               type: name
             }

@@ -9,9 +9,18 @@
       <ElButton type="text" v-if="activeTab === 'system'" @click="handleNotify">{{
         $t('notify_view_all_notify')
       }}</ElButton>
-      <ElButton type="text" v-else @click="$router.push({ name: 'notification', query: { type: 'user' } })">{{
-        $t('notify_view_more')
-      }}</ElButton>
+      <ElButton
+        type="text"
+        v-if="activeTab === 'alarm'"
+        @click="$router.push({ name: 'alarmNotification', query: { type: 'alarmNotice' } })"
+        >{{ $t('notify_view_more') }}</ElButton
+      >
+      <ElButton
+        type="text"
+        v-if="activeTab === 'user'"
+        @click="$router.push({ name: 'notification', query: { type: 'user' } })"
+        >{{ $t('notify_view_more') }}</ElButton
+      >
       <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
           <ul class="tab-list notification-list" v-if="listData.length">
@@ -87,7 +96,12 @@
       >
         <div class="tab-item-container">
           <ul class="tab-list notification-list" v-if="alarmData.length">
-            <li class="notification-item" v-for="(item, index) in alarmData" :key="index" @click="handleRead(item.id)">
+            <li
+              class="notification-item"
+              v-for="(item, index) in alarmData"
+              :key="index"
+              @click="handleRead(item.id, 'alarm')"
+            >
               <div class="flex flex-row">
                 <div class="mr-1">
                   <span class="unread-1zPaAXtSu inline-block"></span>
@@ -221,8 +235,12 @@ export default {
         })
       })
     },
-    handleRead(id) {
+    handleRead(id, type) {
       notificationApi.patch({ read: true, id: id }).then(() => {
+        if (type === 'alarm') {
+          this.getAlarmData()
+          return
+        }
         this.getUnreadData()
         this.$root.$emit('notificationUpdate')
       })

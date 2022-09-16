@@ -85,6 +85,7 @@ export default {
       loading: false,
       loadingConfig: false,
       searchParams: {
+        type: 'alarm',
         status: '',
         time: '',
         keyword: ''
@@ -156,16 +157,16 @@ export default {
           type: 'select-inner',
           items: [
             {
-              label: i18n.t('task_info_progress'),
+              label: i18n.t('packages_dag_shared_const_gaojingzhong'),
               value: 'ING'
             },
             {
-              label: i18n.t('task_button_recover'),
+              label: i18n.t('packages_dag_shared_const_yihuifu'),
               value: 'RECOVER'
             },
             {
-              label: i18n.t('text_close'),
-              value: 'CLOESED'
+              label: i18n.t('packages_dag_components_alert_yiguanbi'),
+              value: 'CLOESE'
             }
           ],
           selectedWidth: '200px'
