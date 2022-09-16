@@ -2,7 +2,7 @@
   <section class="flex flex-1 flex-column ml-4 mr-4 overflow-hidden">
     <header class="flex justify-content-between mb-4 mt-4">
       <div>任务告警设置</div>
-      <div class="color-primary" @click="showAlarmRlues">默认告警规则</div>
+      <div class="color-primary cursor-pointer" @click="showAlarmRlues">默认告警规则</div>
     </header>
     <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
       <template slot="key" slot-scope="scope">
@@ -46,11 +46,8 @@
           <el-input-number :controls="false" style="width: 100px" v-model="scope.row.point"></el-input-number>
           <span class="ml-2 mr-2"> 个点</span>
           <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
-            <el-option lable=">=" value=">="></el-option>
-            <el-option lable=">=" value=">"></el-option>
-            <el-option lable=">=" value="="></el-option>
-            <el-option lable="<=" value="<="></el-option>
-            <el-option lable="<" value="<"></el-option>
+            <el-option label=">=" :value="1"></el-option>
+            <el-option label="<=" :value="-1"></el-option>
           </el-select>
           <el-input-number :controls="false" v-model="scope.row.ms" style="width: 80px"></el-input-number>
           <span class="ml-2">ms时告警</span>
