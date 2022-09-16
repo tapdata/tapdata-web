@@ -6,30 +6,28 @@
           <button @click="$emit('page-return')" class="icon-btn">
             <VIcon size="18">left</VIcon>
           </button>
-          <TextEditable
-            v-model="name"
-            :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-            max-width="260"
-            readonly
-            class="dataflow-name"
-            @change="onNameInputChange"
+          <OverflowTooltip
+            class="task-name text-truncate fs-7 fw-bold font-color-dark"
+            placement="bottom"
+            :text="name"
+            :open-delay="400"
           />
           <span class="ml-4">{{ syncType[dataflow.type] }}</span>
           <TaskStatus :task="dataflow" class="ml-4" />
         </div>
-        <div class="flex align-items-center font-color-light ml-10 pl-1">
+        <div class="flex align-items-center font-color-light ml-10 mt-1">
           <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
           <span>{{ startTime }}</span>
         </div>
       </div>
       <div class="agent-data__item ml-4 pl-4">
         <OverflowTooltip
-          class="agent-name__item text-truncate mb-2"
-          placement="right"
-          :text="dataflow.agentId || dataflow.agentName || '-'"
+          class="agent-name__item text-truncate mb-2 font-color-dark"
+          placement="bottom"
+          :text="dataflow.agentId || dataflow.agentName || '-' + dataflow.agentId"
           :open-delay="400"
         />
-        <div v-if="agentData" class="font-color-light">
+        <div v-if="agentData" class="font-color-sslight">
           <span>CPU：</span>
           <span>{{ agentData.cpuUsage }}</span>
           <span class="ml-4">MEM：</span>
@@ -404,8 +402,8 @@ $sidebarBg: #fff;
   }
 }
 
-.dataflow-name {
-  height: 24px;
+.task-name {
+  max-width: 180px;
 }
 
 .agent-data__item {
