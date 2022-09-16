@@ -24,7 +24,12 @@
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
-                  <el-select v-model="item.lagTimeUtil" slot="append" :placeholder="$t('common_placeholder_select')" class="input-with-select">
+                  <el-select
+                    v-model="item.lagTimeUtil"
+                    slot="append"
+                    :placeholder="$t('common_placeholder_select')"
+                    class="input-with-select"
+                  >
                     <el-option label="hour" value="hour"></el-option>
                     <el-option label="second" value="second"></el-option>
                   </el-select>
@@ -63,7 +68,12 @@
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
-                  <el-select v-model="item.util" slot="append" :placeholder="$t('common_placeholder_select')" class="input-with-select">
+                  <el-select
+                    v-model="item.util"
+                    slot="append"
+                    :placeholder="$t('common_placeholder_select')"
+                    class="input-with-select"
+                  >
                     <el-option label="hour" value="hour"></el-option>
                     <el-option label="second" value="second"></el-option>
                   </el-select>

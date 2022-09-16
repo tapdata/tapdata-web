@@ -79,7 +79,12 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane class="tab-item" :label="$t('daas_notification_alarmnotification_gaojingtongzhi')" name="alarm" v-loading="loadingAlarm">
+      <el-tab-pane
+        class="tab-item"
+        :label="$t('daas_notification_alarmnotification_gaojingtongzhi')"
+        name="alarm"
+        v-loading="loadingAlarm"
+      >
         <div class="tab-item-container">
           <ul class="tab-list notification-list" v-if="alarmData.length">
             <li class="notification-item" v-for="(item, index) in alarmData" :key="index" @click="handleRead(item.id)">

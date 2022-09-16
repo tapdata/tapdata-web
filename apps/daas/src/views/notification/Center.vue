@@ -14,11 +14,11 @@
           </li>
           <li :class="{ active: activePanel === 'alarmNotice' }" @click="selectPanel('alarmNotice')">
             <i class="iconfont icon-lishijilu"></i>
-            <span class="content">{{$t('daas_notification_alarmnotification_gaojingtongzhi')}}</span>
+            <span class="content">{{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}</span>
           </li>
           <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">
             <i class="iconfont icon-lishijilu"></i>
-            <span class="content">{{$t('daas_notification_center_xitonggaojing')}}</span>
+            <span class="content">{{ $t('daas_notification_center_xitonggaojing') }}</span>
           </li>
         </ul>
       </div>
