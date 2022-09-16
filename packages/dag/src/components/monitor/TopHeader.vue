@@ -1,44 +1,40 @@
 <template>
   <header class="layout-header border-bottom p-4">
-    <div>
-      <div class="flex align-items-center">
-        <button @click="$emit('page-return')" class="icon-btn">
-          <VIcon size="18">left</VIcon>
-        </button>
-        <TextEditable
-          v-model="name"
-          :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-          max-width="260"
-          readonly
-          @change="onNameInputChange"
-        />
-        <span class="ml-4">{{ syncType[dataflow.type] }}</span>
-        <TaskStatus :task="dataflow" class="ml-4" />
-      </div>
-      <div class="flex align-items-center font-color-light">
-        <div class="ml-10 pl-1">
+    <div class="flex">
+      <div>
+        <div class="flex align-items-center">
+          <button @click="$emit('page-return')" class="icon-btn">
+            <VIcon size="18">left</VIcon>
+          </button>
+          <TextEditable
+            v-model="name"
+            :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+            max-width="260"
+            readonly
+            class="dataflow-name"
+            @change="onNameInputChange"
+          />
+          <span class="ml-4">{{ syncType[dataflow.type] }}</span>
+          <TaskStatus :task="dataflow" class="ml-4" />
+        </div>
+        <div class="flex align-items-center font-color-light ml-10 pl-1">
           <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
           <span>{{ startTime }}</span>
         </div>
-        <div class="ml-4">
-          <OverflowTooltip
-            class="text-truncate"
-            placement="right"
-            :text="dataflow.agentId || dataflow.agentName || '-'"
-            :open-delay="400"
-            style="width: 65px"
-          />
-        </div>
-        <div v-if="agentData" class="ml-4">
+      </div>
+      <div class="agent-data__item ml-4 pl-4">
+        <OverflowTooltip
+          class="agent-name__item text-truncate mb-2"
+          placement="right"
+          :text="dataflow.agentId || dataflow.agentName || '-'"
+          :open-delay="400"
+        />
+        <div v-if="agentData" class="font-color-light">
           <span>CPU：</span>
           <span>{{ agentData.cpuUsage }}</span>
-        </div>
-        <div class="ml-4">
-          <span>MEM：</span>
+          <span class="ml-4">MEM：</span>
           <span>{{ agentData.memoryRate }}</span>
-        </div>
-        <div class="ml-4">
-          <span>GC：</span>
+          <span class="ml-4">GC：</span>
           <span>{{ agentData.gcRate }}</span>
         </div>
       </div>
@@ -302,48 +298,16 @@ $radius: 4px;
 $baseHeight: 26px;
 $sidebarBg: #fff;
 
-.btn-base {
-  padding-left: 6px;
-  padding-right: 6px;
-  height: $baseHeight;
-  background-color: #eee;
-  color: #606266;
-  border: none;
-  border-radius: $radius;
-  &:hover {
-    background-color: #e1e1e1;
-    color: #606266;
-  }
-  &.is-disabled {
-    background: #eee;
-    color: #bbb;
-  }
-}
-
-.btn-operation {
-  padding-left: 6px;
-  padding-right: 10px;
-  background-color: #e1e1e1;
-  &:hover {
-    background-color: #cfcfcf;
-  }
-}
-
 .layout-header {
   position: relative;
   z-index: 10;
   display: flex;
-  //justify-content: space-between;
   align-items: center;
   width: 100%;
   flex: 0 0 48px;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   box-sizing: border-box;
-
-  .title-wrap {
-    width: $sidebarW;
-  }
 
   .nav-icon {
     width: 40px;
@@ -353,50 +317,6 @@ $sidebarBg: #fff;
     font-size: 24px;
     &:hover {
       background-color: var(--primary-hover);
-    }
-  }
-
-  .title-input-wrap {
-    position: relative;
-    flex: 1;
-    max-width: 214px;
-    font-size: 13px;
-
-    &:hover {
-      .title-input {
-        border-color: #dcdfe6;
-      }
-      .title-input-icon {
-        color: map-get($color, primary);
-      }
-    }
-
-    .title-input {
-      position: relative;
-      padding-left: 8px;
-      padding-right: 28px;
-      width: 230px;
-      height: 28px;
-      line-height: 28px;
-      outline: none;
-      box-shadow: none;
-      background: 0 0;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-
-      &:focus {
-        border-color: map-get($color, primary);
-        & + .title-input-icon {
-          color: map-get($color, primary);
-        }
-      }
-    }
-
-    .title-input-icon {
-      position: absolute;
-      right: 8px;
-      height: 28px;
     }
   }
 
@@ -429,10 +349,6 @@ $sidebarBg: #fff;
   .icon-btn {
     margin-right: 18px;
   }
-
-  //.icon-btn + .icon-btn {
-  //  margin-left: 18px;
-  //}
 
   .btn-setting {
     padding: 0;
@@ -479,32 +395,6 @@ $sidebarBg: #fff;
     }
   }
 
-  //::v-deep {
-  //  .el-button {
-  //    line-height: 1;
-  //
-  //    &.btn--text {
-  //      min-width: auto;
-  //      background: unset;
-  //      border: none;
-  //      padding: 7px 8px;
-  //      &:hover {
-  //        background: $hoverBg;
-  //      }
-  //      > span {
-  //        display: flex;
-  //        align-items: center;
-  //        gap: 4px;
-  //      }
-  //    }
-  //  }
-  //  .el-link--inner {
-  //    display: flex;
-  //    align-items: center;
-  //    gap: 4px;
-  //  }
-  //}
-
   .operation-center {
     position: absolute;
     top: 0;
@@ -513,24 +403,21 @@ $sidebarBg: #fff;
     transform: translateX(-50%);
   }
 }
+
+.dataflow-name {
+  height: 24px;
+}
+
+.agent-data__item {
+  border-left: 1px solid #f2f2f2;
+}
+
+.agent-name__item {
+  width: 280px;
+}
 </style>
 
 <style lang="scss">
-.choose-pane-wrap {
-  max-width: 450px;
-  .input-filled .el-input__inner {
-    height: 40px;
-    line-height: 40px;
-  }
-}
-
-.input-filled {
-  .el-input__inner {
-    border: 0;
-    border-radius: 0;
-    background: unset;
-  }
-}
 .choose-list-wrap {
   max-width: 450px;
   max-height: 274px;
