@@ -28,13 +28,12 @@
     <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
       <div class="panel-header flex align-center px-4 border-bottom">
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
-          <!--          {{ $t('packages_dag_task_stetting_basic_setting') }}-->
-          <ElTabs ref="tabs" v-model="titleCurrentTab" class="config-tabs">
+          <ElTabs v-if="isMonitor" ref="tabs" v-model="titleCurrentTab" class="setting-tabs">
             <ElTabPane :label="$t('packages_dag_task_stetting_basic_setting')"></ElTabPane>
             <ElTabPane label="告警设置"></ElTabPane>
           </ElTabs>
+          <span v-else>{{ $t('packages_dag_task_stetting_basic_setting') }}</span>
         </div>
-        <!--<VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>-->
       </div>
       <div v-if="titleCurrentTab === '0'" class="panel-content flex-1">
         <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
@@ -91,6 +90,10 @@ export default {
 
     showPanel() {
       return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
+    },
+
+    isMonitor() {
+      return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
     }
   },
 
@@ -258,7 +261,7 @@ $headerHeight: 40px;
       > .el-tabs__header {
         margin: 0;
         .el-tabs__nav-wrap {
-          padding-left: 0;
+          padding-left: 52px;
           padding-right: 16px;
 
           &::after {
@@ -290,6 +293,18 @@ $headerHeight: 40px;
 
     .resize-trigger {
       background: 0 0 !important;
+    }
+
+    .setting-tabs.el-tabs {
+      height: 100%;
+      > .el-tabs__header {
+        .el-tabs__nav-wrap {
+          padding-left: 0;
+          &::after {
+            height: 0;
+          }
+        }
+      }
     }
   }
 }
