@@ -17,7 +17,8 @@ export default observer({
   components: { FormRender },
   props: {
     settings: Object,
-    scope: Object
+    scope: Object,
+    nodeType: String
   },
 
   data() {
@@ -33,192 +34,7 @@ export default observer({
     return {
       formScope: {},
 
-      schema: {
-        type: 'object',
-        properties: {
-          layout: {
-            type: 'void',
-            properties: {
-              'TASK_STATUS_ERROR.open': {
-                title: '任务运行出错告警',
-                type: 'string',
-                required: 'true',
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
-              'TASK_STATUS_ERROR.notify': {
-                type: 'array',
-                'x-decorator': 'FormItem',
-                'x-component': 'Checkbox.Group',
-                enum: [
-                  { label: '系统通知', value: 'SYSTEM' },
-                  { label: '邮件通知', value: 'EMAIL' }
-                ]
-              },
-
-              'TASK_INSPECT_ERROR.open': {
-                title: '任务校验出错告警',
-                type: 'string',
-                required: 'true',
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
-              'TASK_INSPECT_ERROR.notify': {
-                type: 'array',
-                'x-decorator': 'FormItem',
-                'x-component': 'Checkbox.Group',
-                enum: [
-                  { label: '系统通知', value: 'SYSTEM' },
-                  { label: '邮件通知', value: 'EMAIL' }
-                ]
-              },
-
-              'TASK_FULL_COMPLETE.open': {
-                title: '任务全量完成通知',
-                type: 'string',
-                required: 'true',
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
-              'TASK_FULL_COMPLETE.notify': {
-                type: 'array',
-                'x-decorator': 'FormItem',
-                'x-component': 'Checkbox.Group',
-                enum: [
-                  { label: '系统通知', value: 'SYSTEM' },
-                  { label: '邮件通知', value: 'EMAIL' }
-                ]
-              },
-
-              // 任务增量开始通知
-              'TASK_INCREMENT_COMPLETE.open': {
-                title: '任务增量开始通知',
-                type: 'string',
-                required: 'true',
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
-              'TASK_INCREMENT_COMPLETE.notify': {
-                type: 'array',
-                'x-decorator': 'FormItem',
-                'x-component': 'Checkbox.Group',
-                enum: [
-                  { label: '系统通知', value: 'SYSTEM' },
-                  { label: '邮件通知', value: 'EMAIL' }
-                ]
-              },
-
-              'TASK_STATUS_STOP.open': {
-                title: '任务停止告警',
-                type: 'string',
-                required: 'true',
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
-              'TASK_STATUS_STOP.notify': {
-                type: 'array',
-                'x-decorator': 'FormItem',
-                'x-component': 'Checkbox.Group',
-                enum: [
-                  { label: '系统通知', value: 'SYSTEM' },
-                  { label: '邮件通知', value: 'EMAIL' }
-                ]
-              },
-
-              'TASK_INCREMENT_DELAY.open': {
-                title: '任务增量延迟告警',
-                type: 'string',
-                required: 'true',
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
-              'TASK_INCREMENT_DELAY.notify': {
-                type: 'array',
-                'x-decorator': 'FormItem',
-                'x-component': 'Checkbox.Group',
-                enum: [
-                  { label: '系统通知', value: 'SYSTEM' },
-                  { label: '邮件通知', value: 'EMAIL' }
-                ]
-              },
-              increase: {
-                type: 'void',
-                'x-component': 'Space',
-                // 'x-component-props': {
-                //   style: {
-                //     display: 'flex'
-                //   }
-                // },
-                properties: {
-                  'TASK_INCREMENT_DELAY.point': {
-                    title: '连续',
-                    type: 'number',
-                    default: 0,
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      layout: 'horizontal'
-                    },
-                    'x-component': 'InputNumber',
-                    'x-component-props': {
-                      min: 1,
-                      style: {
-                        width: '100px'
-                      }
-                    }
-                  },
-                  'TASK_INCREMENT_DELAY.equalsFlag': {
-                    title: '个点',
-                    type: 'number',
-                    default: 0,
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      layout: 'horizontal'
-                    },
-                    'x-component': 'Select',
-                    'x-component-props': {
-                      min: 1,
-                      style: {
-                        width: '70px'
-                      }
-                    },
-                    enum: [
-                      {
-                        label: '<=',
-                        value: -1
-                      },
-                      {
-                        label: '>=',
-                        value: 1
-                      }
-                    ]
-                  },
-                  'TASK_INCREMENT_DELAY.ms': {
-                    type: 'number',
-                    default: 0,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'InputNumber',
-                    'x-component-props': {
-                      min: 1,
-                      style: {
-                        width: '100px'
-                      }
-                    }
-                  },
-                  ms: {
-                    title: 'ms',
-                    type: 'void',
-                    default: 0,
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      layout: 'horizontal'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
+      schema: null,
 
       form: createForm({
         // disabled: this.stateIsReadonly,
@@ -235,7 +51,15 @@ export default observer({
   watch: {
     stateIsReadonly(v) {
       this.form.setState({ disabled: v })
+    },
+
+    nodeType() {
+      this.loadSchema()
     }
+  },
+
+  mounted() {
+    this.loadSchema()
   },
 
   methods: {
@@ -266,7 +90,490 @@ export default observer({
         alarmSettings: alarmSettingsNew,
         alarmRules: alarmRulesNew
       })
-    }, 500)
+    }, 500),
+
+    loadSchema() {
+      switch (this.nodeType) {
+        case 'source':
+          this.schema = {
+            type: 'object',
+            properties: {
+              layout: {
+                type: 'void',
+                properties: {
+                  'TASK_STATUS_ERROR.open': {
+                    title: '- 源数据源无法连接告警',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_STATUS_ERROR.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+
+                  'TASK_INSPECT_ERROR.open': {
+                    title: '- 源数据源网络连接耗时告警',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_INSPECT_ERROR.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+                  space1: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      'TASK_INCREMENT_DELAY.point': {
+                        title: '连续',
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '100px'
+                          }
+                        }
+                      },
+                      'TASK_INCREMENT_DELAY.equalsFlag': {
+                        title: '个点',
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Select',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '70px'
+                          }
+                        },
+                        enum: [
+                          {
+                            label: '<=',
+                            value: -1
+                          },
+                          {
+                            label: '>=',
+                            value: 1
+                          }
+                        ]
+                      },
+                      'TASK_INCREMENT_DELAY.ms': {
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '100px'
+                          }
+                        }
+                      },
+                      ms: {
+                        title: 'ms',
+                        type: 'void',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        }
+                      }
+                    }
+                  },
+
+                  'TASK_FULL_COMPLETE.open': {
+                    title: '- 源数据源协议连接耗时告警',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_FULL_COMPLETE.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+                  space2: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      'TASK_INCREMENT_DELAY.point': {
+                        title: '连续',
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '100px'
+                          }
+                        }
+                      },
+                      'TASK_INCREMENT_DELAY.equalsFlag': {
+                        title: '个点',
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Select',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '70px'
+                          }
+                        },
+                        enum: [
+                          {
+                            label: '<=',
+                            value: -1
+                          },
+                          {
+                            label: '>=',
+                            value: 1
+                          }
+                        ]
+                      },
+                      'TASK_INCREMENT_DELAY.ms': {
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '100px'
+                          }
+                        }
+                      },
+                      ms: {
+                        title: 'ms',
+                        type: 'void',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        }
+                      }
+                    }
+                  },
+
+                  'TASK_INCREMENT_COMPLETE.open': {
+                    title: '- 源节点平均处理耗时告警',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_INCREMENT_COMPLETE.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+                  space3: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    properties: {
+                      'TASK_INCREMENT_DELAY.point': {
+                        title: '连续',
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '100px'
+                          }
+                        }
+                      },
+                      'TASK_INCREMENT_DELAY.equalsFlag': {
+                        title: '个点',
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Select',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '70px'
+                          }
+                        },
+                        enum: [
+                          {
+                            label: '<=',
+                            value: -1
+                          },
+                          {
+                            label: '>=',
+                            value: 1
+                          }
+                        ]
+                      },
+                      'TASK_INCREMENT_DELAY.ms': {
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '100px'
+                          }
+                        }
+                      },
+                      ms: {
+                        title: 'ms',
+                        type: 'void',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          break
+        case 'target':
+          break
+        case 'process':
+          break
+        default:
+          this.schema = {
+            type: 'object',
+            properties: {
+              layout: {
+                type: 'void',
+                properties: {
+                  'TASK_STATUS_ERROR.open': {
+                    title: '任务运行出错告警',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_STATUS_ERROR.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+
+                  'TASK_INSPECT_ERROR.open': {
+                    title: '任务校验出错告警',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_INSPECT_ERROR.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+
+                  'TASK_FULL_COMPLETE.open': {
+                    title: '任务全量完成通知',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_FULL_COMPLETE.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+
+                  // 任务增量开始通知
+                  'TASK_INCREMENT_COMPLETE.open': {
+                    title: '任务增量开始通知',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_INCREMENT_COMPLETE.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+
+                  'TASK_STATUS_STOP.open': {
+                    title: '任务停止告警',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_STATUS_STOP.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+
+                  'TASK_INCREMENT_DELAY.open': {
+                    title: '任务增量延迟告警',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch'
+                  },
+                  'TASK_INCREMENT_DELAY.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    enum: [
+                      { label: '系统通知', value: 'SYSTEM' },
+                      { label: '邮件通知', value: 'EMAIL' }
+                    ]
+                  },
+                  increase: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    // 'x-component-props': {
+                    //   style: {
+                    //     display: 'flex'
+                    //   }
+                    // },
+                    properties: {
+                      'TASK_INCREMENT_DELAY.point': {
+                        title: '连续',
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '100px'
+                          }
+                        }
+                      },
+                      'TASK_INCREMENT_DELAY.equalsFlag': {
+                        title: '个点',
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Select',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '70px'
+                          }
+                        },
+                        enum: [
+                          {
+                            label: '<=',
+                            value: -1
+                          },
+                          {
+                            label: '>=',
+                            value: 1
+                          }
+                        ]
+                      },
+                      'TASK_INCREMENT_DELAY.ms': {
+                        type: 'number',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1,
+                          style: {
+                            width: '100px'
+                          }
+                        }
+                      },
+                      ms: {
+                        title: 'ms',
+                        type: 'void',
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          break
+      }
+    }
   }
 })
 </script>
