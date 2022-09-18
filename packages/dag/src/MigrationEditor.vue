@@ -190,12 +190,6 @@ export default {
   },
 
   watch: {
-    'allNodes.length'(v) {
-      if (v === 0) {
-        this.showLeftSider = true
-      }
-    },
-
     'dataflow.status'(v) {
       console.log(i18n.t('packages_dag_src_migrationeditor_zhuangtaijianting'), v) // eslint-disable-line
       if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
@@ -384,8 +378,8 @@ export default {
 
     async saveAsNewDataflow() {
       this.isSaving = true
+      const data = this.getDataflowDataToSave()
       try {
-        const data = this.getDataflowDataToSave()
         const dataflow = await taskApi.post(data)
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
@@ -398,7 +392,13 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
-        this.handleError(e)
+
+        if (e?.data?.code === 'Task.RepeatName') {
+          const newName = await this.makeTaskName(data.name)
+          this.newDataflow(newName)
+        } else {
+          this.handleError(e)
+        }
       }
       this.isSaving = false
     },
