@@ -511,12 +511,12 @@ export default {
         }
       }
 
-      if (this.connectionType === 'target') {
+      /*if (this.connectionType === 'target') {
         props.existDataProcessMode = 'keepData'
         props.attrs.isTarget = true
       } else {
         props.migrateTableSelectType = 'all'
-      }
+      }*/
 
       return props
     },

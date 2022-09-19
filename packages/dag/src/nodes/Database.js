@@ -88,7 +88,7 @@ export class Database extends NodeType {
           dependencies: ['$outputs'],
           fulfill: {
             state: {
-              display: '{{$deps[0].length > 0 ? "visible":"none"}}'
+              display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
             }
           }
         },
@@ -255,7 +255,7 @@ export class Database extends NodeType {
           dependencies: ['$inputs'],
           fulfill: {
             state: {
-              display: '{{$deps[0].length > 0 ? "visible":"none"}}'
+              display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
             }
           }
         },
@@ -316,7 +316,7 @@ export class Database extends NodeType {
                       }
                     ],
                     'x-decorator': 'FormItem',
-                    required: true,
+                    // required: true,
                     'x-component': 'Select'
                   },
                   dmlPolicy: {

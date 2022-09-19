@@ -362,6 +362,7 @@ export default {
         taskId: id,
         nodeId: this.dataFlow?.nodeId
       }
+      this.searchField = ''
       metadataInstancesApi.resetTable(data).then(() => {
         this.getMetadataTransformer() //更新整个数据
       })

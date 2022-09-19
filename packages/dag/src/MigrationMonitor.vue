@@ -356,7 +356,11 @@ export default {
         await this.$nextTick()
         await this.addNodes(dag)
         await this.$nextTick()
-        this.handleAutoLayout()
+
+        // 延迟自动布局，等待ResizeObserver
+        setTimeout(() => {
+          this.handleAutoLayout()
+        }, 10)
       }
     },
 
