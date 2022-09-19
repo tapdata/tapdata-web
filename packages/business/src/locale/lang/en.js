@@ -469,5 +469,14 @@ export default {
   packages_business_verify_details_jiaoyanjieguo: 'Verification result',
   packages_business_verify_details_jiaoyanzhong: 'Verifying',
   packages_business_verify_details_jiaoyan: 'Verify',
-  packages_business_verify_details_qingshurubiaoming: 'Please enter the table name...'
+  packages_business_verify_details_qingshurubiaoming: 'Please enter the table name...',
+  packages_business_shared_const_gaojingzhong: 'Alarming',
+  packages_business_shared_const_yihuifu: 'Restored',
+  packages_business_components_alert_yiguanbi: 'closed',
+  packages_business_components_alert_huifu: 'Restore',
+  packages_business_shared_const_yiban: 'General',
+  packages_business_shared_const_jinggao: 'Warning',
+  packages_business_shared_const_yanzhong: 'serious',
+  packages_business_shared_const_jinji: 'urgent',
+  packages_business_external_storage: 'External storage'
 }
