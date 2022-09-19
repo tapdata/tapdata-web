@@ -101,10 +101,10 @@ export default {
 
     nodeType() {
       const { type, $inputs, $outputs } = this.activeNode || {}
+      if (!type) return ''
       if (type === 'database' || type === 'table') {
         if (!$inputs.length) return 'source'
         if (!$outputs.length) return 'target'
-        return 'process'
       }
       return 'process'
     }

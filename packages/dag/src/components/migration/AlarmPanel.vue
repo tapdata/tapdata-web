@@ -3,10 +3,8 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
-import { mapGetters } from 'vuex'
-import { createForm, isVoidField, onFieldReact, onFormInputChange, onFormValuesChange } from '@formily/core'
+import { mapGetters, mapState } from 'vuex'
+import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce, cloneDeep } from 'lodash'
@@ -34,7 +32,8 @@ export default observer({
   },
 
   computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes', 'activeNode', 'allEdges'])
+    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes', 'allEdges', 'activeNode']),
+    ...mapState('dataflow', ['taskId', 'activeNodeId'])
   },
 
   watch: {
@@ -60,15 +59,20 @@ export default observer({
         const values = JSON.parse(JSON.stringify(form.values))
         // 节点类型
         if (['source', 'target', 'process'].includes(this.nodeType)) {
-          this.saveNodeSettings(values)
+          const { allNodes, allEdges, activeNodeId } = this
+          this.saveNodeSettings(values, this.settings, {
+            allNodes,
+            allEdges,
+            activeNodeId
+          })
           return
         }
-        this.saveTaskSettings(values)
+        this.saveTaskSettings(values, this.settings)
       })
     },
 
-    saveTaskSettings: debounce(values => {
-      const { id, alarmSettings, alarmRules } = this.settings
+    saveTaskSettings: debounce((values, settings) => {
+      const { id, alarmSettings, alarmRules } = settings
       let alarmSettingsNew = cloneDeep(alarmSettings)
       let alarmRulesNew = cloneDeep(alarmRules)
       alarmSettingsNew.forEach(el => {
@@ -88,10 +92,11 @@ export default observer({
       })
     }, 500),
 
-    saveNodeSettings: debounce(values => {
-      const { id } = this.settings
-      let nodes = cloneDeep(this.allNodes)
-      let findOne = nodes?.find(t => t.id === this.activeNode?.id) || {}
+    saveNodeSettings: debounce((values, settings, params = {}) => {
+      const { id } = settings
+      const { allNodes, allEdges, activeNodeId } = params
+      let nodes = cloneDeep(allNodes)
+      let findOne = nodes?.find(t => t.id === activeNodeId) || {}
       let alarmSettings = findOne.alarmSettings || []
       let alarmRules = findOne.alarmRules || []
       alarmSettings.forEach(el => {
@@ -107,7 +112,7 @@ export default observer({
       taskApi.patch({
         id,
         dag: {
-          edges: this.allEdges,
+          edges: allEdges,
           nodes
         }
       })
@@ -208,9 +213,9 @@ export default observer({
       let { alarmSettings = [], alarmRules = [] } = this.settings
       // 节点类型
       if (['source', 'target', 'process'].includes(this.nodeType)) {
-        const findOne = this.allNodes?.find(t => t.id === this.activeNode?.id) || {}
-        alarmSettings = findOne.alarmSettings || []
-        alarmRules = findOne.alarmRules || []
+        const { activeNode = {} } = this
+        alarmSettings = activeNode.alarmSettings || []
+        alarmRules = activeNode.alarmRules || []
       }
       const alarmRulesMap =
         alarmRules.reduce((cur, next) => {
