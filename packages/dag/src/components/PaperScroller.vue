@@ -181,6 +181,7 @@ export default {
   },
 
   async mounted() {
+    // 监听画布的尺寸变化
     this.resizeObserver = new ResizeObserver(this.observerHandler)
     this.resizeObserver.observe(this.$el)
 
