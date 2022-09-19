@@ -798,6 +798,8 @@ export default {
         return this.saveAsNewDataflow()
       }
 
+      this.wsAgentLive()
+
       this.toggleConsole(true)
       this.$refs.console?.autoLoad() // 信息输出自动加载
 
@@ -1768,6 +1770,18 @@ export default {
           opType: 'subscribe'
         }
       })
+    },
+
+    // ws 探活
+    wsAgentLive() {
+      this.$ws.send({
+        type: 'editFlush',
+        taskId: this.dataflow.id,
+        data: {
+          opType: 'subscribe'
+        }
+      })
+      console.log('wsAgentLive', this.$ws.ws) // eslint-disable-line
     },
 
     deleteSelectedConnections() {
