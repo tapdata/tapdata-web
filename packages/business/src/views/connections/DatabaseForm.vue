@@ -120,7 +120,6 @@ import {
   logcollectorApi,
   pdkApi,
   settingsApi,
-  commandApi,
   proxyApi
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
@@ -789,44 +788,17 @@ export default {
             }) || []
           )
         },
-        loadCommand: async filter => {
-          const { pdkId, group, version } = this.pdkOptions
-          const { $values, command, page, size } = filter
-          let params = {
-            pdkId,
-            group,
-            version,
-            connectionConfig: $values,
-            command: command,
-            action: 'list',
-            argMap: {
-              page,
-              size
-            }
-          }
-          const searchLabel = filter.where?.label
-          if (searchLabel) {
-            params.action = 'search'
-            params.argMap.key = searchLabel?.like
-          }
-          try {
-            let result = await commandApi.codding(params)
-            return result
-          } catch (e) {
-            return { total: 0, items: [] }
-          }
-        },
         loadCommandList: async (filter, val) => {
-          console.log('loadList-filter', filter, val)
           try {
             const { $values, command, where = {}, page, size } = filter
             const { pdkHash, id } = this.pdkOptions
             const { __TAPDATA, ...formValues } = $values
             const search = where.label?.like
+            const getValues = Object.assign({}, this.model?.config || {}, formValues)
             let params = {
               pdkHash,
               connectionId: id || this.commandCallbackFunctionId,
-              connectionConfig: isEmpty(formValues) ? this.model?.config || {} : formValues,
+              connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
               command,
               type: 'connection',
               action: search ? 'search' : 'list',

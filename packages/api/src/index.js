@@ -138,9 +138,6 @@ const monitoringLogsApi = new MonitoringLogs()
 import Discovery from './Discovery'
 const discoveryApi = new Discovery()
 
-import Command from './Command'
-const commandApi = new Command()
-
 import AlarmRule from './AlarmRule'
 const alarmRuleApi = new AlarmRule()
 
@@ -197,7 +194,6 @@ export {
   functionApi,
   monitoringLogsApi,
   discoveryApi,
-  commandApi,
   alarmRuleApi,
   externalStorageApi,
   proxyApi
