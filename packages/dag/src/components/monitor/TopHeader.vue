@@ -1,103 +1,41 @@
 <template>
   <header class="layout-header border-bottom p-4">
-    <div>
-      <div class="flex align-items-center">
-        <button @click="$emit('page-return')" class="icon-btn">
-          <VIcon size="18">left</VIcon>
-        </button>
-        <TextEditable
-          v-model="name"
-          :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-          max-width="260"
-          readonly
-          @change="onNameInputChange"
-        />
-        <span class="ml-4">{{ syncType[dataflow.type] }}</span>
-        <TaskStatus :task="dataflow" class="ml-4" />
-      </div>
-      <div class="flex align-items-center font-color-light">
-        <div class="ml-10 pl-1">
-          <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
-          <span>{{ stopTime }}</span>
-        </div>
-        <div class="ml-4">
+    <div class="flex">
+      <div>
+        <div class="flex align-items-center">
+          <button @click="$emit('page-return')" class="icon-btn">
+            <VIcon size="18">left</VIcon>
+          </button>
           <OverflowTooltip
-            class="text-truncate"
-            placement="right"
-            :text="dataflow.agentId || dataflow.agentName || '-'"
+            class="task-name text-truncate fs-7 fw-bold font-color-dark"
+            placement="bottom"
+            :text="name"
             :open-delay="400"
-            style="width: 65px"
           />
+          <span class="ml-4">{{ syncType[dataflow.type] }}</span>
+          <TaskStatus :task="dataflow" class="ml-4" />
         </div>
-        <div v-if="agentData" class="ml-4">
+        <div class="flex align-items-center font-color-light ml-10 mt-1">
+          <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
+          <span>{{ startTime }}</span>
+        </div>
+      </div>
+      <div class="agent-data__item ml-4 pl-4">
+        <OverflowTooltip
+          class="agent-name__item text-truncate mb-2 font-color-dark"
+          placement="bottom"
+          :text="dataflow.agentId || dataflow.agentName || '-' + dataflow.agentId"
+          :open-delay="400"
+        />
+        <div v-if="agentData" class="font-color-sslight">
           <span>CPU：</span>
           <span>{{ agentData.cpuUsage }}</span>
-        </div>
-        <div class="ml-4">
-          <span>MEM：</span>
+          <span class="ml-4">MEM：</span>
           <span>{{ agentData.memoryRate }}</span>
-        </div>
-        <div class="ml-4">
-          <span>GC：</span>
+          <span class="ml-4">GC：</span>
           <span>{{ agentData.gcRate }}</span>
         </div>
       </div>
-    </div>
-
-    <div class="operation-center flex align-center">
-      <!--自动布局-->
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :content="$t('button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
-      >
-        <button @click="$emit('auto-layout')" class="icon-btn">
-          <VIcon size="20">auto-layout</VIcon>
-        </button>
-      </ElTooltip>
-      <VDivider class="mx-3" vertical inset></VDivider>
-      <!--缩小-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out') + `(${commandCode} -)`">
-        <button @click="$emit('zoom-out')" class="icon-btn">
-          <VIcon size="20">remove-outline</VIcon>
-        </button>
-      </ElTooltip>
-      <div class="choose-size mx-2">
-        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
-          <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
-          <div class="choose-list p-2">
-            <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">{{ $t('button_zoom_out') }}</span>
-              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
-            </div>
-            <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">{{ $t('button_zoom_in') }}</span>
-              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
-            </div>
-            <VDivider class="my-2"></VDivider>
-            <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
-              {{ val * 100 }}%
-            </div>
-          </div>
-        </ElPopover>
-      </div>
-      <!--放大-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_in') + `(${commandCode} +)`">
-        <button @click="$emit('zoom-in')" class="icon-btn">
-          <VIcon size="20">add-outline</VIcon>
-        </button>
-      </ElTooltip>
-      <VDivider class="mx-3" vertical inset></VDivider>
-      <!--设置-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
-        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
-          <VIcon size="20">setting-outline</VIcon>
-        </button>
-      </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
-        <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
-          <VIcon size="16">list</VIcon>
-        </button>
-      </ElTooltip>
     </div>
 
     <div class="operation-center flex align-center">
@@ -274,9 +212,9 @@ export default {
       return Math.round(this.scale * 100) + '%'
     },
 
-    stopTime() {
-      const { stopTime } = this.dataflow
-      return stopTime ? dayjs(stopTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+    startTime() {
+      const { startTime } = this.dataflow
+      return startTime ? dayjs(startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
 
     agentData() {
@@ -358,48 +296,16 @@ $radius: 4px;
 $baseHeight: 26px;
 $sidebarBg: #fff;
 
-.btn-base {
-  padding-left: 6px;
-  padding-right: 6px;
-  height: $baseHeight;
-  background-color: #eee;
-  color: #606266;
-  border: none;
-  border-radius: $radius;
-  &:hover {
-    background-color: #e1e1e1;
-    color: #606266;
-  }
-  &.is-disabled {
-    background: #eee;
-    color: #bbb;
-  }
-}
-
-.btn-operation {
-  padding-left: 6px;
-  padding-right: 10px;
-  background-color: #e1e1e1;
-  &:hover {
-    background-color: #cfcfcf;
-  }
-}
-
 .layout-header {
   position: relative;
   z-index: 10;
   display: flex;
-  //justify-content: space-between;
   align-items: center;
   width: 100%;
   flex: 0 0 48px;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   box-sizing: border-box;
-
-  .title-wrap {
-    width: $sidebarW;
-  }
 
   .nav-icon {
     width: 40px;
@@ -409,50 +315,6 @@ $sidebarBg: #fff;
     font-size: 24px;
     &:hover {
       background-color: var(--primary-hover);
-    }
-  }
-
-  .title-input-wrap {
-    position: relative;
-    flex: 1;
-    max-width: 214px;
-    font-size: 13px;
-
-    &:hover {
-      .title-input {
-        border-color: #dcdfe6;
-      }
-      .title-input-icon {
-        color: map-get($color, primary);
-      }
-    }
-
-    .title-input {
-      position: relative;
-      padding-left: 8px;
-      padding-right: 28px;
-      width: 230px;
-      height: 28px;
-      line-height: 28px;
-      outline: none;
-      box-shadow: none;
-      background: 0 0;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-
-      &:focus {
-        border-color: map-get($color, primary);
-        & + .title-input-icon {
-          color: map-get($color, primary);
-        }
-      }
-    }
-
-    .title-input-icon {
-      position: absolute;
-      right: 8px;
-      height: 28px;
     }
   }
 
@@ -485,10 +347,6 @@ $sidebarBg: #fff;
   .icon-btn {
     margin-right: 18px;
   }
-
-  //.icon-btn + .icon-btn {
-  //  margin-left: 18px;
-  //}
 
   .btn-setting {
     padding: 0;
@@ -535,32 +393,6 @@ $sidebarBg: #fff;
     }
   }
 
-  //::v-deep {
-  //  .el-button {
-  //    line-height: 1;
-  //
-  //    &.btn--text {
-  //      min-width: auto;
-  //      background: unset;
-  //      border: none;
-  //      padding: 7px 8px;
-  //      &:hover {
-  //        background: $hoverBg;
-  //      }
-  //      > span {
-  //        display: flex;
-  //        align-items: center;
-  //        gap: 4px;
-  //      }
-  //    }
-  //  }
-  //  .el-link--inner {
-  //    display: flex;
-  //    align-items: center;
-  //    gap: 4px;
-  //  }
-  //}
-
   .operation-center {
     position: absolute;
     top: 0;
@@ -569,24 +401,21 @@ $sidebarBg: #fff;
     transform: translateX(-50%);
   }
 }
+
+.task-name {
+  max-width: 180px;
+}
+
+.agent-data__item {
+  border-left: 1px solid #f2f2f2;
+}
+
+.agent-name__item {
+  width: 280px;
+}
 </style>
 
 <style lang="scss">
-.choose-pane-wrap {
-  max-width: 450px;
-  .input-filled .el-input__inner {
-    height: 40px;
-    line-height: 40px;
-  }
-}
-
-.input-filled {
-  .el-input__inner {
-    border: 0;
-    border-radius: 0;
-    background: unset;
-  }
-}
 .choose-list-wrap {
   max-width: 450px;
   max-height: 274px;

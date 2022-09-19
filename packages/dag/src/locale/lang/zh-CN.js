@@ -424,14 +424,14 @@ export default {
   packages_dag_components_alert_guanbi: '关闭',
   packages_dag_components_frequency_shuaxinpinlu: '刷新频率',
   packages_dag_components_nodedetaildialog_xieruhaoshi: '写入耗时',
+  packages_dag_components_nodedetaildialog_chulihaoshidang: '处理耗时：当前节点处理事件的平均耗时',
+  packages_dag_components_nodedetaildialog_xieruhaoshidang: '写入耗时：当前目标节点写入数据到目标数据库的耗时',
+  packages_dag_components_nodedetaildialog_chulihaoshiyuan: '处理耗时：源节点从源数据库读取到事件后完成处理花费的时间',
   packages_dag_components_nodedetaildialog_zengliangduquyan: '增量读取延迟',
   packages_dag_components_nodedetaildialog_pingjunduquhao: '平均读取耗时',
   packages_dag_components_nodedetaildialog_zengliangshijiandian2: '增量时间点：',
   packages_dag_components_nodedetaildialog_chulixieruhao: '处理/写入耗时',
   packages_dag_components_nodedetaildialog_duquchulihao: '读取/处理耗时',
-  packages_dag_components_nodedetaildialog_chulihaoshidang: '处理耗时：当前节点处理事件的平均耗时',
-  packages_dag_components_nodedetaildialog_xieruhaoshidang: '写入耗时：当前目标节点写入数据到目标数据库的耗时',
-  packages_dag_components_nodedetaildialog_chulihaoshiyuan: '处理耗时：源节点从源数据库读取到事件后完成处理花费的时间',
   packages_dag_components_nodedetaildialog_dangqianbiaotongbu: '当前表同步进度',
   packages_dag_components_nodedetaildialog_quanliangtongbujin: '全量同步进度',
   packages_dag_components_nodedetaildialog_quanliangkaishishi: '全量开始时间：',
@@ -449,5 +449,16 @@ export default {
   packages_dag_shared_const_jinggao: '警告',
   packages_dag_shared_const_yiban: '一般',
   packages_dag_shared_const_yihuifu: '已恢复',
-  packages_dag_shared_const_gaojingzhong: '告警中'
+  packages_dag_shared_const_gaojingzhong: '告警中',
+  packages_dag_components_nodedetaildialog_dangqianjiedianchu: '当前节点处理事件的平均耗时',
+  packages_dag_components_nodedetaildialog_dangqianjiedianping: '当前节点平均每秒处理的输入事件数和输出事件数',
+  packages_dag_monitor_leftsider_renwuchuliwan:
+    '任务处理完成一条新产生事件需要消耗的总时间，当有多个目标时只统计最大的处理耗时',
+  packages_dag_monitor_leftsider_shijiancongyuanku:
+    '事件从源库生成到经任务处理完成写入目标的延迟时间，当有多个目标时只统计最大的增量延迟时间',
+  packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任务平均每秒处理的输入事件数和输出事件数',
+  packages_dag_components_nodedetaildialog_zengliangduquyan2:
+    '增量读取延迟：增量阶段下增量事件从生成到被读取到任务开始处理的延迟时间',
+  packages_dag_components_nodedetaildialog_pingjunduquhao2: '平均读取耗时：全量阶段下读取每条数据的平均耗时',
+  packages_dag_components_log_zuidashijianshu: '最大事件数（条）'
 }

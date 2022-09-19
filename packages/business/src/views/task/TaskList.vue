@@ -189,9 +189,9 @@
                 <el-dropdown-item v-readonlybtn="'SYNC_job_delete'" command="del" :disabled="row.btnDisabled.delete">
                   {{ $t('packages_business_button_delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
+                <!-- <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
                   {{ $t('packages_business_dataFlow_addTag') }}
-                </el-dropdown-item>
+                </el-dropdown-item> -->
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -208,7 +208,7 @@
 import dayjs from 'dayjs'
 
 import { taskApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
+import { VIcon, FilterBar } from '@tap/component'
 import { toRegExp } from '@tap/shared'
 
 import SkipError from './SkipError'
@@ -219,7 +219,7 @@ import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
+  components: { VIcon, FilterBar, TablePage, SkipError, Upload, TaskStatus },
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',

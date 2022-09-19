@@ -7,7 +7,7 @@
             <img :src="getConnectionIcon()" />
           </div>
         </div>
-        <div class="ml-4">
+        <div class="ml-4 overflow-hidden">
           <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
           <div><status-tag type="text" target="connection" :status="connection.status"></status-tag></div>
         </div>

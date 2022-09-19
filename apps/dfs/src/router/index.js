@@ -26,7 +26,18 @@ const MigrationMonitor = async () => {
   const { MigrationMonitor } = await import('@tap/dag')
   return MigrationMonitor
 }
-
+const MigrationMonitorViewer = async () => {
+  const { MigrationMonitorViewer } = await import('@tap/dag')
+  return MigrationMonitorViewer
+}
+const EtlDetails = async () => {
+  const { EtlDetails } = await import('@tap/business')
+  return EtlDetails
+}
+const EtlStatistics = async () => {
+  const { EtlStatistics } = await import('@tap/business')
+  return EtlStatistics
+}
 const routes = [
   {
     path: '/',
@@ -132,15 +143,51 @@ const routes = [
         },
         children: [
           {
-            path: 'Statistics',
-            name: 'MigrateStatistics',
+            path: 'details/:id',
+            name: 'MigrateDetails',
             component: MigrateDetails,
             meta: {
               title: i18n.t('tap_task_details')
             }
+          },
+          {
+            path: 'Statistics',
+            name: 'MigrateStatistics',
+            component: MigrateDetails,
+            meta: {
+              title: i18n.t('tap_monitor')
+            }
           }
         ]
       },
+      {
+        path: '/etl',
+        name: 'dataflowList',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/EtlList.tsx'),
+        meta: {
+          title: i18n.t('task_manage_etl'),
+          icon: 'task'
+        },
+        children: [
+          {
+            path: 'details/:id',
+            name: 'dataflowDetails',
+            component: EtlDetails,
+            meta: {
+              title: i18n.t('tap_task_details')
+            }
+          },
+          {
+            path: 'statistics/:id',
+            name: 'dataflowStatistics',
+            component: EtlStatistics,
+            meta: {
+              title: i18n.t('tap_monitor')
+            }
+          }
+        ]
+      },
+
       {
         path: '/operationLog',
         name: 'OperationLog',
@@ -212,7 +259,18 @@ const routes = [
   {
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
-    component: DagEditor
+    component: DagEditor,
+    meta: {
+      title: i18n.t('task_manage_etl')
+    }
+  },
+  {
+    path: '/dataflow/viewer/:id',
+    name: 'DataflowViewer',
+    component: DagEditor,
+    meta: {
+      title: i18n.t('task_manage_etl')
+    }
   },
   {
     path: '/migrate/editor',
@@ -236,6 +294,15 @@ const routes = [
     component: MigrationEditor,
     meta: {
       title: 'tap_edit_task'
+    }
+  },
+  {
+    path: '/migrate/monitor-record/:id',
+    name: 'MigrationMonitorViewer',
+    component: MigrationMonitorViewer,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'Data_SYNC_menu'
     }
   }
 ]

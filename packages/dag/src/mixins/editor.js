@@ -259,9 +259,29 @@ export default {
       }
     },
 
-    async newDataflow() {
-      this.dataflow.name = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
+    async newDataflow(name) {
+      this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
+    },
+
+    async makeTaskName(source) {
+      const taskNames = await taskApi.get({
+        filter: JSON.stringify({
+          fields: { name: 1 },
+          where: { name: { like: `^${source} +` } }
+        })
+      })
+      let def = 1
+      if (taskNames?.items.length) {
+        let arr = [0]
+        taskNames.items.forEach(item => {
+          const res = item.name.match(/\+(\d+)$/)
+          if (res && res[1]) arr.push(+res[1])
+        })
+        arr.sort()
+        def = arr.pop() + 1
+      }
+      return `${source} +${def}`
     },
 
     onNodeDragStart() {

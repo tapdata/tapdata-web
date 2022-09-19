@@ -461,5 +461,20 @@ export default {
   packages_dag_node_none_input: '「 {val1} 」At least {val2} source nodes are required',
   packages_dag_node_none_output: '「 {val1} 」At least {val2} target nodes are required',
   packages_dag_node_none_connection: '「 {val1} 」 no connection',
-  packages_dag_external_storage: 'External storage'
+  packages_dag_external_storage: 'External storage',
+  packages_dag_components_nodedetaildialog_dangqianjiedianchu:
+    'The average time spent processing events by the current node',
+  packages_dag_components_nodedetaildialog_dangqianjiedianping:
+    'The average number of input events and output events per second processed by the current node',
+  packages_dag_monitor_leftsider_renwuchuliwan:
+    'The total time required for task processing to complete a newly generated event, when there are multiple targets, only the maximum processing time is counted',
+  packages_dag_monitor_leftsider_shijiancongyuanku:
+    'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed. When there are multiple targets, only the maximum incremental delay time is counted',
+  packages_dag_monitor_leftsider_qpSshizhi:
+    'QPS refers to the average number of input events and output events processed by the task per second',
+  packages_dag_components_nodedetaildialog_zengliangduquyan2:
+    "Incremental read delay: the delay time from the time the incremental event is generated to the time it is read to the start of the task's processing in the incremental phase",
+  packages_dag_components_nodedetaildialog_pingjunduquhao2:
+    'Average read time: the average time to read each piece of data in the full stage',
+  packages_dag_components_log_zuidashijianshu: 'Maximum number of events (pieces)'
 }

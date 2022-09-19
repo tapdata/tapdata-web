@@ -176,6 +176,7 @@ export default {
             let result = ''
             params.forEach((item, index) => {
               const { axisValue, marker, seriesName, data } = item
+              let markerStr = marker.replace(/background-color:#\w+;/g, `background-color:${this.color[index]};`)
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
@@ -191,7 +192,7 @@ export default {
                 }
               }
 
-              result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${val}</div></div>`
+              result += `<div class="flex justify-content-between"><div>${markerStr}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
           }
@@ -291,6 +292,9 @@ export default {
     },
     reset() {
       this.end = 100
+    },
+    clear() {
+      this.$refs.chart.chart?.chart?.clear()
     }
   }
 }

@@ -86,15 +86,15 @@
               :data-index="index"
               :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
             >
-              <div class="log-line py-1 font-color-light">
+              <div class="log-line py-1 font-color-light white-space-pre">
                 <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
-                <span class="white-space-nowrap ml-1">{{ formatTime(item.timestamp) }}</span>
+                <span class="ml-1">{{ formatTime(item.timestamp) }}</span>
                 <span v-if="item.taskName" v-html="item.taskNameText" class="ml-1"></span>
                 <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
                 <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.message" class="ml-1"></span>
                 <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>
-                <span v-if="item.dataText" v-html="item.dataText"></span>
+                <span v-if="item.dataText" v-html="item.dataText" class=""></span>
               </div>
             </DynamicScrollerItem>
           </template>
@@ -120,7 +120,7 @@
           <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
             <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="max">
+          <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')" prop="max">
             <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
         </template>
@@ -700,8 +700,11 @@ export default {
     background: rgba(44, 101, 255, 0.05);
   }
 }
-.white-space-nowrap {
-  white-space: nowrap;
+.main {
+  width: 0;
+}
+.white-space-pre {
+  white-space: pre;
 }
 
 .log-list {
@@ -716,6 +719,9 @@ export default {
     }
     .empty-wrap {
       margin: 24px 0;
+    }
+    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
+      overflow: visible;
     }
   }
 }

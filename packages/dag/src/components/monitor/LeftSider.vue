@@ -116,33 +116,62 @@
             <VIcon @click.stop="toFullscreen">enlarge</VIcon>
           </ElTooltip>
         </div>
-        <div class="mb-2" style="height: 140px">
+        <div class="line-chart__box mb-2">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="$t('packages_dag_monitor_leftsider_qpSshizhi')"
+          >
+            <span>
+              <span class="mr-2 font-color-dark fw-bold">QPS（Q/S）</span>
+              <VIcon size="14" class="color-primary">info</VIcon>
+            </span>
+          </ElTooltip>
           <LineChart
             :data="qpsData"
             :color="['#26CF6C', '#2C65FF']"
-            title="QPS（Q/S）"
             :time-format="timeFormat"
-            class="h-100"
+            class="line-chart"
           ></LineChart>
         </div>
-        <div class="mb-2" style="height: 140px">
+        <div class="line-chart__box mb-2">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
+          >
+            <span>
+              <span class="mr-2 font-color-dark fw-bold">{{
+                $t('packages_dag_components_nodedetaildialog_zengliangyanchi')
+              }}</span>
+              <VIcon size="14" class="color-primary">info</VIcon>
+            </span>
+          </ElTooltip>
           <LineChart
             :data="replicateLagData"
-            :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
             :color="['#2C65FF']"
             :time-format="timeFormat"
             time-value
-            class="h-100"
+            class="line-chart"
           ></LineChart>
         </div>
-        <div class="mb-2" style="height: 140px">
+        <div class="line-chart__box mb-2">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
+          >
+            <span>
+              <span class="mr-2 font-color-dark fw-bold">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
+              <VIcon size="14" class="color-primary">info</VIcon>
+            </span>
+          </ElTooltip>
           <LineChart
             :data="delayData"
-            :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
             :color="['#2C65FF']"
             :time-format="timeFormat"
             time-value
-            class="h-100"
+            class="line-chart"
           ></LineChart>
         </div>
       </div>
@@ -525,5 +554,11 @@ export default {
 .sync-info-item__title {
   display: inline-block;
   width: 110px;
+}
+.line-chart__box {
+  .line-chart {
+    margin-top: 8px;
+    height: 110px;
+  }
 }
 </style>

@@ -32,9 +32,13 @@
               type="primary"
               size="mini"
               :disabled="!selection.length || verifyLoading"
-              :loading="verifyLoading"
+              :loading="verifyLoading || isChecking"
               @click="handleAgainCheck"
-              >{{ $t('packages_business_verify_details_jiaoyan') }}</ElButton
+              >{{
+                isChecking
+                  ? $t('packages_business_verify_details_jiaoyanzhong')
+                  : $t('packages_business_verify_details_jiaoyan')
+              }}</ElButton
             >
           </div>
         </div>
@@ -220,12 +224,22 @@ export default {
     }
   },
 
+  computed: {
+    isChecking() {
+      return ['Scheduling', 'Running'].includes(this.checkProgress?.status)
+    }
+  },
+
   mounted() {
     this.init()
     //轮询结果
     this.timeout = setInterval(() => {
-      this.$refs.table.fetch?.(null, 0, true)
-    }, 30000)
+      this.getCheckingStatus(flag => {
+        if (!flag) {
+          this.$refs.table.fetch?.(null, 0, true)
+        }
+      })
+    }, 5000)
   },
   destroyed() {
     clearInterval(this.timeout)
@@ -358,6 +372,19 @@ export default {
             Date.now() - startStamp < 1000 ? 1500 : 0
           )
         })
+    },
+
+    getCheckingStatus(callback) {
+      let filter = {
+        id: this.$route.params.id,
+        limit: 1,
+        skip: 0,
+        filter: this.keyword
+      }
+      taskApi.autoInspectResultsGroupByTable(filter).then(data => {
+        this.checkProgress = data?.progress
+        callback?.(['Scheduling', 'Running'].includes(this.checkProgress?.status))
+      })
     }
   }
 }
