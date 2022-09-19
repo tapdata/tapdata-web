@@ -33,7 +33,7 @@
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <el-tooltip :content="`${data.value} (${data.objCount})`" placement="right" :open-delay="400">
+          <el-tooltip :content="`${data.value} (${data.objCount})`" placement="bottom-start" :open-delay="400">
             <span class="table-label"
               >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
             >
