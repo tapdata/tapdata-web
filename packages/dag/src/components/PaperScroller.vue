@@ -33,6 +33,7 @@
 
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex'
+import ResizeObserver from 'resize-observer-polyfill'
 import { on, off } from '@tap/shared'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { getDataflowCorners } from '../helpers'
@@ -180,13 +181,17 @@ export default {
   },
 
   async mounted() {
+    this.resizeObserver = new ResizeObserver(this.observerHandler)
+    this.resizeObserver.observe(this.$el)
+
     this.initVisibleArea()
     await this.$nextTick()
     this.center()
   },
 
-  destroyed() {
+  beforeDestroy() {
     this.offEvent()
+    this.resizeObserver.unobserve(this.$el)
   },
 
   methods: {
@@ -197,6 +202,10 @@ export default {
       'removeActiveAction',
       'toggleShiftKeyPressed'
     ]),
+
+    observerHandler() {
+      this.initVisibleArea()
+    },
 
     /**
      * 获取节点拖放后的坐标
