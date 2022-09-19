@@ -243,6 +243,15 @@ export default {
     }
   },
 
+  watch: {
+    alarmData: {
+      deep: true,
+      handler() {
+        this.getList()
+      }
+    }
+  },
+
   mounted() {
     this.getList()
   },
@@ -281,9 +290,7 @@ export default {
     handleClose(row = {}) {
       alarmApi.close([row.id]).then(() => {
         this.$message.success('关闭成功')
-        const status = 'CLOESE'
-        this.list.find(t => t.id === row.id).statusLabel = ALARM_STATUS_MAP[status].text
-        row.status = status
+        this.$emit('load-data')
       })
     },
 

@@ -114,6 +114,7 @@
           }"
           :dataflow="dataflow"
           :alarmData="alarmData"
+          @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
@@ -248,7 +249,8 @@ export default {
       verifyData: null,
       verifyTotals: null,
       alarmData: null,
-      refreshRate: 5000
+      refreshRate: 5000,
+      extraEnterCount: 0
     }
   },
 
@@ -325,9 +327,15 @@ export default {
 
   methods: {
     init() {
+      this.extraEnterCount = 0
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.isEnterTimer && this.startLoadData()
+        if (
+          this.isEnterTimer ||
+          (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
+        ) {
+          this.startLoadData()
+        }
       }, this.refreshRate)
       this.startLoadData()
     },
