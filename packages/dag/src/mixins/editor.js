@@ -1652,7 +1652,7 @@ export default {
         if (!resFlag) {
           return
         }
-
+        this.wsAgentLive()
         this.dataflow.disabledData.stop = true
         await taskApi.stop(this.dataflow.id).catch(e => {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
@@ -1670,7 +1670,7 @@ export default {
         if (!resFlag) {
           return
         }
-
+        this.wsAgentLive()
         this.dataflow.disabledData.stop = true
         await taskApi.forceStop(this.dataflow.id)
         // this.startLoop(true)
@@ -1686,6 +1686,7 @@ export default {
           return
         }
         try {
+          this.wsAgentLive()
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
