@@ -563,6 +563,7 @@ export default {
     async handleStart() {
       this.isSaving = true
       try {
+        this.wsAgentLive()
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
