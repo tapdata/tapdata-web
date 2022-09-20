@@ -478,5 +478,6 @@ export default {
   packages_business_shared_const_jinggao: 'Warning',
   packages_business_shared_const_yanzhong: 'serious',
   packages_business_shared_const_jinji: 'urgent',
-  packages_business_external_storage: 'External storage'
+  packages_business_external_storage: 'External storage',
+  packages_business_dataFlow_taskBulkTag: 'Bulk Tag',
 }

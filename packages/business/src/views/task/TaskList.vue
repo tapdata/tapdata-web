@@ -27,7 +27,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+          <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
         </el-button>
         <el-dropdown
           class="btn"
@@ -173,7 +173,7 @@
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('packages_business_dataFlow_view') }}</el-dropdown-item>
                 <el-dropdown-item v-if="isDaas" v-readonlybtn="'SYNC_job_export'" command="export">{{
-                  $t('dataFlow_dataFlowExport')
+                  $t('packages_business_dataFlow_dataFlowExport')
                 }}</el-dropdown-item>
                 <el-dropdown-item v-readonlybtn="'SYNC_job_creation'" command="copy"
                   >{{ $t('packages_business_dataFlow_copy') }}

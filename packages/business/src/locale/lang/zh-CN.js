@@ -471,5 +471,6 @@ export default {
   packages_business_shared_const_jinggao: '警告',
   packages_business_shared_const_yanzhong: '严重',
   packages_business_shared_const_jinji: '紧急',
-  packages_business_external_storage: '外存配置'
+  packages_business_external_storage: '外存配置',
+  packages_business_dataFlow_taskBulkTag: '设置分类',
 }
