@@ -356,7 +356,11 @@ export default {
         await this.$nextTick()
         await this.addNodes(dag)
         await this.$nextTick()
-        this.handleAutoLayout()
+
+        // 延迟自动布局，等待ResizeObserver
+        setTimeout(() => {
+          this.handleAutoLayout()
+        }, 10)
       }
     },
 
@@ -559,6 +563,7 @@ export default {
     async handleStart() {
       this.isSaving = true
       try {
+        this.wsAgentLive()
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false

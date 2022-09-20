@@ -164,12 +164,16 @@ export default {
     }
   },
 
-  async created() {
+  // created 换成 mounted，等上一个实例destroy走完
+  async mounted() {
     if (this.$route.name === 'DataflowViewer') {
       this.setStateReadonly(true)
     }
+    // 设置schema的校验语言
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
     await this.initPdkProperties()
+    // 初始化所有节点类型
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -458,6 +462,7 @@ export default {
       const data = this.getDataflowDataToSave()
 
       try {
+        this.wsAgentLive()
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))

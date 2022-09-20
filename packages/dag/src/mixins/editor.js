@@ -798,6 +798,8 @@ export default {
         return this.saveAsNewDataflow()
       }
 
+      this.wsAgentLive()
+
       this.toggleConsole(true)
       this.$refs.console?.autoLoad() // 信息输出自动加载
 
@@ -979,13 +981,19 @@ export default {
     },
 
     resetWorkspace() {
-      this.dataflow = merge(
+      console.log('resetWorkspace', this.dataflow) // eslint-disable-line
+      Object.assign(this.dataflow, {
+        ...DEFAULT_SETTINGS,
+        id: '',
+        name: ''
+      })
+      /*this.dataflow = merge(
         {
           id: '',
           name: ''
         },
         DEFAULT_SETTINGS
-      )
+      )*/
       this.jsPlumbIns.reset()
       this.deselectAllNodes()
       this.reset()
@@ -1650,7 +1658,7 @@ export default {
         if (!resFlag) {
           return
         }
-
+        this.wsAgentLive()
         this.dataflow.disabledData.stop = true
         await taskApi.stop(this.dataflow.id).catch(e => {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
@@ -1668,7 +1676,7 @@ export default {
         if (!resFlag) {
           return
         }
-
+        this.wsAgentLive()
         this.dataflow.disabledData.stop = true
         await taskApi.forceStop(this.dataflow.id)
         // this.startLoop(true)
@@ -1684,6 +1692,7 @@ export default {
           return
         }
         try {
+          this.wsAgentLive()
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
@@ -1768,6 +1777,18 @@ export default {
           opType: 'subscribe'
         }
       })
+    },
+
+    // ws 探活
+    wsAgentLive() {
+      this.$ws.send({
+        type: 'editFlush',
+        taskId: this.dataflow.id,
+        data: {
+          opType: 'subscribe'
+        }
+      })
+      console.log('wsAgentLive', this.$ws.ws) // eslint-disable-line
     },
 
     deleteSelectedConnections() {
