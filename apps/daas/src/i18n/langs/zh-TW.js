@@ -4567,5 +4567,7 @@ export default {
   daas_setting_setting_shujuyuanxieyi: '數據源協議連接耗時',
   daas_setting_setting_shujuyuanwanglu: '數據源網路連接耗時',
   daas_setting_setting_renwudezengliang: '任務的增量延遲',
-  daas_setting_settingcenter_gaojingshezhi: '告警設置'
+  daas_setting_settingcenter_gaojingshezhi: '告警設置',
+  packages_nodeDesign_custom_node_name_required: '請輸入節點名稱',
+  packages_nodeDesign_message_save_ok: '保存成功'
 }

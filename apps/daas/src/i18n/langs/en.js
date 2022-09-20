@@ -4730,5 +4730,7 @@ export default {
   daas_setting_setting_shujuyuanxieyi: 'Data source protocol connection takes time',
   daas_setting_setting_shujuyuanwanglu: 'Data source network connection time',
   daas_setting_setting_renwudezengliang: 'Incremental delay for tasks',
-  daas_setting_settingcenter_gaojingshezhi: 'Alarm settings'
+  daas_setting_settingcenter_gaojingshezhi: 'Alarm settings',
+  packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
+  packages_nodeDesign_message_save_ok: 'Save successfully'
 }

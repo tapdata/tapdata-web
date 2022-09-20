@@ -4594,5 +4594,9 @@ export default {
   daas_setting_setting_shujuyuanxieyi: '数据源协议连接耗时',
   daas_setting_setting_shujuyuanwanglu: '数据源网路连接耗时',
   daas_setting_setting_renwudezengliang: '任务的增量延迟',
-  daas_setting_settingcenter_gaojingshezhi: '告警设置'
+  daas_setting_settingcenter_gaojingshezhi: '告警设置',
+
+  // 覆写公共模块
+  packages_nodeDesign_custom_node_name_required: '请输入节点名称',
+  packages_nodeDesign_message_save_ok: '保存成功'
 }
