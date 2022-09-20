@@ -447,5 +447,6 @@ export default {
   packages_dag_monitor_leftsider_shijiancongyuanku:
     '事件從源庫生成到經任務處理完成寫入目標的延遲時間，當有多個目標時只統計最大的增量延遲時間',
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任務平均每秒處理的輸入事件數和輸出事件數',
-  packages_dag_components_log_zuidashijianshu: '最大事件數（條）'
+  packages_dag_components_log_zuidashijianshu: '最大事件數（條）',
+  packages_dag_message_save_fail: '保存失敗',
 }

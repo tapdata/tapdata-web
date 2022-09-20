@@ -113,7 +113,7 @@
           <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
             >search-outline</VIcon
           >
-          <ElTooltip :content="$t('dag_create_table_as_node')" placement="top">
+          <ElTooltip :content="$t('packages_dag_dag_create_table_as_node')" placement="top">
             <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
           </ElTooltip>
         </div>
@@ -123,7 +123,7 @@
             <ElInput
               v-model="tbSearchTxt"
               ref="tbInput"
-              :placeholder="$t('table_name_search_placeholder')"
+              :placeholder="$t('packages_dag_table_name_search_placeholder')"
               size="mini"
               clearable
               @keydown.native.stop

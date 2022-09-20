@@ -467,5 +467,6 @@ export default {
     "Incremental read delay: the delay time from the time the incremental event is generated to the time it is read to the start of the task's processing in the incremental phase",
   packages_dag_components_nodedetaildialog_pingjunduquhao2:
     'Average read time: the average time to read each piece of data in the full stage',
-  packages_dag_components_log_zuidashijianshu: 'Maximum number of events (pieces)'
+  packages_dag_components_log_zuidashijianshu: 'Maximum number of events (pieces)',
+  packages_dag_message_save_fail: 'Save failed',
 }
