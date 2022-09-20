@@ -1,6 +1,5 @@
 export default {
   // 通用文本
-  loading: 'Loading',
   // 通用提示
   tips_rule_not_empty: ' cannot be empty',
   text_close: 'Close',
@@ -65,7 +64,6 @@ export default {
   message_deleting: 'Deleting',
   message_operation_succuess: 'The operation succeeded',
   message_request_error: 'Request data failed',
-  message_no_permission: 'Login has expired, please log in again',
   message_loading: 'Loading',
   message_401: 'Login expired, please log in again',
   message_404: 'The resource you requested not existed',
@@ -208,14 +206,9 @@ export default {
   metadata_form_table_name: 'name',
   metadata_form_collection: 'Dataset',
   metadata_form_mongo_view: 'Mongodb view',
-  metadata_form_rule_table_name:
-    'Only supports English, numbers, underscores, dots, minus signs, and starts with English letters, not allowed to start with system',
   metadata_detail_original_table_name: 'Original table name',
   metadata_detail_original_database_name: 'Original database name',
-  taskprogress_plan_sync_data: 'Planned synchronization data volume (rows)',
-  taskprogress_completed_sync_data: 'Completed synchronization data volume (rows)',
   // 任务设置
-  task_settings_cdc_sync_point_date: '【Task settings】Incremental acquisition start time, please select the time',
   // api release api发布
   modules_all: 'All',
   modules_active: 'Released',
@@ -348,9 +341,6 @@ export default {
   api_monitor_detail_monitoring_period: 'Monitoring period',
   api_monitor_detail_Monitoring_conditions: 'Monitoring conditions',
   // api statistics api服务器
-  api_asnalysis_header_sum_res_timespan: 'Total operation time (seconds)',
-  api_asnalysis_header_avg_res_timespan: 'Average response time (milliseconds)',
-  api_asnalysis_placeholder: 'Request method/path',
   // api server api浏览
   api_server_name: 'Name',
   api_server_user: 'User',
@@ -369,7 +359,6 @@ export default {
   dataExplorer_render_time: 'Rendering use',
   dataExplorer_tag_title: 'Set tag',
   dataExplorer_show_column: 'Show column',
-  dataExplorer_document_sql: 'Please enter the SELECT statement:',
   dataExplorer_new_document: 'New record',
   dataExplorer_timeout: 'Timeout time',
   dataExplorer_unauthenticated: 'You do not have permission to access the API. ',
@@ -383,7 +372,6 @@ export default {
   dataExplorer_add_favorite: 'Favorites',
   dataExplorer_add_favorite_name: 'Favorite name',
   dataExplorer_format: 'Format code',
-  dataExplorer_exists: 'Already exists',
   dataExplorer_type: 'type',
   dataExplorer_apiservr: 'Api server',
   dataExplorer_base_path: 'Base path',
@@ -399,7 +387,6 @@ export default {
   apiaudit_parameter: 'parameter',
   apiaudit_link: 'Link',
   apiaudit_access_records: 'Number of access records',
-  apiaudit_access_bandwidth: 'API access bandwidth (M)',
   apiaudit_average_access_rate: 'API average access rate',
   apiaudit_access_time: 'Access time',
   apiaudit_average_response_time: 'Average response time',
@@ -411,23 +398,10 @@ export default {
   connection_list_form_database_type: 'Database type',
   connection_list_name: 'Connection name',
   connection_list_type: 'Connection Type',
-  connection_list_copy_failed:
-    'Copying failed because of the reason: "Connection Settings-Allow the creation of duplicate data sources" in the system settings is set to "false"',
-  connection_list_delete_connection_tip: 'After this, this connection will not be restored',
-  connection_list_delete_connection_title: 'Do you want to delete this connection? ',
   connection_list_efficient: 'effective',
   connection_list_invalidation: 'Invalid',
   connection_list_testing: 'Testing',
-  connection_list_desc:
-    'Data sources include types such as databases, structured files, application RESTful APIs, custom interfaces, etc. A data source must be created before a migration or synchronization task can be created. For more configuration instructions, please click ',
-  connection_form_kuduhost: 'IP address: port; support multiple; split with ,',
-  connection_form_table_filter_tips:
-    'Comma-separated list of expressions, use * to represent any character of any length',
-  connection_form_time_zone_tips: 'Affect type: DATE',
-  connection_form_ssl_tsl: 'TSL/SSL connection',
   connection_form_agent_msg: "Agent's current state is abnormal and cannot create a connection, please check",
-  connection_form_agent_connection_msg:
-    'The current state of the agent is abnormal, the connection cannot be tested, please check the agent',
   connection_form_content:
     `<b>MongoDB database connection URI example:</b><br>` +
     `<b>The username and password in the URI must be url encoded and then spliced into the connection string</b><br>` +
@@ -436,106 +410,40 @@ export default {
     `<b>Multi-node replica set:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
     `<b>shard set:</b> mongodb://192.168.0.100:27017/mydb<br>` +
     `<b>Multiple mongos:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`,
-  connection_form_database_owner_tip:
-    'Comma-separated list of expressions, use * to represent any character of any length',
-  connection_form_source_tip: 'This data connection can only be used as a source in Tapdata, not as a target',
-  connection_form_target_tip:
-    'This data connection can only be used as a target in Tapdata, and cannot be used as a source',
-  connection_form_shared_mining_tip:
-    'Shared mining will mine incremental logs. When there are multiple incremental tasks, there is no need to repeatedly start the log collection process, which can greatly reduce the occupation and waste of source library resources.',
-  connection_form_impact_type: 'Impact type: DATE',
-  connection_form_database_host_tips:
-    'Database address (127.0.0.1/Domain:{port}, please use multiple addresses, separate)',
-  connection_form_name_rules:
-    'Start with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, spaces',
-  connection_form_access_node_tip:
-    'In automatic case, the platform assigns nodes for connection access, and in manual case, the user manually specifies nodes for access',
-  connection_form_name_ip: 'name (ip)',
-  connection_form_mq_broker_url_tip: 'Example tcp://127.0.0.1:61616, supports tcp, nio, udp, ssl, http(s)',
-  connection_form_custom_connection_connection_time_out: 'Connection timeout (s)',
-  connection_form_custom_connection_read_time_out: 'Read timeout (s)',
-  connection_form_custom_connection_before_operate: 'Pre-operation',
-  connection_form_custom_connection_after_operate: 'Post-operation',
-  connection_form_hana_file_schema_tip: 'If matching files have the same structure, please specify a common name',
-  connection_kafka_kerberos_tip:
-    'The instance name mapping needs to be configured on the host where the Engine is located in /etc/hosts',
-  connection_form_kafka_host_tip: 'Enter IP/host:port , multiple addresses are separated by commas',
-  connection_form_kafka_lonore_format_tip:
-    'If it is enabled, the message will be ignored when a parsing exception is encountered, otherwise it will stop pulling the message',
-  connection_form_kafka_ignore_push_error_tip:
-    'If enabled, ignore this push message (there is message loss), otherwise stop pushing messages',
-  connection_form_kafka_ignore_invalid: 'Ignore non-JSON Object format messages',
-  connection_form_kudu_host_tip: 'IP address: port; support multiple; split with ,',
   // 连接管理
   connection_form_dameng_database_owner_tip:
     'Comma-separated expression list, use * to represent any character of any length',
   connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
   connection_form_hazecast_name_rules:
     'Starting with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, and spaces',
-  connection_form_hazecast_confirm_create_content: 'Do you want to abandon the creation of the connection ?', //是否放弃创建该连接？
-  connection_form_hazecast_confirm_edit_content: 'Do you want to abandon the modification of the content ?', //是否放弃修改内容？
+  //是否放弃创建该连接？
+  //是否放弃修改内容？
   //集群名称
   //是否开启ssl
-  connection_form_confirm_create_content: 'Do you want to abandon the creation of the connection? ', //Do I have to give up creating the connection?
-  connection_form_confirm_edit_content: 'Do you want to abandon the content modification? ', //Do you want to give up modifying the content?
-  connection_form_mongo_standard_mode_tip:
-    'This mode will connect to a separate server in the network, which provides a TSL/SSL channel to the database. If your database is in an inaccessible subnet, you can try this method',
-  connection_test_schema_tips:
-    'Possible reason: there is a problem with the Schema case setting, you can try to modify the case and try again',
+  //Do I have to give up creating the connection?
+  //Do you want to give up modifying the content?
   connection_reload_schema_confirm_title: 'Reload schema',
   connection_reload_schema_confirm_msg:
     'If there are too many schemas in this library, it may take a long time. Make sure to refresh the schema of the data source',
   connection_reload_schema_fail: 'Schema load failed',
   // function函数
   //Dag
-  dag_data_node_label_memcache_type_tip:
-    'All tasks in the global cache can be referenced, and the local cache can only be referenced by the current DAG. ',
-  dag_data_setting_expression: '表達式：',
-  dag_data_setting_explanation: '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務',
-  dag_data_setting_grammar: '語法:',
   dag_data_setting_second: '秒',
   dag_data_setting_hour: '小時',
-  dag_data_setting_example: '例子:',
   //Field mapping字段映射
-  dag_link_field_mapping_error_all_deleted:
-    'All fields have been deleted from the current table, and the save operation is not allowed',
-  dag_dialog_field_mapping_tip:
-    'Users can set the fields to be synchronized for each table in the source database on this page, as well as the corresponding field names and field types when the target database is automatically created.',
-  dag_dialog_field_mapping_loading_schema: 'Loading, please wait...',
-  dag_dialog_field_mapping_example_tip: 'Explanation: the prefix and suffix set also follow the capitalization rules',
-  dag_dialog_field_mapping_error_save_suffix:
-    'There is a problem with the field type setting of the table, please select the table with the problem in the table area on the left for processing',
-  dag_dialog_field_mapping_batch_change_type_error_tip:
-    'Please select the type of source table/target table conversion',
-  dag_job_check_source: 'as a source, only full tasks are supported',
   //Task edit缓存节点提示
-  task_job_setting_disable: 'Do not de-duplicate',
-  task_job_tip_text:
-    'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? ',
-  task_job_source_falg: 'as a source, only full tasks are supported',
   task_form_error_name_Duplicate: 'Task name already exists, please re-enter',
   task_list_run: 'Start',
   task_list_stop: 'Stop',
   task_list_force_stop: 'Forced stop',
   task_list_reset: 'Reset',
-  task_list_search_placeholder: 'task name/node name/library name',
   task_list_status_all: 'All status',
-  task_list_edit_confirm:
-    'If the number of tables and field mappings have been modified during editing, the new configuration may not take effect if it is not reset after submission. Do you want to continue editing?',
   task_list_important_reminder: 'Important reminder',
   task_list_stop_confirm_message:
     'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
   task_status_running: 'Running',
   task_status_not_running: 'Not running',
   task_status_error: 'Error',
-  task_monitor_migrate_table_rows: 'Planned migration data volume (rows)',
-  task_monitor_migrate_table_rows_completed: 'Completed migration data volume (rows)',
-  task_monitor_migrate_tip:
-    '*Current task progress view only supports: MySQL, Oracle, SQL Server, PostgreSQL and MongoDB',
-  task_monitor_unit_row: 'Unit:/item',
-  task_monitor_unit_second: 'Unit:/sec',
-  task_info_throughputpop:
-    'Input and output statistics: average source data collection speed and target write speed per second, the larger the value, the better',
   task_info_progress: 'Running',
   task_info_ms: 'milliseconds',
   task_info_s: 'seconds',
@@ -544,88 +452,17 @@ export default {
   task_info_d: 'day',
   task_info_input: 'input',
   task_info_output: 'Output',
-  task_info_cdc_delay: 'Delay (ms)',
-  task_info_data_row: 'Data volume (row)',
-  task_info_amount_sync_data: 'Completed synchronization data amount (rows)',
   task_info_five_min: 'Last five minutes',
   task_info_ten_min: 'The last ten minutes',
   task_info_thirty_min: 'The last thirty minutes',
   task_info_last_hour: 'Last hour',
-  task_info_subtasks_tip:
-    'In Tapdata, each target node in the task you create will be defined as a subtask. You can view the details of each subtask below',
-  task_setting_initial_sync_cdc: 'Full + Incremental synchronization',
-  task_setting_initial_sync_tip:
-    'Full synchronization is also called initialization synchronization, that is, at the time of task startup, the source data snapshot is read and synchronized to the target end; this synchronization has two modes: update write, delete and rewrite. ',
-  task_setting_cdc_tip:
-    'Incremental synchronization refers to the collection and analysis of the stored source-side change logs from the moment when the task is started, and the data changes are synchronized to the target side in an orderly manner, supporting addition, deletion, and modification operations. ',
-  task_setting_initial_sync_cdc_tip:
-    'Select the full + incremental synchronization mode, the task will automatically enter the incremental synchronization state after the full synchronization is completed. ',
-  task_setting_update_write_mode_tip:
-    'The update write mode will determine whether each piece of data on the source side exists on the target side. If it exists, it will be updated, and if it does not exist, it will be added. ',
-  task_setting_remoive_rewrite_mode_tip:
-    'Deleting the rewrite mode will first clear the data of the target table, and then synchronize all the data of the source end to the target end, which can ensure that the data of the source end and the target end are completely consistent. ',
-  task_setting_read_number_cannot_empty: 'The number of each read cannot be empty, the default is 1000',
-  task_setting_read_number_ranges: 'The value range of the number of each read is 1 ~ 10000',
-  task_setting_incremental_concurrency_cannot_empty: 'The incremental concurrency cannot be empty, the default is 8',
-  task_setting_two_way_switch: 'Whether two-way',
-  task_setting_automatic_ddl_tip:
-    'Automatic DDL operations support field and index renaming and operations such as adding, deleting, and updating',
-  task_setting_maximum_transaction: 'Transaction maximum duration (hours)',
-  task_setting_distinct_write_type: 'De-duplication write mechanism',
-  task_setting_cron_feedbackText:
-    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year *',
-  task_setting_cron_extra: 'Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
-  task_setting_cron_tip:
-    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year * ; Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
   // stop editing subtask
   // description start forced stop stop edit subtask
   // description start forced stop stop edit subtask
-  task_job_link_type_view_tips:
-    'The setting of field mapping is temporarily not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset.',
-  task_job_link_confirm_message_rollback:
-    'The setting of field mapping is not supported for the time being when copying the view. The field mapping function under this option will be disabled, and the field mapping that has been set will be reset. Are you sure to check it? ',
   //字段映射
-  task_form_no_fields_not_save:
-    'All fields in the current table have been deleted, and the save operation is not allowed',
-  task_form_lost_task: 'This operation will lose the task currently being created/edited',
-  task_form_give_up: 'Whether to give up creating/editing this task',
-  task_form_no_table_available: 'No table available? ',
-  task_form_regular:
-    'Start with an English letter, only support English, numbers, underscores, dots, and underscores, with a limit of 0~50 characters',
-  task_form_regular_not_system: 'The prefix is ​​not allowed to start with system',
-  task_form_regular_header:
-    'Start with English letters and underscores, only support English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
-  task_form_following_rules: 'Please enter according to the following rules:',
-  task_form_field_limit:
-    'Start with English letters and underscores, only support English, numbers, and underscores, with a limit of 1~50 characters',
-  task_form_right_field_duplicate: 'Duplicate name with the field on the right, no further movement allowed',
-  task_form_table_reset:
-    'Modifying the table name at this time will reset the existing table settings, are you sure to modify?',
-  task_form_restore_table:
-    'At this time, restoring the table name will reset the existing table settings. Are you sure to restore?',
   ask_form_source_type_check: 'Please select the source type',
-  task_mapping_table_setting_tip:
-    'Users can set the fields to be synchronized for each table in the source database on this page, as well as the corresponding field names and field types when the target database is automatically created.',
-  task_mapping_dialog_rule_note: 'Note: The prefix and suffix of the setting also follow the capitalization rule',
-  task_mapping_dialog_english_letter:
-    'Starting with an English letter, only supports English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
-  task_mapping_dialog_underscore_begin:
-    'Start with English letters and underscores, only support English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
-  task_mapping_dialog_rule_input: 'Please input according to the following rules:',
-  task_mapping_dialog_all_restore_defaults: 'Are you sure you want to restore all defaults? ',
-  task_mapping_dialog_delete_all_field_tip:
-    'All fields in the current table have been deleted, and the save operation is not allowed',
-  task_mapping_dialog_restore_defaults: 'Are you sure you want to restore the defaults? ',
-  task_mapping_dialog_field_name_restrictions_tip:
-    'Start with English letters and underscores, only support English, numbers, and underscores, limited to 1~50 characters',
-  task_mapping_dialog_target_no_fields_problem:
-    'It is detected that you have XXX tables with no fields, please go back to the previous step and remove the tables without fields. ',
   migrate_select_connection_tip:
     "If you haven't added a data source, please click the Add Data Source button to add it. In order to facilitate your testing, we recommend that the number of data sources should be at least 2",
-  migrate_task_settings_tip:
-    'Users can set the task name, synchronization type, error handling, etc. in the task setting step. For specific configuration instructions, please refer to the help document',
-  migrate_select_table_tip:
-    ' The user can click the right arrow button in the middle to select the tables to be synchronized at the source, and move these tables to the queue of tables to be synchronized (these tables will be transferred synchronously after the task is executed)',
   // Function management
   function_button_import_jar: 'Import',
   function_details: 'Function details',
@@ -639,14 +476,11 @@ export default {
   function_name_placeholder: 'Please enter the function name',
   function_name_repeat: 'Function name repeat',
   function_class_label: 'Class name',
-  function_class_placeholder:
-    'Please enter the class name, UDF function class name, the format is resource name. Class name',
   function_file_label: 'jar file',
   function_button_file_upload: 'Click to upload',
   function_file_upload_tips: 'Please upload the jar package file',
   function_file_upload_success: 'Upload successful',
   function_file_upload_fail: 'Upload failed',
-  function_body_placeholder: 'Please enter the command format, which is an example of the specific usage of this UDF',
   function_parameters_describe_label: 'Parameter description',
   function_parameters_describe_placeholder:
     'Support input parameter types and specific description of return parameter types',
@@ -677,10 +511,7 @@ export default {
     'Deletion may cause the task that has called this function to report an error. Are you sure to delete this function? ',
   function_tips_max_size: 'Max size ',
   // 用户
-  login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes',
-  rule_exists_name: 'Save failed, duplicate name',
   // solution解决方案
-  solution_name: 'Solution',
   solution_customer_job_logs: 'Customer job logs',
   solution_error_code: 'Error code',
   solution_select_placeholder_type: 'Please select the type',
@@ -701,7 +532,6 @@ export default {
   share_list_time_excavation: 'Excavation time point',
   share_list_creat_time: 'Create time',
   share_list_setting: 'Mining settings',
-  share_list_dig_task_search: 'digging task name/connection name search',
   share_list_status: 'Status',
   share_list_time: 'Mining Delay',
   share_list_edit_title: 'Mining Edit',
@@ -920,9 +750,6 @@ export default {
   setting_share_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
-  process_name: 'name/worker type',
-  user_list_des:
-    'The user management page provides functions for creating, editing, deleting, and setting statuses for users',
   user_list_all: 'all',
   user_list_user_name_email: 'Please enter username/email',
   user_list_change_time: 'Modification time',
@@ -1245,7 +1072,6 @@ export default {
   role_name_servers_oversee: 'Browse O&M',
   role_name_dictionary: 'Browse dictionary template management',
   role_name_Topology: 'Browse network topology',
-  milestone_label_create_target_function: '[Preliminary preparation] Automatically create target-side function',
   milestone_list_status_finish: 'finish',
   milestone_list_status_error: 'Error',
   milestone_list_status_waiting: 'Waiting',
@@ -1258,7 +1084,6 @@ export default {
   signin_verify_password_invalid: 'Verification code at least 5 characters',
   signin_verify_password_notCN: 'Password only allows English, numbers and English punctuation',
   signin_not_mailbox: 'oops~This mailbox has not been registered yet',
-  dag_save_fail: 'Save failed, please check node',
   meta_table_default: 'Default',
   meta_table_not_null: 'Not null',
   new_advanced_mode: 'Standard Mode',
@@ -1275,8 +1100,6 @@ export default {
     'The data source is the premise of creating a transfer task, and all the database and table data nodes in the task come from the data source',
   new_create_api_desc:
     'API is data publishing, you can create a new collection API based on the existing collection or through synchronization tasks',
-  new_data_valid_desc:
-    'It can compare and verify the data between the data source and the target of the migration synchronization task, including fast count verification, full table field value verification, associated field value verification, etc.',
   //数据发现-数据对象
   object_list_name: 'Object name',
   object_list_classification: 'Object classification',
@@ -1301,49 +1124,6 @@ export default {
   datadiscovery_previewdrawer_waijian: 'Foreign key',
   datadiscovery_previewdrawer_zhujian: 'Primary key',
   // web-core
-  tap_login: 'Tapdata-Login',
-  tap_registry: 'Tapdata-register',
-  tap_verificationEmail: 'Tapdata-Email verification',
-  tap_passwordReset: 'Tapdata-Modify Password',
-  tap_home: 'Tapdata-Home',
-  tap_connection: 'Tapdata-Connection ',
-  tap_connectionEdtion: 'Tapdata-ConnectionEdtion',
-  tap_jobFlow: 'Tapdata-JobFlow',
-  tap_jsFuncs: 'Tapdata-JsFuncs',
-  tap_dataCatalog: 'Tapdata-DataCatalog',
-  tap_metadata: 'Tapdata-MetadataManagement',
-  tap_metadataInstances: 'Tapdata-MetadataInstances',
-  tap_dataQuality: 'Tapdata-DataQuality',
-  tap_TimeToLive: 'Tapdata-TimeToLive',
-  tap_dataLineage: 'Tapdata-DataLineage',
-  tap_dataRules: 'Tapdata-DataRules ',
-  tap_apiManagement: 'Tapdata-APIManagement ',
-  tap_apiEdition: 'Tapdata-APIEdition',
-  tap_dataExplor: 'Tapdata-DataExplor',
-  tap_docTest: 'Tapdata-Doc&Test',
-  tap_apiStats: 'Tapdata-API Stats',
-  tap_apiClients: 'Tapdata-APIClients ',
-  tap_apiSever: 'Tapdata-APISever',
-  tap_dictionary: 'Tapdata-Dictionary',
-  tap_topology: 'Tapdata-Topology',
-  tap_serversOversee: 'Tapdata-ServersOversee',
-  tap_journal: 'Tapdata-Journal',
-  tap_apiInfo: 'Tapdata-APIInfo',
-  tap_taskHistories: 'Tapdata-Scheduling History',
-  tap_agentdownload: 'Tapdata-Agentdownload',
-  tap_dataCollect: 'Tapdata-DataCollect',
-  tap_upload: 'Tapdata-Upload',
-  tap_jobSchedule: 'Tapdata-JobSchedule',
-  tap_clusterManagement: 'Tapdata-ClusterManagement ',
-  tap_agentManagement: 'Tapdata-AgentManagement ',
-  tap_userManagement: 'Tapdata-UserManagement ',
-  tap_userEdition: 'Tapdata-UserEdition',
-  tap_roleManagement: 'Tapdata-RoleManagement',
-  tap_roleEdition: 'Tapdata-RoleEdition ',
-  tap_systemSettings: 'Tapdata-SystemSettings',
-  tap_account: 'Tapdata-Account',
-  tap_settingCenter: 'Tapdata-Setting Center',
-  tap_sharedMining: 'Tapdata-shared mining',
   errorCode_networkUnconnected: 'Network unconnected',
   errorCode_serverAbnormal: 'Server abnormal',
   errorCode_requested: 'The resource you requested not existed',
@@ -1378,9 +1158,6 @@ export default {
   app_signIn_password_invalid: 'Password at least 5 characters.',
   app_signIn_permission_denied: 'Permission denied.',
   app_signIn_signInFail: "The email and password didn't work.",
-  app_signIn_watingApprove: 'This account is not approved, please wait for contact email.',
-  app_signIn_accountDisabled:
-    'Your account has been frozen, if you have any questions, please contact customer service. ',
   app_signIn_registry: 'Registration',
   app_signIn_registry_tip: 'I agree with',
   app_signIn_userPplicy: ' user policy',
@@ -1412,20 +1189,14 @@ export default {
   app_signIn_registered: ' Registered',
   app_signIn_resetAccountSuccess: 'The password has been reset successfully~',
   app_signIn_passwordResetText: 'Reset password email has been sent to',
-  app_signIn_notMailbox: 'oops~This mailbox has not been registered yet',
   app_signIn_hasMailbox: 'oops~This mailbox has already been registered',
   app_signIn_disableSignup: 'oops~Disable Signup',
   app_signIn_getCode: 'Get InviteCode',
   app_signIn_qrCodeText: 'Scan wechat QR Code to get invite code',
-  app_menu_apiDocAndTest: 'API Doc&Test',
-  app_menu_dataCollect: 'Data Collect(Old)',
-  app_menu_licenseBefore: 'Info: License remaining ',
   app_Home_initialization: 'Initializing',
   app_Home_loadingFinished: 'Initialization completed',
   app_Home_incremental: 'CDC',
   app_Home_incrementalLag: 'CDC Lag',
-  message_ipTip:
-    'Switching the network card only changes the display of IP under the server of cluster management page, does not affect any function.',
   message_update: 'Update',
   message_delete: 'Delete',
   message_cancel: 'Cancel',
@@ -1435,19 +1206,8 @@ export default {
   message_deleteOK: 'Successfully deleted',
   message_deleteFail: 'Failed to delete',
   message_prompt: 'Prompt',
-  message_resetMessage: 'This will cause the job to be rerun from the beginning, continue?',
-  message_deteleJobMessage: 'This will permanently delete the choosed jobs ?',
-  message_forceStoppingMessage: 'This will interrupt the data transfer immediately, continue?',
-  message_stopInitial_syncMessage:
-    'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
-  message_stopMessage: 'Are you sure to pause the mission?',
-  message_stopAggregation_message:
-    'Job XXX includes aggregation processor node, job will be reset when excutes restart，still excute pause?',
-  message_startAggregation_message:
-    'Job XXX includes aggregation processor node, job will be reset when excutes start job，still excute start?',
   message_clickRelatedTasks: 'Click to view related tasks',
   message_noRelatedTask: 'No related tasks',
-  message_loadingSchema: 'Schema of source database has not finished loading yet, please wait',
   cluster_cancel: 'Cancel',
   cluster_confirm: 'Confirm',
   cluster_confirmText: 'Confirm ',
@@ -1854,29 +1614,11 @@ export default {
   dataFlow_flowEngineVersion: 'Flow Engine Version',
   dataFlow_flowEngineV1: 'Flow Engine V1',
   dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
-  connection_desc:
-    'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
-  connection_deteleDatabaseTittle: 'Do you want to delete the connection?',
-  connection_deteleDatabaseMsg: 'After deleting connection xxx, this connection cannot be restored. ',
-  connection_reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
-  connection_checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
-  connection_copyFailedMsg:
-    'Copy failed, reason:  The setting item "Connections - create  duplicate source" need to be set to "false"',
-  connection_type_source_and_target: 'Source&Target',
-  editor_cell_data_node_tcpTip:
-    'Important: TCP/IP data sources output JSON packets by default without additional packet conversion processing nodes ',
-  editor_cell_data_node_database_enterName: 'Please enter the name / field name to search',
   editor_cell_data_node_collection_form_collection_placeholder: 'Please select collection',
   editor_cell_data_node_collection_form_fieldFilterType_retainedField: 'Retained field',
   editor_cell_data_node_collection_form_fieldFilterType_deleteField: 'Delete field',
   editor_cell_data_node_collection_form_fieldFilter_placeholderKeep: ' Select the fields to keep',
   editor_cell_data_node_collection_form_fieldFilter_placeholderDelete: ' Select the fields to delete',
-  editor_cell_data_node_collection_form_fieldFilterTip_keepAllFields:
-    'Keep all fields: Keep all fields of this collection.',
-  editor_cell_data_node_collection_form_fieldFilterTip_retainedField:
-    'Retained field: the selected fields will be retained and all other fields will be discarded.',
-  editor_cell_data_node_collection_form_fieldFilterTip_deleteField:
-    'Delete field: the selected fields will be deleted and all other fields will be retained.',
   editor_cell_data_node_collection_form_dropTable_placeholder: '',
   editor_cell_data_node_collection_form_filter_fieldFilter: 'Visual Mode',
   editor_cell_data_node_collection_form_filter_sqlFilter: 'SQL Filter',
@@ -1886,57 +1628,13 @@ export default {
   editor_cell_data_node_collection_form_filter_allRows: 'All rows',
   editor_cell_data_node_collection_form_filter_oneThousandRows: '1000 rows',
   editor_cell_data_node_collection_form_filter_tenThousandRows: '10000 rows',
-  editor_cell_data_node_collection_form_filter_placeholder_placeholder:
-    'Filter Condition (Mongo Query Filter Document)',
-  editor_cell_data_node_collection_form_aggregation_addTextTip1:
-    'Please enter the MongoDB aggregation code, and then click "Preview" to preview the sample data here',
-  editor_cell_data_node_table_form_table_labelTips: '（If it is empty, create a new table）',
-  editor_cell_data_node_table_form_table_placeholder: 'Please select table,Case sensitive',
   editor_cell_data_node_table_form_custom_sql_placeholder: 'Please input you custom sql',
   editor_cell_data_node_table_form_custom_sql_mplaceholder: 'Please input you custom mql',
   editor_cell_data_node_table_form_initial_offset_label: 'Custom SQL Offset',
   editor_cell_data_node_table_form_initial_offset_placeholder: 'Please input you custom sql offset',
   editor_cell_data_node_api_publishApi_path: 'API path is not empty',
-  editor_cell_data_node_api_variable_name:
-    'Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start',
-  editor_cell_data_node_logminer_functionContent:
-    'This node is used to collect logs from specified source databases to save to target MongoDB database share log data, in order to avoid the action of repeatedly starting the logging process to greatly alleviate theoccupation and waste of source database resources. ',
-  editor_cell_processor_aggregate_none_name: 'Sub-process name is required',
-  editor_cell_processor_aggregate_school_name: 'school_name: "Dorset"',
-  editor_cell_processor_aggregate_idComment:
-    '// "students_sum" is the Sub-process name, and the names between sub-processes cannot be repeated',
-  editor_cell_processor_aggregate_countComment:
-    '// COUNT is the Polymerization function and 132 is the value; if the function is MAX, it will show MAX here',
-  editor_cell_processor_aggregate_school_nameComment: '// Grouping summary field names, no display if dont filling out',
-  editor_cell_processor_aggregate_aggregateSizeTips:
-    'Put in the range of cached aggregation result, the excess data will be stored in target database.',
-  editor_cell_processor_field_form_originalName: 'Original field name: ',
-  editor_cell_processor_field_form_originalType: 'Original type: ',
-  editor_cell_processor_field_form_fieldDesc: 'Comment: ',
-  editor_cell_processor_field_form_errorUndefined:
-    'The model of the source node has changed, so that the field processor does not work, please click the UPDATE MODEL button in the configuration panel of the upper node to handle this issue',
-  editor_cell_processor_field_form_errorOperationDrop:
-    'The following processing operation is detected to conflict with the source model. Please select the operation mode for the following fields. Drop / Keep: Drop / Keep the process of the field',
-  editor_cell_processor_field_form_errorOperationDesc:
-    'Click "Drop all" to select "Drop" operation for all fields; click "Bulk keep" to select "Keep" operation for all fields, the field without "Keep" operation will still be selected "Drop"',
   editor_cell_processor_field_form_toUpperCase: 'Upper',
   editor_cell_processor_field_form_toLowerCase: 'Lower',
-  editor_cell_processor_field_form_originalField: 'Original field (type) ',
-  editor_cell_processor_field_form_exampleRow1:
-    'var result = "a" + "b"  // String concatenation, the result of result is "ab"',
-  editor_cell_processor_field_form_exampleRow2: 'var result = 1 + 2 // Digital calculation, the result of result is 3',
-  editor_cell_processor_field_form_exampleRow3:
-    'var result = fn("1") // Call function, the result is the return value of the fn function.',
-  editor_cell_processor_field_form_exampleRow4:
-    'var result = record.isTrue ? true : false // Ternary expression, The value of result is true or false based on the result of the judgment expression (record.isTrue)',
-  editor_cell_processor_script_warning_for_not_save:
-    'The current task has not been saved, unable to connect the test server, please save and try again',
-  editor_cell_processor_dataFilter_form_expressionExample_tip:
-    'Select men over 50 years old or people over 30 years old with income below 10,000, the expression is as follows:',
-  editor_cell_processor_dataFilter_form_symbol_gtLt: 'Greater than, less than',
-  editor_cell_processor_dataFilter_form_symbol_geLe: 'Greater than and equal to, less than and equal to',
-  editor_cell_link_repeatId_message:
-    '"_id" field exists in target model, and system will remove the duplicated field “_id”, if you wanna keep it, please use the field processor to rename the "_id" field before continue.',
   editor_cell_link_pcb_Label: 'protocol type',
   editor_cell_link_pcb_Placeholder: 'please select a protocol type',
   editor_cell_link_pcb_Fieldsselected: 'field to be selected',
@@ -1946,112 +1644,12 @@ export default {
   editor_cell_link_pcb_Notmoveuptip: 'there is no room to move up',
   editor_cell_link_pcb_Notmovedowntip: 'there is no room to move down',
   editor_cell_link_pcb_Onlyonepiece: 'only one piece of data can be selected to move up and down',
-  editor_cell_link_form_joinKeys_tips:
-    'Reminder: The current association condition setting will cause the data deletion operation to fail to be synchronized. Please add an intermediate mongodb node to complete the synchronization setting.',
-  editor_cell_link_existingSchema_label: 'When schema and/or data already exist in target database',
-  editor_cell_link_existingSchema_keepExistedData: 'Retain schema, but remove data in target database',
-  editor_cell_link_viewTip:
-    'Copy view does not support table rename, if check this box rename function will be disabled',
-  editor_cell_link_formTip: 'The function of copy view, function, procedure only support MySQL to MySQL',
   editor_ui_sidebar_setting: 'Data Flow Settings',
-  editor_ui_toolbar_export_svg_tip: 'Open as SVG in a pop-up',
-  editor_ui_toolbar_export_png_tip: 'Open as SVG in a pop-up',
-  editor_ui_toolbar_layout_tip: 'Auto-layout Graph',
-  editor_ui_nodeLoadSchemaDiaLog:
-    'If the data source is updated, this operation will update the model of this node. Do you want to continue?',
-  editor_ui_allNodeLoadSchemaDiaLog:
-    'If the data source is updated, this operation will update the model of each node. Do you want to continue?',
-  editor_fileFormBuilder_guideDoc:
-    'file under the data source of the FILE type. The system will load up the model and transfer it to the target collection. If the structures of selected files are different, the system will combine them into one model. For more information, please click the',
-  editor_fileFormBuilder_excel_cell_point:
-    'Enter the coordinates of Excel, "row 1 and column 1" can be entered as "A1"',
-  editor_fileFormBuilder_excel_cell_tip: 'The field range must be uppercase letter + number',
-  editor_fileFormBuilder_excel_value_range:
-    'Enter the abscissa range of Excel, "line 2 to line 100", can be entered as: "2" ~ "10"',
-  editor_fileFormBuilder_loadSchemaTip:
-    'After configuring the above items, please click the Load Model" button to update the file model. If there is no model, sync transmission cannot be performed',
-  dataMap_dblclickDataModel: 'Please double-click the data model to open the field mapping',
-  apiInfo_isPublishAPI: 'Are you sure to publish api?',
-  apiInfo_unpublish_api: 'Are you sure you want to cancel publishing api?',
-  dataForm_primaryTest: 'Starting connection test service, please wait for a while ...',
-  dataForm_testing: 'Testing, please wait for a while ...',
   dataForm_submit: 'Submit',
-  dataForm_test_testResult: 'Test connection result: ',
-  dataForm_test_error: 'The test service request timed out, please close and try again.',
-  dataForm_test_retryTest: 'The connection test service failed to start, please click Retry',
-  dataForm_form_kuduhost: 'IP:port;support multiple; separated by ,',
-  dataForm_form_ssl: 'Use TLS/SSL Connection',
-  dataForm_form_databaseHostPlaceholder:
-    'Database Host(127.0.0.1/Domain:{Port},Please use multiple addresses , separate)',
-  dataForm_form_agentMsg: 'Agent current state exception cannot create connection, please check.',
-  dataForm_form_agentConnectionMsg: 'Agent current state is abnormal, cannot to test connection, please check.',
-  dataForm_form_multiTenant: 'Multi-tenant',
-  dataForm_form_uriTips_content:
-    '<b>MongoDB Connection URI Examples :</b><br><b>Replicaset :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br><b>Replicaset with authentication:</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br><b>Replicaset with multiple members :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br><b>Sharded Cluste :</b> mongodb://192.168.0.100:27017/mydb<br><b>Sharded Cluster with multiple mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>',
-  dataForm_form_tableFilterTips: 'Comma-delimited list of expression, use * to represent any character of any length.',
-  dataForm_form_timeZoneTips: 'Impact Type: DATE',
-  dataForm_form_options_sourceTips: 'This data connection can only be used as source in Tapdata, but not as target',
-  dataForm_form_options_targetTips: 'This data connection can only be used as target in Tapdata, but not as source ',
-  dataForm_form_options_standardModeTips:
-    'Configure MongoDB database according to Host/IP, port, account and password. Batch input is supported',
-  dataForm_form_options_sslTSL: 'Connect via an TSL/SSL tunnel',
-  dataForm_form_options_sslTSLTip:
-    'Tapdata will connect to a separate server in your network which provides an TSL/SSL tunnel to your database. This method is necessary if your database is in an inaccessible subnet.',
-  dataForm_form_guide:
-    'For data connection configuration, please refer to the guide documenton the right side. For more information about data connection settings, instructions or other information, please click',
-  dataForm_form_response_body_CHECK_AUTH: 'Checks if the username,password and database are available',
-  dataForm_form_response_body_CHECK_BIN_LOG: 'Check if binlog is opened, and is ROW level',
-  dataForm_form_response_body_CHECK_SCRIPT: 'Check if script(s) is available',
-  dataForm_form_response_body_CHECK_PRIMARY_KEY: 'Check if primary key(s) is available',
-  dataForm_form_file_connecitonTimeout: 'Connection timeout (seconds)',
-  dataForm_form_file_transmissionTimeout: 'Transmission timeout (seconds)',
-  dataForm_form_file_ftpTip: 'Add files according to FTP such as address, port, account, password, etc. ',
-  dataForm_form_file_sharedTip: 'Add files according to shared folders such as address, account, password, etc.',
-  dataForm_form_file_activeConnectionModeTip:
-    'The server initiatively sends a request to establish a connection with high performance. If there is a firewall, the request may fail. ',
-  dataForm_form_file_passiveConnectionModeTip:
-    'The connection and data connection are submitted by the client to the server, which can solve the problem that the request is filtered out by the firewall.',
-  dataForm_form_file_file_upload_chunk_size: 'File upload file chunk size (bytes)',
-  dataForm_form_file_file_upload_memory: 'Memory read (risk of memory overflow)',
-  dataForm_form_kafka_lonoreFormat: 'Ignore non-JSON Object format messages',
-  dataForm_form_kafka_lonoreFormatTip:
-    'If it is turned on, it will ignore the message if it encounters a parsing exception, otherwise it will stop pulling the message',
-  dataForm_form_kafka_directlyNameTip: 'Enter the subject name directly, separate multiple subjects with commas',
-  dataForm_form_kafka_kafkaPatternTopicsTip:
-    'Configure the MongoDB database according to Host, port, account, and password, and support batch input',
-  dataForm_form_kafka_hostPlaceHolder: 'Enter IP/host:port, separate multiple addresses with commas',
-  dataForm_form_kafka_requestTimeout: 'Push request timeout (ms)',
-  dataForm_form_kafka_kafkaLingerMS: 'Maximum waiting time for partition message batch (milliseconds)',
-  dataForm_form_kafka_pushErrorTip:
-    'If it is enabled, ignore the message pushed this time (there is a message loss), otherwise stop pushing the message',
-  dataForm_form_custom_connection_unique_keys_label: 'Comma-delimited list of joint primary key',
-  dataForm_form_restApi_request_interval_tip: 'Synchronization interval (second)',
-  dataForm_form_restApi_unique_keys_label: 'Comma-delimited list of joint primary key',
-  dataForm_form_restApi_url_info_url_invalid: 'Invalid URL, url example: http://127.0.0.1:8080/api/xxx?param=value',
-  dataForm_form_restApi_url_info_INCREMENTAL_SYNC: 'Synchronize real-time data',
-  dataForm_form_restApi_url_info_INITIAL_INCREMENTAL_SYNC: 'Synchronize historical and real-time data',
-  dataForm_form_gridfs_file_schema_tip: 'If files are of same type, please specify a common name.',
-  dataForm_form_gridfs_gridfs_upload_chunk_size: 'Gridfs Upload Chunk Size(Byte)',
-  dataForm_form_gridfs_file_upload_memory: 'Memory(May be cause OOM)(有内存溢出风险)',
-  dataForm_form_mq_brokerUrlTip: 'example tcp://127.0.0.1 : 61616, support TCP, NiO, UDP, SSL, HTTP (s) ',
-  dataForm_form_transform_deleteFieldTip:
-    'Are you sure you want to delete the field? After deletion, it cannot be restored',
-  dataForm_form_transform_deleteFieldConfirm:
-    'Are you sure you want to delete the field? Cannot recover after deletion',
   dataForm_error_connectionurl: 'Connection name already existed.',
-  dataForm_error_portRange: 'Port should be between 1 ~ 65535',
-  dataForm_error_noCreate: ' , Cannot be created repeatedly',
-  classification_deteleMessage:
-    'This operation will delete all subclasses existing in this category, whether to delete it',
-  relations_refreshMsg:
-    'All synchronous tasks will be analyzed and lineage graph will be generated. It may take a long time, click "YES" to confirm',
-  relations_refreshStatusMsg: 'Syncing graphics data, graphics may be missing, please refresh later and try again',
-  relations_customFields: 'Custom fields, please separate multiple fields with , ',
-  relations_label: 'Field type/field name',
   relations_add: 'Add',
   relations_field: 'Fields',
   relations_attributes: 'Attributes',
-  metadata_namePlaceholder: 'Please enter the table name/database name',
   metadata_createModel: 'Create a model',
   metadata_header_name: 'Table name/owned database',
   metadata_header_meta_type: 'Meta type',
@@ -2246,7 +1844,6 @@ export default {
   metadata_metadataSearch_placeholder: 'please enter keyword to search',
   notification_stoppedByError: 'stopped by error',
   notification_CDCLag: 'CDC lag',
-  notification_SYNCSeverRestartFailed: 'SYNC SEVER restart failed\t',
   notification_jobPaused: 'Job paused',
   notification_jobDeleted: 'Job deleted',
   notification_jobStateError: 'Job state error',
@@ -2289,54 +1886,9 @@ export default {
   notification_modular_system: ' System ',
   dialog_placeholderTable:
     'Only supports English, numbers, underscores, minus signs, dots, and starts with English letter',
-  dialog_placeholderCollection:
-    'Only support English, numbers, underscores, minus signs, dots, and starts with English letter, and cannot start with "system"',
-  dialog_tableValidateTip:
-    'Table name can contain only English letters, numbers, underscores, minus signs, dots, and starts with English letter',
-  dialog_collectionValidateTip:
-    'Collection name can contain only English letters, numbers, underscores, minus signs, dots, and starts with English letter, and cannot start with "system"',
-  dialog_downAgent_text:
-    'First, a JAVA runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
-  dialog_downAgent_linuxInstructionsText1:
-    '· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
-  dialog_downAgent_linuxInstructionsText2:
-    '· Execute the above command in install environment, Agent will download and start automatically ',
-  dialog_downAgent_linuxInstructionsText3:
-    '· You can start and stop Agent by executing the command "tapdata start/stop backend".',
-  dialog_downAgent_windowsText:
-    'First, a JAVA runtime environment is required in the installation environment. After download, you can install and start Agent by using the following command in the directory where the Agent Installation package stored.',
-  dialog_downAgent_windowsInstructionsText1:
-    '· First, ensure that the JAVA runtime environment is installed in the installation target environment.',
-  dialog_downAgent_windowsInstructionsText2: '· Second, download the installation file and store it in a directory.',
-  dialog_downAgent_windowsInstructionsText3:
-    '· Third, enter the directory, and execute the command to install and start Agent automatically. ',
-  dialog_downAgent_windowsInstructionsText4: '· Only one Agent can be installed under an account of Tapdata cloud.',
-  dialog_downAgent_windowsInstructionsText5:
-    '· You can start and stop Agent by executing the command "tapdata start/stop backend".',
-  dialog_downAgent_dockerText:
-    'First, a Docker runtime environment is required in the installation environment. Then, download and start Agent by using the following command.',
-  dialog_downAgent_dockerText1:
-    '· First, ensure that the Docker runtime environment is installed in the installation target environment.',
-  dialog_downAgent_dockerText2: '· After executing the command, the Agent will be automatically installed and started.',
-  dialog_downAgent_important: 'Important: ',
-  dialog_downAgent_noAgent: 'You have not installed Agent yet, and cannot execute the transmission jobs. Please ',
-  dialog_downAgent_dfsSuccessText: 'DFS Agent installed successfully,',
-  dialog_downAgent_dfsSuccessText3: 'DFS Agent installed successfully, job',
   dialog_downAgent_ok: 'OK',
-  dialog_sameTable: 'has duplicate name tables: ',
-  dialog_jobSchedule_job: 'Job:',
-  dialog_jobSchedule_sync: 'Sync:',
-  dialog_jobSchedule_expression: 'Expression:',
-  dialog_jobSchedule_explanation: 'You can set cron expression to schedule tasks at fixed time, date, or interval',
-  dialog_jobSchedule_grammar: 'Grammar:',
-  dialog_jobSchedule_example: 'Example:',
   dialog_jobSchedule_runDay: "Run at 2 o'clock every day",
-  dialog_jobSchedule_jobSchedule_tip: 'Job schedule settings - available only for initial job',
   queryBuilder_addCond: 'field Cond',
-  tableFlow_source_target_table: 'Source/Target Table',
-  tableFlow_task_execution_time: 'Job/Execution Time',
-  tableFlow_output_input: 'Output/Input (rows)',
-  tableFlow_speed: 'Speed (QPS)',
   account_accountSettings: 'Account settings',
   account_systemSetting: 'System Settings',
   account_email: 'Email',
@@ -2377,59 +1929,10 @@ export default {
   role_chooseAllFunction: 'Select all functions',
   role_chooseAllRole: 'All role data',
   role_settingTitle: 'Set Up Permission',
-  role_moduleMeun_Data_SYNC: 'Migration & Data Synchronization',
-  role_moduleMeun_API_doc_test: 'API doc & test',
-  role_moduleMeun_data_collect: 'Data collection (old)',
-  role_roleNavName_Dashboard: 'Dashboard (Home)',
-  role_roleNavName_verify_job_edition: 'verify job editing & execution',
-  role_roleNavName_API_doc_test: 'View API doc & test',
-  role_roleNavName_data_collect: 'View data collect(old)',
-  role_delete: 'Delete',
-  milestone_INIT_DATAFLOW: '【Preparation】Analyze the DAG and create sub job(s)',
-  milestone_CONNECT_TO_SOURCE: '【Preparation】Connecto to source',
-  milestone_CONNECT_TO_TARGET: '【Preparation】Connect to target',
-  milestone_INIT_CONNECTOR: '【Preparation】Scan source information and initialize the source collector',
-  milestone_INIT_TRANSFORMER: '【Preparation】Scan target information and initialize the target handler',
-  milestone_READ_SOURCE_DDL: '【Preparation】Read source DDL information(Database Migration)',
-  milestone_DROP_TARGET_SCHEMA: '【Preparation】Drop target schema',
-  milestone_CLEAR_TARGET_DATA: '【Preparation】Empty the target data',
-  milestone_CREATE_TARGET_TABLE: '【Preparation】Automatically create target table',
-  milestone_CREATE_TARGET_INDEX: '【Preparation】Automatically create target index',
-  milestone_CREATE_TARGET_VIEW: '【Preparation】Automatically create target view',
-  milestone_CREATE_TARGET_FUNCTION: '【Preparation】Automatically create target function',
-  milestone_CREATE_TARGET_PROCEDURE: '【Preparation】Automatically create target procedure',
-  milestone_READ_SNAPSHOT: '【Data transfer】Read the source snapshot',
-  milestone_WRITE_SNAPSHOT: '【Data transfer】Write the snapshot into target',
-  milestone_READ_CDC_EVENT: '【Data transfer】Source enters incremental read mode',
-  milestone_WRITE_CDC_EVENT: '【Data transfer】Target enters incremental write mode',
-  milestone_emptyText: 'The job has not been started or has been reset, so there is no running milestone data.',
-  guide_step_4_desc:
-    'Please select the type of task to be performed according to the prompts below, the system will open the corresponding task editing panel according to your choice, if you choose a wrong task, you can cancel the task and select again.',
-  guide_task_type_clone_tips:
-    'Database migration function takes the library as the unit user to easily realize the structure migration, initial migration, or incremental migration between multiple homogeneous or heterogeneous databases (libraries, table mapping) within a task, suitable for data Database migration to the cloud, database migration between instances, database migration to the cloud, database disaster recovery and other scenarios. ',
   guide_task_type_custom_tips:
     "Data synchronization focuses on table-level data processing and transmission, to meet the needs of users to achieve multi-table (data set), multi-table integration between multi-level data, data splitting, association mapping, field increase and decrease merge, content filtering, Real-time data synchronization is realized at the same time in the case of aggregate processing JS processing and other functions. Without affecting the user's business, it meets the user's needs for various business scenarios such as remote or local data disaster recovery, cross-instance data synchronization, query and report distribution, and real-time data warehouse management. ",
-  guide_agent_not_install:
-    'The system detects that the Agent is not installed, please download and install and try again',
-  guide_btn_save: 'Save,',
   guide_btn_to_dashboard: "Don't edit the task for now, go shopping first",
-  guide_windowsSolution: 'WINDOWS: Start the server and execute commands',
-  guide_windowsSolution1: 'WINDOWS: execute commands in the Agent environment',
-  guide_linuxSolution: 'LINUX: Start the server and execute commands',
-  guide_linuxSolution1: 'LINUX: execute commands in the Agent environment',
-  guide_clickText: 'The process has been restarted? Please click',
-  user_des: 'The user management page provides functions to create, edit, delete, and status settings for users',
-  user_userNameEmail: 'Please enter your username/email',
   user_creatUser: 'Create user',
-  user_delete: 'Delete',
-  user_passwordNull: 'Please enter a password, the length is 5 ~ 32 characters',
-  user_delUserTitle: 'Whether to delete this user ?',
-  user_checkUserTitle: 'Whether to verify this user ?',
-  user_checkUserLast: ' after the mailbox, this user can be activated',
-  user_activationUserTitle: 'Do you want to activate this user ? ',
-  user_activetionUserLast: ' after that, this user will be able to use the TAPDATA system',
-  user_freezeUserTitle: 'Do you want to freeze this user ? ',
-  timeToLive_searchtext: 'Database name/Data table name/Index name',
   timeToLive_m: 'minute',
   timeToLive_h: 'hour',
   timeToLive_d: 'day',
@@ -2437,11 +1940,7 @@ export default {
   timeToLive_w: 'week',
   timeToLive_mo: 'month',
   timeToLive_y: 'year',
-  timeToLive_failed: 'The current database table, no time field was found, and the life cycle could not be created',
-  timeToLive_filedGetFailed:
-    'The current database table, no time field was found, and the life cycle could not be created',
   dictionary_isMappedvalue: 'The mapped value cannot be empty',
-  dictionary_titlenametips: 'The name cannot be repeated, please modify it again',
   dataRule_classification: 'Classification',
   dataRule_pleaseSelect: 'Please select',
   dataRule_pleaseInput: 'Please input',
@@ -2473,25 +1972,6 @@ export default {
   dataRule_dataType_baseShorttype: 'Shorttype',
   dataRule_dataType_baseTimestamp: 'Timestamp',
   dataRule_dataType_baseLonginteger: 'Longinteger',
-  task_task_duration: 'Task Duration(ms)',
-  dkDashboard_annulusTitle1: 'Published data (pieces)',
-  dkDashboard_annulusTitle3: 'Data types available (number)',
-  dkDashboard_annulusTitle4: 'Published data (number)',
-  dkDashboard_spaceUsage: 'Take up the space(GB)',
-  dkDashboard_topRelease: 'Top 10 distribution of released data (pieces)',
-  dkDashboard_create: 'New (number)',
-  dkDashboard_update: 'New (Modified)',
-  dkDashboard_spaceUsage2: 'Take up the space(number)',
-  dkDashboard_record: 'Historical records (number)',
-  dkDashboard_outCount: 'Violations(number)',
-  dkDashboard_yi: '*10000W',
-  taskProgress_tip: '*Current task progress view only supports: MySQL, Oracle, SQL Server, PostgreSQL and MongoDB',
-  taskProgress_planMigrateData: 'Planned migration data volume (rows)',
-  taskProgress_completedMigrateData: 'The amount of data that has been migrated (rows)',
-  taskProgress_totalDataVolume: 'Total data volume (rows)',
-  connection_selector_desc2: 'For more data sources, please use the official version',
-  schema_progress_load_time: 'Loaded time: {0}',
-  dag_task_error_tittle: 'Task start pre-check',
   dag_task_error_Text: 'During the model deduction, please wait patiently',
   dag_task_error_current_Progress: 'Current progress',
   dag_task_error_Completed: 'Model deduction completed',
