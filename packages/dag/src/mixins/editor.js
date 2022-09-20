@@ -981,13 +981,19 @@ export default {
     },
 
     resetWorkspace() {
-      this.dataflow = merge(
+      console.log('resetWorkspace', this.dataflow) // eslint-disable-line
+      Object.assign(this.dataflow, {
+        ...DEFAULT_SETTINGS,
+        id: '',
+        name: ''
+      })
+      /*this.dataflow = merge(
         {
           id: '',
           name: ''
         },
         DEFAULT_SETTINGS
-      )
+      )*/
       this.jsPlumbIns.reset()
       this.deselectAllNodes()
       this.reset()
