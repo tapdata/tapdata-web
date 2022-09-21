@@ -1,5 +1,4 @@
 export default {
-  // 通用文本
   // 通用提示
   tips_rule_not_empty: '不能为空',
   text_close: '关闭',
@@ -125,7 +124,6 @@ export default {
   page_title_custom_node: '自定义节点',
   page_title_account: '个人设置',
   page_title_external_storage: '外存管理',
-  // 通用组件
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',
   component_table_selector_checked_label: '已选择表',
@@ -138,7 +136,6 @@ export default {
   component_table_selector_clipboard_placeholder: '请输入表名称并以逗号分隔,例如：table_a,table_b',
   // app
   app_license_expire_warning: '提醒：License剩余 {0} 天到期',
-  // 路由名
   // Agent
   agent_check_error: 'Agent当前状态异常无法创建连接，请检查',
   // 控制台
@@ -206,7 +203,6 @@ export default {
   metadata_form_mongo_view: 'Mongodb视图',
   metadata_detail_original_table_name: '原表名',
   metadata_detail_original_database_name: '原库名',
-  // 任务设置
   // api发布
   modules_all: '全部',
   modules_active: '已发布',
@@ -309,7 +305,6 @@ export default {
   application_true: '是',
   application_false: '否',
   application_create: '创建客户端',
-  // api统计
   //api 监控
   api_monitor_total_totalCount: 'API总数',
   api_monitor_total_warningApiCount: 'API访问总数',
@@ -371,7 +366,6 @@ export default {
   dataExplorer_type: '类型',
   dataExplorer_apiservr: 'api服务器',
   dataExplorer_base_path: '基础路径',
-  // api文档及测试
   // 服务审计
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
@@ -389,7 +383,6 @@ export default {
   apiaudit_success: '成功',
   apiaudit_fail: '失败',
   apiaudit_placeholder: '请输入名称/ID',
-  // 数据源
   // 连接
   connection_list_form_database_type: '数据库类型',
   connection_list_name: '连接名',
@@ -397,29 +390,12 @@ export default {
   connection_list_efficient: '有效',
   connection_list_invalidation: '无效',
   connection_list_testing: '测试中',
-  connection_form_content:
-    `<b>MongoDB 数据库连接 URI 示范 :</b><br>` +
-    `<b>URI中的用户名和密码必须做 url encode 编码后在拼接到连接串中</b><br>` +
-    `<b>副本集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-    `<b>启用认证的副本集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-    `<b>多节点副本集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-    `<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
-    `<b>多个mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`,
-  //是否放弃创建该连接？
-  //是否放弃修改内容？
-  //集群名称
-  //是否开启ssl
-  //是否必须放弃创建该连接？
-  //是否放弃修改内容？
   connection_reload_schema_confirm_title: '重新加载 schema',
   connection_reload_schema_confirm_msg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema',
   connection_reload_schema_fail: 'Schema 加载失败',
-  // 函数
   // Dag
   dag_data_setting_second: '秒',
   dag_data_setting_hour: '小时',
-  //字段映射
-  // 缓存节点提示
   // 缓存节点提示
   task_list_run: '启动',
   task_list_stop: '停止',
@@ -444,10 +420,6 @@ export default {
   task_info_ten_min: '最近十分钟',
   task_info_thirty_min: '最近三十分钟',
   task_info_last_hour: '最近一小时',
-  // 停止 编辑 子任务
-  // 描述 启动 强制停止 停止 编辑 子任务
-  // 描述 启动 强制停止 停止 编辑 子任务
-  //字段映射
   // 函数管理
   function_button_import_jar: '导入jar包',
   function_details: '函数详情',
@@ -493,7 +465,6 @@ export default {
   function_message_delete_title: '删除函数',
   function_message_delete_content: '删除可能会导致已调用该函数的任务报错，确定删除该函数吗？',
   function_tips_max_size: '最大',
-  // 用户
   // 解决方案
   solution_customer_job_logs: '客户任务日志',
   solution_error_code: '错误码',
@@ -501,7 +472,6 @@ export default {
   solution_search_result: '结果',
   solution_search_desc: '描述',
   solution_search_solutions: '解决方案',
-  // 客户日志
   // 共享挖掘
   shared_cdc_placeholder_task_name: '请输入挖掘任务名搜索',
   shared_cdc_placeholder_connection_name: '请输入连接名称搜索',
@@ -517,7 +487,6 @@ export default {
   share_list_setting: '挖掘设置',
   share_list_status: '状态',
   share_list_time: '挖掘延迟',
-  //
   share_list_edit_title: '挖掘编辑',
   share_detail_title: '挖掘表详情',
   share_form_setting_table_name: '存储MongoDB表名',
@@ -1930,7 +1899,7 @@ export default {
   dataFlow_databsenProcessing:
     '以引导的模式帮助新手用户快速了解表级的数据处理与同步，此功能除了能实现表级的全量或增量传输除功能外，更注重使用各种处理器(JS处理、字段过滤、聚合处理、行级过滤等)进行复杂的逻辑处理，以满足用户更高的数据处理需求',
   dataFlow_button_milestone: '任务里程碑',
-  connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
+
   role_name_API_clients_amanement: 'API客户端管理',
   dataFlow_sharecdcmode: '共享增量阅读模式',
   dataFlow_delete_confirm_Title: '删除任务？',

@@ -1,5 +1,4 @@
 export default {
-  // 通用文本
   // 通用提示
   tips_rule_not_empty: ' cannot be empty',
   text_close: 'Close',
@@ -76,7 +75,6 @@ export default {
   column_table: 'From table',
   column_create_time: 'Create time',
   column_creator: 'Creator',
-  // 菜单标题
   // dialog按钮
   dialog_button_cancel: 'Cancel',
   //页面标题
@@ -125,7 +123,6 @@ export default {
   page_title_custom_node: 'Custom Nodes',
   page_title_account: 'Personal settings',
   page_title_external_storage: 'External storage',
-  // 通用组件
   // -- 多表选择器
   component_table_selector_candidate_label: 'To be selected',
   component_table_selector_checked_label: 'Selected ',
@@ -140,7 +137,6 @@ export default {
     'Please enter table names separated by commas, for example: table_a, table_b',
   // app
   app_license_expire_warning: 'Reminder: License expires in {0} days remaining',
-  // 路由名
   // Agent
   agent_check_error: "Agent's current state is abnormal and cannot create a connection, please check",
   // console
@@ -208,7 +204,6 @@ export default {
   metadata_form_mongo_view: 'Mongodb view',
   metadata_detail_original_table_name: 'Original table name',
   metadata_detail_original_database_name: 'Original database name',
-  // 任务设置
   // api release api发布
   modules_all: 'All',
   modules_active: 'Released',
@@ -340,7 +335,6 @@ export default {
   api_monitor_detail_responseTime: 'API response time',
   api_monitor_detail_monitoring_period: 'Monitoring period',
   api_monitor_detail_Monitoring_conditions: 'Monitoring conditions',
-  // api statistics api服务器
   // api server api浏览
   api_server_name: 'Name',
   api_server_user: 'User',
@@ -375,7 +369,6 @@ export default {
   dataExplorer_type: 'type',
   dataExplorer_apiservr: 'Api server',
   dataExplorer_base_path: 'Base path',
-  // api documentation and testing api文档及测试
   // server audit 服务审计
   apiaudit_name: 'API name',
   apiaudit_access_type: 'Access Type',
@@ -393,7 +386,6 @@ export default {
   apiaudit_success: 'success',
   apiaudit_fail: 'Failed',
   apiaudit_placeholder: 'Please enter name/ID',
-  // 数据源
   // 连接
   connection_list_form_database_type: 'Database type',
   connection_list_name: 'Connection name',
@@ -402,31 +394,13 @@ export default {
   connection_list_invalidation: 'Invalid',
   connection_list_testing: 'Testing',
   connection_form_agent_msg: "Agent's current state is abnormal and cannot create a connection, please check",
-  connection_form_content:
-    `<b>MongoDB database connection URI example:</b><br>` +
-    `<b>The username and password in the URI must be url encoded and then spliced into the connection string</b><br>` +
-    `<b>ReplicaSet:</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-    `<b>Authenticated replica set:</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-    `<b>Multi-node replica set:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-    `<b>shard set:</b> mongodb://192.168.0.100:27017/mydb<br>` +
-    `<b>Multiple mongos:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`,
-  // 连接管理
-  connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
-  //是否放弃创建该连接？
-  //是否放弃修改内容？
-  //集群名称
-  //是否开启ssl
-  //Do I have to give up creating the connection?
-  //Do you want to give up modifying the content?
   connection_reload_schema_confirm_title: 'Reload schema',
   connection_reload_schema_confirm_msg:
     'If there are too many schemas in this library, it may take a long time. Make sure to refresh the schema of the data source',
   connection_reload_schema_fail: 'Schema load failed',
-  // function函数
   //Dag
   dag_data_setting_second: '秒',
   dag_data_setting_hour: '小時',
-  //Field mapping字段映射
   //Task edit缓存节点提示
   task_list_run: 'Start',
   task_list_stop: 'Stop',
@@ -451,9 +425,6 @@ export default {
   task_info_ten_min: 'The last ten minutes',
   task_info_thirty_min: 'The last thirty minutes',
   task_info_last_hour: 'Last hour',
-  // stop editing subtask
-  // description start forced stop stop edit subtask
-  // description start forced stop stop edit subtask
   //字段映射
   migrate_select_connection_tip:
     "If you haven't added a data source, please click the Add Data Source button to add it. In order to facilitate your testing, we recommend that the number of data sources should be at least 2",
@@ -504,7 +475,6 @@ export default {
   function_message_delete_content:
     'Deletion may cause the task that has called this function to report an error. Are you sure to delete this function? ',
   function_tips_max_size: 'Max size ',
-  // 用户
   // solution解决方案
   solution_customer_job_logs: 'Customer job logs',
   solution_error_code: 'Error code',
@@ -512,7 +482,6 @@ export default {
   solution_search_result: 'Result',
   solution_search_desc: 'Description',
   solution_search_solutions: 'Solution',
-  // Customer log客户日志
   // 共享挖掘
   shared_cdc_placeholder_task_name: 'Please enter the mining task name to search',
   shared_cdc_placeholder_connection_name: 'Please enter the connection name to search',

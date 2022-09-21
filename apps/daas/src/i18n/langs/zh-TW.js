@@ -1,5 +1,4 @@
 export default {
-  // 通用文本
   // 通用提示
   tips_rule_not_empty: '不能為空',
   text_close: '關閉',
@@ -124,7 +123,6 @@ export default {
   page_title_custom_node: '自定義節點',
   page_title_account: '個人設置',
   page_title_external_storage: '外存管理',
-  // 通用組件
   // -- 多表選擇器
   component_table_selector_candidate_label: '待覆制表',
   component_table_selector_checked_label: '已選擇表',
@@ -137,7 +135,6 @@ export default {
   component_table_selector_clipboard_placeholder: '請輸入表名稱並以逗號分隔,例如：table_a,table_b',
   // app
   app_license_expire_warning: '提醒：License剩餘 {0} 天到期',
-  // 路由名
   // Agent
   agent_check_error: 'Agent當前狀態異常無法創建連接，請檢查',
   // 控制台
@@ -205,7 +202,6 @@ export default {
   metadata_form_mongo_view: 'Mongodb視圖',
   metadata_detail_original_table_name: '原表名',
   metadata_detail_original_database_name: '原庫名',
-  // 任务设置
   // api發布
   modules_all: '全部',
   modules_active: '已發布',
@@ -308,7 +304,6 @@ export default {
   application_true: '是',
   application_false: '否',
   application_create: '創建客戶端',
-  // api統計
   //api 监控
   api_monitor_total_totalCount: 'API總數',
   api_monitor_total_warningApiCount: 'API訪問總數',
@@ -370,7 +365,6 @@ export default {
   dataExplorer_type: '類型',
   dataExplorer_apiservr: 'api服務器',
   dataExplorer_base_path: '基礎路徑',
-  // api文檔及測試
   // api審計
   apiaudit_name: 'API名稱',
   apiaudit_access_type: '訪問類型',
@@ -388,7 +382,6 @@ export default {
   apiaudit_success: '成功',
   apiaudit_fail: '失敗',
   apiaudit_placeholder: '請輸入名稱/ID',
-  // 数据源
   // 連接
   connection_list_form_database_type: '數據庫類型',
   connection_list_name: '連接名',
@@ -396,29 +389,12 @@ export default {
   connection_list_efficient: '有效',
   connection_list_invalidation: '无效',
   connection_list_testing: '測試中',
-  // 连接管理
-  connection_form_content:
-    `<b>MongoDB 數據庫連接 URI 示範 :</b><br>` +
-    `<b>URI中的用戶名和密碼必須做 url encode 編碼後在拼接到連接串中</b><br>` +
-    `<b>副本集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-    `<b>啟用認證的副本集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-    `<b>多節點副本集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-    `<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
-    `<b>多個mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`,
-  //是否放棄創建該連接？
-  //是否放棄修改內容？
-  //集群名稱
-  //是否開啟ssl
-  //是否必須放棄創建該連接？
-  //是否放棄修改內容？
   connection_reload_schema_confirm_title: '重新加載 schema',
   connection_reload_schema_confirm_msg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema',
   connection_reload_schema_fail: 'Schema 加載失敗',
-  // 函數
   // Dag
   dag_data_setting_second: '秒',
   dag_data_setting_hour: '小時',
-  //任務編輯
   // 緩存節點提示
   task_list_run: '啟動',
   task_list_stop: '停止',
@@ -442,10 +418,6 @@ export default {
   task_info_ten_min: '最近十分鐘',
   task_info_thirty_min: '最近三十分鐘',
   task_info_last_hour: '最近一小時',
-  // 停止 編輯 子任務
-  // 描述 啟動 強制停止 停止 編輯 子任務
-  // 描述 啟動 強制停止 停止 編輯 子任務
-  //字段映射
   // 函数管理
   function_button_import_jar: '導入jar包',
   function_details: '函數詳情',
@@ -491,7 +463,6 @@ export default {
   function_message_delete_title: '刪除函數',
   function_message_delete_content: '刪除可能會導致已調用該函數的任務報錯，確定刪除該函數嗎？',
   function_tips_max_size: '最大',
-  // 用户
   // 解決方案
   solution_customer_job_logs: '客戶任務日誌',
   solution_error_code: '錯誤碼',
@@ -499,7 +470,6 @@ export default {
   solution_search_result: '結果',
   solution_search_desc: '描述',
   solution_search_solutions: '解決方案',
-  // 客戶日誌
   // 共享挖掘
   shared_cdc_placeholder_task_name: '請輸入挖掘任務名搜索',
   shared_cdc_placeholder_connection_name: '請輸入連接名稱搜索',
@@ -515,7 +485,6 @@ export default {
   share_list_creat_time: '創建時間',
   share_list_setting: '挖掘設置',
   share_list_status: '狀態',
-  //
   share_list_edit_title: '挖掘编辑',
   share_form_setting_table_name: '存儲MongoDB表名',
   share_form_setting_log_time: '日誌保存時長',
@@ -1927,7 +1896,7 @@ export default {
   modules_apiServerStatus: 'API 服務狀態',
   modules_describtion: '描述',
   modules_set_mode: '設置方式',
-  connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
+
   role_name_API_clients_amanement: 'API客戶端管理',
   dataFlow_sharecdcmode: '共享增量閱讀模式',
   dataFlow_delete_confirm_Title: '刪除任務？',
