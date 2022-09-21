@@ -1571,7 +1571,6 @@ export default {
   editor_cell_data_node_collection_form_fieldFilterType_deleteField: 'Delete field',
   editor_cell_data_node_collection_form_fieldFilter_placeholderKeep: ' Select the fields to keep',
   editor_cell_data_node_collection_form_fieldFilter_placeholderDelete: ' Select the fields to delete',
-  editor_cell_data_node_collection_form_dropTable_placeholder: '',
   editor_cell_data_node_collection_form_filter_fieldFilter: 'Visual Mode',
   editor_cell_data_node_collection_form_filter_sqlFilter: 'SQL Filter',
   editor_cell_data_node_collection_form_filter_mqlFilter: 'MQL Filter',

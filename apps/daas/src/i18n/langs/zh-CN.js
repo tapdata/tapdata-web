@@ -1527,7 +1527,6 @@ export default {
   editor_cell_data_node_collection_form_fieldFilterType_deleteField: '删除字段',
   editor_cell_data_node_collection_form_fieldFilter_placeholderKeep: ' 请选择要保留的字段',
   editor_cell_data_node_collection_form_fieldFilter_placeholderDelete: '  请选择要删除的字段',
-  editor_cell_data_node_collection_form_dropTable_placeholder: '',
   editor_cell_data_node_collection_form_filter_fieldFilter: '智能模式',
   editor_cell_data_node_collection_form_filter_sqlFilter: 'SQL模式',
   editor_cell_data_node_collection_form_filter_mqlFilter: 'MQL模式',
@@ -1905,5 +1904,15 @@ export default {
   dataFlow_delete_confirm_Title: '删除任务？',
   dataFlow_delete_confirm_Message: '删除任务XXX后，该任务无法恢复',
   dataFlow_bulk_delete_confirm_Title: '删除中的任务批量？',
-  dataFlow_bulk_delete_confirm_Message: '批量删除任务后，任务无法恢复'
+  dataFlow_bulk_delete_confirm_Message: '批量删除任务后，任务无法恢复',
+
+  connection_form_agent_msg: 'Agent当前状态异常，无法创建连接，请检查',
+  migrate_select_connection_tip:
+    '如果您还没有添加数据源，请点击添加数据源按钮添加。为了方便您测试，我们建议您使用数据源数量至少要2',
+  app_signIn_signInFail: '邮箱和密码无效',
+  dialog_jobSchedule_runDay: '每天2点运行',
+  guide_task_type_custom_tips:
+    '数据同步侧重于表级数据处理和传输，以满足用户需要实现多表（数据集）、多级数据之间的多表集成、数据拆分、关联映射、字段增减合并、内容过滤、实时数据同步聚合处理案例JS处理等功能，在不影响用户业务的情况下，满足用户对远程或本地数据容灾、跨实例数据同步、查询报表分发、实时性等多种业务场景的需求数据仓库管理员元素。 ',
+  guide_btn_to_dashboard: '暂不编辑任务，先去购物',
+  app_signIn_registry_sucess_wait_approval: '登录前等待管理员批准，5秒后跳转到登录页面'
 }

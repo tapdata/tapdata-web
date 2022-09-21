@@ -1519,7 +1519,6 @@ export default {
   editor_cell_data_node_collection_form_fieldFilterType_deleteField: '刪除字段',
   editor_cell_data_node_collection_form_fieldFilter_placeholderKeep: ' 請選擇要保留的字段',
   editor_cell_data_node_collection_form_fieldFilter_placeholderDelete: ' 請選擇要刪除的字段',
-  editor_cell_data_node_collection_form_dropTable_placeholder: '',
   editor_cell_data_node_collection_form_filter_fieldFilter: '智慧模式',
   editor_cell_data_node_collection_form_filter_sqlFilter: 'SQL模式',
   editor_cell_data_node_collection_form_filter_mqlFilter: 'MQL模式',
@@ -1902,5 +1901,15 @@ export default {
   dataFlow_delete_confirm_Title: '刪除任務？',
   dataFlow_delete_confirm_Message: '刪除任務XXX後，該任務無法恢復',
   dataFlow_bulk_delete_confirm_Title: '刪除中的任務批量？',
-  dataFlow_bulk_delete_confirm_Message: '批量刪除任務後，任務無法恢復'
+  dataFlow_bulk_delete_confirm_Message: '批量刪除任務後，任務無法恢復',
+
+  connection_form_agent_msg: 'Agent當前狀態異常，無法創建連接，請檢查',
+  migrate_select_connection_tip:
+    '如果您還沒有添加數據源，請點擊添加數據源按鈕添加。為了方便您測試，我們建議您使用數據源數量至少要2',
+  app_signIn_signInFail: '郵箱和密碼無效',
+  dialog_jobSchedule_runDay: '每天2點運行',
+  guide_task_type_custom_tips:
+    '數據同步側重於表級數據處理和傳輸，以滿足用戶需要實現多表（數據集）、多級數據之間的多表集成、數據拆分、關聯映射、字段增減合併、內容過濾、實時數據同步聚合處理案例JS處理等功能，在不影響用戶業務的情況下，滿足用戶對遠程或本地數據容災、跨實例數據同步、查詢報表分發、實時性等多種業務場景的需求數據倉庫管理員元素。 ',
+  guide_btn_to_dashboard: '暫不編輯任務，先去購物',
+  app_signIn_registry_sucess_wait_approval: '登錄前等待管理員批准，5秒後跳轉到登錄頁面'
 }
