@@ -14,6 +14,7 @@ jobs:
       check-style: ${{ steps.check-style.outputs.error }}
       commit-message: ${{ steps.check-style.outputs.commit-message }}
       issue-code: ${{ steps.check-style.outputs.issue-code }}
+      issue-project: ${{ steps.check-style.outputs.issue-project }}
       commit-id: ${{ steps.check-style.outputs.commit-id }}
     steps:
       - name: Checkout Enterprise Branch
@@ -28,10 +29,14 @@ jobs:
           commit_id=`git rev-parse HEAD`
           echo "::set-output name=commit-id::$commit_id"
           echo $message | egrep "#[0-9]+" -o | egrep "[0-9]+" -o > /tmp/commit_msg | cat /tmp/commit_msg
+          echo $message | egrep "\[[a-zA-Z]+\]" -o | egrep "[a-zA-Z]+" -o > /tmp/project | cat /tmp/project
           echo "::set-output name=issue-code::`cat /tmp/commit_msg`"
           flag=`cat /tmp/commit_msg`
+          project=`cat /tmp/project`
           if [[ "X${flag}" != "X" ]]; then isPost='true'; else isPost='false'; fi
+          if [[ "X${project}" == "X" ]]; then project='tapdata'; fi
           echo "::set-output name=error::$isPost"
+          echo "::set-output name=issue-project::$project"
 
   Post-Commit-Message:
     runs-on: ubuntu-latest
@@ -48,7 +53,7 @@ jobs:
           https://tapdata.coding.net/open-api?Action=CreateIssueComment \
           -d '{
             "Action": "CreateIssueComment",
-            "ProjectName": "tapdata",
+            "ProjectName": "${{ needs.Check-Commit-Style.outputs.issue-project }}",
             "IssueCode": ${{ needs.Check-Commit-Style.outputs.issue-code }},
             "Content": "'"$GITHUB_ACTOR Commit: [${{ needs.Check-Commit-Style.outputs.commit-message }}]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA)"'"
           }'
