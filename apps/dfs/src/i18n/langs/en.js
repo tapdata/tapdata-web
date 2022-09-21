@@ -1064,5 +1064,20 @@ export default {
   dag_task_error_Text: 'During the model deduction, please wait patiently',
   dag_task_error_current_Progress: 'Current progress',
   dag_task_error_Completed: 'Model deduction completed',
-  dag_task_filed_mapping_Text: 'Field mapping error, please correct'
+  dag_task_filed_mapping_Text: 'Field mapping error, please correct',
+
+  page_title_run_monitor: 'Run monitoring',
+  connection_form_content:
+    '<b>MongoDB database connection URI demonstration:</b><br><b>The username and password in the URI must be url encoded and then spliced into the connection string</b><br ><b>Replica Set:</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br><b>Authenticated Replica Set:</b> mongodb://admin:password@ 192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br><b>Multi-node replica set:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/ mydb?replicaSet=xxx<br><b>shard set:</b> mongodb://192.168.0.100:27017/mydb<br><b>multiple mongos:</b> mongodb://192.168. 0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>',
+  notify_abnormally_stopped: 'stopped unexpectedly',
+  app_signIn_registry_sucess:
+    'Please check your email and click the verification link before logging in, you will be redirected to the login page in 5 seconds.',
+  app_signIn_registry_sucess_wait_approval:
+    "Wait for the administrator's approval before login, and you will be redirected to the login page in 5 seconds.",
+  dataFlow_databsenProcessing:
+    'With The guided mode helps novice users to quickly understand table-level data processing and synchronization. In addition to realizing table-level full or incremental transfer functions, this function pays more attention to the use of various processors (JS processing, field filtering, aggregation processing, row (level filtering, etc.) to perform complex logical processing to meet the higher data processing needs of users',
+  dataFlow_button_milestone: 'task milestones',
+  editor_cell_data_node_file_choiceFileName: 'please select a file name',
+  dataForm_test_title: 'test results',
+  dataForm_form_kafka_choiceTheme: 'select a topic'
 }

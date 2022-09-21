@@ -952,5 +952,44 @@ export default {
   dataVerify_filterSQL: '行數校驗下僅支持 select count(*) 查詢語句',
   dataVerify_showResult: '顯示數據校驗結果',
   dataForm_test_title: '測試結果',
-  dataForm_form_kafka_choiceTheme: '選擇主題'
+  dataForm_form_kafka_choiceTheme: '選擇主題',
+
+  page_title_run_monitor: '運行監控',
+  connection_form_content:
+    '<b>MongoDB 數據庫連接 URI 示範 :</b><br><b>URI中的用戶名和密碼必須做 url encode 編碼後在拼接到連接串中</b><br><b>副本集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br><b>啟用認證的副本集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br><b>多節點副本集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br><b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br><b>多個mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>',
+  notify_abnormally_stopped: '意外停止',
+
+  task_form_connection_tip: '如果您還沒有添加數據源，請先到連接管理添加。',
+  dialog_jobSchedule_runDay: '每天2點運行',
+  app_signIn_signInFail: '郵箱和密碼無效',
+  app_signIn_receiveEmail: '沒收到郵件？點擊',
+  dataFlow_sharecdcmode: '共享增量閱讀模式',
+  dataFlow_delete_confirm_Title: '刪除任務？',
+  dataFlow_delete_confirm_Message: '刪除任務XXX後，該任務無法恢復',
+  dataFlow_bulk_delete_confirm_Title: '批量刪除任務？',
+  dataFlow_bulk_delete_confirm_Message: '批量刪除任務後, 任務無法恢復',
+  dataFlow_setting_intellectTip: '智能去重：智能檢測目標現有數據，去重可大幅提升傳輸性能',
+  dataFlow_setting_compelTip: '強制去重：對目標現有數據進行強制去重檢測，嚴格保證準確性但傳輸性能低',
+  editor_cell_link_pcb_Label: '協議類型',
+  editor_cell_link_pcb_Placeholder: '請選擇協議類型',
+  editor_cell_link_pcb_Fieldsselected: '要選擇的字段',
+  editor_cell_link_pcb_Selectedfield: '已選擇的字段',
+  editor_cell_link_pcb_Moveup: '上移',
+  editor_cell_link_pcb_Movedown: '下移',
+  editor_cell_link_pcb_Notmoveuptip: '沒有上移的空間',
+  editor_cell_link_pcb_Notmovedowntip: '沒有空間to move down',
+  editor_cell_link_pcb_Onlyonepiece: '只能選擇一條數據上下移動',
+  dataVerify_exampleHashSQL:
+    '請輸入SELECT查詢語句 Hash驗證只支持SELECT查詢stat ement，但不支持count/sum/avg/max等。例如：select field_1 from tablename_1 where field__2 = A;',
+  dataForm_error_connectionurl: 'Connection name already exists.',
+  relations_field: 'Fields',
+  relations_attributes: 'Attributes',
+  account_user_null: "That username's been taken",
+  guide_task_type_custom_tips:
+    '數據同步側重於表級數據處理和傳輸，以滿足用戶實現多表（數據集）、多級數據之間的多表集成、數據拆分、關聯映射、字段增減合併、內容過濾、同時實現數據實時同步的需求時間在聚合處理JS處理等功能的情況下。在不影響用戶業務的情況下，滿足用戶對遠程或本地數據容災、跨實例數據同步、查詢報表分發、實時數倉管理等多種業務場景的需求。 ',
+  guide_btn_to_dashboard: '暫不編輯任務,先去購物吧',
+  dag_task_error_Text: '模型推演中,請耐心等待',
+  dag_task_error_current_Progress: '當前進度',
+  dag_task_error_Completed: '模型推演完成',
+  dag_task_filed_mapping_Text: '字段映射錯誤,請指正'
 }

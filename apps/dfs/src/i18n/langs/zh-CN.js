@@ -1023,5 +1023,56 @@ export default {
   notify_abnormally_stopped: '意外停止',
   // 新建
   // web-core
-  editor_cell_data_node_collection_form_dropTable_placeholder: ''
+  editor_cell_data_node_collection_form_dropTable_placeholder: '',
+
+  app_signIn_registry_sucess: '登录前请检查你的邮件并点击验证链接，将在5秒后转跳到登录页面。 ',
+  app_signIn_registry_sucess_wait_approval: '登录前等待管理员审批，将在5秒后转跳到登录页面。 ',
+  message_update: '更新',
+  dataFlow_databseProcessingHead: '数据处理同步',
+  dataFlow_databsenProcessing:
+    '以引导的模式帮助新手用户快速了解表级的数据处理与同步，此功能除了能实现表级的全量或增量传输除功能外，更注重使用各种处理器(JS处理、字段过滤、聚合处理、行级过滤等)进行复杂的逻辑处理，以满足用户更高的数据处理需求',
+  dataFlow_button_milestone: '任务里程碑',
+  editor_cell_data_node_file_choiceFileName: '请选择文件名',
+  editor_cell_data_node_api_publishApi_path: 'API路径不为空',
+  editor_cell_processor_field_form_toUpperCase: '转大写',
+  editor_cell_processor_field_form_toLowerCase: '转小写',
+  dataVerify_filterMQL: '请输入MQL语句',
+  dataVerify_filterSQL: '行数校验下仅支持 select count(*) 查询语句',
+  dataVerify_showResult: '显示数据校验结果',
+  dataForm_test_title: '测试结果',
+  dataForm_form_kafka_choiceTheme: '选择主题',
+
+  task_form_connection_tip: '如果您还没有添加数据源，请先到连接管理添加。',
+  dialog_jobSchedule_runDay: '每天2点运行',
+  app_signIn_signInFail: '邮箱和密码无效',
+  app_signIn_receiveEmail: '没收到邮件？点击',
+  dataFlow_sharecdcmode: '共享增量阅读模式',
+  dataFlow_delete_confirm_Title: '删除任务？',
+  dataFlow_delete_confirm_Message: '删除任务XXX后，该任务无法恢复',
+  dataFlow_bulk_delete_confirm_Title: '批量删除任务？',
+  dataFlow_bulk_delete_confirm_Message: '批量删除任务后, 任务无法恢复',
+  dataFlow_setting_intellectTip: '智能去重：智能检测目标现有数据，去重可大幅提升传输性能',
+  dataFlow_setting_compelTip: '强制去重：对目标现有数据进行强制去重检测，严格保证准确性但传输性能低',
+  editor_cell_link_pcb_Label: '协议类型',
+  editor_cell_link_pcb_Placeholder: '请选择协议类型',
+  editor_cell_link_pcb_Fieldsselected: '要选择的字段',
+  editor_cell_link_pcb_Selectedfield: '已选择的字段',
+  editor_cell_link_pcb_Moveup: '上移',
+  editor_cell_link_pcb_Movedown: '下移',
+  editor_cell_link_pcb_Notmoveuptip: '没有上移的空间',
+  editor_cell_link_pcb_Notmovedowntip: '没有空间to move down',
+  editor_cell_link_pcb_Onlyonepiece: '只能选择一条数据上下移动',
+  dataVerify_exampleHashSQL:
+    '请输入SELECT查询语句 Hash验证只支持SELECT查询stat ement，但不支持count/sum/avg/max等。例如：select field_1 from tablename_1 where field__2 = A;',
+  dataForm_error_connectionurl: 'Connection name already exists.',
+  relations_field: 'Fields',
+  relations_attributes: 'Attributes',
+  account_user_null: "That username's been taken",
+  guide_task_type_custom_tips:
+    '数据同步侧重于表级数据处理和传输，以满足用户实现多表（数据集）、多级数据之间的多表集成、数据拆分、关联映射、字段增减合并、内容过滤、同时实现数据实时同步的需求时间在聚合处理JS处理等功能的情况下。在不影响用户业务的情况下，满足用户对远程或本地数据容灾、跨实例数据同步、查询报表分发、实时数仓管理等多种业务场景的需求。 ',
+  guide_btn_to_dashboard: '暂不编辑任务,先去购物吧',
+  dag_task_error_Text: '模型推演中,请耐心等待',
+  dag_task_error_current_Progress: '当前进度',
+  dag_task_error_Completed: '模型推演完成',
+  dag_task_filed_mapping_Text: '字段映射错误,请指正'
 }
