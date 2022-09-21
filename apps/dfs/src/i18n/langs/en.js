@@ -1025,59 +1025,19 @@ export default {
   // web-core
   app_signIn_signInFail: "The email and password didn't work.",
   app_signIn_receiveEmail: "Didn't receive email? Click",
-  message_update: 'Update',
-  dataFlow_databseProcessingHead: 'Data Processing & Sync',
-  dataFlow_sharecdcmode: 'shared incremental read mode',
-  dataFlow_delete_confirm_Title: 'Delete the task? ',
-  dataFlow_delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
-  dataFlow_bulk_delete_confirm_Title: 'Delete tasks in batch? ',
-  dataFlow_bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
   dataFlow_setting_intellectTip:
     "Intelligent deduplication: intelligent detection of the target's existing data, deduplication can greatly improve transmission performance",
   dataFlow_setting_compelTip:
     "Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
   editor_cell_data_node_collection_form_dropTable_placeholder: '',
-  editor_cell_data_node_api_publishApi_path: 'API path is not empty',
-  editor_cell_processor_field_form_toUpperCase: 'Upper',
-  editor_cell_processor_field_form_toLowerCase: 'Lower',
-  editor_cell_link_pcb_Label: 'protocol type',
-  editor_cell_link_pcb_Placeholder: 'please select a protocol type',
-  editor_cell_link_pcb_Fieldsselected: 'field to be selected',
-  editor_cell_link_pcb_Selectedfield: 'selected field',
-  editor_cell_link_pcb_Moveup: 'move up',
-  editor_cell_link_pcb_Movedown: 'move down',
-  editor_cell_link_pcb_Notmoveuptip: 'there is no room to move up',
-  editor_cell_link_pcb_Notmovedowntip: 'there is no room to move down',
-  editor_cell_link_pcb_Onlyonepiece: 'only one piece of data can be selected to move up and down',
-  dataVerify_showResult: 'Show result',
-  dataVerify_filterMQL: 'Please enter MQL query statement',
-  dataVerify_filterSQL: 'Row Verify only supports select count(*) query statements',
   dataVerify_exampleHashSQL:
     "Please enter SELECT query statement Hash verify only supports SELECT query statement, but doesn't support such as count/sum/avg/max,etc. e.g.: select field_1 from tablename_1 where field__2 = A;",
-  dataForm_error_connectionurl: 'Connection name already existed.',
-  relations_field: 'Fields',
-  relations_attributes: 'Attributes',
   account_user_null: "That username's been taken",
   guide_task_type_custom_tips:
     "Data synchronization focuses on table-level data processing and transmission, to meet the needs of users to achieve multi-table (data set), multi-table integration between multi-level data, data splitting, association mapping, field increase and decrease merge, content filtering, Real-time data synchronization is realized at the same time in the case of aggregate processing JS processing and other functions. Without affecting the user's business, it meets the user's needs for various business scenarios such as remote or local data disaster recovery, cross-instance data synchronization, query and report distribution, and real-time data warehouse management. ",
   guide_btn_to_dashboard: "Don't edit the task for now, go shopping first",
-  dag_task_error_Text: 'During the model deduction, please wait patiently',
-  dag_task_error_current_Progress: 'Current progress',
-  dag_task_error_Completed: 'Model deduction completed',
-  dag_task_filed_mapping_Text: 'Field mapping error, please correct',
-
   page_title_run_monitor: 'Run monitoring',
-  connection_form_content:
-    '<b>MongoDB database connection URI demonstration:</b><br><b>The username and password in the URI must be url encoded and then spliced into the connection string</b><br ><b>Replica Set:</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br><b>Authenticated Replica Set:</b> mongodb://admin:password@ 192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br><b>Multi-node replica set:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/ mydb?replicaSet=xxx<br><b>shard set:</b> mongodb://192.168.0.100:27017/mydb<br><b>multiple mongos:</b> mongodb://192.168. 0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>',
   notify_abnormally_stopped: 'stopped unexpectedly',
-  app_signIn_registry_sucess:
-    'Please check your email and click the verification link before logging in, you will be redirected to the login page in 5 seconds.',
   app_signIn_registry_sucess_wait_approval:
-    "Wait for the administrator's approval before login, and you will be redirected to the login page in 5 seconds.",
-  dataFlow_databsenProcessing:
-    'With The guided mode helps novice users to quickly understand table-level data processing and synchronization. In addition to realizing table-level full or incremental transfer functions, this function pays more attention to the use of various processors (JS processing, field filtering, aggregation processing, row (level filtering, etc.) to perform complex logical processing to meet the higher data processing needs of users',
-  dataFlow_button_milestone: 'task milestones',
-  editor_cell_data_node_file_choiceFileName: 'please select a file name',
-  dataForm_test_title: 'test results',
-  dataForm_form_kafka_choiceTheme: 'select a topic'
+    "Wait for the administrator's approval before login, and you will be redirected to the login page in 5 seconds."
 }
