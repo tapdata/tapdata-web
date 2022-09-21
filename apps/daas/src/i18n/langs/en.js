@@ -411,11 +411,7 @@ export default {
     `<b>shard set:</b> mongodb://192.168.0.100:27017/mydb<br>` +
     `<b>Multiple mongos:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`,
   // 连接管理
-  connection_form_dameng_database_owner_tip:
-    'Comma-separated expression list, use * to represent any character of any length',
   connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
-  connection_form_hazecast_name_rules:
-    'Starting with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, and spaces',
   //是否放弃创建该连接？
   //是否放弃修改内容？
   //集群名称
@@ -432,7 +428,6 @@ export default {
   dag_data_setting_hour: '小時',
   //Field mapping字段映射
   //Task edit缓存节点提示
-  task_form_error_name_Duplicate: 'Task name already exists, please re-enter',
   task_list_run: 'Start',
   task_list_stop: 'Stop',
   task_list_force_stop: 'Forced stop',
@@ -460,7 +455,6 @@ export default {
   // description start forced stop stop edit subtask
   // description start forced stop stop edit subtask
   //字段映射
-  ask_form_source_type_check: 'Please select the source type',
   migrate_select_connection_tip:
     "If you haven't added a data source, please click the Add Data Source button to add it. In order to facilitate your testing, we recommend that the number of data sources should be at least 2",
   // Function management
@@ -535,8 +529,6 @@ export default {
   share_list_status: 'Status',
   share_list_time: 'Mining Delay',
   share_list_edit_title: 'Mining Edit',
-  share_list_connection_search: 'Connection name search',
-  share_list_dig_setting: 'digging settings',
   share_form_setting_table_name: 'Store MongoDB table name',
   share_form_setting_log_time: 'Log save time',
   share_form_edit_name: 'Mining name',
@@ -770,7 +762,6 @@ export default {
   user_list_freeze_user: 'After freezing user {0}, this user will not be able to use the TAPDATA system',
   user_list_check_user: 'After checking the mailbox of user {0}, this user can be activated',
   user_list_activetion_success: 'Activation successful',
-  user_list_activity_error: 'Activation failed',
   user_list_freeze_success: 'Freeze successful',
   user_list_freeze_error: 'Freeze failed',
   user_list_check_success: 'Pass the check',
@@ -853,7 +844,6 @@ export default {
   notify_ddl_deal: 'DDL processing',
   notify_source_name: 'source connection',
   notify_database_name: 'Database name',
-  notify_notify_schema_name: 'Model name',
   notify_system: 'license expiration time',
   notify_started: 'Started',
   notify_paused: 'Paused',
@@ -1124,12 +1114,6 @@ export default {
   datadiscovery_previewdrawer_waijian: 'Foreign key',
   datadiscovery_previewdrawer_zhujian: 'Primary key',
   // web-core
-  errorCode_networkUnconnected: 'Network unconnected',
-  errorCode_serverAbnormal: 'Server abnormal',
-  errorCode_requested: 'The resource you requested not existed',
-  errorCode_unauthorized: 'Unauthorized',
-  errorCode_parameters: 'Incorrect input parameters',
-  errorCode_timeout: 'Request time out',
   app_document: 'Documentation',
   app_qa: 'Customer Service',
   app_account: 'Account',
@@ -1197,7 +1181,6 @@ export default {
   app_Home_loadingFinished: 'Initialization completed',
   app_Home_incremental: 'CDC',
   app_Home_incrementalLag: 'CDC Lag',
-  message_update: 'Update',
   message_delete: 'Delete',
   message_cancel: 'Cancel',
   message_confirm: 'Confirm',
@@ -1632,24 +1615,9 @@ export default {
   editor_cell_data_node_table_form_custom_sql_mplaceholder: 'Please input you custom mql',
   editor_cell_data_node_table_form_initial_offset_label: 'Custom SQL Offset',
   editor_cell_data_node_table_form_initial_offset_placeholder: 'Please input you custom sql offset',
-  editor_cell_data_node_api_publishApi_path: 'API path is not empty',
-  editor_cell_processor_field_form_toUpperCase: 'Upper',
-  editor_cell_processor_field_form_toLowerCase: 'Lower',
-  editor_cell_link_pcb_Label: 'protocol type',
-  editor_cell_link_pcb_Placeholder: 'please select a protocol type',
-  editor_cell_link_pcb_Fieldsselected: 'field to be selected',
-  editor_cell_link_pcb_Selectedfield: 'selected field',
-  editor_cell_link_pcb_Moveup: 'move up',
-  editor_cell_link_pcb_Movedown: 'move down',
-  editor_cell_link_pcb_Notmoveuptip: 'there is no room to move up',
-  editor_cell_link_pcb_Notmovedowntip: 'there is no room to move down',
-  editor_cell_link_pcb_Onlyonepiece: 'only one piece of data can be selected to move up and down',
   editor_ui_sidebar_setting: 'Data Flow Settings',
   dataForm_submit: 'Submit',
-  dataForm_error_connectionurl: 'Connection name already existed.',
   relations_add: 'Add',
-  relations_field: 'Fields',
-  relations_attributes: 'Attributes',
   metadata_createModel: 'Create a model',
   metadata_header_name: 'Table name/owned database',
   metadata_header_meta_type: 'Meta type',
@@ -1972,10 +1940,6 @@ export default {
   dataRule_dataType_baseShorttype: 'Shorttype',
   dataRule_dataType_baseTimestamp: 'Timestamp',
   dataRule_dataType_baseLonginteger: 'Longinteger',
-  dag_task_error_Text: 'During the model deduction, please wait patiently',
-  dag_task_error_current_Progress: 'Current progress',
-  dag_task_error_Completed: 'Model deduction completed',
-  dag_task_filed_mapping_Text: 'Field mapping error, please correct',
   daas_notification_alarmnotification_gaojingtongzhi: 'Alarm notification',
   daas_notification_center_xitonggaojing: 'System alarm',
   daas_notification_systemalarm_guanbichenggong: 'Close successfully',
@@ -2011,7 +1975,6 @@ export default {
   daas_setting_settingcenter_gaojingshezhi: 'Alarm settings',
   packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
   packages_nodeDesign_message_save_ok: 'Save successfully',
-
   dialog_tip_copied: 'Copyed',
   share_detail_title: 'Mining table details',
   shared_cache_messge_no_table: 'The selected table model is not found',
@@ -2031,16 +1994,9 @@ export default {
   modules_apiServerStatus: 'API service status',
   modules_describtion: 'Description',
   modules_set_mode: 'Setting method',
-
-  ask_list_transform_running: 'During the game',
-  app_signIn_registry_sucess:
-    'Please check your email and click the verification link before logging in, you will be redirected to the login page in 5 seconds.',
   app_signIn_registry_sucess_wait_approval:
     "Wait for the administrator's approval before login, and you will be redirected to the login page in 5 seconds ",
   dataFlow_databsenProcessing:
     'In a guided mode, it helps novice users to quickly understand table-level data processing and synchronization. In addition to realizing table-level full or incremental transfer functions, this function pays more attention to the use of various processors (JS processing, field filtering, etc.) , aggregation processing, row-level filtering, etc.) to perform complex logical processing to meet the higher data processing needs of users',
-  dataFlow_button_milestone: 'task milestones',
-  editor_cell_data_node_file_choiceFileName: 'please select a file name',
-  dataForm_test_title: 'test results',
-  dataForm_form_kafka_choiceTheme: 'select a topic'
+  dataFlow_button_milestone: 'task milestones'
 }
