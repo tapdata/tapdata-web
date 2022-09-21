@@ -328,8 +328,6 @@ export default {
   task_important_reminder: 'Important reminder',
   task_stop_tip:
     'Task XXX contains aggregation processing nodes. After the task is stopped and restarted, the task will be reset first. Are you sure to stop? ',
-  task_form_connection_tip:
-    "If you haven't added a data source yet, please go to the connection management to add it first. ",
   task_monitor_progress: 'Task progress',
   task_monitor_full_sync: 'Full synchronization overview',
   task_monitor_full_completion_time: 'It is estimated that full completion will take time',
@@ -522,7 +520,6 @@ export default {
   dataFlow_totalInsert: 'Total insertion',
   dataFlow_totalUpdate: 'Total update',
   dataFlow_totalDelete: 'Total deletion',
-  dialog_jobSchedule_runDay: "Run at 2 o'clock every day",
   RequestErrorMessage_error_title: 'There is an error currently. Please refresh the page',
   RequestErrorMessage_code_label: 'Error code:',
   RequestErrorMessage_req_id_label: 'Request ID:',
@@ -1022,21 +1019,6 @@ export default {
   workbench_Notice_beiZhuMoRenQi:
     '*Note: by default, startup occupies 3 / 5 of the system configuration memory. If 3 / 5 of the system memory exceeds 8g, it only occupies 8g at most.',
   workbench_Workbench_tAPDA12: 'Tapdata cloud version 2.1.5 has been released!',
-  // web-core
-  app_signIn_signInFail: "The email and password didn't work.",
-  app_signIn_receiveEmail: "Didn't receive email? Click",
-  dataFlow_setting_intellectTip:
-    "Intelligent deduplication: intelligent detection of the target's existing data, deduplication can greatly improve transmission performance",
-  dataFlow_setting_compelTip:
-    "Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
-  editor_cell_data_node_collection_form_dropTable_placeholder: '',
-  dataVerify_exampleHashSQL:
-    "Please enter SELECT query statement Hash verify only supports SELECT query statement, but doesn't support such as count/sum/avg/max,etc. e.g.: select field_1 from tablename_1 where field__2 = A;",
-  guide_task_type_custom_tips:
-    "Data synchronization focuses on table-level data processing and transmission, to meet the needs of users to achieve multi-table (data set), multi-table integration between multi-level data, data splitting, association mapping, field increase and decrease merge, content filtering, Real-time data synchronization is realized at the same time in the case of aggregate processing JS processing and other functions. Without affecting the user's business, it meets the user's needs for various business scenarios such as remote or local data disaster recovery, cross-instance data synchronization, query and report distribution, and real-time data warehouse management. ",
-  guide_btn_to_dashboard: "Don't edit the task for now, go shopping first",
   page_title_run_monitor: 'Run monitoring',
-  notify_abnormally_stopped: 'stopped unexpectedly',
-  app_signIn_registry_sucess_wait_approval:
-    "Wait for the administrator's approval before login, and you will be redirected to the login page in 5 seconds."
+  notify_abnormally_stopped: 'stopped unexpectedly'
 }

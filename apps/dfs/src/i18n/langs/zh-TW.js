@@ -935,8 +935,6 @@ export default {
   workbench_Notice_beiZhuMoRenQi:
     '*備註：默認啟動佔用系統配寘記憶體的3/5，如果系統記憶體的3/5超過8G，則最大只佔用到8G。',
   workbench_Workbench_tAPDA12: 'Tapdata Cloud 2.1.5版本發佈啦！',
-  // web-core
-  editor_cell_data_node_collection_form_dropTable_placeholder: '',
   page_title_run_monitor: '運行監控',
   notify_abnormally_stopped: '意外停止'
 }

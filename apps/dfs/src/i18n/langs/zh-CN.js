@@ -967,7 +967,5 @@ export default {
   //页面标题
   page_title_run_monitor: '运行监控',
   // 自定义节点
-  notify_abnormally_stopped: '意外停止',
-  // web-core
-  editor_cell_data_node_collection_form_dropTable_placeholder: ''
+  notify_abnormally_stopped: '意外停止'
 }
