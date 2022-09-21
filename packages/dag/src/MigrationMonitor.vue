@@ -128,7 +128,13 @@
         @connectionList="handleConnectionList"
       />
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+      <ConfigPanel
+        ref="configPanel"
+        :settings="dataflow"
+        :scope="formScope"
+        :show-schema-panel="dataflow.syncType === 'sync'"
+        @hide="onHideSidebar"
+      />
 
       <!--   节点详情   -->
       <NodeDetailDialog
