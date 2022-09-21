@@ -149,7 +149,8 @@ export default {
     const dataflow = observable({
       ...DEFAULT_SETTINGS,
       id: '',
-      name: ''
+      name: '',
+      status: ''
     })
 
     return {
