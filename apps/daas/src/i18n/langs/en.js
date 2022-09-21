@@ -2010,5 +2010,37 @@ export default {
   daas_setting_setting_renwudezengliang: 'Incremental delay for tasks',
   daas_setting_settingcenter_gaojingshezhi: 'Alarm settings',
   packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
-  packages_nodeDesign_message_save_ok: 'Save successfully'
+  packages_nodeDesign_message_save_ok: 'Save successfully',
+
+  dialog_tip_copied: 'Copyed',
+  share_detail_title: 'Mining table details',
+  shared_cache_messge_no_table: 'The selected table model is not found',
+  shared_cache_placeholder_max_memory: 'Please enter the maximum cache memory',
+  shared_cache_placeholder_external_storage: 'Please select the external memory configuration',
+  setting_newMongodbChangeStream: '111111',
+  user_list_activetion_error: 'Activation failed',
+  notify_schema_name: 'Model name',
+  role_name_API_clients_amangement: 'API client management',
+  signin_verify_email_invalid: 'Please enter a valid email address',
+  dataFlow_atabseProcessingHead: 'Data processing synchronization',
+  dataFlow_shareCdcMode: 'Shared incremental read mode',
+  dataFlow_delete_confirm_title: 'Do you want to delete this task?',
+  dataFlow_delete_confirm_message: 'After deleting task xxx, this task will not be able to Restore',
+  dataFlow_bulk_delete_confirm_title: 'Do you want to delete tasks in batches?',
+  dataFlow_bulk_delete_confirm_message: 'After deleting tasks in batches, the tasks cannot be restored',
+  modules_apiServerStatus: 'API service status',
+  modules_describtion: 'Description',
+  modules_set_mode: 'Setting method',
+
+  ask_list_transform_running: 'During the game',
+  app_signIn_registry_sucess:
+    'Please check your email and click the verification link before logging in, you will be redirected to the login page in 5 seconds.',
+  app_signIn_registry_sucess_wait_approval:
+    "Wait for the administrator's approval before login, and you will be redirected to the login page in 5 seconds ",
+  dataFlow_databsenProcessing:
+    'In a guided mode, it helps novice users to quickly understand table-level data processing and synchronization. In addition to realizing table-level full or incremental transfer functions, this function pays more attention to the use of various processors (JS processing, field filtering, etc.) , aggregation processing, row-level filtering, etc.) to perform complex logical processing to meet the higher data processing needs of users',
+  dataFlow_button_milestone: 'task milestones',
+  editor_cell_data_node_file_choiceFileName: 'please select a file name',
+  dataForm_test_title: 'test results',
+  dataForm_form_kafka_choiceTheme: 'select a topic'
 }
