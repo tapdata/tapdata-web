@@ -104,7 +104,8 @@ export default {
           window.location.origin +
           window.location.pathname +
           `api/Task/batch/import?listtags=${encodeURIComponent(JSON.stringify(this.importForm.tag))}&access_token=` +
-          this.accessToken
+          this.accessToken +
+          `&cover=${this.importForm.upsert}`
       }
     },
 
