@@ -1032,7 +1032,6 @@ export default {
   editor_cell_data_node_collection_form_dropTable_placeholder: '',
   dataVerify_exampleHashSQL:
     "Please enter SELECT query statement Hash verify only supports SELECT query statement, but doesn't support such as count/sum/avg/max,etc. e.g.: select field_1 from tablename_1 where field__2 = A;",
-  account_user_null: "That username's been taken",
   guide_task_type_custom_tips:
     "Data synchronization focuses on table-level data processing and transmission, to meet the needs of users to achieve multi-table (data set), multi-table integration between multi-level data, data splitting, association mapping, field increase and decrease merge, content filtering, Real-time data synchronization is realized at the same time in the case of aggregate processing JS processing and other functions. Without affecting the user's business, it meets the user's needs for various business scenarios such as remote or local data disaster recovery, cross-instance data synchronization, query and report distribution, and real-time data warehouse management. ",
   guide_btn_to_dashboard: "Don't edit the task for now, go shopping first",

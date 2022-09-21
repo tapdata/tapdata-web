@@ -431,7 +431,6 @@ export default {
   task_mapping_dialog_rename_a_single_table_title: '修改目标表名',
   task_mapping_dialog_rename_a_single_table_input_desc: '自定义名称的表，不会应用：前后缀和大小写转换操作',
   task_mapping_dialog_batch_change_field_type_desc: '实际可用长度取决于目标数据库类型定义，请按需设置',
-  // 里程碑
   // 操作日志
   operation_log_manage: '操作日志',
   operation_log_user_name: '用户名称',
@@ -965,64 +964,10 @@ export default {
   workbench_Notice_beiZhuMoRenQi:
     '*备注：默认启动占用系统配置内存的 3/5，如果系统内存的 3/5 超过 8G，则最大只占用到 8G。',
   workbench_Workbench_tAPDA12: 'Tapdata Cloud 2.1.5 版本发布啦！',
-  // 通用文本
-  // 通用提示
-  // 通用下拉框
-  // 公共区
-  // 通用按钮
-  // 通用消息
-  // 表格
-  // dialog按钮
   //页面标题
   page_title_run_monitor: '运行监控',
-  // 通用组件
-  // -- 多表选择器
-  // app
-  // 路由名
-  // Agent
-  // 控制台
-  // 元数据管理
-  // 任务设置
-  // api发布
-  // 客户端
-  // api统计
-  //api 监控
-  // api服务器
-  // api浏览
-  // api文档及测试
-  // api审计
-  // 数据源
-  // 连接
-  connection_form_content:
-    `<b>MongoDB 数据库连接 URI 示范 :</b><br>` +
-    `<b>URI中的用户名和密码必须做 url encode 编码后在拼接到连接串中</b><br>` +
-    `<b>副本集 :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
-    `<b>启用认证的副本集 :</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
-    `<b>多节点副本集 :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
-    `<b>分片集 :</b> mongodb://192.168.0.100:27017/mydb<br>` +
-    `<b>多个mongos :</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`,
-  // 函数
-  // Dag
-  //字段映射
-  // 缓存节点提示
-  // 缓存节点提示
-  //后台数据返回
-  // 停止 编辑 子任务
-  // 描述 启动 强制停止 停止 编辑 子任务
-  // 描述 启动 强制停止 停止 编辑 子任务
-  //字段映射
-  // 函数管理
-  // 用户
-  // 解决方案
-  // 客户日志
-  // 共享挖掘
-  // share_list_connection_search: '连接名称搜索',
-  // 共享缓存
-  // 设置
   // 自定义节点
   notify_abnormally_stopped: '意外停止',
-  // 新建
   // web-core
-  editor_cell_data_node_collection_form_dropTable_placeholder: '',
-  account_user_null: "That username's been taken"
+  editor_cell_data_node_collection_form_dropTable_placeholder: ''
 }

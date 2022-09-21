@@ -938,6 +938,5 @@ export default {
   // web-core
   editor_cell_data_node_collection_form_dropTable_placeholder: '',
   page_title_run_monitor: '運行監控',
-  notify_abnormally_stopped: '意外停止',
-  account_user_null: "That username's been taken"
+  notify_abnormally_stopped: '意外停止'
 }
