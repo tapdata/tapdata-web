@@ -40,7 +40,7 @@
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
-              $t('dataFlow.packages_business_dataFlow_bulkExport')
+              $t('packages_business_dataFlow_bulkExport')
             }}</el-dropdown-item>
             <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_bulkScheuled')
