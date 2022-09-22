@@ -2,6 +2,7 @@ import i18n from '@/i18n'
 import { defineComponent, reactive, ref, computed } from '@vue/composition-api'
 import { TableList, OverflowTooltip } from '@tap/component'
 import { discoveryApi } from '@tap/api'
+import { NodeViewer } from '@tap/dag'
 import './index.scss'
 import dayjs from 'dayjs'
 
@@ -198,43 +199,53 @@ export default defineComponent({
                     </el-row>
                   </div>
                 </div>
-                <div class="mt-5">
-                  <div class="flex justify-content-between align-items-center">
-                    <span class="drawer__header_text inline-block">
-                      {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
-                    </span>
-                    <el-input
-                      class="mb-3"
-                      style="width:200px"
-                      placeholder="请输入名称"
-                      suffix-icon="el-icon-search"
-                      v-model={this.data.search}
-                      onChange={this.filterNames}
-                    ></el-input>
+                {this.previewData.category === 'storage' ? (
+                  <div class="mt-5">
+                    <div class="flex justify-content-between align-items-center">
+                      <span class="drawer__header_text inline-block">
+                        {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
+                      </span>
+                      <el-input
+                        class="mb-3"
+                        style="width:200px"
+                        placeholder="请输入名称"
+                        suffix-icon="el-icon-search"
+                        v-model={this.data.search}
+                        onChange={this.filterNames}
+                      ></el-input>
+                    </div>
+                    <TableList
+                      class="discovery-page-table"
+                      columns={this.data.columns}
+                      data={this.previewData.fields}
+                      has-pagination={false}
+                    ></TableList>
                   </div>
-                  <TableList
-                    class="discovery-page-table"
-                    columns={this.data.columns}
-                    data={this.previewData.fields}
-                    has-pagination={false}
-                  ></TableList>
-                </div>
-                {/*<div class="mt-5">*/}
-                {/*  <span class="drawer__header_text inline-block">输入参数</span>*/}
-                {/*  <TableList*/}
-                {/*    class="discovery-page-api-table"*/}
-                {/*    columns={this.data.columns}*/}
-                {/*    data={this.preview.fields}*/}
-                {/*  ></TableList>*/}
-                {/*</div>*/}
-                {/*<div class="mt-5">*/}
-                {/*  <span class="drawer__header_text inline-block">输出参数</span>*/}
-                {/*  <TableList*/}
-                {/*    class="discovery-page-api-table"*/}
-                {/*    columns={this.data.columns}*/}
-                {/*    data={this.preview.fields}*/}
-                {/*  ></TableList>*/}
-                {/*</div>*/}
+                ) : this.previewData.category === 'api ' ? (
+                  <div>
+                    <div class="mt-5">
+                      <span class="drawer__header_text inline-block">输入参数</span>
+                      <TableList
+                        class="discovery-page-api-table"
+                        columns={this.data.columns}
+                        data={this.preview.fields}
+                      ></TableList>
+                    </div>
+                    <div class="mt-5">
+                      <span class="drawer__header_text inline-block">输出参数</span>
+                      <TableList
+                        class="discovery-page-api-table"
+                        columns={this.data.columns}
+                        data={this.preview.fields}
+                      ></TableList>
+                    </div>
+                  </div>
+                ) : (
+                  <div class="mt-5">
+                    <span class="drawer__header_text inline-block">节点</span>
+                    <NodeViewer></NodeViewer>
+                  </div>
+                )}
               </div>
             </div>
           </section>
