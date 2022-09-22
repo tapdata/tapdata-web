@@ -93,6 +93,52 @@ export class Database extends NodeType {
           }
         },
         properties: {
+          enableDynamicTable: {
+            title: '动态新增表',
+            type: 'boolean',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              tooltip: '开启后任务将会自动处理新增，删除表',
+              feedbackLayout: 'none'
+            },
+            'x-component': 'Switch',
+            'x-reactions': [
+              {
+                dependencies: ['.migrateTableSelectType'],
+                fulfill: {
+                  state: {
+                    visible:
+                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
+                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
+                  }
+                }
+              }
+            ]
+          },
+
+          enableDDL: {
+            title: 'DDL事件采集',
+            type: 'boolean',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
+              tooltip: '开启后任务将会自动采集选中的源端DDL事件',
+              feedbackLayout: 'none'
+              // wrapperStyle: {
+              //   width: 'auto'
+              // }
+            },
+            'x-component': 'Switch',
+            'x-reactions': {
+              target: 'disabledEvents',
+              fulfill: {
+                state: {
+                  display: '{{$self.value ? "visible" :"hidden"}}'
+                }
+              }
+            }
+          },
+
           migrateTableSelectType: {
             title: '选择表',
             type: 'string',
@@ -191,51 +237,6 @@ export class Database extends NodeType {
               fulfill: {
                 state: {
                   display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                }
-              }
-            }
-          },
-          enableDynamicTable: {
-            title: '动态新增表',
-            type: 'boolean',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              tooltip: '开启后任务将会自动处理新增，删除表',
-              feedbackLayout: 'none'
-            },
-            'x-component': 'Switch',
-            'x-reactions': [
-              {
-                dependencies: ['.migrateTableSelectType'],
-                fulfill: {
-                  state: {
-                    visible:
-                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
-                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
-                  }
-                }
-              }
-            ]
-          },
-
-          enableDDL: {
-            title: 'DDL事件采集',
-            type: 'boolean',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
-              tooltip: '开启后任务将会自动采集选中的源端DDL事件',
-              feedbackLayout: 'none'
-              // wrapperStyle: {
-              //   width: 'auto'
-              // }
-            },
-            'x-component': 'Switch',
-            'x-reactions': {
-              target: 'disabledEvents',
-              fulfill: {
-                state: {
-                  display: '{{$self.value ? "visible" :"hidden"}}'
                 }
               }
             }
