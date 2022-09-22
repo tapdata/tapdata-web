@@ -451,6 +451,7 @@ export default {
 
       const errorMsg = await this.validate()
       if (errorMsg) {
+        if (this.destory) return
         this.$message.error(errorMsg)
         this.isSaving = false
         return
