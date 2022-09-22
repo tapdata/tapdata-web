@@ -97,7 +97,6 @@ export class Database extends NodeType {
             title: '选择表',
             type: 'string',
             default: 'all',
-            required: true,
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               className: 'form-item-dense'

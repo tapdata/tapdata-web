@@ -61,6 +61,7 @@ export default {
   beforeDestroy() {
     this.destory = true
     this.stopDagWatch?.()
+    this.stopLoopTask()
   },
 
   methods: {
@@ -798,7 +799,7 @@ export default {
         return this.saveAsNewDataflow()
       }
 
-      this.wsAgentLive()
+      this.initWS()
 
       this.toggleConsole(true)
       this.$refs.console?.autoLoad() // 信息输出自动加载
@@ -1626,6 +1627,7 @@ export default {
     },
 
     handleEditFlush(result) {
+      console.debug(`【DEBUG】ws返回，任务状态：[${result.data?.status}]`, result.data) // eslint-disable-line
       if (result.data) {
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
@@ -1658,7 +1660,7 @@ export default {
         if (!resFlag) {
           return
         }
-        this.wsAgentLive()
+        this.initWS()
         this.dataflow.disabledData.stop = true
         await taskApi.stop(this.dataflow.id).catch(e => {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
@@ -1676,7 +1678,7 @@ export default {
         if (!resFlag) {
           return
         }
-        this.wsAgentLive()
+        this.initWS()
         this.dataflow.disabledData.stop = true
         await taskApi.forceStop(this.dataflow.id)
         // this.startLoop(true)
@@ -1692,7 +1694,7 @@ export default {
           return
         }
         try {
-          this.wsAgentLive()
+          this.initWS()
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
@@ -1756,9 +1758,11 @@ export default {
         if (!data) {
           this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           this.handlePageReturn()
+          return
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
+        this.startLoopTask(id)
         return data
       } catch (e) {
         console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
@@ -1767,7 +1771,25 @@ export default {
       }
     },
 
+    startLoopTask(id) {
+      console.debug('【DEBUG】开始轮询加载任务，间隔3s') // eslint-disable-line
+      clearTimeout(this.startLoopTaskTimer)
+      this.startLoopTaskTimer = setTimeout(async () => {
+        const data = await taskApi.get(id)
+        this.startLoopTask(id)
+        console.debug(
+          `【DEBUG】轮询加载任务详情，当前状态：[${this.dataflow.status}], 返回状态：[${data.status}]`,
+          data
+        ) // eslint-disable-line
+      }, 3000)
+    },
+
+    stopLoopTask() {
+      clearTimeout(this.startLoopTaskTimer)
+    },
+
     initWS() {
+      console.log('initWS', this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({

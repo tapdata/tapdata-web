@@ -451,6 +451,7 @@ export default {
 
       const errorMsg = await this.validate()
       if (errorMsg) {
+        if (this.destory) return
         this.$message.error(errorMsg)
         this.isSaving = false
         return
@@ -463,7 +464,7 @@ export default {
       const data = this.getDataflowDataToSave()
 
       try {
-        this.wsAgentLive()
+        this.initWS()
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
