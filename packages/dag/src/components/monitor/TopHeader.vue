@@ -20,7 +20,7 @@
           <span>{{ startTime }}</span>
         </div>
       </div>
-      <div class="agent-data__item ml-4 pl-4">
+      <div v-if="dataflow.agentId || dataflow.agentName" class="agent-data__item ml-4 pl-4">
         <OverflowTooltip
           class="agent-name__item text-truncate mb-2 font-color-dark"
           placement="bottom"
