@@ -28,6 +28,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-typescript": "^9.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.1.0",
     "prettier": "^2.2.1",
     "sass": "^1.34.1",
@@ -47,6 +48,11 @@
       "@formily/vue": "^2.1.2",
       "vue-demi": "^0.12.1",
       "vue": "^2.6.14"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
     }
   }
 }
