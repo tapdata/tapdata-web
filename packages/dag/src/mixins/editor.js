@@ -582,7 +582,6 @@ export default {
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
-            console.trace('updateDag') // eslint-disable-line
             this.updateDag()
           }
         )
@@ -617,7 +616,6 @@ export default {
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
-            console.trace('updateDag') // eslint-disable-line
             this.updateDag()
           }
         )

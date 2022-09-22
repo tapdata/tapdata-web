@@ -8,7 +8,7 @@ import { isPlainObj } from '@tap/shared'
 
 export default {
   data() {
-    function addDeclaredCompleter(tools, params1) {
+    function addDeclaredCompleter(editor, tools, params1) {
       const tapType = [
         'TapNumber',
         'TapString',
@@ -75,7 +75,10 @@ export default {
           meta: 'local'
         }
       ]
+      const idx = editor.completers?.findIndex(item => item.id === 'jsDeclare') || -1
+      if (~idx) editor.completers.splice(idx, 1)
       tools.addCompleter({
+        id: 'jsDeclare',
         getCompletions: (editor, session, pos, prefix, callback) => {
           if (prefix.length === 0) {
             return callback(null, [])
@@ -453,12 +456,12 @@ export default {
           return this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
         },
 
-        addDeclaredCompleterForMigrate: tools => {
-          addDeclaredCompleter(tools, 'schemaApplyResultList')
+        addDeclaredCompleterForMigrate: (editor, tools) => {
+          addDeclaredCompleter(editor, tools, 'schemaApplyResultList')
         },
 
-        addDeclaredCompleterForSync: tools => {
-          addDeclaredCompleter(tools, 'tapTable')
+        addDeclaredCompleterForSync: (editor, tools) => {
+          addDeclaredCompleter(editor, tools, 'tapTable')
         },
 
         async loadExternalStorage() {
