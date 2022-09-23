@@ -14,6 +14,7 @@
       @delete="handleDelete"
       @change-name="handleUpdateName"
       @auto-layout="handleAutoLayout"
+      @center-content="handleCenterContent"
       @zoom-out="handleZoomOut"
       @zoom-in="handleZoomIn"
       @showSettings="handleShowSettings"
