@@ -345,6 +345,7 @@ export default {
     resetData() {
       this.preLoading = false
       this.resList()
+      this.resetNewPage()
       this.resetOldPage()
       this.resetDataTime = Date.now()
       this.loadOld(this.pollingData)
