@@ -6,7 +6,7 @@ import { taskApi } from '@tap/api'
 import { useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
-import { HighlightCode } from '../highlight-code'
+import { JsDeclare } from '../js-declare'
 import './style.scss'
 
 export const JsProcessor = observer(
@@ -19,24 +19,6 @@ export const JsProcessor = observer(
       const tableLoading = ref(false)
       const running = ref(false)
       const runningText = ref('')
-      const dialogVisible = ref(false)
-      const codeExample = `// 增加一个字段，如果字段已存在则不操作
-TapModelDeclare.addField(tapTable, 'fieldName', 'TapString')
-// 移除一个已存在字段
-TapModelDeclare.removeField(tapTable, 'fieldName')
-// 更新一个已存在的字段
-TapModelDeclare.updateField(tapTable, 'fieldName', 'TapString')
-// 更新字段，如果不存在则新增
-TapModelDeclare.upsertField(tapTable, 'fieldName', 'TapString')
-// 设置字段为主键
-TapModelDeclare.setPk(tapTable, 'fieldName')
-// 取消主键
-TapModelDeclare.unsetPk(tapTable, 'fieldName')
-// 增加索引
-TapModelDeclare.addIndex(tapTable, 'indexName', [{'filedName':'fieldName1', 'order': 'asc'}])
-// 移除索引
-TapModelDeclare.removeIndex(tapTable, 'indexName')
-`
 
       let queryTimes = 0
       const params = reactive({
@@ -161,64 +143,16 @@ TapModelDeclare.removeIndex(tapTable, 'indexName')
               />
             </FormItem.BaseItem>
 
-            <el-collapse class="declare-collapse my-4 mx-n4 formily-element-form-collapse inset">
-              <el-collapse-item name="1">
-                <template slot="title">
-                  <span class="font-color-light fw-normal">
-                    {i18n.t('packages_form_js_processor_index_moxingshengming')}
-                  </span>
-                  <el-tooltip content="显式声明来定义和修改模型" placement="top">
-                    <i class="ml-1 font-color-sslight header-icon el-icon-info"></i>
-                  </el-tooltip>
-                  <div class="flex-grow-1"></div>
-                  <el-link
-                    onClick={event => (event.stopPropagation(), (dialogVisible.value = true))}
-                    type="primary"
-                    class="mx-4"
-                  >
-                    使用帮助
-                  </el-link>
-                </template>
-                <FormItem.BaseItem feedbackLayout="none">
-                  <JsEditor
-                    value={form.values.declareScript}
-                    onChange={val => {
-                      form.setValuesIn('declareScript', val)
-                    }}
-                    height={240}
-                    options={editorProps.options}
-                    before="function declare(schemaApplyResultList) {"
-                    after={`  return schemaApplyResultList\n}`}
-                    handleAddCompleter={editorProps.handleAddCompleter}
-                  />
-                </FormItem.BaseItem>
-              </el-collapse-item>
-            </el-collapse>
-
-            <el-dialog
-              title="模型声明"
-              visible={dialogVisible.value}
-              on={{
-                'update:visible': v => (dialogVisible.value = v)
+            <JsDeclare
+              value={form.values.declareScript}
+              onChange={val => {
+                form.setValuesIn('declareScript', val)
               }}
-              append-to-body
-              width="800"
-            >
-              <div class="">
-                <div class="fs-6 mb-4">TapType</div>
-                <HighlightCode
-                  class="m-0"
-                  code="type TapType = 'TapNumber' | 'TapString' | 'TapBoolean' | 'TapBinary' | 'TapDate' | 'TapDateTime' | 'TapTime' | 'TapYear' | 'TapRaw' | 'TapArray' | 'TapMap'"
-                ></HighlightCode>
-                <div class="fs-6 my-4">示例代码</div>
-                <HighlightCode class="m-0" code={codeExample}></HighlightCode>
-              </div>
-              <span slot="footer" class="dialog-footer">
-                <el-button type="primary" onClick={() => (dialogVisible.value = false)}>
-                  确 定
-                </el-button>
-              </span>
-            </el-dialog>
+              height={240}
+              options={editorProps.options}
+              param="schemaApplyResultList"
+              handleAddCompleter={editorProps.handleAddCompleter}
+            />
 
             <div class="flex align-center">
               <FormItem.BaseItem
