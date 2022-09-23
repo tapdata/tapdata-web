@@ -21,7 +21,7 @@
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tongbuxinxi') }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tongbuxinxi') }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
@@ -75,7 +75,7 @@
         class="info-box"
       >
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
           <ElTooltip
             v-if="verifyTotals.diffTables"
             transition="tooltip-fade-in"
@@ -109,7 +109,7 @@
       </div>
       <div class="info-box">
         <div class="flex justify-content-between mb-2">
-          <span class="fs-7 fw-bold font-color-normal">{{
+          <span class="fs-7 fw-sub font-color-normal">{{
             $t('packages_dag_components_nodedetaildialog_xingnengzhibiao')
           }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in')">
@@ -123,7 +123,7 @@
             :content="$t('packages_dag_monitor_leftsider_qpSshizhi')"
           >
             <span>
-              <span class="mr-2 font-color-dark fw-bold">QPS（Q/S）</span>
+              <span class="mr-2 font-color-dark fw-sub">QPS（Q/S）</span>
               <VIcon size="14" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
@@ -141,7 +141,7 @@
             :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
           >
             <span>
-              <span class="mr-2 font-color-dark fw-bold">{{
+              <span class="mr-2 font-color-dark fw-sub">{{
                 $t('packages_dag_components_nodedetaildialog_zengliangyanchi')
               }}</span>
               <VIcon size="14" class="color-primary">info</VIcon>
@@ -162,7 +162,7 @@
             :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
           >
             <span>
-              <span class="mr-2 font-color-dark fw-bold">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
+              <span class="mr-2 font-color-dark fw-sub">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
               <VIcon size="14" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
@@ -177,14 +177,12 @@
       </div>
       <div class="info-box">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">{{
-            $t('packages_dag_monitor_leftsider_renwushijiantong')
-          }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwushijiantong') }}</span>
         </div>
         <div v-loading="!eventDataAll" class="flex">
           <div v-if="eventDataAll" class="w-50 pr-4">
             <div>{{ $t('packages_dag_components_eventchart_zongshuru') }}</div>
-            <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+            <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
               {{ eventDataAll.inputTotals.toLocaleString() }}
             </div>
             <div class="mb-2">
@@ -209,7 +207,7 @@
             <div class="output-item__divider"></div>
             <div class="ml-4">
               <div>{{ $t('packages_dag_components_eventchart_zongshuchu') }}</div>
-              <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+              <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
                 {{ eventDataAll.outputTotals.toLocaleString() }}
               </div>
               <div class="mb-2">
