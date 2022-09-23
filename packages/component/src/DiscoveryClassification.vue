@@ -605,23 +605,6 @@ export default {
       align-items: center;
       justify-content: space-between;
       margin-bottom: 3px;
-      // .iconfont {
-      // 	color: #c0c4cc;
-      // 	font-size: 12px;
-      // 	background-color: map-get($bgColor, white);
-      // 	border: 1px solid #dedee4;
-      // 	display: flex;
-      // 	justify-content: center;
-      // 	align-items: center;
-      // 	height: 66%;
-      // 	padding: 0 4px;
-      // 	padding-right: 6px;
-      // 	padding-left: 5px;
-      // 	margin-top: 0px;
-      // 	border-top-width: 1px;
-      // 	border-radius: 3px;
-      // 	cursor: pointer;
-      // }
     }
   }
   .tree-block {
@@ -680,9 +663,6 @@ export default {
   .el-input .el-input__inner {
     height: 24px;
     line-height: 24px;
-  }
-  .el-input__suffix {
-    top: 2px;
   }
 }
 .classification-tree {
