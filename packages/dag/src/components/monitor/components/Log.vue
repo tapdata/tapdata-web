@@ -433,7 +433,7 @@ export default {
           const items = this.getFormatRow(data.items.reverse())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
-          if (this.list.length) {
+          if (this.list.length && this.oldPageObj.page !== 1) {
             this.list = Object.freeze(uniqueArr([...items, ...this.list]))
             this.scrollToItem(items.length - 1)
           } else {

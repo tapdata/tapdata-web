@@ -34,7 +34,7 @@
 import dayjs from 'dayjs'
 import { customNodeApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
+import { TablePage, makeStatusAndDisabled } from '@tap/business'
 
 export default {
   components: { FilterBar, TablePage },
@@ -120,13 +120,21 @@ export default {
             }
           }).href
         )
-      const usedData = await customNodeApi.checkUsed(row.id)
-      if (usedData?.length) {
+      let usedTaskData = await customNodeApi.checkUsed(row.id)
+      if (usedTaskData?.length) {
+        const arr = ['starting', 'running']
+        const filterData = usedTaskData.map(makeStatusAndDisabled).filter(item => {
+          return arr.includes(item.status)
+        })
+        if (!filterData.length) {
+          open()
+          return
+        }
         this.$confirm(
           <div class="w-100">
-            <div>检测到该节点被以下任务调用, 如果要配置生效需先停止任务启动</div>
+            <div>检测到以下运行中的任务调用了该节点，如需配置生效请重新启动任务</div>
             <div class="p-3 mt-3" style="background: #FAFAFA; font-size: 12px;">
-              {usedData.map(item => {
+              {filterData.map(item => {
                 return (
                   <a
                     class="block link-primary"

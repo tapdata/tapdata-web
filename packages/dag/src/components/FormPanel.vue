@@ -73,8 +73,6 @@ export default {
 
   watch: {
     stateIsReadonly(v) {
-      // eslint-disable-next-line no-console
-      console.log(i18n.t('packages_dag_components_formpanel_jiantingsta'), v)
       this.form.setState({ disabled: v })
     },
 
@@ -96,8 +94,6 @@ export default {
         try {
           if (node) {
             const result = await validateBySchema(node.__Ctor.formSchema, node, this.scope)
-            // eslint-disable-next-line no-console
-            console.log(i18n.t('packages_dag_components_formpanel_shangyigejihuo'), result)
           }
 
           if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
@@ -114,11 +110,7 @@ export default {
         this.$watch('node.$inputs', v => {
           if (!this.node || !v) return
           const $inputs = this.form.getFieldState('$inputs')
-          // eslint-disable-next-line no-console
-          console.log('🤖️ node.$inputs', this.node.name, v)
           if ($inputs && $inputs.value.join(',') !== v.join(',')) {
-            // eslint-disable-next-line no-console
-            console.log(i18n.t('packages_dag_components_formpanel_gengxininp'), $inputs.value)
             this.form.setValuesIn('$inputs', [...v])
             this.$emit('update:InputsOrOutputs')
           }
@@ -128,11 +120,7 @@ export default {
         this.$watch('node.$outputs', v => {
           if (!this.node || !v) return
           const $outputs = this.form.getFieldState('$outputs')
-          // eslint-disable-next-line no-console
-          console.log('🤖️ node.$outputs', this.node.name, v)
           if ($outputs && $outputs.value.join(',') !== v.join(',')) {
-            // eslint-disable-next-line no-console
-            console.log(i18n.t('packages_dag_components_formpanel_gengxinout'), $outputs.value, v)
             this.form.setValuesIn('$outputs', [...v])
             this.$emit('update:InputsOrOutputs')
           }
@@ -646,24 +634,16 @@ export default {
     // 更新节点属性
     updateNodeProps(form) {
       clearTimeout(this.updateTimer)
-      /*if (!this.node || form.values.id !== this.node.id) {
-        console.log('节点已经切换', form.values.name, '->', this.node.name) // eslint-disable-line
-        return
-      }*/
-
       const formValues = JSON.parse(JSON.stringify(form.values))
-      // const formValues = { ...form.values }
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
+
       filterProps.forEach(path => {
         Path.setIn(formValues, path, undefined)
       })
-
-      console.log('updateNodeProps', formValues) // eslint-disable-line
       this.updateNodeProperties({
         id: form.values.id,
         properties: JSON.parse(JSON.stringify(formValues))
       })
-      // console.trace('updateDag') // eslint-disable-line
       this.updateDag()
       clearTimeout(this.confirmTimer)
       this.confirmTimer = setTimeout(() => this.confirmNodeHasError(), 10)
@@ -674,14 +654,6 @@ export default {
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
         // eslint-disable-next-line no-console
-        // console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`)
-        // eslint-disable-next-line no-console
-        // console.trace(JSON.parse(JSON.stringify(form.values)))
-        // eslint-disable-next-line no-console
-        // console.groupEnd()
-        // if (!this.node || form.values.id !== this.node.id) {
-        //   console.log('节点已经切换', form.values.name, '->', this.node.name) // eslint-disable-line
-        // }
         console.log(`🚗onFormValuesChange`, JSON.parse(JSON.stringify(form.values)))
         this.updateNodePropsDebounce(form)
       })

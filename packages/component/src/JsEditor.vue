@@ -6,7 +6,7 @@
     :width="width"
     :height="height - 24"
     :options="_options"
-    @init="init"
+    @initOptions="init"
     v-on="$listeners"
   ></VCodeEditor>
 </template>
@@ -125,7 +125,10 @@ export default {
             return 0
           }
         })
+        const idx = editor.completers?.findIndex(item => item.id === 'function') || -1
+        if (~idx) editor.completers.splice(idx, 1)
         tools.addCompleter({
+          id: 'function',
           getCompletions: (editor, session, pos, prefix, callback) => {
             if (prefix.length === 0) {
               return callback(null, [])
