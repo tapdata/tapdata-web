@@ -34,17 +34,11 @@ export class JavaScript extends NodeType {
         }
       },
       declareScript: {
-        title: '模型声明',
         type: 'string',
-        default: '',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': { gridSpan: 1 },
-        'x-component': 'JsEditor',
+        'x-component': 'JsDeclare',
         'x-component-props': {
           height: 300,
           options: { showPrintMargin: false, wrap: false },
-          before: 'function declare(tapTable) {',
-          after: `  return tapTable\n}`,
           handleAddCompleter: '{{addDeclaredCompleterForSync}}'
         }
       }
