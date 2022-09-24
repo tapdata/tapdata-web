@@ -14,11 +14,13 @@
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
         </div>
-        <NotificationPopover class="command-item mr-6"></NotificationPopover>
-        <ElDropdown v-if="false" placement="bottom" class="mr-6" @command="changeLanguage">
-          <span class="cursor-pointer command-item langs-btn">{{ languagesItems[lang] }}</span>
+        <NotificationPopover class="command-item mr-2"></NotificationPopover>
+        <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage">
+          <span class="cursor-pointer command-item icon-btn">
+            <VIcon size="20">{{ 'language-' + lang }}</VIcon>
+          </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem v-for="(value, key) in languagesItems" :key="key" :command="key">
+            <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
             </ElDropdownItem>
           </ElDropdownMenu>
@@ -60,7 +62,7 @@ export default {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       lang: '',
-      languagesItems: langMenu
+      languages: langMenu
     }
   },
   created() {
@@ -270,9 +272,5 @@ export default {
       right: 0;
     }
   }
-}
-.langs-btn {
-  border: 1px solid #ddd;
-  border-radius: 4px;
 }
 </style>
