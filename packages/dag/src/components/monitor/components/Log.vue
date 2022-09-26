@@ -12,8 +12,8 @@
         <VIcon>arrow-right</VIcon>
       </div>
     </div>
-    <div class="main flex-fill flex flex-column pt-5">
-      <div class="flex ml-4 mb-4 align-items-center">
+    <div class="main flex-fill flex flex-column p-4">
+      <div class="flex mb-2 align-items-center">
         <TimeSelect
           :options="timeOptions"
           :range="[firstStartTime, lastStopTime || Date.now()]"
@@ -36,7 +36,7 @@
           $t('packages_dag_components_log_xiazai')
         }}</ElButton>
       </div>
-      <div class="level-line ml-4">
+      <div class="level-line mb-2">
         <ElCheckboxGroup
           v-model="checkList"
           :disabled="loading"
@@ -48,17 +48,20 @@
           <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
         </ElCheckboxGroup>
       </div>
-      <div v-loading="loading" class="log-list my-4 ml-4 pl-4 flex-1" style="height: 0">
+      <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
           key-field="id"
           :min-item-size="30"
-          class="scroller py-4 h-100"
+          class="scroller px-2 py-1 h-100"
           @scroll.native="scrollFnc"
         >
           <template #before>
-            <div class="before-scroll-content text-center font-color-light pb-2">
+            <div
+              v-show="preLoading || showNoMore || !list.length"
+              class="before-scroll-content text-center font-color-light pb-2"
+            >
               <div v-show="preLoading">
                 <i class="el-icon-loading"></i>
               </div>
@@ -708,7 +711,6 @@ export default {
 }
 
 .log-list {
-  border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
     .log-line {

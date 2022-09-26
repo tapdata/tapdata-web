@@ -20,7 +20,7 @@
           <span>{{ startTime }}</span>
         </div>
       </div>
-      <div v-if="dataflow.agentId" class="agent-data__item ml-4 pl-4">
+      <div v-if="dataflow.agentId" class="agent-data__item ml-4 px-4">
         <OverflowTooltip
           class="agent-name__item text-truncate mb-2 font-color-dark"
           placement="bottom"
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="flex align-center mx-2">
+    <div class="flex align-center">
       <!--内容居中-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
         <button @click="$emit('center-content')" class="icon-btn">
@@ -91,7 +91,7 @@
       </ElTooltip>
     </div>
     <div class="flex-grow-1"></div>
-    <div class="flex align-center">
+    <div class="flex align-center ml-2">
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
