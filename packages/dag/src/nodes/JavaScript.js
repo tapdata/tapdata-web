@@ -15,6 +15,13 @@ export class JavaScript extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
       script: {
         title: '脚本',
         type: 'string',
