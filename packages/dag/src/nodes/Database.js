@@ -139,6 +139,11 @@ export class Database extends NodeType {
             }
           },
 
+          disabledEvents: {
+            type: 'array',
+            'x-component': 'DdlEventCheckbox'
+          },
+
           migrateTableSelectType: {
             title: '选择表',
             type: 'string',
@@ -240,11 +245,6 @@ export class Database extends NodeType {
                 }
               }
             }
-          },
-
-          disabledEvents: {
-            type: 'array',
-            'x-component': 'DdlEventCheckbox'
           }
         }
       },
