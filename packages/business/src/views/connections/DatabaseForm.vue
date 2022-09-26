@@ -113,15 +113,7 @@ import i18n from '@tap/i18n'
 
 import { action } from '@formily/reactive'
 
-import {
-  clusterApi,
-  connectionsApi,
-  databaseTypesApi,
-  logcollectorApi,
-  pdkApi,
-  settingsApi,
-  proxyApi
-} from '@tap/api'
+import { clusterApi, connectionsApi, databaseTypesApi, logcollectorApi, pdkApi, settingsApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import Test from './Test'
@@ -748,6 +740,7 @@ export default {
       }
       //this.showSystemConfig = true
       this.schemaScope = {
+        isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
             field.loading = true
@@ -830,6 +823,42 @@ export default {
           proxyApi.subscribe(filter).then(data => {
             const str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
             $form.setValuesIn(field.name, str)
+          })
+        },
+        getTokenCommand: async (field, $values, $form, others) => {
+          const { pdkHash, id } = this.pdkOptions
+          const { __TAPDATA, ...formValues } = $values
+          const { command } = others
+          const getValues = Object.assign({}, this.model?.config || {}, formValues)
+          let params = {
+            pdkHash,
+            connectionId: id || this.commandCallbackFunctionId,
+            connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+            command,
+            type: 'connection'
+          }
+          proxyApi.command(params).then(data => {
+            others.fill.forEach(el => {
+              $form.setValuesIn(el, data[el])
+            })
+          })
+        },
+        refreshTokenCommand: async (field, $values, $form, others) => {
+          const { pdkHash, id } = this.pdkOptions
+          const { __TAPDATA, ...formValues } = $values
+          const { command } = others
+          const getValues = Object.assign({}, this.model?.config || {}, formValues)
+          let params = {
+            pdkHash,
+            connectionId: id || this.commandCallbackFunctionId,
+            connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+            command,
+            type: 'connection'
+          }
+          proxyApi.command(params).then(data => {
+            others.fill.forEach(el => {
+              $form.setValuesIn(el, data[el])
+            })
           })
         }
       }
