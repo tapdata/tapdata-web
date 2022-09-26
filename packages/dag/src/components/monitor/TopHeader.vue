@@ -1,10 +1,10 @@
 <template>
   <header class="layout-header border-bottom px-4 text-nowrap">
-    <div class="flex flex-1 align-center">
+    <div class="left-content flex align-center overflow-hidden">
       <button @click="$emit('page-return')" class="icon-btn mr-2">
         <VIcon size="18">left</VIcon>
       </button>
-      <div>
+      <div class="overflow-hidden">
         <div class="flex align-items-center">
           <OverflowTooltip
             class="task-name text-truncate fs-7 fw-sub font-color-dark"
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="flex align-center">
+    <div class="flex align-center mx-2">
       <!--内容居中-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
         <button @click="$emit('center-content')" class="icon-btn">
@@ -90,9 +90,8 @@
         </button>
       </ElTooltip>
     </div>
-
-    <div class="flex align-center flex-1">
-      <div class="flex-grow-1"></div>
+    <div class="flex-grow-1"></div>
+    <div class="flex align-center">
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
@@ -304,6 +303,10 @@ $sidebarBg: #fff;
   color: rgba(0, 0, 0, 0.87);
   box-sizing: border-box;
 
+  .left-content {
+    min-width: calc(50% - 140px);
+  }
+
   .nav-icon {
     width: 40px;
     height: 100%;
@@ -395,16 +398,8 @@ $sidebarBg: #fff;
   }
 }
 
-.task-name {
-  max-width: 180px;
-}
-
 .agent-data__item {
   border-left: 1px solid #f2f2f2;
-}
-
-.agent-name__item {
-  width: 280px;
 }
 </style>
 
