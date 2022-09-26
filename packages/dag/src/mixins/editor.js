@@ -1270,6 +1270,7 @@ export default {
       let lines = []
 
       if (document.getElementById('dfEditorContent').contains($elemBelow)) {
+        el.style.transition = `transform 0.3s`
         el.style.transform = `scale(${this.scale})`
         let nw = el.offsetWidth
         let nh = el.offsetHeight
@@ -1395,6 +1396,7 @@ export default {
           )
         }
       } else {
+        el.style.transition = `transform 0.3s`
         el.style.transform = 'scale(1)'
       }
 
@@ -1779,6 +1781,10 @@ export default {
           `【DEBUG】轮询加载任务详情，当前状态：[${this.dataflow.status}], 返回状态：[${data.status}]`,
           data
         ) // eslint-disable-line
+        if (this.dataflow.status !== data.status) {
+          console.debug(`【DEBUG】轮询加载任务详情，出现状态不一致，按照返回状态更新`) // eslint-disable-line
+          this.dataflow.status = data.status
+        }
       }, 3000)
     },
 
