@@ -1,19 +1,21 @@
 <template>
   <ElDialog
-    :title="$t('packages_dag_components_initiallist_quanliangxinxixiang')"
     width="774px"
     :visible.sync="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
     @close="$emit('input', false)"
   >
-    <ElTooltip
-      transition="tooltip-fade-in"
-      :content="$t('packages_dag_components_initiallist_dianjishuaxin')"
-      class="refresh-tooltip"
-    >
-      <VIcon class="color-primary cursor-pointer" size="12" @click="startLoadData">icon_table_selector_load</VIcon>
-    </ElTooltip>
+    <div slot="title">
+      <span>{{ $t('packages_dag_components_initiallist_quanliangxinxixiang') }}</span>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_components_initiallist_dianjishuaxin')"
+        class="ml-2"
+      >
+        <VIcon class="color-primary cursor-pointer" size="12" @click="startLoadData">icon_table_selector_load</VIcon>
+      </ElTooltip>
+    </div>
     <VTable :remoteMethod="remoteMethod" :columns="columns" height="100%" ref="table" class="table-list">
       <template slot="progress" slot-scope="scope">
         <ElProgress color="#2C65FF" :percentage="scope.row.progress" style="font-size: 12px !important"></ElProgress>
@@ -174,10 +176,5 @@ export default {
       }
     }
   }
-}
-.refresh-tooltip {
-  position: absolute;
-  top: 26px;
-  left: 120px;
 }
 </style>
