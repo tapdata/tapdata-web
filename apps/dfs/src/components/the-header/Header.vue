@@ -6,6 +6,9 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
+        <div class="command-item mr-6">
+          <span class="cursor-pointer">切回旧版本</span>
+        </div>
         <div class="command-item mr-6" @click="command('support')">
           <VIcon class="mr-2" size="17">question</VIcon>
           <span>{{ $t('header_technical_support') }}</span>
