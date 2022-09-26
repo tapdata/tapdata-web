@@ -6,15 +6,15 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
-        <div class="command-item mr-6" @click="command('support')">
+        <div class="command-item mr-6 flex align-items-center" @click="command('support')">
           <VIcon class="mr-2" size="17">question</VIcon>
           <span>{{ $t('header_technical_support') }}</span>
         </div>
-        <div class="command-item mr-6" @click="command('handbook')">
+        <div class="command-item mr-6 flex align-items-center" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
         </div>
-        <NotificationPopover class="command-item mr-2"></NotificationPopover>
+        <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
         <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage">
           <span class="cursor-pointer command-item icon-btn">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
