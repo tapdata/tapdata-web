@@ -1793,7 +1793,7 @@ export default {
     },
 
     initWS() {
-      console.log('initWS', this.$ws.ws) // eslint-disable-line
+      console.debug('【DEBUG】初始化ws监听', this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
