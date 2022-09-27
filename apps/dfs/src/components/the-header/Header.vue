@@ -7,6 +7,7 @@
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <div class="command-item mr-6">
+          <VIcon class="mr-2" size="17">warning-circle</VIcon>
           <span class="cursor-pointer">切回旧版本</span>
         </div>
         <div class="command-item mr-6" @click="command('support')">
