@@ -816,7 +816,7 @@ export default {
         },
         getToken: async (field, params, $form) => {
           const filter = {
-            subscribeId: `source#${this.pdkOptions.pdkHash}`,
+            subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
             service: 'engine',
             expireSeconds: 100000000
           }
@@ -826,13 +826,13 @@ export default {
           })
         },
         getTokenCommand: async (field, $values, $form, others) => {
-          const { pdkHash, id } = this.pdkOptions
+          const { pdkHash } = this.pdkOptions
           const { __TAPDATA, ...formValues } = $values
           const { command } = others
           const getValues = Object.assign({}, this.model?.config || {}, formValues)
           let params = {
             pdkHash,
-            connectionId: id || this.commandCallbackFunctionId,
+            connectionId: this.model?.id || this.commandCallbackFunctionId,
             connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
             command,
             type: 'connection'
