@@ -80,7 +80,7 @@ const TOKEN = getUrlSearch('token')
 const URL_LANG = getUrlSearch('lang')
 
 // 西工大的case
-;['zh_CN', 'zh_TW', 'en_US'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
+;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
 
 if (TOKEN) {
   Cookie.set('token', TOKEN)
