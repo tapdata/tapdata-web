@@ -18,6 +18,13 @@ export class FieldModType extends NodeType {
         type: 'array',
         display: 'none'
       },
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
       operations: {
         type: 'array',
         title: '',

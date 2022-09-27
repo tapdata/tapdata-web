@@ -155,7 +155,8 @@
             class="line-chart"
           ></LineChart>
         </div>
-        <div class="line-chart__box mb-2">
+        <!--指标不准确，暂时隐藏-->
+        <!--<div class="line-chart__box mb-2">
           <ElTooltip
             transition="tooltip-fade-in"
             placement="top"
@@ -173,7 +174,7 @@
             time-value
             class="line-chart"
           ></LineChart>
-        </div>
+        </div>-->
       </div>
       <div class="info-box">
         <div class="flex justify-content-between mb-2">

@@ -1776,7 +1776,8 @@ export default {
       clearTimeout(this.startLoopTaskTimer)
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
-        this.startLoopTask(id)
+        makeStatusAndDisabled(data)
+
         console.debug(
           `【DEBUG】轮询加载任务详情，当前状态：[${this.dataflow.status}], 返回状态：[${data.status}]`,
           data
@@ -1784,7 +1785,10 @@ export default {
         if (this.dataflow.status !== data.status) {
           console.debug(`【DEBUG】轮询加载任务详情，出现状态不一致，按照返回状态更新`) // eslint-disable-line
           this.dataflow.status = data.status
+          this.dataflow.disabledData = data.btnDisabled
         }
+
+        this.startLoopTask(id)
       }, 3000)
     },
 
