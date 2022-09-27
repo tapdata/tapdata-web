@@ -279,7 +279,7 @@ export default {
       logcollectorApi
         .check()
         .then(data => {
-          this.showEditSettingBtn = data //true是可用，false是禁用
+          this.showEditSettingBtn = data?.data //true是可用，false是禁用 数据结构本身多了一层
           this.settingDialogVisible = true
           logcollectorApi
             .getSystemConfig()
