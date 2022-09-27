@@ -6,7 +6,7 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
-        <div class="command-item mr-6">
+        <div class="command-item mr-6" @click="command('v2')">
           <VIcon class="mr-2" size="17">warning-circle</VIcon>
           <span class="cursor-pointer">切回旧版本</span>
         </div>
@@ -88,6 +88,9 @@ export default {
           break
         case 'home':
           window.open('https://cloud.tapdata.net/', '_blank')
+          break
+        case 'v2':
+          window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
           break
         case 'userCenter':
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
