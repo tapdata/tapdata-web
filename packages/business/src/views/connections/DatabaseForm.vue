@@ -825,7 +825,7 @@ export default {
             $form.setValuesIn(field.name, str)
           })
         },
-        getTokenCommand: async (field, $values, $form, others) => {
+        getTokenCommand: async ($values, $form, others) => {
           const { pdkHash } = this.pdkOptions
           const { __TAPDATA, ...formValues } = $values
           const { command } = others
@@ -837,10 +837,22 @@ export default {
             command,
             type: 'connection'
           }
+          const setValue = {
+            accessToken: {
+              data: '1000.3dc452a108977788d3a465bae23b5900.22f365d7557dc4e6a01f6cdde245c1cf'
+            },
+            refreshToken: {
+              data: '1000.909280a49dca76ddc1f45c527c943478.8c1406beb9d02fc93077bdc81c621990'
+            },
+            getTokenButtonMessage: {
+              data: 'ok'
+            }
+          }
+          for (let key in setValue) {
+            $form.setValuesIn(key, setValue[key]?.data)
+          }
           proxyApi.command(params).then(data => {
-            others.fill.forEach(el => {
-              $form.setValuesIn(el, data[el])
-            })
+            console.log('data', data)
           })
         },
         refreshTokenCommand: async (field, $values, $form, others) => {
