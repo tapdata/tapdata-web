@@ -181,6 +181,8 @@ import { formatMs, handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
 import { apiMonitorApi } from '@tap/api'
+import { calcTimeUnit } from '@tap/shared'
+
 export default {
   name: 'ApiMonitor',
   components: { Chart, TableList, FilterBar, Detail },
@@ -271,7 +273,7 @@ export default {
     formatMs(time) {
       if (time === 0 || !time) return 0
       if (time < 1000) return time + ' ms'
-      return formatMs(time, '')
+      return calcTimeUnit(time, 2)
     },
     //获取统计数据
     getPreview() {
