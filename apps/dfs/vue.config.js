@@ -125,7 +125,7 @@ module.exports = {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id', 'fill']
+              attrs: ['class', 'p-id']
             }
           }
         ]
