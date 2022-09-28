@@ -384,54 +384,6 @@ export default {
           type: '',
           name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
           time: '2022-09-29 18:00'
-        },
-        {
-          id: 16,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA12'),
-          time: '2022-05-12 18:00'
-        },
-        {
-          id: 15,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA1'),
-          time: '2022-04-22 19:00'
-        },
-        {
-          id: 14,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA5'),
-          time: '2022-04-07 21:00:00'
-        },
-        {
-          id: 13,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA4'),
-          time: '2022-03-30 18:00:00'
-        },
-        {
-          id: 12,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA3'),
-          time: '2022-03-11 14:00:00'
-        },
-        {
-          id: 11,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA2'),
-          time: '2022-02-28 14:00:00'
-        },
-        {
-          id: 10,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA'),
-          time: '2022-02-12 14:00:00'
-        },
-        {
-          id: 8,
-          type: '',
-          name: i18n.t('workbench_Notice_tAPDA12'),
-          time: '2021-12-21'
         }
       ]
     },
