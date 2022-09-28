@@ -53,7 +53,7 @@ export const JsEditor = connect(
 
       onInit(editor, tools) {
         if (this.handleAddCompleter && typeof this.handleAddCompleter === 'function') {
-          this.handleAddCompleter(tools)
+          this.handleAddCompleter(editor, tools)
         }
       }
     },
@@ -79,7 +79,7 @@ export const JsEditor = connect(
             value={this.code}
             lang="javascript"
             onBlur={this.onBlur}
-            onInit={this.onInit}
+            onInitOptions={this.onInit}
             options={options}
           />
           <div class="code-after">

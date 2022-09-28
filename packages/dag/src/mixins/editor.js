@@ -61,6 +61,7 @@ export default {
   beforeDestroy() {
     this.destory = true
     this.stopDagWatch?.()
+    this.stopLoopTask()
   },
 
   methods: {
@@ -581,7 +582,6 @@ export default {
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
-            console.trace('updateDag') // eslint-disable-line
             this.updateDag()
           }
         )
@@ -616,7 +616,6 @@ export default {
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
-            console.trace('updateDag') // eslint-disable-line
             this.updateDag()
           }
         )
@@ -797,6 +796,8 @@ export default {
       if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }
+
+      this.initWS()
 
       this.toggleConsole(true)
       this.$refs.console?.autoLoad() // 信息输出自动加载
@@ -979,13 +980,19 @@ export default {
     },
 
     resetWorkspace() {
-      this.dataflow = merge(
+      console.log('resetWorkspace', this.dataflow) // eslint-disable-line
+      Object.assign(this.dataflow, {
+        ...DEFAULT_SETTINGS,
+        id: '',
+        name: ''
+      })
+      /*this.dataflow = merge(
         {
           id: '',
           name: ''
         },
         DEFAULT_SETTINGS
-      )
+      )*/
       this.jsPlumbIns.reset()
       this.deselectAllNodes()
       this.reset()
@@ -1263,6 +1270,7 @@ export default {
       let lines = []
 
       if (document.getElementById('dfEditorContent').contains($elemBelow)) {
+        el.style.transition = `transform 0.3s`
         el.style.transform = `scale(${this.scale})`
         let nw = el.offsetWidth
         let nh = el.offsetHeight
@@ -1388,6 +1396,7 @@ export default {
           )
         }
       } else {
+        el.style.transition = `transform 0.3s`
         el.style.transform = 'scale(1)'
       }
 
@@ -1618,6 +1627,7 @@ export default {
     },
 
     handleEditFlush(result) {
+      console.debug(`【DEBUG】ws返回，任务状态：[${result.data?.status}]`, result.data) // eslint-disable-line
       if (result.data) {
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
@@ -1650,7 +1660,7 @@ export default {
         if (!resFlag) {
           return
         }
-
+        this.initWS()
         this.dataflow.disabledData.stop = true
         await taskApi.stop(this.dataflow.id).catch(e => {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
@@ -1668,7 +1678,7 @@ export default {
         if (!resFlag) {
           return
         }
-
+        this.initWS()
         this.dataflow.disabledData.stop = true
         await taskApi.forceStop(this.dataflow.id)
         // this.startLoop(true)
@@ -1684,6 +1694,7 @@ export default {
           return
         }
         try {
+          this.initWS()
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
@@ -1747,9 +1758,11 @@ export default {
         if (!data) {
           this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           this.handlePageReturn()
+          return
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
+        this.startLoopTask(id)
         return data
       } catch (e) {
         console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
@@ -1758,7 +1771,33 @@ export default {
       }
     },
 
+    startLoopTask(id) {
+      console.debug('【DEBUG】开始轮询加载任务，间隔3s') // eslint-disable-line
+      clearTimeout(this.startLoopTaskTimer)
+      this.startLoopTaskTimer = setTimeout(async () => {
+        const data = await taskApi.get(id)
+        makeStatusAndDisabled(data)
+
+        console.debug(
+          `【DEBUG】轮询加载任务详情，当前状态：[${this.dataflow.status}], 返回状态：[${data.status}]`,
+          data
+        ) // eslint-disable-line
+        if (this.dataflow.status !== data.status) {
+          console.debug(`【DEBUG】轮询加载任务详情，出现状态不一致，按照返回状态更新`) // eslint-disable-line
+          this.dataflow.status = data.status
+          this.dataflow.disabledData = data.btnDisabled
+        }
+
+        this.startLoopTask(id)
+      }, 3000)
+    },
+
+    stopLoopTask() {
+      clearTimeout(this.startLoopTaskTimer)
+    },
+
     initWS() {
+      console.debug('【DEBUG】初始化ws监听', this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
@@ -1768,6 +1807,18 @@ export default {
           opType: 'subscribe'
         }
       })
+    },
+
+    // ws 探活
+    wsAgentLive() {
+      this.$ws.send({
+        type: 'editFlush',
+        taskId: this.dataflow.id,
+        data: {
+          opType: 'subscribe'
+        }
+      })
+      console.log('wsAgentLive', this.$ws.ws) // eslint-disable-line
     },
 
     deleteSelectedConnections() {

@@ -33,7 +33,7 @@
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <el-tooltip :content="`${data.value} (${data.objCount})`" placement="right" :open-delay="400">
+          <el-tooltip :content="`${data.value} (${data.objCount})`" placement="bottom-start" :open-delay="400">
             <span class="table-label"
               >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
             >
@@ -605,23 +605,6 @@ export default {
       align-items: center;
       justify-content: space-between;
       margin-bottom: 3px;
-      // .iconfont {
-      // 	color: #c0c4cc;
-      // 	font-size: 12px;
-      // 	background-color: map-get($bgColor, white);
-      // 	border: 1px solid #dedee4;
-      // 	display: flex;
-      // 	justify-content: center;
-      // 	align-items: center;
-      // 	height: 66%;
-      // 	padding: 0 4px;
-      // 	padding-right: 6px;
-      // 	padding-left: 5px;
-      // 	margin-top: 0px;
-      // 	border-top-width: 1px;
-      // 	border-radius: 3px;
-      // 	cursor: pointer;
-      // }
     }
   }
   .tree-block {
@@ -680,9 +663,6 @@ export default {
   .el-input .el-input__inner {
     height: 24px;
     line-height: 24px;
-  }
-  .el-input__suffix {
-    top: 2px;
   }
 }
 .classification-tree {

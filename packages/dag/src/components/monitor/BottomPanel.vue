@@ -1,7 +1,7 @@
 <template>
   <section class="bottom-panel border-top flex-column">
     <Log v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
-    <div v-else class="panel-header flex pr-4 h-100">
+    <div v-else class="panel-header flex h-100">
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column">
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
           <Log v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
@@ -141,7 +141,6 @@ $headerHeight: 40px;
     ::v-deep {
       .el-tabs__header {
         margin: 0;
-        padding-left: 16px;
       }
       .el-tabs__content {
         flex: 1;
@@ -230,7 +229,7 @@ $headerHeight: 40px;
 .close-icon {
   position: absolute;
   right: 16px;
-  top: 12px;
+  top: 10px;
 }
 .tabs-header__hidden {
   ::v-deep {

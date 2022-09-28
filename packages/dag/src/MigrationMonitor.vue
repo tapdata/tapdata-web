@@ -14,6 +14,7 @@
       @delete="handleDelete"
       @change-name="handleUpdateName"
       @auto-layout="handleAutoLayout"
+      @center-content="handleCenterContent"
       @zoom-out="handleZoomOut"
       @zoom-in="handleZoomIn"
       @showSettings="handleShowSettings"
@@ -134,7 +135,13 @@
         @connectionList="handleConnectionList"
       />
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+      <ConfigPanel
+        ref="configPanel"
+        :settings="dataflow"
+        :scope="formScope"
+        :show-schema-panel="dataflow.syncType === 'sync'"
+        @hide="onHideSidebar"
+      />
 
       <!--   节点详情   -->
       <NodeDetailDialog
@@ -210,7 +217,8 @@ export default {
   data() {
     const dataflow = observable({
       id: '',
-      name: ''
+      name: '',
+      status: ''
     })
 
     return {
@@ -375,7 +383,11 @@ export default {
         await this.$nextTick()
         await this.addNodes(dag)
         await this.$nextTick()
-        this.handleAutoLayout()
+
+        // 延迟自动布局，等待ResizeObserver
+        setTimeout(() => {
+          this.handleAutoLayout()
+        }, 10)
       }
     },
 
@@ -578,6 +590,7 @@ export default {
     async handleStart() {
       this.isSaving = true
       try {
+        this.wsAgentLive()
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false

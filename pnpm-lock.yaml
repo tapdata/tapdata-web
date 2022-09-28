@@ -378,6 +378,7 @@ importers:
       dayjs: ^1.11.2
       jsplumb: ^2.15.6
       mousetrap: ^1.6.5
+      resize-observer-polyfill: ^1.5.1
       vuex: ^3.6.2
     dependencies:
       '@formily/core': registry.npmmirror.com/@formily/core/2.1.9
@@ -396,6 +397,7 @@ importers:
       dayjs: registry.npmmirror.com/dayjs/1.11.3
       jsplumb: registry.npmmirror.com/jsplumb/2.15.6
       mousetrap: registry.npmmirror.com/mousetrap/1.6.5
+      resize-observer-polyfill: registry.npmmirror.com/resize-observer-polyfill/1.5.1
       vuex: registry.npmmirror.com/vuex/3.6.2
 
   packages/field-mapping:

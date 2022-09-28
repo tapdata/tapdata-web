@@ -258,10 +258,7 @@ export const FieldRenameProcessor = defineComponent({
             originTableName: t?.sourceObjectName,
             previousTableName: t?.sinkObjectName,
             operation: config.operation,
-            fields:
-              t?.sourceQualifiedName === map[t?.sourceQualifiedName]?.qualifiedName
-                ? map[t?.sourceQualifiedName]?.fields || []
-                : []
+            fields: []
           }
         })
         fieldsMapping = toList(map)
@@ -273,7 +270,7 @@ export const FieldRenameProcessor = defineComponent({
       if (config.checkedFields?.length > 0) {
         //字段级别
         config.checkedFields.forEach(t => {
-          let newField = config.operation.prefix + t?.targetFieldName + config.operation.suffix
+          let newField = config.operation.prefix + t?.sourceFieldName + config.operation.suffix
           if (config.operation.capitalized) {
             newField = newField[config.operation.capitalized]()
           }

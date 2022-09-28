@@ -11,7 +11,11 @@
         {{ $t('packages_component_button_button') }}
       </ElButton>
       <div class="title">
-        <span>{{ types[0] === 'user' ? $t('packages_component_classification_userTitle') : $t('packages_component_classification_title') }}</span>
+        <span>{{
+          types[0] === 'user'
+            ? $t('packages_component_classification_userTitle')
+            : $t('packages_component_classification_title')
+        }}</span>
       </div>
       <!-- v-if="searchFalg" -->
       <div class="search-box">
@@ -62,7 +66,11 @@
         @click="showDialog()"
         class="create"
       >
-        {{ types[0] === 'user' ? $t('packages_component_classification_creatUserGroup') : $t('packages_component_classification_creatDataClassification') }}
+        {{
+          types[0] === 'user'
+            ? $t('packages_component_classification_creatUserGroup')
+            : $t('packages_component_classification_creatDataClassification')
+        }}
       </ElButton>
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
@@ -613,9 +621,6 @@ export default {
   .el-input .el-input__inner {
     height: 24px;
     line-height: 24px;
-  }
-  .el-input__suffix {
-    top: 2px;
   }
 }
 .classification-tree {

@@ -489,11 +489,12 @@ export default {
     },
 
     getNodeProps(item) {
-      const props = {
+      return {
         name: item.name,
         type: 'database',
         databaseType: item.database_type,
         connectionId: item.id,
+        migrateTableSelectType: 'all',
         attrs: {
           connectionName: item.name,
           connectionType: item.connection_type,
@@ -501,24 +502,8 @@ export default {
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
           capabilities: item.capabilities || []
-          /*capabilities: [
-            ...(item.capabilities || []),
-            {
-              id: 'new_field_function',
-              type: 11
-            }
-          ]*/
         }
       }
-
-      if (this.connectionType === 'target') {
-        props.existDataProcessMode = 'keepData'
-        props.attrs.isTarget = true
-      } else {
-        props.migrateTableSelectType = 'all'
-      }
-
-      return props
     },
 
     handleShowDBInput() {

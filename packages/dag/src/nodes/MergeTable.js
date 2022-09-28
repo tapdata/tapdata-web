@@ -22,6 +22,13 @@ export class MergeTable extends NodeType {
         type: 'array',
         'x-display': 'hidden'
       },
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
       // TODO 按时屏蔽外存功能
       // externalStorageId: {
       //   title: '外存配置', //外存配置

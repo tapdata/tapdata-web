@@ -150,9 +150,10 @@ export default {
             title: {
               show: isEmptyData,
               textStyle: {
-                color: '#909399',
-                fontSize: 20,
-                fontWeight: '500'
+                color: '#86909c',
+                fontSize: 14,
+                fontWeight: '500',
+                opacity: 0.7
               },
               text: i18n.t('packages_dag_dag_dialog_field_mapping_no_data'),
               left: 'center',
