@@ -167,6 +167,7 @@ import { observable } from '@formily/reactive'
 
 import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
 import { measurementApi, taskApi } from '@tap/api'
+import { delayTrigger } from '@tap/shared'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -307,7 +308,6 @@ export default {
   },
 
   mounted() {
-    console.log('enterMonitor') // eslint-disable-line
     this.setValidateLanguage()
     this.initNodeType()
     this.jsPlumbIns.ready(async () => {
@@ -335,17 +335,19 @@ export default {
 
   methods: {
     init() {
-      this.extraEnterCount = 0
-      this.timer && clearInterval(this.timer)
-      this.timer = setInterval(() => {
-        if (
-          this.isEnterTimer ||
-          (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
-        ) {
-          this.startLoadData()
-        }
-      }, this.refreshRate)
-      this.startLoadData()
+      delayTrigger(() => {
+        this.timer && clearTimeout(this.timer)
+        this.startLoadData()
+      }, 200)
+    },
+
+    polling() {
+      if (
+        this.isEnterTimer ||
+        (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
+      ) {
+        this.startLoadData()
+      }
     },
 
     async startLoadData() {
@@ -767,22 +769,30 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      measurementApi.batch(this.getParams()).then(data => {
-        const map = {
-          quota: this.loadQuotaData,
-          verify: this.loadVerifyData,
-          verifyTotals: this.loadVerifyTotals,
-          alarmData: this.loadAlarmData
-        }
-        for (let key in data) {
-          const item = data[key]
-          if (item.code === 'ok') {
-            map[key]?.(data[key].data)
-          } else {
-            this.$message.error(item.error)
+      measurementApi
+        .batch(this.getParams())
+        .then(data => {
+          const map = {
+            quota: this.loadQuotaData,
+            verify: this.loadVerifyData,
+            verifyTotals: this.loadVerifyTotals,
+            alarmData: this.loadAlarmData
           }
-        }
-      })
+          for (let key in data) {
+            const item = data[key]
+            if (item.code === 'ok') {
+              map[key]?.(data[key].data)
+            } else {
+              this.$message.error(item.error)
+            }
+          }
+        })
+        .finally(() => {
+          this.timer && clearTimeout(this.timer)
+          this.timer = setTimeout(() => {
+            this.polling()
+          }, this.refreshRate)
+        })
     },
 
     loadQuotaData(data) {

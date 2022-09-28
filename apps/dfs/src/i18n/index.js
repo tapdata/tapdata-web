@@ -9,6 +9,7 @@ import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 import { langs as formLangs } from '@tap/form'
 import { langs as componentLangs } from '@tap/component'
 import { langs as businessLangs } from '@tap/business'
+import { langs as dagLangs } from '@tap/dag'
 // apps语言文件
 import en from './langs/en'
 import zhCN from './langs/zh-CN'
@@ -32,6 +33,7 @@ i18n.merge(eleLangs)
 i18n.merge(formLangs)
 i18n.merge(componentLangs)
 i18n.merge(businessLangs)
+i18n.merge(dagLangs)
 // apps语言文件，最后覆盖
 i18n.merge(localLangs)
 

@@ -6,19 +6,25 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
-        <div class="command-item mr-6" @click="command('support')">
+        <div class="command-item mr-6" @click="command('v2')">
+          <VIcon class="mr-2" size="17">navigation_general</VIcon>
+          <span class="cursor-pointer">{{ $t('header_upgrade') }}</span>
+        </div>
+        <div class="command-item mr-6 flex align-items-center" @click="command('support')">
           <VIcon class="mr-2" size="17">question</VIcon>
           <span>{{ $t('header_technical_support') }}</span>
         </div>
-        <div class="command-item mr-6" @click="command('handbook')">
+        <div class="command-item mr-6 flex align-items-center" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
         </div>
-        <NotificationPopover class="command-item mr-6"></NotificationPopover>
-        <ElDropdown v-if="false" placement="bottom" class="mr-6" @command="changeLanguage">
-          <span class="cursor-pointer command-item langs-btn">{{ languagesItems[lang] }}</span>
+        <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
+        <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage">
+          <span class="cursor-pointer command-item icon-btn">
+            <VIcon size="20">{{ 'language-' + lang }}</VIcon>
+          </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem v-for="(value, key) in languagesItems" :key="key" :command="key">
+            <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
             </ElDropdownItem>
           </ElDropdownMenu>
@@ -60,7 +66,7 @@ export default {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       lang: '',
-      languagesItems: langMenu
+      languages: langMenu
     }
   },
   created() {
@@ -82,6 +88,9 @@ export default {
           break
         case 'home':
           window.open('https://cloud.tapdata.net/', '_blank')
+          break
+        case 'v2':
+          window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
           break
         case 'userCenter':
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
@@ -270,9 +279,5 @@ export default {
       right: 0;
     }
   }
-}
-.langs-btn {
-  border: 1px solid #ddd;
-  border-radius: 4px;
 }
 </style>

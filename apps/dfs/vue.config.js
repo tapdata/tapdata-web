@@ -7,7 +7,7 @@ const serveUrlMap = {
   dev: 'http://backend:3030',
   test: 'http://v3.test.cloud.tapdata.net'
 }
-let origin, publicPath
+let origin
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
 
@@ -15,9 +15,6 @@ const { SERVE_ENV = 'mock' } = process.env
 if (~argv.indexOf('--origin')) {
   origin = argv[argv.indexOf('--origin') + 1]
   origin && (origin = origin.replace(/^(?!http)/, 'http://'))
-}
-if (~argv.indexOf('--publicPath')) {
-  publicPath = argv[argv.indexOf('--publicPath') + 1]
 }
 const proxy = {
   target: origin || serveUrlMap[SERVE_ENV],
@@ -32,10 +29,11 @@ let pages = {
     title: 'Tapdata Cloud'
   }
 }
+
 module.exports = {
   pages,
   lintOnSave: true,
-  publicPath: publicPath || '/console/v3',
+  publicPath: './',
   productionSourceMap: false,
 
   devServer: {

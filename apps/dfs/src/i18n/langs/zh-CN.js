@@ -967,5 +967,6 @@ export default {
   //页面标题
   page_title_run_monitor: '运行监控',
   // 自定义节点
-  notify_abnormally_stopped: '意外停止'
+  notify_abnormally_stopped: '意外停止',
+  header_upgrade: '访问旧版本',
 }
