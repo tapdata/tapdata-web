@@ -5699,7 +5699,7 @@ export default {
   dfs_workbench_workbench_youyuzengjiale:
     '由于增加了很多实用功能，我们被迫舍弃了现有的版本架构重新开发，因此您在当前V2版本中创建的连接和任务将不会同步到新版本，不过放心，新版本发布后您仍然可以继续使用旧版本进行您的数据操作，我们保证V2版本和V3版本将长期共存，\n          ',
   dfs_workbench_workbench_zainianyueriwo: '在2022年9月29日，我们将会发布重大升级V3.0版本。',
-  dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用户,您好：',
+  dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用户，您好：',
   dfs_workbench_workbench_banbenshengjihe: '版本升级和服务切换的公告',
   dfs_workbench_workbench_banbenshengjitong: '版本升级通知'
 }

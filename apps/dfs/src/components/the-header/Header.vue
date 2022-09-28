@@ -7,7 +7,7 @@
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
         <div class="command-item mr-6" @click="command('v2')">
-          <VIcon class="mr-2" size="17">warning-circle</VIcon>
+          <VIcon class="mr-2" size="17">navigation_general</VIcon>
           <span class="cursor-pointer">{{ $t('header_upgrade') }}</span>
         </div>
         <div class="command-item mr-6 flex align-items-center" @click="command('support')">

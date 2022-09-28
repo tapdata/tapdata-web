@@ -4297,7 +4297,7 @@ export default {
   dfs_workbench_workbench_youyuzengjiale:
     '由於增加了很多實用功能，我們被迫捨棄了現有的版本架構重新開發，因此您在當前V2版本中創建的連接和任務將不會同步到新版本，不過放心，新版本發布後您仍然可以繼續使用舊版本進行您的數據操作，我們保證V2版本和V3版本將長期共存，\n          ',
   dfs_workbench_workbench_zainianyueriwo: '在2022年9月29日，我們將會發布重大升級V3.0版本。 ',
-  dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用戶,您好：',
+  dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用戶，您好：',
   dfs_workbench_workbench_banbenshengjihe: '版本升級和服務切換的公告',
   dfs_workbench_workbench_banbenshengjitong: '版本升級通知'
 }

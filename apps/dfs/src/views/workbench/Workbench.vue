@@ -109,7 +109,7 @@
       </div>
     </div>
     <!-- 版本升级弹窗-->
-    <el-dialog :visible.sync="showUpgrade" :title="$t('dfs_workbench_workbench_banbenshengjitong')">
+    <el-dialog :visible.sync="showUpgrade" :title="$t('dfs_workbench_workbench_banbenshengjitong')" width="670px">
       <div class="dialog-upgrade">
         <div class="mb-2 dialog-upgrade__header">{{ $t('dfs_workbench_workbench_banbenshengjihe') }}</div>
         <div>
