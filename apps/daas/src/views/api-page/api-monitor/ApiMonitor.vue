@@ -127,7 +127,7 @@
         </div>
       </section>
       <!--api list -->
-      <section class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height mb-5 pl-5 pt-5">
+      <section class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height pl-5 pt-5">
         <header class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_api_list') }}</header>
         <FilterBar class="mb-2" v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
         <el-table
@@ -495,7 +495,6 @@ export default {
   display: flex;
   -ms-flex: 1;
   flex: 1;
-  padding: 0 20px 20px 20px;
   background-color: #eff1f4;
   overflow: auto;
   .api-monitor__min__height {
