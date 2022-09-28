@@ -37,6 +37,7 @@
         <TimeSelect
           :options="timeOptions"
           :range="[firstStartTime, lastStopTime || Date.now()]"
+          ref="timeSelect"
           @change="changeTime"
         ></TimeSelect>
         <ElInput
@@ -660,14 +661,14 @@ export default {
       taskApi
         .putLogSetting(this.dataflow.id, params)
         .then(() => {
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('packages_dag_message_save_ok'))
           this.dialog = false
         })
         .finally(() => {
           this.saveLoading = false
         })
         .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
+          this.$message.error(this.$t('packages_dag_message_save_fail'))
         })
     },
 

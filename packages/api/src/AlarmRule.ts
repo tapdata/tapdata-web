@@ -1,14 +1,14 @@
 import Http from './Http'
-export default class AlarmAPI extends Http {
+export default class AlarmRuleAPI extends Http {
   constructor() {
-    super('/api/alarm')
+    super('/api/alarm_rule')
   }
-  listTask() {
-    return this.axios.get(`${this.url}/list_task`)
+  find() {
+    return this.axios.get(`${this.url}/find`)
   }
 
-  list() {
-    return this.axios.post(`${this.url}/list`)
+  save(params: object) {
+    return this.axios.post(`${this.url}/save`, params)
   }
 }
-export { AlarmAPI }
+export { AlarmRuleAPI }

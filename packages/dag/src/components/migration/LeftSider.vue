@@ -23,7 +23,7 @@
               <ElInput
                 v-model="dbSearchTxt"
                 ref="dbInput"
-                :placeholder="$t('connection_name_search_placeholder')"
+                :placeholder="$t('packages_dag_connection_name_search_placeholder')"
                 size="mini"
                 clearable
                 @keydown.native.stop

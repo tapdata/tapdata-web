@@ -28,7 +28,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+          <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
         </el-button>
         <el-dropdown
           class="btn"

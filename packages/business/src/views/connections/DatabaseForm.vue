@@ -485,7 +485,7 @@ export default {
           let config = {
             // TODO 按时屏蔽外存功能
             // externalStorageId: {
-            //   title: this.$t('packages_dag_external_storage'), //外存配置
+            //   title: this.$t('packages_business_external_storage'), //外存配置
             //   type: 'string',
             //   'x-decorator': 'FormItem',
             //   'x-component': 'Select',

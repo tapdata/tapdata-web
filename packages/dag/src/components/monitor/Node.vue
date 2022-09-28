@@ -2,7 +2,7 @@
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { defineComponent, computed, ref } from '@vue/composition-api'
+import { defineComponent, computed, ref, onMounted, watch } from '@vue/composition-api'
 
 import i18n from '@tap/i18n'
 import { VIcon } from '@tap/component'
@@ -11,6 +11,18 @@ import DFNode from '../DFNode'
 
 dayjs.extend(relativeTime)
 dayjs.locale('zh-cn')
+
+const setConnectionAlarm = (endpoint, type) => {
+  endpoint.connections?.forEach(conn => {
+    conn.setType(type)
+  })
+}
+
+const clearConnectionAlarm = endpoint => {
+  endpoint.connections?.forEach(conn => {
+    conn.clearTypes()
+  })
+}
 
 export default defineComponent({
   name: 'Node',
@@ -32,8 +44,15 @@ export default defineComponent({
         tableTotal: 0
       })
     },
+    alarmData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
     taskType: String,
-    syncType: String
+    syncType: String,
+    alarm: Object
   },
 
   setup(props, { attrs, listeners, emit, refs }) {
@@ -323,12 +342,40 @@ export default defineComponent({
 
     const ifDragStart = ref(false) // 控制popover禁用
 
+    const alarmLevel = computed(() => {
+      if (!props.alarm) return
+      const alarmLevel = props.alarm.level
+      if (['EMERGENCY', 'CRITICAL'].includes(alarmLevel)) {
+        return 'error'
+      } else if (['WARNING', 'NORMAL'].includes(alarmLevel)) {
+        return 'warn'
+      }
+    })
+
+    onMounted(() => {
+      watch(
+        alarmLevel,
+        level => {
+          const endpoint = refs.dfNode?.targetPoint
+          if (!endpoint) return
+
+          clearConnectionAlarm(endpoint)
+
+          level && setConnectionAlarm(endpoint, level)
+        },
+        { immediate: true }
+      )
+    })
+
     return () => {
       let nodeProps = { props: { ...attrs }, attrs }
+      let alarmCls = alarmLevel.value ? `alarm-${alarmLevel.value}` : null
+
       return (
         <DFNode
+          ref="dfNode"
           {...nodeProps}
-          class="position-s"
+          class={alarmCls}
           on={{
             ...listeners,
             'drag-start': (...args) => {
@@ -435,6 +482,31 @@ export default defineComponent({
 }
 .span-2 {
   grid-column: span 2 / auto;
+}
+.alarm-warn::v-deep {
+  .df-node {
+    border-color: #ff932c;
+    &.active,
+    &.selected {
+      box-shadow: 0 0 0 2px rgba(255, 147, 44, 0.3);
+    }
+  }
+  .statistic-value {
+    color: #ff932c;
+  }
+}
+
+.alarm-error::v-deep {
+  .df-node {
+    border-color: #d44d4d;
+    &.active,
+    &.selected {
+      box-shadow: 0 0 0 2px rgba(212, 77, 77, 0.3);
+    }
+  }
+  .statistic-value {
+    color: #d44d4d;
+  }
 }
 </style>
 

@@ -37,7 +37,7 @@ export const StudioHeader = observer(
       const save = async () => {
         const customNode = customNodeRef.value
         if (!customNode.name) {
-          root.$message.warning(root.$t('custom_node_name_required'))
+          root.$message.warning(root.$t('packages_nodeDesign_custom_node_name_required'))
           return
         }
         saving.value = true
@@ -51,11 +51,10 @@ export const StudioHeader = observer(
               params: { id: data.id, action: 'nodeSave' }
             })
           }
-          root.$message.success(root.$t('message_save_ok'))
+          root.$message.success(root.$t('packages_nodeDesign_message_save_ok'))
         } catch (e) {
           // eslint-disable-next-line no-console
           console.log('CustomNode save error', e)
-          // root.$message.error(root.$t('message_save_fail'))
         }
         saving.value = false
       }

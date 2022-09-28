@@ -26,6 +26,7 @@
       @forceStop="handleForceStop"
       @reset="handleReset"
       @edit="handleEdit"
+      @load-data="init"
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
@@ -89,6 +90,7 @@
               :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
               :quota="quota"
+              :alarm="alarmData ? alarmData.nodes[n.id] : undefined"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -103,6 +105,8 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large></VEmpty>
           </div>
+
+          <AlarmStatistics :alarm-num="alarmData ? alarmData.alarmNum : undefined" />
         </main>
         <BottomPanel
           v-if="dataflow && dataflow.status && showBottomPanel"
@@ -110,6 +114,8 @@
             minHeight: 328
           }"
           :dataflow="dataflow"
+          :alarmData="alarmData"
+          @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
@@ -165,6 +171,7 @@ import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
+import { ALARM_LEVEL_SORT } from '@tap/business'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -181,6 +188,7 @@ import editor from './mixins/editor'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
+import AlarmStatistics from './components/monitor/components/AlarmStatistics'
 
 export default {
   name: 'MigrationMonitor',
@@ -192,6 +200,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    AlarmStatistics,
     VExpandXTransition,
     VEmpty,
     ConfigPanel,
@@ -247,7 +256,9 @@ export default {
       dagData: null,
       verifyData: null,
       verifyTotals: null,
-      refreshRate: 5000
+      alarmData: null,
+      refreshRate: 5000,
+      extraEnterCount: 0
     }
   },
 
@@ -296,10 +307,12 @@ export default {
   },
 
   mounted() {
+    console.log('enterMonitor') // eslint-disable-line
     this.setValidateLanguage()
     this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
+        this.initConnectionType()
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
@@ -322,9 +335,15 @@ export default {
 
   methods: {
     init() {
+      this.extraEnterCount = 0
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.isEnterTimer && this.startLoadData()
+        if (
+          this.isEnterTimer ||
+          (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
+        ) {
+          this.startLoadData()
+        }
       }, this.refreshRate)
       this.startLoadData()
     },
@@ -719,14 +738,20 @@ export default {
           param: {
             id: this.dataflow.id
           }
+        },
+        logTotals: {
+          uri: '/api/MonitoringLogs/count',
+          param: {
+            taskId,
+            taskRecordId
+          }
+        },
+        alarmData: {
+          uri: '/api/alarm/list_task',
+          param: {
+            taskId
+          }
         }
-        // logTotals: {
-        //   uri: '/api/MonitoringLogs/count',
-        //   param: {
-        //     taskId,
-        //     taskRecordId
-        //   }
-        // }
       }
       const $verifyPanel = this.$refs.verifyPanel
       if ($verifyPanel) {
@@ -746,7 +771,8 @@ export default {
         const map = {
           quota: this.loadQuotaData,
           verify: this.loadVerifyData,
-          verifyTotals: this.loadVerifyTotals
+          verifyTotals: this.loadVerifyTotals,
+          alarmData: this.loadAlarmData
         }
         for (let key in data) {
           const item = data[key]
@@ -777,6 +803,33 @@ export default {
         diffTables,
         totals,
         ignore
+      }
+    },
+
+    loadAlarmData(data = {}) {
+      const { alarmNum = {}, nodeInfos = [], alarmList = [] } = data
+      const { alert = 0, error = 0 } = alarmNum
+      const nodes = alarmList
+        .filter(t => t.nodeId && t.level)
+        .reduce((cur, next) => {
+          const index = ALARM_LEVEL_SORT.indexOf(cur[next.nodeId]?.level)
+          return {
+            ...cur,
+            [next.nodeId]: index !== -1 && index < ALARM_LEVEL_SORT.indexOf(next.level) ? cur[next.nodeId] : next
+          }
+        }, {})
+      this.alarmData = {
+        alarmNum: {
+          alert,
+          error
+        },
+        nodeInfos: nodeInfos.map(t => {
+          return Object.assign({}, t, {
+            num: t.num || 0
+          })
+        }),
+        alarmList,
+        nodes
       }
     },
 
@@ -946,6 +999,22 @@ export default {
       } else {
         this.jsPlumbIns.select().removeClass('running')
       }
+    },
+
+    /**
+     * 初始化连接样式【告警、错误】
+     */
+    initConnectionType() {
+      this.jsPlumbIns.registerConnectionTypes({
+        error: {
+          paintStyle: { stroke: '#D44D4D' },
+          hoverPaintStyle: { stroke: '#D44D4D' }
+        },
+        warn: {
+          paintStyle: { stroke: '#FF932C' },
+          hoverPaintStyle: { stroke: '#FF932C' }
+        }
+      })
     }
   }
 }

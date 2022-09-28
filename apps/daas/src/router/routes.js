@@ -780,6 +780,18 @@ export default [
             name: 'userNotification',
             component: () => import('@/views/notification/UserNotification'),
             meta: { title: 'notify_user_notice', isNotAside: true }
+          },
+          {
+            path: 'alarmNotification',
+            name: 'alarmNotification',
+            component: () => import('@/views/notification/AlarmNotification'),
+            meta: { title: 'notify_system_notice', isNotAside: true }
+          },
+          {
+            path: 'systemAlarm',
+            name: 'systemAlarm',
+            component: () => import('@/views/notification/SystemAlarm'),
+            meta: { title: 'notify_user_notice', isNotAside: true }
           }
         ]
       },
