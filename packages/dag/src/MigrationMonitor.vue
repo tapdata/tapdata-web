@@ -295,9 +295,9 @@ export default {
     this.setStateReadonly(true)
   },
 
-  mounted() {
+  async mounted() {
     this.setValidateLanguage()
-    this.initNodeType()
+    await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -347,8 +347,9 @@ export default {
       this.loadData()
     },
 
-    initNodeType() {
+    async initNodeType() {
       this.addResourceIns(allResourceIns)
+      if (this.dataflow.syncType !== 'migrate') await this.loadCustomNode(false)
     },
 
     async openDataflow(id) {

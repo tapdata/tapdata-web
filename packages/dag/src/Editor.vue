@@ -246,6 +246,7 @@ export default {
       const data = await this.loadDataflow(id)
 
       if (data) {
+        if (this.destory) return
         const { dag } = data
         this.setStateReadonly(this.$route.name === 'DataflowViewer' ? true : this.dataflow.disabledData.edit)
         this.setTaskId(data.id)
