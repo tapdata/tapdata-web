@@ -42,16 +42,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
 import FormPanel from '../FormPanel'
-import { VIcon } from '@tap/component'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import MetaPane from '../MetaPane'
-import { TextEditable } from '@tap/component'
 
 export default {
   name: 'ConfigPanel',
@@ -77,10 +75,11 @@ export default {
     }
   },
 
-  components: { MetaPane, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
+  components: { MetaPane, SettingPanel, NodeIcon, FormPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapState('dataflow', ['editVersion']),
 
     showPanel() {
       return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
