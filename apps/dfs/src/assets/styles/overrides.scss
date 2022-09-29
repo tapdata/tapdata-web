@@ -117,6 +117,9 @@ th {
 .el-radio__inner:hover {
   border-color: map-get($color, primary);
 }
+.el-radio__input.is-checked+.el-radio__label{
+  color: map-get($color, primary);
+}
 .el-radio__input.is-checked .el-radio__inner {
   border-color: map-get($color, primary);
   background-color: map-get($color, primary);
