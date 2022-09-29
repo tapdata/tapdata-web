@@ -4,11 +4,15 @@
       <!-- 顶部 标题 Tab -->
       <div class="flex position-relative">
         <div class="position-absolute top-0 start-0 fs-7 fw-sub px-6 font-color-dark" style="line-height: 36px">
-          {{ data.id ? '服务详情' : '创建服务' }}
+          {{ data.id ? $t('daas_data_server_drawer_fuwuxiangqing') : $t('daas_data_server_drawer_chuangjianfuwu') }}
         </div>
         <ElTabs v-model="tab" class="data-server__tabs flex-1" @tab-click="tabChanged">
-          <ElTabPane label="配置" name="form"></ElTabPane>
-          <ElTabPane v-if="data.status === 'active'" label="调试" name="debug"></ElTabPane>
+          <ElTabPane :label="$t('daas_data_server_drawer_peizhi')" name="form"></ElTabPane>
+          <ElTabPane
+            v-if="data.status === 'active'"
+            :label="$t('daas_data_server_drawer_tiaoshi')"
+            name="debug"
+          ></ElTabPane>
         </ElTabs>
       </div>
       <ElForm
@@ -20,7 +24,7 @@
         :model="form"
         :rules="rules"
       >
-        <!-- 服务名称 -->
+        <!-- 服务{{$t('metadata_name')}} -->
         <div class="flex justify-content-between align-items-start">
           <ElFormItem prop="name" class="flex-1" size="small">
             <ElInput v-if="isEdit" v-model="form.name"></ElInput>
@@ -37,24 +41,31 @@
           </template>
         </div>
         <ElFormItem prop="description" class="flex-1 mt-4" size="small">
-          <ElInput v-if="isEdit" v-model="form.description" type="textarea" placeholder="请输入描述"></ElInput>
-          <div v-else class="font-color-light">{{ data.description || '暂无描述' }}</div>
+          <ElInput
+            v-if="isEdit"
+            v-model="form.description"
+            type="textarea"
+            :placeholder="$t('function_describe_placeholder')"
+          ></ElInput>
+          <div v-else class="font-color-light">
+            {{ data.description || $t('daas_data_server_drawer_zanwumiaoshu') }}
+          </div>
         </ElFormItem>
 
         <!-- 基础信息 -->
         <ul v-if="tab === 'form'" class="flex flex-wrap bg-main p-2 mt-4 rounded-1">
           <li class="data-server-form-base__item">
-            <ElFormItem label="操作类型" label-width="66px">
-              <div class="text">查询</div>
+            <ElFormItem :label="$t('daas_data_server_drawer_caozuoleixing')" label-width="66px">
+              <div class="text">{{ $t('dataExplorer_query') }}</div>
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem label="发布节点" label-width="66px">
-              <div class="text">全部</div>
+            <ElFormItem :label="$t('daas_data_server_drawer_fabujiedian')" label-width="66px">
+              <div class="text">{{ $t('select_option_all') }}</div>
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem label="接口类型" label-width="66px">
+            <ElFormItem :label="$t('daas_data_server_drawer_jiekouleixing')" label-width="66px">
               <ElSelect v-if="isEdit" v-model="form.apiType" @change="apiTypeChanged">
                 <ElOption v-for="(label, value) in apiTypeMap" :key="value" :value="value" :label="label"></ElOption>
               </ElSelect>
@@ -62,7 +73,7 @@
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem label="连接类型" label-width="66px" prop="connectionType">
+            <ElFormItem :label="$t('connection_list_type')" label-width="66px" prop="connectionType">
               <ElSelect
                 v-if="isEdit"
                 v-model="form.connectionType"
@@ -76,7 +87,7 @@
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem label="连接名称" label-width="66px" prop="connectionId">
+            <ElFormItem :label="$t('daas_data_server_drawer_lianjiemingcheng')" label-width="66px" prop="connectionId">
               <ElSelect
                 v-if="isEdit"
                 v-model="form.connectionName"
@@ -95,7 +106,7 @@
             </ElFormItem>
           </li>
           <li class="data-server-form-base__item">
-            <ElFormItem label="对象名称" label-width="66px" prop="tableName">
+            <ElFormItem :label="$t('object_list_name')" label-width="66px" prop="tableName">
               <ElSelect
                 v-if="isEdit"
                 v-model="form.tableName"
@@ -110,10 +121,10 @@
           </li>
         </ul>
 
-        <!-- 输入参数 -->
+        <!-- {{$t('daas_data_server_drawer_shurucanshu')}} -->
         <div class="data-server-panel__title">
           <div>
-            <span>输入参数</span>
+            <span>{{ $t('daas_data_server_drawer_shurucanshu') }}</span>
             <i
               v-if="isEdit && form.apiType === 'customerQuery'"
               class="el-icon-circle-plus icon-button color-primary ml-4"
@@ -122,7 +133,7 @@
           </div>
         </div>
         <ElTable class="flex-1" :data="isEdit ? form.params : data.params">
-          <ElTableColumn label="参数名称" prop="name" min-width="120">
+          <ElTableColumn :label="$t('daas_data_server_drawer_canshumingcheng')" prop="name" min-width="120">
             <template #default="{ row, $index }">
               <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
                 <ElFormItem :error="!form.params[$index].name ? 'true' : ''" :show-message="false">
@@ -132,7 +143,7 @@
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="类型" prop="type">
+          <ElTableColumn :label="$t('metadata_type')" prop="type">
             <template #default="{ row, $index }">
               <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'" min-width="60">
                 <ElSelect v-model="form.params[$index].type" size="mini">
@@ -142,7 +153,13 @@
               <div v-else>{{ row.type }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn v-if="tab === 'form'" label="默认值" prop="defaultvalue" key="defaultvalue" min-width="60">
+          <ElTableColumn
+            v-if="tab === 'form'"
+            :label="$t('meta_table_default')"
+            prop="defaultvalue"
+            key="defaultvalue"
+            min-width="60"
+          >
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
                 <ElInput v-model="form.params[$index].defaultvalue" size="mini"></ElInput>
@@ -150,7 +167,7 @@
               <div v-else>{{ row.defaultvalue }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="描述" prop="description" min-width="100">
+          <ElTableColumn :label="$t('module_form_describtion')" prop="description" min-width="100">
             <template #default="{ row, $index }">
               <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
                 <ElInput v-model="form.params[$index].description" size="mini"></ElInput>
@@ -158,7 +175,12 @@
               <div v-else>{{ row.description }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn v-if="debugParams" label="参数值" key="value" min-width="100">
+          <ElTableColumn
+            v-if="debugParams"
+            :label="$t('daas_data_server_drawer_canshuzhi')"
+            key="value"
+            min-width="100"
+          >
             <template #default="{ row }">
               <ElInput v-model="debugParams[row.name]" size="mini"></ElInput>
             </template>
@@ -171,10 +193,10 @@
         </ElTable>
 
         <template v-if="data.apiType === 'customerQuery' || form.apiType === 'customerQuery'">
-          <!-- 筛选条件 -->
+          <!-- {{$t('daas_data_server_drawer_shaixuantiaojian')}} -->
           <div class="data-server-panel__title">
             <div>
-              <span>筛选条件</span>
+              <span>{{ $t('daas_data_server_drawer_shaixuantiaojian') }}</span>
               <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('where')"></i>
             </div>
           </div>
@@ -221,10 +243,10 @@
             </li>
           </ul>
 
-          <!-- 排列条件 -->
+          <!-- {{$t('daas_data_server_drawer_pailietiaojian')}} -->
           <div class="data-server-panel__title">
             <div>
-              <span>排列条件</span>
+              <span>{{ $t('daas_data_server_drawer_pailietiaojian') }}</span>
               <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('sort')"></i>
             </div>
           </div>
@@ -253,9 +275,9 @@
           </ul>
         </template>
 
-        <!-- 输出结果 -->
+        <!-- {{$t('daas_data_server_drawer_shuchujieguo')}} -->
         <template v-if="tab === 'form'">
-          <div class="data-server-panel__title">输出结果</div>
+          <div class="data-server-panel__title">{{ $t('daas_data_server_drawer_shuchujieguo') }}</div>
           <ElTable
             ref="fieldTable"
             :data="isEdit ? allFields : data.fields"
@@ -263,15 +285,17 @@
             @selection-change="fieldsChanged"
           >
             <ElTableColumn v-if="isEdit" type="selection" width="55"></ElTableColumn>
-            <ElTableColumn label="名称" prop="field_name" min-width="200"></ElTableColumn>
-            <ElTableColumn label="类型" prop="originalDataType" min-width="120"></ElTableColumn>
-            <ElTableColumn label="描述" prop="comment" min-width="50"></ElTableColumn>
+            <ElTableColumn :label="$t('metadata_name')" prop="field_name" min-width="200"></ElTableColumn>
+            <ElTableColumn :label="$t('metadata_type')" prop="originalDataType" min-width="120"></ElTableColumn>
+            <ElTableColumn :label="$t('module_form_describtion')" prop="comment" min-width="50"></ElTableColumn>
           </ElTable>
         </template>
         <template v-if="tab === 'form' && !isEdit">
           <div class="data-server-panel__title">
-            <span>服务访问</span>
-            <ElButton v-if="data.status === 'generating'" type="primary" size="mini" @click="generate">生成</ElButton>
+            <span>{{ $t('daas_data_server_drawer_fuwufangwen') }}</span>
+            <ElButton v-if="data.status === 'generating'" type="primary" size="mini" @click="generate">{{
+              $t('application_generator')
+            }}</ElButton>
           </div>
           <ul v-if="data.path" class="data-server-path">
             <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
@@ -283,9 +307,9 @@
           </ul>
         </template>
 
-        <!-- 调用方式 -->
+        <!-- {{$t('daas_data_server_drawer_diaoyongfangshi')}} -->
         <template v-if="tab === 'debug'">
-          <div class="data-server-panel__title">调用方式</div>
+          <div class="data-server-panel__title">{{ $t('daas_data_server_drawer_diaoyongfangshi') }}</div>
           <div class="flex">
             <div class="data-server-debug__url flex-1 flex align-center mr-4">
               <ElSelect v-model="debugMethod" class="data-server-debug__method mr-4" style="width: 100px" size="mini">
@@ -297,7 +321,7 @@
           </div>
         </template>
         <template v-if="tab === 'debug'">
-          <div class="data-server-panel__title">返回结果</div>
+          <div class="data-server-panel__title">{{ $t('daas_data_server_drawer_fanhuijieguo') }}</div>
           <VCodeEditor
             height="280"
             lang="json"
@@ -306,11 +330,11 @@
           ></VCodeEditor>
         </template>
 
-        <!--  示例代码 -->
+        <!--  {{$t('daas_data_server_drawer_shilidaima2')}} -->
         <template v-if="tab === 'debug'">
           <div class="flex position-relative mt-8 mb-4">
             <div class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark" style="line-height: 36px">
-              示例代码
+              {{ $t('daas_data_server_drawer_shilidaima') }}
             </div>
             <ElTabs v-model="templateType" class="data-server__tabs flex-1">
               <ElTabPane label="JAVA" name="java"></ElTabPane>
@@ -331,6 +355,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
@@ -354,14 +380,16 @@ export default {
       tab: 'form',
       isEdit: false,
       rules: {
-        name: [{ required: true, message: '请输入服务名称', trigger: 'blur' }],
-        connectionType: [{ required: true, message: '请选择连接类型', trigger: 'blur' }],
-        connectionId: [{ required: true, message: '请选择连接', trigger: 'blur' }],
-        tableName: [{ required: true, message: '请选择对象名称', trigger: 'blur' }]
+        name: [{ required: true, message: i18n.t('daas_data_server_drawer_qingshurufuwu'), trigger: 'blur' }],
+        connectionType: [
+          { required: true, message: i18n.t('daas_data_server_drawer_qingxuanzelianjie'), trigger: 'blur' }
+        ],
+        connectionId: [{ required: true, message: i18n.t('shared_cache_placeholder_connection'), trigger: 'blur' }],
+        tableName: [{ required: true, message: i18n.t('daas_data_server_drawer_qingxuanzeduixiang'), trigger: 'blur' }]
       },
       apiTypeMap: {
-        defaultApi: '默认查询',
-        customerQuery: '自定义查询'
+        defaultApi: i18n.t('daas_data_server_drawer_morenchaxun'),
+        customerQuery: i18n.t('daas_data_server_drawer_zidingyichaxun')
       },
       databaseTypes: null,
       connectionOptions: null,
@@ -422,7 +450,8 @@ export default {
         formData.apiType = 'customerQuery'
       }
       const path = formData?.paths?.[0] || {}
-      const { id, name, description, status, connectionType, connectionName, connectionId, tableName, basePath } = formData
+      const { id, name, description, status, connectionType, connectionName, connectionId, tableName, basePath } =
+        formData
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       let apiType = formData?.apiType || 'defaultApi'
       this.data = {
@@ -460,14 +489,26 @@ export default {
     },
     getDefaultParams(apiType) {
       let params = [
-        { name: 'page', type: 'number', defaultvalue: '1', description: '分页编号', required: true },
-        { name: 'limit', type: 'number', defaultvalue: '20', description: '每个分页返回的记录数', required: true }
+        {
+          name: 'page',
+          type: 'number',
+          defaultvalue: '1',
+          description: i18n.t('daas_data_server_drawer_fenyebianhao'),
+          required: true
+        },
+        {
+          name: 'limit',
+          type: 'number',
+          defaultvalue: '20',
+          description: i18n.t('daas_data_server_drawer_meigefenyefan'),
+          required: true
+        }
       ]
       if (apiType === 'defaultApi') {
         params.push(
           ...[
-            { name: 'sort', type: 'object', description: '排序' },
-            { name: 'filter', type: 'object', description: '过滤条件' }
+            { name: 'sort', type: 'object', description: i18n.t('daas_data_server_drawer_paixu') },
+            { name: 'filter', type: 'object', description: i18n.t('module_form_condition') }
           ]
         )
       }
@@ -512,7 +553,7 @@ export default {
             connectionName
           } = this.form
           if (params.some(it => !it.name.trim())) {
-            return this.$message.error('请输入参数名称')
+            return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
           }
           this.loading = true
           const data = await modulesApi[id ? 'patch' : 'post']({

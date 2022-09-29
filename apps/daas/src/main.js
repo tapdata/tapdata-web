@@ -85,7 +85,7 @@ const URL_LANG = getUrlSearch('lang')
 if (TOKEN) {
   Cookie.set('token', TOKEN)
   // eslint-disable-next-line
-  console.log('保存token到cookie：', TOKEN)
+  console.log(i18n.t('daas_src_main_baocuntok'), TOKEN)
 }
 
 let token = Cookie.get('token')
@@ -134,7 +134,7 @@ settingsApi
   })
   .catch(err => {
     // eslint-disable-next-line
-    console.log('请求全局配置(settings)失败: ' + err)
+    console.log(i18n.t('daas_src_main_qingqiuquanjupei') + err)
   })
 //获取全局项目设置（OEM信息）
 

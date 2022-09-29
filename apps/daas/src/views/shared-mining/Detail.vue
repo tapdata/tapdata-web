@@ -109,6 +109,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { Chart, DatetimeRange, TableList } from '@tap/component'
 import { formatMs } from '@/utils/util'
 import dayjs from 'dayjs'
@@ -217,7 +219,7 @@ export default {
       operations: ['start', 'stop', 'forceStop'],
       columnsTableName: [
         {
-          label: '表名称',
+          label: i18n.t('modules_header_tablename'),
           prop: 'tablename'
         }
       ],
@@ -367,7 +369,7 @@ export default {
           })
         })
         // eslint-disable-next-line
-        console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
+        console.log(i18n.t('daas_shared_mining_detail_wajuexiangqingx'), this.lineDataDeep.x.length, xArr)
         xArr.forEach((el, index) => {
           if (!this.lineDataDeep.x.includes(el)) {
             this.lineDataDeep.x.push(el)

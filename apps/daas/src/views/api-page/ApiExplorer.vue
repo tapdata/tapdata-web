@@ -212,6 +212,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import dayjs from 'dayjs'
 
 import { ApiClient, settingsApi, workerApi, usersApi, apiServerApi, modulesApi } from '@tap/api'
@@ -1217,7 +1219,7 @@ export default {
     },
     // 初始化时区下拉
     initTimezones() {
-      let timezones = [{ label: '数据库时区', value: '' }]
+      let timezones = [{ label: i18n.t('dataFlow_SyncInfo_connTZType'), value: '' }]
 
       for (let i = -11; i < 15; i++) {
         let timezone = ''
