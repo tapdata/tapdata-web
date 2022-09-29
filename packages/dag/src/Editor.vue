@@ -205,10 +205,10 @@ export default {
           name: 'JavaScript',
           type: 'js_processor'
         },
-        {
+        /*{
           name: i18n.t('packages_dag_src_editor_juhe'),
           type: 'aggregation_processor'
-        },
+        },*/
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
