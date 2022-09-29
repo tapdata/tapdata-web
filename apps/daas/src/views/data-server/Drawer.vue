@@ -13,7 +13,6 @@
       </div>
       <ElForm
         hide-required-asterisk
-        inline-message
         class="data-server__form p-6 overflow-auto flex-1 pb-16"
         ref="form"
         label-position="left"
@@ -37,7 +36,10 @@
             <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{ $t('button_edit') }}</ElButton>
           </template>
         </div>
-        <div class="mt-1 line-height font-color-light">按联系方式筛选结果统计不同年龄段的人员数量</div>
+        <ElFormItem prop="description" class="flex-1 mt-4" size="small">
+          <ElInput v-if="isEdit" v-model="form.description" type="textarea" placeholder="请输入描述"></ElInput>
+          <div v-else class="font-color-light">{{ data.description || '暂无描述' }}</div>
+        </ElFormItem>
 
         <!-- 基础信息 -->
         <ul v-if="tab === 'form'" class="flex flex-wrap bg-main p-2 mt-4 rounded-1">
@@ -420,13 +422,14 @@ export default {
         formData.apiType = 'customerQuery'
       }
       const path = formData?.paths?.[0] || {}
-      const { id, name, status, connectionType, connectionName, connectionId, tableName, basePath } = formData
+      const { id, name, description, status, connectionType, connectionName, connectionId, tableName, basePath } = formData
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       let apiType = formData?.apiType || 'defaultApi'
       this.data = {
         status: status || 'generating', // generating,pending,active
         id,
         name,
+        description,
         apiType: apiType,
         connectionType,
         connectionName,
@@ -493,6 +496,7 @@ export default {
           let {
             id,
             name,
+            description,
             apiType,
             basePath,
             connectionId,
@@ -515,6 +519,7 @@ export default {
             id,
             status,
             name,
+            description,
             apiType,
             connectionId,
             connectionName,
