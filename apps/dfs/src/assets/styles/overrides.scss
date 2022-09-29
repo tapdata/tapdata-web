@@ -209,6 +209,11 @@ th {
 }
 .el-button {
   font-weight: normal;
+  min-width: 80px;
+}
+.el-button--text{
+  min-width: auto;
+  border: none;
 }
 .el-button + .el-button {
   margin-left: 16px;
