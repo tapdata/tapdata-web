@@ -22,13 +22,13 @@
         <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
         <ElSwitch v-model="form.connected.email" @change="handleSettingValue"></ElSwitch>
       </ElFormItem>
-      <div class="notice-setting-title">{{ $t('notify_task_running_notification') }}</div>
-      <ElFormItem :label="$t('notify_agent_status_error')">
-        <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
-        <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>
-        <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
-        <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>
-      </ElFormItem>
+      <!--      <div class="notice-setting-title">{{ $t('notify_task_running_notification') }}</div>-->
+      <!--      <ElFormItem :label="$t('notify_agent_status_error')">-->
+      <!--        <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>-->
+      <!--        <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>-->
+      <!--        <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>-->
+      <!--        <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>-->
+      <!--      </ElFormItem>-->
     </ElForm>
   </ElDialog>
 </template>
