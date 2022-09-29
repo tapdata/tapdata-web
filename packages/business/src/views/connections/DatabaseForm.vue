@@ -825,7 +825,7 @@ export default {
             $form.setValuesIn(field.name, str)
           })
         },
-        getTokenCommand: async ($values, $form, others) => {
+        getCommandAndSetValue: async ($values, $form, others) => {
           const { pdkHash } = this.pdkOptions
           const { __TAPDATA, ...formValues } = $values
           const { command } = others
@@ -844,24 +844,6 @@ export default {
                 $form.setValuesIn(key, setValue[key]?.data)
               }
             }
-          })
-        },
-        refreshTokenCommand: async (field, $values, $form, others) => {
-          const { pdkHash, id } = this.pdkOptions
-          const { __TAPDATA, ...formValues } = $values
-          const { command } = others
-          const getValues = Object.assign({}, this.model?.config || {}, formValues)
-          let params = {
-            pdkHash,
-            connectionId: id || this.commandCallbackFunctionId,
-            connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
-            command,
-            type: 'connection'
-          }
-          proxyApi.command(params).then(data => {
-            others.fill.forEach(el => {
-              $form.setValuesIn(el, data[el])
-            })
           })
         }
       }
