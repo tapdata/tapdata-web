@@ -18,6 +18,7 @@
             layout: 'vertical',
             feedbackLayout: 'terse'
           }"
+          @update:InputsOrOutputs="handleLoadMeta"
         />
       </ElTabPane>
       <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')">
@@ -120,6 +121,16 @@ export default {
 
     async validateSetting() {
       await this.$refs.setting?.form.validate()
+    },
+
+    handleLoadMeta() {
+      let watcher = this.$watch('editVersion', () => {
+        watcher()
+        const metaPane = this.$refs.metaPane
+        if (metaPane && this.currentTab === '1') {
+          metaPane.loadFields()
+        }
+      })
     }
   }
 }

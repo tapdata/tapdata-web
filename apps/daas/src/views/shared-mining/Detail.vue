@@ -417,7 +417,7 @@ export default {
         })
       } else {
         this.$router.push({
-          name: 'dataflowStatistics',
+          name: 'TaskMonitor',
           params: {
             id: row.id
           }

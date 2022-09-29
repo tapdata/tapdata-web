@@ -18,6 +18,13 @@ export class FieldCalc extends NodeType {
         type: 'array',
         display: 'none'
       },
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
       scripts: {
         type: 'array',
         title: '',

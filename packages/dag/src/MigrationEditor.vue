@@ -32,20 +32,12 @@
       <VExpandXTransition>
         <LeftSider
           v-if="!stateIsReadonly"
-          v-show="showLeftSider"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
           @toggle-expand="handleToggleExpand"
         />
       </VExpandXTransition>
-      <div
-        v-if="!stateIsReadonly"
-        v-show="!showLeftSider"
-        class="sider-expand-wrap flex justify-center align-center rotate-180"
-      >
-        <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
-      </div>
       <section class="layout-wrap flex-1">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
