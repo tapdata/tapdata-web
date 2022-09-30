@@ -205,10 +205,10 @@ export default {
           name: 'JavaScript',
           type: 'js_processor'
         },
-        {
+        /*{
           name: i18n.t('packages_dag_src_editor_juhe'),
           type: 'aggregation_processor'
-        },
+        },*/
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
@@ -246,6 +246,7 @@ export default {
       const data = await this.loadDataflow(id)
 
       if (data) {
+        if (this.destory) return
         const { dag } = data
         this.setStateReadonly(this.$route.name === 'DataflowViewer' ? true : this.dataflow.disabledData.edit)
         this.setTaskId(data.id)

@@ -585,6 +585,7 @@ export default {
             this.updateDag()
           }
         )
+        this.initWS()
         // 从查看进入编辑，清掉轮询
         return Promise.resolve()
       }
