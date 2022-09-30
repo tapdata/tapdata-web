@@ -860,9 +860,10 @@ export default {
             $form.setValuesIn(field.name, str)
           })
         },
-        getCommandAndSetValue: async ($values, $form, others) => {
+        getCommandAndSetValue: async ($form, others) => {
+          const getState = $form.getState()
           const { pdkHash } = this.pdkOptions
-          const { __TAPDATA, ...formValues } = $values
+          const { __TAPDATA, ...formValues } = getState?.values || {}
           const { command } = others
           const getValues = Object.assign({}, this.model?.config || {}, formValues)
           let params = {
