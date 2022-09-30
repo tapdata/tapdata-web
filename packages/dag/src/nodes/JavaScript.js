@@ -15,6 +15,10 @@ export class JavaScript extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      $inputs: {
+        type: 'array',
+        'x-display': 'hidden'
+      },
       name: {
         type: 'string',
         title: '节点名称',
