@@ -1,6 +1,6 @@
 import { VCodeEditor } from '@tap/component'
 
-export const SqlEditor = {
+export const Index = {
   props: {
     value: String,
     height: {
@@ -55,4 +55,4 @@ export const SqlEditor = {
   }
 }
 
-export default SqlEditor
+export default Index

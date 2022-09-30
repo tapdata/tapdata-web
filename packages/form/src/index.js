@@ -24,6 +24,7 @@ const { SchemaField } = createSchemaField({
   components
 })
 
-export { SchemaField, composeExport, langs }
+export { SchemaField, composeExport, langs, components }
 
 export * from './components'
+export * from '@formily/vue'
