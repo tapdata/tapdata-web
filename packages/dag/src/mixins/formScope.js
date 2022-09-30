@@ -1,8 +1,8 @@
+import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { merge, isEqual, escapeRegExp } from 'lodash'
-import i18n from '@tap/i18n'
-import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 
@@ -285,6 +285,40 @@ export default {
           const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
           return data
+        },
+
+        loadCommandList: async (filter, val) => {
+          console.log('loadList-filter', filter, val)
+          try {
+            const { $values = {}, command, where = {}, page, size } = filter
+            const { nodeConfig, connectionId, attrs = {} } = $values
+            const search = where.label?.like
+            let params = {
+              pdkHash: attrs.pdkHash,
+              connectionId,
+              nodeConfig,
+              command,
+              type: 'node',
+              action: search ? 'search' : 'list',
+              argMap: {
+                key: search,
+                page,
+                size: 1000
+              }
+            }
+            let result = await proxyApi.command(params)
+            if (!result.items) {
+              return { items: [], total: 0 }
+            }
+            result.items.unshift({
+              label: '全部',
+              value: -1
+            })
+            return result
+          } catch (e) {
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
+          }
         },
 
         /**

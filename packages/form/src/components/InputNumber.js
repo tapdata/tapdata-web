@@ -1,6 +1,6 @@
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { getComponentByTag } from './utils'
-import PreviewText from 'web-core/components/form/preview-text'
+import PreviewText from './preview-text'
 
 const ElInputNumber = getComponentByTag('el-input-number', {
   change: 'input'

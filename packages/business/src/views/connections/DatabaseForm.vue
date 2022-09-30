@@ -121,7 +121,8 @@ import {
   pdkApi,
   settingsApi,
   commandApi,
-  externalStorageApi
+  externalStorageApi,
+  proxyApi
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
@@ -129,7 +130,7 @@ import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
-import { checkConnectionName } from '@tap/shared'
+import { checkConnectionName, isEmpty } from '@tap/shared'
 
 export default {
   name: 'DatabaseForm',
@@ -153,6 +154,7 @@ export default {
     return {
       rules: [],
       id: '',
+      commandCallbackFunctionId: '',
       visible: false,
       showSystemConfig: false,
       model: {
@@ -261,8 +263,9 @@ export default {
           params.id = id
           promise = connectionsApi.updateById(id, params)
         } else {
+          const { commandCallbackFunctionId } = this
           params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-          promise = connectionsApi.post(params)
+          promise = connectionsApi.create(params, { id: commandCallbackFunctionId })
         }
         promise
           .then(() => {
@@ -398,6 +401,9 @@ export default {
       const data = await databaseTypesApi.pdkHash(pdkHash)
       let id = this.id || this.$route.params.id
       this.pdkOptions = data || {}
+      if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
+        this.commandCallbackFunctionId = await proxyApi.getId()
+      }
       let connectionTypeJson = {
         type: 'string',
         title: this.$t('packages_business_connection_form_connection_type'),
@@ -769,10 +775,27 @@ export default {
       }
       //this.showSystemConfig = true
       this.schemaScope = {
+        isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
             field.loading = true
             service({ field }, ...serviceParams).then(
+              action.bound(data => {
+                if (fieldName === 'value') {
+                  field.setValue(data)
+                } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
+        useAsyncDataSourceByConfig: (config, ...serviceParams) => {
+          // withoutField: 不往service方法传field参数
+          const { service, fieldName = 'dataSource', withoutField = false } = config
+          return field => {
+            field.loading = true
+            let fetch = withoutField ? service(...serviceParams) : service(field, ...serviceParams)
+            fetch.then(
               action.bound(data => {
                 if (fieldName === 'value') {
                   field.setValue(data)
@@ -793,32 +816,70 @@ export default {
             }) || []
           )
         },
-        loadCommand: async filter => {
-          const { pdkId, group, version } = this.pdkOptions
-          const { $values, command, page, size } = filter
-          let params = {
-            pdkId,
-            group,
-            version,
-            connectionConfig: $values,
-            command: command,
-            action: 'list',
-            argMap: {
-              page,
-              size
-            }
-          }
-          const searchLabel = filter.where?.label
-          if (searchLabel) {
-            params.action = 'search'
-            params.argMap.key = searchLabel?.like
-          }
+        loadCommandList: async (filter, val) => {
           try {
-            let result = await commandApi.codding(params)
+            const { $values, command, where = {}, page, size } = filter
+            const { pdkHash, id } = this.pdkOptions
+            const { __TAPDATA, ...formValues } = $values
+            const search = where.label?.like
+            const getValues = Object.assign({}, this.model?.config || {}, formValues)
+            let params = {
+              pdkHash,
+              connectionId: id || this.commandCallbackFunctionId,
+              connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+              command,
+              type: 'connection',
+              action: search ? 'search' : 'list',
+              argMap: {
+                key: search,
+                page,
+                size: 1000
+              }
+            }
+            if (!params.pdkHash || !params.connectionId) {
+              return { items: [], total: 0 }
+            }
+            let result = await proxyApi.command(params)
+            if (!result.items) {
+              return { items: [], total: 0 }
+            }
             return result
           } catch (e) {
-            return { total: 0, items: [] }
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
           }
+        },
+        getToken: async (field, params, $form) => {
+          const filter = {
+            subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
+            service: 'engine',
+            expireSeconds: 100000000
+          }
+          proxyApi.subscribe(filter).then(data => {
+            const str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
+            $form.setValuesIn(field.name, str)
+          })
+        },
+        getCommandAndSetValue: async ($values, $form, others) => {
+          const { pdkHash } = this.pdkOptions
+          const { __TAPDATA, ...formValues } = $values
+          const { command } = others
+          const getValues = Object.assign({}, this.model?.config || {}, formValues)
+          let params = {
+            pdkHash,
+            connectionId: this.model?.id || this.commandCallbackFunctionId,
+            connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+            command,
+            type: 'connection'
+          }
+          proxyApi.command(params).then(data => {
+            const setValue = data.setValue
+            if (setValue) {
+              for (let key in setValue) {
+                $form.setValuesIn(key, setValue[key]?.data)
+              }
+            }
+          })
         },
         async loadExternalStorage() {
           try {
