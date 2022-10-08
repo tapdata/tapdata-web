@@ -132,7 +132,9 @@ export default {
             let data = await databaseTypesApi.get()
             data = data || []
             let databaseTypes = []
-            databaseTypes.push(...data)
+            databaseTypes = data?.filter(it =>
+              ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId)
+            )
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
             )

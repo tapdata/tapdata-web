@@ -627,8 +627,9 @@ export default {
         this.databaseTypes = []
       })
       this.databaseTypes =
-        data?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg'].includes(it.pdkId))?.map(it => it.name) ||
-        []
+        data
+          ?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId))
+          ?.map(it => it.name) || []
       // this.databaseTypes = data?.map(it => it.name) || []
       this.getConnectionOptions()
     },
