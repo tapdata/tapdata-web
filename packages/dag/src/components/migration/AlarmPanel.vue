@@ -273,7 +273,7 @@ export default observer({
       return {
         title,
         type: 'number',
-        default: 0,
+        default: -1,
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           layout: 'horizontal'
