@@ -380,7 +380,7 @@ let menuSetting = [
   {
     name: 'discovery',
     label: 'page_title_data_discovery',
-    icon: 'system',
+    icon: 'dataDiscovery_navbar',
     code: 'system_management',
     children: [
       { name: 'objectList', code: 'datasource_menu', parent: 'object' },
@@ -391,7 +391,7 @@ let menuSetting = [
     name: 'dataService',
     label: 'page_title_data_service',
     icon: 'connection',
-    code: 'data_publish',
+    code: 'apiServer_navbar',
     children: [
       { name: 'dataServer', code: 'API_management_menu', parent: 'dataServer' },
       { name: 'apiClient', code: 'API_clients_menu', parent: 'apiClient' },
@@ -403,7 +403,7 @@ let menuSetting = [
   {
     name: 'system',
     label: 'page_title_system',
-    icon: 'system',
+    icon: 'system_navbar',
     code: 'system_management',
     children: [
       { name: 'clusterManagement', code: 'Cluster_management_menu' }
