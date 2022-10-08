@@ -54,11 +54,11 @@
       ></el-table-column>
       <el-table-column fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
-          <el-button type="text" @click="handleClose(row.id)">{{
+          <el-button type="text" @click="handleClose(row.id)" :disabled="row.status === 'CLOESE'">{{
             $t('packages_dag_components_alert_guanbi')
           }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button type="text">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>
+          <el-button type="text" @click="goLog(row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>
         </template>
       </el-table-column>
     </TablePage>
@@ -183,7 +183,7 @@ export default {
       ]
     },
     handleClose(id) {
-      let ids = id[0]
+      let ids = id
       if (this.multipleSelection?.length > 0) {
         ids = this.multipleSelection.map(item => item.id)
       }
@@ -191,6 +191,23 @@ export default {
         this.$message.success(i18n.t('daas_notification_systemalarm_guanbichenggong'))
         this.table.fetch(1)
       })
+    },
+    goLog({ taskId, syncType }) {
+      if (syncType === 'migrate') {
+        this.$router.push({
+          name: 'MigrationMonitor',
+          params: {
+            taskId
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'TaskMonitor',
+          params: {
+            taskId
+          }
+        })
+      }
     }
   }
 }
