@@ -62,7 +62,7 @@
               ></span>
             </span>
           </div>
-          <TableList
+          <VTable
             height="100%"
             ref="failRateList"
             v-loading="loadingFailRateList"
@@ -73,7 +73,7 @@
             <template slot="failed" slot-scope="scope">
               <span> {{ scope.row.failed * 100 }}</span>
             </template>
-          </TableList>
+          </VTable>
           <el-pagination
             class="mb-5 mr-2"
             layout="->,total, prev,pager, next"
@@ -99,7 +99,7 @@
               ></span>
             </span>
           </div>
-          <TableList
+          <VTable
             height="100%"
             v-loading="loadingTimeList"
             background
@@ -113,7 +113,7 @@
                 {{ formatMs(scope.row.failed) }}
               </span>
             </template>
-          </TableList>
+          </VTable>
           <el-pagination
             class="mb-5 mr-2"
             layout="->,total, prev,pager, next"
@@ -176,7 +176,7 @@
 </template>
 
 <script>
-import { Chart, FilterBar, TableList } from '@tap/component'
+import { Chart, FilterBar, VTable } from '@tap/component'
 import { formatMs, handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
@@ -185,7 +185,7 @@ import { calcTimeUnit } from '@tap/shared'
 
 export default {
   name: 'ApiMonitor',
-  components: { Chart, TableList, FilterBar, Detail },
+  components: { Chart, VTable, FilterBar, Detail },
   data() {
     return {
       loadingTimeList: false,

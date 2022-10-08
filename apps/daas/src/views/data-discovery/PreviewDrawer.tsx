@@ -1,6 +1,6 @@
 import i18n from '@/i18n'
 import { defineComponent, reactive, ref, computed } from '@vue/composition-api'
-import { TableList, OverflowTooltip } from '@tap/component'
+import { VTable, OverflowTooltip } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import './index.scss'
 import dayjs from 'dayjs'
@@ -210,28 +210,28 @@ export default defineComponent({
                       onChange={this.filterNames}
                     ></el-input>
                   </div>
-                  <TableList
+                  <VTable
                     class="discovery-page-table"
                     columns={this.data.columns}
                     data={this.previewData.fields}
                     has-pagination={false}
-                  ></TableList>
+                  ></VTable>
                 </div>
                 {/*<div class="mt-5">*/}
                 {/*  <span class="drawer__header_text inline-block">输入参数</span>*/}
-                {/*  <TableList*/}
+                {/*  <VTable*/}
                 {/*    class="discovery-page-api-table"*/}
                 {/*    columns={this.data.columns}*/}
                 {/*    data={this.preview.fields}*/}
-                {/*  ></TableList>*/}
+                {/*  ></VTable>*/}
                 {/*</div>*/}
                 {/*<div class="mt-5">*/}
                 {/*  <span class="drawer__header_text inline-block">输出参数</span>*/}
-                {/*  <TableList*/}
+                {/*  <VTable*/}
                 {/*    class="discovery-page-api-table"*/}
                 {/*    columns={this.data.columns}*/}
                 {/*    data={this.preview.fields}*/}
-                {/*  ></TableList>*/}
+                {/*  ></VTable>*/}
                 {/*</div>*/}
               </div>
             </div>

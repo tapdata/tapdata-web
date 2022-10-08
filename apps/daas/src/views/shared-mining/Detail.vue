@@ -49,14 +49,14 @@
       </div>
     </div>
     <div class="share-detail-box share-detail-main mt-5 p-5 overflow-hidden">
-      <TableList
+      <VTable
         v-if="detailData"
         :data="detailData.taskList"
         :columns="columns"
         :remote-data="id"
         height="100%"
         :has-pagination="false"
-        ref="tableList"
+        ref="VTable"
       >
         <template slot="sourceTimestamp" slot-scope="scope">
           <span>{{ formatTime(scope.row.sourceTimestamp) }}</span>
@@ -75,7 +75,7 @@
             }}</ElButton>
           </div>
         </template>
-      </TableList>
+      </VTable>
     </div>
     <el-dialog
       width="400px"
@@ -84,7 +84,7 @@
       :close-on-click-modal="false"
       :visible.sync="tableDialogVisible"
     >
-      <TableList
+      <VTable
         :data="tableNameList"
         :columns="columnsTableName"
         :remote-data="id"
@@ -92,7 +92,7 @@
         :has-pagination="false"
         ref="tableName"
       >
-      </TableList>
+      </VTable>
       <span slot="footer" class="dialog-footer">
         <el-pagination
           @current-change="getTableNames"
@@ -111,7 +111,7 @@
 <script>
 import i18n from '@/i18n'
 
-import { Chart, DatetimeRange, TableList } from '@tap/component'
+import { Chart, DatetimeRange, VTable } from '@tap/component'
 import { formatMs } from '@/utils/util'
 import dayjs from 'dayjs'
 import { measurementApi, logcollectorApi } from '@tap/api'
@@ -119,7 +119,7 @@ import { TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 export default {
   name: 'Info',
-  components: { Chart, TableList, DatetimeRange, TaskStatus },
+  components: { Chart, VTable, DatetimeRange, TaskStatus },
   data() {
     return {
       id: '',
