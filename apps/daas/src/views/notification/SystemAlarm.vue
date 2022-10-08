@@ -157,15 +157,15 @@ export default {
           type: 'select-inner',
           items: [
             {
-              label: i18n.t('packages_dag_shared_const_gaojingzhong'),
+              label: i18n.t('packages_business_shared_const_gaojingzhong'),
               value: 'ING'
             },
             {
-              label: i18n.t('packages_dag_shared_const_yihuifu'),
+              label: i18n.t('packages_business_shared_const_yihuifu'),
               value: 'RECOVER'
             },
             {
-              label: i18n.t('packages_dag_components_alert_yiguanbi'),
+              label: i18n.t('packages_business_components_alert_yiguanbi'),
               value: 'CLOESE'
             }
           ],
