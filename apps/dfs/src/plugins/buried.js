@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 const TIME_ON_SITE_KEY = 'TAPDATA_SITE_SESSTION'
 const TIME_ON_PAGE_KEY = 'TAPDATA_PAGE_SESSTION'
 
@@ -19,7 +20,7 @@ export const buried = (code, page, attrs, sid) => {
     queryStr = queryStr + '&where=' + encodeURIComponent(JSON.stringify(where))
   }
   // eslint-disable-next-line
-  process.env.NODE_ENV !== 'production' && console.log(`触发埋点【${code}]: `, attrs)
+  process.env.NODE_ENV !== 'production' && console.log(i18n.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
 
   window.axios.get('api/tcm/user/behavior' + queryStr)
 }
@@ -49,7 +50,7 @@ export const updateTimeOnSite = () => {
     )
   } else {
     // eslint-disable-next-line
-    console.error('网站停留时间埋点未初始化！')
+    console.error(i18n.t('dfs_plugins_buried_wangzhantingliushi'))
   }
 }
 
@@ -102,6 +103,6 @@ export const updateTimeOnPage = () => {
     }
   } else {
     // eslint-disable-next-line
-    console.error('网站停留时间埋点未初始化！')
+    console.error(i18n.t('dfs_plugins_buried_wangzhantingliushi'))
   }
 }

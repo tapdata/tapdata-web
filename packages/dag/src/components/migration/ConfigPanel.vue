@@ -18,6 +18,7 @@
             layout: 'vertical',
             feedbackLayout: 'terse'
           }"
+          @update:InputsOrOutputs="handleLoadMeta"
         />
       </ElTabPane>
       <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')">
@@ -49,16 +50,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
 import FormPanel from '../FormPanel'
-import { VIcon } from '@tap/component'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import MetaPane from '../MetaPane'
-import { TextEditable } from '@tap/component'
 import AlarmPanel from './AlarmPanel'
 
 export default {
@@ -86,10 +85,11 @@ export default {
     }
   },
 
-  components: { MetaPane, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel, AlarmPanel },
+  components: { MetaPane, SettingPanel, NodeIcon, FormPanel, AlarmPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapState('dataflow', ['editVersion']),
 
     showPanel() {
       return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
@@ -144,6 +144,16 @@ export default {
 
     async validateSetting() {
       await this.$refs.setting?.form.validate()
+    },
+
+    handleLoadMeta() {
+      let watcher = this.$watch('editVersion', () => {
+        watcher()
+        const metaPane = this.$refs.metaPane
+        if (metaPane && this.currentTab === '1') {
+          metaPane.loadFields()
+        }
+      })
     }
   }
 }

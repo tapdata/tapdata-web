@@ -204,7 +204,7 @@ export default defineComponent({
                     <el-input
                       class="mb-3"
                       style="width:200px"
-                      placeholder="请输入名称"
+                      placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
                       suffix-icon="el-icon-search"
                       v-model={this.data.search}
                       onChange={this.filterNames}

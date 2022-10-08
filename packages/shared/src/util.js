@@ -226,3 +226,5 @@ export function downloadBlob(res, name = '') {
   const blob = new Blob([data], { type: headers['content-type'] })
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
+
+export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object

@@ -6,11 +6,11 @@
       </template>
       <div slot="operation">
         <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
-          <span>创建服务</span>
+          <span>{{ $t('daas_data_server_drawer_chuangjianfuwu') }}</span>
         </ElButton>
       </div>
       <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip label="服务名称" min-width="180">
+      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_list_fuwumingcheng')" min-width="180">
         <template #default="{ row }">
           <ElLink
             class="ellipsis"
@@ -22,22 +22,22 @@
           </ElLink>
         </template>
       </ElTableColumn>
-      <ElTableColumn label="连接类型" min-width="120">
+      <ElTableColumn :label="$t('connection_list_type')" min-width="120">
         <template #default="{ row }">
           {{ row.connectionType }}
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip label="连接名称" min-width="200">
+      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_drawer_lianjiemingcheng')" min-width="200">
         <template #default="{ row }">
           {{ row.connectionName }}
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip label="关联对象" min-width="120">
+      <ElTableColumn show-overflow-tooltip :label="$t('daas_data_server_list_guanlianduixiang')" min-width="120">
         <template #default="{ row }">
           {{ row.tableName }}
         </template>
       </ElTableColumn>
-      <ElTableColumn label="服务状态" min-width="100">
+      <ElTableColumn :label="$t('daas_data_server_list_fuwuzhuangtai')" min-width="100">
         <template #default="{ row }">
           <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
         </template>
@@ -65,6 +65,8 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 import { FilterBar } from '@tap/component'
@@ -86,19 +88,19 @@ export default {
       },
       statusOptions: [
         {
-          label: '全部',
+          label: i18n.t('select_option_all'),
           value: ''
         },
         {
-          label: '已发布',
+          label: i18n.t('modules_active'),
           value: 'active'
         },
         {
-          label: '未发布',
+          label: i18n.t('modules_pending'),
           value: 'pending'
         },
         {
-          label: '待生成',
+          label: i18n.t('api_monitor_total_api_list_status_generating'),
           value: 'generating'
         }
       ]
@@ -149,13 +151,13 @@ export default {
           }
         },
         {
-          label: '状态',
+          label: i18n.t('modules_header_status'),
           key: 'status', //对象类型
           type: 'select-inner',
           items: this.statusOptions
         },
         {
-          placeholder: '请输入名称',
+          placeholder: i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
           key: 'keyword', //输入搜索名称
           type: 'input'
         }
@@ -196,7 +198,7 @@ export default {
     },
     async getApiServerHost() {
       const showError = () => {
-        this.$message.error('获取服务域名失败！')
+        this.$message.error(i18n.t('daas_data_server_list_huoqufuwuyu'))
       }
       const data = await apiServerApi.get().catch(() => {
         showError()
@@ -211,7 +213,7 @@ export default {
       this.multipleSelection = val
     },
     async removeServer(row) {
-      const flag = await this.$confirm('确认删除服务？', '', {
+      const flag = await this.$confirm(i18n.t('daas_data_server_list_querenshanchufu'), '', {
         type: 'warning',
         showClose: false
       })
@@ -221,9 +223,9 @@ export default {
       }
     },
     async changeStatus(row) {
-      let msg = '确定发布该服务？'
+      let msg = i18n.t('daas_data_server_list_quedingfabugai')
       if (row.status === 'active') {
-        msg = '确定撤销该服务？'
+        msg = i18n.t('daas_data_server_list_quedingchexiaogai')
       }
       const flag = await this.$confirm(msg, '', {
         type: 'warning',

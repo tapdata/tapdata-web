@@ -240,34 +240,37 @@ const actions = {
     await dispatch('updateDag')
   },
 
-  async loadCustomNode({ commit }) {
+  async loadCustomNode({ commit }, needPushProcessor = true) {
     const { items } = await customNodeApi.get()
     const insArr = []
-    commit(
-      'addProcessorNode',
-      items.map(item => {
-        const node = {
-          name: item.name,
-          type: 'custom_processor',
-          customNodeId: item.id
-        }
+    if (needPushProcessor) {
+      commit(
+        'addProcessorNode',
+        items.map(item => {
+          const node = {
+            name: item.name,
+            type: 'custom_processor',
+            customNodeId: item.id
+          }
 
-        const ins = new CustomProcessor({
-          customNodeId: item.id,
-          formSchema: item.formSchema
+          const ins = new CustomProcessor({
+            customNodeId: item.id,
+            formSchema: item.formSchema
+          })
+
+          insArr.push(ins)
+
+          // 设置属性__Ctor不可枚举
+          Object.defineProperty(node, '__Ctor', {
+            value: ins,
+            enumerable: false
+          })
+
+          return node
         })
+      )
+    }
 
-        insArr.push(ins)
-
-        // 设置属性__Ctor不可枚举
-        Object.defineProperty(node, '__Ctor', {
-          value: ins,
-          enumerable: false
-        })
-
-        return node
-      })
-    )
     commit('addResourceIns', insArr)
     // console.log('loadCustomNode', data)
   }
@@ -353,6 +356,7 @@ const mutations = {
 
   // 添加节点
   addNode(state, nodeData) {
+    if (state.NodeMap[nodeData.id]) return
     if (!nodeData.$inputs) nodeData.$inputs = []
     if (!nodeData.$outputs) nodeData.$outputs = []
     state.dag.nodes.push(nodeData)

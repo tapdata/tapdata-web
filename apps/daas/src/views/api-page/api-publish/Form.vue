@@ -8,7 +8,7 @@
               v-model="createForm.datasource"
               filterable
               size="mini"
-              placeholder="请选择"
+              :placeholder="$t('common_placeholder_select')"
               :disabled="!!$route.query.id"
             >
               <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
@@ -74,7 +74,7 @@
                 <div class="module-path-button-box">
                   <div class="module-path-item-role fw-sub">
                     <span>{{ $t('module_form_permission') }}: </span>
-                    <el-select v-model="item.acl" multiple size="mini" placeholder="请选择">
+                    <el-select v-model="item.acl" multiple size="mini" :placeholder="$t('common_placeholder_select')">
                       <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
                       </el-option>
                     </el-select>

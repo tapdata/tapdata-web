@@ -140,6 +140,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import Cookie from '@tap/shared/src/cookie'
 import { javascriptFunctionsApi, fileApi } from '@tap/api'
 
@@ -286,7 +288,7 @@ export default {
     selectFile(file) {
       let maxFileSize = 10
       if (file.size > maxFileSize * 1024 * 1024) {
-        this.$message.error(`上传文件大小不能超过 ${maxFileSize}M`)
+        this.$message.error(i18n.t('daas_function_importform_shangchuanwenjianda', { val1: maxFileSize }))
         return false
       }
       return true

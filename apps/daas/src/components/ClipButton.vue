@@ -1,5 +1,11 @@
 <template>
-  <el-tooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+  <el-tooltip
+    placement="top"
+    manual
+    :content="$t('dialog_tip_copied')"
+    popper-class="copy-tooltip"
+    :value="showTooltip"
+  >
     <i
       class="buton-icon iconfont icon-fuzhi1"
       v-clipboard:copy="value"
