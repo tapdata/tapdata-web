@@ -6,7 +6,7 @@ import enLocale from 'element-ui/lib/locale/lang/en'
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 // 公共模块
-import { langs as formLangs } from '@tap/form'
+import formLangs from '@tap/form/src/locale'
 import { langs as componentLangs } from '@tap/component'
 import { langs as businessLangs } from '@tap/business'
 import { langs as dagLangs } from '@tap/dag'
