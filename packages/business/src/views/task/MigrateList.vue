@@ -253,7 +253,7 @@ import dayjs from 'dayjs'
 
 import { taskApi } from '@tap/api'
 import { VIcon, FilterBar, Drawer } from '@tap/component'
-import { toRegExp } from '@tap/shared'
+import { toRegExp, openUrl } from '@tap/shared'
 
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 import { TablePage, TaskStatus } from '../../components'
@@ -907,11 +907,18 @@ export default {
      * @param row
      */
     handleClickName(row) {
-      if (row.btnDisabled.edit) {
-        this.toDetail(row)
-      } else {
-        this.handleEditor(row)
-      }
+      this.toView([row.id])
+    },
+
+    toView([id]) {
+      openUrl(
+        this.$router.resolve({
+          name: 'MigrateViewer',
+          params: {
+            id
+          }
+        }).href
+      )
     }
   }
 }
