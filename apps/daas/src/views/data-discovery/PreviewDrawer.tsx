@@ -212,30 +212,30 @@ export default defineComponent({
                         onChange={this.filterNames}
                       ></el-input>
                     </div>
-                    <TableList
+                    <VTable
                       class="discovery-page-table"
                       columns={this.data.columns}
                       data={this.previewData.fields}
                       has-pagination={false}
-                    ></TableList>
+                    ></VTable>
                   </div>
                 ) : this.previewData.category === 'api ' ? (
                   <div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">输入参数</span>
-                      <TableList
+                      <VTable
                         class="discovery-page-api-table"
                         columns={this.data.columns}
                         data={this.preview.fields}
-                      ></TableList>
+                      ></VTable>
                     </div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">输出参数</span>
-                      <TableList
+                      <VTable
                         class="discovery-page-api-table"
                         columns={this.data.columns}
                         data={this.preview.fields}
-                      ></TableList>
+                      ></VTable>
                     </div>
                   </div>
                 ) : (
