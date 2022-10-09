@@ -462,5 +462,15 @@ export default {
   packages_business_verify_details_jiaoyanjieguo: '校验结果',
   packages_business_verify_details_jiaoyanzhong: '校验中',
   packages_business_verify_details_jiaoyan: '校验',
-  packages_business_verify_details_qingshurubiaoming: '请输入表名…'
+  packages_business_verify_details_qingshurubiaoming: '请输入表名…',
+  packages_business_shared_const_gaojingzhong: '告警中',
+  packages_business_shared_const_yihuifu: '已恢复',
+  packages_business_components_alert_yiguanbi: '已关闭',
+  packages_business_components_alert_huifu: '恢复',
+  packages_business_shared_const_yiban: '一般',
+  packages_business_shared_const_jinggao: '警告',
+  packages_business_shared_const_yanzhong: '严重',
+  packages_business_shared_const_jinji: '紧急',
+  packages_business_external_storage: '外存配置',
+  packages_business_dataFlow_taskBulkTag: '设置分类',
 }

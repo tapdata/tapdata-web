@@ -1,7 +1,27 @@
 <template>
   <div class="log-container flex justify-content-between">
     <div class="filter-items border-end">
-      <div
+      <div class="px-2 py-3">
+        <div
+          class="node-list-item px-2 mb-1 flex align-center font-color-dark"
+          :class="{ active: activeNodeId === 'all' }"
+          @click="changeItem()"
+        >
+          <VIcon size="20" class="mr-1">folder</VIcon>{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
+        </div>
+        <div
+          v-for="node in allNodes"
+          :key="node.id"
+          class="node-list-item px-2 mb-1 flex align-center font-color-dark"
+          :class="{ active: activeNodeId === node.id }"
+          @click="changeItem(node.id)"
+        >
+          <NodeIcon :node="node" :size="18" />
+          <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
+        </div>
+      </div>
+
+      <!--<div
         v-for="(item, index) in items"
         :key="index"
         :class="[{ active: activeNodeId === item.value }]"
@@ -10,13 +30,14 @@
       >
         <OverflowTooltip class="text-truncate" placement="right" :text="item.label" :open-delay="400" />
         <VIcon>arrow-right</VIcon>
-      </div>
+      </div>-->
     </div>
-    <div class="main flex-fill flex flex-column pt-5">
-      <div class="flex ml-4 mb-4 align-items-center">
+    <div class="main flex-fill flex flex-column px-4 py-3">
+      <div class="flex mb-2 align-items-center">
         <TimeSelect
           :options="timeOptions"
           :range="[firstStartTime, lastStopTime || Date.now()]"
+          ref="timeSelect"
           @change="changeTime"
         ></TimeSelect>
         <ElInput
@@ -36,7 +57,7 @@
           $t('packages_dag_components_log_xiazai')
         }}</ElButton>
       </div>
-      <div class="level-line ml-4">
+      <div class="level-line mb-2">
         <ElCheckboxGroup
           v-model="checkList"
           :disabled="loading"
@@ -48,17 +69,20 @@
           <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
         </ElCheckboxGroup>
       </div>
-      <div v-loading="loading" class="log-list my-4 ml-4 pl-4 flex-1" style="height: 0">
+      <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
           key-field="id"
           :min-item-size="30"
-          class="scroller py-4 h-100"
+          class="scroller px-2 py-1 h-100"
           @scroll.native="scrollFnc"
         >
           <template #before>
-            <div class="before-scroll-content text-center font-color-light pb-2">
+            <div
+              v-show="preLoading || showNoMore || !list.length"
+              class="before-scroll-content text-center font-color-light pb-2"
+            >
               <div v-show="preLoading">
                 <i class="el-icon-loading"></i>
               </div>
@@ -146,11 +170,12 @@ import { VEmpty, VIcon, OverflowTooltip } from '@tap/component'
 import { monitoringLogsApi, taskApi } from '@tap/api'
 
 import TimeSelect from './TimeSelect'
+import NodeIcon from '../../NodeIcon'
 
 export default {
   name: 'Log',
 
-  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, OverflowTooltip },
+  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, OverflowTooltip },
 
   props: {
     dataflow: {
@@ -345,6 +370,7 @@ export default {
     resetData() {
       this.preLoading = false
       this.resList()
+      this.resetNewPage()
       this.resetOldPage()
       this.resetDataTime = Date.now()
       this.loadOld(this.pollingData)
@@ -385,11 +411,11 @@ export default {
       this.loadNew()
     },
 
-    changeItem(item) {
-      if (this.activeNodeId === item.value) {
+    changeItem(itemId = 'all') {
+      if (this.activeNodeId === itemId) {
         return
       }
-      this.activeNodeId = item.value
+      this.activeNodeId = itemId
       this.init()
     },
 
@@ -433,7 +459,7 @@ export default {
           const items = this.getFormatRow(data.items.reverse())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
-          if (this.list.length) {
+          if (this.list.length && this.oldPageObj.page !== 1) {
             this.list = Object.freeze(uniqueArr([...items, ...this.list]))
             this.scrollToItem(items.length - 1)
           } else {
@@ -635,14 +661,14 @@ export default {
       taskApi
         .putLogSetting(this.dataflow.id, params)
         .then(() => {
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('packages_dag_message_save_ok'))
           this.dialog = false
         })
         .finally(() => {
           this.saveLoading = false
         })
         .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
+          this.$message.error(this.$t('packages_dag_message_save_fail'))
         })
     },
 
@@ -690,6 +716,7 @@ export default {
 .filter-items {
   width: 200px;
   user-select: none;
+  overflow-y: auto;
 }
 .filter-items__item {
   padding: 0 16px;
@@ -707,7 +734,6 @@ export default {
 }
 
 .log-list {
-  border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
     .log-line {
@@ -733,6 +759,16 @@ export default {
     .el-alert__closebtn {
       top: 7px;
     }
+  }
+}
+.node-list-item {
+  line-height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover,
+  &.active {
+    background-color: rgba(229, 236, 255, 0.3);
   }
 }
 </style>

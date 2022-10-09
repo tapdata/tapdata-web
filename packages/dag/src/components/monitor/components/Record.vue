@@ -1,5 +1,5 @@
 <template>
-  <div class="py-6 pl-6 h-100">
+  <div class="p-4 h-100">
     <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"

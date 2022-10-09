@@ -125,7 +125,7 @@
     .el-table__body-wrapper {
       overflow-y: auto;
       overflow-x: hidden;
-      height: calc(100vh - 465px)
+      height: calc(100vh - 460px)
     }
   }
   .discovery-page-api-table{
@@ -135,15 +135,16 @@
       height: 230px
     }
   }
-  .drawer-header-h{
-    height: 45px;
-    border-bottom: 1px solid map-get($borderColor, light);
-  }
-  .drawer-header-mt{
-    margin-top: 18px;
-  }
   .table-page-container .table-page-body .table-page-topbar{
     align-items:center;
+  }
+}
+.drawer-tabs {
+  .el-tabs__nav-wrap.is-top {
+    padding-left: 112px;
+  }
+  .el-tabs__header.is-top {
+    margin: 0;
   }
 }
 

@@ -18,39 +18,47 @@
             layout: 'vertical',
             feedbackLayout: 'terse'
           }"
+          @update:InputsOrOutputs="handleLoadMeta"
         />
       </ElTabPane>
       <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')">
         <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
+      </ElTabPane>
+      <ElTabPane v-if="isMonitor" label="告警设置">
+        <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === '2'" />
       </ElTabPane>
     </ElTabs>
 
     <div class="flex-column h-100" :class="activeType === 'settings' ? 'flex' : 'none'">
       <div class="panel-header flex align-center px-4 border-bottom">
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
-          {{ $t('packages_dag_task_stetting_basic_setting') }}
+          <ElTabs v-if="isMonitor" ref="tabs" v-model="titleCurrentTab" class="setting-tabs">
+            <ElTabPane :label="$t('packages_dag_task_stetting_basic_setting')"></ElTabPane>
+            <ElTabPane label="告警设置"></ElTabPane>
+          </ElTabs>
+          <span v-else>{{ $t('packages_dag_task_stetting_basic_setting') }}</span>
         </div>
-        <!--<VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>-->
       </div>
-
-      <div class="panel-content flex-1">
+      <div v-if="titleCurrentTab === '0'" class="panel-content flex-1">
         <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
+      </div>
+      <div v-else-if="titleCurrentTab === '1'" class="panel-content flex-1">
+        <AlarmPanel v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
 import FormPanel from '../FormPanel'
-import { VIcon } from '@tap/component'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
 import MetaPane from '../MetaPane'
-import { TextEditable } from '@tap/component'
+import AlarmPanel from './AlarmPanel'
 
 export default {
   name: 'ConfigPanel',
@@ -72,17 +80,33 @@ export default {
   data() {
     return {
       currentTab: '0',
+      titleCurrentTab: '0',
       name: this.activeNode?.name
     }
   },
 
-  components: { MetaPane, SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
+  components: { MetaPane, SettingPanel, NodeIcon, FormPanel, AlarmPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapState('dataflow', ['editVersion']),
 
     showPanel() {
       return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
+    },
+
+    isMonitor() {
+      return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
+    },
+
+    nodeType() {
+      const { type, $inputs, $outputs } = this.activeNode || {}
+      if (!type) return ''
+      if (type === 'database' || type === 'table') {
+        if (!$inputs.length) return 'source'
+        if (!$outputs.length) return 'target'
+      }
+      return 'process'
     }
   },
 
@@ -120,6 +144,16 @@ export default {
 
     async validateSetting() {
       await this.$refs.setting?.form.validate()
+    },
+
+    handleLoadMeta() {
+      let watcher = this.$watch('editVersion', () => {
+        watcher()
+        const metaPane = this.$refs.metaPane
+        if (metaPane && this.currentTab === '1') {
+          metaPane.loadFields()
+        }
+      })
     }
   }
 }
@@ -195,7 +229,7 @@ $headerHeight: 40px;
   will-change: width;
 
   &.show-settings {
-    width: 320px;
+    width: 440px;
   }
 
   &-close {
@@ -282,6 +316,18 @@ $headerHeight: 40px;
 
     .resize-trigger {
       background: 0 0 !important;
+    }
+
+    .setting-tabs.el-tabs {
+      height: 100%;
+      > .el-tabs__header {
+        .el-tabs__nav-wrap {
+          padding-left: 0;
+          &::after {
+            height: 0;
+          }
+        }
+      }
     }
   }
 }

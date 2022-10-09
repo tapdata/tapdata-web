@@ -1,7 +1,7 @@
 <template>
   <section class="bottom-panel border-top flex-column">
     <Log v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
-    <div v-else class="panel-header flex pr-4 h-100">
+    <div v-else class="panel-header flex h-100">
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column">
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
           <Log v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
@@ -9,9 +9,15 @@
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
         </ElTabPane>
-        <!--        <ElTabPane label="告警列表" name="alert">-->
-        <!--          <Alert v-if="currentTab === 'alert'" v-bind="$attrs" :currentTab="currentTab"></Alert>-->
-        <!--        </ElTabPane>-->
+        <ElTabPane label="告警列表" name="alert">
+          <Alert
+            v-if="currentTab === 'alert'"
+            v-bind="$attrs"
+            :currentTab="currentTab"
+            @change-tab="changeTab"
+            @load-data="$emit('load-data')"
+          ></Alert>
+        </ElTabPane>
       </ElTabs>
 
       <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
@@ -88,6 +94,20 @@ export default {
 
     getLogRef() {
       return this.$refs.log
+    },
+
+    changeTab(tab, data) {
+      this.currentTab = tab
+      this.$nextTick(() => {
+        if (tab === 'log') {
+          data.nodeId &&
+            this.getLogRef()?.changeItem({
+              value: data.nodeId
+            })
+          data.lastOccurrenceTime &&
+            this.getLogRef()?.$refs.timeSelect.changeTime([new Date(data.lastOccurrenceTime).getTime(), Date.now()])
+        }
+      })
     }
   }
 }
@@ -121,7 +141,6 @@ $headerHeight: 40px;
     ::v-deep {
       .el-tabs__header {
         margin: 0;
-        padding-left: 16px;
       }
       .el-tabs__content {
         flex: 1;
@@ -210,7 +229,7 @@ $headerHeight: 40px;
 .close-icon {
   position: absolute;
   right: 16px;
-  top: 12px;
+  top: 10px;
 }
 .tabs-header__hidden {
   ::v-deep {

@@ -408,7 +408,8 @@ export default {
   packages_dag_node_none_input: '「 {val1} 」至少需要{val2}個源節點',
   packages_dag_node_none_output: '「 {val1} 」至少需要{val2}個目標節點',
   packages_dag_node_none_connection: '「 {val1} 」沒有任何連線',
-  packages_dag_external_storage: '外存配置',
+  packages_dag_node_only_as_source: '該節點「{val1}」僅支持作為源',
+  packages_dag_node_only_as_target: '該節點「{val1}」僅支持作為目標',
   packages_dag_components_alert_dangqianrenwuyi: '當前任務已報錯停止，請關注!',
   packages_dag_components_alert_gaojingfashengci: '告警發生次數',
   packages_dag_components_alert_gaojingzuijinfa: '告警最近發生時間',
@@ -416,8 +417,6 @@ export default {
   packages_dag_components_alert_gaojingmiaoshu: '告警描述',
   packages_dag_components_alert_gaojingzhuangtai: '告警狀態',
   packages_dag_components_alert_gaojingjibie: '告警級別',
-  packages_dag_components_alert_huifu: '恢復',
-  packages_dag_components_alert_yiguanbi: '已關閉',
   packages_dag_components_alert_guanbi: '關閉',
   packages_dag_components_frequency_shuaxinpinlu: '刷新頻率',
   packages_dag_components_nodedetaildialog_xieruhaoshi: '寫入耗時',
@@ -428,6 +427,7 @@ export default {
   packages_dag_components_nodedetaildialog_chulihaoshidang: '處理耗時：當前節點處理事件的平均耗時',
   packages_dag_components_nodedetaildialog_xieruhaoshidang: '寫入耗時：當前目標節點寫入數據到目標數據庫的耗時',
   packages_dag_components_nodedetaildialog_chulihaoshiyuan: '處理耗時：源節點從源數據庫讀取到事件後完成處理花費的時間',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian2: '增量時間點：',
   packages_dag_components_nodedetaildialog_dangqianbiaotongbu: '當前表同步進度',
   packages_dag_components_nodedetaildialog_quanliangtongbujin: '全量同步進度',
   packages_dag_components_nodedetaildialog_quanliangkaishishi: '全量開始時間：',
@@ -440,8 +440,6 @@ export default {
   packages_dag_monitor_leftsider_chayixiangqing: '差異詳情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延遲：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
-  packages_dag_node_only_as_source: '該節點「{val1}」僅支持作為源',
-  packages_dag_node_only_as_target: '該節點「{val1}」僅支持作為目標',
   packages_dag_components_nodedetaildialog_dangqianjiedianchu: '當前節點處理事件的平均耗時',
   packages_dag_components_nodedetaildialog_dangqianjiedianping: '當前節點平均每秒處理的輸入事件數和輸出事件數',
   packages_dag_monitor_leftsider_renwuchuliwan:
@@ -449,5 +447,6 @@ export default {
   packages_dag_monitor_leftsider_shijiancongyuanku:
     '事件從源庫生成到經任務處理完成寫入目標的延遲時間，當有多個目標時只統計最大的增量延遲時間',
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任務平均每秒處理的輸入事件數和輸出事件數',
-  packages_dag_components_log_zuidashijianshu: '最大事件數（條）'
+  packages_dag_components_log_zuidashijianshu: '最大事件數（條）',
+  packages_dag_message_save_fail: '保存失敗',
 }

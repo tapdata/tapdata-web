@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 'use strict'
 
 import Vue from 'vue'
@@ -60,7 +61,7 @@ const errorCallback = error => {
   } else if (error?.message !== 'cancel') {
     errorConfirmFnc(error)
   }
-  console.error('请求报错：' + error) // eslint-disable-line
+  console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line
   return Promise.reject(error)
 }
 const requestInterceptor = config => {
@@ -116,7 +117,7 @@ const responseInterceptor = response => {
       let msg = data?.message || data?.msg || ''
       Message.error(`SystemError： ${msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'}`)
       // eslint-disable-next-line
-      console.log('请求失败:' + msg, response)
+      console.log(i18n.t('dfs_plugins_axios_qingqiushibai') + msg, response)
       return reject(msg)
     } else {
       // 其他情况交由业务端自行处理

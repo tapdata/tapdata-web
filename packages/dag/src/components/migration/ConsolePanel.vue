@@ -10,7 +10,7 @@
       <!--<div class="console-panel-header p-4">日志</div>-->
       <div class="step-list px-2">
         <div
-          class="step-list-header step-item px-2 mb-1 flex align-center"
+          class="step-list-header step-item px-2 mb-1 flex align-center font-color-dark"
           :class="{ active: !nodeId }"
           @click="toggleNode()"
         >
@@ -19,11 +19,11 @@
         <div
           v-for="node in nodeList"
           :key="node.id"
-          class="step-item px-2 mb-1 flex align-center"
+          class="step-item px-2 mb-1 flex align-center font-color-dark"
           :class="{ active: nodeId === node.id }"
           @click="toggleNode(node.id)"
         >
-          <NodeIcon :node="node" :size="20" />
+          <NodeIcon :node="node" :size="18" />
           <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
         </div>
       </div>
@@ -207,7 +207,7 @@ export default {
 
     &:hover,
     &.active {
-      background-color: #edf1f9;
+      background-color: rgba(229, 236, 255, 0.3);
     }
   }
 

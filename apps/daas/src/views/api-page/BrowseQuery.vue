@@ -28,7 +28,9 @@
     </div>
     <div class="browse_rows">
       <h3 class="pb-4">{{ $t('dataExplorer_show_column') }}</h3>
-      <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">全选</el-checkbox>
+      <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">{{
+        $t('role_all_check')
+      }}</el-checkbox>
       <div style="margin: 15px 0"></div>
       <el-checkbox-group v-model="selectionRow" @change="handleCheckedFieldChange">
         <el-checkbox

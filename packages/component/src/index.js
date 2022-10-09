@@ -20,7 +20,6 @@ import DatetimeRange from './filter-bar/DatetimeRange.vue'
 import SelectList from './SelectList.vue'
 import GitBook from './GitBook.vue'
 import Drawer from './Drawer.vue'
-import TableList from './TableList.vue'
 import InlineInput from './InlineInput.vue'
 
 // business
@@ -51,7 +50,6 @@ export {
   SelectList,
   GitBook,
   Drawer,
-  TableList,
   InlineInput,
   DiscoveryClassification,
   OverflowTooltip

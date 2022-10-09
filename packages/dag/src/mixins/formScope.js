@@ -1,14 +1,14 @@
+import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { merge, isEqual, escapeRegExp } from 'lodash'
-import i18n from '@tap/i18n'
-import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 
 export default {
   data() {
-    function addDeclaredCompleter(tools, params1) {
+    function addDeclaredCompleter(editor, tools, params1) {
       const tapType = [
         'TapNumber',
         'TapString',
@@ -75,7 +75,10 @@ export default {
           meta: 'local'
         }
       ]
+      const idx = editor.completers?.findIndex(item => item.id === 'jsDeclare') || -1
+      if (~idx) editor.completers.splice(idx, 1)
       tools.addCompleter({
+        id: 'jsDeclare',
         getCompletions: (editor, session, pos, prefix, callback) => {
           if (prefix.length === 0) {
             return callback(null, [])
@@ -284,6 +287,40 @@ export default {
           return data
         },
 
+        loadCommandList: async (filter, val) => {
+          console.log('loadList-filter', filter, val)
+          try {
+            const { $values = {}, command, where = {}, page, size } = filter
+            const { nodeConfig, connectionId, attrs = {} } = $values
+            const search = where.label?.like
+            let params = {
+              pdkHash: attrs.pdkHash,
+              connectionId,
+              nodeConfig,
+              command,
+              type: 'node',
+              action: search ? 'search' : 'list',
+              argMap: {
+                key: search,
+                page,
+                size: 1000
+              }
+            }
+            let result = await proxyApi.command(params)
+            if (!result.items) {
+              return { items: [], total: 0 }
+            }
+            result.items.unshift({
+              label: '全部',
+              value: -1
+            })
+            return result
+          } catch (e) {
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
+          }
+        },
+
         /**
          * 将form对象作为handle方法第一个参数
          * @param handle
@@ -340,18 +377,9 @@ export default {
         loadNodeFieldsById: async nodeId => {
           if (!nodeId) return []
           try {
+            await this.afterTaskSaved()
             const data = await metadataInstancesApi.nodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
-            /*fields.sort((a, b) => {
-              const aIsPrimaryKey = a.primary_key_position > 0
-              const bIsPrimaryKey = b.primary_key_position > 0
-
-              if (aIsPrimaryKey !== bIsPrimaryKey) {
-                return aIsPrimaryKey ? -1 : 1
-              } else {
-                return a.field_name.localeCompare(b.field_name)
-              }
-            })*/
             return fields
           } catch (e) {
             // eslint-disable-next-line no-console
@@ -462,12 +490,12 @@ export default {
           return this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
         },
 
-        addDeclaredCompleterForMigrate: tools => {
-          addDeclaredCompleter(tools, 'schemaApplyResultList')
+        addDeclaredCompleterForMigrate: (editor, tools) => {
+          addDeclaredCompleter(editor, tools, 'schemaApplyResultList')
         },
 
-        addDeclaredCompleterForSync: tools => {
-          addDeclaredCompleter(tools, 'tapTable')
+        addDeclaredCompleterForSync: (editor, tools) => {
+          addDeclaredCompleter(editor, tools, 'tapTable')
         },
 
         async loadExternalStorage() {
@@ -489,44 +517,8 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['editVersion']),
+    ...mapState('dataflow', ['editVersion', 'taskSaving']),
     ...mapGetters('dataflow', ['stateIsReadonly'])
-
-    /*accessNodeProcessIdArr() {
-      const set = this.allNodes
-        .filter(item => item.type === 'table')
-        .reduce((set, item) => {
-          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
-          return set
-        }, new Set())
-      return [...set]
-    },
-
-    accessNodeProcessList() {
-      if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
-      return this.accessNodeProcessIdArr.reduce((list, id) => {
-        const item = this.scope.$agentMap[id]
-        if (item) {
-          list.push({
-            value: item.processId,
-            label: `${item.hostName}（${item.ip}）`
-          })
-        }
-        return list
-      }, [])
-    }*/
-  },
-
-  watch: {
-    /*accessNodeProcessIdArr: {
-      handler(arr) {
-        if (arr.length >= 1) {
-          this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
-          this.$set(this.dataflow, 'accessNodeProcessId', this.settings.accessNodeProcessId || arr[0])
-        }
-      },
-      immediate: true
-    }*/
   },
 
   async created() {
@@ -543,6 +535,22 @@ export default {
         }
       })
       this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})
+    },
+
+    /**
+     * 等待任务保存完
+     * @returns {Promise<unknown>}
+     */
+    afterTaskSaved() {
+      return new Promise(resolve => {
+        if (this.taskSaving) {
+          this.$watch('taskSaving', () => {
+            resolve()
+          })
+        } else {
+          resolve()
+        }
+      })
     }
   }
 }

@@ -2,7 +2,7 @@
   <div class="api-doc">
     <div class="section-wrap-box h-100">
       <div class="api-doc-box">
-        <el-button title="导出到postman" size="mini" @click="exportJson">
+        <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" size="mini" @click="exportJson">
           {{ $t('button_export') }}
         </el-button>
       </div>
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { ApiClient, apiServerApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 export default {
@@ -111,7 +113,7 @@ export default {
             'x-controller-name': 'oauth',
             'x-operation-name': 'oauth',
             tags: ['oauth'],
-            summary: '授权接口',
+            summary: i18n.t('daas_api_page_apidocandtest_shouquanjiekou'),
             responses: {
               200: {
                 description:

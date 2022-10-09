@@ -1,30 +1,30 @@
 <template>
-  <header class="layout-header border-bottom p-4">
-    <div class="flex">
-      <div>
+  <header class="layout-header border-bottom px-4 text-nowrap">
+    <div class="left-content flex align-center overflow-hidden">
+      <button @click="$emit('page-return')" class="icon-btn mr-2">
+        <VIcon size="18">left</VIcon>
+      </button>
+      <div class="overflow-hidden">
         <div class="flex align-items-center">
-          <button @click="$emit('page-return')" class="icon-btn">
-            <VIcon size="18">left</VIcon>
-          </button>
           <OverflowTooltip
-            class="task-name text-truncate fs-7 fw-bold font-color-dark"
+            class="task-name text-truncate fs-7 fw-sub font-color-dark"
             placement="bottom"
             :text="name"
             :open-delay="400"
           />
-          <span class="ml-4">{{ syncType[dataflow.type] }}</span>
           <TaskStatus :task="dataflow" class="ml-4" />
         </div>
-        <div class="flex align-items-center font-color-light ml-10 mt-1">
+        <div class="flex align-items-center font-color-light mt-1">
+          <span class="mr-2">{{ syncType[dataflow.type] }}</span>
           <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
           <span>{{ startTime }}</span>
         </div>
       </div>
-      <div class="agent-data__item ml-4 pl-4">
+      <div v-if="dataflow.agentId" class="agent-data__item ml-4 px-4">
         <OverflowTooltip
           class="agent-name__item text-truncate mb-2 font-color-dark"
           placement="bottom"
-          :text="dataflow.agentId || dataflow.agentName || '-' + dataflow.agentId"
+          :text="dataflow.hostName"
           :open-delay="400"
         />
         <div v-if="agentData" class="font-color-sslight">
@@ -38,17 +38,14 @@
       </div>
     </div>
 
-    <div class="operation-center flex align-center">
-      <!--自动布局-->
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :content="$t('packages_dag_button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
-      >
-        <button @click="$emit('auto-layout')" class="icon-btn">
-          <VIcon size="20">auto-layout</VIcon>
+    <div class="flex align-center">
+      <!--内容居中-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
+        <button @click="$emit('center-content')" class="icon-btn">
+          <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical inset></VDivider>
+      <VDivider class="mx-3" vertical></VDivider>
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
         <button @click="$emit('zoom-out')" class="icon-btn">
@@ -80,7 +77,7 @@
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical inset></VDivider>
+      <VDivider class="mx-3" vertical></VDivider>
       <!--设置-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
@@ -93,30 +90,29 @@
         </button>
       </ElTooltip>
     </div>
-
-    <div class="flex align-center flex-grow-1">
-      <div class="flex-grow-1"></div>
+    <div class="flex-grow-1"></div>
+    <div class="flex align-center ml-2">
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
-          size="mini"
           class="mx-2"
+          size="medium"
           @click="$emit('reset')"
         >
           {{ $t('packages_dag_dataFlow_button_reset') }}
         </ElButton>
         <ElButton
           v-if="dataflow.disabledData && !dataflow.disabledData.edit"
-          size="mini"
           class="mx-2"
+          size="medium"
           @click="$emit('edit')"
         >
           {{ $t('packages_dag_button_edit') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
-          size="mini"
           class="mx-2"
+          size="medium"
           type="primary"
           @click="$emit('start')"
         >
@@ -128,7 +124,7 @@
             :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
             key="forceStop"
             class="mx-2"
-            size="mini"
+            size="medium"
             type="danger"
             @click="$emit('forceStop')"
           >
@@ -138,8 +134,8 @@
             v-else
             :disabled="dataflow.disabledData && dataflow.disabledData.stop"
             key="stop"
+            size="medium"
             type="danger"
-            size="mini"
             class="mx-2"
             @click="$emit('stop')"
           >
@@ -179,7 +175,7 @@ export default {
     quota: Object
   },
 
-  components: { VIcon, TextEditable, TaskStatus, VDivider, OverflowTooltip },
+  components: { VIcon, TaskStatus, VDivider, OverflowTooltip },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -302,10 +298,14 @@ $sidebarBg: #fff;
   display: flex;
   align-items: center;
   width: 100%;
-  flex: 0 0 48px;
+  flex: 0 0 64px;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   box-sizing: border-box;
+
+  .left-content {
+    min-width: calc(50% - 140px);
+  }
 
   .nav-icon {
     width: 40px;
@@ -322,9 +322,9 @@ $sidebarBg: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 21px;
-    height: 21px;
-    //padding: 5px;
+    width: 28px;
+    height: 28px;
+    padding: 4px;
     color: #4e5969;
     background: #fff;
     outline: none;
@@ -338,14 +338,10 @@ $sidebarBg: #fff;
       color: map-get($color, primary);
       background: $hoverBg;
     }
-    &.edit {
-      width: 27px;
-      height: 27px;
-    }
   }
 
-  .icon-btn {
-    margin-right: 18px;
+  .icon-btn + .icon-btn {
+    margin-left: 10px;
   }
 
   .btn-setting {
@@ -402,16 +398,8 @@ $sidebarBg: #fff;
   }
 }
 
-.task-name {
-  max-width: 180px;
-}
-
 .agent-data__item {
   border-left: 1px solid #f2f2f2;
-}
-
-.agent-name__item {
-  width: 280px;
 }
 </style>
 

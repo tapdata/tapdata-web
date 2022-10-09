@@ -46,6 +46,13 @@ export default class Connections extends Http {
   getStats() {
     return this.axios.get(this.url + '/stats')
   }
+  create(params: unknown, urlParams: any) {
+    let url = this.url
+    for (let key in urlParams) {
+      url += `?${key}=${urlParams[key]}`
+    }
+    return this.axios.post(url, params)
+  }
 }
 
 export { Connections }

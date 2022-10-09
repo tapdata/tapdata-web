@@ -217,8 +217,7 @@ const getters = {
 
 // actions
 const actions = {
-  updateDag: debounce(async function ({ state, commit }) {
-    if (!state.taskId || state.stateIsReadonly) return
+  patchTask: debounce(async function ({ state, commit }) {
     commit('toggleTaskSaving', true)
     const data = await taskApi.patch({
       id: state.taskId,
@@ -229,40 +228,49 @@ const actions = {
     commit('toggleTaskSaving', false)
   }, 50),
 
+  async updateDag({ state, commit, dispatch }) {
+    console.log('updateDag') // eslint-disable-line
+    if (!state.taskId || state.stateIsReadonly) return
+    commit('toggleTaskSaving', true)
+    dispatch('patchTask')
+  },
+
   async addNodeAsync({ dispatch, commit }, nodeData) {
     commit('addNode', nodeData)
-    console.trace('updateDag') // eslint-disable-line
     await dispatch('updateDag')
   },
 
-  async loadCustomNode({ commit }) {
+  async loadCustomNode({ commit }, needPushProcessor = true) {
     const { items } = await customNodeApi.get()
     const insArr = []
-    commit(
-      'addProcessorNode',
-      items.map(item => {
-        const node = {
-          name: item.name,
-          type: 'custom_processor',
-          customNodeId: item.id
-        }
+    if (needPushProcessor) {
+      commit(
+        'addProcessorNode',
+        items.map(item => {
+          const node = {
+            name: item.name,
+            type: 'custom_processor',
+            customNodeId: item.id
+          }
 
-        const ins = new CustomProcessor({
-          customNodeId: item.id,
-          formSchema: item.formSchema
+          const ins = new CustomProcessor({
+            customNodeId: item.id,
+            formSchema: item.formSchema
+          })
+
+          insArr.push(ins)
+
+          // 设置属性__Ctor不可枚举
+          Object.defineProperty(node, '__Ctor', {
+            value: ins,
+            enumerable: false
+          })
+
+          return node
         })
+      )
+    }
 
-        insArr.push(ins)
-
-        // 设置属性__Ctor不可枚举
-        Object.defineProperty(node, '__Ctor', {
-          value: ins,
-          enumerable: false
-        })
-
-        return node
-      })
-    )
     commit('addResourceIns', insArr)
     // console.log('loadCustomNode', data)
   }
@@ -348,6 +356,7 @@ const mutations = {
 
   // 添加节点
   addNode(state, nodeData) {
+    if (state.NodeMap[nodeData.id]) return
     if (!nodeData.$inputs) nodeData.$inputs = []
     if (!nodeData.$outputs) nodeData.$outputs = []
     state.dag.nodes.push(nodeData)

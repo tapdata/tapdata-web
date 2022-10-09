@@ -1,12 +1,12 @@
 <template>
   <div class="connection-container">
-    <TableList
+    <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"
       :remote-data="ids"
       height="100%"
       :has-pagination="false"
-      ref="tableList"
+      ref="VTable"
     >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
@@ -43,7 +43,7 @@
           }}</ElButton>
         </div>
       </template>
-    </TableList>
+    </VTable>
     <!-- 连接测试 -->
     <ConnectionTest ref="test"></ConnectionTest>
   </div>
@@ -51,7 +51,7 @@
 
 <script>
 import { connectionsApi } from '@tap/api'
-import { VIcon, TableList } from '@tap/component'
+import { VIcon, VTable } from '@tap/component'
 import { deepCopy } from '@tap/shared'
 
 import ConnectionTest from '../../../connections/Test.vue'
@@ -60,7 +60,7 @@ import { getConnectionIcon } from '../../../connections/util'
 
 export default {
   name: 'Connection',
-  components: { TableList, VIcon, SchemaProgress, ConnectionTest },
+  components: { VTable, VIcon, SchemaProgress, ConnectionTest },
   inject: ['checkAgent'],
   props: {
     ids: {
@@ -152,10 +152,10 @@ export default {
         })
     },
     getTableData() {
-      return this.$refs.tableList?.getData()
+      return this.$refs.VTable?.getData()
     },
     fetch() {
-      this.$refs.tableList?.fetch(null, null, true)
+      this.$refs.VTable?.fetch(null, null, true)
     },
     clearInterval() {
       // 清除定时器

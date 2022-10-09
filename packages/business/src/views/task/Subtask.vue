@@ -1,6 +1,6 @@
 <template>
   <div class="subtask-container">
-    <TableList
+    <VTable
       v-if="taskId"
       :remoteMethod="remoteMethod"
       :columns="columns"
@@ -8,7 +8,7 @@
         'hide-on-single-page': true
       }"
       max-height="100%"
-      ref="tableList"
+      ref="VTable"
     >
       <template slot="status" slot-scope="scope">
         <span :class="['status-' + scope.row.status, 'status-block']">
@@ -60,19 +60,19 @@
           }}</VButton>
         </div>
       </template>
-    </TableList>
+    </VTable>
   </div>
 </template>
 
 <script>
 import { subtaskApi } from '@tap/api'
-import { VIcon, TableList } from '@tap/component'
+import { VIcon, VTable } from '@tap/component'
 import { deepCopy } from '@tap/shared'
 
 let timeout = null
 export default {
   name: 'Subtask',
-  components: { TableList, VIcon },
+  components: { VTable, VIcon },
   props: {
     task: {
       type: Object,
@@ -130,13 +130,13 @@ export default {
       return this.task?.id
     },
     table() {
-      return this.$refs.tableList
+      return this.$refs.VTable
     }
   },
   mounted() {
     //定时轮询
     timeout = setInterval(() => {
-      this.$refs.tableList.fetch(null, 0, true)
+      this.$refs.VTable.fetch(null, 0, true)
     }, 5000)
   },
   destroyed() {

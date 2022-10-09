@@ -20,7 +20,7 @@
           <div class="mb-4 fs-7 font-color-dark">
             {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
           </div>
-          <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
+          <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
               <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
                 $t('packages_business_button_clear')
@@ -29,7 +29,7 @@
                 $t('packages_business_button_rollback')
               }}</ElButton></template
             >
-          </TableList>
+          </VTable>
         </div>
       </div>
       <!--  结构迁移  -->
@@ -49,7 +49,7 @@
             {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
           </div>
           <div></div>
-          <TableList
+          <VTable
             v-if="columns.length"
             ref="initialTableList"
             :data="runtimeInfo.structureMigrate.tableStatus"
@@ -61,14 +61,14 @@
             <template slot="schedule" slot-scope="scope">
               <span>{{ getSchedule(scope.row) }}</span>
             </template>
-          </TableList>
+          </VTable>
         </div>
         <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
           <div class="mb-4 fs-7 font-color-dark">
             {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
           </div>
           <div></div>
-          <TableList
+          <VTable
             v-if="columns.length"
             ref="initialTableList"
             :data="syncTableList"
@@ -98,7 +98,7 @@
                 {{ $t('packages_business_task_info_status_' + getStatus(scope.row.status)) }}
               </span>
             </template>
-          </TableList>
+          </VTable>
           <el-pagination
             style="margin-top: 10px"
             @current-change="getSyncTableData"
@@ -114,7 +114,7 @@
           <div class="mb-4 fs-7 font-color-dark">
             {{ currentStep.label }}{{ $t('packages_business_task_info_info') }}
           </div>
-          <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
+          <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
               <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{
                 $t('packages_business_button_clear')
@@ -123,7 +123,7 @@
                 $t('packages_business_button_rollback')
               }}</ElButton></template
             >
-          </TableList>
+          </VTable>
         </div>
       </div>
     </template>
@@ -138,7 +138,7 @@
           {{ $t('packages_business_task_info_task_structure') }}{{ $t('packages_business_task_info_info') }}
         </div>
         <div></div>
-        <TableList
+        <VTable
           v-if="columns.length"
           ref="initialTableList"
           :data="runtimeInfo.structureMigrate.tableStatus"
@@ -150,13 +150,13 @@
           <template slot="schedule" slot-scope="scope">
             <span>{{ getSchedule(scope.row) }}</span>
           </template>
-        </TableList>
+        </VTable>
       </div>
       <div class="mt-6">
         <div class="mb-4 fs-7 font-color-dark">
           {{ $t('packages_business_task_setting_initial_sync') }}{{ $t('packages_business_task_info_info') }}
         </div>
-        <TableList
+        <VTable
           v-if="columns.length"
           :data="syncTableList"
           :columns="columns"
@@ -167,13 +167,13 @@
           <template slot="schedule" slot-scope="scope">
             <span>{{ getSchedule(scope.row) }}</span>
           </template>
-        </TableList>
+        </VTable>
       </div>
       <div class="mt-6">
         <div class="mb-4 fs-7 font-color-dark">
           {{ $t('packages_business_task_info_task_cdc') }}{{ $t('packages_business_task_info_info') }}
         </div>
-        <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
+        <VTable :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></VTable>
       </div>
     </div>
     <ElDialog
@@ -216,7 +216,7 @@ import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 
 import { dataFlowInsightsApi, subtaskApi } from '@tap/api'
-import { VStep, TableList } from '@tap/component'
+import { VStep, VTable } from '@tap/component'
 import { deepCopy } from '@tap/shared'
 
 import Milestone from './Milestone'
@@ -224,7 +224,7 @@ import Overview from '../../etl/statistics/Overview'
 
 export default {
   name: 'Schedule',
-  components: { TableList, Milestone, Overview, VStep },
+  components: { VTable, Milestone, Overview, VStep },
   props: {
     task: {
       type: Object,

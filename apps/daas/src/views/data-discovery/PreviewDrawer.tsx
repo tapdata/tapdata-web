@@ -1,6 +1,6 @@
 import i18n from '@/i18n'
 import { defineComponent, reactive, ref, computed } from '@vue/composition-api'
-import { TableList, OverflowTooltip } from '@tap/component'
+import { VTable, OverflowTooltip } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import { NodeViewer } from '@tap/dag'
 import './index.scss'
@@ -104,14 +104,12 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="drawer-content" v-loading={this.data.loading}>
-        <div class="flex align-items-center ml-4 drawer-header-h">
-          <header class="font-weight-bold mr-4 drawer-header-mt">
-            <span class="drawer__header_text inline-block">
-              {i18n.t('datadiscovery_previewdrawer_duixiangxiangqing')}
-            </span>
-          </header>
-          <el-tabs v-model={this.data.activeName} class="drawer-header-mt">
+      <div class="flex flex-column overflow-hidden pt-2 h-100" v-loading={this.data.loading}>
+        <div class="flex position-relative">
+          <div class="position-absolute top-0 start-0 fs-7 fw-sub px-6 font-color-dark" style="line-height: 36px">
+            {i18n.t('datadiscovery_previewdrawer_duixiangxiangqing')}
+          </div>
+          <el-tabs class="drawer-tabs flex-1" v-model={this.data.activeName}>
             <el-tab-pane label={i18n.t('page_title_overview')} name="first">
               <div style="width:40px"></div>
             </el-tab-pane>

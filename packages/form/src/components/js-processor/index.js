@@ -6,6 +6,8 @@ import { taskApi } from '@tap/api'
 import { useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
+import { JsDeclare } from '../js-declare'
+import './style.scss'
 
 export const JsProcessor = observer(
   defineComponent({
@@ -17,6 +19,7 @@ export const JsProcessor = observer(
       const tableLoading = ref(false)
       const running = ref(false)
       const runningText = ref('')
+
       let queryTimes = 0
       const params = reactive({
         taskId,
@@ -140,19 +143,16 @@ export const JsProcessor = observer(
               />
             </FormItem.BaseItem>
 
-            <FormItem.BaseItem label={i18n.t('packages_form_js_processor_index_moxingshengming')}>
-              <JsEditor
-                value={form.values.declareScript}
-                onChange={val => {
-                  form.setValuesIn('declareScript', val)
-                }}
-                height={240}
-                options={editorProps.options}
-                before="function declare(schemaApplyResultList) {"
-                after={`  return schemaApplyResultList\n}`}
-                handleAddCompleter={editorProps.handleAddCompleter}
-              />
-            </FormItem.BaseItem>
+            <JsDeclare
+              value={form.values.declareScript}
+              onChange={val => {
+                form.setValuesIn('declareScript', val)
+              }}
+              height={240}
+              options={editorProps.options}
+              param="schemaApplyResultList"
+              handleAddCompleter={editorProps.handleAddCompleter}
+            />
 
             <div class="flex align-center">
               <FormItem.BaseItem

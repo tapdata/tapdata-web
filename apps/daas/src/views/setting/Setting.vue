@@ -105,31 +105,6 @@
                 <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
               </span>
             </template>
-            <template v-if="item.category === 'alarm'">
-              <el-row class="mb-4">
-                <el-col :span="12">告警指标</el-col>
-                <el-col :span="12">默认告警规则</el-col>
-              </el-row>
-              <el-row class="mb-4" v-for="(childItem, childIndex) in item.items" :key="childIndex">
-                <el-col :span="8">
-                  <span>{{ childItem.key }}</span>
-                </el-col>
-                <el-col :span="16">
-                  <span class="mr-2">连续</span>
-                  <el-input-number :controls="false" style="width: 100px" v-model="childItem.point"></el-input-number>
-                  <span class="ml-2 mr-2"> 个点</span>
-                  <el-select style="width: 100px" class="mr-2" v-model="childItem.equalsFlag">
-                    <el-option lable=">=" value=">="></el-option>
-                    <el-option lable=">=" value=">"></el-option>
-                    <el-option lable=">=" value="="></el-option>
-                    <el-option lable="<=" value="<="></el-option>
-                    <el-option lable="<" value="<"></el-option>
-                  </el-select>
-                  <el-input-number :controls="false" v-model="childItem.ms" style="width: 80px"></el-input-number>
-                  <span class="ml-2">ms时告警</span>
-                </el-col>
-              </el-row>
-            </template>
           </div>
         </div>
 
@@ -211,8 +186,10 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import { uniq, find } from 'lodash'
-import { VIcon } from '@tap/component'
+import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
 
@@ -226,7 +203,6 @@ export default {
       formData: {
         items: []
       },
-      alarmData: {}, //告警数据
       activeTab: 0,
       activePanel: 'Log',
       lang: getCurrentLanguage(),
@@ -252,6 +228,23 @@ export default {
           status: 'CDC Lag'
         },
         { label: this.$t('setting_Email_Template_DDL') }
+      ],
+      keyMapping: {
+        TASK_INCREMENT_DELAY: i18n.t('daas_setting_setting_renwudezengliang'),
+        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanwanglu'),
+        DATANODE_TCP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanxieyi'),
+        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_shujuyuanjiedian'),
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_chulijiediande')
+      },
+      columns: [
+        {
+          label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
+          slotName: 'keySlot'
+        },
+        {
+          label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
+          slotName: 'valueSlot'
+        }
       ]
     }
   },
@@ -344,16 +337,6 @@ export default {
         category: 'license'
       }
       _this.formData.items.push(lincenseData)
-    },
-    //告警设置 单独请求接口 单独提交数据
-    getAlarmData() {
-      alarmRuleApi.find().then(data => {
-        this.alarmData = {
-          category: 'alarm',
-          items: data
-        }
-        this.formData.items.push(this.alarmData)
-      })
     },
     // 保存
     save() {

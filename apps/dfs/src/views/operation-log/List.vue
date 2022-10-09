@@ -6,11 +6,12 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </div>
-      <TableList
+      <VTable
         ref="table"
         row-key="id"
         :columns="columns"
         :remoteMethod="getData"
+        height="100%"
         class="mt-4"
         @sort-change="sortChange"
       >
@@ -40,21 +41,20 @@
             <ElLink type="primary" class="fs-7" @click="reset">{{ $t('link_back_to_list') }}</ElLink>
           </div>
         </div>
-      </TableList>
+      </VTable>
     </div>
   </section>
   <RouterView v-else></RouterView>
 </template>
 
 <script>
-import { VIcon, FilterBar } from '@tap/component'
+import { VIcon, FilterBar, VTable } from '@tap/component'
 
-import TableList from '@/components/TableList'
 import i18n from '@/i18n'
 import { isEmpty } from '@/util'
 
 export default {
-  components: { VIcon, FilterBar, TableList },
+  components: { VIcon, FilterBar, VTable },
   data() {
     return {
       loading: true,

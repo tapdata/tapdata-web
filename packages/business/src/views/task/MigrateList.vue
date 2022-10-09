@@ -5,7 +5,7 @@
       row-key="id"
       class="data-flow-list"
       :remoteMethod="getData"
-      :classify="isDaas ? { authority: 'SYNC_category_management', types: ['dataflow'] } : null"
+      :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
         val => {
@@ -20,7 +20,6 @@
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="isDaas"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'SYNC_category_application'"
           size="mini"
@@ -28,7 +27,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+          <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
         </el-button>
         <el-dropdown
           class="btn"

@@ -38,5 +38,7 @@ export * from './js-processor'
 export * from './ddl-event-checkbox'
 export * from './pdk-properties'
 export * from './highlight-code'
+export * from './js-declare'
+export * from './Button'
 
 export * from '@formily/element'

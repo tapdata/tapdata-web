@@ -134,7 +134,8 @@ export default {
     const dataflow = observable({
       ...DEFAULT_SETTINGS,
       id: '',
-      name: ''
+      name: '',
+      status: ''
     })
 
     return {
@@ -164,12 +165,16 @@ export default {
     }
   },
 
-  async created() {
+  // created 换成 mounted，等上一个实例destroy走完
+  async mounted() {
     if (this.$route.name === 'DataflowViewer') {
       this.setStateReadonly(true)
     }
+    // 设置schema的校验语言
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
     await this.initPdkProperties()
+    // 初始化所有节点类型
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -200,10 +205,10 @@ export default {
           name: 'JavaScript',
           type: 'js_processor'
         },
-        {
+        /*{
           name: i18n.t('packages_dag_src_editor_juhe'),
           type: 'aggregation_processor'
-        },
+        },*/
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
@@ -241,6 +246,7 @@ export default {
       const data = await this.loadDataflow(id)
 
       if (data) {
+        if (this.destory) return
         const { dag } = data
         this.setStateReadonly(this.$route.name === 'DataflowViewer' ? true : this.dataflow.disabledData.edit)
         this.setTaskId(data.id)
@@ -446,6 +452,7 @@ export default {
 
       const errorMsg = await this.validate()
       if (errorMsg) {
+        if (this.destory) return
         this.$message.error(errorMsg)
         this.isSaving = false
         return
@@ -458,7 +465,7 @@ export default {
       const data = this.getDataflowDataToSave()
 
       try {
-        this.wsAgentLive()
+        this.initWS()
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))

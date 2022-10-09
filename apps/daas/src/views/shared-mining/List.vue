@@ -62,7 +62,7 @@
         :disabled="!showEditSettingBtn"
         :rules="rules"
       >
-        <el-form-item prop="persistenceMongodb_uri_db" size="mini" :label="$t('shared_cdc_setting_select_mode')">
+        <el-form-item prop="persistenceMode" size="mini" :label="$t('shared_cdc_setting_select_mode')">
           <el-select v-model="digSettingForm.persistenceMode">
             <el-option v-for="item in enumsItems" :key="item" :label="item" :value="item"></el-option>
           </el-select>
@@ -129,7 +129,7 @@
           <el-input clearable v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
-          <el-select v-model="editForm.storageTime" placeholder="请选择">
+          <el-select v-model="editForm.storageTime" :placeholder="$t('common_placeholder_select')">
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
             </el-option>
           </el-select>
@@ -279,7 +279,7 @@ export default {
       logcollectorApi
         .check()
         .then(data => {
-          this.showEditSettingBtn = data //true是可用，false是禁用
+          this.showEditSettingBtn = data?.data //true是可用，false是禁用 数据结构本身多了一层
           this.settingDialogVisible = true
           logcollectorApi
             .getSystemConfig()
