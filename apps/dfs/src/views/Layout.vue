@@ -27,7 +27,7 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <PageHeader class="main-view-header py-4 px-5"></PageHeader>
+      <PageHeader class="py-4 px-5"></PageHeader>
       <ElMain class="main">
         <RouterView></RouterView>
       </ElMain>

@@ -106,7 +106,7 @@
 
       <ElMain class="layout-main">
         <div class="layout-main-body">
-          <PageHeader></PageHeader>
+          <PageHeader class="py-4 px-5"></PageHeader>
           <div class="flex-fill px-5 pb-5 overflow-auto">
             <RouterView />
           </div>
@@ -117,6 +117,7 @@
     <newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
   </ElContainer>
 </template>
+
 <style lang="scss">
 .btn-del-fav-menu {
   display: none;
@@ -353,10 +354,10 @@ import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { usersApi, timeStampApi, licensesApi } from '@tap/api'
+import { PageHeader } from '@tap/business'
 
 import CustomerService from '@/components/CustomerService'
 import newDataFlow from '@/components/newDataFlow'
-import PageHeader from '@/components/PageHeader'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
 
