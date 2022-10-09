@@ -7,6 +7,7 @@ import Log from './logs/Index.vue'
 import TablePage from './TablePage.vue'
 import ConnectionTypeSelector from './ConnectionTypeSelector.vue'
 import TaskStatus from './TaskStatus'
+import PageHeader from './PageHeader'
 
 export {
   StatusItem,
@@ -17,5 +18,6 @@ export {
   Log,
   TablePage,
   ConnectionTypeSelector,
-  TaskStatus
+  TaskStatus,
+  PageHeader
 }
