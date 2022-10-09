@@ -3,12 +3,6 @@
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
     <ElAside class="left-aside" width="200px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
-        <!-- <ElMenuItem v-for="m in menus" :key="m.name" :index="m.path">
-          <span class="mr-4" slot v-if="m.icon"
-            ><VIcon class="v-icon" size="12">{{ m.icon }}</VIcon></span
-          >
-          <span slot="title">{{ m.title }}</span>
-        </ElMenuItem> -->
         <template v-for="menu in menus">
           <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
             <template slot="title">
@@ -33,16 +27,7 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <div v-if="!hideBreadcrumb" class="header">
-        <ElBreadcrumb
-          :class="['breadcrumb', { 'one-breadcrumb': breadcrumbData.length === 1 }]"
-          separator-class="el-icon-arrow-right"
-        >
-          <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
-            {{ item.name }}
-          </ElBreadcrumbItem>
-        </ElBreadcrumb>
-      </div>
+      <PageHeader class="main-view-header py-4 px-5"></PageHeader>
       <ElMain class="main">
         <RouterView></RouterView>
       </ElMain>
@@ -56,6 +41,8 @@
 <script>
 import TheHeader from '@/components/the-header'
 import { VIcon } from '@tap/component'
+import { PageHeader } from '@tap/business'
+
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import BindPhone from '@/views/user/components/BindPhone'
@@ -67,7 +54,8 @@ export default {
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
-    BindPhone
+    BindPhone,
+    PageHeader
   },
   data() {
     const $t = this.$t.bind(this)
@@ -106,8 +94,6 @@ export default {
           icon: 'operation-log'
         }
       ],
-      breadcrumbData: [],
-      hideBreadcrumb: false,
       dialogVisible: false,
       agentDownload: {
         visible: false,
@@ -133,7 +119,6 @@ export default {
       }
       return el
     })
-    this.getBreadcrumb(this.$route)
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)
     this.$root.$on('get-user', this.getUser)
@@ -144,17 +129,6 @@ export default {
   watch: {
     $route(route) {
       this.activeMenu = route.path
-      this.getBreadcrumb(route)
-    },
-    breadcrumbData: {
-      deep: true,
-      handler(v) {
-        let flag = false
-        v?.forEach(el => {
-          flag = !!el.hideTitle
-        })
-        this.hideBreadcrumb = flag
-      }
     }
   },
   methods: {
@@ -184,22 +158,6 @@ export default {
         return
       }
       this.$router.push(path)
-    },
-    getBreadcrumb(route) {
-      let matched = route.matched.slice(1)
-      let data = []
-      if (matched.length) {
-        data = matched.map(route => {
-          return {
-            name: route.meta?.title,
-            to: {
-              name: route.name === this.$route.name ? null : route.name
-            },
-            hideTitle: !!route.meta?.hideTitle
-          }
-        })
-      }
-      this.breadcrumbData = data
     },
     back() {
       this.$router.back()
