@@ -6,7 +6,8 @@ import { langKeyMap, getCurrentLanguage } from './shared/util'
 Vue.use(VueI18n)
 const i18n = new VueI18n({
   locale: getCurrentLanguage(),
-  messages: {}
+  messages: {},
+  silentTranslationWarn: true
 })
 
 i18n.merge = (langs = {}) => {
