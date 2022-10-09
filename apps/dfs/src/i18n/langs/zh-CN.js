@@ -966,6 +966,8 @@ export default {
   workbench_Workbench_tAPDA12: 'Tapdata Cloud 2.1.5 版本发布啦！',
   //页面标题
   page_title_run_monitor: '运行监控',
+  page_title_data_verify: '数据校验',
+  page_title_data_difference_details: '差异详情',
   // 自定义节点
   notify_abnormally_stopped: '意外停止',
   header_upgrade: '访问旧版本',

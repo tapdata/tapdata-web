@@ -38,6 +38,10 @@ const EtlStatistics = async () => {
   const { EtlStatistics } = await import('@tap/business')
   return EtlStatistics
 }
+const VerifyDetails = async () => {
+  const { VerifyDetails } = await import('@tap/business')
+  return VerifyDetails
+}
 const routes = [
   {
     path: '/',
@@ -204,6 +208,27 @@ const routes = [
         meta: {
           title: i18n.t('tap_user_center')
         }
+      },
+      {
+        path: '/verify',
+        name: 'verify',
+        redirect: 'verify/',
+        meta: {
+          title: i18n.t('page_title_data_verify'),
+          doNotJump: true
+        },
+        children: [
+          {
+            path: ':id/details',
+            name: 'VerifyDetails',
+            component: VerifyDetails,
+            meta: {
+              title: i18n.t('page_title_data_difference_details'),
+              code: 'Data_verify',
+              isNotAside: true
+            }
+          }
+        ]
       }
     ]
   },

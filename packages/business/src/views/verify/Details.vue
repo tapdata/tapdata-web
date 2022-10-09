@@ -277,10 +277,11 @@ export default {
         filter: this.keyword
       }
       return taskApi.autoInspectResultsGroupByTable(filter).then(data => {
-        const list = data.items.map(t => {
-          t.counts = t.counts.toLocaleString()
-          return t
-        })
+        const list =
+          data.items?.map(t => {
+            t.counts = t.counts.toLocaleString()
+            return t
+          }) || []
         if (!this.row || !list.find(t => JSON.stringify(this.row) === JSON.stringify(t))) {
           this.handleRow(list[0])
         }
@@ -311,7 +312,7 @@ export default {
     fetch(page = 1) {
       this.page.current = page
       const { size, current } = this.page
-      const { originalTableName } = this.row
+      const { originalTableName } = this.row || {}
       let filter = {
         where: {
           originalTableName
