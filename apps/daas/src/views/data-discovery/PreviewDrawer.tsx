@@ -137,7 +137,7 @@ export default defineComponent({
     const loadData = row => {
       data.currentRow = row
       if (data.activeName === 'first') {
-        switch (row.category) {
+        switch (row.category || row.table) {
           case 'storage':
             data.loading = true
             discoveryApi
