@@ -62,7 +62,7 @@
               <div class="charts-list-text">
                 <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
                 <ul class="job-list">
-                  <li v-for="task in syncTaskList" :key="task.label">
+                  <li v-for="task in syncTaskList" :key="task.label" @click="handleSyncStatus(task.label)">
                     <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
                     <span class="fw-normal font-color-light">{{ task.name }}</span
                     ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(task.value) }}</span>
@@ -410,6 +410,14 @@ export default {
     handleStatus(status) {
       this.$router.push({
         name: 'migrate',
+        query: {
+          status: status
+        }
+      })
+    },
+    handleSyncStatus(status) {
+      this.$router.push({
+        name: 'dataflow',
         query: {
           status: status
         }
