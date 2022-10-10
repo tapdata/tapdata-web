@@ -136,7 +136,6 @@ export default defineComponent({
     }
     const loadData = row => {
       data.currentRow = row
-      row.category = 'api'
       if (data.activeName === 'first') {
         switch (row.category) {
           case 'storage':
@@ -167,7 +166,7 @@ export default defineComponent({
                 data.loading = false
               })
             break
-          case 'task':
+          case 'job':
             data.loading = true
             discoveryApi
               .overViewTask(row.id)
@@ -355,7 +354,7 @@ export default defineComponent({
                 ) : (
                   ''
                 )}
-                {this.previewData.category === 'task' ? (
+                {this.previewData.category === 'job' ? (
                   <div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">节点</span>
