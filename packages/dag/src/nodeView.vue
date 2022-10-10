@@ -30,6 +30,7 @@ import { allResourceIns } from './nodes/loader'
 
 export default {
   name: 'NodeViewer',
+  props: ['id'],
   components: {
     PaperScroller,
     DFNode
@@ -57,7 +58,7 @@ export default {
     async loadDataflow() {
       this.loading = true
       try {
-        return await taskApi.get('632acdcff9f531293779058c')
+        return await taskApi.get(this.id)
       } catch (e) {
         console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
       } finally {

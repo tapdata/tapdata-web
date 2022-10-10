@@ -11,8 +11,16 @@ export default class Discovery extends Http {
     }
     return this.axios.get(this.url, config)
   }
-  overView(id: string) {
+  overViewStorage(id: string) {
     return this.axios.get(`${this.url}/storage/overview/${id}`)
+  }
+  overViewTask(id: string) {
+    return this.axios.get(`${this.url}/task/overview/${id}`)
+    //return this.axios.get(`https://mock.apifox.cn/m1/1293445-0-default/api/discovery/task/overview/`)
+  }
+  overViewApi(id: string) {
+    return this.axios.get(`${this.url}/api/overview/${id}`)
+    // return this.axios.get(`https://mock.apifox.cn/m1/1293445-0-default/api/discovery/api/overview/`)
   }
   preview(id: string) {
     return this.axios.get(`${this.url}/storage/preview/${id}`)

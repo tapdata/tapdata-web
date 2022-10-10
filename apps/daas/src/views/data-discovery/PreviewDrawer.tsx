@@ -57,6 +57,72 @@ export default defineComponent({
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'businessDesc'
         }
+      ],
+      nodeColumns: [
+        {
+          label: i18n.t('metadata_name'),
+          prop: 'name'
+        },
+        {
+          label: i18n.t('metadata_type'),
+          prop: 'type'
+        },
+        {
+          label: '节点描述',
+          prop: 'connectionInfo'
+        },
+        {
+          label: '业务描述',
+          prop: 'serviceDesc'
+        }
+      ],
+      apiColumns: [
+        {
+          label: i18n.t('metadata_name'),
+          prop: 'name'
+        },
+        {
+          label: i18n.t('metadata_type'),
+          prop: 'type'
+        },
+        {
+          label: i18n.t('meta_table_default'),
+          prop: 'defaultvalue'
+        },
+        {
+          label: i18n.t('module_form_describtion'),
+          prop: 'description'
+        }
+      ],
+      apiInputColumns: [
+        {
+          label: i18n.t('metadata_name'),
+          prop: 'field_name'
+        },
+        {
+          label: i18n.t('metadata_type'),
+          prop: 'data_type'
+        },
+        {
+          label: i18n.t('module_form_describtion'),
+          prop: 'description'
+        }
+      ],
+      outInput: [
+        {
+          name: 'page',
+          type: 'number',
+          defaultvalue: '1',
+          description: i18n.t('daas_data_server_drawer_fenyebianhao'),
+          required: true
+        },
+        {
+          name: 'limit',
+          type: 'number',
+          defaultvalue: '20',
+          description: i18n.t('daas_data_server_drawer_meigefenyefan'),
+          required: true
+        }
       ]
     })
     const format = data => {
@@ -70,19 +136,51 @@ export default defineComponent({
     }
     const loadData = row => {
       data.currentRow = row
+      row.category = 'api'
       if (data.activeName === 'first') {
-        data.loading = true
-        discoveryApi
-          .overView(row.id)
-          .then(res => {
-            let newData = res
-            newData['fields'] = format(res.fields)
-            preview.value = newData || ''
-            oldData.value = JSON.parse(JSON.stringify(newData))
-          })
-          .finally(() => {
-            data.loading = false
-          })
+        switch (row.category) {
+          case 'storage':
+            data.loading = true
+            discoveryApi
+              .overViewStorage(row.id)
+              .then(res => {
+                let newData = res
+                newData['fields'] = format(res.fields)
+                preview.value = newData || ''
+                oldData.value = JSON.parse(JSON.stringify(newData))
+              })
+              .finally(() => {
+                data.loading = false
+              })
+            break
+          case 'api':
+            data.loading = true
+            discoveryApi
+              .overViewApi(row.id)
+              .then(res => {
+                let newData = res
+                newData['fields'] = format(res.fields)
+                preview.value = newData || ''
+                oldData.value = JSON.parse(JSON.stringify(newData))
+              })
+              .finally(() => {
+                data.loading = false
+              })
+            break
+          case 'task':
+            data.loading = true
+            discoveryApi
+              .overViewTask(row.id)
+              .then(res => {
+                let newData = res
+                preview.value = newData || ''
+                oldData.value = JSON.parse(JSON.stringify(newData))
+              })
+              .finally(() => {
+                data.loading = false
+              })
+            break
+        }
       }
     }
     const filterNames = computed(() => {
@@ -118,7 +216,13 @@ export default defineComponent({
         {this.previewData ? (
           <section class="discovery-page-wrap">
             <div class="discovery-page-main-box">
-              <div class="discovery-page-right" v-loading={this.data.tableLoading}>
+              <div
+                class={[
+                  this.previewData.category === 'api' ? 'overflow-hidden' : 'overflow-auto',
+                  'discovery-page-right'
+                ]}
+                v-loading={this.data.tableLoading}
+              >
                 <div>
                   <div class="user">
                     <span class="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
@@ -219,30 +323,55 @@ export default defineComponent({
                       has-pagination={false}
                     ></VTable>
                   </div>
-                ) : this.previewData.category === 'api ' ? (
+                ) : (
+                  ''
+                )}
+                {this.previewData.category === 'api' ? (
                   <div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">输入参数</span>
-                      <VTable
-                        class="discovery-page-api-table"
-                        columns={this.data.columns}
-                        data={this.preview.fields}
-                      ></VTable>
+                      <VTable has-pagination={false} columns={this.data.apiColumns} data={this.data.outInput}></VTable>
                     </div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">输出参数</span>
                       <VTable
                         class="discovery-page-api-table"
-                        columns={this.data.columns}
-                        data={this.preview.fields}
+                        hasPagination={false}
+                        columns={this.data.apiInputColumns}
+                        data={this.previewData.fields}
+                      ></VTable>
+                    </div>
+                    <div class="mt-5">
+                      <ul class="data-api-path">
+                        {this.previewData.paths.map(path => (
+                          <li class="data-api-path__item">
+                            <div class={['method--' + path.method, 'data-api-path__method']}>{path.method}</div>
+                            <div class="data-api-path__value line-height">{path.path}</div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ) : (
+                  ''
+                )}
+                {this.previewData.category === 'task' ? (
+                  <div>
+                    <div class="mt-5">
+                      <span class="drawer__header_text inline-block">节点</span>
+                      <NodeViewer id={this.previewData.id}></NodeViewer>
+                    </div>
+                    <div class="mt-5">
+                      <VTable
+                        class="discovery-page-api-table mt-4"
+                        hasPagination={false}
+                        columns={this.data.nodeColumns}
+                        data={this.previewData.taskConnections}
                       ></VTable>
                     </div>
                   </div>
                 ) : (
-                  <div class="mt-5">
-                    <span class="drawer__header_text inline-block">节点</span>
-                    <NodeViewer></NodeViewer>
-                  </div>
+                  ''
                 )}
               </div>
             </div>

@@ -21,7 +21,6 @@
   display: flex;
   -ms-flex-direction: column;
   flex-direction: column;
-  overflow: hidden;
   padding: 20px;
   border-radius: 4px;
 }
@@ -147,4 +146,28 @@
     margin: 0;
   }
 }
+.data-api-path__item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  font-family: PingFangSC-Regular, PingFang SC;
+}
+.data-api-path__method {
+  margin-right: 40px;
+  width: 62px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 2px;
 
+  color: map-get($fontColor, white);
+  &.method--POST {
+    background: #478c6c;
+  }
+  &.method--GET {
+    background: #09819c;
+  }
+  &.method--TOKEN {
+    background: #f2994b;
+  }
+}
