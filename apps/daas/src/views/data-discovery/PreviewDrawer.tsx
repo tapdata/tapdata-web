@@ -330,7 +330,7 @@ export default defineComponent({
                     <div class="details_data_info mt-4 p-5">
                       <el-row class="mt-2">
                         <el-col>
-                          <span class="drawer__header_text inline-block">{i18n.t('metadata_meta_type_table')}</span>
+                          <span class="drawer__header_text inline-block">API</span>
                           <span class="ml-2">{this.previewData.name}</span>
                         </el-col>
                       </el-row>
@@ -381,12 +381,6 @@ export default defineComponent({
                           <span class="max-label inline-block">服务描述</span>
                           <span class="ml-2">{this.previewData.description}</span>
                         </el-col>
-                        <el-col span={8}>
-                          <span class="max-label inline-block">
-                            {i18n.t('datadiscovery_previewdrawer_lianjiemiaoshu')}
-                          </span>
-                          <span class="ml-2">{this.previewData.connectionDesc}</span>
-                        </el-col>
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
@@ -426,16 +420,10 @@ export default defineComponent({
                 )}
                 {this.previewData.category === 'job' ? (
                   <div>
-                    <div class="user">
-                      <span class="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
-                      <el-select v-model={this.data.activeUser}>
-                        <el-option label="admin" value="admin"></el-option>
-                      </el-select>
-                    </div>
                     <div class="details_data_info mt-4 p-5">
                       <el-row class="mt-2">
                         <el-col>
-                          <span class="drawer__header_text inline-block">{i18n.t('metadata_meta_type_table')}</span>
+                          <span class="drawer__header_text inline-block">任务</span>
                           <span class="ml-2">{this.previewData.name}</span>
                         </el-col>
                       </el-row>
