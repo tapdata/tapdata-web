@@ -15,12 +15,20 @@ export default defineComponent({
     }
   },
 
-  setup(props) {
+  setup(props, { emit }) {
     return () => {
       return (
         <div class="alarm-statistics">
           <transition name="el-fade-in-linear">
-            <div v-show={props.alarmNum.alert} class="alarm-statistic-item align-center px-4 mb-4">
+            <div
+              v-show={props.alarmNum.alert}
+              class="alarm-statistic-item align-center cursor-pointer px-4 mb-4"
+              onClick={() => {
+                {
+                  emit('showBottomPanel')
+                }
+              }}
+            >
               <VIcon size="18" class="mr-2 color-warning">
                 warning
               </VIcon>
@@ -28,7 +36,15 @@ export default defineComponent({
             </div>
           </transition>
           <transition name="el-fade-in-linear">
-            <div v-show={props.alarmNum.error} class="alarm-statistic-item align-center px-4">
+            <div
+              v-show={props.alarmNum.error}
+              class="alarm-statistic-item align-center cursor-pointer px-4"
+              onClick={() => {
+                {
+                  emit('showBottomPanel')
+                }
+              }}
+            >
               <VIcon size="18" class="mr-2 color-danger">
                 error
               </VIcon>

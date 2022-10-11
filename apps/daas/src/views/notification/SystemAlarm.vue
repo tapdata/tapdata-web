@@ -192,19 +192,19 @@ export default {
         this.table.fetch(1)
       })
     },
-    goLog({ taskId, syncType }) {
-      if (syncType === 'migrate') {
+    goLog(row) {
+      if (row.syncType === 'migrate') {
         this.$router.push({
           name: 'MigrationMonitor',
           params: {
-            taskId
+            id: row.taskId
           }
         })
       } else {
         this.$router.push({
           name: 'TaskMonitor',
           params: {
-            taskId
+            id: row.taskId
           }
         })
       }

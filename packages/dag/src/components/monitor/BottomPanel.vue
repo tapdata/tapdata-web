@@ -95,6 +95,9 @@ export default {
     getLogRef() {
       return this.$refs.log
     },
+    changeAlertTab(tab) {
+      this.currentTab = tab
+    },
 
     changeTab(tab, data) {
       this.currentTab = tab

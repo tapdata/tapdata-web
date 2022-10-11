@@ -106,7 +106,10 @@
             <VEmpty large></VEmpty>
           </div>
 
-          <AlarmStatistics :alarm-num="alarmData ? alarmData.alarmNum : undefined" />
+          <AlarmStatistics
+            :alarm-num="alarmData ? alarmData.alarmNum : undefined"
+            @showBottomPanel="handleAlarmShowBottomPanel"
+          />
         </main>
         <BottomPanel
           v-if="dataflow && dataflow.status && showBottomPanel"
@@ -588,6 +591,16 @@ export default {
 
     handleShowBottomPanel() {
       this.showBottomPanel = !this.showBottomPanel
+    },
+
+    handleAlarmShowBottomPanel() {
+      //告警错误提示点击跳转到告警列表
+      if (!this.showBottomPanel) {
+        this.showBottomPanel = true
+      }
+      this.$nextTick(() => {
+        this.$refs.bottomPanel.changeAlertTab('alert')
+      })
     },
 
     async handleStart() {
