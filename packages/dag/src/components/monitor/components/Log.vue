@@ -730,7 +730,7 @@ export default {
   width: 0;
 }
 .white-space-pre {
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .log-list {
