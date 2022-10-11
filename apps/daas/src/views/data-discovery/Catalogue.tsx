@@ -194,6 +194,8 @@ export default defineComponent({
           <el-table-column
             label={i18n.t('metadata_name')}
             prop="name"
+            show-overflow-tooltip
+            width="350px"
             scopedSlots={{
               default: this.renderNode
             }}
