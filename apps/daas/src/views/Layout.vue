@@ -391,8 +391,8 @@ let menuSetting = [
   {
     name: 'dataService',
     label: 'page_title_data_service',
-    icon: 'connection',
-    code: 'apiServer_navbar',
+    icon: 'apiServer_navbar',
+    code: 'data_publish',
     children: [
       { name: 'dataServer', code: 'API_management_menu', parent: 'dataServer' },
       { name: 'apiClient', code: 'API_clients_menu', parent: 'apiClient' },
