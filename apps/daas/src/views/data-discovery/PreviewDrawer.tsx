@@ -137,7 +137,7 @@ export default defineComponent({
     const loadData = row => {
       data.currentRow = row
       if (data.activeName === 'first') {
-        switch (row.category || row.table) {
+        switch (row.category || row.type) {
           case 'storage':
             data.loading = true
             discoveryApi
@@ -222,111 +222,181 @@ export default defineComponent({
                 ]}
                 v-loading={this.data.tableLoading}
               >
-                <div>
-                  <div class="user">
-                    <span class="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
-                    <el-select v-model={this.data.activeUser}>
-                      <el-option label="admin" value="admin"></el-option>
-                    </el-select>
-                  </div>
-                  <div class="details_data_info mt-4 p-5">
-                    <el-row class="mt-2">
-                      <el-col>
-                        <span class="drawer__header_text inline-block">{i18n.t('metadata_meta_type_table')}</span>
-                        <span class="ml-2">{this.previewData.name}</span>
-                      </el-col>
-                    </el-row>
-                    <el-row class="mt-2">
-                      <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
-                        <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
-                      </el-col>
-                      <el-col span={8}>
-                        <span class="max-label inline-block">
-                          {i18n.t('datadiscovery_previewdrawer_biangengshijian')}
-                        </span>
-                        <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
-                      </el-col>
-                      <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_shujuxiang')}</span>
-                        <span class="ml-2">{this.previewData.fieldNum}</span>
-                      </el-col>
-                    </el-row>
-                    <el-row class="mt-2">
-                      <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_shujuliang')}</span>
-                        <span class="ml-2">{this.previewData.rowNum}</span>
-                      </el-col>
-                      <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
-                        <span class="ml-2">{this.previewData.sourceType}</span>
-                      </el-col>
-                      <el-col class="flex" span={8}>
-                        <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
-                        <span class="ml-2">
-                          <OverflowTooltip
-                            class="cursor-pointer"
-                            style="width:190px"
-                            text={this.previewData.sourceInfo}
-                            placement="right"
-                            open-delay={400}
-                          ></OverflowTooltip>
-                        </span>
-                      </el-col>
-                    </el-row>
-                    <el-row class="mt-2">
-                      <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('connection_list_name')}</span>
-                        <span class="ml-2">{this.previewData.connectionName}</span>
-                      </el-col>
-                      <el-col span={8}>
-                        <span class="max-label inline-block">{i18n.t('connection_list_type')}</span>
-                        <span class="ml-2">{this.previewData.connectionType}</span>
-                      </el-col>
-                      <el-col span={8}>
-                        <span class="max-label inline-block">
-                          {i18n.t('datadiscovery_previewdrawer_lianjiemiaoshu')}
-                        </span>
-                        <span class="ml-2">{this.previewData.connectionDesc}</span>
-                      </el-col>
-                    </el-row>
-                    <el-row class="mt-2">
-                      <el-col span={8}>
-                        <span class="max-label inline-block">
-                          {i18n.t('datadiscovery_previewdrawer_yewumingcheng')}
-                        </span>
-                        <span class="ml-2">{this.previewData.businessName}</span>
-                      </el-col>
-                    </el-row>
-                  </div>
+                <div className="user">
+                  <span className="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
+                  <el-select v-model={this.data.activeUser}>
+                    <el-option label="admin" value="admin"></el-option>
+                  </el-select>
                 </div>
                 {this.previewData.category === 'storage' ? (
-                  <div class="mt-5">
-                    <div class="flex justify-content-between align-items-center">
-                      <span class="drawer__header_text inline-block">
-                        {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
-                      </span>
-                      <el-input
-                        class="mb-3"
-                        style="width:200px"
-                        placeholder="请输入名称"
-                        suffix-icon="el-icon-search"
-                        v-model={this.data.search}
-                        onChange={this.filterNames}
-                      ></el-input>
+                  <div>
+                    <div class="details_data_info mt-4 p-5">
+                      <el-row class="mt-2">
+                        <el-col>
+                          <span class="drawer__header_text inline-block">{i18n.t('metadata_meta_type_table')}</span>
+                          <span class="ml-2">{this.previewData.name}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">
+                            {i18n.t('datadiscovery_previewdrawer_biangengshijian')}
+                          </span>
+                          <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_shujuxiang')}</span>
+                          <span class="ml-2">{this.previewData.fieldNum}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">{i18n.t('datadiscovery_previewdrawer_shujuliang')}</span>
+                          <span class="ml-2">{this.previewData.rowNum}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
+                          <span class="ml-2">{this.previewData.sourceType}</span>
+                        </el-col>
+                        <el-col class="flex" span={8}>
+                          <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
+                          <span class="ml-2">
+                            <OverflowTooltip
+                              class="cursor-pointer"
+                              style="width:190px"
+                              text={this.previewData.sourceInfo}
+                              placement="right"
+                              open-delay={400}
+                            ></OverflowTooltip>
+                          </span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">{i18n.t('connection_list_name')}</span>
+                          <span class="ml-2">{this.previewData.connectionName}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">{i18n.t('connection_list_type')}</span>
+                          <span class="ml-2">{this.previewData.connectionType}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">
+                            {i18n.t('datadiscovery_previewdrawer_lianjiemiaoshu')}
+                          </span>
+                          <span class="ml-2">{this.previewData.connectionDesc}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">
+                            {i18n.t('datadiscovery_previewdrawer_yewumingcheng')}
+                          </span>
+                          <span class="ml-2">{this.previewData.businessName}</span>
+                        </el-col>
+                      </el-row>
                     </div>
-                    <VTable
-                      class="discovery-page-table"
-                      columns={this.data.columns}
-                      data={this.previewData.fields}
-                      has-pagination={false}
-                    ></VTable>
+                    <div class="mt-5">
+                      <div class="flex justify-content-between align-items-center">
+                        <span class="drawer__header_text inline-block">
+                          {i18n.t('datadiscovery_previewdrawer_shujuxiang')}
+                        </span>
+                        <el-input
+                          class="mb-3"
+                          style="width:200px"
+                          placeholder="请输入名称"
+                          suffix-icon="el-icon-search"
+                          v-model={this.data.search}
+                          onChange={this.filterNames}
+                        ></el-input>
+                      </div>
+                      <VTable
+                        class="discovery-page-table"
+                        columns={this.data.columns}
+                        data={this.previewData.fields}
+                        has-pagination={false}
+                      ></VTable>
+                    </div>
                   </div>
                 ) : (
                   ''
                 )}
                 {this.previewData.category === 'api' ? (
                   <div>
+                    <div class="details_data_info mt-4 p-5">
+                      <el-row class="mt-2">
+                        <el-col>
+                          <span class="drawer__header_text inline-block">{i18n.t('metadata_meta_type_table')}</span>
+                          <span class="ml-2">{this.previewData.name}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">
+                            {i18n.t('datadiscovery_previewdrawer_biangengshijian')}
+                          </span>
+                          <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">输入参数</span>
+                          <span class="ml-2">{this.previewData.inputParamNum}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">输出参数</span>
+                          <span class="ml-2">{this.previewData.outputParamNum}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">来源类型</span>
+                          <span class="ml-2">{this.previewData.sourceType}</span>
+                        </el-col>
+                        <el-col class="flex" span={8}>
+                          <span class="max-label inline-block">来源信息</span>
+                          <span class="ml-2">
+                            <OverflowTooltip
+                              class="cursor-pointer"
+                              style="width:190px"
+                              text={this.previewData.sourceInfo}
+                              placement="right"
+                              open-delay={400}
+                            ></OverflowTooltip>
+                          </span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">服务名称</span>
+                          <span class="ml-2">{this.previewData.name}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">服务描述</span>
+                          <span class="ml-2">{this.previewData.description}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">
+                            {i18n.t('datadiscovery_previewdrawer_lianjiemiaoshu')}
+                          </span>
+                          <span class="ml-2">{this.previewData.connectionDesc}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">
+                            {i18n.t('datadiscovery_previewdrawer_yewumingcheng')}
+                          </span>
+                          <span class="ml-2">{this.previewData.businessName}</span>
+                        </el-col>
+                      </el-row>
+                    </div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">输入参数</span>
                       <VTable has-pagination={false} columns={this.data.apiColumns} data={this.data.outInput}></VTable>
@@ -356,6 +426,76 @@ export default defineComponent({
                 )}
                 {this.previewData.category === 'job' ? (
                   <div>
+                    <div class="user">
+                      <span class="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
+                      <el-select v-model={this.data.activeUser}>
+                        <el-option label="admin" value="admin"></el-option>
+                      </el-select>
+                    </div>
+                    <div class="details_data_info mt-4 p-5">
+                      <el-row class="mt-2">
+                        <el-col>
+                          <span class="drawer__header_text inline-block">{i18n.t('metadata_meta_type_table')}</span>
+                          <span class="ml-2">{this.previewData.name}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">{i18n.t('column_create_time')}</span>
+                          <span class="ml-2">{dayjs(this.previewData.createAt).format('YYYY-MM-DD HH:mm:ss')}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">
+                            {i18n.t('datadiscovery_previewdrawer_biangengshijian')}
+                          </span>
+                          <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">节点数</span>
+                          <span class="ml-2">{this.previewData.nodeNum}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">来源类型</span>
+                          <span class="ml-2">{this.previewData.sourceType}</span>
+                        </el-col>
+                        <el-col class="flex" span={8}>
+                          <span class="max-label inline-block">来源信息</span>
+                          <span class="ml-2">
+                            <OverflowTooltip
+                              class="cursor-pointer"
+                              style="width:190px"
+                              text={this.previewData.sourceInfo}
+                              placement="right"
+                              open-delay={400}
+                            ></OverflowTooltip>
+                          </span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">引擎名称</span>
+                          <span class="ml-2">{this.previewData.agentId}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">引擎描述</span>
+                          <span class="ml-2">{this.previewData.agentDesc}</span>
+                        </el-col>
+                        <el-col span={8}>
+                          <span class="max-label inline-block">任务描述</span>
+                          <span class="ml-2">{this.previewData.taskDesc}</span>
+                        </el-col>
+                      </el-row>
+                      <el-row class="mt-2">
+                        <el-col span={8}>
+                          <span class="max-label inline-block">
+                            {i18n.t('datadiscovery_previewdrawer_yewumingcheng')}
+                          </span>
+                          <span class="ml-2">{this.previewData.businessName}</span>
+                        </el-col>
+                      </el-row>
+                    </div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">节点</span>
                       <NodeViewer id={this.previewData.id}></NodeViewer>
