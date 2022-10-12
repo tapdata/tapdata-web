@@ -21,6 +21,7 @@ import SelectList from './SelectList.vue'
 import GitBook from './GitBook.vue'
 import Drawer from './Drawer.vue'
 import InlineInput from './InlineInput.vue'
+import DarkSelect from './DarkSelect'
 
 // business
 import Chart from './chart'
@@ -52,7 +53,8 @@ export {
   Drawer,
   InlineInput,
   DiscoveryClassification,
-  OverflowTooltip
+  OverflowTooltip,
+  DarkSelect
 }
 
 export * from './base'
