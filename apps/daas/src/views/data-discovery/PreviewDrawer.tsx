@@ -68,11 +68,11 @@ export default defineComponent({
           prop: 'type'
         },
         {
-          label: '节点描述',
+          label: i18n.t('daas_data_discovery_previewdrawer_jiedianmiaoshu'),
           prop: 'connectionInfo'
         },
         {
-          label: '业务描述',
+          label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
           prop: 'serviceDesc'
         }
       ],
@@ -108,23 +108,10 @@ export default defineComponent({
           prop: 'description'
         }
       ],
-      outInput: [
-        {
-          name: 'page',
-          type: 'number',
-          defaultvalue: '1',
-          description: i18n.t('daas_data_server_drawer_fenyebianhao'),
-          required: true
-        },
-        {
-          name: 'limit',
-          type: 'number',
-          defaultvalue: '20',
-          description: i18n.t('daas_data_server_drawer_meigefenyefan'),
-          required: true
-        }
-      ]
+      params: [],
+      urls: []
     })
+
     const format = data => {
       for (let i = 0; i < data?.length; i++) {
         data[i].primaryKey = !data[i].primaryKey ? '' : data[i].primaryKey
@@ -159,8 +146,24 @@ export default defineComponent({
               .then(res => {
                 let newData = res
                 newData['fields'] = format(res.fields)
+                data.params = res.paths?.[0]?.params || []
+                let baseUrl = res.paths?.[0]?.path || ''
+                data.urls = [
+                  {
+                    method: 'POST',
+                    path: `http://${res.sourceInfo}${baseUrl}/find`
+                  },
+                  {
+                    method: 'GET',
+                    path: `http://${res.sourceInfo}${baseUrl}`
+                  },
+                  {
+                    method: 'TOKEN',
+                    path: `${location.origin + location.pathname}oauth/token`
+                  }
+                ]
+
                 preview.value = newData || ''
-                oldData.value = JSON.parse(JSON.stringify(newData))
               })
               .finally(() => {
                 data.loading = false
@@ -173,7 +176,6 @@ export default defineComponent({
               .then(res => {
                 let newData = res
                 preview.value = newData || ''
-                oldData.value = JSON.parse(JSON.stringify(newData))
               })
               .finally(() => {
                 data.loading = false
@@ -217,13 +219,13 @@ export default defineComponent({
             <div class="discovery-page-main-box">
               <div
                 class={[
-                  this.previewData.category === 'api' ? 'overflow-hidden' : 'overflow-auto',
+                  this.previewData.category === 'storage' ? 'overflow-hidden' : 'overflow-auto',
                   'discovery-page-right'
                 ]}
                 v-loading={this.data.tableLoading}
               >
-                <div className="user">
-                  <span className="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
+                <div class="user">
+                  <span class="mr-4">{i18n.t('datadiscovery_previewdrawer_guanliyuan')}</span>
                   <el-select v-model={this.data.activeUser}>
                     <el-option label="admin" value="admin"></el-option>
                   </el-select>
@@ -308,7 +310,7 @@ export default defineComponent({
                         <el-input
                           class="mb-3"
                           style="width:200px"
-                          placeholder="请输入名称"
+                          placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
                           suffix-icon="el-icon-search"
                           v-model={this.data.search}
                           onChange={this.filterNames}
@@ -346,21 +348,23 @@ export default defineComponent({
                           <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">输入参数</span>
+                          <span class="max-label inline-block">{i18n.t('daas_data_server_drawer_shurucanshu')}</span>
                           <span class="ml-2">{this.previewData.inputParamNum}</span>
                         </el-col>
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">输出参数</span>
+                          <span class="max-label inline-block">
+                            {i18n.t('daas_data_discovery_previewdrawer_shuchucanshu')}
+                          </span>
                           <span class="ml-2">{this.previewData.outputParamNum}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">来源类型</span>
+                          <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
                           <span class="ml-2">{this.previewData.sourceType}</span>
                         </el-col>
                         <el-col class="flex" span={8}>
-                          <span class="max-label inline-block">来源信息</span>
+                          <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
                           <span class="ml-2">
                             <OverflowTooltip
                               class="cursor-pointer"
@@ -374,11 +378,13 @@ export default defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">服务名称</span>
+                          <span class="max-label inline-block">{i18n.t('daas_data_server_list_fuwumingcheng')}</span>
                           <span class="ml-2">{this.previewData.name}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">服务描述</span>
+                          <span class="max-label inline-block">
+                            {i18n.t('daas_data_discovery_previewdrawer_fuwumiaoshu')}
+                          </span>
                           <span class="ml-2">{this.previewData.description}</span>
                         </el-col>
                       </el-row>
@@ -392,21 +398,27 @@ export default defineComponent({
                       </el-row>
                     </div>
                     <div class="mt-5">
-                      <span class="drawer__header_text inline-block">输入参数</span>
-                      <VTable has-pagination={false} columns={this.data.apiColumns} data={this.data.outInput}></VTable>
+                      <span class="drawer__header_text inline-block">
+                        {i18n.t('daas_data_server_drawer_shurucanshu')}
+                      </span>
+                      <VTable has-pagination={false} columns={this.data.apiColumns} data={this.data.params}></VTable>
                     </div>
                     <div class="mt-5">
-                      <span class="drawer__header_text inline-block">输出参数</span>
+                      <span class="drawer__header_text inline-block">
+                        {i18n.t('daas_data_discovery_previewdrawer_shuchucanshu')}
+                      </span>
                       <VTable
-                        class="discovery-page-api-table"
                         hasPagination={false}
                         columns={this.data.apiInputColumns}
                         data={this.previewData.fields}
                       ></VTable>
                     </div>
                     <div class="mt-5">
+                      <span class="drawer__header_text inline-block">
+                        {i18n.t('daas_data_server_drawer_fuwufangwen')}
+                      </span>
                       <ul class="data-api-path">
-                        {this.previewData.paths.map(path => (
+                        {this.data.urls.map(path => (
                           <li class="data-api-path__item">
                             <div class={['method--' + path.method, 'data-api-path__method']}>{path.method}</div>
                             <div class="data-api-path__value line-height">{path.path}</div>
@@ -423,7 +435,7 @@ export default defineComponent({
                     <div class="details_data_info mt-4 p-5">
                       <el-row class="mt-2">
                         <el-col>
-                          <span class="drawer__header_text inline-block">任务</span>
+                          <span class="drawer__header_text inline-block">{i18n.t('setting_Job')}</span>
                           <span class="ml-2">{this.previewData.name}</span>
                         </el-col>
                       </el-row>
@@ -439,17 +451,19 @@ export default defineComponent({
                           <span class="ml-2">{dayjs(this.previewData.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">节点数</span>
+                          <span class="max-label inline-block">
+                            {i18n.t('daas_data_discovery_previewdrawer_jiedianshu')}
+                          </span>
                           <span class="ml-2">{this.previewData.nodeNum}</span>
                         </el-col>
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">来源类型</span>
+                          <span class="max-label inline-block">{i18n.t('object_list_source_type')}</span>
                           <span class="ml-2">{this.previewData.sourceType}</span>
                         </el-col>
                         <el-col class="flex" span={8}>
-                          <span class="max-label inline-block">来源信息</span>
+                          <span class="max-label inline-block">{i18n.t('object_list_source_information')}</span>
                           <span class="ml-2">
                             <OverflowTooltip
                               class="cursor-pointer"
@@ -463,15 +477,21 @@ export default defineComponent({
                       </el-row>
                       <el-row class="mt-2">
                         <el-col span={8}>
-                          <span class="max-label inline-block">引擎名称</span>
+                          <span class="max-label inline-block">
+                            {i18n.t('daas_data_discovery_previewdrawer_yinqingmingcheng')}
+                          </span>
                           <span class="ml-2">{this.previewData.agentId}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">引擎描述</span>
+                          <span class="max-label inline-block">
+                            {i18n.t('daas_data_discovery_previewdrawer_yinqingmiaoshu')}
+                          </span>
                           <span class="ml-2">{this.previewData.agentDesc}</span>
                         </el-col>
                         <el-col span={8}>
-                          <span class="max-label inline-block">任务描述</span>
+                          <span class="max-label inline-block">
+                            {i18n.t('daas_data_discovery_previewdrawer_renwumiaoshu')}
+                          </span>
                           <span class="ml-2">{this.previewData.taskDesc}</span>
                         </el-col>
                       </el-row>
@@ -485,7 +505,9 @@ export default defineComponent({
                       </el-row>
                     </div>
                     <div class="mt-5">
-                      <span class="drawer__header_text inline-block">节点</span>
+                      <span class="drawer__header_text inline-block">
+                        {i18n.t('daas_data_discovery_previewdrawer_jiedian')}
+                      </span>
                       <NodeViewer id={this.previewData.id}></NodeViewer>
                     </div>
                     <div class="mt-5">

@@ -1972,5 +1972,13 @@ export default {
   daas_login_passwordreset_shangweiyanzhengdian: '尚未驗證電子郵件',
   daas_login_passwordreset_zhaobudaodianzi: '找不到電子郵件',
   daas_metadata_search_yuanbiaoming: '( 原表名:',
-  daas_shared_mining_detail_wajuexiangqingx: '挖掘詳情x軸：'
+  daas_shared_mining_detail_wajuexiangqingx: '挖掘詳情x軸：',
+  daas_data_discovery_previewdrawer_jiedian: '節點',
+  daas_data_discovery_previewdrawer_renwumiaoshu: '任務描述',
+  daas_data_discovery_previewdrawer_yinqingmiaoshu: '引擎描述',
+  daas_data_discovery_previewdrawer_yinqingmingcheng: '引擎名稱',
+  daas_data_discovery_previewdrawer_jiedianshu: '節點數',
+  daas_data_discovery_previewdrawer_shuchucanshu: '輸出參數',
+  daas_data_discovery_previewdrawer_fuwumiaoshu: '服務描述',
+  daas_data_discovery_previewdrawer_jiedianmiaoshu: '節點描述'
 }
