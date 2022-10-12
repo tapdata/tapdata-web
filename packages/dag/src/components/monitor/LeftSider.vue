@@ -176,7 +176,7 @@
           ></LineChart>
         </div>-->
       </div>
-      <div class="info-box">
+      <div class="py-2 px-4">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwushijiantong') }}</span>
         </div>
