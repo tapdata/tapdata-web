@@ -18,6 +18,15 @@
             @load-data="$emit('load-data')"
           ></Alert>
         </ElTabPane>
+        <ElTabPane label="关联任务" name="relation">
+          <RelationList
+            v-if="currentTab === 'relation'"
+            v-bind="$attrs"
+            :currentTab="currentTab"
+            @change-tab="changeTab"
+            @load-data="$emit('load-data')"
+          ></RelationList>
+        </ElTabPane>
       </ElTabs>
 
       <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
@@ -35,11 +44,12 @@ import focusSelect from '@tap/component/src/directives/focusSelect'
 import Log from './components/Log'
 import Record from './components/Record'
 import Alert from './components/Alert'
+import RelationList from './components/RelationList'
 
 export default {
   name: 'ConfigPanel',
 
-  components: { Log, Record, Alert },
+  components: { Log, Record, Alert, RelationList },
 
   directives: {
     resize,
