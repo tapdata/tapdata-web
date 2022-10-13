@@ -26,6 +26,7 @@ export default observer({
     this.getAllNode()
     let values = this.settings
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       formScope: {
         checkName: value => {
           return new Promise(resolve => {
@@ -264,7 +265,7 @@ export default observer({
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$values.syncType === "migrate"}}'
+                              visible: '{{$values.syncType === "migrate" && isDaas}}'
                             }
                           }
                         }

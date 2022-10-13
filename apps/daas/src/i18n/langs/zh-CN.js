@@ -1975,5 +1975,15 @@ export default {
   daas_login_passwordreset_shangweiyanzhengdian: '尚未验证电子邮件',
   daas_login_passwordreset_zhaobudaodianzi: '找不到电子邮件',
   daas_metadata_search_yuanbiaoming: '( 原表名:',
-  daas_shared_mining_detail_wajuexiangqingx: '挖掘详情x轴：'
+  daas_shared_mining_detail_wajuexiangqingx: '挖掘详情x轴：',
+  daas_data_discovery_previewdrawer_jiedian: '节点',
+  daas_data_discovery_previewdrawer_renwumiaoshu: '任务描述',
+  daas_data_discovery_previewdrawer_yinqingmiaoshu: '引擎描述',
+  daas_data_discovery_previewdrawer_yinqingmingcheng: '引擎名称',
+  daas_data_discovery_previewdrawer_jiedianshu: '节点数',
+  daas_data_discovery_previewdrawer_shuchucanshu: '输出参数',
+  daas_data_discovery_previewdrawer_fuwumiaoshu: '服务描述',
+  daas_data_discovery_previewdrawer_jiedianmiaoshu: '节点描述',
+  daas_data_discovery_previewdrawer_shurujiedian: '输入节点',
+  daas_data_discovery_previewdrawer_shuchujiedian: '输出节点'
 }

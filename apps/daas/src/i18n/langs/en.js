@@ -2027,5 +2027,15 @@ export default {
   daas_login_passwordreset_shangweiyanzhengdian: 'Email not verified',
   daas_login_passwordreset_zhaobudaodianzi: 'Email not found',
   daas_metadata_search_yuanbiaoming: ' (Original table name:',
-  daas_shared_mining_detail_wajuexiangqingx: 'Mining details x-axis:'
+  daas_shared_mining_detail_wajuexiangqingx: 'Mining details x-axis:',
+  daas_data_discovery_previewdrawer_jiedian: 'Node',
+  daas_data_discovery_previewdrawer_renwumiaoshu: 'Task description',
+  daas_data_discovery_previewdrawer_yinqingmiaoshu: 'Engine description',
+  daas_data_discovery_previewdrawer_yinqingmingcheng: 'Engine name',
+  daas_data_discovery_previewdrawer_jiedianshu: 'Number of nodes',
+  daas_data_discovery_previewdrawer_shuchucanshu: 'Output parameters',
+  daas_data_discovery_previewdrawer_fuwumiaoshu: 'Service Description',
+  daas_data_discovery_previewdrawer_jiedianmiaoshu: 'node description',
+  daas_data_discovery_previewdrawer_shurujiedian: 'Input node',
+  daas_data_discovery_previewdrawer_shuchujiedian: 'Output node'
 }
