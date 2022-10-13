@@ -5,11 +5,13 @@
         v-model="searchParams"
         :items="filterItems"
         :change-route="false"
+        class="ml-2"
         @search="handleSearch"
         @fetch="handleFetch"
       ></FilterBar>
       <VTable
         :columns="columns"
+        :remoteMethod="remoteMethod"
         :data="list"
         :page-options="{
           layout: 'total, ->, prev, pager, next, sizes, jumper'
@@ -54,6 +56,8 @@ import { mapGetters } from 'vuex'
 import { VTable, FilterBar, DarkSelect } from '@tap/component'
 import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP, TaskStatus } from '@tap/business'
 import { alarmApi } from '@tap/api'
+import { deepCopy } from '@tap/shared'
+import { connectionsApi } from '@tap/api'
 
 export default {
   name: 'Alert',
@@ -92,13 +96,12 @@ export default {
       columns: [
         {
           label: '任务名称',
-          prop: 'taskName',
-          width: 120
+          prop: 'taskName'
         },
         {
           label: '任务类型',
           prop: 'taskType',
-          width: 80
+          width: 150
         },
         {
           label: '任务状态',
@@ -298,6 +301,34 @@ export default {
       ]
     },
 
+    remoteMethod({ page }) {
+      const { ids } = this
+      let { current, size } = page
+      let filter = {
+        where: {
+          id: {
+            inq: ids
+          }
+        },
+        limit: size,
+        skip: size * (current - 1)
+      }
+      return connectionsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          let list = (data?.items || []).map(item => {
+            item.connectType = this.connectTypeMap[item.connection_type]
+            return deepCopy(item)
+          })
+          return {
+            total: data?.total || 0,
+            data: list
+          }
+        })
+    },
+
     getList() {
       let data = [
         {
@@ -342,12 +373,10 @@ export default {
     },
 
     handleFetch() {
-      console.log('handleFetch')
       this.$refs.table?.fetch(1)
     },
 
     handleSearch() {
-      console.log('handleSearch', this.searchParams)
       this.getList()
     }
   }

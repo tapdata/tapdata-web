@@ -160,7 +160,6 @@ export default {
         if (valid) {
           const { delayTrigger } = this.$util
           delayTrigger(() => {
-            console.log('search-emit')
             this.$emit('input', this.getValue())
             this.$emit('search', this.getValue())
             this.changeRoute &&
