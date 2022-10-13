@@ -336,6 +336,9 @@ export default {
     },
     'dataflow.taskRecordId'() {
       this.init()
+    },
+    'dataflow.startTime'() {
+      this.init()
     }
   },
 
