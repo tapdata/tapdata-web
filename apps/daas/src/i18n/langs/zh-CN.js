@@ -1983,5 +1983,7 @@ export default {
   daas_data_discovery_previewdrawer_jiedianshu: '节点数',
   daas_data_discovery_previewdrawer_shuchucanshu: '输出参数',
   daas_data_discovery_previewdrawer_fuwumiaoshu: '服务描述',
-  daas_data_discovery_previewdrawer_jiedianmiaoshu: '节点描述'
+  daas_data_discovery_previewdrawer_jiedianmiaoshu: '节点描述',
+  daas_data_discovery_previewdrawer_shurujiedian: '输入节点',
+  daas_data_discovery_previewdrawer_shuchujiedian: '输出节点'
 }

@@ -2035,5 +2035,7 @@ export default {
   daas_data_discovery_previewdrawer_jiedianshu: 'Number of nodes',
   daas_data_discovery_previewdrawer_shuchucanshu: 'Output parameters',
   daas_data_discovery_previewdrawer_fuwumiaoshu: 'Service Description',
-  daas_data_discovery_previewdrawer_jiedianmiaoshu: 'node description'
+  daas_data_discovery_previewdrawer_jiedianmiaoshu: 'node description',
+  daas_data_discovery_previewdrawer_shurujiedian: 'Input node',
+  daas_data_discovery_previewdrawer_shuchujiedian: 'Output node'
 }

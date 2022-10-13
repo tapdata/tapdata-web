@@ -121,6 +121,17 @@ export default defineComponent({
       }
       return data
     }
+
+    const formatTask = data => {
+      for (let i = 0; i < data?.length; i++) {
+        if (data[i].type === 'calculate') {
+          data[i].connectionInfo = `${i18n.t('daas_data_discovery_previewdrawer_shurujiedian')}: ${
+            data[i].inputNodeName
+          } ; ${i18n.t('daas_data_discovery_previewdrawer_shurujiedian')}: ${data[i].outputNodeName}`
+        }
+      }
+      return data
+    }
     const loadData = row => {
       data.currentRow = row
       if (data.activeName === 'first') {
@@ -175,6 +186,8 @@ export default defineComponent({
               .overViewTask(row.id)
               .then(res => {
                 let newData = res
+                //数据格式化
+                newData['taskConnections'] = formatTask(res?.taskConnections)
                 preview.value = newData || ''
               })
               .finally(() => {
