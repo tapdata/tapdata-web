@@ -109,35 +109,39 @@
       </div>
     </div>
     <!-- 版本升级弹窗-->
-    <el-dialog :visible.sync="showUpgrade" :title="$t('dfs_workbench_workbench_banbenshengjitong')" width="670px">
-      <div class="dialog-upgrade">
-        <div class="mb-2 dialog-upgrade__header">{{ $t('dfs_workbench_workbench_banbenshengjihe') }}</div>
+    <el-dialog
+      class="dialog-upgrade"
+      :visible.sync="showUpgrade"
+      :title="$t('dfs_workbench_workbench_banbenshengjitong')"
+      width="670px"
+    >
+      <div class="dialog-upgrade__text">
         <div>
           <p class="mb-2">{{ $t('dfs_workbench_workbench_zunjingdeyonghu') }}</p>
           <p class="mb-2">{{ $t('dfs_workbench_workbench_zainianyueriwo') }}</p>
           <p>{{ $t('dfs_workbench_workbench_youyuzengjiale') }}</p>
           <p>{{ $t('dfs_workbench_workbench_dangranruguoyou') }}</p>
         </div>
-        <p class="mb-2 mt-2 dialog-upgrade__header">{{ $t('dfs_workbench_workbench_xiamianshixinban') }}</p>
-        <p class="mt-4 mb-2 dialog-upgrade__header">{{ $t('dfs_workbench_workbench_jiyuPdk2') }}</p>
+        <p class="mb-2 mt-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_xiamianshixinban') }}</p>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_jiyuPdk2') }}</p>
         <ul>
           <li>{{ $t('dfs_workbench_workbench_jiyuPdk') }}</li>
           <li>{{ $t('dfs_workbench_workbench_yonghukeanzhao') }}</li>
           <li>{{ $t('dfs_workbench_workbench_xinkaifadeshu') }}</li>
         </ul>
-        <p class="mt-4 mb-2 dialog-upgrade__header">{{ $t('dfs_workbench_workbench_quanlianghezengliang') }}</p>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_quanlianghezengliang') }}</p>
         <ul>
           <li>{{ $t('dfs_workbench_workbench_jubeiduishuju3') }}</li>
           <li>{{ $t('dfs_workbench_workbench_jubeiduishuju2') }}</li>
           <li>{{ $t('dfs_workbench_workbench_jubeiduishuju') }}</li>
         </ul>
-        <p class="mt-4 mb-2 dialog-upgrade__header">{{ $t('dfs_workbench_workbench_renwukeguance') }}</p>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_renwukeguance') }}</p>
         <ul>
           <li>{{ $t('dfs_workbench_workbench_renwuzhibiaoke') }}</li>
           <li>{{ $t('dfs_workbench_workbench_renwurizhike') }}</li>
           <li>{{ $t('dfs_workbench_workbench_renwugaojingneng') }}</li>
         </ul>
-        <p class="mt-4 mb-2 dialog-upgrade__header">{{ $t('dfs_workbench_workbench_shujutongbuneng') }}</p>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_shujutongbuneng') }}</p>
         <ul>
           <li>{{ $t('dfs_workbench_workbench_xinzengdongtaixin') }}</li>
           <li>{{ $t('dfs_workbench_workbench_xinzengDdl') }}</li>
@@ -580,12 +584,19 @@ export default {
 .guide-list {
   height: 190px;
 }
-.dialog-upgrade {
+.dialog-upgrade__text {
   font-size: 12px;
   color: map-get($fontColor, light);
 }
-.dialog-upgrade__header {
+.dialog-upgrade__text__header {
   font-size: 14px;
   color: map-get($fontColor, normal);
+}
+.dialog-upgrade {
+  ::v-deep {
+    .el-dialog__body {
+      padding: 0 20px;
+    }
+  }
 }
 </style>

@@ -213,14 +213,14 @@ export default {
           name: 'Row Filter',
           type: 'row_filter_processor'
         },
-        {
-          name: i18n.t('packages_dag_dag_connection'),
-          type: 'join_processor'
-        },
-        {
-          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
-        },
+        // {
+        //   name: i18n.t('packages_dag_dag_connection'),
+        //   type: 'join_processor'
+        // },
+        // {
+        //   name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+        //   type: 'merge_table_processor'
+        // },
         {
           name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
           type: 'field_calc_processor'
