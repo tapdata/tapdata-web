@@ -508,7 +508,7 @@ export default defineComponent({
                       <span class="drawer__header_text inline-block">
                         {i18n.t('daas_data_discovery_previewdrawer_jiedian')}
                       </span>
-                      <NodeViewer id={this.previewData.id}></NodeViewer>
+                      <NodeViewer dag={this.previewData.dag}></NodeViewer>
                     </div>
                     <div class="mt-5">
                       <VTable

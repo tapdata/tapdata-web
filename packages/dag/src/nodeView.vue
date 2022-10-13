@@ -30,7 +30,7 @@ import { allResourceIns } from './nodes/loader'
 
 export default {
   name: 'NodeViewer',
-  props: ['id'],
+  props: ['dag'],
   components: {
     PaperScroller,
     DFNode
@@ -55,25 +55,15 @@ export default {
     })
   },
   methods: {
-    async loadDataflow() {
-      this.loading = true
-      try {
-        return await taskApi.get(this.id)
-      } catch (e) {
-        console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
-      } finally {
-        this.loading = false
-      }
-    },
     async openDataflow() {
-      const data = await this.loadDataflow()
+      const data = this.dag
 
       if (data) {
-        const { dag } = data
+        const { edges } = data
         this.setTaskId(data.id)
-        this.setEdges(dag.edges)
+        this.setEdges(edges)
         await this.$nextTick()
-        await this.addNodes(dag)
+        await this.addNodes(data)
         await this.$nextTick()
         this.$refs.paperScroller.initVisibleArea()
         this.$refs.paperScroller.autoResizePaper()
