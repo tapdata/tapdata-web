@@ -6,13 +6,12 @@
         :items="filterItems"
         :change-route="false"
         class="ml-2"
-        @search="handleSearch"
+        @search="handleFetch"
         @fetch="handleFetch"
       ></FilterBar>
       <VTable
         :columns="columns"
         :remoteMethod="remoteMethod"
-        :data="list"
         :page-options="{
           layout: 'total, ->, prev, pager, next, sizes, jumper'
         }"
@@ -31,16 +30,7 @@
         </template>
         <template slot="operation" slot-scope="scope" fixed="right">
           <div class="operate-columns">
-            <ElButton
-              size="mini"
-              type="text"
-              :disabled="scope.row.status === 'CLOESE'"
-              @click="handleClose(scope.row)"
-              >{{ $t('packages_dag_components_alert_guanbi') }}</ElButton
-            >
-            <ElButton size="mini" type="text" @click="handleLog(scope.row)">{{
-              $t('packages_dag_monitor_bottompanel_rizhi')
-            }}</ElButton>
+            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">详情</ElButton>
           </div>
         </template>
       </VTable>
@@ -49,34 +39,19 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
-import { mapGetters } from 'vuex'
-
 import { VTable, FilterBar, DarkSelect } from '@tap/component'
-import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP, TaskStatus } from '@tap/business'
-import { alarmApi } from '@tap/api'
-import { deepCopy } from '@tap/shared'
+import { TaskStatus } from '@tap/business'
 import { connectionsApi } from '@tap/api'
 
 export default {
   name: 'Alert',
 
-  components: { VTable, FilterBar, DarkSelect, TaskStatus },
+  components: { VTable, FilterBar, TaskStatus },
 
   props: {
     dataflow: {
       type: Object,
       default: () => {}
-    },
-    logsData: {
-      type: Object,
-      default: () => {
-        return {
-          total: 0,
-          items: []
-        }
-      }
     }
   },
 
@@ -88,11 +63,6 @@ export default {
         taskName: ''
       },
       filterItems: [],
-      activeNodeId: 'all',
-      form: {
-        level: '',
-        status: ''
-      },
       columns: [
         {
           label: '任务名称',
@@ -120,118 +90,7 @@ export default {
           fixed: 'right',
           width: 150
         }
-      ],
-      list: [],
-      taskTypesItems: [
-        {
-          label: '挖掘任务',
-          value: '挖掘任务'
-        },
-        {
-          label: '校验任务',
-          value: '校验任务'
-        },
-        {
-          label: '缓存任务',
-          value: '缓存任务'
-        },
-        {
-          label: '精准延时',
-          value: '精准延时'
-        }
-      ],
-      taskStatusItems: [
-        {
-          label: '挖掘任务',
-          value: '挖掘任务'
-        },
-        {
-          label: '校验任务',
-          value: '校验任务'
-        },
-        {
-          label: '缓存任务',
-          value: '缓存任务'
-        },
-        {
-          label: '精准延时',
-          value: '精准延时'
-        }
       ]
-    }
-  },
-
-  computed: {
-    ...mapGetters('dataflow', ['allNodes']),
-
-    levelItems() {
-      let result = [
-        {
-          label: i18n.t('packages_dag_components_log_quanbu'),
-          value: ''
-        }
-      ]
-      for (let key in ALARM_LEVEL_MAP) {
-        result.push({
-          label: ALARM_LEVEL_MAP[key].text,
-          value: key
-        })
-      }
-      return result
-    },
-
-    statusItems() {
-      let result = [
-        {
-          label: i18n.t('packages_dag_components_log_quanbu'),
-          value: ''
-        }
-      ]
-      for (let key in ALARM_STATUS_MAP) {
-        result.push({
-          label: ALARM_STATUS_MAP[key].text,
-          value: key
-        })
-      }
-      return result
-    },
-
-    items() {
-      const nodeMap =
-        this.alarmData?.nodeInfos?.reduce((cur, next) => {
-          return { ...cur, [next.nodeId]: next }
-        }, {}) || {}
-      const totals =
-        this.alarmData?.nodeInfos?.reduce((cur, next) => {
-          return cur + (next.num || 0)
-        }, 0) || 0
-      return [
-        {
-          label: '全部告警',
-          value: 'all',
-          num: totals
-        },
-        ...this.allNodes
-          .map(t => {
-            return {
-              label: t.name,
-              value: t.id,
-              source: t.$outputs.length > 0,
-              target: t.$inputs.length > 0,
-              num: nodeMap[t.id]?.num || 0
-            }
-          })
-          .filter(t => t.num)
-      ]
-    }
-  },
-
-  watch: {
-    alarmData: {
-      deep: true,
-      handler() {
-        this.init()
-      }
     }
   },
 
@@ -242,7 +101,6 @@ export default {
   methods: {
     init() {
       this.getSearchItems()
-      this.getList()
     },
 
     getSearchItems() {
@@ -302,6 +160,7 @@ export default {
     },
 
     remoteMethod({ page }) {
+      console.log('remoteMethod', page, this.searchParams)
       const { ids } = this
       let { current, size } = page
       let filter = {
@@ -318,66 +177,38 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          let list = (data?.items || []).map(item => {
-            item.connectType = this.connectTypeMap[item.connection_type]
-            return deepCopy(item)
-          })
           return {
-            total: data?.total || 0,
-            data: list
+            total: 10,
+            data: [
+              {
+                taskName: 'taskName',
+                taskType: 'taskType',
+                status: 'running',
+                startTime: Date.now()
+              },
+              {
+                taskName: 'taskName',
+                taskType: 'taskType',
+                status: 'running',
+                startTime: Date.now()
+              },
+              {
+                taskName: 'taskName',
+                taskType: 'taskType',
+                status: 'stopping',
+                startTime: Date.now()
+              }
+            ]
           }
         })
     },
 
-    getList() {
-      let data = [
-        {
-          taskName: 'taskName',
-          taskType: 'taskType',
-          status: 'running',
-          startTime: Date.now()
-        },
-        {
-          taskName: 'taskName',
-          taskType: 'taskType',
-          status: 'running',
-          startTime: Date.now()
-        },
-        {
-          taskName: 'taskName',
-          taskType: 'taskType',
-          status: 'stopping',
-          startTime: Date.now()
-        }
-      ]
-      this.list = data
-    },
-
-    changeItem(item) {
-      if (this.activeNodeId === item.value) {
-        return
-      }
-      this.activeNodeId = item.value
-      this.getList()
-    },
-
-    handleClose(row = {}) {
-      alarmApi.close([row.id]).then(() => {
-        this.$message.success('关闭成功')
-        this.$emit('load-data')
-      })
-    },
-
-    handleLog(row = {}) {
-      this.$emit('change-tab', 'log', row)
+    handleDetail(row = {}) {
+      console.log('handleDetail', row)
     },
 
     handleFetch() {
       this.$refs.table?.fetch(1)
-    },
-
-    handleSearch() {
-      this.getList()
     }
   }
 }
