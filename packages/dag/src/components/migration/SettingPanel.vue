@@ -25,6 +25,7 @@ export default observer({
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
     this.getAllNode()
     let values = this.settings
+    values.isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       formScope: {
@@ -38,6 +39,10 @@ export default observer({
       schema: {
         type: 'object',
         properties: {
+          isDaas: {
+            type: 'string',
+            display: 'none'
+          },
           layout: {
             type: 'void',
             properties: {
@@ -265,7 +270,7 @@ export default observer({
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$values.syncType === "migrate" && isDaas}}'
+                              visible: '{{$values.syncType === "migrate" && $values.isDaas}}'
                             }
                           }
                         }
