@@ -16,8 +16,8 @@
         v-model="item.value"
         :is="getComponent(item.type)"
         :style="getStyle(item)"
-        @input="search(item)"
-        @change="search(item)"
+        @input="search(item, 'input')"
+        @change="search(item, 'change')"
         @clear="fetch()"
       >
         <VIcon slot="suffix" size="14" class="inline-block">{{ item.icon }}</VIcon>
@@ -155,7 +155,10 @@ export default {
       })
       this.rules = result
     },
-    search(item) {
+    search(item, target) {
+      if (item.type === 'input' && target === 'change') {
+        return
+      }
       this.$refs.filterForm.validate(valid => {
         if (valid) {
           const { delayTrigger } = this.$util
