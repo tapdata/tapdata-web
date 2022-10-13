@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 300px">
+  <div style="height: 270px">
     <PaperScroller
       ref="paperScroller"
       :nav-lines="navLines"
@@ -20,8 +20,6 @@
 
 <script>
 import { config, jsPlumb } from './instance'
-import i18n from '@tap/i18n'
-import { taskApi } from '@tap/api'
 import PaperScroller from './components/PaperScroller'
 import DFNode from './components/DFNode'
 import { NODE_PREFIX } from './constants'
@@ -30,7 +28,7 @@ import { allResourceIns } from './nodes/loader'
 
 export default {
   name: 'NodeViewer',
-  props: ['dag'],
+  props: ['dag', 'id'],
   components: {
     PaperScroller,
     DFNode
@@ -54,10 +52,17 @@ export default {
       }
     })
   },
+  watch: {
+    dag() {
+      this.jsPlumbIns.reset()
+      this.resetState()
+      this.initNodeType()
+      this.openDataflow()
+    }
+  },
   methods: {
     async openDataflow() {
       const data = this.dag
-
       if (data) {
         const { edges } = data
         this.setTaskId(data.id)
