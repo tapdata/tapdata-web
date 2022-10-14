@@ -59,7 +59,7 @@ export default defineComponent({
     const completeTime = computed(() => {
       const { snapshotInsertRowTotal, snapshotRowTotal, outputQps } = props.sample
       return outputQps
-        ? calcTimeUnit(Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000), 2)
+        ? calcTimeUnit(Math.ceil(Math.abs((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000), 2)
         : '-'
     })
 
