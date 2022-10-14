@@ -22,6 +22,7 @@ import GitBook from './GitBook.vue'
 import Drawer from './Drawer.vue'
 import InlineInput from './InlineInput.vue'
 import DarkSelect from './DarkSelect'
+import TimeSelect from './TimeSelect'
 
 // business
 import Chart from './chart'
@@ -54,7 +55,8 @@ export {
   InlineInput,
   DiscoveryClassification,
   OverflowTooltip,
-  DarkSelect
+  DarkSelect,
+  TimeSelect
 }
 
 export * from './base'
