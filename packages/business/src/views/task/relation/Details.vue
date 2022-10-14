@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="my-4 fs-5">标题，xxx任务名称</div>
+    <div class="my-4 fs-5">{{ dataflow.name || '任务名称' }}</div>
     <div class="bg-white p-6">
       <div class="mb-4 fs-7 fw-bold">使用该关联任务的任务清单</div>
       <VTable
@@ -13,28 +13,26 @@
         height="300px"
         class="table-list"
         hide-on-single-page
-        style="height: 300px"
       >
         <template slot="status" slot-scope="scope">
           <TaskStatus :task="scope.row" />
         </template>
         <template slot="operation" slot-scope="scope" fixed="right">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">详情</ElButton>
+            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">查看任务</ElButton>
           </div>
         </template>
       </VTable>
-      <Log :dataflow="dataflow"></Log>
+      <NodeLog :dataflow="dataflow" hide-filter class="log-box mt-6 border-top"></NodeLog>
     </div>
   </div>
 </template>
 
 <script>
-import { connectionsApi } from '@tap/api'
+import { connectionsApi, taskApi } from '@tap/api'
 import { VTable } from '@tap/component'
 import { TaskStatus } from '@tap/business'
-import Log from '@tap/dag/src/components/monitor/components/Log'
-import {taskApi} from "../../../../../api";
+import NodeLog from '../../../components/logs/NodeLog'
 
 export default {
   name: 'Details',
@@ -42,12 +40,12 @@ export default {
   components: {
     VTable,
     TaskStatus,
-    Log
+    NodeLog
   },
 
   data() {
     return {
-      dataflow: null,
+      dataflow: {},
       columns: [
         {
           label: '任务名称',
@@ -89,10 +87,9 @@ export default {
     },
 
     getDataflow() {
-      taskApi.get(this.id).then(data => {
-        this.dataflow = data || {
-          id: '123'
-        }
+      const { id } = this.$route.params
+      taskApi.get(id).then(data => {
+        this.dataflow = data
       })
     },
 
@@ -141,9 +138,23 @@ export default {
             ]
           }
         })
+    },
+
+    handleDetail({ id }) {
+      this.$router.push({
+        name: 'TaskMonitor',
+        params: {
+          id
+        }
+      })
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.table-list,
+.log-box {
+  height: 320px;
+}
+</style>
