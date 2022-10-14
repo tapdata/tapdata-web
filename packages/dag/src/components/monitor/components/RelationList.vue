@@ -23,11 +23,6 @@
         <template slot="status" slot-scope="scope">
           <TaskStatus :task="scope.row" />
         </template>
-        <template slot="levelSlot" slot-scope="scope">
-          <span :class="['status-' + scope.row.levelType, 'status-block']">
-            {{ scope.row.levelLabel }}
-          </span>
-        </template>
         <template slot="operation" slot-scope="scope" fixed="right">
           <div class="operate-columns">
             <ElButton size="mini" type="text" @click="handleDetail(scope.row)">详情</ElButton>
@@ -39,21 +34,15 @@
 </template>
 
 <script>
-import { VTable, FilterBar, DarkSelect } from '@tap/component'
+import { VTable, FilterBar } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import { connectionsApi } from '@tap/api'
+import { openUrl } from '@tap/shared'
 
 export default {
-  name: 'Alert',
+  name: 'RelationList',
 
   components: { VTable, FilterBar, TaskStatus },
-
-  props: {
-    dataflow: {
-      type: Object,
-      default: () => {}
-    }
-  },
 
   data() {
     return {
@@ -181,18 +170,21 @@ export default {
             total: 10,
             data: [
               {
+                id: '1',
                 taskName: 'taskName',
                 taskType: 'taskType',
                 status: 'running',
                 startTime: Date.now()
               },
               {
+                id: '2',
                 taskName: 'taskName',
                 taskType: 'taskType',
                 status: 'running',
                 startTime: Date.now()
               },
               {
+                id: '3',
                 taskName: 'taskName',
                 taskType: 'taskType',
                 status: 'stopping',
@@ -205,6 +197,13 @@ export default {
 
     handleDetail(row = {}) {
       console.log('handleDetail', row)
+      const routeUrl = this.$router.resolve({
+        name: 'relationTaskDetail',
+        params: {
+          id: row.id
+        }
+      })
+      openUrl(routeUrl.href)
     },
 
     handleFetch() {
