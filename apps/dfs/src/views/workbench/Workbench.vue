@@ -318,9 +318,6 @@ export default {
       showUpgrade: false //版本升级弹窗
     }
   },
-  created() {
-    this.loadChat()
-  },
   mounted() {
     this.init()
   },
@@ -451,36 +448,8 @@ export default {
       }
       window.open(item.url, '_blank')
     },
-    hideCustomTip() {
-      setTimeout(() => {
-        let tDom = document.getElementById('titlediv')
-        if (tDom) {
-          tDom.style.display = 'none'
-        } else {
-          this.hideCustomTip()
-        }
-      }, 5000)
-    },
     numToThousands() {
       return numToThousands(...arguments)
-    },
-    loadChat() {
-      let $zoho = $zoho || {}
-      $zoho.salesiq = $zoho.salesiq || {
-        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
-        values: {},
-        ready: function () {}
-      }
-      window.$zoho = $zoho
-      let d = document
-      let s = d.createElement('script')
-      s.type = 'text/javascript'
-      s.id = 'zsiqscript'
-      s.defer = true
-      s.src = 'https://salesiq.zoho.com.cn/widget'
-      let t = d.getElementsByTagName('script')[0]
-      t.parentNode.insertBefore(s, t)
-      this.hideCustomTip()
     }
   }
 }

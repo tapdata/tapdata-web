@@ -103,6 +103,7 @@ export default {
     }
   },
   created() {
+    this.loadChat()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
@@ -190,6 +191,34 @@ export default {
         }
         this.checkDialogState()
       }
+    },
+    hideCustomTip() {
+      setTimeout(() => {
+        let tDom = document.getElementById('titlediv')
+        if (tDom) {
+          tDom.style.display = 'none'
+        } else {
+          this.hideCustomTip()
+        }
+      }, 5000)
+    },
+    loadChat() {
+      let $zoho = $zoho || {}
+      $zoho.salesiq = $zoho.salesiq || {
+        widgetcode: 'a97952edfe212ffc52d6a67f37aa6e903e76203f0bbbd3e066c89cc43779f219',
+        values: {},
+        ready: function () {}
+      }
+      window.$zoho = $zoho
+      let d = document
+      let s = d.createElement('script')
+      s.type = 'text/javascript'
+      s.id = 'zsiqscript'
+      s.defer = true
+      s.src = 'https://salesiq.zoho.com.cn/widget'
+      let t = d.getElementsByTagName('script')[0]
+      t.parentNode.insertBefore(s, t)
+      this.hideCustomTip()
     }
   }
 }
