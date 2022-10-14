@@ -1,4 +1,27 @@
 .form-js-editor-wrap {
+  &.dark {
+    .code-before,
+    .code-after{
+      .hljs {
+        color: #abb2bf;
+        background: rgb(40, 44, 52);
+      }
+    }
+    .ace-chrome {
+      background: rgb(40, 44, 52);
+      .ace_cursor {
+        color: #abb2bf;
+      }
+      .ace_gutter {
+        background-color: inherit;
+        color: #6a6f7a;
+      }
+      .ace_gutter-active-line {
+        background-color: inherit;
+        color: inherit;
+      }
+    }
+  }
   .code-before,
   .code-after{
     .hljs {
