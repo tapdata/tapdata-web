@@ -280,7 +280,15 @@ export default observer({
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
                       },
                       increHysteresisSpace: {
                         type: 'void',
@@ -310,6 +318,14 @@ export default observer({
                                   display: '{{$deps[0]?"visible":"hidden"}}'
                                 }
                               }
+                            }
+                          }
+                        },
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
                             }
                           }
                         }
@@ -347,6 +363,14 @@ export default observer({
                                   display: '{{$deps[0]?"visible":"hidden"}}'
                                 }
                               }
+                            }
+                          }
+                        },
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
                             }
                           }
                         }
