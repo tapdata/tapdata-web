@@ -22,6 +22,8 @@ export default {
   packages_business_status_finished: '已完成',
   packages_business_status_force_stopping: '强制停止中',
   packages_business_status_schedule_failed: '错误',
+  packages_business_status_renewing: '重置中',
+  packages_business_status_renew_failed: '重置失败',
 
   packages_business_milestone_list_status_finish: '已完成',
   packages_business_milestone_list_status_error: '错误',

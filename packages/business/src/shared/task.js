@@ -115,6 +115,12 @@ export const STATUS_MAP = {
   error: {
     i18n: 'packages_business_status_error',
     in: ['schedule_failed', 'error']
+  },
+  renewing: {
+    i18n: 'packages_business_status_renewing'
+  },
+  renew_failed: {
+    i18n: 'packages_business_status_renew_failed'
   }
 }
 
@@ -128,10 +134,10 @@ const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => 
 const BUTTON_WITH_STATUS = {
   start: ['wait_start', 'complete', 'error', 'stop'],
   edit: ['edit', 'wait_start', 'complete', 'error', 'stop'],
-  delete: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  delete: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renewing', 'renew_failed'],
   stop: ['running'],
   forceStop: ['stopping'],
-  reset: ['wait_start', 'complete', 'error', 'stop'],
+  reset: ['wait_start', 'complete', 'error', 'stop', 'renew_failed'],
   monitor: ['running', 'complete', 'error', 'stop', 'stopping']
 }
 

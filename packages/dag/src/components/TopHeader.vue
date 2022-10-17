@@ -130,6 +130,17 @@
       </ElButton>
 
       <ElButton
+        v-if="dataflow.disabledData && dataflow.disabledData.reset"
+        key="reset"
+        class="mx-1 btn--text"
+        size="medium"
+        @click="$emit('reset')"
+      >
+        <VIcon>reset</VIcon>
+        {{ $t('packages_dag_dataFlow_button_reset') }}
+      </ElButton>
+
+      <ElButton
         v-if="!stateIsReadonly"
         :loading="isSaving"
         :disabled="dataflow.disabledData && dataflow.disabledData.edit"
@@ -175,16 +186,6 @@
         >
           <VIcon>stop</VIcon>
           {{ $t('packages_dag_task_list_stop') }}
-        </ElButton>
-        <ElButton
-          key="reset"
-          class="mx-1 btn--text"
-          :disabled="dataflow.disabledData && dataflow.disabledData.reset"
-          size="medium"
-          @click="$emit('reset')"
-        >
-          <VIcon>reset</VIcon>
-          {{ $t('packages_dag_dataFlow_button_reset') }}
         </ElButton>
       </template>
 
