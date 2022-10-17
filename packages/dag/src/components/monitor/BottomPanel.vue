@@ -41,10 +41,10 @@ import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
+import RelationList from '@tap/business/src/views/task/relation/List.vue'
 
 import Record from './components/Record'
 import Alert from './components/Alert'
-import RelationList from './components/RelationList'
 
 export default {
   name: 'ConfigPanel',

@@ -159,5 +159,9 @@ export default class Task extends Http {
   putLogSetting(taskId, params) {
     return this.axios.put(this.url + `/logSetting/${taskId}`, params)
   }
+
+  taskConsoleRelations(params) {
+    return this.axios.post(`/api/task-console/relations`, params)
+  }
 }
 export { Task }
