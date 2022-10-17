@@ -227,6 +227,7 @@ export default {
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
         let { __TAPDATA } = formValues
+        formValues.__connectionType = __TAPDATA.connection_type
         delete formValues['__TAPDATA']
         let params = Object.assign(
           {
