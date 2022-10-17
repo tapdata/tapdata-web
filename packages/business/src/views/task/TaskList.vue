@@ -207,7 +207,7 @@
 <script>
 import dayjs from 'dayjs'
 
-import { taskApi } from '@tap/api'
+import { taskApi, workerApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
 import { toRegExp } from '@tap/shared'
 
@@ -580,8 +580,12 @@ export default {
         })
       })
     },
-    forceStop(ids, item = {}) {
+    async forceStop(ids, item = {}) {
+      let data = await workerApi.taskUsedAgent(ids)
       let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
+      if (data?.status === 'offline' && !this.isDaas) {
+        msgObj = this.getConfirmMessage('agent_force_stop', ids.length > 1, item.name)
+      }
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false

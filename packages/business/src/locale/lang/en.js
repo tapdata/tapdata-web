@@ -408,6 +408,8 @@ export default {
   packages_business_etl_details_shifouzhongzhigai: 'Reset this task? ',
   packages_business_etl_details_zhongzhirenwux:
     'Resetting task xxx will clear the task synchronization progress and the task will be re-executed',
+  packages_business_dataFlow_agent_force_stop_confirm_message:
+    'Forcibly stop task xxx. Since the agent is offline, we will only reset the status of the task, but we cannot stop the task. Please ensure that you have manually stopped or deleted the agent locally, or stop the task after the agent is connected.',
   packages_business_etl_details_qiangzhitingzhiren:
     'Forcibly stop the task xxx will immediately interrupt the data transmission force the task to stop quickly and reset the task',
   packages_business_etl_details_shifouqiangzhiting: 'Would you like to force stop this task? ',
@@ -479,5 +481,5 @@ export default {
   packages_business_shared_const_yanzhong: 'serious',
   packages_business_shared_const_jinji: 'urgent',
   packages_business_external_storage: 'External storage',
-  packages_business_dataFlow_taskBulkTag: 'Bulk Tag',
+  packages_business_dataFlow_taskBulkTag: 'Bulk Tag'
 }
