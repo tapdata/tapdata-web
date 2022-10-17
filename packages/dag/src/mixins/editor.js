@@ -1698,7 +1698,10 @@ export default {
         try {
           this.initWS()
           this.dataflow.disabledData.reset = true
+          this.toggleConsole(true)
+          this.$refs.console?.startAuto() // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
+          this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
           this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
         } catch (e) {
           this.handleError(e, this.$t('packages_dag_message_resetFailed'))
