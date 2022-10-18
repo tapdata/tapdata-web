@@ -597,6 +597,10 @@ export default {
       this.showBottomPanel = !this.showBottomPanel
     },
 
+    hideBottomPanel() {
+      this.showBottomPanel = false
+    },
+
     handleAlarmShowBottomPanel() {
       //告警错误提示点击跳转到告警列表
       if (!this.showBottomPanel) {
@@ -1007,7 +1011,7 @@ export default {
         }
         try {
           this.dataflow.disabledData.reset = true
-          this.handleShowBottomPanel()
+          this.hideBottomPanel()
           this.toggleConsole(true)
           this.$refs.console?.startAuto() // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
