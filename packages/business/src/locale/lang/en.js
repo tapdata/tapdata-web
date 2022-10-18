@@ -22,6 +22,8 @@ export default {
   packages_business_status_finished: 'Finished',
   packages_business_status_force_stopping: 'Force stopping',
   packages_business_status_schedule_failed: 'Error',
+  packages_business_status_renewing: 'Renewing',
+  packages_business_status_renew_failed: 'Renew failed',
 
   packages_business_milestone_list_status_finish: 'finish',
   packages_business_milestone_list_status_error: 'Error',

@@ -62,6 +62,9 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import dayjs from 'dayjs'
+import i18n from '@tap/i18n'
+
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
 import { taskApi } from '@tap/api'
@@ -129,8 +132,12 @@ export default {
         nodeId,
         grade: this.levels.join(',')
       })
+      const list = data.list?.filter(t => !t.describe) || []
+      const resetList = data.list?.filter(t => t.describe) || []
+      const modelList = data.modelList || []
       this.loading = false
-      this.logList = data.list?.concat(data?.modelList || []) || []
+      this.logList = list.concat(modelList).concat(this.getResetList(resetList)) || []
+
       const nodeList = []
       Object.keys(data.nodes).forEach(id => {
         let node = this.nodeById(id)
@@ -165,6 +172,34 @@ export default {
       if (this.nodeId === nodeId) return
       this.nodeId = nodeId
       this.autoLoad()
+    },
+
+    getResetList(data) {
+      const I18N_MAP = {
+        task_reset_start: 'packages_dag_task_reset_start',
+        task_reset_pdk_node_external_resource: 'packages_dag_task_reset_pdk_node_external_resource',
+        task_reset_pdk_node_state: 'packages_dag_task_reset_pdk_node_state',
+        task_reset_merge_node: 'packages_dag_task_reset_merge_node',
+        task_reset_aggregate_node: 'packages_dag_task_reset_aggregate_node',
+        task_reset_custom_node: 'packages_dag_task_reset_custom_node',
+        task_reset_join_node: 'packages_dag_task_reset_join_node',
+        task_reset_end: 'packages_dag_task_reset_end',
+        unknown_error: 'packages_dag_unknown_error'
+      }
+      let result = []
+      data.forEach(el => {
+        const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
+        const desc = i18n.t(I18N_MAP[el.describe], el)
+        let item = {}
+        item.id = el.id
+        item.grade = el.level
+        item.log = `${time} ${desc}`
+        if (['FAILED'].includes(el.status) && item.grade === 'ERROR') {
+          item.log += `${el.errorMsg}\n${el.errorStack}`
+        }
+        result.push(item)
+      })
+      return result
     }
   }
 }
