@@ -26,6 +26,7 @@ export const FieldRename = connect(
           originalFields: [],
           //checkAll: false,
           fieldsNameTransforms: '',
+          transformLoading: this.$store.getters['dataflow/transformLoading'],
           /*字段处理器支持功能类型*/
           RENAME_OPS_TPL: {
             id: '',
@@ -70,25 +71,25 @@ export const FieldRename = connect(
               </span>
               <span class="field-ops  inline-block mr-4">
                 <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
-                  disabled={this.disabled}
+                  disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllToUpperCase()}
                 >
                   toUpperCase
                 </VIcon>
                 <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
-                  disabled={this.disabled}
+                  disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllToLowerCase()}
                 >
                   toLowerCase
                 </VIcon>
                 <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
-                  disabled={this.disabled}
+                  disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllReset()}
                 >
                   revoke
@@ -130,6 +131,7 @@ export const FieldRename = connect(
                                 'tree-field-input-primary': data.field_name !== data.original_field_name
                               }
                             ]}
+                            disabled={this.disabled || this.transformLoading}
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
                           />
@@ -144,7 +146,8 @@ export const FieldRename = connect(
                           disabled={
                             (this.fieldsNameTransforms === '' && !this.isRename(data.id)) ||
                             this.isReset(data.id) ||
-                            this.disabled
+                            this.disabled ||
+                            this.transformLoading
                           }
                           onClick={() => this.handleReset(node, data)}
                         >

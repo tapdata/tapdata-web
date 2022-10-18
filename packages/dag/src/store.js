@@ -93,6 +93,10 @@ const getters = {
     return state.stateIsReadonly
   },
 
+  transformLoading: state => {
+    return state.stateIsReadonly
+  },
+
   // 判断action是否被标记
   isActionActive: state => action => {
     return state.activeActions.includes(action)
