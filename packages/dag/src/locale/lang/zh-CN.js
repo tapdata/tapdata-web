@@ -467,5 +467,7 @@ export default {
   packages_dag_task_reset_join_node: '清理连接节点[{nodeName}({nodeId})]的状态数据...{status}, 耗时: {elapsedTime} ms',
   packages_dag_task_reset_end:
     '任务完成清理，共{totalEvent}项需要清理，成功: {succeedEvent}项，失败: {failedEvent}项...{status}, 耗时: {elapsedTime} ms',
-  packages_dag_unknown_error: '清理节点[{nodeName}({nodeId})]出现未知错误'
+  packages_dag_unknown_error: '清理节点[{nodeName}({nodeId})]出现未知错误',
+  packages_dag_console_log_status_success: '成功',
+  packages_dag_console_log_status_fail: '失败'
 }
