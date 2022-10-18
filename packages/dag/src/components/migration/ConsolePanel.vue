@@ -184,10 +184,15 @@ export default {
         task_reset_custom_node: 'packages_dag_task_reset_custom_node',
         task_reset_join_node: 'packages_dag_task_reset_join_node',
         task_reset_end: 'packages_dag_task_reset_end',
-        unknown_error: 'packages_dag_unknown_error'
+        unknown_error: 'packages_dag_unknown_error',
+        SUCCEED: 'packages_dag_console_log_status_success',
+        TASK_SUCCEED: 'packages_dag_console_log_status_success',
+        FAILED: 'packages_dag_console_log_status_fail',
+        TASK_FAILED: 'packages_dag_console_log_status_fail'
       }
       let result = []
       data.forEach(el => {
+        el.status = i18n.t(I18N_MAP[el.status])
         const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
         const desc = i18n.t(I18N_MAP[el.describe], el)
         let item = {}

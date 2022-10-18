@@ -484,5 +484,7 @@ export default {
     "Clean join node[{nodeName}({nodeId})]'s cache data...{status}, elapsed time: {elapsedTime} ms",
   packages_dag_task_reset_end:
     'The task is cleaned, in total, {totalEvent} items need to clean, succeed: {succeedEvent} item, failed: {failedEvent} item...{status}, elapsed time: {elapsedTime} ms',
-  packages_dag_unknown_error: 'Clean node[{nodeName}({nodeId})] occur an unknown error'
+  packages_dag_unknown_error: 'Clean node[{nodeName}({nodeId})] occur an unknown error',
+  packages_dag_console_log_status_success: 'Succeed',
+  packages_dag_console_log_status_fail: 'Failed'
 }
