@@ -40,7 +40,11 @@ export class FieldProcessor extends NodeType {
       //   title: '',
       //   'x-decorator': 'FormItem',
       //   'x-component': 'Button',
-      //   'x-content': '加载模型'
+      //   'x-content': '加載模型',
+      //   'x-component-props': {
+      //     onClick:
+      //       '{{useAsyncDataSourceByConfig({service: getCommandAndSetValue, withoutField: true}, $form, {nodeId:$values.id})}}'
+      //   }
       // },
       // loadSchemaTree: {
       //   type: 'void',

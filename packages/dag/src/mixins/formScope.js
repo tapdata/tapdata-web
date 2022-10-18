@@ -4,7 +4,7 @@ import { mapGetters, mapState } from 'vuex'
 import { merge, isEqual, escapeRegExp } from 'lodash'
 import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
-import { isPlainObj } from '@tap/shared'
+import { isEmpty, isPlainObj } from '@tap/shared'
 
 export default {
   data() {
@@ -386,6 +386,62 @@ export default {
             console.error('nodeSchema', e)
             return []
           }
+        },
+        //传参获取远程数据
+        getCommandAndSetValue: async ($form, others) => {
+          const getState = $form.getState()
+          const formValues = getState?.values || {}
+          const { nodeId } = others
+          let params = {
+            nodeId
+          }
+          let fields = [
+            {
+              targetFieldName: 'form_id',
+              sourceFieldName: 'form_id',
+              sourceFieldType: 'INT32',
+              type: 'auto',
+              defaultValue: '',
+              useDefaultValue: true,
+              isShow: true,
+              migrateType: 'system',
+              primary_key_position: 0
+            },
+            {
+              targetFieldName: 'form_version',
+              sourceFieldName: 'form_version',
+              sourceFieldType: 'STRING',
+              type: 'auto',
+              defaultValue: '',
+              useDefaultValue: true,
+              isShow: true,
+              migrateType: 'system',
+              primary_key_position: 0
+            },
+            {
+              targetFieldName: 'id',
+              sourceFieldName: 'id',
+              sourceFieldType: 'INT32',
+              type: 'auto',
+              defaultValue: '',
+              useDefaultValue: true,
+              isShow: true,
+              migrateType: 'system',
+              primary_key_position: 1
+            },
+            {
+              targetFieldName: 'task_id',
+              sourceFieldName: 'task_id',
+              sourceFieldType: 'INT32',
+              type: 'auto',
+              defaultValue: '',
+              useDefaultValue: true,
+              isShow: true,
+              migrateType: 'system',
+              primary_key_position: 0
+            }
+          ]
+          $form.setValuesIn('loadSchemaTree', fields)
         },
 
         /**
