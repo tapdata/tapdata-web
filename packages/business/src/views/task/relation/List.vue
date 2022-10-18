@@ -169,6 +169,9 @@ export default {
         name: 'relationTaskDetail',
         params: {
           id: row.id
+        },
+        query: {
+          type: row.type
         }
       })
       openUrl(routeUrl.href)

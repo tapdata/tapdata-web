@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { connectionsApi, taskApi } from '@tap/api'
+import { taskApi, logcollectorApi } from '@tap/api'
 import { VTable } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import NodeLog from '../../../components/logs/NodeLog'
@@ -49,11 +49,11 @@ export default {
       columns: [
         {
           label: '任务名称',
-          prop: 'taskName'
+          prop: 'name'
         },
         {
           label: '任务类型',
-          prop: 'taskType',
+          prop: 'type',
           width: 150
         },
         {
@@ -63,14 +63,13 @@ export default {
         },
         {
           label: '创建时间',
-          prop: 'created',
+          prop: 'creatTime',
           dataType: 'time',
           width: 150
         },
         {
           label: '操作',
           slotName: 'operation',
-          fixed: 'right',
           width: 150
         }
       ]
@@ -106,45 +105,46 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return connectionsApi
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(data => {
-          return {
-            total: 10,
-            data: [
-              {
-                id: '1',
-                taskName: 'taskName',
-                taskType: 'taskType',
-                status: 'running',
-                created: Date.now()
-              },
-              {
-                id: '2',
-                taskName: 'taskName',
-                taskType: 'taskType',
-                status: 'running',
-                created: Date.now()
-              },
-              {
-                id: '3',
-                taskName: 'taskName',
-                taskType: 'taskType',
-                status: 'stopping',
-                created: Date.now()
-              }
-            ]
-          }
-        })
+      return logcollectorApi.relateTasks(filter).then(data => {
+        const { total, items = [] } = data || {}
+        return {
+          total,
+          data: items
+        }
+        // return {
+        //   total: 10,
+        //   data: [
+        //     {
+        //       id: '1',
+        //       name: 'name',
+        //       type: 'type',
+        //       status: 'running',
+        //       creatTime: Date.now()
+        //     },
+        //     {
+        //       id: '2',
+        //       name: 'name',
+        //       type: 'type',
+        //       status: 'running',
+        //       creatTime: Date.now()
+        //     },
+        //     {
+        //       id: '3',
+        //       name: 'name',
+        //       type: 'type',
+        //       status: 'stopping',
+        //       creatTime: Date.now()
+        //     }
+        //   ]
+        // }
+      })
     },
 
-    handleDetail({ id }) {
+    handleDetail({ taskId }) {
       this.$router.push({
         name: 'TaskMonitor',
         params: {
-          id
+          id: taskId
         }
       })
     }
