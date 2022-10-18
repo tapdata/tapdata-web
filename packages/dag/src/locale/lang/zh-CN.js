@@ -453,4 +453,19 @@ export default {
   packages_dag_components_nodedetaildialog_pingjunduquhao2: '平均读取耗时：全量阶段下读取每条数据的平均耗时',
   packages_dag_components_log_zuidashijianshu: '最大事件数（条）',
   packages_dag_message_save_fail: '保存失败',
+  packages_dag_task_reset_start: '开始清理任务',
+  packages_dag_task_reset_pdk_node_external_resource:
+    '清理pdk数据节点[{nodeName}({nodeId})]的外部资源...{status}, 耗时: {elapsedTime} ms',
+  packages_dag_task_reset_pdk_node_state:
+    '清理pdk数据节点[{nodeName}({nodeId})]的状态数据...{status}, 耗时: {elapsedTime} ms',
+  packages_dag_task_reset_merge_node:
+    '清理主从合并节点[{nodeName}({nodeId})]的缓存数据...{status}, 耗时: {elapsedTime} ms',
+  packages_dag_task_reset_aggregate_node:
+    '清理聚合节点[{nodeName}({nodeId})]的缓存数据...{status}, 耗时: {elapsedTime} ms',
+  packages_dag_task_reset_custom_node:
+    '清理自定义节点[{nodeName}({nodeId})]的状态数据...{status}, 耗时: {elapsedTime} ms',
+  packages_dag_task_reset_join_node: '清理连接节点[{nodeName}({nodeId})]的状态数据...{status}, 耗时: {elapsedTime} ms',
+  packages_dag_task_reset_end:
+    '任务完成清理，共{totalEvent}项需要清理，成功: {succeedEvent}项，失败: {failedEvent}项...{status}, 耗时: {elapsedTime} ms',
+  packages_dag_unknown_error: '清理节点[{nodeName}({nodeId})]出现未知错误'
 }

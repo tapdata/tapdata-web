@@ -81,6 +81,7 @@
   color: #008b58;
   background-color: #b4edd8;
 }
+.status-renew_failed,
 .status-error,
 .status-rejected,
 .status-stopped {
@@ -117,6 +118,7 @@
   background-color: #ddebff;
 }
 
+.status-renewing,
 .status-waiting {
   color: #c39700;
   background-color: #fdf1c8;

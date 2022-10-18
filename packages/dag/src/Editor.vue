@@ -79,6 +79,7 @@
             @hide="nodeMenu.typeId = ''"
           ></NodePopover>
         </main>
+        <ConsolePanel ref="console"></ConsolePanel>
       </section>
       <!--配置面板-->
       <ConfigPanel ref="configPanel" :scope="scope" :settings="dataflow" show-schema-panel />
@@ -113,6 +114,7 @@ import editor from './mixins/editor'
 import { DEFAULT_SETTINGS } from './constants'
 import { mapMutations } from 'vuex'
 import { observable } from '@formily/reactive'
+import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
   name: 'Editor',
@@ -127,7 +129,8 @@ export default {
     TopHeader,
     DFNode,
     LeftSidebar,
-    TransformLoading
+    TransformLoading,
+    ConsolePanel
   },
 
   data() {
@@ -471,10 +474,14 @@ export default {
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
+        this.toggleConsole(true)
+        this.$refs.console?.startAuto() // 信息输出自动加载
         return true
       } catch (e) {
         this.isSaving = false
         this.handleError(e)
+        this.toggleConsole(true)
+        this.$refs.console?.startAuto() // 信息输出自动加载
         return false
       }
     },
