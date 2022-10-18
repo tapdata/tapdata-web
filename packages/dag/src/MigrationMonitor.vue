@@ -593,6 +593,7 @@ export default {
     },
 
     handleShowBottomPanel() {
+      this.toggleConsole(false)
       this.showBottomPanel = !this.showBottomPanel
     },
 
@@ -1006,6 +1007,7 @@ export default {
         }
         try {
           this.dataflow.disabledData.reset = true
+          this.handleShowBottomPanel()
           this.toggleConsole(true)
           this.$refs.console?.startAuto() // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)

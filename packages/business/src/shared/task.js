@@ -138,7 +138,7 @@ const BUTTON_WITH_STATUS = {
   stop: ['running'],
   forceStop: ['stopping'],
   reset: ['wait_start', 'complete', 'error', 'stop', 'renew_failed'],
-  monitor: ['running', 'complete', 'error', 'stop', 'stopping']
+  monitor: ['running', 'complete', 'error', 'stop', 'stopping', 'renewing', 'renew_failed']
 }
 
 export function makeStatusAndDisabled(item) {
