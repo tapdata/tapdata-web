@@ -17,7 +17,7 @@ if (~argv.indexOf('--origin')) {
   origin && (origin = origin.replace(/^(?!http)/, 'http://'))
 }
 const proxy = {
-  target: origin || serveUrlMap[SERVE_ENV],
+  target: process.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
   changeOrigin: true
 }
 
@@ -30,6 +30,22 @@ let pages = {
   }
 }
 
+let proxyConfig = {
+  '/api/tcm/': Object.assign({
+    pathRewrite: {
+      '^/': '/console/v3/'
+    }
+  }, proxy),
+  '/tm/': {
+    ws: true,
+    target: proxy.target,
+    changeOrigin: true,
+    pathRewrite: {
+      '^/': '/console/v3/'
+    }
+  }
+}
+
 module.exports = {
   pages,
   lintOnSave: true,
@@ -37,7 +53,7 @@ module.exports = {
   productionSourceMap: false,
 
   devServer: {
-    proxy: {
+    proxy: SERVE_ENV === 'PROD' ? proxyConfig : {
       '/api/tcm/': proxy,
       '/tm/api/': proxy,
       '/tm/ws/': {
@@ -256,8 +272,9 @@ if (process.env.NODE_ENV === 'development') {
       value: '62307427948eebde4aadeaf3'
     }
   ]
-  let userId = arr[4].value
+  let userId = process.env.USER_ID || arr[4].value
   process.env.VUE_APP_ACCESS_TOKEN = getToken(userId)
   console.log('本地用户调试ID: ' + userId)
   console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
+  console.log('Proxy server: ' + proxy.target)
 }
