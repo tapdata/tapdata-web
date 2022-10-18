@@ -179,6 +179,7 @@
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+                <el-dropdown-item command="toView">{{ $t('packages_business_dataFlow_view') }}</el-dropdown-item>
                 <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('packages_business_task_list_export')
                 }}</el-dropdown-item>
@@ -251,7 +252,7 @@
 <script>
 import dayjs from 'dayjs'
 
-import { taskApi } from '@tap/api'
+import { taskApi, workerApi } from '@tap/api'
 import { VIcon, FilterBar, Drawer } from '@tap/component'
 import { toRegExp, openUrl } from '@tap/shared'
 
@@ -588,8 +589,12 @@ export default {
         })
       })
     },
-    forceStop(ids, item = {}) {
+    async forceStop(ids, item = {}) {
+      let data = await workerApi.taskUsedAgent(ids)
       let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
+      if (data?.status === 'offline' && !this.isDaas) {
+        msgObj = this.getConfirmMessage('agent_force_stop', ids.length > 1, item.name)
+      }
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false

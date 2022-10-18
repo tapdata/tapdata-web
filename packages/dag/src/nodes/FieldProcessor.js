@@ -35,6 +35,20 @@ export class FieldProcessor extends NodeType {
           nodeId: '{{$values.id}}'
         }
       }
+      // loadSchemaButton: {
+      //   type: 'void',
+      //   title: '',
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'Button',
+      //   'x-content': '加载模型'
+      // },
+      // loadSchemaTree: {
+      //   type: 'void',
+      //   title: '',
+      //   required: true,
+      //   'x-decorator': 'FormItem',
+      //   'x-component': 'loadSchemaTree'
+      // }
     }
   }
 }

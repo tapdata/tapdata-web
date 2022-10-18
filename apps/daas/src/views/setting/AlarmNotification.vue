@@ -95,7 +95,7 @@ export default {
         TASK_STATUS_ERROR: i18n.t('daas_setting_alarmnotification_dangrenwuyudao'),
         TASK_INSPECT_ERROR: i18n.t('daas_setting_alarmnotification_dangrenwujiaoyan'),
         TASK_FULL_COMPLETE: i18n.t('daas_setting_alarmnotification_dangrenwuquanliang'),
-        TASK_INCREMENT_COMPLETE: i18n.t('daas_setting_alarmnotification_dangrenwuzengliang'),
+        TASK_INCREMENT_START: i18n.t('daas_setting_alarmnotification_dangrenwuzengliang'),
         TASK_STATUS_STOP: i18n.t('daas_setting_alarmnotification_dangrenwutingzhi'),
         TASK_INCREMENT_DELAY: i18n.t('daas_setting_alarmnotification_dangrenwudezeng'),
         DATANODE_CANNOT_CONNECT: i18n.t('daas_setting_alarmnotification_dangshujuwufa'),

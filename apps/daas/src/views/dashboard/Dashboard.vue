@@ -94,7 +94,7 @@
             <div class="dashboard-col-box">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_valid_title') }}</div>
               <div class="chart line-chart flex flex-column">
-                <ul>
+                <ul v-if="validBarData.every(item => item.value === 0)">
                   <li v-for="item in validBarData" :key="item.name">
                     <span class="font-color-light">{{ item.name }} </span>
                     <span class="font-color-dark fw-sub"> {{ item.value }}</span>

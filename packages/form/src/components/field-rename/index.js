@@ -95,7 +95,7 @@ export const FieldRename = connect(
                 </VIcon>
               </span>
             </div>
-            <div className="field-processors-tree-warp">
+            <div class="field-processors-tree-warp">
               <ElTree
                 ref="tree"
                 data={fields}
