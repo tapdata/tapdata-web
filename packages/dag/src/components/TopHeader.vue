@@ -130,7 +130,7 @@
       </ElButton>
 
       <ElButton
-        v-if="dataflow.disabledData && dataflow.disabledData.reset"
+        v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
         key="reset"
         class="mx-1 btn--text"
         size="medium"
