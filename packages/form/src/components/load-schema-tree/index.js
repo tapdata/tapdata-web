@@ -2,60 +2,21 @@ import { defineComponent } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 
 import './style.scss'
-import { VIcon } from '@tap/component'
+import { useForm } from '@formily/vue'
 
 export const loadSchemaTree = observer(
   defineComponent({
-    props: ['findParentNode'],
-    setup() {},
+    props: ['findParentNode', 'value'],
+    setup(props) {
+      const formRef = useForm()
+      const form = formRef.value
+      return {
+        form
+      }
+    },
 
     render() {
-      let fields = [
-        {
-          targetFieldName: 'form_id',
-          sourceFieldName: 'form_id',
-          sourceFieldType: 'INT32',
-          type: 'auto',
-          defaultValue: '',
-          useDefaultValue: true,
-          isShow: true,
-          migrateType: 'system',
-          primary_key_position: 0
-        },
-        {
-          targetFieldName: 'form_version',
-          sourceFieldName: 'form_version',
-          sourceFieldType: 'STRING',
-          type: 'auto',
-          defaultValue: '',
-          useDefaultValue: true,
-          isShow: true,
-          migrateType: 'system',
-          primary_key_position: 0
-        },
-        {
-          targetFieldName: 'id',
-          sourceFieldName: 'id',
-          sourceFieldType: 'INT32',
-          type: 'auto',
-          defaultValue: '',
-          useDefaultValue: true,
-          isShow: true,
-          migrateType: 'system',
-          primary_key_position: 1
-        },
-        {
-          targetFieldName: 'task_id',
-          sourceFieldName: 'task_id',
-          sourceFieldType: 'INT32',
-          type: 'auto',
-          defaultValue: '',
-          useDefaultValue: true,
-          isShow: true,
-          migrateType: 'system',
-          primary_key_position: 0
-        }
-      ]
+      let fields = this.form.getValuesIn('loadSchemaTree')
       return (
         <div>
           <el-tree
