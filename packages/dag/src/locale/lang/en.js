@@ -469,4 +469,20 @@ export default {
     'Average read time: the average time to read each piece of data in the full stage',
   packages_dag_components_log_zuidashijianshu: 'Maximum number of events (pieces)',
   packages_dag_message_save_fail: 'Save failed',
+  packages_dag_task_reset_start: 'Starting clean task',
+  packages_dag_task_reset_pdk_node_external_resource:
+    "Clean pdk connector node[{nodeName}({nodeId})]'s external resource(s)...{status}, elapsed time: {elapsedTime} ms",
+  packages_dag_task_reset_pdk_node_state:
+    "Clean pdk connector node[{nodeName}({nodeId})]'s state data...{status}, elapsed time: {elapsedTime} ms",
+  packages_dag_task_reset_merge_node:
+    "Clean merge node[{nodeName}({nodeId})]'s cache data...{status}, elapsed time: {elapsedTime} ms",
+  packages_dag_task_reset_aggregate_node:
+    "Clean aggregate node[{nodeName}({nodeId})]'s cache data...{status}, elapsed time: {elapsedTime} ms",
+  packages_dag_task_reset_custom_node:
+    "Clean custom node[{nodeName}({nodeId})]'s cache data...{status}, elapsed time: {elapsedTime} ms",
+  packages_dag_task_reset_join_node:
+    "Clean join node[{nodeName}({nodeId})]'s cache data...{status}, elapsed time: {elapsedTime} ms",
+  packages_dag_task_reset_end:
+    'The task is cleaned, in total, {totalEvent} items need to clean, succeed: {succeedEvent} item, failed: {failedEvent} item...{status}, elapsed time: {elapsedTime} ms',
+  packages_dag_unknown_error: 'Clean node[{nodeName}({nodeId})] occur an unknown error'
 }

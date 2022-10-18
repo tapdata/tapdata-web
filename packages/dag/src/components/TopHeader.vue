@@ -121,7 +121,7 @@
       </ElTooltip>
     </div>
     <!--复制dag查看不显示-->
-    <div class="flex align-center flex-grow-1" v-if="$route.name !== 'MigrateViewer'">
+    <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
       <ElButton v-if="stateIsReadonly" size="medium" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>

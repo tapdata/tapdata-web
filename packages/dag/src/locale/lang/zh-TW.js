@@ -449,4 +449,19 @@ export default {
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任務平均每秒處理的輸入事件數和輸出事件數',
   packages_dag_components_log_zuidashijianshu: '最大事件數（條）',
   packages_dag_message_save_fail: '保存失敗',
+  packages_dag_task_reset_start: '開始清理任務',
+  packages_dag_task_reset_pdk_node_external_resource:
+    '清理pdk數據節點[{nodeName}({nodeId})]的外部資源...{status}, 耗時: {elapsedTime} ms',
+  packages_dag_task_reset_pdk_node_state:
+    '清理pdk數據節點[{nodeName}({nodeId})]的狀態數據...{status}, 耗時: {elapsedTime} ms',
+  packages_dag_task_reset_merge_node:
+    '清理主從合並節點[{nodeName}({nodeId})]的緩存數據...{status}, 耗時: {elapsedTime} ms',
+  packages_dag_task_reset_aggregate_node:
+    '清理聚合節點[{nodeName}({nodeId})]的緩存數據...{status}, 耗時: {elapsedTime} ms',
+  packages_dag_task_reset_custom_node:
+    '清理自定義節點[{nodeName}({nodeId})]的狀態數據...{status}, 耗時: {elapsedTime} ms',
+  packages_dag_task_reset_join_node: '清理連接節點[{nodeName}({nodeId})]的狀態數據...{status}, 耗時: {elapsedTime} ms',
+  packages_dag_task_reset_end:
+    '任務完成清理，共{totalEvent}項需要清理，成功: {succeedEvent}項，失敗: {failedEvent}項...{status}, 耗時: {elapsedTime} ms',
+  packages_dag_unknown_error: '清理節點[{nodeName}({nodeId})]出現未知錯誤'
 }

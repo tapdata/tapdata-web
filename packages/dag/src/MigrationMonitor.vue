@@ -122,6 +122,7 @@
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
+        <ConsolePanel ref="console"></ConsolePanel>
       </section>
       <!--校验面板-->
       <VerifyPanel
@@ -193,6 +194,7 @@ import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 import AlarmStatistics from './components/monitor/components/AlarmStatistics'
+import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
   name: 'MigrationMonitor',
@@ -215,7 +217,8 @@ export default {
     Node,
     LeftSider,
     VIcon,
-    NodeDetailDialog
+    NodeDetailDialog,
+    ConsolePanel
   },
 
   data() {
@@ -1003,7 +1006,10 @@ export default {
         }
         try {
           this.dataflow.disabledData.reset = true
+          this.toggleConsole(true)
+          this.$refs.console?.startAuto() // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
+          this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
           this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
           // this.init()
           this.loadDataflow(this.dataflow?.id)
