@@ -35,9 +35,10 @@
 
 <script>
 import { VTable, FilterBar } from '@tap/component'
-import { TaskStatus } from '@tap/business'
+import { TaskStatus, STATUS_MAP } from '@tap/business'
 import { taskApi } from '@tap/api'
 import { openUrl } from '@tap/shared'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'RelationList',
@@ -59,24 +60,25 @@ export default {
         },
         {
           label: '任务类型',
-          prop: 'type',
+          prop: 'typeLabel',
           width: 150
         },
         {
           label: '任务状态',
           prop: 'status',
-          slotName: 'status'
+          slotName: 'status',
+          width: 150
         },
         {
           label: '启动时间',
           prop: 'startTime',
           dataType: 'time',
-          width: 150
+          width: 200
         },
         {
           label: '操作',
           slotName: 'operation',
-          width: 80
+          width: 100
         }
       ]
     }
@@ -92,6 +94,14 @@ export default {
     },
 
     getSearchItems() {
+      let statusItems = []
+      for (let key in STATUS_MAP) {
+        statusItems.push({
+          label: i18n.t(STATUS_MAP[key].i18n),
+          value: key
+        })
+      }
+
       this.filterItems = [
         {
           label: '任务类型',
@@ -100,19 +110,15 @@ export default {
           items: [
             {
               label: '挖掘任务',
-              value: '挖掘任务'
+              value: 'logCollector'
             },
             {
               label: '校验任务',
-              value: '校验任务'
+              value: 'inspect'
             },
             {
               label: '缓存任务',
-              value: '缓存任务'
-            },
-            {
-              label: '精准延时',
-              value: '精准延时'
+              value: 'mem_cache'
             }
           ]
         },
@@ -120,24 +126,7 @@ export default {
           label: '任务状态',
           key: 'taskStatus',
           type: 'dark-select',
-          items: [
-            {
-              label: '挖掘任务',
-              value: '挖掘任务'
-            },
-            {
-              label: '校验任务',
-              value: '校验任务'
-            },
-            {
-              label: '缓存任务',
-              value: '缓存任务'
-            },
-            {
-              label: '精准延时',
-              value: '精准延时'
-            }
-          ]
+          items: statusItems
         },
         {
           placeholder: '请输入任务名称...',
@@ -151,6 +140,11 @@ export default {
       const taskId = this.$route.params.id
       const { taskRecordId } = this.$route.query || {}
       const { keyword } = this.searchParams
+      const MAP = {
+        logCollector: '挖掘任务',
+        mem_cache: '缓存任务',
+        inspect: '校验任务'
+      }
       let filter = {
         keyword,
         taskId,
@@ -159,7 +153,11 @@ export default {
       return taskApi.taskConsoleRelations(filter).then(data => {
         return {
           total: 10,
-          data: data || []
+          data:
+            data.map(t => {
+              t.typeLabel = MAP[t.type]
+              return t
+            }) || []
         }
       })
     },
