@@ -25,7 +25,9 @@
         </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">详情</ElButton>
+            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
+              $t('packages_business_task_info_info')
+            }}</ElButton>
           </div>
         </template>
       </VTable>
@@ -55,28 +57,28 @@ export default {
       filterItems: [],
       columns: [
         {
-          label: '任务名称',
+          label: i18n.t('packages_business_task_name'),
           prop: 'name'
         },
         {
-          label: '任务类型',
+          label: i18n.t('packages_business_task_list_task_type'),
           prop: 'typeLabel',
           width: 150
         },
         {
-          label: '任务状态',
+          label: i18n.t('packages_business_task_status'),
           prop: 'status',
           slotName: 'status',
           width: 150
         },
         {
-          label: '启动时间',
+          label: i18n.t('packages_business_task_preview_startTime'),
           prop: 'startTime',
           dataType: 'time',
           width: 200
         },
         {
-          label: '操作',
+          label: i18n.t('packages_business_connection_operate'),
           slotName: 'operation',
           width: 100
         }
@@ -104,32 +106,32 @@ export default {
 
       this.filterItems = [
         {
-          label: '任务类型',
+          label: i18n.t('packages_business_task_list_task_type'),
           key: 'type',
           type: 'dark-select',
           items: [
             {
-              label: '挖掘任务',
+              label: i18n.t('packages_business_task_monitor_mining_task'),
               value: 'logCollector'
             },
             {
-              label: '校验任务',
+              label: i18n.t('packages_business_relation_list_jiaoyanrenwu'),
               value: 'inspect'
             },
             {
-              label: '缓存任务',
+              label: i18n.t('packages_business_relation_list_huancunrenwu'),
               value: 'mem_cache'
             }
           ]
         },
         {
-          label: '任务状态',
+          label: i18n.t('packages_business_task_status'),
           key: 'status',
           type: 'dark-select',
           items: statusItems
         },
         {
-          placeholder: '请输入任务名称...',
+          placeholder: i18n.t('packages_business_relation_list_qingshururenwu'),
           key: 'keyword',
           type: 'input'
         }
@@ -141,9 +143,9 @@ export default {
       const { taskRecordId } = this.$route.query || {}
       const { keyword, type, status } = this.searchParams
       const MAP = {
-        logCollector: '挖掘任务',
-        mem_cache: '缓存任务',
-        inspect: '校验任务'
+        logCollector: i18n.t('packages_business_task_monitor_mining_task'),
+        mem_cache: i18n.t('packages_business_relation_list_huancunrenwu'),
+        inspect: i18n.t('packages_business_relation_list_jiaoyanrenwu')
       }
       let filter = {
         keyword,

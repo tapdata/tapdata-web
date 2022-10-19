@@ -1,8 +1,14 @@
 <template>
   <div>
-    <div class="my-4 fs-5">{{ dataflow.name || '任务名称' }}</div>
+    <div class="my-4 fs-5">{{ dataflow.name || $t('packages_business_task_name') }}</div>
     <div class="bg-white p-6">
-      <div class="mb-4 fs-7 fw-bold">使用该关联任务的任务清单</div>
+      <div class="mb-4 fs-8 fw-bold">
+        {{
+          $t('packages_business_relation_details_shiyonggaiguanlian', {
+            val: taskTypeMap[type] || $t('packages_business_relation_details_renwu')
+          })
+        }}
+      </div>
       <VTable
         :columns="columns"
         :remoteMethod="remoteMethod"
@@ -19,7 +25,9 @@
         </template>
         <template slot="operation" slot-scope="scope" fixed="right">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">查看任务</ElButton>
+            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
+              $t('packages_business_relation_details_chakanrenwu')
+            }}</ElButton>
           </div>
         </template>
       </VTable>
@@ -29,6 +37,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { taskApi, logcollectorApi } from '@tap/api'
 import { VTable } from '@tap/component'
 import { TaskStatus } from '@tap/business'
@@ -48,31 +58,35 @@ export default {
       dataflow: {},
       columns: [
         {
-          label: '任务名称',
+          label: i18n.t('packages_business_task_name'),
           prop: 'name'
         },
         {
-          label: '任务类型',
+          label: i18n.t('packages_business_task_list_task_type'),
           prop: 'typeTitle',
           width: 150
         },
         {
-          label: '任务状态',
+          label: i18n.t('packages_business_task_status'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '创建时间',
+          label: i18n.t('packages_business_column_create_time'),
           prop: 'creatTime',
           dataType: 'time',
           width: 150
         },
         {
-          label: '操作',
+          label: i18n.t('packages_business_connection_operate'),
           slotName: 'operation',
           width: 150
         }
-      ]
+      ],
+      taskTypeMap: {
+        logCollector: i18n.t('packages_business_relation_details_wajue'),
+        mem_cache: i18n.t('packages_business_relation_details_huancun')
+      }
     }
   },
 
