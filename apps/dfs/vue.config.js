@@ -5,7 +5,8 @@ const crypto = require('crypto')
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
-  test: 'http://v3.test.cloud.tapdata.net'
+  test: 'https://v3.test.cloud.tapdata.net',
+  local: 'https://v3.test.cloud.tapdata.net'
 }
 let origin
 const { argv } = process
@@ -30,7 +31,7 @@ let pages = {
   }
 }
 
-let proxyConfig = {
+let prodProxyConfig = {
   '/api/tcm/': Object.assign({
     pathRewrite: {
       '^/': '/console/v3/'
@@ -44,7 +45,19 @@ let proxyConfig = {
       '^/': '/console/v3/'
     }
   }
-}
+};
+let localTmProxy = {
+  target: 'http://127.0.0.1:3000',
+  changeOrigin: true,
+  ws: true,
+  secure: false,
+  pathRewrite: {
+    '^/tm/': '/'
+  },
+  onProxyReq: function(proxyReq, req, res, opts){
+    proxyReq.setHeader('user_id', '6153e78c5e9f9fcc8119a4ca');
+  }
+};
 
 module.exports = {
   pages,
@@ -53,22 +66,12 @@ module.exports = {
   productionSourceMap: false,
 
   devServer: {
-    proxy: SERVE_ENV === 'PROD' ? proxyConfig : {
+    proxy: SERVE_ENV === 'PROD' ? prodProxyConfig : {
       '/api/tcm/': proxy,
-      '/tm/api/': proxy,
-      '/tm/ws/': {
-        // ...proxy,
+      '/tm/': SERVE_ENV === 'local' ? localTmProxy : Object.assign({
         ws: true,
         secure: false,
-        target: proxy.target.replace(/^https?/, 'ws')
-      },
-      '/tm/#/': {
-        target: 'http://localhost:8081',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/tm': '/'
-        }
-      }
+      }, proxy)
     }
   },
   configureWebpack: config => {
