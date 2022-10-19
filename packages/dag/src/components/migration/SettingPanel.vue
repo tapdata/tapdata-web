@@ -485,9 +485,14 @@ export default observer({
 
   methods: {
     handleCheckName: debounce(function (resolve, value) {
-      taskApi.checkName(value, this.settings.id || '').then(data => {
-        resolve(data)
-      })
+      taskApi
+        .checkName({
+          name: value,
+          id: this.settings.id || ''
+        })
+        .then(data => {
+          resolve(data)
+        })
     }, 500),
     // 获取所有节点
     getAllNode() {

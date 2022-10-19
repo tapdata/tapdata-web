@@ -104,12 +104,8 @@ export default class Task extends Http {
     }
   }
 
-  checkName(name, id) {
-    if (id) {
-      return this.axios.post(this.url + '/checkName?name=' + name + '&id=' + id)
-    } else {
-      return this.axios.post(this.url + '/checkName?name=' + name)
-    }
+  checkName(params = {}) {
+    return this.axios.post(this.url + '/checkName', params)
   }
   getNodeTableInfo(params = {}) {
     const config = { params }
