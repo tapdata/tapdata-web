@@ -477,5 +477,13 @@ export default {
   packages_business_shared_const_yanzhong: '嚴重',
   packages_business_shared_const_jinji: '緊急',
   packages_business_external_storage: '外存配置',
-  packages_business_dataFlow_taskBulkTag: '設置分类'
+  packages_business_dataFlow_taskBulkTag: '設置分类',
+  packages_business_relation_details_chakanrenwu: '查看任務',
+  packages_business_relation_details_shiyonggaiguanlian: '使用該{val}的任務清單',
+  packages_business_relation_list_jiaoyanrenwu: '校驗任務',
+  packages_business_relation_list_huancunrenwu: '緩存任務',
+  packages_business_relation_list_qingshururenwu: '請輸入任務名稱...',
+  packages_business_relation_details_huancun: '緩存',
+  packages_business_relation_details_wajue: '挖掘',
+  packages_business_relation_details_renwu: '任務'
 }

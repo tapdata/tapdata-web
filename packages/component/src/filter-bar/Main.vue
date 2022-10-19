@@ -16,7 +16,8 @@
         v-model="item.value"
         :is="getComponent(item.type)"
         :style="getStyle(item)"
-        @input="search(item)"
+        @input="search(item, 'input')"
+        @change="search(item, 'change')"
         @clear="fetch()"
       >
         <VIcon slot="suffix" size="14" class="inline-block">{{ item.icon }}</VIcon>
@@ -36,10 +37,11 @@ import SelectList from '../SelectList'
 import PopInput from './PopInput'
 import DatetimeRange from './DatetimeRange'
 import Datetime from './Datetime'
+import DarkSelect from '../DarkSelect'
 
 export default {
   name: 'FilterBar',
-  components: { VIcon, SelectList, PopInput, DatetimeRange, Datetime },
+  components: { VIcon, SelectList, PopInput, DatetimeRange, Datetime, DarkSelect },
   props: {
     value: {
       type: Object,
@@ -56,6 +58,10 @@ export default {
     hideRefresh: {
       type: Boolean,
       default: false
+    },
+    changeRoute: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -149,17 +155,22 @@ export default {
       })
       this.rules = result
     },
-    search(item) {
+    search(item, target) {
+      if (item.type === 'input' && target === 'change') {
+        return
+      }
       this.$refs.filterForm.validate(valid => {
         if (valid) {
           const { delayTrigger } = this.$util
           delayTrigger(() => {
             this.$emit('input', this.getValue())
-            this.$router.replace({
-              name: this.$route.name,
-              params: this.$route.params,
-              query: this.getValue()
-            })
+            this.$emit('search', this.getValue())
+            this.changeRoute &&
+              this.$router.replace({
+                name: this.$route.name,
+                params: this.$route.params,
+                query: this.getValue()
+              })
           }, item.debounce)
         }
       })
@@ -182,6 +193,7 @@ export default {
       let obj = {
         select: 'SelectList',
         'select-inner': 'SelectList',
+        'dark-select': 'DarkSelect',
         datetime: 'Datetime',
         datetimerange: 'DatetimeRange',
         'input-pop': 'PopInput',

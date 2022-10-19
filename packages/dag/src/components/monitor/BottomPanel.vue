@@ -1,10 +1,10 @@
 <template>
   <section class="bottom-panel border-top flex-column">
-    <Log v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
+    <NodeLog v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
     <div v-else class="panel-header flex h-100">
-      <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column">
+      <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column" key="bottomPanel">
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">
-          <Log v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></Log>
+          <NodeLog v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
         </ElTabPane>
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
@@ -17,6 +17,15 @@
             @change-tab="changeTab"
             @load-data="$emit('load-data')"
           ></Alert>
+        </ElTabPane>
+        <ElTabPane label="关联任务" name="relation">
+          <RelationList
+            v-if="currentTab === 'relation'"
+            v-bind="$attrs"
+            :currentTab="currentTab"
+            @change-tab="changeTab"
+            @load-data="$emit('load-data')"
+          ></RelationList>
         </ElTabPane>
       </ElTabs>
 
@@ -31,15 +40,16 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import NodeLog from '@tap/business/src/components/logs/NodeLog'
+import RelationList from '@tap/business/src/views/task/relation/List.vue'
 
-import Log from './components/Log'
 import Record from './components/Record'
 import Alert from './components/Alert'
 
 export default {
   name: 'ConfigPanel',
 
-  components: { Log, Record, Alert },
+  components: { Record, Alert, RelationList, NodeLog },
 
   directives: {
     resize,

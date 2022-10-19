@@ -162,10 +162,10 @@ import { mapGetters } from 'vuex'
 
 import { measurementApi } from '@tap/api'
 import { calcTimeUnit } from '@tap/shared'
+import { TimeSelect } from '@tap/component'
 
 import EventChart from './EventChart'
 import LineChart from './LineChart'
-import TimeSelect from './TimeSelect'
 import Frequency from './Frequency'
 import { TIME_FORMAT_MAP, getTimeGranularity } from '../util'
 

@@ -6,7 +6,7 @@
   >
     <NodeIcon v-if="activeNode" v-show="activeType === 'node'" class="config-node-icon" :node="activeNode" />
     <ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
-      <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')">
+      <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')" name="settings">
         <FormPanel
           v-show="activeType !== 'settings'"
           v-on="$listeners"
@@ -21,10 +21,10 @@
           @update:InputsOrOutputs="handleLoadMeta"
         />
       </ElTabPane>
-      <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')">
+      <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
         <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
       </ElTabPane>
-      <ElTabPane v-if="isMonitor" label="告警设置">
+      <ElTabPane v-if="isMonitor" label="告警设置" name="alarm">
         <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === '2'" />
       </ElTabPane>
     </ElTabs>
