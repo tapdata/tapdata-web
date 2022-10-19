@@ -49,7 +49,7 @@ export default {
     return {
       searchParams: {
         type: '',
-        taskStatus: '',
+        status: '',
         keyword: ''
       },
       filterItems: [],
@@ -124,7 +124,7 @@ export default {
         },
         {
           label: '任务状态',
-          key: 'taskStatus',
+          key: 'status',
           type: 'dark-select',
           items: statusItems
         },
@@ -139,7 +139,7 @@ export default {
     remoteMethod() {
       const taskId = this.$route.params.id
       const { taskRecordId } = this.$route.query || {}
-      const { keyword } = this.searchParams
+      const { keyword, type, status } = this.searchParams
       const MAP = {
         logCollector: '挖掘任务',
         mem_cache: '缓存任务',
@@ -148,11 +148,13 @@ export default {
       let filter = {
         keyword,
         taskId,
+        type,
+        status,
         taskRecordId
       }
       return taskApi.taskConsoleRelations(filter).then(data => {
         return {
-          total: 10,
+          total: 0,
           data:
             data.map(t => {
               t.typeLabel = MAP[t.type]

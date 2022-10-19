@@ -23,7 +23,7 @@
           </div>
         </template>
       </VTable>
-      <NodeLog :dataflow="dataflow" hide-filter class="log-box mt-6 border-top"></NodeLog>
+      <NodeLog v-if="isShowLog" :dataflow="dataflow" hide-filter class="log-box mt-6 border-top"></NodeLog>
     </div>
   </div>
 </template>
@@ -53,7 +53,7 @@ export default {
         },
         {
           label: '任务类型',
-          prop: 'type',
+          prop: 'typeTitle',
           width: 150
         },
         {
@@ -76,6 +76,15 @@ export default {
     }
   },
 
+  computed: {
+    type() {
+      return this.$route.query.type
+    },
+    isShowLog() {
+      return ['logCollector', 'mem_cache'].includes(this.type)
+    }
+  },
+
   mounted() {
     this.init()
   },
@@ -93,56 +102,40 @@ export default {
     },
 
     remoteMethod({ page }) {
-      console.log('remoteMethod', page, this.searchParams)
-      const { ids } = this
+      const { id } = this.$route.params
+      const { type } = this
       let { current, size } = page
       let filter = {
-        where: {
-          id: {
-            inq: ids
-          }
-        },
-        limit: size,
-        skip: size * (current - 1)
+        taskId: id,
+        type,
+        page: current,
+        size
+      }
+      const MAP = {
+        initial_sync: this.$t('packages_business_task_info_initial_sync'),
+        cdc: this.$t('packages_business_task_info_initial_cdc'),
+        'initial_sync+cdc':
+          this.$t('packages_business_task_info_initial_sync') + '+' + this.$t('packages_business_task_info_initial_cdc')
       }
       return logcollectorApi.relateTasks(filter).then(data => {
-        const { total, items = [] } = data || {}
+        const { total = 0, items = [] } = data || {}
         return {
           total,
-          data: items
+          data: items.map(t => {
+            t.typeTitle = MAP[t.type]
+            return t
+          })
         }
-        // return {
-        //   total: 10,
-        //   data: [
-        //     {
-        //       id: '1',
-        //       name: 'name',
-        //       type: 'type',
-        //       status: 'running',
-        //       creatTime: Date.now()
-        //     },
-        //     {
-        //       id: '2',
-        //       name: 'name',
-        //       type: 'type',
-        //       status: 'running',
-        //       creatTime: Date.now()
-        //     },
-        //     {
-        //       id: '3',
-        //       name: 'name',
-        //       type: 'type',
-        //       status: 'stopping',
-        //       creatTime: Date.now()
-        //     }
-        //   ]
-        // }
       })
     },
 
-    handleDetail({ taskId }) {
+    handleDetail({ taskId, syncType }) {
+      const MAP = {
+        migrate: 'MigrateViewer',
+        sync: 'DataflowViewer'
+      }
       this.$router.push({
-        name: 'TaskMonitor',
+        name: MAP[syncType],
         params: {
           id: taskId
         }

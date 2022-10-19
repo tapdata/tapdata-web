@@ -48,7 +48,7 @@ export default {
 
   methods: {
     changeFnc(value) {
-      this.$emit('change', value)
+      this.$emit('input', value).$emit('change', value)
     },
 
     openSelect() {
