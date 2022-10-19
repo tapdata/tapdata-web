@@ -9,7 +9,7 @@
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
         </ElTabPane>
-        <ElTabPane label="告警列表" name="alert">
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')" name="alert">
           <Alert
             v-if="currentTab === 'alert'"
             v-bind="$attrs"
@@ -18,7 +18,7 @@
             @load-data="$emit('load-data')"
           ></Alert>
         </ElTabPane>
-        <ElTabPane label="关联任务" name="relation">
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
           <RelationList
             v-if="currentTab === 'relation'"
             v-bind="$attrs"

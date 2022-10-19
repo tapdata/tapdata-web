@@ -224,7 +224,7 @@ export default {
         }, 0) || 0
       return [
         {
-          label: '全部告警',
+          label: i18n.t('packages_dag_components_alert_quanbugaojing'),
           value: 'all',
           num: totals
         },
@@ -289,7 +289,7 @@ export default {
 
     handleClose(row = {}) {
       alarmApi.close([row.id]).then(() => {
-        this.$message.success('关闭成功')
+        this.$message.success(i18n.t('packages_dag_components_alert_guanbichenggong'))
         this.$emit('load-data')
       })
     },

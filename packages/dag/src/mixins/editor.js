@@ -1632,7 +1632,7 @@ export default {
     },
 
     handleEditFlush(result) {
-      console.debug(`【DEBUG】ws返回，任务状态：[${result.data?.status}]`, result.data) // eslint-disable-line
+      console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
@@ -1779,18 +1779,18 @@ export default {
     },
 
     startLoopTask(id) {
-      console.debug('【DEBUG】开始轮询加载任务，间隔3s') // eslint-disable-line
+      console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
       clearTimeout(this.startLoopTaskTimer)
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
         makeStatusAndDisabled(data)
 
         console.debug(
-          `【DEBUG】轮询加载任务详情，当前状态：[${this.dataflow.status}], 返回状态：[${data.status}]`,
+          i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
           data
         ) // eslint-disable-line
         if (this.dataflow.status !== data.status) {
-          console.debug(`【DEBUG】轮询加载任务详情，出现状态不一致，按照返回状态更新`) // eslint-disable-line
+          console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
           this.dataflow.status = data.status
           this.dataflow.disabledData = data.btnDisabled
         }
@@ -1804,7 +1804,7 @@ export default {
     },
 
     initWS() {
-      console.debug('【DEBUG】初始化ws监听', this.$ws.ws) // eslint-disable-line
+      console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({

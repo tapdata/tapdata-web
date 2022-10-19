@@ -24,7 +24,7 @@
       <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
         <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
       </ElTabPane>
-      <ElTabPane v-if="isMonitor" label="告警设置" name="alarm">
+      <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
         <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === '2'" />
       </ElTabPane>
     </ElTabs>
@@ -34,7 +34,7 @@
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
           <ElTabs v-if="isMonitor" ref="tabs" v-model="titleCurrentTab" class="setting-tabs">
             <ElTabPane :label="$t('packages_dag_task_stetting_basic_setting')"></ElTabPane>
-            <ElTabPane label="告警设置"></ElTabPane>
+            <ElTabPane :label="$t('packages_dag_migration_configpanel_gaojingshezhi')"></ElTabPane>
           </ElTabs>
           <span v-else>{{ $t('packages_dag_task_stetting_basic_setting') }}</span>
         </div>
