@@ -87,7 +87,8 @@ export default {
       nodeList: [],
       nodeId: '',
       ifAuto: false,
-      loading: false
+      loading: false,
+      type: ''
     }
   },
 
@@ -128,8 +129,9 @@ export default {
       const { taskId, nodeId } = this
       this.loading = true
       const data = await taskApi.getConsole({
-        taskId,
+        taskId: taskId || this.$route.params.id,
         nodeId,
+        type: this.type,
         grade: this.levels.join(',')
       })
       const list = data.list?.filter(t => !t.describe) || []
@@ -158,8 +160,9 @@ export default {
       }
     },
 
-    startAuto() {
+    startAuto(type) {
       this.ifAuto = true
+      this.type = type
       this.autoLoad()
     },
 
