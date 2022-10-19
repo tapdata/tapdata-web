@@ -193,6 +193,8 @@ export default {
         } else {
           this.setStateReadonly(false)
         }
+      } else {
+        this.$route.name === 'MigrateViewer' && this.handleConsoleAutoLoad()
       }
     }
   },
@@ -470,7 +472,7 @@ export default {
       }
       this.isSaving = false
       this.toggleConsole(true)
-      this.$refs.console?.startAuto() // 信息输出自动加载
+      this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
       if (!needStart) {
         // this.$refs.console?.stopAuto() // 再load一下信息输出，并且停掉计时器
         // this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
@@ -489,6 +491,8 @@ export default {
             this.gotoViewer(false)
           }
           // this.unWatchStatus()
+        } else {
+          this.$route.name === 'MigrateViewer' && this.handleConsoleAutoLoad()
         }
       })
       const flag = await this.save(true)

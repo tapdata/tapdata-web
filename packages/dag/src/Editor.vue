@@ -475,13 +475,13 @@ export default {
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         this.toggleConsole(true)
-        this.$refs.console?.startAuto() // 信息输出自动加载
+        this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return true
       } catch (e) {
         this.isSaving = false
         this.handleError(e)
         this.toggleConsole(true)
-        this.$refs.console?.startAuto() // 信息输出自动加载
+        this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return false
       }
     },
