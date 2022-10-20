@@ -311,7 +311,7 @@ export default {
               return { items: [], total: 0 }
             }
             result.items.unshift({
-              label: '全部',
+              label: i18n.t('packages_dag_components_log_quanbu'),
               value: -1
             })
             return result

@@ -1015,11 +1015,11 @@ export default {
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
+          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
           // this.init()
           this.loadDataflow(this.dataflow?.id)
         } catch (e) {
-          this.handleError(e, this.$t('packages_dag_message_resetFailed'))
+          this.handleError(e, this.$t('packages_dag_message_operation_error'))
         }
       })
     },

@@ -483,5 +483,13 @@ export default {
   packages_business_shared_const_yanzhong: 'serious',
   packages_business_shared_const_jinji: 'urgent',
   packages_business_external_storage: 'External storage',
-  packages_business_dataFlow_taskBulkTag: 'Bulk Tag'
+  packages_business_dataFlow_taskBulkTag: 'Bulk Tag',
+  packages_business_relation_details_chakanrenwu: 'View tasks',
+  packages_business_relation_details_shiyonggaiguanlian: 'Use the task list for this {val}',
+  packages_business_relation_list_jiaoyanrenwu: 'Verification tasks',
+  packages_business_relation_list_huancunrenwu: 'Cached tasks',
+  packages_business_relation_list_qingshururenwu: 'Please enter the task name...',
+  packages_business_relation_details_huancun: 'cache',
+  packages_business_relation_details_wajue: 'Mining',
+  packages_business_relation_details_renwu: 'Tasks'
 }

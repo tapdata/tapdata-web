@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapGetters, mapState } from 'vuex'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
@@ -130,23 +132,31 @@ export default observer({
               layout: {
                 type: 'void',
                 properties: {
-                  'DATANODE_CANNOT_CONNECT.open': this.getSwitch('数据源无法连接告警'),
+                  'DATANODE_CANNOT_CONNECT.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_shujuyuanwufa')
+                  ),
                   'DATANODE_CANNOT_CONNECT.notify': this.getCheckboxGroup(),
-                  'DATANODE_HTTP_CONNECT_CONSUME.open': this.getSwitch('数据源网络连接耗时告警'),
+                  'DATANODE_HTTP_CONNECT_CONSUME.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_shujuyuanwangluo')
+                  ),
                   'DATANODE_HTTP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
                   space1: this.getSpace(
                     'DATANODE_HTTP_CONNECT_CONSUME.point',
                     'DATANODE_HTTP_CONNECT_CONSUME.equalsFlag',
                     'DATANODE_HTTP_CONNECT_CONSUME.ms'
                   ),
-                  'DATANODE_TCP_CONNECT_CONSUME.open': this.getSwitch('数据源协议连接耗时告警'),
+                  'DATANODE_TCP_CONNECT_CONSUME.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_shujuyuanxieyi')
+                  ),
                   'DATANODE_TCP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
                   space2: this.getSpace(
                     'DATANODE_TCP_CONNECT_CONSUME.point',
                     'DATANODE_TCP_CONNECT_CONSUME.equalsFlag',
                     'DATANODE_TCP_CONNECT_CONSUME.ms'
                   ),
-                  'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch('节点平均处理耗时告警'),
+                  'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_jiedianpingjunchu')
+                  ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(),
                   space3: this.getSpace(
                     'DATANODE_AVERAGE_HANDLE_CONSUME.point',
@@ -165,7 +175,9 @@ export default observer({
               layout: {
                 type: 'void',
                 properties: {
-                  'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch('节点平均处理耗时告警'),
+                  'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_jiedianpingjunchu')
+                  ),
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(),
                   space1: this.getSpace(
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.point',
@@ -184,17 +196,25 @@ export default observer({
               layout: {
                 type: 'void',
                 properties: {
-                  'TASK_STATUS_ERROR.open': this.getSwitch('任务运行出错告警'),
+                  'TASK_STATUS_ERROR.open': this.getSwitch(i18n.t('packages_dag_migration_alarmpanel_renwuyunxingchu')),
                   'TASK_STATUS_ERROR.notify': this.getCheckboxGroup(),
-                  'TASK_INSPECT_ERROR.open': this.getSwitch('任务校验出错告警'),
+                  'TASK_INSPECT_ERROR.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_renwujiaoyanchu')
+                  ),
                   'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup(),
-                  'TASK_FULL_COMPLETE.open': this.getSwitch('任务全量完成通知'),
+                  'TASK_FULL_COMPLETE.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan')
+                  ),
                   'TASK_FULL_COMPLETE.notify': this.getCheckboxGroup(),
-                  'TASK_INCREMENT_START.open': this.getSwitch('任务增量开始通知'),
+                  'TASK_INCREMENT_START.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_renwuzengliangkai')
+                  ),
                   'TASK_INCREMENT_START.notify': this.getCheckboxGroup(),
-                  'TASK_STATUS_STOP.open': this.getSwitch('任务停止告警'),
+                  'TASK_STATUS_STOP.open': this.getSwitch(i18n.t('packages_dag_migration_alarmpanel_renwutingzhigao')),
                   'TASK_STATUS_STOP.notify': this.getCheckboxGroup(),
-                  'TASK_INCREMENT_DELAY.open': this.getSwitch('任务增量延迟告警'),
+                  'TASK_INCREMENT_DELAY.open': this.getSwitch(
+                    i18n.t('packages_dag_migration_alarmpanel_renwuzengliangyan')
+                  ),
                   'TASK_INCREMENT_DELAY.notify': this.getCheckboxGroup(),
                   space1: this.getSpace(
                     'TASK_INCREMENT_DELAY.point',
@@ -244,8 +264,8 @@ export default observer({
         'x-decorator': 'FormItem',
         'x-component': 'Checkbox.Group',
         enum: [
-          { label: '系统通知', value: 'SYSTEM' },
-          { label: '邮件通知', value: 'EMAIL' }
+          { label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'), value: 'SYSTEM' },
+          { label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'), value: 'EMAIL' }
         ]
       }
     },
@@ -304,8 +324,8 @@ export default observer({
         'x-component': 'Space',
         properties: {}
       }
-      result.properties[key1] = this.getInputNumber('连续')
-      result.properties[key2] = this.getSelect('个点')
+      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'))
+      result.properties[key2] = this.getSelect(i18n.t('packages_dag_migration_alarmpanel_gedian'))
       result.properties[key3] = this.getInputNumber()
       result.properties.ms = {
         title: 'ms',

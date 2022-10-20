@@ -486,5 +486,31 @@ export default {
     'The task is cleaned, in total, {totalEvent} items need to clean, succeed: {succeedEvent} item, failed: {failedEvent} item...{status}, elapsed time: {elapsedTime} ms',
   packages_dag_unknown_error: 'Clean node[{nodeName}({nodeId})] occur an unknown error',
   packages_dag_console_log_status_success: 'Succeed',
-  packages_dag_console_log_status_fail: 'Failed'
+  packages_dag_console_log_status_fail: 'Failed',
+  packages_dag_migration_alarmpanel_gedian: 'points',
+  packages_dag_migration_alarmpanel_lianxu: 'Continuous',
+  packages_dag_migration_alarmpanel_youjiantongzhi: 'Email notification',
+  packages_dag_migration_alarmpanel_xitongtongzhi: 'System notification',
+  packages_dag_migration_alarmpanel_renwuzengliangyan: 'Task increment delay alarm',
+  packages_dag_migration_alarmpanel_renwutingzhigao: 'Task stop alarm',
+  packages_dag_migration_alarmpanel_renwuzengliangkai: 'Task increment start notification',
+  packages_dag_migration_alarmpanel_renwuquanliangwan: 'Notice of full completion of tasks',
+  packages_dag_migration_alarmpanel_renwujiaoyanchu: 'Task verification error alarm',
+  packages_dag_migration_alarmpanel_renwuyunxingchu: 'Task running error alarm',
+  packages_dag_migration_alarmpanel_jiedianpingjunchu: 'Node average processing time alarm',
+  packages_dag_migration_alarmpanel_shujuyuanxieyi: 'Data source protocol connection time-consuming alarm',
+  packages_dag_migration_alarmpanel_shujuyuanwangluo: 'Data source network connection time-consuming alarm',
+  packages_dag_migration_alarmpanel_shujuyuanwufa: 'Data source cannot be connected to alarm',
+  packages_dag_migration_configpanel_gaojingshezhi: 'Alarm settings',
+  packages_dag_monitor_bottompanel_guanlianrenwu: 'Associated tasks',
+  packages_dag_monitor_bottompanel_gaojingliebiao: 'Alarm list',
+  packages_dag_components_alert_guanbichenggong: 'Close successfully',
+  packages_dag_components_alert_quanbugaojing: 'All alerts',
+  packages_dag_mixins_editor_debug: '[DEBUG] Initialize ws monitor',
+  packages_dag_mixins_editor_debug2:
+    '[DEBUG] Polling the loading task details, the status is inconsistent, and update according to the returned status',
+  packages_dag_mixins_editor_debug3:
+    '[DEBUG] Polling load task details, current status: [{val1}], return status: [{val2}]',
+  packages_dag_mixins_editor_debug4: '[DEBUG] Start polling loading tasks, every 3s',
+  packages_dag_mixins_editor_debug5: '[DEBUG]ws returned, task status: [{val1}]'
 }

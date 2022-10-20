@@ -55,6 +55,11 @@ const VerifyDetails = async () => {
   return VerifyDetails
 }
 
+const RelationTaskDetails = async () => {
+  const { RelationTaskDetails } = await import('@tap/business')
+  return RelationTaskDetails
+}
+
 export default [
   {
     path: '/login',
@@ -809,6 +814,15 @@ export default [
         component: () => import('@/views/solutions/Index'),
         meta: {
           title: 'solution_name'
+        }
+      },
+      {
+        path: 'relationTask/detail/:id',
+        name: 'relationTaskDetail',
+        component: RelationTaskDetails,
+        meta: {
+          title: '关联任务详情',
+          hideTitle: true
         }
       }
     ]

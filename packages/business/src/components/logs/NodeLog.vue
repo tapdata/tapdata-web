@@ -1,6 +1,6 @@
 <template>
   <div class="log-container flex justify-content-between">
-    <div class="filter-items border-end">
+    <div v-show="!hideFilter" class="filter-items border-end">
       <div class="px-2 py-3">
         <div
           class="node-list-item px-2 mb-1 flex align-center font-color-dark"
@@ -20,17 +20,6 @@
           <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
         </div>
       </div>
-
-      <!--<div
-        v-for="(item, index) in items"
-        :key="index"
-        :class="[{ active: activeNodeId === item.value }]"
-        class="filter-items__item flex justify-content-between align-items-center"
-        @click="changeItem(item)"
-      >
-        <OverflowTooltip class="text-truncate" placement="right" :text="item.label" :open-delay="400" />
-        <VIcon>arrow-right</VIcon>
-      </div>-->
     </div>
     <div class="main flex-fill flex flex-column px-4 py-3">
       <div class="flex mb-2 align-items-center">
@@ -166,16 +155,15 @@ import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
 import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
-import { VEmpty, VIcon, OverflowTooltip } from '@tap/component'
+import { VIcon, TimeSelect } from '@tap/component'
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi } from '@tap/api'
-
-import TimeSelect from './TimeSelect'
-import NodeIcon from '../../NodeIcon'
+import NodeIcon from '@tap/dag/src/components/NodeIcon'
 
 export default {
-  name: 'Log',
+  name: 'NodeLog',
 
-  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, OverflowTooltip },
+  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty },
 
   props: {
     dataflow: {
@@ -190,6 +178,10 @@ export default {
           items: []
         }
       }
+    },
+    hideFilter: {
+      type: Boolean,
+      default: false
     }
   },
 

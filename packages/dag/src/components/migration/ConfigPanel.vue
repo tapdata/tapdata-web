@@ -6,7 +6,7 @@
   >
     <NodeIcon v-if="activeNode" v-show="activeType === 'node'" class="config-node-icon" :node="activeNode" />
     <ElTabs ref="tabs" v-model="currentTab" class="config-tabs" v-show="activeType === 'node'">
-      <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')">
+      <ElTabPane :label="$t('packages_dag_migration_configpanel_peizhi')" name="settings">
         <FormPanel
           v-show="activeType !== 'settings'"
           v-on="$listeners"
@@ -21,11 +21,11 @@
           @update:InputsOrOutputs="handleLoadMeta"
         />
       </ElTabPane>
-      <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')">
-        <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
+      <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
+        <MetaPane ref="metaPane" :is-show="currentTab === 'meta'"></MetaPane>
       </ElTabPane>
-      <ElTabPane v-if="isMonitor" label="告警设置">
-        <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === '2'" />
+      <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
+        <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === 'alarm'" />
       </ElTabPane>
     </ElTabs>
 
@@ -34,7 +34,7 @@
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100 fw-sub">
           <ElTabs v-if="isMonitor" ref="tabs" v-model="titleCurrentTab" class="setting-tabs">
             <ElTabPane :label="$t('packages_dag_task_stetting_basic_setting')"></ElTabPane>
-            <ElTabPane label="告警设置"></ElTabPane>
+            <ElTabPane :label="$t('packages_dag_migration_configpanel_gaojingshezhi')"></ElTabPane>
           </ElTabs>
           <span v-else>{{ $t('packages_dag_task_stetting_basic_setting') }}</span>
         </div>
@@ -79,7 +79,7 @@ export default {
 
   data() {
     return {
-      currentTab: '0',
+      currentTab: 'settings',
       titleCurrentTab: '0',
       name: this.activeNode?.name
     }

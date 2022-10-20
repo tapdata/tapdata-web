@@ -274,8 +274,7 @@
 <script>
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'
-import TimeSelect from './components/TimeSelect'
-import { VIcon } from '@tap/component'
+import { VIcon, TimeSelect } from '@tap/component'
 import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'

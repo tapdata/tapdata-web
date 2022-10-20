@@ -193,8 +193,6 @@ export default {
         } else {
           this.setStateReadonly(false)
         }
-      } else {
-        this.$route.name === 'MigrateViewer' && this.handleConsoleAutoLoad()
       }
     }
   },
@@ -491,8 +489,6 @@ export default {
             this.gotoViewer(false)
           }
           // this.unWatchStatus()
-        } else {
-          this.$route.name === 'MigrateViewer' && this.handleConsoleAutoLoad()
         }
       })
       const flag = await this.save(true)
