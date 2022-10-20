@@ -20,7 +20,7 @@ export default {
   status_stop: '已停止',
   status_stopping: '停止中',
   status_finished: '已完成',
-  status_force_stopping: '強制停止中',
+  status_force_stopping: 'class中',
   status_schedule_failed: '錯誤',
   // 通用按钮
   button_edit: '編輯',

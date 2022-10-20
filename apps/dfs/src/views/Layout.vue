@@ -202,10 +202,11 @@ export default {
         }
       }, 5000)
     },
+
     loadChat() {
       let $zoho = $zoho || {}
       $zoho.salesiq = $zoho.salesiq || {
-        widgetcode: 'a97952edfe212ffc52d6a67f37aa6e903e76203f0bbbd3e066c89cc43779f219',
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
         values: {},
         ready: function () {}
       }
