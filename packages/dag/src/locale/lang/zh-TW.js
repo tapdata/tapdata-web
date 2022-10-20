@@ -212,7 +212,7 @@ export default {
   packages_dag_components_log_kaiqishichangmiao: '開啟時長（秒）',
   packages_dag_components_log_debug: 'DEBUG日誌參數',
   packages_dag_components_log_rizhijibie: '日誌級別：',
-  packages_dag_components_log_rizhidengjishe: '日誌等級設置',
+  packages_dag_components_log_rizhidengjishe: '日誌輸出等級設置',
   packages_dag_components_log_xiazai: '下載',
   packages_dag_components_log_qingshururizhi: '請輸入日誌內容…',
   packages_dag_components_nodedetaildialog_shuchu: '輸出',

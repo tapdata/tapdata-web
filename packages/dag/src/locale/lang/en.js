@@ -218,7 +218,7 @@ export default {
   packages_dag_components_log_kaiqishichangmiao: 'Open duration (seconds)',
   packages_dag_components_log_debug: 'DEBUG log parameter',
   packages_dag_components_log_rizhijibie: 'Log level:',
-  packages_dag_components_log_rizhidengjishe: 'Log level settings',
+  packages_dag_components_log_rizhidengjishe: 'Log output level setting',
   packages_dag_components_log_xiazai: 'download',
   packages_dag_components_log_qingshururizhi: 'Please enter the log content...',
   packages_dag_components_nodedetaildialog_shuchu: 'output',

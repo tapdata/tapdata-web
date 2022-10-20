@@ -39,9 +39,6 @@
           style="width: 240px"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">{{
-          $t('packages_dag_button_setting')
-        }}</ElButton>
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
           $t('packages_dag_components_log_xiazai')
         }}</ElButton>
@@ -57,6 +54,9 @@
         >
           <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
         </ElCheckboxGroup>
+        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">{{
+          $t('packages_dag_components_log_rizhidengjishe')
+        }}</ElButton>
       </div>
       <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
         <DynamicScroller

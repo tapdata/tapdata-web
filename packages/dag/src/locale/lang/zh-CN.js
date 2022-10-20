@@ -212,7 +212,7 @@ export default {
   packages_dag_components_log_kaiqishichangmiao: '开启时长（秒）',
   packages_dag_components_log_debug: 'DEBUG日志参数',
   packages_dag_components_log_rizhijibie: '日志级别：',
-  packages_dag_components_log_rizhidengjishe: '日志等级设置',
+  packages_dag_components_log_rizhidengjishe: '日志输出等级设置',
   packages_dag_components_log_xiazai: '下载',
   packages_dag_components_log_qingshururizhi: '请输入日志内容…',
   packages_dag_components_nodedetaildialog_shuchu: '输出',
