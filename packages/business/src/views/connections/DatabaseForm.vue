@@ -312,6 +312,7 @@ export default {
     startTestPdk() {
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
       let { __TAPDATA } = formValues
+      formValues.__connectionType = __TAPDATA.connection_type
       Object.assign(this.model, __TAPDATA)
       delete formValues['__TAPDATA']
       this.model.config = formValues
