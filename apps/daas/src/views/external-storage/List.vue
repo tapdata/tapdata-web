@@ -6,7 +6,7 @@
       </template>
       <div slot="operation">
         <ElButton class="btn btn-create" type="primary" size="mini" @click="openDialog()">
-          <span{{ $t('daas_external_storage_list_chuangjianwaicun') }}/span>
+          <span>{{ $t('daas_external_storage_list_chuangjianwaicun') }}</span>
         </ElButton>
       </div>
       <ElTableColumn

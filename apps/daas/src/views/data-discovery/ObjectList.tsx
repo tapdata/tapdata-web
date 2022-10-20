@@ -53,6 +53,10 @@ export default defineComponent({
         }
       })
     }
+    const rest = () => {
+      // @ts-ignore
+      refs.table.fetch(1)
+    }
     //请求筛选条件-下拉列表
     const loadFilterList = () => {
       let filterType = ['objCategory', 'objType', 'sourceCategory', 'sourceType']
@@ -144,7 +148,8 @@ export default defineComponent({
       success,
       loadData,
       renderNode,
-      closeDrawer
+      closeDrawer,
+      rest
     }
   },
   render() {
@@ -155,7 +160,7 @@ export default defineComponent({
             <FilterBar
               items={this.data.filterItems}
               v-model={this.data.searchParams}
-              {...{ on: { fetch: this.loadData } }}
+              {...{ on: { fetch: this.rest } }}
             ></FilterBar>
           </template>
           <el-table-column

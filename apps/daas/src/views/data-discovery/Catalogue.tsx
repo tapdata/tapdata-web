@@ -47,6 +47,10 @@ export default defineComponent({
         }
       })
     }
+    const rest = () => {
+      // @ts-ignore
+      refs.table.fetch(1)
+    }
     const loadFilterList = () => {
       let filterType = ['objType']
       discoveryApi.filterList(filterType).then(res => {
@@ -150,7 +154,8 @@ export default defineComponent({
       handleSourceDrawer,
       renderNode,
       getNodeChecked,
-      loadData
+      loadData,
+      rest
     }
   },
   render() {
@@ -173,7 +178,7 @@ export default defineComponent({
             <FilterBar
               v-model={this.data.searchParams}
               items={this.data.filterItems}
-              {...{ on: { fetch: this.loadData } }}
+              {...{ on: { fetch: this.rest } }}
             ></FilterBar>
           </template>
           <template slot="operation">
