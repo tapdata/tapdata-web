@@ -472,7 +472,7 @@ export default {
   packages_dag_console_log_status_fail: '失败',
   packages_dag_auto_reset_start: '任务将自动在{resetInterval}秒后对清理失败项尝试{rest}次重置清理',
   packages_dag_auto_reset_start_nth: '任务开始进行第{resetTimes}次自动重置清理',
-  packages_dag_auto_reset_start_result: '任务重置失败，请按照失败原因进行相关检查后再重试',
+  packages_dag_auto_reset_start_result: '任务重置失败，请稍后再试',
   packages_dag_migration_alarmpanel_gedian: '个点',
   packages_dag_migration_alarmpanel_lianxu: '连续',
   packages_dag_migration_alarmpanel_youjiantongzhi: '邮件通知',

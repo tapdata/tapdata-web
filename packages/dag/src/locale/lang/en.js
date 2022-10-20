@@ -490,7 +490,7 @@ export default {
   packages_dag_auto_reset_start:
     'The task will automatically attempt to reset the cleanup {rest} times on failed cleanup items after {resetInterval} seconds',
   packages_dag_auto_reset_start_nth: 'The task starts to perform the {resetTimes} automatic reset cleanup',
-  packages_dag_auto_reset_start_result: 'The task reset failed, please check the reason for the failure and try again',
+  packages_dag_auto_reset_start_result: 'The task reset failed, please try again later',
   packages_dag_migration_alarmpanel_gedian: 'points',
   packages_dag_migration_alarmpanel_lianxu: 'Continuous',
   packages_dag_migration_alarmpanel_youjiantongzhi: 'Email notification',
