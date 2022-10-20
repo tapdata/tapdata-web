@@ -90,16 +90,24 @@ export default {
       total: 0,
       options: [
         {
-          value: 'ERROR',
-          label: 'ERROR'
+          label: this.$t('packages_business_components_alert_huifu'),
+          value: 'RECOVERY'
         },
         {
-          value: 'WARN',
-          label: 'WARN'
+          label: this.$t('packages_business_shared_const_yiban'),
+          value: 'NORMAL'
         },
         {
-          value: 'INFO',
-          label: 'INFO'
+          label: this.$t('packages_business_shared_const_jinggao'),
+          value: 'WARNING'
+        },
+        {
+          label: this.$t('packages_business_shared_const_yanzhong'),
+          value: 'CRITICAL'
+        },
+        {
+          label: this.$t('packages_business_shared_const_jinji'),
+          value: 'EMERGENCY'
         }
       ]
     }
@@ -114,6 +122,9 @@ export default {
         msgType: 'ALARM',
         page: this.currentPage,
         size: this.pagesize
+      }
+      if (this.searchParams.search) {
+        where.level = this.searchParams.search
       }
       if (!this.read) {
         where.read = false

@@ -441,7 +441,7 @@ export default {
     '批量暫停任務後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
   packages_business_dataFlow_force_stop_confirm_title: '是否強制停止該任務？',
   packages_business_dataFlow_agent_force_stop_confirm_message:
-    '強制停止任務xxx，由於Agent已離線，我們只會重置該任務的狀態，但是無法停止此任務的運行，請您確保已在本地手動停止或删除了該Agent，或等待該Agent連接上後在停止該任務。',
+    '強制停止任務xxx，由於Agent已離線，我們只會重置該任務的狀態，但是無法停止此任務的運行，請您確保已在本地手動停止或删除了該Agent，或等待該Agent連接上後再停止該任務。',
   packages_business_dataFlow_force_stop_confirm_message:
     '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
   packages_business_dataFlow_bulk_force_stop_confirm_title: '是否批量強制停止任務？',

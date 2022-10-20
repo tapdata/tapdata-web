@@ -415,7 +415,7 @@ export default {
   packages_business_etl_details_zantingrenwux:
     '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
   packages_business_dataFlow_agent_force_stop_confirm_message:
-    '强制停止任务 xxx ，由于Agent已离线，我们只会重置该任务的状态，但是无法停止此任务的运行，请您确保已在本地手动停止或删除了该Agent，或等待该Agent连接上后在停止该任务。',
+    '强制停止任务 xxx ，由于Agent已离线，我们只会重置该任务的状态，但是无法停止此任务的运行，请您确保已在本地手动停止或删除了该Agent，或等待该Agent连接上后再停止该任务。',
   packages_business_etl_details_shifouzantinggai: '是否暂停该任务？',
   packages_business_etl_details_shanchurenwux: '删除任务 xxx 后，此任务将无法恢复',
   packages_business_etl_details_shifoushanchugai: '是否删除该任务？',
