@@ -64,6 +64,7 @@
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
+import { deepCopy } from '@tap/shared'
 
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
@@ -195,6 +196,7 @@ export default {
       }
       let result = []
       data.forEach(el => {
+        el.st = el.status
         el.status = i18n.t(I18N_MAP[el.status])
         const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
         const desc = i18n.t(I18N_MAP[el.describe], el)
@@ -202,10 +204,29 @@ export default {
         item.id = el.id
         item.grade = el.level
         item.log = `${time} ${desc}`
-        if (['FAILED'].includes(el.status) && item.grade === 'ERROR') {
-          item.log += `${el.errorMsg}\n${el.errorStack}`
+        if (['FAILED'].includes(el.st) && item.grade === 'ERROR') {
+          item.log += `\n${el.errorMsg}\n${el.errorStack}`
         }
         result.push(item)
+        if (el.describe === 'task_reset_end' && ['FAILED', 'TASK_FAILED'].includes(el.st)) {
+          let { resetTimes = 0, resetAllTimes = 0 } = el
+          const rest = resetAllTimes - resetTimes
+          if (rest) {
+            let startItem = deepCopy(item)
+            startItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
+            result.push(startItem)
+          }
+          if (resetTimes) {
+            let nthItem = deepCopy(item)
+            nthItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_nth', el)}`
+            result.push(nthItem)
+          }
+          if (resetAllTimes && resetAllTimes === resetTimes) {
+            let resultItem = deepCopy(item)
+            resultItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_result', el)}`
+            result.push(resultItem)
+          }
+        }
       })
       return result
     }

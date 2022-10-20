@@ -194,6 +194,9 @@ export default {
           this.setStateReadonly(false)
         }
       }
+      if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) && ['renewing', 'renew_failed'].includes(v)) {
+        this.handleConsoleAutoLoad()
+      }
     }
   },
 
@@ -489,6 +492,9 @@ export default {
             this.gotoViewer(false)
           }
           // this.unWatchStatus()
+        }
+        if (['MigrateViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
+          this.handleConsoleAutoLoad()
         }
       })
       const flag = await this.save(true)
