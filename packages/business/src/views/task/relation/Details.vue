@@ -41,7 +41,7 @@ import i18n from '@tap/i18n'
 
 import { taskApi, logcollectorApi } from '@tap/api'
 import { VTable } from '@tap/component'
-import { TaskStatus } from '@tap/business'
+import { TaskStatus, STATUS_MERGE } from '@tap/business'
 import NodeLog from '../../../components/logs/NodeLog'
 
 export default {
@@ -137,6 +137,7 @@ export default {
           total,
           data: items.map(t => {
             t.typeTitle = MAP[t.type]
+            t.status = STATUS_MERGE[t.status] || t.status
             return t
           })
         }

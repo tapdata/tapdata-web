@@ -124,7 +124,7 @@ export const STATUS_MAP = {
   }
 }
 
-const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
+export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
   if (value.in) {
     value.in.reduce((res, val) => ((res[val] = key), res), merge)
   }
