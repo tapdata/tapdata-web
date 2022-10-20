@@ -1923,7 +1923,7 @@ export default {
   daas_setting_alarmnotification_dangshujuwufa: 'It takes time when the data cannot be connected to the network',
   daas_setting_alarmnotification_dangrenwudezeng: 'When the incremental delay of the task',
   daas_setting_alarmnotification_dangrenwutingzhi: 'When the task stops',
-  daas_setting_alarmnotification_dangrenwuzengliang: 'When the task increment is completed',
+  daas_setting_alarmnotification_dangrenwuzengliang: 'When the task increment start',
   daas_setting_alarmnotification_dangrenwuquanliang: 'When the task is fully completed',
   daas_setting_alarmnotification_dangrenwujiaoyan: 'When the task verification error occurs',
   daas_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
