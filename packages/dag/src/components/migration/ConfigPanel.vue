@@ -22,10 +22,10 @@
         />
       </ElTabPane>
       <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
-        <MetaPane ref="metaPane" :is-show="currentTab === '1'"></MetaPane>
+        <MetaPane ref="metaPane" :is-show="currentTab === 'meta'"></MetaPane>
       </ElTabPane>
       <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
-        <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === '2'" />
+        <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === 'alarm'" />
       </ElTabPane>
     </ElTabs>
 
@@ -79,7 +79,7 @@ export default {
 
   data() {
     return {
-      currentTab: '0',
+      currentTab: 'settings',
       titleCurrentTab: '0',
       name: this.activeNode?.name
     }
