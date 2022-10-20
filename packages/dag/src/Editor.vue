@@ -168,6 +168,14 @@ export default {
     }
   },
 
+  watch: {
+    'dataflow.status'(v) {
+      if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
+        this.handleConsoleAutoLoad()
+      }
+    }
+  },
+
   // created 换成 mounted，等上一个实例destroy走完
   async mounted() {
     if (this.$route.name === 'DataflowViewer') {
