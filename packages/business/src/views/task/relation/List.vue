@@ -37,7 +37,7 @@
 
 <script>
 import { VTable, FilterBar } from '@tap/component'
-import { TaskStatus, STATUS_MAP } from '@tap/business'
+import { TaskStatus } from '@tap/business'
 import { taskApi } from '@tap/api'
 import { openUrl } from '@tap/shared'
 import i18n from '@tap/i18n'
@@ -96,14 +96,6 @@ export default {
     },
 
     getSearchItems() {
-      let statusItems = []
-      for (let key in STATUS_MAP) {
-        statusItems.push({
-          label: i18n.t(STATUS_MAP[key].i18n),
-          value: key
-        })
-      }
-
       this.filterItems = [
         {
           label: i18n.t('packages_business_task_list_task_type'),
@@ -115,20 +107,10 @@ export default {
               value: 'logCollector'
             },
             {
-              label: i18n.t('packages_business_relation_list_jiaoyanrenwu'),
-              value: 'inspect'
-            },
-            {
               label: i18n.t('packages_business_relation_list_huancunrenwu'),
               value: 'mem_cache'
             }
           ]
-        },
-        {
-          label: i18n.t('packages_business_task_status'),
-          key: 'status',
-          type: 'dark-select',
-          items: statusItems
         },
         {
           placeholder: i18n.t('packages_business_relation_list_qingshururenwu'),
