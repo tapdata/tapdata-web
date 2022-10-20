@@ -421,6 +421,7 @@ export default defineComponent({
                         {i18n.t('daas_data_discovery_previewdrawer_shuchucanshu')}
                       </span>
                       <VTable
+                        class="discovery-page-table"
                         hasPagination={false}
                         columns={this.data.apiInputColumns}
                         data={this.previewData.fields}
