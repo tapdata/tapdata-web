@@ -426,6 +426,7 @@ export default {
       this.debugParams = null
       this.debugMethod = 'GET'
       this.debugResult = ''
+      this.allFields = []
 
       this.$refs?.form?.clearValidate()
       this.formatData(formData || {})
