@@ -1862,7 +1862,7 @@ export default {
   daas_setting_alarmnotification_dangshujuwufa: '當數據無法網络連接耗時',
   daas_setting_alarmnotification_dangrenwudezeng: '當任務的增量延遲',
   daas_setting_alarmnotification_dangrenwutingzhi: '當任務停止時',
-  daas_setting_alarmnotification_dangrenwuzengliang: '當任務增量完成時',
+  daas_setting_alarmnotification_dangrenwuzengliang: '當任務增量开始時',
   daas_setting_alarmnotification_dangrenwuquanliang: '當任務全量完成時',
   daas_setting_alarmnotification_dangrenwujiaoyan: '當任務校驗出錯時',
   daas_setting_alarmnotification_dangrenwuyudao: '當任務遇到錯誤時',

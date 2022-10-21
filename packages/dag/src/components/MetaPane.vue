@@ -20,7 +20,7 @@
       <ElTableColumn prop="default_value" :label="$t('packages_dag_meta_table_default')"> </ElTableColumn>
       <ElTableColumn prop="is_nullable" :label="$t('packages_dag_meta_table_not_null')">
         <template #default="{ row }">
-          {{ $t(`meta_table_${!row.is_nullable ? 'true' : 'false'}`) }}
+          {{ nullableMap[!row.is_nullable] }}
         </template>
       </ElTableColumn>
       <ElTableColumn prop="comment" :label="$t('packages_dag_meta_table_comment')"> </ElTableColumn>
@@ -29,9 +29,11 @@
 </template>
 
 <script>
-import { metadataInstancesApi } from '@tap/api'
 import { mapGetters, mapState } from 'vuex'
+
+import { metadataInstancesApi } from '@tap/api'
 import { VIcon } from '@tap/component'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'MetaPane',
@@ -53,6 +55,10 @@ export default {
         field_process: [],
         fieldsNameTransform: '',
         batchOperationList: []
+      },
+      nullableMap: {
+        true: i18n.t('packages_dag_meta_table_true'),
+        false: i18n.t('packages_dag_meta_table_false')
       }
     }
   },
