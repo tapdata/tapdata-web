@@ -110,7 +110,7 @@
         </ElFormItem>
         <ElFormItem :label="$t('application_header_scopes')" required>
           <ElSelect v-model="createForm.scopes" multiple size="mini">
-            <ElOption v-for="item in roles" :label="item.name" :value="item.id" :key="item.id"></ElOption>
+            <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_redirect_uri')" required>
