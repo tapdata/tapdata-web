@@ -127,7 +127,7 @@ export default defineComponent({
         if (data[i].type === 'calculate') {
           data[i].connectionInfo = `${i18n.t('daas_data_discovery_previewdrawer_shurujiedian')}: ${
             data[i].inputNodeName
-          } ; ${i18n.t('daas_data_discovery_previewdrawer_shurujiedian')}: ${data[i].outputNodeName}`
+          } ; ${i18n.t('daas_data_discovery_previewdrawer_shuchujiedian')}: ${data[i].outputNodeName}`
         }
       }
       return data
