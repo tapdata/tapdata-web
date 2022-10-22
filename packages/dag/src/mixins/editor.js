@@ -607,7 +607,11 @@ export default {
         await this.openDataflow(id)
         // await this.startLoop()
         this.setStateReadonly(true)
-        if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name)) {
+        const routeName = this.$route.name
+        if (
+          routeName === 'MigrateViewer' ||
+          (routeName === 'DataflowViewer' && ['renewing', 'renew_failed'].includes(this.dataflow.status))
+        ) {
           this.handleConsoleAutoLoad()
         }
       } else {
