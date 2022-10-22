@@ -7,9 +7,9 @@ const serveUrlMap = {
   dev: 'http://backend:3030',
   test: 'https://v3.test.cloud.tapdata.net',
   local: 'https://v3.test.cloud.tapdata.net',
-  localTm: 'http://127.0.0.1:3000'
+  localTm: 'http://127.0.0.1:3030'
 }
-const userId = "60cc0c304e190a579cbe306c";
+const userId = "60b60af1147bce7705727188";
 let origin
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
@@ -58,6 +58,10 @@ let localTmProxy = {
   },
   onProxyReq: function(proxyReq, req, res, opts){
     proxyReq.setHeader('user_id', userId);
+  },
+  onProxyReqWs: function(proxyReq, req, socket, options, head){
+    proxyReq.setHeader('user_id', userId);
+    console.log(req.url)
   }
 };
 
@@ -232,6 +236,7 @@ const getToken = userId => {
 if (process.env.NODE_ENV === 'development') {
   let _userId = process.env.USER_ID || userId;
   process.env.VUE_APP_ACCESS_TOKEN = getToken(_userId)
+
   console.log('本地用户调试ID: ' + _userId)
   console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
   console.log('Proxy server: ' + proxy.target)
