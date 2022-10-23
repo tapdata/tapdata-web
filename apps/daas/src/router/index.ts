@@ -22,7 +22,7 @@ export default i18n => {
     if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
       document.title = i18n.t(to.meta.title)
     }
-    const token = Cookie.get('token')
+    const token = Cookie.get('access_token')
     if (token) {
       //若token存在，获取权限
       const permissionsStr = sessionStorage.getItem('tapdata_permissions')

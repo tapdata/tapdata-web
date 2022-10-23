@@ -88,7 +88,7 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
       encoder: str => window.encodeURIComponent(str)
     })
   }
-  const accessToken = Cookie.get('token')
+  const accessToken = Cookie.get('access_token')
   if (accessToken) {
     if (~config.url.indexOf('?')) {
       if (!~config.url.indexOf('access_token')) {
