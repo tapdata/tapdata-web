@@ -18,7 +18,6 @@
         ref="table"
         height="300px"
         class="table-list"
-        hide-on-single-page
       >
         <template slot="status" slot-scope="scope">
           <TaskStatus :task="scope.row" />
@@ -69,13 +68,14 @@ export default {
         {
           label: i18n.t('packages_business_task_status'),
           prop: 'status',
-          slotName: 'status'
+          slotName: 'status',
+          width: 150
         },
         {
           label: i18n.t('packages_business_column_create_time'),
           prop: 'creatTime',
           dataType: 'time',
-          width: 150
+          width: 200
         },
         {
           label: i18n.t('packages_business_connection_operate'),

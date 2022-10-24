@@ -482,8 +482,8 @@ export default {
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
-        this.toggleConsole(true)
-        this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
+        // this.toggleConsole(true)
+        // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return true
       } catch (e) {
         this.isSaving = false
