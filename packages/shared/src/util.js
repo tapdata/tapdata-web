@@ -26,7 +26,7 @@ export function setPermission(list) {
 export function signOut() {
   sessionStorage.removeItem('tapdata_permissions')
   Cookie.remove('xToken')
-  Cookie.remove('token')
+  Cookie.remove('access_token')
   Cookie.remove('user_id')
   Cookie.remove('login')
   Cookie.remove('isAdmin')

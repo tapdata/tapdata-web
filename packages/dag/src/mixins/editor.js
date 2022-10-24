@@ -574,6 +574,7 @@ export default {
     },
 
     async initView(first) {
+      const { id } = this.$route.params
       this.stopDagWatch?.()
 
       if (this.$route.params.action === 'dataflowEdit') {
@@ -586,6 +587,7 @@ export default {
             this.updateDag()
           }
         )
+        this.startLoopTask(id)
         this.initWS()
         // 从查看进入编辑，清掉轮询
         return Promise.resolve()
@@ -596,7 +598,6 @@ export default {
         return Promise.resolve()
       }
 
-      const { id } = this.$route.params
       this.dataflow.id = id
 
       if (!first) {
@@ -1785,21 +1786,24 @@ export default {
     startLoopTask(id) {
       console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
       clearTimeout(this.startLoopTaskTimer)
+      if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
-        makeStatusAndDisabled(data)
+        if (data) {
+          makeStatusAndDisabled(data)
 
-        console.debug(
-          i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
-          data
-        ) // eslint-disable-line
-        if (this.dataflow.status !== data.status) {
-          console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
-          this.dataflow.status = data.status
-          this.dataflow.disabledData = data.btnDisabled
+          console.debug(
+            i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
+            data
+          ) // eslint-disable-line
+          if (this.dataflow.status !== data.status) {
+            console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
+            this.dataflow.status = data.status
+            this.dataflow.disabledData = data.btnDisabled
+          }
+
+          this.startLoopTask(id)
         }
-
-        this.startLoopTask(id)
       }, 3000)
     },
 

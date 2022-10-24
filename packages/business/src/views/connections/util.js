@@ -50,7 +50,7 @@ export const defaultModel = {
 // 数据源图标
 export const getConnectionIcon = pdkHash => {
   if (pdkHash) {
-    const token = Cookie.get('token')
+    const token = Cookie.get('access_token')
     let baseUrl = axios.defaults.baseURL
     return (baseUrl + `/api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`).replace('//', '/')
   } else {

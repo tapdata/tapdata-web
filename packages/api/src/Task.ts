@@ -53,7 +53,7 @@ export default class Task extends Http {
   }
 
   export(ids) {
-    const href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('token')}`
+    const href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('access_token')}`
     window.open(href)
   }
   checkRun(id) {

@@ -27,12 +27,12 @@
           :text="dataflow.hostName"
           :open-delay="400"
         />
-        <div v-if="agentData" class="font-color-sslight">
+        <div v-if="agentData" class="font-color-sslight agent-statistical">
           <span>CPU：</span>
           <span>{{ agentData.cpuUsage }}</span>
-          <span class="ml-4">MEM：</span>
+          <span class="ml-3">MEM：</span>
           <span>{{ agentData.memoryRate }}</span>
-          <span class="ml-4">GC：</span>
+          <span class="ml-3">GC：</span>
           <span>{{ agentData.gcRate }}</span>
         </div>
       </div>
@@ -395,6 +395,10 @@ $sidebarBg: #fff;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  .agent-statistical {
+    min-width: 260px;
   }
 }
 

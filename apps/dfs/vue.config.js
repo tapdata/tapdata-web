@@ -6,8 +6,10 @@ const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
   test: 'https://v3.test.cloud.tapdata.net',
-  local: 'https://v3.test.cloud.tapdata.net'
+  local: 'https://v3.test.cloud.tapdata.net',
+  localTm: 'http://127.0.0.1:3030'
 }
+const userId = "60b60af1147bce7705727188";
 let origin
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
@@ -47,7 +49,7 @@ let prodProxyConfig = {
   }
 };
 let localTmProxy = {
-  target: 'http://127.0.0.1:3000',
+  target: serveUrlMap.localTm,
   changeOrigin: true,
   ws: true,
   secure: false,
@@ -55,7 +57,11 @@ let localTmProxy = {
     '^/tm/': '/'
   },
   onProxyReq: function(proxyReq, req, res, opts){
-    proxyReq.setHeader('user_id', '6153e78c5e9f9fcc8119a4ca');
+    proxyReq.setHeader('user_id', userId);
+  },
+  onProxyReqWs: function(proxyReq, req, socket, options, head){
+    proxyReq.setHeader('user_id', userId);
+    console.log(req.url)
   }
 };
 
@@ -228,56 +234,10 @@ const getToken = userId => {
   return token
 }
 if (process.env.NODE_ENV === 'development') {
-  const arr = [
-    {
-      id: 0,
-      name: 'Leon',
-      value: '60b064e9a65d8e852c8523bc'
-    },
-    {
-      id: 1,
-      name: 'kennen',
-      value: '620b218c3f56a9cf5fea1b09'
-    },
-    {
-      id: 2,
-      name: 'jakin',
-      value: '621368008659934341358719'
-    },
-    {
-      id: 3,
-      name: '13025460560',
-      value: '60b08aaea11ba4bb3f867142'
-    },
-    {
-      id: 4,
-      name: 'dexter@tapdata.io',
-      value: '6153e78c5e9f9fcc8119a4ca'
-    },
-    {
-      id: 5,
-      name: 'jason@tapdata.io',
-      value: '60cc0c304e190a579cbe306c'
-    },
-    {
-      id: 6,
-      name: 'auto@tapdata.io',
-      value: '610a3d43d7f65cfcd80837b5'
-    },
-    {
-      id: 7,
-      name: '18661673206',
-      value: '60b064e9a65d8e852c8523bc'
-    },
-    {
-      id: 8,
-      name: 'webchat_2h2136',
-      value: '62307427948eebde4aadeaf3'
-    }
-  ]
-  let userId = process.env.USER_ID || arr[4].value
-  process.env.VUE_APP_ACCESS_TOKEN = getToken(userId)
-  console.log('本地用户调试ID: ' + userId)
+  let _userId = process.env.USER_ID || userId;
+  process.env.VUE_APP_ACCESS_TOKEN = getToken(_userId)
+
+  console.log('本地用户调试ID: ' + _userId)
   console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
   console.log('Proxy server: ' + proxy.target)
 }

@@ -329,7 +329,7 @@ export default {
           usersApi.changePassword(parmas).then(() => {
             this.$message.success(this.$t('account_pawSaveSuccess'))
             this.passwordDialogFalg = false
-            Cookie.remove('token')
+            Cookie.remove('access_token')
             Cookie.remove('user_id')
             setTimeout(() => {
               location.reload()
