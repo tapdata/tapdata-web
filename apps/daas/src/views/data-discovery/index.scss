@@ -1,6 +1,15 @@
 .discovery-page-wrap{
   overflow: hidden;
   height: 100%;
+
+  .classification {
+    &.expand, .classification-header {
+      width: 100%;
+    }
+    .custom-tree-node .table-label {
+      max-width: unset;
+    }
+  }
 }
 .discovery-page-main-box{
   display: flex;

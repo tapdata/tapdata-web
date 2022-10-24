@@ -6,9 +6,13 @@ import { discoveryApi } from '@tap/api'
 import DrawerContent from '@/views/data-discovery/PreviewDrawer'
 import ObjectTable from '@/views/data-discovery/ObjectTable'
 import './index.scss'
+import resize from '@tap/component/src/directives/resize'
 
 export default defineComponent({
   props: [''],
+  directives: {
+    resize
+  },
   setup(props, { refs, root }) {
     const list = ref([])
     const { sourceType, queryKey } = root.$route.query || {}
@@ -161,7 +165,23 @@ export default defineComponent({
   render() {
     return (
       <section class="discovery-page-wrap flex">
-        <div class="page-left border-right">
+        <div
+          {...{
+            directives: [
+              {
+                name: 'resize',
+                value: {
+                  minWidth: 215,
+                  maxWidth: 500
+                },
+                modifiers: {
+                  right: true
+                }
+              }
+            ]
+          }}
+          class="page-left border-right"
+        >
           <DiscoveryClassification
             v-model={this.data.searchParams}
             ref="classify"
