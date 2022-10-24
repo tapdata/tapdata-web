@@ -429,7 +429,7 @@ export default {
       if (Array.isArray(this.value)) {
         for (let i = 0; i < this.value.length; i++) {
           const value = this.value[i]
-          if (this.currentLabel.length) {
+          if (this.currentLabel?.length) {
             result.push({
               value,
               currentLabel: this.currentLabel[i] || ''
