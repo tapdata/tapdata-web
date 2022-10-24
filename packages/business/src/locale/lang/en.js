@@ -491,5 +491,6 @@ export default {
   packages_business_relation_list_qingshururenwu: 'Please enter the task name...',
   packages_business_relation_details_huancun: 'cache',
   packages_business_relation_details_wajue: 'Mining',
-  packages_business_relation_details_renwu: 'Tasks'
+  packages_business_relation_details_renwu: 'Tasks',
+  packages_business_agent_select_not_found: 'This agent does not exist. Select another agent'
 }
