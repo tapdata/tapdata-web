@@ -5,8 +5,12 @@ import SelectClassify from './SelectClassify'
 import UploadDialog from './UploadDialog'
 import Log from './logs/Index.vue'
 import TablePage from './TablePage.vue'
-import ConnectionTypeSelector from './ConnectionTypeSelector.vue'
+import ConnectionTypeSelectorAll from './ConnectionTypeSelector.vue'
+import ConnectionTypeSelectorSort from './ConnectionTypeSelectorSort'
 import TaskStatus from './TaskStatus'
+
+const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+const ConnectionTypeSelector = isDaas ? ConnectionTypeSelectorAll : ConnectionTypeSelectorSort
 
 export {
   StatusItem,
