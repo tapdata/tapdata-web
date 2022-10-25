@@ -1065,5 +1065,49 @@ export default {
   dfs_workbench_tyepmap_tongbuzhilifu7: 'Restart synchronization management service Failed',
   dfs_workbench_tyepmap_apIfuwu7: 'API service restart failed',
   dfs_workbench_tyepmap_guanliduanfuwu7: 'Management service restart failed',
-  dfs_workbench_tyepmap_cdCzhihou2: 'CDC lag timeout'
+  dfs_workbench_tyepmap_cdCzhihou2: 'CDC lag timeout',
+
+  dfs_workbench_workbench_zhongyaobanbensheng:
+    '[Important] Important announcement on version upgrade and service switching',
+  dfs_workbench_workbench_xinzengzidingyi:
+    '· Added support for custom operators, users can define their own operators through flexible JS capabilities',
+  dfs_workbench_workbench_xinzengzidingyi2:
+    '· Added custom functions. Users can import custom functions through jar packages for use',
+  dfs_workbench_workbench_xinzenghebingsuan:
+    '· Add merge operator and JOIN operator, support multi-table association merge operation',
+  dfs_workbench_workbench_xinzengDdl:
+    '· Added DDL support capability to synchronize common DDL operations of Oracle, MySQL, DB2, PG and other databases',
+  dfs_workbench_workbench_xinzengdongtaixin:
+    '· Added the function of dynamically adding new tables, which supports synchronizing new tables in the database to the target',
+  dfs_workbench_workbench_shujutongbuneng: 'Enhanced data synchronization capability',
+  dfs_workbench_workbench_renwugaojingneng:
+    '· Task alarm capability, when an abnormal alarm occurs in a task, it is directly reflected on the task operation monitoring page, combined with the task DAG, all problems are intuitively visible',
+  dfs_workbench_workbench_renwurizhike:
+    '· Mission log observability capability, output key mission information through standardized mission logs, and quickly locate problems when they occur',
+  dfs_workbench_workbench_renwuzhibiaoke:
+    '· Task indicators can be observed, and the running status of tasks can be directly fed back through key indicators',
+  dfs_workbench_workbench_renwukeguance: 'Task observability',
+  dfs_workbench_workbench_jubeiduishuju:
+    '· Has the ability to initiate re-verification on the difference results of data verification',
+  dfs_workbench_workbench_jubeiduishuju2:
+    '· Has the ability to verify the consistency of incremental data in real time for data replication tasks',
+  dfs_workbench_workbench_jubeiduishuju3:
+    '· Has the ability to verify the consistency of the full data of the data replication task',
+  dfs_workbench_workbench_quanlianghezengliang:
+    'Data consistency verification capability in full and incremental phases',
+  dfs_workbench_workbench_xinkaifadeshu:
+    '· The newly developed data source can be quickly connected to the platform through registration and can be used without restarting',
+  dfs_workbench_workbench_yonghukeanzhao:
+    '·Users can flexibly customize their own data sources according to PDK standards',
+  dfs_workbench_workbench_jiyuPdk: '· Implement data source development based on PDK',
+  dfs_workbench_workbench_jiyuPdk2: 'PDK-based data source registration mechanism',
+  dfs_workbench_workbench_xiamianshixinban: 'The following are the features added in the new version:',
+  dfs_workbench_workbench_dangranruguoyou:
+    'Of course, if there are new tasks, we recommend that you create them in the new version for a better user experience. You are welcome to experience our new version functions and give your valuable suggestions at that time. ',
+  dfs_workbench_workbench_youyuzengjiale:
+    'Because of the addition of many useful functions, we were forced to abandon the existing version structure and redevelop, so the connections and tasks you created in the current V2 version will not be synchronized to the new version, but rest assured, you will still be You can continue to use the old version for your data operations, we guarantee that the V2 version and the V3 version will coexist for a long time,\n ',
+  dfs_workbench_workbench_zainianyueriwo: 'On September 29, 2022, we will release a major upgrade V3.0. ',
+  dfs_workbench_workbench_zunjingdeyonghu: 'Dear user, hello:',
+  dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switch',
+  dfs_workbench_workbench_banbenshengjitong: 'version upgrade notice'
 }
