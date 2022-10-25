@@ -108,7 +108,42 @@
         </template>
       </div>
     </div>
-    <!--  {{$t('user_Center_shangChuanTouXiang')}}  -->
+    <div class="mt-12 fs-7">Access Key/Secret Key</div>
+    <ElDivider class="my-6"></ElDivider>
+    <div>
+      <div>
+        <ElRow :gutter="40" class="section-header mb-2">
+          <ElCol :span="12" class="enterprise-item">
+            <div class="enterprise-item__label">Access Key：</div>
+            <div>
+              {{ keyForm.accessKey }}
+            </div>
+          </ElCol>
+          <ElCol :span="12" class="enterprise-item">
+            <div class="enterprise-item__label">Secret Key：</div>
+            <div>
+              {{ keyForm.secretKey }}
+            </div>
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_start_install_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="keyForm.decodeSecretKey"
+                v-clipboard:success="handleCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              </span>
+            </ElTooltip>
+          </ElCol>
+        </ElRow>
+      </div>
+    </div>
     <ElDialog
       width="435px"
       append-to-body
@@ -467,7 +502,13 @@ export default {
         industry: '',
         city: ''
       },
-      isEdit: false
+      keyForm: {
+        accessKey: '',
+        secretKey: '',
+        decodeSecretKey: ''
+      },
+      isEdit: false,
+      showTooltip: false
     }
   },
   mounted() {
@@ -482,6 +523,7 @@ export default {
       userData.avatar = window.__USER_INFO__.avatar
       this.avatar = userData.avatar
       this.getEnterprise()
+      this.getAkAndSk()
       this.resetPasswordForm()
       this.resetPhoneForm()
       this.resetEmailForm()
@@ -493,6 +535,23 @@ export default {
           this.enData[key] = data[key] || ''
           this.enForm[key] = data[key] || ''
         }
+      })
+    },
+    getAkAndSk() {
+      this.$axios.get('api/tcm/user/ak').then(data => {
+        const { accessKey, secretKey } = data?.[0] || {}
+        const key = '5fa25b06ee34581d'
+        this.keyForm.accessKey = accessKey
+        this.keyForm.secretKey = secretKey.replace(/(\w{3})\w*(\w{3})/, '$1****$2')
+        this.keyForm.decodeSecretKey = CryptoJS.AES.decrypt(
+          {
+            ciphertext: CryptoJS.enc.Base64.parse(secretKey)
+          },
+          CryptoJS.enc.Latin1.parse(key),
+          {
+            iv: CryptoJS.enc.Latin1.parse(key)
+          }
+        ).toString(CryptoJS.enc.Utf8)
       })
     },
     resetPasswordForm() {
@@ -778,6 +837,9 @@ export default {
     },
     refreshRootUser() {
       this.$root.$emit('get-user')
+    },
+    handleCopy() {
+      this.showTooltip = true
     }
   }
 }
@@ -832,5 +894,13 @@ export default {
       justify-content: space-between;
     }
   }
+}
+.click-style {
+  padding-left: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: map-get($color, primary);
+  font-weight: normal;
+  cursor: pointer;
 }
 </style>
