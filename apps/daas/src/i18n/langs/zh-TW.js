@@ -67,7 +67,8 @@ export default {
   message_401: '登錄過期，請重新登錄',
   message_404: '請求的資源不存在',
   message_5xx: '伺服器異常',
-  message_network_unconnected: '網絡未連接',
+  message_network_unconnected: '網絡連接異常',
+  message_network_connected: '網絡已恢復',
   message_request_timeout: '請求超時',
   // 表格
   column_operation: '操作',

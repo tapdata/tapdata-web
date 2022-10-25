@@ -23,6 +23,9 @@ export default {
   button_bind: '绑定',
   button_unbind: '解绑',
   button_retry: '重试',
+  button_zhanKai: '展开',
+  message_network_unconnected: '网络连接异常',
+  message_network_connected: '网络已恢复',
   // 链接
   link_back_to_list: '返回列表',
   // 国际化
