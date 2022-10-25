@@ -484,5 +484,6 @@ export default {
   packages_business_relation_list_qingshururenwu: '请输入任务名称...',
   packages_business_relation_details_huancun: '缓存',
   packages_business_relation_details_wajue: '挖掘',
-  packages_business_relation_details_renwu: '任务'
+  packages_business_relation_details_renwu: '任务',
+  packages_business_agent_select_not_found: '该agent已不存在，请选择其他agent'
 }

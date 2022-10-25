@@ -233,7 +233,7 @@ export default observer({
       let { alarmSettings = [], alarmRules = [] } = this.settings
       // 节点类型
       if (['source', 'target', 'process'].includes(this.nodeType)) {
-        const { activeNode = {} } = this
+        const activeNode = this.activeNode || {}
         alarmSettings = activeNode.alarmSettings || []
         alarmRules = activeNode.alarmRules || []
       }

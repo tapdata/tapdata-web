@@ -9,8 +9,12 @@
   >
     <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
       <ElFormItem :label="$t('packages_business_modules_dialog_condition') + ':'">
-        <el-radio v-model="importForm.upsert" :label="1">{{ $t('packages_business_modules_dialog_overwrite_data') }}</el-radio>
-        <el-radio v-model="importForm.upsert" :label="0">{{ $t('packages_business_modules_dialog_skip_data') }}</el-radio>
+        <el-radio v-model="importForm.upsert" :label="1">{{
+          $t('packages_business_modules_dialog_overwrite_data')
+        }}</el-radio>
+        <el-radio v-model="importForm.upsert" :label="0">{{
+          $t('packages_business_modules_dialog_skip_data')
+        }}</el-radio>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_modules_dialog_group') + ':'">
         <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">
@@ -37,7 +41,9 @@
     </ElForm>
     <span slot="footer" class="dialog-footer">
       <ElButton @click="handleClose" size="mini">{{ $t('packages_business_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('packages_business_button_confirm') }}</ElButton>
+      <ElButton type="primary" @click="submitUpload()" size="mini">{{
+        $t('packages_business_button_confirm')
+      }}</ElButton>
     </span>
   </ElDialog>
 </template>
@@ -78,7 +84,7 @@ export default {
     } else {
       this.downType = 'dataflow'
     }
-    this.accessToken = Cookie.get('token')
+    this.accessToken = Cookie.get('access_token')
     this.getClassify()
   },
   methods: {

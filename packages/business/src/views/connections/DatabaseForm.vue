@@ -681,7 +681,29 @@ export default {
           colon: false
         },
         'x-component': 'Select',
-        'x-reactions': '{{useAsyncDataSource(loadAccessNode)}}'
+        'x-reactions': [
+          '{{useAsyncDataSource(loadAccessNode)}}',
+          // 根据下拉数据判断是否存在已选的agent
+          {
+            fulfill: {
+              run: `if ($self.dataSource?.length && $self.value) {
+                const current = $self.dataSource.find(item => item.value === $self.value)
+                if (!current) {
+                  $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
+                }
+              }`
+            }
+          }
+        ],
+        // 校验下拉数据判断是否存在已选的agent
+        'x-validator': `{{(value, rule, ctx)=> {
+            if (value && ctx.field.dataSource?.length) {
+              const current = ctx.field.dataSource.find(item => item.value === value)
+              if (!current) {
+                return '${this.$t('packages_business_agent_select_not_found')}'
+              }
+            }
+          }}}`
       }
       let result = {
         type: 'object',

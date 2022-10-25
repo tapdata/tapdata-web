@@ -288,7 +288,6 @@ export default {
         },
 
         loadCommandList: async (filter, val) => {
-          console.log('loadList-filter', filter, val)
           try {
             const { $values = {}, command, where = {}, page, size } = filter
             const { nodeConfig, connectionId, attrs = {} } = $values
@@ -310,10 +309,6 @@ export default {
             if (!result.items) {
               return { items: [], total: 0 }
             }
-            result.items.unshift({
-              label: i18n.t('packages_dag_components_log_quanbu'),
-              value: -1
-            })
             return result
           } catch (e) {
             console.log('catch', e) // eslint-disable-line

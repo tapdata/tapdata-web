@@ -82,7 +82,7 @@ export function getNodeIconSrc(node) {
   if (!node) return
   const pdkHash = node.pdkHash || node.attrs?.pdkHash
   if (pdkHash) {
-    const accessToken = Cookie.get('token')
+    const accessToken = Cookie.get('access_token')
     return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type

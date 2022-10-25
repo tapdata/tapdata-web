@@ -1,35 +1,13 @@
 .form-js-editor-wrap {
-  &.dark {
+  &[theme="one_dark"] {
     .code-before,
     .code-after{
       .hljs {
         color: #abb2bf;
         background: rgb(40, 44, 52);
       }
-    }
-    .ace-chrome {
-      background: rgb(40, 44, 52);
-      .ace_text-layer,
-      .ace_cursor {
-        color: #abb2bf;
-      }
-      .ace_gutter {
-        background-color: inherit;
-        color: #6a6f7a;
-      }
-      .ace_gutter-active-line {
-        background-color: inherit;
-        color: inherit;
-      }
-    }
-    .ace_gutter-cell.ace_info {
-      position: relative;
-      background-image: unset;
-      &:before {
-        content: "i";
-        position: absolute;
-        left: 8px;
-        top: 0;
+      .hljs-title {
+        color: rgb(97,175,239);
       }
     }
   }

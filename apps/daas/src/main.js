@@ -83,12 +83,12 @@ const URL_LANG = getUrlSearch('lang')
 ;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
 
 if (TOKEN) {
-  Cookie.set('token', TOKEN)
+  Cookie.set('access_token', TOKEN)
   // eslint-disable-next-line
   console.log(i18n.t('daas_src_main_baocuntok'), TOKEN)
 }
 
-let token = Cookie.get('token')
+let token = Cookie.get('access_token')
 
 let init = settings => {
   window.__settings__ = settings
