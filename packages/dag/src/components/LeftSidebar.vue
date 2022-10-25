@@ -225,10 +225,11 @@
 
     <ElDialog
       :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
-      width="1030px"
+      width="848px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"
       :append-to-body="true"
+      custom-class="connection-dialog"
     >
       <ConnectionTypeSelector
         :types="database"
@@ -964,6 +965,14 @@ $hoverBg: #eef3ff;
       font-size: 12px;
       line-height: 1;
       white-space: nowrap;
+    }
+  }
+}
+
+::v-deep {
+  .connection-dialog {
+    .el-dialog__body {
+      padding: 0 20px 30px 20px;
     }
   }
 }

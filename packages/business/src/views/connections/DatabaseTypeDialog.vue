@@ -3,7 +3,7 @@
     :title="$t('packages_business_connection_createNewDataSource')"
     :visible="dialogVisible"
     :append-to-body="true"
-    width="1030px"
+    width="848px"
     custom-class="connection-dialog"
     :before-close="handleClose"
   >
@@ -158,7 +158,7 @@ export default {
 ::v-deep {
   .connection-dialog {
     .el-dialog__body {
-      padding: 20px 20px 30px 20px;
+      padding: 0 20px 30px 20px;
     }
   }
 }
