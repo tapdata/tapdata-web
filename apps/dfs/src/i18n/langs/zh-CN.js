@@ -1010,5 +1010,6 @@ export default {
   dfs_workbench_tyepmap_tongbuzhilifu7: '同步治理服务重启失败',
   dfs_workbench_tyepmap_apIfuwu7: 'API服务重启失败',
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服务重启失败',
-  dfs_workbench_tyepmap_cdCzhihou2: 'CDC滞后超时'
+  dfs_workbench_tyepmap_cdCzhihou2: 'CDC滞后超时',
+  dfs_user_center_miyao: '密钥'
 }

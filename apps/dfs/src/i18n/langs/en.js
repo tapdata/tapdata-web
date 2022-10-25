@@ -1063,5 +1063,6 @@ export default {
   dfs_workbench_tyepmap_tongbuzhilifu7: 'Restart synchronization management service Failed',
   dfs_workbench_tyepmap_apIfuwu7: 'API service restart failed',
   dfs_workbench_tyepmap_guanliduanfuwu7: 'Management service restart failed',
-  dfs_workbench_tyepmap_cdCzhihou2: 'CDC lag timeout'
+  dfs_workbench_tyepmap_cdCzhihou2: 'CDC lag timeout',
+  dfs_user_center_miyao: 'key'
 }

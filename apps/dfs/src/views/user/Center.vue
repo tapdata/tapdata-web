@@ -108,7 +108,7 @@
         </template>
       </div>
     </div>
-    <div class="mt-12 fs-7">Access Key/Secret Key</div>
+    <div class="mt-12 fs-7">{{ $t('dfs_user_center_miyao') }}</div>
     <ElDivider class="my-6"></ElDivider>
     <div>
       <div>

@@ -979,5 +979,6 @@ export default {
   dfs_workbench_tyepmap_tongbuzhilifu7: '同步治理服務重啟失敗',
   dfs_workbench_tyepmap_apIfuwu7: 'API服務重啟失敗',
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服務重啟失敗',
-  dfs_workbench_tyepmap_cdCzhihou2: 'CDC滯後超時'
+  dfs_workbench_tyepmap_cdCzhihou2: 'CDC滯後超時',
+  dfs_user_center_miyao: '密鑰'
 }
