@@ -981,5 +981,36 @@ export default {
   dfs_workbench_tyepmap_tongbuzhilifu7: '同步治理服務重啟失敗',
   dfs_workbench_tyepmap_apIfuwu7: 'API服務重啟失敗',
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服務重啟失敗',
-  dfs_workbench_tyepmap_cdCzhihou2: 'CDC滯後超時'
+  dfs_workbench_tyepmap_cdCzhihou2: 'CDC滯後超時',
+
+  dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升級和服務切換重要公告',
+  dfs_workbench_workbench_xinzengzidingyi: '· 新增自定義算子支持，用戶可通過靈活的JS能力來定義自己的算子',
+  dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定義函數用戶可通過jar包導入自定義函數進行使用',
+  dfs_workbench_workbench_xinzenghebingsuan: '· 新增合併算子和JOIN算子，支持多表關聯合併操作',
+  dfs_workbench_workbench_xinzengDdl: '· 新增DDL支持能力，支持對Oracle、MySQL、DB2、PG等數據庫的常用DDL操作進行同步',
+  dfs_workbench_workbench_xinzengdongtaixin: '· 新增動態新增表功能，支持將數據庫新增表同步至目標',
+  dfs_workbench_workbench_shujutongbuneng: '數據同步能力增強',
+  dfs_workbench_workbench_renwugaojingneng:
+    '· 任務告警能力，任務出現異常告警時直接體現在任務運行監控頁面，與任務DAG結合，所有問題直觀可見',
+  dfs_workbench_workbench_renwurizhike:
+    '· 任務日誌可觀測能力，通過標準化的任務日誌輸出任務關鍵信息，當出現問題時可以快速定位',
+  dfs_workbench_workbench_renwuzhibiaoke: '· 任務指標可觀測能力，可通過關鍵指標直接反饋任務的運行狀態',
+  dfs_workbench_workbench_renwukeguance: '任務可觀測能力',
+  dfs_workbench_workbench_jubeiduishuju: '· 具備對數據校驗的差異結果發起再次校驗的能力',
+  dfs_workbench_workbench_jubeiduishuju2: '· 具備對數據複製任務增量數據一致性的實時校驗能力',
+  dfs_workbench_workbench_jubeiduishuju3: '· 具備對數據複製任務全量數據一致性的校驗能力',
+  dfs_workbench_workbench_quanlianghezengliang: '全量和增量階段的數據一致性校驗能力',
+  dfs_workbench_workbench_xinkaifadeshu: '· 新開發的數據源可以通過註冊快速接入平台，無需重啟即可使用',
+  dfs_workbench_workbench_yonghukeanzhao: '· 用戶可按照PDK的標準靈活定制自己的數據源',
+  dfs_workbench_workbench_jiyuPdk: '· 基於PDK來實現數據源的開發',
+  dfs_workbench_workbench_jiyuPdk2: '基於PDK的數據源註冊機制',
+  dfs_workbench_workbench_xiamianshixinban: '下面是新版本增加的特性：',
+  dfs_workbench_workbench_dangranruguoyou:
+    '當然，如果有新的任務我們建議您在新版本中創建以便獲得更好的使用體驗，歡迎您屆時體驗我們新版功能並提出您的寶貴建議。 ',
+  dfs_workbench_workbench_youyuzengjiale:
+    '由於增加了很多實用功能，我們被迫捨棄了現有的版本架構重新開發，因此您在當前V2版本中創建的連接和任務將不會同步到新版本，不過放心，新版本發布後您仍然可以繼續使用舊版本進行您的數據操作，我們保證V2版本和V3版本將長期共存，\n          ',
+  dfs_workbench_workbench_zainianyueriwo: '在2022年9月29日，我們將會發布重大升級V3.0版本。 ',
+  dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用戶，您好：',
+  dfs_workbench_workbench_banbenshengjihe: '版本升級和服務切換的公告',
+  dfs_workbench_workbench_banbenshengjitong: '版本升級通知'
 }
