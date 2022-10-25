@@ -271,6 +271,7 @@ export default {
         this.$refs.paperScroller.initVisibleArea()
         this.$refs.paperScroller.autoResizePaper()
         this.handleCenterContent()
+        this.preventNodeOverlap(dag.nodes)
       }
     },
 
