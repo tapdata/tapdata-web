@@ -163,11 +163,11 @@ export default {
       ],
       tabs: [
         {
-          label: i18n.t('packages_business_components_connectiontypeselectorsort_zhengshiban'),
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
           value: 'formal'
         },
         {
-          label: i18n.t('packages_business_components_connectiontypeselectorsort_betaban'),
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
           value: 'beta'
         },
         {
