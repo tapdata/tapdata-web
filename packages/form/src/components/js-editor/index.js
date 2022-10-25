@@ -27,7 +27,11 @@ export const JsEditor = connect(
       },
       disabled: Boolean,
       includeBeforeAndAfter: Boolean,
-      handleAddCompleter: Function
+      handleAddCompleter: Function,
+      theme: {
+        type: String,
+        default: 'chrome'
+      }
     },
 
     computed: {
@@ -75,7 +79,7 @@ export const JsEditor = connect(
           </div>
           <_JsEditor
             class="form-js-editor py-0 flex-1 min-h-0"
-            theme="chrome"
+            theme={this.chrome}
             value={this.code}
             lang="javascript"
             onBlur={this.onBlur}
@@ -92,7 +96,7 @@ export const JsEditor = connect(
           style={{
             background: '#fff'
           }}
-          theme="chrome"
+          theme={this.theme}
           value={this.code}
           lang="javascript"
           height={this.height}
