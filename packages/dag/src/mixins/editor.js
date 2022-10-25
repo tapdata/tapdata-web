@@ -1893,6 +1893,24 @@ export default {
       this.toggleConsole(true)
       const logType = ['renewing', 'renew_failed'].includes(this.dataflow.status) ? 'reset' : 'checkDag'
       this.$refs.console?.startAuto(logType)
+    },
+
+    /**
+     * 防止node重叠
+     */
+    preventNodeOverlap(nodes) {
+      if (nodes?.length) {
+        const map = {}
+        const ifOverlap = nodes.some(node => {
+          const pos = node.attrs.position.join(',')
+          if (map[pos]) return true
+          map[pos] = true
+          return false
+        })
+        if (ifOverlap) {
+          this.handleAutoLayout()
+        }
+      }
     }
   }
 }

@@ -261,6 +261,7 @@ export default {
         await this.$nextTick()
         this.$refs.paperScroller.autoResizePaper()
         this.handleCenterContent()
+        this.preventNodeOverlap(dag.nodes)
       }
     },
 
