@@ -492,5 +492,16 @@ export default {
   packages_business_relation_details_huancun: 'cache',
   packages_business_relation_details_wajue: 'Mining',
   packages_business_relation_details_renwu: 'Tasks',
-  packages_business_agent_select_not_found: 'This agent does not exist. Select another agent'
+  packages_business_agent_select_not_found: 'This agent does not exist. Select another agent',
+  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My data source',
+  packages_business_components_connectiontypeselectorsort_betaban: 'Beta',
+  packages_business_components_connectiontypeselectorsort_zhengshiban: 'Official version',
+  packages_business_components_connectiontypeselectorsort_jiaoyouTap:
+    'Let TapaData conduct a comprehensive quality test to ensure the stability and quality of the plugin',
+  packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
+    'Note: here is the data source plugin uploaded by yourself, if you want to use it for production tasks, please submit the source code on GitHub',
+  packages_business_components_connectiontypeselectorsort_zhuyiBet:
+    'Note: The beta version is mainly from the contribution of the open source community, TapaData has done a basic test on it, there may be errors during use, if you have any questions, please contact technical support',
+  packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
+    'The trial version does not currently support the following data sources. For more information, please use the official'
 }
