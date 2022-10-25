@@ -637,7 +637,7 @@ export default {
           .batchRenew(ids)
           .then(data => {
             this.table.fetch()
-            this.responseHandler(data, this.$t('packages_business_message_resetOk'))
+            this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
           })
           .finally(() => {
             this.restLoading = false
