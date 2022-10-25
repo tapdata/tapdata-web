@@ -1,106 +1,67 @@
 <template>
   <div class="database">
-    <ul class="flex mb-4">
-      <li
-        v-for="item in tabs"
-        :key="item.value"
-        :class="[
-          { 'bg-primary text-white': active === item.value },
-          { 'bg-color-main text-main': active !== item.value }
-        ]"
-        class="mr-4 py-1 px-4 rounded-2 cursor-pointer"
-        @click="handleTab(item)"
+    <el-radio-group v-if="!hideType && otherTypes.length" class="pb-5" v-model="type" @change="changeType">
+      <el-radio-button label="sourcedata">{{ $t('packages_business_connection_form_data_source') }}</el-radio-button>
+      <el-radio-button label="other">Other Type</el-radio-button>
+    </el-radio-group>
+    <template v-if="type === 'sourcedata'">
+      <ul
+        v-loading="loading"
+        class="database-ul position-relative"
+        :class="[large ? 'customNthChild' : 'primaryNthChild']"
       >
-        {{ item.label }}
-      </li>
-    </ul>
-    <div v-if="active === 'formal'">
-      <ul v-loading="loading" class="database-ul overflow-auto">
-        <li
-          v-for="item in types"
-          :key="item.type"
-          class="database-item float-start mb-4 cursor-pointer"
-          @click="$emit('select', item)"
-        >
-          <div class="img-box rounded-3">
+        <li v-for="item in types" :key="item.type" @click="$emit('select', item)">
+          <div class="img-box">
             <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
             <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
           </div>
-          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
+          <ElTooltip class="item" effect="dark" :content="item.name" placement="bottom">
+            <div class="content">
+              <div class="content__name">{{ item.name }}</div>
+            </div>
           </ElTooltip>
         </li>
-      </ul>
-      <div class="mt-5 mb-3">
-        <VIcon class="color-primary mr-2" size="14">info</VIcon>
-        <span class="fs-8 font-color-light">试用版暂不支持以下数据源 更多请使用正式</span>
-      </div>
-      <ul v-loading="loading" class="database-ul overflow-auto">
-        <li v-for="item in comingTypes" :key="item.type" class="database-item float-start mb-4">
-          <div class="img-box bg-color-disable opacity-25 rounded-3">
-            <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
-          </div>
-          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-            <div class="ellipsis text-center font-color-slight">{{ item.name }}</div>
-          </ElTooltip>
-        </li>
-      </ul>
-    </div>
-    <div v-else-if="active === 'beta'">
-      <div class="my-4 fs-8">
-        注意：Beta版主要来自开源社区的贡献，TapaData对其做了基本的测试，使用过程中可能会出现错误，如有问题可联系技术支持
-      </div>
-      <ul v-loading="loading" class="database-ul overflow-auto">
         <li
-          v-for="item in types"
+          v-for="(item, itemIndex) in comingTypes"
           :key="item.type"
-          class="database-item float-start mb-4 cursor-pointer"
-          @click="$emit('select', item)"
+          class="item--disabled"
+          :style="getComingItemStyle(itemIndex)"
         >
-          <div class="img-box rounded-3">
-            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
-            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
+          <div>
+            <div class="img-box">
+              <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
+            </div>
+            <!--            <ElTooltip class="item" effect="dark" :content="item.name" placement="bottom">-->
+            <div class="content">
+              <div class="content__name">{{ item.name }}</div>
+            </div>
+            <!--            </ElTooltip>-->
           </div>
-          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
-          </ElTooltip>
         </li>
-      </ul>
-    </div>
-    <div v-else>
-      <div class="my-database__desc my-4 p-2 font-color-light fs-8">
-        <div>注意：这里是您自己上传的数据源插件，如果要用于生产任务，请在GitHub上提交源代码</div>
-        <div>交由TapaData进行全面的质量测试，以保证插件的稳定性和质量</div>
-      </div>
-      <ul v-loading="loading" class="database-ul overflow-auto">
-        <li
-          v-for="item in types"
-          :key="item.type"
-          class="database-item float-start mb-4 cursor-pointer"
-          @click="$emit('select', item)"
-        >
-          <div class="img-box rounded-3">
-            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
-            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
+        <div v-if="comingTypes.length > 0" class="coming-desc" :style="getComingDescStyle()">
+          <div class="coming-desc__content">
+            <div class="mb-2">{{ comingDesc1 }}</div>
+            <div>{{ comingDesc2 }}</div>
           </div>
-          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
-          </ElTooltip>
-        </li>
+        </div>
       </ul>
-    </div>
+    </template>
   </div>
 </template>
 
 <script>
 import { getConnectionIcon } from '../views/connections/util'
-import { VIcon } from '@tap/component'
 
 export default {
   name: 'ConnectionTypeSelector',
-  components: { VIcon },
   props: {
     types: {
+      value: Array,
+      default: () => {
+        return []
+      }
+    },
+    otherTypes: {
       value: Array,
       default: () => {
         return []
@@ -112,6 +73,9 @@ export default {
         return false
       }
     },
+    hideType: {
+      type: Boolean
+    },
     loading: {
       type: Boolean,
       default: false
@@ -119,7 +83,9 @@ export default {
   },
   data() {
     return {
-      active: 'formal',
+      type: 'sourcedata',
+      comingDesc1: this.$t('packages_business_connection_selector_desc1'),
+      comingDesc2: this.$t('packages_business_connection_selector_desc2'),
       comingTypes: [
         { name: 'MongoDB', type: 'mongodb' },
         { name: 'MySQL', type: 'mysql' },
@@ -156,20 +122,6 @@ export default {
         { name: 'ADB MySQL', type: 'adb_mysql' },
         { name: 'ADB PostgreSQL', type: 'adb_postgres' },
         { name: 'Hazelcast Cloud', type: 'hazelcast_cloud_cluster' }
-      ],
-      tabs: [
-        {
-          label: '正式版',
-          value: 'formal'
-        },
-        {
-          label: 'Beta版',
-          value: 'beta'
-        },
-        {
-          label: '我的数据源',
-          value: 'my'
-        }
       ]
     }
   },
@@ -185,51 +137,188 @@ export default {
     this.getComingTypes()
   },
   methods: {
+    changeType(type) {
+      this.type = type
+    },
     getPdkIcon(item) {
       return getConnectionIcon(item.pdkHash)
     },
-
+    getComingItemStyle(index) {
+      let count = 9
+      let result = {}
+      let comingLen = this.comingTypes.length
+      let typesLen = this.types.length
+      let row = Math.ceil(typesLen / count) // 支持数据源的行数
+      let allRow = Math.ceil((comingLen + typesLen) / count) // 所有数据源的行数
+      let col = typesLen % count // 支持数据源，多出的列数
+      let allCol = (comingLen + typesLen) % count // 所有数据源，多出的列数
+      // 第一行，第一个元素
+      if (index === 0) {
+        result['border-top-left-radius'] = '8px'
+      }
+      // 第一行，最后一个元素
+      if (typesLen + index + 1 === count * (col ? row : row + 1)) {
+        result['border-top-right-radius'] = '8px'
+      }
+      if (col !== 0) {
+        // 第二行，第一个元素
+        if (index + typesLen === count * row) {
+          result['border-top-left-radius'] = '8px'
+        }
+      }
+      // 最后一行，第一个元素
+      if (typesLen + index + 1 - 1 === count * (allRow - 1)) {
+        result['border-bottom-left-radius'] = '8px'
+      }
+      // 最后一行，最后一个元素
+      if (index === comingLen - 1) {
+        result['border-bottom-right-radius'] = '8px'
+      }
+      if (allCol !== 0) {
+        // 倒数第二行,最后一个元素
+        if (typesLen + index + 1 === count * (allRow - 1)) {
+          result['border-bottom-right-radius'] = '8px'
+        }
+      }
+      return result
+    },
+    getComingDescStyle() {
+      let result = {}
+      let count = 9
+      let height = 122
+      let typesLen = this.types.length
+      let row = Math.ceil(typesLen / count) // 支持数据源的行数
+      result.top = (row + 1) * height + 'px'
+      return result
+    },
     getComingTypes() {
       this.comingTypes = this.comingTypes.filter(f => !this.types.some(t => t.pdkId === f.type))
-    },
-
-    handleTab(item) {
-      this.active = item.value
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .database {
-  width: 804px;
   overflow: auto;
-}
-.database-item {
-  width: 80px;
-  flex: 1;
-  margin-right: 40px;
-  &:nth-child(7n) {
-    margin-right: 0;
+  .title {
+    color: #999;
+    margin-bottom: 32px;
+    display: inline-block;
   }
-  &:hover {
-    .img-box {
+  .database-ul {
+    display: flex;
+    flex-wrap: wrap;
+    li {
+      width: 109px;
+      padding: 12px 0;
+      text-align: center;
+    }
+    .item--disabled {
       background: rgba(0, 0, 0, 0.2);
+      cursor: default;
+      user-select: none;
+      &:nth-of-type(1) {
+        border-top-left-radius: 8px;
+      }
+      .img-box {
+        background: inherit;
+        cursor: inherit;
+        &:hover {
+          background: inherit;
+        }
+      }
+    }
+    .img-box {
+      margin: 0 auto;
+      width: 78px;
+      height: 78px;
+      border: 1px solid #dedee4;
+      border-radius: 6px;
+      background: #fafafa;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:hover {
+        background: rgba(201, 205, 212, 0.3);
+      }
+      .img-box__mask {
+        width: 75px;
+        height: 20px;
+        top: 5px;
+        right: -20px;
+        border-radius: 12px;
+        align-items: center;
+        background: #ff9c00;
+        .mask-text {
+          font-size: 11px;
+          color: #fff;
+          font-family: PingFangSC-Regular, PingFang SC;
+        }
+      }
+    }
+    .content {
+      margin-top: 5px;
+      //max-width: 82px;
+      .content__name {
+        margin: 0 auto;
+        max-width: 78px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        word-break: break-word;
+        cursor: default;
+        overflow: hidden;
+        font-weight: 500;
+        font-size: 12px;
+        color: map-get($fontColor, dark);
+      }
+    }
+    .coming-icon {
+      width: 46px;
+      height: 16px;
+      background: #ff9c00;
+      border-radius: 7px;
     }
   }
+  .customNthChild {
+    max-height: 500px;
+    li:nth-child(9n + 1) {
+      margin-left: 0;
+      padding-left: 0;
+    }
+  }
+  .primaryNthChild {
+    li:nth-child(6n + 1) {
+      margin-left: 0;
+      padding-left: 0;
+    }
+  }
+  .coming-desc {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    user-select: none;
+  }
+  .coming-desc__content {
+    padding: 16px 32px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    font-size: 37px;
+    color: rgba(0, 0, 0, 0.4);
+    text-align: center;
+  }
 }
-.img-box {
-  width: 80px;
-  height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #f2f2f2;
-}
-.el-image {
-  width: 50px;
-}
-.my-database__desc {
-  background: #f2f2f2;
+</style>
+<style lang="scss">
+.database {
+  .database-ul {
+    .el-image__inner {
+      // width: 60px
+      width: 30px;
+    }
+  }
 }
 </style>
