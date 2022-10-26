@@ -165,11 +165,6 @@
           </li>
         </ul>
       </template>
-      <div class="wx-img text-center">
-        <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
-        <div>{{ $t('header_scan_code') }}</div>
-        <div class="mt-1">{{ $t('header_join_group') }}</div>
-      </div>
     </main>
     <footer class="footer">
       <ElButton type="primary" @click="handleNextStep()">{{ $t('button_finish') }}</ElButton>
@@ -199,6 +194,7 @@ export default {
   },
   created() {
     this.getUrl()
+    this.loadChat()
   },
   methods: {
     getUrl() {
@@ -251,6 +247,35 @@ export default {
     },
     dockerToAgent() {
       window.open('https://sourl.cn/MK6mXF', '_blank')
+    },
+    //在线小助手
+    hideCustomTip() {
+      setTimeout(() => {
+        let tDom = document.getElementById('titlediv')
+        if (tDom) {
+          tDom.style.display = 'none'
+        } else {
+          this.hideCustomTip()
+        }
+      }, 5000)
+    },
+    loadChat() {
+      let $zoho = $zoho || {}
+      $zoho.salesiq = $zoho.salesiq || {
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        values: {},
+        ready: function () {}
+      }
+      window.$zoho = $zoho
+      let d = document
+      let s = d.createElement('script')
+      s.type = 'text/javascript'
+      s.id = 'zsiqscript'
+      s.defer = true
+      s.src = 'https://salesiq.zoho.com.cn/widget'
+      let t = d.getElementsByTagName('script')[0]
+      t.parentNode.insertBefore(s, t)
+      this.hideCustomTip()
     }
   }
 }
