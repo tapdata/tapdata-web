@@ -229,7 +229,7 @@ export default {
   }
   &:hover {
     .img-box {
-      background: rgba(0, 0, 0, 0.1);
+      background: rgba(201, 205, 212, 0.3);
     }
   }
   &.disable {
