@@ -102,7 +102,8 @@ export default {
         DATANODE_HTTP_CONNECT_CONSUME: i18n.t('daas_setting_alarmnotification_dangshujuyuanwang'),
         DATANODE_TCP_CONNECT_CONSUME: i18n.t('daas_setting_alarmnotification_dangshujuyuanxie'),
         DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_alarmnotification_dangshujuyuanjie'),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_alarmnotification_dangjiediandeping')
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_alarmnotification_dangjiediandeping'),
+        SYSTEM_FLOW_EGINGE_DOWN: i18n.t('daas_setting_alarmnotification_dangrenwustop')
       },
       alarmRulesColumns: [
         {
