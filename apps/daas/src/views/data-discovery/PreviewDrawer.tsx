@@ -14,6 +14,7 @@ export default defineComponent({
       activeName: 'first',
       activeUser: 'admin',
       search: '',
+      searchApi: '',
       currentRow: '',
       loading: false,
       columns: [
@@ -157,6 +158,7 @@ export default defineComponent({
               .then(res => {
                 let newData = res
                 newData['fields'] = format(res.fields)
+                oldData.value = JSON.parse(JSON.stringify(newData)) //前端搜索用
                 data.params = res.paths?.[0]?.params || []
                 let baseUrl = res.paths?.[0]?.path || ''
                 data.urls = [
@@ -207,10 +209,21 @@ export default defineComponent({
       preview.value['fields'] = oldData.value['fields'] || []
       return preview.value
     })
+    const filterNamesApi = computed(() => {
+      const txt = data.searchApi.trim().toLowerCase()
+      if (txt) {
+        let fields = preview.value['fields'] || []
+        preview.value['fields'] = fields.filter(n => n.field_name.toLowerCase().includes(txt))
+        return preview.value
+      }
+      preview.value['fields'] = oldData.value['fields'] || []
+      return preview.value
+    })
     return {
       data,
       previewData: preview,
       filterNames,
+      filterNamesApi,
       loadData
     }
   },
@@ -414,12 +427,27 @@ export default defineComponent({
                       <span class="drawer__header_text inline-block">
                         {i18n.t('daas_data_server_drawer_shurucanshu')}
                       </span>
-                      <VTable has-pagination={false} columns={this.data.apiColumns} data={this.data.params}></VTable>
+                      <VTable
+                        class="discovery-page-api-table"
+                        has-pagination={false}
+                        columns={this.data.apiColumns}
+                        data={this.data.params}
+                      ></VTable>
                     </div>
                     <div class="mt-5">
-                      <span class="drawer__header_text inline-block">
-                        {i18n.t('daas_data_discovery_previewdrawer_shuchucanshu')}
-                      </span>
+                      <div class="flex justify-content-between align-items-center">
+                        <span class="drawer__header_text inline-block">
+                          {i18n.t('daas_data_discovery_previewdrawer_shuchucanshu')}
+                        </span>
+                        <el-input
+                          class="mb-3"
+                          style="width:200px"
+                          placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
+                          suffix-icon="el-icon-search"
+                          v-model={this.data.searchApi}
+                          onChange={this.filterNamesApi}
+                        ></el-input>
+                      </div>
                       <VTable
                         class="discovery-page-table"
                         hasPagination={false}
