@@ -179,10 +179,10 @@ export default {
   },
   computed: {
     publicList() {
-      return this.types.filter(t => t.scope === 'public')
+      return this.types.filter(t => t.scope === 'public' && !t.beta)
     },
     betaList() {
-      return this.types.filter(t => t.scope === 'beta')
+      return this.types.filter(t => t.scope === 'public' && t.beta)
     },
     customerList() {
       return this.types.filter(t => t.scope === 'customer')
