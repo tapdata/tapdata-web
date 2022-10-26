@@ -1867,6 +1867,7 @@ export default {
   daas_setting_alarmnotification_dangrenwuquanliang: '當任務全量完成時',
   daas_setting_alarmnotification_dangrenwujiaoyan: '當任務校驗出錯時',
   daas_setting_alarmnotification_dangrenwuyudao: '當任務遇到錯誤時',
+  daas_setting_alarmnotification_dangrenwustop: 'Agent服務停止時',
   daas_setting_alarmnotification_msshigaojing: 'ms時告警',
   daas_setting_alarmnotification_gedian: '個點',
   daas_setting_alarmnotification_lianxu: '連續',

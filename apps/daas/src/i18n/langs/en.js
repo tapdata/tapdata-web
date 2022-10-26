@@ -1928,6 +1928,7 @@ export default {
   daas_setting_alarmnotification_dangrenwuquanliang: 'When the task is fully completed',
   daas_setting_alarmnotification_dangrenwujiaoyan: 'When the task verification error occurs',
   daas_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
+  daas_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
   daas_setting_alarmnotification_msshigaojing: 'Alarm when ms',
   daas_setting_alarmnotification_gedian: 'points',
   daas_setting_alarmnotification_lianxu: 'Continuous',
