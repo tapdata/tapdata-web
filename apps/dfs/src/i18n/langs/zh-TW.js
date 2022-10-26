@@ -1016,5 +1016,7 @@ export default {
   dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用戶，您好：',
   dfs_workbench_workbench_banbenshengjihe: '版本升級和服務切換的公告',
   dfs_workbench_workbench_banbenshengjitong: '版本升級通知',
-  dfs_user_center_miyao: '密鑰'
+  dfs_user_center_acces:
+    'AccessKey是您訪問系統API的秘鑰，具有賬號的完全權限，請您務必妥善保管！不要以任何方式公開AccessKey到外部渠道（例如GitHub），避免被他人利用造成安全威脅。 ',
+  dfs_user_center_kaifaxinxi: '開發信息'
 }

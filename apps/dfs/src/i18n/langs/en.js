@@ -1113,5 +1113,7 @@ export default {
   dfs_workbench_workbench_zunjingdeyonghu: 'Dear user, hello:',
   dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switch',
   dfs_workbench_workbench_banbenshengjitong: 'version upgrade notice',
-  dfs_user_center_miyao: 'key'
+  dfs_user_center_acces:
+    'AccessKey is your secret key to access the system API and has full account authority, please keep it properly! Do not expose AccessKey to external channels (such as GitHub) in any way to avoid being used by others to cause security threats. ',
+  dfs_user_center_kaifaxinxi: 'Development information'
 }
