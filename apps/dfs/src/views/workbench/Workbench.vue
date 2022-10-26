@@ -151,7 +151,7 @@
         </ul>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="showUpgrade = false">{{ $t('message_cancel') }}</el-button>
+        <el-button type="primary" @click="showUpgrade = false">{{ $t('button_cancel') }}</el-button>
       </span>
     </el-dialog>
   </div>

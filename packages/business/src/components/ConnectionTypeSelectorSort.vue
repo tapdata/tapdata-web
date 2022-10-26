@@ -33,11 +33,13 @@
       </ul>
       <div class="mt-5 mb-3">
         <VIcon class="color-primary mr-2" size="14">info</VIcon>
-        <span class="fs-8 font-color-light">试用版暂不支持以下数据源 更多请使用正式</span>
+        <span class="fs-8 font-color-light">{{
+          $t('packages_business_components_connectiontypeselectorsort_shiyongbanzanbu')
+        }}</span>
       </div>
       <ul v-loading="loading" class="database-ul overflow-auto">
-        <li v-for="item in comingTypes" :key="item.type" class="database-item float-start mb-4">
-          <div class="img-box bg-color-disable opacity-25 rounded-3">
+        <li v-for="item in comingTypes" :key="item.type" class="database-item disable float-start mb-4">
+          <div class="img-box rounded-3">
             <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
           </div>
           <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
@@ -48,7 +50,7 @@
     </div>
     <div v-else-if="active === 'beta'">
       <div class="my-4 fs-8">
-        注意：Beta版主要来自开源社区的贡献，TapaData对其做了基本的测试，使用过程中可能会出现错误，如有问题可联系技术支持
+        {{ $t('packages_business_components_connectiontypeselectorsort_zhuyiBet') }}
       </div>
       <ul v-loading="loading" class="database-ul overflow-auto">
         <li
@@ -69,12 +71,12 @@
     </div>
     <div v-else>
       <div class="my-database__desc my-4 p-2 font-color-light fs-8">
-        <div>注意：这里是您自己上传的数据源插件，如果要用于生产任务，请在GitHub上提交源代码</div>
-        <div>交由TapaData进行全面的质量测试，以保证插件的稳定性和质量</div>
+        <div>{{ $t('packages_business_components_connectiontypeselectorsort_zhuyizhelishi') }}</div>
+        <div>{{ $t('packages_business_components_connectiontypeselectorsort_jiaoyouTap') }}</div>
       </div>
       <ul v-loading="loading" class="database-ul overflow-auto">
         <li
-          v-for="item in customList"
+          v-for="item in customerList"
           :key="item.type"
           class="database-item float-start mb-4 cursor-pointer"
           @click="$emit('select', item)"
@@ -93,6 +95,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { getConnectionIcon } from '../views/connections/util'
 import { VIcon } from '@tap/component'
 
@@ -159,15 +163,15 @@ export default {
       ],
       tabs: [
         {
-          label: '正式版',
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
           value: 'formal'
         },
         {
-          label: 'Beta版',
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
           value: 'beta'
         },
         {
-          label: '我的数据源',
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
           value: 'my'
         }
       ]
@@ -180,8 +184,8 @@ export default {
     betaList() {
       return this.types.filter(t => t.scope === 'beta')
     },
-    customList() {
-      return this.types.filter(t => t.scope === 'custom')
+    customerList() {
+      return this.types.filter(t => t.scope === 'customer')
     }
   },
   watch: {
@@ -225,7 +229,12 @@ export default {
   }
   &:hover {
     .img-box {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+  &.disable {
+    .img-box {
+      background-color: rgba(242, 242, 242, 0.2);
     }
   }
 }

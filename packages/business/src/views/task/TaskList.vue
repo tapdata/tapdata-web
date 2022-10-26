@@ -697,7 +697,7 @@ export default {
       this.table.fetch(1)
     },
     responseHandler(data, msg) {
-      let failList = data.fail || []
+      let failList = data?.fail || []
       if (failList.length) {
         let msgMapping = {
           5: this.$t('packages_business_dataFlow_multiError_notFound'),

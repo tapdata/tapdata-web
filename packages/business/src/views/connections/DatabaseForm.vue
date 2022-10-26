@@ -130,7 +130,7 @@ import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
-import { checkConnectionName, isEmpty } from '@tap/shared'
+import { checkConnectionName, isEmpty, delayTrigger } from '@tap/shared'
 
 export default {
   name: 'DatabaseForm',
@@ -302,9 +302,14 @@ export default {
     async startTest() {
       this.buried('connectionTest')
       this.checkAgent(() => {
-        this.schemaFormInstance.validate().then(() => {
-          this.startTestPdk()
-        })
+        this.schemaFormInstance.validate().then(
+          () => {
+            this.startTestPdk()
+          },
+          () => {
+            this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
+          }
+        )
       }).catch(() => {
         this.buried('connectionTestAgentFail')
       })
@@ -841,37 +846,39 @@ export default {
           )
         },
         loadCommandList: async (filter, val) => {
-          try {
-            const { $values, command, where = {}, page, size } = filter
-            const { pdkHash, id } = this.pdkOptions
-            const { __TAPDATA, ...formValues } = $values
-            const search = where.label?.like
-            const getValues = Object.assign({}, this.model?.config || {}, formValues)
-            let params = {
-              pdkHash,
-              connectionId: id || this.commandCallbackFunctionId,
-              connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
-              command,
-              type: 'connection',
-              action: search ? 'search' : 'list',
-              argMap: {
-                key: search,
-                page,
-                size: 1000
+          delayTrigger(async () => {
+            try {
+              const { $values, command, where = {}, page, size } = filter
+              const { pdkHash, id } = this.pdkOptions
+              const { __TAPDATA, ...formValues } = $values
+              const search = where.label?.like
+              const getValues = Object.assign({}, this.model?.config || {}, formValues)
+              let params = {
+                pdkHash,
+                connectionId: id || this.commandCallbackFunctionId,
+                connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+                command,
+                type: 'connection',
+                action: search ? 'search' : 'list',
+                argMap: {
+                  key: search,
+                  page,
+                  size: 1000
+                }
               }
-            }
-            if (!params.pdkHash || !params.connectionId) {
+              if (!params.pdkHash || !params.connectionId) {
+                return { items: [], total: 0 }
+              }
+              let result = await proxyApi.command(params)
+              if (!result.items) {
+                return { items: [], total: 0 }
+              }
+              return result
+            } catch (e) {
+              console.log('catch', e) // eslint-disable-line
               return { items: [], total: 0 }
             }
-            let result = await proxyApi.command(params)
-            if (!result.items) {
-              return { items: [], total: 0 }
-            }
-            return result
-          } catch (e) {
-            console.log('catch', e) // eslint-disable-line
-            return { items: [], total: 0 }
-          }
+          }, 500)
         },
         getToken: async (field, params, $form) => {
           const filter = {
