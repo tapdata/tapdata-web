@@ -756,7 +756,7 @@ export default {
     },
 
     getParams() {
-      const { id: taskId, taskRecordId } = this.dataflow || {}
+      const { id: taskId } = this.dataflow || {}
       let params = {
         quota: {
           uri: '/api/measurement/query/v2',
@@ -766,13 +766,6 @@ export default {
           uri: `/api/task/auto-inspect-totals`,
           param: {
             id: this.dataflow.id
-          }
-        },
-        logTotals: {
-          uri: '/api/MonitoringLogs/count',
-          param: {
-            taskId,
-            taskRecordId
           }
         },
         alarmData: {
