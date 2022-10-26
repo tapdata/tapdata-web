@@ -302,9 +302,14 @@ export default {
     async startTest() {
       this.buried('connectionTest')
       this.checkAgent(() => {
-        this.schemaFormInstance.validate().then(() => {
-          this.startTestPdk()
-        })
+        this.schemaFormInstance.validate().then(
+          () => {
+            this.startTestPdk()
+          },
+          () => {
+            this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
+          }
+        )
       }).catch(() => {
         this.buried('connectionTestAgentFail')
       })
