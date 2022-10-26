@@ -12,25 +12,54 @@ class WSClient extends EventEmitter {
     const defaultOptions = {
       url: null,
       protocols: null,
-      retryTimes: 5,
-      retryInterval: 5000
+      retryTimes: Number.MAX_VALUE, // 无限次尝试重连
+      retryInterval: 500, // 断开立即重连
+      query: {}
     }
     this.options = Object.assign({}, defaultOptions, opts, {
       url,
-      protocols
+      protocols,
+      query: {
+        id: this.__getId()
+      }
     })
     this.ws = null
     this.retryCount = 0
     this.connect()
     this.bindNetworkEvent()
   }
+
+  __getId() {
+    let id = this.__id;
+    if (!id) {
+      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = (Math.random() * 16) | 0,
+          v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+      this.__id = id;
+    }
+    return id;
+  }
+
   connect() {
     if (this.ws) {
       this.disconnect()
     }
     let opts = this.options
     try {
-      this.ws = new WebSocket(opts.url, opts.protocols)
+      let queryStr = '';
+      if (opts.query && Object.keys(opts.query).length > 0) {
+        queryStr = Object.keys(opts.query).map(key => key + '=' + encodeURIComponent(opts.query[key])).join('&');
+      }
+
+      let idx = opts.url.indexOf('?');
+      let url = idx > 0 ?
+        (idx+1 === opts.url.length ?
+          (opts.url + queryStr) :
+          (opts.url + '&' + queryStr)) :
+        (opts.url + '?' + queryStr);
+      this.ws = new WebSocket(url, opts.protocols)
       this.retryCount = 0
       this.__bindEvent()
     } catch (e) {
@@ -53,7 +82,7 @@ class WSClient extends EventEmitter {
       }, opts.retryInterval)
     } else {
       // eslint-disable-next-line
-      console.log('websocket 重连失败！')
+      console.log('websocket 超过最大重连次数 ' + this.retryTimes)
       this.retryCount = 0
     }
   }
