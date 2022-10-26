@@ -102,6 +102,7 @@ export default {
   },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       drawer: false,
       visible: false,
       timer: null,
@@ -260,6 +261,7 @@ export default {
       row.database_username = row.config.user || row.config.username
       row.additionalString = row.config.extParams || row.config.additionalString
       row.database_datetype_without_timezone = row.config.timezone
+      row.sourceFrom = this.getSourceFrom(row)
       if (row.config.uri && row.config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
@@ -387,6 +389,17 @@ export default {
     },
     loadList() {
       this.list = this.configModel['default']
+      if (!this.isDaas) {
+        this.list.push({
+          icon: 'link',
+          items: [
+            {
+              label: i18n.t('packages_business_connections_preview_lianjiechajianlai'),
+              key: 'sourceFrom'
+            }
+          ]
+        })
+      }
     },
     getConnectionIcon() {
       const { connection } = this
@@ -400,8 +413,17 @@ export default {
       if (!this.visible) return
       const result = list.find(item => item.id === this.connection.id)
       if (!result) return
-      console.log('result', result) // eslint-disable-line
       this.connection = this.transformData(result)
+    },
+
+    getSourceFrom(row = {}) {
+      const { definitionScope, beta = false } = row
+      const MAP = {
+        publicfalse: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
+        publictrue: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
+        customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
+      }
+      return MAP[definitionScope + beta] || MAP['customer']
     }
   }
 }

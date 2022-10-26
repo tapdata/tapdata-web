@@ -495,5 +495,6 @@ export default {
     '注意：Beta 数据源尚未通过Tapdata的认证测试流程，Tapdata暂不保证这些数据源的稳定运行',
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu: '试用版暂不支持以下数据源 更多请使用正式',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta数据源',
-  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: '认证数据源'
+  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: '认证数据源',
+  packages_business_connections_preview_lianjiechajianlai: '链接插件来源'
 }
