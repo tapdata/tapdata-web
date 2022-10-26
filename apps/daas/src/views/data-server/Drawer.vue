@@ -843,6 +843,7 @@ export default {
   width: 30%;
   .text {
     font-size: 12px;
+    word-break: break-word;
   }
 }
 .data-server-panel__title {

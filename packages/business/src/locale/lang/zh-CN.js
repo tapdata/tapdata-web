@@ -492,7 +492,7 @@ export default {
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
     '注意：这里是您自己上传的数据源插件，如果要用于生产任务，请在GitHub上提交源代码',
   packages_business_components_connectiontypeselectorsort_zhuyiBet:
-    '注意：Beta版主要来自开源社区的贡献，Tapdata对其做了基本的测试，使用过程中可能会出现错误，如有问题可联系技术支持',
+    '注意：Beta 数据源尚未通过Tapdata的认证测试流程，Tapdata暂不保证这些数据源的稳定运行',
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu: '试用版暂不支持以下数据源 更多请使用正式',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta数据源',
   packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: '认证数据源'

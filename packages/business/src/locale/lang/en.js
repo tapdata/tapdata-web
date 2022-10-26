@@ -499,7 +499,7 @@ export default {
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
     'Note: here is the data source plugin uploaded by yourself, if you want to use it for production tasks, please submit the source code on GitHub',
   packages_business_components_connectiontypeselectorsort_zhuyiBet:
-    'Note: The beta version is mainly from the contribution of the open source community, Tapdata has done a basic test on it, there may be errors during use, if you have any questions, please contact technical support',
+    "Note: Beta data sources have not passed Tapdata's certification testing process, and Tapdata does not guarantee the stable operation of these data sources for the time being",
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
     'The trial version does not currently support the following data sources. For more information, please use the official',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta data source',
