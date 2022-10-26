@@ -305,9 +305,6 @@ export default {
         this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
-      if (['renewing'].includes(v1)) {
-        this.handleConsoleAutoLoad()
-      }
     }
   },
 
