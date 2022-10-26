@@ -541,6 +541,7 @@ export default {
       this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
       this.$set(this.dataflow, 'stopTime', data.stopTime)
       this.$set(this.dataflow, 'startTime', data.startTime)
+      this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
 
       if (!fromWS) {
         Object.keys(data).forEach(key => {
