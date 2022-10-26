@@ -23,6 +23,9 @@ export default {
   button_bind: '绑定',
   button_unbind: '解绑',
   button_retry: '重试',
+  button_zhanKai: '展开',
+  message_network_unconnected: '网络连接异常',
+  message_network_connected: '网络已恢复',
   // 链接
   link_back_to_list: '返回列表',
   // 国际化
@@ -1043,5 +1046,6 @@ export default {
   dfs_workbench_workbench_zainianyueriwo: '在2022年9月29日，我们将会发布重大升级V3.0版本。',
   dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用户，您好：',
   dfs_workbench_workbench_banbenshengjihe: '版本升级和服务切换的公告',
-  dfs_workbench_workbench_banbenshengjitong: '版本升级通知'
+  dfs_workbench_workbench_banbenshengjitong: '版本升级通知',
+  dfs_user_center_miyao: '密钥'
 }

@@ -19,6 +19,9 @@ export default {
   button_bind: 'binding',
   button_unbind: 'unbind',
   button_retry: 'retry',
+  button_zhanKai: 'Expand',
+  message_network_unconnected: 'Network not connected',
+  message_network_connected: 'Network is restored',
   link_back_to_list: 'Back to list',
   lang_zh_cn: 'chinese',
   lang_en: 'english',
@@ -1109,5 +1112,6 @@ export default {
   dfs_workbench_workbench_zainianyueriwo: 'On September 29, 2022, we will release a major upgrade V3.0. ',
   dfs_workbench_workbench_zunjingdeyonghu: 'Dear user, hello:',
   dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switch',
-  dfs_workbench_workbench_banbenshengjitong: 'version upgrade notice'
+  dfs_workbench_workbench_banbenshengjitong: 'version upgrade notice',
+  dfs_user_center_miyao: 'key'
 }

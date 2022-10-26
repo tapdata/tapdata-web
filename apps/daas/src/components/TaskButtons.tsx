@@ -146,7 +146,7 @@ export default defineComponent({
             {$t('button_edit')}
           </el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-dropdown onCommand={dropdownHandler}>
+          <el-dropdown onCommand={dropdownHandler} trigger="click">
             <el-link type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
             </el-link>

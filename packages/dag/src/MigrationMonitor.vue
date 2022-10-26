@@ -735,7 +735,9 @@ export default {
               'tableTotal',
               'snapshotSourceReadTimeCostAvg',
               'incrementalSourceReadTimeCostAvg',
-              'targetWriteTimeCostAvg'
+              'targetWriteTimeCostAvg',
+              'snapshotStartAt',
+              'snapshotDoneAt'
             ],
             type: 'instant' // 瞬时值
           },

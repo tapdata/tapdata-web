@@ -486,5 +486,15 @@ export default {
   packages_business_relation_details_huancun: '緩存',
   packages_business_relation_details_wajue: '挖掘',
   packages_business_relation_details_renwu: '任務',
-  packages_business_agent_select_not_found: '該agent已不存在，請選擇其他agent'
+  packages_business_agent_select_not_found: '該agent已不存在，請選擇其他agent',
+  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的數據源',
+  packages_business_components_connectiontypeselectorsort_jiaoyouTap:
+    '交由Tapdata進行全面的質量測試，以保證插件的穩定性和質量',
+  packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
+    '注意：這裡是您自己上傳的數據源插件，如果要用於生產任務，請在GitHub上提交源代碼',
+  packages_business_components_connectiontypeselectorsort_zhuyiBet:
+    '注意：Beta版主要來自開源社區的貢獻，Tapdata對其做了基本的測試，使用過程中可能會出現錯誤，如有問題可聯繫技術支持',
+  packages_business_components_connectiontypeselectorsort_shiyongbanzanbu: '試用版暫不支持以下數據源 更多請使用正式',
+  packages_business_components_connectiontypeselectorsort_betashu: 'Beta数据源',
+  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: '认证数据源'
 }

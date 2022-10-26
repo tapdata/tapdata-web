@@ -67,7 +67,8 @@ export default {
   message_401: '登录过期，请重新登录',
   message_404: '请求的资源不存在',
   message_5xx: '服务器异常',
-  message_network_unconnected: '网络未连接',
+  message_network_unconnected: '网络连接异常',
+  message_network_connected: '网络已恢复',
   message_request_timeout: '请求超时',
   // 表格
   column_operation: '操作',

@@ -87,7 +87,9 @@ export default defineComponent({
      */
     const cdcEventStartTime = computed(() => {
       const val = props.sample.currentEventTimestamp
-      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : '-'
+      const val1 = props.sample.snapshotStartAt
+      const snapshotStartAt = val1 ? dayjs(val1).format('YYYY-MM-DD HH:mm:ss.SSS') : '-'
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : snapshotStartAt
     })
 
     /**
@@ -96,7 +98,9 @@ export default defineComponent({
      */
     const cdcEventStartRelativeTime = computed(() => {
       const val = props.sample.currentEventTimestamp
-      return val ? dayjs().to(dayjs(val)) : '-'
+      const val1 = props.sample.snapshotStartAt
+      const snapshotStartAt = val1 ? dayjs().to(dayjs(val1)) : '-'
+      return val ? dayjs().to(dayjs(val)) : snapshotStartAt
     })
 
     const outputQps = computed(() => {

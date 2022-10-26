@@ -16,8 +16,8 @@
         </div>
         <div class="flex align-items-center font-color-light mt-1">
           <span class="mr-2">{{ syncType[dataflow.type] }}</span>
-          <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
-          <span>{{ startTime }}</span>
+          <span>{{ $t('packages_dag_monitor_topheader_zuijinyiciqi') }}</span>
+          <span>{{ lastStartDate }}</span>
         </div>
       </div>
       <div v-if="dataflow.agentId" class="agent-data__item ml-4 px-4">
@@ -211,6 +211,11 @@ export default {
     startTime() {
       const { startTime } = this.dataflow
       return startTime ? dayjs(startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+
+    lastStartDate() {
+      const { lastStartDate } = this.dataflow
+      return lastStartDate ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
 
     agentData() {

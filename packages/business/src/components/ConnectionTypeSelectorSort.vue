@@ -1,0 +1,256 @@
+<template>
+  <div class="database">
+    <ul class="flex mb-4">
+      <li
+        v-for="item in tabs"
+        :key="item.value"
+        :class="[
+          { 'bg-primary text-white': active === item.value },
+          { 'bg-color-main text-main': active !== item.value }
+        ]"
+        class="mr-4 py-1 px-4 rounded-2 cursor-pointer"
+        @click="handleTab(item)"
+      >
+        {{ item.label }}
+      </li>
+    </ul>
+    <div v-if="active === 'formal'">
+      <ul v-loading="loading" class="database-ul overflow-auto">
+        <li
+          v-for="item in publicList"
+          :key="item.type"
+          class="database-item float-start mb-4 cursor-pointer"
+          @click="$emit('select', item)"
+        >
+          <div class="img-box rounded-3">
+            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
+            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
+          </div>
+          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
+            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
+          </ElTooltip>
+        </li>
+      </ul>
+      <div class="mt-5 mb-3">
+        <VIcon class="color-primary mr-2" size="14">info</VIcon>
+        <span class="fs-8 font-color-light">{{
+          $t('packages_business_components_connectiontypeselectorsort_shiyongbanzanbu')
+        }}</span>
+      </div>
+      <ul v-loading="loading" class="database-ul overflow-auto">
+        <li v-for="item in comingTypes" :key="item.type" class="database-item disable float-start mb-4">
+          <div class="img-box rounded-3">
+            <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
+          </div>
+          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
+            <div class="ellipsis text-center font-color-slight">{{ item.name }}</div>
+          </ElTooltip>
+        </li>
+      </ul>
+    </div>
+    <div v-else-if="active === 'beta'">
+      <div class="my-4 fs-8">
+        {{ $t('packages_business_components_connectiontypeselectorsort_zhuyiBet') }}
+      </div>
+      <ul v-loading="loading" class="database-ul overflow-auto">
+        <li
+          v-for="item in betaList"
+          :key="item.type"
+          class="database-item float-start mb-4 cursor-pointer"
+          @click="$emit('select', item)"
+        >
+          <div class="img-box rounded-3">
+            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
+            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
+          </div>
+          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
+            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
+          </ElTooltip>
+        </li>
+      </ul>
+    </div>
+    <div v-else>
+      <div class="my-database__desc my-4 p-2 font-color-light fs-8">
+        <div>{{ $t('packages_business_components_connectiontypeselectorsort_zhuyizhelishi') }}</div>
+        <div>{{ $t('packages_business_components_connectiontypeselectorsort_jiaoyouTap') }}</div>
+      </div>
+      <ul v-loading="loading" class="database-ul overflow-auto">
+        <li
+          v-for="item in customerList"
+          :key="item.type"
+          class="database-item float-start mb-4 cursor-pointer"
+          @click="$emit('select', item)"
+        >
+          <div class="img-box rounded-3">
+            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
+            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
+          </div>
+          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
+            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
+          </ElTooltip>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script>
+import i18n from '@tap/i18n'
+
+import { getConnectionIcon } from '../views/connections/util'
+import { VIcon } from '@tap/component'
+
+export default {
+  name: 'ConnectionTypeSelector',
+  components: { VIcon },
+  props: {
+    types: {
+      value: Array,
+      default: () => {
+        return []
+      }
+    },
+    large: {
+      value: Boolean,
+      default: () => {
+        return false
+      }
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      active: 'formal',
+      comingTypes: [
+        { name: 'MongoDB', type: 'mongodb' },
+        { name: 'MySQL', type: 'mysql' },
+        { name: 'Oracle', type: 'oracle' },
+        { name: 'Elasticsearch', type: 'elasticsearch' },
+        { name: 'Redis', type: 'redis' },
+        { name: 'PostgreSQL', type: 'postgres' },
+        { name: 'SQL Server', type: 'sqlserver' },
+        // { name: 'GBase 8s', type: 'gbase-8s' },
+        { name: 'Sybase ASE', type: 'sybase ase' },
+        { name: 'GaussDB200', type: 'gaussdb200' },
+        { name: 'IBM Db2', type: 'db2' },
+        { name: 'Memory Cache', type: 'mem_cache' },
+        { name: 'KunDB', type: 'kundb' },
+        { name: 'Custom connection', type: 'custom_connection' },
+        { name: 'REST API', type: 'rest api' },
+        { name: 'Dummy', type: 'dummy' },
+        { name: 'GridFS', type: 'gridfs' },
+        { name: 'Kafka', type: 'kafka' },
+        { name: 'MariaDB', type: 'mariadb' },
+        { name: 'MySQL PXC', type: 'mysql pxc' },
+        { name: 'jira', type: 'jira' },
+        { name: 'DM DB', type: 'dameng' },
+        { name: 'Hive', type: 'hive' },
+        { name: 'TCP/IP', type: 'tcp_udp' },
+        // { name: 'MQ', type: 'mq' },
+        { name: 'HBase', type: 'hbase' },
+        { name: 'KUDU', type: 'kudu' },
+        { name: 'Greenplum', type: 'greenplum' },
+        { name: 'TiDB', type: 'tidb' },
+        { name: 'SAP HANA', type: 'hana' },
+        { name: 'ClickHouse', type: 'clickhouse' },
+        { name: 'File(s)', type: 'file' },
+        { name: 'ADB MySQL', type: 'adb_mysql' },
+        { name: 'ADB PostgreSQL', type: 'adb_postgres' },
+        { name: 'Hazelcast Cloud', type: 'hazelcast_cloud_cluster' }
+      ],
+      tabs: [
+        {
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
+          value: 'formal'
+        },
+        {
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
+          value: 'beta'
+        },
+        {
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
+          value: 'my'
+        }
+      ]
+    }
+  },
+  computed: {
+    publicList() {
+      return this.types.filter(t => t.scope === 'public')
+    },
+    betaList() {
+      return this.types.filter(t => t.scope === 'beta')
+    },
+    customerList() {
+      return this.types.filter(t => t.scope === 'customer')
+    }
+  },
+  watch: {
+    types: {
+      deep: true,
+      handler() {
+        this.getComingTypes()
+      }
+    }
+  },
+  mounted() {
+    this.getComingTypes()
+  },
+  methods: {
+    getPdkIcon(item) {
+      return getConnectionIcon(item.pdkHash)
+    },
+
+    getComingTypes() {
+      this.comingTypes = this.comingTypes.filter(f => !this.types.some(t => t.pdkId === f.type))
+    },
+
+    handleTab(item) {
+      this.active = item.value
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.database {
+  width: 804px;
+  overflow: auto;
+}
+.database-item {
+  width: 80px;
+  flex: 1;
+  margin-right: 40px;
+  &:nth-child(7n) {
+    margin-right: 0;
+  }
+  &:hover {
+    .img-box {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+  &.disable {
+    .img-box {
+      background-color: rgba(242, 242, 242, 0.2);
+    }
+  }
+}
+.img-box {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #f2f2f2;
+}
+.el-image {
+  width: 50px;
+  text-align: center;
+}
+.my-database__desc {
+  background: #f2f2f2;
+}
+</style>

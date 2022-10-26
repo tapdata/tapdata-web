@@ -159,7 +159,7 @@
             >{{ $t('button_delete') }}</ElButton
           >
           <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
-          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
+          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)" trigger="click">
             <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
             </ElLink>

@@ -37,6 +37,7 @@
           <el-button class="btn-dropdowm" size="mini">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
+            <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
@@ -166,7 +167,7 @@
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
+            <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)" trigger="click">
               <ElLink type="primary" class="rotate-90">
                 <i class="el-icon-more"></i>
               </ElLink>
@@ -626,7 +627,7 @@ export default {
           .batchRenew(ids)
           .then(data => {
             this.table.fetch()
-            this.responseHandler(data, this.$t('packages_business_message_resetOk'))
+            this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
           })
           .finally(() => {
             this.restLoading = false
@@ -696,7 +697,7 @@ export default {
       this.table.fetch(1)
     },
     responseHandler(data, msg) {
-      let failList = data.fail || []
+      let failList = data?.fail || []
       if (failList.length) {
         let msgMapping = {
           5: this.$t('packages_business_dataFlow_multiError_notFound'),

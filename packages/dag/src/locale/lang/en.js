@@ -516,5 +516,6 @@ export default {
   packages_dag_mixins_editor_debug3:
     '[DEBUG] Polling load task details, current status: [{val1}], return status: [{val2}]',
   packages_dag_mixins_editor_debug4: '[DEBUG] Start polling loading tasks, every 3s',
-  packages_dag_mixins_editor_debug5: '[DEBUG]ws returned, task status: [{val1}]'
+  packages_dag_mixins_editor_debug5: '[DEBUG]ws returned, task status: [{val1}]',
+  packages_dag_monitor_topheader_zuijinyiciqi: 'Last start time:'
 }

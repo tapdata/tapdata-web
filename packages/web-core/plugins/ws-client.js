@@ -1,7 +1,9 @@
 /**
  * websocket 封装类
  */
+import { Message } from 'element-ui'
 import EventEmitter from './event'
+import i18n from '@/i18n'
 
 class WSClient extends EventEmitter {
   constructor(url, protocols, opts = {}) {
@@ -20,6 +22,7 @@ class WSClient extends EventEmitter {
     this.ws = null
     this.retryCount = 0
     this.connect()
+    this.bindNetworkEvent()
   }
   connect() {
     if (this.ws) {
@@ -131,6 +134,32 @@ class WSClient extends EventEmitter {
         this.ready(cb)
       }, 500)
     }
+  }
+
+  bindNetworkEvent() {
+    window.addEventListener('online', this.onLine.bind(this))
+    window.addEventListener('offline', this.offLine.bind(this))
+  }
+
+  onLine() {
+    this.send('ping') // 网络恢复立即发送ping
+    if (this.msg?.visible) {
+      Object.assign(this.msg, {
+        message: i18n.t('message_network_connected'),
+        type: 'success',
+        duration: 3000
+      })
+      this.msg.startTimer()
+      this.msg = null
+    }
+  }
+
+  offLine() {
+    this.msg = Message.error({
+      duration: 0,
+      showClose: true,
+      message: i18n.t('message_network_unconnected')
+    })
   }
 }
 

@@ -19,6 +19,9 @@ export default {
   button_bind: '綁定',
   button_unbind: '解綁',
   button_retry: '重試',
+  button_zhanKai: '展開',
+  message_network_unconnected: '網絡連接異常',
+  message_network_connected: '網絡已恢復',
   link_back_to_list: '返回列表',
   lang_zh_cn: '中文',
   lang_en: '英文',
@@ -1012,5 +1015,6 @@ export default {
   dfs_workbench_workbench_zainianyueriwo: '在2022年9月29日，我們將會發布重大升級V3.0版本。 ',
   dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用戶，您好：',
   dfs_workbench_workbench_banbenshengjihe: '版本升級和服務切換的公告',
-  dfs_workbench_workbench_banbenshengjitong: '版本升級通知'
+  dfs_workbench_workbench_banbenshengjitong: '版本升級通知',
+  dfs_user_center_miyao: '密鑰'
 }

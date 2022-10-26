@@ -492,5 +492,6 @@ export default {
   packages_dag_mixins_editor_debug2: '【DEBUG】轮询加载任务详情，出现状态不一致，按照返回状态更新',
   packages_dag_mixins_editor_debug3: '【DEBUG】轮询加载任务详情，当前状态：[{val1}], 返回状态：[{val2}]',
   packages_dag_mixins_editor_debug4: '【DEBUG】开始轮询加载任务，间隔3s',
-  packages_dag_mixins_editor_debug5: '【DEBUG】ws返回，任务状态：[{val1}]'
+  packages_dag_mixins_editor_debug5: '【DEBUG】ws返回，任务状态：[{val1}]',
+  packages_dag_monitor_topheader_zuijinyiciqi: '最近一次啟動時間：'
 }
