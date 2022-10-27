@@ -42,14 +42,11 @@
         </div>
         <ElFormItem prop="description" class="flex-1 mt-4" size="small">
           <ElInput
-            v-if="isEdit"
             v-model="form.description"
             type="textarea"
             :placeholder="$t('function_describe_placeholder')"
+            :disabled="!isEdit"
           ></ElInput>
-          <div v-else class="font-color-light">
-            {{ data.description || $t('daas_data_server_drawer_zanwumiaoshu') }}
-          </div>
         </ElFormItem>
 
         <!-- 基础信息 -->

@@ -197,7 +197,7 @@
 </template>
 
 <script>
-import { merge, escapeRegExp, uniqBy } from 'lodash'
+import { merge, escapeRegExp, uniqBy, debounce } from 'lodash'
 import { Select } from 'element-ui'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
@@ -250,7 +250,11 @@ export default {
       type: Boolean,
       default: false
     },
-    currentLabel: [String, Array]
+    currentLabel: [String, Array],
+    debounceWait: {
+      type: Number,
+      default: 200
+    }
   },
 
   data() {
@@ -315,11 +319,11 @@ export default {
   },
 
   watch: {
-    async params(val, old) {
+    params(val, old) {
       if (JSON.stringify(val) !== JSON.stringify(old)) {
         this.lastQuery = null
         this.query = ''
-        await this.loadData()
+        this.debounceLoadData()
       }
     },
 
@@ -332,6 +336,10 @@ export default {
 
   async created() {
     if (!this.lazy) await this.loadData()
+
+    this.debounceLoadData = debounce(() => {
+      this.loadData()
+    }, this.debounceWait)
   },
 
   methods: {

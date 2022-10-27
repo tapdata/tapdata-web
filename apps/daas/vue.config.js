@@ -25,7 +25,7 @@ const proxy = {
 
 module.exports = {
   assetsDir: 'static',
-  lintOnSave: true,
+  lintOnSave: process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
   productionSourceMap: false,
   publicPath: './',
   devServer: {
