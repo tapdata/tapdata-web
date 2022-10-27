@@ -846,39 +846,37 @@ export default {
           )
         },
         loadCommandList: async (filter, val) => {
-          delayTrigger(async () => {
-            try {
-              const { $values, command, where = {}, page, size } = filter
-              const { pdkHash, id } = this.pdkOptions
-              const { __TAPDATA, ...formValues } = $values
-              const search = where.label?.like
-              const getValues = Object.assign({}, this.model?.config || {}, formValues)
-              let params = {
-                pdkHash,
-                connectionId: id || this.commandCallbackFunctionId,
-                connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
-                command,
-                type: 'connection',
-                action: search ? 'search' : 'list',
-                argMap: {
-                  key: search,
-                  page,
-                  size: 1000
-                }
+          try {
+            const { $values, command, where = {}, page, size } = filter
+            const { pdkHash, id } = this.pdkOptions
+            const { __TAPDATA, ...formValues } = $values
+            const search = where.label?.like
+            const getValues = Object.assign({}, this.model?.config || {}, formValues)
+            let params = {
+              pdkHash,
+              connectionId: id || this.commandCallbackFunctionId,
+              connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+              command,
+              type: 'connection',
+              action: search ? 'search' : 'list',
+              argMap: {
+                key: search,
+                page,
+                size: 1000
               }
-              if (!params.pdkHash || !params.connectionId) {
-                return { items: [], total: 0 }
-              }
-              let result = await proxyApi.command(params)
-              if (!result.items) {
-                return { items: [], total: 0 }
-              }
-              return result
-            } catch (e) {
-              console.log('catch', e) // eslint-disable-line
+            }
+            if (!params.pdkHash || !params.connectionId) {
               return { items: [], total: 0 }
             }
-          }, 500)
+            let result = await proxyApi.command(params)
+            if (!result.items) {
+              return { items: [], total: 0 }
+            }
+            return result
+          } catch (e) {
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
+          }
         },
         getToken: async (field, params, $form) => {
           const filter = {
