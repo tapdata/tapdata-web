@@ -132,6 +132,87 @@ export default {
           value: 'migration&&forceStop',
           desc: this.$t('operation_log_migration_forceStop_tip')
         },
+        {
+          label: this.$t('operation_log_migration_create'),
+          value: 'migration&&create',
+          desc: this.$t('operation_log_migration_create_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_start'),
+          value: 'migration&&start',
+          desc: this.$t('operation_log_migration_start_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_update'),
+          value: 'migration&&update',
+          desc: this.$t('operation_log_migration_update_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_copy'),
+          value: 'migration&&copy',
+          desc: this.$t('operation_log_migration_copy_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_reset'),
+          value: 'migration&&reset',
+          desc: this.$t('operation_log_migration_reset_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_delete'),
+          value: 'migration&&delete',
+          desc: this.$t('operation_log_migration_delete_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_stop'),
+          value: 'migration&&stop',
+          desc: this.$t('operation_log_migration_stop_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_forceStop'),
+          value: 'migration&&forceStop',
+          desc: this.$t('operation_log_migration_forceStop_tip')
+        },
+        // 数据开发
+        {
+          label: this.$t('operation_log_migration_create'),
+          value: 'sync&&create',
+          desc: this.$t('operation_log_migration_create_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_start'),
+          value: 'sync&&start',
+          desc: this.$t('operation_log_migration_start_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_update'),
+          value: 'sync&&update',
+          desc: this.$t('operation_log_migration_update_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_copy'),
+          value: 'sync&&copy',
+          desc: this.$t('operation_log_migration_copy_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_reset'),
+          value: 'sync&&reset',
+          desc: this.$t('operation_log_migration_reset_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_delete'),
+          value: 'sync&&delete',
+          desc: this.$t('operation_log_migration_delete_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_stop'),
+          value: 'sync&&stop',
+          desc: this.$t('operation_log_migration_stop_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_forceStop'),
+          value: 'sync&&forceStop',
+          desc: this.$t('operation_log_migration_forceStop_tip')
+        },
         // Agent
         {
           label: this.$t('operation_log_agent_create'),
@@ -452,6 +533,18 @@ export default {
         case 'migration':
           this.$router.push({
             name: 'migrateList',
+            query: {
+              status: '',
+              syncType: '',
+              agentId: '',
+              keyword: parameter1
+            }
+          })
+          break
+        // 数据开发
+        case 'sync':
+          this.$router.push({
+            name: 'dataflowList',
             query: {
               status: '',
               syncType: '',
