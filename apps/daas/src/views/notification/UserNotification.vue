@@ -64,7 +64,7 @@
     <el-pagination
       class="pagination"
       background
-      layout="prev, pager, next,sizes"
+      layout="->,total,prev, pager, next,sizes"
       :page-sizes="[20, 30, 50, 100]"
       :page-size.sync="page.size"
       :total="page.total"
@@ -163,6 +163,7 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
+          console.log(data)
           this.page.total = data?.total || 0
           this.page.index = current
           this.list = (data?.items || []).map(item => {
