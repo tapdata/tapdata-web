@@ -471,6 +471,7 @@ export default {
         sort: path.sort || [],
         path: path.path || ''
       }
+      this.form.description = this.data.description
       let host = this.host
       let _path = this.data.path
       let baseUrl = host + _path
