@@ -189,7 +189,7 @@ export default {
     return {
       activeNodeId: 'all',
       keyword: '',
-      checkList: ['INFO', 'WARN', 'ERROR'],
+      checkList: ['DEBUG', 'INFO', 'WARN', 'ERROR'],
       checkItems: [
         {
           label: 'DEBUG',
