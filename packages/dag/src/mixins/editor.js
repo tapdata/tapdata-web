@@ -1107,7 +1107,10 @@ export default {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', { val1: agent.hostName, val2: agent.ip })
+                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', {
+                  val1: agent.hostName,
+                  val2: agent.ip
+                })
               })
               isError = true
             }
@@ -1222,7 +1225,7 @@ export default {
             hasEnableDDLAndIncreasesql = true
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi')
+              msg: i18n.t('packages_dag_mixins_editor_not_support_ddl')
             })
           }
         }

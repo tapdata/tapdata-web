@@ -433,7 +433,7 @@ export default observer({
 
     accessNodeProcessIdArr() {
       const set = this.allNodes
-        .filter(item => item.type === 'database')
+        .filter(item => item.type === 'database' || item.type === 'table')
         .reduce((set, item) => {
           item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
           return set
