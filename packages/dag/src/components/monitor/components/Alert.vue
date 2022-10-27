@@ -218,10 +218,7 @@ export default {
         this.alarmData?.nodeInfos?.reduce((cur, next) => {
           return { ...cur, [next.nodeId]: next }
         }, {}) || {}
-      const totals =
-        this.alarmData?.nodeInfos?.reduce((cur, next) => {
-          return cur + (next.num || 0)
-        }, 0) || 0
+      const totals = this.alarmData?.alarmList?.length || 0
       return [
         {
           label: i18n.t('packages_dag_components_alert_quanbugaojing'),
