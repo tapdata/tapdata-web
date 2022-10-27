@@ -726,6 +726,7 @@ export default {
 }
 .white-space-pre {
   white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .log-list {

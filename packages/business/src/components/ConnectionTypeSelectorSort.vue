@@ -1,19 +1,8 @@
 <template>
   <div class="database">
-    <ul class="flex mb-4">
-      <li
-        v-for="item in tabs"
-        :key="item.value"
-        :class="[
-          { 'bg-primary text-white': active === item.value },
-          { 'bg-color-main text-main': active !== item.value }
-        ]"
-        class="mr-4 py-1 px-4 rounded-2 cursor-pointer"
-        @click="handleTab(item)"
-      >
-        {{ item.label }}
-      </li>
-    </ul>
+    <ElTabs v-model="active">
+      <ElTabPane v-for="item in tabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
+    </ElTabs>
     <div v-if="active === 'formal'">
       <ul v-loading="loading" class="database-ul overflow-auto">
         <li
@@ -252,5 +241,10 @@ export default {
 }
 .my-database__desc {
   background: #f2f2f2;
+}
+::v-deep {
+  .el-tabs__nav-wrap.is-top {
+    padding: 0;
+  }
 }
 </style>
