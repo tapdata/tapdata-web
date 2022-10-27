@@ -133,7 +133,12 @@
           <ElTableColumn :label="$t('daas_data_server_drawer_canshumingcheng')" prop="name" min-width="120">
             <template #default="{ row, $index }">
               <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
-                <ElFormItem :error="!form.params[$index].name ? 'true' : ''" :show-message="false">
+                <ElFormItem
+                  :prop="`params.${$index}.name`"
+                  :error="!form.params[$index].name ? 'true' : ''"
+                  :show-message="false"
+                  :rules="rules.param"
+                >
                   <ElInput v-model="form.params[$index].name" size="mini"></ElInput>
                 </ElFormItem>
               </div>
@@ -369,6 +374,13 @@ export default {
     host: String
   },
   data() {
+    const validateParams = (rule, value, callback) => {
+      if (/^[a-zA-Z_$]/.test(value)) {
+        callback()
+      } else {
+        callback('格式错误')
+      }
+    }
     return {
       loading: false,
       visible: false,
@@ -382,7 +394,8 @@ export default {
           { required: true, message: i18n.t('daas_data_server_drawer_qingxuanzelianjie'), trigger: 'blur' }
         ],
         connectionId: [{ required: true, message: i18n.t('shared_cache_placeholder_connection'), trigger: 'blur' }],
-        tableName: [{ required: true, message: i18n.t('daas_data_server_drawer_qingxuanzeduixiang'), trigger: 'blur' }]
+        tableName: [{ required: true, message: i18n.t('daas_data_server_drawer_qingxuanzeduixiang'), trigger: 'blur' }],
+        param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }]
       },
       apiTypeMap: {
         defaultApi: i18n.t('daas_data_server_drawer_morenchaxun'),
