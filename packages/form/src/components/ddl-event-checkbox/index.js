@@ -3,6 +3,20 @@ import { defineComponent, ref, onMounted } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useForm, useField } from '@formily/vue'
 
+const EVENT_MAP = {
+  alter_field_name_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming'),
+  alter_field_attributes_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanshu'),
+  create_table_event: i18n.t('packages_form_ddl_event_checkbox_index_chuangjianbiao'),
+  drop_table_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchubiao'),
+  clear_table_event: i18n.t('packages_form_ddl_event_checkbox_index_qingkongbiao'),
+  alter_primary_key_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaizhujian'),
+  drop_field_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchuziduan'),
+  new_field_event: i18n.t('packages_form_ddl_event_checkbox_index_xinzengziduan'),
+  alter_table_charset_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaozifu'),
+  alter_database_timezone_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaishujuku'),
+  rename_table_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaoming')
+}
+
 export const DdlEventCheckbox = observer(
   defineComponent({
     props: ['value', 'disabled'],
@@ -13,19 +27,6 @@ export const DdlEventCheckbox = observer(
       const selected = ref([])
       const capabilities = form.values.attrs.capabilities || []
       const unselected = ref(props.value || [])
-      const EVENT_MAP = {
-        alter_field_name_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming'),
-        alter_field_attributes_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanshu'),
-        create_table_event: i18n.t('packages_form_ddl_event_checkbox_index_chuangjianbiao'),
-        drop_table_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchubiao'),
-        clear_table_event: i18n.t('packages_form_ddl_event_checkbox_index_qingkongbiao'),
-        alter_primary_key_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaizhujian'),
-        drop_field_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchuziduan'),
-        new_field_event: i18n.t('packages_form_ddl_event_checkbox_index_xinzengziduan'),
-        alter_table_charset_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaozifu'),
-        alter_database_timezone_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaishujuku'),
-        rename_table_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaoming')
-      }
 
       events.value = capabilities.filter(item => item.type === 10).map(item => item.id)
       selected.value = unselected.value.length
