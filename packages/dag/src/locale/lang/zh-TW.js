@@ -318,6 +318,7 @@ export default {
   packages_dag_mixins_editor_renwuzhonghanyou:
     '任務中含有JS節點、自定義節點、或節點設置增量自定義SQL，暫不支持DDL，請手動關閉',
   packages_dag_mixins_editor_gaijiedianbuzhi: '該節點不支持在 {val1}（{val2}）上運行',
+  packages_dag_mixins_editor_not_support_ddl: '該節點不支持DDL，請關閉',
   packages_dag_mixins_editor_buzhichiduotiao: '不支持多條鏈路，請重新編輯任務鏈路',
   packages_dag_mixins_editor_renwulianlubu: '任務鏈路不完整',
   packages_dag_mixins_editor_renwushezhiyi: '任務設置異常',
