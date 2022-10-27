@@ -103,8 +103,8 @@ export default {
 
     handleDetail(row = {}) {
       const { taskId, taskRecordId, startDate, endDate } = row
-      const start = new Date(startDate).getTime()
-      const end = new Date(endDate).getTime()
+      const start = startDate ? new Date(startDate).getTime() : Date.now()
+      const end = endDate ? new Date(endDate).getTime() : Date.now()
       const routeUrl = this.$router.resolve({
         name: 'MigrationMonitorViewer',
         params: {
