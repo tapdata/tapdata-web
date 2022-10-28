@@ -163,7 +163,7 @@ export default {
       },
 
       dataflow,
-
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       scale: 1
     }
   },
@@ -211,27 +211,19 @@ export default {
     ...mapMutations('dataflow', ['setPdkPropertiesMap']),
 
     async initNodeType() {
-      this.addProcessorNode([
+      let nodes = [
         {
           name: 'JavaScript',
           type: 'js_processor'
         },
-        /*{
-          name: i18n.t('packages_dag_src_editor_juhe'),
-          type: 'aggregation_processor'
-        },*/
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
         },
         // {
-        //   name: i18n.t('packages_dag_dag_connection'),
-        //   type: 'join_processor'
-        // },
-        {
-          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
-        },
+        //   name: i18n.t('packages_dag_src_editor_juhe'),
+        //   type: 'aggregation_processor' //聚合节点
+        // }
         {
           name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
           type: 'field_calc_processor'
@@ -248,7 +240,22 @@ export default {
           name: i18n.t('packages_dag_src_editor_zengshanziduan'),
           type: 'field_add_del_processor'
         }
-      ])
+      ]
+      //仅企业版有的节点
+      if (this.isDaas) {
+        let isDaasNode = [
+          {
+            name: i18n.t('packages_dag_dag_connection'),
+            type: 'join_processor' //join 节点
+          },
+          {
+            name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+            type: 'merge_table_processor'
+          }
+        ]
+        nodes = [...isDaasNode, ...nodes]
+      }
+      this.addProcessorNode(nodes)
       this.addResourceIns(allResourceIns)
       await this.loadCustomNode()
     },
