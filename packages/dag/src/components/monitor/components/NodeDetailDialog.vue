@@ -11,7 +11,12 @@
       <div class="select__row flex align-items-center" @click.stop="handleSelect">
         <span>{{ $t('packages_dag_components_nodedetaildialog_jiedian') }}</span>
         <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init">
-          <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value"></ElOption>
+          <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value">
+            <div class="flex align-center mx-n1">
+              <NodeIcon class="mr-2" :node="item.node" :size="18" />
+              <span>{{ item.label }}</span>
+            </div>
+          </ElOption>
         </ElSelect>
       </div>
       <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
@@ -168,11 +173,12 @@ import EventChart from './EventChart'
 import LineChart from './LineChart'
 import Frequency from './Frequency'
 import { TIME_FORMAT_MAP, getTimeGranularity } from '../util'
+import NodeIcon from '../../NodeIcon'
 
 export default {
   name: 'NodeDetailDialog',
 
-  components: { EventChart, LineChart, TimeSelect, Frequency },
+  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency },
 
   props: {
     value: {
@@ -211,6 +217,7 @@ export default {
       return (
         this.allNodes.map(t => {
           return {
+            node: t,
             label: t.name,
             value: t.id
           }
