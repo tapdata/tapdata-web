@@ -248,6 +248,10 @@ export default {
       }
       this.$ws.ready(() => {
         this.$ws.send(msg)
+        // 连接测试时出现access_token过期,重发消息
+        this.$ws.once('401', () => {
+          this.$ws.send(msg)
+        })
         this.timer && clearTimeout(this.timer)
         this.timer = null
         this.timer = setTimeout(() => {

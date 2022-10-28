@@ -102,7 +102,7 @@ let init = settings => {
   if (loc.protocol === 'https:') {
     wsUrl = 'wss:'
   }
-  wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent?access_token=${token}`
+  wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
   window.App = new Vue({
     el: '#app',
@@ -110,7 +110,12 @@ let init = settings => {
     router: getRouter(i18n),
     store,
     wsOptions: {
-      url: wsUrl
+      url: wsUrl,
+      getQuery() {
+        return {
+          access_token: Cookie.get('access_token')
+        }
+      }
     },
     render: h => h(App)
   })

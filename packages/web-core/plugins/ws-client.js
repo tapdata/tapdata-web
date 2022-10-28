@@ -2,6 +2,7 @@
  * websocket 封装类
  */
 import { Message } from 'element-ui'
+import { merge } from 'lodash'
 import EventEmitter from './event'
 import i18n from '@/i18n'
 
@@ -10,13 +11,13 @@ class WSClient extends EventEmitter {
     super()
 
     const defaultOptions = {
-      url: null,
-      protocols: null,
+      url: undefined,
+      protocols: undefined, // 不能为null
       retryTimes: Number.MAX_VALUE, // 无限次尝试重连
       retryInterval: 500, // 断开立即重连
       query: {}
     }
-    this.options = Object.assign({}, defaultOptions, opts, {
+    this.options = merge({}, defaultOptions, opts, {
       url,
       protocols,
       query: {
@@ -30,16 +31,16 @@ class WSClient extends EventEmitter {
   }
 
   __getId() {
-    let id = this.__id;
+    let id = this.__id
     if (!id) {
       id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         let r = (Math.random() * 16) | 0,
-          v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
-      this.__id = id;
+          v = c === 'x' ? r : (r & 0x3) | 0x8
+        return v.toString(16)
+      })
+      this.__id = id
     }
-    return id;
+    return id
   }
 
   connect() {
@@ -47,18 +48,27 @@ class WSClient extends EventEmitter {
       this.disconnect()
     }
     let opts = this.options
+
+    // 包含获取参数方法
+    if (opts.getQuery && typeof opts.getQuery === 'function') {
+      Object.assign(opts.query, opts.getQuery() || {})
+    }
+
     try {
-      let queryStr = '';
+      let queryStr = ''
       if (opts.query && Object.keys(opts.query).length > 0) {
-        queryStr = Object.keys(opts.query).map(key => key + '=' + encodeURIComponent(opts.query[key])).join('&');
+        queryStr = Object.keys(opts.query)
+          .map(key => key + '=' + encodeURIComponent(opts.query[key]))
+          .join('&')
       }
 
-      let idx = opts.url.indexOf('?');
-      let url = idx > 0 ?
-        (idx+1 === opts.url.length ?
-          (opts.url + queryStr) :
-          (opts.url + '&' + queryStr)) :
-        (opts.url + '?' + queryStr);
+      let idx = opts.url.indexOf('?')
+      let url =
+        idx > 0
+          ? idx + 1 === opts.url.length
+            ? opts.url + queryStr
+            : opts.url + '&' + queryStr
+          : opts.url + '?' + queryStr
       this.ws = new WebSocket(url, opts.protocols)
       this.retryCount = 0
       this.__bindEvent()
@@ -126,7 +136,12 @@ class WSClient extends EventEmitter {
     let msg = event.data
     let message = {}
     try {
-      if (typeof msg === 'string' && /^"?\{.*\}"?$/.test(msg)) {
+      if (msg === 'UserId is blank') {
+        // access_token 过期
+        console.debug('access_token 过期', event) // eslint-disable-line
+        this.emit('401')
+        this.connect()
+      } else if (typeof msg === 'string' && /^"?\{.*\}"?$/.test(msg)) {
         message = JSON.parse(msg)
         if (message.type === 'pipe') {
           let data = message.data || {}
