@@ -59,7 +59,7 @@
       </ul>
     </div>
     <div v-else>
-      <div class="my-database__desc my-4 p-2 font-color-light fs-8">
+      <div class="my-4 fs-8">
         <div>{{ $t('packages_business_components_connectiontypeselectorsort_zhuyizhelishi') }}</div>
         <div>{{ $t('packages_business_components_connectiontypeselectorsort_jiaoyouTap') }}</div>
       </div>
