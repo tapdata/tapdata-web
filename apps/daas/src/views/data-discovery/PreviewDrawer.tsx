@@ -347,7 +347,9 @@ export default defineComponent({
                         columns={this.data.columns}
                         data={this.previewData.fields}
                         has-pagination={false}
-                      ></VTable>
+                      >
+                        <div slot="empty">{i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
+                      </VTable>
                     </div>
                   </div>
                 ) : (
@@ -453,7 +455,9 @@ export default defineComponent({
                         hasPagination={false}
                         columns={this.data.apiInputColumns}
                         data={this.previewData.fields}
-                      ></VTable>
+                      >
+                        <div slot="empty">{i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}</div>
+                      </VTable>
                     </div>
                     <div class="mt-5">
                       <span class="drawer__header_text inline-block">
