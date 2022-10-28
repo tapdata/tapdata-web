@@ -375,7 +375,8 @@ export default {
   },
   data() {
     const validateParams = (rule, value, callback) => {
-      if (/^[a-zA-Z_$]/.test(value)) {
+      // eslint-disable-next-line no-control-regex
+      if (/^([^\x00-\xff]|[a-zA-Z_$])([^\x00-\xff]|[a-zA-Z0-9_$])*$/.test(value)) {
         callback()
       } else {
         callback('格式错误')
