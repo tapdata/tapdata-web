@@ -30,11 +30,11 @@
           <VIcon size="76">notice-color</VIcon>
           <span>{{ $t('header_no_notice') }}</span>
         </div>
-        <div class="tab-item__footer flex justify-content-between py-3 font-color-sub">
-          <span class="system-operation-setting cursor-pointer" @click="handleSetting">
+        <div class="tab-item__footer flex justify-content-end py-3 font-color-sub">
+          <!--<span class="system-operation-setting cursor-pointer" @click="handleSetting">
             <VIcon class="mr-1" size="12">setting</VIcon>
             <span class="fs-8">{{ $t('header_setting') }}</span>
-          </span>
+          </span>-->
           <ElLink class="font-color-sub" @click="toCenter()">{{ $t('header_view_notifications') }}</ElLink>
         </div>
       </div>
@@ -237,7 +237,7 @@ export default {
 <style lang="scss" scoped>
 .notive-popove {
   .notification-popover-wrap {
-    margin: -15px;
+    margin: -12px;
     width: 380px;
     overflow: hidden;
     position: relative;
@@ -265,20 +265,20 @@ export default {
       display: flex;
       flex-direction: column;
       height: 262px;
-      padding: 0 16px 30px;
+      padding: 0 16px 0;
       overflow: hidden;
-      margin-bottom: -1px;
+      //margin-bottom: -1px;
       position: relative;
       //.tab-list {
       //  flex: 1;
       //  overflow-y: auto;
       //}
       .tab-item__footer {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 0 16px;
+        //position: absolute;
+        //bottom: 0;
+        //left: 0;
+        //right: 0;
+        //padding: 0 16px;
       }
     }
 

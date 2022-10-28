@@ -79,6 +79,7 @@ export default {
 
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       currentTab: 'settings',
       titleCurrentTab: '0',
       name: this.activeNode?.name
@@ -96,7 +97,7 @@ export default {
     },
 
     isMonitor() {
-      return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
+      return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name) && this.isDaas
     },
 
     nodeType() {
