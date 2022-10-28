@@ -587,10 +587,10 @@ export default {
       } else {
         this.cumulativeZoomFactor /= this.zoomFactor
         this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
-        const scale = this.paperScale * this.cumulativeZoomFactor
-        this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
-        this.changeScale(scale)
       }
+      const scale = this.paperScale * this.cumulativeZoomFactor
+      this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
+      this.changeScale(scale)
     },
     /**
      * 放大
