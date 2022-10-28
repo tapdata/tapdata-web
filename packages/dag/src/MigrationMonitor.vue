@@ -17,6 +17,7 @@
       @center-content="handleCenterContent"
       @zoom-out="handleZoomOut"
       @zoom-in="handleZoomIn"
+      @zoom-to="handleZoomTo"
       @showSettings="handleShowSettings"
       @showVerify="handleShowVerify"
       @showBottomPanel="handleShowBottomPanel"
