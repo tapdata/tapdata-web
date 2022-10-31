@@ -9,7 +9,7 @@ const serveUrlMap = {
   local: 'https://v3.test.cloud.tapdata.net',
   localTm: 'http://127.0.0.1:3030'
 }
-const userId = "60b60af1147bce7705727188";
+const userId = '60b60af1147bce7705727188'
 let origin
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
@@ -34,11 +34,14 @@ let pages = {
 }
 
 let prodProxyConfig = {
-  '/api/tcm/': Object.assign({
-    pathRewrite: {
-      '^/': '/console/v3/'
-    }
-  }, proxy),
+  '/api/tcm/': Object.assign(
+    {
+      pathRewrite: {
+        '^/': '/console/v3/'
+      }
+    },
+    proxy
+  ),
   '/tm/': {
     ws: true,
     target: proxy.target,
@@ -47,7 +50,7 @@ let prodProxyConfig = {
       '^/': '/console/v3/'
     }
   }
-};
+}
 let localTmProxy = {
   target: serveUrlMap.localTm,
   changeOrigin: true,
@@ -56,29 +59,38 @@ let localTmProxy = {
   pathRewrite: {
     '^/tm/': '/'
   },
-  onProxyReq: function(proxyReq, req, res, opts){
-    proxyReq.setHeader('user_id', userId);
+  onProxyReq: function (proxyReq, req, res, opts) {
+    proxyReq.setHeader('user_id', userId)
   },
-  onProxyReqWs: function(proxyReq, req, socket, options, head){
-    proxyReq.setHeader('user_id', userId);
+  onProxyReqWs: function (proxyReq, req, socket, options, head) {
+    proxyReq.setHeader('user_id', userId)
     console.log(req.url)
   }
-};
+}
 
 module.exports = {
   pages,
-  lintOnSave: true,
+  lintOnSave: process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
   publicPath: './',
   productionSourceMap: false,
 
   devServer: {
-    proxy: SERVE_ENV === 'PROD' ? prodProxyConfig : {
-      '/api/tcm/': proxy,
-      '/tm/': SERVE_ENV === 'local' ? localTmProxy : Object.assign({
-        ws: true,
-        secure: false,
-      }, proxy)
-    }
+    proxy:
+      SERVE_ENV === 'PROD'
+        ? prodProxyConfig
+        : {
+            '/api/tcm/': proxy,
+            '/tm/':
+              SERVE_ENV === 'local'
+                ? localTmProxy
+                : Object.assign(
+                    {
+                      ws: true,
+                      secure: false
+                    },
+                    proxy
+                  )
+          }
   },
   configureWebpack: config => {
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
@@ -234,7 +246,7 @@ const getToken = userId => {
   return token
 }
 if (process.env.NODE_ENV === 'development') {
-  let _userId = process.env.USER_ID || userId;
+  let _userId = process.env.USER_ID || userId
   process.env.VUE_APP_ACCESS_TOKEN = getToken(_userId)
 
   console.log('本地用户调试ID: ' + _userId)
