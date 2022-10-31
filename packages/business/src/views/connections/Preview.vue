@@ -388,18 +388,22 @@ export default {
       this.status = data.status
     },
     loadList() {
-      this.list = this.configModel['default']
-      if (!this.isDaas) {
-        this.list.push({
-          icon: 'link',
-          items: [
-            {
-              label: i18n.t('packages_business_connections_preview_lianjiechajianlai'),
-              key: 'sourceFrom'
-            }
-          ]
-        })
-      }
+      this.list = [
+        ...this.configModel['default'],
+        ...(this.isDaas
+          ? []
+          : [
+              {
+                icon: 'link',
+                items: [
+                  {
+                    label: i18n.t('packages_business_connections_preview_lianjiechajianlai'),
+                    key: 'sourceFrom'
+                  }
+                ]
+              }
+            ])
+      ]
     },
     getConnectionIcon() {
       const { connection } = this
