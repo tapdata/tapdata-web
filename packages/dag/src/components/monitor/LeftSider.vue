@@ -481,6 +481,7 @@ export default {
 }
 
 .layout-sidebar.--left {
+  z-index: 11;
   overflow: hidden auto;
   will-change: width;
   $headerH: 34px;
