@@ -542,6 +542,8 @@ export default {
       this.$set(this.dataflow, 'stopTime', data.stopTime)
       this.$set(this.dataflow, 'startTime', data.startTime)
       this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
+      // 前端不关心的属性
+      this.dataflow.attrs = data.attrs
 
       if (!fromWS) {
         Object.keys(data).forEach(key => {
@@ -1794,8 +1796,8 @@ export default {
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
         if (data) {
+          this.dataflow.attrs = data.attrs // 同步下任务上的attrs，后端说要最新的
           makeStatusAndDisabled(data)
-
           console.debug(
             i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
             data
