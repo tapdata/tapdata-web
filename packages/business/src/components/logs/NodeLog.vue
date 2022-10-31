@@ -694,6 +694,9 @@ export default {
           result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
           break
       }
+      if (!result[0]) {
+        result[0] = endTimestamp - 5 * 60 * 1000
+      }
       return result
     },
 
