@@ -337,7 +337,15 @@ export class Table extends NodeType {
                     'x-decorator-props': {
                       wrapperWidth: 300
                     },
-                    'x-component': 'Select'
+                    'x-component': 'Select',
+                    'x-reactions': {
+                      fulfill: {
+                        schema: {
+                          // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
+                          'x-component-props.options': `{{$values.attrs.capabilities.find(item => item.id ==='clear_table_function')?$self.dataSource:[$self.dataSource[0], $self.dataSource[2]]}}`
+                        }
+                      }
+                    }
                   },
                   writeStrategy: {
                     title: '数据写入模式',
