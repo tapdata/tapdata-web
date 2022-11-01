@@ -421,6 +421,7 @@ export default {
     },
 
     searchFnc(debounce) {
+      this.clearTimer()
       delayTrigger(() => {
         this.init()
       }, debounce)
@@ -526,7 +527,7 @@ export default {
       return result
     },
 
-    getHighlightSpan(str) {
+    getHighlightSpan(str = '') {
       const { keyword } = this
       if (!keyword) {
         return str
