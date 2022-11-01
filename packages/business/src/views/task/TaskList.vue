@@ -209,7 +209,7 @@
 import dayjs from 'dayjs'
 
 import { taskApi, workerApi } from '@tap/api'
-import { VIcon, FilterBar } from '@tap/component'
+import { FilterBar } from '@tap/component'
 import { toRegExp } from '@tap/shared'
 
 import SkipError from './SkipError'
@@ -220,7 +220,8 @@ import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { VIcon, FilterBar, TablePage, SkipError, Upload, TaskStatus },
+  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
+  inject: ['buried'],
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
@@ -835,7 +836,11 @@ export default {
      * @param row
      */
     handleClickName(row) {
-      this.toView([row.id])
+      if (row.btnDisabled.edit) {
+        this.toDetail(row)
+      } else {
+        this.handleEditor(row)
+      }
     }
   }
 }

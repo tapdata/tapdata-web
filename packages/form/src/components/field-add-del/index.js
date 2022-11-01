@@ -410,7 +410,7 @@ export const FieldAddDel = connect(
               let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
               let op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
                 id: field.id,
-                field: field.original_field_name,
+                field: field.field_name,
                 operand: !self.deleteAllFieldsData,
                 table_name: field.table_name,
                 type: field.data_type,
