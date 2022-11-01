@@ -597,17 +597,17 @@ export default {
 
     handleShowBottomPanel() {
       this.toggleConsole(false)
-      this.showBottomPanel = !this.showBottomPanel
+      this.handleBottomPanel(!this.showBottomPanel)
     },
 
-    hideBottomPanel() {
-      this.showBottomPanel = false
+    handleBottomPanel(flag = false) {
+      this.showBottomPanel = flag
     },
 
     handleAlarmShowBottomPanel() {
       //告警错误提示点击跳转到告警列表
       if (!this.showBottomPanel) {
-        this.showBottomPanel = true
+        this.handleBottomPanel(true)
       }
       this.$nextTick(() => {
         this.$refs.bottomPanel.changeAlertTab('alert')
@@ -622,7 +622,8 @@ export default {
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
         this.loadDataflow(this.dataflow?.id)
-        this.handleShowBottomPanel()
+        this.toggleConsole(false)
+        this.handleBottomPanel(true)
       } catch (e) {
         this.handleError(e)
         this.isSaving = false
@@ -1022,7 +1023,7 @@ export default {
         }
         try {
           this.dataflow.disabledData.reset = true
-          this.hideBottomPanel()
+          this.handleBottomPanel()
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
