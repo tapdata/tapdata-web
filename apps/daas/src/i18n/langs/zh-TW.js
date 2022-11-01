@@ -1984,5 +1984,8 @@ export default {
   daas_data_discovery_previewdrawer_fuwumiaoshu: '服務描述',
   daas_data_discovery_previewdrawer_jiedianmiaoshu: '節點描述',
   daas_data_discovery_previewdrawer_shurujiedian: '输入节点',
-  daas_data_discovery_previewdrawer_shuchujiedian: '输出节点'
+  daas_data_discovery_previewdrawer_shuchujiedian: '输出节点',
+  daas_router_routes_guanlianrenwuxiang: '關聯任務詳情',
+  daas_data_server_drawer_geshicuowu: '格式錯誤',
+  daas_notification_center_yonghucaozuo: '用戶操作'
 }

@@ -104,7 +104,7 @@
                 <span v-if="item.taskName" v-html="item.taskNameText" class="ml-1"></span>
                 <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
                 <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
-                <span v-html="item.message" class="ml-1"></span>
+                <span v-html="item.messageText" class="ml-1"></span>
                 <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>
                 <span v-if="item.dataText" v-html="item.dataText" class=""></span>
               </div>
@@ -513,7 +513,7 @@ export default {
 
     getFormatRow(data) {
       let result = deepCopy(data)
-      const arr = ['taskName', 'nodeName']
+      const arr = ['taskName', 'nodeName', 'message']
       result.forEach(row => {
         row.levelText = `[${row.level}]`
         row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
@@ -693,6 +693,9 @@ export default {
         default:
           result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
           break
+      }
+      if (!result[0]) {
+        result[0] = endTimestamp - 5 * 60 * 1000
       }
       return result
     },

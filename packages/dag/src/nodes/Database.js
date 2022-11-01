@@ -303,21 +303,29 @@ export class Database extends NodeType {
                     default: 'keepData',
                     enum: [
                       {
+                        label: '保持目标端原有表结构和数据',
+                        value: 'keepData'
+                      },
+                      {
                         label: '清除目标端原有表结构及数据',
                         value: 'dropTable'
                       },
                       {
                         label: '保持目标端原有表结构，清除数据',
                         value: 'removeData'
-                      },
-                      {
-                        label: '保持目标端原有表结构和数据',
-                        value: 'keepData'
                       }
                     ],
                     'x-decorator': 'FormItem',
                     // required: true,
-                    'x-component': 'Select'
+                    'x-component': 'Select',
+                    'x-reactions': {
+                      fulfill: {
+                        schema: {
+                          // ⚠️👇表达式依赖enum的顺序
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
+                        }
+                      }
+                    }
                   },
                   dmlPolicy: {
                     title: '数据写入策略',

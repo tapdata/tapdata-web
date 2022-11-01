@@ -164,5 +164,10 @@ export function makeStatusAndDisabled(item) {
     return map
   }, {})
 
+  // 当返回false时，任务不可点击强制停止
+  if (item.canForceStopping === false) {
+    item.btnDisabled.forceStop = true
+  }
+
   return item
 }

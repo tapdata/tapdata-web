@@ -821,7 +821,7 @@ export default [
         name: 'relationTaskDetail',
         component: RelationTaskDetails,
         meta: {
-          title: '关联任务详情',
+          title: 'daas_router_routes_guanlianrenwuxiang',
           hideTitle: true
         }
       }

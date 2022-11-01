@@ -388,7 +388,9 @@ export default {
         statuses: true,
         type: true,
         desc: true,
-        listtags: true
+        listtags: true,
+        stoppingTime: true,
+        canForceStopping: true
       }
       let where = {
         syncType: 'migrate'
@@ -540,39 +542,16 @@ export default {
     },
     async start(ids) {
       this.buried('migrationStart')
-      let id = ids[0]
-      let filter = {
-        fields: {
-          id: true,
-          errorEvents: true
-        },
-        where: {
-          id: {
-            inq: ids
-          }
-        }
-      }
-      try {
-        let data = await taskApi.get({ filter: JSON.stringify(filter) })
-        let flag = false
-        let items = data?.items || []
-        if (items.length) {
-          items.forEach(item => {
-            if (item?.errorEvents?.length) {
-              flag = true
-            }
-          })
-        }
-        let result = await taskApi.batchStart(ids)
-        this.buried('migrationStart', '', { result: true })
-        this.$message.success(result?.message || this.$t('packages_business_message_operation_succuess'), false)
-        this.table.fetch()
-        if (flag) {
-          this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {})
-        }
-      } catch (error) {
-        this.buried('migrationStart', '', { result: false })
-      }
+      taskApi
+        .batchStart(ids)
+        .then(data => {
+          this.buried('migrationStart', '', { result: true })
+          this.table.fetch()
+          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
+        })
+        .catch(() => {
+          this.buried('migrationStart', '', { result: false })
+        })
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
@@ -585,8 +564,8 @@ export default {
           return
         }
         taskApi.batchStop(ids).then(data => {
-          this.$message.success(data?.message || this.$t('packages_business_message_operation_succuess'), false)
           this.table.fetch()
+          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
         })
       })
     },
@@ -707,14 +686,8 @@ export default {
       this.table.fetch(1)
     },
     responseHandler(data, msg) {
-      let failList = data?.fail || []
+      let failList = data?.filter(t => t.code !== 'ok') || []
       if (failList.length) {
-        let msgMapping = {
-          5: this.$t('packages_business_dataFlow_multiError_notFound'),
-          6: this.$t('packages_business_dataFlow_multiError_statusError'),
-          7: this.$t('packages_business_dataFlow_multiError_otherError'),
-          8: this.$t('packages_business_dataFlow_multiError_statusError')
-        }
         let nameMapping = {}
         this.table.list.forEach(item => {
           nameMapping[item.id] = item.name
@@ -725,7 +698,7 @@ export default {
             .map(item => {
               return `<div style="line-height: 24px;"><span class="link-primary">${
                 nameMapping[item.id]
-              }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
+              }</span> : <span style="color: #F56C6C">${item.message}</span></div>`
             })
             .join('')
         })

@@ -2039,5 +2039,8 @@ export default {
   daas_data_discovery_previewdrawer_fuwumiaoshu: 'Service Description',
   daas_data_discovery_previewdrawer_jiedianmiaoshu: 'node description',
   daas_data_discovery_previewdrawer_shurujiedian: 'Input node',
-  daas_data_discovery_previewdrawer_shuchujiedian: 'Output node'
+  daas_data_discovery_previewdrawer_shuchujiedian: 'Output node',
+  daas_router_routes_guanlianrenwuxiang: 'Associated task details',
+  daas_data_server_drawer_geshicuowu: 'Format error',
+  daas_notification_center_yonghucaozuo: 'User action'
 }

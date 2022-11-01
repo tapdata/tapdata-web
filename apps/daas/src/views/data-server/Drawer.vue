@@ -379,7 +379,7 @@ export default {
       if (/^([^\x00-\xff]|[a-zA-Z_$])([^\x00-\xff]|[a-zA-Z0-9_$])*$/.test(value)) {
         callback()
       } else {
-        callback('格式错误')
+        callback(i18n.t('daas_data_server_drawer_geshicuowu'))
       }
     }
     return {

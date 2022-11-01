@@ -542,16 +542,18 @@ export default {
       this.$set(this.dataflow, 'stopTime', data.stopTime)
       this.$set(this.dataflow, 'startTime', data.startTime)
       this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
+      // 前端不关心的属性
+      this.dataflow.attrs = data.attrs
 
-      if (!fromWS) {
-        Object.keys(data).forEach(key => {
-          if (!['dag'].includes(key)) {
-            // 坑啊...formily响应式observable和vue2搭配需要加个避免属性不更新Field
-            this.dataflow[key] = data[key]
-            this.$set(this.dataflow, key, data[key])
-          }
-        })
-      }
+      /*if (!fromWS) {*/
+      Object.keys(data).forEach(key => {
+        if (!['dag'].includes(key)) {
+          // 坑啊...formily响应式observable和vue2搭配需要加个避免属性不更新Field
+          this.dataflow[key] = data[key]
+          this.$set(this.dataflow, key, data[key])
+        }
+      })
+      /*}*/
 
       // makeStatusAndDisabled(data)
       // this.$set(this.dataflow, 'status', data.status)
@@ -1593,41 +1595,30 @@ export default {
     },
 
     handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
-      error = error.data
-      if (error?.code === 'Task.ListWarnMessage') {
+      if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []
-        if (error.data) {
-          const keys = Object.keys(error.data)
+        if (error.data?.data) {
+          const keys = Object.keys(error.data.data)
           keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: error.data[key][0].msg
+                msg: error.data.data[key][0].msg
               })
             }
           })
-          if (!names.length && keys.length) {
+          if (!names.length && keys.length && msg) {
             // 兼容错误信息id不是节点id的情况
-            const nodeMsg = error.data[keys[0]][0]?.msg
-            if (nodeMsg) {
-              this.$message.error(nodeMsg)
+            const msg = error.data.data[keys[0]][0]?.msg
+            if (msg) {
+              this.$message.error(msg)
               return
             }
-          } else if (msg) {
-            this.$message.error(msg)
           }
         }
-        // this.$message.error(`${this.$t('packages_dag_dag_save_fail')} ${names.join('，')}`)
       }
-      // else if (error?.data?.message) {
-      //   this.$message.error(error.data.message)
-      // } else {
-      //   // eslint-disable-next-line no-console
-      //   console.error(error)
-      //   this.$message.error(msg)
-      // }
     },
 
     async handleUpdateName(name) {
@@ -1794,8 +1785,8 @@ export default {
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
         if (data) {
+          this.dataflow.attrs = data.attrs // 同步下任务上的attrs，后端说要最新的
           makeStatusAndDisabled(data)
-
           console.debug(
             i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
             data

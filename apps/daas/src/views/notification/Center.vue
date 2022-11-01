@@ -10,7 +10,7 @@
           </li>
           <li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
             <i class="iconfont icon-lishijilu"></i>
-            <span class="content">{{ $t('notify_user_notice') }}</span>
+            <span class="content">{{$t('daas_notification_center_yonghucaozuo')}}</span>
           </li>
           <li :class="{ active: activePanel === 'alarmNotice' }" @click="selectPanel('alarmNotice')">
             <i class="iconfont icon-lishijilu"></i>
