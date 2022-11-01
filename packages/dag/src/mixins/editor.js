@@ -545,15 +545,15 @@ export default {
       // 前端不关心的属性
       this.dataflow.attrs = data.attrs
 
-      /*if (!fromWS) {*/
-      Object.keys(data).forEach(key => {
-        if (!['dag'].includes(key)) {
-          // 坑啊...formily响应式observable和vue2搭配需要加个避免属性不更新Field
-          this.dataflow[key] = data[key]
-          this.$set(this.dataflow, key, data[key])
-        }
-      })
-      /*}*/
+      if (!fromWS) {
+        Object.keys(data).forEach(key => {
+          if (!['dag'].includes(key)) {
+            // 坑啊...formily响应式observable和vue2搭配需要加个避免属性不更新Field
+            this.dataflow[key] = data[key]
+            this.$set(this.dataflow, key, data[key])
+          }
+        })
+      }
 
       // makeStatusAndDisabled(data)
       // this.$set(this.dataflow, 'status', data.status)
