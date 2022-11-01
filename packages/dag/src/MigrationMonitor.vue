@@ -124,7 +124,7 @@
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
-        <ConsolePanel ref="console"></ConsolePanel>
+        <ConsolePanel ref="console" @stopAuto="handleStopAuto"></ConsolePanel>
       </section>
       <!--校验面板-->
       <VerifyPanel
@@ -1061,6 +1061,12 @@ export default {
           hoverPaintStyle: { stroke: '#FF932C' }
         }
       })
+    },
+
+    handleStopAuto() {
+      setTimeout(() => {
+        this.showConsole && this.$refs.console?.autoLoad('reset')
+      }, 5000)
     }
   }
 }
