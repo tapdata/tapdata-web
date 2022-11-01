@@ -620,6 +620,7 @@ export default {
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
         this.loadDataflow(this.dataflow?.id)
+        this.handleShowBottomPanel()
       } catch (e) {
         this.handleError(e)
         this.isSaving = false
