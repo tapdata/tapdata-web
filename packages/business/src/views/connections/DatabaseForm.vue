@@ -376,19 +376,10 @@ export default {
               this.$message.success(this.$t('packages_business_message_save_ok'))
               this.dialogEditNameVisible = false
             })
-            .catch(err => {
+            .catch(() => {
               this.renameData.rename = this.model.name
               this.$refs['renameForm'].clearValidate()
               this.editBtnLoading = false
-              if (err && err.response) {
-                if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(this.$t('packages_business_dataForm_error_connectionNameExist'))
-                } else {
-                  this.$message.error(err.response.msg)
-                }
-              } else {
-                this.$message.error(this.$t('packages_business_dataForm_saveFail'))
-              }
             })
         }
       })
