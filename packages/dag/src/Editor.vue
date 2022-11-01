@@ -659,41 +659,6 @@ export default {
       }
     },*/
 
-    handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
-      if (error?.data?.code === 'Task.ListWarnMessage') {
-        let names = []
-        if (error.data?.data) {
-          const keys = Object.keys(error.data.data)
-          keys.forEach(key => {
-            const node = this.$store.state.dataflow.NodeMap[key]
-            if (node) {
-              names.push(node.name)
-              this.setNodeErrorMsg({
-                id: node.id,
-                msg: error.data.data[key][0].msg
-              })
-            }
-          })
-          if (!names.length && keys.length && msg) {
-            // 兼容错误信息id不是节点id的情况
-            const msg = error.data.data[keys[0]][0]?.msg
-            if (msg) {
-              this.$message.error(msg)
-              return
-            }
-          }
-        }
-        // this.$message.error(`${this.$t('packages_dag_dag_save_fail')} ${names.join('，')}`)
-      }
-      // else if (error?.data?.message) {
-      //   this.$message.error(error.data.message)
-      // } else {
-      //   // eslint-disable-next-line no-console
-      //   console.error(error)
-      //   this.$message.error(msg)
-      // }
-    },
-
     handlePageReturn() {
       this.$router.push({
         name: 'dataflowList'

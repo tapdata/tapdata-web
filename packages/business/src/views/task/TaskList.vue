@@ -346,7 +346,9 @@ export default {
         statuses: true,
         type: true,
         desc: true,
-        listtags: true
+        listtags: true,
+        stoppingTime: true,
+        canForceStopping: true
       }
       if (keyword && keyword.trim()) {
         where.name = { like: toRegExp(keyword), options: 'i' }

@@ -388,7 +388,9 @@ export default {
         statuses: true,
         type: true,
         desc: true,
-        listtags: true
+        listtags: true,
+        stoppingTime: true,
+        canForceStopping: true
       }
       let where = {
         syncType: 'migrate'
