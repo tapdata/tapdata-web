@@ -1785,7 +1785,11 @@ export default {
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
         if (data) {
-          this.dataflow.attrs = data.attrs // 同步下任务上的attrs，后端说要最新的
+          // 同步下任务上的属性，重置后会改变
+          this.dataflow.attrs = data.attrs
+          this.dataflow.planStartDateFlag = data.planStartDateFlag
+          this.dataflow.planStartDate = data.planStartDate
+
           makeStatusAndDisabled(data)
           console.debug(
             i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
