@@ -64,7 +64,6 @@ export default defineComponent({
   top: 16px;
   right: 24px;
   z-index: 2;
-  box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
 
   .alarm-statistic-item {
     display: flex;
