@@ -46,6 +46,7 @@ const removePending = config => {
   let index = pending.findIndex(it => it === key)
   pending.splice(index, 1)
 }
+let skipErrorHandler = false
 const errorCallback = error => {
   let status = error?.response?.status
   // 从请求池清除掉错误请求
@@ -77,6 +78,7 @@ const requestInterceptor = config => {
     let params = { __token: ACCESS_TOKEN }
     config.params = Object.assign({}, config.params, params)
   }
+  skipErrorHandler = config?.data?.skipErrorHandler || false //是否跳转统一错误提示
 
   // headers里面注入用户token，并开启鉴权
   let user = window.__USER_INFO__
@@ -135,7 +137,9 @@ const responseInterceptor = response => {
       let msg = data?.message || data?.msg || ''
       // eslint-disable-next-line
       console.log(`${code}： ${msg}`)
-      Message.error(msg)
+      if (!skipErrorHandler) {
+        Message.error(msg)
+      }
       return reject(Object.assign(response))
     }
   })
