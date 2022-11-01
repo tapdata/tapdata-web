@@ -287,11 +287,10 @@ export default {
               })
             }
           })
-          .catch(err => {
+          .catch(() => {
             this.buried('connectionSubmit', '', {
               result: false
             })
-            this.$message.error(err?.data?.message || this.$t('packages_business_message_saveFail'))
           })
           .finally(() => {
             this.submitBtnLoading = false
