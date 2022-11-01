@@ -119,6 +119,7 @@
           }"
           :dataflow="dataflow"
           :alarmData="alarmData"
+          :logTotals="logTotals"
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
@@ -265,6 +266,7 @@ export default {
       verifyData: null,
       verifyTotals: null,
       alarmData: null,
+      logTotals: [],
       refreshRate: 5000,
       extraEnterCount: 0
     }
@@ -755,7 +757,7 @@ export default {
     },
 
     getParams() {
-      const { id: taskId } = this.dataflow || {}
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       let params = {
         quota: {
           uri: '/api/measurement/query/v2',
@@ -771,6 +773,13 @@ export default {
           uri: '/api/alarm/list_task',
           param: {
             taskId
+          }
+        },
+        logTotals: {
+          uri: '/api/MonitoringLogs/count',
+          param: {
+            taskId,
+            taskRecordId
           }
         }
       }
@@ -795,7 +804,8 @@ export default {
             quota: this.loadQuotaData,
             verify: this.loadVerifyData,
             verifyTotals: this.loadVerifyTotals,
-            alarmData: this.loadAlarmData
+            alarmData: this.loadAlarmData,
+            logTotals: this.loadLogTotals
           }
           for (let key in data) {
             const item = data[key]
@@ -860,6 +870,10 @@ export default {
         alarmList,
         nodes
       }
+    },
+
+    loadLogTotals(data = []) {
+      this.logTotals = data
     },
 
     getDagData(data = []) {
