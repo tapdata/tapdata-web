@@ -169,6 +169,7 @@ export default {
 
     stopAuto() {
       this.ifAuto = false
+      this.$emit('stopAuto')
       clearTimeout(this.timerId)
     },
 

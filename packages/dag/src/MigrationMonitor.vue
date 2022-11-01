@@ -119,11 +119,12 @@
           }"
           :dataflow="dataflow"
           :alarmData="alarmData"
+          :logTotals="logTotals"
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
-        <ConsolePanel ref="console"></ConsolePanel>
+        <ConsolePanel ref="console" @stopAuto="handleStopAuto"></ConsolePanel>
       </section>
       <!--校验面板-->
       <VerifyPanel
@@ -265,6 +266,7 @@ export default {
       verifyData: null,
       verifyTotals: null,
       alarmData: null,
+      logTotals: [],
       refreshRate: 5000,
       extraEnterCount: 0
     }
@@ -595,17 +597,17 @@ export default {
 
     handleShowBottomPanel() {
       this.toggleConsole(false)
-      this.showBottomPanel = !this.showBottomPanel
+      this.handleBottomPanel(!this.showBottomPanel)
     },
 
-    hideBottomPanel() {
-      this.showBottomPanel = false
+    handleBottomPanel(flag = false) {
+      this.showBottomPanel = flag
     },
 
     handleAlarmShowBottomPanel() {
       //告警错误提示点击跳转到告警列表
       if (!this.showBottomPanel) {
-        this.showBottomPanel = true
+        this.handleBottomPanel(true)
       }
       this.$nextTick(() => {
         this.$refs.bottomPanel.changeAlertTab('alert')
@@ -620,7 +622,8 @@ export default {
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
         this.loadDataflow(this.dataflow?.id)
-        this.handleShowBottomPanel()
+        this.toggleConsole(false)
+        this.handleBottomPanel(true)
       } catch (e) {
         this.handleError(e)
         this.isSaving = false
@@ -755,7 +758,7 @@ export default {
     },
 
     getParams() {
-      const { id: taskId } = this.dataflow || {}
+      const { id: taskId, taskRecordId } = this.dataflow || {}
       let params = {
         quota: {
           uri: '/api/measurement/query/v2',
@@ -771,6 +774,13 @@ export default {
           uri: '/api/alarm/list_task',
           param: {
             taskId
+          }
+        },
+        logTotals: {
+          uri: '/api/MonitoringLogs/count',
+          param: {
+            taskId,
+            taskRecordId
           }
         }
       }
@@ -795,7 +805,8 @@ export default {
             quota: this.loadQuotaData,
             verify: this.loadVerifyData,
             verifyTotals: this.loadVerifyTotals,
-            alarmData: this.loadAlarmData
+            alarmData: this.loadAlarmData,
+            logTotals: this.loadLogTotals
           }
           for (let key in data) {
             const item = data[key]
@@ -860,6 +871,10 @@ export default {
         alarmList,
         nodes
       }
+    },
+
+    loadLogTotals(data = []) {
+      this.logTotals = data
     },
 
     getDagData(data = []) {
@@ -1008,7 +1023,7 @@ export default {
         }
         try {
           this.dataflow.disabledData.reset = true
-          this.hideBottomPanel()
+          this.handleBottomPanel()
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
@@ -1047,6 +1062,12 @@ export default {
           hoverPaintStyle: { stroke: '#FF932C' }
         }
       })
+    },
+
+    handleStopAuto() {
+      setTimeout(() => {
+        this.showConsole && this.$refs.console?.autoLoad('reset')
+      }, 5000)
     }
   }
 }
