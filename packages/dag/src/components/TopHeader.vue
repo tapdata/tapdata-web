@@ -132,11 +132,11 @@
       <ElButton
         v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
         key="reset"
-        class="mx-1 btn--text"
+        :class="[isViewer ? 'btn--text mx-2' : 'mx-1']"
         size="medium"
         @click="$emit('reset')"
       >
-        <VIcon>reset</VIcon>
+        <VIcon v-if="isViewer">reset</VIcon>
         {{ $t('packages_dag_dataFlow_button_reset') }}
       </ElButton>
 
@@ -246,6 +246,10 @@ export default {
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
+    },
+
+    isViewer() {
+      return ['DataflowViewer', 'MigrateViewer'].includes(this.$route.name)
     }
   },
 

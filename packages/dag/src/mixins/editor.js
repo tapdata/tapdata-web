@@ -607,11 +607,11 @@ export default {
         this.resetWorkspace()
         this.initNodeView()
       }
-      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer', 'TaskMonitor'].includes(this.$route.name)) {
+      const routeName = this.$route.name
+      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer', 'TaskMonitor'].includes(routeName)) {
         await this.openDataflow(id)
         // await this.startLoop()
         this.setStateReadonly(true)
-        const routeName = this.$route.name
         if (
           routeName === 'MigrateViewer' ||
           (routeName === 'DataflowViewer' && ['renewing', 'renew_failed'].includes(this.dataflow.status))
