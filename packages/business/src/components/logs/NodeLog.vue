@@ -226,12 +226,12 @@ export default {
       },
       newPageObj: {
         page: 0,
-        pageSize: 20,
+        pageSize: 50,
         total: 0
       },
       oldPageObj: {
         page: 0,
-        pageSize: 20,
+        pageSize: 50,
         total: 0
       },
       isScrollBottom: false,
