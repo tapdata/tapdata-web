@@ -698,6 +698,9 @@ export default {
       if (!result[0]) {
         result[0] = endTimestamp - 5 * 60 * 1000
       }
+      if (result[0] >= result[1]) {
+        result[1] = Date.now() + 5 * 1000
+      }
       return result
     },
 
