@@ -132,11 +132,10 @@
       <ElButton
         v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
         key="reset"
-        class="mx-1 btn--text"
+        class="mx-2"
         size="medium"
         @click="$emit('reset')"
       >
-        <VIcon>reset</VIcon>
         {{ $t('packages_dag_dataFlow_button_reset') }}
       </ElButton>
 
