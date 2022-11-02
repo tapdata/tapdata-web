@@ -183,7 +183,7 @@ export default defineComponent({
 
     const renderStatistic = () => {
       if (isSource.value) {
-        return !showCDCAt.value || !hasCDC ? (
+        return !showCDCAt.value && hasInitalSync ? (
           <div class="statistic flex">
             <div class="statistic-title">全量完成还需：</div>
             <div class="statistic-content">
