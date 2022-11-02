@@ -1799,7 +1799,8 @@ export default {
             console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
             this.dataflow.status = data.status
           }
-          this.dataflow.disabledData = data.btnDisabled
+          if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
+          Object.assign(this.dataflow.disabledData, data.btnDisabled)
 
           this.startLoopTask(id)
         }

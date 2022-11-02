@@ -418,7 +418,9 @@ export default {
       return filterTables
     },
     clipboardTables() {
-      let value = this.clipboardValue?.replace(/\s+/g, '')
+      //支持换行符 /n
+      let value = this.clipboardValue?.replace(/(\n)/g, ',')
+      value = value?.replace(/\s+/g, '')
       let tables = value ? value.split(',') : []
       return Array.from(new Set(tables.filter(it => !!it && it.trim())))
     },
@@ -469,8 +471,8 @@ export default {
       let errorTables = this.getErrorTables(tables)
       if (!Object.keys(errorTables).length) {
         this.changeSeletedMode()
-        let tables = this.clipboardTables.concat()
-        this.selected.tables = tables
+        //保留当前选中 以及当前所手动输入
+        this.selected.tables = Array.from(new Set([...this.selected.tables, ...this.clipboardTables.concat()]))
         this.$emit('input', this.selected.tables)
         this.$emit('change', this.selected.tables)
       }
