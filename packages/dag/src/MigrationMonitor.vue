@@ -607,6 +607,7 @@ export default {
     handleAlarmShowBottomPanel() {
       //告警错误提示点击跳转到告警列表
       if (!this.showBottomPanel) {
+        this.toggleConsole(false)
         this.handleBottomPanel(true)
       }
       this.$nextTick(() => {
