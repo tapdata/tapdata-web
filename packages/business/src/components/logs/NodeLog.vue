@@ -10,7 +10,7 @@
           <VIcon size="20" class="mr-1">folder</VIcon>{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
         </div>
         <div
-          v-for="node in allNodes"
+          v-for="node in items"
           :key="node.id"
           class="node-list-item px-2 mb-1 flex align-center font-color-dark"
           :class="{ active: activeNodeId === node.id }"
@@ -182,6 +182,10 @@ export default {
     hideFilter: {
       type: Boolean,
       default: false
+    },
+    logTotals: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -222,12 +226,12 @@ export default {
       },
       newPageObj: {
         page: 0,
-        pageSize: 20,
+        pageSize: 50,
         total: 0
       },
       oldPageObj: {
         page: 0,
-        pageSize: 20,
+        pageSize: 50,
         total: 0
       },
       isScrollBottom: false,
@@ -271,21 +275,17 @@ export default {
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
+    nodeLogCountMap() {
+      return this.logTotals
+        .filter(t => t.nodeId)
+        .reduce((cur, next) => {
+          const count = cur[next.nodeId] || 0
+          return { ...cur, [next.nodeId]: count + next.count }
+        }, {})
+    },
+
     items() {
-      return [
-        {
-          label: i18n.t('packages_dag_components_log_quanburizhi'),
-          value: 'all'
-        },
-        ...this.allNodes.map(t => {
-          return {
-            label: t.name,
-            value: t.id,
-            source: t.$outputs.length > 0,
-            target: t.$inputs.length > 0
-          }
-        })
-      ]
+      return this.allNodes.filter(t => !!this.nodeLogCountMap[t.id])
     },
 
     firstStartTime() {
@@ -451,8 +451,8 @@ export default {
       }
       monitoringLogsApi
         .query(filter)
-        .then(data => {
-          const items = this.getFormatRow(data.items.reverse())
+        .then((data = {}) => {
+          const items = this.getFormatRow(data.items?.reverse())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
           if (this.list.length && this.oldPageObj.page !== 1) {
@@ -492,7 +492,7 @@ export default {
       if (!filter.start || !filter.end) {
         return
       }
-      monitoringLogsApi.query(filter).then(data => {
+      monitoringLogsApi.query(filter).then((data = {}) => {
         const items = this.getFormatRow(data.items)
         this.newPageObj.total = data.total || 0
         const arr = uniqueArr([...this.list, ...items])
@@ -512,7 +512,7 @@ export default {
       })
     },
 
-    getFormatRow(data) {
+    getFormatRow(data = []) {
       let result = deepCopy(data)
       const arr = ['taskName', 'nodeName', 'message']
       result.forEach(row => {
@@ -697,6 +697,9 @@ export default {
       }
       if (!result[0]) {
         result[0] = endTimestamp - 5 * 60 * 1000
+      }
+      if (result[0] >= result[1]) {
+        result[1] = Date.now() + 5 * 1000
       }
       return result
     },

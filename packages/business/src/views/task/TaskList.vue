@@ -836,7 +836,11 @@ export default {
      * @param row
      */
     handleClickName(row) {
-      this.toView([row.id])
+      if (row.btnDisabled.edit) {
+        this.toDetail(row)
+      } else {
+        this.handleEditor(row)
+      }
     }
   }
 }
