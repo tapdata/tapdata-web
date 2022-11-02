@@ -129,14 +129,25 @@ export class Database extends NodeType {
               // }
             },
             'x-component': 'Switch',
-            'x-reactions': {
-              target: 'disabledEvents',
-              fulfill: {
-                state: {
-                  display: '{{$self.value ? "visible" :"hidden"}}'
+            'x-reactions': [
+              {
+                target: 'disabledEvents',
+                fulfill: {
+                  state: {
+                    display: '{{$self.value ? "visible" :"hidden"}}'
+                  }
+                }
+              },
+              {
+                when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
+                fulfill: {
+                  state: {
+                    disabled: true,
+                    description: `{{$values.databaseType + '暂不支持DDL事件采集'}}`
+                  }
                 }
               }
-            }
+            ]
           },
 
           disabledEvents: {
