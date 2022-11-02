@@ -271,18 +271,28 @@ export class Table extends NodeType {
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '开启后任务将会自动采集选中的源端DDL事件',
-                      layout: 'horizontal'
+                      tooltip: '开启后任务将会自动采集选中的源端DDL事件'
                     },
                     'x-component': 'Switch',
-                    'x-reactions': {
-                      target: '.disabledEvents',
-                      fulfill: {
-                        state: {
-                          display: '{{$self.value ? "visible" :"hidden"}}'
+                    'x-reactions': [
+                      {
+                        target: 'disabledEvents',
+                        fulfill: {
+                          state: {
+                            display: '{{$self.value ? "visible" :"hidden"}}'
+                          }
+                        }
+                      },
+                      {
+                        when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
+                        fulfill: {
+                          state: {
+                            disabled: true,
+                            description: `{{$values.databaseType + '暂不支持DDL事件采集'}}`
+                          }
                         }
                       }
-                    }
+                    ]
                   },
                   disabledEvents: {
                     type: 'array',
