@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, set, del, computed } from 'vue-demi'
+import { defineComponent, ref, reactive, set, del, computed, watch } from 'vue-demi'
 import { useForm } from '@formily/vue'
 import { FormItem } from '../index'
 import { observer } from '@formily/reactive-vue'
@@ -32,7 +32,8 @@ export const TableRename = observer(
         replaceAfter: '',
         prefix: '',
         suffix: '',
-        transferCase: ''
+        transferCase: '',
+        transformLoading: root.$store.state.dataflow.transformLoading
       })
 
       let prevMap = {}
@@ -139,6 +140,15 @@ export const TableRename = observer(
         })
         emit('change', arr)
       }
+      watch(
+        () => root.$store.state.dataflow.transformLoading,
+        v => {
+          config.transformLoading = root.$store.state.dataflow.transformLoading
+          if (!v) {
+            makeTable()
+          }
+        }
+      )
 
       return {
         config,
@@ -156,7 +166,7 @@ export const TableRename = observer(
 
     render() {
       return (
-        <div class="table-rename">
+        <div class="table-rename" v-loading={this.config.transformLoading}>
           <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}>
             <ElInput
               v-model={this.config.search}
