@@ -1787,8 +1787,6 @@ export default {
         if (data) {
           // 同步下任务上的属性，重置后会改变
           this.dataflow.attrs = data.attrs
-          this.dataflow.planStartDateFlag = data.planStartDateFlag
-          this.dataflow.planStartDate = data.planStartDate
 
           makeStatusAndDisabled(data)
           console.debug(
