@@ -398,8 +398,12 @@ export default {
   computed: {
     filteredData() {
       let { searchKeyword, tables } = this.table
-      let reg = new RegExp(searchKeyword, 'i')
-      return tables.filter(item => reg.test(item))
+      try {
+        let reg = new RegExp(searchKeyword, 'i')
+        return tables.filter(item => reg.test(item))
+      } catch (error) {
+        return []
+      }
     },
     filterSelectedData() {
       let { searchKeyword, tables } = this.selected

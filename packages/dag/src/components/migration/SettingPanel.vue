@@ -175,10 +175,10 @@ export default observer({
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
                         'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
+                          dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
+                              display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}'
                             }
                           }
                         },

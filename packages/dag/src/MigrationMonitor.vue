@@ -126,20 +126,6 @@
         ></BottomPanel>
         <ConsolePanel ref="console" @stopAuto="handleStopAuto"></ConsolePanel>
       </section>
-      <!--校验面板-->
-      <VerifyPanel
-        v-if="activeType === 'verify'"
-        ref="verifyPanel"
-        :settings="dataflow"
-        :scope="formScope"
-        :data="verifyData"
-        :totals="verifyTotals"
-        :dataflow="dataflow"
-        @showVerify="handleShowVerify"
-        @hide="onHideSidebar"
-        @verifyDetails="handleVerifyDetails"
-        @connectionList="handleConnectionList"
-      />
       <!--配置面板-->
       <ConfigPanel
         ref="configPanel"
@@ -188,7 +174,6 @@ import { jsPlumb, config } from './instance'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { allResourceIns } from './nodes/loader'
 import ConfigPanel from './components/migration/ConfigPanel'
-import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
@@ -212,7 +197,6 @@ export default {
     VExpandXTransition,
     VEmpty,
     ConfigPanel,
-    VerifyPanel,
     BottomPanel,
     PaperScroller,
     TopHeader,
@@ -263,7 +247,6 @@ export default {
       nodeDetailDialogId: '',
       timeFormat: 'HH:mm:ss',
       dagData: null,
-      verifyData: null,
       verifyTotals: null,
       alarmData: null,
       logTotals: [],
@@ -607,6 +590,7 @@ export default {
     handleAlarmShowBottomPanel() {
       //告警错误提示点击跳转到告警列表
       if (!this.showBottomPanel) {
+        this.toggleConsole(false)
         this.handleBottomPanel(true)
       }
       this.$nextTick(() => {
@@ -802,13 +786,6 @@ export default {
           param: this.getQuotaFilter('agentData')
         }
       }
-      const $verifyPanel = this.$refs.verifyPanel
-      if ($verifyPanel) {
-        params.verify = {
-          uri: `/api/task/auto-inspect-results-group-by-table`,
-          param: $verifyPanel.getFilter(1)
-        }
-      }
       return params
     },
 
@@ -820,7 +797,6 @@ export default {
         .batch(this.getParams())
         .then(data => {
           const map = {
-            verify: this.loadVerifyData,
             verifyTotals: this.loadVerifyTotals,
             alarmData: this.loadAlarmData,
             logTotals: this.loadLogTotals
@@ -845,25 +821,27 @@ export default {
 
     loadQuotaData(data) {
       let quota = {
-        samples: {}
+        samples: {},
+        time: [],
+        interval: 5000
       }
-      let interval = 5000
       let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
       arr.forEach(el => {
         const item = data[el]
         if (item.code === 'ok') {
           quota.samples[el] = item.data?.samples?.data
-          interval = item.interval
+          if (item.data?.interval) {
+            quota.interval = item.data.interval
+          }
+          if (item.data?.time) {
+            quota.time = item.data.time
+          }
         }
       })
       this.quota = quota
-      const granularity = getTimeGranularity(interval)
+      const granularity = getTimeGranularity(this.quota.interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
-    },
-
-    loadVerifyData(data) {
-      this.verifyData = data
     },
 
     loadVerifyTotals(data = {}) {
