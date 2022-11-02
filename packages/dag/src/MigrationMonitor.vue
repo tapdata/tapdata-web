@@ -630,140 +630,138 @@ export default {
       }
     },
 
-    getQuotaFilter() {
+    getQuotaFilter(type) {
       const { id: taskId, taskRecordId, agentId } = this.dataflow || {}
       const [startAt, endAt] = this.quotaTime
       let params = {
         startAt,
         endAt,
-        samples: {
-          // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
-          totalData: {
-            tags: {
-              type: 'task',
-              taskId,
-              taskRecordId
-            },
-            endAt: Date.now(), // 停止时间 || 当前时间
-            fields: [
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal',
-              'tableTotal', // 任务中源表总数
-              'createTableTotal', // 完成建表的数量
-              'snapshotTableTotal', // 完成全量的表的数量
-              'initialCompleteTime', // 全量完成时间
-              'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
-              'targetConnection',
-              'snapshotDoneAt',
-              'snapshotRowTotal',
-              'snapshotInsertRowTotal',
-              'outputQps',
-              'currentSnapshotTableRowTotal',
-              'currentSnapshotTableInsertRowTotal',
-              'replicateLag',
-              'snapshotStartAt'
-            ],
-            type: 'instant' // 瞬时值
+        samples: {}
+      }
+      const samples = {
+        // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
+        totalData: {
+          tags: {
+            type: 'task',
+            taskId,
+            taskRecordId
           },
-          // 任务事件统计（条）-所选周期累计
-          barChartData: {
-            tags: {
-              type: 'task',
-              taskId,
-              taskRecordId
-            },
-            fields: [
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal'
-            ],
-            type: 'difference'
+          endAt: Date.now(), // 停止时间 || 当前时间
+          fields: [
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal',
+            'tableTotal', // 任务中源表总数
+            'createTableTotal', // 完成建表的数量
+            'snapshotTableTotal', // 完成全量的表的数量
+            'initialCompleteTime', // 全量完成时间
+            'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
+            'targetConnection',
+            'snapshotDoneAt',
+            'snapshotRowTotal',
+            'snapshotInsertRowTotal',
+            'outputQps',
+            'currentSnapshotTableRowTotal',
+            'currentSnapshotTableInsertRowTotal',
+            'replicateLag',
+            'snapshotStartAt'
+          ],
+          type: 'instant' // 瞬时值
+        },
+        // 任务事件统计（条）-所选周期累计
+        barChartData: {
+          tags: {
+            type: 'task',
+            taskId,
+            taskRecordId
           },
-          // qps + 增量延迟
-          lineChartData: {
-            tags: {
-              type: 'task',
-              taskId,
-              taskRecordId
-            },
-            fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag'],
-            type: 'continuous' // 连续数据
+          fields: [
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal'
+          ],
+          type: 'difference'
+        },
+        // qps + 增量延迟
+        lineChartData: {
+          tags: {
+            type: 'task',
+            taskId,
+            taskRecordId
           },
-          // dag数据
-          dagData: {
-            tags: {
-              type: 'node',
-              taskId,
-              taskRecordId
-            },
-            fields: [
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal',
-              'qps',
-              'timeCostAvg',
-              'currentEventTimestamp',
-              'tcpPing',
-              'connectPing',
-              'inputTotal',
-              'outputTotal',
-              'inputQps',
-              'outputQps',
-              'snapshotRowTotal',
-              'snapshotInsertRowTotal',
-              'snapshotTableTotal',
-              'tableTotal',
-              'snapshotSourceReadTimeCostAvg',
-              'incrementalSourceReadTimeCostAvg',
-              'targetWriteTimeCostAvg',
-              'snapshotStartAt',
-              'snapshotDoneAt'
-            ],
-            type: 'instant' // 瞬时值
+          fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag'],
+          type: 'continuous' // 连续数据
+        },
+        // dag数据
+        dagData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId
           },
-          agentData: {
-            tags: {
-              type: 'engine',
-              engineId: agentId
-            },
-            endAt: Date.now(),
-            fields: ['memoryRate', 'cpuUsage', 'gcRate'],
-            type: 'instant'
-          }
+          fields: [
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal',
+            'qps',
+            'timeCostAvg',
+            'currentEventTimestamp',
+            'tcpPing',
+            'connectPing',
+            'inputTotal',
+            'outputTotal',
+            'inputQps',
+            'outputQps',
+            'snapshotRowTotal',
+            'snapshotInsertRowTotal',
+            'snapshotTableTotal',
+            'tableTotal',
+            'snapshotSourceReadTimeCostAvg',
+            'incrementalSourceReadTimeCostAvg',
+            'targetWriteTimeCostAvg',
+            'snapshotStartAt',
+            'snapshotDoneAt'
+          ],
+          type: 'instant' // 瞬时值
+        },
+        agentData: {
+          tags: {
+            type: 'engine',
+            engineId: agentId
+          },
+          endAt: Date.now(),
+          fields: ['memoryRate', 'cpuUsage', 'gcRate'],
+          type: 'instant'
         }
       }
+      params.samples.data = samples[type]
       return params
     },
 
     getParams() {
       const { id: taskId, taskRecordId } = this.dataflow || {}
       let params = {
-        quota: {
-          uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter()
-        },
         verifyTotals: {
           uri: `/api/task/auto-inspect-totals`,
           param: {
@@ -782,6 +780,26 @@ export default {
             taskId,
             taskRecordId
           }
+        },
+        totalData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('totalData')
+        },
+        barChartData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('barChartData')
+        },
+        lineChartData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('lineChartData')
+        },
+        dagData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('dagData')
+        },
+        agentData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('agentData')
         }
       }
       const $verifyPanel = this.$refs.verifyPanel
@@ -802,7 +820,6 @@ export default {
         .batch(this.getParams())
         .then(data => {
           const map = {
-            quota: this.loadQuotaData,
             verify: this.loadVerifyData,
             verifyTotals: this.loadVerifyTotals,
             alarmData: this.loadAlarmData,
@@ -816,6 +833,7 @@ export default {
               this.$message.error(item.error)
             }
           }
+          this.loadQuotaData(data)
         })
         .finally(() => {
           this.timer && clearTimeout(this.timer)
@@ -826,8 +844,20 @@ export default {
     },
 
     loadQuotaData(data) {
-      this.quota = data
-      const granularity = getTimeGranularity(data.interval)
+      let quota = {
+        samples: {}
+      }
+      let interval = 5000
+      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
+      arr.forEach(el => {
+        const item = data[el]
+        if (item.code === 'ok') {
+          quota.samples[el] = item.data?.samples?.data
+          interval = item.interval
+        }
+      })
+      this.quota = quota
+      const granularity = getTimeGranularity(interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
     },
