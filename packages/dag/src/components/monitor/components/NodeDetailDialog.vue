@@ -450,104 +450,106 @@ export default {
       }
     },
 
-    getFilter() {
+    getFilter(type) {
       const { id: taskId, taskRecordId } = this.dataflow || {}
       const nodeId = this.selected
       const [startAt, endAt] = this.quotaTimeType === 'custome' ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
       let params = {
         startAt,
         endAt,
-        samples: {
-          // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
-          totalData: {
-            tags: {
-              type: 'node',
-              taskId,
-              taskRecordId,
-              nodeId
-            },
-            endAt: Date.now(), // 停止时间 || 当前时间
-            fields: [
-              'insertTotal',
-              'updateTotal',
-              'deleteTotal',
-              'ddlTotal',
-              'othersTotal',
-              'tcpPing',
-              'connectPing',
-              'currentEventTimestamp',
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal',
-              'tableTotal',
-              'snapshotTableTotal',
-              'snapshotRowTotal',
-              'snapshotInsertRowTotal',
-              'currentSnapshotTableRowTotal',
-              'currentSnapshotTableInsertRowTotal',
-              'replicateLag',
-              'snapshotStartAt',
-              'snapshotDoneAt',
-              'outputQps'
-            ],
-            //
-            type: 'instant' // 瞬时值
+        samples: {}
+      }
+      const samples = {
+        // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
+        totalData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId,
+            nodeId
           },
-          // 任务事件统计（条）-所选周期累计
-          barChartData: {
-            tags: {
-              type: 'node',
-              taskId,
-              taskRecordId,
-              nodeId
-            },
-            fields: [
-              'insertTotal',
-              'updateTotal',
-              'deleteTotal',
-              'ddlTotal',
-              'othersTotal',
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal'
-            ],
-            type: 'difference'
+          endAt: Date.now(), // 停止时间 || 当前时间
+          fields: [
+            'insertTotal',
+            'updateTotal',
+            'deleteTotal',
+            'ddlTotal',
+            'othersTotal',
+            'tcpPing',
+            'connectPing',
+            'currentEventTimestamp',
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal',
+            'tableTotal',
+            'snapshotTableTotal',
+            'snapshotRowTotal',
+            'snapshotInsertRowTotal',
+            'currentSnapshotTableRowTotal',
+            'currentSnapshotTableInsertRowTotal',
+            'replicateLag',
+            'snapshotStartAt',
+            'snapshotDoneAt',
+            'outputQps'
+          ],
+          //
+          type: 'instant' // 瞬时值
+        },
+        // 任务事件统计（条）-所选周期累计
+        barChartData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId,
+            nodeId
           },
-          // qps + 增量延迟
-          lineChartData: {
-            tags: {
-              type: 'node',
-              taskId,
-              taskRecordId,
-              nodeId
-            },
-            fields: [
-              'qps',
-              'inputQps',
-              'outputQps',
-              'timeCostAvg',
-              'snapshotSourceReadTimeCostAvg',
-              'incrementalSourceReadTimeCostAvg',
-              'targetWriteTimeCostAvg'
-            ],
-            type: 'continuous' // 连续数据
-          }
+          fields: [
+            'insertTotal',
+            'updateTotal',
+            'deleteTotal',
+            'ddlTotal',
+            'othersTotal',
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal'
+          ],
+          type: 'difference'
+        },
+        // qps + 增量延迟
+        lineChartData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId,
+            nodeId
+          },
+          fields: [
+            'qps',
+            'inputQps',
+            'outputQps',
+            'timeCostAvg',
+            'snapshotSourceReadTimeCostAvg',
+            'incrementalSourceReadTimeCostAvg',
+            'targetWriteTimeCostAvg'
+          ],
+          type: 'continuous' // 连续数据
         }
       }
+      params.samples.data = samples[type]
       return params
     },
 
@@ -556,11 +558,43 @@ export default {
         this.loading = true
       }
       const startStamp = Date.now()
+      const params = {
+        totalData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getFilter('totalData')
+        },
+        barChartData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getFilter('barChartData')
+        },
+        lineChartData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getFilter('lineChartData')
+        }
+      }
       measurementApi
-        .queryV2(this.getFilter())
+        .batch(params)
         .then(data => {
-          this.quota = data
-          const granularity = getTimeGranularity(data.interval)
+          let quota = {
+            samples: {},
+            time: [],
+            interval: 5000
+          }
+          let arr = ['totalData', 'barChartData', 'lineChartData']
+          arr.forEach(el => {
+            const item = data[el]
+            if (item.code === 'ok') {
+              quota.samples[el] = item.data?.samples?.data
+              if (item.data?.interval) {
+                quota.interval = item.data.interval
+              }
+              if (item.data?.time) {
+                quota.time = item.data.time
+              }
+            }
+          })
+          this.quota = quota
+          const granularity = getTimeGranularity(this.quota.interval)
           this.timeFormat = TIME_FORMAT_MAP[granularity]
         })
         .finally(() => {

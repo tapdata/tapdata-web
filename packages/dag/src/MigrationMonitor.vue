@@ -845,19 +845,25 @@ export default {
 
     loadQuotaData(data) {
       let quota = {
-        samples: {}
+        samples: {},
+        time: [],
+        interval: 5000
       }
-      let interval = 5000
       let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
       arr.forEach(el => {
         const item = data[el]
         if (item.code === 'ok') {
           quota.samples[el] = item.data?.samples?.data
-          interval = item.interval
+          if (item.data?.interval) {
+            quota.interval = item.data.interval
+          }
+          if (item.data?.time) {
+            quota.time = item.data.time
+          }
         }
       })
       this.quota = quota
-      const granularity = getTimeGranularity(interval)
+      const granularity = getTimeGranularity(this.quota.interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
     },
