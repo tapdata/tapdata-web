@@ -134,25 +134,25 @@
           </ul>
         </template>
         <div class="result-item mt-4 text-center">
-          <div class="loading-item">
+          <div v-if="!isFinished" class="loading-item">
             <VIcon class="v-icon animation-rotate color-success" size="24" color="rgb(61, 156, 64)"
               >loading-circle</VIcon
             >
             <div class="mt-4 pb-10">{{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}</div>
             <el-button type="primary" @click="recordUserBehavior">稍后部署</el-button>
           </div>
-          <!--          <div v-else class="finish-item">-->
-          <!--            <VIcon class="v-icon color-success" size="24" color="rgb(61, 156, 64)">check</VIcon>-->
-          <!--            <div class="mt-4">{{ $t('agent_download_AgentDownloadModal_gongXiNinWanCheng') }}</div>-->
-          <!--            <div class="flex justify-content-between mt-4">-->
-          <!--              <ElLink type="primary" @click="toConnection">{{-->
-          <!--                $t('agent_download_AgentDownloadModal_kaiShiChuangJianLian')-->
-          <!--              }}</ElLink>-->
-          <!--              <ElLink type="primary" @click="toWorkbench">{{-->
-          <!--                $t('agent_download_AgentDownloadModal_jinRuGongZuoTai')-->
-          <!--              }}</ElLink>-->
-          <!--            </div>-->
-          <!--          </div>-->
+          <div v-else class="finish-item">
+            <VIcon class="v-icon color-success" size="24" color="rgb(61, 156, 64)">check</VIcon>
+            <div class="mt-4">{{ $t('agent_download_AgentDownloadModal_gongXiNinWanCheng') }}</div>
+            <div class="flex justify-content-between mt-4">
+              <ElLink type="primary" @click="toConnection">{{
+                $t('agent_download_AgentDownloadModal_kaiShiChuangJianLian')
+              }}</ElLink>
+              <ElLink type="primary" @click="toWorkbench">{{
+                $t('agent_download_AgentDownloadModal_jinRuGongZuoTai')
+              }}</ElLink>
+            </div>
+          </div>
         </div>
       </main>
     </section>
