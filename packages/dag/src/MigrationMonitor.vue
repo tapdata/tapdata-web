@@ -47,7 +47,7 @@
           :quota="quota"
           :verifyTotals="verifyTotals"
           :timeFormat="timeFormat"
-          :range="[firstStartTime, lastStopTime || Date.now()]"
+          :range="timeSelectRange"
           @load-data="init"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
@@ -279,6 +279,15 @@ export default {
         !this.nodeDetailDialog &&
         ['running', 'stopping'].includes(this.dataflow?.status)
       )
+    },
+
+    timeSelectRange() {
+      const { firstStartTime, lastStopTime } = this
+      let end = lastStopTime
+      if (['running'].includes(this.dataflow.status)) {
+        end = Date.now()
+      }
+      return [firstStartTime, end || Date.now()]
     }
   },
 
