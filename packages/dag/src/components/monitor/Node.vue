@@ -194,7 +194,7 @@ export default defineComponent({
         }
         return !showCDCAt.value && hasInitalSync ? (
           <div class="statistic flex">
-            <div class="statistic-title">全量完成还需：</div>
+            <div class="statistic-title">{i18n.t('packages_dag_components_node_quanliangwanchenghaixu')}</div>
             <div class="statistic-content">
               <div class="statistic-value">{completeTime.value}</div>
             </div>
@@ -214,7 +214,7 @@ export default defineComponent({
       if (isTarget.value) {
         return (
           <div class="statistic flex">
-            <div class="statistic-title">写入耗时：</div>
+            <div class="statistic-title">{i18n.t('packages_dag_components_node_xieruhaoshi')}</div>
             <div class="statistic-content">
               <div class="statistic-value">{targetWriteTimeCostAvg.value}</div>
             </div>
@@ -224,7 +224,7 @@ export default defineComponent({
 
       return (
         <div class="statistic flex">
-          <div class="statistic-title">处理耗时：</div>
+          <div class="statistic-title">{i18n.t('packages_dag_components_node_chulihaoshi')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{timeCostAvg.value}</div>
           </div>
@@ -244,7 +244,7 @@ export default defineComponent({
 
       const processingTime = (
         <div class="statistic">
-          <div class="statistic-title">处理耗时</div>
+          <div class="statistic-title">{i18n.t('packages_dag_monitor_leftsider_chulihaoshim')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{timeCostAvg.value}</div>
           </div>
@@ -254,7 +254,7 @@ export default defineComponent({
       // 源全量读取耗时
       const sourceInitalReadTime = (
         <div class="statistic">
-          <div class="statistic-title">平均读取耗时</div>
+          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao')}</div>
           <div class="statistic-content">
             <div class="statistic-value">
               {props.sample.snapshotSourceReadTimeCostAvg
@@ -268,7 +268,7 @@ export default defineComponent({
       // 源增量读取耗时
       const sourceCDCReadTime = (
         <div class="statistic">
-          <div class="statistic-title">增量读取延迟</div>
+          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')}</div>
           <div class="statistic-content">
             <div class="statistic-value">
               {props.sample.incrementalSourceReadTimeCostAvg
@@ -282,7 +282,7 @@ export default defineComponent({
       // 目标写入耗时
       const targetWriteTime = (
         <div class="statistic">
-          <div class="statistic-title">写入耗时</div>
+          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi')}</div>
           <div class="statistic-content">
             <div class="statistic-value">
               {props.sample.targetWriteTimeCostAvg ? calcTimeUnit(props.sample.targetWriteTimeCostAvg) : '-'}
@@ -315,7 +315,7 @@ export default defineComponent({
 
       const syncProcess = (
         <div class="statistic">
-          <div class="statistic-title">全量同步进度</div>
+          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_quanliangtongbujin')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{initialSyncProcess.value}%</div>
           </div>

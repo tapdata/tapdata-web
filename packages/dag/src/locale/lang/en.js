@@ -519,5 +519,8 @@ export default {
   packages_dag_mixins_editor_debug4: '[DEBUG] Start polling loading tasks, every 3s',
   packages_dag_mixins_editor_debug5: '[DEBUG]ws returned, task status: [{val1}]',
   packages_dag_monitor_topheader_zuijinyiciqi: 'Last start time:',
-  packages_dag_components_nodedetaildialog_quanliangyiwancheng: 'Full volume completed'
+  packages_dag_components_nodedetaildialog_quanliangyiwancheng: 'Full volume completed',
+  packages_dag_components_node_quanliangwanchenghaixu: 'Full completion still required:',
+  packages_dag_components_node_xieruhaoshi: 'Writing time:',
+  packages_dag_components_node_chulihaoshi: 'Processing time:'
 }
