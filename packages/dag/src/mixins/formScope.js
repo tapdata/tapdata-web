@@ -1,10 +1,10 @@
 import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { merge, isEqual, escapeRegExp } from 'lodash'
+import { merge, isEqual } from 'lodash'
 import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
-import { isEmpty, isPlainObj } from '@tap/shared'
+import { isPlainObj } from '@tap/shared'
 
 export default {
   data() {
@@ -575,6 +575,7 @@ export default {
   },
 
   async created() {
+    this.scope.$settings = this.dataflow
     await this.loadAccessNode()
   },
 

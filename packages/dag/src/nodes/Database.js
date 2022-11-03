@@ -319,7 +319,8 @@ export class Database extends NodeType {
                       },
                       {
                         label: '清除目标端原有表结构及数据',
-                        value: 'dropTable'
+                        value: 'dropTable',
+                        disabled: true
                       },
                       {
                         label: '保持目标端原有表结构，清除数据',
@@ -327,10 +328,13 @@ export class Database extends NodeType {
                       }
                     ],
                     'x-decorator': 'FormItem',
-                    // required: true,
                     'x-component': 'Select',
                     'x-reactions': {
                       fulfill: {
+                        run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
+                        state: {
+                          description: `{{$settings.type === "cdc" ? '纯增量场景下，不支持对目标表结构和数据的清除操作。':''}}`
+                        },
                         schema: {
                           // ⚠️👇表达式依赖enum的顺序
                           'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`

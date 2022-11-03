@@ -111,9 +111,7 @@ import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
-import { DEFAULT_SETTINGS } from './constants'
 import { mapMutations } from 'vuex'
-import { observable } from '@formily/reactive'
 import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
@@ -134,13 +132,6 @@ export default {
   },
 
   data() {
-    const dataflow = observable({
-      ...DEFAULT_SETTINGS,
-      id: '',
-      name: '',
-      status: ''
-    })
-
     return {
       NODE_PREFIX,
       status: 'draft',
@@ -162,7 +153,6 @@ export default {
         connectionData: {}
       },
 
-      dataflow,
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       scale: 1
     }
@@ -304,151 +294,6 @@ export default {
         ...this.dataflow
       }
     },
-
-    /*async validate() {
-      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
-
-      // 至少两个数据节点
-      const tableNode = this.allNodes.filter(node => node.type === 'table')
-      if (tableNode.length < 2) {
-        return this.$t('packages_dag_editor_cell_validate_none_data_node')
-      }
-
-      await this.validateAllNodes()
-
-      const sourceMap = {},
-        targetMap = {},
-        edges = this.allEdges
-      edges.forEach(item => {
-        let _source = sourceMap[item.source]
-        let _target = targetMap[item.target]
-
-        if (!_source) {
-          sourceMap[item.source] = [item]
-        } else {
-          _source.push(item)
-        }
-
-        if (!_target) {
-          targetMap[item.target] = [item]
-        } else {
-          _target.push(item)
-        }
-      })
-
-      let someErrorMsg = ''
-      // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some(node => {
-        const { id } = node
-        const minInputs = node.__Ctor.minInputs ?? 1 // 没有设置minInputs则缺省为1
-        const inputNum = targetMap[id]?.length ?? 0
-
-        if (!sourceMap[id] && !targetMap[id]) {
-          // 存在没有连线的节点
-          someErrorMsg = `「 ${node.name} 」没有任何连线`
-          return true
-        }
-
-        if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
-          return true
-        }
-
-        if (this.hasNodeError(id)) {
-          someErrorMsg = `「 ${node.name} 」配置异常`
-          return true
-        }
-      })
-
-      const nodeNames = []
-      let typeName = ''
-      // 根据任务类型(全量、增量),检查不支持此类型的节点
-      // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
-      if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = '全量+增量'
-        tableNode.forEach(node => {
-          if (
-            sourceMap[node.id] &&
-            (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
-          ) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'initial_sync') {
-        typeName = '全量'
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'cdc') {
-        typeName = '增量'
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      }
-
-      if (nodeNames.length) {
-        someErrorMsg = `存在不支持${typeName}的节点`
-      }
-
-      const accessNodeProcessIdArr = [
-        ...tableNode.reduce((set, item) => {
-          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
-          return set
-        }, new Set())
-      ]
-
-      if (accessNodeProcessIdArr.length > 1) {
-        // 所属agent节点冲突
-        const chooseId = this.dataflow.accessNodeProcessId
-
-        if (!chooseId) {
-          // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
-        } else {
-          let isError = false
-          const agent = this.scope.$agentMap[chooseId]
-          tableNode.forEach(node => {
-            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
-              this.setNodeErrorMsg({
-                id: node.id,
-                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
-              })
-              isError = true
-            }
-          })
-          isError && (someErrorMsg = `所属agent节点冲突`)
-        }
-      } else if (accessNodeProcessIdArr.length === 1) {
-        // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
-        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
-      }
-
-      if (someErrorMsg) return someErrorMsg
-
-      // 检查链路的末尾节点类型是否是表节点
-      const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
-      const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
-
-      return null
-    },*/
 
     // 循环检查检查链路的末尾节点类型是否是表节点
     isEndOfTable(source, sourceMap, nodeMap) {

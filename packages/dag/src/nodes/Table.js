@@ -349,6 +349,10 @@ export class Table extends NodeType {
                     'x-component': 'Select',
                     'x-reactions': {
                       fulfill: {
+                        run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
+                        state: {
+                          description: `{{$settings.type === "cdc" ? '纯增量场景下，不支持对目标表结构和数据的清除操作。':''}}`
+                        },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
                           'x-component-props.options': `{{$values.attrs.capabilities.find(item => item.id ==='clear_table_function')?$self.dataSource:[$self.dataSource[0], $self.dataSource[2]]}}`

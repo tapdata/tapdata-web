@@ -19,10 +19,24 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
+import { observable } from '@formily/reactive'
 
 export default {
   directives: {
     resize
+  },
+
+  data() {
+    const dataflow = observable({
+      ...DEFAULT_SETTINGS,
+      id: '',
+      name: '',
+      status: ''
+    })
+
+    return {
+      dataflow
+    }
   },
 
   computed: {
