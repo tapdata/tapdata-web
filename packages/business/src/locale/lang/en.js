@@ -501,7 +501,7 @@ export default {
   packages_business_components_connectiontypeselectorsort_zhuyiBet:
     "Note: Beta data sources have not passed Tapdata's certification testing process, and Tapdata does not guarantee the stable operation of these data sources for the time being",
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
-    'The trial version does not currently support the following data sources. For more information, please use the official version',
+    'Please look forward to the opening of data sources',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta data source',
   packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'Authentication data source',
   packages_business_connections_preview_lianjiechajianlai: 'Link plugin source'
