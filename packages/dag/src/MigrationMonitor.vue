@@ -287,6 +287,9 @@ export default {
       if (['running'].includes(this.dataflow.status)) {
         end = Date.now()
       }
+      if (end < firstStartTime) {
+        end = firstStartTime + 5 * 60 * 1000
+      }
       return [firstStartTime, end || Date.now()]
     }
   },
