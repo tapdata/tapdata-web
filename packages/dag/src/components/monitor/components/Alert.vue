@@ -214,11 +214,18 @@ export default {
     },
 
     items() {
-      const nodeMap =
+      let nodeMap =
         this.alarmData?.nodeInfos?.reduce((cur, next) => {
+          next.num = 0
           return { ...cur, [next.nodeId]: next }
         }, {}) || {}
-      const totals = this.alarmData?.alarmList?.length || 0
+      const alarmList = this.alarmData?.alarmList || []
+      const totals = alarmList.length
+      alarmList.forEach(el => {
+        if (el.nodeId) {
+          nodeMap[el.nodeId].num++
+        }
+      })
       return [
         {
           label: i18n.t('packages_dag_components_alert_quanbugaojing'),
