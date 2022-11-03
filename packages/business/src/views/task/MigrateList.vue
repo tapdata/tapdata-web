@@ -505,7 +505,6 @@ export default {
       }
     },
     handleCommand(command, node) {
-      let commandFilter = ['start', 'stop', 'del']
       let ids = []
       let taskList = []
       if (node) {
@@ -513,28 +512,7 @@ export default {
       } else {
         taskList = this.multipleSelection
       }
-      let canList = []
-      let canNotList = []
-      if (commandFilter.includes(command)) {
-        let op = command === 'del' ? 'delete' : command
-        taskList.forEach(task => {
-          if (task.btnDisabled?.[op]) {
-            canNotList.push(task)
-          } else {
-            canList.push(task)
-          }
-        })
-      } else {
-        canList = taskList
-      }
-
-      if (canNotList.length) {
-        const msg = canNotList.length !== taskList.length ? `部分任务不支持该操作` : `所选任务不支持该操作`
-        this.$message.warning(msg)
-      }
-
-      if (!canList.length) return
-      ids = canList.map(item => item.id)
+      ids = taskList.map(item => item.id)
       this[command](ids, node)
     },
     export(ids) {
