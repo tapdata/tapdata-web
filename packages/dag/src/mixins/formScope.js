@@ -97,6 +97,8 @@ export default {
 
         $agentMap: {},
 
+        $isDaas: process.env.VUE_APP_PLATFORM === 'DAAS', //区分云版、企业版
+
         findNodeById: id => {
           return this.$store.state.dataflow.NodeMap[id]
         },

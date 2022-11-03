@@ -221,7 +221,7 @@ let timeout = null
 export default {
   name: 'TaskList',
   components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
-  inject: ['buried'],
+  inject: ['checkAgent', 'buried'],
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
@@ -408,8 +408,15 @@ export default {
         })
     },
     create() {
-      this.$router.push({
-        name: 'DataflowNew'
+      this.buried('taskCreate')
+      this.checkAgent(() => {
+        this.$router
+          .push({
+            name: 'DataflowNew'
+          })
+          .catch(() => {
+            this.buried('taskCreateAgentFail')
+          })
       })
     },
     handleEditor({ id }) {

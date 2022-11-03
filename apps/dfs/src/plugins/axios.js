@@ -57,9 +57,11 @@ const errorCallback = error => {
   } else if (error.code && error.message) {
     // 其他错误
     Message.error(`${error.message || error}`)
-  } else if (error?.message !== 'cancel' && window.navigator.onLine) {
-    errorConfirmFnc(error)
   }
+  //先去掉全局接口异常弹窗 #125624
+  // else if (error?.message !== 'cancel' && window.navigator.onLine) {
+  //   errorConfirmFnc(error)
+  // }
   console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line
   return Promise.reject(error)
 }

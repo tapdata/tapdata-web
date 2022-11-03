@@ -208,7 +208,7 @@ export default {
   agent_detail_run_manual: '日志目录',
   agent_list_empty_desc1: '快来',
   agent_list_empty_desc2: '开始实时数据同步吧~',
-  agent_error_check: 'Agent当前状态异常，请检查',
+  agent_error_check: '当前无可用Agent，请去Agent管理页面新建Agent或启动已有的Agent并保证连通性',
   // Agent部署
   agent_deploy_title: 'Agent 下载与安装',
   agent_deploy_select_tip:
