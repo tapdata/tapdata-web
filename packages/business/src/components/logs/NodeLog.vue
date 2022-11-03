@@ -37,7 +37,7 @@
           size="mini"
           clearable
           style="width: 240px"
-          @input="searchFnc(800)"
+          @input="searchFnc"
         ></ElInput>
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
           $t('packages_dag_components_log_xiazai')
@@ -344,22 +344,24 @@ export default {
 
   methods: {
     init() {
-      if (this.$route.name === 'MigrationMonitorViewer') {
-        this.timeOptions = [
-          {
-            label: i18n.t('packages_dag_components_log_quanbu'),
-            value: 'full'
-          },
-          {
-            label: i18n.t('packages_dag_components_log_zidingyishijian'),
-            type: 'custom',
-            value: 'custom'
-          }
-        ]
-      }
-      this.extraEnterCount = 0
-      this.clearTimer()
-      this.resetData()
+      delayTrigger(() => {
+        if (this.$route.name === 'MigrationMonitorViewer') {
+          this.timeOptions = [
+            {
+              label: i18n.t('packages_dag_components_log_quanbu'),
+              value: 'full'
+            },
+            {
+              label: i18n.t('packages_dag_components_log_zidingyishijian'),
+              type: 'custom',
+              value: 'custom'
+            }
+          ]
+        }
+        this.extraEnterCount = 0
+        this.clearTimer()
+        this.resetData()
+      }, 500)
     },
 
     resetData() {
@@ -420,11 +422,9 @@ export default {
       this.init()
     },
 
-    searchFnc(debounce) {
+    searchFnc() {
       this.clearTimer()
-      delayTrigger(() => {
-        this.init()
-      }, debounce)
+      this.init()
     },
 
     scrollFnc(ev) {
