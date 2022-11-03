@@ -213,7 +213,7 @@ export default {
   packages_dag_components_log_quanbu: 'all',
   packages_dag_components_log_quanburizhi: 'All logs',
   packages_dag_components_log_zuijintian: 'Last 3 days',
-  packages_dag_components_log_zuixintian: 'Latest 1 day',
+  packages_dag_components_log_zuixintian: 'Last 1 day',
   packages_dag_components_log_zuijingexiaoshi: 'Last 6 hours',
   packages_dag_components_log_kaiqishichangmiao: 'Open duration (seconds)',
   packages_dag_components_log_debug: 'DEBUG log parameter',

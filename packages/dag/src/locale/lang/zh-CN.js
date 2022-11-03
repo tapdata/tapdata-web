@@ -207,7 +207,7 @@ export default {
   packages_dag_components_log_quanbu: '全部',
   packages_dag_components_log_quanburizhi: '全部日志',
   packages_dag_components_log_zuijintian: '最近3天',
-  packages_dag_components_log_zuixintian: '最新1天',
+  packages_dag_components_log_zuixintian: '最近1天',
   packages_dag_components_log_zuijingexiaoshi: '最近6个小时',
   packages_dag_components_log_kaiqishichangmiao: '开启时长（秒）',
   packages_dag_components_log_debug: 'DEBUG日志参数',
