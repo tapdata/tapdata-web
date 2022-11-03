@@ -1,6 +1,4 @@
 import i18n from '@/i18n'
-'use strict'
-
 import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
@@ -59,7 +57,7 @@ const errorCallback = error => {
   } else if (error.code && error.message) {
     // 其他错误
     Message.error(`${error.message || error}`)
-  } else if (error?.message !== 'cancel') {
+  } else if (error?.message !== 'cancel' && window.navigator.onLine) {
     errorConfirmFnc(error)
   }
   console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line

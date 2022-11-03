@@ -94,7 +94,7 @@ const getters = {
   },
 
   transformLoading: state => {
-    return state.stateIsReadonly
+    return state.transformLoading
   },
 
   // 判断action是否被标记

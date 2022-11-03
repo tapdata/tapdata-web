@@ -463,7 +463,7 @@ export default {
       })
     },
     handleEditor({ id }) {
-      this.$router.push({
+      this.openRoute({
         name: 'MigrateEditor',
         params: {
           id
@@ -729,7 +729,7 @@ export default {
       })
     },
     toDetail({ id }) {
-      this.$router.push({
+      this.openRoute({
         name: 'MigrationMonitor',
         params: {
           id
@@ -902,6 +902,14 @@ export default {
           }
         }).href
       )
+    },
+
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
+      }
     }
   }
 }
