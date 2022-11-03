@@ -413,45 +413,10 @@ export default {
       })
     },
     handleEditor({ id }) {
-      this.$router.push({
+      this.openRoute({
         name: 'DataflowEditor',
         params: { id: id }
       })
-      /*const h = this.$createElement
-      this.$confirm(
-        h('p', null, [
-          h('span', null, this.$t('packages_business_dataFlow_modifyEditText')),
-          h('span', { style: 'color: #2C65FF' }, this.$t('packages_business_dataFlow_nodeLayoutProcess')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #2C65FF' }, this.$t('packages_business_dataFlow_nodeAttributes')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #2C65FF' }, this.$t('packages_business_dataFlow_matchingRelationship')),
-          h('span', null, '，'),
-          h('span', null, this.$t('packages_business_dataFlow_afterSubmission')),
-          h('span', { style: 'color: #2C65FF' }, this.$t('packages_business_dataFlow_reset')),
-          h('span', null, this.$t('packages_business_dataFlow_runNomally')),
-          h('span', null, this.$t('packages_business_dataFlow_editLayerTip'))
-        ]),
-        this.$t('packages_business_dataFlow_importantReminder'),
-        {
-          customClass: 'dataflow-clickTip',
-          confirmButtonText: this.$t('packages_business_dataFlow_continueEditing'),
-          type: 'warning'
-        }
-      ).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.$router.push({
-          name: 'DataflowEditor',
-          params: { id: id }
-        })
-      })
-      setTimeout(() => {
-        document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-          it.outerHTML = ''
-        })
-      }, 200)*/
     },
     handleImport() {
       this.$refs.upload.show()
@@ -705,7 +670,7 @@ export default {
       })
     },
     toDetail({ id }) {
-      this.$router.push({
+      this.openRoute({
         name: 'TaskMonitor',
         params: {
           id
@@ -840,6 +805,14 @@ export default {
         this.toDetail(row)
       } else {
         this.handleEditor(row)
+      }
+    },
+
+    openRoute(route, newTab = true) {
+      if (newTab) {
+        window.open(this.$router.resolve(route).href)
+      } else {
+        this.$router.push(route)
       }
     }
   }
