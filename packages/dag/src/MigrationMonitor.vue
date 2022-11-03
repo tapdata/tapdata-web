@@ -817,8 +817,6 @@ export default {
             const item = data[key]
             if (item.code === 'ok') {
               map[key]?.(data[key].data)
-            } else {
-              this.$message.error(item.error)
             }
           }
           this.loadQuotaData(data)
