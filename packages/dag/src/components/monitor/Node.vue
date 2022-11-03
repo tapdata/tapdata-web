@@ -183,6 +183,15 @@ export default defineComponent({
 
     const renderStatistic = () => {
       if (isSource.value) {
+        if (showCDCAt.value && props.taskType === 'initial_sync') {
+          return (
+            <div class="statistic flex">
+              <div class="statistic-title">
+                {i18n.t('packages_dag_components_nodedetaildialog_quanliangyiwancheng')}
+              </div>
+            </div>
+          )
+        }
         return !showCDCAt.value && hasInitalSync ? (
           <div class="statistic flex">
             <div class="statistic-title">全量完成还需：</div>
@@ -408,7 +417,9 @@ export default defineComponent({
                   <VIcon size="16">menu-left</VIcon>
                 </button>
               </div>
-              {isSource.value && <ElProgress class="mt-2" show-text={false} percentage={initialSyncProcess.value} />}
+              {isSource.value && hasInitalSync && (
+                <ElProgress class="mt-2" show-text={false} percentage={initialSyncProcess.value} />
+              )}
             </div>
 
             <div class="statistic-card">
