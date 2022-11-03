@@ -153,8 +153,9 @@ import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { debounce } from 'lodash'
 
-import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
+import { uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
 import { VIcon, TimeSelect } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi } from '@tap/api'
@@ -343,26 +344,24 @@ export default {
   },
 
   methods: {
-    init() {
-      delayTrigger(() => {
-        if (this.$route.name === 'MigrationMonitorViewer') {
-          this.timeOptions = [
-            {
-              label: i18n.t('packages_dag_components_log_quanbu'),
-              value: 'full'
-            },
-            {
-              label: i18n.t('packages_dag_components_log_zidingyishijian'),
-              type: 'custom',
-              value: 'custom'
-            }
-          ]
-        }
-        this.extraEnterCount = 0
-        this.clearTimer()
-        this.resetData()
-      }, 500)
-    },
+    init: debounce(function () {
+      if (this.$route.name === 'MigrationMonitorViewer') {
+        this.timeOptions = [
+          {
+            label: i18n.t('packages_dag_components_log_quanbu'),
+            value: 'full'
+          },
+          {
+            label: i18n.t('packages_dag_components_log_zidingyishijian'),
+            type: 'custom',
+            value: 'custom'
+          }
+        ]
+      }
+      this.extraEnterCount = 0
+      this.clearTimer()
+      this.resetData()
+    }, 500),
 
     resetData() {
       this.preLoading = false

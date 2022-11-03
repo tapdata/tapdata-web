@@ -156,10 +156,10 @@ import i18n from '@tap/i18n'
 
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
+import { debounce } from 'lodash'
 
 import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
 import { measurementApi, taskApi } from '@tap/api'
-import { delayTrigger } from '@tap/shared'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -338,12 +338,10 @@ export default {
   },
 
   methods: {
-    init() {
-      delayTrigger(() => {
-        this.timer && clearTimeout(this.timer)
-        this.startLoadData()
-      }, 200)
-    },
+    init: debounce(function () {
+      this.timer && clearTimeout(this.timer)
+      this.startLoadData()
+    }, 200),
 
     polling() {
       if (
