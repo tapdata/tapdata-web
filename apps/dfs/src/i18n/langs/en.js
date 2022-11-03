@@ -193,7 +193,8 @@ export default {
   agent_detail_run_manual: 'Log directory',
   agent_list_empty_desc1: 'Come soon',
   agent_list_empty_desc2: 'Start real-time data synchronization~',
-  agent_error_check: 'Agent current status is abnormal, please check',
+  agent_error_check:
+    'No agent is currently available. Please go to the agent management page to create a new agent or start an existing agent and ensure connectivity',
   agent_deploy_title: 'Agent download and installation',
   agent_deploy_select_tip:
     'Tapdata DFS Cloud Edition needs to install the Agent locally to ensure the normal operation of the database connection and data transmission service. You can select the corresponding type below to download and install according to the type of server to be installed.',

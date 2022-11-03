@@ -47,6 +47,7 @@ import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import BindPhone from '@/views/user/components/BindPhone'
 import { buried } from '@/plugins/buried'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   components: {
@@ -125,7 +126,10 @@ export default {
     this.$root.$on('get-user', this.getUser)
   },
   mounted() {
-    this.checkDialogState()
+    //获取cookie 是否用户有操作过 稍后部署
+    if (Cookie.get('deployLater') != 1) {
+      this.checkDialogState()
+    }
   },
   watch: {
     $route(route) {
@@ -178,6 +182,7 @@ export default {
     // 检查是否有安装过agent
     checkAgent() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
+        this.agentDownload.visible = true
         if (data.agentId) {
           this.agentDownload.visible = true
           this.agentDownload.data = data

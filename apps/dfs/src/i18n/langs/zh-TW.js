@@ -189,7 +189,7 @@ export default {
   agent_detail_run_manual: '日誌目錄',
   agent_list_empty_desc1: '快來',
   agent_list_empty_desc2: '開始即時資料同步吧~',
-  agent_error_check: 'Agent當前狀態異常，請檢查',
+  agent_error_check: '當前無可用Agent，請去Agent管理頁面新建Agent或啟動已有的Agent並保證連通性',
   agent_deploy_title: 'Agent下載與安裝',
   agent_deploy_select_tip:
     'Tapdata DFS雲版需要先在本地安裝Agent以確保連接數據庫和資料傳輸服務的正常運行，您可以根據要安裝服務器的類型在下方選擇相應的類型進行下載安裝',
