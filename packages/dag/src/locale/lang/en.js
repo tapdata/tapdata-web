@@ -522,5 +522,9 @@ export default {
   packages_dag_components_nodedetaildialog_quanliangyiwancheng: 'Full volume completed',
   packages_dag_components_node_quanliangwanchenghaixu: 'Full completion still required:',
   packages_dag_components_node_xieruhaoshi: 'Writing time:',
-  packages_dag_components_node_chulihaoshi: 'Processing time:'
+  packages_dag_components_node_chulihaoshi: 'Processing time:',
+  packages_dag_page_return_confirm_title: 'Return to confirm',
+  packages_dag_page_return_confirm_content: 'The current task is empty. Do you want to keep it?',
+  packages_dag_page_return_confirm_ok_text: "Don't keep",
+  packages_dag_page_return_confirm_cancel_text: 'Keep'
 }

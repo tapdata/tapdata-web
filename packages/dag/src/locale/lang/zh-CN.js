@@ -502,5 +502,9 @@ export default {
   packages_dag_components_nodedetaildialog_quanliangyiwancheng: '全量已完成',
   packages_dag_components_node_quanliangwanchenghaixu: '全量完成还需：',
   packages_dag_components_node_xieruhaoshi: '写入耗时：',
-  packages_dag_components_node_chulihaoshi: '处理耗时：'
+  packages_dag_components_node_chulihaoshi: '处理耗时：',
+  packages_dag_page_return_confirm_title: '返回确认',
+  packages_dag_page_return_confirm_content: '当前任务内容为空，是否要保留？',
+  packages_dag_page_return_confirm_ok_text: '不保留',
+  packages_dag_page_return_confirm_cancel_text: '保留'
 }
