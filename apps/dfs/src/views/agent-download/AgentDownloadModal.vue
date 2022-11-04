@@ -138,8 +138,10 @@
             <VIcon class="v-icon animation-rotate color-success" size="24" color="rgb(61, 156, 64)"
               >loading-circle</VIcon
             >
-            <div class="mt-4 pb-10">{{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}</div>
-            <el-button type="primary" @click="recordUserBehavior">稍后部署</el-button>
+            <div class="mt-4 pb-2">{{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}</div>
+            <div>
+              <el-button size="mini" @click="recordUserBehavior">稍后部署</el-button>
+            </div>
           </div>
           <div v-else class="finish-item">
             <VIcon class="v-icon color-success" size="24" color="rgb(61, 156, 64)">check</VIcon>
@@ -277,6 +279,8 @@ export default {
     },
     recordUserBehavior() {
       Cookie.set('deployLater', 1)
+      let user = window.__USER_INFO__
+      Cookie.set('deployLaterUser', user.userId)
       this.closeModal()
     }
   }
