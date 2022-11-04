@@ -139,6 +139,10 @@ export default {
 
     // 上传保存
     submitUpload() {
+      if (this.importForm.fileList?.length === 0) {
+        this.$message.error(this.$t('packages_business_message_upload_msg'))
+        return
+      }
       this.dialogVisible = false
       this.$refs.upload.submit()
     },

@@ -67,6 +67,7 @@ export default {
   packages_business_button_confirm: '確定',
   packages_business_message_upload_success: '上傳成功',
   packages_business_message_upload_fail: '上傳失敗',
+  packages_business_message_upload_msg: '請上傳需要導入的任務檔案',
   packages_business_modules_dialog_import_title: '任務導入',
   packages_business_modules_dialog_condition: '條件',
   packages_business_modules_dialog_overwrite_data: '覆蓋已有數據',

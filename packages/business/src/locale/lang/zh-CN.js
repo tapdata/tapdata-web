@@ -67,6 +67,7 @@ export default {
   packages_business_button_confirm: '确定',
   packages_business_message_upload_success: '上传成功',
   packages_business_message_upload_fail: '上传失败',
+  packages_business_message_upload_msg: '请上传需要导入的任务文件',
   packages_business_modules_dialog_import_title: '任务导入',
   packages_business_modules_dialog_condition: '条件',
   packages_business_modules_dialog_overwrite_data: '覆盖已有数据',

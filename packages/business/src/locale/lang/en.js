@@ -67,6 +67,7 @@ export default {
   packages_business_button_confirm: 'Confirm',
   packages_business_message_upload_success: 'Upload successful',
   packages_business_message_upload_fail: 'Upload failed',
+  packages_business_message_upload_msg: 'Please upload the task file to be imported',
   packages_business_modules_dialog_import_title: 'Task import',
   packages_business_modules_dialog_condition: 'Condition',
   packages_business_modules_dialog_overwrite_data: 'Overwrite existing data',
