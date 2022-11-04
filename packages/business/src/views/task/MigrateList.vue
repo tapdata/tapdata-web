@@ -864,7 +864,7 @@ export default {
      * @param row
      */
     handleClickName(row) {
-      if (row.btnDisabled.edit) {
+      if (!['edit', 'wait_start'].includes(row.status)) {
         this.toDetail(row)
       } else {
         this.handleEditor(row)
