@@ -26,7 +26,7 @@
           class="btn message-button-cancel"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
+          <!--<i class="iconfont icon-biaoqian back-btn-icon"></i>-->
           <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
         </el-button>
         <el-dropdown
@@ -35,41 +35,46 @@
           v-show="multipleSelection.length > 0 && bulkOperation"
         >
           <el-button class="btn-dropdowm" size="mini">
-            <i class="iconfont icon-piliang back-btn-icon"></i>
+            <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
             <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
             <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
-              $t('packages_business_dataFlow_bulkExport')
-            }}</el-dropdown-item>
             <el-dropdown-item command="start" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_bulkScheuled')
             }}</el-dropdown-item>
             <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_bulkStopping')
             }}</el-dropdown-item>
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'">{{
-              $t('packages_business_dataFlow_batchDelete')
-            }}</el-dropdown-item>
             <el-dropdown-item command="initialize" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_batchRest')
             }}</el-dropdown-item>
-            <el-dropdown-item v-readonlybtn="'SYNC_category_application'" command="setTag">
-              {{ $t('packages_business_dataFlow_addTag') }}
-            </el-dropdown-item>
+            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'">{{
+              $t('packages_business_dataFlow_batchDelete')
+            }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button
-          v-if="isDaas"
-          v-readonlybtn="'SYNC_job_import'"
-          size="mini"
-          class="btn message-button-cancel"
-          @click="handleImport"
-        >
-          <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('packages_business_button_bulk_import') }}</span>
-        </el-button>
+        <template v-if="isDaas">
+          <el-button
+            v-show="multipleSelection.length > 0"
+            v-readonlybtn="'SYNC_job_export'"
+            size="mini"
+            class="btn message-button-cancel"
+            @click="handleCommand('export')"
+          >
+            <!--<i class="iconfont icon-export back-btn-icon"></i>-->
+            <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>
+          </el-button>
+          <el-button
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn message-button-cancel"
+            @click="handleImport"
+          >
+            <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
+            <span> {{ $t('packages_business_button_bulk_import') }}</span>
+          </el-button>
+        </template>
         <el-button
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
@@ -89,7 +94,7 @@
       >
       </el-table-column>
 
-      <el-table-column min-width="380" :label="$t('packages_business_task_list_name')" :show-overflow-tooltip="true">
+      <el-table-column min-width="300" :label="$t('packages_business_task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary">
             <ElLink
@@ -120,17 +125,18 @@
       <el-table-column
         prop="createTime"
         :label="$t('packages_business_column_create_time')"
-        min-width="160"
+        width="160"
         sortable="createTime"
       >
         <template #default="{ row }">
           {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('packages_business_column_operation')" width="280">
+      <el-table-column :label="$t('packages_business_column_operation')" width="300">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
+              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.btnDisabled.start"
@@ -138,24 +144,25 @@
             >
               {{ $t('packages_business_task_list_run') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
-            <ElLink
-              v-if="row.status === 'stopping'"
-              v-readonlybtn="'SYNC_job_operation'"
-              type="primary"
-              :disabled="row.btnDisabled.forceStop"
-              @click="forceStop([row.id], row)"
-            >
-              {{ $t('packages_business_task_list_force_stop') }}
-            </ElLink>
-            <ElLink
-              v-else
-              v-readonlybtn="'SYNC_job_operation'"
-              type="primary"
-              :disabled="row.btnDisabled.stop"
-              @click="stop([row.id], row)"
-              >{{ $t('packages_business_task_list_stop') }}</ElLink
-            >
+            <template v-else>
+              <ElLink
+                v-if="row.status === 'stopping'"
+                v-readonlybtn="'SYNC_job_operation'"
+                type="primary"
+                :disabled="row.btnDisabled.forceStop"
+                @click="forceStop([row.id], row)"
+              >
+                {{ $t('packages_business_task_list_force_stop') }}
+              </ElLink>
+              <ElLink
+                v-else
+                v-readonlybtn="'SYNC_job_operation'"
+                type="primary"
+                :disabled="row.btnDisabled.stop"
+                @click="stop([row.id], row)"
+                >{{ $t('packages_business_task_list_stop') }}</ElLink
+              >
+            </template>
             <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
@@ -175,34 +182,27 @@
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)" trigger="click">
-              <ElLink type="primary" class="rotate-90">
-                <i class="el-icon-more"></i>
-              </ElLink>
-              <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
-                <el-dropdown-item command="toView">{{ $t('packages_business_dataFlow_view') }}</el-dropdown-item>
-                <el-dropdown-item v-if="isDaas" command="export" v-readonlybtn="'SYNC_job_export'">{{
-                  $t('packages_business_task_list_export')
-                }}</el-dropdown-item>
-                <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
-                  >{{ $t('packages_business_task_list_copy') }}
-                </el-dropdown-item>
-
-                <el-dropdown-item
-                  :disabled="row.btnDisabled.reset"
-                  command="initialize"
-                  v-readonlybtn="'SYNC_job_operation'"
-                >
-                  {{ $t('packages_business_task_list_reset') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="del" :disabled="row.btnDisabled.delete" v-readonlybtn="'SYNC_job_delete'">
-                  {{ $t('packages_business_task_list_delete') }}
-                </el-dropdown-item>
-                <el-dropdown-item v-if="isDaas" command="setTag" v-readonlybtn="'SYNC_category_application'">
-                  {{ $t('packages_business_dataFlow_addTag') }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.reset"
+              @click="initialize([row.id], row)"
+            >
+              {{ $t('packages_business_task_list_reset') }}
+            </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="copy([row.id], row)">
+              {{ $t('packages_business_task_list_copy') }}
+            </ElLink>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="row.btnDisabled.delete"
+              @click="del([row.id], row)"
+            >
+              {{ $t('packages_business_task_list_delete') }}
+            </ElLink>
           </div>
         </template>
       </el-table-column>
