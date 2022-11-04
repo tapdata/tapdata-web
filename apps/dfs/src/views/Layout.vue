@@ -126,10 +126,10 @@ export default {
     this.$root.$on('get-user', this.getUser)
   },
   mounted() {
-    //获取cookie 是否用户有操作过 稍后部署
-    if (Cookie.get('deployLater') != 1) {
-      this.checkDialogState()
-    }
+    //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
+    let isCurrentUser = Cookie.get('deployLaterUser') === Cookie.get('user_id')
+    if (Cookie.get('deployLater') == 1 && isCurrentUser) return
+    this.checkDialogState()
   },
   watch: {
     $route(route) {
