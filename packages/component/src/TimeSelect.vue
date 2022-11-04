@@ -291,6 +291,7 @@ export default {
   ::v-deep {
     .time-select__popper {
       width: 270px;
+      min-width: 270px !important;
       transform: translateX(-40px);
     }
     // 灰色风格下拉框
