@@ -418,7 +418,6 @@ export const FieldRenameProcessor = defineComponent({
     }
   },
   render() {
-    console.log(this.config.transformLoading, 'fieldJSSSSSSS')
     return (
       <div class="processor-field-mapping flex flex-column" v-loading={this.config.transformLoading}>
         <div class="task-form-body" style={this.listStyle}>
