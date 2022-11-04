@@ -16,11 +16,13 @@
         </div>
         <div class="flex align-items-center font-color-light mt-1">
           <span class="mr-2">{{ syncType[dataflow.type] }}</span>
-          <span>{{ $t('packages_dag_monitor_topheader_zuijinyiciqi') }}</span>
-          <span>{{ lastStartDate }}</span>
+          <template v-if="!hideMenus.includes('agent')">
+            <span>{{ $t('packages_dag_monitor_topheader_zuijinyiciqi') }}</span>
+            <span>{{ lastStartDate }}</span>
+          </template>
         </div>
       </div>
-      <div v-if="dataflow.agentId" class="agent-data__item ml-4 px-4">
+      <div v-if="dataflow.agentId && !hideMenus.includes('agent')" class="agent-data__item ml-4 px-4">
         <OverflowTooltip
           class="agent-name__item text-truncate mb-2 font-color-dark"
           placement="bottom"
