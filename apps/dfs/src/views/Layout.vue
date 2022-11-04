@@ -127,7 +127,8 @@ export default {
   },
   mounted() {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
-    let isCurrentUser = Cookie.get('deployLaterUser') === Cookie.get('user_id')
+    let user = window.__USER_INFO__
+    let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
   },

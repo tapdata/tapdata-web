@@ -279,7 +279,8 @@ export default {
     },
     recordUserBehavior() {
       Cookie.set('deployLater', 1)
-      Cookie.set('deployLaterUser', Cookie.get('user_id'))
+      let user = window.__USER_INFO__
+      Cookie.set('deployLaterUser', user.userId)
       this.closeModal()
     }
   }
