@@ -81,15 +81,28 @@ export default defineComponent({
 
     const hasInitalSync = props.taskType !== 'cdc'
 
+    const taskSnapshotStartAt = computed(() => {
+      const val = props.quota.samples?.totalData?.[0]?.snapshotStartAt
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
+    })
+    const taskSnapshotDoneAt = computed(() => {
+      const val = props.quota.samples?.totalData?.[0]?.snapshotDoneAt
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
+    })
+    const currentEventTimestamp = computed(() => {
+      const val = props.sample.currentEventTimestamp
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
+    })
+
     /**
      * 增量时间点
      * @type {ComputedRef<string|string>}
      */
     const cdcEventStartTime = computed(() => {
-      const val = props.sample.currentEventTimestamp
-      const val1 = props.sample.snapshotStartAt
-      const snapshotStartAt = val1 ? dayjs(val1).format('YYYY-MM-DD HH:mm:ss.SSS') : '-'
-      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : snapshotStartAt
+      if (!hasCDC) return ''
+      const val =
+        props.taskType === 'cdc' ? currentEventTimestamp.value : currentEventTimestamp.value || taskSnapshotDoneAt.value
+      return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
 
     /**
@@ -97,10 +110,8 @@ export default defineComponent({
      * @type {ComputedRef<string|string>}
      */
     const cdcEventStartRelativeTime = computed(() => {
-      const val = props.sample.currentEventTimestamp
-      const val1 = props.sample.snapshotStartAt
-      const snapshotStartAt = val1 ? dayjs().to(dayjs(val1)) : '-'
-      return val ? dayjs().to(dayjs(val)) : snapshotStartAt
+      const val = cdcEventStartTime.value
+      return val ? dayjs().to(dayjs(val)) : '-'
     })
 
     const outputQps = computed(() => {
@@ -176,39 +187,44 @@ export default defineComponent({
       }, 0)
     })
 
-    // 是否显示增量时间点
-    const showCDCAt = computed(() => {
-      return !!props.quota.samples?.totalData?.[0]?.snapshotDoneAt // 全量完成时间点
-    })
-
     const renderStatistic = () => {
       if (isSource.value) {
-        if (showCDCAt.value && props.taskType === 'initial_sync') {
+        if (hasInitalSync) {
+          // 全量完成
+          if (taskSnapshotDoneAt.value) {
+            return (
+              <div class="statistic flex">
+                <div class="statistic-title">
+                  {i18n.t('packages_dag_components_nodedetaildialog_quanliangyiwancheng')}
+                </div>
+              </div>
+            )
+          } else if (taskSnapshotStartAt.value) {
+            // 全量进行中
+            return (
+              <div class="statistic flex">
+                <div class="statistic-title">{i18n.t('packages_dag_components_node_quanliangwanchenghaixu')}</div>
+                <div class="statistic-content">
+                  <div class="statistic-value">{completeTime.value}</div>
+                </div>
+              </div>
+            )
+          }
+        }
+        if (hasCDC) {
+          // 增量进行中
           return (
             <div class="statistic flex">
               <div class="statistic-title">
-                {i18n.t('packages_dag_components_nodedetaildialog_quanliangyiwancheng')}
+                {i18n.t('packages_dag_components_nodedetaildialog_zengliangshijiandian')}：
+              </div>
+              <div class="statistic-content">
+                <div class="statistic-value">{cdcEventStartRelativeTime.value}</div>
               </div>
             </div>
           )
         }
-        return !showCDCAt.value && hasInitalSync ? (
-          <div class="statistic flex">
-            <div class="statistic-title">{i18n.t('packages_dag_components_node_quanliangwanchenghaixu')}</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{completeTime.value}</div>
-            </div>
-          </div>
-        ) : (
-          <div class="statistic flex">
-            <div class="statistic-title">
-              {i18n.t('packages_dag_components_nodedetaildialog_zengliangshijiandian')}：
-            </div>
-            <div class="statistic-content">
-              <div class="statistic-value">{cdcEventStartRelativeTime.value}</div>
-            </div>
-          </div>
-        )
+        return <div></div>
       }
 
       if (isTarget.value) {
@@ -331,17 +347,6 @@ export default defineComponent({
         </div>
       )
 
-      // 在增量阶段
-      if (hasCDC && showCDCAt.value) {
-        if (isSource.value) {
-          return [cdcTime, inputEvent, outputEvent, sourceCDCReadTime, processingTime, qps]
-        }
-        if (isProcessor.value) {
-          return [cdcTime, inputEvent, outputEvent, processingTime, qps]
-        }
-        return [cdcTime, inputEvent, outputEvent, targetWriteTime, processingTime, qps]
-      }
-
       if (hasInitalSync) {
         if (isSource.value) {
           return [syncProcess, qps, inputEvent, outputEvent, sourceInitalReadTime, processingTime]
@@ -350,6 +355,17 @@ export default defineComponent({
           return [inputEvent, outputEvent, processingTime, qps]
         }
         return [inputEvent, outputEvent, targetWriteTime, processingTime, qps]
+      }
+
+      // 在增量阶段
+      if (hasCDC) {
+        if (isSource.value) {
+          return [cdcTime, inputEvent, outputEvent, sourceCDCReadTime, processingTime, qps]
+        }
+        if (isProcessor.value) {
+          return [cdcTime, inputEvent, outputEvent, processingTime, qps]
+        }
+        return [cdcTime, inputEvent, outputEvent, targetWriteTime, processingTime, qps]
       }
     }
 
