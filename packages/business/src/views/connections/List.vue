@@ -7,7 +7,8 @@
         isDaas
           ? {
               authority: 'datasource_catalog_management',
-              types: ['database']
+              types: ['database'],
+              title: $t('packages_business_connections_list_lianjiefenlei')
             }
           : null
       "

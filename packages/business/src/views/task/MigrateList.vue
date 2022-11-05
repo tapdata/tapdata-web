@@ -5,7 +5,11 @@
       row-key="id"
       class="data-flow-list"
       :remoteMethod="getData"
-      :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
+      :classify="{
+        authority: 'SYNC_category_management',
+        types: ['dataflow'],
+        title: $t('packages_business_task_migratelist_renwufenlei')
+      }"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
         val => {

@@ -498,5 +498,7 @@ export default {
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu: '敬請期待以下數據源開放',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta数据源',
   packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: '认证数据源',
-  packages_business_connections_preview_lianjiechajianlai: '鏈接插件來源'
+  packages_business_connections_preview_lianjiechajianlai: '鏈接插件來源',
+  packages_business_connections_list_lianjiefenlei: '連接分類',
+  packages_business_task_migratelist_renwufenlei: '任務分類'
 }

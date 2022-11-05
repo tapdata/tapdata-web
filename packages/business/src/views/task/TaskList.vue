@@ -4,7 +4,11 @@
       ref="table"
       row-key="id"
       class="data-flow-list"
-      :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
+      :classify="{
+        authority: 'SYNC_category_management',
+        types: ['dataflow'],
+        title: $t('packages_business_task_migratelist_renwufenlei')
+      }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
