@@ -512,6 +512,24 @@ export class Table extends NodeType {
       'attrs.connectionName': {
         type: 'string',
         'x-display': 'hidden'
+      },
+
+      loadSchemaButton: {
+        type: 'void',
+        title: '',
+        'x-decorator': 'FormItem',
+        'x-component': 'Button',
+        'x-content': '加載模型',
+        'x-component-props': {
+          onClick:
+            '{{useAsyncDataSourceByConfig({service: getCommandAndSetValue, withoutField: true}, $form, {nodeId:$values.id})}}'
+        }
+      },
+      loadSchemaTree: {
+        type: 'void',
+        title: '',
+        'x-decorator': 'FormItem',
+        'x-component': 'loadSchemaTree'
       }
     }
   }
