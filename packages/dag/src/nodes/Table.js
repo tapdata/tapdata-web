@@ -106,6 +106,14 @@ export class Table extends NodeType {
           gap: 8,
           align: 'start'
         },
+        'x-reactions': {
+          dependencies: ['databaseType'],
+          fulfill: {
+            state: {
+              display: '{{ !["CSV",].includes($deps[0]) ? "visible":"hidden"}}'
+            }
+          }
+        },
         properties: {
           tableName: {
             type: 'string',
@@ -522,7 +530,7 @@ export class Table extends NodeType {
         'x-content': '加載模型',
         'x-component-props': {
           onClick:
-            '{{useAsyncDataSourceByConfig({service: getCommandAndSetValue, withoutField: true}, $form, {nodeId:$values.id})}}'
+            '{{useAsyncDataSourceByConfig({service: loadSchemaData, withoutField: true}, $form, {nodeId:$values.id})}}'
         }
       },
       loadSchemaTree: {

@@ -442,6 +442,22 @@ export default {
           $form.setValuesIn('loadSchemaTree', fields)
         },
 
+        loadSchemaData: async ($form, others) => {
+          const getState = $form.getState()
+          const formValues = getState?.values || {}
+          console.log('formValues', formValues, others)
+          const { nodeConfig } = formValues
+          const { nodeId } = others
+          let params = {
+            nodeId,
+            nodeConfig
+          }
+          let data = await metadataInstancesApi.nodeSchema(nodeId, ['fields'], nodeConfig)
+          console.log('data', data)
+          const fields = data?.[0]?.fields || []
+          $form.setValuesIn('loadSchemaTree', fields)
+        },
+
         /**
          * 在dag更新接口请求完之后运行
          * @param service

@@ -29,8 +29,8 @@ export const loadSchemaTree = observer(
             scopedSlots={{
               default: ({ data }) => (
                 <span class="row" slot-scope="{  data }">
-                  <span class="type mr-2">{data.sourceFieldType}</span>
-                  <span>{data.sourceFieldName}</span>
+                  <span class="type mr-2">{data.data_type}</span>
+                  <span>{data.field_name}</span>
                 </span>
               )
             }}
