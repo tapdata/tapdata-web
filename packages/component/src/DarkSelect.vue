@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 export default {
   name: 'DarkSelect',
 
@@ -25,7 +27,7 @@ export default {
     label: {
       type: String,
       default: () => {
-        return '标题'
+        return i18n.t('packages_component_src_darkselect_biaoti')
       }
     },
     items: {

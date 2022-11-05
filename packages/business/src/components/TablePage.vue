@@ -15,6 +15,8 @@
           <Classification
             :authority="classify.authority"
             :types="classify.types"
+            :title="classify.title"
+            :kai-title="classify.title"
             @nodeChecked="nodeChecked"
           ></Classification>
         </div>

@@ -107,6 +107,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 
@@ -314,7 +316,7 @@ export default {
           } else {
             //默认目录国际化
             if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
-              it.value = '默认目录（技术）'
+              it.value = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
             }
             nodes.push(it)
           }

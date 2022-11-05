@@ -11,13 +11,8 @@
         {{ $t('packages_component_button_button') }}
       </ElButton>
       <div class="title">
-        <span>{{
-          types[0] === 'user'
-            ? $t('packages_component_classification_userTitle')
-            : $t('packages_component_classification_title')
-        }}</span>
+        <span>{{ comTitle }}</span>
       </div>
-      <!-- v-if="searchFalg" -->
       <div class="search-box">
         <ElInput class="search" size="mini" v-model="filterText">
           <span slot="suffix" class="el-input__icon h-100 ml-1">
@@ -65,13 +60,8 @@
         v-readonlybtn="authority"
         @click="showDialog()"
         class="create"
+        >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
       >
-        {{
-          types[0] === 'user'
-            ? $t('packages_component_classification_creatUserGroup')
-            : $t('packages_component_classification_creatDataClassification')
-        }}
-      </ElButton>
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -107,6 +97,9 @@ export default {
     },
     authority: {
       type: String
+    },
+    title: {
+      type: String
     }
   },
   data() {
@@ -132,8 +125,17 @@ export default {
       },
 
       nodeName: '',
-      parent_id: '',
-      title: ''
+      parent_id: ''
+    }
+  },
+  computed: {
+    comTitle() {
+      return (
+        this.title ||
+        (this.types[0] === 'user'
+          ? this.$t('packages_component_classification_userTitle')
+          : this.$t('packages_component_classification_title'))
+      )
     }
   },
   mounted() {
