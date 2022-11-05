@@ -318,9 +318,29 @@ export default {
     },
 
     handlePageReturn() {
-      this.$router.push({
-        name: 'migrateList'
-      })
+      if (!this.allNodes.length && !this.nameHasUpdated) {
+        this.$confirm(
+          this.$t('packages_dag_page_return_confirm_content'),
+          this.$t('packages_dag_page_return_confirm_title'),
+          {
+            type: 'warning',
+            closeOnClickModal: false,
+            confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
+            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
+          }
+        ).then(res => {
+          if (res) {
+            taskApi.delete(this.dataflow.id)
+          }
+          this.$router.push({
+            name: 'migrateList'
+          })
+        })
+      } else {
+        this.$router.push({
+          name: 'migrateList'
+        })
+      }
     },
 
     handleEdit() {

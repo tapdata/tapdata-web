@@ -1020,6 +1020,7 @@ export default {
         },
         DEFAULT_SETTINGS
       )*/
+      this.nameHasUpdated = false
       this.jsPlumbIns.reset()
       this.deselectAllNodes()
       this.reset()
@@ -1636,6 +1637,7 @@ export default {
     },
 
     async handleUpdateName(name) {
+      this.nameHasUpdated = true
       this.dataflow.name = name
       taskApi
         .patch({
