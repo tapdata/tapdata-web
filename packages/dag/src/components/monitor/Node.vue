@@ -10,7 +10,7 @@ import { calcTimeUnit, calcUnit } from '@tap/shared'
 import DFNode from '../DFNode'
 
 dayjs.extend(relativeTime)
-dayjs.locale('zh-cn')
+dayjs.locale(i18n.locale || 'zh-cn')
 
 const setConnectionAlarm = (endpoint, type) => {
   endpoint.connections?.forEach(conn => {
