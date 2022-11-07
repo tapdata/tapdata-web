@@ -526,5 +526,13 @@ export default {
   packages_dag_page_return_confirm_title: 'Return to confirm',
   packages_dag_page_return_confirm_content: 'The current task is empty. Do you want to keep it?',
   packages_dag_page_return_confirm_ok_text: "Don't keep",
-  packages_dag_page_return_confirm_cancel_text: 'Keep'
+  packages_dag_page_return_confirm_cancel_text: 'Keep',
+  packages_dag_monitor_node_cdcTitle_source: 'The latest read data is generated in',
+  packages_dag_monitor_node_cdcTitle_target: 'The latest written data is generated in',
+  packages_dag_monitor_node_cdcTitle_processor: 'The latest processed data is generated in',
+  packages_dag_monitor_node_popover_cdcTimeTitle_source: 'Read incremental time point',
+  packages_dag_monitor_node_popover_cdcTimeTitle_target: 'Write incremental time point',
+  packages_dag_monitor_node_popover_cdcTimeTitle_processor: 'Process incremental time points',
+  packages_dag_monitor_node_popover_targetWriteTime_title: 'Average time per write',
+  packages_dag_monitor_node_popover_cdc_no_find_data: 'No new data found'
 }

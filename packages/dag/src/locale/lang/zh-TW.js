@@ -502,5 +502,13 @@ export default {
   packages_dag_page_return_confirm_title: '返回確認',
   packages_dag_page_return_confirm_content: '當前任務內容為空，是否要保留？',
   packages_dag_page_return_confirm_ok_text: '不保留',
-  packages_dag_page_return_confirm_cancel_text: '保留'
+  packages_dag_page_return_confirm_cancel_text: '保留',
+  packages_dag_monitor_node_cdcTitle_source: '最新讀取到的數據產生在',
+  packages_dag_monitor_node_cdcTitle_target: '最新寫入的數據產生在',
+  packages_dag_monitor_node_cdcTitle_processor: '最新處理的數據產生在',
+  packages_dag_monitor_node_popover_cdcTimeTitle_source: '讀取增量時間點',
+  packages_dag_monitor_node_popover_cdcTimeTitle_target: '寫入增量時間點',
+  packages_dag_monitor_node_popover_cdcTimeTitle_processor: '處理增量時間點',
+  packages_dag_monitor_node_popover_targetWriteTime_title: '平均每條寫入耗時',
+  packages_dag_monitor_node_popover_cdc_no_find_data: '未發現新增數據'
 }

@@ -100,8 +100,7 @@ export default defineComponent({
      */
     const cdcEventStartTime = computed(() => {
       if (!hasCDC) return ''
-      const val =
-        props.taskType === 'cdc' ? currentEventTimestamp.value : currentEventTimestamp.value || taskSnapshotDoneAt.value
+      const val = currentEventTimestamp.value
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
 
@@ -188,10 +187,10 @@ export default defineComponent({
     })
 
     const renderStatistic = () => {
-      if (isSource.value) {
-        if (props.taskType === 'initial_sync') {
-          // 全量完成
-          if (taskSnapshotDoneAt.value) {
+      if (hasInitalSync) {
+        // 全量完成
+        if (taskSnapshotDoneAt.value) {
+          if (props.taskType === 'initial_sync') {
             return (
               <div class="statistic flex">
                 <div class="statistic-title">
@@ -200,63 +199,62 @@ export default defineComponent({
               </div>
             )
           }
-        }
-        if (hasInitalSync) {
-          if (!taskSnapshotDoneAt.value && taskSnapshotStartAt.value) {
-            // 全量进行中
+        } else {
+          // 全量进行中
+          if (taskSnapshotStartAt.value) {
             return (
               <div class="statistic flex">
                 <div class="statistic-title">{i18n.t('packages_dag_components_node_quanliangwanchenghaixu')}</div>
                 <div class="statistic-content">
-                  <div class="statistic-value">{completeTime.value}</div>
+                  <div class="statistic-value">
+                    {isTarget.value
+                      ? targetWriteTimeCostAvg.value
+                      : isProcessor.value
+                      ? timeCostAvg.value
+                      : completeTime.value}
+                  </div>
                 </div>
               </div>
             )
           }
         }
-        if (hasCDC) {
-          // 增量进行中
-          return (
-            <div class="statistic flex">
-              <div class="statistic-title">
-                {i18n.t('packages_dag_components_nodedetaildialog_zengliangshijiandian')}：
-              </div>
-              <div class="statistic-content">
-                <div class="statistic-value">{cdcEventStartRelativeTime.value}</div>
-              </div>
-            </div>
-          )
-        }
-        return <div>-</div>
       }
-
-      if (isTarget.value) {
+      if (hasCDC) {
+        // 增量进行中
+        const cdcTitle = isSource.value
+          ? i18n.t('packages_dag_monitor_node_cdcTitle_source')
+          : isTarget.value
+          ? i18n.t('packages_dag_monitor_node_cdcTitle_target')
+          : i18n.t('packages_dag_monitor_node_cdcTitle_processor')
         return (
           <div class="statistic flex">
-            <div class="statistic-title">{i18n.t('packages_dag_components_node_xieruhaoshi')}</div>
+            <div class="statistic-title">{cdcTitle}：</div>
             <div class="statistic-content">
-              <div class="statistic-value">{targetWriteTimeCostAvg.value}</div>
+              <div class="statistic-value">
+                {cdcEventStartRelativeTime.value === '-'
+                  ? i18n.t('packages_dag_monitor_node_popover_cdc_no_find_data')
+                  : cdcEventStartRelativeTime.value}
+              </div>
             </div>
           </div>
         )
       }
-
-      return (
-        <div class="statistic flex">
-          <div class="statistic-title">{i18n.t('packages_dag_components_node_chulihaoshi')}</div>
-          <div class="statistic-content">
-            <div class="statistic-value">{timeCostAvg.value}</div>
-          </div>
-        </div>
-      )
+      return <div>-</div>
     }
 
     const renderPopoverContent = () => {
+      const cdcTimeTitle = isSource.value
+        ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_source')
+        : isTarget
+        ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_target')
+        : i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_processor')
       const cdcTime = (
         <div class="statistic span-2">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_zengliangshijiandian')}</div>
+          <div class="statistic-title">{cdcTimeTitle}</div>
           <div class="statistic-content">
-            <div class="statistic-value">{cdcEventStartTime.value}</div>
+            <div class="statistic-value">
+              {cdcEventStartTime.value || i18n.t('packages_dag_monitor_node_popover_cdc_no_find_data')}
+            </div>
           </div>
         </div>
       )
@@ -301,7 +299,7 @@ export default defineComponent({
       // 目标写入耗时
       const targetWriteTime = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi')}</div>
+          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')}</div>
           <div class="statistic-content">
             <div class="statistic-value">
               {props.sample.targetWriteTimeCostAvg ? calcTimeUnit(props.sample.targetWriteTimeCostAvg) : '-'}
@@ -353,12 +351,12 @@ export default defineComponent({
       // 在增量阶段
       if (props.taskType === 'cdc' || (hasCDC && taskSnapshotDoneAt.value)) {
         if (isSource.value) {
-          return [cdcTime, inputEvent, outputEvent, sourceCDCReadTime, processingTime, qps]
+          return [cdcTime, inputEvent, outputEvent, qps]
         }
         if (isProcessor.value) {
           return [cdcTime, inputEvent, outputEvent, processingTime, qps]
         }
-        return [cdcTime, inputEvent, outputEvent, targetWriteTime, processingTime, qps]
+        return [cdcTime, inputEvent, outputEvent, targetWriteTime, qps]
       }
 
       if (hasInitalSync) {
@@ -455,7 +453,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .node-card {
   position: absolute;
-  min-width: 200px;
+  min-width: 280px;
   z-index: -1;
   top: 100%;
   left: 50%;
