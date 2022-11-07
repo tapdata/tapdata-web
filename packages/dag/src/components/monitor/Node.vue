@@ -189,7 +189,7 @@ export default defineComponent({
 
     const renderStatistic = () => {
       if (isSource.value) {
-        if (hasInitalSync) {
+        if (props.taskType === 'initial_sync') {
           // 全量完成
           if (taskSnapshotDoneAt.value) {
             return (
@@ -199,7 +199,10 @@ export default defineComponent({
                 </div>
               </div>
             )
-          } else if (taskSnapshotStartAt.value) {
+          }
+        }
+        if (hasInitalSync) {
+          if (!taskSnapshotDoneAt.value && taskSnapshotStartAt.value) {
             // 全量进行中
             return (
               <div class="statistic flex">
@@ -224,7 +227,7 @@ export default defineComponent({
             </div>
           )
         }
-        return <div></div>
+        return <div>-</div>
       }
 
       if (isTarget.value) {
