@@ -350,6 +350,17 @@ export default defineComponent({
         </div>
       )
 
+      // 在增量阶段
+      if (props.taskType === 'cdc' || (hasCDC && taskSnapshotDoneAt.value)) {
+        if (isSource.value) {
+          return [cdcTime, inputEvent, outputEvent, sourceCDCReadTime, processingTime, qps]
+        }
+        if (isProcessor.value) {
+          return [cdcTime, inputEvent, outputEvent, processingTime, qps]
+        }
+        return [cdcTime, inputEvent, outputEvent, targetWriteTime, processingTime, qps]
+      }
+
       if (hasInitalSync) {
         if (isSource.value) {
           return [syncProcess, qps, inputEvent, outputEvent, sourceInitalReadTime, processingTime]
@@ -358,17 +369,6 @@ export default defineComponent({
           return [inputEvent, outputEvent, processingTime, qps]
         }
         return [inputEvent, outputEvent, targetWriteTime, processingTime, qps]
-      }
-
-      // 在增量阶段
-      if (hasCDC) {
-        if (isSource.value) {
-          return [cdcTime, inputEvent, outputEvent, sourceCDCReadTime, processingTime, qps]
-        }
-        if (isProcessor.value) {
-          return [cdcTime, inputEvent, outputEvent, processingTime, qps]
-        }
-        return [cdcTime, inputEvent, outputEvent, targetWriteTime, processingTime, qps]
       }
     }
 
