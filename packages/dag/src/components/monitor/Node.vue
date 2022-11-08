@@ -90,7 +90,7 @@ export default defineComponent({
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
     const currentEventTimestamp = computed(() => {
-      const val = props.sample.currentEventTimestamp
+      const val = props.sample.currentEventTimestamp || props.sample.snapshotDoneAt
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
 
@@ -190,7 +190,7 @@ export default defineComponent({
       if (hasInitalSync) {
         // 全量完成
         if (taskSnapshotDoneAt.value) {
-          if (props.taskType === 'initial_sync') {
+          if (!hasCDC) {
             return (
               <div class="statistic flex">
                 <div class="statistic-title">
@@ -349,7 +349,7 @@ export default defineComponent({
       )
 
       // 在增量阶段
-      if (props.taskType === 'cdc' || (hasCDC && taskSnapshotDoneAt.value)) {
+      if (!hasInitalSync || (hasCDC && taskSnapshotDoneAt.value)) {
         if (isSource.value) {
           return [cdcTime, inputEvent, outputEvent, qps]
         }
