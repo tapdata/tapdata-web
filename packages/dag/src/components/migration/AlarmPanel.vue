@@ -29,12 +29,14 @@ export default observer({
 
       form: createForm({
         effects: this.useEffects
-      })
+      }),
+
+      allNodesResult: []
     }
   },
 
   computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes', 'allEdges', 'activeNode']),
+    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes', 'allEdges']),
     ...mapState('dataflow', ['taskId', 'activeNodeId'])
   },
 
@@ -43,30 +45,36 @@ export default observer({
       this.form.setState({ disabled: v })
     },
 
-    nodeType() {
+    activeNodeId() {
+      if (!this.allNodes.length) {
+        return
+      }
       this.loadSchema()
       this.loadSchemaForm()
+    },
+
+    allNodes: {
+      deep: true,
+      handler() {
+        this.init()
+      }
     }
   },
 
-  mounted() {
-    this.loadSchema()
-    this.loadSchemaForm()
-  },
-
   methods: {
+    init() {
+      this.allNodesResult = cloneDeep(this.allNodes)
+      this.loadSchema()
+      this.loadSchemaForm()
+    },
+
     // 绑定表单事件
     useEffects() {
       onFormInputChange(form => {
         const values = JSON.parse(JSON.stringify(form.values))
         // 节点类型
         if (['source', 'target', 'process'].includes(this.nodeType)) {
-          const { allNodes, allEdges, activeNodeId } = this
-          this.saveNodeSettings(values, this.settings, {
-            allNodes,
-            allEdges,
-            activeNodeId
-          })
+          this.saveNodeSettings(values, this)
           return
         }
         this.saveTaskSettings(values, this.settings)
@@ -94,11 +102,10 @@ export default observer({
       })
     }, 500),
 
-    saveNodeSettings: debounce((values, settings, params = {}) => {
+    saveNodeSettings: debounce((values, _self) => {
+      const { allEdges, activeNodeId, settings, allNodesResult } = _self
       const { id } = settings
-      const { allNodes, allEdges, activeNodeId } = params
-      let nodes = cloneDeep(allNodes)
-      let findOne = nodes?.find(t => t.id === activeNodeId) || {}
+      let findOne = allNodesResult.find(t => t.id === activeNodeId) || {}
       let alarmSettings = findOne.alarmSettings || []
       let alarmRules = findOne.alarmRules || []
       alarmSettings.forEach(el => {
@@ -111,12 +118,13 @@ export default observer({
           el[key] = values[el.key][key]
         }
       })
+      const dag = {
+        edges: allEdges,
+        nodes: allNodesResult
+      }
       taskApi.patch({
         id,
-        dag: {
-          edges: allEdges,
-          nodes
-        }
+        dag
       })
     }, 500),
 
@@ -233,7 +241,8 @@ export default observer({
       let { alarmSettings = [], alarmRules = [] } = this.settings
       // 节点类型
       if (['source', 'target', 'process'].includes(this.nodeType)) {
-        const activeNode = this.activeNode || {}
+        const { activeNodeId, allNodesResult } = this
+        const activeNode = allNodesResult.find(t => t.id === activeNodeId) || {}
         alarmSettings = activeNode.alarmSettings || []
         alarmRules = activeNode.alarmRules || []
       }
