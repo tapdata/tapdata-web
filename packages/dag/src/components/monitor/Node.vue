@@ -90,7 +90,7 @@ export default defineComponent({
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
     const currentEventTimestamp = computed(() => {
-      const val = props.sample.currentEventTimestamp || props.sample.snapshotDoneAt
+      const val = props.sample.currentEventTimestamp || props.sample.snapshotDoneAt || taskSnapshotDoneAt.value
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
 
