@@ -100,9 +100,10 @@
               </div>
             </template>
             <template v-if="item.category !== 'license'">
-              <span class="btns" v-if="item.category === 'SMTP'">
+              <span class="btns py-3" v-if="item.category === 'SMTP'">
                 <a class="link-primary" @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
-                <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
+                <!--后端暂无法支持跟产品沟通先行屏蔽-->
+                <!--<a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>-->
               </span>
             </template>
           </div>
