@@ -194,7 +194,7 @@ export const FieldRename = connect(
 
                 // change children field name
                 fields.forEach(field => {
-                  if (field.field_name.startsWith(name + '.')) {
+                  if (field?.field_name?.startsWith(name + '.')) {
                     field.field_name = newNameStr + field.field_name.substring(name.length)
                   }
                 })
@@ -227,7 +227,7 @@ export const FieldRename = connect(
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
-              field: nativeData.original_field_name,
+              field: data.schema_field_name || data.field_name,
               operand: first ? nativeData.original_field_name : data.field_name,
               table_name: data.table_name,
               type: data.type,
