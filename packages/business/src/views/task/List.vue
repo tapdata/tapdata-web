@@ -79,6 +79,7 @@
           class="btn btn-create"
           type="primary"
           size="mini"
+          :loading="createBtnLoading"
           @click="create"
         >
           {{ $t('packages_business_button_create') }}
@@ -261,6 +262,7 @@ export default {
       restLoading: false,
       order: 'last_updated DESC',
       multipleSelection: [],
+      createBtnLoading: false,
       bulkOperation: this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
       taskType: {
         initial_sync: this.$t('packages_business_task_info_initial_sync'),
@@ -539,26 +541,37 @@ export default {
     },
 
     handleSelectTag() {
-      let tagList = {}
+      let tagList = []
       this.multipleSelection.forEach(row => {
-        if (row.listtags && row.listtags.length > 0) {
-          tagList[row.listtags[0].id] = {
-            value: row.listtags[0].value
-          }
+        if (row.listtags) {
+          tagList = [...row.listtags, ...tagList]
         }
       })
+      //去重
+      let map = new Map()
+      for (let item of tagList) {
+        if (!map.has(item.id)) {
+          map.set(item.id, item)
+        }
+      }
+      tagList = [...map.values()]
       return tagList
     },
 
     create() {
       this.buried(this.taskBuried.new)
+      this.createBtnLoading = true
       this.checkAgent(() => {
         this.$router
           .push({
             name: this.route.new
           })
           .catch(() => {
+            this.createBtnLoading = false
             this.buried(this.taskBuried.newFail)
+          })
+          .finally(() => {
+            this.createBtnLoading = false
           })
       })
     },

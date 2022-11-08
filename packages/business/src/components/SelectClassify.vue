@@ -18,14 +18,6 @@
         >{{ item.value }}</el-tag
       >
     </div>
-    <div>
-      <el-tag size="mini" type="info" class="SelectClassify-tag" v-for="item in oldTagList" v-bind:key="item.value">{{
-        item.value
-      }}</el-tag>
-      <el-button size="mini" @click="handleClearOldTag" round v-if="Object.keys(oldTagList).length > 0"
-        >Clear</el-button
-      >
-    </div>
     <el-tree
       node-key="id"
       :props="props"
@@ -45,7 +37,9 @@
       </span>
     </el-tree>
     <span slot="footer" class="dialog-footer">
-      <el-button class="message-button-cancel" @click="handleCancel" size="mini">{{ $t('packages_business_button_cancel') }}</el-button>
+      <el-button class="message-button-cancel" @click="handleCancel" size="mini">{{
+        $t('packages_business_button_cancel')
+      }}</el-button>
       <el-button type="primary" @click="handleAdd" size="mini">{{ $t('packages_business_button_save') }}</el-button>
     </span>
   </el-dialog>
@@ -75,14 +69,13 @@ export default {
         isLeaf: 'leaf'
       },
       treeData: [],
-      tagList: [],
-      oldTagList: []
+      tagList: []
     }
   },
   methods: {
     show(tagList) {
       this.dialogVisible = true
-      this.oldTagList = JSON.parse(JSON.stringify(tagList))
+      this.tagList = JSON.parse(JSON.stringify(tagList))
       this.getData()
     },
     getData(cb) {
@@ -166,22 +159,20 @@ export default {
       this.oldTagList = []
       this.dialogVisible = false
     },
-    handleClearOldTag() {
-      this.oldTagList = ''
-    },
     handleCheckChange(data) {
-      this.oldTagList = []
-      if (this.tagList.length > 0 && data.id === this.tagList[0].id) {
-        this.tagList = []
-      } else {
-        this.tagList = []
-        let node = {
-          id: data.id,
-          value: data.value,
-          gid: data.gid
-        }
-        this.tagList.push(node)
+      this.tagList = this.tagList || []
+      if (this.tagList.length > 0) {
+        this.tagList.map((k, index) => {
+          if (k.id === data.id) {
+            this.tagList.splice(index, 1)
+          }
+        })
       }
+      let node = {
+        id: data.id,
+        value: data.value
+      }
+      this.tagList.push(node)
     },
     handleCloseTag(data) {
       let checkList = this.$refs.tree.getCheckedKeys()
@@ -203,10 +194,6 @@ export default {
       this.handleClose()
     },
     handleAdd() {
-      if (Object.keys(this.oldTagList).length !== 0) {
-        this.handleClose()
-        return
-      }
       if (this.tagList && this.tagList.length === 0) {
         this.tagList = []
       }

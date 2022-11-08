@@ -53,6 +53,7 @@
           class="table-list"
           hide-on-single-page
           highlight-current-row
+          row-key="originalTableName"
           @row-click="handleRow"
           @selection-change="handleSelectionChange"
         >
@@ -190,7 +191,8 @@ export default {
       selection: [],
       columns: [
         {
-          type: 'selection'
+          type: 'selection',
+          reserveSelection: true
         },
         {
           label: i18n.t('packages_business_verify_details_yuanbiaoming'),
