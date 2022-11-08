@@ -109,14 +109,14 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('packages_business_task_list_task_type')" :width="colWidth.taskType">
+      <el-table-column :label="$t('packages_business_task_list_task_type')" :min-width="colWidth.taskType">
         <template #default="{ row }">
           <span>
             {{ row.type ? taskType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('packages_business_task_list_status')" :width="colWidth.status">
+      <el-table-column prop="status" :label="$t('packages_business_task_list_status')" :min-width="colWidth.status">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
@@ -125,7 +125,7 @@
         sortable
         prop="currentEventTimestamp"
         :label="$t('packages_business_column_event_time')"
-        width="160"
+        min-width="160"
       >
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
@@ -134,7 +134,7 @@
       <el-table-column
         prop="createTime"
         :label="$t('packages_business_column_create_time')"
-        width="160"
+        min-width="160"
         sortable="custom"
       >
         <template #default="{ row }">
