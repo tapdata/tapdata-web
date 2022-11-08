@@ -312,6 +312,7 @@ export default {
   packages_business_button_bulk_import: '导入',
   packages_business_message_save_fail: '保存失败',
   packages_business_column_create_time: '创建时间',
+  packages_business_column_event_time: '增量时间点',
   packages_business_task_list_transform_running: '推演中',
   packages_business_task_list_transform_done: '推演完成',
   packages_business_task_list_transform_error: '推演失败',

@@ -553,7 +553,7 @@ export default {
       let dataName = []
       let total = 0
       let totalFalg = true
-      let totalText = this.$t('dashboard_total')
+      let totalText = this.$t('dashboard_public_total')
       if (data?.length) {
         data.forEach(item => {
           dataName.push(item.name)
