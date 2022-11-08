@@ -79,7 +79,7 @@ export const JsEditor = connect(
           </div>
           <_JsEditor
             class="form-js-editor py-0 flex-1 min-h-0"
-            theme={this.chrome}
+            theme={this.theme}
             value={this.code}
             lang="javascript"
             onBlur={this.onBlur}
