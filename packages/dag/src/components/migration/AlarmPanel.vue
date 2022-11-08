@@ -136,24 +136,24 @@ export default observer({
                     i18n.t('packages_dag_migration_alarmpanel_shujuyuanwufa')
                   ),
                   'DATANODE_CANNOT_CONNECT.notify': this.getCheckboxGroup(),
-                  'DATANODE_HTTP_CONNECT_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_shujuyuanwangluo')
-                  ),
-                  'DATANODE_HTTP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
-                  space1: this.getSpace(
-                    'DATANODE_HTTP_CONNECT_CONSUME.point',
-                    'DATANODE_HTTP_CONNECT_CONSUME.equalsFlag',
-                    'DATANODE_HTTP_CONNECT_CONSUME.ms'
-                  ),
-                  'DATANODE_TCP_CONNECT_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_shujuyuanxieyi')
-                  ),
-                  'DATANODE_TCP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
-                  space2: this.getSpace(
-                    'DATANODE_TCP_CONNECT_CONSUME.point',
-                    'DATANODE_TCP_CONNECT_CONSUME.equalsFlag',
-                    'DATANODE_TCP_CONNECT_CONSUME.ms'
-                  ),
+                  // 'DATANODE_HTTP_CONNECT_CONSUME.open': this.getSwitch(
+                  //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanwangluo')
+                  // ),
+                  // 'DATANODE_HTTP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
+                  // space1: this.getSpace(
+                  //   'DATANODE_HTTP_CONNECT_CONSUME.point',
+                  //   'DATANODE_HTTP_CONNECT_CONSUME.equalsFlag',
+                  //   'DATANODE_HTTP_CONNECT_CONSUME.ms'
+                  // ),
+                  // 'DATANODE_TCP_CONNECT_CONSUME.open': this.getSwitch(
+                  //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanxieyi')
+                  // ),
+                  // 'DATANODE_TCP_CONNECT_CONSUME.notify': this.getCheckboxGroup(),
+                  // space2: this.getSpace(
+                  //   'DATANODE_TCP_CONNECT_CONSUME.point',
+                  //   'DATANODE_TCP_CONNECT_CONSUME.equalsFlag',
+                  //   'DATANODE_TCP_CONNECT_CONSUME.ms'
+                  // ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_jiedianpingjunchu')
                   ),
