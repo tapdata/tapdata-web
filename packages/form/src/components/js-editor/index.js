@@ -31,6 +31,13 @@ export const JsEditor = connect(
       theme: {
         type: String,
         default: 'chrome'
+      },
+      showFullscreen: Boolean
+    },
+
+    data() {
+      return {
+        fullscreen: false
       }
     },
 
@@ -71,9 +78,25 @@ export const JsEditor = connect(
       }
       return this.before || this.after ? (
         <div
-          class="form-js-editor-wrap flex flex-column border rounded-2 overflow-hidden"
+          staticClass="form-js-editor-wrap flex flex-column border rounded-2"
+          class={this.fullscreen && 'full-mode'}
           style={{ height: this.height + 'px' }}
         >
+          {this.showFullscreen && (
+            <div class="js-editor-toolbar flex align-center px-4">
+              <div class="js-editor-toolbar-title flex-1">脚本</div>
+              <ElLink
+                onClick={() => {
+                  this.fullscreen = !this.fullscreen
+                }}
+                class="js-editor-fullscreen"
+                type="primary"
+              >
+                <i class="el-icon-full-screen mr-1"></i>
+                {this.fullscreen ? '退出全屏' : '全屏编辑'}
+              </ElLink>
+            </div>
+          )}
           <div class="code-before">
             <HighlightCode class="m-0" code={this.before} />
           </div>
