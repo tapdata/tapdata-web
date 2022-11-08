@@ -500,5 +500,7 @@ export default {
   packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: '认证数据源',
   packages_business_connections_preview_lianjiechajianlai: '链接插件来源',
   packages_business_connections_list_lianjiefenlei: '连接分类',
-  packages_business_task_migratelist_renwufenlei: '任务分类'
+  packages_business_task_migratelist_renwufenlei: '任务分类',
+  packages_business_components_connectiontypeselectorsort_jijiangshangxian: '即将上线',
+  packages_business_task_list_renwubuzhichi: '任务不支持该操作'
 }

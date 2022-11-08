@@ -20,22 +20,6 @@
           </ElTooltip>
         </li>
       </ul>
-      <div class="mt-5 mb-3">
-        <VIcon class="color-primary mr-2" size="14">info</VIcon>
-        <span class="fs-8 font-color-light">{{
-          $t('packages_business_components_connectiontypeselectorsort_shiyongbanzanbu')
-        }}</span>
-      </div>
-      <ul v-loading="loading" class="database-ul overflow-auto">
-        <li v-for="item in comingTypes" :key="item.type" class="database-item disable float-start mb-4">
-          <div class="img-box rounded-3">
-            <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
-          </div>
-          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-            <div class="ellipsis text-center font-color-slight">{{ item.name }}</div>
-          </ElTooltip>
-        </li>
-      </ul>
     </div>
     <div v-else-if="active === 'beta'">
       <div class="my-4 fs-8">
@@ -54,6 +38,21 @@
           </div>
           <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
             <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
+          </ElTooltip>
+        </li>
+      </ul>
+    </div>
+    <div v-else-if="active === 'coming'">
+      <div class="my-4 fs-8">
+        {{ $t('packages_business_components_connectiontypeselectorsort_shiyongbanzanbu') }}
+      </div>
+      <ul v-loading="loading" class="database-ul overflow-auto">
+        <li v-for="item in comingTypes" :key="item.type" class="database-item disable float-start mb-4">
+          <div class="img-box rounded-3">
+            <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
+          </div>
+          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
+            <div class="ellipsis text-center font-color-slight">{{ item.name }}</div>
           </ElTooltip>
         </li>
       </ul>
@@ -158,6 +157,10 @@ export default {
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
           value: 'beta'
+        },
+        {
+          label: i18n.t('packages_business_components_connectiontypeselectorsort_jijiangshangxian'),
+          value: 'coming'
         },
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),

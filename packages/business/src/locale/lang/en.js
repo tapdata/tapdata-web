@@ -508,5 +508,7 @@ export default {
   packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'Authentication data source',
   packages_business_connections_preview_lianjiechajianlai: 'Link plugin source',
   packages_business_connections_list_lianjiefenlei: 'Connection Category',
-  packages_business_task_migratelist_renwufenlei: 'Task classification'
+  packages_business_task_migratelist_renwufenlei: 'Task classification',
+  packages_business_components_connectiontypeselectorsort_jijiangshangxian: 'Coming soon',
+  packages_business_task_list_renwubuzhichi: 'The task does not support this operation'
 }

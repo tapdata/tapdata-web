@@ -224,6 +224,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import dayjs from 'dayjs'
 import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
@@ -712,7 +714,7 @@ export default {
         return {
           code: 'error',
           id: t?.id,
-          message: '任务不支持该操作'
+          message: i18n.t('packages_business_task_list_renwubuzhichi')
         }
       })
       if (!canList.length) {
