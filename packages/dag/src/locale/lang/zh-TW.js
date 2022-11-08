@@ -503,7 +503,7 @@ export default {
   packages_dag_page_return_confirm_content: '當前任務內容為空，是否要保留？',
   packages_dag_page_return_confirm_ok_text: '不保留',
   packages_dag_page_return_confirm_cancel_text: '保留',
-  packages_dag_monitor_node_cdcTitle_source: '最新讀取到的數據產生在',
+  packages_dag_monitor_node_cdcTitle_source: '最新讀取的數據產生在',
   packages_dag_monitor_node_cdcTitle_target: '最新寫入的數據產生在',
   packages_dag_monitor_node_cdcTitle_processor: '最新處理的數據產生在',
   packages_dag_monitor_node_popover_cdcTimeTitle_source: '讀取增量時間點',

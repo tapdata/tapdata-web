@@ -507,7 +507,7 @@ export default {
   packages_dag_page_return_confirm_content: '当前任务内容为空，是否要保留？',
   packages_dag_page_return_confirm_ok_text: '不保留',
   packages_dag_page_return_confirm_cancel_text: '保留',
-  packages_dag_monitor_node_cdcTitle_source: '最新读取到的数据产生在',
+  packages_dag_monitor_node_cdcTitle_source: '最新读取的数据产生在',
   packages_dag_monitor_node_cdcTitle_target: '最新写入的数据产生在',
   packages_dag_monitor_node_cdcTitle_processor: '最新处理的数据产生在',
   packages_dag_monitor_node_popover_cdcTimeTitle_source: '读取增量时间点',
