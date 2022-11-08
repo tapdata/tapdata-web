@@ -57,10 +57,10 @@ export default defineComponent({
 
   setup(props, { attrs, listeners, emit, refs }) {
     const completeTime = computed(() => {
-      const { snapshotInsertRowTotal, snapshotRowTotal, outputQps } = props.sample
-      return outputQps
-        ? calcTimeUnit(Math.ceil(Math.abs((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000), 2)
-        : '-'
+      const { snapshotInsertRowTotal, snapshotRowTotal, snapshotStartAt } = props.sample
+      const usedTime = Date.now() - snapshotStartAt
+      const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+      return calcTimeUnit(Math.ceil(Math.abs(time)), 2)
     })
 
     const isSource = computed(() => {
@@ -245,7 +245,7 @@ export default defineComponent({
     const renderPopoverContent = () => {
       const cdcTimeTitle = isSource.value
         ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_source')
-        : isTarget
+        : isTarget.value
         ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_target')
         : i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_processor')
       const cdcTime = (

@@ -358,15 +358,9 @@ export default {
 
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        outputQps = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag
-      } = data
-      const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
+      const usedTime = Date.now() - snapshotStartAt
+      const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
