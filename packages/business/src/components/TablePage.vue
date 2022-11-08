@@ -192,6 +192,9 @@ export default {
     },
     getData() {
       return this.list
+    },
+    clearSelection() {
+      this.$refs?.table?.clearSelection()
     }
   }
 }

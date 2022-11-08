@@ -467,8 +467,9 @@ export default {
       }
     },
 
-    responseHandler(data, msg) {
+    responseHandler(data, msg, canNotList = []) {
       let failList = data?.filter(t => t.code !== 'ok') || []
+      failList = [...failList, ...canNotList]
       if (failList.length) {
         let nameMapping = {}
         this.table.list.forEach(item => {
@@ -487,6 +488,7 @@ export default {
       } else if (msg) {
         this.$message.success(msg, false)
       }
+      this.table.clearSelection()
     },
 
     handleSortTable({ order, prop }) {
@@ -568,14 +570,14 @@ export default {
       })
     },
 
-    start(ids) {
+    start(ids, node, canNotList = []) {
       this.buried(this.taskBuried.start)
       taskApi
         .batchStart(ids)
         .then(data => {
           this.buried(this.taskBuried.start, '', { result: true })
           this.table.fetch()
-          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
+          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
         })
         .catch(() => {
           this.buried(this.taskBuried.start, '', { result: false })
@@ -589,7 +591,7 @@ export default {
       })
     },
 
-    initialize(ids, item = {}) {
+    initialize(ids, item = {}, canNotList) {
       let msgObj = this.getConfirmMessage('initialize', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
@@ -602,7 +604,7 @@ export default {
           .batchRenew(ids)
           .then(data => {
             this.table.fetch()
-            this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
+            this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
           })
           .finally(() => {
             this.restLoading = false
@@ -610,7 +612,7 @@ export default {
       })
     },
 
-    del(ids, item = {}) {
+    del(ids, item = {}, canNotList) {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, '', {
         type: 'warning'
@@ -623,7 +625,7 @@ export default {
           const { toggleRowSelection } = this.table.$refs.table
           selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
-          this.responseHandler(data, this.$t('packages_business_message_deleteOK'))
+          this.responseHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
         })
       })
     },
@@ -648,7 +650,7 @@ export default {
       })
     },
 
-    stop(ids, item = {}) {
+    stop(ids, item = {}, canNotList) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
       this.$confirm(message, '', {
@@ -660,7 +662,7 @@ export default {
         }
         taskApi.batchStop(ids).then(data => {
           this.table.fetch()
-          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'))
+          this.responseHandler(data, this.$t('packages_business_message_operation_succuess'), canNotList)
         })
       })
     },
@@ -679,7 +681,7 @@ export default {
     },
 
     handleCommand(command, node) {
-      let commandFilter = ['start', 'stop', 'del']
+      let commandFilter = ['start', 'stop', 'del', 'initialize']
       let ids = []
       let taskList = []
       if (node) {
@@ -689,8 +691,12 @@ export default {
       }
       let canList = []
       let canNotList = []
+      const disabledMap = {
+        initialize: 'reset',
+        del: 'delete'
+      }
       if (commandFilter.includes(command)) {
-        let op = command === 'del' ? 'delete' : command
+        let op = disabledMap[command] || command
         taskList.forEach(task => {
           if (task.btnDisabled?.[op]) {
             canNotList.push(task)
@@ -702,14 +708,19 @@ export default {
         canList = taskList
       }
 
-      if (canNotList.length) {
-        const msg = canNotList.length !== taskList.length ? `部分任务不支持该操作` : `所选任务不支持该操作`
-        this.$message.warning(msg)
+      const canNotResult = canNotList.map(t => {
+        return {
+          code: 'error',
+          id: t?.id,
+          message: '任务不支持该操作'
+        }
+      })
+      if (!canList.length) {
+        this.responseHandler(canList, '', canNotResult)
+        return
       }
-
-      if (!canList.length) return
       ids = canList.map(item => item.id)
-      this[command](ids, node)
+      this[command](ids, node, canNotResult)
     },
 
     getConfirmMessage(operateStr, isBulk, name) {
