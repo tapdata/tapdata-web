@@ -361,7 +361,7 @@ export default defineComponent({
 
       if (hasInitalSync) {
         if (isSource.value) {
-          return [syncProcess, qps, inputEvent, outputEvent, sourceInitalReadTime, processingTime]
+          return [syncProcess, qps, inputEvent, outputEvent]
         }
         if (isProcessor.value) {
           return [inputEvent, outputEvent, processingTime, qps]
