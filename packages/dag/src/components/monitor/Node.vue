@@ -57,8 +57,10 @@ export default defineComponent({
 
   setup(props, { attrs, listeners, emit, refs }) {
     const completeTime = computed(() => {
+      const totalData = props.quota.samples?.totalData?.[0] || {}
       const { snapshotInsertRowTotal, snapshotRowTotal, snapshotStartAt } = props.sample
-      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+      let startAt = snapshotStartAt || totalData.snapshotStartAt
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !startAt) {
         return ''
       }
       const usedTime = Date.now() - snapshotStartAt
