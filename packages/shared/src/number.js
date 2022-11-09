@@ -65,13 +65,14 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
  * @val Number 需要处理的毫秒
  * @fix Number 需要保留几个单位
  * @digits Number 只有ms单位时，保留几位小数；多个单位默认取整
+ * @separator String 分割符
  * @return string
  * */
-export function calcTimeUnit(val, fix = 1, digits = 3) {
+export function calcTimeUnit(val, fix = 1, separator = ' ') {
   const list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
   const sp = [1000, 60, 60, 24, 30, 12]
   let result = []
-  const power = Math.pow(10, digits)
+  const power = Math.pow(10, 3)
   let num = val
   const isMs = num / sp[0] < 1
   const ms = Math.round(num * power) / power
@@ -98,6 +99,6 @@ export function calcTimeUnit(val, fix = 1, digits = 3) {
   return arr
     .filter(t => t.value)
     .reduce((pre, current) => {
-      return pre + current.value + current.util
+      return pre + separator + current.value + current.util
     }, '')
 }
