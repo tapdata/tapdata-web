@@ -520,7 +520,7 @@ export default {
   packages_dag_mixins_editor_debug5: '[DEBUG]ws returned, task status: [{val1}]',
   packages_dag_monitor_topheader_zuijinyiciqi: 'Last start time:',
   packages_dag_components_nodedetaildialog_quanliangyiwancheng: 'Full volume completed',
-  packages_dag_components_node_quanliangwanchenghaixu: 'Estimated finish time:',
+  packages_dag_components_node_quanliangwanchenghaixu: 'Estimated finish time',
   packages_dag_components_node_xieruhaoshi: 'Writing time:',
   packages_dag_components_node_chulihaoshi: 'Processing time:',
   packages_dag_page_return_confirm_title: 'Return to confirm',
@@ -535,5 +535,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: 'Process incremental time',
   packages_dag_monitor_node_popover_targetWriteTime_title: 'Avg time per write',
   packages_dag_monitor_node_popover_cdc_no_find_data: 'No fresh data',
-  packages_dag_monitor_topheader_renwuxintiaoshi: 'Task heartbeat time:'
+  packages_dag_monitor_topheader_renwuxintiaoshi: 'Task heartbeat time',
+  packages_dag_monitor_node_per_deal_need_time: 'Single processing time'
 }

@@ -96,7 +96,7 @@
     <div class="flex align-center ml-2">
       <template v-if="!hideMenus.includes('operation')">
         <div v-if="heartbeatTime" class="mr-2">
-          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}</span>
+          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}：</span>
           <span>{{ heartbeatTime }}</span>
         </div>
         <ElButton

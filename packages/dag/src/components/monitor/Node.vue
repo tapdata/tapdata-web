@@ -205,9 +205,12 @@ export default defineComponent({
         } else {
           // 全量进行中
           if (taskSnapshotStartAt.value) {
+            const title = isSource.value
+              ? i18n.t('packages_dag_components_node_quanliangwanchenghaixu')
+              : i18n.t('packages_dag_monitor_node_per_deal_need_time')
             return (
               <div class="statistic flex">
-                <div class="statistic-title">{i18n.t('packages_dag_components_node_quanliangwanchenghaixu')}</div>
+                <div class="statistic-title">{title}：</div>
                 <div class="statistic-content">
                   <div class="statistic-value">
                     {isTarget.value
@@ -264,7 +267,7 @@ export default defineComponent({
 
       const processingTime = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_leftsider_chulihaoshim')}</div>
+          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_per_deal_need_time')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{timeCostAvg.value}</div>
           </div>

@@ -500,7 +500,7 @@ export default {
   packages_dag_mixins_editor_debug5: '【DEBUG】ws返回，任务状态：[{val1}]',
   packages_dag_monitor_topheader_zuijinyiciqi: '最近一次启动时间：',
   packages_dag_components_nodedetaildialog_quanliangyiwancheng: '全量已完成',
-  packages_dag_components_node_quanliangwanchenghaixu: '全量完成还需：',
+  packages_dag_components_node_quanliangwanchenghaixu: '全量完成还需',
   packages_dag_components_node_xieruhaoshi: '写入耗时：',
   packages_dag_components_node_chulihaoshi: '处理耗时：',
   packages_dag_page_return_confirm_title: '返回确认',
@@ -515,5 +515,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '处理增量时间点',
   packages_dag_monitor_node_popover_targetWriteTime_title: '平均每条写入耗时',
   packages_dag_monitor_node_popover_cdc_no_find_data: '未发现新增数据',
-  packages_dag_monitor_topheader_renwuxintiaoshi: '任务心跳时间：'
+  packages_dag_monitor_topheader_renwuxintiaoshi: '任务心跳时间',
+  packages_dag_monitor_node_per_deal_need_time: '单条处理耗时'
 }
