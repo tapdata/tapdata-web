@@ -133,7 +133,7 @@ export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, valu
 
 const BUTTON_WITH_STATUS = {
   start: ['wait_start', 'complete', 'error', 'stop'],
-  edit: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  edit: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renew_failed'],
   delete: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renewing', 'renew_failed'],
   stop: ['running'],
   forceStop: ['stopping'],
