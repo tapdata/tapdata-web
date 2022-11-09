@@ -13,7 +13,7 @@
         <p class="title-text pt-6">
           {{ $t('agent_deploy_select_tip') }}
         </p>
-
+        <div class="text-style mt-6">要安装Agent,请先在下方选择您的服务器类型：</div>
         <div class="down-type">
           <div
             v-for="down in downType"
@@ -149,14 +149,15 @@
               <div class="my-5 text-style">开始安装</div>
             </li>
             <li>
-              1.您可以选择按流量计费或者预付包月/年，也可以免费试用3天，3天后服务器资源将自动回收，您需要重新部署Agent才能继续使用TapData，根据您的付费方式，请点击下方按钮跳转到阿里云创建您的云服务器，Tapdata
+              1.
+              您可以选择按流量计费或者预付包月/年，也可以免费试用3天，3天后服务器资源将自动回收，您需要重新部署Agent才能继续使用TapData，根据您的付费方式，请点击下方按钮跳转到阿里云创建您的云服务器，Tapdata
               Agent会自动安装在改实例上，如果没有账号可以现场注册：
-              <div class="mt-2">
-                <el-link :href="trialUrl" target="_blank" class="mr-4"><el-button>三天试用</el-button></el-link>
-                <el-link :href="url" target="_blank"><el-button>付费部署</el-button></el-link>
+              <div class="my-4">
+                <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"><div>三天试用</div></el-link>
+                <el-link :href="url" target="_blank" class="url-btn"><div>付费部署</div></el-link>
               </div>
             </li>
-            <li>2.我们已经为您自动填充了《应用实例配置》中的信息，如果需要也可以手动复制/黏贴下面的信息。</li>
+            <li>2. 我们已经为您自动填充了《应用实例配置》中的信息，如果需要也可以手动复制/黏贴下面的信息。</li>
             <li>
               <div class="my-2 text-style">实例版本：</div>
             </li>
@@ -167,12 +168,12 @@
             <li class="box title-text link-line my-2">
               {{ token }}
             </li>
-            <li>3.确认计算巢部署完成。</li>
+            <li>3. 确认计算巢部署完成。</li>
             <li>
               <el-image :src="getImg('alicomputenest_instance')" alt="" />
             </li>
-            <li>
-              4.部署完成后，返回我们的【Agent管理页面】等待2分钟直到【状态】变为【运行中】。恭喜您！已经完成了Tapdata
+            <li class="my-2">
+              4. 部署完成后，返回我们的【Agent管理页面】等待2分钟直到【状态】变为【运行中】。恭喜您！已经完成了Tapdata
               Alould 计算环境的部署，可以去创建数据任务了。
             </li>
             <li>
@@ -180,31 +181,31 @@
             </li>
           </ul>
         </template>
-        <div class="result-item mt-4 text-center">
-          <div v-if="!isFinished" class="loading-item">
-            <VIcon class="v-icon animation-rotate color-success" size="24" color="rgb(61, 156, 64)"
-              >loading-circle</VIcon
-            >
-            <div class="mt-4 pb-2">{{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}</div>
-            <div>
-              <el-button size="mini" @click="recordUserBehavior">稍后部署</el-button>
-            </div>
-          </div>
-          <div v-else class="finish-item">
-            <VIcon class="v-icon color-success" size="24" color="rgb(61, 156, 64)">check</VIcon>
-            <div class="mt-4">{{ $t('agent_download_AgentDownloadModal_gongXiNinWanCheng') }}</div>
-            <div class="flex justify-content-between mt-4">
-              <ElLink type="primary" @click="toConnection">{{
-                $t('agent_download_AgentDownloadModal_kaiShiChuangJianLian')
-              }}</ElLink>
-              <ElLink type="primary" @click="toWorkbench">{{
-                $t('agent_download_AgentDownloadModal_jinRuGongZuoTai')
-              }}</ElLink>
-            </div>
-          </div>
-        </div>
       </main>
     </section>
+    <span slot="footer">
+      <div class="result-item mt-4 text-center">
+        <div v-if="!isFinished" class="loading-item">
+          <VIcon class="v-icon animation-rotate color-success" size="24" color="rgb(61, 156, 64)">loading-circle</VIcon>
+          <div class="mt-4 pb-2">{{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}</div>
+          <div>
+            <el-button size="mini" @click="recordUserBehavior">稍后部署</el-button>
+          </div>
+        </div>
+        <div v-else class="finish-item">
+          <VIcon class="v-icon color-success" size="24" color="rgb(61, 156, 64)">check</VIcon>
+          <div class="mt-4">{{ $t('agent_download_AgentDownloadModal_gongXiNinWanCheng') }}</div>
+          <div class="flex justify-content-between mt-4">
+            <ElLink type="primary" @click="toConnection">{{
+              $t('agent_download_AgentDownloadModal_kaiShiChuangJianLian')
+            }}</ElLink>
+            <ElLink type="primary" @click="toWorkbench">{{
+              $t('agent_download_AgentDownloadModal_jinRuGongZuoTai')
+            }}</ElLink>
+          </div>
+        </div>
+      </div>
+    </span>
   </ElDialog>
 </template>
 <script>
@@ -230,7 +231,7 @@ export default {
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
         { name: 'Windows (64 bit)', value: 'windows' },
-        { name: '阿里云计算巢', value: 'computenest' }
+        { name: '阿里云计算巢', value: 'AliComputenest' }
       ],
       showTooltip: false,
       windowsLink: '',
@@ -335,6 +336,9 @@ export default {
         name: 'Workbench'
       })
     },
+    getImg(name) {
+      return require(`../../../public/images/agent/${name}.png`)
+    },
     recordUserBehavior() {
       Cookie.set('deployLater', 1)
       let user = window.__USER_INFO__
@@ -373,9 +377,11 @@ export default {
       color: #666;
     }
     .text-style {
-      font-size: 12px;
-      color: #333;
-      font-weight: bold;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 21px;
+      letter-spacing: 0px;
+      text-align: left;
     }
     .ul-style {
       li {
@@ -402,12 +408,17 @@ export default {
       cursor: pointer;
     }
     .text-style {
-      font-size: 12px;
-      color: #333;
-      font-weight: bold;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 21px;
+      letter-spacing: 0px;
+      text-align: left;
     }
     .down-type {
-      padding: 18px 0;
+      padding: 16px 0 16px 0;
+    }
+    .down-type,
+    .url-btn {
       div {
         position: relative;
         display: inline-block;
@@ -416,9 +427,9 @@ export default {
         padding: 10px 50px;
         font-size: 12px;
         cursor: pointer;
-        color: #666;
-        border: 1px solid #dedee4;
-        border-radius: 3px;
+        color: map-get($iconFillColor, normal);
+        background: map-get($bgColor, main);
+        border-radius: 4px;
       }
       .active {
         border: 1px solid map-get($color, primary);

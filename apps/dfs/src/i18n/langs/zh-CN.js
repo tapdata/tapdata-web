@@ -210,9 +210,10 @@ export default {
   agent_list_empty_desc2: '开始实时数据同步吧~',
   agent_error_check: '当前无可用Agent，请去Agent管理页面新建Agent或启动已有的Agent并保证连通性',
   // Agent部署
-  agent_deploy_title: 'Agent 下载与安装',
+  agent_deploy_title: '准备 Tapdata Cloud 计算环境',
   agent_deploy_select_tip:
-    'Tapdata DFS 云版需要先在本地安装 Agent 以确保连接数据库和数据传输服务的正常运行, 您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
+    '在半托管模式中，您需要提前安装Tapdata的计算代理Agent，您的任务运行、数据库连接以及数据的传输和计算，都是在您安装了Agent的服务器上进行的，Tapdata不会收集传输的数据内容，只要这台服务器能够访问到您的数据源，它可以是公有云、私有服务器甚至您的个人计算机,',
+  agent_deploy_select_help: '详情请见《Tapdata 半托管架构及工作原理》。',
   agent_deploy_before_prepare_title: '安装前准备',
   agent_deploy_before_prepare_windows_first: '1. 安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。',
   agent_deploy_before_prepare_windows_first_link: '点击查看Java1.8安装和配置方式',
