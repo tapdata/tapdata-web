@@ -34,12 +34,12 @@
           </div>
         </div>
         <div class="form-wrap">
-          <div class="form">
+          <div class="form pr-3">
             <SchemaToForm
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="610px"
+              wrapperWidth="600px"
               :colon="true"
               label-width="160"
             ></SchemaToForm>
