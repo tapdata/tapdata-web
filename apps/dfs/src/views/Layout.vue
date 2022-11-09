@@ -82,7 +82,7 @@ export default {
         {
           name: 'migrateList',
           title: $t('task_manage_migrate'),
-          icon: 'task'
+          icon: 'migrate'
         },
         {
           name: 'dataflowList',
