@@ -7,6 +7,12 @@
       .hljs {
         color: #abb2bf;
         background: rgb(40, 44, 52);
+        .hljs-keyword {
+          color: #c678dd;
+        }
+        .hljs-params {
+          color: #d19a66;
+        }
       }
       .hljs-title {
         color: rgb(97,175,239);
@@ -53,6 +59,9 @@
       right: 0;
       transform: translateY(-100%);
       line-height: 40px;
+      .el-link--inner {
+        line-height: inherit;
+      }
     }
   }
 

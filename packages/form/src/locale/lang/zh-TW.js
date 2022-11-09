@@ -129,5 +129,7 @@ export default {
   packages_form_table_rename_index_yuanbiaoming: '原表名',
   packages_form_table_rename_index_sousuobiaoming: '搜索表名',
   packages_form_text_file_reader_index_shangchuanwenjianda: '上傳文件大小不能超過 {val1}KB',
-  packages_form_src_index_cronbiao: 'Cron表達式格式有誤'
+  packages_form_src_index_cronbiao: 'Cron表達式格式有誤',
+  packages_form_js_editor_fullscreen: '全屏編輯',
+  packages_form_js_editor_exit_fullscreen: '退出全屏'
 }

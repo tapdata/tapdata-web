@@ -71,7 +71,7 @@
             :columns="columns"
           >
             <template slot="failed" slot-scope="scope">
-              <span> {{ scope.row.failed * 100 }}</span>
+              <span> {{ Math.round(scope.row.failed * 100) }}</span>
             </template>
           </VTable>
           <el-pagination
