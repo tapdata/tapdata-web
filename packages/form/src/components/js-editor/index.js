@@ -1,4 +1,4 @@
-import { JsEditor as _JsEditor } from '@tap/component'
+import { JsEditor as _JsEditor, VIcon } from '@tap/component'
 import { connect, mapProps } from '@formily/vue'
 import { HighlightCode } from '../highlight-code'
 import './style.scss'
@@ -101,7 +101,7 @@ export const JsEditor = connect(
         >
           {this.showFullscreen && (
             <div class="js-editor-toolbar flex align-center px-4">
-              <div class="js-editor-toolbar-title flex-1">脚本</div>
+              <div class="js-editor-toolbar-title flex-1">{this.$t('packages_form_js_processor_index_jiaoben')}</div>
               <ElLink
                 onClick={() => {
                   this.fullscreen = !this.fullscreen
@@ -109,8 +109,9 @@ export const JsEditor = connect(
                 class="js-editor-fullscreen"
                 type="primary"
               >
-                <i class="el-icon-full-screen mr-1"></i>
-                {this.fullscreen ? '退出全屏' : '全屏编辑'}
+                {this.fullscreen
+                  ? [<VIcon class="mr-1">suoxiao</VIcon>, this.$t('packages_form_js_editor_exit_fullscreen')]
+                  : [<VIcon class="mr-1">fangda</VIcon>, this.$t('packages_form_js_editor_fullscreen')]}
               </ElLink>
             </div>
           )}
