@@ -34,9 +34,7 @@ export default observer({
         effects: this.useEffects
       }),
 
-      allNodesResult: [],
-
-      taskAlarmData: {}
+      allNodesResult: []
     }
   },
 
@@ -61,12 +59,6 @@ export default observer({
         if (!this.allNodesResult.length) {
           this.allNodesResult = this.allNodes
         }
-      }
-      if (!this.taskAlarmData.alarmSettings) {
-        this.taskAlarmData.alarmSettings = this.settings.alarmSettings
-      }
-      if (!this.taskAlarmData.alarmRules) {
-        this.taskAlarmData.alarmRules = this.settings.alarmRules
       }
       this.loadSchema()
       this.loadSchemaForm()
@@ -100,7 +92,7 @@ export default observer({
     }, 500),
 
     saveNodeSettings: debounce((values, _self) => {
-      const { allEdges, activeNodeId, settings, allNodesResult, taskAlarmData } = _self
+      const { allEdges, activeNodeId, settings, allNodesResult } = _self
       const { id } = settings
       let findOne = allNodesResult.find(t => t.id === activeNodeId) || {}
       let alarmSettings = findOne.alarmSettings || []
@@ -122,8 +114,8 @@ export default observer({
       taskApi.patch({
         id,
         dag,
-        alarmSettings: taskAlarmData.alarmSettings,
-        alarmRules: taskAlarmData.alarmRules
+        alarmSettings: settings.alarmSettings,
+        alarmRules: settings.alarmRules
       })
     }, 500),
 
@@ -237,9 +229,9 @@ export default observer({
     },
 
     loadSchemaForm() {
-      const { taskAlarmData, settings } = this
-      let alarmSettings = taskAlarmData.alarmSettings || settings.alarmSettings || []
-      let alarmRules = taskAlarmData.alarmRules || settings.alarmRules || []
+      const { settings } = this
+      let alarmSettings = settings.alarmSettings || []
+      let alarmRules = settings.alarmRules || []
       // 节点类型
       if (this.isNode) {
         const { activeNodeId, allNodesResult } = this
