@@ -134,6 +134,7 @@ export const JsProcessor = observer(
                   emit('change', val)
                 }}
                 height={350}
+                showFullscreen={true}
                 options={editorProps.options}
                 includeBeforeAndAfter={editorProps.includeBeforeAndAfter}
                 before={editorProps.before}

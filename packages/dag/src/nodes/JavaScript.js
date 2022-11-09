@@ -36,6 +36,7 @@ export class JavaScript extends NodeType {
         'x-component': 'JsEditor',
         'x-component-props': {
           height: 500,
+          showFullscreen: true,
           options: { showPrintMargin: false, wrap: false },
           includeBeforeAndAfter: true,
           before: 'function process(record){',

@@ -1,4 +1,6 @@
 .form-js-editor-wrap {
+  position: relative;
+
   &[theme="one_dark"] {
     .code-before,
     .code-after{
@@ -36,5 +38,42 @@
 
   .form-js-editor-wrap {
     background: #fff;
+  }
+
+  .js-editor-toolbar {
+    background: #fff;
+    font-size: 14px;
+    &-title {
+      display: none;
+    }
+
+    .js-editor-fullscreen {
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translateY(-100%);
+      line-height: 40px;
+    }
+  }
+
+  &.full-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh !important;
+    z-index: 10;
+
+    .js-editor-toolbar {
+      height: 40px;
+      .js-editor-toolbar-title {
+        display: block;
+      }
+
+      .js-editor-fullscreen {
+        position: static;
+        transform: unset;
+      }
+    }
   }
 }
