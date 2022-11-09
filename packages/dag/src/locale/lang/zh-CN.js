@@ -514,5 +514,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_target: '写入增量时间点',
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '处理增量时间点',
   packages_dag_monitor_node_popover_targetWriteTime_title: '平均每条写入耗时',
-  packages_dag_monitor_node_popover_cdc_no_find_data: '未发现新增数据'
+  packages_dag_monitor_node_popover_cdc_no_find_data: '未发现新增数据',
+  packages_dag_monitor_topheader_renwuxintiaoshi: '任务心跳时间：'
 }

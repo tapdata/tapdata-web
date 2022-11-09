@@ -534,5 +534,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_target: 'Write incremental time',
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: 'Process incremental time',
   packages_dag_monitor_node_popover_targetWriteTime_title: 'Avg time per write',
-  packages_dag_monitor_node_popover_cdc_no_find_data: 'No fresh data'
+  packages_dag_monitor_node_popover_cdc_no_find_data: 'No fresh data',
+  packages_dag_monitor_topheader_renwuxintiaoshi: 'Task heartbeat time:'
 }
