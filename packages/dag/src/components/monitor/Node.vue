@@ -58,6 +58,9 @@ export default defineComponent({
   setup(props, { attrs, listeners, emit, refs }) {
     const completeTime = computed(() => {
       const { snapshotInsertRowTotal, snapshotRowTotal, snapshotStartAt } = props.sample
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+        return ''
+      }
       const usedTime = Date.now() - snapshotStartAt
       const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
       return calcTimeUnit(Math.ceil(Math.abs(time)), 2)
