@@ -18,7 +18,10 @@ export default observer({
   props: {
     settings: Object,
     scope: Object,
-    nodeType: String
+    isNode: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data() {
@@ -31,79 +34,73 @@ export default observer({
         effects: this.useEffects
       }),
 
-      allNodesResult: []
+      allNodesResult: [],
+
+      taskAlarmData: {}
     }
   },
 
   computed: {
-    ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes', 'allEdges']),
-    ...mapState('dataflow', ['taskId', 'activeNodeId'])
+    ...mapGetters('dataflow', ['allNodes', 'allEdges']),
+    ...mapState('dataflow', ['activeNodeId'])
   },
 
   watch: {
-    stateIsReadonly(v) {
-      this.form.setState({ disabled: v })
-    },
-
     activeNodeId() {
-      if (!this.allNodes.length) {
-        return
-      }
-      this.loadSchema()
-      this.loadSchemaForm()
-    },
-
-    allNodes: {
-      deep: true,
-      handler() {
-        this.init()
-      }
+      this.init()
     }
   },
 
+  mounted() {
+    this.init()
+  },
+
   methods: {
-    init() {
-      this.allNodesResult = cloneDeep(this.allNodes)
+    init: debounce(function () {
+      if (this.isNode) {
+        if (!this.allNodesResult.length) {
+          this.allNodesResult = this.allNodes
+        }
+      }
+      if (!this.taskAlarmData.alarmSettings) {
+        this.taskAlarmData.alarmSettings = this.settings.alarmSettings
+      }
+      if (!this.taskAlarmData.alarmRules) {
+        this.taskAlarmData.alarmRules = this.settings.alarmRules
+      }
       this.loadSchema()
       this.loadSchemaForm()
-    },
+    }, 500),
 
     // 绑定表单事件
     useEffects() {
       onFormInputChange(form => {
         const values = JSON.parse(JSON.stringify(form.values))
-        // 节点类型
-        if (['source', 'target', 'process'].includes(this.nodeType)) {
-          this.saveNodeSettings(values, this)
-          return
-        }
-        this.saveTaskSettings(values, this.settings)
+        this.isNode ? this.saveNodeSettings(values, this) : this.saveTaskSettings(values, this.settings)
       })
     },
 
     saveTaskSettings: debounce((values, settings) => {
-      const { id, alarmSettings, alarmRules } = settings
-      let alarmSettingsNew = cloneDeep(alarmSettings)
-      let alarmRulesNew = cloneDeep(alarmRules)
-      alarmSettingsNew.forEach(el => {
+      let { id, alarmSettings, alarmRules } = settings
+      alarmSettings.forEach(el => {
         for (let key in el) {
           el[key] = values[el.key][key]
         }
       })
-      alarmRulesNew.forEach(el => {
+      alarmRules.forEach(el => {
         for (let key in el) {
           el[key] = values[el.key][key]
         }
       })
       taskApi.patch({
         id,
-        alarmSettings: alarmSettingsNew,
-        alarmRules: alarmRulesNew
+        alarmSettings: alarmSettings,
+        alarmRules: alarmRules
       })
     }, 500),
 
     saveNodeSettings: debounce((values, _self) => {
-      const { allEdges, activeNodeId, settings, allNodesResult } = _self
+      const { allEdges, activeNodeId, settings, allNodesResult, taskAlarmData } = _self
       const { id } = settings
       let findOne = allNodesResult.find(t => t.id === activeNodeId) || {}
       let alarmSettings = findOne.alarmSettings || []
@@ -124,12 +121,14 @@ export default observer({
       }
       taskApi.patch({
         id,
-        dag
+        dag,
+        alarmSettings: taskAlarmData.alarmSettings,
+        alarmRules: taskAlarmData.alarmRules
       })
     }, 500),
 
     loadSchema() {
-      const { nodeType } = this
+      const nodeType = this.isNode ? this.getNodeType() : ''
       this.schema = null
       switch (nodeType) {
         case 'source':
@@ -238,9 +237,11 @@ export default observer({
     },
 
     loadSchemaForm() {
-      let { alarmSettings = [], alarmRules = [] } = this.settings
+      const { taskAlarmData, settings } = this
+      let alarmSettings = taskAlarmData.alarmSettings || settings.alarmSettings || []
+      let alarmRules = taskAlarmData.alarmRules || settings.alarmRules || []
       // 节点类型
-      if (['source', 'target', 'process'].includes(this.nodeType)) {
+      if (this.isNode) {
         const { activeNodeId, allNodesResult } = this
         const activeNode = allNodesResult.find(t => t.id === activeNodeId) || {}
         alarmSettings = activeNode.alarmSettings || []
@@ -279,11 +280,11 @@ export default observer({
       }
     },
 
-    getInputNumber(title) {
+    getInputNumber(title, defaultNum = 0) {
       return {
         title,
         type: 'number',
-        default: 0,
+        default: defaultNum,
         'x-decorator': 'FormItem',
         'x-decorator-props': {
           layout: 'horizontal'
@@ -335,7 +336,7 @@ export default observer({
       }
       result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'))
       result.properties[key2] = this.getSelect(i18n.t('packages_dag_migration_alarmpanel_gedian'))
-      result.properties[key3] = this.getInputNumber()
+      result.properties[key3] = this.getInputNumber('', 500)
       result.properties.ms = {
         title: 'ms',
         type: 'void',
@@ -346,6 +347,17 @@ export default observer({
         }
       }
       return result
+    },
+
+    getNodeType() {
+      const { activeNodeId, allNodes } = this
+      const { type, $inputs, $outputs } = allNodes.find(t => t.id === activeNodeId) || {}
+      if (!type) return ''
+      if (type === 'database' || type === 'table') {
+        if (!$inputs.length) return 'source'
+        if (!$outputs.length) return 'target'
+      }
+      return 'process'
     }
   }
 })
