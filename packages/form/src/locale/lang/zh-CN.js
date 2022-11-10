@@ -130,6 +130,6 @@ export default {
   packages_form_table_rename_index_sousuobiaoming: '搜索表名',
   packages_form_text_file_reader_index_shangchuanwenjianda: '上传文件大小不能超过 {val1}KB',
   packages_form_src_index_cronbiao: 'Cron表达式格式有误',
-  packages_form_js_editor_fullscreen: '全屏编辑',
+  packages_form_js_editor_fullscreen: '全屏',
   packages_form_js_editor_exit_fullscreen: '退出全屏'
 }
