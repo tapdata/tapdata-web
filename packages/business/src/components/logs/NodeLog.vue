@@ -101,7 +101,6 @@
               <div class="log-line py-1 font-color-light white-space-pre">
                 <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
                 <span class="ml-1">{{ formatTime(item.timestamp) }}</span>
-                <span v-if="item.taskName" v-html="item.taskNameText" class="ml-1"></span>
                 <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
                 <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
                 <span v-html="item.messageText" class="ml-1"></span>
@@ -513,7 +512,7 @@ export default {
 
     getFormatRow(data = []) {
       let result = deepCopy(data)
-      const arr = ['taskName', 'nodeName', 'message']
+      const arr = ['nodeName', 'message']
       result.forEach(row => {
         row.levelText = `[${row.level}]`
         row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
