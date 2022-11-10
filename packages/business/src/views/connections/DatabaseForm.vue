@@ -875,7 +875,10 @@ export default {
             expireSeconds: 100000000
           }
           proxyApi.subscribe(filter).then(data => {
-            const str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
+            let str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
+            if (/^\/\w+/.test(data.token)) {
+              str = `${process.env.BASE_URL || location.origin}${data.token}`
+            }
             $form.setValuesIn(field.name, str)
           })
         },
