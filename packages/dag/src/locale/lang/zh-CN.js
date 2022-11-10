@@ -406,7 +406,6 @@ export default {
   packages_dag_nodes_targetdatabase_jiedianmiaoshu: '节点描述',
   packages_dag_src_store_weizhaodaojiedian: '未找到节点',
   packages_dag_src_store_qingkongjiedianshu: '清空节点输入输出的监听',
-  dag_dialog_field_mapping_no_data: '暂无数据',
   packages_dag_node_none_input: '“ {val1} ”至少需要{val2}个源节点',
   packages_dag_node_none_output: '“ {val1} ”至少需要{val2}个目标节点',
   packages_dag_node_none_connection: '“ {val1} ”没有任何连线',
@@ -507,14 +506,11 @@ export default {
   packages_dag_page_return_confirm_content: '当前任务内容为空，是否要保留？',
   packages_dag_page_return_confirm_ok_text: '不保留',
   packages_dag_page_return_confirm_cancel_text: '保留',
-  packages_dag_monitor_node_cdcTitle_source: '最新读取的数据产生在',
-  packages_dag_monitor_node_cdcTitle_target: '最新写入的数据产生在',
-  packages_dag_monitor_node_cdcTitle_processor: '最新处理的数据产生在',
+  packages_dag_monitor_node_cdcTitle_source: '采集延迟',
   packages_dag_monitor_node_popover_cdcTimeTitle_source: '读取增量时间点',
   packages_dag_monitor_node_popover_cdcTimeTitle_target: '写入增量时间点',
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '处理增量时间点',
   packages_dag_monitor_node_popover_targetWriteTime_title: '平均每条写入耗时',
-  packages_dag_monitor_node_popover_cdc_no_find_data: '未发现新增数据',
   packages_dag_monitor_topheader_renwuxintiaoshi: '任务心跳时间',
   packages_dag_monitor_node_per_deal_need_time: '单条处理耗时'
 }

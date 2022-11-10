@@ -109,15 +109,6 @@ export default defineComponent({
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
 
-    /**
-     * 增量时间点（相对）
-     * @type {ComputedRef<string|string>}
-     */
-    const cdcEventStartRelativeTime = computed(() => {
-      const val = cdcEventStartTime.value
-      return val ? dayjs().to(dayjs(val)) : '-'
-    })
-
     const outputQps = computed(() => {
       const { outputQps = 0 } = props.sample
       return outputQps.toLocaleString('zh', {
@@ -137,7 +128,7 @@ export default defineComponent({
      */
     const timeCostAvg = computed(() => {
       const { timeCostAvg } = props.sample
-      if (!timeCostAvg) return '-'
+      if (!timeCostAvg) return ''
       return calcTimeUnit(timeCostAvg)
     })
 
@@ -147,7 +138,8 @@ export default defineComponent({
      */
     const targetWriteTimeCostAvg = computed(() => {
       const { targetWriteTimeCostAvg } = props.sample
-      if (!targetWriteTimeCostAvg) return '-'
+      if (!targetWriteTimeCostAvg) return ''
+      console.log('targetWriteTimeCostAvg', targetWriteTimeCostAvg)
       return calcTimeUnit(targetWriteTimeCostAvg)
     })
 
@@ -210,17 +202,17 @@ export default defineComponent({
             const title = isSource.value
               ? i18n.t('packages_dag_components_node_quanliangwanchenghaixu')
               : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+            const val =
+              (isTarget.value
+                ? targetWriteTimeCostAvg.value
+                : isProcessor.value
+                ? timeCostAvg.value
+                : completeTime.value) || i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
             return (
               <div class="statistic flex">
                 <div class="statistic-title">{title}：</div>
                 <div class="statistic-content">
-                  <div class="statistic-value">
-                    {isTarget.value
-                      ? targetWriteTimeCostAvg.value
-                      : isProcessor.value
-                      ? timeCostAvg.value
-                      : completeTime.value}
-                  </div>
+                  <div class="statistic-value">{val}</div>
                 </div>
               </div>
             )
@@ -231,18 +223,16 @@ export default defineComponent({
         // 增量进行中
         const cdcTitle = isSource.value
           ? i18n.t('packages_dag_monitor_node_cdcTitle_source')
-          : isTarget.value
-          ? i18n.t('packages_dag_monitor_node_cdcTitle_target')
-          : i18n.t('packages_dag_monitor_node_cdcTitle_processor')
+          : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+        const getCdcTime = calcTimeUnit(Date.now() - new Date(cdcEventStartTime.value || null).getTime(), 2)
+        const val =
+          (isSource.value ? getCdcTime : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value) ||
+          i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
         return (
           <div class="statistic flex">
             <div class="statistic-title">{cdcTitle}：</div>
             <div class="statistic-content">
-              <div class="statistic-value">
-                {cdcEventStartRelativeTime.value === '-'
-                  ? i18n.t('packages_dag_monitor_node_popover_cdc_no_find_data')
-                  : cdcEventStartRelativeTime.value}
-              </div>
+              <div class="statistic-value">{val}</div>
             </div>
           </div>
         )
@@ -261,7 +251,7 @@ export default defineComponent({
           <div class="statistic-title">{cdcTimeTitle}</div>
           <div class="statistic-content">
             <div class="statistic-value">
-              {cdcEventStartTime.value || i18n.t('packages_dag_monitor_node_popover_cdc_no_find_data')}
+              {cdcEventStartTime.value || i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
             </div>
           </div>
         </div>
@@ -271,7 +261,9 @@ export default defineComponent({
         <div class="statistic">
           <div class="statistic-title">{i18n.t('packages_dag_monitor_node_per_deal_need_time')}</div>
           <div class="statistic-content">
-            <div class="statistic-value">{timeCostAvg.value}</div>
+            <div class="statistic-value">
+              {timeCostAvg.value || i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
+            </div>
           </div>
         </div>
       )
@@ -284,7 +276,7 @@ export default defineComponent({
             <div class="statistic-value">
               {props.sample.snapshotSourceReadTimeCostAvg
                 ? calcTimeUnit(props.sample.snapshotSourceReadTimeCostAvg)
-                : '-'}
+                : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
             </div>
           </div>
         </div>
@@ -298,7 +290,7 @@ export default defineComponent({
             <div class="statistic-value">
               {props.sample.incrementalSourceReadTimeCostAvg
                 ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
-                : '-'}
+                : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
             </div>
           </div>
         </div>
@@ -310,7 +302,9 @@ export default defineComponent({
           <div class="statistic-title">{i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')}</div>
           <div class="statistic-content">
             <div class="statistic-value">
-              {props.sample.targetWriteTimeCostAvg ? calcTimeUnit(props.sample.targetWriteTimeCostAvg) : '-'}
+              {props.sample.targetWriteTimeCostAvg
+                ? calcTimeUnit(props.sample.targetWriteTimeCostAvg)
+                : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
             </div>
           </div>
         </div>
