@@ -395,7 +395,8 @@ export class Table extends NodeType {
                     type: 'array',
                     required: true,
                     default: null,
-                    description: '{{ $isDaas ? "" : "如果要同步删除事件，请确保关联 _id "}}',
+                    description:
+                      '{{ !$isDaas && $values.databaseType==="MongoDB" ? "如果要同步删除事件，请确保关联 _id" : ""}}',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       wrapperWidth: 300
