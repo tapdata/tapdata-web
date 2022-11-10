@@ -139,7 +139,6 @@ export default defineComponent({
     const targetWriteTimeCostAvg = computed(() => {
       const { targetWriteTimeCostAvg } = props.sample
       if (!targetWriteTimeCostAvg) return ''
-      console.log('targetWriteTimeCostAvg', targetWriteTimeCostAvg)
       return calcTimeUnit(targetWriteTimeCostAvg)
     })
 
