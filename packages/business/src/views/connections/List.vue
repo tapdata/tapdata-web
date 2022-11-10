@@ -107,10 +107,14 @@
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="220" :label="$t('packages_business_connection_operate')">
+      <ElTableColumn width="300" :label="$t('packages_business_connection_operate')">
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)"
             >{{ $t('packages_business_connection_list_test_button') }}
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" @click="handleLoadSchema(scope.row)"
+            >{{ $t('packages_business_connection_preview_load_schema') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
@@ -672,6 +676,13 @@ export default {
     },
     getConnectionIcon() {
       return getConnectionIcon(...arguments)
+    },
+    handleLoadSchema(row) {
+      if (!this.$refs.preview) {
+        return
+      }
+      this.$refs.preview.setConnectionData(row)
+      this.$refs.preview.reload?.(this.table.fetch(null, 0, true))
     }
   }
 }

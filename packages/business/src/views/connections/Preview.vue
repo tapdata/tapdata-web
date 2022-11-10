@@ -313,7 +313,7 @@ export default {
           })
       })
     },
-    async reload() {
+    async reload(cb) {
       this.checkAgent(() => {
         let config = {
           title: this.$t('packages_business_connection_reloadTittle'),
@@ -332,20 +332,21 @@ export default {
           if (resFlag) {
             this.showProgress = true
             this.progress = 0
-            this.testSchema()
+            this.testSchema(cb)
             this.$emit('reload-schema')
           }
         })
       })
     },
     //请求测试
-    testSchema() {
+    testSchema(cb) {
       let parms = {
         loadCount: 0,
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
       connectionsApi.updateById(this.connection.id, parms).then(data => {
+        cb?.()
         if (!this?.$refs?.test) {
           return
         }
@@ -428,6 +429,10 @@ export default {
         customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
       }
       return MAP[definitionScope + beta] || MAP['customer']
+    },
+
+    setConnectionData(row) {
+      this.connection = this.transformData(row)
     }
   }
 }
