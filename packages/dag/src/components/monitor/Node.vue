@@ -222,6 +222,8 @@ export default defineComponent({
         // 增量进行中
         const cdcTitle = isSource.value
           ? i18n.t('packages_dag_monitor_node_cdcTitle_source')
+          : isTarget.value
+          ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
           : i18n.t('packages_dag_monitor_node_per_deal_need_time')
         const getCdcTime = calcTimeUnit(Date.now() - new Date(cdcEventStartTime.value || null).getTime(), 2)
         const val =
