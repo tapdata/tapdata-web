@@ -65,10 +65,18 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
  * @val Number 需要处理的毫秒
  * @fix Number 需要保留几个单位
  * @digits Number 只有ms单位时，保留几位小数；多个单位默认取整
- * @separator String 分割符
+ * @options.separator String 分割符
+ * @options.showMs Boolean
  * @return string
  * */
-export function calcTimeUnit(val, fix = 1, separator = ' ') {
+export function calcTimeUnit(
+  val,
+  fix = 1,
+  options = {
+    separator: ' ',
+    showMs: false
+  }
+) {
   const list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
   const sp = [1000, 60, 60, 24, 30, 12]
   let result = []
@@ -95,10 +103,15 @@ export function calcTimeUnit(val, fix = 1, separator = ' ') {
     })
     num = Math.round(m)
   }
-  const arr = fix < 0 ? result : result.slice(0, fix)
+  let arr = fix < 0 ? result : result.slice(0, fix)
+  const findMsIndex = arr.findIndex(t => t.util === 'ms')
+  if (!options.showMs && findMsIndex >= 1) {
+    arr[findMsIndex - 1].value++
+    arr = arr.slice(0, fix - 1)
+  }
   return arr
     .filter(t => t.value)
     .reduce((pre, current) => {
-      return pre + separator + current.value + current.util
+      return pre + (pre ? options.separator : '') + current.value + current.util
     }, '')
 }
