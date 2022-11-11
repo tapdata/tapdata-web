@@ -200,6 +200,8 @@ export default defineComponent({
           if (taskSnapshotStartAt.value) {
             const title = isSource.value
               ? i18n.t('packages_dag_components_node_quanliangwanchenghaixu')
+              : isTarget.value
+              ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
               : i18n.t('packages_dag_monitor_node_per_deal_need_time')
             const val =
               (isTarget.value
@@ -225,7 +227,9 @@ export default defineComponent({
           : isTarget.value
           ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
           : i18n.t('packages_dag_monitor_node_per_deal_need_time')
-        const getCdcTime = calcTimeUnit(Date.now() - new Date(cdcEventStartTime.value || null).getTime(), 2)
+        const getCdcTime = cdcEventStartTime.value
+          ? calcTimeUnit(Date.now() - new Date(cdcEventStartTime.value).getTime(), 2)
+          : null
         const val =
           (isSource.value ? getCdcTime : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value) ||
           i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
