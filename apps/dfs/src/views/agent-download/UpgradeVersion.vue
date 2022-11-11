@@ -82,8 +82,8 @@
       <!--   AliComputenest   -->
       <div v-else-if="downLoadType === 'AliComputenest'" class="content-container">
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
-        <div>1. 登录到安装了Tapdata Agent的阿里云ECS实例</div>
-        <div>2. 进入原Agent安装目录下，计算巢会自动安装在/data/tapdata下面</div>
+        <div>{{$t('dfs_agent_download_upgradeversion_dengludaoanzhuang')}}</div>
+        <div>{{$t('dfs_agent_download_upgradeversion_jinruyuanAg')}}</div>
         <div v-if="agentId">
           <div class="box title-text">
             <span class="com-url">{{ comUrl }}</span>
@@ -155,6 +155,8 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import TheHeader from '@/components/the-header'
 
 export default {
@@ -167,7 +169,7 @@ export default {
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
         { name: 'Windows (64 bit)', value: 'windows' },
-        { name: '阿里云计算巢', value: 'AliComputenest' }
+        { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
       ],
       showTooltip: false,
       agentId: '',

@@ -1116,5 +1116,33 @@ export default {
   dfs_workbench_workbench_banbenshengjitong: 'version upgrade notice',
   dfs_user_center_acces:
     'AccessKey is your secret key to access the system API and has full account authority, please keep it properly! Do not expose AccessKey to external channels (such as GitHub) in any way to avoid being used by others to cause security threats. ',
-  dfs_user_center_kaifaxinxi: 'Development information'
+  dfs_user_center_kaifaxinxi: 'Development information',
+
+  dfs_agent_download_agentdownloadmodal_aliyunjisuan: 'Alibaba Cloud Computing Nest',
+  dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
+    '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations! The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
+  dfs_agent_download_agentdownloadmodal_querenjisuanchao: '3. Confirm that the Compute Nest deployment is complete. ',
+  dfs_agent_download_agentdownloadmodal_shilitok: 'Instance token:',
+  dfs_agent_download_agentdownloadmodal_shilibanben: 'Instance version:',
+  dfs_agent_download_agentdownloadmodal_womenyijingwei:
+    '2. We have automatically filled in the information in "Application Instance Configuration" for you, you can also manually copy/paste the following information if necessary. ',
+  dfs_agent_download_agentdownloadmodal_fufeibushu: 'paid deployment',
+  dfs_agent_download_agentdownloadmodal_santianshiyong: 'Trial for three days',
+  dfs_agent_download_agentdownloadmodal_ninkeyixuanze:
+    ' 1. You can choose to pay by flow rate or prepaid monthly/yearly, or you can try it for 3 days for free. After 3 days, the server resources will be automatically recovered. You need to redeploy the Agent to continue to use TapData. According to your payment method, please click below Click the button to jump to Alibaba Cloud to create your cloud server. Tapdata Agent will be automatically installed on the new instance. If you do not have an account, you can register on site: ',
+  dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun:
+    'The Alibaba Cloud account that is ready to manage the cloud server can also be created on site by clicking the button below. ',
+  dfs_agent_download_agentdownloadmodal_jisuanchaoCo:
+    'Compute Nest is an enterprise software service for automated deployment and management of Tapdata for Alibaba Cloud, which saves you the time to deploy and operate servers. ',
+  dfs_agent_download_agentdownloadmodal_yaoanzhuangAg: 'To install Agent, please select your server type below:',
+  dfs_agent_download_fastdownload_bushuwanchenghou:
+    '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations! The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
+  dfs_agent_download_fastdownload_ninkeyixuanze:
+    '1. You can choose to pay by flow rate or prepaid monthly/yearly, or you can try it for free for 3 days. After 3 days, the server resources will be automatically recovered. You need to redeploy the Agent to continue to use TapData. According to your payment method, please click below Click the button to jump to Alibaba Cloud to create your cloud server. Tapdata Agent will be automatically installed on the new instance. If you do not have an account, you can register on site: ',
+  dfs_agent_download_fastdownload_jisuanchaoCo:
+    'Compute Nest is an enterprise software service for automated deployment and management of Tapdata for Alibaba Cloud, which saves you the time to deploy and operate servers. ',
+  dfs_agent_download_upgradeversion_jinruyuanAg:
+    '2. Enter the original Agent installation directory, Compute Nest will be automatically installed under /data/tapdata',
+  dfs_agent_download_upgradeversion_dengludaoanzhuang:
+    '1. Log in to the Alibaba Cloud ECS instance where Tapdata Agent is installed'
 }

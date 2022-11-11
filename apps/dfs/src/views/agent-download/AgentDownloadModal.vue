@@ -14,7 +14,7 @@
           {{ $t('agent_deploy_select_tip') }}
         </p>
         <div class="content">
-          <div class="text-style mt-6">要安装Agent,请先在下方选择您的服务器类型：</div>
+          <div class="text-style mt-6">{{$t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg')}}</div>
           <div class="down-type">
             <div
               v-for="down in downType"
@@ -138,45 +138,37 @@
             <ul class="ul-style">
               <li>
                 <span
-                  >计算巢（Compute
-                  Nest）是为阿里云提供的自动化部署和管理Tapdata的企业软件服务，可以免去您部署和运维服务器的时间。</span
+                  >{{$t('dfs_agent_download_agentdownloadmodal_jisuanchaoCo')}}</span
                 >
               </li>
               <li>
-                <div class="my-5 text-style">安装前准备</div>
+                <div class="my-5 text-style">{{$t('agent_deploy_before_prepare_title')}}</div>
               </li>
-              <li>准备管理云服务器的阿里云账号，也可点击下方的按钮现场创建。</li>
+              <li>{{$t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun')}}</li>
               <li>
-                <div class="my-5 text-style">开始安装</div>
+                <div class="my-5 text-style">{{$t('agent_deploy_start_install')}}</div>
               </li>
-              <li>
-                1.
-                您可以选择按流量计费或者预付包月/年，也可以免费试用3天，3天后服务器资源将自动回收，您需要重新部署Agent才能继续使用TapData，根据您的付费方式，请点击下方按钮跳转到阿里云创建您的云服务器，Tapdata
-                Agent会自动安装在改实例上，如果没有账号可以现场注册：
-                <div class="my-4">
-                  <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"><div>三天试用</div></el-link>
-                  <el-link :href="url" target="_blank" class="url-btn"><div>付费部署</div></el-link>
+              <li>{{$t('dfs_agent_download_agentdownloadmodal_ninkeyixuanze')}}<div class="my-4">
+                  <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"><div>{{$t('dfs_agent_download_agentdownloadmodal_santianshiyong')}}</div></el-link>
+                  <el-link :href="url" target="_blank" class="url-btn"><div>{{$t('dfs_agent_download_agentdownloadmodal_fufeibushu')}}</div></el-link>
                 </div>
               </li>
-              <li>2. 我们已经为您自动填充了《应用实例配置》中的信息，如果需要也可以手动复制/黏贴下面的信息。</li>
+              <li>{{$t('dfs_agent_download_agentdownloadmodal_womenyijingwei')}}</li>
               <li>
-                <div class="my-2 text-style">实例版本：</div>
+                <div class="my-2 text-style">{{$t('dfs_agent_download_agentdownloadmodal_shilibanben')}}</div>
               </li>
               <li class="box title-text my-2">{{ version }}</li>
               <li>
-                <div class="my-2 text-style">实例token：</div>
+                <div class="my-2 text-style">{{$t('dfs_agent_download_agentdownloadmodal_shilitok')}}</div>
               </li>
               <li class="box title-text link-line my-2">
                 {{ token }}
               </li>
-              <li>3. 确认计算巢部署完成。</li>
+              <li>{{$t('dfs_agent_download_agentdownloadmodal_querenjisuanchao')}}</li>
               <li>
                 <el-image :src="getImg('alicomputenest_instance')" alt="" />
               </li>
-              <li class="my-2">
-                4. 部署完成后，返回我们的【Agent管理页面】等待2分钟直到【状态】变为【运行中】。恭喜您！已经完成了Tapdata
-                Alould 计算环境的部署，可以去创建数据任务了。
-              </li>
+              <li class="my-2">{{$t('dfs_agent_download_agentdownloadmodal_bushuwanchenghou')}}</li>
               <li>
                 <el-image :src="getImg('alicomputenest_agent')" alt="" />
               </li>
@@ -195,7 +187,7 @@
             <div class="ml-4">{{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}</div>
           </div>
           <div class="agent_download_status_btn">
-            <div @click="recordUserBehavior">稍后部署</div>
+            <div @click="recordUserBehavior">{{$t('agent_button_deploy_later')}}</div>
           </div>
         </div>
         <div v-else class="finish-item">
@@ -215,6 +207,8 @@
   </ElDialog>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -237,7 +231,7 @@ export default {
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
         { name: 'Windows (64 bit)', value: 'windows' },
-        { name: '阿里云计算巢', value: 'AliComputenest' }
+        { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
       ],
       showTooltip: false,
       windowsLink: '',
