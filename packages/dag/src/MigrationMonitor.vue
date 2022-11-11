@@ -372,7 +372,7 @@ export default {
 
     async initNodeType() {
       this.addResourceIns(allResourceIns)
-      if (this.dataflow.syncType !== 'migrate') await this.loadCustomNode(false)
+      await this.loadCustomNode(false)
     },
 
     async openDataflow(id) {

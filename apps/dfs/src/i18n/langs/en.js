@@ -1144,5 +1144,18 @@ export default {
   dfs_agent_download_upgradeversion_jinruyuanAg:
     '2. Enter the original Agent installation directory, Compute Nest will be automatically installed under /data/tapdata',
   dfs_agent_download_upgradeversion_dengludaoanzhuang:
-    '1. Log in to the Alibaba Cloud ECS instance where Tapdata Agent is installed'
+    '1. Log in to the Alibaba Cloud ECS instance where Tapdata Agent is installed',
+  dfs_agent_download_upgradeversion_chuxianUpd:
+    '5. If "Update finished." appears, it means that the Agent has been upgraded successfully',
+  dfs_agent_download_upgradeversion_zaiTapd:
+    '4. Copy the upgrade command on the manual upgrade page of the Tapdata console, and paste it into the "ECS" remote terminal for execution',
+  dfs_agent_download_upgradeversion_dengluchenggonghou:
+    '3. After successful login, enter the directory "/data/tapdata"',
+  dfs_agent_download_upgradeversion_dianjishiliming:
+    '2. Click the instance name, select the "Resources" tab, and click "Remote Login" in the "Cloud Server ECS" resource',
+  dfs_agent_download_upgradeversion_ruguoninbushu:
+    'If you are deploying a "3-day trial instance", please open the Compute Nest "trial service" tab',
+  dfs_agent_download_upgradeversion_jisuanchaodenglu: 'Calculate nest login address',
+  dfs_agent_download_upgradeversion_denglualiyun:
+    '1. Log in to Alibaba Cloud Computing Nest console and find the service instance where Agent is deployed.'
 }
