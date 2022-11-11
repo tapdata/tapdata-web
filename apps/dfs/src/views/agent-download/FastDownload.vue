@@ -6,7 +6,7 @@
       <p class="title-text box link-line my-2">
         {{ $t('agent_deploy_select_tip') }}
       </p>
-      <div class="text-style mt-6">{{$t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg')}}</div>
+      <div class="text-style mt-6">{{ $t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg') }}</div>
       <div class="down-type">
         <div
           v-for="down in downType"
@@ -168,38 +168,42 @@
       <template v-if="downLoadType === 'AliComputenest'">
         <ul class="ul-style">
           <li>
-            <span
-              >{{$t('dfs_agent_download_fastdownload_jisuanchaoCo')}}</span
-            >
+            <span>{{ $t('dfs_agent_download_fastdownload_jisuanchaoCo') }}</span>
           </li>
           <li>
-            <div class="my-5 text-style">{{$t('agent_deploy_before_prepare_title')}}</div>
+            <div class="my-5 text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
           </li>
-          <li>{{$t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun')}}</li>
+          <li>{{ $t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun') }}</li>
           <li>
-            <div class="my-5 text-style">{{$t('agent_deploy_start_install')}}</div>
+            <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
           </li>
-          <li>{{$t('dfs_agent_download_fastdownload_ninkeyixuanze')}}<div class="my-4">
-              <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"><div>{{$t('dfs_agent_download_agentdownloadmodal_santianshiyong')}}</div></el-link>
-              <el-link :href="url" target="_blank" class="url-btn"><div>{{$t('dfs_agent_download_agentdownloadmodal_fufeibushu')}}</div></el-link>
+          <li>
+            {{ $t('dfs_agent_download_fastdownload_ninkeyixuanze') }}
+            <div class="my-4">
+              <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"
+                ><div>{{ $t('dfs_agent_download_agentdownloadmodal_santianshiyong') }}</div></el-link
+              >
+              <el-link :href="url" target="_blank" class="url-btn"
+                ><div>{{ $t('dfs_agent_download_agentdownloadmodal_fufeibushu') }}</div></el-link
+              >
             </div>
           </li>
-          <li>{{$t('dfs_agent_download_agentdownloadmodal_womenyijingwei')}}</li>
+          <li>{{ $t('dfs_agent_download_agentdownloadmodal_womenyijingwei') }}</li>
           <li>
-            <div class="my-2 text-style">{{$t('dfs_agent_download_agentdownloadmodal_shilibanben')}}</div>
+            <div class="my-2 text-style">{{ $t('dfs_agent_download_agentdownloadmodal_shilibanben') }}</div>
           </li>
           <li class="box title-text my-2">{{ version }}</li>
           <li>
-            <div class="my-2 text-style">{{$t('dfs_agent_download_agentdownloadmodal_shilitok')}}</div>
+            <div class="my-2 text-style">{{ $t('dfs_agent_download_agentdownloadmodal_shilitok') }}</div>
           </li>
           <li class="box title-text link-line my-2">
             {{ token }}
           </li>
-          <li>{{$t('dfs_agent_download_agentdownloadmodal_querenjisuanchao')}}</li>
+          <li>{{ $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao') }}</li>
           <li>
             <el-image :src="getImg('alicomputenest_instance')" alt="" />
           </li>
-          <li class="my-2">{{$t('dfs_agent_download_fastdownload_bushuwanchenghou')}}</li>
+          <li class="my-2">{{ $t('dfs_agent_download_fastdownload_bushuwanchenghou') }}</li>
           <li>
             <el-image :src="getImg('alicomputenest_agent')" alt="" />
           </li>
@@ -418,6 +422,10 @@ export default {
         color: map-get($iconFillColor, normal);
         background: map-get($bgColor, main);
         border-radius: 4px;
+        &:hover {
+          background-color: #e5e8ee;
+          border-color: #e5e8ee;
+        }
       }
       .active {
         border: 1px solid map-get($color, primary);

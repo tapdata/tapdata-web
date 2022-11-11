@@ -1074,5 +1074,14 @@ export default {
   dfs_agent_download_fastdownload_jisuanchaoCo:
     '计算巢（Compute Nest）是为阿里云提供的自动化部署和管理Tapdata的企业软件服务，可以免去您部署和运维服务器的时间。',
   dfs_agent_download_upgradeversion_jinruyuanAg: '2. 进入原Agent安装目录下，计算巢会自动安装在/data/tapdata下面',
-  dfs_agent_download_upgradeversion_dengludaoanzhuang: '1. 登录到安装了Tapdata Agent的阿里云ECS实例'
+  dfs_agent_download_upgradeversion_dengludaoanzhuang: '1. 登录到安装了Tapdata Agent的阿里云ECS实例',
+  dfs_agent_download_upgradeversion_chuxianUpd: '5. 出现“Update finished.”则代表Agent升级成功',
+  dfs_agent_download_upgradeversion_zaiTapd:
+    '4. 在Tapdata 控制台手动升级页面 复制升级命令，并粘贴到“云服务器ECS”远程终端中执行',
+  dfs_agent_download_upgradeversion_dengluchenggonghou: '3. 登录成功后，进入目录“/data/tapdata”',
+  dfs_agent_download_upgradeversion_dianjishiliming:
+    '2. 点击实例名称，选择“资源”选项卡，在“云服务器 ECS”资源点击“远程登录”',
+  dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天试用实例”请打开计算巢“试用服务”选项卡',
+  dfs_agent_download_upgradeversion_jisuanchaodenglu: '计算巢登录地址',
+  dfs_agent_download_upgradeversion_denglualiyun: '1. 登录阿里云计算巢控制台，找到部署Agent的服务实例.'
 }
