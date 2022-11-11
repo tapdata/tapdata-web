@@ -556,6 +556,7 @@ export default {
       this.$set(this.dataflow, 'stopTime', data.stopTime)
       this.$set(this.dataflow, 'startTime', data.startTime)
       this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
+      this.$set(this.dataflow, 'pingTime', data.pingTime)
       // 前端不关心的属性
       this.dataflow.attrs = data.attrs
 
@@ -1813,6 +1814,9 @@ export default {
             console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
             this.dataflow.status = data.status
           }
+          // 需要实时更新的字段
+          this.dataflow.lastStartDate = data.lastStartDate
+          this.dataflow.pingTime = data.pingTime
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 
