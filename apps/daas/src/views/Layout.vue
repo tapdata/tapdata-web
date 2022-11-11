@@ -1,7 +1,7 @@
 <template>
   <ElContainer class="layout-container" direction="vertical">
     <ElHeader v-if="!IS_IFRAME" class="layout-header" height="60px">
-      <a class="logo" href="/">
+      <a class="logo" href="/" :style="logoStyle">
         <img :src="logoUrl" />
       </a>
       <div class="button-bar">
@@ -445,6 +445,13 @@ export default {
   computed: {
     initials() {
       return this.userName.substring(0, 1)
+    },
+
+    logoStyle() {
+      const width = window._TAPDATA_OPTIONS_.logoWidth
+      return {
+        width: width && `${width}px`
+      }
     }
   },
   watch: {
