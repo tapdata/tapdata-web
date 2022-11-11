@@ -210,9 +210,10 @@ export default {
   agent_list_empty_desc2: '开始实时数据同步吧~',
   agent_error_check: '当前无可用Agent，请去Agent管理页面新建Agent或启动已有的Agent并保证连通性',
   // Agent部署
-  agent_deploy_title: 'Agent 下载与安装',
+  agent_deploy_title: '准备 Tapdata Cloud 计算环境',
   agent_deploy_select_tip:
-    'Tapdata DFS 云版需要先在本地安装 Agent 以确保连接数据库和数据传输服务的正常运行, 您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
+    '在半托管模式中，您需要提前安装Tapdata的计算代理Agent，您的任务运行、数据库连接以及数据的传输和计算，都是在您安装了Agent的服务器上进行的，Tapdata不会收集传输的数据内容，只要这台服务器能够访问到您的数据源，它可以是公有云、私有服务器甚至您的个人计算机,',
+  agent_deploy_select_help: '详情请见《Tapdata 半托管架构及工作原理》。',
   agent_deploy_before_prepare_title: '安装前准备',
   agent_deploy_before_prepare_windows_first: '1. 安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。',
   agent_deploy_before_prepare_windows_first_link: '点击查看Java1.8安装和配置方式',
@@ -1049,5 +1050,29 @@ export default {
   dfs_workbench_workbench_banbenshengjitong: '版本升级通知',
   dfs_user_center_acces:
     'AccessKey是您访问系统API的秘钥，具有账号的完全权限，请您务必妥善保管！不要以任何方式公开AccessKey到外部渠道（例如GitHub），避免被他人利用造成安全威胁。',
-  dfs_user_center_kaifaxinxi: '开发信息'
+  dfs_user_center_kaifaxinxi: '开发信息',
+  dfs_agent_download_agentdownloadmodal_aliyunjisuan: '阿里云计算巢',
+  dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
+    '4. 部署完成后，返回我们的【Agent管理页面】等待2分钟直到【状态】变为【运行中】。恭喜您！已经完成了Tapdata  Alould 计算环境的部署，可以去创建数据任务了。',
+  dfs_agent_download_agentdownloadmodal_querenjisuanchao: '3. 确认计算巢部署完成。',
+  dfs_agent_download_agentdownloadmodal_shilitok: '实例token：',
+  dfs_agent_download_agentdownloadmodal_shilibanben: '实例版本：',
+  dfs_agent_download_agentdownloadmodal_womenyijingwei:
+    '2. 我们已经为您自动填充了《应用实例配置》中的信息，如果需要也可以手动复制/黏贴下面的信息。',
+  dfs_agent_download_agentdownloadmodal_fufeibushu: '付费部署',
+  dfs_agent_download_agentdownloadmodal_santianshiyong: '三天试用',
+  dfs_agent_download_agentdownloadmodal_ninkeyixuanze:
+    ' 1. 您可以选择按流量计费或者预付包月/年，也可以免费试用3天，3天后服务器资源将自动回收，您需要重新部署Agent才能继续使用TapData，根据您的付费方式，请点击下方按钮跳转到阿里云创建您的云服务器，Tapdata  Agent会自动安装在改实例上，如果没有账号可以现场注册： ',
+  dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun: '准备管理云服务器的阿里云账号，也可点击下方的按钮现场创建。',
+  dfs_agent_download_agentdownloadmodal_jisuanchaoCo:
+    '计算巢（Compute Nest）是为阿里云提供的自动化部署和管理Tapdata的企业软件服务，可以免去您部署和运维服务器的时间。',
+  dfs_agent_download_agentdownloadmodal_yaoanzhuangAg: '要安装Agent,请先在下方选择您的服务器类型：',
+  dfs_agent_download_fastdownload_bushuwanchenghou:
+    '4. 部署完成后，返回我们的【Agent管理页面】等待2分钟直到【状态】变为【运行中】。恭喜您！已经完成了Tapdata Alould 计算环境的部署，可以去创建数据任务了。 ',
+  dfs_agent_download_fastdownload_ninkeyixuanze:
+    '1. 您可以选择按流量计费或者预付包月/年，也可以免费试用3天，3天后服务器资源将自动回收，您需要重新部署Agent才能继续使用TapData，根据您的付费方式，请点击下方按钮跳转到阿里云创建您的云服务器，Tapdata  Agent会自动安装在改实例上，如果没有账号可以现场注册： ',
+  dfs_agent_download_fastdownload_jisuanchaoCo:
+    '计算巢（Compute Nest）是为阿里云提供的自动化部署和管理Tapdata的企业软件服务，可以免去您部署和运维服务器的时间。',
+  dfs_agent_download_upgradeversion_jinruyuanAg: '2. 进入原Agent安装目录下，计算巢会自动安装在/data/tapdata下面',
+  dfs_agent_download_upgradeversion_dengludaoanzhuang: '1. 登录到安装了Tapdata Agent的阿里云ECS实例'
 }

@@ -79,6 +79,34 @@
         </div>
         <div>{{ $t('agent_upgrade_step_linux_third') }}</div>
       </div>
+      <!--   AliComputenest   -->
+      <div v-else-if="downLoadType === 'AliComputenest'" class="content-container">
+        <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
+        <div>{{$t('dfs_agent_download_upgradeversion_dengludaoanzhuang')}}</div>
+        <div>{{$t('dfs_agent_download_upgradeversion_jinruyuanAg')}}</div>
+        <div v-if="agentId">
+          <div class="box title-text">
+            <span class="com-url">{{ comUrl }}</span>
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_upgrade_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="comUrl"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+              </span>
+            </ElTooltip>
+          </div>
+        </div>
+        <div>{{ $t('agent_upgrade_step_linux_third') }}</div>
+      </div>
       <!--   Docker   -->
       <div v-else-if="downLoadType === 'Docker'" class="content-container">
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
@@ -127,6 +155,8 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import TheHeader from '@/components/the-header'
 
 export default {
@@ -138,7 +168,8 @@ export default {
       downType: [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
       ],
       showTooltip: false,
       agentId: '',
@@ -155,6 +186,7 @@ export default {
       let map = {
         windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         Linux: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        AliComputenest: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
       }
       return map[this.downLoadType]

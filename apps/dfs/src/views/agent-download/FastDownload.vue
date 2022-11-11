@@ -3,10 +3,10 @@
     <TheHeader></TheHeader>
     <main class="page-main block">
       <div class="title">{{ $t('agent_deploy_title') }}</div>
-      <p class="title-text pt-10">
+      <p class="title-text box link-line my-2">
         {{ $t('agent_deploy_select_tip') }}
       </p>
-
+      <div class="text-style mt-6">{{$t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg')}}</div>
       <div class="down-type">
         <div
           v-for="down in downType"
@@ -165,6 +165,46 @@
           </li>
         </ul>
       </template>
+      <template v-if="downLoadType === 'AliComputenest'">
+        <ul class="ul-style">
+          <li>
+            <span
+              >{{$t('dfs_agent_download_fastdownload_jisuanchaoCo')}}</span
+            >
+          </li>
+          <li>
+            <div class="my-5 text-style">{{$t('agent_deploy_before_prepare_title')}}</div>
+          </li>
+          <li>{{$t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun')}}</li>
+          <li>
+            <div class="my-5 text-style">{{$t('agent_deploy_start_install')}}</div>
+          </li>
+          <li>{{$t('dfs_agent_download_fastdownload_ninkeyixuanze')}}<div class="my-4">
+              <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"><div>{{$t('dfs_agent_download_agentdownloadmodal_santianshiyong')}}</div></el-link>
+              <el-link :href="url" target="_blank" class="url-btn"><div>{{$t('dfs_agent_download_agentdownloadmodal_fufeibushu')}}</div></el-link>
+            </div>
+          </li>
+          <li>{{$t('dfs_agent_download_agentdownloadmodal_womenyijingwei')}}</li>
+          <li>
+            <div class="my-2 text-style">{{$t('dfs_agent_download_agentdownloadmodal_shilibanben')}}</div>
+          </li>
+          <li class="box title-text my-2">{{ version }}</li>
+          <li>
+            <div class="my-2 text-style">{{$t('dfs_agent_download_agentdownloadmodal_shilitok')}}</div>
+          </li>
+          <li class="box title-text link-line my-2">
+            {{ token }}
+          </li>
+          <li>{{$t('dfs_agent_download_agentdownloadmodal_querenjisuanchao')}}</li>
+          <li>
+            <el-image :src="getImg('alicomputenest_instance')" alt="" />
+          </li>
+          <li class="my-2">{{$t('dfs_agent_download_fastdownload_bushuwanchenghou')}}</li>
+          <li>
+            <el-image :src="getImg('alicomputenest_agent')" alt="" />
+          </li>
+        </ul>
+      </template>
     </main>
     <footer class="footer">
       <ElButton type="primary" @click="handleNextStep()">{{ $t('button_finish') }}</ElButton>
@@ -172,6 +212,8 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import TheHeader from '@/components/the-header'
 export default {
   name: 'FastDownload',
@@ -182,13 +224,18 @@ export default {
       downType: [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
       ],
       showTooltip: false,
       windowsLink: '',
       linuxLink: '',
       dockerLink: '',
       downloadUrl: '',
+      token: '',
+      version: '',
+      trialUrl: '',
+      url: '',
       agentId: ''
     }
   },
@@ -200,8 +247,14 @@ export default {
     getUrl() {
       this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
         this.downloadUrl = data.downloadUrl || ''
+        this.token = data.token || ''
+        this.version = data.version || ''
         let links = data.links || []
         links.forEach(el => {
+          if (el?.os === 'AliComputenest') {
+            this.trialUrl = el?.trialUrl
+            this.url = el?.url
+          }
           this[el.os + 'Link'] = el.command
         })
       })
@@ -312,9 +365,11 @@ export default {
       color: #666;
     }
     .text-style {
-      font-size: 12px;
-      color: #333;
-      font-weight: bold;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 21px;
+      letter-spacing: 0px;
+      text-align: left;
     }
     .ul-style {
       li {
@@ -341,12 +396,17 @@ export default {
       cursor: pointer;
     }
     .text-style {
-      font-size: 12px;
-      color: #333;
-      font-weight: bold;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 21px;
+      letter-spacing: 0px;
+      text-align: left;
     }
     .down-type {
-      padding: 30px 0;
+      padding: 16px 0 16px 0;
+    }
+    .down-type,
+    .url-btn {
       div {
         position: relative;
         display: inline-block;
@@ -355,9 +415,9 @@ export default {
         padding: 10px 50px;
         font-size: 12px;
         cursor: pointer;
-        color: #666;
-        border: 1px solid #dedee4;
-        border-radius: 3px;
+        color: map-get($iconFillColor, normal);
+        background: map-get($bgColor, main);
+        border-radius: 4px;
       }
       .active {
         border: 1px solid map-get($color, primary);

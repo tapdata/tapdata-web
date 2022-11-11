@@ -1018,5 +1018,30 @@ export default {
   dfs_workbench_workbench_banbenshengjitong: '版本升級通知',
   dfs_user_center_acces:
     'AccessKey是您訪問系統API的秘鑰，具有賬號的完全權限，請您務必妥善保管！不要以任何方式公開AccessKey到外部渠道（例如GitHub），避免被他人利用造成安全威脅。 ',
-  dfs_user_center_kaifaxinxi: '開發信息'
+  dfs_user_center_kaifaxinxi: '開發信息',
+
+  dfs_agent_download_agentdownloadmodal_aliyunjisuan: '阿里雲計算巢',
+  dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
+    '4. 部署完成後，返回我們的【Agent管理頁面】等待2分鐘直到【狀態】變為【運行中】。恭喜您！已經完成了Tapdata  Alould 計算環境的部署，可以去創建數據任務了。 ',
+  dfs_agent_download_agentdownloadmodal_querenjisuanchao: '3. 確認計算巢部署完成。 ',
+  dfs_agent_download_agentdownloadmodal_shilitok: '實例token：',
+  dfs_agent_download_agentdownloadmodal_shilibanben: '實例版本：',
+  dfs_agent_download_agentdownloadmodal_womenyijingwei:
+    '2. 我們已經為您自動填充了《應用實例配置》中的信息，如果需要也可以手動複製/黏貼下面的信息。 ',
+  dfs_agent_download_agentdownloadmodal_fufeibushu: '付費部署',
+  dfs_agent_download_agentdownloadmodal_santianshiyong: '三天試用',
+  dfs_agent_download_agentdownloadmodal_ninkeyixuanze:
+    ' 1. 您可以選擇按流量計費或者預付包月/年，也可以免費試用3天，3天后服務器資源將自動回收，您需要重新部署Agent才能繼續使用TapData，根據您的付費方式，請點擊下方按鈕跳轉到阿里雲創建您的雲服務器，Tapdata  Agent會自動安裝在改實例上，如果沒有賬號可以現場註冊： ',
+  dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun: '準備管理雲服務器的阿里雲賬號，也可點擊下方的按鈕現場創建。 ',
+  dfs_agent_download_agentdownloadmodal_jisuanchaoCo:
+    '計算巢（Compute Nest）是為阿里雲提供的自動化部署和管理Tapdata的企業軟件服務，可以免去您部署和運維服務器的時間。 ',
+  dfs_agent_download_agentdownloadmodal_yaoanzhuangAg: '要安裝Agent,請先在下方選擇您的服務器類型：',
+  dfs_agent_download_fastdownload_bushuwanchenghou:
+    '4. 部署完成後，返回我們的【Agent管理頁面】等待2分鐘直到【狀態】變為【運行中】。恭喜您！已經完成了Tapdata Alould 計算環境的部署，可以去創建數據任務了。 ',
+  dfs_agent_download_fastdownload_ninkeyixuanze:
+    '1. 您可以選擇按流量計費或者預付包月/年，也可以免費試用3天，3天后服務器資源將自動回收，您需要重新部署Agent才能繼續使用TapData，根據您的付費方式，請點擊下方按鈕跳轉到阿里雲創建您的雲服務器，Tapdata  Agent會自動安裝在改實例上，如果沒有賬號可以現場註冊： ',
+  dfs_agent_download_fastdownload_jisuanchaoCo:
+    '計算巢（Compute Nest）是為阿里雲提供的自動化部署和管理Tapdata的企業軟件服務，可以免去您部署和運維服務器的時間。 ',
+  dfs_agent_download_upgradeversion_jinruyuanAg: '2. 進入原Agent安裝目錄下，計算巢會自動安裝在/data/tapdata下面',
+  dfs_agent_download_upgradeversion_dengludaoanzhuang: '1. 登錄到安裝了Tapdata Agent的阿里雲ECS實例'
 }

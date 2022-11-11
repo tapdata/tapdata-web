@@ -183,6 +183,7 @@ export default {
     // 检查是否有安装过agent
     checkAgent() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
+        this.agentDownload.visible = true
         if (data.agentId) {
           this.agentDownload.visible = true
           this.agentDownload.data = data
