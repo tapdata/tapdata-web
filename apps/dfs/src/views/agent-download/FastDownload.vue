@@ -3,10 +3,10 @@
     <TheHeader></TheHeader>
     <main class="page-main block">
       <div class="title">{{ $t('agent_deploy_title') }}</div>
-      <p class="title-text pt-10">
+      <p class="title-text box link-line my-2">
         {{ $t('agent_deploy_select_tip') }}
       </p>
-
+      <div class="text-style mt-6">要安装Agent,请先在下方选择您的服务器类型：</div>
       <div class="down-type">
         <div
           v-for="down in downType"
@@ -165,6 +165,54 @@
           </li>
         </ul>
       </template>
+      <template v-if="downLoadType === 'AliComputenest'">
+        <ul class="ul-style">
+          <li>
+            <span
+              >计算巢（Compute
+              Nest）是为阿里云提供的自动化部署和管理Tapdata的企业软件服务，可以免去您部署和运维服务器的时间。</span
+            >
+          </li>
+          <li>
+            <div class="my-5 text-style">安装前准备</div>
+          </li>
+          <li>准备管理云服务器的阿里云账号，也可点击下方的按钮现场创建。</li>
+          <li>
+            <div class="my-5 text-style">开始安装</div>
+          </li>
+          <li>
+            1.
+            您可以选择按流量计费或者预付包月/年，也可以免费试用3天，3天后服务器资源将自动回收，您需要重新部署Agent才能继续使用TapData，根据您的付费方式，请点击下方按钮跳转到阿里云创建您的云服务器，Tapdata
+            Agent会自动安装在改实例上，如果没有账号可以现场注册：
+            <div class="my-4">
+              <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"><div>三天试用</div></el-link>
+              <el-link :href="url" target="_blank" class="url-btn"><div>付费部署</div></el-link>
+            </div>
+          </li>
+          <li>2. 我们已经为您自动填充了《应用实例配置》中的信息，如果需要也可以手动复制/黏贴下面的信息。</li>
+          <li>
+            <div class="my-2 text-style">实例版本：</div>
+          </li>
+          <li class="box title-text my-2">{{ version }}</li>
+          <li>
+            <div class="my-2 text-style">实例token：</div>
+          </li>
+          <li class="box title-text link-line my-2">
+            {{ token }}
+          </li>
+          <li>3. 确认计算巢部署完成。</li>
+          <li>
+            <el-image :src="getImg('alicomputenest_instance')" alt="" />
+          </li>
+          <li class="my-2">
+            4. 部署完成后，返回我们的【Agent管理页面】等待2分钟直到【状态】变为【运行中】。恭喜您！已经完成了Tapdata
+            Alould 计算环境的部署，可以去创建数据任务了。
+          </li>
+          <li>
+            <el-image :src="getImg('alicomputenest_agent')" alt="" />
+          </li>
+        </ul>
+      </template>
     </main>
     <footer class="footer">
       <ElButton type="primary" @click="handleNextStep()">{{ $t('button_finish') }}</ElButton>
@@ -182,13 +230,18 @@ export default {
       downType: [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: '阿里云计算巢', value: 'AliComputenest' }
       ],
       showTooltip: false,
       windowsLink: '',
       linuxLink: '',
       dockerLink: '',
       downloadUrl: '',
+      token: '',
+      version: '',
+      trialUrl: '',
+      url: '',
       agentId: ''
     }
   },
@@ -200,8 +253,14 @@ export default {
     getUrl() {
       this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
         this.downloadUrl = data.downloadUrl || ''
+        this.token = data.token || ''
+        this.version = data.version || ''
         let links = data.links || []
         links.forEach(el => {
+          if (el?.os === 'AliComputenest') {
+            this.trialUrl = el?.trialUrl
+            this.url = el?.url
+          }
           this[el.os + 'Link'] = el.command
         })
       })
@@ -312,9 +371,11 @@ export default {
       color: #666;
     }
     .text-style {
-      font-size: 12px;
-      color: #333;
-      font-weight: bold;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 21px;
+      letter-spacing: 0px;
+      text-align: left;
     }
     .ul-style {
       li {
@@ -341,12 +402,17 @@ export default {
       cursor: pointer;
     }
     .text-style {
-      font-size: 12px;
-      color: #333;
-      font-weight: bold;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 21px;
+      letter-spacing: 0px;
+      text-align: left;
     }
     .down-type {
-      padding: 30px 0;
+      padding: 16px 0 16px 0;
+    }
+    .down-type,
+    .url-btn {
       div {
         position: relative;
         display: inline-block;
@@ -355,9 +421,9 @@ export default {
         padding: 10px 50px;
         font-size: 12px;
         cursor: pointer;
-        color: #666;
-        border: 1px solid #dedee4;
-        border-radius: 3px;
+        color: map-get($iconFillColor, normal);
+        background: map-get($bgColor, main);
+        border-radius: 4px;
       }
       .active {
         border: 1px solid map-get($color, primary);
