@@ -226,23 +226,23 @@ export default {
     }
   },
   beforeDestroy() {
-    this.clearInterval()
+    this.clearTimer()
   },
   watch: {
     visible(val) {
       if (!val) {
-        this.clearInterval() //清除定时器
+        this.clearTimer() //清除定时器
       }
     }
   },
   methods: {
-    clearInterval() {
+    clearTimer() {
       // 清除定时器
-      clearInterval(this.timer)
+      clearTimeout(this.timer)
       this.timer = null
     },
     handleClose() {
-      this.clearInterval()
+      this.clearTimer()
       this.visible = false
       this.showProgress = false
       this.$emit('close')
@@ -356,7 +356,7 @@ export default {
       })
     },
     getProgress() {
-      this.clearInterval()
+      this.clearTimer()
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
@@ -374,9 +374,9 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.timer = setInterval(() => {
-              this.getProgress()
-            }, 800)
+            this.timer = setTimeout(() => {
+              this.visible && this.getProgress()
+            }, 2000)
           }
         })
         .catch(() => {
