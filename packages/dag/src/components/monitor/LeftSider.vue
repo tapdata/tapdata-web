@@ -464,7 +464,7 @@ export default {
     },
 
     calcTimeUnit(val, fix) {
-      return val ? calcTimeUnit(val, fix) : '-'
+      return typeof val === 'number' ? calcTimeUnit(val, fix) : '-'
     }
   }
 }
