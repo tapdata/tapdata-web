@@ -6,7 +6,7 @@ import { observer } from '@formily/reactive-vue'
 import { VIcon, EmptyItem } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { observe } from '@formily/reactive'
-// import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+// import 'vue-virtual-scroller/dist/vue-visafrtual-scroller.css'
 // import { RecycleScroller } from 'vue-virtual-scroller'
 import './style.scss'
 
@@ -67,6 +67,16 @@ export const TableRename = observer(
       makeTable()
 
       observe(formRef.value.values.$inputs, () => {
+        let unwatchSaving = watch(
+          () => root.$store.state.dataflow.taskSaving,
+          v => {
+            console.log('taskSaving', v) // eslint-disable-line
+            config.transformLoading = root.$store.state.dataflow.transformLoading
+            if (!v) {
+              makeTable()
+            }
+          }
+        )
         makeTable()
       })
 
@@ -143,6 +153,7 @@ export const TableRename = observer(
       watch(
         () => root.$store.state.dataflow.transformLoading,
         v => {
+          console.log('transformLoading', v) // eslint-disable-line
           config.transformLoading = root.$store.state.dataflow.transformLoading
           if (!v) {
             makeTable()
