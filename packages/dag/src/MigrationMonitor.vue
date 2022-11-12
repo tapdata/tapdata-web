@@ -146,6 +146,7 @@
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
         ref="nodeDetailDialog"
+        @load-data="init"
       ></NodeDetailDialog>
     </section>
   </section>

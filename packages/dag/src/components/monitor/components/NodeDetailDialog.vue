@@ -5,7 +5,7 @@
     :visible.sync="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
-    @close="$emit('input', false)"
+    @close="$emit('input', false).$emit('load-data')"
   >
     <div class="flex mb-4 align-items-center">
       <div class="select__row flex align-items-center" @click.stop="handleSelect">
