@@ -666,7 +666,8 @@ export default {
             'currentSnapshotTableRowTotal',
             'currentSnapshotTableInsertRowTotal',
             'replicateLag',
-            'snapshotStartAt'
+            'snapshotStartAt',
+            'currentEventTimestamp'
           ],
           type: 'instant' // 瞬时值
         },
