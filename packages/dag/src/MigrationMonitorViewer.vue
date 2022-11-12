@@ -578,7 +578,8 @@ export default {
               'snapshotRowTotal',
               'snapshotInsertRowTotal',
               'snapshotTableTotal',
-              'tableTotal'
+              'tableTotal',
+              'replicateLag'
             ],
             type: 'instant' // 瞬时值
           }

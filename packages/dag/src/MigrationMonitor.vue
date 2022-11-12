@@ -736,7 +736,8 @@ export default {
             'incrementalSourceReadTimeCostAvg',
             'targetWriteTimeCostAvg',
             'snapshotStartAt',
-            'snapshotDoneAt'
+``            'snapshotDoneAt',
+            'replicateLag'
           ],
           type: 'instant' // 瞬时值
         },
