@@ -461,7 +461,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .node-card {
   position: absolute;
-  min-width: 280px;
+  min-width: 240px;
   z-index: -1;
   top: 100%;
   left: 50%;
