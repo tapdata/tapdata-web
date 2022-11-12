@@ -527,7 +527,6 @@ export default {
   packages_dag_page_return_confirm_content: 'The current task is empty. Do you want to keep it?',
   packages_dag_page_return_confirm_ok_text: "Don't keep",
   packages_dag_page_return_confirm_cancel_text: 'Keep',
-  packages_dag_monitor_node_cdcTitle_source: 'Acquisition delay',
   packages_dag_monitor_node_popover_cdcTimeTitle_source: 'Read incremental time',
   packages_dag_monitor_node_popover_cdcTimeTitle_target: 'Write incremental time',
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: 'Process incremental time',

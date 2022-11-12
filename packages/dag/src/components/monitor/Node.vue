@@ -100,6 +100,15 @@ export default defineComponent({
     })
 
     /**
+     * 增量延迟
+     */
+    const replicateLag = computed(() => {
+      const { replicateLag } = props.sample
+      if (isNumber(replicateLag)) return calcTimeUnit(replicateLag)
+      return null
+    })
+
+    /**
      * 增量时间点
      * @type {ComputedRef<string|string>}
      */
@@ -226,15 +235,12 @@ export default defineComponent({
       if (hasCDC) {
         // 增量进行中
         const cdcTitle = isSource.value
-          ? i18n.t('packages_dag_monitor_node_cdcTitle_source')
+          ? i18n.t('packages_dag_components_nodedetaildialog_zengliangyanchi')
           : isTarget.value
           ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
           : i18n.t('packages_dag_monitor_node_per_deal_need_time')
-        const getCdcTime = cdcEventStartTime.value
-          ? calcTimeUnit(Date.now() - new Date(cdcEventStartTime.value).getTime(), 2)
-          : null
         const val = getVal(
-          isSource.value ? getCdcTime : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
+          isSource.value ? replicateLag.value : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
         )
         return (
           <div class="statistic flex">

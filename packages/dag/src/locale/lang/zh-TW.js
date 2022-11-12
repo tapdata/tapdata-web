@@ -503,7 +503,6 @@ export default {
   packages_dag_page_return_confirm_content: '當前任務內容為空，是否要保留？',
   packages_dag_page_return_confirm_ok_text: '不保留',
   packages_dag_page_return_confirm_cancel_text: '保留',
-  packages_dag_monitor_node_cdcTitle_source: '採集延遲',
   packages_dag_monitor_node_popover_cdcTimeTitle_source: '讀取增量時間點',
   packages_dag_monitor_node_popover_cdcTimeTitle_target: '寫入增量時間點',
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '處理增量時間點',
