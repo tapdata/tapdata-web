@@ -447,18 +447,42 @@ export default {
           const formValues = getState?.values || {}
           console.log('formValues', formValues, others)
           const { nodeConfig, connectionId } = formValues
-          const { nodeId, field } = others
+          const { nodeId, field, tableNameField } = others
           let params = {
             className: 'DiscoverSchemaService',
             method: 'discoverSchema',
-            // nodeConfig,
             nodeId,
             args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)]
           }
           proxyApi.call(params).then(() => {
-            metadataInstancesApi.nodeSchema(nodeId).then(data => {
-              const fields = data?.[0]?.fields || []
-              $form.setValuesIn('loadSchemaTree', fields)
+            const filter = {
+              where: {
+                'source.id': connectionId,
+                meta_type: {
+                  in: ['collection', 'table', 'view']
+                },
+                is_deleted: false,
+                sourceType: 'SOURCE',
+                original_name: {
+                  neq: ''
+                }
+              },
+              page: 1,
+              size: 20,
+              fields: {
+                original_name: true
+              },
+              order: ['original_name ASC']
+            }
+            metadataInstancesApi.get({ filter: JSON.stringify(filter) }).then(metaData => {
+              const table = metaData.items?.[0]?.original_name
+              $form.setValuesIn(tableNameField, table)
+              setTimeout(() => {
+                metadataInstancesApi.nodeSchema(nodeId).then(data => {
+                  const fields = data?.[0]?.fields || []
+                  $form.setValuesIn('loadSchemaTree', fields)
+                })
+              }, 3000)
             })
           })
         },
