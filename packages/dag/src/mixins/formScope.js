@@ -446,19 +446,14 @@ export default {
           const getState = $form.getState()
           const formValues = getState?.values || {}
           console.log('formValues', formValues, others)
-          const { nodeConfig } = formValues
+          const { nodeConfig, connectionId } = formValues
           const { nodeId, field } = others
           let params = {
             className: 'DiscoverSchemaService',
             method: 'discoverSchema',
-            nodeConfig,
-            nodeId,
-            args: [
-              '62d6171cf598ac6cec662801',
-              {
-                file: 'file'
-              }
-            ]
+            // nodeConfig,
+            // nodeId,
+            args: [connectionId, Object.assign({ file: 'file' }, nodeConfig)]
           }
           proxyApi.call(params).then(data => {
             console.log('proxyApi.call', data)
