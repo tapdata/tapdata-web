@@ -447,15 +447,24 @@ export default {
           const formValues = getState?.values || {}
           console.log('formValues', formValues, others)
           const { nodeConfig } = formValues
-          const { nodeId } = others
+          const { nodeId, field } = others
           let params = {
+            className: 'DiscoverSchemaService',
+            method: 'discoverSchema',
+            nodeConfig,
             nodeId,
-            nodeConfig
+            args: [
+              '62d6171cf598ac6cec662801',
+              {
+                file: 'file'
+              }
+            ]
           }
-          let data = await metadataInstancesApi.nodeSchema(nodeId, ['fields'], nodeConfig)
-          console.log('data', data)
-          const fields = data?.[0]?.fields || []
-          $form.setValuesIn('loadSchemaTree', fields)
+          proxyApi.call(params).then(data => {
+            console.log('proxyApi.call', data)
+            // const fields = data?.[0]?.fields || []
+            // $form.setValuesIn('loadSchemaTree', fields)
+          })
         },
 
         /**
