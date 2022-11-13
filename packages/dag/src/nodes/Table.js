@@ -106,14 +106,14 @@ export class Table extends NodeType {
           gap: 8,
           align: 'start'
         },
-        'x-reactions': {
-          dependencies: ['databaseType'],
-          fulfill: {
-            state: {
-              display: '{{ !["CSV",].includes($deps[0]) ? "visible":"hidden"}}'
-            }
-          }
-        },
+        // 'x-reactions': {
+        //   dependencies: ['databaseType'],
+        //   fulfill: {
+        //     state: {
+        //       display: '{{ !["CSV",].includes($deps[0]) ? "visible":"hidden"}}'
+        //     }
+        //   }
+        // },
         properties: {
           tableName: {
             type: 'string',

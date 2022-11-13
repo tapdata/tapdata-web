@@ -452,13 +452,14 @@ export default {
             className: 'DiscoverSchemaService',
             method: 'discoverSchema',
             // nodeConfig,
-            // nodeId,
-            args: [connectionId, Object.assign({ file: 'file' }, nodeConfig)]
+            nodeId,
+            args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)]
           }
-          proxyApi.call(params).then(data => {
-            console.log('proxyApi.call', data)
-            // const fields = data?.[0]?.fields || []
-            // $form.setValuesIn('loadSchemaTree', fields)
+          proxyApi.call(params).then(() => {
+            metadataInstancesApi.nodeSchema(nodeId).then(data => {
+              const fields = data?.[0]?.fields || []
+              $form.setValuesIn('loadSchemaTree', fields)
+            })
           })
         },
 
