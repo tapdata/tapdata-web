@@ -95,10 +95,6 @@
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
       <template v-if="!hideMenus.includes('operation')">
-        <div v-if="heartbeatTime" class="mr-2">
-          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}：</span>
-          <span>{{ heartbeatTime }}</span>
-        </div>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
           class="mx-2"
@@ -241,11 +237,6 @@ export default {
             ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
             : ''
       }
-    },
-
-    heartbeatTime() {
-      const { pingTime, status } = this.dataflow
-      return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : ''
     }
   },
 

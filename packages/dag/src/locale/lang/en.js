@@ -440,6 +440,7 @@ export default {
   packages_dag_monitor_leftsider_renwushijiantong: 'Task event statistics (strips)',
   packages_dag_monitor_leftsider_zuidazengliangyan: 'Maximum incremental delay:',
   packages_dag_monitor_leftsider_tongbuxinxi: 'Sync information',
+  packages_dag_monitor_leftsider_tiaoshixinxi: 'Debug information',
   packages_dag_monitor_leftsider_chayixiangqing: 'Difference details',
   packages_dag_components_nodedetaildialog_chulixieruhao: 'Processing/writing time',
   packages_dag_components_nodedetaildialog_duquchulihao: 'Reading/processing time',

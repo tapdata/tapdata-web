@@ -181,7 +181,7 @@
           ></LineChart>
         </div>-->
       </div>
-      <div class="py-2 px-4">
+      <div class="info-box py-2 px-4">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwushijiantong') }}</span>
         </div>
@@ -234,6 +234,15 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="py-2 px-4">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tiaoshixinxi') }}</span>
+        </div>
+        <div class="mb-2 flex justify-content-between">
+          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}:</span>
+          <span>{{ heartbeatTime }}</span>
         </div>
       </div>
     </div>
@@ -421,6 +430,11 @@ export default {
     eventDataAll() {
       const data = this.quota.samples?.totalData?.[0]
       return this.getInputOutput(data)
+    },
+
+    heartbeatTime() {
+      const { pingTime, status } = this.dataflow
+      return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : '-'
     }
   },
 
