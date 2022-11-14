@@ -482,8 +482,8 @@ export default {
       return result
     },
 
-    calcTimeUnit(val, fix) {
-      return typeof val === 'number' ? calcTimeUnit(val, fix) : '-'
+    calcTimeUnit() {
+      return typeof arguments[0] === 'number' ? calcTimeUnit(...arguments) : '-'
     }
   }
 }
