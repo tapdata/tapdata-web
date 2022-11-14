@@ -67,6 +67,7 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
  * @digits Number 只有ms单位时，保留几位小数；多个单位默认取整
  * @options.separator String 分割符
  * @options.showMs Boolean
+ * @options.autoShowMs Boolean <= 10s 自动显示ms
  * @return string
  * */
 export function calcTimeUnit(
@@ -74,7 +75,8 @@ export function calcTimeUnit(
   fix = 1,
   options = {
     separator: ' ',
-    showMs: false
+    showMs: false,
+    autoShowMs: false
   }
 ) {
   const list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
@@ -105,10 +107,10 @@ export function calcTimeUnit(
   }
   let arr = fix < 0 ? result : result.slice(0, fix)
   const findMsIndex = arr.findIndex(t => t.util === 'ms')
-  if (!options.showMs && findMsIndex >= 1) {
+  if ((!options.showMs || options.autoShowMs) && findMsIndex >= 1) {
     const s = arr[findMsIndex - 1]
     // 如果 >10s 不需要ms
-    if (s.value > 10) {
+    if ((options.autoShowMs && s.value > 10) || !options.autoShowMs) {
       s.value++
       arr = arr.slice(0, fix - 1)
     }

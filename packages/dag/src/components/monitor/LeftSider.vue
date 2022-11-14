@@ -66,7 +66,12 @@
         <template v-if="dataflow.type !== 'initial_sync'">
           <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
             <span>{{ $t('packages_dag_monitor_leftsider_zuidazengliangyan') }}</span>
-            <span>{{ calcTimeUnit(initialData.replicateLag, 1) }}</span>
+            <span>{{
+              calcTimeUnit(initialData.replicateLag, 2, {
+                separator: ' ',
+                autoShowMs: true
+              })
+            }}</span>
           </div>
         </template>
       </div>
