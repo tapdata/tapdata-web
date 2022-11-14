@@ -146,6 +146,7 @@
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
         ref="nodeDetailDialog"
+        @load-data="init"
       ></NodeDetailDialog>
     </section>
   </section>
@@ -665,7 +666,8 @@ export default {
             'currentSnapshotTableRowTotal',
             'currentSnapshotTableInsertRowTotal',
             'replicateLag',
-            'snapshotStartAt'
+            'snapshotStartAt',
+            'currentEventTimestamp'
           ],
           type: 'instant' // 瞬时值
         },
@@ -735,7 +737,8 @@ export default {
             'incrementalSourceReadTimeCostAvg',
             'targetWriteTimeCostAvg',
             'snapshotStartAt',
-            'snapshotDoneAt'
+            'snapshotDoneAt',
+            'replicateLag'
           ],
           type: 'instant' // 瞬时值
         },
