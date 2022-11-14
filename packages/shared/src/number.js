@@ -106,8 +106,12 @@ export function calcTimeUnit(
   let arr = fix < 0 ? result : result.slice(0, fix)
   const findMsIndex = arr.findIndex(t => t.util === 'ms')
   if (!options.showMs && findMsIndex >= 1) {
-    arr[findMsIndex - 1].value++
-    arr = arr.slice(0, fix - 1)
+    const s = arr[findMsIndex - 1]
+    // 如果 >10s 不需要ms
+    if (s.value > 10) {
+      s.value++
+      arr = arr.slice(0, fix - 1)
+    }
   }
   return arr
     .filter(t => t.value)
