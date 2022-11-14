@@ -104,7 +104,11 @@ export default defineComponent({
      */
     const replicateLag = computed(() => {
       const { replicateLag } = props.sample
-      if (isNumber(replicateLag)) return calcTimeUnit(replicateLag)
+      if (isNumber(replicateLag))
+        return calcTimeUnit(replicateLag, 2, {
+          separator: ' ',
+          autoShowMs: true
+        })
       return null
     })
 
