@@ -266,7 +266,7 @@ export default {
     },
 
     checkGotoViewer() {
-      if (this.dataflow.disabledData.edit) {
+      if (this.dataflow.disabledData?.edit) {
         // 不可编辑
         this.gotoViewer()
         this.setStateReadonly(true)
@@ -1789,7 +1789,8 @@ export default {
         this.startLoopTask(id)
         return data
       } catch (e) {
-        console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
+        this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
+        this.handlePageReturn()
       } finally {
         this.loading = false
       }
