@@ -8,6 +8,7 @@
           ? {
               authority: 'datasource_catalog_management',
               types: ['database'],
+              viewPage: 'connections',
               title: $t('packages_business_connections_list_lianjiefenlei')
             }
           : null

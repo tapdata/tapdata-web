@@ -7,6 +7,7 @@
       :classify="{
         authority: 'SYNC_category_management',
         types: ['dataflow'],
+        viewPage: syncType,
         title: $t('packages_business_task_migratelist_renwufenlei')
       }"
       :remoteMethod="getData"
