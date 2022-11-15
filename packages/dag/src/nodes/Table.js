@@ -106,14 +106,14 @@ export class Table extends NodeType {
           gap: 8,
           align: 'start'
         },
-        // 'x-reactions': {
-        //   dependencies: ['databaseType'],
-        //   fulfill: {
-        //     state: {
-        //       display: '{{ !["CSV",].includes($deps[0]) ? "visible":"hidden"}}'
-        //     }
-        //   }
-        // },
+        'x-reactions': {
+          dependencies: ['databaseType'],
+          fulfill: {
+            state: {
+              display: '{{ ["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+            }
+          }
+        },
         properties: {
           tableName: {
             type: 'string',
@@ -537,7 +537,19 @@ export class Table extends NodeType {
         type: 'void',
         title: '',
         'x-decorator': 'FormItem',
-        'x-component': 'loadSchemaTree'
+        'x-component': 'loadSchemaTree',
+        'x-component-props': {
+          tableNameField: 'tableName'
+        },
+        'x-reactions': {
+          dependencies: ['databaseType', '$outputs'],
+          fulfill: {
+            state: {
+              display:
+                '{{ $deps[1].length > 1 && $["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+            }
+          }
+        }
       }
     }
   }
