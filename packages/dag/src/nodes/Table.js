@@ -522,17 +522,6 @@ export class Table extends NodeType {
         'x-display': 'hidden'
       },
 
-      loadSchemaButton: {
-        type: 'void',
-        title: '',
-        'x-decorator': 'FormItem',
-        'x-component': 'Button',
-        'x-content': '加載模型',
-        'x-component-props': {
-          onClick:
-            '{{useAsyncDataSourceByConfig({service: loadSchemaData, withoutField: true}, $form, {nodeId:$values.id})}}'
-        }
-      },
       loadSchemaTree: {
         type: 'void',
         title: '',
