@@ -105,9 +105,7 @@
               @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
-            <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
-              {{ row.listTagValue }}
-            </el-tag>
+            <span class="tag inline-block" v-for="item in row.listtags">{{ item.value }}</span>
           </span>
         </template>
       </el-table-column>
@@ -821,10 +819,15 @@ export default {
     }
     .dataflow-name {
       .tag {
+        padding: 2px 5px;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 10px;
+        line-height: 14px;
+        color: map-get($color, tag);
+        border: 1px solid map-get($bgColor, tag);
+        border-radius: 2px;
         margin-left: 5px;
-        color: map-get($fontColor, light);
-        background: map-get($bgColor, main);
-        border: 1px solid #dedee4;
       }
       .name {
         &:not(.has-children) {

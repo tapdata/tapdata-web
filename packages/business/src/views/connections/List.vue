@@ -47,7 +47,7 @@
       <ElTableColumn
         show-overflow-tooltip
         prop="name"
-        min-width="180"
+        min-width="290"
         :label="$t('packages_business_connection_column_name')"
       >
         <template slot-scope="scope">
@@ -61,10 +61,11 @@
             >
               {{ scope.row.name }}
             </ElLink>
+            <span class="tag inline-block" v-for="item in scope.row.listtags">{{ item.value }}</span>
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('packages_business_connection_connectionInfo')" min-width="200">
+      <ElTableColumn show-overflow-tooltip :label="$t('packages_business_connection_connectionInfo')" min-width="160">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
@@ -78,12 +79,12 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="120" :label="$t('packages_business_connection_connectionType')">
+      <ElTableColumn prop="connection_type" min-width="110" :label="$t('packages_business_connection_connectionType')">
         <template slot-scope="scope">
           {{ $t('packages_business_connection_type_' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="140">
+      <ElTableColumn min-width="90">
         <div slot="header" class="flex align-center">
           <span>{{ $t('packages_business_connection_list_column_schema_status') }}</span>
           <ElTooltip
@@ -704,7 +705,17 @@ export default {
     display: flex;
     align-items: center;
   }
-
+  .tag {
+    padding: 2px 5px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 14px;
+    color: map-get($color, tag);
+    border: 1px solid map-get($bgColor, tag);
+    border-radius: 2px;
+    margin-left: 5px;
+  }
   .connection-img {
     width: 18px;
   }
@@ -713,18 +724,6 @@ export default {
     // color: map-get($color, primary);
     font-size: 12px;
     padding-right: 5px;
-  }
-
-  .tag {
-    padding: 0 3px 2px 3px;
-    line-height: 12px;
-    font-size: 12px;
-    font-weight: 400;
-    color: map-get($fontColor, light);
-    background: map-get($bgColor, main);
-    border: 1px solid #dedee4;
-    border-radius: 3px;
-    margin-left: 5px;
   }
 
   .error {
