@@ -995,7 +995,9 @@ export default {
           loadAllTables,
           shareCdcEnable,
           accessNodeType,
-          accessNodeProcessId
+          accessNodeProcessId,
+          openTableExcludeFilter,
+          tableExcludeFilter
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -1005,7 +1007,9 @@ export default {
             loadAllTables,
             shareCdcEnable,
             accessNodeType,
-            accessNodeProcessId
+            accessNodeProcessId,
+            openTableExcludeFilter,
+            tableExcludeFilter
           },
           ...this.model?.config
         })
