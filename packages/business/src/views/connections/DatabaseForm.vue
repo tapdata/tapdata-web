@@ -614,7 +614,7 @@ export default {
           loadAllTables: {
             type: 'boolean',
             default: true,
-            title: i18n.t('packages_business_connections_databaseform_duixiangshouji'),
+            title: i18n.t('packages_business_connections_databaseform_baohanbiao'),
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
@@ -644,6 +644,60 @@ export default {
               fulfill: {
                 state: {
                   display: '{{$deps[0] ? "hidden" : "visible"}}'
+                }
+              }
+            }
+          },
+          openTableExcludeFilterWrap: {
+            title: i18n.t('packages_business_connections_databaseform_paichubiao'),
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              layout: 'horizontal',
+              feedbackLayout: 'none'
+            },
+            type: 'void',
+            'x-component': 'Space',
+            'x-component-props': {
+              size: 'middle'
+            },
+            properties: {
+              openTableExcludeFilter: {
+                type: 'boolean',
+                default: false,
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch'
+              },
+              openTableExcludeFilterTips: {
+                type: 'void',
+                title: ' ',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  colon: false
+                },
+                'x-component': 'Text',
+                'x-component-props': {
+                  icon: 'info',
+                  content: i18n.t('packages_business_connections_databaseform_keyicongbaohan')
+                }
+              }
+            }
+          },
+          tableExcludeFilter: {
+            type: 'string',
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input.TextArea',
+            'x-component-props': {
+              placeholder: this.$t('packages_business_connection_form_database_owner_tip')
+            },
+            'x-decorator-props': {
+              colon: false
+            },
+            'x-reactions': {
+              dependencies: ['__TAPDATA.openTableExcludeFilter'],
+              fulfill: {
+                state: {
+                  display: '{{ $deps[0] ? "visible" : "hidden"}}'
                 }
               }
             }

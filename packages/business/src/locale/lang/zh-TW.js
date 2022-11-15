@@ -503,5 +503,8 @@ export default {
   packages_business_connections_list_lianjiefenlei: '連接分類',
   packages_business_task_migratelist_renwufenlei: '任務分類',
   packages_business_components_connectiontypeselectorsort_jijiangshangxian: '即將上線',
-  packages_business_task_list_renwubuzhichi: '任務不支持該操作'
+  packages_business_task_list_renwubuzhichi: '任務不支持該操作',
+  packages_business_connections_databaseform_keyicongbaohan: '可以從包含表規則匹配到的表中將指定的表排除',
+  packages_business_connections_databaseform_paichubiao: '排除表',
+  packages_business_connections_databaseform_baohanbiao: '包含表'
 }
