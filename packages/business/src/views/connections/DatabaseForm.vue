@@ -179,7 +179,8 @@ export default {
       schemaData: null,
       schemaScope: null,
       pdkFormModel: {},
-      doc: ''
+      doc: '',
+      pathUrl: ''
     }
   },
   computed: {
@@ -191,6 +192,11 @@ export default {
     this.id = this.$route.params.id || ''
     this.getPdkForm()
     this.getPdkDoc()
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.pathUrl = from?.fullPath
+    })
   },
   methods: {
     //保存全局挖掘设置
@@ -212,9 +218,15 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push({
-          name: 'connections'
-        })
+        if (this.pathUrl === '/') {
+          this.$router.push({
+            name: 'connections'
+          })
+        } else {
+          this.$router.push({
+            path: this.pathUrl
+          })
+        }
       })
     },
     submit() {
