@@ -14,7 +14,12 @@
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="data_type" :label="$t('packages_dag_meta_table_field_type')"> </ElTableColumn>
+      <ElTableColumn prop="data_type" :label="$t('packages_dag_meta_table_field_type')">
+        <template #default="{ row }">
+          <span>{{ row.data_type }}</span>
+          <VIcon class="ml-2" @click="openEditDataTypeVisible(row)">arrow-down</VIcon>
+        </template>
+      </ElTableColumn>
       <!--      <ElTableColumn prop="scale" :label="$t('packages_dag_meta_table_scale')"> </ElTableColumn>-->
       <!--      <ElTableColumn prop="precision" :label="$t('packages_dag_meta_table_precision')"> </ElTableColumn>-->
       <ElTableColumn prop="default_value" :label="$t('packages_dag_meta_table_default')"> </ElTableColumn>
@@ -25,6 +30,28 @@
       </ElTableColumn>
       <ElTableColumn prop="comment" :label="$t('packages_dag_meta_table_comment')"> </ElTableColumn>
     </ElTable>
+    <el-dialog
+      title="字段类型调整"
+      append-to-body
+      :close-on-click-modal="false"
+      :visible.sync="editDataTypeVisible"
+      width="35%"
+    >
+      <el-form ref="dataTypeForm" label-width="120px" label-position="left" :model="currentData" @submit.native.prevent>
+        <el-form-item label="推演出的类型: ">
+          <span>{{ currentData.dataType }}</span>
+        </el-form-item>
+        <el-form-item label="要调整为的类型: " prop="newDataType" required>
+          <el-input v-model="currentData.newDataType" maxlength="100" show-word-limit></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handelClose" size="mini">{{ $t('packages_business_button_cancel') }}</el-button>
+        <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
+          $t('packages_business_button_confirm')
+        }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -59,7 +86,13 @@ export default {
       nullableMap: {
         true: i18n.t('packages_dag_meta_table_true'),
         false: i18n.t('packages_dag_meta_table_false')
-      }
+      },
+      editDataTypeVisible: false,
+      currentData: {
+        dataType: '',
+        newDataType: ''
+      },
+      editBtnLoading: false
     }
   },
 
@@ -146,6 +179,18 @@ export default {
     getDataFlow() {
       const data = this.getDataflowDataToSave()
       return data
+    },
+    //打开字段编辑调整dialog
+    openEditDataTypeVisible(row) {
+      this.editDataTypeVisible = true
+      this.currentData.dataType = row.data_type
+      this.currentData.newDataType = row.data_type
+    },
+    handelClose() {
+      this.editDataTypeVisible = false
+    },
+    submitEdit() {
+      this.editDataTypeVisible = false
     }
   }
 }
