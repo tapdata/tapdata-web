@@ -441,6 +441,7 @@ export default {
   packages_dag_monitor_leftsider_chayixiangqing: '差異詳情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延遲：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
+  packages_dag_monitor_leftsider_tiaoshixinxi: '調試信息',
   packages_dag_components_nodedetaildialog_dangqianjiedianchu: '當前節點處理事件的平均耗時',
   packages_dag_components_nodedetaildialog_dangqianjiedianping: '當前節點平均每秒處理的輸入事件數和輸出事件數',
   packages_dag_monitor_leftsider_renwuchuliwan:

@@ -373,7 +373,7 @@ export default {
 
     async initNodeType() {
       this.addResourceIns(allResourceIns)
-      await this.loadCustomNode(false)
+      await this.loadCustomNode()
     },
 
     async openDataflow(id) {
