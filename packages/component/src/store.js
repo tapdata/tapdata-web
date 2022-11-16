@@ -18,7 +18,7 @@ const getState = function () {
 
 // 初始化 state
 const state = getState()
-console.log(state, '当前分类表桥store')
+console.log(state, '当前分类标签store')
 
 // getters
 const getters = {
