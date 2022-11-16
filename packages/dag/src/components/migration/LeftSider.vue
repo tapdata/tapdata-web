@@ -495,7 +495,7 @@ export default {
         type: 'database',
         databaseType: item.database_type,
         connectionId: item.id,
-        migrateTableSelectType: 'all',
+        migrateTableSelectType: 'custom',
         attrs: {
           connectionName: item.name,
           connectionType: item.connection_type,
