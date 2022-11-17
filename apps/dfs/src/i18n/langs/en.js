@@ -1150,7 +1150,7 @@ export default {
   dfs_agent_download_upgradeversion_zaiTapd:
     '4. Copy the upgrade command on the manual upgrade page of the Tapdata console, and paste it into the "ECS" remote terminal for execution',
   dfs_agent_download_upgradeversion_dengluchenggonghou:
-    '3. After successful login, enter the directory "/data/tapdata"',
+    '3. After logging in successfully, first switch to the root user, then enter the "/data/tapdata" directory, and execute the command as follows:',
   dfs_agent_download_upgradeversion_dianjishiliming:
     '2. Click the instance name, select the "Resources" tab, and click "Remote Login" in the "Cloud Server ECS" resource',
   dfs_agent_download_upgradeversion_ruguoninbushu:
