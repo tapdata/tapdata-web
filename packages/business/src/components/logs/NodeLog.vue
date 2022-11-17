@@ -100,7 +100,10 @@
             >
               <VCollapse active="0">
                 <template #header>
-                  <div v-html="item.titleDomStr" class="log-line pr-6 font-color-light text-truncate"></div>
+                  <div class="log-line flex align-items-center pr-6 flex font-color-light">
+                    <VIcon :class="`${item.level.toLowerCase()}-level`" size="16">{{ iconMap[item.level] }}</VIcon>
+                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>
+                  </div>
                 </template>
                 <template #content>
                   <div v-html="item.jsonDomStr" class="log-line pl-10 pr-4 py-2 font-color-light white-space-pre"></div>
@@ -218,10 +221,12 @@ export default {
       preLoading: false,
       resetDataTime: null,
       list: [],
-      colorMap: {
-        FATAL: 'color-danger',
-        ERROR: 'color-danger',
-        WARN: 'color-warning'
+      iconMap: {
+        INFO: 'success',
+        WARN: 'warning',
+        ERROR: 'error',
+        FATAL: 'error',
+        DEBUG: 'debug'
       },
       newPageObj: {
         page: 0,
@@ -519,12 +524,12 @@ export default {
         obj.taskName = row.taskName
         obj.logTags = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
         obj.data = row.data.length ? JSON.stringify(row.data?.slice(0, 10)) : ''
-        obj.message = row.message // ?.slice(0, 3000).replace(/\n+/g, '\n\t\t')
-        obj.errorStack = row.errorStack // ?.slice(0, 3000).replace(/\n+/g, '\n\t\t')
+        obj.message = row.message?.slice(0, 10000)
+        obj.errorStack = row.errorStack?.slice(0, 20000)
 
-        const jsonStr = JSON.stringify(obj, null, '\t')
         const { level, timestamp, nodeName, taskName, logTags, data, message, errorStack } = obj
-        row.titleDomStr = this.getTitleStringDom({ level, timestamp, nodeName }, jsonStr)
+        const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
+        row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
         row.jsonDomStr = this.getJsonString([
           { level },
           { timestamp },
@@ -540,7 +545,6 @@ export default {
     },
     getTitleStringDom(row = {}, extra = '') {
       let result = ''
-      result += `<span class="level-item inline-block ${this.colorMap[row.level]}">[${row.level}]</span>`
       result += `<span class="ml-1">${row.timestamp}</span>`
       if (row.nodeName) {
         result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
@@ -558,7 +562,7 @@ export default {
           const val = obj[key]
           if (val) {
             result += `<div class="flex pl-4">`
-            result += `<span class="log__label color-warning">"${key}"</span>: <span class="color-success">"${val}"</span>`
+            result += `<span class="log__label warn-level">"${key}"</span>: <span class="debug-level">"${val}"</span>`
             result += `,</div>`
           }
         }
@@ -781,6 +785,19 @@ export default {
     .log-line {
       width: 100%;
       font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      .info-level {
+        color: #c9cdd4;
+      }
+      .warn-level {
+        color: #d5760e;
+      }
+      .error-level,
+      .fatal-level {
+        color: #d44d4d;
+      }
+      .debug-level {
+        color: #178061;
+      }
     }
     .highlight-bg-color {
       background-color: #ff0;
