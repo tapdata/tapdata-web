@@ -1047,7 +1047,8 @@ export default {
   dfs_agent_download_upgradeversion_chuxianUpd: '5. 出現“Update finished.”則代表Agent升級成功',
   dfs_agent_download_upgradeversion_zaiTapd:
     '4. 在Tapdata 控制台手動升級頁面 複製升級命令，並粘貼到“雲服務器ECS”遠程終端中執行',
-  dfs_agent_download_upgradeversion_dengluchenggonghou: '3. 登錄成功後，進入目錄“/data/tapdata”',
+  dfs_agent_download_upgradeversion_dengluchenggonghou:
+    '3. 登錄成功後，先切換為 root 用戶，然後進入 “/data/tapdata” 目錄，執行命令如下：',
   dfs_agent_download_upgradeversion_dianjishiliming:
     '2. 點擊實例名稱，選擇“資源”選項卡，在“雲服務器 ECS”資源點擊“遠程登錄”',
   dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天試用實例”請打開計算巢“試用服務”選項卡',
