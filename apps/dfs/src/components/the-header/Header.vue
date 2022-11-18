@@ -147,7 +147,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 68px !important;
+  height: 52px !important;
   padding: 0 7px;
   background: rgba(54, 54, 54, 1);
   box-sizing: border-box;
@@ -172,7 +172,7 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.45);
+      color: map-get($color, white);
       &:hover {
         color: #fff;
         background-color: rgba(255, 255, 255, 0.2);
@@ -241,7 +241,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 68px !important;
+  height: 52px !important;
 }
 .dfs-header__dialog {
   .fixed-novice-guide-dialog {

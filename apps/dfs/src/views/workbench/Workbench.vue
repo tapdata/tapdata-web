@@ -461,6 +461,7 @@ export default {
   min-height: 610px;
   min-width: 1100px;
   box-sizing: border-box;
+  padding: 0 24px 24px 24px;
   .pointer {
     cursor: pointer;
   }
@@ -499,7 +500,8 @@ export default {
 .create-list__desc {
   height: 110px;
   overflow: auto;
-  color: rgba(0, 0, 0, 0.49);
+  line-height: 22px;
+  color: map-get($fontColor, light);
 }
 .aside-main {
   height: 213px;
@@ -525,7 +527,7 @@ export default {
 .agent-list__detail {
   width: 232px;
   background-color: #fafafb;
-  color: rgba(0, 0, 0, 0.5);
+  color: map-get($fontColor, light);
   .agent-list__status {
     white-space: nowrap;
     margin-right: 8px;
@@ -545,7 +547,7 @@ export default {
   background: #f7f8f9;
 }
 .notice-list__time {
-  color: rgba(0, 0, 0, 0.5);
+  color: map-get($fontColor, light);
   white-space: nowrap;
   width: 80px;
   text-align: right;

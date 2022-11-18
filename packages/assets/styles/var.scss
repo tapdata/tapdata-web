@@ -6,6 +6,11 @@ $fontFamily: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Ari
   sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 $codeFontFamily: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
+//字体大小变量
+$fontTitle: 18px;
+$fontSubtitle: 16px;
+$fontBaseTitle: 14px;
+
 $color: (
   // primary: #337dff,
   primary: #2c65ff,
@@ -51,7 +56,8 @@ $borderColor: (
   normal: #ddd,
   slight: #f6f7f7,
   light: #f2f2f2,
-  form: rgba(221, 221, 221, 0.4)
+  form: rgba(221, 221, 221, 0.4),
+  aside: #E1E3E9
 );
 
 $iconFillColor: (

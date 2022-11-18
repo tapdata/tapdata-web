@@ -80,7 +80,7 @@ $--fill-base: $--color-white !default;
 /* Font
 -------------------------- */
 $--font-path: 'fonts' !default;
-$--font-size-base: 12px !default;
+$--font-size-base: 14px !default;
 $--font-size-large: 18px !default;
 $--font-color-disabled-base: #bbb !default;
 $--font-weight-normal: 400 !default;
@@ -830,4 +830,12 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 }
 .el-icon-error {
   color: map-get($color, danger);
+}
+.el-menu {
+  border-right: none;
+  list-style: none;
+  position: relative;
+  margin: 0;
+  padding-left: 0;
+  background-color: map-get($bgColor, disable);
 }

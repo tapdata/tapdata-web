@@ -780,6 +780,8 @@ export default {
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
+  padding: 0 24px 24px 24px;
+  background: #fff;
   .btn-refresh {
     padding: 0;
     height: 32px;

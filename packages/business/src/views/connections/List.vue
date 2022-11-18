@@ -691,6 +691,8 @@ export default {
 .connection-list-wrap {
   height: 100%;
   overflow: hidden;
+  background: #fff;
+  padding: 0 24px 24px 24px;
   ::v-deep {
     .el-select-dropdown__item {
       span {

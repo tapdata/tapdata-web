@@ -47,7 +47,7 @@ export default {
 
 <style lang="scss" scoped>
 .error-page-wrap {
-  padding-top: 68px;
+  padding-top: 52px;
   height: 100%;
   display: flex;
   flex-direction: column;
