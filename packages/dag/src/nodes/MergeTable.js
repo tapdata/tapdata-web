@@ -95,7 +95,7 @@ export class MergeTable extends NodeType {
                           dependencies: ['.mergeType', '.id'],
                           fulfill: {
                             state: {
-                              value: `{{ !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1])?.name : $self.value }}`
+                              value: `{{ !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1]) ? findNodeById($deps[1]).name:undefined : $self.value }}`
                             }
                           }
                         },
