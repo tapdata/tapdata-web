@@ -879,7 +879,7 @@ export default {
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {
-              str = `${p}${data.token}`
+              str = `${p.replace(/\/$/, '')}${data.token}`
             }
             $form.setValuesIn(field.name, str)
           })
