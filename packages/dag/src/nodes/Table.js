@@ -412,7 +412,7 @@ export class Table extends NodeType {
                       {
                         fulfill: {
                           run: `
-                            if (!$self.value && $self.dataSource?.length) {
+                            if (!$self.value && $self.dataSource && $self.dataSource.length) {
                               $self.setValue($self.dataSource.filter(item => item.isPrimaryKey).map(item => item.value))
                               $self.validate()
                             }
