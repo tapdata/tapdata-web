@@ -34,11 +34,14 @@ Vue.use(FormBuilder)
 Vue.component(VIcon.name, VIcon)
 
 window._TAPDATA_OPTIONS_ = {
-  logoUrl: require('@/assets/images/logo.png'),
-  loginUrl: require('@/assets/images/login-bg.png'),
-  version: 'DAAS_BUILD_NUMBER',
-  loadingImg: require('@/assets/icons/loading.svg')
+  version: process.env.VUE_APP_VERSION,
+  logoUrl: require(`@/assets/images/${process.env.VUE_APP_LOGO_IMG}`),
+  loginUrl: require(`@/assets/images/${process.env.VUE_APP_LOGIN_IMG}`),
+  loadingImg: require(`@/assets/icons/${process.env.VUE_APP_LOADING_IMG}`),
+  logoWidth: process.env.VUE_APP_LOGO_WIDTH,
+  loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE
 }
+
 window.getSettingByKey = key => {
   let value = ''
 

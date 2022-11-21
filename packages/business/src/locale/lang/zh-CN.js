@@ -312,6 +312,7 @@ export default {
   packages_business_button_bulk_import: '导入',
   packages_business_message_save_fail: '保存失败',
   packages_business_column_create_time: '创建时间',
+  packages_business_column_event_time: '增量时间点',
   packages_business_task_list_transform_running: '推演中',
   packages_business_task_list_transform_done: '推演完成',
   packages_business_task_list_transform_error: '推演失败',
@@ -499,5 +500,10 @@ export default {
   packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: '认证数据源',
   packages_business_connections_preview_lianjiechajianlai: '链接插件来源',
   packages_business_connections_list_lianjiefenlei: '连接分类',
-  packages_business_task_migratelist_renwufenlei: '任务分类'
+  packages_business_task_migratelist_renwufenlei: '任务分类',
+  packages_business_components_connectiontypeselectorsort_jijiangshangxian: '即将上线',
+  packages_business_task_list_renwubuzhichi: '任务不支持该操作',
+  packages_business_connections_databaseform_keyicongbaohan: '可以从包含表规则匹配到的表中将指定的表排除',
+  packages_business_connections_databaseform_paichubiao: '排除表',
+  packages_business_connections_databaseform_baohanbiao: '包含表'
 }

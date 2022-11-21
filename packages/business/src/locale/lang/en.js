@@ -319,6 +319,7 @@ export default {
   packages_business_button_bulk_import: 'Bulk Import',
   packages_business_message_save_fail: 'Save failed',
   packages_business_column_create_time: 'Create time',
+  packages_business_column_event_time: 'Event time',
   packages_business_task_list_transform_running: 'Field mapping running',
   packages_business_task_list_transform_done: 'Field mapping completed',
   packages_business_task_list_transform_error: 'Field mapping failed',
@@ -507,5 +508,11 @@ export default {
   packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'Authentication data source',
   packages_business_connections_preview_lianjiechajianlai: 'Link plugin source',
   packages_business_connections_list_lianjiefenlei: 'Connection Category',
-  packages_business_task_migratelist_renwufenlei: 'Task classification'
+  packages_business_task_migratelist_renwufenlei: 'Task classification',
+  packages_business_components_connectiontypeselectorsort_jijiangshangxian: 'Coming soon',
+  packages_business_task_list_renwubuzhichi: 'The task does not support this operation',
+  packages_business_connections_databaseform_keyicongbaohan:
+    'The specified table can be excluded from the tables matched by the inclusion table rule',
+  packages_business_connections_databaseform_paichubiao: 'Exclude table',
+  packages_business_connections_databaseform_baohanbiao: 'Contain table'
 }

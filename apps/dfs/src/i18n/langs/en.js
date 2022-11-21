@@ -45,7 +45,7 @@ export default {
   workbench_overview: 'Overview',
   workbench_guide: "Beginner's guide",
   workbench_agent_desc:
-    'Welcome to Tapdata Cloud, you are about to start your real-time data synchronization journey! Please install and deploy the Agent for the first use, otherwise the task cannot be run. ',
+    'Welcome to Tapdata Cloud, you are about to start your real-time data synchronization journey. Please install and deploy the Agent for the first use, otherwise the task cannot be run. ',
   workbench_agent_button_create: 'Create Agent',
   workbench_connection_desc:
     "Data connection is mainly used to establish the connection between the Agent and the user's source database and target database. Come and create a data connection, and test and manage the status of the existing data connection. ",
@@ -107,12 +107,12 @@ export default {
   notify_list_paused: 'Paused',
   notify_list_edited: 'Edited',
   notify_list_deleted: 'deleted',
-  notify_list_stopped_by_error: 'stopped by error, please pay attention!',
+  notify_list_stopped_by_error: 'stopped by error, please pay attention.',
   notify_list_startup_failed: 'startup failed',
   notify_list_stop_failed: 'stop failed',
   notify_list_encounter_error_skipped: 'skip an ERROR',
   notify_list_connection_interrupted: 'connection interrupted',
-  notify_list_connected: 'has returned to normal!',
+  notify_list_connected: 'has returned to normal.',
   notify_list_inspect_count: 'Verify job count difference',
   notify_list_inspect_value: 'Verify job field value difference',
   notify_list_inspect_delete: 'Verify job was deleted',
@@ -161,7 +161,7 @@ export default {
   agent_tip_auto_upgrade: 'Unable to use "Auto upgrade" when Agent is offline',
   agent_dialog_upgrade_title:
     'The Agent version is updated. You can upgrade your Agent to the latest version in the following ways. Tasks cannot be run during the upgrade process.',
-  agent_dialog_upgrade_fail: 'Auto upgrade failed, please try again or upgrade manually!',
+  agent_dialog_upgrade_fail: 'Auto upgrade failed, please try again or upgrade manually.',
   agent_button_create_msg_success: 'Agent created successfully',
   agent_button_create_msg_success_desc:
     'Please click [Deploy] to enter the deployment page and follow the instructions to complete the Agent deployment.',
@@ -178,7 +178,7 @@ export default {
   agent_button_delete_success: 'Agent deleted successfully',
   agent_button_delete_fail: 'Agent deletion failed',
   agent_auto_upgrade_tip_running_task:
-    'It has been detected that you have a task running, please stop all tasks under this agent before proceeding with the upgrade operation!',
+    'It has been detected that you have a task running, please stop all tasks under this agent before proceeding with the upgrade operation.',
   agent_auto_upgrade_tip_start: 'Start to upgrade',
   agent_auto_upgrade_tip_upgrading: 'Automatically upgrading',
   agent_auto_upgrade_tip_progress: 'Upgrade package download progress',
@@ -206,7 +206,7 @@ export default {
     '2. Click the download button below to download the Tapdata Agent installation package to the local environment. ',
   agent_deploy_before_prepare_windows_second_download: 'Click to download Tapdata Agent',
   agent_deploy_before_prepare_windows_third:
-    '3. Please strictly follow the installation steps below to deploy, do not double-click the installation package directly! ',
+    '3. Please strictly follow the installation steps below to deploy, do not double-click the installation package directly. ',
   agent_deploy_before_prepare_windows_four:
     '4. If the installation path includes Chinese or special characters, the installation may fail.',
   agent_deploy_start_install: 'Start installation',
@@ -559,15 +559,15 @@ export default {
   agent_download_AgentDownloadModal_dengDaiMingLingZhi:
     '3. Wait for the command execution to complete the installation and startup of tapdata agent.',
   agent_download_AgentDownloadModal_buShuZhuangTaiJian: 'Deployment status detection in progress',
-  agent_download_AgentDownloadModal_gongXiNinWanCheng: 'Congratulations on completing the deployment!',
+  agent_download_AgentDownloadModal_gongXiNinWanCheng: 'Congratulations on completing the deployment.',
   agent_download_AgentDownloadModal_kaiShiChuangJianLian: 'Start creating connection',
   agent_download_AgentDownloadModal_jinRuGongZuoTai: 'Enter the workbench',
   agent_download_UpgradeVersion_dOCKE: 'Docker exec - it container ID Bash',
   agent_download_UpgradeVersion_dOCKE2: 'Docker start container ID',
-  views_Error_fuWuQiNeiBu: 'Server internal error!',
+  views_Error_fuWuQiNeiBu: 'Server internal error.',
   views_Error_fanHuiShouYe: 'Return to home page',
   views_Error_zhangHuZanWuQuan:
-    'The account has no permission! Your account authority is insufficient to order products. Please contact the customer manager or customer service personnel: 4001100868',
+    'The account has no permission. Your account authority is insufficient to order products. Please contact the customer manager or customer service personnel: 4001100868',
   views_Error_zhangHuYiBeiDong: 'The account has been frozen',
   views_Error_ninDeZhangHuYi:
     'Your account has been suspended and cannot order products. Please recharge in time or contact the account manager.',
@@ -652,7 +652,7 @@ export default {
   user_Center_zhiChiJPG: 'Support JPG, PNG and GIF formats, and the image size should be within 500kb',
   user_Center_qingShiYongWeiXin: 'Please use wechat scanning QR code to bind tapdata cloud',
   user_Center_xiuGaiNiChengCheng: 'Successfully modified nickname',
-  user_Center_shangChuanTouXiangTu: 'Upload avatar image size can not exceed 500kb!',
+  user_Center_shangChuanTouXiangTu: 'Upload avatar image size can not exceed 500kb.',
   user_Center_xiuGaiTouXiangCheng: 'Successfully modified Avatar',
   user_Center_qingXianBangDingShou: 'Please bind your mobile number first',
   user_Center_bangDingShouJi: 'Binding mobile phone',
@@ -669,7 +669,7 @@ export default {
   user_Center_xiuGaiQiYeXin: 'Enterprise information modified successfully',
   components_BindPhone_qingBangDingShouJi: 'Please bind your mobile number',
   components_BindPhone_qingShuRuShouJi: 'Please enter your mobile phone',
-  workbench_Notice_tAPDA12: 'Tapdata cloud version 1.0.9 has been released!',
+  workbench_Notice_tAPDA12: 'Tapdata cloud version 1.0.9 has been released.',
   workbench_Notice_tAPDA11:
     'Tapdata cloud is the first heterogeneous database real-time synchronization cloud platform in China. At present, it supports Oracle, mysql, PG, SQL server, mongodb and es, Dameng, Kafka, GP, MQ, Clickhouse, hazelcast cloud, ADB mysql, ADBThe data synchronization among PostgreSQL, kundb, tidb and dummy will support DB2, Sybase ASE, redis, gbase and gaussdbAnd permanently free to users.',
   workbench_Notice_buDuanYouHuaTi: '2. Continuously optimize and provide better experience',
@@ -681,10 +681,10 @@ export default {
   workbench_Notice_duoWeiDuTongJi: '4. Multi dimensional statistics, more intuitive understanding of task progress',
   workbench_Notice_banBenDuiShuJu:
     'Version 1.0.9 optimizes the details of database synchronization tasks. Users can see the synchronization progress and the synchronization process at a glance.',
-  workbench_Notice_shengJiGongGao: 'Upgrade announcement!',
+  workbench_Notice_shengJiGongGao: 'Upgrade announcement.',
   workbench_Notice_zunJingDeYongHu: 'Dear users',
   workbench_Notice_ninHaoWeiLeJin:
-    'Hello! In order to further improve the service quality, the tapdata cloud will be upgraded from 19:00 to 22:00 on January 20, 2022 (Thursday)',
+    'Hello, In order to further improve the service quality, the tapdata cloud will be upgraded from 19:00 to 22:00 on January 20, 2022 (Thursday)',
   workbench_Notice_shengJiQiJianKe:
     'During the upgrade, operations such as accessing the console and creating tasks may be affected, and tasks that are already running may not be affected. After the upgrade, they will be restored to normal use.',
   workbench_Notice_yiShangShengJiRu:
@@ -692,9 +692,9 @@ export default {
   workbench_Notice_nianYueRi: 'January 20, 2022',
   workbench_Notice_tAPDA9: 'Tapdata cloud team',
   workbench_Notice_tAPDA8:
-    'New year version update of tapdata cloud: details control benefits! The data source is newly added, which supports the custom collection "start time" of incremental tasks',
+    'New year version update of tapdata cloud: details control benefits. The data source is newly added, which supports the custom collection "start time" of incremental tasks',
   workbench_Notice_kaiNianYouFengGeng:
-    'Update again at the beginning of the year and optimize all the time - the new version of tapdata cloud has been released!',
+    'Update again at the beginning of the year and optimize all the time - the new version of tapdata cloud has been released.',
   workbench_Notice_ciCiFaBuDe2:
     '2.0.1 of this releaseVersion, in addition to the new data source, it is optimized for many details in the actual operation process, which further improves its ease of use and convenience of operation.',
   workbench_Notice_gengXinSuLan: 'Update quick view 👇',
@@ -728,7 +728,7 @@ export default {
     "Pay attention to every feedback gained on the road of growth, constantly improve and optimize. Tapdata has been on the road all the time. Let's focus on details and become a great beauty. We look forward to seeing you again in the next new version",
   workbench_Notice_: '。',
   workbench_Notice_tAPDA7:
-    'Here comes tapdata cloud 2.1.0: the latest version supports Alibaba cloud database access. The Windows version has lighter operation and a comprehensive upgrade of the user experience!',
+    'Here comes tapdata cloud 2.1.0: the latest version supports Alibaba cloud database access. The Windows version has lighter operation and a comprehensive upgrade of the user experience.',
   workbench_Notice_ciCiFaBuDe:
     'The release of version 2.1.0 has another big move: officially start accessing cloud database and optimize windowsThe version operation process comprehensively upgrades the user experience along the practical demand points in the real use environment.',
   workbench_Notice_shuJuLianJieShang2: '1. New data connection,',
@@ -762,7 +762,7 @@ export default {
   workbench_Notice_xinZengYongHuZhong: 'Add "user center" page',
   workbench_Notice_niDeGeXingHua: 'Your new personalization feature is online',
   workbench_Notice_xiangYaoZiZhuXiu:
-    'If you want to modify the initial registration information, set the avatar / nickname / password, or bind a new mobile phone number and email, the entrance is coming! Hover over the personal account in the upper right corner, select the [user center] tab in the drop-down menu, and click to enter the personal and enterprise information editing interface.',
+    'If you want to modify the initial registration information, set the avatar / nickname / password, or bind a new mobile phone number and email, the entrance is coming. Hover over the personal account in the upper right corner, select the [user center] tab in the drop-down menu, and click to enter the personal and enterprise information editing interface.',
   workbench_Notice_xinZengRenWuShu: 'Statistical chart display of new task data volume',
   workbench_Notice_yinWeiKeShiSuo: "It's clearer because it's visible",
   workbench_Notice_zheYiCiWoMen:
@@ -772,7 +772,7 @@ export default {
   workbench_Notice_xinZengTengXunYun:
     'Tencent cloud database connection is added, tasks can be published regularly, and forms can be specified for re verification - tapdata with user experience firstCloud, start on the functional details again',
   workbench_Notice_xuQiuChiXuGeng3:
-    'The requirements are continuously updated and optimized all the time - the March version of tapdata cloud is updated again!',
+    'The requirements are continuously updated and optimized all the time - the March version of tapdata cloud is updated again.',
   workbench_Notice_zuiXinFaBuDe3:
     'Newly released 2.1.1In the version, Tencent\'s cloud database connection is new. While expanding the access area of cloud database again, it adheres to the iterative guidance of giving priority to user experience and focuses on removing three "small nails" that are easy to kick in the past use.',
   workbench_Notice_shuJuLianJieShang: 'New data connection and new cloud database access',
@@ -829,9 +829,9 @@ export default {
   workbench_Notice_renWuZaiCiQi: 'The task starts again',
   workbench_Notice_zhiChiDuiZhiDing: 'Supports re verification of the specified table',
   workbench_Notice_zhiYouGeBieBiao:
-    'Only individual table verification is inconsistent? Now you can delimit a small area and recheck it!',
+    'Only individual table verification is inconsistent? Now you can delimit a small area and recheck it.',
   workbench_Notice_congZheYiBanKai2:
-    '📣 From this version, when there is a problem of inconsistent data verification, there is no need to re perform the whole verification task!',
+    '📣 From this version, when there is a problem of inconsistent data verification, there is no need to re perform the whole verification task.',
   workbench_Notice_xinBanBenZhiChi2:
     'The new version supports selecting one or more tables from the current execution results on the data verification results page to start the data verification task again. The task execution status and results will directly update the current verification results. Come back byeBye, efficiency high~',
   workbench_Notice_ziDuanYingSheShi: 'Field mapping supports modifying a single table name',
@@ -848,9 +848,9 @@ export default {
   workbench_Notice_duoGeJieGouXiang: 'Multiple source tables with the same structure',
   workbench_Notice_tongYiMuBiaoBiao: 'Same target table',
   workbench_Notice_tAPDA4:
-    'Tapdata cloud 2.1.2 is coming: big wave details are ready! Field types can be modified in batch, support wechat code scanning login, and add Vika as the goal',
+    'Tapdata cloud 2.1.2 is coming: big wave details are ready. Field types can be modified in batch, support wechat code scanning login, and add Vika as the goal',
   workbench_Notice_xuQiuChiXuGeng2:
-    'Requirements are constantly updated and optimized all the time - tapdata cloud version 2.1.2 is coming!',
+    'Requirements are constantly updated and optimized all the time - tapdata cloud version 2.1.2 is coming.',
   workbench_Notice_zuiXinFaBuDe2:
     'In the latest release, Vika is supportedAs the goal, in order to quickly import data, we use wig table to realize zero code cooperation system and build a "bridge". At the same time, we will continue to adhere to the iterative orientation of giving priority to user experience, open support wechat code scanning registration and login, focus on details and focus on improvementThe ease of use of tapdata cloud at the practical level.',
   workbench_Notice_xinZengZhiChiV: 'New support for Vika',
@@ -878,7 +878,7 @@ export default {
   workbench_Notice_caoZuoYanShiJiang: 'Operation demonstration: import student scores into Vika',
   workbench_Notice_zhiChiZiDuanLei: 'Batch modification of field types is supported',
   workbench_Notice_ziDuanLeiXingZhuan:
-    'What should I do if the field type conversion exception causes an error in the task? Now you can modify it manually!',
+    'What should I do if the field type conversion exception causes an error in the task? Now you can modify it manually.',
   workbench_Notice_tAPDA3:
     'Tapdata Cloud 2.1.2Aiming at the problem of task errors caused by abnormal field type conversion during data migration in the historical version, it began to support batch modification of field types (you can choose to apply to all tables of the current task during modification), providing users with the ability to manually modify the field type conversion mapping relationship.',
   workbench_Notice_shiXianSaoMaZhu: 'Realize code scanning registration and login',
@@ -903,8 +903,8 @@ export default {
   workbench_Notice_xinBanBenZhiChi:
     'The new version supports quick search and location of data sources and targets through connection type filtering and fuzzy query of connection name when creating connections - all changes are for easier use.',
   workbench_Notice_tAPDA2:
-    'Tapdata 2.1.3 is coming: Apache Doris is added as the target, and the task query is faster!',
-  workbench_Notice_xuQiuChiXuGeng: 'Requirements are constantly updated and optimized - tapdata cloud 2.1.3 is coming!',
+    'Tapdata 2.1.3 is coming: Apache Doris is added as the target, and the task query is faster.',
+  workbench_Notice_xuQiuChiXuGeng: 'Requirements are constantly updated and optimized - tapdata cloud 2.1.3 is coming.',
   workbench_Notice_zuiXinFaBuDe:
     'In the newly released version, in addition to supporting Apache Doris, the query of task log is also more humanized.',
   workbench_Notice_xinZengZhiChiA: 'New support for Apache Doris',
@@ -924,18 +924,18 @@ export default {
   workbench_Notice_shuJuLianJieJu: 'Number of data connection sites expanded to',
   workbench_Notice_xiaoYouHuaGengTie: 'Small optimization, more intimate',
   workbench_Notice_congZheYiBanKai:
-    "📣 From this version, when you need to query the task log, you don't need to go back to the agent to pull it!",
+    "📣 From this version, when you need to query the task log, you don't need to go back to the agent to pull it.",
   workbench_Notice_xinBanBenXiaDang:
-    "In the new version, when there is a problem with the user's task and you need to view the log to locate the problem, you can directly export the log on the operation monitoring page (you can select [time range]) without returningAgent deployment server finds log files. The operation is more humanized!",
-  workbench_Workbench_tAPDA5: 'Tapdata cloud version 2.1.3 has been released!',
-  workbench_Workbench_tAPDA4: 'Tapdata cloud version 2.1.2 has been released!',
-  workbench_Workbench_tAPDA3: 'Tapdata cloud version 2.1.1 has been released!',
-  workbench_Workbench_tAPDA2: 'Tapdata cloud version 2.1.0 has been released!',
-  workbench_Workbench_tAPDA: 'Tapdata cloud version 2.0.1 has been released!',
+    "In the new version, when there is a problem with the user's task and you need to view the log to locate the problem, you can directly export the log on the operation monitoring page (you can select [time range]) without returningAgent deployment server finds log files. The operation is more humanized.",
+  workbench_Workbench_tAPDA5: 'Tapdata cloud version 2.1.3 has been released.',
+  workbench_Workbench_tAPDA4: 'Tapdata cloud version 2.1.2 has been released.',
+  workbench_Workbench_tAPDA3: 'Tapdata cloud version 2.1.1 has been released.',
+  workbench_Workbench_tAPDA2: 'Tapdata cloud version 2.1.0 has been released.',
+  workbench_Workbench_tAPDA: 'Tapdata cloud version 2.0.1 has been released.',
   workbench_Notice_tAPDA1:
     'Tapdata 2.1.4 is coming: the data connection is new again. Polardb MySQL and light flow start to access, which can automatically mark unsupported field types',
   workbench_Notice_xuQiuChiXuGeng1:
-    'Requirements are constantly updated and optimized - tapdata cloud 2.1.4 is coming!',
+    'Requirements are constantly updated and optimized - tapdata cloud 2.1.4 is coming.',
   workbench_Notice_zuiXinFaBuDe1:
     'In the latest released version, the default flag does not support synchronized field types when adding data connections, so as to avoid affecting the normal operation of tasks.',
   workbench_Notice_shuJuLianJieShang1: 'New data connection',
@@ -973,7 +973,7 @@ export default {
     ': the user can clearly see in the task interface that the corresponding field is deleted because [not supported], and the [deleted] field does not support recovery',
   workbench_Notice_congErBaoZhengRen:
     "）So as to ensure the normal operation of the task and avoid frequent errors caused by users' unclear which fields are not supported.",
-  workbench_Workbench_tAPDA1: 'Tapdata cloud version 2.1.4 has been released!',
+  workbench_Workbench_tAPDA1: 'Tapdata cloud version 2.1.4 has been released.',
   field_mapping_field_mapping_dialog_buZhiChi: "I won't support it",
   views_Lang_pingBiGuoJiHua: 'Shielding internationalization - Rules',
   views_Lang_wenAnBaoHanDe: 'Values contained in the document, list: A, B, C',
@@ -984,7 +984,7 @@ export default {
   workbench_Notice_tAPDA1213:
     'Tapdata cloud 2.1.5 is coming: Amazon RDS database is newly supported, error log query is more convenient, and agent deployment details are optimized',
   workbench_Notice_xuQiuChiXuGeng12:
-    'Requirements are constantly updated and optimized - tapdata cloud 2.1.5 is coming!',
+    'Requirements are constantly updated and optimized - tapdata cloud 2.1.5 is coming.',
   workbench_Notice_zuiXinFaBuDe12:
     'In the latest released version, the data connection is updated again, and a quick query entry of task error related information is added, which starts to support the custom setting of JVM parameters.',
   workbench_Notice_shuJuLianJieShang12: 'New data connection',
@@ -1010,7 +1010,7 @@ export default {
   workbench_Notice_renWuBaoCuoXiang:
     'If the task reports an error, what should I do if I want to query the error log faster?',
   workbench_Notice_congZheYiBanBen:
-    "📣 Starting from this version, log query will be faster! When a task runs in error, you don't need to go back to the operation monitoring page to export the error log. You can preview the error information directly through the pop-up window. At the same time, you can get the complete log query entry at the bottom of the pop-up window. You can click directly to the log display page for quick viewing and quick positioning, which is more convenient to use!",
+    "📣 Starting from this version, log query will be faster. When a task runs in error, you don't need to go back to the operation monitoring page to export the error log. You can preview the error information directly through the pop-up window. At the same time, you can get the complete log query entry at the bottom of the pop-up window. You can click directly to the log display page for quick viewing and quick positioning, which is more convenient to use.",
   workbench_Notice_renWuBaoCuoDian: 'The task reports an error. Click to view the error log',
   workbench_Notice_aGENT1: 'Agent deployment details optimization',
   workbench_Notice_zhiChiJVM: 'Support JVM custom configuration',
@@ -1022,7 +1022,7 @@ export default {
   workbench_Notice_peiZhiWenJianKai: "JVM parameter name opened by configuration file: tapdatajavaopts: '- xmx2362m'",
   workbench_Notice_beiZhuMoRenQi:
     '*Note: by default, startup occupies 3 / 5 of the system configuration memory. If 3 / 5 of the system memory exceeds 8g, it only occupies 8g at most.',
-  workbench_Workbench_tAPDA12: 'Tapdata cloud version 2.1.5 has been released!',
+  workbench_Workbench_tAPDA12: 'Tapdata cloud version 2.1.5 has been released.',
   page_title_run_monitor: 'Run monitoring',
   page_title_data_verify: 'Data verification',
   page_title_data_difference_details: 'Difference details',
@@ -1033,7 +1033,7 @@ export default {
   dfs_src_init_huoquyonghuxin2: 'Failed to obtain user information',
   dfs_plugins_axios_qingqiushibai: 'Request failed:',
   dfs_plugins_axios_qingqiubaocuo: 'Request error:',
-  dfs_plugins_buried_wangzhantingliushi: 'The website stay time tracking point is not initialized!',
+  dfs_plugins_buried_wangzhantingliushi: 'The website stay time tracking point is not initialized.',
   dfs_plugins_buried_chufamaidianc: 'Trigger tracking point [{val1}]: ',
   dfs_workbench_tyepmap_fuwuqiduankai: 'Server disconnected',
   dfs_workbench_tyepmap_fasongjiange: 'Sending interval',
@@ -1115,6 +1115,47 @@ export default {
   dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switch',
   dfs_workbench_workbench_banbenshengjitong: 'version upgrade notice',
   dfs_user_center_acces:
-    'AccessKey is your secret key to access the system API and has full account authority, please keep it properly! Do not expose AccessKey to external channels (such as GitHub) in any way to avoid being used by others to cause security threats. ',
-  dfs_user_center_kaifaxinxi: 'Development information'
+    'AccessKey is your secret key to access the system API and has full account authority, please keep it properly. Do not expose AccessKey to external channels (such as GitHub) in any way to avoid being used by others to cause security threats. ',
+  dfs_user_center_kaifaxinxi: 'Development information',
+
+  dfs_agent_download_agentdownloadmodal_aliyunjisuan: 'Alibaba Cloud Computing Nest',
+  dfs_agent_download_agentdownloadmodal_bushuwanchenghou:
+    '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations. The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
+  dfs_agent_download_agentdownloadmodal_querenjisuanchao: '3. Confirm that the Compute Nest deployment is complete. ',
+  dfs_agent_download_agentdownloadmodal_shilitok: 'Instance token:',
+  dfs_agent_download_agentdownloadmodal_shilibanben: 'Instance version:',
+  dfs_agent_download_agentdownloadmodal_womenyijingwei:
+    '2. We have automatically filled in the information in "Application Instance Configuration" for you, you can also manually copy/paste the following information if necessary. ',
+  dfs_agent_download_agentdownloadmodal_fufeibushu: 'paid deployment',
+  dfs_agent_download_agentdownloadmodal_santianshiyong: 'Trial for three days',
+  dfs_agent_download_agentdownloadmodal_ninkeyixuanze:
+    ' 1. You can choose to pay by flow rate or prepaid monthly/yearly, or you can try it for 3 days for free. After 3 days, the server resources will be automatically recovered. You need to redeploy the Agent to continue to use TapData. According to your payment method, please click below Click the button to jump to Alibaba Cloud to create your cloud server. Tapdata Agent will be automatically installed on the new instance. If you do not have an account, you can register on site: ',
+  dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun:
+    'The Alibaba Cloud account that is ready to manage the cloud server can also be created on site by clicking the button below. ',
+  dfs_agent_download_agentdownloadmodal_jisuanchaoCo:
+    'Compute Nest is an enterprise software service for automated deployment and management of Tapdata for Alibaba Cloud, which saves you the time to deploy and operate servers. ',
+  dfs_agent_download_agentdownloadmodal_yaoanzhuangAg: 'To install Agent, please select your server type below:',
+  dfs_agent_download_fastdownload_bushuwanchenghou:
+    '4. After the deployment is complete, return to our [Agent Management Page] and wait for 2 minutes until the [Status] changes to [Running]. congratulations. The deployment of the Tapdata Alould computing environment has been completed, and the data task can be created. ',
+  dfs_agent_download_fastdownload_ninkeyixuanze:
+    '1. You can choose to pay by flow rate or prepaid monthly/yearly, or you can try it for free for 3 days. After 3 days, the server resources will be automatically recovered. You need to redeploy the Agent to continue to use TapData. According to your payment method, please click below Click the button to jump to Alibaba Cloud to create your cloud server. Tapdata Agent will be automatically installed on the new instance. If you do not have an account, you can register on site: ',
+  dfs_agent_download_fastdownload_jisuanchaoCo:
+    'Compute Nest is an enterprise software service for automated deployment and management of Tapdata for Alibaba Cloud, which saves you the time to deploy and operate servers. ',
+  dfs_agent_download_upgradeversion_jinruyuanAg:
+    '2. Enter the original Agent installation directory, Compute Nest will be automatically installed under /data/tapdata',
+  dfs_agent_download_upgradeversion_dengludaoanzhuang:
+    '1. Log in to the Alibaba Cloud ECS instance where Tapdata Agent is installed',
+  dfs_agent_download_upgradeversion_chuxianUpd:
+    '5. If "Update finished." appears, it means that the Agent has been upgraded successfully',
+  dfs_agent_download_upgradeversion_zaiTapd:
+    '4. Copy the upgrade command on the manual upgrade page of the Tapdata console, and paste it into the "ECS" remote terminal for execution',
+  dfs_agent_download_upgradeversion_dengluchenggonghou:
+    '3. After successful login, enter the directory "/data/tapdata"',
+  dfs_agent_download_upgradeversion_dianjishiliming:
+    '2. Click the instance name, select the "Resources" tab, and click "Remote Login" in the "Cloud Server ECS" resource',
+  dfs_agent_download_upgradeversion_ruguoninbushu:
+    'If you are deploying a "3-day trial instance", please open the Compute Nest "trial service" tab',
+  dfs_agent_download_upgradeversion_jisuanchaodenglu: 'Calculate nest login address',
+  dfs_agent_download_upgradeversion_denglualiyun:
+    '1. Log in to Alibaba Cloud Computing Nest console and find the service instance where Agent is deployed.'
 }

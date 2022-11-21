@@ -244,35 +244,35 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
-                  increase: {
-                    type: 'void',
-                    'x-component': 'Space',
-                    'x-component-props': {
-                      size: 'middle'
-                    },
-                    properties: {
-                      increaseSyncInterval: {
-                        title: '增量同步间隔(ms)',
-                        type: 'number',
-                        default: 500,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 1
-                        }
-                      },
-                      increaseReadSize: {
-                        title: '每次读取数量(行)',
-                        type: 'number',
-                        default: 100,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 1
-                        }
-                      }
-                    }
-                  },
+                  // increase: {
+                  //   type: 'void',
+                  //   'x-component': 'Space',
+                  //   'x-component-props': {
+                  //     size: 'middle'
+                  //   },
+                  //   properties: {
+                  //     increaseSyncInterval: {
+                  //       title: '增量同步间隔(ms)',
+                  //       type: 'number',
+                  //       default: 500,
+                  //       'x-decorator': 'FormItem',
+                  //       'x-component': 'InputNumber',
+                  //       'x-component-props': {
+                  //         min: 1
+                  //       }
+                  //     },
+                  //     increaseReadSize: {
+                  //       title: '每次读取数量(行)',
+                  //       type: 'number',
+                  //       default: 100,
+                  //       'x-decorator': 'FormItem',
+                  //       'x-component': 'InputNumber',
+                  //       'x-component-props': {
+                  //         min: 1
+                  //       }
+                  //     }
+                  //   }
+                  // },
                   enableDDL: {
                     title: 'DDL事件采集',
                     type: 'boolean',
@@ -403,7 +403,8 @@ export class Table extends NodeType {
                     type: 'array',
                     required: true,
                     default: null,
-                    description: '{{ $isDaas ? "" : "如果要同步删除事件，请确保关联 _id "}}',
+                    description:
+                      '{{ !$isDaas && $values.databaseType==="MongoDB" ? "如果要同步删除事件，请确保关联 _id" : ""}}',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       wrapperWidth: 300

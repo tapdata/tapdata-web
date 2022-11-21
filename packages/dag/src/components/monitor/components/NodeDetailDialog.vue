@@ -5,7 +5,7 @@
     :visible.sync="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
-    @close="$emit('input', false)"
+    @close="$emit('input', false).$emit('load-data')"
   >
     <div class="flex mb-4 align-items-center">
       <div class="select__row flex align-items-center" @click.stop="handleSelect">
@@ -358,15 +358,14 @@ export default {
 
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        outputQps = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag
-      } = data
-      const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
+      const usedTime = Date.now() - snapshotStartAt
+      let time
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+        time = 0
+      } else {
+        time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+      }
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',

@@ -93,29 +93,6 @@ export class Database extends NodeType {
           }
         },
         properties: {
-          enableDynamicTable: {
-            title: '动态新增表',
-            type: 'boolean',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              tooltip: '开启后任务将会自动处理新增，删除表',
-              feedbackLayout: 'none'
-            },
-            'x-component': 'Switch',
-            'x-reactions': [
-              {
-                dependencies: ['.migrateTableSelectType'],
-                fulfill: {
-                  state: {
-                    visible:
-                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
-                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
-                  }
-                }
-              }
-            ]
-          },
-
           enableDDL: {
             title: 'DDL事件采集',
             type: 'boolean',
@@ -161,14 +138,10 @@ export class Database extends NodeType {
             default: 'all',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              className: 'form-item-dense'
+              className: 'form-item-dense',
+              feedbackLayout: 'none'
             },
             'x-component': 'Radio.Group',
-            'x-component-props': {
-              style: {
-                marginBottom: '8px'
-              }
-            },
             enum: [
               {
                 label: '全部',
@@ -188,6 +161,28 @@ export class Database extends NodeType {
                 }
               }
             }
+          },
+
+          enableDynamicTable: {
+            title: '动态新增表',
+            type: 'boolean',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              tooltip: '开启后任务将会自动处理新增，删除表'
+            },
+            'x-component': 'Switch',
+            'x-reactions': [
+              {
+                dependencies: ['.migrateTableSelectType'],
+                fulfill: {
+                  state: {
+                    visible:
+                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
+                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
+                  }
+                }
+              }
+            ]
           },
 
           tableCard: {
@@ -218,6 +213,7 @@ export class Database extends NodeType {
             'x-component-props': {
               connectionId: '{{$values.connectionId}}',
               style: {
+                marginTop: '8px',
                 height: 'unset',
                 minHeight: 0,
                 maxHeight: 'calc((100vh - 120px) * 0.618)'

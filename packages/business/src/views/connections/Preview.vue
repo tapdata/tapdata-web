@@ -226,23 +226,23 @@ export default {
     }
   },
   beforeDestroy() {
-    this.clearInterval()
+    this.clearTimer()
   },
   watch: {
     visible(val) {
       if (!val) {
-        this.clearInterval() //清除定时器
+        this.clearTimer() //清除定时器
       }
     }
   },
   methods: {
-    clearInterval() {
+    clearTimer() {
       // 清除定时器
-      clearInterval(this.timer)
+      clearTimeout(this.timer)
       this.timer = null
     },
     handleClose() {
-      this.clearInterval()
+      this.clearTimer()
       this.visible = false
       this.showProgress = false
       this.$emit('close')
@@ -313,7 +313,7 @@ export default {
           })
       })
     },
-    async reload() {
+    async reload(cb) {
       this.checkAgent(() => {
         let config = {
           title: this.$t('packages_business_connection_reloadTittle'),
@@ -332,20 +332,21 @@ export default {
           if (resFlag) {
             this.showProgress = true
             this.progress = 0
-            this.testSchema()
+            this.testSchema(cb)
             this.$emit('reload-schema')
           }
         })
       })
     },
     //请求测试
-    testSchema() {
+    testSchema(cb) {
       let parms = {
         loadCount: 0,
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
       connectionsApi.updateById(this.connection.id, parms).then(data => {
+        cb?.()
         if (!this?.$refs?.test) {
           return
         }
@@ -355,7 +356,7 @@ export default {
       })
     },
     getProgress() {
-      this.clearInterval()
+      this.clearTimer()
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
@@ -373,9 +374,9 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.timer = setInterval(() => {
-              this.getProgress()
-            }, 800)
+            this.timer = setTimeout(() => {
+              this.visible && this.getProgress()
+            }, 2000)
           }
         })
         .catch(() => {
@@ -428,6 +429,10 @@ export default {
         customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
       }
       return MAP[definitionScope + beta] || MAP['customer']
+    },
+
+    setConnectionData(row) {
+      this.connection = this.transformData(row)
     }
   }
 }

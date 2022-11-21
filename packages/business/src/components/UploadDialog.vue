@@ -31,6 +31,7 @@
           :auto-upload="false"
           :on-success="handleSuccess"
           :on-change="handleChange"
+          :on-remove="handleRemove"
         >
           <ElLink type="primary" plain slot="trigger" size="mini">
             <VIcon class="mr-1 link-primary">upload</VIcon>
@@ -145,6 +146,10 @@ export default {
       }
       this.dialogVisible = false
       this.$refs.upload.submit()
+    },
+    //删除文件
+    handleRemove(file, fileList) {
+      this.importForm.fileList = fileList
     },
 
     handleClose() {

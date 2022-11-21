@@ -146,6 +146,7 @@
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
         ref="nodeDetailDialog"
+        @load-data="init"
       ></NodeDetailDialog>
     </section>
   </section>
@@ -372,7 +373,7 @@ export default {
 
     async initNodeType() {
       this.addResourceIns(allResourceIns)
-      if (this.dataflow.syncType !== 'migrate') await this.loadCustomNode(false)
+      await this.loadCustomNode()
     },
 
     async openDataflow(id) {
@@ -665,7 +666,8 @@ export default {
             'currentSnapshotTableRowTotal',
             'currentSnapshotTableInsertRowTotal',
             'replicateLag',
-            'snapshotStartAt'
+            'snapshotStartAt',
+            'currentEventTimestamp'
           ],
           type: 'instant' // 瞬时值
         },
@@ -735,7 +737,8 @@ export default {
             'incrementalSourceReadTimeCostAvg',
             'targetWriteTimeCostAvg',
             'snapshotStartAt',
-            'snapshotDoneAt'
+            'snapshotDoneAt',
+            'replicateLag'
           ],
           type: 'instant' // 瞬时值
         },
@@ -912,7 +915,7 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 300, ranksep: 200, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({ nodesep: 120, ranksep: 200, marginx: 0, marginy: 0, rankdir: 'LR' })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })

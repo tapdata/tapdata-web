@@ -79,6 +79,45 @@
         </div>
         <div>{{ $t('agent_upgrade_step_linux_third') }}</div>
       </div>
+      <!--   AliComputenest   -->
+      <div v-else-if="downLoadType === 'AliComputenest'" class="content-container">
+        <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
+        <div>
+          {{ $t('dfs_agent_download_upgradeversion_denglualiyun') }}
+          <el-link
+            type="primary"
+            href="https://computenest.console.aliyun.com/user/cn-hangzhou/serviceInstance/private"
+            target="_blank"
+            >{{ $t('dfs_agent_download_upgradeversion_jisuanchaodenglu') }}</el-link
+          >
+        </div>
+        <div class="ml-2">{{ $t('dfs_agent_download_upgradeversion_ruguoninbushu') }}</div>
+        <div>{{ $t('dfs_agent_download_upgradeversion_dianjishiliming') }}</div>
+        <div>{{ $t('dfs_agent_download_upgradeversion_dengluchenggonghou') }}</div>
+        <div>{{ $t('dfs_agent_download_upgradeversion_zaiTapd') }}</div>
+        <div v-if="agentId">
+          <div class="box title-text">
+            <span class="com-url">{{ comUrl }}</span>
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_upgrade_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="comUrl"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+              </span>
+            </ElTooltip>
+          </div>
+        </div>
+        <div>{{ $t('dfs_agent_download_upgradeversion_chuxianUpd') }}</div>
+      </div>
       <!--   Docker   -->
       <div v-else-if="downLoadType === 'Docker'" class="content-container">
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
@@ -127,6 +166,8 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import TheHeader from '@/components/the-header'
 
 export default {
@@ -138,7 +179,8 @@ export default {
       downType: [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
       ],
       showTooltip: false,
       agentId: '',
@@ -155,6 +197,7 @@ export default {
       let map = {
         windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         Linux: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        AliComputenest: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
       }
       return map[this.downLoadType]
@@ -299,9 +342,13 @@ export default {
         padding: 10px 50px;
         font-size: 12px;
         cursor: pointer;
-        color: #666;
-        border: 1px solid #dedee4;
-        border-radius: 3px;
+        color: map-get($iconFillColor, normal);
+        background: map-get($bgColor, main);
+        border-radius: 4px;
+        &:hover {
+          background-color: #e5e8ee;
+          border-color: #e5e8ee;
+        }
       }
       .active {
         border: 1px solid map-get($color, primary);

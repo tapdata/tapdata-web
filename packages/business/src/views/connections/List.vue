@@ -107,10 +107,14 @@
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="220" :label="$t('packages_business_connection_operate')">
+      <ElTableColumn width="300" :label="$t('packages_business_connection_operate')">
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)"
             >{{ $t('packages_business_connection_list_test_button') }}
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" @click="handleLoadSchema(scope.row)"
+            >{{ $t('packages_business_connection_preview_load_schema') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
@@ -347,7 +351,21 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          let list = (data?.items || []).map(item => {
+          let list = data?.items || []
+          // 有选中行，列表刷新后无法更新行数据，比如状态
+          if (this.multipleSelection.length && list.length) {
+            let tempMap = list.reduce((map, item) => {
+              map[item.id] = item
+              return map
+            }, {})
+            this.multipleSelection.forEach((item, i) => {
+              const temp = tempMap[item.id]
+              if (temp) {
+                this.multipleSelection[i] = temp
+              }
+            })
+          }
+          list = list.map(item => {
             if (item.connectionString) {
               item.connectionUrl = item.connectionString
             } else {
@@ -508,14 +526,20 @@ export default {
       }
     },
     handleSelectTag() {
-      let tagList = {}
+      let tagList = []
       this.multipleSelection.forEach(row => {
-        if (row.listtags && row.listtags.length > 0) {
-          tagList[row.listtags[0].id] = {
-            value: row.listtags[0].value
-          }
+        if (row.listtags) {
+          tagList = [...row.listtags, ...tagList]
         }
       })
+      //去重
+      let map = new Map()
+      for (let item of tagList) {
+        if (!map.has(item.id)) {
+          map.set(item.id, item)
+        }
+      }
+      tagList = [...map.values()]
       return tagList
     },
     handleOperationClassify(listtags) {
@@ -652,6 +676,13 @@ export default {
     },
     getConnectionIcon() {
       return getConnectionIcon(...arguments)
+    },
+    handleLoadSchema(row) {
+      if (!this.$refs.preview) {
+        return
+      }
+      this.$refs.preview.setConnectionData(row)
+      this.$refs.preview.reload?.(this.table.fetch(null, 0, true))
     }
   }
 }

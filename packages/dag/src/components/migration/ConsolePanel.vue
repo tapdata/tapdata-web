@@ -6,7 +6,7 @@
     class="console-panel border-top"
     :class="showConsole ? 'flex' : 'none'"
   >
-    <div class="console-panel-side border-end overflow-auto py-2">
+    <div class="console-panel-side border-end overflow-auto py-2 flex-shrink-0">
       <!--<div class="console-panel-header p-4">日志</div>-->
       <div class="step-list px-2">
         <div

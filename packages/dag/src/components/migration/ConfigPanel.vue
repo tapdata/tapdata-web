@@ -25,7 +25,13 @@
         <MetaPane ref="metaPane" :is-show="currentTab === 'meta'"></MetaPane>
       </ElTabPane>
       <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
-        <AlarmPanel v-bind="$attrs" v-on="$listeners" :node-type="nodeType" :is-show="currentTab === 'alarm'" />
+        <AlarmPanel
+          v-if="currentTab === 'alarm' && activeType === 'node'"
+          v-bind="$attrs"
+          v-on="$listeners"
+          :isNode="true"
+          key="nodeAlarm"
+        />
       </ElTabPane>
     </ElTabs>
 
@@ -43,7 +49,7 @@
         <SettingPanel ref="setting" v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
       </div>
       <div v-else-if="titleCurrentTab === '1'" class="panel-content flex-1">
-        <AlarmPanel v-bind="$attrs" v-on="$listeners" v-show="activeType === 'settings'" />
+        <AlarmPanel v-if="activeType === 'settings'" v-bind="$attrs" v-on="$listeners" key="taskAlarm" />
       </div>
     </div>
   </section>
@@ -98,16 +104,6 @@ export default {
 
     isMonitor() {
       return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name) && this.isDaas
-    },
-
-    nodeType() {
-      const { type, $inputs, $outputs } = this.activeNode || {}
-      if (!type) return ''
-      if (type === 'database' || type === 'table') {
-        if (!$inputs.length) return 'source'
-        if (!$outputs.length) return 'target'
-      }
-      return 'process'
     }
   },
 
@@ -221,7 +217,7 @@ $headerHeight: 40px;
 
 .config-panel {
   position: relative;
-  z-index: 9;
+  z-index: 11;
   width: 600px;
   height: 100%;
   overflow: auto;

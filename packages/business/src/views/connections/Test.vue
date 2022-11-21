@@ -262,7 +262,7 @@ export default {
             wsError: 'ERROR'
           }
           this.$emit('returnTestData', testData)
-        }, 40000)
+        }, 120000)
       })
     },
     clearInterval() {

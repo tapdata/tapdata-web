@@ -244,39 +244,36 @@ const actions = {
     await dispatch('updateDag')
   },
 
-  async loadCustomNode({ commit }, needPushProcessor = true) {
+  async loadCustomNode({ commit }) {
     const { items } = await customNodeApi.get()
     const insArr = []
-    if (needPushProcessor) {
-      commit(
-        'addProcessorNode',
-        items.map(item => {
-          const node = {
-            name: item.name,
-            type: 'custom_processor',
-            customNodeId: item.id
-          }
 
-          const ins = new CustomProcessor({
-            customNodeId: item.id,
-            formSchema: item.formSchema
-          })
+    commit(
+      'addProcessorNode',
+      items.map(item => {
+        const node = {
+          name: item.name,
+          type: 'custom_processor',
+          customNodeId: item.id
+        }
 
-          insArr.push(ins)
-
-          // 设置属性__Ctor不可枚举
-          Object.defineProperty(node, '__Ctor', {
-            value: ins,
-            enumerable: false
-          })
-
-          return node
+        const ins = new CustomProcessor({
+          customNodeId: item.id,
+          formSchema: item.formSchema
         })
-      )
-    }
 
+        insArr.push(ins)
+
+        // 设置属性__Ctor不可枚举
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
+
+        return node
+      })
+    )
     commit('addResourceIns', insArr)
-    // console.log('loadCustomNode', data)
   }
 }
 
@@ -539,6 +536,7 @@ const mutations = {
 
     if (state.activeNodeId === nodes[index].id && state.activeType === 'node') {
       state.activeType = null
+      state.activeNodeId = null
     }
 
     nodes.splice(index, 1)
@@ -599,8 +597,10 @@ const mutations = {
       }
     })
 
+    // 如果是删除当前激活的节点
     if (nodeIds.includes(state.activeNodeId) && state.activeType === 'node') {
       state.activeType = null
+      state.activeNodeId = null
     }
 
     state.dag.nodes = state.dag.nodes.filter(node => !nodeIds.includes(node.id))

@@ -441,6 +441,7 @@ export default {
   packages_dag_monitor_leftsider_chayixiangqing: '差異詳情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延遲：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
+  packages_dag_monitor_leftsider_tiaoshixinxi: '調試信息',
   packages_dag_components_nodedetaildialog_dangqianjiedianchu: '當前節點處理事件的平均耗時',
   packages_dag_components_nodedetaildialog_dangqianjiedianping: '當前節點平均每秒處理的輸入事件數和輸出事件數',
   packages_dag_monitor_leftsider_renwuchuliwan:
@@ -496,11 +497,17 @@ export default {
   packages_dag_mixins_editor_debug5: '【DEBUG】ws返回，任务状态：[{val1}]',
   packages_dag_monitor_topheader_zuijinyiciqi: '最近一次啟動時間：',
   packages_dag_components_nodedetaildialog_quanliangyiwancheng: '全量已完成',
-  packages_dag_components_node_quanliangwanchenghaixu: '全量完成還需：',
+  packages_dag_components_node_quanliangwanchenghaixu: '全量完成還需',
   packages_dag_components_node_xieruhaoshi: '寫入耗時：',
   packages_dag_components_node_chulihaoshi: '處理耗時：',
   packages_dag_page_return_confirm_title: '返回確認',
   packages_dag_page_return_confirm_content: '當前任務內容為空，是否要保留？',
   packages_dag_page_return_confirm_ok_text: '不保留',
-  packages_dag_page_return_confirm_cancel_text: '保留'
+  packages_dag_page_return_confirm_cancel_text: '保留',
+  packages_dag_monitor_node_popover_cdcTimeTitle_source: '讀取增量時間點',
+  packages_dag_monitor_node_popover_cdcTimeTitle_target: '寫入增量時間點',
+  packages_dag_monitor_node_popover_cdcTimeTitle_processor: '處理增量時間點',
+  packages_dag_monitor_node_popover_targetWriteTime_title: '平均每條寫入耗時',
+  packages_dag_monitor_topheader_renwuxintiaoshi: '任務心跳時間',
+  packages_dag_monitor_node_per_deal_need_time: '單條處理耗時'
 }

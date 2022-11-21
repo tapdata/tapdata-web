@@ -66,7 +66,12 @@
         <template v-if="dataflow.type !== 'initial_sync'">
           <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
             <span>{{ $t('packages_dag_monitor_leftsider_zuidazengliangyan') }}</span>
-            <span>{{ calcTimeUnit(initialData.replicateLag, 1) }}</span>
+            <span>{{
+              calcTimeUnit(initialData.replicateLag, 2, {
+                separator: ' ',
+                autoShowMs: true
+              })
+            }}</span>
           </div>
         </template>
       </div>
@@ -176,7 +181,7 @@
           ></LineChart>
         </div>-->
       </div>
-      <div class="py-2 px-4">
+      <div class="info-box py-2 px-4">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwushijiantong') }}</span>
         </div>
@@ -229,6 +234,15 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="py-2 px-4">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tiaoshixinxi') }}</span>
+        </div>
+        <div class="mb-2 flex justify-content-between">
+          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}:</span>
+          <span>{{ heartbeatTime }}</span>
         </div>
       </div>
     </div>
@@ -370,15 +384,14 @@ export default {
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        outputQps = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag
-      } = data
-      const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
+      const usedTime = Date.now() - snapshotStartAt
+      let time
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+        time = 0
+      } else {
+        time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+      }
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
@@ -417,6 +430,11 @@ export default {
     eventDataAll() {
       const data = this.quota.samples?.totalData?.[0]
       return this.getInputOutput(data)
+    },
+
+    heartbeatTime() {
+      const { pingTime, status } = this.dataflow
+      return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : '-'
     }
   },
 
@@ -464,8 +482,8 @@ export default {
       return result
     },
 
-    calcTimeUnit(val, fix) {
-      return val ? calcTimeUnit(val, fix) : '-'
+    calcTimeUnit() {
+      return typeof arguments[0] === 'number' ? calcTimeUnit(...arguments) : '-'
     }
   }
 }
