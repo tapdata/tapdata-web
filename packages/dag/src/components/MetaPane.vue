@@ -29,6 +29,12 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="comment" :label="$t('packages_dag_meta_table_comment')"> </ElTableColumn>
+      <ElTableColumn align="right">
+        <template slot="header"><VIcon class="mr-4" @click="rest()">revoke</VIcon></template>
+        <template #default="{ row }">
+          <VIcon class="mr-4" @click="rest(row.field_name)">revoke</VIcon>
+        </template>
+      </ElTableColumn>
     </ElTable>
     <el-dialog
       title="字段类型调整"
@@ -87,6 +93,7 @@ export default {
         true: i18n.t('packages_dag_meta_table_true'),
         false: i18n.t('packages_dag_meta_table_false')
       },
+      data: '',
       editDataTypeVisible: false,
       currentData: {
         dataType: '',
@@ -147,6 +154,7 @@ export default {
 
       try {
         let data = await metadataInstancesApi.nodeSchema(this.activeNode.id)
+        this.data = data
         let fields = data?.[0]?.fields || []
         fields = fields.filter(f => !f.is_deleted)
         /*fields.sort((a, b) => {
@@ -184,13 +192,42 @@ export default {
     openEditDataTypeVisible(row) {
       this.editDataTypeVisible = true
       this.currentData.dataType = row.data_type
+      this.currentData.fieldName = row.field_name
       this.currentData.newDataType = row.data_type
     },
     handelClose() {
       this.editDataTypeVisible = false
     },
     submitEdit() {
-      this.editDataTypeVisible = false
+      let { qualified_name, nodeId, taskId } = this.data?.[0]
+      let data = {
+        taskId: taskId,
+        nodeId: nodeId,
+        sinkQualifiedName: qualified_name,
+        fields: [
+          {
+            fieldName: this.currentData.fieldName,
+            attributes: {
+              DataType: this.currentData.newDataType
+            }
+          }
+        ]
+      }
+      metadataInstancesApi.changeFields(data).then(() => {
+        this.editDataTypeVisible = false
+      })
+    },
+    rest(name) {
+      let { qualified_name, nodeId, taskId } = this.data?.[0]
+      let data = {
+        taskId: taskId,
+        nodeId: nodeId,
+        sinkQualifiedName: qualified_name,
+        fieldName: name || ''
+      }
+      metadataInstancesApi.changeFieldsReset(data).then(() => {
+        this.editDataTypeVisible = false
+      })
     }
   }
 }

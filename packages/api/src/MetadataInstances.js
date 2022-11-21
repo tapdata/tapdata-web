@@ -107,5 +107,13 @@ export default class MetadataInstances extends Http {
   resetTable(params) {
     return this.axios.post(this.url + '/migrate/reset', params)
   }
+
+  //61迭代 新增可以修改目标节点类型 新增接口
+  changeFields(params) {
+    return this.axios.post(this.url + '/changeFields', params)
+  }
+  changeFieldsReset(params) {
+    return this.axios.post(this.url + '/changeFields/reset', params)
+  }
 }
 export { MetadataInstances }
