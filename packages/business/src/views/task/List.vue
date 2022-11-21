@@ -221,6 +221,8 @@
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
     <Upload v-if="isDaas" :type="'dataflow'" ref="upload"></Upload>
+    <!--付费 -->
+    <PaidUpgradeDialog :visible="paidUpgradeVisible"></PaidUpgradeDialog>
   </section>
 </template>
 
@@ -229,12 +231,12 @@ import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
 import { taskApi, workerApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
 import { toRegExp } from '@tap/shared'
+import { FilterBar, PaidUpgradeDialog } from '@tap/component'
 
 export default {
   name: 'List',
@@ -247,7 +249,7 @@ export default {
 
   inject: ['checkAgent', 'buried'],
 
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
+  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus, PaidUpgradeDialog },
 
   data() {
     return {
@@ -289,7 +291,9 @@ export default {
         keyword: '',
         status: '',
         type: ''
-      }
+      },
+      //付费升级
+      paidUpgradeVisible: false
     }
   },
 
@@ -560,6 +564,10 @@ export default {
 
     create() {
       this.buried(this.taskBuried.new)
+      if (!this.isDaas) {
+        this.paidUpgradeVisible = true
+        return
+      }
       this.createBtnLoading = true
       this.checkAgent(() => {
         this.$router

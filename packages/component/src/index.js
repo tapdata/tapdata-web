@@ -19,6 +19,7 @@ import FilterBar from './filter-bar'
 import DatetimeRange from './filter-bar/DatetimeRange.vue'
 import SelectList from './SelectList.vue'
 import GitBook from './GitBook.vue'
+import PaidUpgradeDialog from './PaidUpgradeDialog.vue'
 import Drawer from './Drawer.vue'
 import InlineInput from './InlineInput.vue'
 import DarkSelect from './DarkSelect'
@@ -56,7 +57,8 @@ export {
   DiscoveryClassification,
   OverflowTooltip,
   DarkSelect,
-  TimeSelect
+  TimeSelect,
+  PaidUpgradeDialog
 }
 
 export * from './base'
