@@ -105,6 +105,7 @@ export const JsEditor = connect(
               <ElLink
                 onClick={() => {
                   this.fullscreen = !this.fullscreen
+                  this.$refs.jsEditor.editor.resize(true)
                 }}
                 class="js-editor-fullscreen"
                 type="primary"
@@ -119,6 +120,7 @@ export const JsEditor = connect(
             <HighlightCode class="m-0" code={this.before} />
           </div>
           <_JsEditor
+            ref="jsEditor"
             class="form-js-editor py-0 flex-1 min-h-0"
             theme={this.theme}
             value={this.code}
