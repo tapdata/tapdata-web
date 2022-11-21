@@ -98,15 +98,17 @@
               :data-index="index"
               :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
             >
-              <div class="log-line py-1 font-color-light white-space-pre">
-                <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
-                <span class="ml-1">{{ formatTime(item.timestamp) }}</span>
-                <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
-                <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
-                <span v-html="item.messageText" class="ml-1"></span>
-                <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>
-                <span v-if="item.dataText" v-html="item.dataText" class=""></span>
-              </div>
+              <VCollapse active="0">
+                <template #header>
+                  <div class="log-line flex align-items-center pr-6 flex font-color-light">
+                    <VIcon :class="`${item.level.toLowerCase()}-level`" size="16">{{ iconMap[item.level] }}</VIcon>
+                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>
+                  </div>
+                </template>
+                <template #content>
+                  <div v-html="item.jsonDomStr" class="log-line pl-10 pr-4 py-2 font-color-light white-space-pre"></div>
+                </template>
+              </VCollapse>
             </DynamicScrollerItem>
           </template>
         </DynamicScroller>
@@ -155,7 +157,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { debounce } from 'lodash'
 
 import { uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
-import { VIcon, TimeSelect } from '@tap/component'
+import { VIcon, TimeSelect, VCollapse } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
@@ -163,7 +165,7 @@ import NodeIcon from '@tap/dag/src/components/NodeIcon'
 export default {
   name: 'NodeLog',
 
-  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty },
+  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, VCollapse },
 
   props: {
     dataflow: {
@@ -219,10 +221,12 @@ export default {
       preLoading: false,
       resetDataTime: null,
       list: [],
-      colorMap: {
-        FATAL: 'color-danger',
-        ERROR: 'color-danger',
-        WARN: 'color-warning'
+      iconMap: {
+        INFO: 'success',
+        WARN: 'warning',
+        ERROR: 'error',
+        FATAL: 'error',
+        DEBUG: 'debug'
       },
       newPageObj: {
         page: 0,
@@ -510,19 +514,60 @@ export default {
       })
     },
 
-    getFormatRow(data = []) {
-      let result = deepCopy(data)
-      const arr = ['nodeName', 'message']
+    getFormatRow(rowData = []) {
+      let result = deepCopy(rowData)
       result.forEach(row => {
-        row.levelText = `[${row.level}]`
-        row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
-        row.message = row.message.slice(0, 3000)
-        row.dataText = row.data?.length ? JSON.stringify(row.data.slice(0, 100)) : ''
-        arr.forEach(el => {
-          row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
-        })
+        let obj = {}
+        obj.level = row.level
+        obj.timestamp = this.formatTime(row.timestamp)
+        obj.nodeName = this.getHighlightSpan(row.nodeName)
+        obj.taskName = row.taskName
+        obj.logTags = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
+        obj.data = row.data.length ? JSON.stringify(row.data?.slice(0, 10)) : ''
+        obj.message = row.message?.slice(0, 10000)
+        obj.errorStack = row.errorStack?.slice(0, 20000)
+
+        const { level, timestamp, nodeName, taskName, logTags, data, message, errorStack } = obj
+        const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
+        row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
+        row.jsonDomStr = this.getJsonString([
+          { level },
+          { timestamp },
+          { nodeName },
+          { taskName },
+          { logTags },
+          { data },
+          { message },
+          { errorStack }
+        ])
       })
       return result
+    },
+    getTitleStringDom(row = {}, extra = '') {
+      let result = ''
+      result += `<span class="ml-1">${row.timestamp}</span>`
+      if (row.nodeName) {
+        result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
+      }
+      if (extra) {
+        result += `<span class="ml-1">${extra}</span>`
+      }
+      return result
+    },
+
+    getJsonString(data = []) {
+      let result = `<div class="bg-color-normal">{`
+      data.forEach((obj, i) => {
+        for (let key in obj) {
+          const val = obj[key]
+          if (val) {
+            result += `<div class="flex pl-4">`
+            result += `<span class="log__label warn-level">"${key}"</span>: <span class="debug-level">"${val}"</span>`
+            result += `,</div>`
+          }
+        }
+      })
+      return (result += `}</div>`)
     },
 
     getHighlightSpan(str = '') {
@@ -738,7 +783,21 @@ export default {
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
     .log-line {
+      width: 100%;
       font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      .info-level {
+        color: #c9cdd4;
+      }
+      .warn-level {
+        color: #d5760e;
+      }
+      .error-level,
+      .fatal-level {
+        color: #d44d4d;
+      }
+      .debug-level {
+        color: #178061;
+      }
     }
     .highlight-bg-color {
       background-color: #ff0;
@@ -749,6 +808,9 @@ export default {
     .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
       overflow: visible;
     }
+    .log__label {
+      white-space: nowrap;
+    }
   }
 }
 .no-more__alert {
@@ -756,6 +818,7 @@ export default {
   top: 4px;
   left: 50%;
   width: 140px;
+  z-index: 2;
   ::v-deep {
     .el-alert__closebtn {
       top: 7px;
