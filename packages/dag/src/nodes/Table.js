@@ -536,7 +536,7 @@ export class Table extends NodeType {
           fulfill: {
             state: {
               display:
-                '{{ $deps[1].length > 1 && $["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                '{{ ($deps[1].length > 0 && ["CSV","EXCEL","JSON","XML"].includes($deps[0])) ? "visible":"hidden"}}'
             }
           }
         }
