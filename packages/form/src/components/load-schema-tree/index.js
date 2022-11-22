@@ -18,15 +18,25 @@ export const loadSchemaTree = observer(
       fieldList.value = form.getValuesIn('loadSchemaTree')
       const title = root.$t('packages_form_load_schema_tree_button_title')
       const nodeId = form.getValuesIn('id')
+      const loadCount = ref(0)
 
-      function getSchemaData() {
+      function getSchemaData(check = false) {
         metadataInstancesApi
           .nodeSchema(nodeId)
           .then(data => {
             fieldList.value = data?.[0]?.fields || []
+            if (check && !fieldList.value?.length) {
+              setTimeout(() => {
+                getSchemaData(check)
+              }, 2000)
+            }
           })
           .finally(() => {
-            loading.value = false
+            const len = fieldList.value?.length
+            const count = ++loadCount.value
+            if (len > 0 || !check || (check && count > 10)) {
+              loading.value = false
+            }
           })
       }
 
@@ -69,7 +79,7 @@ export const loadSchemaTree = observer(
               .then(metaData => {
                 const table = metaData.items?.[0]?.original_name
                 form.setValuesIn(tableNameField || 'tableName', table)
-                getSchemaData()
+                getSchemaData(true)
               })
               .catch(() => {
                 loading.value = false
