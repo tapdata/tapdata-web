@@ -85,6 +85,7 @@
 <script>
 import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 
 export default {
   components: { VIcon },
@@ -99,6 +100,9 @@ export default {
       type: String
     },
     title: {
+      type: String
+    },
+    viewPage: {
       type: String
     }
   },
@@ -129,6 +133,9 @@ export default {
     }
   },
   computed: {
+    ...mapState('classification', ['connections', 'migrate', 'sync']),
+    ...mapGetters('classification', ['stateConnections', 'stateMigrate', 'stateSync']),
+
     comTitle() {
       return (
         this.title ||
@@ -140,6 +147,43 @@ export default {
   },
   mounted() {
     this.getData()
+    //是否 默认打开/是否有选择tag
+    switch (this.viewPage) {
+      case 'connections':
+        this.isExpand = this.connections?.panelFlag
+        break
+      case 'migrate':
+        this.isExpand = this.migrate?.panelFlag
+        break
+      case 'sync':
+        this.isExpand = this.sync?.panelFlag
+        break
+    }
+  },
+  updated() {
+    switch (this.viewPage) {
+      case 'connections':
+        if (!this.isExpand) return
+        this.$nextTick(() => {
+          this.$refs.tree?.setCheckedKeys(this.connections?.classification)
+          this.$emit('nodeChecked', this.connections?.classification)
+        })
+        break
+      case 'migrate':
+        if (!this.isExpand) return
+        this.$nextTick(() => {
+          this.$refs.tree?.setCheckedKeys(this.migrate?.classification)
+          this.$emit('nodeChecked', this.migrate?.classification)
+        })
+        break
+      case 'sync':
+        if (!this.isExpand) return
+        this.$nextTick(() => {
+          this.$refs.tree?.setCheckedKeys(this.sync?.classification)
+          this.$emit('nodeChecked', this.sync?.classification)
+        })
+        break
+    }
   },
   watch: {
     types(_new, _old) {
@@ -153,8 +197,13 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('classification', ['setTag', 'setPanelFlag']),
     toggle() {
       this.isExpand = !this.isExpand
+      this.setPanelFlag({
+        panelFlag: this.isExpand,
+        type: this.viewPage
+      })
     },
     clear() {
       this.$refs.tree && this.$refs.tree.setCheckedNodes([])
@@ -180,6 +229,10 @@ export default {
     emitCheckedNodes() {
       let checkedNodes = this.$refs.tree.getCheckedKeys() || []
       this.$emit('nodeChecked', checkedNodes)
+      this.setTag({
+        value: checkedNodes,
+        type: this.viewPage
+      })
     },
     getData(cb) {
       let where = {}
