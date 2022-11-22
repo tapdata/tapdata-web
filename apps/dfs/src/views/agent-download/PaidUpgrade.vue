@@ -5,7 +5,7 @@
       <ElBreadcrumbItem :to="{ path: '/' }">返回菜单</ElBreadcrumbItem>
       <ElBreadcrumbItem>服务升级</ElBreadcrumbItem>
     </ElBreadcrumb>
-    <div class="card">
+    <div class="card" v-show="!successStatus">
       <header class="header">标准版</header>
       <div class="main">
         <el-form :model="form" ref="paidForm" :rules="rules">
@@ -47,6 +47,14 @@
         <el-button class="float-end" type="primary" @click="save">确认</el-button>
       </div>
     </div>
+    <div class="success" v-show="successStatus">
+      <div class="paid-upgrade-mb16 imgBox"><img class="mt-2 block" :src="getImg('complete')" alt="" /></div>
+      <div class="version paid-upgrade-mb8">
+        感谢您订购Tapdata Cloud 标准版(链路数量：{{ successData.extraPipelines }}个）
+      </div>
+      <div class="desc paid-upgrade-mb16">我们的同事会通过您留下的联系方式和您联系进行线下合同签署和付款。</div>
+      <el-button type="primary" @click="goBack">确认</el-button>
+    </div>
   </div>
 </template>
 
@@ -67,7 +75,9 @@ export default {
       rules: {
         contactName: [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
         contactTelephone: [{ required: true, message: '请选择联系人手机号码', trigger: 'blur' }]
-      }
+      },
+      successStatus: false,
+      successData: ''
     }
   },
   computed: {
@@ -83,9 +93,18 @@ export default {
       this.$refs.paidForm.validate(valid => {
         if (valid) {
           this.$axios.post('api/tcm/orders/subscribe/paid/plan', this.form).then(data => {
-            this.$message.success('提交成功')
+            this.successData = data
+            this.successStatus = true
           })
         }
+      })
+    },
+    getImg(name) {
+      return require(`../../../public/images/task/${name}.png`)
+    },
+    goBack() {
+      this.$router.push({
+        name: 'migrateList'
       })
     }
   }
@@ -95,6 +114,8 @@ export default {
 <style scoped lang="scss">
 .paid-upgrade-wrap {
   padding-top: 68px;
+  height: calc(100% - 0px);
+  background: #fff;
   .card {
     width: 587px;
     height: 570px;
@@ -102,6 +123,12 @@ export default {
     background: #ffffff;
     box-shadow: 0px 4px 4px rgba(198, 198, 198, 0.25);
     border-radius: 8px;
+  }
+  .success {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   .header {
     height: 53px;
@@ -113,6 +140,14 @@ export default {
     border-bottom: 1px solid #f2f2f2;
     border-radius: 8px 8px 0px 0px;
     background: #2c65ff;
+  }
+  .imgBox {
+    width: 48px;
+    height: 48px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
   .main {
     padding: 20px;
