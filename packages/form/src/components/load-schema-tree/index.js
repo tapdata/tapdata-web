@@ -1,7 +1,7 @@
 import { defineComponent, ref } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useForm } from '@formily/vue'
-import { onMounted } from '@vue/composition-api'
+import { onMounted, onUnmounted } from '@vue/composition-api'
 
 import { metadataInstancesApi, proxyApi } from '@tap/api'
 
@@ -19,6 +19,7 @@ export const loadSchemaTree = observer(
       const title = root.$t('packages_form_load_schema_tree_button_title')
       const nodeId = form.getValuesIn('id')
       const loadCount = ref(0)
+      let timer
 
       function getSchemaData(check = false) {
         metadataInstancesApi
@@ -26,7 +27,8 @@ export const loadSchemaTree = observer(
           .then(data => {
             fieldList.value = data?.[0]?.fields || []
             if (check && !fieldList.value?.length) {
-              setTimeout(() => {
+              timer && clearTimeout(timer)
+              timer = setTimeout(() => {
                 getSchemaData(check)
               }, 2000)
             }
@@ -93,6 +95,10 @@ export const loadSchemaTree = observer(
       onMounted(() => {
         loading.value = true
         getSchemaData()
+      })
+
+      onUnmounted(() => {
+        timer && clearTimeout(timer)
       })
 
       return () => {
