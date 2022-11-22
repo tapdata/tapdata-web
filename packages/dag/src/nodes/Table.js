@@ -110,7 +110,7 @@ export class Table extends NodeType {
           dependencies: ['databaseType'],
           fulfill: {
             state: {
-              display: '{{ ["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+              display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
             }
           }
         },
