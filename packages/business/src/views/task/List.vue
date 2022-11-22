@@ -222,7 +222,7 @@
     <!-- 导入 -->
     <Upload v-if="isDaas" :type="'dataflow'" ref="upload"></Upload>
     <!--付费 -->
-    <PaidUpgradeDialog :visible="paidUpgradeVisible"></PaidUpgradeDialog>
+    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible"></PaidUpgradeDialog>
   </section>
 </template>
 

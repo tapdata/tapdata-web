@@ -5,6 +5,7 @@
     :append-to-body="true"
     width="680px"
     custom-class="paid-upgrade-dialog"
+    :before-close="handleClose"
   >
     <span class="paid-upgrade-desc">您使用的是免费版本，目前任务数量已经达到上限，请升级您的服务计划。</span>
     <ul class="flex paid-upgrade-ul mt-4">
@@ -47,6 +48,9 @@ export default {
       this.$router.push({
         name: 'PaidUpgrade'
       })
+    },
+    handleClose() {
+      this.$emit('update:visible', false)
     }
   }
 }

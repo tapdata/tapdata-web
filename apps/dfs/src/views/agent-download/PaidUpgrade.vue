@@ -1,6 +1,10 @@
 <template>
   <div class="paid-upgrade-wrap">
     <TheHeader></TheHeader>
+    <ElBreadcrumb class="breadcrumb paid-upgrade-mb16" separator-class="el-icon-arrow-right">
+      <ElBreadcrumbItem :to="{ path: '/' }">返回菜单</ElBreadcrumbItem>
+      <ElBreadcrumbItem>服务升级</ElBreadcrumbItem>
+    </ElBreadcrumb>
     <div class="card">
       <header class="header">标准版</header>
       <div class="main">
@@ -27,7 +31,7 @@
         </div>
         <div class="link paid-upgrade-mb16"></div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
-          <span class="content">总计</span><span class="version">¥12000</span>
+          <span class="currentList">总计</span><span class="version">¥12000</span>
         </div>
         <div class="tip paid-upgrade-mb16">
           点击确认购买即表示您同意我们的【服务条款】
@@ -58,10 +62,10 @@ export default {
 
 <style scoped lang="scss">
 .paid-upgrade-wrap {
-  padding-top: 85px;
+  padding-top: 68px;
   .card {
     width: 587px;
-    height: 610px;
+    height: 570px;
     margin: 0 auto;
     background: #ffffff;
     box-shadow: 0px 4px 4px rgba(198, 198, 198, 0.25);
@@ -117,6 +121,12 @@ export default {
   }
   .link {
     border-bottom: 1px solid map-get($borderColor, light);
+  }
+  .breadcrumb {
+    height: 50px;
+    line-height: 50px;
+    padding-left: 24px;
+    border-bottom: 1px solid #e1e3e9;
   }
 }
 </style>
