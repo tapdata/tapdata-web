@@ -8,12 +8,12 @@
     <div class="card">
       <header class="header">标准版</header>
       <div class="main">
-        <el-form :data="form">
-          <el-form-item label="姓名">
-            <el-input v-model="form.name"></el-input>
+        <el-form :model="form" ref="paidForm" :rules="rules">
+          <el-form-item label="姓名" required prop="contactName">
+            <el-input v-model="form.contactName"></el-input>
           </el-form-item>
-          <el-form-item label="电话">
-            <el-input v-model="form.iPhone"></el-input>
+          <el-form-item label="电话" required prop="contactTelephone">
+            <el-input :max="11" v-model="form.contactTelephone"></el-input>
           </el-form-item>
         </el-form>
         <div class="currentList paid-upgrade-mb16">购买方案</div>
@@ -22,22 +22,29 @@
           <span>基础月费含5个任务</span> <span class="version">¥12000</span>
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb8">
-          <span><el-checkbox class="mr-2" v-model="form.checked"></el-checkbox>每个额外的任务</span>
+          <span><el-checkbox class="mr-2" v-model="checked"></el-checkbox>每个额外的任务</span>
           <span class="version">¥300</span>
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
-          <el-input-number size="mini" controls-position="right" v-model="form.number"></el-input-number
-          ><span class="version">× {{ form.number || 0 }}</span>
+          <el-input-number
+            size="mini"
+            controls-position="right"
+            v-model="form.extraPipelines"
+            :min="0"
+          ></el-input-number
+          ><span class="desc">× {{ form.extraPipelines || 0 }}</span>
         </div>
         <div class="link paid-upgrade-mb16"></div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
-          <span class="currentList">总计</span><span class="version">¥12000</span>
+          <span class="currentList">总计</span>
+          <span class="version" v-if="!checked">¥12000</span>
+          <span class="version" v-else>¥{{ total }}</span>
         </div>
         <div class="tip paid-upgrade-mb16">
           点击确认购买即表示您同意我们的【服务条款】
           您可以立即开始享受新计划的权益。我们的同事将通过电话或者邮件与您联络，您需要在1周之内完成线下付款。
         </div>
-        <el-button class="float-end" type="primary">确认</el-button>
+        <el-button class="float-end" type="primary" @click="save">确认</el-button>
       </div>
     </div>
   </div>
@@ -51,10 +58,35 @@ export default {
   data() {
     return {
       form: {
-        name: '张三',
-        iPhone: '',
-        checked: ''
+        contactName: '',
+        contactTelephone: '',
+        paidPlanCode: 'standard',
+        count: 1,
+        extraPipelines: 0
+      },
+      rules: {
+        contactName: [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
+        contactTelephone: [{ required: true, message: '请选择联系人手机号码', trigger: 'blur' }]
       }
+    }
+  },
+  computed: {
+    total() {
+      return 12000 + this.form.extraPipelines * 300
+    },
+    checked() {
+      return this.form.extraPipelines > 0
+    }
+  },
+  methods: {
+    save() {
+      this.$refs.paidForm.validate(valid => {
+        if (valid) {
+          this.$axios.post('api/tcm/orders/subscribe/paid/plan', this.form).then(data => {
+            this.$message.success('提交成功')
+          })
+        }
+      })
     }
   }
 }

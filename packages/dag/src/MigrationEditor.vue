@@ -83,6 +83,8 @@
 
       <!--配置面板-->
       <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
+      <!--付费 -->
+      <PaidUpgradeDialog :visible.sync="paidUpgradeVisible"></PaidUpgradeDialog>
     </section>
   </section>
 </template>
@@ -109,7 +111,7 @@ import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
-import { VExpandXTransition, VEmpty } from '@tap/component'
+import { VExpandXTransition, VEmpty, PaidUpgradeDialog } from '@tap/component'
 import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
@@ -131,7 +133,8 @@ export default {
     TopHeader,
     DFNode,
     LeftSider,
-    TransformLoading
+    TransformLoading,
+    PaidUpgradeDialog
   },
 
   data() {
@@ -291,6 +294,10 @@ export default {
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           this.newDataflow(newName)
+        } else if (e?.data?.code === 'InvalidPaidPlan') {
+          this.$router.push({
+            name: 'migrateList'
+          })
         } else {
           this.handleError(e)
         }

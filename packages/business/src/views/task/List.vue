@@ -230,7 +230,7 @@
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
-import { taskApi, workerApi } from '@tap/api'
+import { taskApi, workerApi, paidApi } from '@tap/api'
 import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
@@ -562,13 +562,19 @@ export default {
       return tagList
     },
 
-    create() {
+    async create() {
       this.buried(this.taskBuried.new)
+      this.createBtnLoading = true
+      let data = ''
       if (!this.isDaas) {
+        // true 付费计划有效，false 付费计划无效
+        data = await paidApi.getUserPaidPlan()
+      }
+      if (!this.isDaas && !data?.valid) {
         this.paidUpgradeVisible = true
+        this.createBtnLoading = false
         return
       }
-      this.createBtnLoading = true
       this.checkAgent(() => {
         this.$router
           .push({
