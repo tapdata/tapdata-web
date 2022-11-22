@@ -280,10 +280,19 @@ export class Database extends NodeType {
               findParentNodes: '{{findParentNodes}}'
             }
           },
-          fieldMapping: {
+          fieldMappingBatchRules: {
             type: 'void',
             title: '推演结果',
             'x-decorator': 'FormItem',
+            'x-component': 'fieldChangeRules'
+          },
+          fieldMapping: {
+            type: 'void',
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              colon: false
+            },
             'x-component': 'SchemaFiledMapping'
           },
           collapse: {
