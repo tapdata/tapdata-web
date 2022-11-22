@@ -9,7 +9,7 @@ import './style.scss'
 
 export const loadSchemaTree = observer(
   defineComponent({
-    props: ['findParentNode', 'value'],
+    props: ['findParentNode', 'value', 'tableNameField'],
     setup(props, { root }) {
       const formRef = useForm()
       const form = formRef.value
@@ -68,7 +68,7 @@ export const loadSchemaTree = observer(
               .get({ filter: JSON.stringify(filter) })
               .then(metaData => {
                 const table = metaData.items?.[0]?.original_name
-                form.setValuesIn(tableNameField, table)
+                form.setValuesIn(tableNameField || 'tableName', table)
                 getSchemaData()
               })
               .catch(() => {
