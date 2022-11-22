@@ -441,6 +441,7 @@ export default {
   packages_dag_monitor_leftsider_chayixiangqing: '差異詳情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延遲：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
+  packages_dag_monitor_leftsider_tiaoshixinxi: '調試信息',
   packages_dag_components_nodedetaildialog_dangqianjiedianchu: '當前節點處理事件的平均耗時',
   packages_dag_components_nodedetaildialog_dangqianjiedianping: '當前節點平均每秒處理的輸入事件數和輸出事件數',
   packages_dag_monitor_leftsider_renwuchuliwan:
@@ -503,7 +504,6 @@ export default {
   packages_dag_page_return_confirm_content: '當前任務內容為空，是否要保留？',
   packages_dag_page_return_confirm_ok_text: '不保留',
   packages_dag_page_return_confirm_cancel_text: '保留',
-  packages_dag_monitor_node_cdcTitle_source: '採集延遲',
   packages_dag_monitor_node_popover_cdcTimeTitle_source: '讀取增量時間點',
   packages_dag_monitor_node_popover_cdcTimeTitle_target: '寫入增量時間點',
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '處理增量時間點',

@@ -184,7 +184,10 @@ export default {
               let val = data
               if (![null, undefined].includes(data)) {
                 if (this.timeValue) {
-                  val = calcTimeUnit(data || 0, 2)
+                  val = calcTimeUnit(data || 0, 2, {
+                    separator: ' ',
+                    autoShowMs: true
+                  })
                 } else {
                   val = (data || 0).toLocaleString('zh', {
                     minimumFractionDigits: 2,

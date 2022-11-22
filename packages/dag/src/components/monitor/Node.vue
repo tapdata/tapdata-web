@@ -61,7 +61,7 @@ export default defineComponent({
       const { snapshotInsertRowTotal, snapshotRowTotal, snapshotStartAt } = props.sample
       let startAt = snapshotStartAt || totalData.snapshotStartAt
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !startAt) {
-        return ''
+        return null
       }
       const usedTime = Date.now() - snapshotStartAt
       const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
@@ -100,6 +100,19 @@ export default defineComponent({
     })
 
     /**
+     * 增量延迟
+     */
+    const replicateLag = computed(() => {
+      const { replicateLag } = props.sample
+      if (isNumber(replicateLag))
+        return calcTimeUnit(replicateLag, 2, {
+          separator: ' ',
+          autoShowMs: true
+        })
+      return null
+    })
+
+    /**
      * 增量时间点
      * @type {ComputedRef<string|string>}
      */
@@ -128,8 +141,8 @@ export default defineComponent({
      */
     const timeCostAvg = computed(() => {
       const { timeCostAvg } = props.sample
-      if (!timeCostAvg) return ''
-      return calcTimeUnit(timeCostAvg)
+      if (isNumber(timeCostAvg)) return calcTimeUnit(timeCostAvg)
+      return null
     })
 
     /**
@@ -138,8 +151,8 @@ export default defineComponent({
      */
     const targetWriteTimeCostAvg = computed(() => {
       const { targetWriteTimeCostAvg } = props.sample
-      if (!targetWriteTimeCostAvg) return ''
-      return calcTimeUnit(targetWriteTimeCostAvg)
+      if (isNumber(targetWriteTimeCostAvg)) return calcTimeUnit(targetWriteTimeCostAvg)
+      return null
     })
 
     /**
@@ -182,6 +195,12 @@ export default defineComponent({
       }, 0)
     })
 
+    const isNumber = value => typeof value === 'number'
+
+    const getVal = val => {
+      return val ?? i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
+    }
+
     const renderStatistic = () => {
       if (hasInitalSync) {
         // 全量完成
@@ -200,13 +219,12 @@ export default defineComponent({
           if (taskSnapshotStartAt.value) {
             const title = isSource.value
               ? i18n.t('packages_dag_components_node_quanliangwanchenghaixu')
+              : isTarget.value
+              ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
               : i18n.t('packages_dag_monitor_node_per_deal_need_time')
-            const val =
-              (isTarget.value
-                ? targetWriteTimeCostAvg.value
-                : isProcessor.value
-                ? timeCostAvg.value
-                : completeTime.value) || i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
+            const val = getVal(
+              isTarget.value ? targetWriteTimeCostAvg.value : isProcessor.value ? timeCostAvg.value : completeTime.value
+            )
             return (
               <div class="statistic flex">
                 <div class="statistic-title">{title}：</div>
@@ -221,12 +239,13 @@ export default defineComponent({
       if (hasCDC) {
         // 增量进行中
         const cdcTitle = isSource.value
-          ? i18n.t('packages_dag_monitor_node_cdcTitle_source')
+          ? i18n.t('packages_dag_components_nodedetaildialog_zengliangyanchi')
+          : isTarget.value
+          ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
           : i18n.t('packages_dag_monitor_node_per_deal_need_time')
-        const getCdcTime = calcTimeUnit(Date.now() - new Date(cdcEventStartTime.value || null).getTime(), 2)
-        const val =
-          (isSource.value ? getCdcTime : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value) ||
-          i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
+        const val = getVal(
+          isSource.value ? replicateLag.value : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
+        )
         return (
           <div class="statistic flex">
             <div class="statistic-title">{cdcTitle}：</div>
@@ -249,9 +268,7 @@ export default defineComponent({
         <div class="statistic span-2">
           <div class="statistic-title">{cdcTimeTitle}</div>
           <div class="statistic-content">
-            <div class="statistic-value">
-              {cdcEventStartTime.value || i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
-            </div>
+            <div class="statistic-value">{getVal(cdcEventStartTime.value)}</div>
           </div>
         </div>
       )
@@ -260,9 +277,7 @@ export default defineComponent({
         <div class="statistic">
           <div class="statistic-title">{i18n.t('packages_dag_monitor_node_per_deal_need_time')}</div>
           <div class="statistic-content">
-            <div class="statistic-value">
-              {timeCostAvg.value || i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
-            </div>
+            <div class="statistic-value">{getVal(timeCostAvg.value)}</div>
           </div>
         </div>
       )
@@ -300,11 +315,7 @@ export default defineComponent({
         <div class="statistic">
           <div class="statistic-title">{i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')}</div>
           <div class="statistic-content">
-            <div class="statistic-value">
-              {props.sample.targetWriteTimeCostAvg
-                ? calcTimeUnit(props.sample.targetWriteTimeCostAvg)
-                : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')}
-            </div>
+            <div class="statistic-value">{getVal(targetWriteTimeCostAvg.value)}</div>
           </div>
         </div>
       )
@@ -454,7 +465,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .node-card {
   position: absolute;
-  min-width: 280px;
+  min-width: 240px;
   z-index: -1;
   top: 100%;
   left: 50%;
