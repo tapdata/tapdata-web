@@ -17,7 +17,12 @@
         <div class="link paid-upgrade-mb16"></div>
         <div class="currentList paid-upgrade-mb16">√ 最大任务数: 3</div>
         <div class="currentList paid-upgrade-mb16">√ 已用任务数: 3</div>
-        <el-link type="primary">参与激励计划，奖励2个额外免费任务数</el-link>
+        <el-link
+          type="primary"
+          target="_blank"
+          href="https://page.ma.scrmtech.com/cyy-form/index?pf_uid=32551_2180&id=17751&main_id=32551&wx_id=2180"
+          >参与激励计划，奖励2个额外免费任务数</el-link
+        >
       </li>
       <li class="paid-upgrade-right ml-6">
         <div style="height: 150px">
