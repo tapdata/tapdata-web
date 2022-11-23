@@ -570,7 +570,7 @@ export default {
         // true 付费计划有效，false 付费计划无效
         this.paidPlan = await paidApi.getUserPaidPlan()
       }
-      if (!this.isDaas && this.paidPlan?.valid) {
+      if (!this.isDaas && !this.paidPlan?.valid) {
         this.paidUpgradeVisible = true
         this.createBtnLoading = false
         return
