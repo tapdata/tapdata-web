@@ -23,7 +23,7 @@
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb8">
           <span
-            ><el-checkbox class="mr-2" v-model="checked"></el-checkbox
+            ><el-checkbox class="mr-2" v-model="checked" @change="handleChecked"></el-checkbox
             >{{ $t('dfs_agent_download_paidupgrade_meigeewaide') }}</span
           >
           <span class="version">¥3600</span>
@@ -75,7 +75,7 @@ export default {
         contactTelephone: user.telephone,
         paidPlanCode: 'standard',
         count: 1,
-        extraPipelines: 1
+        extraPipelines: 0
       },
       rules: {
         contactName: [
@@ -92,12 +92,12 @@ export default {
   computed: {
     total() {
       return 12000 + this.form.extraPipelines * 3600
-    },
-    checked() {
-      return this.form.extraPipelines > 0
     }
   },
   methods: {
+    handleChecked(val) {
+      this.form.extraPipelines = val ? 1 : 0
+    },
     save() {
       this.$refs.paidForm.validate(valid => {
         if (valid) {
