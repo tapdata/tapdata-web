@@ -118,5 +118,8 @@ export default class MetadataInstances extends Http {
   dataType2TapType(params) {
     return this.axios.post(this.url + '/dataType2TapType', params)
   }
+  nodeSchemaPage(params) {
+    return this.axios.get(this.url + '/node/schemaPage', { params })
+  }
 }
 export { MetadataInstances }

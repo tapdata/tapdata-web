@@ -289,7 +289,7 @@ export class Database extends NodeType {
           fieldMapping: {
             type: 'void',
             'x-decorator': 'FormItem',
-            'x-component': 'SchemaFiledMapping'
+            'x-component': 'fieldInference'
           },
           collapse: {
             type: 'void',

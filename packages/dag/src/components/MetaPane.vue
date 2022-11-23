@@ -1,114 +1,46 @@
 <template>
-  <div class="metadata-list-wrap">
-    <!--<div class="total mb-2 mt-4">
-      {{ $t('packages_dag_components_metapane_gongyou') }}{{ tableData.length
-      }}{{ $t('packages_dag_components_metapane_geziduan') }}
-    </div>-->
-    <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
-      <ElTableColumn width="56" type="index" :label="$t('packages_dag_meta_table_index')"> </ElTableColumn>
-      <ElTableColumn prop="field_name" :label="$t('packages_dag_meta_table_field_name')">
-        <template #default="{ row }">
-          <span class="flex align-center"
-            >{{ row.field_name }}
-            <VIcon v-if="row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
-          </span>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="data_type" :label="$t('packages_dag_meta_table_field_type')">
-        <template #default="{ row }">
-          <span>{{ row.data_type }}</span>
-          <VIcon class="ml-2" @click="openEditDataTypeVisible(row)">arrow-down</VIcon>
-        </template>
-      </ElTableColumn>
-      <!--      <ElTableColumn prop="scale" :label="$t('packages_dag_meta_table_scale')"> </ElTableColumn>-->
-      <!--      <ElTableColumn prop="precision" :label="$t('packages_dag_meta_table_precision')"> </ElTableColumn>-->
-      <ElTableColumn prop="default_value" :label="$t('packages_dag_meta_table_default')"> </ElTableColumn>
-      <ElTableColumn prop="is_nullable" :label="$t('packages_dag_meta_table_not_null')">
-        <template #default="{ row }">
-          {{ nullableMap[!row.is_nullable] }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="comment" :label="$t('packages_dag_meta_table_comment')"> </ElTableColumn>
-      <ElTableColumn align="right">
-        <template slot="header"><VIcon class="mr-4" @click="rest()">revoke</VIcon></template>
-        <template #default="{ row }">
-          <VIcon class="mr-4" @click="rest(row.field_name)">revoke</VIcon>
-        </template>
-      </ElTableColumn>
-    </ElTable>
-    <el-dialog
-      title="字段类型调整"
-      append-to-body
-      :close-on-click-modal="false"
-      :visible.sync="editDataTypeVisible"
-      width="35%"
-    >
-      <el-form ref="dataTypeForm" label-width="120px" label-position="left" :model="currentData" @submit.native.prevent>
-        <el-form-item label="推演出的类型: ">
-          <span>{{ currentData.dataType }}</span>
-        </el-form-item>
-        <el-form-item label="要调整为的类型: " prop="newDataType" required>
-          <el-input v-model="currentData.newDataType" maxlength="100" show-word-limit></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handelClose" size="mini">{{ $t('packages_business_button_cancel') }}</el-button>
-        <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('packages_business_button_confirm')
-        }}</el-button>
-      </span>
-    </el-dialog>
+  <div v-loading="loading" class="metadata-list-wrap">
+    <List ref="table" :data="selected" :readonly="stateIsReadonly || !isTarget"></List>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
-import { metadataInstancesApi } from '@tap/api'
-import { VIcon } from '@tap/component'
-import i18n from '@tap/i18n'
+import List from '@tap/form/src/components/field-inference/List'
+import mixins from '@tap/form/src/components/field-inference/mixins.js'
 
 export default {
   name: 'MetaPane',
-  components: { VIcon },
+
+  components: { List },
+
+  mixins: [mixins],
+
   props: {
     isShow: Boolean
   },
 
   data() {
     return {
+      selected: {},
       tableData: [],
       loading: false,
-      isTarget: false,
-      showFieldMapping: false,
-      transform: {
-        showBtn: true,
-        mode: 'metaData',
-        nodeId: '',
-        field_process: [],
-        fieldsNameTransform: '',
-        batchOperationList: []
-      },
-      nullableMap: {
-        true: i18n.t('packages_dag_meta_table_true'),
-        false: i18n.t('packages_dag_meta_table_false')
-      },
-      data: '',
-      editDataTypeVisible: false,
-      currentData: {
-        dataType: '',
-        newDataType: ''
-      },
-      editBtnLoading: false
+      data: ''
     }
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId', 'taskSaving', 'stateIsDirty', 'transformLoading']),
-    ...mapGetters('dataflow', ['activeNode']),
+    ...mapState('dataflow', ['activeNodeId', 'taskSaving', 'transformLoading']),
+    ...mapGetters('dataflow', ['activeNode', 'stateIsReadonly']),
 
     showLoading() {
       return this.loading
+    },
+
+    isTarget() {
+      const { type, $outputs } = this.activeNode || {}
+      return (type === 'database' || type === 'table') && !$outputs.length
     }
   },
 
@@ -141,104 +73,28 @@ export default {
       }
     }
   },
-  mounted() {
-    if (this.stateIsReadonly) {
-      this.transform.mode = 'readOnly'
-    }
-  },
 
   methods: {
     async loadFields() {
-      this.$refs.table.doLayout()
+      this.$refs.table?.doLayout()
       this.loading = true
 
       try {
-        let data = await metadataInstancesApi.nodeSchema(this.activeNode.id)
-        this.data = data
-        let fields = data?.[0]?.fields || []
-        fields = fields.filter(f => !f.is_deleted)
-        /*fields.sort((a, b) => {
-          const aIsPrimaryKey = a.primary_key_position > 0
-          const bIsPrimaryKey = b.primary_key_position > 0
-
-          if (aIsPrimaryKey !== bIsPrimaryKey) {
-            return aIsPrimaryKey ? -1 : 1
-          } else {
-            return a.field_name.localeCompare(b.field_name)
-          }
-        })*/
-        this.tableData = fields
+        const { items } = await this.getData()
+        this.selected = items?.[0] || {}
       } catch (e) {
-        this.tableData = []
+        // catch
       }
 
       this.loading = false
-    },
-    getDataflowDataToSave() {
-      const dag = this.$store.getters['dataflow/dag']
-      const editVersion = this.$store.state.dataflow.editVersion
-      let dataflow = this.$store.state.dataflow
-      return {
-        dag,
-        editVersion,
-        ...dataflow
-      }
-    },
-    getDataFlow() {
-      const data = this.getDataflowDataToSave()
-      return data
-    },
-    //打开字段编辑调整dialog
-    openEditDataTypeVisible(row) {
-      this.editDataTypeVisible = true
-      this.currentData.dataType = row.data_type
-      this.currentData.fieldName = row.field_name
-      this.currentData.newDataType = row.data_type
-    },
-    handelClose() {
-      this.editDataTypeVisible = false
-    },
-    submitEdit() {
-      let { qualified_name, nodeId, taskId } = this.data?.[0]
-      let data = {
-        taskId: taskId,
-        nodeId: nodeId,
-        sinkQualifiedName: qualified_name,
-        fields: [
-          {
-            fieldName: this.currentData.fieldName,
-            attributes: {
-              DataType: this.currentData.newDataType
-            }
-          }
-        ]
-      }
-      metadataInstancesApi.changeFields(data).then(() => {
-        this.editDataTypeVisible = false
-      })
-    },
-    rest(name) {
-      let { qualified_name, nodeId, taskId } = this.data?.[0]
-      let data = {
-        taskId: taskId,
-        nodeId: nodeId,
-        sinkQualifiedName: qualified_name,
-        fieldName: name || ''
-      }
-      metadataInstancesApi.changeFieldsReset(data).then(() => {
-        this.editDataTypeVisible = false
-      })
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .metadata-list-wrap {
   height: 100%;
   overflow: auto;
-  .total {
-    margin-left: 10px;
-    color: map-get($color, info);
-  }
 }
 </style>
