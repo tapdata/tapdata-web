@@ -26,8 +26,16 @@
               <VIcon size="16" class="color-primary">d-arrow-right</VIcon>
             </div>
           </ElCol>
-          <ElCol :span="9">
-            <ElInput v-model="item.result" placeholder="参考格式: varchar(32)"></ElInput>
+          <ElCol :span="9" class="flex align-items-center">
+            <ElInput
+              v-model="item.result.dataType"
+              placeholder="参考格式: varchar(32)"
+              :errormessage="item.result.tapType === null"
+              class="mr-1"
+            ></ElInput>
+            <VIcon v-if="item.result.tapType === null" class="color-danger">error</VIcon>
+            <VIcon v-else :class="[!item.result.tapType ? 'color-disable' : 'color-success']">success</VIcon>
+<!--            <span v-show="item.result.tapType === null" class="color-danger">错误</span>-->
           </ElCol>
           <ElCol :span="3">
             <div class="flex justify-content-center align-items-center" style="height: 32px">
@@ -61,8 +69,10 @@
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
+import { metadataInstancesApi } from '@tap/api'
+
 export default {
-  name: 'Dialog',
+  name: 'FieldTypeRules',
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
@@ -95,7 +105,7 @@ export default {
         namespace: [this.activeNode?.id],
         type: 'DataType',
         accept: '',
-        result: ''
+        result: { dataType: '', tapType: '' }
       }
     },
     handleAdd(index = 0) {
@@ -114,12 +124,11 @@ export default {
     },
     getSubmitDisabled() {
       return (
-        this.form.list.some(t => !t.accept || !t.result) ||
+        this.form.list.some(t => !t.accept || !t.result?.dataType) ||
         JSON.stringify(this.nodeRules) === JSON.stringify(this.form.list)
       )
     },
-    submit() {
-      this.form.visible = false
+    handleUpdate() {
       this.updateNodeProperties({
         id: this.activeNode?.id,
         properties: {
@@ -130,36 +139,33 @@ export default {
         }
       })
       this.updateDag()
+      this.form.visible = false
+    },
+    submit() {
+      const { activeNode = {} } = this
+      const { list } = this.form
+      if (!list.length) {
+        this.handleUpdate()
+        return
+      }
+      const dataTypes = list.map(t => t.result.dataType)
+      const params = {
+        databaseType: activeNode.databaseType,
+        dataTypes
+      }
+      metadataInstancesApi.dataType2TapType(params).then(data => {
+        const result = list.map(t => {
+          const val = data[t.result.dataType]
+          t.result.tapType = val && val.type !== 7 ? JSON.stringify(val) : null
+          return t
+        })
+        if (result.some(t => !t.result?.tapType)) {
+          this.$message.error('存在错误格式')
+          return
+        }
+        this.handleUpdate()
+      })
     }
   }
 }
 </script>
-<style lang="scss" scoped>
-::v-deep {
-  .field-mapping-table-dialog {
-    .table-box {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      .table-form {
-        width: 56%;
-        .el-form-item {
-          margin-bottom: 12px;
-        }
-        .tip {
-          padding-left: 40px;
-        }
-      }
-      .table-example {
-        width: 36%;
-        h3 {
-          padding-bottom: 20px;
-        }
-        p {
-          padding-bottom: 10px;
-        }
-      }
-    }
-  }
-}
-</style>

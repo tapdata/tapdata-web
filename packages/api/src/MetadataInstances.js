@@ -115,5 +115,8 @@ export default class MetadataInstances extends Http {
   changeFieldsReset(params) {
     return this.axios.post(this.url + '/changeFields/reset', params)
   }
+  dataType2TapType(params) {
+    return this.axios.post(this.url + '/dataType2TapType', params)
+  }
 }
 export { MetadataInstances }
