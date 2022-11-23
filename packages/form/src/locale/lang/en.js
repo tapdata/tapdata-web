@@ -136,5 +136,6 @@ export default {
   packages_form_text_file_reader_index_shangchuanwenjianda: 'The upload file size cannot exceed {val1}KB',
   packages_form_src_index_cronbiao: 'Cron expression format is incorrect',
   packages_form_js_editor_fullscreen: 'Full screen',
-  packages_form_js_editor_exit_fullscreen: 'Exit full screen'
+  packages_form_js_editor_exit_fullscreen: 'Exit full screen',
+  packages_form_load_schema_tree_button_title: 'Load Schema'
 }

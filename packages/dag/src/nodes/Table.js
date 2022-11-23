@@ -106,6 +106,14 @@ export class Table extends NodeType {
           gap: 8,
           align: 'start'
         },
+        'x-reactions': {
+          dependencies: ['databaseType'],
+          fulfill: {
+            state: {
+              display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+            }
+          }
+        },
         properties: {
           tableName: {
             type: 'string',
@@ -513,6 +521,25 @@ export class Table extends NodeType {
       'attrs.connectionName': {
         type: 'string',
         'x-display': 'hidden'
+      },
+
+      loadSchemaTree: {
+        type: 'void',
+        title: '',
+        'x-decorator': 'FormItem',
+        'x-component': 'loadSchemaTree',
+        'x-component-props': {
+          tableNameField: 'tableName'
+        },
+        'x-reactions': {
+          dependencies: ['databaseType', '$outputs'],
+          fulfill: {
+            state: {
+              display:
+                '{{ ($deps[1].length > 0 && ["CSV","EXCEL","JSON","XML"].includes($deps[0])) ? "visible":"hidden"}}'
+            }
+          }
+        }
       }
     }
   }
