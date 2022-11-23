@@ -50,7 +50,7 @@
     <div class="success" v-show="successStatus">
       <div class="paid-upgrade-mb16 imgBox"><img class="mt-2 block" :src="getImg('complete')" alt="" /></div>
       <div class="version paid-upgrade-mb8">
-        感谢您订购Tapdata Cloud 标准版(链路数量：{{ successData.extraPipelines }}个）
+        感谢您订购Tapdata Cloud 标准版(链路数量：{{ (successData.extraPipelines || 0) + 5 }}个）
       </div>
       <div class="desc paid-upgrade-mb16">我们的同事会通过您留下的联系方式和您联系进行线下合同签署和付款。</div>
       <el-button type="primary" @click="goBack">返回控制台</el-button>
