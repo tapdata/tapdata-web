@@ -70,7 +70,7 @@ export default {
         contactTelephone: '',
         paidPlanCode: 'standard',
         count: 1,
-        extraPipelines: 0
+        extraPipelines: 1
       },
       rules: {
         contactName: [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
