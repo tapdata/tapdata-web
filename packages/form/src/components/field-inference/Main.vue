@@ -9,7 +9,7 @@
         clearable
         class="p-2"
       ></ElInput>
-      <div class="flex bg-main justify-content-between mb-2 pl-2" style="height: 40px">
+      <div class="flex bg-main justify-content-between pl-2" style="height: 40px">
         {{ $t('packages_form_field_mapping_list_biaoming') }}
       </div>
       <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
@@ -20,7 +20,7 @@
             :class="{ active: position === index }"
             @click="handleSelect(item, index)"
           >
-            <div class="task-form-text-box">
+            <div class="task-form-text-box pl-4">
               <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
             </div>
           </li>
@@ -153,7 +153,6 @@ export default {
     background-color: map-get($bgColor, white);
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
     border-bottom: 1px solid map-get($borderColor, light);
-    padding: 10px 0 10px 10px;
     border-left: 2px solid transparent;
     &:hover,
     &.active {
@@ -162,14 +161,11 @@ export default {
       border-left-color: map-get($color, primary);
     }
     .task-form-text-box {
-      margin-left: 10px;
       width: 140px;
       .target {
         font-size: 12px;
-        font-weight: 400;
-        color: map-get($color, normal);
-        line-height: 20px;
-        text-align: left;
+        height: 40px;
+        line-height: 40px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
