@@ -162,10 +162,10 @@ export default {
     padding: 20px;
   }
   .paid-upgrade-mb16 {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
   .paid-upgrade-mb8 {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   .text {
     font-size: 12px;
@@ -203,6 +203,12 @@ export default {
     line-height: 50px;
     padding-left: 24px;
     border-bottom: 1px solid #e1e3e9;
+  }
+  ::v-deep {
+    .el-form-item--small .el-form-item__content,
+    .el-form-item--small .el-form-item__label {
+      line-height: 28px;
+    }
   }
 }
 </style>
