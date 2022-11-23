@@ -23,7 +23,7 @@
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb8">
           <span><el-checkbox class="mr-2" v-model="checked"></el-checkbox>每个额外的任务</span>
-          <span class="version">¥300</span>
+          <span class="version">¥3600</span>
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
           <el-input-number
@@ -53,7 +53,7 @@
         感谢您订购Tapdata Cloud 标准版(链路数量：{{ successData.extraPipelines }}个）
       </div>
       <div class="desc paid-upgrade-mb16">我们的同事会通过您留下的联系方式和您联系进行线下合同签署和付款。</div>
-      <el-button type="primary" @click="goBack">确认</el-button>
+      <el-button type="primary" @click="goBack">返回控制台</el-button>
     </div>
   </div>
 </template>
@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     total() {
-      return 12000 + this.form.extraPipelines * 300
+      return 12000 + this.form.extraPipelines * 3600
     },
     checked() {
       return this.form.extraPipelines > 0
@@ -104,7 +104,7 @@ export default {
     },
     goBack() {
       this.$router.push({
-        name: 'migrateList'
+        name: 'Workbench'
       })
     }
   }

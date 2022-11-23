@@ -11,17 +11,22 @@
     <ul class="flex paid-upgrade-ul mt-4">
       <li class="paid-upgrade-left">
         <div style="height: 150px">
-          <div class="version mb-2">基础版 <span class="current">当前试用版</span></div>
-          <div class="paid-upgrade-mb16"><span class="free">免费</span><span class="desc">试用所有功能</span></div>
+          <div class="version mb-2">基础版 <span class="current">当前版本</span></div>
+          <div class="paid-upgrade-mb16">
+            <span class="free">免费,</span>
+            <span class="desc">包含所有产品功能</span>
+          </div>
         </div>
         <div class="link paid-upgrade-mb16"></div>
-        <div class="currentList paid-upgrade-mb16">√ 最大任务数: 3</div>
-        <div class="currentList paid-upgrade-mb16">√ 已用任务数: 3</div>
+        <div class="currentList paid-upgrade-mb16">
+          √ 最大任务数: {{ paidPlan.limit === -1 ? '不限制' : paidPlan.limit }}
+        </div>
+        <div class="currentList paid-upgrade-mb16">√ 已用任务数: {{ paidPlan.current }}</div>
         <el-link
           type="primary"
           target="_blank"
           href="https://page.ma.scrmtech.com/cyy-form/index?pf_uid=32551_2180&id=17751&main_id=32551&wx_id=2180"
-          >参与激励计划，奖励2个额外免费任务数</el-link
+          >点击此处获取更多免费任务 →</el-link
         >
       </li>
       <li class="paid-upgrade-right ml-6">
@@ -29,10 +34,10 @@
           <div class="version mb-2">标准版</div>
           <div class="desc paid-upgrade-mb16">收费详情（每年）</div>
           <div class="content mb-2 flex justify-content-between">
-            <span>基础月费含5个任务</span> <span class="version">¥12000</span>
+            <span>基础年费含5个任务</span> <span class="version">¥12000</span>
           </div>
           <div class="content flex justify-content-between">
-            <span>每个额外的任务</span> <span class="version">¥300</span>
+            <span>每个额外的任务</span> <span class="version">¥3600</span>
           </div>
         </div>
         <div class="link paid-upgrade-mb16"></div>
@@ -47,7 +52,7 @@
 <script>
 export default {
   name: 'PaidUpgradeDialog',
-  props: ['visible'],
+  props: ['visible', 'paidPlan'],
   methods: {
     goPaidUpgrade() {
       this.$router.push({

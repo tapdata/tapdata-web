@@ -222,7 +222,7 @@
     <!-- 导入 -->
     <Upload v-if="isDaas" :type="'dataflow'" ref="upload"></Upload>
     <!--付费 -->
-    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible"></PaidUpgradeDialog>
+    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
   </section>
 </template>
 
@@ -293,7 +293,8 @@ export default {
         type: ''
       },
       //付费升级
-      paidUpgradeVisible: false
+      paidUpgradeVisible: false,
+      paidPlan: ''
     }
   },
 
@@ -565,16 +566,16 @@ export default {
     async create() {
       this.buried(this.taskBuried.new)
       this.createBtnLoading = true
-      let data = ''
       if (!this.isDaas) {
         // true 付费计划有效，false 付费计划无效
-        data = await paidApi.getUserPaidPlan()
+        this.paidPlan = await paidApi.getUserPaidPlan()
       }
-      if (!this.isDaas && !data?.valid) {
+      if (!this.isDaas && this.paidPlan?.valid) {
         this.paidUpgradeVisible = true
         this.createBtnLoading = false
         return
       }
+      this.createBtnLoading = false
       this.checkAgent(() => {
         this.$router
           .push({
