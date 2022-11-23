@@ -40,7 +40,7 @@
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
-            <span class="ml-2 current">{{ paidPlansCode || '基础版' }}</span>
+            <span class="ml-2 current">{{ paidPlansCode || $t('dfs_the_header_header_jichuban') }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">

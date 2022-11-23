@@ -1053,5 +1053,25 @@ export default {
     '2. 點擊實例名稱，選擇“資源”選項卡，在“雲服務器 ECS”資源點擊“遠程登錄”',
   dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天試用實例”請打開計算巢“試用服務”選項卡',
   dfs_agent_download_upgradeversion_jisuanchaodenglu: '計算巢登錄地址',
-  dfs_agent_download_upgradeversion_denglualiyun: '1. 登錄阿里雲計算巢控制台，找到部署Agent的服務實例.'
+  dfs_agent_download_upgradeversion_denglualiyun: '1. 登錄阿里雲計算巢控制台，找到部署Agent的服務實例.',
+
+  dfs_the_header_header_jichuban: '基礎版',
+  dfs_agent_download_paidupgrade_qingxuanzelianxi: '請選擇聯繫人手機號碼',
+  dfs_agent_download_paidupgrade_qingshurulianxi: '請輸入聯繫人姓名',
+  dfs_agent_download_paidupgrade_fanhuikongzhitai: '返回控制台',
+  dfs_agent_download_paidupgrade_womendetongshi: '我們的同事會通過您留下的聯繫方式和您聯繫進行線下合同簽署和付款。 ',
+  dfs_agent_download_paidupgrade_ganxienindinggou: '感謝您訂購Tapdata Cloud 標準版。鏈路數量：',
+  dfs_agent_download_paidupgrade_queren: '確認',
+  dfs_agent_download_paidupgrade_dianjiquerengou:
+    '點擊確認購買即表示您同意我們的【服務條款】您可以立即開始享受新計劃的權益。我們的同事將通過電話或者郵件與您聯絡，您需要在1週之內完成線下付款。 ',
+  dfs_agent_download_paidupgrade_zongji: '總計',
+  dfs_agent_download_paidupgrade_meigeewaide: '每個額外的任務',
+  dfs_agent_download_paidupgrade_jichuyuefeihan: '基礎月費含5個任務',
+  dfs_agent_download_paidupgrade_shoufeixiangqingmei: '收費詳情（每年）',
+  dfs_agent_download_paidupgrade_goumaifangan: '購買方案',
+  dfs_agent_download_paidupgrade_dianhua: '電話',
+  dfs_agent_download_paidupgrade_xingming: '姓名',
+  dfs_agent_download_paidupgrade_biaozhunban: '標準版',
+  dfs_agent_download_paidupgrade_fuwushengji: '服務升級',
+  dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜單'
 }

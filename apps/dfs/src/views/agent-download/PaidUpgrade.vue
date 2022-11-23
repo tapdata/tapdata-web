@@ -2,27 +2,30 @@
   <div class="paid-upgrade-wrap">
     <TheHeader></TheHeader>
     <ElBreadcrumb class="breadcrumb paid-upgrade-mb16" separator-class="el-icon-arrow-right">
-      <ElBreadcrumbItem :to="{ path: '/' }">返回菜单</ElBreadcrumbItem>
-      <ElBreadcrumbItem>服务升级</ElBreadcrumbItem>
+      <ElBreadcrumbItem :to="{ path: '/' }">{{ $t('dfs_agent_download_paidupgrade_fanhuicaidan') }}</ElBreadcrumbItem>
+      <ElBreadcrumbItem>{{ $t('dfs_agent_download_paidupgrade_fuwushengji') }}</ElBreadcrumbItem>
     </ElBreadcrumb>
     <div class="card" v-show="!successStatus">
-      <header class="header">标准版</header>
+      <header class="header">{{ $t('dfs_agent_download_paidupgrade_biaozhunban') }}</header>
       <div class="main">
         <el-form :model="form" ref="paidForm" :rules="rules">
-          <el-form-item label="姓名" required prop="contactName">
+          <el-form-item :label="$t('dfs_agent_download_paidupgrade_xingming')" required prop="contactName">
             <el-input v-model="form.contactName"></el-input>
           </el-form-item>
-          <el-form-item label="电话" required prop="contactTelephone">
+          <el-form-item :label="$t('dfs_agent_download_paidupgrade_dianhua')" required prop="contactTelephone">
             <el-input :max="11" v-model="form.contactTelephone"></el-input>
           </el-form-item>
         </el-form>
-        <div class="currentList paid-upgrade-mb16">购买方案</div>
-        <div class="desc paid-upgrade-mb16">收费详情（每年）</div>
+        <div class="currentList paid-upgrade-mb16">{{ $t('dfs_agent_download_paidupgrade_goumaifangan') }}</div>
+        <div class="desc paid-upgrade-mb16">{{ $t('dfs_agent_download_paidupgrade_shoufeixiangqingmei') }}</div>
         <div class="content mb-2 flex justify-content-between">
-          <span>基础月费含5个任务</span> <span class="version">¥12000</span>
+          <span>{{ $t('dfs_agent_download_paidupgrade_jichuyuefeihan') }}</span> <span class="version">¥12000</span>
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb8">
-          <span><el-checkbox class="mr-2" v-model="checked"></el-checkbox>每个额外的任务</span>
+          <span
+            ><el-checkbox class="mr-2" v-model="checked"></el-checkbox
+            >{{ $t('dfs_agent_download_paidupgrade_meigeewaide') }}</span
+          >
           <span class="version">¥3600</span>
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
@@ -36,45 +39,51 @@
         </div>
         <div class="link paid-upgrade-mb16"></div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
-          <span class="currentList">总计</span>
+          <span class="currentList">{{ $t('dfs_agent_download_paidupgrade_zongji') }}</span>
           <span class="version" v-if="!checked">¥12000</span>
           <span class="version" v-else>¥{{ total }}</span>
         </div>
-        <div class="tip paid-upgrade-mb16">
-          点击确认购买即表示您同意我们的【服务条款】
-          您可以立即开始享受新计划的权益。我们的同事将通过电话或者邮件与您联络，您需要在1周之内完成线下付款。
-        </div>
-        <el-button class="float-end" type="primary" @click="save">确认</el-button>
+        <div class="tip paid-upgrade-mb16">{{ $t('dfs_agent_download_paidupgrade_dianjiquerengou') }}</div>
+        <el-button class="float-end" type="primary" @click="save">{{
+          $t('dfs_agent_download_paidupgrade_queren')
+        }}</el-button>
       </div>
     </div>
     <div class="success" v-show="successStatus">
       <div class="paid-upgrade-mb16 imgBox"><img class="mt-2 block" :src="getImg('complete')" alt="" /></div>
       <div class="version paid-upgrade-mb8">
-        感谢您订购Tapdata Cloud 标准版(链路数量：{{ (successData.extraPipelines || 0) + 5 }}个）
+        {{ $t('dfs_agent_download_paidupgrade_ganxienindinggou') }}{{ (successData.extraPipelines || 0) + 5 }}
       </div>
-      <div class="desc paid-upgrade-mb16">我们的同事会通过您留下的联系方式和您联系进行线下合同签署和付款。</div>
-      <el-button type="primary" @click="goBack">返回控制台</el-button>
+      <div class="desc paid-upgrade-mb16">{{ $t('dfs_agent_download_paidupgrade_womendetongshi') }}</div>
+      <el-button type="primary" @click="goBack">{{ $t('dfs_agent_download_paidupgrade_fanhuikongzhitai') }}</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import TheHeader from '@/components/the-header'
 export default {
   name: 'PaidUpgrade',
   components: { TheHeader },
   data() {
+    let user = window.__USER_INFO__ || {}
     return {
       form: {
-        contactName: '',
-        contactTelephone: '',
+        contactName: user.nickname,
+        contactTelephone: user.telephone,
         paidPlanCode: 'standard',
         count: 1,
         extraPipelines: 1
       },
       rules: {
-        contactName: [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
-        contactTelephone: [{ required: true, message: '请选择联系人手机号码', trigger: 'blur' }]
+        contactName: [
+          { required: true, message: i18n.t('dfs_agent_download_paidupgrade_qingshurulianxi'), trigger: 'blur' }
+        ],
+        contactTelephone: [
+          { required: true, message: i18n.t('dfs_agent_download_paidupgrade_qingxuanzelianxi'), trigger: 'blur' }
+        ]
       },
       successStatus: false,
       successData: ''

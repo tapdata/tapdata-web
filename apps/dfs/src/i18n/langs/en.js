@@ -1157,5 +1157,27 @@ export default {
     'If you are deploying a "3-day trial instance", please open the Compute Nest "trial service" tab',
   dfs_agent_download_upgradeversion_jisuanchaodenglu: 'Calculate nest login address',
   dfs_agent_download_upgradeversion_denglualiyun:
-    '1. Log in to Alibaba Cloud Computing Nest console and find the service instance where Agent is deployed.'
+    '1. Log in to Alibaba Cloud Computing Nest console and find the service instance where Agent is deployed.',
+
+  dfs_the_header_header_jichuban: 'basic version',
+  dfs_agent_download_paidupgrade_qingxuanzelianxi: 'Please select a contact phone number',
+  dfs_agent_download_paidupgrade_qingshurulianxi: 'Please enter the contact name',
+  dfs_agent_download_paidupgrade_fanhuikongzhitai: 'Return to console',
+  dfs_agent_download_paidupgrade_womendetongshi:
+    'Our colleagues will contact you through the contact information you left for offline contract signing and payment. ',
+  dfs_agent_download_paidupgrade_ganxienindinggou:
+    'Thank you for ordering Tapdata Cloud Standard Edition. Number of Pipelines: ',
+  dfs_agent_download_paidupgrade_queren: 'Confirm',
+  dfs_agent_download_paidupgrade_dianjiquerengou:
+    'Clicking to confirm the purchase means that you agree to our [Terms of Service] You can immediately start enjoying the benefits of the new plan. Our colleagues will contact you by phone or email, and you need to complete the offline payment within 1 week. ',
+  dfs_agent_download_paidupgrade_zongji: 'Total',
+  dfs_agent_download_paidupgrade_meigeewaide: 'Every additional task',
+  dfs_agent_download_paidupgrade_jichuyuefeihan: 'Basic monthly fee includes 5 tasks',
+  dfs_agent_download_paidupgrade_shoufeixiangqingmei: 'Charge details (yearly)',
+  dfs_agent_download_paidupgrade_goumaifangan: 'Purchase plan',
+  dfs_agent_download_paidupgrade_dianhua: 'Phone',
+  dfs_agent_download_paidupgrade_xingming: 'Name',
+  dfs_agent_download_paidupgrade_biaozhunban: 'Standard Edition',
+  dfs_agent_download_paidupgrade_fuwushengji: 'Service Upgrade',
+  dfs_agent_download_paidupgrade_fanhuicaidan: 'Back to menu'
 }
