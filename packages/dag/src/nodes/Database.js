@@ -284,15 +284,11 @@ export class Database extends NodeType {
             type: 'void',
             title: '推演结果',
             'x-decorator': 'FormItem',
-            'x-component': 'fieldChangeRules'
+            'x-component': 'fieldTypeRules'
           },
           fieldMapping: {
             type: 'void',
-            title: ' ',
             'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              colon: false
-            },
             'x-component': 'SchemaFiledMapping'
           },
           collapse: {

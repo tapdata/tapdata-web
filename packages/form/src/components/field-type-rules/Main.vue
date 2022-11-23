@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span @click="batchFieldTypeForm.visible = true">点击设置</span>
+    <ElLink type="primary" @click="batchFieldTypeForm.visible = true">批量修改字段类型</ElLink>
     <ElDialog
       width="800px"
       append-to-body
@@ -19,7 +19,7 @@
         </ElRow>
         <ElRow v-for="(item, index) in batchFieldTypeForm.list" :key="index" class="mt-4">
           <ElCol :span="9">
-            <ElInput v-model="item.accept" :disabled="index !== batchFieldTypeForm.list.length - 1" readonly></ElInput>
+            <ElInput v-model="item.accept" placeholder="参考格式: varchar(32)"></ElInput>
           </ElCol>
           <ElCol :span="3">
             <div class="flex justify-content-center align-items-center" style="height: 32px">
@@ -27,7 +27,7 @@
             </div>
           </ElCol>
           <ElCol :span="9">
-            <ElInput v-model="item.result"></ElInput>
+            <ElInput v-model="item.result" placeholder="参考格式: varchar(32)"></ElInput>
           </ElCol>
           <ElCol :span="3">
             <div class="flex justify-content-center align-items-center" style="height: 32px">
@@ -86,73 +86,24 @@ export default {
     return {
       dialogVisible: false,
       loadingSave: false,
-      columns: [
-        {
-          label: '序号',
-          prop: 'index',
-          width: 180
-        },
-        {
-          label: '作用域',
-          prop: 'scop',
-          width: 180
-        },
-        {
-          label: '初始',
-          prop: 'accept',
-          width: 180
-        },
-        {
-          label: '结果',
-          prop: 'result',
-          width: 180
-        }
-        // {
-        //   label: '操作',
-        //   prop: 'operation',
-        //   slotName: 'operation',
-        //   width: 60
-        // }
-      ],
-      list: [
-        {
-          id: 'id',
-          index: 1,
-          scop: 'Node',
-          namespace: 'nodeId',
-          type: 'DataType',
-          accept: 'decimal(30,2)',
-          result: 'varchar(32)'
-        }
-      ],
+      list: [],
       batchFieldTypeForm: {
         visible: false,
-        list: [
-          {
-            id: 'id',
-            index: 1,
-            scop: 'Node',
-            namespace: 'nodeId',
-            type: 'DataType',
-            accept: 'decimal(30,2)',
-            result: 'varchar(32)'
-          }
-        ],
+        list: [],
         options: []
-      }
+      },
+      fieldRules: {}
     }
   },
 
   mounted() {
-    console.log('mounted')
     this.loadCustomTypeMappingsData()
   },
 
   methods: {
-    save() {
-      this.loadingSave = true
-      this.$refs.fieldMappingList.save(true)
-    },
+    ...mapMutations('dataflow', ['updateNodeProperties']),
+    ...mapActions('dataflow', ['updateDag']),
+
     updateVisible() {
       this.loadingSave = false
       this.$emit('update:visible', false)
@@ -162,20 +113,21 @@ export default {
     },
     getBatchFieldTypeItem() {
       return {
-        sourceType: '',
-        targetType: '',
-        precision: undefined,
-        length: undefined
+        scope: 'Node',
+        namespace: [this.activeNode?.id],
+        type: 'DataType',
+        accept: '',
+        result: ''
       }
     },
     fieldTypeChangeAddItem(index = 0) {
       this.batchFieldTypeForm.list.splice(index + 1, 0, this.getBatchFieldTypeItem())
     },
     loadCustomTypeMappingsData() {
-      console.log('loadCustomTypeMappingsData，恢复数据', this.activeNode)
-      const fieldChangeRules = this.activeNode?.changeFieldRules || {}
-      const { nodeRules = [], fieldRules = [] } = fieldChangeRules
-      // let arr = JSON.parse(JSON.stringify(this.customTypeMappings)).map(t => Object.assign(t, { disabled: true }))
+      const fieldChangeRules = this.activeNode?.fieldChangeRules || {}
+      const { nodeRules = [], fieldRules = {} } = fieldChangeRules
+      this.fieldRules = fieldRules
+      this.list = JSON.parse(JSON.stringify(nodeRules))
       this.batchFieldTypeForm.list = JSON.parse(JSON.stringify(nodeRules))
     },
     batchFieldTypeFormCancel() {
@@ -183,23 +135,23 @@ export default {
       this.batchFieldTypeForm.visible = false
     },
     batchFieldTypeFormDisabled() {
-      return false
-      // let flag = false
-      // flag = !this.batchFieldTypeForm.list.every(t => t.sourceType && t.targetType)
-      // if (flag) {
-      //   return flag
-      // }
-      // let getCustomTypeMappings = this.getCustomTypeMappings()
-      // flag = JSON.stringify(getCustomTypeMappings) === JSON.stringify(this.customTypeMappings)
-      // return flag
+      return (
+        this.batchFieldTypeForm.list.some(t => !t.accept || !t.result) ||
+        JSON.stringify(this.list) === JSON.stringify(this.batchFieldTypeForm.list)
+      )
     },
     batchFieldTypeFormSave() {
-      console.log('batchFieldTypeFormSave')
       this.batchFieldTypeForm.visible = false
-      this.batchFieldTypeForm.list.forEach(el => {
-        el.disabled = true
+      this.updateNodeProperties({
+        id: this.activeNode?.id,
+        properties: {
+          fieldChangeRules: {
+            nodeRules: JSON.parse(JSON.stringify(this.batchFieldTypeForm.list)),
+            fieldRules: this.fieldRules
+          }
+        }
       })
-      // this.updateParentMetaData('customTypeMappings', this.getCustomTypeMappings())
+      this.updateDag()
     }
   }
 }
