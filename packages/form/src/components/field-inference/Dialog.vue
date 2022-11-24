@@ -3,7 +3,7 @@
     <ElDialog
       width="600px"
       append-to-body
-      title="目标默认推演类型"
+      title="$t('packages_form_field_inference_dialog_mubiaomorentui')"
       custom-class="batch-field-type-maping-table-dialog"
       :visible.sync="ruleForm.visible"
       :close-on-click-modal="false"
@@ -11,14 +11,17 @@
     >
       <div>
         <ElRow>
-          <ElCol :span="9">目标默认推演类型</ElCol>
+          <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_mubiaomorentui') }}</ElCol>
           <ElCol :span="3">&nbsp;</ElCol>
-          <ElCol :span="9">修改后的类型</ElCol>
-          <ElCol :span="3" class="text-center">操作</ElCol>
+          <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_xiugaihoudelei') }}</ElCol>
+          <ElCol :span="3" class="text-center">{{ $t('packages_form_field_processor_index_caozuo') }}</ElCol>
         </ElRow>
         <ElRow v-for="(item, index) in ruleForm.list" :key="index" class="mt-4">
           <ElCol :span="9">
-            <ElInput v-model="item.accept" placeholder="参考格式: varchar(32)"></ElInput>
+            <ElInput
+              v-model="item.accept"
+              :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
+            ></ElInput>
           </ElCol>
           <ElCol :span="3">
             <div class="flex justify-content-center align-items-center" style="height: 32px">
@@ -28,7 +31,7 @@
           <ElCol :span="9" class="flex align-items-center">
             <ElInput
               v-model="item.result.dataType"
-              placeholder="参考格式: varchar(32)"
+              :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
               :errormessage="item.result.tapType === null"
               class="mr-1"
             ></ElInput>
@@ -66,6 +69,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 import { metadataInstancesApi } from '@tap/api'
@@ -168,7 +173,7 @@ export default {
           return t
         })
         if (result.some(t => !t.result?.tapType)) {
-          this.$message.error('存在错误格式')
+          this.$message.error(i18n.t('packages_form_field_inference_dialog_cunzaicuowuge'))
           return
         }
         this.handleUpdate()

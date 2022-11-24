@@ -136,5 +136,27 @@ export default {
   packages_form_text_file_reader_index_shangchuanwenjianda: 'The upload file size cannot exceed {val1}KB',
   packages_form_src_index_cronbiao: 'Cron expression format is incorrect',
   packages_form_js_editor_fullscreen: 'Full screen',
-  packages_form_js_editor_exit_fullscreen: 'Exit full screen'
+  packages_form_js_editor_exit_fullscreen: 'Exit full screen',
+  packages_form_field_inference_dialog_cunzaicuowuge: 'There is an error format',
+  packages_form_field_inference_dialog_cankaogeshiv: 'Reference format: varchar(32)',
+  packages_form_field_inference_dialog_xiugaihoudelei: 'Modified type',
+  packages_form_field_inference_dialog_mubiaomorentui: 'Target default inference type',
+  packages_form_field_inference_list_qingxiugaizhengzai: 'Please modify the batch rules that are in effect',
+  packages_form_field_inference_list_caozuochenggong: 'Operation succeeded',
+  packages_form_field_inference_list_geshicuowu: 'Format error',
+  packages_form_field_inference_list_ziduanzhushi: 'Field Notes',
+  packages_form_field_inference_list_feikong: 'not empty',
+  packages_form_field_inference_list_piliangyingyonghui:
+    'Batch application will overwrite existing batch application rules',
+  packages_form_field_inference_list_duidangqiantuiyan: 'Batch adjustment to the current deduction type',
+  packages_form_field_inference_list_yaotiaozhengweide: 'The type to adjust to:',
+  packages_form_field_inference_list_tuiyanchudelei: 'Inference type:',
+  packages_form_field_inference_list_ziduanleixingtiao: 'Field type adjustment',
+  packages_form_field_inference_main_quanbuhuifumo: 'Restore all to default',
+  packages_form_field_inference_main_gepiliangxiugai: 'A batch modification rule is taking effect',
+  packages_form_field_inference_main_dangqianyou: 'Currently has',
+  packages_form_field_type_rules_main_shijikeyongchang:
+    'The actual available length depends on the target database type definition, please set it as needed',
+  packages_form_field_type_rules_main_tianjia: 'Add',
+  packages_form_field_type_rules_main_piliangxiugaizi: 'Batch modify field type'
 }

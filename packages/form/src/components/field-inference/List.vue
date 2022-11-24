@@ -35,17 +35,17 @@
       </template>
     </VTable>
     <ElDialog
-      title="字段类型调整"
+      :title="$t('packages_form_field_inference_list_ziduanleixingtiao')"
       append-to-body
       :close-on-click-modal="false"
       :visible.sync="editDataTypeVisible"
       width="35%"
     >
       <ElForm ref="dataTypeForm" label-width="120px" label-position="left" :model="currentData" @submit.native.prevent>
-        <ElFormItem label="推演出的类型: ">
+        <ElFormItem label="{{$t('packages_form_field_inference_list_tuiyanchudelei')}} ">
           <span>{{ currentData.dataType }}</span>
         </ElFormItem>
-        <ElFormItem label="要调整为的类型: " prop="newDataType" required>
+        <ElFormItem label="{{$t('packages_form_field_inference_list_yaotiaozhengweide')}} " prop="newDataType" required>
           <ElInput v-model="currentData.newDataType" maxlength="100" show-word-limit></ElInput>
         </ElFormItem>
         <!--        <div v-if="currentData.source" class="mb-3">-->
@@ -55,8 +55,12 @@
         <!--          </div>-->
         <!--        </div>-->
         <div>
-          <ElCheckbox v-model="currentData.useToAll">对当前推演类型进行批量调整</ElCheckbox>
-          <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">批量应用会覆盖已有批量应用规则</div>
+          <ElCheckbox v-model="currentData.useToAll">{{
+            $t('packages_form_field_inference_list_duidangqiantuiyan')
+          }}</ElCheckbox>
+          <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">
+            {{ $t('packages_form_field_inference_list_piliangyingyonghui') }}
+          </div>
         </div>
       </ElForm>
       <span slot="footer" class="dialog-footer">
@@ -127,32 +131,32 @@ export default {
     return {
       columns: [
         {
-          label: '序号',
+          label: i18n.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
           prop: 'index'
         },
         {
-          label: '字段名称',
+          label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
           prop: 'field_name',
           slotName: 'field_name'
         },
         {
-          label: '字段类型',
+          label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
           prop: 'data_type',
           slotName: 'data_type',
           'min-width': '160px'
         },
         {
-          label: '非空',
+          label: i18n.t('packages_form_field_inference_list_feikong'),
           prop: 'is_nullable',
           slotName: 'is_nullable'
         },
         {
-          label: '字段注释',
+          label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
           prop: 'comment'
         },
         {
-          label: '操作',
+          label: i18n.t('packages_form_field_processor_index_caozuo'),
           prop: 'operation',
           slotName: 'operation',
           headerSlot: 'operationHeader',
@@ -249,7 +253,7 @@ export default {
         const val = data[newDataType]
         const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
         if (!tapType) {
-          this.$message.error('格式错误')
+          this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
           return
         }
         const f = this.findInRulesById(changeRuleId)
@@ -315,7 +319,7 @@ export default {
             t.source.scope = useToAll ? 'Node' : 'Field'
           }
         })
-        this.$message.success('操作成功')
+        this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
         this.editDataTypeVisible = false
       })
     },
@@ -325,7 +329,7 @@ export default {
       const f = this.findInRulesById(row.changeRuleId)
       if (!f) return
       if (f.scope === 'Node') {
-        this.$message.error('请修改正在生效的批量规则')
+        this.$message.error(i18n.t('packages_form_field_inference_list_qingxiugaizhengzai'))
         return
       }
       if (f.scope === 'Field') {

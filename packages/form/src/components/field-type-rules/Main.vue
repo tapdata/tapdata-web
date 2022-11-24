@@ -1,10 +1,12 @@
 <template>
   <div>
-    <ElLink type="primary" @click="form.visible = true">批量修改字段类型</ElLink>
+    <ElLink type="primary" @click="form.visible = true">{{
+      $t('packages_form_field_type_rules_main_piliangxiugaizi')
+    }}</ElLink>
     <ElDialog
       width="800px"
       append-to-body
-      title="目标默认推演类型"
+      title="$t('packages_form_field_inference_dialog_mubiaomorentui')"
       custom-class="batch-field-type-maping-table-dialog"
       :visible.sync="form.visible"
       :close-on-click-modal="false"
@@ -12,14 +14,17 @@
     >
       <div>
         <ElRow>
-          <ElCol :span="9">目标默认推演类型</ElCol>
+          <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_mubiaomorentui') }}</ElCol>
           <ElCol :span="3">&nbsp;</ElCol>
-          <ElCol :span="9">修改后的类型</ElCol>
-          <ElCol :span="3" class="text-center">操作</ElCol>
+          <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_xiugaihoudelei') }}</ElCol>
+          <ElCol :span="3" class="text-center">{{ $t('packages_form_field_processor_index_caozuo') }}</ElCol>
         </ElRow>
         <ElRow v-for="(item, index) in form.list" :key="index" class="mt-4">
           <ElCol :span="9">
-            <ElInput v-model="item.accept" placeholder="参考格式: varchar(32)"></ElInput>
+            <ElInput
+              v-model="item.accept"
+              :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
+            ></ElInput>
           </ElCol>
           <ElCol :span="3">
             <div class="flex justify-content-center align-items-center" style="height: 32px">
@@ -29,13 +34,13 @@
           <ElCol :span="9" class="flex align-items-center">
             <ElInput
               v-model="item.result.dataType"
-              placeholder="参考格式: varchar(32)"
+              :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
               :errormessage="item.result.tapType === null"
               class="mr-1"
             ></ElInput>
             <VIcon v-if="item.result.tapType === null" class="color-danger">error</VIcon>
             <VIcon v-else :class="[!item.result.tapType ? 'color-disable' : 'color-success']">success</VIcon>
-<!--            <span v-show="item.result.tapType === null" class="color-danger">错误</span>-->
+            <!--            <span v-show="item.result.tapType === null" class="color-danger">错误</span>-->
           </ElCol>
           <ElCol :span="3">
             <div class="flex justify-content-center align-items-center" style="height: 32px">
@@ -48,12 +53,12 @@
         <div class="mt-4">
           <span class="inline-flex align-items-center cursor-pointer" @click="handleAdd(form.list.length)">
             <VIcon size="16" class="mr-1 cursor-pointer color-primary">plus-circle</VIcon>
-            <span class="color-primary">添加</span>
+            <span class="color-primary">{{ $t('packages_form_field_type_rules_main_tianjia') }}</span>
           </span>
         </div>
         <div class="flex align-items-center mt-4">
           <VIcon class="color-primary">info</VIcon>
-          <span class="fs-8">实际可用长度取决于目标数据库类型定义，请按需设置</span>
+          <span class="fs-8">{{ $t('packages_form_field_type_rules_main_shijikeyongchang') }}</span>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -67,6 +72,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 import { metadataInstancesApi } from '@tap/api'
@@ -160,7 +167,7 @@ export default {
           return t
         })
         if (result.some(t => !t.result?.tapType)) {
-          this.$message.error('存在错误格式')
+          this.$message.error(i18n.t('packages_form_field_inference_dialog_cunzaicuowuge'))
           return
         }
         this.handleUpdate()

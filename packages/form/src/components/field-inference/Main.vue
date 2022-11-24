@@ -3,11 +3,11 @@
     <div class="flex justify-content-end">
       <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
         <VIcon>info</VIcon>
-        <span>当前有</span>
+        <span>{{ $t('packages_form_field_inference_main_dangqianyou') }}</span>
         <span class="color-warning">{{ batchRuleCounts }}</span>
-        <span>个批量修改规则正在生效</span>
+        <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
       </div>
-      <ElButton type="text" class="ml-3">全部恢复默认</ElButton>
+      <ElButton type="text" class="ml-3">{{ $t('packages_form_field_inference_main_quanbuhuifumo') }}</ElButton>
     </div>
     <div class="field-inference flex">
       <div class="field-inference__nav flex flex-column">
