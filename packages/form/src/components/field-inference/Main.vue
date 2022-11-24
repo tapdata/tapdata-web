@@ -7,7 +7,9 @@
         <span class="color-warning px-1 fs-6 fw-bold din-font">{{ batchRuleCounts }}</span>
         <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
       </div>
-      <ElButton type="text" class="ml-3">{{ $t('packages_form_field_inference_main_quanbuhuifumo') }}</ElButton>
+      <ElButton type="text" class="ml-3" @click="rollbackAll">{{
+        $t('packages_form_field_inference_main_quanbuhuifumo')
+      }}</ElButton>
     </div>
     <div class="field-inference flex">
       <div class="field-inference__nav flex flex-column">
@@ -76,16 +78,10 @@
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           class="flex-fill"
-          @loadData="loadData"
         ></List>
       </div>
     </div>
-    <Dialog
-      :visible.sync="visible"
-      :form="form"
-      :fieldChangeRules.sync="fieldChangeRules"
-      @loadData="loadData"
-    ></Dialog>
+    <Dialog :visible.sync="visible" :form="form" :fieldChangeRules.sync="fieldChangeRules"></Dialog>
   </div>
 </template>
 
@@ -146,7 +142,8 @@ export default {
       const { size, current } = this.page
       const { items, total } = await this.getData({
         page: current,
-        pageSize: size
+        pageSize: size,
+        searchTable: this.searchTable
       })
       this.navList = items
       this.page.total = total
@@ -158,9 +155,27 @@ export default {
     refresh() {
       this.loadData()
     },
+
     handleSelect(item, index = 0) {
       this.selected = item
       this.position = index
+    },
+
+    rollbackAll() {
+      this.$confirm('您确认要全部恢复默认吗？', '', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(resFlag => {
+        if (resFlag) {
+          this.fieldChangeRules = []
+          this.handleUpdate()
+          this.$message.success('操作成功')
+        }
+      })
+    },
+
+    handleUpdate() {
+      this.form.setValuesIn('fieldChangeRules', this.fieldChangeRules)
     }
   }
 }

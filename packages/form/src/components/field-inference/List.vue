@@ -10,6 +10,7 @@
       height="100%"
       hide-on-single-page
       stripe
+      :key="!!canRevokeRules.length + ''"
     >
       <template slot="field_name" slot-scope="scope">
         <span class="flex align-center"
@@ -28,7 +29,7 @@
         {{ nullableMap[!scope.row.is_nullable] }}
       </template>
       <template slot="operationHeader">
-        <VIcon @click="revokeAll()">revoke</VIcon>
+        <VIcon :class="canRevokeRules.length ? 'color-primary' : 'color-disable'" @click="revokeAll()">revoke</VIcon>
       </template>
       <template slot="operation" slot-scope="scope">
         <VIcon :class="getRevokeColorClass(scope.row)" @click="revoke(scope.row)">revoke</VIcon>
@@ -202,13 +203,16 @@ export default {
       const { fields } = this.data
       let list = (fields || []).map(t => {
         t.source = this.findInRulesById(t.changeRuleId) || {}
-        if (t.source?.accept) {
-          t.accept = t.source.accept
-          t.data_type = t.source.result.dataType
-        }
+        t.accept = t.source?.accept || t.accept
+        t.data_type = t.source?.result?.dataType || t.data_type
         return t
       })
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
+    },
+
+    canRevokeRules() {
+      const { qualified_name } = this.data
+      return this.fieldChangeRules.filter(t => t.scope === 'Field' && t.namespace?.[1] === qualified_name) || []
     }
   },
 
@@ -236,10 +240,9 @@ export default {
       this.editDataTypeVisible = true
     },
 
-    handleUpdate() {
-      const { fieldChangeRules } = this
-      this.form.setValuesIn('fieldChangeRules', JSON.parse(JSON.stringify(fieldChangeRules)))
-      this.$emit('update:fieldChangeRules', this.fieldChangeRules)
+    handleUpdate(data) {
+      this.form.setValuesIn('fieldChangeRules', data || this.fieldChangeRules)
+      this.$emit('update:fieldChangeRules', data || this.fieldChangeRules)
     },
 
     submitEdit() {
@@ -333,13 +336,30 @@ export default {
         return
       }
       if (f.scope === 'Field') {
+        row.data_type = f.accept
         const index = this.fieldChangeRules.findIndex(t => t.id === f.id)
         this.fieldChangeRules.splice(index, 1)
       }
       this.handleUpdate()
     },
 
-    revokeAll() {},
+    revokeAll() {
+      if (!this.canRevokeRules.length) {
+        return
+      }
+      this.$confirm('您确认要恢复当前表吗？', '', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(resFlag => {
+        if (resFlag) {
+          const { qualified_name } = this.data
+          this.handleUpdate(
+            this.fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name))
+          )
+          this.$message.success('操作成功')
+        }
+      })
+    },
 
     doLayout() {
       this.$refs.table.doLayout()
