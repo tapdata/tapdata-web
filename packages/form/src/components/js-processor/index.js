@@ -1,7 +1,8 @@
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, onUnmounted } from 'vue-demi'
 import { FormItem, JsEditor } from '../index'
-import { VCodeEditor, VirtualSelect } from '@tap/component'
+import { VCodeEditor, VIcon, VirtualSelect } from '@tap/component'
+import resize from '@tap/component/src/directives/resize'
 import { taskApi } from '@tap/api'
 import { useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
@@ -12,6 +13,9 @@ import './style.scss'
 export const JsProcessor = observer(
   defineComponent({
     props: ['value', 'disabled'],
+    directives: {
+      resize
+    },
     setup(props, { emit, root, attrs }) {
       const { taskId } = root.$store.state.dataflow
       const formRef = useForm()
@@ -19,6 +23,7 @@ export const JsProcessor = observer(
       const tableLoading = ref(false)
       const running = ref(false)
       const runningText = ref('')
+      const fullscreen = ref(false)
 
       let queryTimes = 0
       const params = reactive({
@@ -122,27 +127,162 @@ export const JsProcessor = observer(
         clearTimeout(timer)
       })
 
+      const toogleFullscreen = () => {
+        fullscreen.value = !fullscreen.value
+      }
+
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
-        return (
-          <div class="js-processor font-color-light">
-            <FormItem.BaseItem asterisk label={i18n.t('packages_form_js_processor_index_jiaoben')}>
-              <JsEditor
-                value={props.value}
-                onChange={val => {
-                  emit('change', val)
+
+        const label = (
+          <div class="position-absolute flex align-center w-100">
+            <span class="formily-element-form-item-asterisk">*</span>
+            <span class="flex-1">{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
+            <ElLink onClick={toogleFullscreen} class="js-editor-fullscreen" type="primary">
+              <VIcon class="mr-1">fangda</VIcon>
+              {i18n.t('packages_form_js_editor_fullscreen')}
+            </ElLink>
+          </div>
+        )
+
+        const runTool = (
+          <div class="flex align-center">
+            <FormItem.BaseItem
+              asterisk
+              class="flex-1 mr-4"
+              label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
+              layout="horizontal"
+              feedbackLayout="none"
+            >
+              <VirtualSelect
+                value={params.tableName}
+                filterable
+                class="form-input"
+                item-size={34}
+                items={tableList.value}
+                loading={tableLoading.value}
+                onInput={val => {
+                  params.tableName = val
                 }}
-                height={350}
-                showFullscreen={true}
-                options={editorProps.options}
-                includeBeforeAndAfter={editorProps.includeBeforeAndAfter}
-                before={editorProps.before}
-                beforeRegexp={editorProps.beforeRegexp}
-                afterRegexp={editorProps.afterRegexp}
-                after={editorProps.after}
               />
             </FormItem.BaseItem>
+            <div class="flex-1 flex justify-content-between">
+              <FormItem.BaseItem
+                label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
+                layout="horizontal"
+                feedbackLayout="none"
+              >
+                <ElInputNumber
+                  style="width: 100px;"
+                  value={params.rows}
+                  max={10}
+                  onInput={val => {
+                    params.rows = val
+                  }}
+                  controls-position="right"
+                ></ElInputNumber>
+              </FormItem.BaseItem>
+              <ElButton
+                class="ml-4"
+                disabled={!params.tableName}
+                loading={running.value || tableLoading.value}
+                onClick={handleRun}
+                type="primary"
+                size="small"
+              >
+                {i18n.t('packages_form_js_processor_index_shiyunxing')}
+              </ElButton>
+            </div>
+          </div>
+        )
+
+        const jsonView = (
+          <div class="flex" v-loading={running.value} element-loading-text={runningText.value}>
+            <FormItem.BaseItem class="flex-1 mr-4" label={i18n.t('packages_form_js_processor_index_tiaoshishuru')}>
+              <VCodeEditor
+                class="border rounded-2 py-0"
+                value={inputRef.value}
+                lang="json"
+                options={{ readOnly: true }}
+                theme="chrome"
+                style="height: calc((100vh - 120px);"
+              ></VCodeEditor>
+            </FormItem.BaseItem>
+
+            <FormItem.BaseItem class="flex-1" label={i18n.t('packages_form_js_processor_index_jieguoshuchu')}>
+              <VCodeEditor
+                class="border rounded-2 py-0"
+                value={outputRef.value}
+                lang="json"
+                options={{ readOnly: true }}
+                theme="chrome"
+                style="height: calc((100vh - 120px);"
+              ></VCodeEditor>
+            </FormItem.BaseItem>
+          </div>
+        )
+
+        return (
+          <div class="js-processor font-color-light">
+            <div
+              class={[
+                'js-processor-editor',
+                {
+                  fullscreen: fullscreen.value
+                }
+              ]}
+            >
+              <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
+                {fullscreen && runTool}
+                <ElLink onClick={toogleFullscreen} class="js-editor-fullscreen" type="primary">
+                  <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
+                </ElLink>
+              </div>
+
+              <div class="js-editor-form-item-wrap">
+                <FormItem.BaseItem class="js-editor-form-item" label={label}>
+                  <JsEditor
+                    value={props.value}
+                    onChange={val => {
+                      emit('change', val)
+                    }}
+                    height={350}
+                    showFullscreen={false}
+                    options={editorProps.options}
+                    includeBeforeAndAfter={editorProps.includeBeforeAndAfter}
+                    before={editorProps.before}
+                    beforeRegexp={editorProps.beforeRegexp}
+                    afterRegexp={editorProps.afterRegexp}
+                    after={editorProps.after}
+                  />
+                </FormItem.BaseItem>
+
+                <div
+                  {...{
+                    directives: [
+                      {
+                        name: 'resize',
+                        value: {
+                          minWidth: 100
+                        },
+                        modifiers: {
+                          left: true
+                        }
+                      }
+                    ]
+                  }}
+                  class="js-processor-editor-console border-start"
+                >
+                  <ElTabs class="w-100">
+                    <ElTabPane label="输出">
+                      <div class="js-processor-editor-console-panel px-3">// 暂未实现</div>
+                    </ElTabPane>
+                    <ElTabPane label="对比">{fullscreen.value && jsonView}</ElTabPane>
+                  </ElTabs>
+                </div>
+              </div>
+            </div>
 
             <JsDeclare
               value={form.values.declareScript}
@@ -155,77 +295,9 @@ export const JsProcessor = observer(
               handleAddCompleter={editorProps.handleAddCompleter}
             />
 
-            <div class="flex align-center">
-              <FormItem.BaseItem
-                asterisk
-                class="flex-1 mr-4"
-                label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
-                layout="horizontal"
-                feedbackLayout="none"
-              >
-                <VirtualSelect
-                  value={params.tableName}
-                  filterable
-                  class="form-input"
-                  item-size={34}
-                  items={tableList.value}
-                  loading={tableLoading.value}
-                  onInput={val => {
-                    params.tableName = val
-                  }}
-                />
-              </FormItem.BaseItem>
-              <div class="flex-1 flex justify-content-between">
-                <FormItem.BaseItem
-                  label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
-                  layout="horizontal"
-                  feedbackLayout="none"
-                >
-                  <ElInputNumber
-                    style="width: 100px;"
-                    value={params.rows}
-                    max={10}
-                    onInput={val => {
-                      params.rows = val
-                    }}
-                    controls-position="right"
-                  ></ElInputNumber>
-                </FormItem.BaseItem>
-                <ElButton
-                  disabled={!params.tableName}
-                  loading={running.value || tableLoading.value}
-                  onClick={handleRun}
-                  type="primary"
-                  size="small"
-                >
-                  {i18n.t('packages_form_js_processor_index_shiyunxing')}
-                </ElButton>
-              </div>
-            </div>
+            {runTool}
 
-            <div class="flex" v-loading={running.value} element-loading-text={runningText.value}>
-              <FormItem.BaseItem class="flex-1 mr-4" label={i18n.t('packages_form_js_processor_index_tiaoshishuru')}>
-                <VCodeEditor
-                  class="border rounded-2 py-0"
-                  value={inputRef.value}
-                  lang="json"
-                  options={{ readOnly: true }}
-                  theme="chrome"
-                  style="height: calc((100vh - 120px);"
-                ></VCodeEditor>
-              </FormItem.BaseItem>
-
-              <FormItem.BaseItem class="flex-1" label={i18n.t('packages_form_js_processor_index_jieguoshuchu')}>
-                <VCodeEditor
-                  class="border rounded-2 py-0"
-                  value={outputRef.value}
-                  lang="json"
-                  options={{ readOnly: true }}
-                  theme="chrome"
-                  style="height: calc((100vh - 120px);"
-                ></VCodeEditor>
-              </FormItem.BaseItem>
-            </div>
+            {jsonView}
           </div>
         )
       }

@@ -4,4 +4,64 @@
       padding-bottom: 0;
     }
   }
+
+  &-editor {
+    &-toolbar {
+      display: none;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    &-console {
+      display: none;
+      width: 33.33%;
+
+      &-panel {
+        background-color: rgba(229, 236, 255, 0.3);
+      }
+    }
+
+    &.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100vh !important;
+      z-index: 10;
+      background: #fff;
+
+      .js-editor-form-item-wrap {
+        display: flex;
+        flex: 1;
+        .js-editor-form-item {
+          flex: 1;
+          margin-bottom: 0;
+          .formily-element-form-item-label {
+            display: none;
+          }
+        }
+
+        .form-js-editor-wrap {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100% !important;
+          border: none !important;
+          border-radius: 0 !important;
+
+          .hljs {
+            border-radius: 0;
+          }
+        }
+      }
+    }
+
+    &.fullscreen &-toolbar,
+    &.fullscreen &-console{
+      display: flex;
+    }
+  }
 }
