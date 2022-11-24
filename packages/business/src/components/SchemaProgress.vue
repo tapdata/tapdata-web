@@ -29,7 +29,7 @@ export default {
       let schemaInfo = {}
       // 加载数量大于等于实际的视为已完成
       if (data.loadFieldsStatus === 'finished') {
-        let loadTime = data.loadSchemaDate
+        let loadTime = data.loadSchemaTime
         schemaInfo = {
           text: this.$t('packages_business_schema_progress_status_success'),
           icon: 'success',
