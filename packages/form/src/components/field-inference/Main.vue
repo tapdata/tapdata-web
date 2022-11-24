@@ -1,70 +1,89 @@
 <template>
-  <div class="field-inference flex">
-    <div class="field-inference__nav flex flex-column">
-      <ElInput
-        v-model="searchTable"
-        size="mini"
-        :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
-        suffix-icon="el-icon-search"
-        clearable
-        class="p-2"
-      ></ElInput>
-      <div class="flex bg-main justify-content-between pl-2" style="height: 40px">
-        {{ $t('packages_form_field_mapping_list_biaoming') }}
-      </div>
-      <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
-        <ul v-if="navList.length">
-          <li
-            v-for="(item, index) in navList"
-            :key="index"
-            :class="{ active: position === index }"
-            @click="handleSelect(item, index)"
-          >
-            <div class="task-form-text-box pl-4">
-              <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
-            </div>
-          </li>
-        </ul>
-        <div v-else class="task-form-left__ul flex flex-column align-items-center">
-          <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
-          <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
-        </div>
-      </div>
-      <ElPagination
-        small
-        class="flex mt-3 din-font mx-auto"
-        layout="total, prev, slot, next"
-        :current-page.sync="page.current"
-        :page-size.sync="page.size"
-        :total="page.total"
-        :pager-count="5"
-        @current-change="loadData"
+  <div>
+    <div class="flex justify-content-end">
+      <div
+        v-if="fieldChangeRules.length"
+        class="flex align-items-center cursor-pointer color-primary"
+        @click="visible = true"
       >
-        <div class="text-center">
-          <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
-          <span class="icon-color" style="min-width: 22px">/</span>
-          <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
-        </div>
-      </ElPagination>
+        <VIcon>info</VIcon>
+        <span>当前有</span>
+        <span class="color-warning">{{ fieldChangeRules.length }}</span>
+        <span>个批量修改规则正在生效</span>
+      </div>
+      <ElButton type="text" class="ml-3">全部恢复默认</ElButton>
     </div>
-    <div class="field-inference__main flex-fill flex flex-column">
-      <div class="flex align-items-center p-2">
+    <div class="field-inference flex">
+      <div class="field-inference__nav flex flex-column">
         <ElInput
-          v-model="searchField"
-          :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
+          v-model="searchTable"
           size="mini"
+          :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
+          class="p-2"
         ></ElInput>
-        <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
-          <VIcon>refresh</VIcon>
-        </ElButton>
-        <ElButton v-if="!readOnly" type="text" class="btn-rest" @click="reset">
-          {{ $t('packages_form_button_reset') }}
-        </ElButton>
+        <div class="flex bg-main justify-content-between pl-2" style="height: 40px">
+          {{ $t('packages_form_field_mapping_list_biaoming') }}
+        </div>
+        <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
+          <ul v-if="navList.length">
+            <li
+              v-for="(item, index) in navList"
+              :key="index"
+              :class="{ active: position === index }"
+              @click="handleSelect(item, index)"
+            >
+              <div class="task-form-text-box pl-4">
+                <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
+              </div>
+            </li>
+          </ul>
+          <div v-else class="task-form-left__ul flex flex-column align-items-center">
+            <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
+            <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
+          </div>
+        </div>
+        <ElPagination
+          small
+          class="flex mt-3 din-font mx-auto"
+          layout="total, prev, slot, next"
+          :current-page.sync="page.current"
+          :page-size.sync="page.size"
+          :total="page.total"
+          :pager-count="5"
+          @current-change="loadData"
+        >
+          <div class="text-center">
+            <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
+            <span class="icon-color" style="min-width: 22px">/</span>
+            <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
+          </div>
+        </ElPagination>
       </div>
-      <List :data="selected" :show-columns="['index', 'field_name', 'data_type', 'operation']" class="flex-fill"></List>
+      <div class="field-inference__main flex-fill flex flex-column">
+        <div class="flex align-items-center p-2">
+          <ElInput
+            v-model="searchField"
+            :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
+            size="mini"
+            suffix-icon="el-icon-search"
+            clearable
+          ></ElInput>
+          <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
+            <VIcon>refresh</VIcon>
+          </ElButton>
+        </div>
+        <List
+          :form="form"
+          :data="selected"
+          :show-columns="['index', 'field_name', 'data_type', 'operation']"
+          class="flex-fill"
+          @loadData="loadData"
+        ></List>
+      </div>
     </div>
+    <Dialog :visible.sync="visible" :form="form"></Dialog>
   </div>
 </template>
 
@@ -74,15 +93,17 @@ import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 
 import mixins from './mixins'
 import List from './List'
+import Dialog from './Dialog'
 
 export default {
   name: 'FieldInference',
 
-  components: { OverflowTooltip, List },
+  components: { OverflowTooltip, List, Dialog },
 
   mixins: [mixins],
 
   props: {
+    form: Object,
     readOnly: Boolean
   },
 
@@ -100,6 +121,8 @@ export default {
       },
       searchTable: '',
       searchField: '',
+      visible: false,
+      fieldChangeRules: [],
       noData
     }
   },
@@ -111,6 +134,8 @@ export default {
   methods: {
     async loadData() {
       this.navLoading = true
+      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || {}
+      const getState = this.form.getState()
       const { size, current } = this.page
       const { items, total } = await this.getData({
         page: current,

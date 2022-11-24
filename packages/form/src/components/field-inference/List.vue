@@ -28,10 +28,10 @@
         {{ nullableMap[!scope.row.is_nullable] }}
       </template>
       <template slot="operationHeader">
-        <VIcon class="mr-4" @click="revoke()">revoke</VIcon>
+        <VIcon @click="revokeAll()">revoke</VIcon>
       </template>
       <template slot="operation" slot-scope="scope">
-        <VIcon class="mr-4" @click="revoke(scope.row.field_name)">revoke</VIcon>
+        <VIcon :class="getRevokeColorClass(scope.row)" @click="revoke(scope.row)">revoke</VIcon>
       </template>
     </VTable>
     <ElDialog
@@ -48,15 +48,15 @@
         <ElFormItem label="要调整为的类型: " prop="newDataType" required>
           <ElInput v-model="currentData.newDataType" maxlength="100" show-word-limit></ElInput>
         </ElFormItem>
-        <div v-if="currentData.findOne" class="mb-3">
-          <ElCheckbox v-model="currentData.deleteFindOne">已存在批量规则，勾选删除</ElCheckbox>
-          <div :class="{ 'text-decoration-line-through color-danger': currentData.deleteFindOne }">
-            源类型：{{ currentData.findOne.accept }}，目标类型：{{ currentData.findOne.result.dataType }}
-          </div>
-        </div>
+        <!--        <div v-if="currentData.source" class="mb-3">-->
+        <!--          <ElCheckbox v-model="currentData.deleteFindOne">已存在批量规则，勾选删除</ElCheckbox>-->
+        <!--          <div :class="{ 'text-decoration-line-through color-danger': currentData.deleteFindOne }">-->
+        <!--            源类型：{{ currentData.source.accept }}，目标类型：{{ currentData.source.result.dataType }}-->
+        <!--          </div>-->
+        <!--        </div>-->
         <div>
           <ElCheckbox v-model="currentData.useToAll">对当前推演类型进行批量调整</ElCheckbox>
-          <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">勾选，将会覆盖“批量规则”</div>
+          <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">批量应用会覆盖已有批量应用规则</div>
         </div>
       </ElForm>
       <span slot="footer" class="dialog-footer">
@@ -82,7 +82,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { VTable } from '@tap/component'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
-import { isEmpty } from '@tap/shared'
+import { uuid } from '@tap/shared'
 
 export default {
   name: 'List',
@@ -90,6 +90,12 @@ export default {
   components: { VTable },
 
   props: {
+    form: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
     data: {
       type: Object,
       default: () => {
@@ -155,22 +161,21 @@ export default {
       },
       editDataTypeVisible: false,
       currentData: {
+        changeRuleId: '',
         fieldName: '',
         dataType: '',
         newDataType: '',
         useToAll: false,
         deleteFindOne: false,
-        findOne: null
+        source: null
       },
       editBtnLoading: false,
-      nodeRules: [],
-      fieldRules: {}
+      fieldChangeRules: {}
     }
   },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-    ...mapState('dataflow', ['editVersion']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'stateIsReadonly']),
 
     columnsList() {
       const { showColumns, columns, readonly } = this
@@ -187,156 +192,117 @@ export default {
     },
 
     tableList() {
-      const list = this.data?.fields || []
+      const { fields } = this.data
+      let list = (fields || []).map(t => {
+        t.source = this.findInRules(t.changeRuleId)
+        if (t.source) {
+          t.accept = t.source.accept
+          t.data_type = t.source.result.dataType
+        }
+        return t
+      })
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
     }
   },
 
+  created() {
+    this.loadData()
+  },
+
   methods: {
     loadData() {
-      const { nodeRules = [], fieldRules = {} } = this.activeNode?.fieldChangeRules || {}
-      if (isEmpty(this.fieldRules)) {
-        this.fieldRules = fieldRules
-      }
-      this.nodeRules = nodeRules
+      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+    },
+
+    findInRules(id) {
+      return this.fieldChangeRules.find(t => t.id === id)
     },
 
     openEditDataTypeVisible(row) {
-      this.editDataTypeVisible = true
-      this.currentData.dataType = row.data_type
+      const source = row.source
+      this.currentData.changeRuleId = row.changeRuleId
+      this.currentData.dataType = source?.accept || row.data_type
       this.currentData.fieldName = row.field_name
       this.currentData.newDataType = row.data_type
-      let findOne = this.nodeRules.find(t => t.accept === this.currentData.dataType)
-      if (findOne) {
-        this.currentData.findOne = findOne
-      }
+      this.currentData.source = source
+      this.editDataTypeVisible = true
+    },
+
+    handleUpdate() {
+      const { fieldChangeRules } = this
+      this.form.setValuesIn('fieldChangeRules', JSON.parse(JSON.stringify(fieldChangeRules)))
     },
 
     submitEdit() {
-      console.log('123', this.currentData, this.fieldRules, this.data)
-      console.log('this.activeNode', this.activeNode)
       const { qualified_name, nodeId } = this.data
-      const { fieldName, dataType, newDataType, useToAll } = this.currentData
-      if (!this.fieldRules[qualified_name]) {
-        this.fieldRules[qualified_name] = {}
-      }
+      const { changeRuleId, fieldName, dataType, newDataType, useToAll } = this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
         dataTypes: [newDataType]
       }
-      metadataInstancesApi
-        .dataType2TapType(params)
-        .then(data => {
-          console.log('api', data)
-          const val = data[newDataType]
-          const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
-          if (!tapType) {
-            this.$message.error('格式错误')
-            return
-          }
-          this.fieldRules[qualified_name][fieldName] = {
-            scope: 'Field',
-            namespace: [nodeId, qualified_name, fieldName],
-            type: 'DataType',
-            accept: dataType,
-            result: { dataType: newDataType, tapType }
-          }
-          if (useToAll) {
-            let findOne = this.nodeRules.find(t => t.accept === dataType)
-            findOne.result = this.fieldRules[qualified_name][fieldName].result
-          }
-          console.log('保存', this.fieldRules, this.nodeRules)
-          this.editDataTypeVisible = false
-        })
-        .catch(() => {
-          const data = {}
-          const val = data[newDataType]
-          const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
-          if (!tapType) {
-            this.$message.error('格式错误')
-            return
-          }
-          this.fieldRules[qualified_name][fieldName] = {
-            scope: 'Field',
-            namespace: [nodeId, qualified_name, fieldName],
-            type: 'DataType',
-            accept: dataType,
-            result: { dataType: newDataType, tapType }
-          }
-          if (useToAll) {
-            let findOne = this.nodeRules.find(t => t.accept === dataType)
-            findOne.result = this.fieldRules[qualified_name][fieldName].result
-          }
-          console.log('保存', this.fieldRules, this.nodeRules)
-          this.editDataTypeVisible = false
-        })
-      const data = {}
-      const val = data[newDataType]
-      const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
-      // if (!tapType) {
-      //   this.$message.error('格式错误')
-      //   return
-      // }
-      this.fieldRules[qualified_name][fieldName] = {
-        scope: 'Field',
-        namespace: [nodeId, qualified_name, fieldName],
-        type: 'DataType',
-        accept: dataType,
-        result: { dataType: newDataType, tapType }
-      }
-      if (useToAll) {
-        let findOne = this.nodeRules.find(t => t.accept === dataType)
-        if (findOne) {
-          findOne.result = this.fieldRules[qualified_name][fieldName].result
-        } else {
-          this.nodeRules.push({
-            scope: 'Node',
-            namespace: [this.activeNode?.id],
-            type: 'DataType',
-            accept: dataType,
-            result: this.fieldRules[qualified_name][fieldName].result
-          })
+      metadataInstancesApi.dataType2TapType(params).then(data => {
+        const val = data[newDataType]
+        const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
+        if (!tapType) {
+          this.$message.error('格式错误')
+          return
         }
-      }
-      console.log('保存', this.fieldRules, this.nodeRules)
-      this.editDataTypeVisible = false
-      // this.fieldRules[qualified_name][fieldName] = {
-      //   scope: 'Field',
-      //   namespace: [nodeId, qualified_name, fieldName],
-      //   type: 'DataType',
-      //   accept: dataType,
-      //   result: newDataType
-      // }
-      // if (useToAll) {
-      //   let findOne = this.nodeRules.find(t => t.accept === dataType)
-      // }
-      // console.log('保存', this.fieldRules)
-      // this.editDataTypeVisible = false
-      // let { qualified_name, nodeId, taskId } = this.data
-      // let data = {
-      //   taskId: taskId,
-      //   nodeId: nodeId,
-      //   sinkQualifiedName: qualified_name,
-      //   fields: [
-      //     {
-      //       fieldName: this.currentData.fieldName,
-      //       attributes: {
-      //         DataType: this.currentData.newDataType
-      //       }
-      //     }
-      //   ]
-      // }
-      // metadataInstancesApi.changeFields(data).then(() => {
-      //   this.editDataTypeVisible = false
-      // })
+        const id = uuid(fieldName)
+        const f = this.findInRules(changeRuleId)
+        if (f?.scope === 'Field') {
+          // delete this.this.fieldChangeRules[f.id]
+        } else if (f?.scope === 'Node') {
+          // 已存在批量规则，需要先删除
+        }
+        const op = {
+          id,
+          scope: useToAll ? 'Node' : 'Field',
+          namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
+          type: 'DataType',
+          accept: dataType,
+          result: { dataType: newDataType, tapType }
+        }
+        let dataFind = this.data.fields.find(t => t.field_name === fieldName)
+        dataFind.changeRuleId = id
+        this.fieldChangeRules.push(op)
+        this.currentData.source = op
+        this.handleUpdate()
+        this.$message.success('操作成功')
+        this.editDataTypeVisible = false
+      })
     },
 
-    revoke() {
-      console.log('revoke')
+    revoke(row) {
+      if (this.getRevokeDisabled(row)) return
+      const f = this.findInRules(row.changeRuleId)
+      if (!f) return
+      if (f.scope === 'Node') {
+        this.$message.error('请修改正在生效的批量规则')
+        return
+      }
+      if (f.scope === 'Field') {
+        const index = this.fieldChangeRules.findIndex(t => t.id === f.id)
+        this.fieldChangeRules.splice(index, 1)
+      }
+      this.handleUpdate()
     },
+
+    revokeAll() {},
 
     doLayout() {
       this.$refs.table.doLayout()
+    },
+
+    getRevokeDisabled(row) {
+      return !row.source
+    },
+
+    getRevokeColorClass(row = {}) {
+      const map = {
+        Node: 'color-warning',
+        Field: 'color-primary'
+      }
+      return map[row.source?.scope] || 'color-disable'
     }
   }
 }
