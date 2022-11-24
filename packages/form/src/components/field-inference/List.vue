@@ -116,6 +116,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false
+    },
+    fieldChangeRules: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -169,8 +173,7 @@ export default {
         deleteFindOne: false,
         source: null
       },
-      editBtnLoading: false,
-      fieldChangeRules: {}
+      editBtnLoading: false
     }
   },
 
@@ -194,7 +197,7 @@ export default {
     tableList() {
       const { fields } = this.data
       let list = (fields || []).map(t => {
-        t.source = this.findInRules(t.changeRuleId)
+        t.source = this.findInRulesById(t.changeRuleId)
         if (t.source) {
           t.accept = t.source.accept
           t.data_type = t.source.result.dataType
@@ -205,17 +208,18 @@ export default {
     }
   },
 
-  created() {
-    this.loadData()
-  },
-
   methods: {
-    loadData() {
-      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+    findInRulesById(id) {
+      return this.fieldChangeRules.find(t => t.id === id)
     },
 
-    findInRules(id) {
-      return this.fieldChangeRules.find(t => t.id === id)
+    findNodeRuleByType(type) {
+      return this.fieldChangeRules.find(t => t.accept === type && t.scope === 'Node')
+    },
+
+    deleteRuleById(id) {
+      const index = this.fieldChangeRules.findIndex(t => t.id === id)
+      this.fieldChangeRules.splice(index, 1)
     },
 
     openEditDataTypeVisible(row) {
@@ -231,6 +235,7 @@ export default {
     handleUpdate() {
       const { fieldChangeRules } = this
       this.form.setValuesIn('fieldChangeRules', JSON.parse(JSON.stringify(fieldChangeRules)))
+      this.$emit('update:fieldChangeRules', this.fieldChangeRules)
     },
 
     submitEdit() {
@@ -247,26 +252,58 @@ export default {
           this.$message.error('格式错误')
           return
         }
-        const id = uuid(fieldName)
-        const f = this.findInRules(changeRuleId)
+        const f = this.findInRulesById(changeRuleId)
+        let ruleId = f?.id
         if (f?.scope === 'Field') {
-          // delete this.this.fieldChangeRules[f.id]
+          if (useToAll) {
+            let batchRule = this.findNodeRuleByType(f.accept)
+            if (batchRule) {
+              // 删除节点规则
+              this.deleteRuleById(f.id)
+              // 修改批量规则
+              batchRule.result = { dataType: newDataType, tapType }
+              ruleId = batchRule.id
+            } else {
+              // 修改规则为批量规则 scope、namespace
+              f.scope = 'Node'
+              f.namespace = [nodeId]
+              f.result = { dataType: newDataType, tapType }
+            }
+          } else {
+            // 修改字段规则
+            f.result = { dataType: newDataType, tapType }
+          }
         } else if (f?.scope === 'Node') {
-          // 已存在批量规则，需要先删除
+          if (useToAll) {
+            // 修改批量规则
+            f.result = { dataType: newDataType, tapType }
+          } else {
+            // 添加字段规则
+            const op = {
+              id: uuid(),
+              scope: 'Field',
+              namespace: [nodeId, qualified_name, fieldName],
+              type: 'DataType',
+              accept: f.accept,
+              result: { dataType: newDataType, tapType }
+            }
+            ruleId = op.id
+            this.fieldChangeRules.push(op)
+          }
+        } else {
+          const op = {
+            id: uuid(),
+            scope: useToAll ? 'Node' : 'Field',
+            namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
+            type: 'DataType',
+            accept: dataType,
+            result: { dataType: newDataType, tapType }
+          }
+          ruleId = op.id
+          this.fieldChangeRules.push(op)
         }
-        const op = {
-          id,
-          scope: useToAll ? 'Node' : 'Field',
-          namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
-          type: 'DataType',
-          accept: dataType,
-          result: { dataType: newDataType, tapType }
-        }
-        let dataFind = this.data.fields.find(t => t.field_name === fieldName)
-        dataFind.changeRuleId = id
-        this.fieldChangeRules.push(op)
-        this.currentData.source = op
         this.handleUpdate()
+        this.currentData.changeRuleId = ruleId
         this.$message.success('操作成功')
         this.editDataTypeVisible = false
       })
@@ -274,7 +311,7 @@ export default {
 
     revoke(row) {
       if (this.getRevokeDisabled(row)) return
-      const f = this.findInRules(row.changeRuleId)
+      const f = this.findInRulesById(row.changeRuleId)
       if (!f) return
       if (f.scope === 'Node') {
         this.$message.error('请修改正在生效的批量规则')

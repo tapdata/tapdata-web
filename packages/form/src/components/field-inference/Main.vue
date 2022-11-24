@@ -1,14 +1,10 @@
 <template>
   <div>
     <div class="flex justify-content-end">
-      <div
-        v-if="fieldChangeRules.length"
-        class="flex align-items-center cursor-pointer color-primary"
-        @click="visible = true"
-      >
+      <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
         <VIcon>info</VIcon>
         <span>当前有</span>
-        <span class="color-warning">{{ fieldChangeRules.length }}</span>
+        <span class="color-warning">{{ batchRuleCounts }}</span>
         <span>个批量修改规则正在生效</span>
       </div>
       <ElButton type="text" class="ml-3">全部恢复默认</ElButton>
@@ -78,12 +74,18 @@
           :form="form"
           :data="selected"
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
+          :fieldChangeRules.sync="fieldChangeRules"
           class="flex-fill"
           @loadData="loadData"
         ></List>
       </div>
     </div>
-    <Dialog :visible.sync="visible" :form="form"></Dialog>
+    <Dialog
+      :visible.sync="visible"
+      :form="form"
+      :fieldChangeRules.sync="fieldChangeRules"
+      @loadData="loadData"
+    ></Dialog>
   </div>
 </template>
 
@@ -127,6 +129,12 @@ export default {
     }
   },
 
+  computed: {
+    batchRuleCounts() {
+      return this.fieldChangeRules.filter(t => t.scope === 'Node').length
+    }
+  },
+
   mounted() {
     this.loadData()
   },
@@ -148,8 +156,9 @@ export default {
       this.navLoading = false
     },
 
-    refresh() {},
-    reset() {},
+    refresh() {
+      this.loadData()
+    },
     handleSelect(item, index = 0) {
       this.selected = item
       this.position = index

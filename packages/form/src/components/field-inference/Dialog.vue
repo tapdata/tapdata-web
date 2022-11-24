@@ -80,6 +80,10 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    },
+    fieldChangeRules: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -94,8 +98,7 @@ export default {
         visible: false,
         list: [],
         options: []
-      },
-      fieldChangeRules: []
+      }
     }
   },
 
@@ -124,7 +127,7 @@ export default {
     },
     loadData() {
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
-      this.ruleForm.list = this.fieldChangeRules
+      this.ruleForm.list = this.fieldChangeRules.filter(t => t.scope === 'Node')
     },
     handleCancel() {
       this.loadData()
@@ -138,9 +141,13 @@ export default {
       )
     },
     handleUpdate() {
-      const { fieldChangeRules } = this
-      this.form.setValuesIn('fieldChangeRules', JSON.parse(JSON.stringify(fieldChangeRules)))
+      this.form.setValuesIn('fieldChangeRules', this.ruleForm.list)
       this.ruleForm.visible = false
+      this.$emit('update:visible', this.ruleForm.visible)
+      this.$emit(
+        'update:fieldChangeRules',
+        this.fieldChangeRules.filter(t => t.scope === 'Field' || this.ruleForm.list.find(t2 => t2.id === t.id))
+      )
     },
     submit() {
       const { activeNode = {} } = this
