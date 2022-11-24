@@ -42,10 +42,10 @@
       width="35%"
     >
       <ElForm ref="dataTypeForm" label-width="120px" label-position="left" :model="currentData" @submit.native.prevent>
-        <ElFormItem label="{{$t('packages_form_field_inference_list_tuiyanchudelei')}} ">
+        <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
           <span>{{ currentData.dataType }}</span>
         </ElFormItem>
-        <ElFormItem label="{{$t('packages_form_field_inference_list_yaotiaozhengweide')}} " prop="newDataType" required>
+        <ElFormItem :label="$t('packages_form_field_inference_list_yaotiaozhengweide')" prop="newDataType" required>
           <ElInput v-model="currentData.newDataType" maxlength="100" show-word-limit></ElInput>
         </ElFormItem>
         <!--        <div v-if="currentData.source" class="mb-3">-->
