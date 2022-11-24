@@ -105,9 +105,8 @@
               @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
-            <span v-if="row.listtags">
-              <span class="tag inline-block" v-if="row.listtags[0]">{{ row.listtags[0].value }}</span>
-              <span class="tag inline-block" v-if="row.listtags.length > 1"> +{{ row.listtags.length - 1 }}</span>
+            <span v-if="row.listtags" class="justify-content-start ellipsis block">
+              <span class="tag inline-block" v-for="item in row.listtags">{{ item.value }}</span>
             </span>
           </span>
         </template>

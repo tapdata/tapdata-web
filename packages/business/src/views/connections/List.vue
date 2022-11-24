@@ -51,14 +51,18 @@
         :label="$t('packages_business_connection_column_name')"
       >
         <template #default="{ row }">
-          <span class="connection-name">
+          <span class="connection-name flex">
             <img class="connection-img mr-2" :src="getConnectionIcon(row.pdkHash)" alt="" />
-            <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(row)">
+            <ElLink
+              type="primary"
+              class="justify-content-start ellipsis block"
+              style="line-height: 20px"
+              @click.stop="preview(row)"
+            >
               {{ row.name }}
             </ElLink>
-            <span v-if="row.listtags">
-              <span class="tag inline-block" v-if="row.listtags[0]">{{ row.listtags[0].value }}</span>
-              <span class="tag inline-block" v-if="row.listtags.length > 1"> +{{ row.listtags.length - 1 }}</span>
+            <span v-if="row.listtags" class="justify-content-start ellipsis block">
+              <span class="tag inline-block" v-for="item in row.listtags"> {{ item.value }} </span>
             </span>
           </span>
         </template>
