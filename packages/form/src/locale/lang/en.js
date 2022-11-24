@@ -159,5 +159,6 @@ export default {
     'The actual available length depends on the target database type definition, please set it as needed',
   packages_form_field_type_rules_main_tianjia: 'Add',
   packages_form_field_type_rules_main_piliangxiugaizi: 'Batch modify field type',
-  packages_form_load_schema_tree_button_title: 'Load Schema'
+  packages_form_load_schema_tree_button_title: 'Load Schema',
+  packages_form_field_inference_dialog_mubiaoleixingpi: 'Target type batch modification rules'
 }

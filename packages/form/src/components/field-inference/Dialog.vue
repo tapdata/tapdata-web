@@ -3,13 +3,13 @@
     <ElDialog
       width="600px"
       append-to-body
-      :title="$t('packages_form_field_inference_dialog_mubiaomorentui')"
+      :title="$t('packages_form_field_inference_dialog_mubiaoleixingpi')"
       custom-class="batch-field-type-maping-table-dialog"
       :visible.sync="ruleForm.visible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <div>
+      <div v-if="ruleForm.list.length">
         <ElRow>
           <ElCol :span="9">{{ $t('packages_form_field_inference_dialog_mubiaomorentui') }}</ElCol>
           <ElCol :span="3">&nbsp;</ElCol>
@@ -58,6 +58,10 @@
         <!--          <span class="fs-8">实际可用长度取决于目标数据库类型定义，请按需设置</span>-->
         <!--        </div>-->
       </div>
+      <div v-else class="flex flex-column align-items-center">
+        <img width="120px" :src="noData" />
+        <div class="noData">{{ $t('packages_form_dag_dialog_field_mapping_no_data') }}</div>
+      </div>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="handleCancel">{{ $t('button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" :disabled="getSubmitDisabled()" @click="submit">{{
@@ -69,11 +73,11 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
+import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
+import noData from 'web-core/assets/images/noData.png'
 
 export default {
   name: 'FieldTypeRules',
@@ -103,7 +107,8 @@ export default {
         visible: false,
         list: [],
         options: []
-      }
+      },
+      noData
     }
   },
 
@@ -131,7 +136,6 @@ export default {
       this.ruleForm.list.splice(index + 1, 0, this.getItem())
     },
     loadData() {
-      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
       this.ruleForm.list = this.fieldChangeRules.filter(t => t.scope === 'Node')
     },
     handleCancel() {

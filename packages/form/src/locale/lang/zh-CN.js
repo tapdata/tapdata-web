@@ -152,5 +152,6 @@ export default {
   packages_form_field_type_rules_main_shijikeyongchang: '实际可用长度取决于目标数据库类型定义，请按需设置',
   packages_form_field_type_rules_main_tianjia: '添加',
   packages_form_field_type_rules_main_piliangxiugaizi: '批量修改字段类型',
-  packages_form_load_schema_tree_button_title: '加载模型'
+  packages_form_load_schema_tree_button_title: '加载模型',
+  packages_form_field_inference_dialog_mubiaoleixingpi: '目标类型批量修改规则',
 }

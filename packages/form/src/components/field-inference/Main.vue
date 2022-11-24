@@ -4,7 +4,7 @@
       <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
         <VIcon>info</VIcon>
         <span>{{ $t('packages_form_field_inference_main_dangqianyou') }}</span>
-        <span class="color-warning">{{ batchRuleCounts }}</span>
+        <span class="color-warning px-1 fs-6 fw-bold din-font">{{ batchRuleCounts }}</span>
         <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
       </div>
       <ElButton type="text" class="ml-3">{{ $t('packages_form_field_inference_main_quanbuhuifumo') }}</ElButton>
@@ -142,8 +142,7 @@ export default {
   methods: {
     async loadData() {
       this.navLoading = true
-      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || {}
-      const getState = this.form.getState()
+      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
       const { size, current } = this.page
       const { items, total } = await this.getData({
         page: current,
