@@ -232,7 +232,7 @@ export class Database extends NodeType {
             }
           },
 
-          increaseReadSize: {
+          readBatchSize: {
             title: '批量读取条数', //增量批次读取条数
             type: 'string',
             'x-decorator': 'FormItem',
