@@ -171,7 +171,7 @@ export default {
         newDataType: '',
         useToAll: false,
         deleteFindOne: false,
-        source: null
+        source: {}
       },
       editBtnLoading: false
     }
@@ -197,8 +197,8 @@ export default {
     tableList() {
       const { fields } = this.data
       let list = (fields || []).map(t => {
-        t.source = this.findInRulesById(t.changeRuleId)
-        if (t.source) {
+        t.source = this.findInRulesById(t.changeRuleId) || {}
+        if (t.source?.accept) {
           t.accept = t.source.accept
           t.data_type = t.source.result.dataType
         }
@@ -223,7 +223,7 @@ export default {
     },
 
     openEditDataTypeVisible(row) {
-      const source = row.source
+      const source = row.source || {}
       this.currentData.changeRuleId = row.changeRuleId
       this.currentData.dataType = source?.accept || row.data_type
       this.currentData.fieldName = row.field_name
@@ -254,6 +254,7 @@ export default {
         }
         const f = this.findInRulesById(changeRuleId)
         let ruleId = f?.id
+        let ruleAccept = f?.accept
         if (f?.scope === 'Field') {
           if (useToAll) {
             let batchRule = this.findNodeRuleByType(f.accept)
@@ -263,20 +264,24 @@ export default {
               // 修改批量规则
               batchRule.result = { dataType: newDataType, tapType }
               ruleId = batchRule.id
+              ruleAccept = newDataType
             } else {
               // 修改规则为批量规则 scope、namespace
               f.scope = 'Node'
               f.namespace = [nodeId]
               f.result = { dataType: newDataType, tapType }
+              ruleAccept = newDataType
             }
           } else {
             // 修改字段规则
             f.result = { dataType: newDataType, tapType }
+            ruleAccept = newDataType
           }
         } else if (f?.scope === 'Node') {
           if (useToAll) {
             // 修改批量规则
             f.result = { dataType: newDataType, tapType }
+            ruleAccept = newDataType
           } else {
             // 添加字段规则
             const op = {
@@ -300,10 +305,16 @@ export default {
             result: { dataType: newDataType, tapType }
           }
           ruleId = op.id
+          ruleAccept = dataType
           this.fieldChangeRules.push(op)
         }
         this.handleUpdate()
-        this.currentData.changeRuleId = ruleId
+        this.data.fields.find(t => {
+          if ((useToAll && t.data_type === ruleAccept) || t.field_name === fieldName) {
+            t.changeRuleId = ruleId
+            t.source.scope = useToAll ? 'Node' : 'Field'
+          }
+        })
         this.$message.success('操作成功')
         this.editDataTypeVisible = false
       })
@@ -331,7 +342,7 @@ export default {
     },
 
     getRevokeDisabled(row) {
-      return !row.source
+      return !row.source?.scope
     },
 
     getRevokeColorClass(row = {}) {
