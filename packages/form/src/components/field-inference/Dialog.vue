@@ -3,7 +3,7 @@
     <ElDialog
       width="600px"
       append-to-body
-      title="$t('packages_form_field_inference_dialog_mubiaomorentui')"
+      :title="$t('packages_form_field_inference_dialog_mubiaomorentui')"
       custom-class="batch-field-type-maping-table-dialog"
       :visible.sync="ruleForm.visible"
       :close-on-click-modal="false"
