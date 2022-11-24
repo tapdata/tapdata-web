@@ -151,5 +151,6 @@ export default {
   packages_form_field_inference_main_dangqianyou: '當前有',
   packages_form_field_type_rules_main_shijikeyongchang: '實際可用長度取決於目標數據庫類型定義，請按需設置',
   packages_form_field_type_rules_main_tianjia: '添加',
-  packages_form_field_type_rules_main_piliangxiugaizi: '批量修改字段類型'
+  packages_form_field_type_rules_main_piliangxiugaizi: '批量修改字段類型',
+  packages_form_load_schema_tree_button_title: '加載模型'
 }

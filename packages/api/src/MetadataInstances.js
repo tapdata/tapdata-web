@@ -45,11 +45,12 @@ export default class MetadataInstances extends Http {
    * @param fields 筛选字段，如果有值，则请求结果只返回fields包含的字段；类型：字符串数组
    * @returns {Promise<AxiosResponse<any>>}
    */
-  nodeSchema(nodeId, fields = ['fields']) {
+  nodeSchema(nodeId, fields = ['fields'], nodeConfig) {
     return this.axios.get(this.url + '/node/schema', {
       params: {
         nodeId,
-        fields
+        fields,
+        nodeConfig
       }
     })
   }

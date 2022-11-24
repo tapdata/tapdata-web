@@ -78,7 +78,11 @@ export default {
 
     async activeNodeId(n, o) {
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-      if (!this.ins) return
+      if (!this.ins) {
+        // 节点不存在，比如删掉了，清除表单
+        this.schema = null
+        return
+      }
       await this.setSchema(this.ins.formSchema || formSchema.node)
 
       // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息

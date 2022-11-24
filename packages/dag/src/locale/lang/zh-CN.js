@@ -96,6 +96,7 @@ export default {
   packages_dag_message_operation_succuess: '操作成功',
   packages_dag_message_resetOk: '重置成功',
   packages_dag_message_resetFailed: '重置失败',
+  packages_dag_message_task_rename_success: '任务名称修改成功',
   packages_dag_dataFlow_multiError_notFound: '此任务不存在',
   packages_dag_dataFlow_multiError_statusError: '任务状态不允许这种操作',
   packages_dag_dataFlow_multiError_otherError: '操作失败, 请重试',
@@ -441,6 +442,7 @@ export default {
   packages_dag_monitor_leftsider_chayixiangqing: '差异详情',
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延迟：',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
+  packages_dag_monitor_leftsider_tiaoshixinxi: '调试信息',
   packages_dag_components_nodedetaildialog_dangqianjiedianchu: '当前节点处理事件的平均耗时',
   packages_dag_components_nodedetaildialog_dangqianjiedianping: '当前节点平均每秒处理的输入事件数和输出事件数',
   packages_dag_monitor_leftsider_renwuchuliwan:

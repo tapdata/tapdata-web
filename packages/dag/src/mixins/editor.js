@@ -1638,14 +1638,18 @@ export default {
     },
 
     async handleUpdateName(name) {
+      const oldName = this.dataflow.name
       this.nameHasUpdated = true
       this.dataflow.name = name
-      taskApi
-        .patch({
-          id: this.dataflow.id,
-          name
-        })
-        .catch(this.handleError)
+      taskApi.rename(this.dataflow.id, name).then(
+        () => {
+          this.$message.success(this.$t('packages_dag_message_task_rename_success'))
+        },
+        error => {
+          this.dataflow.name = oldName
+          this.handleError(error)
+        }
+      )
     },
 
     handleEditFlush(result) {

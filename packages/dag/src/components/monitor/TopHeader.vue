@@ -6,11 +6,12 @@
       </button>
       <div class="overflow-hidden">
         <div class="flex align-items-center">
-          <OverflowTooltip
-            class="task-name text-truncate fs-7 fw-sub font-color-dark"
-            placement="bottom"
-            :text="name"
-            :open-delay="400"
+          <TextEditable
+            class="overflow-hidden"
+            v-model="name"
+            :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+            :input-min-width="32"
+            @change="onNameInputChange"
           />
           <TaskStatus :task="dataflow" class="ml-4" />
         </div>
@@ -95,10 +96,6 @@
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
       <template v-if="!hideMenus.includes('operation')">
-        <div v-if="heartbeatTime" class="mr-2">
-          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}：</span>
-          <span>{{ heartbeatTime }}</span>
-        </div>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
           class="mx-2"
@@ -181,7 +178,7 @@ export default {
     quota: Object
   },
 
-  components: { VIcon, TaskStatus, VDivider, OverflowTooltip },
+  components: { VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -241,11 +238,6 @@ export default {
             ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
             : ''
       }
-    },
-
-    heartbeatTime() {
-      const { pingTime, status } = this.dataflow
-      return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : ''
     }
   },
 
