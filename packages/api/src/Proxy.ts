@@ -16,5 +16,9 @@ export default class Proxy extends Http {
   command(params) {
     return this.axios.post(`${this.url}/command`, params)
   }
+
+  call(params) {
+    return this.axios.post(`${this.url}/call`, params)
+  }
 }
 export { Proxy }
