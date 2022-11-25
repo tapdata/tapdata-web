@@ -48,11 +48,17 @@
       :visible.sync="editDataTypeVisible"
       width="35%"
     >
-      <ElForm ref="dataTypeForm" label-width="120px" label-position="left" :model="currentData" @submit.native.prevent>
+      <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.native.prevent>
         <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
           <span>{{ currentData.dataType }}</span>
         </ElFormItem>
-        <ElFormItem :label="$t('packages_form_field_inference_list_yaotiaozhengweide')" prop="newDataType" required>
+        <ElFormItem
+          :label="$t('packages_form_field_inference_list_yaotiaozhengweide')"
+          prop="newDataType"
+          :error="currentData.errorMessage"
+          inline-message
+          required
+        >
           <ElInput v-model="currentData.newDataType" maxlength="100" show-word-limit></ElInput>
         </ElFormItem>
         <div v-if="!hideBatch">
@@ -71,7 +77,7 @@
         <ElButton
           size="mini"
           type="primary"
-          :disabled="currentData.dataType === currentData.newDataType"
+          :disabled="!currentData.newDataType || currentData.dataType === currentData.newDataType"
           :loading="editBtnLoading"
           @click="submitEdit"
           >{{ $t('packages_business_button_confirm') }}</ElButton
@@ -181,7 +187,7 @@ export default {
         dataType: '',
         newDataType: '',
         useToAll: false,
-        deleteFindOne: false,
+        errorMessage: '',
         source: {}
       },
       editBtnLoading: false
@@ -245,6 +251,7 @@ export default {
       this.currentData.fieldName = row.field_name
       this.currentData.newDataType = row.data_type
       this.currentData.useToAll = false
+      this.currentData.errorMessage = ''
       this.currentData.source = source
       this.editDataTypeVisible = true
     },
@@ -262,13 +269,14 @@ export default {
         dataTypes: [newDataType]
       }
       this.editBtnLoading = true
+      this.currentData.errorMessage = ''
       metadataInstancesApi
         .dataType2TapType(params)
         .then(data => {
           const val = data[newDataType]
           const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
           if (!tapType) {
-            this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
+            this.currentData.errorMessage = i18n.t('packages_form_field_inference_list_geshicuowu')
             this.editBtnLoading = false
             return
           }

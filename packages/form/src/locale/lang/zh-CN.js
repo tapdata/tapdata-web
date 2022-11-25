@@ -137,7 +137,7 @@ export default {
   packages_form_field_inference_dialog_xiugaihoudelei: '修改后的类型',
   packages_form_field_inference_dialog_mubiaomorentui: '目标默认推演类型',
   packages_form_field_inference_list_caozuochenggong: '操作成功',
-  packages_form_field_inference_list_geshicuowu: '格式错误',
+  packages_form_field_inference_list_geshicuowu: '请检查字段的长度和精度',
   packages_form_field_inference_list_ziduanzhushi: '字段注释',
   packages_form_field_inference_list_feikong: '非空',
   packages_form_field_inference_list_piliangyingyonghui: '批量应用会覆盖已有批量应用规则',
