@@ -1078,10 +1078,31 @@ export default {
   dfs_agent_download_upgradeversion_chuxianUpd: '5. 出现“Update finished.”则代表Agent升级成功',
   dfs_agent_download_upgradeversion_zaiTapd:
     '4. 在Tapdata 控制台手动升级页面 复制升级命令，并粘贴到“云服务器ECS”远程终端中执行',
-  dfs_agent_download_upgradeversion_dengluchenggonghou: '3. 登录成功后，进入目录“/data/tapdata”',
+  dfs_agent_download_upgradeversion_dengluchenggonghou:
+    '3. 登录成功后，先切换为 root 用户，然后进入 “/data/tapdata” 目录，执行命令如下：',
   dfs_agent_download_upgradeversion_dianjishiliming:
     '2. 点击实例名称，选择“资源”选项卡，在“云服务器 ECS”资源点击“远程登录”',
   dfs_agent_download_upgradeversion_ruguoninbushu: '如果您部署的是“3天试用实例”请打开计算巢“试用服务”选项卡',
   dfs_agent_download_upgradeversion_jisuanchaodenglu: '计算巢登录地址',
-  dfs_agent_download_upgradeversion_denglualiyun: '1. 登录阿里云计算巢控制台，找到部署Agent的服务实例.'
+  dfs_agent_download_upgradeversion_denglualiyun: '1. 登录阿里云计算巢控制台，找到部署Agent的服务实例.',
+
+  dfs_the_header_header_jichuban: '基础版',
+  dfs_agent_download_paidupgrade_qingxuanzelianxi: '请选择联系人手机号码',
+  dfs_agent_download_paidupgrade_qingshurulianxi: '请输入联系人姓名',
+  dfs_agent_download_paidupgrade_fanhuikongzhitai: '返回控制台',
+  dfs_agent_download_paidupgrade_womendetongshi: '我们的同事会通过您留下的联系方式和您联系进行线下合同签署和付款。',
+  dfs_agent_download_paidupgrade_ganxienindinggou: '感谢您订购Tapdata Cloud 标准版。链路数量: ',
+  dfs_agent_download_paidupgrade_queren: '确认',
+  dfs_agent_download_paidupgrade_dianjiquerengou:
+    '点击确认购买即表示您同意我们的【服务条款】您可以立即开始享受新计划的权益。我们的同事将通过电话或者邮件与您联络，您需要在1周之内完成线下付款。',
+  dfs_agent_download_paidupgrade_zongji: '总计',
+  dfs_agent_download_paidupgrade_meigeewaide: '每个额外的任务',
+  dfs_agent_download_paidupgrade_jichuyuefeihan: '基础月费含5个任务',
+  dfs_agent_download_paidupgrade_shoufeixiangqingmei: '收费详情（每年）',
+  dfs_agent_download_paidupgrade_goumaifangan: '购买方案',
+  dfs_agent_download_paidupgrade_dianhua: '电话',
+  dfs_agent_download_paidupgrade_xingming: '姓名',
+  dfs_agent_download_paidupgrade_biaozhunban: '标准版',
+  dfs_agent_download_paidupgrade_fuwushengji: '服务升级',
+  dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜单'
 }

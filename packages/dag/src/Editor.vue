@@ -369,6 +369,10 @@ export default {
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           this.newDataflow(newName)
+        } else if (e?.data?.code === 'InvalidPaidPlan') {
+          this.$router.push({
+            name: 'dataflowList'
+          })
         } else {
           this.handleError(e)
         }
