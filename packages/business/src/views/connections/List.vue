@@ -117,9 +117,17 @@
             >{{ $t('packages_business_connection_list_test_button') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="handleLoadSchema(scope.row)"
-            >{{ $t('packages_business_connection_preview_load_schema') }}
-          </ElButton>
+          <ElTooltip
+            :disabled="!isFileSource(scope.row)"
+            :content="$t('packages_business_connections_list_wenjianleixingde')"
+            placement="top"
+          >
+            <span>
+              <ElButton type="text" :disabled="isFileSource(scope.row)"
+                >{{ $t('packages_business_connection_preview_load_schema') }}
+              </ElButton>
+            </span>
+          </ElTooltip>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
             v-readonlybtn="'datasource_edition'"
@@ -687,6 +695,9 @@ export default {
       }
       this.$refs.preview.setConnectionData(row)
       this.$refs.preview.reload?.(this.table.fetch(null, 0, true))
+    },
+    isFileSource(row) {
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(row?.database_type)
     }
   }
 }
