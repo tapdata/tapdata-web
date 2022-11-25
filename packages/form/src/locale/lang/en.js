@@ -160,5 +160,7 @@ export default {
   packages_form_field_type_rules_main_tianjia: 'Add',
   packages_form_field_type_rules_main_piliangxiugaizi: 'Batch modify field type',
   packages_form_load_schema_tree_button_title: 'Load Schema',
-  packages_form_field_inference_dialog_mubiaoleixingpi: 'Target type batch modification rules'
+  packages_form_field_inference_dialog_mubiaoleixingpi: 'Target type batch modification rules',
+  packages_form_field_inference_list_ninquerenyaohui: 'Are you sure you want to restore the current table? ',
+  packages_form_field_inference_main_ninquerenyaoquan: 'Are you sure you want to restore all the defaults? '
 }

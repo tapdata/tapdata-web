@@ -154,4 +154,6 @@ export default {
   packages_form_field_type_rules_main_piliangxiugaizi: '批量修改字段類型',
   packages_form_load_schema_tree_button_title: '加載模型',
   packages_form_field_inference_dialog_mubiaoleixingpi: '目標類型批量修改規則',
+  packages_form_field_inference_list_ninquerenyaohui: '您確認要恢復當前表嗎？ ',
+  packages_form_field_inference_main_ninquerenyaoquan: '您確認要全部恢復默認嗎？ '
 }

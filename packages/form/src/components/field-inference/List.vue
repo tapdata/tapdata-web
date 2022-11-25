@@ -49,12 +49,6 @@
         <ElFormItem :label="$t('packages_form_field_inference_list_yaotiaozhengweide')" prop="newDataType" required>
           <ElInput v-model="currentData.newDataType" maxlength="100" show-word-limit></ElInput>
         </ElFormItem>
-        <!--        <div v-if="currentData.source" class="mb-3">-->
-        <!--          <ElCheckbox v-model="currentData.deleteFindOne">已存在批量规则，勾选删除</ElCheckbox>-->
-        <!--          <div :class="{ 'text-decoration-line-through color-danger': currentData.deleteFindOne }">-->
-        <!--            源类型：{{ currentData.source.accept }}，目标类型：{{ currentData.source.result.dataType }}-->
-        <!--          </div>-->
-        <!--        </div>-->
         <div v-if="!hideBatch">
           <ElCheckbox v-model="currentData.useToAll">{{
             $t('packages_form_field_inference_list_duidangqiantuiyan')
@@ -356,7 +350,7 @@ export default {
       if (!this.canRevokeRules.length) {
         return
       }
-      this.$confirm('您确认要恢复当前表吗？', '', {
+      this.$confirm(i18n.t('packages_form_field_inference_list_ninquerenyaohui'), '', {
         type: 'warning',
         closeOnClickModal: false
       }).then(resFlag => {
@@ -365,7 +359,7 @@ export default {
           this.handleUpdate(
             this.fieldChangeRules.filter(t => !(t.scope === 'Field' && t.namespace?.[1] === qualified_name))
           )
-          this.$message.success('操作成功')
+          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
         }
       })
     },

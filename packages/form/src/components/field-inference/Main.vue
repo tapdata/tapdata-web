@@ -94,6 +94,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapGetters } from 'vuex'
 import { debounce } from 'lodash'
 
@@ -188,14 +190,14 @@ export default {
     },
 
     rollbackAll() {
-      this.$confirm('您确认要全部恢复默认吗？', '', {
+      this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
         type: 'warning',
         closeOnClickModal: false
       }).then(resFlag => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
-          this.$message.success('操作成功')
+          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
         }
       })
     },
