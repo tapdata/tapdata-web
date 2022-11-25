@@ -14,6 +14,13 @@ export class RowFilter extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
       action: {
         title: '执行动作',
         type: 'string',

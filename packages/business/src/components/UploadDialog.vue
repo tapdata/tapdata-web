@@ -9,8 +9,12 @@
   >
     <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
       <ElFormItem :label="$t('packages_business_modules_dialog_condition') + ':'">
-        <el-radio v-model="importForm.upsert" :label="1">{{ $t('packages_business_modules_dialog_overwrite_data') }}</el-radio>
-        <el-radio v-model="importForm.upsert" :label="0">{{ $t('packages_business_modules_dialog_skip_data') }}</el-radio>
+        <el-radio v-model="importForm.upsert" :label="1">{{
+          $t('packages_business_modules_dialog_overwrite_data')
+        }}</el-radio>
+        <el-radio v-model="importForm.upsert" :label="0">{{
+          $t('packages_business_modules_dialog_skip_data')
+        }}</el-radio>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_modules_dialog_group') + ':'">
         <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">
@@ -27,6 +31,7 @@
           :auto-upload="false"
           :on-success="handleSuccess"
           :on-change="handleChange"
+          :on-remove="handleRemove"
         >
           <ElLink type="primary" plain slot="trigger" size="mini">
             <VIcon class="mr-1 link-primary">upload</VIcon>
@@ -37,7 +42,9 @@
     </ElForm>
     <span slot="footer" class="dialog-footer">
       <ElButton @click="handleClose" size="mini">{{ $t('packages_business_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('packages_business_button_confirm') }}</ElButton>
+      <ElButton type="primary" @click="submitUpload()" size="mini">{{
+        $t('packages_business_button_confirm')
+      }}</ElButton>
     </span>
   </ElDialog>
 </template>
@@ -78,7 +85,7 @@ export default {
     } else {
       this.downType = 'dataflow'
     }
-    this.accessToken = Cookie.get('token')
+    this.accessToken = Cookie.get('access_token')
     this.getClassify()
   },
   methods: {
@@ -104,7 +111,8 @@ export default {
           window.location.origin +
           window.location.pathname +
           `api/Task/batch/import?listtags=${encodeURIComponent(JSON.stringify(this.importForm.tag))}&access_token=` +
-          this.accessToken
+          this.accessToken +
+          `&cover=${!!this.importForm.upsert}`
       }
     },
 
@@ -132,8 +140,16 @@ export default {
 
     // 上传保存
     submitUpload() {
+      if (this.importForm.fileList?.length === 0) {
+        this.$message.error(this.$t('packages_business_message_upload_msg'))
+        return
+      }
       this.dialogVisible = false
       this.$refs.upload.submit()
+    },
+    //删除文件
+    handleRemove(file, fileList) {
+      this.importForm.fileList = fileList
     },
 
     handleClose() {

@@ -1,189 +1,164 @@
 <template>
-  <ElDialog
+  <el-dialog
     :title="$t('connection_form_creat_connection')"
-    :visible.sync="dialogVisible"
-    :width="width"
-    custom-class="connection-type-dialog"
-    @close="$emit('input', false)"
+    :visible="dialogVisible"
+    :append-to-body="true"
+    width="848px"
+    custom-class="connection-dialog"
+    :before-close="handleClose"
   >
-    <div class="search-box flex">
-      <ElSelect v-model="searchType" class="search-box__select" @change="changeFnc">
-        <ElOption v-for="(item, index) in options" :key="index" :value="item.name" :label="item.desc"></ElOption>
-      </ElSelect>
-      <ElInput
-        v-model="searchKey"
-        :placeholder="$t('form_placeholder_input')"
-        class="search-box__input"
-        clearable
-        @input="searchFnc"
-      ></ElInput>
-    </div>
-    <div class="database">
-      <ul v-if="list.length" class="database__list">
-        <li v-for="(item, index) in list" :key="index" class="database__item" @click="selectItem(item)">
-          <div class="database__img">
-            <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
-          </div>
-          <div class="database__name">{{ item.name }}</div>
-        </li>
-      </ul>
-      <div v-else class="flex flex-column justify-content-center align-items-center h-100">
-        <VIcon size="120">search-no-data-color</VIcon>
-        <div class="flex justify-content-center lh-sm font-color-sub">
-          <span>{{ $t('data_no_find_result') }}</span>
-          <span class="color-primary cursor-pointer" @click="reset">{{ $t('data_see_all') }}</span>
-        </div>
-      </div>
-    </div>
-  </ElDialog>
+    <ConnectionTypeSelector
+      :loading="loading"
+      :types="database"
+      :otherTypes="otherType"
+      :large="true"
+      @select="databaseType"
+    ></ConnectionTypeSelector>
+  </el-dialog>
 </template>
 
 <script>
-import { VIcon } from '@tap/component'
-import { setDatabaseTypes } from '@/util'
+import { databaseTypesApi } from '@tap/api'
+import { ConnectionTypeSelector } from '@tap/business'
 
 export default {
-  name: 'connectionTypeDialog',
-  components: { VIcon },
+  name: 'DatasourceDialog',
+  components: {
+    ConnectionTypeSelector
+  },
   props: {
-    value: {
-      type: Boolean
+    dialogVisible: {
+      required: true,
+      value: Boolean
     },
-    width: {
-      type: String,
-      default: '780px'
+    allwoType: {
+      value: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
     return {
-      dialogVisible: false,
-      searchKey: '',
-      searchType: '',
-      options: [],
-      list: []
+      database: [],
+      otherType: [],
+      loading: true
     }
   },
   watch: {
-    value(v) {
-      this.dialogVisible = !!v
+    dialogVisible(v) {
+      if (v) {
+        this.getDatabaseType()
+      }
     }
   },
-  mounted() {
-    this.init()
+  created() {
+    this.getDatabaseType()
   },
   methods: {
-    init() {
-      this.getOptions()
-      this.getData()
+    handleClose() {
+      this.$emit('dialogVisible', false)
+      this.$emit('update:dialogVisible', false)
     },
-    getOptions() {
-      this.$axios.get('tm/api/DatabaseTags/availableTags').then(data => {
-        this.options = [{ name: '', desc: this.$t('form_all') }, ...data]
-      })
+    databaseType(item) {
+      this.$emit('databaseType', item)
     },
-    getData() {
-      let filter = {
-        limit: 999,
-        where: {}
-      }
-      const { searchKey, searchType } = this
-      if (searchKey) {
-        filter.where.name = { $regex: searchKey, $options: 'i' }
-      }
-      if (searchType) {
-        filter.where.tags = searchType
-      }
-      this.$axios.get('tm/api/DatabaseTypes?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        this.list = data
-        setDatabaseTypes(data)
-      })
-    },
-    changeFnc() {
-      this.getData()
-    },
-    searchFnc(debounce = 800) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.getData()
-      }, debounce)
-    },
-    selectItem(item) {
-      this.$emit('select', item.type, item)
-    },
-    reset() {
-      this.searchKey = ''
-      this.searchType = ''
-      this.getData()
+    getDatabaseType() {
+      databaseTypesApi
+        .get()
+        .then(data => {
+          if (data) {
+            let items = data?.filter(t => !this.database.length || !this.database.some(d => d.pdkHash === t.pdkHash))
+            if (!items.length) {
+              return
+            }
+            this.database.push(...items)
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.search-box {
-  margin-bottom: 24px;
-}
-.search-box__select {
-  width: 240px;
-}
-.search-box__input {
-  margin-left: 16px;
-  width: 240px;
-}
+<style scoped lang="scss">
 .database {
-  height: 380px;
-  font-size: 12px;
-  overflow: auto;
-}
-.database__list {
-  overflow: auto;
-}
-.database__item {
-  float: left;
-  margin-right: 48px;
-  margin-bottom: 12px;
-  text-align: center;
-  box-sizing: border-box;
-  cursor: pointer;
-  &:nth-child(6n) {
-    margin-right: 0;
+  .title {
+    color: map-get($fontColor, slight);
+    margin-left: 20px;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  .item {
+    li {
+      float: left;
+      margin-left: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .img-box {
+      display: flex;
+      width: 120px;
+      height: 70px;
+      justify-content: center;
+      align-items: center;
+      background: map-get($bgColor, normal);
+      border: 1px solid #dedee4;
+      border-radius: 3px;
+      cursor: pointer;
+      img {
+        width: 35%;
+      }
+      &:hover {
+        box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+      }
+      .img-box__mask {
+        margin: -1px;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0.4);
+        .mask-text {
+          opacity: 0;
+          color: map-get($fontColor, white);
+          font-weight: bold;
+        }
+        &:hover {
+          .mask-text {
+            opacity: 1;
+          }
+        }
+      }
+    }
+    .content {
+      font-size: 12px;
+      margin-top: 5px;
+      max-width: 124px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      word-break: break-word;
+      overflow: hidden;
+    }
+  }
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: '';
+  }
+
+  .clearfix:after {
+    clear: both;
+  }
+
+  .clearfix {
+    *zoom: 1;
   }
 }
-.database__img {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 80px;
-  height: 80px;
-  background: #ffffff;
-  border-radius: 6px;
-  border: 1px solid #e8e9eb;
-  box-sizing: border-box;
-  cursor: pointer;
-  &:hover {
-    background: rgba(0, 0, 0, 0.3);
-  }
-  .el-image {
-    width: 40px;
-  }
-}
-.database__name {
-  margin-top: 8px;
-  width: 80px;
-  height: 30px;
-  word-wrap: break-word;
-  word-break: normal;
-}
-</style>
-<style lang="scss">
-.connection-type-dialog {
-  background: #f4f5f7;
-  border-radius: 4px;
-  .el-dialog__header {
-    padding: 24px 24px 0;
-  }
-  .el-dialog__body {
-    padding: 24px;
+::v-deep {
+  .connection-dialog {
+    .el-dialog__body {
+      padding: 0 20px 30px 20px;
+    }
   }
 }
 </style>

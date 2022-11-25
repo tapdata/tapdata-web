@@ -1,17 +1,9 @@
 <template>
   <div class="metadata-list-wrap">
-    <FieldMapping
-      v-if="isTarget && showFieldMapping"
-      ref="fieldMapping"
-      class="flex justify-content-end mr-5 mt-3"
-      :transform="transform"
-      :getDataFlow="getDataFlow"
-      @returnPreFixSuffix="loadFields"
-    ></FieldMapping>
-    <div class="total mb-2 mt-4">
+    <!--<div class="total mb-2 mt-4">
       {{ $t('packages_dag_components_metapane_gongyou') }}{{ tableData.length
       }}{{ $t('packages_dag_components_metapane_geziduan') }}
-    </div>
+    </div>-->
     <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
       <ElTableColumn width="56" type="index" :label="$t('packages_dag_meta_table_index')"> </ElTableColumn>
       <ElTableColumn prop="field_name" :label="$t('packages_dag_meta_table_field_name')">
@@ -28,7 +20,7 @@
       <ElTableColumn prop="default_value" :label="$t('packages_dag_meta_table_default')"> </ElTableColumn>
       <ElTableColumn prop="is_nullable" :label="$t('packages_dag_meta_table_not_null')">
         <template #default="{ row }">
-          {{ $t(`meta_table_${!row.is_nullable ? 'true' : 'false'}`) }}
+          {{ nullableMap[!row.is_nullable] }}
         </template>
       </ElTableColumn>
       <ElTableColumn prop="comment" :label="$t('packages_dag_meta_table_comment')"> </ElTableColumn>
@@ -37,14 +29,15 @@
 </template>
 
 <script>
-import { metadataInstancesApi } from '@tap/api'
-import { FieldMapping } from '@tap/field-mapping'
 import { mapGetters, mapState } from 'vuex'
+
+import { metadataInstancesApi } from '@tap/api'
 import { VIcon } from '@tap/component'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'MetaPane',
-  components: { VIcon, FieldMapping },
+  components: { VIcon },
   props: {
     isShow: Boolean
   },
@@ -62,6 +55,10 @@ export default {
         field_process: [],
         fieldsNameTransform: '',
         batchOperationList: []
+      },
+      nullableMap: {
+        true: i18n.t('packages_dag_meta_table_true'),
+        false: i18n.t('packages_dag_meta_table_false')
       }
     }
   },
@@ -89,10 +86,6 @@ export default {
         } else {
           this.loadFields()
         }
-      }
-      if (this.activeNode) {
-        this.checkTarget()
-        this.checkNodeType()
       }
     },
     // 推演加载完成后，主动请求最新模型
@@ -153,18 +146,6 @@ export default {
     getDataFlow() {
       const data = this.getDataflowDataToSave()
       return data
-    },
-    checkTarget() {
-      //是否目标节点
-      const dag = this.$store.getters['dataflow/dag']
-      const id = this.activeNode.id
-      const allEdges = dag.edges
-      this.isTarget = allEdges.some(({ target }) => target === id)
-      this.transform.nodeId = this.activeNode.id
-    },
-    checkNodeType() {
-      //处理节点没有字段映射功能
-      this.showFieldMapping = this.activeNode.type === 'table'
     }
   }
 }

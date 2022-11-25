@@ -758,7 +758,11 @@ export default {
         .then(data => {
           buried('agentCreate')
           this.fetch()
-          this.deployConfirm(data.agentId)
+          this.toDeploy({
+            id: data.agentId
+          })
+          //创建agnet成功后直接跳转到部署页面
+          // this.deployConfirm(data.agentId)
         })
         .catch(() => {
           this.$router.replace('/500')
@@ -767,19 +771,19 @@ export default {
           this.createAgentLoading = false
         })
     },
-    deployConfirm(id) {
-      this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
-        type: 'success',
-        confirmButtonText: this.$t('agent_button_deploy_now'),
-        cancelButtonText: this.$t('agent_button_deploy_later')
-      }).then(res => {
-        if (res) {
-          this.toDeploy({
-            id: id
-          })
-        }
-      })
-    },
+    // deployConfirm(id) {
+    //   this.$confirm(this.$t('agent_button_create_msg_success_desc'), this.$t('agent_button_create_msg_success'), {
+    //     type: 'success',
+    //     confirmButtonText: this.$t('agent_button_deploy_now'),
+    //     cancelButtonText: this.$t('agent_button_deploy_later')
+    //   }).then(res => {
+    //     if (res) {
+    //       this.toDeploy({
+    //         id: id
+    //       })
+    //     }
+    //   })
+    // },
     // 禁用部署
     deployBtnDisabled(row) {
       return row.agentType === 'Cloud' || !!row.deployDisable

@@ -35,8 +35,12 @@
 .zsiq_floatmain {
   display: none !important;
 }
-.Workbench ~ .zsiq_floatmain {
+.zsiq_floatmain {
   display: block !important;
+}
+.siq_bR{
+  bottom: 75px !important;
+  right: 10px;
 }
 .error-confirm-fold {
   & > input:checked ~ label {
@@ -70,6 +74,7 @@
   color: #008b58;
   background-color: #b4edd8;
 }
+.status-renew_failed,
 .status-error,
 .status-rejected,
 .status-stopped {
@@ -106,6 +111,7 @@
   background-color: #ddebff;
 }
 
+.status-renewing,
 .status-waiting {
   color: #c39700;
   background-color: #fdf1c8;
@@ -119,7 +125,8 @@
   background-color: #ffe4ae;
 }
 .status-stopping,
-.status-notVerified {
+.status-notVerified,
+.status-generating {
   color: #c39700;
   background-color: #fdf1c8;
 }
@@ -138,4 +145,19 @@
 .status-connection-invalid {
   color: #d5575a;
   background-color: #feeeef;
+}
+.level-finished {
+  color: #008b58;
+}
+.level-edit {
+  color: #0083c7;
+}
+.level-waiting {
+  color: #c39700;
+}
+.level-stop {
+  color: #c88500;
+}
+.level-error {
+  color: #d44d4d;
 }

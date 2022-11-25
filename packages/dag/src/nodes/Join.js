@@ -38,6 +38,13 @@ export class Join extends NodeType {
           }
         ]
       },
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
       leftNodeId: {
         type: 'string',
         display: 'none'

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import {
+  Alert,
   Card,
   Container,
   Header,
@@ -141,3 +142,4 @@ Vue.use(Skeleton)
 Vue.use(SkeletonItem)
 Vue.use(Submenu)
 Vue.use(InfiniteScroll)
+Vue.use(Alert)

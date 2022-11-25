@@ -64,7 +64,7 @@ export default ({ routes }) => {
     if (process.env.NODE_ENV === 'development') {
       queryString = `__token=${process.env.VUE_APP_ACCESS_TOKEN}`
     }
-    wsUrl = wsUrl + loc.host + `/tm/ws/agent?${queryString}`
+    wsUrl = wsUrl + loc.host + loc.pathname + `tm/ws/agent?${queryString}`
     window.App = new Vue({
       router,
       store,
@@ -92,16 +92,16 @@ export default ({ routes }) => {
         // 获取用户信息失败
         if (count < 4) {
           // eslint-disable-next-line
-          console.log('获取用户信息失败')
+          console.log(i18n.t('dfs_src_init_huoquyonghuxin2'))
           setTimeout(() => {
             count++
             // eslint-disable-next-line
-            console.log(`重新尝试获取用户信息: 第${count}次`)
+            console.log(i18n.t('dfs_src_init_chongxinchangshihuo')('dfs_src_init_chongxinchangshihuo', { val1: count }))
             getData()
           }, 3000)
         } else {
           // eslint-disable-next-line
-          console.log('获取用户信息失败, 停止重试，跳转到500', err)
+          console.log(i18n.t('dfs_src_init_huoquyonghuxin'), err)
           loading.close()
           init()
           return errorConfirmFnc(err)

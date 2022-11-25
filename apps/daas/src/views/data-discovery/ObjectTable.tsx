@@ -220,6 +220,8 @@ export default defineComponent({
           <el-table-column
             label={this.$t('object_list_name')}
             prop="name"
+            show-overflow-tooltip
+            width="350px"
             scopedSlots={{
               default: this.renderNode
             }}

@@ -29,7 +29,6 @@ export class Table extends NodeType {
         type: 'string',
         'x-display': 'hidden'
       },
-
       name: {
         type: 'string',
         title: '节点名称',
@@ -106,6 +105,14 @@ export class Table extends NodeType {
         'x-component-props': {
           gap: 8,
           align: 'start'
+        },
+        'x-reactions': {
+          dependencies: ['databaseType'],
+          fulfill: {
+            state: {
+              display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+            }
+          }
         },
         properties: {
           tableName: {
@@ -209,6 +216,14 @@ export class Table extends NodeType {
         'x-component-props': {
           class: 'inset'
         },
+        'x-reactions': {
+          dependencies: ['$inputs', '$outputs'],
+          fulfill: {
+            state: {
+              display: '{{$deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
+            }
+          }
+        },
         properties: {
           tab1: {
             type: 'void',
@@ -229,52 +244,62 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
-                  increase: {
-                    type: 'void',
-                    'x-component': 'Space',
-                    'x-component-props': {
-                      size: 'middle'
-                    },
-                    properties: {
-                      increaseSyncInterval: {
-                        title: '增量同步间隔(ms)',
-                        type: 'number',
-                        default: 500,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 1
-                        }
-                      },
-                      increaseReadSize: {
-                        title: '每次读取数量(行)',
-                        type: 'number',
-                        default: 100,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 1
-                        }
-                      }
-                    }
-                  },
+                  // increase: {
+                  //   type: 'void',
+                  //   'x-component': 'Space',
+                  //   'x-component-props': {
+                  //     size: 'middle'
+                  //   },
+                  //   properties: {
+                  //     increaseSyncInterval: {
+                  //       title: '增量同步间隔(ms)',
+                  //       type: 'number',
+                  //       default: 500,
+                  //       'x-decorator': 'FormItem',
+                  //       'x-component': 'InputNumber',
+                  //       'x-component-props': {
+                  //         min: 1
+                  //       }
+                  //     },
+                  //     increaseReadSize: {
+                  //       title: '每次读取数量(行)',
+                  //       type: 'number',
+                  //       default: 100,
+                  //       'x-decorator': 'FormItem',
+                  //       'x-component': 'InputNumber',
+                  //       'x-component-props': {
+                  //         min: 1
+                  //       }
+                  //     }
+                  //   }
+                  // },
                   enableDDL: {
                     title: 'DDL事件采集',
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: '开启后任务将会自动采集选中的源端DDL事件',
-                      layout: 'horizontal'
+                      tooltip: '开启后任务将会自动采集选中的源端DDL事件'
                     },
                     'x-component': 'Switch',
-                    'x-reactions': {
-                      target: '.disabledEvents',
-                      fulfill: {
-                        state: {
-                          display: '{{$self.value ? "visible" :"hidden"}}'
+                    'x-reactions': [
+                      {
+                        target: 'disabledEvents',
+                        fulfill: {
+                          state: {
+                            display: '{{$self.value ? "visible" :"hidden"}}'
+                          }
+                        }
+                      },
+                      {
+                        when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
+                        fulfill: {
+                          state: {
+                            disabled: true,
+                            description: `{{$values.databaseType + '暂不支持DDL事件采集'}}`
+                          }
                         }
                       }
-                    }
+                    ]
                   },
                   disabledEvents: {
                     type: 'array',
@@ -329,7 +354,19 @@ export class Table extends NodeType {
                     'x-decorator-props': {
                       wrapperWidth: 300
                     },
-                    'x-component': 'Select'
+                    'x-component': 'Select',
+                    'x-reactions': {
+                      fulfill: {
+                        run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
+                        state: {
+                          description: `{{$settings.type === "cdc" ? '纯增量场景下，不支持对目标表结构和数据的清除操作。':''}}`
+                        },
+                        schema: {
+                          // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
+                          'x-component-props.options': `{{$values.attrs.capabilities.find(item => item.id ==='clear_table_function')?$self.dataSource:[$self.dataSource[0], $self.dataSource[2]]}}`
+                        }
+                      }
+                    }
                   },
                   writeStrategy: {
                     title: '数据写入模式',
@@ -366,6 +403,8 @@ export class Table extends NodeType {
                     type: 'array',
                     required: true,
                     default: null,
+                    description:
+                      '{{ !$isDaas && $values.databaseType==="MongoDB" ? "如果要同步删除事件，请确保关联 _id" : ""}}',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       wrapperWidth: 300
@@ -381,7 +420,7 @@ export class Table extends NodeType {
                       {
                         fulfill: {
                           run: `
-                            if (!$self.value && $self.dataSource?.length) {
+                            if (!$self.value && $self.dataSource && $self.dataSource.length) {
                               $self.setValue($self.dataSource.filter(item => item.isPrimaryKey).map(item => item.value))
                               $self.validate()
                             }
@@ -482,6 +521,25 @@ export class Table extends NodeType {
       'attrs.connectionName': {
         type: 'string',
         'x-display': 'hidden'
+      },
+
+      loadSchemaTree: {
+        type: 'void',
+        title: '',
+        'x-decorator': 'FormItem',
+        'x-component': 'loadSchemaTree',
+        'x-component-props': {
+          tableNameField: 'tableName'
+        },
+        'x-reactions': {
+          dependencies: ['databaseType', '$outputs'],
+          fulfill: {
+            state: {
+              display:
+                '{{ ($deps[1].length > 0 && ["CSV","EXCEL","JSON","XML"].includes($deps[0])) ? "visible":"hidden"}}'
+            }
+          }
+        }
       }
     }
   }

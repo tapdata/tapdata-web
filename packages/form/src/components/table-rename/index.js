@@ -1,12 +1,13 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, set, del, computed } from 'vue-demi'
+import { defineComponent, ref, reactive, set, del, computed, watch } from 'vue-demi'
 import { useForm } from '@formily/vue'
 import { FormItem } from '../index'
 import { observer } from '@formily/reactive-vue'
 import { VIcon, EmptyItem } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { observe } from '@formily/reactive'
-// import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import { useAfterTaskSaved } from '../../hooks/useAfterTaskSaved'
+// import 'vue-virtual-scroller/dist/vue-visafrtual-scroller.css'
 // import { RecycleScroller } from 'vue-virtual-scroller'
 import './style.scss'
 
@@ -32,7 +33,8 @@ export const TableRename = observer(
         replaceAfter: '',
         prefix: '',
         suffix: '',
-        transferCase: ''
+        transferCase: '',
+        transformLoading: root.$store.state.dataflow.transformLoading
       })
 
       let prevMap = {}
@@ -48,9 +50,9 @@ export const TableRename = observer(
               page: 1,
               pageSize: 10000
             })
-            .then(res => {
+            .then(({ items = [] }) => {
               prevMap = {}
-              tableDataRef.value = res.items.map(item => {
+              tableDataRef.value = items.map(item => {
                 prevMap[item.previousTableName] = item.sourceObjectName
                 return item.previousTableName
               })
@@ -65,9 +67,8 @@ export const TableRename = observer(
 
       makeTable()
 
-      observe(formRef.value.values.$inputs, () => {
-        makeTable()
-      })
+      // 源节点发生变化，任务保存后加载模型
+      useAfterTaskSaved(root, formRef.value.values.$inputs, makeTable)
 
       const updateName = (val, name) => {
         if (val !== name) {
@@ -156,7 +157,7 @@ export const TableRename = observer(
 
     render() {
       return (
-        <div class="table-rename">
+        <div class="table-rename" v-loading={this.$store.state.dataflow.transformLoading || this.loading}>
           <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}>
             <ElInput
               v-model={this.config.search}
@@ -167,7 +168,6 @@ export const TableRename = observer(
           </FormItem.BaseItem>
 
           <div
-            v-loading={this.loading}
             class="name-list flex flex-column border border-form rounded-2 overflow-hidden mt-4"
             style={this.listStyle}
           >

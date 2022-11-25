@@ -26,6 +26,7 @@ export const FieldRename = connect(
           originalFields: [],
           //checkAll: false,
           fieldsNameTransforms: '',
+          transformLoading: this.$store.getters['dataflow/transformLoading'],
           /*字段处理器支持功能类型*/
           RENAME_OPS_TPL: {
             id: '',
@@ -70,32 +71,32 @@ export const FieldRename = connect(
               </span>
               <span class="field-ops  inline-block mr-4">
                 <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
-                  disabled={this.disabled}
+                  disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllToUpperCase()}
                 >
                   toUpperCase
                 </VIcon>
                 <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
-                  disabled={this.disabled}
+                  disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllToLowerCase()}
                 >
                   toLowerCase
                 </VIcon>
                 <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
+                  class={[this.disabled || this.transformLoading ? 'disable__btn' : 'clickable', 'ml-5']}
                   size="12"
-                  disabled={this.disabled}
+                  disabled={this.disabled || this.transformLoading}
                   onClick={() => this.handleAllReset()}
                 >
                   revoke
                 </VIcon>
               </span>
             </div>
-            <div className="field-processors-tree-warp">
+            <div class="field-processors-tree-warp">
               <ElTree
                 ref="tree"
                 data={fields}
@@ -130,6 +131,7 @@ export const FieldRename = connect(
                                 'tree-field-input-primary': data.field_name !== data.original_field_name
                               }
                             ]}
+                            disabled={this.disabled || this.transformLoading}
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
                           />
@@ -144,7 +146,8 @@ export const FieldRename = connect(
                           disabled={
                             (this.fieldsNameTransforms === '' && !this.isRename(data.id)) ||
                             this.isReset(data.id) ||
-                            this.disabled
+                            this.disabled ||
+                            this.transformLoading
                           }
                           onClick={() => this.handleReset(node, data)}
                         >
@@ -191,7 +194,7 @@ export const FieldRename = connect(
 
                 // change children field name
                 fields.forEach(field => {
-                  if (field.field_name.startsWith(name + '.')) {
+                  if (field?.field_name?.startsWith(name + '.')) {
                     field.field_name = newNameStr + field.field_name.substring(name.length)
                   }
                 })
@@ -224,7 +227,7 @@ export const FieldRename = connect(
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
-              field: nativeData.original_field_name,
+              field: data.schema_field_name || data.field_name,
               operand: first ? nativeData.original_field_name : data.field_name,
               table_name: data.table_name,
               type: data.type,

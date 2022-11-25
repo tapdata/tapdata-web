@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, nextTick } from 'vue-demi'
+import { defineComponent, ref, reactive, nextTick, watch } from 'vue-demi'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
@@ -41,7 +41,8 @@ export const FieldRenameProcessor = defineComponent({
         current: 1,
         total: 0,
         count: 1
-      }
+      },
+      transformLoading: root.$store.state.dataflow.transformLoading
     })
     const updateDeletedNum = item => {
       item.userDeletedNum = item.fieldsMapping.filter(field => !field.isShow).length
@@ -258,10 +259,7 @@ export const FieldRenameProcessor = defineComponent({
             originTableName: t?.sourceObjectName,
             previousTableName: t?.sinkObjectName,
             operation: config.operation,
-            fields:
-              t?.sourceQualifiedName === map[t?.sourceQualifiedName]?.qualifiedName
-                ? map[t?.sourceQualifiedName]?.fields || []
-                : []
+            fields: []
           }
         })
         fieldsMapping = toList(map)
@@ -273,7 +271,7 @@ export const FieldRenameProcessor = defineComponent({
       if (config.checkedFields?.length > 0) {
         //字段级别
         config.checkedFields.forEach(t => {
-          let newField = config.operation.prefix + t?.targetFieldName + config.operation.suffix
+          let newField = config.operation.prefix + t?.sourceFieldName + config.operation.suffix
           if (config.operation.capitalized) {
             newField = newField[config.operation.capitalized]()
           }
@@ -389,6 +387,15 @@ export const FieldRenameProcessor = defineComponent({
       )
       return props.disabled ? disabled : show
     }
+    watch(
+      () => root.$store.state.dataflow.transformLoading,
+      v => {
+        config.transformLoading = root.$store.state.dataflow.transformLoading
+        if (!v) {
+          loadData()
+        }
+      }
+    )
     loadData()
     return {
       list,
@@ -412,7 +419,7 @@ export const FieldRenameProcessor = defineComponent({
   },
   render() {
     return (
-      <div class="processor-field-mapping flex flex-column">
+      <div class="processor-field-mapping flex flex-column" v-loading={this.config.transformLoading}>
         <div class="task-form-body" style={this.listStyle}>
           <div class="task-form-left flex flex-column">
             <div class="flex mb-2 ml-2 mr-2">

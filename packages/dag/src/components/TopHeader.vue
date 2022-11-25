@@ -1,6 +1,6 @@
 <template>
   <header class="layout-header border-bottom px-4">
-    <button @click="$emit('page-return')" class="icon-btn">
+    <button @click="$emit('page-return')" class="icon-btn mr-2">
       <VIcon size="18">left</VIcon>
     </button>
 
@@ -121,20 +121,31 @@
       </ElTooltip>
     </div>
     <!--复制dag查看不显示-->
-    <div class="flex align-center flex-grow-1" v-if="$route.name !== 'MigrateViewer'">
+    <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElButton v-if="stateIsReadonly" size="mini" class="mx-1 btn--text" @click="$emit('detail')">
+      <ElButton v-if="stateIsReadonly" size="medium" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
         {{ $t('packages_dag_task_list_button_monitor') }}
       </ElButton>
 
       <ElButton
+        v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
+        key="reset"
+        :class="[isViewer ? 'btn--text mx-2' : 'mx-1']"
+        size="medium"
+        @click="$emit('reset')"
+      >
+        <VIcon v-if="isViewer">reset</VIcon>
+        {{ $t('packages_dag_dataFlow_button_reset') }}
+      </ElButton>
+
+      <ElButton
         v-if="!stateIsReadonly"
         :loading="isSaving"
         :disabled="dataflow.disabledData && dataflow.disabledData.edit"
-        size="mini"
         class="mx-2"
+        size="medium"
         @click="$emit('save')"
       >
         <!--保存-->
@@ -144,8 +155,8 @@
         <ElButton
           v-if="$route.name !== 'MigrateEditor'"
           key="edit"
-          size="mini"
           class="mx-1 btn--text"
+          size="medium"
           :disabled="dataflow.disabledData && dataflow.disabledData.edit"
           @click="$emit('edit')"
         >
@@ -159,7 +170,7 @@
           v-if="dataflow.status === 'stopping'"
           class="mx-1 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
-          size="mini"
+          size="medium"
           @click="$emit('forceStop')"
         >
           <VIcon>stop</VIcon>
@@ -170,28 +181,18 @@
           v-else
           class="mx-1 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.stop"
-          size="mini"
+          size="medium"
           @click="$emit('stop')"
         >
           <VIcon>stop</VIcon>
           {{ $t('packages_dag_task_list_stop') }}
         </ElButton>
-        <ElButton
-          key="reset"
-          class="mx-1 btn--text"
-          :disabled="dataflow.disabledData && dataflow.disabledData.reset"
-          size="mini"
-          @click="$emit('reset')"
-        >
-          <VIcon>reset</VIcon>
-          {{ $t('packages_dag_dataFlow_button_reset') }}
-        </ElButton>
       </template>
 
       <ElButton
         :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
-        size="mini"
         class="mx-2"
+        size="medium"
         type="primary"
         @click="$emit('start')"
       >
@@ -245,6 +246,10 @@ export default {
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
+    },
+
+    isViewer() {
+      return ['DataflowViewer', 'MigrateViewer'].includes(this.$route.name)
     }
   },
 
@@ -408,9 +413,9 @@ $sidebarBg: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30px;
-    height: 30px;
-    padding: 5px;
+    width: 28px;
+    height: 28px;
+    padding: 4px;
     color: #4e5969;
     background: #fff;
     outline: none;

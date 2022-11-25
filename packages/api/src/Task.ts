@@ -53,7 +53,7 @@ export default class Task extends Http {
   }
 
   export(ids) {
-    const href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('token')}`
+    const href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('access_token')}`
     window.open(href)
   }
   checkRun(id) {
@@ -104,12 +104,8 @@ export default class Task extends Http {
     }
   }
 
-  checkName(name, id) {
-    if (id) {
-      return this.axios.post(this.url + '/checkName?name=' + name + '&id=' + id)
-    } else {
-      return this.axios.post(this.url + '/checkName?name=' + name)
-    }
+  checkName(params = {}) {
+    return this.axios.post(this.url + '/checkName', params)
   }
   getNodeTableInfo(params = {}) {
     const config = { params }
@@ -146,6 +142,11 @@ export default class Task extends Http {
   autoInspectTotals(params) {
     return this.axios.post(this.url + `/auto-inspect-totals`, params)
   }
+
+  getStats() {
+    return this.axios.get(this.url + `/stats`)
+  }
+
   //再次校验
   autoInspectAgain(taskId, params) {
     return this.axios.post(this.url + `/${taskId}/auto-inspect-again`, params)
@@ -153,6 +154,14 @@ export default class Task extends Http {
 
   putLogSetting(taskId, params) {
     return this.axios.put(this.url + `/logSetting/${taskId}`, params)
+  }
+
+  taskConsoleRelations(params) {
+    return this.axios.post(`/api/task-console/relations`, params)
+  }
+
+  rename(taskId, newName) {
+    return this.axios.patch(`${this.url}/rename/${taskId}?newName=${encodeURIComponent(newName)}`)
   }
 }
 export { Task }

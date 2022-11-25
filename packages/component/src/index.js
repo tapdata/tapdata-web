@@ -13,6 +13,7 @@ import VDivider from './base/VDivider.vue'
 import EmptyItem from './base/EmptyItem.vue'
 import VButton from './base/VButton.vue'
 import Highlight from './base/Highlight.js'
+import VCollapse from './base/VCollapse'
 import Classification from './Classification.vue'
 import DiscoveryClassification from './DiscoveryClassification'
 import FilterBar from './filter-bar'
@@ -20,8 +21,9 @@ import DatetimeRange from './filter-bar/DatetimeRange.vue'
 import SelectList from './SelectList.vue'
 import GitBook from './GitBook.vue'
 import Drawer from './Drawer.vue'
-import TableList from './TableList.vue'
 import InlineInput from './InlineInput.vue'
+import DarkSelect from './DarkSelect'
+import TimeSelect from './TimeSelect'
 
 // business
 import Chart from './chart'
@@ -41,6 +43,7 @@ export {
   VirtualTransferPanel,
   VirtualSelect,
   VTable,
+  VCollapse,
   Chart,
   MqTransfer,
   VCodeEditor,
@@ -51,10 +54,11 @@ export {
   SelectList,
   GitBook,
   Drawer,
-  TableList,
   InlineInput,
   DiscoveryClassification,
-  OverflowTooltip
+  OverflowTooltip,
+  DarkSelect,
+  TimeSelect
 }
 
 export * from './base'

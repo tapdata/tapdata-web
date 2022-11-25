@@ -133,7 +133,7 @@ export default {
     options: {
       deep: true,
       handler() {
-        this.setPeriod()
+        this.setPeriod(this.value)
       }
     }
   },
@@ -272,7 +272,7 @@ export default {
     setPeriod(value) {
       let findOne = this.items.find(t => t.value === value)
       if (!findOne) {
-        this.changeTime(value.split(',').map(t => Number(t)))
+        this.changeTime(value?.split(',').map(t => Number(t)))
         return
       }
       this.period = value
@@ -291,6 +291,7 @@ export default {
   ::v-deep {
     .time-select__popper {
       width: 270px;
+      min-width: 270px !important;
       transform: translateX(-40px);
     }
     // 灰色风格下拉框

@@ -15,6 +15,17 @@ export class JavaScript extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      $inputs: {
+        type: 'array',
+        'x-display': 'hidden'
+      },
+      name: {
+        type: 'string',
+        title: '节点名称',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input'
+      },
       script: {
         title: '脚本',
         type: 'string',
@@ -25,6 +36,7 @@ export class JavaScript extends NodeType {
         'x-component': 'JsEditor',
         'x-component-props': {
           height: 500,
+          showFullscreen: true,
           options: { showPrintMargin: false, wrap: false },
           includeBeforeAndAfter: true,
           before: 'function process(record){',
@@ -34,17 +46,11 @@ export class JavaScript extends NodeType {
         }
       },
       declareScript: {
-        title: '模型声明',
         type: 'string',
-        default: '',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': { gridSpan: 1 },
-        'x-component': 'JsEditor',
+        'x-component': 'JsDeclare',
         'x-component-props': {
           height: 300,
           options: { showPrintMargin: false, wrap: false },
-          before: 'function declare(tapTable) {',
-          after: `  return tapTable\n}`,
           handleAddCompleter: '{{addDeclaredCompleterForSync}}'
         }
       }

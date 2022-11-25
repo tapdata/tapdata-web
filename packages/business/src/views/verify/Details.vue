@@ -32,9 +32,13 @@
               type="primary"
               size="mini"
               :disabled="!selection.length || verifyLoading"
-              :loading="verifyLoading"
+              :loading="verifyLoading || isChecking"
               @click="handleAgainCheck"
-              >{{ $t('packages_business_verify_details_jiaoyan') }}</ElButton
+              >{{
+                isChecking
+                  ? $t('packages_business_verify_details_jiaoyanzhong')
+                  : $t('packages_business_verify_details_jiaoyan')
+              }}</ElButton
             >
           </div>
         </div>
@@ -49,6 +53,7 @@
           class="table-list"
           hide-on-single-page
           highlight-current-row
+          row-key="originalTableName"
           @row-click="handleRow"
           @selection-change="handleSelectionChange"
         >
@@ -186,7 +191,8 @@ export default {
       selection: [],
       columns: [
         {
-          type: 'selection'
+          type: 'selection',
+          reserveSelection: true
         },
         {
           label: i18n.t('packages_business_verify_details_yuanbiaoming'),
@@ -220,12 +226,22 @@ export default {
     }
   },
 
+  computed: {
+    isChecking() {
+      return ['Scheduling', 'Running'].includes(this.checkProgress?.status)
+    }
+  },
+
   mounted() {
     this.init()
     //轮询结果
     this.timeout = setInterval(() => {
-      this.$refs.table.fetch?.(null, 0, true)
-    }, 30000)
+      this.getCheckingStatus(flag => {
+        if (!flag) {
+          this.$refs.table.fetch?.(null, 0, true)
+        }
+      })
+    }, 5000)
   },
   destroyed() {
     clearInterval(this.timeout)
@@ -263,10 +279,11 @@ export default {
         filter: this.keyword
       }
       return taskApi.autoInspectResultsGroupByTable(filter).then(data => {
-        const list = data.items.map(t => {
-          t.counts = t.counts.toLocaleString()
-          return t
-        })
+        const list =
+          data.items?.map(t => {
+            t.counts = t.counts.toLocaleString()
+            return t
+          }) || []
         if (!this.row || !list.find(t => JSON.stringify(this.row) === JSON.stringify(t))) {
           this.handleRow(list[0])
         }
@@ -297,7 +314,7 @@ export default {
     fetch(page = 1) {
       this.page.current = page
       const { size, current } = this.page
-      const { originalTableName } = this.row
+      const { originalTableName } = this.row || {}
       let filter = {
         where: {
           originalTableName
@@ -358,6 +375,19 @@ export default {
             Date.now() - startStamp < 1000 ? 1500 : 0
           )
         })
+    },
+
+    getCheckingStatus(callback) {
+      let filter = {
+        id: this.$route.params.id,
+        limit: 1,
+        skip: 0,
+        filter: this.keyword
+      }
+      taskApi.autoInspectResultsGroupByTable(filter).then(data => {
+        this.checkProgress = data?.progress
+        callback?.(['Scheduling', 'Running'].includes(this.checkProgress?.status))
+      })
     }
   }
 }

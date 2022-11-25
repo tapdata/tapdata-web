@@ -88,26 +88,60 @@ export class Database extends NodeType {
           dependencies: ['$outputs'],
           fulfill: {
             state: {
-              display: '{{$deps[0].length > 0 ? "visible":"none"}}'
+              display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
             }
           }
         },
         properties: {
+          enableDDL: {
+            title: 'DDL事件采集',
+            type: 'boolean',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
+              tooltip: '开启后任务将会自动采集选中的源端DDL事件',
+              feedbackLayout: 'none'
+              // wrapperStyle: {
+              //   width: 'auto'
+              // }
+            },
+            'x-component': 'Switch',
+            'x-reactions': [
+              {
+                target: 'disabledEvents',
+                fulfill: {
+                  state: {
+                    display: '{{$self.value ? "visible" :"hidden"}}'
+                  }
+                }
+              },
+              {
+                when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
+                fulfill: {
+                  state: {
+                    disabled: true,
+                    description: `{{$values.databaseType + '暂不支持DDL事件采集'}}`
+                  }
+                }
+              }
+            ]
+          },
+
+          disabledEvents: {
+            type: 'array',
+            'x-component': 'DdlEventCheckbox'
+          },
+
           migrateTableSelectType: {
             title: '选择表',
             type: 'string',
             default: 'all',
-            required: true,
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              className: 'form-item-dense'
+              className: 'form-item-dense',
+              feedbackLayout: 'none'
             },
             'x-component': 'Radio.Group',
-            'x-component-props': {
-              style: {
-                marginBottom: '8px'
-              }
-            },
             enum: [
               {
                 label: '全部',
@@ -127,6 +161,28 @@ export class Database extends NodeType {
                 }
               }
             }
+          },
+
+          enableDynamicTable: {
+            title: '动态新增表',
+            type: 'boolean',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              tooltip: '开启后任务将会自动处理新增，删除表'
+            },
+            'x-component': 'Switch',
+            'x-reactions': [
+              {
+                dependencies: ['.migrateTableSelectType'],
+                fulfill: {
+                  state: {
+                    visible:
+                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
+                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
+                  }
+                }
+              }
+            ]
           },
 
           tableCard: {
@@ -157,6 +213,7 @@ export class Database extends NodeType {
             'x-component-props': {
               connectionId: '{{$values.connectionId}}',
               style: {
+                marginTop: '8px',
                 height: 'unset',
                 minHeight: 0,
                 maxHeight: 'calc((100vh - 120px) * 0.618)'
@@ -175,7 +232,7 @@ export class Database extends NodeType {
             }
           },
 
-          increaseReadSize: {
+          readBatchSize: {
             title: '批量读取条数', //增量批次读取条数
             type: 'string',
             'x-decorator': 'FormItem',
@@ -195,56 +252,6 @@ export class Database extends NodeType {
                 }
               }
             }
-          },
-          enableDynamicTable: {
-            title: '动态新增表',
-            type: 'boolean',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              tooltip: '开启后任务将会自动处理新增，删除表',
-              feedbackLayout: 'none'
-            },
-            'x-component': 'Switch',
-            'x-reactions': [
-              {
-                dependencies: ['.migrateTableSelectType'],
-                fulfill: {
-                  state: {
-                    visible:
-                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
-                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
-                  }
-                }
-              }
-            ]
-          },
-
-          enableDDL: {
-            title: 'DDL事件采集',
-            type: 'boolean',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
-              tooltip: '开启后任务将会自动采集选中的源端DDL事件',
-              feedbackLayout: 'none'
-              // wrapperStyle: {
-              //   width: 'auto'
-              // }
-            },
-            'x-component': 'Switch',
-            'x-reactions': {
-              target: 'disabledEvents',
-              fulfill: {
-                state: {
-                  display: '{{$self.value ? "visible" :"hidden"}}'
-                }
-              }
-            }
-          },
-
-          disabledEvents: {
-            type: 'array',
-            'x-component': 'DdlEventCheckbox'
           }
         }
       },
@@ -255,7 +262,7 @@ export class Database extends NodeType {
           dependencies: ['$inputs'],
           fulfill: {
             state: {
-              display: '{{$deps[0].length > 0 ? "visible":"none"}}'
+              display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
             }
           }
         },
@@ -303,21 +310,33 @@ export class Database extends NodeType {
                     default: 'keepData',
                     enum: [
                       {
+                        label: '保持目标端原有表结构和数据',
+                        value: 'keepData'
+                      },
+                      {
                         label: '清除目标端原有表结构及数据',
-                        value: 'dropTable'
+                        value: 'dropTable',
+                        disabled: true
                       },
                       {
                         label: '保持目标端原有表结构，清除数据',
                         value: 'removeData'
-                      },
-                      {
-                        label: '保持目标端原有表结构和数据',
-                        value: 'keepData'
                       }
                     ],
                     'x-decorator': 'FormItem',
-                    required: true,
-                    'x-component': 'Select'
+                    'x-component': 'Select',
+                    'x-reactions': {
+                      fulfill: {
+                        run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
+                        state: {
+                          description: `{{$settings.type === "cdc" ? '纯增量场景下，不支持对目标表结构和数据的清除操作。':''}}`
+                        },
+                        schema: {
+                          // ⚠️👇表达式依赖enum的顺序
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
+                        }
+                      }
+                    }
                   },
                   dmlPolicy: {
                     title: '数据写入策略',

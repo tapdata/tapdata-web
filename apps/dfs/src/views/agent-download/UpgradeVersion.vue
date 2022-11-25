@@ -79,6 +79,45 @@
         </div>
         <div>{{ $t('agent_upgrade_step_linux_third') }}</div>
       </div>
+      <!--   AliComputenest   -->
+      <div v-else-if="downLoadType === 'AliComputenest'" class="content-container">
+        <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
+        <div>
+          {{ $t('dfs_agent_download_upgradeversion_denglualiyun') }}
+          <el-link
+            type="primary"
+            href="https://computenest.console.aliyun.com/user/cn-hangzhou/serviceInstance/private"
+            target="_blank"
+            >{{ $t('dfs_agent_download_upgradeversion_jisuanchaodenglu') }}</el-link
+          >
+        </div>
+        <div class="ml-2">{{ $t('dfs_agent_download_upgradeversion_ruguoninbushu') }}</div>
+        <div>{{ $t('dfs_agent_download_upgradeversion_dianjishiliming') }}</div>
+        <div>{{ $t('dfs_agent_download_upgradeversion_dengluchenggonghou') }}</div>
+        <div>{{ $t('dfs_agent_download_upgradeversion_zaiTapd') }}</div>
+        <div v-if="agentId">
+          <div class="box title-text">
+            <span class="com-url">{{ comUrl }}</span>
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_upgrade_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="comUrl"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <i class="click-style">{{ $t('agent_deploy_upgrade_button_copy') }}</i>
+              </span>
+            </ElTooltip>
+          </div>
+        </div>
+        <div>{{ $t('dfs_agent_download_upgradeversion_chuxianUpd') }}</div>
+      </div>
       <!--   Docker   -->
       <div v-else-if="downLoadType === 'Docker'" class="content-container">
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
@@ -127,6 +166,8 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import TheHeader from '@/components/the-header'
 
 export default {
@@ -138,7 +179,8 @@ export default {
       downType: [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
       ],
       showTooltip: false,
       agentId: '',
@@ -155,6 +197,7 @@ export default {
       let map = {
         windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         Linux: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        AliComputenest: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
       }
       return map[this.downLoadType]
@@ -162,6 +205,7 @@ export default {
   },
   created() {
     this.loadData()
+    this.loadChat()
   },
   methods: {
     loadData() {
@@ -192,6 +236,35 @@ export default {
       let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
       window.open(`${downloadUrl}tapdata.exe`, '_blank')
       // window.location = `https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`
+    },
+    //在线小助手
+    hideCustomTip() {
+      setTimeout(() => {
+        let tDom = document.getElementById('titlediv')
+        if (tDom) {
+          tDom.style.display = 'none'
+        } else {
+          this.hideCustomTip()
+        }
+      }, 5000)
+    },
+    loadChat() {
+      let $zoho = $zoho || {}
+      $zoho.salesiq = $zoho.salesiq || {
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        values: {},
+        ready: function () {}
+      }
+      window.$zoho = $zoho
+      let d = document
+      let s = d.createElement('script')
+      s.type = 'text/javascript'
+      s.id = 'zsiqscript'
+      s.defer = true
+      s.src = 'https://salesiq.zoho.com.cn/widget'
+      let t = d.getElementsByTagName('script')[0]
+      t.parentNode.insertBefore(s, t)
+      this.hideCustomTip()
     }
   }
 }
@@ -269,9 +342,13 @@ export default {
         padding: 10px 50px;
         font-size: 12px;
         cursor: pointer;
-        color: #666;
-        border: 1px solid #dedee4;
-        border-radius: 3px;
+        color: map-get($iconFillColor, normal);
+        background: map-get($bgColor, main);
+        border-radius: 4px;
+        &:hover {
+          background-color: #e5e8ee;
+          border-color: #e5e8ee;
+        }
       }
       .active {
         border: 1px solid map-get($color, primary);

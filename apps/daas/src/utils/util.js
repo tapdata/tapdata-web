@@ -24,7 +24,7 @@ export function configUser(user = {}) {
 }
 
 export function signOut() {
-  Cookie.remove('token')
+  Cookie.remove('access_token')
   Cookie.remove('email')
   Cookie.remove('username')
   Cookie.remove('isAdmin')

@@ -150,9 +150,10 @@ export default {
             title: {
               show: isEmptyData,
               textStyle: {
-                color: '#909399',
-                fontSize: 20,
-                fontWeight: '500'
+                color: '#86909c',
+                fontSize: 14,
+                fontWeight: '500',
+                opacity: 0.7
               },
               text: i18n.t('packages_dag_dag_dialog_field_mapping_no_data'),
               left: 'center',
@@ -176,13 +177,17 @@ export default {
             let result = ''
             params.forEach((item, index) => {
               const { axisValue, marker, seriesName, data } = item
+              let markerStr = marker.replace(/background-color:#\w+;/g, `background-color:${this.color[index]};`)
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
               let val = data
               if (![null, undefined].includes(data)) {
                 if (this.timeValue) {
-                  val = calcTimeUnit(data || 0, 2)
+                  val = calcTimeUnit(data || 0, 2, {
+                    separator: ' ',
+                    autoShowMs: true
+                  })
                 } else {
                   val = (data || 0).toLocaleString('zh', {
                     minimumFractionDigits: 2,
@@ -191,7 +196,7 @@ export default {
                 }
               }
 
-              result += `<div class="flex justify-content-between"><div>${marker}${seriesName}</div><div class="din-font">${val}</div></div>`
+              result += `<div class="flex justify-content-between"><div>${markerStr}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
           }
@@ -291,6 +296,9 @@ export default {
     },
     reset() {
       this.end = 100
+    },
+    clear() {
+      this.$refs.chart.chart?.chart?.clear()
     }
   }
 }

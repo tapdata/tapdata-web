@@ -85,6 +85,7 @@ export default {
     if (this.options) {
       session.setUseWrapMode(this.options.useWrapMode) // 自动换行
       editor.setOptions(this.options)
+      this.$emit('initOptions', editor, tools, beautify)
     }
 
     editor.on('change', () => {

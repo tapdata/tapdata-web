@@ -20,12 +20,13 @@
     "@tap/component": "workspace:^1.0.0",
     "@tap/field-mapping": "workspace:^1.0.0",
     "@tap/form": "workspace:^1.0.0",
-    "@tap/shared": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
+    "@tap/shared": "workspace:^1.0.0",
     "dagre": "^0.8.5",
+    "dayjs": "^1.11.2",
     "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
-    "vuex": "^3.6.2",
-    "dayjs": "^1.11.2"
+    "resize-observer-polyfill": "^1.5.1",
+    "vuex": "^3.6.2"
   }
 }

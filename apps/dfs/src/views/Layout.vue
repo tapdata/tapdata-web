@@ -3,12 +3,6 @@
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
     <ElAside class="left-aside" width="200px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
-        <!-- <ElMenuItem v-for="m in menus" :key="m.name" :index="m.path">
-          <span class="mr-4" slot v-if="m.icon"
-            ><VIcon class="v-icon" size="12">{{ m.icon }}</VIcon></span
-          >
-          <span slot="title">{{ m.title }}</span>
-        </ElMenuItem> -->
         <template v-for="menu in menus">
           <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
             <template slot="title">
@@ -33,21 +27,12 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <div v-if="!hideBreadcrumb" class="header">
-        <ElBreadcrumb
-          :class="['breadcrumb', { 'one-breadcrumb': breadcrumbData.length === 1 }]"
-          separator-class="el-icon-arrow-right"
-        >
-          <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
-            {{ item.name }}
-          </ElBreadcrumbItem>
-        </ElBreadcrumb>
-      </div>
+      <PageHeader class="py-4 px-5"></PageHeader>
       <ElMain class="main">
         <RouterView></RouterView>
       </ElMain>
     </ElContainer>
-    <ConnectionTypeDialog v-model="dialogVisible" @select="createConnection"></ConnectionTypeDialog>
+    <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
   </ElContainer>
@@ -56,10 +41,13 @@
 <script>
 import TheHeader from '@/components/the-header'
 import { VIcon } from '@tap/component'
+import { PageHeader } from '@tap/business'
+
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 import BindPhone from '@/views/user/components/BindPhone'
 import { buried } from '@/plugins/buried'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   components: {
@@ -67,7 +55,8 @@ export default {
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
-    BindPhone
+    BindPhone,
+    PageHeader
   },
   data() {
     const $t = this.$t.bind(this)
@@ -93,6 +82,11 @@ export default {
         {
           name: 'migrateList',
           title: $t('task_manage_migrate'),
+          icon: 'migrate'
+        },
+        {
+          name: 'dataflowList',
+          title: $t('task_manage_etl') + ' Beta',
           icon: 'task'
         },
         {
@@ -101,8 +95,6 @@ export default {
           icon: 'operation-log'
         }
       ],
-      breadcrumbData: [],
-      hideBreadcrumb: false,
       dialogVisible: false,
       agentDownload: {
         visible: false,
@@ -112,6 +104,7 @@ export default {
     }
   },
   created() {
+    this.loadChat()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
@@ -128,37 +121,33 @@ export default {
       }
       return el
     })
-    this.getBreadcrumb(this.$route)
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)
     this.$root.$on('get-user', this.getUser)
   },
   mounted() {
+    //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
+    let user = window.__USER_INFO__
+    let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
+    if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
   },
   watch: {
     $route(route) {
       this.activeMenu = route.path
-      this.getBreadcrumb(route)
-    },
-    breadcrumbData: {
-      deep: true,
-      handler(v) {
-        let flag = false
-        v?.forEach(el => {
-          flag = !!el.hideTitle
-        })
-        this.hideBreadcrumb = flag
-      }
     }
   },
   methods: {
-    createConnection(type) {
+    createConnection(item) {
       this.dialogVisible = false
       buried('connectionCreate')
+      const { pdkHash } = item
+      let query = {
+        pdkHash
+      }
       this.$router.push({
-        name: 'ConnectionCreate',
-        query: { databaseType: type }
+        name: 'connectionCreate',
+        query
       })
     },
     showGuide() {
@@ -175,22 +164,6 @@ export default {
         return
       }
       this.$router.push(path)
-    },
-    getBreadcrumb(route) {
-      let matched = route.matched.slice(1)
-      let data = []
-      if (matched.length) {
-        data = matched.map(route => {
-          return {
-            name: route.meta?.title,
-            to: {
-              name: route.name === this.$route.name ? null : route.name
-            },
-            hideTitle: !!route.meta?.hideTitle
-          }
-        })
-      }
-      this.breadcrumbData = data
     },
     back() {
       this.$router.back()
@@ -223,6 +196,35 @@ export default {
         }
         this.checkDialogState()
       }
+    },
+    hideCustomTip() {
+      setTimeout(() => {
+        let tDom = document.getElementById('titlediv')
+        if (tDom) {
+          tDom.style.display = 'none'
+        } else {
+          this.hideCustomTip()
+        }
+      }, 5000)
+    },
+
+    loadChat() {
+      let $zoho = $zoho || {}
+      $zoho.salesiq = $zoho.salesiq || {
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        values: {},
+        ready: function () {}
+      }
+      window.$zoho = $zoho
+      let d = document
+      let s = d.createElement('script')
+      s.type = 'text/javascript'
+      s.id = 'zsiqscript'
+      s.defer = true
+      s.src = 'https://salesiq.zoho.com.cn/widget'
+      let t = d.getElementsByTagName('script')[0]
+      t.parentNode.insertBefore(s, t)
+      this.hideCustomTip()
     }
   }
 }

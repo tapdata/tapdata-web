@@ -6,9 +6,10 @@ import enLocale from 'element-ui/lib/locale/lang/en'
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 // 公共模块
-import { langs as formLangs } from '@tap/form'
-import { langs as componentLangs } from '@tap/component'
-import { langs as businessLangs } from '@tap/business'
+import formLangs from '@tap/form/src/locale'
+import componentLangs from '@tap/component/src/locale'
+import businessLangs from '@tap/business/src/locale'
+import dagLangs from '@tap/dag/src/locale'
 // apps语言文件
 import en from './langs/en'
 import zhCN from './langs/zh-CN'
@@ -32,6 +33,7 @@ i18n.merge(eleLangs)
 i18n.merge(formLangs)
 i18n.merge(componentLangs)
 i18n.merge(businessLangs)
+i18n.merge(dagLangs)
 // apps语言文件，最后覆盖
 i18n.merge(localLangs)
 

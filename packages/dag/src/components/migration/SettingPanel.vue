@@ -25,7 +25,9 @@ export default observer({
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
     this.getAllNode()
     let values = this.settings
+    values.isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       formScope: {
         checkName: value => {
           return new Promise(resolve => {
@@ -37,6 +39,10 @@ export default observer({
       schema: {
         type: 'object',
         properties: {
+          isDaas: {
+            type: 'string',
+            display: 'none'
+          },
           layout: {
             type: 'void',
             properties: {
@@ -169,10 +175,10 @@ export default observer({
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
                         'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
+                          dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
+                              display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}'
                             }
                           }
                         },
@@ -247,7 +253,7 @@ export default observer({
                           dependencies: ['type'],
                           fulfill: {
                             state: {
-                              visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
+                              visible: '{{$deps[0] !== "initial_sync" && $values.isDaas}}' // 只有增量或全量+增量支持
                             }
                           }
                         }
@@ -264,7 +270,7 @@ export default observer({
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$values.syncType === "migrate"}}'
+                              visible: '{{$values.syncType === "migrate" && $values.isDaas}}'
                             }
                           }
                         }
@@ -274,7 +280,15 @@ export default observer({
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
                       },
                       increHysteresisSpace: {
                         type: 'void',
@@ -304,6 +318,14 @@ export default observer({
                                   display: '{{$deps[0]?"visible":"hidden"}}'
                                 }
                               }
+                            }
+                          }
+                        },
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
                             }
                           }
                         }
@@ -341,6 +363,14 @@ export default observer({
                                   display: '{{$deps[0]?"visible":"hidden"}}'
                                 }
                               }
+                            }
+                          }
+                        },
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0]!=="initial_sync" ? "visible" : "hidden"}}'
                             }
                           }
                         }
@@ -403,7 +433,7 @@ export default observer({
 
     accessNodeProcessIdArr() {
       const set = this.allNodes
-        .filter(item => item.type === 'database')
+        .filter(item => item.type === 'database' || item.type === 'table')
         .reduce((set, item) => {
           item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
           return set
@@ -455,9 +485,14 @@ export default observer({
 
   methods: {
     handleCheckName: debounce(function (resolve, value) {
-      taskApi.checkName(value, this.settings.id || '').then(data => {
-        resolve(data)
-      })
+      taskApi
+        .checkName({
+          name: value,
+          id: this.settings.id || ''
+        })
+        .then(data => {
+          resolve(data)
+        })
     }, 500),
     // 获取所有节点
     getAllNode() {

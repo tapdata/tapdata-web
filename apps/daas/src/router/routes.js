@@ -55,6 +55,11 @@ const VerifyDetails = async () => {
   return VerifyDetails
 }
 
+const RelationTaskDetails = async () => {
+  const { RelationTaskDetails } = await import('@tap/business')
+  return RelationTaskDetails
+}
+
 export default [
   {
     path: '/login',
@@ -780,6 +785,18 @@ export default [
             name: 'userNotification',
             component: () => import('@/views/notification/UserNotification'),
             meta: { title: 'notify_user_notice', isNotAside: true }
+          },
+          {
+            path: 'alarmNotification',
+            name: 'alarmNotification',
+            component: () => import('@/views/notification/AlarmNotification'),
+            meta: { title: 'notify_system_notice', isNotAside: true }
+          },
+          {
+            path: 'systemAlarm',
+            name: 'systemAlarm',
+            component: () => import('@/views/notification/SystemAlarm'),
+            meta: { title: 'notify_user_notice', isNotAside: true }
           }
         ]
       },
@@ -797,6 +814,15 @@ export default [
         component: () => import('@/views/solutions/Index'),
         meta: {
           title: 'solution_name'
+        }
+      },
+      {
+        path: 'relationTask/detail/:id',
+        name: 'relationTaskDetail',
+        component: RelationTaskDetails,
+        meta: {
+          title: 'daas_router_routes_guanlianrenwuxiang',
+          hideTitle: true
         }
       }
     ]

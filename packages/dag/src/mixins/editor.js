@@ -19,10 +19,24 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
+import { observable } from '@formily/reactive'
 
 export default {
   directives: {
     resize
+  },
+
+  data() {
+    const dataflow = observable({
+      ...DEFAULT_SETTINGS,
+      id: '',
+      name: '',
+      status: ''
+    })
+
+    return {
+      dataflow
+    }
   },
 
   computed: {
@@ -61,6 +75,7 @@ export default {
   beforeDestroy() {
     this.destory = true
     this.stopDagWatch?.()
+    this.stopLoopTask()
   },
 
   methods: {
@@ -164,7 +179,7 @@ export default {
       if (!allowSource || (connectionType && !connectionType.includes('target'))) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianta', {
+            i18n.t('packages_dag_node_only_as_source', {
               val1: target.name
             })
           )
@@ -180,7 +195,7 @@ export default {
       if (!allowTarget || (connectionType && !connectionType.includes('source'))) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianso', {
+            i18n.t('packages_dag_node_only_as_target', {
               val1: source.name
             })
           )
@@ -251,7 +266,7 @@ export default {
     },
 
     checkGotoViewer() {
-      if (this.dataflow.disabledData.edit) {
+      if (this.dataflow.disabledData?.edit) {
         // 不可编辑
         this.gotoViewer()
         this.setStateReadonly(true)
@@ -259,9 +274,29 @@ export default {
       }
     },
 
-    async newDataflow() {
-      this.dataflow.name = i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
+    async newDataflow(name) {
+      this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
+    },
+
+    async makeTaskName(source) {
+      const taskNames = await taskApi.get({
+        filter: JSON.stringify({
+          fields: { name: 1 },
+          where: { name: { like: `^${source} +` } }
+        })
+      })
+      let def = 1
+      if (taskNames?.items.length) {
+        let arr = [0]
+        taskNames.items.forEach(item => {
+          const res = item.name.match(/\+(\d+)$/)
+          if (res && res[1]) arr.push(+res[1])
+        })
+        arr.sort()
+        def = arr.pop() + 1
+      }
+      return `${source} +${def}`
     },
 
     onNodeDragStart() {
@@ -519,6 +554,11 @@ export default {
       this.$set(this.dataflow, 'disabledData', data.btnDisabled)
       this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
       this.$set(this.dataflow, 'stopTime', data.stopTime)
+      this.$set(this.dataflow, 'startTime', data.startTime)
+      this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
+      this.$set(this.dataflow, 'pingTime', data.pingTime)
+      // 前端不关心的属性
+      this.dataflow.attrs = data.attrs
 
       if (!fromWS) {
         Object.keys(data).forEach(key => {
@@ -552,6 +592,7 @@ export default {
     },
 
     async initView(first) {
+      const { id } = this.$route.params
       this.stopDagWatch?.()
 
       if (this.$route.params.action === 'dataflowEdit') {
@@ -561,10 +602,11 @@ export default {
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
-            console.trace('updateDag') // eslint-disable-line
             this.updateDag()
           }
         )
+        this.startLoopTask(id)
+        this.initWS()
         // 从查看进入编辑，清掉轮询
         return Promise.resolve()
       }
@@ -574,17 +616,23 @@ export default {
         return Promise.resolve()
       }
 
-      const { id } = this.$route.params
       this.dataflow.id = id
 
       if (!first) {
         this.resetWorkspace()
         this.initNodeView()
       }
-      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer'].includes(this.$route.name)) {
+      const routeName = this.$route.name
+      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer', 'TaskMonitor'].includes(routeName)) {
         await this.openDataflow(id)
         // await this.startLoop()
         this.setStateReadonly(true)
+        if (
+          routeName === 'MigrateViewer' ||
+          (routeName === 'DataflowViewer' && ['renewing', 'renew_failed'].includes(this.dataflow.status))
+        ) {
+          this.handleConsoleAutoLoad()
+        }
       } else {
         if (id) {
           await this.openDataflow(id)
@@ -596,7 +644,6 @@ export default {
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
-            console.trace('updateDag') // eslint-disable-line
             this.updateDag()
           }
         )
@@ -777,6 +824,8 @@ export default {
       if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }
+
+      this.initWS()
 
       this.toggleConsole(true)
       this.$refs.console?.autoLoad() // 信息输出自动加载
@@ -959,13 +1008,20 @@ export default {
     },
 
     resetWorkspace() {
-      this.dataflow = merge(
+      console.log('resetWorkspace', this.dataflow) // eslint-disable-line
+      Object.assign(this.dataflow, {
+        ...DEFAULT_SETTINGS,
+        id: '',
+        name: ''
+      })
+      /*this.dataflow = merge(
         {
           id: '',
           name: ''
         },
         DEFAULT_SETTINGS
-      )
+      )*/
+      this.nameHasUpdated = false
       this.jsPlumbIns.reset()
       this.deselectAllNodes()
       this.reset()
@@ -1069,7 +1125,10 @@ export default {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', { val1: agent.hostName, val2: agent.ip })
+                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', {
+                  val1: agent.hostName,
+                  val2: agent.ip
+                })
               })
               isError = true
             }
@@ -1184,7 +1243,7 @@ export default {
             hasEnableDDLAndIncreasesql = true
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi')
+              msg: i18n.t('packages_dag_mixins_editor_not_support_ddl')
             })
           }
         }
@@ -1243,6 +1302,7 @@ export default {
       let lines = []
 
       if (document.getElementById('dfEditorContent').contains($elemBelow)) {
+        el.style.transition = `transform 0.3s`
         el.style.transform = `scale(${this.scale})`
         let nw = el.offsetWidth
         let nh = el.offsetHeight
@@ -1368,6 +1428,7 @@ export default {
           )
         }
       } else {
+        el.style.transition = `transform 0.3s`
         el.style.transform = 'scale(1)'
       }
 
@@ -1550,54 +1611,49 @@ export default {
     },
 
     handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
-      error = error.data
-      if (error?.code === 'Task.ListWarnMessage') {
+      if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []
-        if (error.data) {
-          const keys = Object.keys(error.data)
+        if (error.data?.data) {
+          const keys = Object.keys(error.data.data)
           keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: error.data[key][0].msg
+                msg: error.data.data[key][0].msg
               })
             }
           })
-          if (!names.length && keys.length) {
+          if (!names.length && keys.length && msg) {
             // 兼容错误信息id不是节点id的情况
-            const nodeMsg = error.data[keys[0]][0]?.msg
-            if (nodeMsg) {
-              this.$message.error(nodeMsg)
+            const msg = error.data.data[keys[0]][0]?.msg
+            if (msg) {
+              this.$message.error(msg)
               return
             }
-          } else if (msg) {
-            this.$message.error(msg)
           }
         }
-        // this.$message.error(`${this.$t('packages_dag_dag_save_fail')} ${names.join('，')}`)
       }
-      // else if (error?.data?.message) {
-      //   this.$message.error(error.data.message)
-      // } else {
-      //   // eslint-disable-next-line no-console
-      //   console.error(error)
-      //   this.$message.error(msg)
-      // }
     },
 
     async handleUpdateName(name) {
+      const oldName = this.dataflow.name
+      this.nameHasUpdated = true
       this.dataflow.name = name
-      taskApi
-        .patch({
-          id: this.dataflow.id,
-          name
-        })
-        .catch(this.handleError)
+      taskApi.rename(this.dataflow.id, name).then(
+        () => {
+          this.$message.success(this.$t('packages_dag_message_task_rename_success'))
+        },
+        error => {
+          this.dataflow.name = oldName
+          this.handleError(error)
+        }
+      )
     },
 
     handleEditFlush(result) {
+      console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
@@ -1630,7 +1686,7 @@ export default {
         if (!resFlag) {
           return
         }
-
+        this.initWS()
         this.dataflow.disabledData.stop = true
         await taskApi.stop(this.dataflow.id).catch(e => {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
@@ -1648,7 +1704,7 @@ export default {
         if (!resFlag) {
           return
         }
-
+        this.initWS()
         this.dataflow.disabledData.stop = true
         await taskApi.forceStop(this.dataflow.id)
         // this.startLoop(true)
@@ -1664,11 +1720,14 @@ export default {
           return
         }
         try {
+          this.initWS()
           this.dataflow.disabledData.reset = true
+          this.toggleConsole(true)
+          this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
+          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
         } catch (e) {
-          this.handleError(e, this.$t('packages_dag_message_resetFailed'))
+          this.handleError(e, this.$t('packages_dag_message_operation_error'))
         }
       })
     },
@@ -1727,18 +1786,56 @@ export default {
         if (!data) {
           this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           this.handlePageReturn()
+          return
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
+        this.startLoopTask(id)
         return data
       } catch (e) {
-        console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
+        this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
+        this.handlePageReturn()
       } finally {
         this.loading = false
       }
     },
 
+    startLoopTask(id) {
+      console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
+      clearTimeout(this.startLoopTaskTimer)
+      if (!id) return
+      this.startLoopTaskTimer = setTimeout(async () => {
+        const data = await taskApi.get(id)
+        if (data) {
+          // 同步下任务上的属性，重置后会改变
+          this.dataflow.attrs = data.attrs
+
+          makeStatusAndDisabled(data)
+          console.debug(
+            i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
+            data
+          ) // eslint-disable-line
+          if (this.dataflow.status !== data.status) {
+            console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
+            this.dataflow.status = data.status
+          }
+          // 需要实时更新的字段
+          this.dataflow.lastStartDate = data.lastStartDate
+          this.dataflow.pingTime = data.pingTime
+          if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
+          Object.assign(this.dataflow.disabledData, data.btnDisabled)
+
+          this.startLoopTask(id)
+        }
+      }, 8000)
+    },
+
+    stopLoopTask() {
+      clearTimeout(this.startLoopTaskTimer)
+    },
+
     initWS() {
+      console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
@@ -1748,6 +1845,18 @@ export default {
           opType: 'subscribe'
         }
       })
+    },
+
+    // ws 探活
+    wsAgentLive() {
+      this.$ws.send({
+        type: 'editFlush',
+        taskId: this.dataflow.id,
+        data: {
+          opType: 'subscribe'
+        }
+      })
+      console.log('wsAgentLive', this.$ws.ws) // eslint-disable-line
     },
 
     deleteSelectedConnections() {
@@ -1800,6 +1909,30 @@ export default {
       if (this.activeType === 'node') {
         this.deselectAllNodes()
         this.setActiveNode(null)
+      }
+    },
+
+    handleConsoleAutoLoad() {
+      this.toggleConsole(true)
+      const logType = ['renewing', 'renew_failed'].includes(this.dataflow.status) ? 'reset' : 'checkDag'
+      this.$refs.console?.startAuto(logType)
+    },
+
+    /**
+     * 防止node重叠
+     */
+    preventNodeOverlap(nodes) {
+      if (nodes?.length) {
+        const map = {}
+        const ifOverlap = nodes.some(node => {
+          const pos = node.attrs.position.join(',')
+          if (map[pos]) return true
+          map[pos] = true
+          return false
+        })
+        if (ifOverlap) {
+          this.handleAutoLayout()
+        }
       }
     }
   }

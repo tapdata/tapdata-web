@@ -8,7 +8,7 @@
       :dataflow="dataflow"
       :scale="scale"
       :showBottomPanel="showBottomPanel"
-      :hide-menus="['verify', 'operation']"
+      :hide-menus="['verify', 'operation', 'agent']"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -95,6 +95,7 @@
 
 <script>
 import i18n from '@tap/i18n'
+import { makeStatusAndDisabled } from '@tap/business'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -209,6 +210,10 @@ export default {
     }
   },
 
+  created() {
+    this.setStateReadonly(true)
+  },
+
   mounted() {
     this.setValidateLanguage()
     this.initNodeType()
@@ -216,8 +221,9 @@ export default {
       try {
         this.initCommand()
         this.initNodeView()
-        await this.initView(true)
-        // this.initWS()
+        const { id } = this.$route.params
+        await this.openDataflow(id)
+        this.setStateReadonly(true)
       } catch (error) {
         console.error(error) // eslint-disable-line
       }
@@ -572,7 +578,8 @@ export default {
               'snapshotRowTotal',
               'snapshotInsertRowTotal',
               'snapshotTableTotal',
-              'tableTotal'
+              'tableTotal',
+              'replicateLag'
             ],
             type: 'instant' // 瞬时值
           }
@@ -603,8 +610,6 @@ export default {
           const item = data[key]
           if (item.code === 'ok') {
             map[key]?.(data[key].data)
-          } else {
-            this.$message.error(item.error)
           }
         }
       })
@@ -746,6 +751,28 @@ export default {
         }
       })
       window.open(routeUrl.href)
+    },
+
+    async loadDataflow(id, params) {
+      this.loading = true
+      try {
+        const data = await taskApi.get(id, params)
+        if (!data) {
+          this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
+          this.handlePageReturn()
+          return
+        }
+        data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
+        makeStatusAndDisabled(data)
+        if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
+        this.$set(this, 'dataflow', data)
+        this.$set(this.dataflow, 'disabledData', data.btnDisabled)
+        return data
+      } catch (e) {
+        console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

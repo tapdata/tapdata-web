@@ -9,8 +9,8 @@ export default {
       'PlainArrow',
       {
         location: 1,
-        width: 10,
-        length: 10
+        width: 8,
+        length: 8
       }
     ]
   ],

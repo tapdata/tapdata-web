@@ -1,5 +1,5 @@
 <template>
-  <div class="py-6 pl-6 h-100">
+  <div class="p-4 h-100">
     <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"
@@ -15,7 +15,7 @@
         <TaskStatus :task="scope.row" />
       </template>
       <template slot="operation" slot-scope="scope">
-        <div class="operate-columns" v-if="dataflow.taskRecordId !== scope.row.taskRecordId">
+        <div class="operate-columns">
           <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
             $t('packages_dag_components_record_xiangqing')
           }}</ElButton>
@@ -31,6 +31,7 @@ import i18n from '@tap/i18n'
 import { VTable } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { TaskStatus } from '@tap/business'
+import { openUrl } from '@tap/shared'
 
 export default {
   name: 'Record',
@@ -102,9 +103,9 @@ export default {
 
     handleDetail(row = {}) {
       const { taskId, taskRecordId, startDate, endDate } = row
-      const start = new Date(startDate).getTime()
-      const end = new Date(endDate).getTime()
-      this.$router.push({
+      const start = startDate ? new Date(startDate).getTime() - 1000 : Date.now()
+      const end = endDate ? new Date(endDate).getTime() : Date.now()
+      const routeUrl = this.$router.resolve({
         name: 'MigrationMonitorViewer',
         params: {
           id: taskId
@@ -115,9 +116,8 @@ export default {
           end
         }
       })
+      openUrl(routeUrl.href)
     }
   }
 }
 </script>
-
-<style scoped></style>

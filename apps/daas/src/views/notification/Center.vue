@@ -10,18 +10,23 @@
           </li>
           <li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
             <i class="iconfont icon-lishijilu"></i>
-            <span class="content">{{ $t('notify_user_notice') }}</span>
+            <span class="content">{{$t('daas_notification_center_yonghucaozuo')}}</span>
           </li>
-          <!--          <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">-->
-          <!--            <i class="iconfont icon-lishijilu"></i>-->
-          <!--            <span class="content">系统告警</span>-->
-          <!--          </li>-->
+          <li :class="{ active: activePanel === 'alarmNotice' }" @click="selectPanel('alarmNotice')">
+            <i class="iconfont icon-lishijilu"></i>
+            <span class="content">{{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}</span>
+          </li>
+          <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">
+            <i class="iconfont icon-lishijilu"></i>
+            <span class="content">{{ $t('daas_notification_center_xitonggaojing') }}</span>
+          </li>
         </ul>
       </div>
       <div class="main-panel">
         <SystemNotification v-if="activePanel === 'system'"></SystemNotification>
         <UserNotification v-if="activePanel === 'user'"></UserNotification>
         <SystemAlarm v-if="activePanel === 'alarm'"></SystemAlarm>
+        <AlarmNotification v-if="activePanel === 'alarmNotice'"></AlarmNotification>
       </div>
     </div>
   </section>
@@ -30,6 +35,7 @@
 import SystemNotification from './SystemNotification'
 import UserNotification from './UserNotification'
 import SystemAlarm from './SystemAlarm'
+import AlarmNotification from './AlarmNotification'
 import { VIcon } from '@tap/component'
 import { mapState } from 'vuex'
 
@@ -38,6 +44,7 @@ export default {
     SystemNotification,
     UserNotification,
     SystemAlarm,
+    AlarmNotification,
     VIcon
   },
   data() {
@@ -50,7 +57,7 @@ export default {
   }),
   watch: {
     $route(route) {
-      this.activePanel = route.query.type || 'system'
+      this.activePanel = route.query.type || route.params.type || 'system'
     }
   },
   created() {
@@ -58,27 +65,43 @@ export default {
   },
   methods: {
     selectPanel(name) {
-      if (name === 'system') {
-        this.$router.push({
-          name: 'systemNotification',
-          query: {
-            type: name
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'userNotification',
-          query: {
-            type: name
-          }
-        })
+      switch (name) {
+        case 'system':
+          this.$router.push({
+            name: 'systemNotification',
+            query: {
+              type: name
+            }
+          })
+          break
+        case 'user':
+          this.$router.push({
+            name: 'userNotification',
+            query: {
+              type: name
+            }
+          })
+          break
+        case 'alarmNotice':
+          this.$router.push({
+            name: 'alarmNotification',
+            query: {
+              type: name
+            }
+          })
+          break
+        case 'alarm':
+          this.$router.push({
+            name: 'systemAlarm',
+            params: {
+              type: name
+            },
+            query: {
+              type: name
+            }
+          })
+          break
       }
-      // this.$router.replace({
-      //   name: 'notification',
-      //   query: {
-      //     type: name
-      //   }
-      // })
     }
   }
 }

@@ -21,7 +21,7 @@
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tongbuxinxi') }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tongbuxinxi') }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
             <VIcon @click.stop="toInitialList">menu-left</VIcon>
           </ElTooltip>
@@ -66,7 +66,12 @@
         <template v-if="dataflow.type !== 'initial_sync'">
           <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
             <span>{{ $t('packages_dag_monitor_leftsider_zuidazengliangyan') }}</span>
-            <span>{{ calcTimeUnit(initialData.replicateLag, 1) }}</span>
+            <span>{{
+              calcTimeUnit(initialData.replicateLag, 2, {
+                separator: ' ',
+                autoShowMs: true
+              })
+            }}</span>
           </div>
         </template>
       </div>
@@ -75,7 +80,7 @@
         class="info-box"
       >
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
           <ElTooltip
             v-if="verifyTotals.diffTables"
             transition="tooltip-fade-in"
@@ -109,53 +114,81 @@
       </div>
       <div class="info-box">
         <div class="flex justify-content-between mb-2">
-          <span class="fs-7 fw-bold font-color-normal">{{
+          <span class="fs-7 fw-sub font-color-normal">{{
             $t('packages_dag_components_nodedetaildialog_xingnengzhibiao')
           }}</span>
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in')">
             <VIcon @click.stop="toFullscreen">enlarge</VIcon>
           </ElTooltip>
         </div>
-        <div class="mb-2" style="height: 140px">
+        <div class="line-chart__box mb-2">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="$t('packages_dag_monitor_leftsider_qpSshizhi')"
+          >
+            <span>
+              <span class="mr-2 font-color-dark fw-sub">QPS（Q/S）</span>
+              <VIcon size="14" class="color-primary">info</VIcon>
+            </span>
+          </ElTooltip>
           <LineChart
             :data="qpsData"
             :color="['#26CF6C', '#2C65FF']"
-            title="QPS（Q/S）"
             :time-format="timeFormat"
-            class="h-100"
+            class="line-chart"
           ></LineChart>
         </div>
-        <div class="mb-2" style="height: 140px">
+        <div class="line-chart__box mb-2">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
+          >
+            <span>
+              <span class="mr-2 font-color-dark fw-sub">{{
+                $t('packages_dag_components_nodedetaildialog_zengliangyanchi')
+              }}</span>
+              <VIcon size="14" class="color-primary">info</VIcon>
+            </span>
+          </ElTooltip>
           <LineChart
             :data="replicateLagData"
-            :title="$t('packages_dag_components_nodedetaildialog_zengliangyanchi')"
             :color="['#2C65FF']"
             :time-format="timeFormat"
             time-value
-            class="h-100"
+            class="line-chart"
           ></LineChart>
         </div>
-        <div class="mb-2" style="height: 140px">
+        <!--指标不准确，暂时隐藏-->
+        <!--<div class="line-chart__box mb-2">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
+          >
+            <span>
+              <span class="mr-2 font-color-dark fw-sub">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
+              <VIcon size="14" class="color-primary">info</VIcon>
+            </span>
+          </ElTooltip>
           <LineChart
             :data="delayData"
-            :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
             :color="['#2C65FF']"
             :time-format="timeFormat"
             time-value
-            class="h-100"
+            class="line-chart"
           ></LineChart>
-        </div>
+        </div>-->
       </div>
-      <div class="info-box">
+      <div class="info-box py-2 px-4">
         <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">{{
-            $t('packages_dag_monitor_leftsider_renwushijiantong')
-          }}</span>
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwushijiantong') }}</span>
         </div>
         <div v-loading="!eventDataAll" class="flex">
           <div v-if="eventDataAll" class="w-50 pr-4">
             <div>{{ $t('packages_dag_components_eventchart_zongshuru') }}</div>
-            <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+            <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
               {{ eventDataAll.inputTotals.toLocaleString() }}
             </div>
             <div class="mb-2">
@@ -180,7 +213,7 @@
             <div class="output-item__divider"></div>
             <div class="ml-4">
               <div>{{ $t('packages_dag_components_eventchart_zongshuchu') }}</div>
-              <div class="mt-1 mb-2 font-color-normal fw-bold fs-3 din-font">
+              <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
                 {{ eventDataAll.outputTotals.toLocaleString() }}
               </div>
               <div class="mb-2">
@@ -201,6 +234,15 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="py-2 px-4">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tiaoshixinxi') }}</span>
+        </div>
+        <div class="mb-2 flex justify-content-between">
+          <span>{{ $t('packages_dag_monitor_topheader_renwuxintiaoshi') }}:</span>
+          <span>{{ heartbeatTime }}</span>
         </div>
       </div>
     </div>
@@ -246,8 +288,7 @@
 <script>
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'
-import TimeSelect from './components/TimeSelect'
-import { VIcon } from '@tap/component'
+import { VIcon, TimeSelect } from '@tap/component'
 import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
@@ -343,15 +384,14 @@ export default {
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        outputQps = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag
-      } = data
-      const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
+      const usedTime = Date.now() - snapshotStartAt
+      let time
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+        time = 0
+      } else {
+        time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+      }
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
@@ -390,6 +430,11 @@ export default {
     eventDataAll() {
       const data = this.quota.samples?.totalData?.[0]
       return this.getInputOutput(data)
+    },
+
+    heartbeatTime() {
+      const { pingTime, status } = this.dataflow
+      return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : '-'
     }
   },
 
@@ -437,8 +482,8 @@ export default {
       return result
     },
 
-    calcTimeUnit(val, fix) {
-      return val ? calcTimeUnit(val, fix) : '-'
+    calcTimeUnit() {
+      return typeof arguments[0] === 'number' ? calcTimeUnit(...arguments) : '-'
     }
   }
 }
@@ -454,6 +499,7 @@ export default {
 }
 
 .layout-sidebar.--left {
+  z-index: 11;
   overflow: hidden auto;
   will-change: width;
   $headerH: 34px;
@@ -525,5 +571,11 @@ export default {
 .sync-info-item__title {
   display: inline-block;
   width: 110px;
+}
+.line-chart__box {
+  .line-chart {
+    margin-top: 8px;
+    height: 110px;
+  }
 }
 </style>

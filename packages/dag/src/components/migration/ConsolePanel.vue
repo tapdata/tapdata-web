@@ -6,11 +6,11 @@
     class="console-panel border-top"
     :class="showConsole ? 'flex' : 'none'"
   >
-    <div class="console-panel-side border-end overflow-auto py-2">
+    <div class="console-panel-side border-end overflow-auto py-2 flex-shrink-0">
       <!--<div class="console-panel-header p-4">日志</div>-->
       <div class="step-list px-2">
         <div
-          class="step-list-header step-item px-2 mb-1 flex align-center"
+          class="step-list-header step-item px-2 mb-1 flex align-center font-color-dark"
           :class="{ active: !nodeId }"
           @click="toggleNode()"
         >
@@ -19,11 +19,11 @@
         <div
           v-for="node in nodeList"
           :key="node.id"
-          class="step-item px-2 mb-1 flex align-center"
+          class="step-item px-2 mb-1 flex align-center font-color-dark"
           :class="{ active: nodeId === node.id }"
           @click="toggleNode(node.id)"
         >
-          <NodeIcon :node="node" :size="20" />
+          <NodeIcon :node="node" :size="18" />
           <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
         </div>
       </div>
@@ -62,6 +62,10 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import dayjs from 'dayjs'
+import i18n from '@tap/i18n'
+import { deepCopy } from '@tap/shared'
+
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
 import { taskApi } from '@tap/api'
@@ -84,7 +88,8 @@ export default {
       nodeList: [],
       nodeId: '',
       ifAuto: false,
-      loading: false
+      loading: false,
+      type: ''
     }
   },
 
@@ -125,12 +130,17 @@ export default {
       const { taskId, nodeId } = this
       this.loading = true
       const data = await taskApi.getConsole({
-        taskId,
+        taskId: taskId || this.$route.params.id,
         nodeId,
+        type: this.type,
         grade: this.levels.join(',')
       })
+      const list = data.list?.filter(t => !t.describe) || []
+      const resetList = data.list?.filter(t => t.describe) || []
+      const modelList = data.modelList || []
       this.loading = false
-      this.logList = data.list?.concat(data?.modelList || []) || []
+      this.logList = list.concat(modelList).concat(this.getResetList(resetList)) || []
+
       const nodeList = []
       Object.keys(data.nodes).forEach(id => {
         let node = this.nodeById(id)
@@ -151,13 +161,15 @@ export default {
       }
     },
 
-    startAuto() {
+    startAuto(type) {
       this.ifAuto = true
+      this.type = type
       this.autoLoad()
     },
 
     stopAuto() {
       this.ifAuto = false
+      this.$emit('stopAuto')
       clearTimeout(this.timerId)
     },
 
@@ -165,6 +177,59 @@ export default {
       if (this.nodeId === nodeId) return
       this.nodeId = nodeId
       this.autoLoad()
+    },
+
+    getResetList(data) {
+      const I18N_MAP = {
+        task_reset_start: 'packages_dag_task_reset_start',
+        task_reset_pdk_node_external_resource: 'packages_dag_task_reset_pdk_node_external_resource',
+        task_reset_pdk_node_state: 'packages_dag_task_reset_pdk_node_state',
+        task_reset_merge_node: 'packages_dag_task_reset_merge_node',
+        task_reset_aggregate_node: 'packages_dag_task_reset_aggregate_node',
+        task_reset_custom_node: 'packages_dag_task_reset_custom_node',
+        task_reset_join_node: 'packages_dag_task_reset_join_node',
+        task_reset_end: 'packages_dag_task_reset_end',
+        unknown_error: 'packages_dag_unknown_error',
+        SUCCEED: 'packages_dag_console_log_status_success',
+        TASK_SUCCEED: 'packages_dag_console_log_status_success',
+        FAILED: 'packages_dag_console_log_status_fail',
+        TASK_FAILED: 'packages_dag_console_log_status_fail'
+      }
+      let result = []
+      data.forEach(el => {
+        el.st = el.status
+        el.status = i18n.t(I18N_MAP[el.status])
+        const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
+        const desc = i18n.t(I18N_MAP[el.describe], el)
+        let item = {}
+        item.id = el.id
+        item.grade = el.level
+        item.log = `${time} ${desc}`
+        if (['FAILED'].includes(el.st) && item.grade === 'ERROR') {
+          item.log += `\n${el.errorMsg}\n${el.errorStack}`
+        }
+        result.push(item)
+        if (el.describe === 'task_reset_end' && ['FAILED', 'TASK_FAILED'].includes(el.st)) {
+          let { resetTimes = 0, resetAllTimes = 0 } = el
+          const rest = resetAllTimes - resetTimes
+          if (rest) {
+            let startItem = deepCopy(item)
+            startItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
+            result.push(startItem)
+          }
+          if (resetTimes) {
+            let nthItem = deepCopy(item)
+            nthItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_nth', el)}`
+            result.push(nthItem)
+          }
+          if (resetAllTimes && resetAllTimes === resetTimes) {
+            let resultItem = deepCopy(item)
+            resultItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_result', el)}`
+            result.push(resultItem)
+          }
+        }
+      })
+      return result
     }
   }
 }
@@ -207,7 +272,7 @@ export default {
 
     &:hover,
     &.active {
-      background-color: #edf1f9;
+      background-color: rgba(229, 236, 255, 0.3);
     }
   }
 

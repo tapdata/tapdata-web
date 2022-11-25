@@ -32,20 +32,12 @@
       <VExpandXTransition>
         <LeftSider
           v-if="!stateIsReadonly"
-          v-show="showLeftSider"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
           @add-node="handleAddNode"
           @toggle-expand="handleToggleExpand"
         />
       </VExpandXTransition>
-      <div
-        v-if="!stateIsReadonly"
-        v-show="!showLeftSider"
-        class="sider-expand-wrap flex justify-center align-center rotate-180"
-      >
-        <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
-      </div>
       <section class="layout-wrap flex-1">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
@@ -90,7 +82,7 @@
       </section>
 
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar" />
     </section>
   </section>
 </template>
@@ -117,10 +109,8 @@ import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
-import { VExpandXTransition, VIcon, VEmpty } from '@tap/component'
-import { observable } from '@formily/reactive'
+import { VExpandXTransition, VEmpty } from '@tap/component'
 import ConsolePanel from './components/migration/ConsolePanel'
-import { DEFAULT_SETTINGS } from './constants'
 
 export default {
   name: 'MigrationEditor',
@@ -141,17 +131,10 @@ export default {
     TopHeader,
     DFNode,
     LeftSider,
-    VIcon,
     TransformLoading
   },
 
   data() {
-    const dataflow = observable({
-      ...DEFAULT_SETTINGS,
-      id: '',
-      name: ''
-    })
-
     return {
       NODE_PREFIX,
       status: 'draft',
@@ -173,29 +156,12 @@ export default {
         connectionData: {}
       },
 
-      dataflow,
-
       scale: 1,
       showLeftSider: true
     }
   },
 
-  computed: {
-    formScope() {
-      return {
-        ...this.scope,
-        $settings: this.dataflow
-      }
-    }
-  },
-
   watch: {
-    'allNodes.length'(v) {
-      if (v === 0) {
-        this.showLeftSider = true
-      }
-    },
-
     'dataflow.status'(v) {
       console.log(i18n.t('packages_dag_src_migrationeditor_zhuangtaijianting'), v) // eslint-disable-line
       if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
@@ -206,6 +172,9 @@ export default {
         } else {
           this.setStateReadonly(false)
         }
+      }
+      if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) && ['renewing', 'renew_failed'].includes(v)) {
+        this.handleConsoleAutoLoad()
       }
     }
   },
@@ -271,6 +240,7 @@ export default {
         await this.$nextTick()
         this.$refs.paperScroller.autoResizePaper()
         this.handleCenterContent()
+        this.preventNodeOverlap(dag.nodes)
       }
     },
 
@@ -301,91 +271,10 @@ export default {
       }
     },
 
-    /*async validate() {
-      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
-
-      // 至少两个数据节点
-      const dataNodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
-      // if (dataNodes.length < 2) {
-      //   return this.$t('packages_dag_editor_cell_validate_none_data_node')
-      // }
-
-      await this.validateAllNodes()
-
-      const sourceMap = {},
-        targetMap = {},
-        edges = this.allEdges
-      edges.forEach(item => {
-        let _source = sourceMap[item.source]
-        let _target = targetMap[item.target]
-
-        if (!_source) {
-          sourceMap[item.source] = [item]
-        } else {
-          _source.push(item)
-        }
-
-        if (!_target) {
-          targetMap[item.target] = [item]
-        } else {
-          _target.push(item)
-        }
-      })
-
-      let someErrorMsg = ''
-      // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some(node => {
-        const { id } = node
-        const minInputs = node.__Ctor.minInputs ?? 1
-        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
-        const inputNum = node.$inputs.length
-        const outputNum = node.$outputs.length
-
-        if (!sourceMap[id] && !targetMap[id]) {
-          // 存在没有连线的节点
-          someErrorMsg = `「 ${node.name} 」没有任何连线`
-          return true
-        }
-
-        if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
-          return true
-        }
-
-        // 非数据节点至少有一个目标
-        if (outputNum < minOutputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minOutputs}个目标节点`
-          return true
-        }
-
-        if (this.hasNodeError(id)) {
-          someErrorMsg = `「 ${node.name} 」配置异常`
-          return true
-        }
-      })
-
-      if (someErrorMsg) return someErrorMsg
-
-      someErrorMsg = this.validateAgent(dataNodes)
-
-      if (someErrorMsg) return someErrorMsg
-
-      someErrorMsg = this.validateLink(dataNodes)
-
-      if (someErrorMsg) return someErrorMsg
-
-      // 检查链路的末尾节点类型是否是表节点
-      // const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
-      // const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      // if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
-
-      return null
-    },*/
-
     async saveAsNewDataflow() {
       this.isSaving = true
+      const data = this.getDataflowDataToSave()
       try {
-        const data = this.getDataflowDataToSave()
         const dataflow = await taskApi.post(data)
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
@@ -398,7 +287,13 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
-        this.handleError(e)
+
+        if (e?.data?.code === 'Task.RepeatName') {
+          const newName = await this.makeTaskName(data.name)
+          this.newDataflow(newName)
+        } else {
+          this.handleError(e)
+        }
       }
       this.isSaving = false
     },
@@ -423,9 +318,29 @@ export default {
     },
 
     handlePageReturn() {
-      this.$router.push({
-        name: 'migrateList'
-      })
+      if (!this.allNodes.length && !this.nameHasUpdated && this.$store.state.dataflow.taskId) {
+        this.$confirm(
+          this.$t('packages_dag_page_return_confirm_content'),
+          this.$t('packages_dag_page_return_confirm_title'),
+          {
+            type: 'warning',
+            closeOnClickModal: false,
+            confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
+            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
+          }
+        ).then(res => {
+          if (res) {
+            taskApi.delete(this.dataflow.id)
+          }
+          this.$router.push({
+            name: 'migrateList'
+          })
+        })
+      } else {
+        this.$router.push({
+          name: 'migrateList'
+        })
+      }
     },
 
     handleEdit() {
@@ -451,6 +366,7 @@ export default {
       this.isSaving = true
       const errorMsg = await this.validate()
       if (errorMsg) {
+        if (this.destory) return
         this.$message.error(errorMsg)
         this.isSaving = false
         return
@@ -464,6 +380,7 @@ export default {
       let isOk = false
 
       try {
+        this.initWS()
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
@@ -475,7 +392,7 @@ export default {
       }
       this.isSaving = false
       this.toggleConsole(true)
-      this.$refs.console?.startAuto() // 信息输出自动加载
+      this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
       if (!needStart) {
         // this.$refs.console?.stopAuto() // 再load一下信息输出，并且停掉计时器
         // this.$refs.console?.loadData() // 再load一下信息输出，并且停掉计时器
@@ -494,6 +411,9 @@ export default {
             this.gotoViewer(false)
           }
           // this.unWatchStatus()
+        }
+        if (['MigrateViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
+          this.handleConsoleAutoLoad()
         }
       })
       const flag = await this.save(true)

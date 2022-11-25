@@ -34,11 +34,14 @@ Vue.use(FormBuilder)
 Vue.component(VIcon.name, VIcon)
 
 window._TAPDATA_OPTIONS_ = {
-  logoUrl: require('@/assets/images/logo.png'),
-  loginUrl: require('@/assets/images/login-bg.png'),
-  version: 'DAAS_BUILD_NUMBER',
-  loadingImg: require('@/assets/icons/loading.svg')
+  version: process.env.VUE_APP_VERSION,
+  logoUrl: require(`@/assets/images/${process.env.VUE_APP_LOGO_IMG}`),
+  loginUrl: require(`@/assets/images/${process.env.VUE_APP_LOGIN_IMG}`),
+  loadingImg: require(`@/assets/icons/${process.env.VUE_APP_LOADING_IMG}`),
+  logoWidth: process.env.VUE_APP_LOGO_WIDTH,
+  loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE
 }
+
 window.getSettingByKey = key => {
   let value = ''
 
@@ -77,12 +80,18 @@ if (IS_IFRAME) {
   sessionStorage.setItem('IS_IFRAME', IS_IFRAME)
 }
 const TOKEN = getUrlSearch('token')
+const URL_LANG = getUrlSearch('lang')
+
+// 西工大的case
+;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
+
 if (TOKEN) {
-  Cookie.set('token', TOKEN)
+  Cookie.set('access_token', TOKEN)
   // eslint-disable-next-line
-  console.log('保存token到cookie：', TOKEN)
+  console.log(i18n.t('daas_src_main_baocuntok'), TOKEN)
 }
-let token = Cookie.get('token')
+
+let token = Cookie.get('access_token')
 
 let init = settings => {
   window.__settings__ = settings
@@ -96,7 +105,7 @@ let init = settings => {
   if (loc.protocol === 'https:') {
     wsUrl = 'wss:'
   }
-  wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent?access_token=${token}`
+  wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
   window.App = new Vue({
     el: '#app',
@@ -104,7 +113,12 @@ let init = settings => {
     router: getRouter(i18n),
     store,
     wsOptions: {
-      url: wsUrl
+      url: wsUrl,
+      getQuery() {
+        return {
+          access_token: Cookie.get('access_token')
+        }
+      }
     },
     render: h => h(App)
   })
@@ -128,7 +142,7 @@ settingsApi
   })
   .catch(err => {
     // eslint-disable-next-line
-    console.log('请求全局配置(settings)失败: ' + err)
+    console.log(i18n.t('daas_src_main_qingqiuquanjupei') + err)
   })
 //获取全局项目设置（OEM信息）
 

@@ -12,7 +12,7 @@
             class="input-with"
             maxlength="100"
           >
-            <el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
+            <el-select v-model="meta_type" slot="prepend" :placeholder="$t('common_placeholder_select')" class="input-with-select">
               <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
               <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
             </el-select>
@@ -37,7 +37,7 @@
               maxlength="100"
               @keyup.native.13="handleSearch('')"
             >
-              <el-select v-model="meta_type" slot="prepend" placeholder="请选择" class="input-with-select">
+              <el-select v-model="meta_type" slot="prepend" :placeholder="$t('common_placeholder_select')" class="input-with-select">
                 <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
                 <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
               </el-select>
@@ -61,7 +61,7 @@
                   </div>
                   <div class="info-box">
                     <span class="title" v-html="item.table.name"></span>
-                    <span class="title" v-if="item.table.original_name">( 原表名:</span>
+                    <span class="title" v-if="item.table.original_name">{{$t('daas_metadata_search_yuanbiaoming')}}</span>
                     <span class="title" v-html="item.table.original_name"></span>
                     <span class="title" v-if="item.table.original_name"> )</span>
                     <div class="desc" v-html="item.table.comment"></div>
@@ -77,7 +77,7 @@
                     </div>
                     <div class="info-box">
                       <span class="title" v-html="filed.field_name"></span>
-                      <span class="title" v-if="filed.original_name">( 原表名:</span>
+                      <span class="title" v-if="filed.original_name">{{$t('daas_metadata_search_yuanbiaoming')}}</span>
                       <span class="title" v-html="filed.original_name"></span>
                       <span class="title" v-if="filed.original_name"> )</span>
                       <div class="desc" v-html="filed.comment"></div>

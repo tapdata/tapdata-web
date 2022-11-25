@@ -21,7 +21,7 @@
         </g>
       </svg>
     </div>
-    <p class="empty-desc">暂无数据</p>
+    <p class="empty-desc">{{ $t('daas_deletefile_emptyitem_zanwushuju') }}</p>
   </div>
 </template>
 

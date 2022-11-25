@@ -1,8 +1,6 @@
 <template>
   <div class="page">
-    <div class="page-image">
-      <!-- <img :src="logoUrl" /> -->
-    </div>
+    <div class="page-image" :style="loginImageStyle"></div>
 
     <div class="page-main">
       <div class="page-main-box">
@@ -24,11 +22,20 @@ export default {
   name: 'LoginHeader',
   data() {
     return {
-      logoUrl: window._TAPDATA_OPTIONS_.loginUrl,
       languages: langMenu,
       lang: getCurrentLanguage()
     }
   },
+
+  computed: {
+    loginImageStyle() {
+      return {
+        background: `url('${window._TAPDATA_OPTIONS_.loginUrl}') left 0 no-repeat`,
+        backgroundSize: window._TAPDATA_OPTIONS_.loginSize || 'cover'
+      }
+    }
+  },
+
   methods: {
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
@@ -45,7 +52,6 @@ export default {
   height: 100%;
   .page-image {
     flex: 1;
-    background: url('../../assets/images/login-bg.png') no-repeat left 0;
     background-size: cover;
     overflow: hidden;
     img {

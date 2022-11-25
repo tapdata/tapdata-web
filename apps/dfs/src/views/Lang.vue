@@ -27,7 +27,7 @@
         <ElButton type="primary" @click="exportModifyEn">{{ $t('button_export') + $t('lang_en') }}</ElButton>
       </div>
     </div>
-    <TableList ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
+    <VTable ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
           <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
@@ -39,7 +39,7 @@
         </div>
         <div v-else>{{ scope.row[scope.prop] }}</div>
       </template>
-    </TableList>
+    </VTable>
     <ElDialog width="435px" append-to-body title="edit" :close-on-click-modal="false" :visible.sync="dialog.visible">
       <ElForm :model="dialog.form" label-width="120px" @submit.native.prevent>
         <ElFormItem label="key">
@@ -76,8 +76,7 @@
 <script>
 import i18n from '@/i18n'
 
-import { FilterBar } from '@tap/component'
-import TableList from '@/components/TableList'
+import { FilterBar, VTable } from '@tap/component'
 import zhCN from '@/i18n/langs/zh-CN'
 import enSource from '@/i18n/langs/en'
 import enModify from '@/i18n/modify/en'
@@ -88,7 +87,7 @@ import { downloadBlob } from '@/util'
 
 export default {
   name: 'Lang',
-  components: { TableList, FilterBar, UploadFile },
+  components: { VTable, FilterBar, UploadFile },
   data() {
     let langMap = {
       'zh-CN': i18n.t('lang_zh_cn'),

@@ -6,13 +6,33 @@
       </template>
       <div slot="operation">
         <ElButton class="btn btn-create" type="primary" size="mini" @click="openDialog()">
-          <span>创建外存</span>
+          <span>{{ $t('daas_external_storage_list_chuangjianwaicun') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn show-overflow-tooltip min-width="180" label="外存名称" prop="name"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip min-width="100" label="外存类型" prop="typeFmt"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip min-width="300" label="外存信息" prop="uri"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip min-width="120" label="创建时间" prop="createTimeFmt"></ElTableColumn>
+      <ElTableColumn
+        show-overflow-tooltip
+        min-width="180"
+        :label="$t('daas_external_storage_list_waicunmingcheng')"
+        prop="name"
+      ></ElTableColumn>
+      <ElTableColumn
+        show-overflow-tooltip
+        min-width="100"
+        :label="$t('daas_external_storage_list_waicunleixing')"
+        prop="typeFmt"
+      ></ElTableColumn>
+      <ElTableColumn
+        show-overflow-tooltip
+        min-width="300"
+        :label="$t('daas_external_storage_list_waicunxinxi')"
+        prop="uri"
+      ></ElTableColumn>
+      <ElTableColumn
+        show-overflow-tooltip
+        min-width="120"
+        :label="$t('column_create_time')"
+        prop="createTimeFmt"
+      ></ElTableColumn>
       <ElTableColumn width="120" :label="$t('column_operation')">
         <template #default="{ row }">
           <!-- <ElButton type="text" :disabled="!row.canEdit" @click="openDialog(row)">{{ $t('button_edit') }}</ElButton>
@@ -21,24 +41,34 @@
         </template>
       </ElTableColumn>
     </TablePage>
-    <ElDialog append-to-body :visible.sync="dialogVisible" :title="form.id ? '编辑外存' : '创建外存'">
+    <ElDialog
+      append-to-body
+      :visible.sync="dialogVisible"
+      :title="
+        form.id ? $t('daas_external_storage_list_bianjiwaicun') : $t('daas_external_storage_list_chuangjianwaicun')
+      "
+    >
       <ElForm class="" ref="form" label-position="left" label-width="120px" size="mini" :model="form" :rules="rules">
-        <ElFormItem label="外存名称" prop="name">
+        <ElFormItem :label="$t('daas_external_storage_list_waicunmingcheng')" prop="name">
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
-        <ElFormItem required label="外存类型">
+        <ElFormItem required :label="$t('daas_external_storage_list_waicunleixing')">
           <ElSelect v-model="form.type">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem v-if="form.type === 'mongodb'" label="外存表名" prop="table">
+        <ElFormItem
+          v-if="form.type === 'mongodb'"
+          :label="$t('daas_external_storage_list_waicunbiaoming')"
+          prop="table"
+        >
           <ElInput v-model="form.table"></ElInput>
         </ElFormItem>
-        <ElFormItem label="存储路径" prop="uri">
+        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
           <ElInput v-model="form.uri" type="textarea" resize="none"></ElInput>
         </ElFormItem>
-        <ElFormItem label="设为默认">
+        <ElFormItem :label="$t('daas_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
         </ElFormItem>
       </ElForm>
@@ -50,6 +80,8 @@
   </section>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
 
@@ -62,7 +94,7 @@ export default {
   data() {
     var checkTable = (rule, value, callback) => {
       if (this.form.type === 'mongodb' && value === '') {
-        callback(new Error('请输入外存表名称'))
+        callback(new Error(i18n.t('daas_external_storage_list_qingshuruwaicun2')))
       } else {
         callback()
       }
@@ -83,8 +115,8 @@ export default {
       dialogVisible: false,
       form: {},
       rules: {
-        name: [{ required: true, message: '请输入外存名称', trigger: 'blur' }],
-        uri: [{ required: true, message: '请输入存储路径', trigger: 'blur' }],
+        name: [{ required: true, message: i18n.t('daas_external_storage_list_qingshuruwaicun'), trigger: 'blur' }],
+        uri: [{ required: true, message: i18n.t('daas_external_storage_list_qingshurucunchu'), trigger: 'blur' }],
         table: [{ validator: checkTable, trigger: 'blur' }]
       }
     }
@@ -105,7 +137,7 @@ export default {
   },
   methods: {
     getFilterItems() {
-      let typeOptions = [{ label: '全部', value: '' }]
+      let typeOptions = [{ label: i18n.t('select_option_all'), value: '' }]
       for (const key in this.typeMapping) {
         const label = this.typeMapping[key]
         typeOptions.push({
@@ -121,7 +153,7 @@ export default {
           items: typeOptions
         },
         {
-          placeholder: '请输入名称',
+          placeholder: i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng'),
           key: 'keyword', //输入搜索名称
           type: 'input'
         }
@@ -202,7 +234,7 @@ export default {
       })
     },
     async remove(row) {
-      const flag = await this.$confirm('确认删除外存？', '', {
+      const flag = await this.$confirm(i18n.t('daas_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
         showClose: false
       })

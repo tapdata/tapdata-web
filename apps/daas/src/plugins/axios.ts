@@ -70,7 +70,8 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
         Message.error({ message: i18n.t('message_5xx').toString() })
         break
     }
-  } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error' || !window.navigator.onLine) {
+  } else if (error.code === 'ECONNABORTED' /* || error.message === 'Network Error' || !window.navigator.onLine*/) {
+    // 这两种情况已在ws-client.js里监听 👉 error.message === 'Network Error' || !window.navigator.onLine
     Message.error({
       message: i18n.t('message_network_unconnected').toString()
     })
@@ -88,7 +89,7 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
       encoder: str => window.encodeURIComponent(str)
     })
   }
-  const accessToken = Cookie.get('token')
+  const accessToken = Cookie.get('access_token')
   if (accessToken) {
     if (~config.url.indexOf('?')) {
       if (!~config.url.indexOf('access_token')) {

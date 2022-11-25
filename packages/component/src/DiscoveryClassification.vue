@@ -24,7 +24,6 @@
         node-key="id"
         highlight-current
         :props="props"
-        :expand-on-click-node="false"
         :data="treeData"
         :default-expanded-keys="expandedKeys"
         :filter-node-method="filterNode"
@@ -34,9 +33,11 @@
       >
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <span class="table-label"
-            >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
-          >
+          <el-tooltip :content="`${data.value} (${data.objCount})`" placement="bottom-start" :open-delay="400">
+            <span class="table-label"
+              >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
+            >
+          </el-tooltip>
           <span class="btn-menu" v-if="!data.readOnly">
             <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
               ><VIcon size="12" class="color-primary">add</VIcon></ElButton
@@ -106,6 +107,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 
@@ -200,10 +203,8 @@ export default {
     },
     getData(cb) {
       let where = {}
-      if (this.types.length) {
-        where.item_type = {
-          $in: this.types
-        }
+      where.item_type = {
+        $nin: ['database', 'dataflow', 'api']
       }
       let filter = {
         where,
@@ -315,7 +316,7 @@ export default {
           } else {
             //默认目录国际化
             if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
-              it.value = '默认目录（技术）'
+              it.value = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
             }
             nodes.push(it)
           }
@@ -606,23 +607,6 @@ export default {
       align-items: center;
       justify-content: space-between;
       margin-bottom: 3px;
-      // .iconfont {
-      // 	color: #c0c4cc;
-      // 	font-size: 12px;
-      // 	background-color: map-get($bgColor, white);
-      // 	border: 1px solid #dedee4;
-      // 	display: flex;
-      // 	justify-content: center;
-      // 	align-items: center;
-      // 	height: 66%;
-      // 	padding: 0 4px;
-      // 	padding-right: 6px;
-      // 	padding-left: 5px;
-      // 	margin-top: 0px;
-      // 	border-top-width: 1px;
-      // 	border-radius: 3px;
-      // 	cursor: pointer;
-      // }
     }
   }
   .tree-block {
@@ -681,9 +665,6 @@ export default {
   .el-input .el-input__inner {
     height: 24px;
     line-height: 24px;
-  }
-  .el-input__suffix {
-    top: 2px;
   }
 }
 .classification-tree {

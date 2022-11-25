@@ -79,6 +79,7 @@
             @hide="nodeMenu.typeId = ''"
           ></NodePopover>
         </main>
+        <ConsolePanel ref="console"></ConsolePanel>
       </section>
       <!--配置面板-->
       <ConfigPanel ref="configPanel" :scope="scope" :settings="dataflow" show-schema-panel />
@@ -110,9 +111,8 @@ import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
-import { DEFAULT_SETTINGS } from './constants'
 import { mapMutations } from 'vuex'
-import { observable } from '@formily/reactive'
+import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
   name: 'Editor',
@@ -127,16 +127,11 @@ export default {
     TopHeader,
     DFNode,
     LeftSidebar,
-    TransformLoading
+    TransformLoading,
+    ConsolePanel
   },
 
   data() {
-    const dataflow = observable({
-      ...DEFAULT_SETTINGS,
-      id: '',
-      name: ''
-    })
-
     return {
       NODE_PREFIX,
       status: 'draft',
@@ -158,18 +153,29 @@ export default {
         connectionData: {}
       },
 
-      dataflow,
-
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       scale: 1
     }
   },
 
-  async created() {
+  watch: {
+    'dataflow.status'(v) {
+      if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
+        this.handleConsoleAutoLoad()
+      }
+    }
+  },
+
+  // created 换成 mounted，等上一个实例destroy走完
+  async mounted() {
     if (this.$route.name === 'DataflowViewer') {
       this.setStateReadonly(true)
     }
+    // 设置schema的校验语言
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
     await this.initPdkProperties()
+    // 初始化所有节点类型
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -195,27 +201,19 @@ export default {
     ...mapMutations('dataflow', ['setPdkPropertiesMap']),
 
     async initNodeType() {
-      this.addProcessorNode([
+      let nodes = [
         {
           name: 'JavaScript',
           type: 'js_processor'
         },
         {
-          name: i18n.t('packages_dag_src_editor_juhe'),
-          type: 'aggregation_processor'
-        },
-        {
           name: 'Row Filter',
           type: 'row_filter_processor'
         },
-        {
-          name: i18n.t('packages_dag_dag_connection'),
-          type: 'join_processor'
-        },
-        {
-          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
-        },
+        // {
+        //   name: i18n.t('packages_dag_src_editor_juhe'),
+        //   type: 'aggregation_processor' //聚合节点
+        // }
         {
           name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
           type: 'field_calc_processor'
@@ -232,7 +230,22 @@ export default {
           name: i18n.t('packages_dag_src_editor_zengshanziduan'),
           type: 'field_add_del_processor'
         }
-      ])
+      ]
+      //仅企业版有的节点
+      if (this.isDaas) {
+        let isDaasNode = [
+          {
+            name: i18n.t('packages_dag_dag_connection'),
+            type: 'join_processor' //join 节点
+          },
+          {
+            name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+            type: 'merge_table_processor'
+          }
+        ]
+        nodes = [...isDaasNode, ...nodes]
+      }
+      this.addProcessorNode(nodes)
       this.addResourceIns(allResourceIns)
       await this.loadCustomNode()
     },
@@ -241,6 +254,7 @@ export default {
       const data = await this.loadDataflow(id)
 
       if (data) {
+        if (this.destory) return
         const { dag } = data
         this.setStateReadonly(this.$route.name === 'DataflowViewer' ? true : this.dataflow.disabledData.edit)
         this.setTaskId(data.id)
@@ -254,6 +268,7 @@ export default {
         this.$refs.paperScroller.initVisibleArea()
         this.$refs.paperScroller.autoResizePaper()
         this.handleCenterContent()
+        this.preventNodeOverlap(dag.nodes)
       }
     },
 
@@ -280,151 +295,6 @@ export default {
       }
     },
 
-    /*async validate() {
-      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
-
-      // 至少两个数据节点
-      const tableNode = this.allNodes.filter(node => node.type === 'table')
-      if (tableNode.length < 2) {
-        return this.$t('packages_dag_editor_cell_validate_none_data_node')
-      }
-
-      await this.validateAllNodes()
-
-      const sourceMap = {},
-        targetMap = {},
-        edges = this.allEdges
-      edges.forEach(item => {
-        let _source = sourceMap[item.source]
-        let _target = targetMap[item.target]
-
-        if (!_source) {
-          sourceMap[item.source] = [item]
-        } else {
-          _source.push(item)
-        }
-
-        if (!_target) {
-          targetMap[item.target] = [item]
-        } else {
-          _target.push(item)
-        }
-      })
-
-      let someErrorMsg = ''
-      // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some(node => {
-        const { id } = node
-        const minInputs = node.__Ctor.minInputs ?? 1 // 没有设置minInputs则缺省为1
-        const inputNum = targetMap[id]?.length ?? 0
-
-        if (!sourceMap[id] && !targetMap[id]) {
-          // 存在没有连线的节点
-          someErrorMsg = `「 ${node.name} 」没有任何连线`
-          return true
-        }
-
-        if (inputNum < minInputs) {
-          someErrorMsg = `「 ${node.name} 」至少需要${minInputs}个源节点`
-          return true
-        }
-
-        if (this.hasNodeError(id)) {
-          someErrorMsg = `「 ${node.name} 」配置异常`
-          return true
-        }
-      })
-
-      const nodeNames = []
-      let typeName = ''
-      // 根据任务类型(全量、增量),检查不支持此类型的节点
-      // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
-      if (this.dataflow.type === 'initial_sync+cdc') {
-        typeName = '全量+增量'
-        tableNode.forEach(node => {
-          if (
-            sourceMap[node.id] &&
-            (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
-          ) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'initial_sync') {
-        typeName = '全量'
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      } else if (this.dataflow.type === 'cdc') {
-        typeName = '增量'
-        tableNode.forEach(node => {
-          if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
-            nodeNames.push(node.name)
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: '该节点不支持' + typeName
-            })
-          }
-        })
-      }
-
-      if (nodeNames.length) {
-        someErrorMsg = `存在不支持${typeName}的节点`
-      }
-
-      const accessNodeProcessIdArr = [
-        ...tableNode.reduce((set, item) => {
-          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
-          return set
-        }, new Set())
-      ]
-
-      if (accessNodeProcessIdArr.length > 1) {
-        // 所属agent节点冲突
-        const chooseId = this.dataflow.accessNodeProcessId
-
-        if (!chooseId) {
-          // someErrorMsg = `请配置任务运行agent`
-          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
-        } else {
-          let isError = false
-          const agent = this.scope.$agentMap[chooseId]
-          tableNode.forEach(node => {
-            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
-              this.setNodeErrorMsg({
-                id: node.id,
-                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
-              })
-              isError = true
-            }
-          })
-          isError && (someErrorMsg = `所属agent节点冲突`)
-        }
-      } else if (accessNodeProcessIdArr.length === 1) {
-        // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
-        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
-      }
-
-      if (someErrorMsg) return someErrorMsg
-
-      // 检查链路的末尾节点类型是否是表节点
-      const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
-      const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
-
-      return null
-    },*/
-
     // 循环检查检查链路的末尾节点类型是否是表节点
     isEndOfTable(source, sourceMap, nodeMap) {
       if (!sourceMap[source.id]) {
@@ -446,6 +316,7 @@ export default {
 
       const errorMsg = await this.validate()
       if (errorMsg) {
+        if (this.destory) return
         this.$message.error(errorMsg)
         this.isSaving = false
         return
@@ -458,23 +329,28 @@ export default {
       const data = this.getDataflowDataToSave()
 
       try {
+        this.initWS()
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
+        // this.toggleConsole(true)
+        // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return true
       } catch (e) {
         this.isSaving = false
         this.handleError(e)
+        this.toggleConsole(true)
+        this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return false
       }
     },
 
     async saveAsNewDataflow() {
       this.isSaving = true
+      const data = this.getDataflowDataToSave()
       try {
-        const data = this.getDataflowDataToSave()
         const dataflow = await taskApi.post(data)
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
@@ -490,7 +366,12 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
-        this.handleError(e)
+        if (e?.data?.code === 'Task.RepeatName') {
+          const newName = await this.makeTaskName(data.name)
+          this.newDataflow(newName)
+        } else {
+          this.handleError(e)
+        }
       }
       this.isSaving = false
     },
@@ -623,45 +504,30 @@ export default {
       }
     },*/
 
-    handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
-      if (error?.data?.code === 'Task.ListWarnMessage') {
-        let names = []
-        if (error.data?.data) {
-          const keys = Object.keys(error.data.data)
-          keys.forEach(key => {
-            const node = this.$store.state.dataflow.NodeMap[key]
-            if (node) {
-              names.push(node.name)
-              this.setNodeErrorMsg({
-                id: node.id,
-                msg: error.data.data[key][0].msg
-              })
-            }
-          })
-          if (!names.length && keys.length && msg) {
-            // 兼容错误信息id不是节点id的情况
-            const msg = error.data.data[keys[0]][0]?.msg
-            if (msg) {
-              this.$message.error(msg)
-              return
-            }
-          }
-        }
-        // this.$message.error(`${this.$t('packages_dag_dag_save_fail')} ${names.join('，')}`)
-      }
-      // else if (error?.data?.message) {
-      //   this.$message.error(error.data.message)
-      // } else {
-      //   // eslint-disable-next-line no-console
-      //   console.error(error)
-      //   this.$message.error(msg)
-      // }
-    },
-
     handlePageReturn() {
-      this.$router.push({
-        name: 'dataflowList'
-      })
+      if (!this.allNodes.length && !this.nameHasUpdated && this.$store.state.dataflow.taskId) {
+        this.$confirm(
+          this.$t('packages_dag_page_return_confirm_content'),
+          this.$t('packages_dag_page_return_confirm_title'),
+          {
+            type: 'warning',
+            closeOnClickModal: false,
+            confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
+            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
+          }
+        ).then(res => {
+          if (res) {
+            taskApi.delete(this.dataflow.id)
+          }
+          this.$router.push({
+            name: 'dataflowList'
+          })
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflowList'
+        })
+      }
     },
 
     handleEdit() {

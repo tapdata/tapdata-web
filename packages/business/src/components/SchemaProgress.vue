@@ -1,14 +1,17 @@
 <template>
   <div class="schema-progress-wrapper flex align-items-center">
-    <i
-      class="connections-schema-status__icon mr-1"
-      :class="'el-icon-' + schemaInfo.icon + ' color-' + schemaInfo.color"
-    ></i>
-    <ElLink v-if="schemaInfo.icon === 'error'" type="danger" @click="showErrorMsg">{{ schemaInfo.text }}</ElLink>
-    <ElTooltip v-else-if="schemaInfo.tips" :content="schemaInfo.tips" placement="top">
-      <span :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
-    </ElTooltip>
-    <span v-else-if="schemaInfo.color" :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
+    <template v-if="data.status !== 'invalid'">
+      <i
+        class="connections-schema-status__icon mr-1"
+        :class="'el-icon-' + schemaInfo.icon + ' color-' + schemaInfo.color"
+      ></i>
+      <ElLink v-if="schemaInfo.icon === 'error'" type="danger" @click="showErrorMsg">{{ schemaInfo.text }}</ElLink>
+      <ElTooltip v-else-if="schemaInfo.tips" :content="schemaInfo.tips" placement="top">
+        <span :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
+      </ElTooltip>
+      <span v-else-if="schemaInfo.color" :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
+      <span v-else>-</span>
+    </template>
     <span v-else>-</span>
   </div>
 </template>
@@ -26,12 +29,14 @@ export default {
       let schemaInfo = {}
       // 加载数量大于等于实际的视为已完成
       if (data.loadFieldsStatus === 'finished') {
-        let loadTime = data.loadSchemaDate
+        let loadTime = data.loadSchemaTime
         schemaInfo = {
           text: this.$t('packages_business_schema_progress_status_success'),
           icon: 'success',
           color: 'success',
-          tips: loadTime ? this.$t('packages_business_schema_progress_load_time', [dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss')]) : ''
+          tips: loadTime
+            ? this.$t('packages_business_schema_progress_load_time', [dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss')])
+            : ''
         }
       } else if (data.loadFieldsStatus === 'loading') {
         let process = (data.loadCount * 100) / data.tableCount || 0

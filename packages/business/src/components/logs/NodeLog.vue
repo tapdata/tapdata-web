@@ -1,22 +1,32 @@
 <template>
   <div class="log-container flex justify-content-between">
-    <div class="filter-items border-end">
-      <div
-        v-for="(item, index) in items"
-        :key="index"
-        :class="[{ active: activeNodeId === item.value }]"
-        class="filter-items__item flex justify-content-between align-items-center"
-        @click="changeItem(item)"
-      >
-        <OverflowTooltip class="text-truncate" placement="right" :text="item.label" :open-delay="400" />
-        <VIcon>arrow-right</VIcon>
+    <div v-show="!hideFilter" class="filter-items border-end">
+      <div class="px-2 py-3">
+        <div
+          class="node-list-item px-2 mb-1 flex align-center font-color-dark"
+          :class="{ active: activeNodeId === 'all' }"
+          @click="changeItem()"
+        >
+          <VIcon size="20" class="mr-1">folder</VIcon>{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
+        </div>
+        <div
+          v-for="node in items"
+          :key="node.id"
+          class="node-list-item px-2 mb-1 flex align-center font-color-dark"
+          :class="{ active: activeNodeId === node.id }"
+          @click="changeItem(node.id)"
+        >
+          <NodeIcon :node="node" :size="18" />
+          <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
+        </div>
       </div>
     </div>
-    <div class="main flex-fill flex flex-column pt-5">
-      <div class="flex ml-4 mb-4 align-items-center">
+    <div class="main flex-fill flex flex-column px-4 py-3">
+      <div class="flex mb-2 align-items-center">
         <TimeSelect
           :options="timeOptions"
           :range="[firstStartTime, lastStopTime || Date.now()]"
+          ref="timeSelect"
           @change="changeTime"
         ></TimeSelect>
         <ElInput
@@ -27,16 +37,13 @@
           size="mini"
           clearable
           style="width: 240px"
-          @input="searchFnc(800)"
+          @input="searchFnc"
         ></ElInput>
-        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">{{
-          $t('packages_dag_button_setting')
-        }}</ElButton>
         <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
           $t('packages_dag_components_log_xiazai')
         }}</ElButton>
       </div>
-      <div class="level-line ml-4">
+      <div class="level-line mb-2">
         <ElCheckboxGroup
           v-model="checkList"
           :disabled="loading"
@@ -47,18 +54,24 @@
         >
           <ElCheckbox v-for="item in checkItems" :label="item.label" :key="item.label">{{ item.text }}</ElCheckbox>
         </ElCheckboxGroup>
+        <ElButton type="text" size="mini" class="ml-4" @click="handleSetting">{{
+          $t('packages_dag_components_log_rizhidengjishe')
+        }}</ElButton>
       </div>
-      <div v-loading="loading" class="log-list my-4 ml-4 pl-4 flex-1" style="height: 0">
+      <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
           key-field="id"
           :min-item-size="30"
-          class="scroller py-4 h-100"
+          class="scroller px-2 py-1 h-100"
           @scroll.native="scrollFnc"
         >
           <template #before>
-            <div class="before-scroll-content text-center font-color-light pb-2">
+            <div
+              v-show="preLoading || showNoMore || !list.length"
+              class="before-scroll-content text-center font-color-light pb-2"
+            >
               <div v-show="preLoading">
                 <i class="el-icon-loading"></i>
               </div>
@@ -85,16 +98,17 @@
               :data-index="index"
               :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
             >
-              <div class="log-line py-1 font-color-light">
-                <span :class="['level-item', 'inline-block', colorMap[item.level]]">{{ item.levelText }}</span>
-                <span class="white-space-nowrap ml-1">{{ formatTime(item.timestamp) }}</span>
-                <span v-if="item.taskName" v-html="item.taskNameText" class="ml-1"></span>
-                <span v-if="item.nodeName" v-html="item.nodeNameText" class="ml-1"></span>
-                <span v-for="(temp, tIndex) in item.logTagsText" :key="tIndex" v-html="temp" class="ml-1"></span>
-                <span v-html="item.message" class="ml-1"></span>
-                <span v-if="item.errorStack" v-html="item.errorStack" class="ml-1"></span>
-                <span v-if="item.dataText" v-html="item.dataText"></span>
-              </div>
+              <VCollapse active="0">
+                <template #header>
+                  <div class="log-line flex align-items-center pr-6 flex font-color-light">
+                    <VIcon :class="`${item.level.toLowerCase()}-level`" size="16">{{ iconMap[item.level] }}</VIcon>
+                    <div v-html="item.titleDomStr" class="text-truncate flex-1"></div>
+                  </div>
+                </template>
+                <template #content>
+                  <div v-html="item.jsonDomStr" class="log-line pl-10 pr-4 py-2 font-color-light white-space-pre"></div>
+                </template>
+              </VCollapse>
             </DynamicScrollerItem>
           </template>
         </DynamicScroller>
@@ -119,7 +133,7 @@
           <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
             <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="max">
+          <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')" prop="max">
             <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
         </template>
@@ -140,17 +154,18 @@ import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { debounce } from 'lodash'
 
-import { delayTrigger, uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
-import { VEmpty, VIcon, OverflowTooltip } from '@tap/component'
+import { uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
+import { VIcon, TimeSelect, VCollapse } from '@tap/component'
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi } from '@tap/api'
-
-import TimeSelect from './TimeSelect'
+import NodeIcon from '@tap/dag/src/components/NodeIcon'
 
 export default {
-  name: 'Log',
+  name: 'NodeLog',
 
-  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, OverflowTooltip },
+  components: { NodeIcon, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, VCollapse },
 
   props: {
     dataflow: {
@@ -165,6 +180,14 @@ export default {
           items: []
         }
       }
+    },
+    hideFilter: {
+      type: Boolean,
+      default: false
+    },
+    logTotals: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -172,7 +195,7 @@ export default {
     return {
       activeNodeId: 'all',
       keyword: '',
-      checkList: ['INFO', 'WARN', 'ERROR'],
+      checkList: ['DEBUG', 'INFO', 'WARN', 'ERROR'],
       checkItems: [
         {
           label: 'DEBUG',
@@ -198,19 +221,21 @@ export default {
       preLoading: false,
       resetDataTime: null,
       list: [],
-      colorMap: {
-        FATAL: 'color-danger',
-        ERROR: 'color-danger',
-        WARN: 'color-warning'
+      iconMap: {
+        INFO: 'success',
+        WARN: 'warning',
+        ERROR: 'error',
+        FATAL: 'error',
+        DEBUG: 'debug'
       },
       newPageObj: {
         page: 0,
-        pageSize: 20,
+        pageSize: 50,
         total: 0
       },
       oldPageObj: {
         page: 0,
-        pageSize: 20,
+        pageSize: 50,
         total: 0
       },
       isScrollBottom: false,
@@ -254,21 +279,17 @@ export default {
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
+    nodeLogCountMap() {
+      return this.logTotals
+        .filter(t => t.nodeId)
+        .reduce((cur, next) => {
+          const count = cur[next.nodeId] || 0
+          return { ...cur, [next.nodeId]: count + next.count }
+        }, {})
+    },
+
     items() {
-      return [
-        {
-          label: i18n.t('packages_dag_components_log_quanburizhi'),
-          value: 'all'
-        },
-        ...this.allNodes.map(t => {
-          return {
-            label: t.name,
-            value: t.id,
-            source: t.$outputs.length > 0,
-            target: t.$inputs.length > 0
-          }
-        })
-      ]
+      return this.allNodes.filter(t => !!this.nodeLogCountMap[t.id])
     },
 
     firstStartTime() {
@@ -311,6 +332,9 @@ export default {
     },
     'dataflow.taskRecordId'() {
       this.init()
+    },
+    'dataflow.startTime'() {
+      this.init()
     }
   },
 
@@ -323,7 +347,7 @@ export default {
   },
 
   methods: {
-    init() {
+    init: debounce(function () {
       if (this.$route.name === 'MigrationMonitorViewer') {
         this.timeOptions = [
           {
@@ -340,11 +364,12 @@ export default {
       this.extraEnterCount = 0
       this.clearTimer()
       this.resetData()
-    },
+    }, 500),
 
     resetData() {
       this.preLoading = false
       this.resList()
+      this.resetNewPage()
       this.resetOldPage()
       this.resetDataTime = Date.now()
       this.loadOld(this.pollingData)
@@ -385,11 +410,11 @@ export default {
       this.loadNew()
     },
 
-    changeItem(item) {
-      if (this.activeNodeId === item.value) {
+    changeItem(itemId = 'all') {
+      if (this.activeNodeId === itemId) {
         return
       }
-      this.activeNodeId = item.value
+      this.activeNodeId = itemId
       this.init()
     },
 
@@ -399,10 +424,9 @@ export default {
       this.init()
     },
 
-    searchFnc(debounce) {
-      delayTrigger(() => {
-        this.init()
-      }, debounce)
+    searchFnc() {
+      this.clearTimer()
+      this.init()
     },
 
     scrollFnc(ev) {
@@ -429,11 +453,11 @@ export default {
       }
       monitoringLogsApi
         .query(filter)
-        .then(data => {
-          const items = this.getFormatRow(data.items.reverse())
+        .then((data = {}) => {
+          const items = this.getFormatRow(data.items?.reverse())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
-          if (this.list.length) {
+          if (this.list.length && this.oldPageObj.page !== 1) {
             this.list = Object.freeze(uniqueArr([...items, ...this.list]))
             this.scrollToItem(items.length - 1)
           } else {
@@ -470,7 +494,7 @@ export default {
       if (!filter.start || !filter.end) {
         return
       }
-      monitoringLogsApi.query(filter).then(data => {
+      monitoringLogsApi.query(filter).then((data = {}) => {
         const items = this.getFormatRow(data.items)
         this.newPageObj.total = data.total || 0
         const arr = uniqueArr([...this.list, ...items])
@@ -490,29 +514,63 @@ export default {
       })
     },
 
-    getFormatRow(data) {
-      let result = deepCopy(data)
-      const arr = ['taskName', 'nodeName']
+    getFormatRow(rowData = []) {
+      let result = deepCopy(rowData)
       result.forEach(row => {
-        row.levelText = `[${row.level}]`
-        row.logTagsText = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
-        row.dataText = row.data?.length
-          ? JSON.stringify(
-              row.data.map(t => {
-                return {
-                  eventId: t.eventId
-                }
-              })
-            )
-          : ''
-        arr.forEach(el => {
-          row[el + 'Text'] = `[${this.getHighlightSpan(row[el])}]`
-        })
+        let obj = {}
+        obj.level = row.level
+        obj.timestamp = this.formatTime(row.timestamp)
+        obj.nodeName = this.getHighlightSpan(row.nodeName)
+        obj.taskName = row.taskName
+        obj.logTags = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
+        obj.data = row.data.length ? JSON.stringify(row.data?.slice(0, 10)) : ''
+        obj.message = row.message?.slice(0, 10000)
+        obj.errorStack = row.errorStack?.slice(0, 20000)
+
+        const { level, timestamp, nodeName, taskName, logTags, data, message, errorStack } = obj
+        const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
+        row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
+        row.jsonDomStr = this.getJsonString([
+          { level },
+          { timestamp },
+          { nodeName },
+          { taskName },
+          { logTags },
+          { data },
+          { message },
+          { errorStack }
+        ])
       })
       return result
     },
+    getTitleStringDom(row = {}, extra = '') {
+      let result = ''
+      result += `<span class="ml-1">${row.timestamp}</span>`
+      if (row.nodeName) {
+        result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
+      }
+      if (extra) {
+        result += `<span class="ml-1">${extra}</span>`
+      }
+      return result
+    },
 
-    getHighlightSpan(str) {
+    getJsonString(data = []) {
+      let result = `<div class="bg-color-normal">{`
+      data.forEach((obj, i) => {
+        for (let key in obj) {
+          const val = obj[key]
+          if (val) {
+            result += `<div class="flex pl-4">`
+            result += `<span class="log__label warn-level">"${key}"</span>: <span class="debug-level">"${val}"</span>`
+            result += `,</div>`
+          }
+        }
+      })
+      return (result += `}</div>`)
+    },
+
+    getHighlightSpan(str = '') {
       const { keyword } = this
       if (!keyword) {
         return str
@@ -642,14 +700,14 @@ export default {
       taskApi
         .putLogSetting(this.dataflow.id, params)
         .then(() => {
-          this.$message.success(this.$t('message_save_ok'))
+          this.$message.success(this.$t('packages_dag_message_save_ok'))
           this.dialog = false
         })
         .finally(() => {
           this.saveLoading = false
         })
         .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
+          this.$message.error(this.$t('packages_dag_message_save_fail'))
         })
     },
 
@@ -680,6 +738,12 @@ export default {
           result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
           break
       }
+      if (!result[0]) {
+        result[0] = endTimestamp - 5 * 60 * 1000
+      }
+      if (result[0] >= result[1]) {
+        result[1] = Date.now() + 5 * 1000
+      }
       return result
     },
 
@@ -697,6 +761,7 @@ export default {
 .filter-items {
   width: 200px;
   user-select: none;
+  overflow-y: auto;
 }
 .filter-items__item {
   padding: 0 16px;
@@ -706,22 +771,45 @@ export default {
     background: rgba(44, 101, 255, 0.05);
   }
 }
-.white-space-nowrap {
-  white-space: nowrap;
+.main {
+  width: 0;
+}
+.white-space-pre {
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .log-list {
-  border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
     .log-line {
+      width: 100%;
       font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      .info-level {
+        color: #c9cdd4;
+      }
+      .warn-level {
+        color: #d5760e;
+      }
+      .error-level,
+      .fatal-level {
+        color: #d44d4d;
+      }
+      .debug-level {
+        color: #178061;
+      }
     }
     .highlight-bg-color {
       background-color: #ff0;
     }
     .empty-wrap {
       margin: 24px 0;
+    }
+    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
+      overflow: visible;
+    }
+    .log__label {
+      white-space: nowrap;
     }
   }
 }
@@ -730,10 +818,21 @@ export default {
   top: 4px;
   left: 50%;
   width: 140px;
+  z-index: 2;
   ::v-deep {
     .el-alert__closebtn {
       top: 7px;
     }
+  }
+}
+.node-list-item {
+  line-height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover,
+  &.active {
+    background-color: rgba(229, 236, 255, 0.3);
   }
 }
 </style>

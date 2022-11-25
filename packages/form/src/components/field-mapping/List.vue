@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-loading="transformLoading">
     <div class="node-field-mapping flex flex-column">
       <div class="task-form-body">
         <div class="task-form-left flex flex-column">
@@ -187,6 +187,7 @@ import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import noData from 'web-core/assets/images/noData.png'
 import { metadataInstancesApi, taskApi, typeMappingApi } from '@tap/api'
+import { mapState } from 'vuex'
 
 export default {
   name: 'List',
@@ -236,9 +237,18 @@ export default {
     this.dataFlow['nodeId'] = this.dataFlow.activeNodeId
     this.getMetadataTransformer() //不需要推演 直接拿推演结果
   },
+  computed: {
+    ...mapState('dataflow', ['transformLoading'])
+  },
   watch: {
     updateList() {
       this.getMetadataTransformer()
+    },
+    // 推演加载完成后，主动请求最新模型
+    transformLoading(v) {
+      if (!v) {
+        this.getMetadataTransformer()
+      }
     }
   },
   methods: {
@@ -362,6 +372,7 @@ export default {
         taskId: id,
         nodeId: this.dataFlow?.nodeId
       }
+      this.searchField = ''
       metadataInstancesApi.resetTable(data).then(() => {
         this.getMetadataTransformer() //更新整个数据
       })
@@ -405,15 +416,16 @@ export default {
       let id = this.dataFlow?.id || this.dataFlow?.taskId
       let data = {
         taskId: id,
+        nodeId: this.dataFlow?.nodeId,
         tableName: this.selectRow?.sourceObjectName,
         fields: this.editFields || []
       }
       metadataInstancesApi.saveTable(data).then(() => {
-        this.$emit('updateVisible')
+        if (val) {
+          this.closeDialog()
+          this.$emit('updateVisible')
+        }
       })
-      if (val) {
-        this.closeDialog()
-      }
     },
     closeDialog() {
       this.searchField = ''

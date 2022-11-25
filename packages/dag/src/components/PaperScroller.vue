@@ -33,6 +33,7 @@
 
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex'
+import ResizeObserver from 'resize-observer-polyfill'
 import { on, off } from '@tap/shared'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { getDataflowCorners } from '../helpers'
@@ -57,7 +58,13 @@ export default {
         width: 800,
         height: 800
       },
+      // 记录画布的初始状态
       visibleArea: {
+        width: 0,
+        height: 0
+      },
+      // 跟visibleArea的区别就是，会跟随resize改变
+      windowArea: {
         width: 0,
         height: 0
       },
@@ -180,13 +187,18 @@ export default {
   },
 
   async mounted() {
-    this.initVisibleArea()
+    // 监听画布的尺寸变化
+    this.resizeObserver = new ResizeObserver(this.observerHandler)
+    this.resizeObserver.observe(this.$el)
+
+    this.initVisibleArea(true)
     await this.$nextTick()
     this.center()
   },
 
-  destroyed() {
+  beforeDestroy() {
     this.offEvent()
+    this.resizeObserver.unobserve(this.$el)
   },
 
   methods: {
@@ -197,6 +209,10 @@ export default {
       'removeActiveAction',
       'toggleShiftKeyPressed'
     ]),
+
+    observerHandler() {
+      this.initVisibleArea()
+    },
 
     /**
      * 获取节点拖放后的坐标
@@ -260,11 +276,11 @@ export default {
       off(document, 'keydown', this.onKeydown)
     },
 
-    initVisibleArea() {
+    initVisibleArea(isFirst) {
       const rect = this.$el.getBoundingClientRect()
-      this.visibleArea = {
-        width: rect.width,
-        height: rect.height,
+      const area = {
+        width: this.$el.clientWidth,
+        height: this.$el.clientHeight,
         x: rect.x,
         y: rect.y,
         left: rect.left,
@@ -272,8 +288,13 @@ export default {
         top: rect.top,
         bottom: rect.bottom
       }
-      this.visibleArea.width = this.$el.clientWidth
-      this.visibleArea.height = this.$el.clientHeight
+      if (isFirst) {
+        this.visibleArea = {
+          ...area
+        }
+      }
+      // 窗口保持最新的区域数据
+      this.windowArea = area
     },
 
     // 画布居中
@@ -295,7 +316,7 @@ export default {
       maxY += NODE_HEIGHT
       let contentW = maxX - minX
       let contentH = maxY - minY
-      let scale = Math.min(this.visibleArea.width / contentW, this.visibleArea.height / contentH)
+      let scale = Math.min(this.windowArea.width / contentW, this.windowArea.height / contentH)
 
       if (!ifZoomToFit) {
         scale = Math.min(1, scale)
@@ -306,9 +327,9 @@ export default {
       this.changeScale(scale)
 
       const scrollLeft =
-        this.paperOffset.left + (minX + this.paperReverseSize.w) * scale - (this.visibleArea.width - contentW) / 2
+        this.paperOffset.left + (minX + this.paperReverseSize.w) * scale - (this.windowArea.width - contentW) / 2
       const scrollTop =
-        this.paperOffset.top + (minY + this.paperReverseSize.h) * scale - (this.visibleArea.height - contentH) / 2
+        this.paperOffset.top + (minY + this.paperReverseSize.h) * scale - (this.windowArea.height - contentH) / 2
 
       this.doChangePageScroll(scrollLeft, scrollTop)
     },
@@ -320,7 +341,7 @@ export default {
      */
     centerNode(node, ifZoomToFit) {
       const [left, top] = node.attrs.position
-      let scale = Math.min(this.visibleArea.width / NODE_WIDTH, this.visibleArea.height / NODE_HEIGHT)
+      let scale = Math.min(this.windowArea.width / NODE_WIDTH, this.windowArea.height / NODE_HEIGHT)
 
       if (!ifZoomToFit) {
         scale = Math.min(1, scale)
@@ -329,9 +350,9 @@ export default {
       this.changeScale(scale)
 
       const scrollLeft =
-        this.paperOffset.left + (left + this.paperReverseSize.w) * scale - (this.visibleArea.width - NODE_WIDTH) / 2
+        this.paperOffset.left + (left + this.paperReverseSize.w) * scale - (this.windowArea.width - NODE_WIDTH) / 2
       const scrollTop =
-        this.paperOffset.top + (top + this.paperReverseSize.h) * scale - (this.visibleArea.height - NODE_HEIGHT) / 2
+        this.paperOffset.top + (top + this.paperReverseSize.h) * scale - (this.windowArea.height - NODE_HEIGHT) / 2
 
       this.doChangePageScroll(scrollLeft, scrollTop, true)
     },
@@ -565,11 +586,12 @@ export default {
         this.cumulativeZoomFactor *= (this.paperScale - 0.05) / this.paperScale
       } else {
         this.cumulativeZoomFactor /= this.zoomFactor
-        this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
-        const scale = this.paperScale * this.cumulativeZoomFactor
-        this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
-        this.changeScale(scale)
+        // 缩放力度太小时容易导致scale没有变化，注释下方代码
+        // this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
       }
+      const scale = Math.max(0.05, this.paperScale * this.cumulativeZoomFactor)
+      this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
+      this.changeScale(scale)
     },
     /**
      * 放大
@@ -579,7 +601,8 @@ export default {
         this.cumulativeZoomFactor *= (this.paperScale + 0.05) / this.paperScale
       } else {
         this.cumulativeZoomFactor *= this.zoomFactor
-        this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
+        // 缩放力度太小时容易导致scale没有变化，注释下方代码
+        // this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
       }
       this.cumulativeZoomFactor =
         Math.max(0.05, Math.min(this.paperScale * this.cumulativeZoomFactor, 160)) / this.paperScale

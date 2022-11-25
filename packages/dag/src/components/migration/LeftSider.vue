@@ -23,7 +23,7 @@
               <ElInput
                 v-model="dbSearchTxt"
                 ref="dbInput"
-                :placeholder="$t('connection_name_search_placeholder')"
+                :placeholder="$t('packages_dag_connection_name_search_placeholder')"
                 size="mini"
                 clearable
                 @keydown.native.stop
@@ -149,10 +149,11 @@
 
     <ElDialog
       :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
-      width="1030px"
+      width="848px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"
       :append-to-body="true"
+      custom-class="connection-dialog"
     >
       <ConnectionTypeSelector
         :types="database"
@@ -489,11 +490,12 @@ export default {
     },
 
     getNodeProps(item) {
-      const props = {
+      return {
         name: item.name,
         type: 'database',
         databaseType: item.database_type,
         connectionId: item.id,
+        migrateTableSelectType: 'all',
         attrs: {
           connectionName: item.name,
           connectionType: item.connection_type,
@@ -501,24 +503,8 @@ export default {
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
           capabilities: item.capabilities || []
-          /*capabilities: [
-            ...(item.capabilities || []),
-            {
-              id: 'new_field_function',
-              type: 11
-            }
-          ]*/
         }
       }
-
-      if (this.connectionType === 'target') {
-        props.existDataProcessMode = 'keepData'
-        props.attrs.isTarget = true
-      } else {
-        props.migrateTableSelectType = 'all'
-      }
-
-      return props
     },
 
     handleShowDBInput() {
@@ -802,6 +788,14 @@ $hoverBg: #eef3ff;
       font-size: 12px;
       line-height: 1;
       white-space: nowrap;
+    }
+  }
+}
+
+::v-deep {
+  .connection-dialog {
+    .el-dialog__body {
+      padding: 0 20px 30px 20px;
     }
   }
 }

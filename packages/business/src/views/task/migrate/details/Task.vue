@@ -1,19 +1,21 @@
 <template>
   <div class="connection-container">
-    <TableList
+    <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"
       :remote-data="id"
       height="100%"
       :has-pagination="false"
-      ref="tableList"
+      ref="VTable"
     >
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{ $t('packages_business_button_details') }}</ElButton>
+          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
+            $t('packages_business_button_details')
+          }}</ElButton>
         </div>
       </template>
-    </TableList>
+    </VTable>
   </div>
 </template>
 
@@ -21,11 +23,11 @@
 import dayjs from 'dayjs'
 
 import { logcollectorApi } from '@tap/api'
-import { TableList } from '@tap/component'
+import { VTable } from '@tap/component'
 
 export default {
   name: 'Task',
-  components: { TableList },
+  components: { VTable },
   props: {
     id: {
       type: String,
@@ -93,10 +95,10 @@ export default {
         })
     },
     getTableData() {
-      return this.$refs.tableList?.getData()
+      return this.$refs.VTable?.getData()
     },
     fetch() {
-      this.$refs.tableList?.fetch(null, null, true)
+      this.$refs.VTable?.fetch(null, null, true)
     },
     handleDetail() {}
   }

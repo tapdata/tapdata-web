@@ -1,20 +1,20 @@
 <template>
   <div>
-    <TableList :remoteMethod="remoteMethod" :remote-data="ids" :columns="columns" :hide-on-single-page="true">
+    <VTable :remoteMethod="remoteMethod" :remote-data="ids" :columns="columns" :hide-on-single-page="true">
       <template slot="desc" slot-scope="scope">
         <span>{{ mapData[scope.row.operation] }}</span>
       </template>
-    </TableList>
+    </VTable>
   </div>
 </template>
 
 <script>
 import { userLogsApi } from '@tap/api'
-import { TableList } from '@tap/component'
+import { VTable } from '@tap/component'
 
 export default {
   name: 'History',
-  components: { TableList },
+  components: { VTable },
   props: {
     ids: {
       type: Array,

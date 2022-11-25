@@ -4,6 +4,7 @@
   "scripts": {
     "start:daas": "pnpm --filter daas start:test ",
     "start:dfs": "pnpm --filter dfs start:test",
+    "start:local": "pnpm --filter dfs start:local",
     "dev:daas": "pnpm --filter daas start:dev",
     "dev:dfs": "pnpm --filter dfs start:dev",
     "build:daas": "pnpm --filter daas build",

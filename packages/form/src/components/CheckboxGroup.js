@@ -1,7 +1,7 @@
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { getComponentByTag } from './utils'
 import { Checkbox } from './Checkbox'
-import PreviewText from 'web-core/components/form/preview-text'
+import PreviewText from './preview-text'
 
 const ElCheckboxGroup = getComponentByTag('el-checkbox-group', {
   change: 'input'

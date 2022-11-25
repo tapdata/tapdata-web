@@ -11,7 +11,7 @@
       <div slot="search" class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
-      <div slot="operation">
+      <!--<div slot="operation">
         <ElButton
           v-readonlybtn="'API_creation'"
           class="btn btn-create"
@@ -21,7 +21,7 @@
         >
           <span>{{ $t('application_create') }}</span>
         </ElButton>
-      </div>
+      </div>-->
       <el-table-column :label="$t('application_header_id')" :show-overflow-tooltip="true" prop="id" width="220">
         <!-- <template slot-scope="scope"> -->
       </el-table-column>
@@ -90,17 +90,17 @@
       :visible.sync="createDialogVisible"
     >
       <ElForm ref="form" :model="createForm" class="applications-form" label-width="100px">
-        <ElFormItem :label="$t('application_header_client_name')" required>
+        <ElFormItem :label="$t('application_header_client_name')" required prop="clientName">
           <ElInput v-model="createForm.clientName" size="mini"></ElInput>
         </ElFormItem>
-        <ElFormItem :label="$t('application_header_grant_type')" required>
+        <ElFormItem :label="$t('application_header_grant_type')" required prop="grantTypes">
           <ElSelect v-model="createForm.grantTypes" multiple size="mini">
             <ElOption label="Implicit" value="implicit"></ElOption>
             <ElOption label="Client Credentials" value="client_credentials"></ElOption>
             <ElOption label="Refresh Token" value="refresh_token"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('application_header_client_secret')" required>
+        <ElFormItem :label="$t('application_header_client_secret')" required prop="clientSecret">
           <ElCol :span="22">
             <ElInput v-model="createForm.clientSecret" size="mini"></ElInput>
           </ElCol>
@@ -108,12 +108,12 @@
             <ElButton type="text" size="mini" @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
           </ElCol>
         </ElFormItem>
-        <ElFormItem :label="$t('application_header_scopes')" required>
+        <ElFormItem :label="$t('application_header_scopes')" required prop="scopes">
           <ElSelect v-model="createForm.scopes" multiple size="mini">
-            <ElOption v-for="item in roles" :label="item.name" :value="item.id" :key="item.id"></ElOption>
+            <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('application_header_redirect_uri')" required>
+        <ElFormItem :label="$t('application_header_redirect_uri')" required prop="redirectUris">
           <ElInput
             v-model="createForm.redirectUris"
             type="textarea"
@@ -122,7 +122,7 @@
             :showWordLimit="true"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem :label="$t('application_show_menu')" required>
+        <ElFormItem :label="$t('application_show_menu')" required prop="showMenu">
           <ElSelect v-model="createForm.showMenu" size="mini">
             <ElOption :label="$t('application_true')" :value="true"></ElOption>
             <ElOption :label="$t('application_false')" :value="false"></ElOption>

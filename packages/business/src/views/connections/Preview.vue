@@ -7,7 +7,7 @@
             <img :src="getConnectionIcon()" />
           </div>
         </div>
-        <div class="ml-4">
+        <div class="ml-4 overflow-hidden">
           <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
           <div><status-tag type="text" target="connection" :status="connection.status"></status-tag></div>
         </div>
@@ -102,6 +102,7 @@ export default {
   },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       drawer: false,
       visible: false,
       timer: null,
@@ -225,23 +226,23 @@ export default {
     }
   },
   beforeDestroy() {
-    this.clearInterval()
+    this.clearTimer()
   },
   watch: {
     visible(val) {
       if (!val) {
-        this.clearInterval() //清除定时器
+        this.clearTimer() //清除定时器
       }
     }
   },
   methods: {
-    clearInterval() {
+    clearTimer() {
       // 清除定时器
-      clearInterval(this.timer)
+      clearTimeout(this.timer)
       this.timer = null
     },
     handleClose() {
-      this.clearInterval()
+      this.clearTimer()
       this.visible = false
       this.showProgress = false
       this.$emit('close')
@@ -260,6 +261,7 @@ export default {
       row.database_username = row.config.user || row.config.username
       row.additionalString = row.config.extParams || row.config.additionalString
       row.database_datetype_without_timezone = row.config.timezone
+      row.sourceFrom = this.getSourceFrom(row)
       if (row.config.uri && row.config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
@@ -311,7 +313,7 @@ export default {
           })
       })
     },
-    async reload() {
+    async reload(cb) {
       this.checkAgent(() => {
         let config = {
           title: this.$t('packages_business_connection_reloadTittle'),
@@ -330,20 +332,21 @@ export default {
           if (resFlag) {
             this.showProgress = true
             this.progress = 0
-            this.testSchema()
+            this.testSchema(cb)
             this.$emit('reload-schema')
           }
         })
       })
     },
     //请求测试
-    testSchema() {
+    testSchema(cb) {
       let parms = {
         loadCount: 0,
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
       connectionsApi.updateById(this.connection.id, parms).then(data => {
+        cb?.()
         if (!this?.$refs?.test) {
           return
         }
@@ -353,7 +356,7 @@ export default {
       })
     },
     getProgress() {
-      this.clearInterval()
+      this.clearTimer()
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
@@ -371,9 +374,9 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.timer = setInterval(() => {
-              this.getProgress()
-            }, 800)
+            this.timer = setTimeout(() => {
+              this.visible && this.getProgress()
+            }, 2000)
           }
         })
         .catch(() => {
@@ -386,7 +389,22 @@ export default {
       this.status = data.status
     },
     loadList() {
-      this.list = this.configModel['default']
+      this.list = [
+        ...this.configModel['default'],
+        ...(this.isDaas
+          ? []
+          : [
+              {
+                icon: 'link',
+                items: [
+                  {
+                    label: i18n.t('packages_business_connections_preview_lianjiechajianlai'),
+                    key: 'sourceFrom'
+                  }
+                ]
+              }
+            ])
+      ]
     },
     getConnectionIcon() {
       const { connection } = this
@@ -400,8 +418,21 @@ export default {
       if (!this.visible) return
       const result = list.find(item => item.id === this.connection.id)
       if (!result) return
-      console.log('result', result) // eslint-disable-line
       this.connection = this.transformData(result)
+    },
+
+    getSourceFrom(row = {}) {
+      const { definitionScope, beta = false } = row
+      const MAP = {
+        publicfalse: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
+        publictrue: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
+        customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
+      }
+      return MAP[definitionScope + beta] || MAP['customer']
+    },
+
+    setConnectionData(row) {
+      this.connection = this.transformData(row)
     }
   }
 }
