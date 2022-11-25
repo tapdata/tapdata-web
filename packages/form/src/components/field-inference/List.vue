@@ -193,9 +193,11 @@ export default {
       if (!showColumns.length) {
         return result
       }
-      return showColumns.map(t => {
-        return result.find(f => f.prop === t)
-      })
+      return showColumns
+        .map(t => {
+          return result.find(f => f.prop === t)
+        })
+        .filter(t => t)
     },
 
     tableList() {
