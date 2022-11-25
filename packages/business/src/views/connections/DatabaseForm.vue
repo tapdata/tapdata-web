@@ -933,9 +933,11 @@ export default {
             expireSeconds: 100000000
           }
           proxyApi.subscribe(filter).then(data => {
-            let str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
+            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const p = location.origin + location.pathname
+            let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {
-              str = `${process.env.BASE_URL || location.origin}${data.token}`
+              str = `${p.replace(/\/$/, '')}${data.token}`
             }
             $form.setValuesIn(field.name, str)
           })
