@@ -60,7 +60,7 @@
           </div>
         </ElPagination>
       </div>
-      <div class="flex-fill flex flex-column">
+      <div class="field-inference__content flex-fill flex flex-column">
         <div class="flex align-items-center p-2">
           <ElInput
             v-model="searchField"
@@ -80,7 +80,7 @@
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
           :readonly="readonly"
-          class="flex-fill"
+          class="content__list flex-fill"
         ></List>
       </div>
     </div>
@@ -232,6 +232,9 @@ export default {
   max-width: 210px;
   border-right: 1px solid #f2f2f2;
 }
+.field-inference__content {
+  width: 0;
+}
 .nav-list {
   max-width: 210px;
   overflow: hidden auto;
@@ -278,5 +281,8 @@ export default {
     border-color: map-get($color, primary);
     background-color: map-get($color, white);
   }
+}
+.content__list {
+  height: 0;
 }
 </style>
