@@ -256,6 +256,7 @@ export default {
           const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
           if (!tapType) {
             this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
+            this.editBtnLoading = false
             return
           }
           const f = this.findInRulesById(changeRuleId)
