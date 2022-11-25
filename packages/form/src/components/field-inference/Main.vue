@@ -1,17 +1,17 @@
 <template>
-  <div>
-    <div class="flex justify-content-end">
+  <div class="field-inference">
+    <div class="field-inference__header flex justify-content-end">
       <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
         <VIcon>info</VIcon>
         <span>{{ $t('packages_form_field_inference_main_dangqianyou') }}</span>
         <span class="color-warning px-1 fs-6 fw-bold din-font">{{ batchRuleCounts }}</span>
         <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
       </div>
-      <ElButton type="text" class="ml-3" @click="rollbackAll">{{
+      <ElButton v-if="!readonly" type="text" class="ml-3" @click="rollbackAll">{{
         $t('packages_form_field_inference_main_quanbuhuifumo')
       }}</ElButton>
     </div>
-    <div class="field-inference flex">
+    <div class="field-inference__main flex">
       <div class="field-inference__nav flex flex-column">
         <ElInput
           v-model="searchTable"
@@ -60,7 +60,7 @@
           </div>
         </ElPagination>
       </div>
-      <div class="field-inference__main flex-fill flex flex-column">
+      <div class="flex-fill flex flex-column">
         <div class="flex align-items-center p-2">
           <ElInput
             v-model="searchField"
@@ -79,15 +79,22 @@
           :data="selected"
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
+          :readonly="readonly"
           class="flex-fill"
         ></List>
       </div>
     </div>
-    <Dialog :visible.sync="visible" :form="form" :fieldChangeRules.sync="fieldChangeRules"></Dialog>
+    <Dialog
+      :visible.sync="visible"
+      :form="form"
+      :fieldChangeRules.sync="fieldChangeRules"
+      :readonly="readonly"
+    ></Dialog>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { debounce } from 'lodash'
 
 import noData from 'web-core/assets/images/noData.png'
@@ -130,8 +137,14 @@ export default {
   },
 
   computed: {
+    ...mapGetters('dataflow', ['stateIsReadonly']),
+
     batchRuleCounts() {
       return this.fieldChangeRules.filter(t => t.scope === 'Node').length
+    },
+
+    readonly() {
+      return this.stateIsReadonly
     }
   },
 
@@ -203,7 +216,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.field-inference {
+.field-inference__header {
+  position: relative;
+  z-index: 1;
+  height: 30px;
+}
+.field-inference__main {
   height: 60vh;
   border: 1px solid #f2f2f2;
   border-radius: 4px;
@@ -211,9 +229,6 @@ export default {
 .field-inference__nav {
   max-width: 210px;
   border-right: 1px solid #f2f2f2;
-}
-.field-inference__main {
-  //width: 0;
 }
 .nav-list {
   max-width: 210px;

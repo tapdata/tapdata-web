@@ -235,6 +235,7 @@ export default {
       this.currentData.dataType = source?.accept || row.data_type
       this.currentData.fieldName = row.field_name
       this.currentData.newDataType = row.data_type
+      this.currentData.useToAll = false
       this.currentData.source = source
       this.editDataTypeVisible = true
     },

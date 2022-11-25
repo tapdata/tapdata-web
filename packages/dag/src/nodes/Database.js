@@ -284,7 +284,12 @@ export class Database extends NodeType {
             type: 'void',
             title: '推演结果',
             'x-decorator': 'FormItem',
-            'x-component': 'fieldInference'
+            'x-component': 'fieldInference',
+            'x-component-props': {
+              style: {
+                'margin-top': '-36px'
+              }
+            }
           },
           collapse: {
             type: 'void',
