@@ -189,27 +189,38 @@
         @current-change="fetch"
       >
       </ElPagination>
-      <ElDialog :visible.sync="upgradeDialog" width="562px" top="20vh" title="Agent更新">
+      <ElDialog :visible.sync="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
         <div>
           <div class="flex upgrade-mb24">
             <div class="imgBox flex justify-content-center align-items-center">
               <img :src="getImg('vector')" alt="" />
             </div>
-            <div class="ml-4">
-              <div class="upgrade-version">版本号: v3.0.1</div>
-              <div class="upgrade-version">安装包: 130.1MB</div>
-              <div class="upgrade-version">预计安装时间: 1-15分钟</div>
+            <div class="ml-6">
+              <div class="upgrade-version">
+                {{ $t('dfs_instance_instance_banbenhao') }}{{ currentVersionInfo.version }}
+              </div>
+              <div class="upgrade-version mt-1">
+                {{ $t('dfs_instance_instance_anzhuangbao') }}{{ currentVersionInfo.packageSize }}
+              </div>
+              <div class="upgrade-version mt-1">
+                {{ $t('dfs_instance_instance_yujianzhuangshi') }}{{ currentVersionInfo.estimatedUpgradeTime }}
+              </div>
             </div>
           </div>
-          <div class="upgrade-desc upgrade-mb16">新增功能</div>
-          <ul class="upgrade-mb24">
-            <li class="upgrade-mb8 upgrade-text">- 新增支持Custom Connection作为源和目标</li>
-            <li class="upgrade-mb8 upgrade-text">- 在复制和开发可观测页面增加关联任务查看（目前仅能查看挖掘任务）</li>
-            <li class="upgrade-mb8 upgrade-text">- 新增TiDB作为目标，并支持在TIDB上支持直接发布API</li>
+          <div class="upgrade-desc upgrade-mb16" v-if="currentVersionInfo.changeList">
+            {{ $t('dfs_instance_instance_xinzenggongneng') }}
+          </div>
+          <ul class="upgrade-mb24" v-if="currentVersionInfo.changeList">
+            <li
+              style="white-space: pre-wrap"
+              class="upgrade-mb8 upgrade-text"
+              v-html="currentVersionInfo.changeList"
+            ></li>
           </ul>
-          <div class="upgrade-desc upgrade-mb8">本次更新包含错误修复和安全性更新，建议所有用户安装。</div>
+          <div class="upgrade-desc upgrade-mb8">{{ $t('dfs_instance_instance_bencigengxinbao') }}</div>
           <div class="upgrade-text upgrade-mb16">
-            如需了解更多请访问 <el-link type="primary">Release Notes</el-link>
+            {{ $t('dfs_instance_instance_ruxuliaojiegeng')
+            }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri"> Release Notes</el-link>
           </div>
         </div>
         <div class="dialog-btn flex justify-content-end mt-6">
@@ -336,6 +347,7 @@ export default {
       agentStatus: 'stop',
       version: '',
       upgradeList: [], // 升级列表
+      currentVersionInfo: '',
       showDetails: false,
       detailId: null,
       filterItems: []
@@ -487,6 +499,16 @@ export default {
           // 版本号
           if (this.list?.[0]?.id) {
             let getVersion = await this.getVersion(this.list[0]?.id)
+            //升级弹窗使用
+            let { packageSize, changeList, estimatedUpgradeTime, version, releaseNoteUri } = getVersion
+            this.currentVersionInfo = {
+              packageSize: (packageSize / (1024 * 1024)).toFixed(1) + ' MB' || '-',
+              changeList: changeList || '',
+              estimatedUpgradeTime:
+                (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong') || '-',
+              releaseNoteUri: releaseNoteUri,
+              version: version
+            }
             this.version = getVersion?.version
           }
 
@@ -951,10 +973,6 @@ export default {
     height: 65px;
     background: rgba(201, 205, 212, 0.1);
     border-radius: 4px;
-    img {
-      width: 70%;
-      height: 70%;
-    }
   }
   .upgrade-mb8 {
     margin-bottom: 8px;
