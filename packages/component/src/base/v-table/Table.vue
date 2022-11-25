@@ -208,6 +208,9 @@ export default {
     },
     getData() {
       return this.list
+    },
+    doLayout() {
+      this.table.doLayout()
     }
   }
 }

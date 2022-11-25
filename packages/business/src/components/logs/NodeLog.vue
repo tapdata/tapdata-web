@@ -518,6 +518,7 @@ export default {
       let result = deepCopy(rowData)
       result.forEach(row => {
         let obj = {}
+        row.timestamp = new Date(row.date).getTime()
         obj.level = row.level
         obj.timestamp = this.formatTime(row.timestamp)
         obj.nodeName = this.getHighlightSpan(row.nodeName)
