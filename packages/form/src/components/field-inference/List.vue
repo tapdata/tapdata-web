@@ -55,7 +55,7 @@
         <!--            源类型：{{ currentData.source.accept }}，目标类型：{{ currentData.source.result.dataType }}-->
         <!--          </div>-->
         <!--        </div>-->
-        <div>
+        <div v-if="!hideBatch">
           <ElCheckbox v-model="currentData.useToAll">{{
             $t('packages_form_field_inference_list_duidangqiantuiyan')
           }}</ElCheckbox>
@@ -68,14 +68,9 @@
         <ElButton size="mini" @click="editDataTypeVisible = false">{{
           $t('packages_business_button_cancel')
         }}</ElButton>
-        <ElButton
-          size="mini"
-          type="primary"
-          :disabled="currentData.dataType === currentData.newDataType"
-          :loading="editBtnLoading"
-          @click="submitEdit"
-          >{{ $t('packages_business_button_confirm') }}</ElButton
-        >
+        <ElButton size="mini" type="primary" :loading="editBtnLoading" @click="submitEdit">{{
+          $t('packages_business_button_confirm')
+        }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -125,6 +120,10 @@ export default {
     fieldChangeRules: {
       type: Array,
       default: () => []
+    },
+    hideBatch: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -252,79 +251,86 @@ export default {
         databaseType: this.activeNode.databaseType,
         dataTypes: [newDataType]
       }
-      metadataInstancesApi.dataType2TapType(params).then(data => {
-        const val = data[newDataType]
-        const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
-        if (!tapType) {
-          this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
-          return
-        }
-        const f = this.findInRulesById(changeRuleId)
-        let ruleId = f?.id
-        let ruleAccept = f?.accept
-        if (f?.scope === 'Field') {
-          if (useToAll) {
-            let batchRule = this.findNodeRuleByType(f.accept)
-            if (batchRule) {
-              // 删除节点规则
-              this.deleteRuleById(f.id)
-              // 修改批量规则
-              batchRule.result = { dataType: newDataType, tapType }
-              ruleId = batchRule.id
-              ruleAccept = newDataType
+      this.editBtnLoading = true
+      metadataInstancesApi
+        .dataType2TapType(params)
+        .then(data => {
+          const val = data[newDataType]
+          const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
+          if (!tapType) {
+            this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
+            return
+          }
+          const f = this.findInRulesById(changeRuleId)
+          let ruleId = f?.id
+          let ruleAccept = f?.accept
+          if (f?.scope === 'Field') {
+            if (useToAll) {
+              let batchRule = this.findNodeRuleByType(f.accept)
+              if (batchRule) {
+                // 删除节点规则
+                this.deleteRuleById(f.id)
+                // 修改批量规则
+                batchRule.result = { dataType: newDataType, tapType }
+                ruleId = batchRule.id
+                ruleAccept = newDataType
+              } else {
+                // 修改规则为批量规则 scope、namespace
+                f.scope = 'Node'
+                f.namespace = [nodeId]
+                f.result = { dataType: newDataType, tapType }
+                ruleAccept = newDataType
+              }
             } else {
-              // 修改规则为批量规则 scope、namespace
-              f.scope = 'Node'
-              f.namespace = [nodeId]
+              // 修改字段规则
               f.result = { dataType: newDataType, tapType }
               ruleAccept = newDataType
             }
+          } else if (f?.scope === 'Node') {
+            if (useToAll) {
+              // 修改批量规则
+              f.result = { dataType: newDataType, tapType }
+              ruleAccept = newDataType
+            } else {
+              // 添加字段规则
+              const op = {
+                id: uuid(),
+                scope: 'Field',
+                namespace: [nodeId, qualified_name, fieldName],
+                type: 'DataType',
+                accept: f.accept,
+                result: { dataType: newDataType, tapType }
+              }
+              ruleId = op.id
+              this.fieldChangeRules.push(op)
+            }
           } else {
-            // 修改字段规则
-            f.result = { dataType: newDataType, tapType }
-            ruleAccept = newDataType
-          }
-        } else if (f?.scope === 'Node') {
-          if (useToAll) {
-            // 修改批量规则
-            f.result = { dataType: newDataType, tapType }
-            ruleAccept = newDataType
-          } else {
-            // 添加字段规则
             const op = {
               id: uuid(),
-              scope: 'Field',
-              namespace: [nodeId, qualified_name, fieldName],
+              scope: useToAll ? 'Node' : 'Field',
+              namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
               type: 'DataType',
-              accept: f.accept,
+              accept: dataType,
               result: { dataType: newDataType, tapType }
             }
             ruleId = op.id
+            ruleAccept = dataType
             this.fieldChangeRules.push(op)
           }
-        } else {
-          const op = {
-            id: uuid(),
-            scope: useToAll ? 'Node' : 'Field',
-            namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
-            type: 'DataType',
-            accept: dataType,
-            result: { dataType: newDataType, tapType }
-          }
-          ruleId = op.id
-          ruleAccept = dataType
-          this.fieldChangeRules.push(op)
-        }
-        this.handleUpdate()
-        this.data.fields.find(t => {
-          if ((useToAll && t.data_type === ruleAccept) || t.field_name === fieldName) {
-            t.changeRuleId = ruleId
-            t.source.scope = useToAll ? 'Node' : 'Field'
-          }
+          this.handleUpdate()
+          this.data.fields.find(t => {
+            if ((useToAll && t.data_type === ruleAccept) || t.field_name === fieldName) {
+              t.changeRuleId = ruleId
+              t.source.scope = useToAll ? 'Node' : 'Field'
+            }
+          })
+          this.editBtnLoading = false
+          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
+          this.editDataTypeVisible = false
         })
-        this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
-        this.editDataTypeVisible = false
-      })
+        .catch(() => {
+          this.editBtnLoading = false
+        })
     },
 
     revoke(row) {

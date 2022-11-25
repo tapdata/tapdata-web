@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading" class="metadata-list-wrap">
-    <List ref="table" :data="selected" :readonly="stateIsReadonly || !isTarget"></List>
+    <List ref="table" :data="selected" :readonly="stateIsReadonly || !isTarget" hide-batch></List>
   </div>
 </template>
 
