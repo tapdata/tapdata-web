@@ -136,7 +136,6 @@ export default {
   packages_form_field_inference_dialog_cankaogeshiv: '參考格式: varchar(32)',
   packages_form_field_inference_dialog_xiugaihoudelei: '修改後的類型',
   packages_form_field_inference_dialog_mubiaomorentui: '目標默認推演類型',
-  packages_form_field_inference_list_qingxiugaizhengzai: '請修改正在生效的批量規則',
   packages_form_field_inference_list_caozuochenggong: '操作成功',
   packages_form_field_inference_list_geshicuowu: '格式錯誤',
   packages_form_field_inference_list_ziduanzhushi: '字段註釋',
@@ -147,7 +146,7 @@ export default {
   packages_form_field_inference_list_tuiyanchudelei: '推演出的類型:',
   packages_form_field_inference_list_ziduanleixingtiao: '字段類型調整',
   packages_form_field_inference_main_quanbuhuifumo: '全部恢復默認',
-  packages_form_field_inference_main_gepiliangxiugai: '個批量修改規則正在生效',
+  packages_form_field_inference_main_gepiliangxiugai: '批量修改規則正在生效',
   packages_form_field_inference_main_dangqianyou: '當前有',
   packages_form_field_type_rules_main_shijikeyongchang: '實際可用長度取決於目標數據庫類型定義，請按需設置',
   packages_form_field_type_rules_main_tianjia: '添加',
@@ -155,5 +154,6 @@ export default {
   packages_form_load_schema_tree_button_title: '加載模型',
   packages_form_field_inference_dialog_mubiaoleixingpi: '目標類型批量修改規則',
   packages_form_field_inference_list_ninquerenyaohui: '您確認要恢復當前表嗎？ ',
-  packages_form_field_inference_main_ninquerenyaoquan: '您確認要全部恢復默認嗎？ '
+  packages_form_field_inference_main_ninquerenyaoquan: '您確認要全部恢復默認嗎？ ',
+  packages_form_field_inference_main_ge: '個'
 }

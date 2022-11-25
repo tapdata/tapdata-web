@@ -92,7 +92,7 @@ export default {
   packages_form_field_mapping_dialog_queding: 'OK',
   packages_form_field_mapping_dialog_quxiao: 'Cancel',
   packages_form_field_mapping_dialog_bianjituiyanjie: 'Edit the deduction result',
-  packages_form_field_mapping_list_xuhao: 'serial number',
+  packages_form_field_mapping_list_xuhao: 'Index',
   packages_form_field_mapping_list_qingshuruziduan: 'Please enter the field name',
   packages_form_field_mapping_list_biaoming: 'Table name',
   packages_form_field_mapping_list_qingshurubiaoming: 'Please enter the table name',
@@ -141,7 +141,6 @@ export default {
   packages_form_field_inference_dialog_cankaogeshiv: 'Reference format: varchar(32)',
   packages_form_field_inference_dialog_xiugaihoudelei: 'Modified type',
   packages_form_field_inference_dialog_mubiaomorentui: 'Target default inference type',
-  packages_form_field_inference_list_qingxiugaizhengzai: 'Please modify the batch rules that are in effect',
   packages_form_field_inference_list_caozuochenggong: 'Operation succeeded',
   packages_form_field_inference_list_geshicuowu: 'Format error',
   packages_form_field_inference_list_ziduanzhushi: 'Field Notes',
@@ -153,8 +152,8 @@ export default {
   packages_form_field_inference_list_tuiyanchudelei: 'Inference type:',
   packages_form_field_inference_list_ziduanleixingtiao: 'Field type adjustment',
   packages_form_field_inference_main_quanbuhuifumo: 'Restore all to default',
-  packages_form_field_inference_main_gepiliangxiugai: 'A batch modification rule is taking effect',
-  packages_form_field_inference_main_dangqianyou: 'Currently has',
+  packages_form_field_inference_main_gepiliangxiugai: 'batch modification rule taking effect',
+  packages_form_field_inference_main_dangqianyou: 'There is currently',
   packages_form_field_type_rules_main_shijikeyongchang:
     'The actual available length depends on the target database type definition, please set it as needed',
   packages_form_field_type_rules_main_tianjia: 'Add',
@@ -162,5 +161,6 @@ export default {
   packages_form_load_schema_tree_button_title: 'Load Schema',
   packages_form_field_inference_dialog_mubiaoleixingpi: 'Target type batch modification rules',
   packages_form_field_inference_list_ninquerenyaohui: 'Are you sure you want to restore the current table? ',
-  packages_form_field_inference_main_ninquerenyaoquan: 'Are you sure you want to restore all the defaults? '
+  packages_form_field_inference_main_ninquerenyaoquan: 'Are you sure you want to restore all the defaults? ',
+  packages_form_field_inference_main_ge: ''
 }

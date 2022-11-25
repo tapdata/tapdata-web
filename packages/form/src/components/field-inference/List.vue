@@ -32,7 +32,13 @@
         <VIcon :class="canRevokeRules.length ? 'color-primary' : 'color-disable'" @click="revokeAll()">revoke</VIcon>
       </template>
       <template slot="operation" slot-scope="scope">
-        <VIcon :class="getRevokeColorClass(scope.row)" @click="revoke(scope.row)">revoke</VIcon>
+        <ElTooltip
+          :disabled="getFieldScope(scope.row) !== 'Node'"
+          :content="$t('packages_form_field_inference_main_gepiliangxiugai')"
+          placement="top"
+        >
+          <VIcon :class="getRevokeColorClass(scope.row)" @click="revoke(scope.row)">revoke</VIcon>
+        </ElTooltip>
       </template>
     </VTable>
     <ElDialog
@@ -127,18 +133,20 @@ export default {
         {
           label: i18n.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
-          prop: 'index'
+          prop: 'index',
+          width: '60px'
         },
         {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
           prop: 'field_name',
-          slotName: 'field_name'
+          slotName: 'field_name',
+          'min-width': '90px'
         },
         {
           label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
           prop: 'data_type',
           slotName: 'data_type',
-          'min-width': '160px'
+          'min-width': '150px'
         },
         {
           label: i18n.t('packages_form_field_inference_list_feikong'),
@@ -336,7 +344,6 @@ export default {
       const f = this.findInRulesById(row.changeRuleId)
       if (!f) return
       if (f.scope === 'Node') {
-        this.$message.error(i18n.t('packages_form_field_inference_list_qingxiugaizhengzai'))
         return
       }
       if (f.scope === 'Field') {
@@ -373,12 +380,16 @@ export default {
       return !row.source?.scope
     },
 
+    getFieldScope(row = {}) {
+      return row.source?.scope
+    },
+
     getRevokeColorClass(row = {}) {
       const map = {
         Node: 'color-warning',
         Field: 'color-primary'
       }
-      return map[row.source?.scope] || 'color-disable'
+      return map[this.getFieldScope(row)] || 'color-disable'
     }
   }
 }

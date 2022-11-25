@@ -5,6 +5,7 @@
         <VIcon>info</VIcon>
         <span>{{ $t('packages_form_field_inference_main_dangqianyou') }}</span>
         <span class="color-warning px-1 fs-6 fw-bold din-font">{{ batchRuleCounts }}</span>
+        <span>{{ $t('packages_form_field_inference_main_ge') }}</span>
         <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
       </div>
       <ElButton v-if="!readonly" type="text" class="ml-3" @click="rollbackAll">{{
