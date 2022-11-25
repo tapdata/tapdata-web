@@ -68,9 +68,14 @@
         <ElButton size="mini" @click="editDataTypeVisible = false">{{
           $t('packages_business_button_cancel')
         }}</ElButton>
-        <ElButton size="mini" type="primary" :loading="editBtnLoading" @click="submitEdit">{{
-          $t('packages_business_button_confirm')
-        }}</ElButton>
+        <ElButton
+          size="mini"
+          type="primary"
+          :disabled="currentData.dataType === currentData.newDataType"
+          :loading="editBtnLoading"
+          @click="submitEdit"
+          >{{ $t('packages_business_button_confirm') }}</ElButton
+        >
       </span>
     </ElDialog>
   </div>
