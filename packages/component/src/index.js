@@ -13,6 +13,7 @@ import VDivider from './base/VDivider.vue'
 import EmptyItem from './base/EmptyItem.vue'
 import VButton from './base/VButton.vue'
 import Highlight from './base/Highlight.js'
+import VCollapse from './base/VCollapse'
 import Classification from './Classification.vue'
 import DiscoveryClassification from './DiscoveryClassification'
 import FilterBar from './filter-bar'
@@ -43,6 +44,7 @@ export {
   VirtualTransferPanel,
   VirtualSelect,
   VTable,
+  VCollapse,
   Chart,
   MqTransfer,
   VCodeEditor,

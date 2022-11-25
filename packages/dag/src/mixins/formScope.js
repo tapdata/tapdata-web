@@ -388,6 +388,7 @@ export default {
         getCommandAndSetValue: async ($form, others) => {
           const getState = $form.getState()
           const formValues = getState?.values || {}
+          console.log('formValues', formValues, others)
           const { nodeId } = others
           let params = {
             nodeId

@@ -96,6 +96,7 @@ export default {
   packages_dag_message_operation_succuess: '操作成功',
   packages_dag_message_resetOk: '重置成功',
   packages_dag_message_resetFailed: '重置失敗',
+  packages_dag_message_task_rename_success: '任務名稱修改成功',
   packages_dag_dataFlow_multiError_notFound: '此任務不存在',
   packages_dag_dataFlow_multiError_statusError: '任務狀態不允許這種操作',
   packages_dag_dataFlow_multiError_otherError: '操作失敗，請重試',

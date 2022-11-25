@@ -191,8 +191,10 @@ export default {
       this.getUnreadData()
       this.$ws.on('notification', res => {
         // this.getUnReadNum()
-        this.getUnreadData()
         let data = res?.data
+        if (data?.msg !== 'alarm') {
+          this.getUnreadData()
+        }
         if (data) {
           data.createTime = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
           self.listData = uniqueArr([data, ...this.listData])
