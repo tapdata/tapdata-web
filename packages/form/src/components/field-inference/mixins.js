@@ -16,7 +16,7 @@ export default {
   },
 
   methods: {
-    async getData(page = {}) {
+    async getData(op = {}) {
       let data = {
         items: [],
         total: 0
@@ -24,10 +24,10 @@ export default {
       try {
         const params = {
           nodeId: this.activeNode?.id,
-          tableFilter: '',
+          tableFilter: op.tableFilter,
           fields: ['original_name', 'fields', 'qualified_name'],
-          page: page.page || 1,
-          pageSize: page.pageSize || 20
+          page: op.page || 1,
+          pageSize: op.pageSize || 20
         }
         data = await metadataInstancesApi.nodeSchemaPage(params)
       } catch (e) {

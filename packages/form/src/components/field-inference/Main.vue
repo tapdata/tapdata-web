@@ -20,6 +20,7 @@
           suffix-icon="el-icon-search"
           clearable
           class="p-2"
+          @input="handleSearchTable"
         ></ElInput>
         <div class="flex bg-main justify-content-between pl-2" style="height: 40px">
           {{ $t('packages_form_field_mapping_list_biaoming') }}
@@ -67,6 +68,7 @@
             size="mini"
             suffix-icon="el-icon-search"
             clearable
+            @input="handleSearchField"
           ></ElInput>
           <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
             <VIcon>refresh</VIcon>
@@ -86,6 +88,8 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
+
 import noData from 'web-core/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 
@@ -143,7 +147,7 @@ export default {
       const { items, total } = await this.getData({
         page: current,
         pageSize: size,
-        searchTable: this.searchTable
+        tableFilter: this.searchTable
       })
       this.navList = items
       this.page.total = total
@@ -156,9 +160,18 @@ export default {
       this.loadData()
     },
 
+    filterFields() {
+      let item = this.navList[this.position]
+      let fields = item?.fields
+      if (this.searchField) {
+        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+      }
+      this.selected = Object.assign({}, item, { fields })
+    },
+
     handleSelect(item, index = 0) {
-      this.selected = item
       this.position = index
+      this.filterFields()
     },
 
     rollbackAll() {
@@ -176,7 +189,15 @@ export default {
 
     handleUpdate() {
       this.form.setValuesIn('fieldChangeRules', this.fieldChangeRules)
-    }
+    },
+
+    handleSearchTable: debounce(function () {
+      this.loadData()
+    }, 200),
+
+    handleSearchField: debounce(function () {
+      this.filterFields()
+    }, 200)
   }
 }
 </script>
