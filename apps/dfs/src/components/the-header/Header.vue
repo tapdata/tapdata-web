@@ -164,10 +164,9 @@ export default {
     font-weight: 400;
     font-size: 10px;
     line-height: 14px;
-    color: map-get($color, lprimary);
-    border: 1px solid map-get($color, disprimary);
+    border: 1px solid rgba(255, 255, 255, 0.45);
     border-radius: 2px;
-    padding: 2px;
+    padding: 4px;
   }
   .pointer {
     cursor: pointer;

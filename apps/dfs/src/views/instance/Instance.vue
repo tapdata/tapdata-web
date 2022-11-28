@@ -502,10 +502,12 @@ export default {
             //升级弹窗使用
             let { packageSize, changeList, estimatedUpgradeTime, version, releaseNoteUri } = getVersion
             this.currentVersionInfo = {
-              packageSize: (packageSize / (1024 * 1024)).toFixed(1) + ' MB' || '-',
+              packageSize: (packageSize ? (packageSize / (1024 * 1024)).toFixed(1) + ' MB' : '-') || '-',
               changeList: changeList || '',
               estimatedUpgradeTime:
-                (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong') || '-',
+                (estimatedUpgradeTime
+                  ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong')
+                  : '-') || '-',
               releaseNoteUri: releaseNoteUri,
               version: version
             }
