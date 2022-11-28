@@ -356,7 +356,7 @@ $--input-disabled-placeholder-color: $--color-text-placeholder !default;
 // $--input-medium-font-size: 14px !default;
 // $--input-medium-height: 36px !default;
 
-// $--input-small-font-size: 13px !default;
+ $--input-small-font-size: 14px !default;
 // $--input-small-height: 32px !default;
 
 // $--input-mini-font-size: 12px !default;
@@ -409,7 +409,7 @@ $--tabs-item-color: $--color-text-regular !default;
 
 /* Button
 -------------------------- */
-$--button-font-size: 12px !default;
+$--button-font-size: $--font-size-base !default;
 $--button-font-weight: $--font-weight-normal !default;
 $--button-border-radius: $--border-radius-base !default;
 $--button-padding-vertical: 12px !default;
@@ -421,7 +421,7 @@ $--button-medium-border-radius: $--border-radius-base !default;
 $--button-medium-padding-vertical: 8px !default;
 $--button-medium-padding-horizontal: 15px !default;
 
-$--button-small-font-size: 12px !default;
+$--button-small-font-size: $--font-size-base !default;
 $--button-small-border-radius: #{$--border-radius-base - 1} !default;
 $--button-small-padding-vertical: 9px !default;
 $--button-small-padding-horizontal: 15px !default;
@@ -505,7 +505,7 @@ $--table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, 0.12) !default;
 $--table-header-background-color: $--background-color-regular !default;
 /* Pagination
 -------------------------- */
-$--pagination-font-size: 13px !default;
+$--pagination-font-size: $--font-size-base !default;
 $--pagination-fill: $--color-white !default;
 $--pagination-color: $--color-text-primary !default;
 $--pagination-border-radius: 3px !default;
@@ -532,7 +532,7 @@ $--popover-title-color: $--color-text-primary !default;
 -------------------------- */
 $--tooltip-fill: $--color-text-primary !default;
 $--tooltip-color: $--color-white !default;
-$--tooltip-font-size: 12px !default;
+$--tooltip-font-size: 14px !default;
 $--tooltip-border-color: $--color-text-primary !default;
 $--tooltip-arrow-size: 6px !default;
 $--tooltip-padding: 5px 10px !default;
@@ -577,6 +577,7 @@ $--tree-expand-icon-color: $--color-text-placeholder !default;
 $--dropdown-menu-box-shadow: $--box-shadow-light !default;
 $--dropdown-menuItem-hover-fill: $--color-primary-light-9 !default;
 $--dropdown-menuItem-hover-color: $--link-color !default;
+$--dropdown-menu-font-size: $--font-size-base !default;
 
 /* Badge
 -------------------------- */
@@ -753,9 +754,12 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     height: 40px;
   }
 }
+.el-table--small {
+  font-size: $fontBaseTitle;
+}
 
-/* Breadcrumb
---------------------------*/
+  /* Breadcrumb
+  --------------------------*/
 .el-breadcrumb__inner a,
 .el-breadcrumb__inner.is-link {
   font-size: 12px;
@@ -838,4 +842,10 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   margin: 0;
   padding-left: 0;
   background-color: map-get($bgColor, disable);
+}
+
+/* Input
+--------------------------*/
+.el-input__inner{
+  font-size:  $fontBaseTitle;
 }

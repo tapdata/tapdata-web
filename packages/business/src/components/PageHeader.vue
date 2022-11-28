@@ -1,6 +1,6 @@
 <template>
   <div v-show="!isHidden">
-    <ElBreadcrumb v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
+    <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
       <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
         {{ item.name }}
       </ElBreadcrumbItem>
@@ -79,3 +79,16 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.breadcrumb {
+  height: 50px;
+  line-height: 50px;
+  margin-left: 24px;
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner,
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
+    color: map-get($fontColor, normal) !important;
+  }
+}
+</style>
