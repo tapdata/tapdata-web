@@ -1,13 +1,15 @@
-import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, onUnmounted } from 'vue-demi'
-import { FormItem, JsEditor } from '../index'
-import { VCodeEditor, VIcon, VirtualSelect } from '@tap/component'
-import resize from '@tap/component/src/directives/resize'
-import { taskApi } from '@tap/api'
 import { useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
+import { groupBy } from 'lodash'
+import i18n from '@tap/i18n'
+import { FormItem, JsEditor } from '../index'
+import { VCodeEditor, VIcon, VirtualSelect } from '@tap/component'
+import resize from '@tap/component/src/directives/resize'
+import { javascriptFunctionsApi, taskApi } from '@tap/api'
 import { JsDeclare } from '../js-declare'
+import { HighlightCode } from '../highlight-code'
 import './style.scss'
 
 export const JsProcessor = observer(
@@ -24,6 +26,7 @@ export const JsProcessor = observer(
       const running = ref(false)
       const runningText = ref('')
       const fullscreen = ref(false)
+      const showDoc = ref(false)
 
       let queryTimes = 0
       const params = reactive({
@@ -127,9 +130,39 @@ export const JsProcessor = observer(
         clearTimeout(timer)
       })
 
-      const toogleFullscreen = () => {
+      const toggleFullscreen = () => {
         fullscreen.value = !fullscreen.value
       }
+
+      const toggleDoc = event => {
+        event.stopPropagation()
+        showDoc.value = !showDoc.value
+        console.log('toggleDoc', showDoc.value) // eslint-disable-line
+      }
+
+      let functionGroup = reactive([])
+      const classDescMap = {
+        DateUtil: '日期处理',
+        idGen: 'ID生成器',
+        networkUtil: '网络工具'
+      }
+      const loadFunction = async () => {
+        const data = await javascriptFunctionsApi.get({
+          filter: JSON.stringify({
+            limit: 1000,
+            where: {
+              type: 'system'
+            }
+          })
+        })
+        const group = groupBy(data.items, 'className')
+        const noClassFunction = group['']
+        delete group['']
+        functionGroup = group
+        // console.log('loadFunction', groupBy(data.items, 'className')) // eslint-disable-line
+      }
+
+      loadFunction()
 
       return () => {
         const editorProps = { ...attrs }
@@ -139,7 +172,10 @@ export const JsProcessor = observer(
           <div class="position-absolute flex align-center w-100">
             <span class="formily-element-form-item-asterisk">*</span>
             <span class="flex-1">{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
-            <ElLink onClick={toogleFullscreen} class="js-editor-fullscreen" type="primary">
+            <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+              API文档
+            </ElLink>
+            <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
               <VIcon class="mr-1">fangda</VIcon>
               {i18n.t('packages_form_js_editor_fullscreen')}
             </ElLink>
@@ -225,6 +261,38 @@ export const JsProcessor = observer(
 
         return (
           <div class="js-processor font-color-light">
+            <ElDrawer
+              append-to-body
+              modal={false}
+              title="API"
+              visible={showDoc.value}
+              on={{
+                ['update:visible']: v => {
+                  console.log('update:visible', v) // eslint-disable-line
+                  showDoc.value = v
+                }
+              }}
+            >
+              <div class="px-4 js-doc-content">
+                {Object.keys(functionGroup).map(className => {
+                  return [
+                    <h2>{className}</h2>,
+                    classDescMap[className] && <p>{classDescMap[className]}</p>,
+                    <h3>方法</h3>,
+                    functionGroup[className].map(item => {
+                      return [
+                        <h4>{item.methodName}</h4>,
+                        <ul>
+                          <li>作用</li>
+                          <li>用法</li>
+                        </ul>,
+                        <HighlightCode code={item.format}></HighlightCode>
+                      ]
+                    })
+                  ]
+                })}
+              </div>
+            </ElDrawer>
             <div
               class={[
                 'js-processor-editor',
@@ -235,9 +303,14 @@ export const JsProcessor = observer(
             >
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
                 {fullscreen && runTool}
-                <ElLink onClick={toogleFullscreen} class="js-editor-fullscreen" type="primary">
-                  <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
-                </ElLink>
+                <div>
+                  <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+                    API文档
+                  </ElLink>
+                  <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
+                    <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
+                  </ElLink>
+                </div>
               </div>
 
               <div class="js-editor-form-item-wrap">
