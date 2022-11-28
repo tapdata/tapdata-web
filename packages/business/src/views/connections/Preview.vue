@@ -18,9 +18,15 @@
             :disabled="!isFileSource()"
             :content="$t('packages_business_connections_list_wenjianleixingde')"
             placement="top"
+            class="load-schema__tooltip"
           >
             <span>
-              <el-button type="primary" :disabled="isFileSource()"
+              <el-button
+                :disabled="isFileSource()"
+                type="primary"
+                size="mini"
+                class="flex-fill min-w-0"
+                @click="reload()"
                 >{{ $t('packages_business_connection_preview_load_schema') }}
               </el-button>
             </span>
@@ -484,6 +490,9 @@ export default {
     width: 100%;
     height: 100%;
   }
+}
+.load-schema__tooltip {
+  margin-right: 10px;
 }
 </style>
 <style lang="scss">
