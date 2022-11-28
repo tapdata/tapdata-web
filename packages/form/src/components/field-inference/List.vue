@@ -257,7 +257,7 @@ export default {
     },
 
     handleUpdate(data) {
-      this.form.setValuesIn('fieldChangeRules', data || this.fieldChangeRules)
+      this.form?.setValuesIn?.('fieldChangeRules', data || this.fieldChangeRules)
       this.$emit('update:fieldChangeRules', data || this.fieldChangeRules)
     },
 

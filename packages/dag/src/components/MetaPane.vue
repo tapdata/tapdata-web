@@ -1,6 +1,14 @@
 <template>
   <div v-loading="loading" class="metadata-list-wrap">
-    <List ref="table" :data="selected" :readonly="stateIsReadonly || !isTarget" hide-batch></List>
+    <List
+      ref="table"
+      v-bind="$attrs"
+      :data="selected"
+      :form="form"
+      :readonly="stateIsReadonly || !isTarget"
+      :fieldChangeRules.sync="fieldChangeRules"
+      hide-batch
+    ></List>
   </div>
 </template>
 
@@ -18,7 +26,8 @@ export default {
   mixins: [mixins],
 
   props: {
-    isShow: Boolean
+    isShow: Boolean,
+    form: Object
   },
 
   data() {
@@ -26,7 +35,8 @@ export default {
       selected: {},
       tableData: [],
       loading: false,
-      data: ''
+      data: '',
+      fieldChangeRules: []
     }
   },
 
@@ -78,7 +88,7 @@ export default {
     async loadFields() {
       this.$refs.table?.doLayout()
       this.loading = true
-
+      this.loadFieldChangeRules()
       try {
         const { items } = await this.getData()
         this.selected = items?.[0] || {}
@@ -87,6 +97,10 @@ export default {
       }
 
       this.loading = false
+    },
+
+    loadFieldChangeRules() {
+      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
     }
   }
 }
