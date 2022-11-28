@@ -123,7 +123,7 @@
             placement="top"
           >
             <span>
-              <ElButton type="text" :disabled="isFileSource(scope.row)"
+              <ElButton type="text" :disabled="isFileSource(scope.row)" @click="handleLoadSchema(scope.row)"
                 >{{ $t('packages_business_connection_preview_load_schema') }}
               </ElButton>
             </span>
