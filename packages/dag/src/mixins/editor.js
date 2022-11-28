@@ -20,6 +20,7 @@ import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
+import { setPageTitle } from '@tap/shared'
 
 export default {
   directives: {
@@ -277,6 +278,7 @@ export default {
     async newDataflow(name) {
       this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
+      this.titleSet()
     },
 
     async makeTaskName(source) {
@@ -1644,6 +1646,7 @@ export default {
       taskApi.rename(this.dataflow.id, name).then(
         () => {
           this.$message.success(this.$t('packages_dag_message_task_rename_success'))
+          this.titleSet()
         },
         error => {
           this.dataflow.name = oldName
@@ -1791,6 +1794,7 @@ export default {
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
         this.startLoopTask(id)
+        this.titleSet()
         return data
       } catch (e) {
         this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
@@ -1934,6 +1938,10 @@ export default {
           this.handleAutoLayout()
         }
       }
+    },
+
+    titleSet() {
+      setPageTitle(`${this.dataflow.name} - ${this.$t(this.$route.meta.title)}`)
     }
   }
 }
