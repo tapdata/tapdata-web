@@ -49,7 +49,8 @@
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
-              {{ value }}
+              <span v-if="lang === key" class="color-primary">{{ value }}</span>
+              <span v-else>{{ value }}</span>
             </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
