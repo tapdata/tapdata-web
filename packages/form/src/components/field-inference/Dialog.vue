@@ -67,7 +67,7 @@
     </div>
     <span slot="footer" class="dialog-footer">
       <ElButton size="mini" @click="handleCancel">{{ $t('button_cancel') }}</ElButton>
-      <ElButton size="mini" type="primary" :disabled="getSubmitDisabled()" @click="submit">{{
+      <ElButton size="mini" type="primary" :disabled="getSubmitDisabled()" :loading="editBtnLoading" @click="submit">{{
         $t('button_confirm')
       }}</ElButton>
     </span>
@@ -82,7 +82,7 @@ import { metadataInstancesApi } from '@tap/api'
 import noData from 'web-core/assets/images/noData.png'
 
 export default {
-  name: 'FieldTypeRules',
+  name: 'FieldInferenceDialog',
 
   props: {
     form: {
@@ -114,6 +114,7 @@ export default {
         list: [],
         options: []
       },
+      editBtnLoading: false,
       noData
     }
   },
@@ -177,18 +178,25 @@ export default {
         databaseType: activeNode.databaseType,
         dataTypes
       }
-      metadataInstancesApi.dataType2TapType(params).then(data => {
-        const result = list.map(t => {
-          const val = data[t.result.dataType]
-          t.result.tapType = val && val.type !== 7 ? JSON.stringify(val) : null
-          return t
+      this.editBtnLoading = true
+      metadataInstancesApi
+        .dataType2TapType(params)
+        .then(data => {
+          const result = list.map(t => {
+            const val = data[t.result.dataType]
+            t.result.tapType = val && val.type !== 7 ? JSON.stringify(val) : null
+            return t
+          })
+          if (result.some(t => !t.result?.tapType)) {
+            this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
+            this.editBtnLoading = false
+            return
+          }
+          this.handleUpdate()
         })
-        if (result.some(t => !t.result?.tapType)) {
-          this.$message.error(i18n.t('packages_form_field_inference_dialog_cunzaicuowuge'))
-          return
-        }
-        this.handleUpdate()
-      })
+        .finally(() => {
+          this.editBtnLoading = false
+        })
     }
   }
 }
