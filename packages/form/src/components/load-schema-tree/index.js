@@ -54,34 +54,42 @@ export const loadSchemaTree = observer(
           args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)]
         }
         loading.value = true
-        proxyApi
-          .call(params)
-          .then(() => {
-            const filter = {
-              where: {
-                'source.id': connectionId,
-                meta_type: {
-                  in: ['collection', 'table', 'view']
-                },
-                is_deleted: false,
-                sourceType: 'SOURCE',
-                original_name: {
-                  neq: ''
+        form
+          .validate()
+          .then(valid => {
+            if (!valid) return
+            proxyApi
+              .call(params)
+              .then(() => {
+                const filter = {
+                  where: {
+                    'source.id': connectionId,
+                    meta_type: {
+                      in: ['collection', 'table', 'view']
+                    },
+                    is_deleted: false,
+                    sourceType: 'SOURCE',
+                    original_name: {
+                      neq: ''
+                    }
+                  },
+                  page: 1,
+                  size: 20,
+                  fields: {
+                    original_name: true
+                  },
+                  order: ['original_name ASC']
                 }
-              },
-              page: 1,
-              size: 20,
-              fields: {
-                original_name: true
-              },
-              order: ['original_name ASC']
-            }
-            metadataInstancesApi
-              .get({ filter: JSON.stringify(filter) })
-              .then(metaData => {
-                const table = metaData.items?.[0]?.original_name
-                form.setValuesIn(tableNameField || 'tableName', table)
-                getSchemaData(true)
+                metadataInstancesApi
+                  .get({ filter: JSON.stringify(filter) })
+                  .then(metaData => {
+                    const table = metaData.items?.[0]?.original_name
+                    form.setValuesIn(tableNameField || 'tableName', table)
+                    getSchemaData(true)
+                  })
+                  .catch(() => {
+                    loading.value = false
+                  })
               })
               .catch(() => {
                 loading.value = false
