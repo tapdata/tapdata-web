@@ -12124,6 +12124,9 @@
 .bg-color-white {
   background-color: map-get($bgColor, white) !important;
 }
+.bg-color-normal {
+  background-color: map-get($bgColor, normal) !important;
+}
 
 /*
 * public 具体的样式类

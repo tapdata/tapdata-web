@@ -150,6 +150,9 @@ const alarmApi = new Alarm()
 import Proxy from './Proxy'
 const proxyApi = new Proxy()
 
+import Paid from './Paid'
+const paidApi = new Paid()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -200,7 +203,8 @@ export {
   alarmRuleApi,
   alarmApi,
   externalStorageApi,
-  proxyApi
+  proxyApi,
+  paidApi
 }
 export * from './ApiClient'
 

@@ -153,14 +153,14 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
+import { mapMutations } from 'vuex'
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
 import { debounce } from 'lodash'
 
+import i18n from '@tap/i18n'
 import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
-import { measurementApi, taskApi } from '@tap/api'
+import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -314,6 +314,8 @@ export default {
 
   async mounted() {
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
+    await this.initPdkProperties()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -339,6 +341,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+
     init: debounce(function () {
       this.timer && clearTimeout(this.timer)
       this.startLoadData()
@@ -1087,6 +1091,27 @@ export default {
       setTimeout(() => {
         this.showConsole && this.$refs.console?.autoLoad('reset')
       }, 5000)
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }

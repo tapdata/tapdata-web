@@ -14,6 +14,7 @@
         <div class="table-page-left" v-if="classify && !hideClassify">
           <Classification
             :authority="classify.authority"
+            :viewPage="classify.viewPage"
             :types="classify.types"
             :title="classify.title"
             :kai-title="classify.title"

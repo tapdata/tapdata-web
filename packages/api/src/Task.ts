@@ -159,5 +159,9 @@ export default class Task extends Http {
   taskConsoleRelations(params) {
     return this.axios.post(`/api/task-console/relations`, params)
   }
+
+  rename(taskId, newName) {
+    return this.axios.patch(`${this.url}/rename/${taskId}?newName=${encodeURIComponent(newName)}`)
+  }
 }
 export { Task }

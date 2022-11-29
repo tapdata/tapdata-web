@@ -232,7 +232,7 @@ export class Database extends NodeType {
             }
           },
 
-          increaseReadSize: {
+          readBatchSize: {
             title: '批量读取条数', //增量批次读取条数
             type: 'string',
             'x-decorator': 'FormItem',
@@ -284,7 +284,12 @@ export class Database extends NodeType {
             type: 'void',
             title: '推演结果',
             'x-decorator': 'FormItem',
-            'x-component': 'SchemaFiledMapping'
+            'x-component': 'fieldInference',
+            'x-component-props': {
+              style: {
+                'margin-top': '-36px'
+              }
+            }
           },
           collapse: {
             type: 'void',

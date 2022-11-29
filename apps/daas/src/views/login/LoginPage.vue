@@ -31,7 +31,7 @@ export default {
     loginImageStyle() {
       return {
         background: `url('${window._TAPDATA_OPTIONS_.loginUrl}') left 0 no-repeat`,
-        backgroundSize: window._TAPDATA_OPTIONS_.loginSize
+        backgroundSize: window._TAPDATA_OPTIONS_.loginSize || 'cover'
       }
     }
   },

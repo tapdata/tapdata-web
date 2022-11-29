@@ -648,38 +648,27 @@ export default {
               }
             }
           },
-          openTableExcludeFilterWrap: {
+          openTableExcludeFilter: {
             title: i18n.t('packages_business_connections_databaseform_paichubiao'),
-            'x-decorator': 'FormItem',
+            type: 'boolean',
+            default: false,
             'x-decorator-props': {
-              layout: 'horizontal',
               feedbackLayout: 'none'
             },
+            'x-decorator': 'FormItem',
+            'x-component': 'Switch'
+          },
+          openTableExcludeFilterTips: {
             type: 'void',
-            'x-component': 'Space',
-            'x-component-props': {
-              size: 'middle'
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              colon: false
             },
-            properties: {
-              openTableExcludeFilter: {
-                type: 'boolean',
-                default: false,
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
-              openTableExcludeFilterTips: {
-                type: 'void',
-                title: ' ',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  colon: false
-                },
-                'x-component': 'Text',
-                'x-component-props': {
-                  icon: 'info',
-                  content: i18n.t('packages_business_connections_databaseform_keyicongbaohan')
-                }
-              }
+            'x-component': 'Text',
+            'x-component-props': {
+              icon: 'info',
+              content: i18n.t('packages_business_connections_databaseform_keyicongbaohan')
             }
           },
           tableExcludeFilter: {
@@ -691,7 +680,10 @@ export default {
               placeholder: this.$t('packages_business_connection_form_database_owner_tip')
             },
             'x-decorator-props': {
-              colon: false
+              colon: false,
+              style: {
+                'margin-top': '-22px'
+              }
             },
             'x-reactions': {
               dependencies: ['__TAPDATA.openTableExcludeFilter'],
@@ -941,9 +933,11 @@ export default {
             expireSeconds: 100000000
           }
           proxyApi.subscribe(filter).then(data => {
-            let str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
+            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const p = location.origin + location.pathname
+            let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {
-              str = `${process.env.BASE_URL || location.origin}${data.token}`
+              str = `${p.replace(/\/$/, '')}${data.token}`
             }
             $form.setValuesIn(field.name, str)
           })

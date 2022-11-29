@@ -2,6 +2,8 @@ import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
+import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
+
 import Lang from '../views/Lang.vue'
 
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
@@ -260,6 +262,15 @@ const routes = [
     path: '/upgradeVersion',
     name: 'UpgradeVersion',
     component: UpgradeVersion,
+    meta: {
+      title: 'tap_upgrade'
+    }
+  },
+  //付费升级
+  {
+    path: '/paidUpgrade',
+    name: 'PaidUpgrade',
+    component: PaidUpgrade,
     meta: {
       title: 'tap_upgrade'
     }

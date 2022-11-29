@@ -291,6 +291,10 @@ export default {
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           this.newDataflow(newName)
+        } else if (e?.data?.code === 'InvalidPaidPlan') {
+          this.$router.push({
+            name: 'migrateList'
+          })
         } else {
           this.handleError(e)
         }
@@ -318,7 +322,7 @@ export default {
     },
 
     handlePageReturn() {
-      if (!this.allNodes.length && !this.nameHasUpdated) {
+      if (!this.allNodes.length && !this.nameHasUpdated && this.$store.state.dataflow.taskId) {
         this.$confirm(
           this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),

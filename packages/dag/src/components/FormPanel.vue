@@ -187,6 +187,7 @@ export default {
       } else {
         this.schema = JSON.parse(JSON.stringify(schema))
       }
+      this.$emit('setSchema')
     },
 
     getSettingSchema() {

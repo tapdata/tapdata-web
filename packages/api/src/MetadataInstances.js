@@ -45,11 +45,12 @@ export default class MetadataInstances extends Http {
    * @param fields 筛选字段，如果有值，则请求结果只返回fields包含的字段；类型：字符串数组
    * @returns {Promise<AxiosResponse<any>>}
    */
-  nodeSchema(nodeId, fields = ['fields']) {
+  nodeSchema(nodeId, fields = ['fields'], nodeConfig) {
     return this.axios.get(this.url + '/node/schema', {
       params: {
         nodeId,
-        fields
+        fields,
+        nodeConfig
       }
     })
   }
@@ -106,6 +107,20 @@ export default class MetadataInstances extends Http {
   //元数据修改
   resetTable(params) {
     return this.axios.post(this.url + '/migrate/reset', params)
+  }
+
+  //61迭代 新增可以修改目标节点类型 新增接口
+  changeFields(params) {
+    return this.axios.post(this.url + '/changeFields', params)
+  }
+  changeFieldsReset(params) {
+    return this.axios.post(this.url + '/changeFields/reset', params)
+  }
+  dataType2TapType(params) {
+    return this.axios.post(this.url + '/dataType2TapType', params)
+  }
+  nodeSchemaPage(params) {
+    return this.axios.get(this.url + '/node/schemaPage', { params })
   }
 }
 export { MetadataInstances }

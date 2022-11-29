@@ -98,6 +98,7 @@ export default {
   packages_dag_message_operation_succuess: 'The operation succeeded',
   packages_dag_message_resetOk: 'Reset success',
   packages_dag_message_resetFailed: 'Reset Failed',
+  packages_dag_message_task_rename_success: 'Modified successfully',
   packages_dag_dataFlow_multiError_notFound: 'This job does not existed.',
   packages_dag_dataFlow_multiError_statusError: 'Job status does not allow to do this operation.',
   packages_dag_dataFlow_multiError_otherError: 'Operation failed, please try it again.',
