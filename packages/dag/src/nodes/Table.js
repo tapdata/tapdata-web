@@ -1,5 +1,6 @@
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
+import i18n from '@tap/i18n'
 
 export class Table extends NodeType {
   constructor() {
@@ -304,6 +305,182 @@ export class Table extends NodeType {
                   disabledEvents: {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
+                  },
+
+                  isFilter: {
+                    type: 'boolean',
+                    title: '过滤设置',
+                    default: false,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    'x-reactions': {
+                      target: '*(limitWrap,nodeSchema,conditions)',
+                      fulfill: {
+                        state: {
+                          visible: '{{$self.value}}'
+                        }
+                      }
+                    }
+                  },
+
+                  limitWrap: {
+                    type: 'void',
+                    title: '行数限制',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    properties: {
+                      limitType: {
+                        type: 'string',
+                        default: 'all',
+                        enum: [
+                          {
+                            label: '全部行数',
+                            value: 'all'
+                          },
+                          {
+                            label: '自定义',
+                            value: 'custom'
+                          }
+                        ],
+                        'x-component': 'Select',
+                        'x-reactions': [
+                          {
+                            target: 'limit',
+                            effects: ['onFieldInit'],
+                            fulfill: {
+                              run: `if ($target.value) {
+                                $target.visible = true
+                                $self.value = 'custom'
+                              } else {
+                                $target.visible = false
+                                $self.value = 'all'
+                              }`
+                            }
+                          },
+                          {
+                            target: 'limit',
+                            effects: ['onFieldInputValueChange'],
+                            fulfill: {
+                              state: {
+                                visible: `{{$self.value === 'custom'}}`,
+                                value: null
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      limit: {
+                        type: 'number',
+                        required: true,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1
+                        }
+                      }
+                    }
+                  },
+
+                  nodeSchema: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    'x-reactions': [
+                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id)}}`,
+                      {
+                        target: 'conditions.*.key',
+                        fulfill: {
+                          state: {
+                            loading: '{{$self.loading}}',
+                            dataSource: '{{$self.value}}'
+                          }
+                        }
+                      }
+                    ]
+                  },
+
+                  conditions: {
+                    title: '自定义条件',
+                    type: 'array',
+                    default: [{ key: '', value: '', operator: 5 }],
+                    'x-decorator': 'FormItem',
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        space: {
+                          type: 'void',
+                          'x-component': 'Space',
+                          properties: {
+                            key: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'FieldSelect'
+                            },
+                            operator: {
+                              type: 'number',
+                              required: 'true',
+                              enum: [
+                                {
+                                  label: '>',
+                                  value: 1
+                                },
+                                {
+                                  label: '>=',
+                                  value: 2
+                                },
+                                {
+                                  label: '<',
+                                  value: 3
+                                },
+                                {
+                                  label: '<=',
+                                  value: 4
+                                },
+                                {
+                                  label: '=',
+                                  value: 5
+                                }
+                              ],
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Select'
+                            },
+                            value: {
+                              type: 'string',
+                              required: 'true',
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Input'
+                            },
+                            /*add: {
+                              type: 'void',
+                              'x-component': 'ArrayItems.Addition',
+                              'x-component-props': {
+                                type: 'text',
+                                icon: 'el-icon-edit',
+                                round: true,
+                                loading: true
+                              }
+                            },*/
+                            remove: {
+                              type: 'void',
+                              'x-component': 'ArrayItems.Remove'
+                            }
+                          }
+                        }
+                      }
+                    },
+                    properties: {
+                      add: {
+                        type: 'void',
+                        title: '添加',
+                        'x-component': 'ArrayItems.Addition',
+                        'x-component-props': {
+                          defaultValue: { key: '', value: '', operator: 5 }
+                        }
+                      }
+                    }
                   }
                 }
               },
