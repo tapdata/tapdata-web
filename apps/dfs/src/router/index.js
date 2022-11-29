@@ -321,7 +321,7 @@ const routes = [
     name: 'MigrateCreate',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
@@ -329,7 +329,7 @@ const routes = [
     name: 'MigrateEditor',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
@@ -337,7 +337,7 @@ const routes = [
     name: 'MigrateViewer',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
