@@ -243,8 +243,16 @@ export default defineComponent({
           : isTarget.value
           ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
           : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+        const replicateLagProps = props.sample.replicateLag
+        const replicateLagVal =
+          isNumber(replicateLagProps) && replicateLagProps >= 0
+            ? calcTimeUnit(replicateLagProps, 2, {
+                separator: ' ',
+                autoShowMs: true
+              })
+            : null
         const val = getVal(
-          isSource.value ? replicateLag.value : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
+          isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
         )
         return (
           <div class="statistic flex">
