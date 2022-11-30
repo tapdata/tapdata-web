@@ -157,10 +157,10 @@ export default observer({
                           tooltip: this.$t('packages_dag_task_setting_cron_tip')
                         },
                         'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
+                          dependencies: ['type'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                              display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
                             }
                           }
                         }
