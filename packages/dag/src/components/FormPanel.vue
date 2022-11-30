@@ -3,13 +3,13 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
 import { Path } from '@formily/path'
+
+import i18n from '@tap/i18n'
 import { validateBySchema } from '@tap/form/src/shared/validate'
-import { debounce } from 'lodash'
+
 import FormRender from './FormRender'
 
 const mapEnum = dataSource => (item, index) => {
@@ -97,7 +97,13 @@ export default {
         const node = this.nodeById(o)
         try {
           if (node) {
-            const result = await validateBySchema(node.__Ctor.formSchema, node, this.scope)
+            await validateBySchema(node.__Ctor.formSchema, node, this.scope)
+            const { pdkHash } = node?.attrs || {}
+            const nodeConfigSchema = this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
+            if (Object.keys(nodeConfigSchema || {}).length) {
+              const { nodeConfig } = node
+              await validateBySchema(nodeConfigSchema, nodeConfig, this.scope)
+            }
           }
 
           if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
