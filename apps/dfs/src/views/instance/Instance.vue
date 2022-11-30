@@ -134,7 +134,7 @@
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('list_operation')" width="200">
+        <ElTableColumn :label="$t('list_operation')" width="240">
           <template slot-scope="scope">
             <ElButton type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
               $t('agent_button_deploy')
@@ -235,7 +235,6 @@
             class="flex-fill"
             @click="toDeploy(selectedRow)"
           >
-            <VIcon size="12">deploy</VIcon>
             <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
           </VButton>
           <VButton
@@ -245,7 +244,6 @@
             class="flex-fill"
             @click="handleStop(selectedRow)"
           >
-            <VIcon size="12">stop</VIcon>
             <span class="ml-1">{{ $t('button_stop') }}</span>
           </VButton>
           <VButton
@@ -254,7 +252,6 @@
             class="flex-fill"
             @click="handleDel(selectedRow)"
           >
-            <VIcon size="12">delete</VIcon>
             <span class="ml-1">{{ $t('button_delete') }}</span>
           </VButton>
         </div>

@@ -100,7 +100,6 @@
       <div class="p-6" style="background-color: #fff">
         <div class="fs-7" style="color: #000">
           <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
-          <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
           <span class="color-primary" style="font-family: DIN">{{ numToThousands(taskInputNumber) }}</span>
         </div>
         <div class="pr-4" style="height: 200px">
@@ -237,15 +236,7 @@ export default {
           value: 0,
           list: [
             {
-              label: $t('task_initial_sync'),
-              value: 0
-            },
-            {
-              label: $t('task_sync_type_cdc'),
-              value: 0
-            },
-            {
-              label: $t('task_initial_sync_cdc'),
+              label: $t('workbench_overview_task_status'),
               value: 0
             }
           ]
@@ -377,10 +368,8 @@ export default {
       let agentList = this.agentList
       const stats = data.taskTypeStats
       if (stats) {
-        agentList[2].value = stats.total
-        agentList[2].list[0].value = stats.initial_sync || 0
-        agentList[2].list[1].value = stats.cdc || 0
-        agentList[2].list[2].value = stats['initial_sync+cdc'] || 0
+        agentList[2].value = stats.total - stats.Buffer
+        agentList[2].list[0].value = agentList[2].value || 0
       }
     },
     loadNotices() {

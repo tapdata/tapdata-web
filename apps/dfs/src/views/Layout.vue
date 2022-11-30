@@ -7,7 +7,7 @@
           <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
             <template slot="title">
               <span class="mr-4" slot v-if="menu.icon"
-                ><VIcon class="v-icon" size="14">{{ menu.icon }}</VIcon></span
+                ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
               <span slot="title">{{ menu.title }}</span>
             </template>
@@ -19,7 +19,7 @@
           </ElSubmenu>
           <ElMenuItem v-else :key="menu.title" :index="menu.path">
             <span class="mr-4" slot v-if="menu.icon"
-              ><VIcon class="v-icon" size="14">{{ menu.icon }}</VIcon></span
+              ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
             >
             <span slot="title">{{ menu.title }}</span>
           </ElMenuItem>
@@ -86,7 +86,7 @@ export default {
         },
         {
           name: 'dataflowList',
-          title: $t('task_manage_etl') + ' Beta',
+          title: $t('task_manage_etl') + '(Beta)',
           icon: 'task'
         },
         {

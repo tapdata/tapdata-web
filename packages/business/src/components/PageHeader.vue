@@ -7,7 +7,7 @@
     </ElBreadcrumb>
     <div class="flex align-items-center" v-else>
       <span class="page-header-title font-color-dark">{{ $t($route.meta.title) }}</span>
-      <Desciption class="flex align-items-center ml-4 fs-8 font-color-light" :desc="$route.meta.desc"></Desciption>
+      <Desciption class="flex align-items-center ml-4 fs-8 font-color-light" :desc="$t($route.meta.desc)"></Desciption>
     </div>
   </div>
 </template>

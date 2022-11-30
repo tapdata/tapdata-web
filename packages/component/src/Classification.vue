@@ -519,7 +519,7 @@ export default {
     top: 4px;
   }
   .toggle {
-    margin-top: 16px;
+    margin-top: 56px;
     // color: map-get($color, lprimary);
     z-index: 2;
   }

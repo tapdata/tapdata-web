@@ -40,7 +40,9 @@
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
-            <span class="ml-2 current">{{ paidPlansCode || $t('dfs_the_header_header_jichuban') }}</span>
+            <span class="ml-2 current">{{
+              paidPlansCode === 'standard' ? $t('dfs_the_header_header_biaozhun') : $t('dfs_the_header_header_jichuban')
+            }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">
@@ -144,7 +146,7 @@ export default {
     //用户是否是付费用户
     getPaidPlan() {
       this.$axios.get('api/tcm/user/paidPlan').then(data => {
-        this.paidPlansCode = data?.paidPlans?.[0].name
+        this.paidPlansCode = data?.paidPlans?.[0].code
       })
     }
   }
@@ -164,10 +166,10 @@ export default {
     font-weight: 400;
     font-size: 10px;
     line-height: 14px;
-    color: map-get($color, lprimary);
-    border: 1px solid map-get($color, disprimary);
+    color: map-get($color, white);
+    border: 1px solid map-get($color, white);
     border-radius: 2px;
-    padding: 2px;
+    padding: 4px;
   }
   .pointer {
     cursor: pointer;
