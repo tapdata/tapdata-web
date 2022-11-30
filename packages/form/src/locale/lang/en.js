@@ -162,5 +162,6 @@ export default {
   packages_form_field_inference_dialog_mubiaoleixingpi: 'Target type batch modification rules',
   packages_form_field_inference_list_ninquerenyaohui: 'Are you sure you want to restore the current table? ',
   packages_form_field_inference_main_ninquerenyaoquan: 'Are you sure you want to restore all the defaults? ',
-  packages_form_field_inference_main_ge: ''
+  packages_form_field_inference_main_ge: '',
+  packages_form_qingjianchajiedian: 'Please check node configuration'
 }

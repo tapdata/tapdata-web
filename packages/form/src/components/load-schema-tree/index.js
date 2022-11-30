@@ -56,8 +56,7 @@ export const loadSchemaTree = observer(
         loading.value = true
         form
           .validate()
-          .then(valid => {
-            if (!valid) return
+          .then(() => {
             proxyApi
               .call(params)
               .then(() => {
@@ -96,6 +95,7 @@ export const loadSchemaTree = observer(
               })
           })
           .catch(() => {
+            root.$message.error(root.$t('packages_form_qingjianchajiedian'))
             loading.value = false
           })
       }
