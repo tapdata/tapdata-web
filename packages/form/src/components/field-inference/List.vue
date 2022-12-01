@@ -3,12 +3,9 @@
     <VTable
       :columns="columnsList"
       :data="tableList"
-      :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper'
-      }"
+      :has-pagination="false"
       ref="table"
       height="100%"
-      hide-on-single-page
       stripe
       :key="!!canRevokeRules.length + ''"
     >
@@ -157,7 +154,7 @@ export default {
           label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
           prop: 'data_type',
           slotName: 'data_type',
-          'min-width': '150px'
+          'min-width': '126px'
         },
         {
           label: i18n.t('packages_form_field_inference_list_feikong'),

@@ -46,7 +46,7 @@
         </div>
         <ElPagination
           small
-          class="flex mt-3 din-font mx-auto"
+          class="flex mt-3 p-0 din-font mx-auto"
           layout="total, prev, slot, next"
           :current-page.sync="page.current"
           :page-size.sync="page.size"
@@ -230,14 +230,13 @@ export default {
   border-radius: 4px;
 }
 .field-inference__nav {
-  max-width: 210px;
+  width: 210px;
   border-right: 1px solid #f2f2f2;
 }
 .field-inference__content {
   width: 0;
 }
 .nav-list {
-  max-width: 210px;
   overflow: hidden auto;
   li {
     background-color: map-get($bgColor, white);
@@ -285,5 +284,14 @@ export default {
 }
 .content__list {
   height: 0;
+}
+.page__current {
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  font-weight: 400;
+  color: map-get($color, primary);
+  line-height: 22px;
+  background-color: map-get($bgColor, pageCount);
 }
 </style>
