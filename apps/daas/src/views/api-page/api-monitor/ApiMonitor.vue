@@ -177,7 +177,7 @@
 
 <script>
 import { Chart, FilterBar, VTable } from '@tap/component'
-import { formatMs, handleUnit } from './utils'
+import { handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
 import { apiMonitorApi } from '@tap/api'
@@ -273,7 +273,7 @@ export default {
     formatMs(time) {
       if (time === 0 || !time) return 0
       if (time < 1000) return time + ' ms'
-      return calcTimeUnit(time, 2)
+      return calcTimeUnit(time)
     },
     //获取统计数据
     getPreview() {
