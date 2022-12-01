@@ -540,9 +540,6 @@ export default {
           if (item.metricValues) {
             item.metricValues.CpuUsage = (item.metricValues.CpuUsage * 100).toFixed(2) + '%'
             item.metricValues.HeapMemoryUsage = (item.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
-          } else {
-            item['metricValues']['CpuUsage'] = '-'
-            item['metricValues']['HeapMemoryUsage'] = '-'
           }
           metricValuesData[item.process_id] = item.metricValues
         })
@@ -551,6 +548,11 @@ export default {
       for (let i = 0; i < clusterData.length; i++) {
         clusterData[i].canUpdate = false //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
         clusterData[i]['metricValues'] = metricValuesData[clusterData[i].systemInfo?.process_id]
+          ? metricValuesData[clusterData[i].systemInfo?.process_id]
+          : { CpuUsage: '-', HeapMemoryUsage: '-' }
+        if (clusterData[i]?.engine?.status !== 'running') {
+          clusterData[i]['metricValues'] = { CpuUsage: '-', HeapMemoryUsage: '-' }
+        }
       }
       this.waterfallData = clusterData
     },
