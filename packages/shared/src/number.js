@@ -77,6 +77,7 @@ export function calcTimeUnit(val, fix = 2, op) {
     op || {}
   )
   let results = []
+  const ts = parseInt(val)
   const units = [
     {
       unit: 'ms',
@@ -107,7 +108,7 @@ export function calcTimeUnit(val, fix = 2, op) {
       interval: 99999
     }
   ]
-  for (let i = 0, tmpTs = val; i < units.length && tmpTs > 0; i++) {
+  for (let i = 0, tmpTs = ts; i < units.length && tmpTs > 0; i++) {
     results.unshift({
       value: tmpTs % units[i].interval,
       util: units[i].unit
@@ -121,7 +122,7 @@ export function calcTimeUnit(val, fix = 2, op) {
   if (findMsIndex >= 1) {
     const s = results[findMsIndex - 1]
     // 如果 >10s 不需要ms
-    if (options.autoHideMs && val > 10 * 1000) {
+    if (options.autoHideMs && ts > 10 * 1000) {
       s.value++
       results.pop()
     }
