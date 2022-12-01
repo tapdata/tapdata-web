@@ -51,7 +51,7 @@
             <div v-else class="mb-4 flex justify-content-between">
               <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
               <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-                <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
+                <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
               </ElTooltip>
             </div>
             <div class="mb-4 flex align-items-center">
@@ -644,8 +644,8 @@ export default {
       this.$refs.nodeSelect?.focus()
     },
 
-    calcTimeUnit(val, fix) {
-      return typeof val === 'number' ? calcTimeUnit(val, fix) : '-'
+    calcTimeUnit() {
+      return typeof val === 'number' ? calcTimeUnit(...arguments) : '-'
     }
   }
 }
