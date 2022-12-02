@@ -416,8 +416,12 @@ export default {
           }
           // this.unWatchStatus()
         }
-        if (['MigrateViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
-          this.handleConsoleAutoLoad()
+        if (['MigrateViewer'].includes(this.$route.name)) {
+          if (['renewing'].includes(v)) {
+            this.handleConsoleAutoLoad()
+          } else {
+            this.toggleConsole(false)
+          }
         }
       })
       const flag = await this.save(true)
