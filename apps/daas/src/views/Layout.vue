@@ -588,7 +588,7 @@ export default {
           })
           break
         case 'home':
-          window.open('https://tapdata.net/', '_blank')
+          window.open(window._TAPDATA_OPTIONS_.homeUrl, '_blank')
           break
         case 'signOut':
           this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {
