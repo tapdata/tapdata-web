@@ -66,7 +66,7 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
  * @fix Number 需要保留几个单位
  * @options.separator String 分割符
  * @options.autoHideMs Boolean > 10s 自动隐藏ms
- * @return T
+ * @return string
  * */
 export function calcTimeUnit(val, fix = 2, op) {
   let options = Object.assign(
@@ -108,8 +108,9 @@ export function calcTimeUnit(val, fix = 2, op) {
       interval: 99999
     }
   ]
-  for (let i = 0, tmpTs = ts; i < units.length && tmpTs > 0; i++) {
-    results.unshift({
+  if (!ts) return '0'
+  for (let i = 0, tmpTs = ts; i < units.length && tmpTs >= 0; i++) {
+    results.push({
       value: tmpTs % units[i].interval,
       util: units[i].unit
     })
@@ -118,6 +119,7 @@ export function calcTimeUnit(val, fix = 2, op) {
   if (fix > 0) {
     results = results.slice(0, fix)
   }
+  results = results.reverse()
   const findMsIndex = results.findIndex(t => t.util === 'ms')
   if (findMsIndex >= 1) {
     const s = results[findMsIndex - 1]
