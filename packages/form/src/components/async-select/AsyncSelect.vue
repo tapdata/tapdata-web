@@ -257,7 +257,7 @@ export default {
     },
     inputQueryWait: {
       type: Number,
-      default: 200
+      default: 100
     }
   },
 
