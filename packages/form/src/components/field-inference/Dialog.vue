@@ -76,6 +76,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
@@ -143,7 +144,7 @@ export default {
       this.ruleForm.list.splice(index + 1, 0, this.getItem())
     },
     loadData() {
-      this.ruleForm.list = this.fieldChangeRules.filter(t => t.scope === 'Node')
+      this.ruleForm.list = cloneDeep(this.fieldChangeRules.filter(t => t.scope === 'Node'))
     },
     handleCancel() {
       this.loadData()
@@ -160,11 +161,9 @@ export default {
     handleUpdate() {
       this.form.setValuesIn('fieldChangeRules', this.ruleForm.list)
       this.ruleForm.visible = false
+      const result = [...this.fieldChangeRules.filter(t => t.scope === 'Field'), ...this.ruleForm.list]
+      this.$emit('update:fieldChangeRules', result)
       this.$emit('update:visible', this.ruleForm.visible)
-      this.$emit(
-        'update:fieldChangeRules',
-        this.fieldChangeRules.filter(t => t.scope === 'Field' || this.ruleForm.list.find(t2 => t2.id === t.id))
-      )
     },
     submit() {
       const { activeNode = {} } = this
@@ -193,6 +192,7 @@ export default {
             return
           }
           this.handleUpdate()
+          this.$message.success(i18n.t('packages_form_field_inference_list_caozuochenggong'))
         })
         .finally(() => {
           this.editBtnLoading = false

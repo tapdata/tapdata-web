@@ -185,8 +185,7 @@ export default {
               if (![null, undefined].includes(data)) {
                 if (this.timeValue) {
                   val = calcTimeUnit(data || 0, 2, {
-                    separator: ' ',
-                    autoShowMs: true
+                    autoHideMs: true
                   })
                 } else {
                   val = (data || 0).toLocaleString('zh', {
@@ -252,7 +251,7 @@ export default {
           axisLabel: {
             color: '#535F72',
             formatter: val => {
-              return this.timeValue ? calcTimeUnit(val, 2) : calcUnit(val)
+              return this.timeValue ? calcTimeUnit(val) : calcUnit(val)
             }
             // showMaxLabel: false,
             // showMinLabel: false
