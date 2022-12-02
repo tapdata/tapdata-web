@@ -190,7 +190,6 @@ export default {
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
     this.resetState()
-    this.$ws.off('editFlush', this.handleEditFlush)
 
     this.unWatchStatus?.()
   },
