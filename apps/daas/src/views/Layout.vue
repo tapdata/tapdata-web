@@ -449,8 +449,10 @@ export default {
 
     logoStyle() {
       const width = window._TAPDATA_OPTIONS_.logoWidth
+      const height = window._TAPDATA_OPTIONS_.logoHeight
       return {
-        width: width && `${width}px`
+        width: width && (!isNaN(width) ? `${width}px` : width),
+        height: height && (!isNaN(height) ? `${height}px` : height)
       }
     }
   },
