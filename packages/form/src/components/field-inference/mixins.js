@@ -17,13 +17,15 @@ export default {
 
   methods: {
     async getData(op = {}) {
+      const nodeId = this.activeNode?.id
+      if (!nodeId) return
       let data = {
         items: [],
         total: 0
       }
       try {
         const params = {
-          nodeId: this.activeNode?.id,
+          nodeId,
           tableFilter: op.tableFilter,
           fields: ['original_name', 'fields', 'qualified_name'],
           page: op.page || 1,

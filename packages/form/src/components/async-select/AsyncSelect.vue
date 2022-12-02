@@ -254,6 +254,10 @@ export default {
     debounceWait: {
       type: Number,
       default: 200
+    },
+    inputQueryWait: {
+      type: Number,
+      default: 100
     }
   },
 
@@ -315,6 +319,10 @@ export default {
 
     scrollDisabled() {
       return this.loading || this.noMore || this.loadingMore
+    },
+
+    debounce() {
+      return this.inputQueryWait
     }
   },
 
