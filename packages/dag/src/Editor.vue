@@ -160,6 +160,7 @@ export default {
 
   watch: {
     'dataflow.status'(v) {
+      this.checkGotoViewer()
       if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
@@ -194,7 +195,6 @@ export default {
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
     this.resetState()
-    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
@@ -273,6 +273,7 @@ export default {
     },
 
     gotoViewer() {
+      if (this.$route.name === 'TaskMonitor') return
       this.$router
         .push({
           name: 'TaskMonitor',

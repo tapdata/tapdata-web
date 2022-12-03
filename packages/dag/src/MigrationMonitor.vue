@@ -153,7 +153,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
 import { debounce } from 'lodash'
@@ -257,6 +257,8 @@ export default {
   },
 
   computed: {
+    ...mapState('dataflow', ['showConsole']),
+
     formScope() {
       return {
         ...this.scope,
@@ -1089,7 +1091,7 @@ export default {
 
     handleStopAuto() {
       setTimeout(() => {
-        this.showConsole && this.$refs.console?.autoLoad('reset')
+        this.showConsole && this.$refs.console?.autoLoad()
       }, 5000)
     },
 
