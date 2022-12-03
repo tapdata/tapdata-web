@@ -1833,7 +1833,7 @@ export default {
 
           this.startLoopTask(id)
         }
-      }, 8000)
+      }, 5000)
     },
 
     stopLoopTask() {
