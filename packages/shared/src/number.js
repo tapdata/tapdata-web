@@ -72,12 +72,14 @@ export function calcTimeUnit(val, fix = 2, op) {
   let options = Object.assign(
     {
       separator: ' ',
-      autoHideMs: false
+      autoHideMs: false,
+      digits: 0
     },
     op || {}
   )
   let results = []
-  const ts = parseInt(val)
+  if (!val) return '0'
+  const ts = val.toFixed(options.digits)
   const units = [
     {
       unit: 'ms',
@@ -108,7 +110,6 @@ export function calcTimeUnit(val, fix = 2, op) {
       interval: 99999
     }
   ]
-  if (!ts) return '0'
   for (let i = 0, tmpTs = ts; i < units.length && tmpTs >= 0; i++) {
     results.push({
       value: tmpTs % units[i].interval,
