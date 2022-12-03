@@ -19,10 +19,6 @@ export const loadSchemaTree = observer(
       const title = root.$t('packages_form_load_schema_tree_button_title')
       const nodeId = form.getValuesIn('id')
 
-      const taskSaving = computed(() => {
-        return root.$store.state.dataflow.taskSaving
-      })
-
       const transformLoading = computed(() => {
         return root.$store.state.dataflow.transformLoading
       })
@@ -34,7 +30,7 @@ export const loadSchemaTree = observer(
           .nodeSchema(nodeId)
           .then(data => {
             fieldList.value = data?.[0]?.fields || []
-            if (check && taskSaving.value && transformLoading.value) {
+            if (check && transformLoading.value) {
               timer && clearTimeout(timer)
               timer = setTimeout(() => {
                 getSchemaData(check)
@@ -42,7 +38,7 @@ export const loadSchemaTree = observer(
             }
           })
           .finally(() => {
-            if (!check || (check && !taskSaving.value && !transformLoading.value)) {
+            if (!check || (check && !transformLoading.value)) {
               loading.value = false
             }
           })
@@ -92,6 +88,7 @@ export const loadSchemaTree = observer(
                     form.setValuesIn(tableNameField || 'tableName', '')
                     setTimeout(() => {
                       form.setValuesIn(tableNameField || 'tableName', table)
+                      root.$store.commit('dataflow/setTransformLoading', true)
                       getSchemaData(true)
                     }, 200)
                   })
