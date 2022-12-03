@@ -1,5 +1,5 @@
 <template>
-  <section class="connection-list-wrap">
+  <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap">
     <TablePage
       ref="table"
       row-key="id"
@@ -703,6 +703,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.paddingLeft0 {
+  padding-left: 0 !important;
+}
 .connection-list-wrap {
   height: 100%;
   overflow: hidden;

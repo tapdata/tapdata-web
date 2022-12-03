@@ -96,7 +96,7 @@ export default {
     overflow: hidden;
     .setting-center {
       height: 100%;
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       display: flex;
       justify-content: space-between;
       height: 100%;
