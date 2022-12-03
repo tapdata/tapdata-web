@@ -22,6 +22,11 @@ export const loadSchemaTree = observer(
       const taskSaving = computed(() => {
         return root.$store.state.dataflow.taskSaving
       })
+
+      const transformLoading = computed(() => {
+        return root.$store.state.dataflow.transformLoading
+      })
+
       let timer
 
       function getSchemaData(check = false) {
@@ -29,7 +34,7 @@ export const loadSchemaTree = observer(
           .nodeSchema(nodeId)
           .then(data => {
             fieldList.value = data?.[0]?.fields || []
-            if (check && taskSaving.value) {
+            if (check && taskSaving.value && transformLoading.value) {
               timer && clearTimeout(timer)
               timer = setTimeout(() => {
                 getSchemaData(check)
@@ -37,7 +42,7 @@ export const loadSchemaTree = observer(
             }
           })
           .finally(() => {
-            if (!check || (check && !taskSaving.value)) {
+            if (!check || (check && !taskSaving.value && !transformLoading.value)) {
               loading.value = false
             }
           })
