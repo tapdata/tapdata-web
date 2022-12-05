@@ -1,7 +1,7 @@
 import { defineComponent, ref } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useForm } from '@formily/vue'
-import { onMounted, onUnmounted } from '@vue/composition-api'
+import { computed, onMounted, onUnmounted } from '@vue/composition-api'
 
 import { metadataInstancesApi, proxyApi } from '@tap/api'
 
@@ -18,7 +18,11 @@ export const loadSchemaTree = observer(
       fieldList.value = form.getValuesIn('loadSchemaTree')
       const title = root.$t('packages_form_load_schema_tree_button_title')
       const nodeId = form.getValuesIn('id')
-      const loadCount = ref(0)
+
+      const transformLoading = computed(() => {
+        return root.$store.state.dataflow.transformLoading
+      })
+
       let timer
 
       function getSchemaData(check = false) {
@@ -26,7 +30,7 @@ export const loadSchemaTree = observer(
           .nodeSchema(nodeId)
           .then(data => {
             fieldList.value = data?.[0]?.fields || []
-            if (check && !fieldList.value?.length) {
+            if (check && transformLoading.value) {
               timer && clearTimeout(timer)
               timer = setTimeout(() => {
                 getSchemaData(check)
@@ -34,9 +38,7 @@ export const loadSchemaTree = observer(
             }
           })
           .finally(() => {
-            const len = fieldList.value?.length
-            const count = ++loadCount.value
-            if (len > 0 || !check || (check && count > 10)) {
+            if (!check || (check && !transformLoading.value)) {
               loading.value = false
             }
           })
@@ -83,14 +85,19 @@ export const loadSchemaTree = observer(
                   .get({ filter: JSON.stringify(filter) })
                   .then(metaData => {
                     const table = metaData.items?.[0]?.original_name
-                    form.setValuesIn(tableNameField || 'tableName', table)
-                    getSchemaData(true)
+                    form.setValuesIn(tableNameField || 'tableName', '')
+                    setTimeout(() => {
+                      form.setValuesIn(tableNameField || 'tableName', table)
+                      root.$store.commit('dataflow/setTransformLoading', true)
+                      getSchemaData(true)
+                    }, 200)
                   })
                   .catch(() => {
                     loading.value = false
                   })
               })
-              .catch(() => {
+              .catch(err => {
+                root.$message.error(err?.msg)
                 loading.value = false
               })
           })

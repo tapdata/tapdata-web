@@ -163,16 +163,7 @@ export default {
 
   watch: {
     'dataflow.status'(v) {
-      console.log(i18n.t('packages_dag_src_migrationeditor_zhuangtaijianting'), v) // eslint-disable-line
-      if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
-        // this.$refs.console?.loadData()
-        if (v === 'running') {
-          this.setStateReadonly(true)
-          // this.gotoViewer(true)
-        } else {
-          this.setStateReadonly(false)
-        }
-      }
+      this.checkGotoViewer()
       if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) && ['renewing', 'renew_failed'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
@@ -199,7 +190,6 @@ export default {
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
     this.resetState()
-    this.$ws.off('editFlush', this.handleEditFlush)
 
     this.unWatchStatus?.()
   },
@@ -245,6 +235,7 @@ export default {
     },
 
     gotoViewer(newTab) {
+      if (this.$route.name === 'MigrationMonitor') return
       if (newTab) {
         window.open(
           this.$router.resolve({
@@ -412,12 +403,17 @@ export default {
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
           } else {
+            this.toggleConsole(false)
             this.gotoViewer(false)
           }
           // this.unWatchStatus()
         }
-        if (['MigrateViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
-          this.handleConsoleAutoLoad()
+        if (['MigrateViewer'].includes(this.$route.name)) {
+          if (['renewing'].includes(v)) {
+            this.handleConsoleAutoLoad()
+          } else {
+            this.toggleConsole(false)
+          }
         }
       })
       const flag = await this.save(true)
@@ -431,6 +427,7 @@ export default {
     },
 
     checkGotoViewer() {
+      console.log('editor:checkGotoViewer') // eslint-disable-line
       if (this.dataflow.disabledData.edit) {
         // 不可编辑
         // this.gotoViewer()

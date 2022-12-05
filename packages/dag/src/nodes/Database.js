@@ -168,7 +168,7 @@ export class Database extends NodeType {
             type: 'boolean',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              tooltip: '开启后任务将会自动处理新增，删除表'
+              tooltip: '开启后任务将会自动处理新增表'
             },
             'x-component': 'Switch',
             'x-reactions': [
