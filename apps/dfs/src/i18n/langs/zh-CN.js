@@ -1104,5 +1104,15 @@ export default {
   dfs_agent_download_paidupgrade_xingming: '姓名',
   dfs_agent_download_paidupgrade_biaozhunban: '标准版',
   dfs_agent_download_paidupgrade_fuwushengji: '服务升级',
-  dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜单'
+  dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜单',
+  dfs_instance_instance_fenzhong: ' 分钟',
+  dfs_instance_instance_ruxuliaojiegeng: '如需了解更多请访问',
+  dfs_instance_instance_bencigengxinbao: '本次更新包含错误修复和安全性更新，建议所有用户安装。',
+  dfs_instance_instance_xinzenggongneng: '新增功能',
+  dfs_instance_instance_yujianzhuangshi: '预计安装时间 : ',
+  dfs_instance_instance_anzhuangbao: '安装包 : ',
+  dfs_instance_instance_banbenhao: '版本号: ',
+  dfs_instance_instance_agent: 'Agent更新',
+
+  dfs_user_center_phone_error: '该手机号码已被其他用户注册过'
 }

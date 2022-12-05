@@ -502,8 +502,8 @@ export class Table extends NodeType {
               },
 
               nodeConfig: {
-                type: 'object',
-                'x-component': 'PdkProperties'
+                type: 'object' /*,
+                'x-component': 'PdkProperties'*/
               }
             }
           }

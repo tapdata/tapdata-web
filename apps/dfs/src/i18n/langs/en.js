@@ -1179,5 +1179,17 @@ export default {
   dfs_agent_download_paidupgrade_xingming: 'Name',
   dfs_agent_download_paidupgrade_biaozhunban: 'Standard Edition',
   dfs_agent_download_paidupgrade_fuwushengji: 'Service Upgrade',
-  dfs_agent_download_paidupgrade_fanhuicaidan: 'Back to menu'
+  dfs_agent_download_paidupgrade_fanhuicaidan: 'Back to menu',
+
+  dfs_instance_instance_fenzhong: 'Minutes',
+  dfs_instance_instance_ruxuliaojiegeng: 'For more information, please visit',
+  dfs_instance_instance_bencigengxinbao:
+    'This update contains bug fixes and security updates, and it is recommended that all users install it. ',
+  dfs_instance_instance_xinzenggongneng: 'New features',
+  dfs_instance_instance_yujianzhuangshi: 'Estimated installation time: ',
+  dfs_instance_instance_anzhuangbao: 'Installation package: ',
+  dfs_instance_instance_banbenhao: 'version number: ',
+  dfs_instance_instance_agent: 'Agent update',
+
+  dfs_user_center_phone_error: 'This phone number has already been registered by another user'
 }

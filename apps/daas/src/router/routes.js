@@ -151,7 +151,7 @@ export default [
     name: 'MigrateCreate',
     component: MigrationEditor,
     meta: {
-      title: 'page_title_task_edit',
+      title: 'page_title_data_copy',
       code: 'Data_SYNC_menu'
     }
   },
@@ -160,7 +160,7 @@ export default [
     name: 'MigrateEditor',
     component: MigrationEditor,
     meta: {
-      title: 'page_title_task_edit',
+      title: 'page_title_data_copy',
       code: 'Data_SYNC_menu'
     }
   },
@@ -169,7 +169,7 @@ export default [
     name: 'MigrateViewer',
     component: MigrationEditor,
     meta: {
-      title: 'page_title_task_edit',
+      title: 'page_title_data_copy',
       code: 'Data_SYNC_menu'
     }
   },

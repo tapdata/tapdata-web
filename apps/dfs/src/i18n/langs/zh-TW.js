@@ -1073,5 +1073,16 @@ export default {
   dfs_agent_download_paidupgrade_xingming: '姓名',
   dfs_agent_download_paidupgrade_biaozhunban: '標準版',
   dfs_agent_download_paidupgrade_fuwushengji: '服務升級',
-  dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜單'
+  dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜單',
+
+  dfs_instance_instance_fenzhong: ' 分鐘',
+  dfs_instance_instance_ruxuliaojiegeng: '如需了解更多請訪問',
+  dfs_instance_instance_bencigengxinbao: '本次更新包含錯誤修復和安全性更新，建議所有用戶安裝。 ',
+  dfs_instance_instance_xinzenggongneng: '新增功能',
+  dfs_instance_instance_yujianzhuangshi: '預計安裝時間 : ',
+  dfs_instance_instance_anzhuangbao: '安裝包 : ',
+  dfs_instance_instance_banbenhao: '版本號: ',
+  dfs_instance_instance_agent: 'Agent更新',
+
+  dfs_user_center_phone_error: '該手機號碼已被其他用戶註冊過'
 }
