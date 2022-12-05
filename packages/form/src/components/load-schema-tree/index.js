@@ -1,9 +1,9 @@
 import { defineComponent, ref } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { useForm } from '@formily/vue'
-import { computed, onMounted, onUnmounted } from '@vue/composition-api'
+import { onMounted, onUnmounted } from '@vue/composition-api'
 
-import { metadataInstancesApi, proxyApi } from '@tap/api'
+import { metadataInstancesApi, proxyApi, taskApi } from '@tap/api'
 
 import './style.scss'
 
@@ -20,29 +20,34 @@ export const loadSchemaTree = observer(
       const nodeId = form.getValuesIn('id')
       const errorMsg = ref('')
       const loadStatus = ref('')
+      const isTransformed = ref(true)
 
-      const transformLoading = computed(() => {
-        return root.$store.state.dataflow.transformLoading
-      })
+      async function getTask() {
+        const taskId = root.$store.state.dataflow?.taskId
+        return await taskApi.get(taskId)
+      }
 
       let timer
 
-      function getSchemaData(check = false) {
+      async function getSchemaData(check = false) {
+        if (check) {
+          const { transformed } = (await getTask()) || {}
+          isTransformed.value = !!transformed
+          if (!isTransformed.value) {
+            timer && clearTimeout(timer)
+            timer = setTimeout(() => {
+              getSchemaData(check)
+            }, 2000)
+            return
+          }
+        }
         metadataInstancesApi
           .nodeSchema(nodeId)
           .then(data => {
             fieldList.value = data?.[0]?.fields || []
-            if (check && transformLoading.value) {
-              timer && clearTimeout(timer)
-              timer = setTimeout(() => {
-                getSchemaData(check)
-              }, 2000)
-            }
           })
           .finally(() => {
-            if (!check || (check && !transformLoading.value)) {
-              loading.value = false
-            }
+            loading.value = false
           })
       }
 
@@ -58,6 +63,7 @@ export const loadSchemaTree = observer(
           args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)]
         }
         loading.value = true
+        isTransformed.value = true
         form
           .validate()
           .then(() => {
@@ -90,7 +96,7 @@ export const loadSchemaTree = observer(
                     form.setValuesIn(tableNameField || 'tableName', '')
                     setTimeout(() => {
                       form.setValuesIn(tableNameField || 'tableName', table)
-                      root.$store.commit('dataflow/setTransformLoading', true)
+                      isTransformed.value = false
                       getSchemaData(true)
                     }, 200)
                   })
@@ -127,7 +133,9 @@ export const loadSchemaTree = observer(
         return loadStatus.value ? (
           <el-tooltip disabled={!errorMsg.value} content={errorMsg.value} placement="top" class="ml-2">
             <span className="inline-flex align-content-center">
-              <VIcon size="16" class="mr-1 color-danger" style="padding-bottom: 2px">info</VIcon>
+              <VIcon size="16" class="mr-1 color-danger" style="padding-bottom: 2px">
+                info
+              </VIcon>
               <span class="color-danger">{root.$t('packages_form_load_schema_tree_load_fail')}</span>
             </span>
           </el-tooltip>

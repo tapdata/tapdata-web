@@ -1827,7 +1827,6 @@ export default {
           // 需要实时更新的字段
           this.dataflow.lastStartDate = data.lastStartDate
           this.dataflow.pingTime = data.pingTime
-          this.setTransformLoading(!data.transformed)
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 
