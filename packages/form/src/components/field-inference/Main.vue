@@ -1,5 +1,5 @@
 <template>
-  <div class="field-inference">
+  <div class="field-inference" v-loading="transformLoading">
     <div class="field-inference__header flex justify-content-end">
       <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
         <VIcon>info</VIcon>
@@ -97,7 +97,7 @@
 <script>
 import i18n from '@tap/i18n'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { debounce } from 'lodash'
 
 import noData from 'web-core/assets/images/noData.png'
@@ -140,6 +140,7 @@ export default {
   },
 
   computed: {
+    ...mapState('dataflow', ['transformLoading']),
     ...mapGetters('dataflow', ['stateIsReadonly']),
 
     batchRuleCounts() {
