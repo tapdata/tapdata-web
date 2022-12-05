@@ -156,5 +156,6 @@ export default {
   packages_form_field_inference_list_ninquerenyaohui: '您确认要恢复当前表吗？',
   packages_form_field_inference_main_ninquerenyaoquan: '您确认要全部恢复默认吗？',
   packages_form_field_inference_main_ge: '个',
-  packages_form_qingjianchajiedian: '请检查节点配置'
+  packages_form_qingjianchajiedian: '请检查节点配置',
+  packages_form_load_schema_tree_load_fail: '加载失败'
 }

@@ -18,6 +18,8 @@ export const loadSchemaTree = observer(
       fieldList.value = form.getValuesIn('loadSchemaTree')
       const title = root.$t('packages_form_load_schema_tree_button_title')
       const nodeId = form.getValuesIn('id')
+      const errorMsg = ref('')
+      const loadStatus = ref('')
 
       const transformLoading = computed(() => {
         return root.$store.state.dataflow.transformLoading
@@ -95,9 +97,14 @@ export const loadSchemaTree = observer(
                   .catch(() => {
                     loading.value = false
                   })
+                loadStatus.value = false
+                errorMsg.value = ''
               })
               .catch(err => {
-                root.$message.error(err?.msg)
+                loadStatus.value = true
+                const msg = err?.data?.message
+                errorMsg.value = msg
+                root.$message.error(msg)
                 loading.value = false
               })
           })
@@ -116,12 +123,28 @@ export const loadSchemaTree = observer(
         timer && clearTimeout(timer)
       })
 
+      const loadStatusDom = () => {
+        return loadStatus.value ? (
+          <el-tooltip disabled={!errorMsg.value} content={errorMsg.value} placement="top" class="ml-2">
+            <span className="inline-flex align-content-center">
+              <VIcon size="16" class="mr-1 color-danger" style="padding-bottom: 2px">info</VIcon>
+              <span class="color-danger">{root.$t('packages_form_load_schema_tree_load_fail')}</span>
+            </span>
+          </el-tooltip>
+        ) : (
+          ''
+        )
+      }
+
       return () => {
         return (
           <div>
-            <el-button class="mb-2" loading={loading.value} onClick={handleLoadSchema}>
-              {title}
-            </el-button>
+            <div class="mb-2">
+              <el-button className="mb-2" loading={loading.value} onClick={handleLoadSchema}>
+                {title}
+              </el-button>
+              {loadStatusDom()}
+            </div>
             <el-tree
               ref="tree"
               data={fieldList.value}
