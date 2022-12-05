@@ -104,11 +104,37 @@
           <i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
         </div>
       </ElAside>
-
       <ElMain class="layout-main">
         <div class="layout-main-body">
-          <PageHeader class="border-bottom"></PageHeader>
-          <div class="flex-fill px-5 pb-5 overflow-auto">
+          <PageHeader
+            v-if="!['dashboard', 'clusterManagement', 'apiMonitor'].includes($route.name)"
+            class="border-bottom"
+          ></PageHeader>
+          <div
+            class="flex-fill overflow-auto"
+            :class="[
+              {
+                'px-5': ![
+                  'dashboard',
+                  'clusterManagement',
+                  'apiMonitor',
+                  'migrateList',
+                  'dataflowList',
+                  'connectionsList'
+                ].includes($route.name)
+              },
+              {
+                'pb-5': ![
+                  'dashboard',
+                  'clusterManagement',
+                  'apiMonitor',
+                  'migrateList',
+                  'dataflowList',
+                  'connectionsList'
+                ].includes($route.name)
+              }
+            ]"
+          >
             <RouterView />
           </div>
         </div>

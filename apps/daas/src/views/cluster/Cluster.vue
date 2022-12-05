@@ -1,5 +1,9 @@
 <template>
-  <section class="clusterManagement-container">
+  <section class="clusterManagement-container isCardBox">
+    <!--api 集群管理 -->
+    <el-row :gutter="40" class="section-header py-6">
+      <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+    </el-row>
     <div class="section-wrap-box">
       <div class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
@@ -639,6 +643,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .clusterManagement-container {
+  height: 100%;
+  background-color: #eff1f4;
   .header {
     padding: 15px 20px;
     background: map-get($bgColor, white);
