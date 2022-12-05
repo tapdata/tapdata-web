@@ -12,13 +12,7 @@
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown
-          v-if="$getSettingByKey('SHOW_QA_AND_HELP')"
-          class="btn"
-          placement="bottom"
-          @command="command"
-          command="help"
-        >
+        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help">
           <span class="icon-btn py-1 px-3">
             <VIcon size="16">wenda</VIcon>
           </span>
@@ -439,7 +433,8 @@ export default {
       breadcrumbData: [],
       isCollapse: false,
       isNotAside: this.$route?.meta?.isNotAside || false,
-      activeMenu: ''
+      activeMenu: '',
+      showHelp: !process.env.VUE_APP_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP')
     }
   },
   computed: {

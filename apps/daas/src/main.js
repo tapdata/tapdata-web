@@ -100,7 +100,7 @@ let init = settings => {
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
-  document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
+  document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ process.env.VUE_APP_PRODUCT_TITLE || 'Tapdata'
 
   var loc = window.location,
     wsUrl = 'ws:'
