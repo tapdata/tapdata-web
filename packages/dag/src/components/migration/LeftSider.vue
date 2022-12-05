@@ -264,8 +264,8 @@ export default {
     }
   },
 
-  created() {
-    this.getDatabaseType()
+  async created() {
+    await this.getDatabaseType()
 
     this.init()
   },
@@ -290,8 +290,8 @@ export default {
     creat() {
       this.connectionDialog = true
     },
-    getDatabaseType() {
-      databaseTypesApi.get().then(res => {
+    async getDatabaseType() {
+      await databaseTypesApi.get().then(res => {
         if (res) {
           this.getPdkData(res)
         }
@@ -315,6 +315,8 @@ export default {
     },
 
     getDbFilter() {
+      const databaseTypeList =
+        this.database?.map(t => t.type).filter(t => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
       const filter = {
         page: this.dbPage,
         size: 20,
@@ -342,12 +344,17 @@ export default {
           capabilities: 1,
           config: 1
         },
-        order: ['status DESC', 'name ASC']
+        order: ['status DESC', 'name ASC'],
+        where: {
+          database_type: {
+            in: databaseTypeList
+          }
+        }
       }
       const txt = escapeRegExp(this.dbSearchTxt.trim())
 
       if (txt) {
-        filter.where = { name: { like: txt, options: 'i' } }
+        filter.where.name = { like: txt, options: 'i' }
       }
 
       return { filter: JSON.stringify(filter) }

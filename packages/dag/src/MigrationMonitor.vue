@@ -153,14 +153,14 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
+import { mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
 import { debounce } from 'lodash'
 
+import i18n from '@tap/i18n'
 import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
-import { measurementApi, taskApi } from '@tap/api'
+import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -252,11 +252,14 @@ export default {
       alarmData: null,
       logTotals: [],
       refreshRate: 5000,
-      extraEnterCount: 0
+      extraEnterCount: 0,
+      isReset: false // 是否重置了
     }
   },
 
   computed: {
+    ...mapState('dataflow', ['showConsole']),
+
     formScope() {
       return {
         ...this.scope,
@@ -314,6 +317,8 @@ export default {
 
   async mounted() {
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
+    await this.initPdkProperties()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -339,6 +344,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+
     init: debounce(function () {
       this.timer && clearTimeout(this.timer)
       this.startLoadData()
@@ -616,6 +623,7 @@ export default {
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
+        this.isReset = false
         this.loadDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
@@ -806,6 +814,10 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
+      if (this.isReset) {
+        this.loadResetQuotaData()
+        return
+      }
       measurementApi
         .batch(this.getParams())
         .then(data => {
@@ -853,6 +865,23 @@ export default {
       const granularity = getTimeGranularity(this.quota.interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
+    },
+
+    loadResetQuotaData() {
+      let quota = {
+        samples: {},
+        time: [],
+        interval: 5000
+      }
+      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
+      arr.forEach(el => {
+        quota.samples[el] = []
+      })
+      this.quota = quota
+      this.dagData = {}
+      this.loadVerifyTotals()
+      this.loadAlarmData()
+      this.loadLogTotals()
     },
 
     loadVerifyTotals(data = {}) {
@@ -1047,6 +1076,9 @@ export default {
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          if (!data?.fail?.length) {
+            this.isReset = true
+          }
           // this.init()
           this.loadDataflow(this.dataflow?.id)
         } catch (e) {
@@ -1085,8 +1117,29 @@ export default {
 
     handleStopAuto() {
       setTimeout(() => {
-        this.showConsole && this.$refs.console?.autoLoad('reset')
+        this.showConsole && this.$refs.console?.autoLoad()
       }, 5000)
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }
