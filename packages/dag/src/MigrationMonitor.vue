@@ -252,7 +252,8 @@ export default {
       alarmData: null,
       logTotals: [],
       refreshRate: 5000,
-      extraEnterCount: 0
+      extraEnterCount: 0,
+      isReset: false // 是否重置了
     }
   },
 
@@ -622,6 +623,7 @@ export default {
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
+        this.isReset = false
         this.loadDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
@@ -812,6 +814,10 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
+      if (this.isReset) {
+        this.loadResetQuotaData()
+        return
+      }
       measurementApi
         .batch(this.getParams())
         .then(data => {
@@ -859,6 +865,23 @@ export default {
       const granularity = getTimeGranularity(this.quota.interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
+    },
+
+    loadResetQuotaData() {
+      let quota = {
+        samples: {},
+        time: [],
+        interval: 5000
+      }
+      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
+      arr.forEach(el => {
+        quota.samples[el] = []
+      })
+      this.quota = quota
+      this.dagData = {}
+      this.loadVerifyTotals()
+      this.loadAlarmData()
+      this.loadLogTotals()
     },
 
     loadVerifyTotals(data = {}) {
@@ -1053,6 +1076,9 @@ export default {
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          if (!data?.fail?.length) {
+            this.isReset = true
+          }
           // this.init()
           this.loadDataflow(this.dataflow?.id)
         } catch (e) {
