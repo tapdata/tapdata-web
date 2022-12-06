@@ -2,6 +2,8 @@ import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
+import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
+
 import Lang from '../views/Lang.vue'
 
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
@@ -264,6 +266,15 @@ const routes = [
       title: 'tap_upgrade'
     }
   },
+  //付费升级
+  {
+    path: '/paidUpgrade',
+    name: 'PaidUpgrade',
+    component: PaidUpgrade,
+    meta: {
+      title: 'tap_upgrade'
+    }
+  },
   {
     path: '/500',
     name: '500',
@@ -310,7 +321,7 @@ const routes = [
     name: 'MigrateCreate',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
@@ -318,7 +329,7 @@ const routes = [
     name: 'MigrateEditor',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
@@ -326,7 +337,7 @@ const routes = [
     name: 'MigrateViewer',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {

@@ -5,32 +5,10 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
       </div>
       <div class="main">
-        <!-- <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              size="mini"
-              v-model="sourch"
-              :debounce="800"
-              :placeholder="$t('cluster_placeholderServer')"
-              @input="getDataApi"
-            >
-            </el-input>
-          </li>
-          <li>
-            <el-button type="text" class="restBtn" size="mini" @click="rest()">
-              {{ $t('button_reset') }}
-            </el-button>
-          </li>
-        </ul> -->
         <div class="content" v-if="waterfallData.length">
           <el-row :gutter="20" class="waterfall">
-            <el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
-              <div
-                :class="['grid-content', 'list-box', { 'mt-4': index > 0 }]"
-                v-for="(item, index) in element"
-                :key="item.ip"
-              >
+            <el-col class="list" :md="12" :sm="24" v-for="item in waterfallData" :key="item.id">
+              <div :class="['grid-content', 'list-box']">
                 <div class="list-box-header">
                   <div class="list-box-header-left">
                     <img class="mr-4" src="../../assets/images/serve.svg" />
@@ -330,26 +308,6 @@ export default {
     this.getDataApi()
   },
   methods: {
-    // 获取最大cpu、内存使用率
-    getUsageRate(processId) {
-      let where = {
-        process_id: {
-          inq: processId
-        }
-      }
-      workerApi.get({ filter: JSON.stringify({ where: where }) }).then(data => {
-        let items = data?.items || []
-        if (items?.length) {
-          let metricValuesData = []
-          items.forEach(item => {
-            if (item.metricValues) {
-              metricValuesData.push(item)
-            }
-          })
-          this.processIdData = metricValuesData
-        }
-      })
-    },
     // 提交
     async submitForm() {
       let getFrom = this.$refs.childRules.ruleForm
@@ -513,17 +471,9 @@ export default {
       this.canUpdate = false
     },
     async getVersion(datas) {
-      for (let i = 0; i < datas.length; i++) datas[i].canUpdate = false //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
       let [...waterfallData] = datas
       let [...newWaterfallData] = [[], []]
       waterfallData.forEach((item, index) => {
-        this.processIdData.forEach(processId => {
-          if (item.systemInfo.process_id === processId.process_id) {
-            processId.metricValues.CpuUsage = (processId.metricValues.CpuUsage * 100).toFixed(2) + '%'
-            processId.metricValues.HeapMemoryUsage = (processId.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
-            this.$set(item, 'metricValues', processId.metricValues)
-          }
-        })
         if (index % 2) {
           newWaterfallData[1].push(item)
         } else {
@@ -538,7 +488,16 @@ export default {
         this.getDataApi()
       })
     },
-
+    // 获取最大cpu、内存使用率
+    getUsageRate(processId) {
+      let where = {
+        process_id: {
+          inq: processId
+        },
+        worker_type: 'connector'
+      }
+      return workerApi.get({ filter: JSON.stringify({ where: where }) })
+    },
     // 获取数据
     async getDataApi() {
       let params = { index: 1 }
@@ -569,22 +528,33 @@ export default {
           }
         }
       }
-      clusterApi.get(params).then(data => {
-        let items = data?.items || []
-        let processId = []
-        if (items?.length > 0) {
-          items.forEach(item => {
-            if (item.systemInfo.process_id) {
-              processId.push(item.systemInfo.process_id)
-            }
-          })
+      let clusterData = await clusterApi.get(params)
+      clusterData = clusterData?.items || []
+      let processId = clusterData.map(it => it?.systemInfo?.process_id)
+      let workerData = await this.getUsageRate(processId)
+      //处理worker 数据
+      workerData = workerData?.items || []
+      let metricValuesData = {}
+      if (workerData?.length) {
+        workerData.forEach(item => {
+          if (item.metricValues) {
+            item.metricValues.CpuUsage = (item.metricValues.CpuUsage * 100).toFixed(2) + '%'
+            item.metricValues.HeapMemoryUsage = (item.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
+          }
+          metricValuesData[item.process_id] = item.metricValues
+        })
+      }
+      //匹配CPU使用率
+      for (let i = 0; i < clusterData.length; i++) {
+        clusterData[i].canUpdate = false //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
+        clusterData[i]['metricValues'] = metricValuesData[clusterData[i].systemInfo?.process_id]
+          ? metricValuesData[clusterData[i].systemInfo?.process_id]
+          : { CpuUsage: '-', HeapMemoryUsage: '-' }
+        if (clusterData[i]?.engine?.status !== 'running') {
+          clusterData[i]['metricValues'] = { CpuUsage: '-', HeapMemoryUsage: '-' }
         }
-
-        // 获取最大内存、cpu使用率
-        this.getUsageRate(processId)
-        //自动升级
-        this.getVersion(items)
-      })
+      }
+      this.waterfallData = clusterData
     },
     // 关闭弹窗并且清空验证
     closeDialogForm() {

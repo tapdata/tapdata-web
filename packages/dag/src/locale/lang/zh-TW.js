@@ -45,7 +45,7 @@ export default {
   packages_dag_task_setting_plan_start_date: '计划开始时间',
   packages_dag_task_setting_cron_expression: '請輸入調度表達式',
   packages_dag_task_setting_cron_tip:
-    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ?  //每分鐘運行一次  0 0 2 * * ?  //每天2點運行',
   packages_dag_task_setting_sync_point: '增量採集開始時刻',
   packages_dag_task_setting_syncPoint_tip: '任務將從該時間點開始收集增量日誌',
   packages_dag_task_setting_automatic_index: '自動創建索引',
@@ -96,6 +96,7 @@ export default {
   packages_dag_message_operation_succuess: '操作成功',
   packages_dag_message_resetOk: '重置成功',
   packages_dag_message_resetFailed: '重置失敗',
+  packages_dag_message_task_rename_success: '任務名稱修改成功',
   packages_dag_dataFlow_multiError_notFound: '此任務不存在',
   packages_dag_dataFlow_multiError_statusError: '任務狀態不允許這種操作',
   packages_dag_dataFlow_multiError_otherError: '操作失敗，請重試',

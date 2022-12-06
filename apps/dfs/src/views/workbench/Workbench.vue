@@ -154,6 +154,7 @@
         <el-button type="primary" @click="showUpgrade = false">{{ $t('button_cancel') }}</el-button>
       </span>
     </el-dialog>
+    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
   </div>
   <RouterView v-else></RouterView>
 </template>
@@ -161,14 +162,15 @@
 <script>
 import i18n from '@/i18n'
 
-import { connectionsApi, taskApi } from '@tap/api'
-import { VIcon, Chart } from '@tap/component'
+import { connectionsApi, taskApi, paidApi } from '@tap/api'
+import { VIcon, Chart, PaidUpgradeDialog } from '@tap/component'
 import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart },
+  components: { VIcon, Chart, PaidUpgradeDialog },
+  inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
     const $t = this.$t.bind(this)
@@ -315,7 +317,10 @@ export default {
         }
       },
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
-      showUpgrade: false //版本升级弹窗
+      showUpgrade: false, //版本升级弹窗
+      //付费升级
+      paidUpgradeVisible: false,
+      paidPlan: ''
     }
   },
   mounted() {
@@ -420,9 +425,16 @@ export default {
         }
       })
     },
-    createTask() {
-      this.$router.push({
-        name: 'MigrateCreate'
+    async createTask() {
+      this.paidPlan = await paidApi.getUserPaidPlan()
+      if (!this.paidPlan?.valid) {
+        this.paidUpgradeVisible = true
+        return
+      }
+      this.checkAgent(() => {
+        this.$router.push({
+          name: 'MigrateCreate'
+        })
       })
     },
     createConnection() {

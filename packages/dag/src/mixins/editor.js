@@ -20,6 +20,8 @@ import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
+import { setPageTitle } from '@tap/shared'
+import { getSchema } from '../util'
 
 export default {
   directives: {
@@ -76,6 +78,7 @@ export default {
     this.destory = true
     this.stopDagWatch?.()
     this.stopLoopTask()
+    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
@@ -277,6 +280,7 @@ export default {
     async newDataflow(name) {
       this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
+      this.titleSet()
     },
 
     async makeTaskName(source) {
@@ -1031,7 +1035,8 @@ export default {
 
     async validateNode(node) {
       try {
-        await validateBySchema(node.__Ctor.formSchema, node, this.formScope || this.scope)
+        const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
+        await validateBySchema(schema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -1638,19 +1643,28 @@ export default {
     },
 
     async handleUpdateName(name) {
+      const oldName = this.dataflow.name
       this.nameHasUpdated = true
       this.dataflow.name = name
-      taskApi
-        .patch({
-          id: this.dataflow.id,
-          name
-        })
-        .catch(this.handleError)
+      taskApi.rename(this.dataflow.id, name).then(
+        () => {
+          this.$message.success(this.$t('packages_dag_message_task_rename_success'))
+          this.titleSet()
+        },
+        error => {
+          this.dataflow.name = oldName
+          this.handleError(error)
+        }
+      )
     },
 
     handleEditFlush(result) {
       console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
+        if (result.data.id !== this.dataflow.id) {
+          console.debug('ws收到了其他任务的返回', result.data)
+          return
+        }
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
       }
@@ -1787,6 +1801,7 @@ export default {
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
         this.startLoopTask(id)
+        this.titleSet()
         return data
       } catch (e) {
         this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
@@ -1823,7 +1838,7 @@ export default {
 
           this.startLoopTask(id)
         }
-      }, 8000)
+      }, 5000)
     },
 
     stopLoopTask() {
@@ -1930,6 +1945,10 @@ export default {
           this.handleAutoLayout()
         }
       }
+    },
+
+    titleSet() {
+      setPageTitle(`${this.dataflow.name} - ${this.$t(this.$route.meta.title)}`)
     }
   }
 }
