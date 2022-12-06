@@ -97,7 +97,15 @@ export const loadSchemaTree = observer(
                     setTimeout(() => {
                       form.setValuesIn(tableNameField || 'tableName', table)
                       isTransformed.value = false
-                      getSchemaData(true)
+                      let unwatchSaving = root.$watch(
+                        () => root.$store.state.dataflow.taskSaving,
+                        v => {
+                          if (!v) {
+                            getSchemaData(true)
+                            unwatchSaving()
+                          }
+                        }
+                      )
                     }, 200)
                   })
                   .catch(() => {
