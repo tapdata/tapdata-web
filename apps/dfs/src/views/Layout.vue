@@ -145,7 +145,6 @@ export default {
     //监听agent引导页面
     openAgentDownload() {
       this.agentGuideDialog = false
-      this.agentDownload.visible = true
       this.checkAgent()
     },
     createConnection(item) {
