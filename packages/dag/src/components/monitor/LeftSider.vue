@@ -40,7 +40,7 @@
           <div v-else class="mb-2 flex justify-content-between">
             <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
             <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-              <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
+              <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
             </ElTooltip>
           </div>
           <div class="mb-2 flex align-items-center">
@@ -66,12 +66,7 @@
         <template v-if="dataflow.type !== 'initial_sync'">
           <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
             <span>{{ $t('packages_dag_monitor_leftsider_zuidazengliangyan') }}</span>
-            <span>{{
-              calcTimeUnit(initialData.replicateLag, 2, {
-                separator: ' ',
-                autoShowMs: true
-              })
-            }}</span>
+            <span>{{ getReplicateLag(initialData.replicateLag) }}</span>
           </div>
         </template>
       </div>
@@ -484,6 +479,14 @@ export default {
 
     calcTimeUnit() {
       return typeof arguments[0] === 'number' ? calcTimeUnit(...arguments) : '-'
+    },
+
+    getReplicateLag(val) {
+      return typeof val === 'number' && val >= 0
+        ? calcTimeUnit(val, 2, {
+            autoHideMs: true
+          })
+        : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
     }
   }
 }
@@ -499,7 +502,7 @@ export default {
 }
 
 .layout-sidebar.--left {
-  z-index: 11;
+  z-index: unset; // 防止侧边栏出现的dialog被节点覆盖
   overflow: hidden auto;
   will-change: width;
   $headerH: 34px;

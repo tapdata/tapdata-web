@@ -168,7 +168,7 @@ export class Database extends NodeType {
             type: 'boolean',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              tooltip: '开启后任务将会自动处理新增，删除表'
+              tooltip: '开启后任务将会自动处理新增表'
             },
             'x-component': 'Switch',
             'x-reactions': [
@@ -284,7 +284,12 @@ export class Database extends NodeType {
             type: 'void',
             title: '推演结果',
             'x-decorator': 'FormItem',
-            'x-component': 'SchemaFiledMapping'
+            'x-component': 'fieldInference',
+            'x-component-props': {
+              style: {
+                'margin-top': '-36px'
+              }
+            }
           },
           collapse: {
             type: 'void',

@@ -514,5 +514,7 @@ export default {
   packages_business_connections_databaseform_keyicongbaohan:
     'The specified table can be excluded from the tables matched by the inclusion table rule',
   packages_business_connections_databaseform_paichubiao: 'Exclude table',
-  packages_business_connections_databaseform_baohanbiao: 'Contain table'
+  packages_business_connections_databaseform_baohanbiao: 'Contain table',
+  packages_business_connections_list_wenjianleixingde:
+    'The connection of file type does not support loading Schema at the moment'
 }

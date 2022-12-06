@@ -14,9 +14,23 @@
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" size="mini" class="flex-fill min-w-0" @click="reload()">
-            {{ $t('packages_business_connection_preview_load_schema') }}
-          </el-button>
+          <el-tooltip
+            :disabled="!isFileSource()"
+            :content="$t('packages_business_connections_list_wenjianleixingde')"
+            placement="top"
+            class="load-schema__tooltip"
+          >
+            <span>
+              <el-button
+                :disabled="isFileSource()"
+                type="primary"
+                size="mini"
+                class="flex-fill min-w-0"
+                @click="reload()"
+                >{{ $t('packages_business_connection_preview_load_schema') }}
+              </el-button>
+            </span>
+          </el-tooltip>
           <el-button class="flex-fill min-w-0" size="mini" @click="edit()">
             {{ $t('packages_business_connection_preview_edit') }}
           </el-button>
@@ -433,6 +447,10 @@ export default {
 
     setConnectionData(row) {
       this.connection = this.transformData(row)
+    },
+
+    isFileSource() {
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(this.connection?.database_type)
     }
   }
 }
@@ -472,6 +490,9 @@ export default {
     width: 100%;
     height: 100%;
   }
+}
+.load-schema__tooltip {
+  margin-right: 10px;
 }
 </style>
 <style lang="scss">

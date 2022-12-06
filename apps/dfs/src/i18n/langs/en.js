@@ -1189,5 +1189,7 @@ export default {
   dfs_instance_instance_yujianzhuangshi: 'Estimated installation time: ',
   dfs_instance_instance_anzhuangbao: 'Installation package: ',
   dfs_instance_instance_banbenhao: 'version number: ',
-  dfs_instance_instance_agent: 'Agent update'
+  dfs_instance_instance_agent: 'Agent update',
+
+  dfs_user_center_phone_error: 'This phone number has already been registered by another user'
 }

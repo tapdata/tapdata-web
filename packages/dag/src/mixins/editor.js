@@ -21,6 +21,7 @@ import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
 import { setPageTitle } from '@tap/shared'
+import { getSchema } from '../util'
 
 export default {
   directives: {
@@ -77,6 +78,7 @@ export default {
     this.destory = true
     this.stopDagWatch?.()
     this.stopLoopTask()
+    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
@@ -1033,7 +1035,8 @@ export default {
 
     async validateNode(node) {
       try {
-        await validateBySchema(node.__Ctor.formSchema, node, this.formScope || this.scope)
+        const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
+        await validateBySchema(schema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -1658,6 +1661,10 @@ export default {
     handleEditFlush(result) {
       console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
+        if (result.data.id !== this.dataflow.id) {
+          console.debug('ws收到了其他任务的返回', result.data)
+          return
+        }
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
       }
@@ -1831,7 +1838,7 @@ export default {
 
           this.startLoopTask(id)
         }
-      }, 8000)
+      }, 5000)
     },
 
     stopLoopTask() {

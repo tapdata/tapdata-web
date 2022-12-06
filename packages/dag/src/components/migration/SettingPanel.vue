@@ -113,7 +113,7 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
                         default: false,
-                        target: '*(crontabExpression,syncPoints)',
+                        target: '*(syncPoints)',
                         fulfill: {
                           state: {
                             visible: '{{$self.value}}'
@@ -140,10 +140,27 @@ export default observer({
                           }
                         }
                       },
-                      /*crontabExpression: {
+                      crontabExpressionFlag: {
+                        //调度表达式
+                        title: '重复策略', //定期调度任务
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch',
+                        default: false,
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      crontabExpression: {
                         //调度表达式
                         title: '重复策略', //定期调度任务
                         type: 'string',
+                        required: 'true',
                         'x-validator': {
                           cron: true,
                           message: 'Cron表达式格式有误'
@@ -157,14 +174,14 @@ export default observer({
                           tooltip: this.$t('packages_dag_task_setting_cron_tip')
                         },
                         'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
+                          dependencies: ['type', 'crontabExpressionFlag'],
                           fulfill: {
                             state: {
                               display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
                             }
                           }
                         }
-                      },*/
+                      },
                       syncPoints: {
                         title: this.$t('packages_dag_task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',

@@ -45,7 +45,7 @@ export default {
   packages_dag_task_setting_plan_start_date: '计划开始时间',
   packages_dag_task_setting_cron_expression: '请输入调度表达式',
   packages_dag_task_setting_cron_tip:
-    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
+    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ?  //每分钟运行一次  0 0 2 * * ? //每天2点运行',
   packages_dag_task_setting_sync_point: '增量采集开始时刻',
   packages_dag_task_setting_syncPoint_tip: '任务将从该时间点开始收集增量日志',
   packages_dag_task_setting_automatic_index: '自动创建索引',

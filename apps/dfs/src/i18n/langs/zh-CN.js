@@ -1112,5 +1112,7 @@ export default {
   dfs_instance_instance_yujianzhuangshi: '预计安装时间 : ',
   dfs_instance_instance_anzhuangbao: '安装包 : ',
   dfs_instance_instance_banbenhao: '版本号: ',
-  dfs_instance_instance_agent: 'Agent更新'
+  dfs_instance_instance_agent: 'Agent更新',
+
+  dfs_user_center_phone_error: '该手机号码已被其他用户注册过'
 }
