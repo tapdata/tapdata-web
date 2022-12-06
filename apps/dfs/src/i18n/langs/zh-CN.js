@@ -1021,7 +1021,6 @@ export default {
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升级和服务切换重要公告',
   dfs_workbench_workbench_xinzengzidingyi: '· 新增自定义算子支持，用户可通过灵活的JS能力来定义自己的算子',
   dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定义函数用户可通过jar包导入自定义函数进行使用',
-  dfs_workbench_workbench_xinzenghebingsuan: '· 新增合并算子和JOIN算子，支持多表关联合并操作',
   dfs_workbench_workbench_xinzengDdl: '· 新增DDL支持能力，支持对Oracle、MySQL、DB2、PG等数据库的常用DDL操作进行同步',
   dfs_workbench_workbench_xinzengdongtaixin: '· 新增动态新增表功能，支持将数据库新增表同步至目标',
   dfs_workbench_workbench_shujutongbuneng: '数据同步能力增强',
@@ -1039,15 +1038,15 @@ export default {
   dfs_workbench_workbench_yonghukeanzhao: '· 用户可按照PDK的标准灵活定制自己的数据源',
   dfs_workbench_workbench_jiyuPdk: '· 基于PDK来实现数据源的开发',
   dfs_workbench_workbench_jiyuPdk2: '基于PDK的数据源注册机制',
-  dfs_workbench_workbench_xiamianshixinban: '下面是新版本增加的特性：',
+  dfs_workbench_workbench_xiamianshixinban: '下面是 V3.0 版本增加的特性：',
   dfs_workbench_workbench_dangranruguoyou:
-    '当然，如果有新的任务我们建议您在新版本中创建以便获得更好的使用体验，欢迎您届时体验我们新版功能并提出您的宝贵建议。',
+    '当然，如果有新的任务我们建议您在 V3.0 版本中创建以便获得更好的使用体验，欢迎您来体验我们新版功能并提出您的宝贵建议。',
   dfs_workbench_workbench_youyuzengjiale:
-    '由于增加了很多实用功能，我们被迫舍弃了现有的版本架构重新开发，因此您在当前V2版本中创建的连接和任务将不会同步到新版本，不过放心，新版本发布后您仍然可以继续使用旧版本进行您的数据操作，我们保证V2版本和V3版本将长期共存，\n          ',
-  dfs_workbench_workbench_zainianyueriwo: '在2022年9月29日，我们将会发布重大升级V3.0版本。',
+    '由于增加了很多实用功能，我们对V2版本的架构进行了重构开发，因此您之前在V2版本中创建的连接和任务将不会同步到 V3.0 版本，不过放心，新版本发布后您仍然可以继续使用旧版本进行您的数据操作，我们保证V2版本和 V3.0 版本将长期共存。',
+  dfs_workbench_workbench_zainianyueriwo: '我们的重大升级版本 V3.0，已经正式发布。',
   dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用户，您好：',
   dfs_workbench_workbench_banbenshengjihe: '版本升级和服务切换的公告',
-  dfs_workbench_workbench_banbenshengjitong: '版本升级通知',
+  dfs_workbench_workbench_banbenshengjitong: 'Tapdata Cloud V3.0 版本正式发布通知',
   dfs_user_center_acces:
     'AccessKey是您访问系统API的秘钥，具有账号的完全权限，请您务必妥善保管！不要以任何方式公开AccessKey到外部渠道（例如GitHub），避免被他人利用造成安全威胁。',
   dfs_user_center_kaifaxinxi: '开发信息',
