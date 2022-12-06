@@ -311,6 +311,7 @@ export default {
   packages_dag_src_editor_ziduanjisuan: 'Field calculation',
   packages_dag_src_editor_zhuconghebing: 'Master-slave merge',
   packages_dag_src_editor_juhe: 'Aggregate',
+  packages_dag_src_editor_zhuijiahebing: 'Union',
   packages_dag_src_migrationeditor_jSchuli: 'JS processing',
   packages_dag_src_migrationeditor_ziduanbianji: 'Field Edit',
   packages_dag_src_migrationeditor_biaobianji: 'Table editor',
