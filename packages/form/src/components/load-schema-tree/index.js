@@ -21,6 +21,14 @@ export const loadSchemaTree = observer(
       const errorMsg = ref('')
       const loadStatus = ref('')
       const isTransformed = ref(true)
+      const formIsChange = ref(false)
+
+      root.$watch(
+        () => root.$store.state.dataflow.editVersion,
+        () => {
+          formIsChange.value = true
+        }
+      )
 
       async function getTask() {
         const taskId = root.$store.state.dataflow?.taskId
@@ -144,6 +152,14 @@ export const loadSchemaTree = observer(
         )
       }
 
+      const formValuesChangeDom = () => {
+        return formIsChange.value ? (
+          <span class="ml-2 color-warning">{root.$t('packages_form_load_schema_tree_form_values_change')}</span>
+        ) : (
+          ''
+        )
+      }
+
       return () => {
         return (
           <div>
@@ -152,8 +168,10 @@ export const loadSchemaTree = observer(
                 {title}
               </el-button>
               {loadStatusDom()}
+              {formValuesChangeDom()}
             </div>
             <el-tree
+              loading={loading.value}
               ref="tree"
               data={fieldList.value}
               node-key="id"
