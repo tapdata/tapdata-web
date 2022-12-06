@@ -403,6 +403,7 @@ export class Table extends NodeType {
                   conditions: {
                     title: '自定义条件',
                     type: 'array',
+                    required: true,
                     default: [{ key: '', value: '', operator: 5 }],
                     'x-decorator': 'FormItem',
                     'x-component': 'ArrayItems',
@@ -412,6 +413,9 @@ export class Table extends NodeType {
                         space: {
                           type: 'void',
                           'x-component': 'Space',
+                          'x-component-props': {
+                            align: 'top'
+                          },
                           properties: {
                             key: {
                               type: 'string',
@@ -458,14 +462,16 @@ export class Table extends NodeType {
                               'x-component': 'ArrayItems.Addition',
                               'x-component-props': {
                                 type: 'text',
-                                icon: 'el-icon-edit',
-                                round: true,
-                                loading: true
+                                icon: 'el-icon-plus',
+                                class: 'border-0'
                               }
                             },*/
                             remove: {
                               type: 'void',
-                              'x-component': 'ArrayItems.Remove'
+                              'x-component': 'ArrayItems.Remove',
+                              'x-component-props': {
+                                disabled: '{{$values.conditions.length<2}}'
+                              }
                             }
                           }
                         }
