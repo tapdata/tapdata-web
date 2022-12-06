@@ -3,7 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { useForm } from '@formily/vue'
 import { onMounted, onUnmounted } from '@vue/composition-api'
 
-import { metadataInstancesApi, proxyApi } from '@tap/api'
+import { metadataInstancesApi, proxyApi, taskApi } from '@tap/api'
 
 import './style.scss'
 
@@ -18,27 +18,44 @@ export const loadSchemaTree = observer(
       fieldList.value = form.getValuesIn('loadSchemaTree')
       const title = root.$t('packages_form_load_schema_tree_button_title')
       const nodeId = form.getValuesIn('id')
-      const loadCount = ref(0)
+      const errorMsg = ref('')
+      const loadStatus = ref('')
+      const isTransformed = ref(true)
+      const formIsChange = ref(false)
+
+      root.$watch(
+        () => root.$store.state.dataflow.editVersion,
+        () => {
+          formIsChange.value = true
+        }
+      )
+
+      async function getTask() {
+        const taskId = root.$store.state.dataflow?.taskId
+        return await taskApi.get(taskId)
+      }
+
       let timer
 
-      function getSchemaData(check = false) {
+      async function getSchemaData(check = false) {
+        if (check) {
+          const { transformed } = (await getTask()) || {}
+          isTransformed.value = !!transformed
+          if (!isTransformed.value) {
+            timer && clearTimeout(timer)
+            timer = setTimeout(() => {
+              getSchemaData(check)
+            }, 2000)
+            return
+          }
+        }
         metadataInstancesApi
           .nodeSchema(nodeId)
           .then(data => {
             fieldList.value = data?.[0]?.fields || []
-            if (check && !fieldList.value?.length) {
-              timer && clearTimeout(timer)
-              timer = setTimeout(() => {
-                getSchemaData(check)
-              }, 2000)
-            }
           })
           .finally(() => {
-            const len = fieldList.value?.length
-            const count = ++loadCount.value
-            if (len > 0 || !check || (check && count > 10)) {
-              loading.value = false
-            }
+            loading.value = false
           })
       }
 
@@ -54,40 +71,59 @@ export const loadSchemaTree = observer(
           args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)]
         }
         loading.value = true
-        proxyApi
-          .call(params)
+        isTransformed.value = true
+        form
+          .validate()
           .then(() => {
-            const filter = {
-              where: {
-                'source.id': connectionId,
-                meta_type: {
-                  in: ['collection', 'table', 'view']
-                },
-                is_deleted: false,
-                sourceType: 'SOURCE',
-                original_name: {
-                  neq: ''
+            proxyApi
+              .call(params)
+              .then(() => {
+                const filter = {
+                  where: {
+                    'source.id': connectionId,
+                    meta_type: {
+                      in: ['collection', 'table', 'view']
+                    },
+                    is_deleted: false,
+                    sourceType: 'SOURCE',
+                    original_name: {
+                      neq: ''
+                    }
+                  },
+                  page: 1,
+                  size: 20,
+                  fields: {
+                    original_name: true
+                  },
+                  order: ['original_name ASC']
                 }
-              },
-              page: 1,
-              size: 20,
-              fields: {
-                original_name: true
-              },
-              order: ['original_name ASC']
-            }
-            metadataInstancesApi
-              .get({ filter: JSON.stringify(filter) })
-              .then(metaData => {
-                const table = metaData.items?.[0]?.original_name
-                form.setValuesIn(tableNameField || 'tableName', table)
-                getSchemaData(true)
+                metadataInstancesApi
+                  .get({ filter: JSON.stringify(filter) })
+                  .then(metaData => {
+                    const table = metaData.items?.[0]?.original_name
+                    form.setValuesIn(tableNameField || 'tableName', '')
+                    setTimeout(() => {
+                      form.setValuesIn(tableNameField || 'tableName', table)
+                      isTransformed.value = false
+                      getSchemaData(true)
+                    }, 200)
+                  })
+                  .catch(() => {
+                    loading.value = false
+                  })
+                loadStatus.value = false
+                errorMsg.value = ''
               })
-              .catch(() => {
+              .catch(err => {
+                loadStatus.value = true
+                const msg = err?.data?.message
+                errorMsg.value = msg
+                root.$message.error(msg)
                 loading.value = false
               })
           })
           .catch(() => {
+            root.$message.error(root.$t('packages_form_qingjianchajiedian'))
             loading.value = false
           })
       }
@@ -101,13 +137,41 @@ export const loadSchemaTree = observer(
         timer && clearTimeout(timer)
       })
 
+      const loadStatusDom = () => {
+        return loadStatus.value ? (
+          <el-tooltip disabled={!errorMsg.value} content={errorMsg.value} placement="top" class="ml-2">
+            <span className="inline-flex align-content-center">
+              <VIcon size="16" class="mr-1 color-danger" style="padding-bottom: 2px">
+                info
+              </VIcon>
+              <span class="color-danger">{root.$t('packages_form_load_schema_tree_load_fail')}</span>
+            </span>
+          </el-tooltip>
+        ) : (
+          ''
+        )
+      }
+
+      const formValuesChangeDom = () => {
+        return formIsChange.value ? (
+          <span class="ml-2 color-warning">{root.$t('packages_form_load_schema_tree_form_values_change')}</span>
+        ) : (
+          ''
+        )
+      }
+
       return () => {
         return (
           <div>
-            <el-button class="mb-2" loading={loading.value} onClick={handleLoadSchema}>
-              {title}
-            </el-button>
+            <div class="mb-2">
+              <el-button className="mb-2" loading={loading.value} onClick={handleLoadSchema}>
+                {title}
+              </el-button>
+              {loadStatusDom()}
+              {formValuesChangeDom()}
+            </div>
             <el-tree
+              loading={loading.value}
               ref="tree"
               data={fieldList.value}
               node-key="id"

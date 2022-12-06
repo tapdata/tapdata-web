@@ -363,7 +363,7 @@ export class Table extends NodeType {
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
-                          'x-component-props.options': `{{$values.attrs.capabilities.find(item => item.id ==='clear_table_function')?$self.dataSource:[$self.dataSource[0], $self.dataSource[2]]}}`
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
                         }
                       }
                     }

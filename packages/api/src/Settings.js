@@ -14,8 +14,8 @@ export default class Settings extends Http {
   settingPatch(params) {
     return this.axios.patch(`${this.url}`, params)
   }
-  testEmail() {
-    return this.axios.post(`${this.url}/testEmail`)
+  testEmail(params) {
+    return this.axios.post(`${this.url}/testEmail`, params)
   }
   save(params) {
     return this.axios.patch(`${this.url}/save`, params)

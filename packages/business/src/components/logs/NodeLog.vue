@@ -518,23 +518,22 @@ export default {
       let result = deepCopy(rowData)
       result.forEach(row => {
         let obj = {}
+        row.timestamp = new Date(row.date).getTime()
         obj.level = row.level
         obj.timestamp = this.formatTime(row.timestamp)
         obj.nodeName = this.getHighlightSpan(row.nodeName)
-        obj.taskName = row.taskName
         obj.logTags = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
         obj.data = row.data.length ? JSON.stringify(row.data?.slice(0, 10)) : ''
         obj.message = row.message?.slice(0, 10000)
         obj.errorStack = row.errorStack?.slice(0, 20000)
 
-        const { level, timestamp, nodeName, taskName, logTags, data, message, errorStack } = obj
+        const { level, timestamp, nodeName, logTags, data, message, errorStack } = obj
         const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
         row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
         row.jsonDomStr = this.getJsonString([
           { level },
           { timestamp },
           { nodeName },
-          { taskName },
           { logTags },
           { data },
           { message },

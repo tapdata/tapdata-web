@@ -502,7 +502,7 @@ export default {
 }
 
 .layout-sidebar.--left {
-  z-index: 11;
+  z-index: unset; // 防止侧边栏出现的dialog被节点覆盖
   overflow: hidden auto;
   will-change: width;
   $headerH: 34px;

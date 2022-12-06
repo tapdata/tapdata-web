@@ -77,6 +77,7 @@ export default {
     this.destory = true
     this.stopDagWatch?.()
     this.stopLoopTask()
+    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
@@ -1658,6 +1659,10 @@ export default {
     handleEditFlush(result) {
       console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
+        if (result.data.id !== this.dataflow.id) {
+          console.debug('ws收到了其他任务的返回', result.data)
+          return
+        }
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
       }
@@ -1831,7 +1836,7 @@ export default {
 
           this.startLoopTask(id)
         }
-      }, 8000)
+      }, 5000)
     },
 
     stopLoopTask() {
