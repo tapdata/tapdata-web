@@ -23,9 +23,9 @@
     "@tap/dag": "workspace:^1.0.0",
     "@tap/field-mapping": "workspace:^1.0.0",
     "@tap/form": "workspace:^1.0.0",
+    "@tap/i18n": "workspace:^1.0.0",
     "@tap/node-design": "workspace:^1.0.0",
     "@tap/shared": "workspace:^1.0.0",
-    "@tap/i18n": "workspace:^1.0.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
@@ -41,6 +41,7 @@
     "vue": "^2.6.14",
     "vue-clipboard2": "^0.3.1",
     "vue-echarts": "^6.0.0",
+    "vue-json-viewer": "^2.2.15",
     "vue-router": "^3.2.0",
     "vue-virtual-scroller": "^1.0.10",
     "vuex": "^3.4.0"
