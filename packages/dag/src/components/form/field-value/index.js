@@ -246,7 +246,7 @@ export const FieldValue = connect(
               primary_key_position: data.primary_key_position,
               color: data.color,
               label: data.field_name,
-              field_name: data.field_name,
+              field_name: data.schema_field_name || data.field_name,
               tableName,
               id
             })

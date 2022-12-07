@@ -14,9 +14,23 @@
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" size="mini" class="flex-fill min-w-0" @click="reload()">
-            {{ $t('packages_business_connection_preview_load_schema') }}
-          </el-button>
+          <el-tooltip
+            :disabled="!isFileSource()"
+            :content="$t('packages_business_connections_list_wenjianleixingde')"
+            placement="top"
+            class="load-schema__tooltip"
+          >
+            <span>
+              <el-button
+                :disabled="isFileSource()"
+                type="primary"
+                size="mini"
+                class="flex-fill min-w-0"
+                @click="reload()"
+                >{{ $t('packages_business_connection_preview_load_schema') }}
+              </el-button>
+            </span>
+          </el-tooltip>
           <el-button class="flex-fill min-w-0" size="mini" @click="edit()">
             {{ $t('packages_business_connection_preview_edit') }}
           </el-button>
@@ -102,6 +116,7 @@ export default {
   },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       drawer: false,
       visible: false,
       timer: null,
@@ -225,23 +240,23 @@ export default {
     }
   },
   beforeDestroy() {
-    this.clearInterval()
+    this.clearTimer()
   },
   watch: {
     visible(val) {
       if (!val) {
-        this.clearInterval() //清除定时器
+        this.clearTimer() //清除定时器
       }
     }
   },
   methods: {
-    clearInterval() {
+    clearTimer() {
       // 清除定时器
-      clearInterval(this.timer)
+      clearTimeout(this.timer)
       this.timer = null
     },
     handleClose() {
-      this.clearInterval()
+      this.clearTimer()
       this.visible = false
       this.showProgress = false
       this.$emit('close')
@@ -260,6 +275,7 @@ export default {
       row.database_username = row.config.user || row.config.username
       row.additionalString = row.config.extParams || row.config.additionalString
       row.database_datetype_without_timezone = row.config.timezone
+      row.sourceFrom = this.getSourceFrom(row)
       if (row.config.uri && row.config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
@@ -311,7 +327,7 @@ export default {
           })
       })
     },
-    async reload() {
+    async reload(cb) {
       this.checkAgent(() => {
         let config = {
           title: this.$t('packages_business_connection_reloadTittle'),
@@ -330,20 +346,21 @@ export default {
           if (resFlag) {
             this.showProgress = true
             this.progress = 0
-            this.testSchema()
+            this.testSchema(cb)
             this.$emit('reload-schema')
           }
         })
       })
     },
     //请求测试
-    testSchema() {
+    testSchema(cb) {
       let parms = {
         loadCount: 0,
         loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
       connectionsApi.updateById(this.connection.id, parms).then(data => {
+        cb?.()
         if (!this?.$refs?.test) {
           return
         }
@@ -353,7 +370,7 @@ export default {
       })
     },
     getProgress() {
-      this.clearInterval()
+      this.clearTimer()
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
@@ -371,9 +388,9 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.timer = setInterval(() => {
-              this.getProgress()
-            }, 800)
+            this.timer = setTimeout(() => {
+              this.visible && this.getProgress()
+            }, 2000)
           }
         })
         .catch(() => {
@@ -386,7 +403,22 @@ export default {
       this.status = data.status
     },
     loadList() {
-      this.list = this.configModel['default']
+      this.list = [
+        ...this.configModel['default'],
+        ...(this.isDaas
+          ? []
+          : [
+              {
+                icon: 'link',
+                items: [
+                  {
+                    label: i18n.t('packages_business_connections_preview_lianjiechajianlai'),
+                    key: 'sourceFrom'
+                  }
+                ]
+              }
+            ])
+      ]
     },
     getConnectionIcon() {
       const { connection } = this
@@ -400,8 +432,25 @@ export default {
       if (!this.visible) return
       const result = list.find(item => item.id === this.connection.id)
       if (!result) return
-      console.log('result', result) // eslint-disable-line
       this.connection = this.transformData(result)
+    },
+
+    getSourceFrom(row = {}) {
+      const { definitionScope, beta = false } = row
+      const MAP = {
+        publicfalse: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
+        publictrue: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
+        customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
+      }
+      return MAP[definitionScope + beta] || MAP['customer']
+    },
+
+    setConnectionData(row) {
+      this.connection = this.transformData(row)
+    },
+
+    isFileSource() {
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(this.connection?.database_type)
     }
   }
 }
@@ -441,6 +490,9 @@ export default {
     width: 100%;
     height: 100%;
   }
+}
+.load-schema__tooltip {
+  margin-right: 10px;
 }
 </style>
 <style lang="scss">

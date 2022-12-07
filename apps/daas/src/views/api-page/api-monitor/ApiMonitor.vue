@@ -62,7 +62,7 @@
               ></span>
             </span>
           </div>
-          <TableList
+          <VTable
             height="100%"
             ref="failRateList"
             v-loading="loadingFailRateList"
@@ -71,9 +71,9 @@
             :columns="columns"
           >
             <template slot="failed" slot-scope="scope">
-              <span> {{ scope.row.failed * 100 }}</span>
+              <span> {{ Math.round(scope.row.failed * 100) }}</span>
             </template>
-          </TableList>
+          </VTable>
           <el-pagination
             class="mb-5 mr-2"
             layout="->,total, prev,pager, next"
@@ -99,7 +99,7 @@
               ></span>
             </span>
           </div>
-          <TableList
+          <VTable
             height="100%"
             v-loading="loadingTimeList"
             background
@@ -113,7 +113,7 @@
                 {{ formatMs(scope.row.failed) }}
               </span>
             </template>
-          </TableList>
+          </VTable>
           <el-pagination
             class="mb-5 mr-2"
             layout="->,total, prev,pager, next"
@@ -127,7 +127,7 @@
         </div>
       </section>
       <!--api list -->
-      <section class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height mb-5 pl-5 pt-5">
+      <section class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height pl-5 pt-5">
         <header class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_api_list') }}</header>
         <FilterBar class="mb-2" v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
         <el-table
@@ -176,14 +176,16 @@
 </template>
 
 <script>
-import { Chart, FilterBar, TableList } from '@tap/component'
-import { formatMs, handleUnit } from './utils'
+import { Chart, FilterBar, VTable } from '@tap/component'
+import { handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
 import { apiMonitorApi } from '@tap/api'
+import { calcTimeUnit } from '@tap/shared'
+
 export default {
   name: 'ApiMonitor',
-  components: { Chart, TableList, FilterBar, Detail },
+  components: { Chart, VTable, FilterBar, Detail },
   data() {
     return {
       loadingTimeList: false,
@@ -271,7 +273,7 @@ export default {
     formatMs(time) {
       if (time === 0 || !time) return 0
       if (time < 1000) return time + ' ms'
-      return formatMs(time, '')
+      return calcTimeUnit(time)
     },
     //获取统计数据
     getPreview() {
@@ -493,7 +495,6 @@ export default {
   display: flex;
   -ms-flex: 1;
   flex: 1;
-  padding: 0 20px 20px 20px;
   background-color: #eff1f4;
   overflow: auto;
   .api-monitor__min__height {

@@ -19,7 +19,8 @@ $color: (
   info: #75849b,
   linfo: #e9edf2,
   disable: #c9cdd4,
-  white: #fff
+  white: #fff,
+  tag: #008EFF,
 );
 
 $fontColor: (
@@ -43,7 +44,8 @@ $bgColor: (
   special: #c9cdd4,
   white: #fff,
   pageCount: rgba(44, 101, 255, 0.08),
-  disactive: rgba(106, 161, 255, 0.1)
+  disactive: rgba(106, 161, 255, 0.1),
+  tag: #009BFF33
 );
 
 $borderColor: (
@@ -51,7 +53,7 @@ $borderColor: (
   normal: #ddd,
   slight: #f6f7f7,
   light: #f2f2f2,
-  form: rgba(221, 221, 221, 0.4)
+  form: rgba(221, 221, 221, 0.4),
 );
 
 $iconFillColor: (

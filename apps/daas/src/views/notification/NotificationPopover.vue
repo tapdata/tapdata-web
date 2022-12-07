@@ -1,5 +1,11 @@
 <template>
-  <el-popover popper-class="notification-popover" placement="bottom" trigger="hover" @show="activeTab = 'system'">
+  <el-popover
+    popper-class="notification-popover"
+    placement="bottom"
+    trigger="hover"
+    @show="handleShow"
+    @hide="handleHide"
+  >
     <div class="btn" slot="reference" @click="toCenter()">
       <el-badge class="item-badge icon-btn px-3" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon size="16">xiaoxi-2</VIcon>
@@ -9,9 +15,18 @@
       <ElButton type="text" v-if="activeTab === 'system'" @click="handleNotify">{{
         $t('notify_view_all_notify')
       }}</ElButton>
-      <ElButton type="text" v-else @click="$router.push({ name: 'notification', query: { type: 'user' } })">{{
-        $t('notify_view_more')
-      }}</ElButton>
+      <ElButton
+        type="text"
+        v-if="activeTab === 'alarm'"
+        @click="$router.push({ name: 'alarmNotification', query: { type: 'alarmNotice' } })"
+        >{{ $t('notify_view_more') }}</ElButton
+      >
+      <ElButton
+        type="text"
+        v-if="activeTab === 'user'"
+        @click="$router.push({ name: 'notification', query: { type: 'user' } })"
+        >{{ $t('notify_view_more') }}</ElButton
+      >
       <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
           <ul class="tab-list notification-list" v-if="listData.length">
@@ -79,51 +94,57 @@
           </div>
         </div>
       </el-tab-pane>
-      <!--      <el-tab-pane class="tab-item" label="告警通知" name="alarm" v-loading="loading">-->
-      <!--        <div class="tab-item-container">-->
-      <!--          <ul class="tab-list notification-list" v-if="alarmData.length">-->
-      <!--            <li class="notification-item" v-for="(item, index) in alarmData" :key="index" @click="handleRead(item.id)">-->
-      <!--              <div class="flex flex-row">-->
-      <!--                <div class="mr-1">-->
-      <!--                  <span class="unread-1zPaAXtSu inline-block"></span>-->
-      <!--                </div>-->
-      <!--                <div>-->
-      <!--                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>-->
-      <!--                  <span>{{ systemMap[item.system] }} </span>-->
-      <!--                  <span class="cursor-pointer px-1 primary" @click="handleGo(item)">-->
-      <!--                    {{ item.serverName }}-->
-      <!--                  </span>-->
-      <!--                  <template>-->
-      <!--                    <span>{{ item.msg }}</span>-->
-      <!--                  </template>-->
-      <!--                  <div class="item-time">-->
-      <!--                    <span>{{ item.createTime }}</span>-->
-      <!--                  </div>-->
-      <!--                </div>-->
-      <!--              </div>-->
-      <!--            </li>-->
-      <!--          </ul>-->
-      <!--          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">-->
-      <!--            <div>-->
-      <!--              <VIcon size="76">no-notice</VIcon>-->
-      <!--              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>-->
-      <!--            </div>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </el-tab-pane>-->
+      <el-tab-pane
+        class="tab-item"
+        :label="$t('daas_notification_alarmnotification_gaojingtongzhi')"
+        name="alarm"
+        v-loading="loadingAlarm"
+      >
+        <div class="tab-item-container">
+          <ul class="tab-list notification-list" v-if="alarmData.length">
+            <li
+              class="notification-item"
+              v-for="(item, index) in alarmData"
+              :key="index"
+              @click="handleRead(item.id, 'alarm')"
+            >
+              <div class="flex flex-row">
+                <div class="mr-1">
+                  <span class="unread-1zPaAXtSu inline-block"></span>
+                </div>
+                <div>
+                  <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
+                  <template>
+                    <span>{{ item.title }}</span>
+                  </template>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
     </el-tabs>
   </el-popover>
 </template>
 
 <script>
+import { debounce } from 'lodash'
+import dayjs from 'dayjs'
+import { mapState } from 'vuex'
+
+import { userLogsApi, notificationApi } from '@tap/api'
+import { VIcon } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
+import { ALARM_LEVEL_MAP } from '@tap/business'
+
 import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
-import { mapState } from 'vuex'
-import { VIcon } from '@tap/component'
-import { uniqueArr } from '@/utils/util'
-import Cookie from '@tap/shared/src/cookie'
-import dayjs from 'dayjs'
-import { userLogsApi, notificationApi } from '@tap/api'
 
 export default {
   components: {
@@ -134,16 +155,13 @@ export default {
     return {
       // unRead: 0,
       loading: false,
+      loadingAlarm: false,
       activeTab: 'system',
       listData: [],
       colorMap: {
         ERROR: '#D44D4D',
         WARN: '#FF7D00',
-        INFO: '#2c65ff',
-        Emergency: '#D44D4D',
-        Critical: '#FF7D00',
-        Normal: '#2c65ff',
-        Warning: '#C39700'
+        INFO: '#2c65ff'
       },
       typeMap: TYPEMAP,
       systemMap: {
@@ -157,52 +175,8 @@ export default {
         Agent: 'Agent'
       },
       userOperations: [],
-      alarmData: [
-        {
-          level: 'Emergency',
-          createTime: '2022-08-25T06:50:44Z',
-          id: '63071bc48eefa8002ee2dfce',
-          msg: '已停止，当前无可用Agent，请尽快处理',
-          read: false,
-          serverName: 'Agent1',
-          sourceId: '63071b658eefa8002ee2df55',
-          system: 'Agent',
-          title: ''
-        },
-        {
-          level: 'Warning',
-          createTime: '2022-08-25T06:50:44Z',
-          id: '63071bc48eefa8002ee2dfce',
-          msg: '的增量延迟大于2分钟，已持续30分钟，请关注',
-          read: false,
-          serverName: '新任务@14:49:09',
-          sourceId: '63071b658eefa8002ee2df55',
-          system: 'migration',
-          title: ''
-        },
-        {
-          level: 'Critical',
-          createTime: '2022-08-25T06:50:44Z',
-          id: '63071bc48eefa8002ee2dfce',
-          msg: '已停止，当前2个可用Agent，请关注',
-          read: false,
-          serverName: 'Agent2',
-          sourceId: '63071b658eefa8002ee2df55',
-          system: 'Agent',
-          title: ''
-        },
-        {
-          level: 'Normal',
-          createTime: '2022-08-25T06:50:44Z',
-          id: '63071bc48eefa8002ee2dfce',
-          msg: '已停止，当前2个可用Agent，请关注',
-          read: false,
-          serverName: 'Agent3',
-          sourceId: '63071b658eefa8002ee2df55',
-          system: 'Agent',
-          title: ''
-        }
-      ]
+      alarmData: [],
+      isHide: true
     }
   },
   computed: mapState({
@@ -224,15 +198,19 @@ export default {
         msg.userId = Cookie.get('user_id')
       }
       this.getUnreadData()
-      this.$ws.on('notification', res => {
-        // this.getUnReadNum()
-        this.getUnreadData()
-        let data = res?.data
-        if (data) {
-          data.createTime = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
-          self.listData = uniqueArr([data, ...this.listData])
-        }
-      })
+      this.$ws.on(
+        'notification',
+        debounce(res => {
+          let data = res?.data
+          if (data?.msg !== 'alarm') {
+            if (this.isHide) {
+              this.getUnReadNum()
+              return
+            }
+            this.getUnreadData()
+          }
+        }, 800)
+      )
       this.$ws.ready(() => {
         this.$ws.send(msg)
       }, true)
@@ -270,8 +248,12 @@ export default {
         })
       })
     },
-    handleRead(id) {
+    handleRead(id, type) {
       notificationApi.patch({ read: true, id: id }).then(() => {
+        if (type === 'alarm') {
+          this.getAlarmData()
+          return
+        }
         this.getUnreadData()
         this.$root.$emit('notificationUpdate')
       })
@@ -299,6 +281,9 @@ export default {
       if (this.activeTab === 'user') {
         this.getUserOperations()
       }
+      if (this.activeTab === 'alarm') {
+        this.getAlarmData()
+      }
     },
     getUserOperations() {
       this.loading = true
@@ -325,11 +310,38 @@ export default {
           this.loading = false
         })
     },
+    getAlarmData() {
+      let where = {
+        msgType: 'ALARM',
+        page: 1,
+        size: 20,
+        read: false
+      }
+      this.loadingAlarm = true
+      notificationApi.list(where).then(data => {
+        let list = data?.items || []
+        this.alarmData = list.map(item => {
+          item.levelLabel = ALARM_LEVEL_MAP[item.level].text
+          item.levelType = ALARM_LEVEL_MAP[item.level].type
+          return item
+        })
+
+        this.loadingAlarm = false
+      })
+    },
     toCenter() {
       if (this.$route.name === 'notification') {
         return
       }
       this.$router.push({ name: 'notification' })
+    },
+    handleShow() {
+      this.activeTab = 'system'
+      this.isHide = false
+      this.getUnreadData()
+    },
+    handleHide() {
+      this.isHide = true
     }
   }
 }

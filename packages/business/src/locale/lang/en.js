@@ -22,6 +22,8 @@ export default {
   packages_business_status_finished: 'Finished',
   packages_business_status_force_stopping: 'Force stopping',
   packages_business_status_schedule_failed: 'Error',
+  packages_business_status_renewing: 'Renewing',
+  packages_business_status_renew_failed: 'Renew failed',
 
   packages_business_milestone_list_status_finish: 'finish',
   packages_business_milestone_list_status_error: 'Error',
@@ -65,6 +67,7 @@ export default {
   packages_business_button_confirm: 'Confirm',
   packages_business_message_upload_success: 'Upload successful',
   packages_business_message_upload_fail: 'Upload failed',
+  packages_business_message_upload_msg: 'Please upload the task file to be imported',
   packages_business_modules_dialog_import_title: 'Task import',
   packages_business_modules_dialog_condition: 'Condition',
   packages_business_modules_dialog_overwrite_data: 'Overwrite existing data',
@@ -316,6 +319,7 @@ export default {
   packages_business_button_bulk_import: 'Bulk Import',
   packages_business_message_save_fail: 'Save failed',
   packages_business_column_create_time: 'Create time',
+  packages_business_column_event_time: 'Event time',
   packages_business_task_list_transform_running: 'Field mapping running',
   packages_business_task_list_transform_done: 'Field mapping completed',
   packages_business_task_list_transform_error: 'Field mapping failed',
@@ -408,6 +412,8 @@ export default {
   packages_business_etl_details_shifouzhongzhigai: 'Reset this task? ',
   packages_business_etl_details_zhongzhirenwux:
     'Resetting task xxx will clear the task synchronization progress and the task will be re-executed',
+  packages_business_dataFlow_agent_force_stop_confirm_message:
+    'Forcibly stop task xxx. Since the agent is offline, we will only reset the status of the task, but we cannot stop the task. Please ensure that you have manually stopped or deleted the agent locally, or stop the task after the agent is connected.',
   packages_business_etl_details_qiangzhitingzhiren:
     'Forcibly stop the task xxx will immediately interrupt the data transmission force the task to stop quickly and reset the task',
   packages_business_etl_details_shifouqiangzhiting: 'Would you like to force stop this task? ',
@@ -469,5 +475,46 @@ export default {
   packages_business_verify_details_jiaoyanjieguo: 'Verification result',
   packages_business_verify_details_jiaoyanzhong: 'Verifying',
   packages_business_verify_details_jiaoyan: 'Verify',
-  packages_business_verify_details_qingshurubiaoming: 'Please enter the table name...'
+  packages_business_verify_details_qingshurubiaoming: 'Please enter the table name...',
+  packages_business_shared_const_gaojingzhong: 'Alarming',
+  packages_business_shared_const_yihuifu: 'Restored',
+  packages_business_components_alert_yiguanbi: 'closed',
+  packages_business_components_alert_huifu: 'Restore',
+  packages_business_shared_const_yiban: 'General',
+  packages_business_shared_const_jinggao: 'Warning',
+  packages_business_shared_const_yanzhong: 'serious',
+  packages_business_shared_const_jinji: 'urgent',
+  packages_business_external_storage: 'External storage',
+  packages_business_dataFlow_taskBulkTag: 'Bulk Tag',
+  packages_business_relation_details_chakanrenwu: 'View tasks',
+  packages_business_relation_details_shiyonggaiguanlian: 'Use the task list for this {val}',
+  packages_business_relation_list_jiaoyanrenwu: 'Verification tasks',
+  packages_business_relation_list_huancunrenwu: 'Cached tasks',
+  packages_business_relation_list_qingshururenwu: 'Please enter the task name...',
+  packages_business_relation_details_huancun: 'cache',
+  packages_business_relation_details_wajue: 'Mining',
+  packages_business_relation_details_renwu: 'Tasks',
+  packages_business_agent_select_not_found: 'This agent does not exist. Select another agent',
+  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My data source',
+  packages_business_components_connectiontypeselectorsort_jiaoyouTap:
+    'Let Tapdata conduct a comprehensive quality test to ensure the stability and quality of the plugin',
+  packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
+    'Note: here is the data source plugin uploaded by yourself, if you want to use it for production tasks, please submit the source code on GitHub',
+  packages_business_components_connectiontypeselectorsort_zhuyiBet:
+    "Note: Beta data sources have not passed Tapdata's certification testing process, and Tapdata does not guarantee the stable operation of these data sources for the time being",
+  packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
+    'Stay tuned for the following data sources to open',
+  packages_business_components_connectiontypeselectorsort_betashu: 'Beta data source',
+  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'Authentication data source',
+  packages_business_connections_preview_lianjiechajianlai: 'Link plugin source',
+  packages_business_connections_list_lianjiefenlei: 'Connection Category',
+  packages_business_task_migratelist_renwufenlei: 'Task classification',
+  packages_business_components_connectiontypeselectorsort_jijiangshangxian: 'Coming soon',
+  packages_business_task_list_renwubuzhichi: 'The task does not support this operation',
+  packages_business_connections_databaseform_keyicongbaohan:
+    'The specified table can be excluded from the tables matched by the inclusion table rule',
+  packages_business_connections_databaseform_paichubiao: 'Exclude table',
+  packages_business_connections_databaseform_baohanbiao: 'Contain table',
+  packages_business_connections_list_wenjianleixingde:
+    'The connection of file type does not support loading Schema at the moment'
 }

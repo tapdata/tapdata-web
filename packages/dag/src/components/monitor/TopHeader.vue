@@ -6,33 +6,36 @@
       </button>
       <div class="overflow-hidden">
         <div class="flex align-items-center">
-          <OverflowTooltip
-            class="task-name text-truncate fs-7 fw-sub font-color-dark"
-            placement="bottom"
-            :text="name"
-            :open-delay="400"
+          <TextEditable
+            class="overflow-hidden"
+            v-model="name"
+            :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+            :input-min-width="32"
+            @change="onNameInputChange"
           />
           <TaskStatus :task="dataflow" class="ml-4" />
         </div>
         <div class="flex align-items-center font-color-light mt-1">
           <span class="mr-2">{{ syncType[dataflow.type] }}</span>
-          <span>{{ $t('packages_dag_monitor_topheader_qidongshijian') }}</span>
-          <span>{{ startTime }}</span>
+          <template v-if="!hideMenus.includes('agent')">
+            <span>{{ $t('packages_dag_monitor_topheader_zuijinyiciqi') }}</span>
+            <span>{{ lastStartDate }}</span>
+          </template>
         </div>
       </div>
-      <div v-if="dataflow.agentId" class="agent-data__item ml-4 px-4">
+      <div v-if="dataflow.agentId && !hideMenus.includes('agent')" class="agent-data__item ml-4 px-4">
         <OverflowTooltip
           class="agent-name__item text-truncate mb-2 font-color-dark"
           placement="bottom"
           :text="dataflow.hostName"
           :open-delay="400"
         />
-        <div v-if="agentData" class="font-color-sslight">
+        <div v-if="agentData" class="font-color-sslight agent-statistical">
           <span>CPU：</span>
           <span>{{ agentData.cpuUsage }}</span>
-          <span class="ml-4">MEM：</span>
+          <span class="ml-3">MEM：</span>
           <span>{{ agentData.memoryRate }}</span>
-          <span class="ml-4">GC：</span>
+          <span class="ml-3">GC：</span>
           <span>{{ agentData.gcRate }}</span>
         </div>
       </div>
@@ -175,7 +178,7 @@ export default {
     quota: Object
   },
 
-  components: { VIcon, TaskStatus, VDivider, OverflowTooltip },
+  components: { VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -211,6 +214,11 @@ export default {
     startTime() {
       const { startTime } = this.dataflow
       return startTime ? dayjs(startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+
+    lastStartDate() {
+      const { lastStartDate } = this.dataflow
+      return lastStartDate ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
 
     agentData() {
@@ -395,6 +403,10 @@ $sidebarBg: #fff;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  .agent-statistical {
+    min-width: 260px;
   }
 }
 

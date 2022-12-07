@@ -13,7 +13,11 @@ export const TASK_STATUS_MAP = {
   draft: { text: i18n.t('packages_business_status_draft'), icon: 'daiqidong' },
   scheduled: { text: i18n.t('packages_business_status_scheduled'), icon: 'qidongzhong', type: 'success' },
   stopping: { text: i18n.t('packages_business_status_stopping'), icon: 'tingzhizhong', type: 'success' },
-  'force stopping': { text: i18n.t('packages_business_status_force_stopping'), icon: 'qiangzhitingzhi', type: 'success' },
+  'force stopping': {
+    text: i18n.t('packages_business_status_force_stopping'),
+    icon: 'qiangzhitingzhi',
+    type: 'success'
+  },
   finished: { text: i18n.t('packages_business_status_finished'), icon: 'yiwancheng', type: 'success' }
 }
 
@@ -52,3 +56,19 @@ export const SHARECDC_MAP = {
   scheduling: { text: i18n.t('packages_business_status_scheduling'), icon: 'scheduling', type: 'success' },
   stopping: { text: i18n.t('packages_business_status_stopping'), icon: 'stopping', type: 'warning' }
 }
+
+export const ALARM_STATUS_MAP = {
+  ING: { text: i18n.t('packages_business_shared_const_gaojingzhong'), type: 'waiting' },
+  RECOVER: { text: i18n.t('packages_business_shared_const_yihuifu'), type: 'finish' },
+  CLOESE: { text: i18n.t('packages_business_components_alert_yiguanbi'), type: 'success' }
+}
+
+export const ALARM_LEVEL_MAP = {
+  RECOVERY: { text: i18n.t('packages_business_components_alert_huifu'), type: 'finish' },
+  NORMAL: { text: i18n.t('packages_business_shared_const_yiban'), type: 'edit' },
+  WARNING: { text: i18n.t('packages_business_shared_const_jinggao'), type: 'waiting' },
+  CRITICAL: { text: i18n.t('packages_business_shared_const_yanzhong'), type: 'stop' },
+  EMERGENCY: { text: i18n.t('packages_business_shared_const_jinji'), type: 'error' }
+}
+
+export const ALARM_LEVEL_SORT = ['EMERGENCY', 'CRITICAL', 'WARNING', 'NORMAL', 'RECOVERY']

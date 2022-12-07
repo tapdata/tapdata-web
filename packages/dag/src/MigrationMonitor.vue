@@ -17,6 +17,7 @@
       @center-content="handleCenterContent"
       @zoom-out="handleZoomOut"
       @zoom-in="handleZoomIn"
+      @zoom-to="handleZoomTo"
       @showSettings="handleShowSettings"
       @showVerify="handleShowVerify"
       @showBottomPanel="handleShowBottomPanel"
@@ -26,6 +27,7 @@
       @forceStop="handleForceStop"
       @reset="handleReset"
       @edit="handleEdit"
+      @load-data="init"
     >
       <template #status="{ result }">
         <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
@@ -45,7 +47,7 @@
           :quota="quota"
           :verifyTotals="verifyTotals"
           :timeFormat="timeFormat"
-          :range="[firstStartTime, lastStopTime || Date.now()]"
+          :range="timeSelectRange"
           @load-data="init"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
@@ -89,6 +91,7 @@
               :sync-type="dataflow.syncType"
               :sample="dagData ? dagData[n.id] : {}"
               :quota="quota"
+              :alarm="alarmData ? alarmData.nodes[n.id] : undefined"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -103,6 +106,11 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large></VEmpty>
           </div>
+
+          <AlarmStatistics
+            :alarm-num="alarmData ? alarmData.alarmNum : undefined"
+            @showBottomPanel="handleAlarmShowBottomPanel"
+          />
         </main>
         <BottomPanel
           v-if="dataflow && dataflow.status && showBottomPanel"
@@ -110,24 +118,14 @@
             minHeight: 328
           }"
           :dataflow="dataflow"
+          :alarmData="alarmData"
+          :logTotals="logTotals"
+          @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
         ></BottomPanel>
+        <ConsolePanel ref="console" @stopAuto="handleStopAuto"></ConsolePanel>
       </section>
-      <!--校验面板-->
-      <VerifyPanel
-        v-if="activeType === 'verify'"
-        ref="verifyPanel"
-        :settings="dataflow"
-        :scope="formScope"
-        :data="verifyData"
-        :totals="verifyTotals"
-        :dataflow="dataflow"
-        @showVerify="handleShowVerify"
-        @hide="onHideSidebar"
-        @verifyDetails="handleVerifyDetails"
-        @connectionList="handleConnectionList"
-      />
       <!--配置面板-->
       <ConfigPanel
         ref="configPanel"
@@ -148,23 +146,26 @@
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
         ref="nodeDetailDialog"
+        @load-data="init"
       ></NodeDetailDialog>
     </section>
   </section>
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
+import { mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
+import { debounce } from 'lodash'
 
+import i18n from '@tap/i18n'
 import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
-import { measurementApi, taskApi } from '@tap/api'
+import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
+import { ALARM_LEVEL_SORT } from '@tap/business'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -174,13 +175,14 @@ import { jsPlumb, config } from './instance'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { allResourceIns } from './nodes/loader'
 import ConfigPanel from './components/migration/ConfigPanel'
-import VerifyPanel from './components/monitor/VerifyPanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
+import AlarmStatistics from './components/monitor/components/AlarmStatistics'
+import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
   name: 'MigrationMonitor',
@@ -192,17 +194,18 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    AlarmStatistics,
     VExpandXTransition,
     VEmpty,
     ConfigPanel,
-    VerifyPanel,
     BottomPanel,
     PaperScroller,
     TopHeader,
     Node,
     LeftSider,
     VIcon,
-    NodeDetailDialog
+    NodeDetailDialog,
+    ConsolePanel
   },
 
   data() {
@@ -245,13 +248,18 @@ export default {
       nodeDetailDialogId: '',
       timeFormat: 'HH:mm:ss',
       dagData: null,
-      verifyData: null,
       verifyTotals: null,
-      refreshRate: 5000
+      alarmData: null,
+      logTotals: [],
+      refreshRate: 5000,
+      extraEnterCount: 0,
+      isReset: false // 是否重置了
     }
   },
 
   computed: {
+    ...mapState('dataflow', ['showConsole']),
+
     formScope() {
       return {
         ...this.scope,
@@ -275,6 +283,18 @@ export default {
         !this.nodeDetailDialog &&
         ['running', 'stopping'].includes(this.dataflow?.status)
       )
+    },
+
+    timeSelectRange() {
+      const { firstStartTime, lastStopTime } = this
+      let end = lastStopTime
+      if (['running'].includes(this.dataflow.status)) {
+        end = Date.now()
+      }
+      if (end < firstStartTime) {
+        end = firstStartTime + 5 * 60 * 1000
+      }
+      return [firstStartTime, end || Date.now()]
     }
   },
 
@@ -295,11 +315,14 @@ export default {
     this.setStateReadonly(true)
   },
 
-  mounted() {
+  async mounted() {
     this.setValidateLanguage()
-    this.initNodeType()
+    // 收集pdk上节点的schema
+    await this.initPdkProperties()
+    await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
+        this.initConnectionType()
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
@@ -321,12 +344,20 @@ export default {
   },
 
   methods: {
-    init() {
-      this.timer && clearInterval(this.timer)
-      this.timer = setInterval(() => {
-        this.isEnterTimer && this.startLoadData()
-      }, this.refreshRate)
+    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+
+    init: debounce(function () {
+      this.timer && clearTimeout(this.timer)
       this.startLoadData()
+    }, 200),
+
+    polling() {
+      if (
+        this.isEnterTimer ||
+        (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
+      ) {
+        this.startLoadData()
+      }
     },
 
     async startLoadData() {
@@ -347,8 +378,9 @@ export default {
       this.loadData()
     },
 
-    initNodeType() {
+    async initNodeType() {
       this.addResourceIns(allResourceIns)
+      await this.loadCustomNode()
     },
 
     async openDataflow(id) {
@@ -565,7 +597,23 @@ export default {
     },
 
     handleShowBottomPanel() {
-      this.showBottomPanel = !this.showBottomPanel
+      this.toggleConsole(false)
+      this.handleBottomPanel(!this.showBottomPanel)
+    },
+
+    handleBottomPanel(flag = false) {
+      this.showBottomPanel = flag
+    },
+
+    handleAlarmShowBottomPanel() {
+      //告警错误提示点击跳转到告警列表
+      if (!this.showBottomPanel) {
+        this.toggleConsole(false)
+        this.handleBottomPanel(true)
+      }
+      this.$nextTick(() => {
+        this.$refs.bottomPanel.changeAlertTab('alert')
+      })
     },
 
     async handleStart() {
@@ -575,164 +623,188 @@ export default {
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
+        this.isReset = false
         this.loadDataflow(this.dataflow?.id)
+        this.toggleConsole(false)
+        this.handleBottomPanel(true)
       } catch (e) {
         this.handleError(e)
         this.isSaving = false
       }
     },
 
-    getQuotaFilter() {
+    getQuotaFilter(type) {
       const { id: taskId, taskRecordId, agentId } = this.dataflow || {}
       const [startAt, endAt] = this.quotaTime
       let params = {
         startAt,
         endAt,
-        samples: {
-          // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
-          totalData: {
-            tags: {
-              type: 'task',
-              taskId,
-              taskRecordId
-            },
-            endAt: Date.now(), // 停止时间 || 当前时间
-            fields: [
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal',
-              'tableTotal', // 任务中源表总数
-              'createTableTotal', // 完成建表的数量
-              'snapshotTableTotal', // 完成全量的表的数量
-              'initialCompleteTime', // 全量完成时间
-              'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
-              'targetConnection',
-              'snapshotDoneAt',
-              'snapshotRowTotal',
-              'snapshotInsertRowTotal',
-              'outputQps',
-              'currentSnapshotTableRowTotal',
-              'currentSnapshotTableInsertRowTotal',
-              'replicateLag',
-              'snapshotStartAt'
-            ],
-            type: 'instant' // 瞬时值
+        samples: {}
+      }
+      const samples = {
+        // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
+        totalData: {
+          tags: {
+            type: 'task',
+            taskId,
+            taskRecordId
           },
-          // 任务事件统计（条）-所选周期累计
-          barChartData: {
-            tags: {
-              type: 'task',
-              taskId,
-              taskRecordId
-            },
-            fields: [
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal'
-            ],
-            type: 'difference'
+          endAt: Date.now(), // 停止时间 || 当前时间
+          fields: [
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal',
+            'tableTotal', // 任务中源表总数
+            'createTableTotal', // 完成建表的数量
+            'snapshotTableTotal', // 完成全量的表的数量
+            'initialCompleteTime', // 全量完成时间
+            'sourceConnection', // 增量信息:源连接、目标连接、增量时间点
+            'targetConnection',
+            'snapshotDoneAt',
+            'snapshotRowTotal',
+            'snapshotInsertRowTotal',
+            'outputQps',
+            'currentSnapshotTableRowTotal',
+            'currentSnapshotTableInsertRowTotal',
+            'replicateLag',
+            'snapshotStartAt',
+            'currentEventTimestamp'
+          ],
+          type: 'instant' // 瞬时值
+        },
+        // 任务事件统计（条）-所选周期累计
+        barChartData: {
+          tags: {
+            type: 'task',
+            taskId,
+            taskRecordId
           },
-          // qps + 增量延迟
-          lineChartData: {
-            tags: {
-              type: 'task',
-              taskId,
-              taskRecordId
-            },
-            fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag'],
-            type: 'continuous' // 连续数据
+          fields: [
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal'
+          ],
+          type: 'difference'
+        },
+        // qps + 增量延迟
+        lineChartData: {
+          tags: {
+            type: 'task',
+            taskId,
+            taskRecordId
           },
-          // dag数据
-          dagData: {
-            tags: {
-              type: 'node',
-              taskId,
-              taskRecordId
-            },
-            fields: [
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal',
-              'qps',
-              'timeCostAvg',
-              'currentEventTimestamp',
-              'tcpPing',
-              'connectPing',
-              'inputTotal',
-              'outputTotal',
-              'inputQps',
-              'outputQps',
-              'snapshotRowTotal',
-              'snapshotInsertRowTotal',
-              'snapshotTableTotal',
-              'tableTotal',
-              'snapshotSourceReadTimeCostAvg',
-              'incrementalSourceReadTimeCostAvg',
-              'targetWriteTimeCostAvg'
-            ],
-            type: 'instant' // 瞬时值
+          fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag'],
+          type: 'continuous' // 连续数据
+        },
+        // dag数据
+        dagData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId
           },
-          agentData: {
-            tags: {
-              type: 'engine',
-              engineId: agentId
-            },
-            endAt: Date.now(),
-            fields: ['memoryRate', 'cpuUsage', 'gcRate'],
-            type: 'instant'
-          }
+          fields: [
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal',
+            'qps',
+            'timeCostAvg',
+            'currentEventTimestamp',
+            'tcpPing',
+            'connectPing',
+            'inputTotal',
+            'outputTotal',
+            'inputQps',
+            'outputQps',
+            'snapshotRowTotal',
+            'snapshotInsertRowTotal',
+            'snapshotTableTotal',
+            'tableTotal',
+            'snapshotSourceReadTimeCostAvg',
+            'incrementalSourceReadTimeCostAvg',
+            'targetWriteTimeCostAvg',
+            'snapshotStartAt',
+            'snapshotDoneAt',
+            'replicateLag'
+          ],
+          type: 'instant' // 瞬时值
+        },
+        agentData: {
+          tags: {
+            type: 'engine',
+            engineId: agentId
+          },
+          endAt: Date.now(),
+          fields: ['memoryRate', 'cpuUsage', 'gcRate'],
+          type: 'instant'
         }
       }
+      params.samples.data = samples[type]
       return params
     },
 
     getParams() {
       const { id: taskId, taskRecordId } = this.dataflow || {}
       let params = {
-        quota: {
-          uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter()
-        },
         verifyTotals: {
           uri: `/api/task/auto-inspect-totals`,
           param: {
             id: this.dataflow.id
           }
-        }
-        // logTotals: {
-        //   uri: '/api/MonitoringLogs/count',
-        //   param: {
-        //     taskId,
-        //     taskRecordId
-        //   }
-        // }
-      }
-      const $verifyPanel = this.$refs.verifyPanel
-      if ($verifyPanel) {
-        params.verify = {
-          uri: `/api/task/auto-inspect-results-group-by-table`,
-          param: $verifyPanel.getFilter(1)
+        },
+        alarmData: {
+          uri: '/api/alarm/list_task',
+          param: {
+            taskId
+          }
+        },
+        logTotals: {
+          uri: '/api/MonitoringLogs/count',
+          param: {
+            taskId,
+            taskRecordId
+          }
+        },
+        totalData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('totalData')
+        },
+        barChartData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('barChartData')
+        },
+        lineChartData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('lineChartData')
+        },
+        dagData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('dagData')
+        },
+        agentData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getQuotaFilter('agentData')
         }
       }
       return params
@@ -742,32 +814,74 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      measurementApi.batch(this.getParams()).then(data => {
-        const map = {
-          quota: this.loadQuotaData,
-          verify: this.loadVerifyData,
-          verifyTotals: this.loadVerifyTotals
-        }
-        for (let key in data) {
-          const item = data[key]
-          if (item.code === 'ok') {
-            map[key]?.(data[key].data)
-          } else {
-            this.$message.error(item.error)
+      if (this.isReset) {
+        this.loadResetQuotaData()
+        return
+      }
+      measurementApi
+        .batch(this.getParams())
+        .then(data => {
+          const map = {
+            verifyTotals: this.loadVerifyTotals,
+            alarmData: this.loadAlarmData,
+            logTotals: this.loadLogTotals
           }
-        }
-      })
+          for (let key in data) {
+            const item = data[key]
+            if (item.code === 'ok') {
+              map[key]?.(data[key].data)
+            }
+          }
+          this.loadQuotaData(data)
+        })
+        .finally(() => {
+          this.timer && clearTimeout(this.timer)
+          this.timer = setTimeout(() => {
+            this.polling()
+          }, this.refreshRate)
+        })
     },
 
     loadQuotaData(data) {
-      this.quota = data
-      const granularity = getTimeGranularity(data.interval)
+      let quota = {
+        samples: {},
+        time: [],
+        interval: 5000
+      }
+      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
+      arr.forEach(el => {
+        const item = data[el]
+        if (item.code === 'ok') {
+          quota.samples[el] = item.data?.samples?.data
+          if (item.data?.interval) {
+            quota.interval = item.data.interval
+          }
+          if (item.data?.time) {
+            quota.time = item.data.time
+          }
+        }
+      })
+      this.quota = quota
+      const granularity = getTimeGranularity(this.quota.interval)
       this.timeFormat = TIME_FORMAT_MAP[granularity]
       this.dagData = this.getDagData(this.quota.samples.dagData)
     },
 
-    loadVerifyData(data) {
-      this.verifyData = data
+    loadResetQuotaData() {
+      let quota = {
+        samples: {},
+        time: [],
+        interval: 5000
+      }
+      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
+      arr.forEach(el => {
+        quota.samples[el] = []
+      })
+      this.quota = quota
+      this.dagData = {}
+      this.loadVerifyTotals()
+      this.loadAlarmData()
+      this.loadLogTotals()
     },
 
     loadVerifyTotals(data = {}) {
@@ -778,6 +892,37 @@ export default {
         totals,
         ignore
       }
+    },
+
+    loadAlarmData(data = {}) {
+      const { alarmNum = {}, nodeInfos = [], alarmList = [] } = data
+      const { alert = 0, error = 0 } = alarmNum
+      const nodes = alarmList
+        .filter(t => t.nodeId && t.level)
+        .reduce((cur, next) => {
+          const index = ALARM_LEVEL_SORT.indexOf(cur[next.nodeId]?.level)
+          return {
+            ...cur,
+            [next.nodeId]: index !== -1 && index < ALARM_LEVEL_SORT.indexOf(next.level) ? cur[next.nodeId] : next
+          }
+        }, {})
+      this.alarmData = {
+        alarmNum: {
+          alert,
+          error
+        },
+        nodeInfos: nodeInfos.map(t => {
+          return Object.assign({}, t, {
+            num: t.num || 0
+          })
+        }),
+        alarmList,
+        nodes
+      }
+    },
+
+    loadLogTotals(data = []) {
+      this.logTotals = data
     },
 
     getDagData(data = []) {
@@ -799,7 +944,7 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 300, ranksep: 200, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({ nodesep: 120, ranksep: 200, marginx: 0, marginy: 0, rankdir: 'LR' })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
@@ -926,12 +1071,18 @@ export default {
         }
         try {
           this.dataflow.disabledData.reset = true
+          this.handleBottomPanel()
+          this.toggleConsole(true)
+          this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
+          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          if (!data?.fail?.length) {
+            this.isReset = true
+          }
           // this.init()
           this.loadDataflow(this.dataflow?.id)
         } catch (e) {
-          this.handleError(e, this.$t('packages_dag_message_resetFailed'))
+          this.handleError(e, this.$t('packages_dag_message_operation_error'))
         }
       })
     },
@@ -946,6 +1097,49 @@ export default {
       } else {
         this.jsPlumbIns.select().removeClass('running')
       }
+    },
+
+    /**
+     * 初始化连接样式【告警、错误】
+     */
+    initConnectionType() {
+      this.jsPlumbIns.registerConnectionTypes({
+        error: {
+          paintStyle: { stroke: '#D44D4D' },
+          hoverPaintStyle: { stroke: '#D44D4D' }
+        },
+        warn: {
+          paintStyle: { stroke: '#FF932C' },
+          hoverPaintStyle: { stroke: '#FF932C' }
+        }
+      })
+    },
+
+    handleStopAuto() {
+      setTimeout(() => {
+        this.showConsole && this.$refs.console?.autoLoad()
+      }, 5000)
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }

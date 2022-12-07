@@ -1,6 +1,15 @@
 .discovery-page-wrap{
   overflow: hidden;
   height: 100%;
+
+  .classification {
+    &.expand, .classification-header {
+      width: 100%;
+    }
+    .custom-tree-node .table-label {
+      max-width: unset;
+    }
+  }
 }
 .discovery-page-main-box{
   display: flex;
@@ -21,14 +30,14 @@
   display: flex;
   -ms-flex-direction: column;
   flex-direction: column;
-  overflow: hidden;
   padding: 20px;
   border-radius: 4px;
 }
 .el-table::before{
   height: 0;
 }
-.discovery-page-table{
+
+.discovery-page-table,.discovery-page-api-table{
   flex: 1;
   border-bottom: none;
   border-radius: 3px;
@@ -132,7 +141,7 @@
     .el-table__body-wrapper {
       overflow-y: auto;
       overflow-x: hidden;
-      height: 230px
+      height: 170px
     }
   }
   .table-page-container .table-page-body .table-page-topbar{
@@ -147,4 +156,31 @@
     margin: 0;
   }
 }
+.data-api-path__item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  font-family: PingFangSC-Regular, PingFang SC;
+}
+.data-api-path__method {
+  margin-right: 40px;
+  width: 62px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 2px;
 
+  color: map-get($fontColor, white);
+  &.method--POST {
+    background: #478c6c;
+  }
+  &.method--GET {
+    background: #09819c;
+  }
+  &.method--PATCH {
+    background: #09819c;
+  }
+  &.method--TOKEN {
+    background: #f2994b;
+  }
+}

@@ -62,7 +62,7 @@
               <div class="charts-list-text">
                 <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
                 <ul class="job-list">
-                  <li v-for="task in syncTaskList" :key="task.label">
+                  <li v-for="task in syncTaskList" :key="task.label" @click="handleSyncStatus(task.label)">
                     <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
                     <span class="fw-normal font-color-light">{{ task.name }}</span
                     ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(task.value) }}</span>
@@ -94,7 +94,7 @@
             <div class="dashboard-col-box">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_valid_title') }}</div>
               <div class="chart line-chart flex flex-column">
-                <ul>
+                <ul v-if="validBarData.every(item => item.value === 0)">
                   <li v-for="item in validBarData" :key="item.name">
                     <span class="font-color-light">{{ item.name }} </span>
                     <span class="font-color-dark fw-sub"> {{ item.value }}</span>
@@ -415,6 +415,14 @@ export default {
         }
       })
     },
+    handleSyncStatus(status) {
+      this.$router.push({
+        name: 'dataflow',
+        query: {
+          status: status
+        }
+      })
+    },
     // 获取服务器与进程的数据
     getClsterDataApi() {
       let params = {
@@ -545,7 +553,7 @@ export default {
       let dataName = []
       let total = 0
       let totalFalg = true
-      let totalText = this.$t('dashboard_total')
+      let totalText = this.$t('dashboard_public_total')
       if (data?.length) {
         data.forEach(item => {
           dataName.push(item.name)

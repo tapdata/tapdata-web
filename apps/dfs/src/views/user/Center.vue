@@ -108,7 +108,62 @@
         </template>
       </div>
     </div>
-    <!--  {{$t('user_Center_shangChuanTouXiang')}}  -->
+    <div class="mt-12 fs-7">{{ $t('dfs_user_center_kaifaxinxi') }}</div>
+    <ElDivider class="my-6"></ElDivider>
+    <div class="access-key__desc py-2 px-4 inline-flex align-items-center">
+      <VIcon class="color-primary">info</VIcon>
+      <span class="ml-1">{{ $t('dfs_user_center_acces') }}</span>
+    </div>
+    <div>
+      <div>
+        <ElRow :gutter="40" class="section-header mb-2">
+          <ElCol :span="12" class="enterprise-item">
+            <div class="enterprise-item__label">Access Key：</div>
+            <div>
+              {{ keyForm.accessKey }}
+            </div>
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_start_install_button_copied')"
+              popper-class="copy-tooltip"
+              :value="accessKeyTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="keyForm.accessKey"
+                v-clipboard:success="handleCopyAccessKey"
+                @mouseleave="accessKeyTooltip = false"
+              >
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              </span>
+            </ElTooltip>
+          </ElCol>
+          <ElCol :span="12" class="enterprise-item">
+            <div class="enterprise-item__label">Secret Key：</div>
+            <div>
+              {{ keyForm.secretKey }}
+            </div>
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_start_install_button_copied')"
+              popper-class="copy-tooltip"
+              :value="secretKeyTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="keyForm.decodeSecretKey"
+                v-clipboard:success="handleCopySecretKey"
+                @mouseleave="secretKeyTooltip = false"
+              >
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              </span>
+            </ElTooltip>
+          </ElCol>
+        </ElRow>
+      </div>
+    </div>
     <ElDialog
       width="435px"
       append-to-body
@@ -467,7 +522,14 @@ export default {
         industry: '',
         city: ''
       },
-      isEdit: false
+      keyForm: {
+        accessKey: '',
+        secretKey: '',
+        decodeSecretKey: ''
+      },
+      isEdit: false,
+      accessKeyTooltip: false,
+      secretKeyTooltip: false
     }
   },
   mounted() {
@@ -482,6 +544,7 @@ export default {
       userData.avatar = window.__USER_INFO__.avatar
       this.avatar = userData.avatar
       this.getEnterprise()
+      this.getAkAndSk()
       this.resetPasswordForm()
       this.resetPhoneForm()
       this.resetEmailForm()
@@ -493,6 +556,23 @@ export default {
           this.enData[key] = data[key] || ''
           this.enForm[key] = data[key] || ''
         }
+      })
+    },
+    getAkAndSk() {
+      this.$axios.get('api/tcm/user/ak').then(data => {
+        const { accessKey, secretKey } = data?.[0] || {}
+        const key = '5fa25b06ee34581d'
+        this.keyForm.accessKey = accessKey
+        this.keyForm.decodeSecretKey = CryptoJS.AES.decrypt(
+          {
+            ciphertext: CryptoJS.enc.Base64.parse(secretKey)
+          },
+          CryptoJS.enc.Latin1.parse(key),
+          {
+            iv: CryptoJS.enc.Latin1.parse(key)
+          }
+        ).toString(CryptoJS.enc.Utf8)
+        this.keyForm.secretKey = this.keyForm.decodeSecretKey.replace(/(\w{3})\w*(\w{3})/, '$1****$2')
       })
     },
     resetPasswordForm() {
@@ -778,6 +858,12 @@ export default {
     },
     refreshRootUser() {
       this.$root.$emit('get-user')
+    },
+    handleCopyAccessKey() {
+      this.accessKeyTooltip = true
+    },
+    handleCopySecretKey() {
+      this.secretKeyTooltip = true
     }
   }
 }
@@ -832,5 +918,16 @@ export default {
       justify-content: space-between;
     }
   }
+}
+.click-style {
+  padding-left: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: map-get($color, primary);
+  font-weight: normal;
+  cursor: pointer;
+}
+.access-key__desc {
+  background: #f2f2f2;
 }
 </style>

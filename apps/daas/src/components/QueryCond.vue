@@ -40,7 +40,7 @@
             v-if="cond.isDatetime"
             v-model="cond.value"
             type="datetime"
-            placeholder="选择日期时间"
+            :placeholder="$t('daas_components_querycond_xuanzeriqishi')"
           ></el-date-picker>
         </div>
 

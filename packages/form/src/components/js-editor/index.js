@@ -1,4 +1,4 @@
-import { JsEditor as _JsEditor } from '@tap/component'
+import { JsEditor as _JsEditor, VIcon } from '@tap/component'
 import { connect, mapProps } from '@formily/vue'
 import { HighlightCode } from '../highlight-code'
 import './style.scss'
@@ -27,7 +27,18 @@ export const JsEditor = connect(
       },
       disabled: Boolean,
       includeBeforeAndAfter: Boolean,
-      handleAddCompleter: Function
+      handleAddCompleter: Function,
+      theme: {
+        type: String,
+        default: 'chrome'
+      },
+      showFullscreen: Boolean
+    },
+
+    data() {
+      return {
+        fullscreen: false
+      }
     },
 
     computed: {
@@ -42,6 +53,9 @@ export const JsEditor = connect(
     },
 
     methods: {
+      onFocus() {
+        this.bindEvent()
+      },
       onBlur(val) {
         if (val !== this.code) {
           if (this.includeBeforeAndAfter) {
@@ -49,12 +63,26 @@ export const JsEditor = connect(
           }
           this.$emit('change', val)
         }
+        this.unbindEvent()
       },
 
       onInit(editor, tools) {
         if (this.handleAddCompleter && typeof this.handleAddCompleter === 'function') {
           this.handleAddCompleter(editor, tools)
         }
+      },
+
+      // 防止写代码时，不小心返回或者关闭页面
+      handleBeforeunload(ev) {
+        ev.returnValue = ''
+      },
+
+      bindEvent() {
+        window.addEventListener('beforeunload', this.handleBeforeunload)
+      },
+
+      unbindEvent() {
+        window.removeEventListener('beforeunload', this.handleBeforeunload)
       }
     },
 
@@ -67,17 +95,37 @@ export const JsEditor = connect(
       }
       return this.before || this.after ? (
         <div
-          class="form-js-editor-wrap flex flex-column border rounded-2 overflow-hidden"
+          staticClass="form-js-editor-wrap flex flex-column border rounded-2"
+          class={this.fullscreen && 'full-mode'}
           style={{ height: this.height + 'px' }}
         >
+          {this.showFullscreen && (
+            <div class="js-editor-toolbar flex align-center px-4">
+              <div class="js-editor-toolbar-title flex-1">{this.$t('packages_form_js_processor_index_jiaoben')}</div>
+              <ElLink
+                onClick={() => {
+                  this.fullscreen = !this.fullscreen
+                  this.$refs.jsEditor.editor.resize(true)
+                }}
+                class="js-editor-fullscreen"
+                type="primary"
+              >
+                {this.fullscreen
+                  ? [<VIcon class="mr-1">suoxiao</VIcon>, this.$t('packages_form_js_editor_exit_fullscreen')]
+                  : [<VIcon class="mr-1">fangda</VIcon>, this.$t('packages_form_js_editor_fullscreen')]}
+              </ElLink>
+            </div>
+          )}
           <div class="code-before">
             <HighlightCode class="m-0" code={this.before} />
           </div>
           <_JsEditor
+            ref="jsEditor"
             class="form-js-editor py-0 flex-1 min-h-0"
-            theme="chrome"
+            theme={this.theme}
             value={this.code}
             lang="javascript"
+            onFocus={this.onFocus}
             onBlur={this.onBlur}
             onInitOptions={this.onInit}
             options={options}
@@ -92,7 +140,7 @@ export const JsEditor = connect(
           style={{
             background: '#fff'
           }}
-          theme="chrome"
+          theme={this.theme}
           value={this.code}
           lang="javascript"
           height={this.height}

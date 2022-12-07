@@ -282,14 +282,14 @@ export default {
 
     emptyText() {
       if (this.loading) {
-        return this.loadingText || this.$t('packages_component_el_select_loading')
+        return this.loadingText || this.$t('packages_component_loading')
       } else {
         if (this.remote && this.query === '' && this.options.length === 0) return false
         if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
-          return this.noMatchText || this.$t('packages_component_el_select_noMatch')
+          return this.noMatchText || this.$t('packages_component_no_match')
         }
         if (this.filteredItems.length === 0) {
-          return this.noDataText || this.$t('packages_component_el_select_noData')
+          return this.noDataText || this.$t('packages_component_no_data')
         }
       }
       return null

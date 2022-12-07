@@ -121,12 +121,23 @@
       </ElTooltip>
     </div>
     <!--复制dag查看不显示-->
-    <div class="flex align-center flex-grow-1" v-if="$route.name !== 'MigrateViewer'">
+    <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
       <ElButton v-if="stateIsReadonly" size="medium" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
         {{ $t('packages_dag_task_list_button_monitor') }}
+      </ElButton>
+
+      <ElButton
+        v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
+        key="reset"
+        :class="[isViewer ? 'btn--text mx-2' : 'mx-1']"
+        size="medium"
+        @click="$emit('reset')"
+      >
+        <VIcon v-if="isViewer">reset</VIcon>
+        {{ $t('packages_dag_dataFlow_button_reset') }}
       </ElButton>
 
       <ElButton
@@ -175,16 +186,6 @@
         >
           <VIcon>stop</VIcon>
           {{ $t('packages_dag_task_list_stop') }}
-        </ElButton>
-        <ElButton
-          key="reset"
-          class="mx-1 btn--text"
-          :disabled="dataflow.disabledData && dataflow.disabledData.reset"
-          size="medium"
-          @click="$emit('reset')"
-        >
-          <VIcon>reset</VIcon>
-          {{ $t('packages_dag_dataFlow_button_reset') }}
         </ElButton>
       </template>
 
@@ -245,6 +246,10 @@ export default {
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
+    },
+
+    isViewer() {
+      return ['DataflowViewer', 'MigrateViewer'].includes(this.$route.name)
     }
   },
 

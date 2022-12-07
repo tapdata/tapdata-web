@@ -23,7 +23,7 @@
               <ElInput
                 v-model="dbSearchTxt"
                 ref="dbInput"
-                :placeholder="$t('connection_name_search_placeholder')"
+                :placeholder="$t('packages_dag_connection_name_search_placeholder')"
                 size="mini"
                 clearable
                 @keydown.native.stop
@@ -149,10 +149,11 @@
 
     <ElDialog
       :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
-      width="1030px"
+      width="848px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"
       :append-to-body="true"
+      custom-class="connection-dialog"
     >
       <ConnectionTypeSelector
         :types="database"
@@ -263,8 +264,8 @@ export default {
     }
   },
 
-  created() {
-    this.getDatabaseType()
+  async created() {
+    await this.getDatabaseType()
 
     this.init()
   },
@@ -289,8 +290,8 @@ export default {
     creat() {
       this.connectionDialog = true
     },
-    getDatabaseType() {
-      databaseTypesApi.get().then(res => {
+    async getDatabaseType() {
+      await databaseTypesApi.get().then(res => {
         if (res) {
           this.getPdkData(res)
         }
@@ -314,6 +315,8 @@ export default {
     },
 
     getDbFilter() {
+      const databaseTypeList =
+        this.database?.map(t => t.type).filter(t => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
       const filter = {
         page: this.dbPage,
         size: 20,
@@ -341,12 +344,17 @@ export default {
           capabilities: 1,
           config: 1
         },
-        order: ['status DESC', 'name ASC']
+        order: ['status DESC', 'name ASC'],
+        where: {
+          database_type: {
+            in: databaseTypeList
+          }
+        }
       }
       const txt = escapeRegExp(this.dbSearchTxt.trim())
 
       if (txt) {
-        filter.where = { name: { like: txt, options: 'i' } }
+        filter.where.name = { like: txt, options: 'i' }
       }
 
       return { filter: JSON.stringify(filter) }
@@ -787,6 +795,14 @@ $hoverBg: #eef3ff;
       font-size: 12px;
       line-height: 1;
       white-space: nowrap;
+    }
+  }
+}
+
+::v-deep {
+  .connection-dialog {
+    .el-dialog__body {
+      padding: 0 20px 30px 20px;
     }
   }
 }

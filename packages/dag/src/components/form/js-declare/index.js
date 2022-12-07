@@ -27,9 +27,9 @@ TapModelDeclare.upsertField(${props.param}, 'fieldName', 'TapString')
 // 设置字段为主键
 TapModelDeclare.setPk(${props.param}, 'fieldName')
 // 取消主键
-TapModelDeclare.unsetPk(${props.param}, 'fieldName')
+TapModelDeclare.unSetPk(${props.param}, 'fieldName')
 // 增加索引
-TapModelDeclare.addIndex(${props.param}, 'indexName', [{'filedName':'fieldName1', 'order': 'asc'}])
+TapModelDeclare.addIndex(${props.param}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])
 // 移除索引
 TapModelDeclare.removeIndex(${props.param}, 'indexName')
 `

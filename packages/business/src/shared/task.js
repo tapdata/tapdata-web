@@ -82,7 +82,7 @@ export function getNodeIconSrc(node) {
   if (!node) return
   const pdkHash = node.pdkHash || node.attrs?.pdkHash
   if (pdkHash) {
-    const accessToken = Cookie.get('token')
+    const accessToken = Cookie.get('access_token')
     return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
@@ -115,10 +115,16 @@ export const STATUS_MAP = {
   error: {
     i18n: 'packages_business_status_error',
     in: ['schedule_failed', 'error']
+  },
+  renewing: {
+    i18n: 'packages_business_status_renewing'
+  },
+  renew_failed: {
+    i18n: 'packages_business_status_renew_failed'
   }
 }
 
-const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
+export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
   if (value.in) {
     value.in.reduce((res, val) => ((res[val] = key), res), merge)
   }
@@ -127,12 +133,12 @@ const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => 
 
 const BUTTON_WITH_STATUS = {
   start: ['wait_start', 'complete', 'error', 'stop'],
-  edit: ['edit', 'wait_start', 'complete', 'error', 'stop'],
-  delete: ['edit', 'wait_start', 'complete', 'error', 'stop'],
+  edit: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renew_failed'],
+  delete: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renewing', 'renew_failed'],
   stop: ['running'],
   forceStop: ['stopping'],
-  reset: ['wait_start', 'complete', 'error', 'stop'],
-  monitor: ['running', 'complete', 'error', 'stop', 'stopping']
+  reset: ['wait_start', 'complete', 'error', 'stop', 'renew_failed'],
+  monitor: ['running', 'complete', 'error', 'stop', 'stopping', 'renewing', 'renew_failed']
 }
 
 export function makeStatusAndDisabled(item) {
@@ -157,6 +163,11 @@ export function makeStatusAndDisabled(item) {
     map[key] = !value.includes(status)
     return map
   }, {})
+
+  // 当返回false时，任务不可点击强制停止
+  if (item.canForceStopping === false) {
+    item.btnDisabled.forceStop = true
+  }
 
   return item
 }

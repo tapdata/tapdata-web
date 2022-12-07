@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import cryptoJS from 'crypto-js'
 import LoginPage from './LoginPage'
 import Cookie from '@tap/shared/src/cookie'
@@ -97,10 +99,10 @@ export default {
         this.form['sign'] = cryptoJS.SHA1(Str).toString().toUpperCase()
 
         let data = await usersApi.login(this.form)
-        Cookie.set('token', data?.id)
+        Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
         // eslint-disable-next-line
-        console.log('登录成功：', data)
+        console.log(i18n.t('daas_login_login_dengluchenggong'), data)
 
         let user = await usersApi.getInfo()
         configUser(user)

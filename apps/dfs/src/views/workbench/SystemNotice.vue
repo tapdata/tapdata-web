@@ -270,7 +270,9 @@ export default {
     },
     // 标记为已读
     handleReadNotice(id) {
-      let where = {}
+      let where = {
+        read: true
+      }
       if (id) {
         where.id = { inq: [id] }
       } else {
@@ -278,7 +280,7 @@ export default {
         where.id = { inq: ids }
       }
 
-      this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(() => {
+      this.$axios.post('tm/api/Messages', where).then(() => {
         this.fetch()
       })
     },

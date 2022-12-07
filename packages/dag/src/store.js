@@ -93,6 +93,10 @@ const getters = {
     return state.stateIsReadonly
   },
 
+  transformLoading: state => {
+    return state.transformLoading
+  },
+
   // 判断action是否被标记
   isActionActive: state => action => {
     return state.activeActions.includes(action)
@@ -243,6 +247,7 @@ const actions = {
   async loadCustomNode({ commit }) {
     const { items } = await customNodeApi.get()
     const insArr = []
+
     commit(
       'addProcessorNode',
       items.map(item => {
@@ -269,7 +274,6 @@ const actions = {
       })
     )
     commit('addResourceIns', insArr)
-    // console.log('loadCustomNode', data)
   }
 }
 
@@ -353,6 +357,7 @@ const mutations = {
 
   // 添加节点
   addNode(state, nodeData) {
+    if (state.NodeMap[nodeData.id]) return
     if (!nodeData.$inputs) nodeData.$inputs = []
     if (!nodeData.$outputs) nodeData.$outputs = []
     state.dag.nodes.push(nodeData)
@@ -531,6 +536,7 @@ const mutations = {
 
     if (state.activeNodeId === nodes[index].id && state.activeType === 'node') {
       state.activeType = null
+      state.activeNodeId = null
     }
 
     nodes.splice(index, 1)
@@ -591,8 +597,10 @@ const mutations = {
       }
     })
 
+    // 如果是删除当前激活的节点
     if (nodeIds.includes(state.activeNodeId) && state.activeType === 'node') {
       state.activeType = null
+      state.activeNodeId = null
     }
 
     state.dag.nodes = state.dag.nodes.filter(node => !nodeIds.includes(node.id))

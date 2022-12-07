@@ -147,7 +147,8 @@ export default {
         return {
           total: data.total || 0,
           data: data.items.map(t => {
-            t.progress = Math.floor(t.syncRate * 100)
+            const rate = Math.floor(t.syncRate * 100)
+            t.progress = rate > 100 ? 100 : rate
             t.syncStatusText = this.statusMap[t.fullSyncStatus]?.text
             t.syncStatusType = this.statusMap[t.fullSyncStatus]?.type
             return t

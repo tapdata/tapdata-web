@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 export const showMessage = {
   methods: {
     $showMessage(messageData) {
@@ -32,7 +33,7 @@ export const showMessage = {
       if (!description) return ''
 
       const errorDescription = description.length > 500 ? `${description.slice(0, 500)}...` : description
-
+      const title = i18n.t('button_details')
       return `
 				<br>
 				<br>
@@ -40,7 +41,7 @@ export const showMessage = {
 					<summary
 						style="color: #ff6d5a; font-weight: bold; cursor: pointer;"
 					>
-						详情
+						${title}
 					</summary>
 					<p>${node.name}: ${errorDescription}</p>
 				</details>

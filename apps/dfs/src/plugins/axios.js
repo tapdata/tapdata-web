@@ -1,10 +1,8 @@
-'use strict'
-
+import i18n from '@/i18n'
 import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { Message } from 'element-ui'
-import { errorConfirmFnc } from '@/util'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';
@@ -45,6 +43,7 @@ const removePending = config => {
   let index = pending.findIndex(it => it === key)
   pending.splice(index, 1)
 }
+let skipErrorHandler = false
 const errorCallback = error => {
   let status = error?.response?.status
   // 从请求池清除掉错误请求
@@ -57,10 +56,12 @@ const errorCallback = error => {
   } else if (error.code && error.message) {
     // 其他错误
     Message.error(`${error.message || error}`)
-  } else if (error?.message !== 'cancel') {
-    errorConfirmFnc(error)
   }
-  console.error('请求报错：' + error) // eslint-disable-line
+  //先去掉全局接口异常弹窗 #125624
+  // else if (error?.message !== 'cancel' && window.navigator.onLine) {
+  //   errorConfirmFnc(error)
+  // }
+  console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line
   return Promise.reject(error)
 }
 const requestInterceptor = config => {
@@ -76,6 +77,7 @@ const requestInterceptor = config => {
     let params = { __token: ACCESS_TOKEN }
     config.params = Object.assign({}, config.params, params)
   }
+  skipErrorHandler = config?.data?.skipErrorHandler || false //是否跳转统一错误提示
 
   // headers里面注入用户token，并开启鉴权
   let user = window.__USER_INFO__
@@ -116,7 +118,7 @@ const responseInterceptor = response => {
       let msg = data?.message || data?.msg || ''
       Message.error(`SystemError： ${msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'}`)
       // eslint-disable-next-line
-      console.log('请求失败:' + msg, response)
+      console.log(i18n.t('dfs_plugins_axios_qingqiushibai') + msg, response)
       return reject(msg)
     } else {
       // 其他情况交由业务端自行处理
@@ -134,7 +136,14 @@ const responseInterceptor = response => {
       let msg = data?.message || data?.msg || ''
       // eslint-disable-next-line
       console.log(`${code}： ${msg}`)
-      Message.error(msg)
+      if (!skipErrorHandler) {
+        // 手机号码
+        if (['Authing.User.Update.Failed'].includes(code)) {
+          Message.error(i18n.t('dfs_user_center_phone_error'))
+        } else {
+          Message.error(msg)
+        }
+      }
       return reject(Object.assign(response))
     }
   })

@@ -3,14 +3,15 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
 import { Path } from '@formily/path'
+
+import i18n from '@tap/i18n'
 import { validateBySchema } from '@tap/form/src/shared/validate'
-import { debounce } from 'lodash'
+
 import FormRender from './FormRender'
+import { getSchema } from '../util'
 
 const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
@@ -78,7 +79,11 @@ export default {
 
     async activeNodeId(n, o) {
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-      if (!this.ins) return
+      if (!this.ins) {
+        // 节点不存在，比如删掉了，清除表单
+        this.schema = null
+        return
+      }
       await this.setSchema(this.ins.formSchema || formSchema.node)
 
       // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
@@ -93,7 +98,8 @@ export default {
         const node = this.nodeById(o)
         try {
           if (node) {
-            const result = await validateBySchema(node.__Ctor.formSchema, node, this.scope)
+            const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
+            await validateBySchema(schema, node, this.scope)
           }
 
           if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
@@ -161,28 +167,20 @@ export default {
     },
 
     // 设置schema
-    async setSchema(schema, values) {
+    async setSchema(schema, values = this.node) {
       this.schema = null
 
       await this.$nextTick()
 
       this.form = createForm({
         disabled: this.stateIsReadonly,
-        values: values || this.node,
+        values,
         effects: this.useEffects
       })
-      if (schema.schema && schema.form) {
-        // 临时判断从自定义节点过来的schema
-        // 表单数据存储到form对象
-        this.schema = {
-          type: 'object',
-          properties: {
-            form: JSON.parse(JSON.stringify(schema.schema))
-          }
-        }
-      } else {
-        this.schema = JSON.parse(JSON.stringify(schema))
-      }
+
+      this.schema = getSchema(schema, values, this.$store.state.dataflow.pdkPropertiesMap)
+
+      this.$emit('setSchema')
     },
 
     getSettingSchema() {

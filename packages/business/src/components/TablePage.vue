@@ -14,7 +14,10 @@
         <div class="table-page-left" v-if="classify && !hideClassify">
           <Classification
             :authority="classify.authority"
+            :viewPage="classify.viewPage"
             :types="classify.types"
+            :title="classify.title"
+            :kai-title="classify.title"
             @nodeChecked="nodeChecked"
           ></Classification>
         </div>
@@ -62,7 +65,7 @@
             :page-size.sync="page.size"
             :total="page.total"
             @size-change="fetch(1)"
-            @current-change="fetch"
+            @current-change="handleCurrent"
           >
           </el-pagination>
         </div>
@@ -171,6 +174,12 @@ export default {
         }, debounce)
       })
     },
+    handleCurrent(val) {
+      this.multipleSelection = []
+      this.$emit('selection-change', [])
+      this.$refs?.table?.clearSelection()
+      this.fetch(val) //主要为了换页 清空选中数据
+    },
     nodeChecked(tags) {
       this.tags = tags
       this.fetch(1)
@@ -184,6 +193,9 @@ export default {
     },
     getData() {
       return this.list
+    },
+    clearSelection() {
+      this.$refs?.table?.clearSelection()
     }
   }
 }

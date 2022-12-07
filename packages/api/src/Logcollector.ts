@@ -55,5 +55,8 @@ export default class Logcollector extends Http {
   newTableNames(taskId, callSubId, params) {
     return this.axios.get(`${this.url}/tableNames/${taskId}/${callSubId}`, { params })
   }
+  relateTasks(params) {
+    return this.axios.get(`${this.url}/relate_tasks`, { params })
+  }
 }
 export { Logcollector }

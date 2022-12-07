@@ -197,12 +197,12 @@
 </template>
 
 <script>
-import { merge } from 'lodash'
+import { merge, escapeRegExp, uniqBy, debounce } from 'lodash'
 import { Select } from 'element-ui'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
 import { CancelToken } from '@tap/api'
-import { escapeRegExp } from 'lodash'
+import { valueEquals } from 'element-ui/src/utils/util'
 
 export default {
   name: 'AsyncSelect',
@@ -250,7 +250,15 @@ export default {
       type: Boolean,
       default: false
     },
-    currentLabel: String
+    currentLabel: [String, Array],
+    debounceWait: {
+      type: Number,
+      default: 200
+    },
+    inputQueryWait: {
+      type: Number,
+      default: 100
+    }
   },
 
   data() {
@@ -311,15 +319,19 @@ export default {
 
     scrollDisabled() {
       return this.loading || this.noMore || this.loadingMore
+    },
+
+    debounce() {
+      return this.inputQueryWait
     }
   },
 
   watch: {
-    async params(val, old) {
+    params(val, old) {
       if (JSON.stringify(val) !== JSON.stringify(old)) {
         this.lastQuery = null
         this.query = ''
-        await this.loadData()
+        this.debounceLoadData()
       }
     },
 
@@ -332,6 +344,10 @@ export default {
 
   async created() {
     if (!this.lazy) await this.loadData()
+
+    this.debounceLoadData = debounce(() => {
+      this.loadData()
+    }, this.debounceWait)
   },
 
   methods: {
@@ -378,7 +394,7 @@ export default {
       }
       optionData && this.onLoadOption?.(optionData)
       if (option || notNew) return option
-      const label = this.currentLabel || (!isObject && !isNull && !isUndefined ? String(value) : '')
+      const label = !isObject && !isNull && !isUndefined ? String(value) : ''
       let newOption = {
         value: value,
         currentLabel: label
@@ -397,7 +413,15 @@ export default {
 
     async setSelected() {
       if (!this.multiple) {
-        let option = await this.getOption(this.value)
+        let option
+        if (this.currentLabel) {
+          option = {
+            value: this.value,
+            currentLabel: this.currentLabel
+          }
+        } else {
+          option = await this.getOption(this.value)
+        }
         if (this.onSetSelected && ~this.hoverIndex) {
           if (!option.$el) {
             this.onSetSelected(option)
@@ -419,8 +443,16 @@ export default {
       }
       let result = []
       if (Array.isArray(this.value)) {
-        for (const value of this.value) {
-          result.push(await this.getOption(value))
+        for (let i = 0; i < this.value.length; i++) {
+          const value = this.value[i]
+          if (this.currentLabel?.length) {
+            result.push({
+              value,
+              currentLabel: this.currentLabel[i] || ''
+            })
+          } else {
+            result.push(await this.getOption(value))
+          }
         }
       }
       this.selected = result
@@ -547,7 +579,7 @@ export default {
           value.push(option.value)
         }
         this.$emit('input', value)
-        this.emitChange(value)
+        this.emitChange(value, option)
         if (option.created) {
           this.query = ''
           this.handleQueryChange('')
@@ -565,7 +597,7 @@ export default {
           if (this.createValidate && !this.createValidate(value)) return
         }
         this.$emit('input', option.value)
-        this.emitChange(option.value)
+        this.emitChange(option.value, option)
         !option.created && (this.visible = false)
         /*if (option.created) {
           // 因为调整了setSelected为异步
@@ -583,6 +615,19 @@ export default {
       this.$nextTick(() => {
         this.scrollToOption(option)
       })
+    },
+
+    emitChange(val, option) {
+      if (!valueEquals(this.value, val)) {
+        this.$emit('change', val)
+        if (this.multiple) {
+          const uniqArr = uniqBy([...this.selected, ...this.cachedOptions, ...this.options], 'value') || []
+          const changeLabels = uniqArr.filter(t => val.includes(t.value)).map(t => t.currentLabel || t.label)
+          this.$emit('change-label', changeLabels)
+        } else {
+          this.$emit('change-label', option.currentLabel)
+        }
+      }
     }
   }
 }

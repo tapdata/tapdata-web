@@ -586,11 +586,12 @@ export default {
         this.cumulativeZoomFactor *= (this.paperScale - 0.05) / this.paperScale
       } else {
         this.cumulativeZoomFactor /= this.zoomFactor
-        this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
-        const scale = this.paperScale * this.cumulativeZoomFactor
-        this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
-        this.changeScale(scale)
+        // 缩放力度太小时容易导致scale没有变化，注释下方代码
+        // this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
       }
+      const scale = Math.max(0.05, this.paperScale * this.cumulativeZoomFactor)
+      this.wheelToScaleArtboard(scale, e && { x: e.pageX, y: e.pageY })
+      this.changeScale(scale)
     },
     /**
      * 放大
@@ -600,7 +601,8 @@ export default {
         this.cumulativeZoomFactor *= (this.paperScale + 0.05) / this.paperScale
       } else {
         this.cumulativeZoomFactor *= this.zoomFactor
-        this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
+        // 缩放力度太小时容易导致scale没有变化，注释下方代码
+        // this.cumulativeZoomFactor = Math.round(this.paperScale * this.cumulativeZoomFactor * 20) / 20 / this.paperScale
       }
       this.cumulativeZoomFactor =
         Math.max(0.05, Math.min(this.paperScale * this.cumulativeZoomFactor, 160)) / this.paperScale

@@ -1,33 +1,28 @@
 <template>
-  <TableList
-    :data="taskList"
-    :columns="columns"
-    :remote-data="id"
-    height="100%"
-    :has-pagination="false"
-    ref="tableList"
-  >
+  <VTable :data="taskList" :columns="columns" :remote-data="id" height="100%" :has-pagination="false" ref="VTable">
     <template #status="{ row }">
       <TaskStatus :task="row" />
     </template>
     <template slot="operation" slot-scope="scope">
       <div class="operate-columns">
-        <ElButton size="mini" type="text" @click="goShareCdcInfo(scope.row.id)">{{ $t('packages_business_task_info_info') }}</ElButton>
+        <ElButton size="mini" type="text" @click="goShareCdcInfo(scope.row.id)">{{
+          $t('packages_business_task_info_info')
+        }}</ElButton>
       </div>
     </template>
-  </TableList>
+  </VTable>
 </template>
 
 <script>
 import { logcollectorApi } from '@tap/api'
-import { TableList } from '@tap/component'
+import { VTable } from '@tap/component'
 
 import { makeStatusAndDisabled } from '../../../../shared'
 import { TaskStatus } from '../../../../components'
 
 export default {
   name: 'ShareMining',
-  components: { TableList, TaskStatus },
+  components: { VTable, TaskStatus },
   props: {
     id: String
   },

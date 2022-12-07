@@ -5,13 +5,18 @@
     :visible.sync="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
-    @close="$emit('input', false)"
+    @close="$emit('input', false).$emit('load-data')"
   >
     <div class="flex mb-4 align-items-center">
       <div class="select__row flex align-items-center" @click.stop="handleSelect">
         <span>{{ $t('packages_dag_components_nodedetaildialog_jiedian') }}</span>
         <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init">
-          <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value"></ElOption>
+          <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value">
+            <div class="flex align-center mx-n1">
+              <NodeIcon class="mr-2" :node="item.node" :size="18" />
+              <span>{{ item.label }}</span>
+            </div>
+          </ElOption>
         </ElSelect>
       </div>
       <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
@@ -46,7 +51,7 @@
             <div v-else class="mb-4 flex justify-content-between">
               <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
               <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-                <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
+                <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
               </ElTooltip>
             </div>
             <div class="mb-4 flex align-items-center">
@@ -74,7 +79,7 @@
           </template>
           <template v-if="dataflow.type !== 'initial_sync'">
             <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
-              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</span>
+              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
           </template>
@@ -92,7 +97,7 @@
         <div class="chart-box__content p-6 fs-8 flex flex-column align-items-center flex-fill justify-content-center">
           <template v-if="dataflow.type !== 'initial_sync'">
             <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
-              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian') }}</span>
+              <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
               <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
             </div>
           </template>
@@ -162,17 +167,18 @@ import { mapGetters } from 'vuex'
 
 import { measurementApi } from '@tap/api'
 import { calcTimeUnit } from '@tap/shared'
+import { TimeSelect } from '@tap/component'
 
 import EventChart from './EventChart'
 import LineChart from './LineChart'
-import TimeSelect from './TimeSelect'
 import Frequency from './Frequency'
 import { TIME_FORMAT_MAP, getTimeGranularity } from '../util'
+import NodeIcon from '../../NodeIcon'
 
 export default {
   name: 'NodeDetailDialog',
 
-  components: { EventChart, LineChart, TimeSelect, Frequency },
+  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency },
 
   props: {
     value: {
@@ -211,6 +217,7 @@ export default {
       return (
         this.allNodes.map(t => {
           return {
+            node: t,
             label: t.name,
             value: t.id
           }
@@ -351,15 +358,14 @@ export default {
 
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        outputQps = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag
-      } = data
-      const time = outputQps ? Math.ceil(((snapshotRowTotal - snapshotInsertRowTotal) / outputQps) * 1000) : 0 // 剩余待同步的数据量/当前的同步速率, outputQps行每秒
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
+      const usedTime = Date.now() - snapshotStartAt
+      let time
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+        time = 0
+      } else {
+        time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+      }
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
@@ -443,104 +449,106 @@ export default {
       }
     },
 
-    getFilter() {
+    getFilter(type) {
       const { id: taskId, taskRecordId } = this.dataflow || {}
       const nodeId = this.selected
       const [startAt, endAt] = this.quotaTimeType === 'custome' ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
       let params = {
         startAt,
         endAt,
-        samples: {
-          // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
-          totalData: {
-            tags: {
-              type: 'node',
-              taskId,
-              taskRecordId,
-              nodeId
-            },
-            endAt: Date.now(), // 停止时间 || 当前时间
-            fields: [
-              'insertTotal',
-              'updateTotal',
-              'deleteTotal',
-              'ddlTotal',
-              'othersTotal',
-              'tcpPing',
-              'connectPing',
-              'currentEventTimestamp',
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal',
-              'tableTotal',
-              'snapshotTableTotal',
-              'snapshotRowTotal',
-              'snapshotInsertRowTotal',
-              'currentSnapshotTableRowTotal',
-              'currentSnapshotTableInsertRowTotal',
-              'replicateLag',
-              'snapshotStartAt',
-              'snapshotDoneAt',
-              'outputQps'
-            ],
-            //
-            type: 'instant' // 瞬时值
+        samples: {}
+      }
+      const samples = {
+        // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
+        totalData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId,
+            nodeId
           },
-          // 任务事件统计（条）-所选周期累计
-          barChartData: {
-            tags: {
-              type: 'node',
-              taskId,
-              taskRecordId,
-              nodeId
-            },
-            fields: [
-              'insertTotal',
-              'updateTotal',
-              'deleteTotal',
-              'ddlTotal',
-              'othersTotal',
-              'inputInsertTotal',
-              'inputUpdateTotal',
-              'inputDeleteTotal',
-              'inputDdlTotal',
-              'inputOthersTotal',
-              'outputInsertTotal',
-              'outputUpdateTotal',
-              'outputDeleteTotal',
-              'outputDdlTotal',
-              'outputOthersTotal'
-            ],
-            type: 'difference'
+          endAt: Date.now(), // 停止时间 || 当前时间
+          fields: [
+            'insertTotal',
+            'updateTotal',
+            'deleteTotal',
+            'ddlTotal',
+            'othersTotal',
+            'tcpPing',
+            'connectPing',
+            'currentEventTimestamp',
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal',
+            'tableTotal',
+            'snapshotTableTotal',
+            'snapshotRowTotal',
+            'snapshotInsertRowTotal',
+            'currentSnapshotTableRowTotal',
+            'currentSnapshotTableInsertRowTotal',
+            'replicateLag',
+            'snapshotStartAt',
+            'snapshotDoneAt',
+            'outputQps'
+          ],
+          //
+          type: 'instant' // 瞬时值
+        },
+        // 任务事件统计（条）-所选周期累计
+        barChartData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId,
+            nodeId
           },
-          // qps + 增量延迟
-          lineChartData: {
-            tags: {
-              type: 'node',
-              taskId,
-              taskRecordId,
-              nodeId
-            },
-            fields: [
-              'qps',
-              'inputQps',
-              'outputQps',
-              'timeCostAvg',
-              'snapshotSourceReadTimeCostAvg',
-              'incrementalSourceReadTimeCostAvg',
-              'targetWriteTimeCostAvg'
-            ],
-            type: 'continuous' // 连续数据
-          }
+          fields: [
+            'insertTotal',
+            'updateTotal',
+            'deleteTotal',
+            'ddlTotal',
+            'othersTotal',
+            'inputInsertTotal',
+            'inputUpdateTotal',
+            'inputDeleteTotal',
+            'inputDdlTotal',
+            'inputOthersTotal',
+            'outputInsertTotal',
+            'outputUpdateTotal',
+            'outputDeleteTotal',
+            'outputDdlTotal',
+            'outputOthersTotal'
+          ],
+          type: 'difference'
+        },
+        // qps + 增量延迟
+        lineChartData: {
+          tags: {
+            type: 'node',
+            taskId,
+            taskRecordId,
+            nodeId
+          },
+          fields: [
+            'qps',
+            'inputQps',
+            'outputQps',
+            'timeCostAvg',
+            'snapshotSourceReadTimeCostAvg',
+            'incrementalSourceReadTimeCostAvg',
+            'targetWriteTimeCostAvg'
+          ],
+          type: 'continuous' // 连续数据
         }
       }
+      params.samples.data = samples[type]
       return params
     },
 
@@ -549,11 +557,43 @@ export default {
         this.loading = true
       }
       const startStamp = Date.now()
+      const params = {
+        totalData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getFilter('totalData')
+        },
+        barChartData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getFilter('barChartData')
+        },
+        lineChartData: {
+          uri: '/api/measurement/query/v2',
+          param: this.getFilter('lineChartData')
+        }
+      }
       measurementApi
-        .queryV2(this.getFilter())
+        .batch(params)
         .then(data => {
-          this.quota = data
-          const granularity = getTimeGranularity(data.interval)
+          let quota = {
+            samples: {},
+            time: [],
+            interval: 5000
+          }
+          let arr = ['totalData', 'barChartData', 'lineChartData']
+          arr.forEach(el => {
+            const item = data[el]
+            if (item.code === 'ok') {
+              quota.samples[el] = item.data?.samples?.data
+              if (item.data?.interval) {
+                quota.interval = item.data.interval
+              }
+              if (item.data?.time) {
+                quota.time = item.data.time
+              }
+            }
+          })
+          this.quota = quota
+          const granularity = getTimeGranularity(this.quota.interval)
           this.timeFormat = TIME_FORMAT_MAP[granularity]
         })
         .finally(() => {
@@ -604,8 +644,8 @@ export default {
       this.$refs.nodeSelect?.focus()
     },
 
-    calcTimeUnit(val, fix) {
-      return typeof val === 'number' ? calcTimeUnit(val, fix) : '-'
+    calcTimeUnit() {
+      return typeof val === 'number' ? calcTimeUnit(...arguments) : '-'
     }
   }
 }

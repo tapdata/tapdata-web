@@ -1,7 +1,7 @@
 <template>
   <ElContainer class="layout-container" direction="vertical">
     <ElHeader v-if="!IS_IFRAME" class="layout-header" height="60px">
-      <a class="logo" href="/">
+      <a class="logo" href="/" :style="logoStyle">
         <img :src="logoUrl" />
       </a>
       <div class="button-bar">
@@ -12,13 +12,7 @@
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown
-          v-if="$getSettingByKey('SHOW_QA_AND_HELP')"
-          class="btn"
-          placement="bottom"
-          @command="command"
-          command="help"
-        >
+        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help">
           <span class="icon-btn py-1 px-3">
             <VIcon size="16">wenda</VIcon>
           </span>
@@ -45,11 +39,12 @@
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
           <span class="icon-btn py-1 px-3">
-            <VIcon size="16">{{ 'language-' + lang }}</VIcon>
+            <VIcon size="16">language_icon</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
-              {{ value }}
+              <span v-if="lang === key" class="color-primary">{{ value }}</span>
+              <span v-else>{{ value }}</span>
             </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
@@ -106,7 +101,7 @@
 
       <ElMain class="layout-main">
         <div class="layout-main-body">
-          <PageHeader></PageHeader>
+          <PageHeader class="py-4 px-5"></PageHeader>
           <div class="flex-fill px-5 pb-5 overflow-auto">
             <RouterView />
           </div>
@@ -117,6 +112,7 @@
     <newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
   </ElContainer>
 </template>
+
 <style lang="scss">
 .btn-del-fav-menu {
   display: none;
@@ -353,10 +349,10 @@ import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { usersApi, timeStampApi, licensesApi } from '@tap/api'
+import { PageHeader } from '@tap/business'
 
 import CustomerService from '@/components/CustomerService'
 import newDataFlow from '@/components/newDataFlow'
-import PageHeader from '@/components/PageHeader'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
 
@@ -380,7 +376,7 @@ let menuSetting = [
   {
     name: 'discovery',
     label: 'page_title_data_discovery',
-    icon: 'system',
+    icon: 'dataDiscovery_navbar',
     code: 'system_management',
     children: [
       { name: 'objectList', code: 'datasource_menu', parent: 'object' },
@@ -390,7 +386,7 @@ let menuSetting = [
   {
     name: 'dataService',
     label: 'page_title_data_service',
-    icon: 'connection',
+    icon: 'apiServer_navbar',
     code: 'data_publish',
     children: [
       { name: 'dataServer', code: 'API_management_menu', parent: 'dataServer' },
@@ -403,7 +399,7 @@ let menuSetting = [
   {
     name: 'system',
     label: 'page_title_system',
-    icon: 'system',
+    icon: 'system_navbar',
     code: 'system_management',
     children: [
       { name: 'clusterManagement', code: 'Cluster_management_menu' }
@@ -438,12 +434,22 @@ export default {
       breadcrumbData: [],
       isCollapse: false,
       isNotAside: this.$route?.meta?.isNotAside || false,
-      activeMenu: ''
+      activeMenu: '',
+      showHelp: !process.env.VUE_APP_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP')
     }
   },
   computed: {
     initials() {
       return this.userName.substring(0, 1)
+    },
+
+    logoStyle() {
+      const width = window._TAPDATA_OPTIONS_.logoWidth
+      const height = window._TAPDATA_OPTIONS_.logoHeight
+      return {
+        width: width && (!isNaN(width) ? `${width}px` : width),
+        height: height && (!isNaN(height) ? `${height}px` : height)
+      }
     }
   },
   watch: {
@@ -578,7 +584,7 @@ export default {
           })
           break
         case 'home':
-          window.open('https://tapdata.net/', '_blank')
+          window.open(window._TAPDATA_OPTIONS_.homeUrl, '_blank')
           break
         case 'signOut':
           this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {

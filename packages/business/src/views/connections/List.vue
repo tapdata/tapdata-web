@@ -7,7 +7,9 @@
         isDaas
           ? {
               authority: 'datasource_catalog_management',
-              types: ['database']
+              types: ['database'],
+              viewPage: 'connections',
+              title: $t('packages_business_connections_list_lianjiefenlei')
             }
           : null
       "
@@ -29,7 +31,7 @@
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow_taskBulkTag') }}</span>
+          <span> {{ $t('packages_business_dataFlow_taskBulkTag') }}</span>
         </ElButton>
         <ElButton
           v-readonlybtn="'datasource_creation'"
@@ -45,24 +47,27 @@
       <ElTableColumn
         show-overflow-tooltip
         prop="name"
-        min-width="180"
+        min-width="290"
         :label="$t('packages_business_connection_column_name')"
       >
-        <template slot-scope="scope">
-          <span class="connection-name">
-            <img class="connection-img mr-2" :src="getConnectionIcon(scope.row.pdkHash)" alt="" />
+        <template #default="{ row }">
+          <span class="connection-name flex">
+            <img class="connection-img mr-2" :src="getConnectionIcon(row.pdkHash)" alt="" />
             <ElLink
-              class="ellipsis"
               type="primary"
-              style="display: block; line-height: 20px"
-              @click.stop="preview(scope.row)"
+              class="justify-content-start ellipsis block"
+              style="line-height: 20px"
+              @click.stop="preview(row)"
             >
-              {{ scope.row.name }}
+              {{ row.name }}
             </ElLink>
+            <span v-if="row.listtags" class="justify-content-start ellipsis block">
+              <span class="tag inline-block" v-for="item in row.listtags"> {{ item.value }} </span>
+            </span>
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('packages_business_connection_connectionInfo')" min-width="200">
+      <ElTableColumn show-overflow-tooltip :label="$t('packages_business_connection_connectionInfo')" min-width="160">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
@@ -76,12 +81,12 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="120" :label="$t('packages_business_connection_connectionType')">
+      <ElTableColumn prop="connection_type" min-width="110" :label="$t('packages_business_connection_connectionType')">
         <template slot-scope="scope">
           {{ $t('packages_business_connection_type_' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="140">
+      <ElTableColumn min-width="90">
         <div slot="header" class="flex align-center">
           <span>{{ $t('packages_business_connection_list_column_schema_status') }}</span>
           <ElTooltip
@@ -106,11 +111,23 @@
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="220" :label="$t('packages_business_connection_operate')">
+      <ElTableColumn width="300" :label="$t('packages_business_connection_operate')">
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)"
             >{{ $t('packages_business_connection_list_test_button') }}
           </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElTooltip
+            :disabled="!isFileSource(scope.row)"
+            :content="$t('packages_business_connections_list_wenjianleixingde')"
+            placement="top"
+          >
+            <span>
+              <ElButton type="text" :disabled="isFileSource(scope.row)" @click="handleLoadSchema(scope.row)"
+                >{{ $t('packages_business_connection_preview_load_schema') }}
+              </ElButton>
+            </span>
+          </ElTooltip>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
             v-readonlybtn="'datasource_edition'"
@@ -346,7 +363,21 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          let list = (data?.items || []).map(item => {
+          let list = data?.items || []
+          // 有选中行，列表刷新后无法更新行数据，比如状态
+          if (this.multipleSelection.length && list.length) {
+            let tempMap = list.reduce((map, item) => {
+              map[item.id] = item
+              return map
+            }, {})
+            this.multipleSelection.forEach((item, i) => {
+              const temp = tempMap[item.id]
+              if (temp) {
+                this.multipleSelection[i] = temp
+              }
+            })
+          }
+          list = list.map(item => {
             if (item.connectionString) {
               item.connectionUrl = item.connectionString
             } else {
@@ -507,14 +538,20 @@ export default {
       }
     },
     handleSelectTag() {
-      let tagList = {}
+      let tagList = []
       this.multipleSelection.forEach(row => {
-        if (row.listtags && row.listtags.length > 0) {
-          tagList[row.listtags[0].id] = {
-            value: row.listtags[0].value
-          }
+        if (row.listtags) {
+          tagList = [...row.listtags, ...tagList]
         }
       })
+      //去重
+      let map = new Map()
+      for (let item of tagList) {
+        if (!map.has(item.id)) {
+          map.set(item.id, item)
+        }
+      }
+      tagList = [...map.values()]
       return tagList
     },
     handleOperationClassify(listtags) {
@@ -651,6 +688,16 @@ export default {
     },
     getConnectionIcon() {
       return getConnectionIcon(...arguments)
+    },
+    handleLoadSchema(row) {
+      if (!this.$refs.preview) {
+        return
+      }
+      this.$refs.preview.setConnectionData(row)
+      this.$refs.preview.reload?.(this.table.fetch(null, 0, true))
+    },
+    isFileSource(row) {
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(row?.database_type)
     }
   }
 }
@@ -671,7 +718,17 @@ export default {
     display: flex;
     align-items: center;
   }
-
+  .tag {
+    padding: 2px 5px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 14px;
+    color: map-get($color, tag);
+    border: 1px solid map-get($bgColor, tag);
+    border-radius: 2px;
+    margin-left: 5px;
+  }
   .connection-img {
     width: 18px;
   }
@@ -680,18 +737,6 @@ export default {
     // color: map-get($color, primary);
     font-size: 12px;
     padding-right: 5px;
-  }
-
-  .tag {
-    padding: 0 3px 2px 3px;
-    line-height: 12px;
-    font-size: 12px;
-    font-weight: 400;
-    color: map-get($fontColor, light);
-    background: map-get($bgColor, main);
-    border: 1px solid #dedee4;
-    border-radius: 3px;
-    margin-left: 5px;
   }
 
   .error {

@@ -184,7 +184,9 @@ export default {
               let val = data
               if (![null, undefined].includes(data)) {
                 if (this.timeValue) {
-                  val = calcTimeUnit(data || 0, 2)
+                  val = calcTimeUnit(data || 0, 2, {
+                    digits: 2
+                  })
                 } else {
                   val = (data || 0).toLocaleString('zh', {
                     minimumFractionDigits: 2,
@@ -249,7 +251,11 @@ export default {
           axisLabel: {
             color: '#535F72',
             formatter: val => {
-              return this.timeValue ? calcTimeUnit(val, 2) : calcUnit(val)
+              return this.timeValue
+                ? calcTimeUnit(val || 0, 2, {
+                    digits: 2
+                  })
+                : calcUnit(val)
             }
             // showMaxLabel: false,
             // showMinLabel: false

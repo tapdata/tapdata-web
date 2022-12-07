@@ -19,10 +19,28 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
+import { observable } from '@formily/reactive'
+import { setPageTitle } from '@tap/shared'
+import { getSchema } from '../util'
 
 export default {
   directives: {
     resize
+  },
+
+  inject: ['buried'],
+
+  data() {
+    const dataflow = observable({
+      ...DEFAULT_SETTINGS,
+      id: '',
+      name: '',
+      status: ''
+    })
+
+    return {
+      dataflow
+    }
   },
 
   computed: {
@@ -62,6 +80,7 @@ export default {
     this.destory = true
     this.stopDagWatch?.()
     this.stopLoopTask()
+    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
@@ -252,7 +271,7 @@ export default {
     },
 
     checkGotoViewer() {
-      if (this.dataflow.disabledData.edit) {
+      if (this.dataflow.disabledData?.edit) {
         // 不可编辑
         this.gotoViewer()
         this.setStateReadonly(true)
@@ -263,6 +282,7 @@ export default {
     async newDataflow(name) {
       this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
+      this.titleSet()
     },
 
     async makeTaskName(source) {
@@ -540,6 +560,11 @@ export default {
       this.$set(this.dataflow, 'disabledData', data.btnDisabled)
       this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
       this.$set(this.dataflow, 'stopTime', data.stopTime)
+      this.$set(this.dataflow, 'startTime', data.startTime)
+      this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
+      this.$set(this.dataflow, 'pingTime', data.pingTime)
+      // 前端不关心的属性
+      this.dataflow.attrs = data.attrs
 
       if (!fromWS) {
         Object.keys(data).forEach(key => {
@@ -573,6 +598,7 @@ export default {
     },
 
     async initView(first) {
+      const { id } = this.$route.params
       this.stopDagWatch?.()
 
       if (this.$route.params.action === 'dataflowEdit') {
@@ -585,6 +611,8 @@ export default {
             this.updateDag()
           }
         )
+        this.startLoopTask(id)
+        this.initWS()
         // 从查看进入编辑，清掉轮询
         return Promise.resolve()
       }
@@ -594,17 +622,23 @@ export default {
         return Promise.resolve()
       }
 
-      const { id } = this.$route.params
       this.dataflow.id = id
 
       if (!first) {
         this.resetWorkspace()
         this.initNodeView()
       }
-      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer', 'TaskMonitor'].includes(this.$route.name)) {
+      const routeName = this.$route.name
+      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer', 'TaskMonitor'].includes(routeName)) {
         await this.openDataflow(id)
         // await this.startLoop()
         this.setStateReadonly(true)
+        if (
+          routeName === 'MigrateViewer' ||
+          (routeName === 'DataflowViewer' && ['renewing', 'renew_failed'].includes(this.dataflow.status))
+        ) {
+          this.handleConsoleAutoLoad()
+        }
       } else {
         if (id) {
           await this.openDataflow(id)
@@ -993,6 +1027,7 @@ export default {
         },
         DEFAULT_SETTINGS
       )*/
+      this.nameHasUpdated = false
       this.jsPlumbIns.reset()
       this.deselectAllNodes()
       this.reset()
@@ -1002,7 +1037,8 @@ export default {
 
     async validateNode(node) {
       try {
-        await validateBySchema(node.__Ctor.formSchema, node, this.formScope || this.scope)
+        const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
+        await validateBySchema(schema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -1096,7 +1132,10 @@ export default {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', { val1: agent.hostName, val2: agent.ip })
+                msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', {
+                  val1: agent.hostName,
+                  val2: agent.ip
+                })
               })
               isError = true
             }
@@ -1211,7 +1250,7 @@ export default {
             hasEnableDDLAndIncreasesql = true
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi')
+              msg: i18n.t('packages_dag_mixins_editor_not_support_ddl')
             })
           }
         }
@@ -1579,56 +1618,55 @@ export default {
     },
 
     handleError(error, msg = i18n.t('packages_dag_src_editor_chucuole')) {
-      error = error.data
-      if (error?.code === 'Task.ListWarnMessage') {
+      if (error?.data?.code === 'Task.ListWarnMessage') {
         let names = []
-        if (error.data) {
-          const keys = Object.keys(error.data)
+        if (error.data?.data) {
+          const keys = Object.keys(error.data.data)
           keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: error.data[key][0].msg
+                msg: error.data.data[key][0].msg
               })
             }
           })
-          if (!names.length && keys.length) {
+          if (!names.length && keys.length && msg) {
             // 兼容错误信息id不是节点id的情况
-            const nodeMsg = error.data[keys[0]][0]?.msg
-            if (nodeMsg) {
-              this.$message.error(nodeMsg)
+            const msg = error.data.data[keys[0]][0]?.msg
+            if (msg) {
+              this.$message.error(msg)
               return
             }
-          } else if (msg) {
-            this.$message.error(msg)
           }
         }
-        // this.$message.error(`${this.$t('packages_dag_dag_save_fail')} ${names.join('，')}`)
       }
-      // else if (error?.data?.message) {
-      //   this.$message.error(error.data.message)
-      // } else {
-      //   // eslint-disable-next-line no-console
-      //   console.error(error)
-      //   this.$message.error(msg)
-      // }
     },
 
     async handleUpdateName(name) {
+      const oldName = this.dataflow.name
+      this.nameHasUpdated = true
       this.dataflow.name = name
-      taskApi
-        .patch({
-          id: this.dataflow.id,
-          name
-        })
-        .catch(this.handleError)
+      taskApi.rename(this.dataflow.id, name).then(
+        () => {
+          this.$message.success(this.$t('packages_dag_message_task_rename_success'))
+          this.titleSet()
+        },
+        error => {
+          this.dataflow.name = oldName
+          this.handleError(error)
+        }
+      )
     },
 
     handleEditFlush(result) {
-      console.debug(`【DEBUG】ws返回，任务状态：[${result.data?.status}]`, result.data) // eslint-disable-line
+      console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
+        if (result.data.id !== this.dataflow.id) {
+          console.debug('ws收到了其他任务的返回', result.data)
+          return
+        }
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
       }
@@ -1640,13 +1678,21 @@ export default {
     },
 
     async handleStart() {
+      const routeName = this.$route.name
+      const isDataflow = ['DataflowNew', 'DataflowEditor', 'DataflowViewer', 'TaskMonitor'].includes(routeName)
+      const buriedCode = isDataflow ? 'taskStart' : 'migrationStart'
+      this.buried(buriedCode)
+
       const flag = await this.save(true)
       if (flag) {
         this.dataflow.disabledData.edit = true
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
+        this.buried(buriedCode, { result: true })
         this.gotoViewer()
+      } else {
+        this.buried(buriedCode, { result: false })
       }
     },
 
@@ -1696,10 +1742,12 @@ export default {
         try {
           this.initWS()
           this.dataflow.disabledData.reset = true
+          this.toggleConsole(true)
+          this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(data, this.$t('packages_dag_message_resetOk'))
+          this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
         } catch (e) {
-          this.handleError(e, this.$t('packages_dag_message_resetFailed'))
+          this.handleError(e, this.$t('packages_dag_message_operation_error'))
         }
       })
     },
@@ -1763,33 +1811,44 @@ export default {
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
         this.startLoopTask(id)
+        this.titleSet()
         return data
       } catch (e) {
-        console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
+        this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
+        this.handlePageReturn()
       } finally {
         this.loading = false
       }
     },
 
     startLoopTask(id) {
-      console.debug('【DEBUG】开始轮询加载任务，间隔3s') // eslint-disable-line
+      console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
       clearTimeout(this.startLoopTaskTimer)
+      if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const data = await taskApi.get(id)
-        makeStatusAndDisabled(data)
+        if (data) {
+          // 同步下任务上的属性，重置后会改变
+          this.dataflow.attrs = data.attrs
 
-        console.debug(
-          `【DEBUG】轮询加载任务详情，当前状态：[${this.dataflow.status}], 返回状态：[${data.status}]`,
-          data
-        ) // eslint-disable-line
-        if (this.dataflow.status !== data.status) {
-          console.debug(`【DEBUG】轮询加载任务详情，出现状态不一致，按照返回状态更新`) // eslint-disable-line
-          this.dataflow.status = data.status
-          this.dataflow.disabledData = data.btnDisabled
+          makeStatusAndDisabled(data)
+          console.debug(
+            i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
+            data
+          ) // eslint-disable-line
+          if (this.dataflow.status !== data.status) {
+            console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
+            this.dataflow.status = data.status
+          }
+          // 需要实时更新的字段
+          this.dataflow.lastStartDate = data.lastStartDate
+          this.dataflow.pingTime = data.pingTime
+          if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
+          Object.assign(this.dataflow.disabledData, data.btnDisabled)
+
+          this.startLoopTask(id)
         }
-
-        this.startLoopTask(id)
-      }, 3000)
+      }, 5000)
     },
 
     stopLoopTask() {
@@ -1797,7 +1856,7 @@ export default {
     },
 
     initWS() {
-      console.debug('【DEBUG】初始化ws监听', this.$ws.ws) // eslint-disable-line
+      console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
@@ -1872,6 +1931,34 @@ export default {
         this.deselectAllNodes()
         this.setActiveNode(null)
       }
+    },
+
+    handleConsoleAutoLoad() {
+      this.toggleConsole(true)
+      const logType = ['renewing', 'renew_failed'].includes(this.dataflow.status) ? 'reset' : 'checkDag'
+      this.$refs.console?.startAuto(logType)
+    },
+
+    /**
+     * 防止node重叠
+     */
+    preventNodeOverlap(nodes) {
+      if (nodes?.length) {
+        const map = {}
+        const ifOverlap = nodes.some(node => {
+          const pos = node.attrs.position.join(',')
+          if (map[pos]) return true
+          map[pos] = true
+          return false
+        })
+        if (ifOverlap) {
+          this.handleAutoLayout()
+        }
+      }
+    },
+
+    titleSet() {
+      setPageTitle(`${this.dataflow.name} - ${this.$t(this.$route.meta.title)}`)
     }
   }
 }

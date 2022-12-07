@@ -64,40 +64,75 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
  * @desc 时间差换算： 毫秒转年月日时分秒
  * @val Number 需要处理的毫秒
  * @fix Number 需要保留几个单位
- * @digits Number 只有ms单位时，保留几位小数；多个单位默认取整
+ * @options.separator String 分割符
+ * @options.autoHideMs Boolean > 10s 自动隐藏ms
  * @return string
  * */
-export function calcTimeUnit(val, fix = 1, digits = 3) {
-  const list = ['ms', 's', 'min', 'h', 'd', 'M', 'Y']
-  const sp = [1000, 60, 60, 24, 30, 12]
-  let result = []
-  const power = Math.pow(10, digits)
-  let num = val
-  const isMs = num / sp[0] < 1
-  const ms = Math.round(num * power) / power
-  if (!ms) {
-    return ms + list[0]
-  }
-  for (let i = 0; i < list.length; i++) {
-    let util = list[i]
-    let m = num / sp[i]
-    if (m < 1) {
-      result.unshift({
-        value: isMs ? ms : num,
-        util
-      })
-      break
+export function calcTimeUnit(val, fix = 2, op) {
+  let options = Object.assign(
+    {
+      separator: ' ',
+      autoHideMs: false,
+      digits: 0
+    },
+    op || {}
+  )
+  let results = []
+  if (!val) return '0'
+  const ts = val.toFixed(options.digits)
+  const units = [
+    {
+      unit: 'ms',
+      interval: 1000
+    },
+    {
+      unit: 's',
+      interval: 60
+    },
+    {
+      unit: 'min',
+      interval: 60
+    },
+    {
+      unit: 'h',
+      interval: 24
+    },
+    {
+      unit: 'd',
+      interval: 30
+    },
+    {
+      unit: 'M',
+      interval: 12
+    },
+    {
+      unit: 'Y',
+      interval: 99999
     }
-    result.unshift({
-      value: Math.round(num % sp[i]),
-      util
+  ]
+  for (let i = 0, tmpTs = ts; i < units.length && tmpTs >= 0; i++) {
+    results.push({
+      value: tmpTs % units[i].interval,
+      util: units[i].unit
     })
-    num = Math.round(m)
+    tmpTs = parseInt(tmpTs / units[i].interval)
   }
-  const arr = fix < 0 ? result : result.slice(0, fix)
-  return arr
+  if (fix > 0) {
+    results = results.slice(0, fix)
+  }
+  results = results.reverse()
+  const findMsIndex = results.findIndex(t => t.util === 'ms')
+  if (findMsIndex >= 1) {
+    const s = results[findMsIndex - 1]
+    // 如果 >10s 不需要ms
+    if (options.autoHideMs && ts > 10 * 1000) {
+      s.value++
+      results.pop()
+    }
+  }
+  return results
     .filter(t => t.value)
     .reduce((pre, current) => {
-      return pre + current.value + current.util
+      return pre + (pre ? options.separator : '') + current.value + current.util
     }, '')
 }

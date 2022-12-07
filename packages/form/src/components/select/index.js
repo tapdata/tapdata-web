@@ -66,7 +66,15 @@ const SelectOption = defineComponent({
 
 export const Select = connect(
   SelectOption,
-  mapProps({ dataSource: 'options', loading: true }),
+  mapProps({ dataSource: 'options', loading: true }, (props, field) => {
+    const _props = { ...props }
+    const options = field.componentProps?.options
+
+    if (options) {
+      _props.options = options
+    }
+    return _props
+  }),
   mapReadPretty(PreviewText.Select)
 )
 

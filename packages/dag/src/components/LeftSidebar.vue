@@ -113,7 +113,7 @@
           <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
             >search-outline</VIcon
           >
-          <ElTooltip :content="$t('dag_create_table_as_node')" placement="top">
+          <ElTooltip :content="$t('packages_dag_dag_create_table_as_node')" placement="top">
             <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
           </ElTooltip>
         </div>
@@ -123,7 +123,7 @@
             <ElInput
               v-model="tbSearchTxt"
               ref="tbInput"
-              :placeholder="$t('table_name_search_placeholder')"
+              :placeholder="$t('packages_dag_table_name_search_placeholder')"
               size="mini"
               clearable
               @keydown.native.stop
@@ -225,10 +225,11 @@
 
     <ElDialog
       :title="$t('packages_dag_components_leftsidebar_xuanzeshujuyuan')"
-      width="1030px"
+      width="848px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"
       :append-to-body="true"
+      custom-class="connection-dialog"
     >
       <ConnectionTypeSelector
         :types="database"
@@ -964,6 +965,14 @@ $hoverBg: #eef3ff;
       font-size: 12px;
       line-height: 1;
       white-space: nowrap;
+    }
+  }
+}
+
+::v-deep {
+  .connection-dialog {
+    .el-dialog__body {
+      padding: 0 20px 30px 20px;
     }
   }
 }

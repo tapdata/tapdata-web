@@ -94,7 +94,7 @@ export const JsProcessor = observer(
           runningText.value = i18n.t('packages_form_js_processor_index_rengzaipinmingjia')
         }
 
-        if (queryTimes > 10) {
+        if (queryTimes > 20) {
           resetQuery()
           root.$message.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
           return
@@ -104,7 +104,7 @@ export const JsProcessor = observer(
             if (!isOver) {
               timer = setTimeout(() => {
                 handleAutoQuery()
-              }, 2000)
+              }, 500)
             } else {
               resetQuery()
             }
@@ -134,6 +134,7 @@ export const JsProcessor = observer(
                   emit('change', val)
                 }}
                 height={350}
+                showFullscreen={true}
                 options={editorProps.options}
                 includeBeforeAndAfter={editorProps.includeBeforeAndAfter}
                 before={editorProps.before}

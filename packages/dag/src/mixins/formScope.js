@@ -1,8 +1,8 @@
+import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { merge, isEqual, escapeRegExp } from 'lodash'
-import i18n from '@tap/i18n'
-import { connectionsApi, metadataInstancesApi, clusterApi } from '@tap/api'
+import { merge, isEqual } from 'lodash'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 
@@ -96,6 +96,8 @@ export default {
         $agents: [],
 
         $agentMap: {},
+
+        $isDaas: process.env.VUE_APP_PLATFORM === 'DAAS', //区分云版、企业版
 
         findNodeById: id => {
           return this.$store.state.dataflow.NodeMap[id]
@@ -287,6 +289,35 @@ export default {
           return data
         },
 
+        loadCommandList: async (filter, val) => {
+          try {
+            const { $values = {}, command, where = {}, page, size } = filter
+            const { nodeConfig, connectionId, attrs = {} } = $values
+            const search = where.label?.like
+            let params = {
+              pdkHash: attrs.pdkHash,
+              connectionId,
+              nodeConfig,
+              command,
+              type: 'node',
+              action: search ? 'search' : 'list',
+              argMap: {
+                key: search,
+                page,
+                size: 1000
+              }
+            }
+            let result = await proxyApi.command(params)
+            if (!result.items) {
+              return { items: [], total: 0 }
+            }
+            return result
+          } catch (e) {
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
+          }
+        },
+
         /**
          * 将form对象作为handle方法第一个参数
          * @param handle
@@ -352,6 +383,63 @@ export default {
             console.error('nodeSchema', e)
             return []
           }
+        },
+        //传参获取远程数据
+        getCommandAndSetValue: async ($form, others) => {
+          const getState = $form.getState()
+          const formValues = getState?.values || {}
+          console.log('formValues', formValues, others)
+          const { nodeId } = others
+          let params = {
+            nodeId
+          }
+          let fields = [
+            {
+              targetFieldName: 'form_id',
+              sourceFieldName: 'form_id',
+              sourceFieldType: 'INT32',
+              type: 'auto',
+              defaultValue: '',
+              useDefaultValue: true,
+              isShow: true,
+              migrateType: 'system',
+              primary_key_position: 0
+            },
+            {
+              targetFieldName: 'form_version',
+              sourceFieldName: 'form_version',
+              sourceFieldType: 'STRING',
+              type: 'auto',
+              defaultValue: '',
+              useDefaultValue: true,
+              isShow: true,
+              migrateType: 'system',
+              primary_key_position: 0
+            },
+            {
+              targetFieldName: 'id',
+              sourceFieldName: 'id',
+              sourceFieldType: 'INT32',
+              type: 'auto',
+              defaultValue: '',
+              useDefaultValue: true,
+              isShow: true,
+              migrateType: 'system',
+              primary_key_position: 1
+            },
+            {
+              targetFieldName: 'task_id',
+              sourceFieldName: 'task_id',
+              sourceFieldType: 'INT32',
+              type: 'auto',
+              defaultValue: '',
+              useDefaultValue: true,
+              isShow: true,
+              migrateType: 'system',
+              primary_key_position: 0
+            }
+          ]
+          $form.setValuesIn('loadSchemaTree', fields)
         },
 
         /**
@@ -488,6 +576,7 @@ export default {
   },
 
   async created() {
+    this.scope.$settings = this.dataflow
     await this.loadAccessNode()
   },
 

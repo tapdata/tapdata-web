@@ -34,12 +34,12 @@
           </div>
         </div>
         <div class="form-wrap">
-          <div class="form">
+          <div class="form pr-3">
             <SchemaToForm
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="610px"
+              wrapperWidth="600px"
               :colon="true"
               label-width="160"
             ></SchemaToForm>
@@ -121,7 +121,8 @@ import {
   pdkApi,
   settingsApi,
   commandApi,
-  externalStorageApi
+  externalStorageApi,
+  proxyApi
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
@@ -129,7 +130,7 @@ import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
-import { checkConnectionName } from '@tap/shared'
+import { checkConnectionName, isEmpty, delayTrigger } from '@tap/shared'
 
 export default {
   name: 'DatabaseForm',
@@ -153,6 +154,7 @@ export default {
     return {
       rules: [],
       id: '',
+      commandCallbackFunctionId: '',
       visible: false,
       showSystemConfig: false,
       model: {
@@ -177,7 +179,8 @@ export default {
       schemaData: null,
       schemaScope: null,
       pdkFormModel: {},
-      doc: ''
+      doc: '',
+      pathUrl: ''
     }
   },
   computed: {
@@ -189,6 +192,11 @@ export default {
     this.id = this.$route.params.id || ''
     this.getPdkForm()
     this.getPdkDoc()
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.pathUrl = from?.fullPath
+    })
   },
   methods: {
     //保存全局挖掘设置
@@ -210,9 +218,15 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push({
-          name: 'connections'
-        })
+        if (this.pathUrl === '/') {
+          this.$router.push({
+            name: 'connections'
+          })
+        } else {
+          this.$router.push({
+            path: this.pathUrl
+          })
+        }
       })
     },
     submit() {
@@ -225,6 +239,7 @@ export default {
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
         let { __TAPDATA } = formValues
+        formValues.__connectionType = __TAPDATA.connection_type
         delete formValues['__TAPDATA']
         let params = Object.assign(
           {
@@ -261,8 +276,9 @@ export default {
           params.id = id
           promise = connectionsApi.updateById(id, params)
         } else {
+          const { commandCallbackFunctionId } = this
           params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-          promise = connectionsApi.post(params)
+          promise = connectionsApi.create(params, { id: commandCallbackFunctionId })
         }
         promise
           .then(() => {
@@ -283,11 +299,10 @@ export default {
               })
             }
           })
-          .catch(err => {
+          .catch(() => {
             this.buried('connectionSubmit', '', {
               result: false
             })
-            this.$message.error(err?.data?.message || this.$t('packages_business_message_saveFail'))
           })
           .finally(() => {
             this.submitBtnLoading = false
@@ -298,9 +313,14 @@ export default {
     async startTest() {
       this.buried('connectionTest')
       this.checkAgent(() => {
-        this.schemaFormInstance.validate().then(() => {
-          this.startTestPdk()
-        })
+        this.schemaFormInstance.validate().then(
+          () => {
+            this.startTestPdk()
+          },
+          () => {
+            this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
+          }
+        )
       }).catch(() => {
         this.buried('connectionTestAgentFail')
       })
@@ -308,6 +328,7 @@ export default {
     startTestPdk() {
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
       let { __TAPDATA } = formValues
+      formValues.__connectionType = __TAPDATA.connection_type
       Object.assign(this.model, __TAPDATA)
       delete formValues['__TAPDATA']
       this.model.config = formValues
@@ -366,19 +387,10 @@ export default {
               this.$message.success(this.$t('packages_business_message_save_ok'))
               this.dialogEditNameVisible = false
             })
-            .catch(err => {
+            .catch(() => {
               this.renameData.rename = this.model.name
               this.$refs['renameForm'].clearValidate()
               this.editBtnLoading = false
-              if (err && err.response) {
-                if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(this.$t('packages_business_dataForm_error_connectionNameExist'))
-                } else {
-                  this.$message.error(err.response.msg)
-                }
-              } else {
-                this.$message.error(this.$t('packages_business_dataForm_saveFail'))
-              }
             })
         }
       })
@@ -398,6 +410,9 @@ export default {
       const data = await databaseTypesApi.pdkHash(pdkHash)
       let id = this.id || this.$route.params.id
       this.pdkOptions = data || {}
+      if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
+        this.commandCallbackFunctionId = await proxyApi.getId()
+      }
       let connectionTypeJson = {
         type: 'string',
         title: this.$t('packages_business_connection_form_connection_type'),
@@ -485,7 +500,7 @@ export default {
           let config = {
             // TODO 按时屏蔽外存功能
             // externalStorageId: {
-            //   title: this.$t('packages_dag_external_storage'), //外存配置
+            //   title: this.$t('packages_business_external_storage'), //外存配置
             //   type: 'string',
             //   'x-decorator': 'FormItem',
             //   'x-component': 'Select',
@@ -599,7 +614,7 @@ export default {
           loadAllTables: {
             type: 'boolean',
             default: true,
-            title: i18n.t('packages_business_connections_databaseform_duixiangshouji'),
+            title: i18n.t('packages_business_connections_databaseform_baohanbiao'),
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
@@ -629,6 +644,52 @@ export default {
               fulfill: {
                 state: {
                   display: '{{$deps[0] ? "hidden" : "visible"}}'
+                }
+              }
+            }
+          },
+          openTableExcludeFilter: {
+            title: i18n.t('packages_business_connections_databaseform_paichubiao'),
+            type: 'boolean',
+            default: false,
+            'x-decorator-props': {
+              feedbackLayout: 'none'
+            },
+            'x-decorator': 'FormItem',
+            'x-component': 'Switch'
+          },
+          openTableExcludeFilterTips: {
+            type: 'void',
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              colon: false
+            },
+            'x-component': 'Text',
+            'x-component-props': {
+              icon: 'info',
+              content: i18n.t('packages_business_connections_databaseform_keyicongbaohan')
+            }
+          },
+          tableExcludeFilter: {
+            type: 'string',
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input.TextArea',
+            'x-component-props': {
+              placeholder: this.$t('packages_business_connection_form_database_owner_tip')
+            },
+            'x-decorator-props': {
+              colon: false,
+              style: {
+                'margin-top': '-22px'
+              }
+            },
+            'x-reactions': {
+              dependencies: ['__TAPDATA.openTableExcludeFilter'],
+              fulfill: {
+                state: {
+                  display: '{{ $deps[0] ? "visible" : "hidden"}}'
                 }
               }
             }
@@ -673,7 +734,29 @@ export default {
           colon: false
         },
         'x-component': 'Select',
-        'x-reactions': '{{useAsyncDataSource(loadAccessNode)}}'
+        'x-reactions': [
+          '{{useAsyncDataSource(loadAccessNode)}}',
+          // 根据下拉数据判断是否存在已选的agent
+          {
+            fulfill: {
+              run: `if ($self.dataSource?.length && $self.value) {
+                const current = $self.dataSource.find(item => item.value === $self.value)
+                if (!current) {
+                  $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
+                }
+              }`
+            }
+          }
+        ],
+        // 校验下拉数据判断是否存在已选的agent
+        'x-validator': `{{(value, rule, ctx)=> {
+            if (value && ctx.field.dataSource?.length) {
+              const current = ctx.field.dataSource.find(item => item.value === value)
+              if (!current) {
+                return '${this.$t('packages_business_agent_select_not_found')}'
+              }
+            }
+          }}}`
       }
       let result = {
         type: 'object',
@@ -769,10 +852,27 @@ export default {
       }
       //this.showSystemConfig = true
       this.schemaScope = {
+        isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
             field.loading = true
             service({ field }, ...serviceParams).then(
+              action.bound(data => {
+                if (fieldName === 'value') {
+                  field.setValue(data)
+                } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
+        useAsyncDataSourceByConfig: (config, ...serviceParams) => {
+          // withoutField: 不往service方法传field参数
+          const { service, fieldName = 'dataSource', withoutField = false } = config
+          return field => {
+            field.loading = true
+            let fetch = withoutField ? service(...serviceParams) : service(field, ...serviceParams)
+            fetch.then(
               action.bound(data => {
                 if (fieldName === 'value') {
                   field.setValue(data)
@@ -793,32 +893,76 @@ export default {
             }) || []
           )
         },
-        loadCommand: async filter => {
-          const { pdkId, group, version } = this.pdkOptions
-          const { $values, command, page, size } = filter
-          let params = {
-            pdkId,
-            group,
-            version,
-            connectionConfig: $values,
-            command: command,
-            action: 'list',
-            argMap: {
-              page,
-              size
-            }
-          }
-          const searchLabel = filter.where?.label
-          if (searchLabel) {
-            params.action = 'search'
-            params.argMap.key = searchLabel?.like
-          }
+        loadCommandList: async (filter, val) => {
           try {
-            let result = await commandApi.codding(params)
+            const { $values, command, where = {}, page, size } = filter
+            const { pdkHash, id } = this.pdkOptions
+            const { __TAPDATA, ...formValues } = $values
+            const search = where.label?.like
+            const getValues = Object.assign({}, this.model?.config || {}, formValues)
+            let params = {
+              pdkHash,
+              connectionId: id || this.commandCallbackFunctionId,
+              connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+              command,
+              type: 'connection',
+              action: search ? 'search' : 'list',
+              argMap: {
+                key: search,
+                page,
+                size: 1000
+              }
+            }
+            if (!params.pdkHash || !params.connectionId) {
+              return { items: [], total: 0 }
+            }
+            let result = await proxyApi.command(params)
+            if (!result.items) {
+              return { items: [], total: 0 }
+            }
             return result
           } catch (e) {
-            return { total: 0, items: [] }
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
           }
+        },
+        getToken: async (field, params, $form) => {
+          const filter = {
+            subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
+            service: 'engine',
+            expireSeconds: 100000000
+          }
+          proxyApi.subscribe(filter).then(data => {
+            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const p = location.origin + location.pathname
+            let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
+            if (/^\/\w+/.test(data.token)) {
+              str = `${p.replace(/\/$/, '')}${data.token}`
+            }
+            $form.setValuesIn(field.name, str)
+          })
+        },
+        getCommandAndSetValue: async ($form, others) => {
+          const getState = $form.getState()
+          const { pdkHash } = this.pdkOptions
+          const { __TAPDATA, ...formValues } = getState?.values || {}
+          const { command } = others
+          const getValues = Object.assign({}, this.model?.config || {}, formValues)
+          let params = {
+            pdkHash,
+            connectionId: this.model?.id || this.commandCallbackFunctionId,
+            connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+            command,
+            type: 'connection'
+          }
+          proxyApi.command(params).then(data => {
+            const setValue = data.setValue
+            if (setValue) {
+              for (let key in setValue) {
+                $form.setValuesIn(key, setValue[key]?.data)
+              }
+            }
+          })
         },
         async loadExternalStorage() {
           try {
@@ -848,7 +992,9 @@ export default {
           loadAllTables,
           shareCdcEnable,
           accessNodeType,
-          accessNodeProcessId
+          accessNodeProcessId,
+          openTableExcludeFilter,
+          tableExcludeFilter
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -858,7 +1004,9 @@ export default {
             loadAllTables,
             shareCdcEnable,
             accessNodeType,
-            accessNodeProcessId
+            accessNodeProcessId,
+            openTableExcludeFilter,
+            tableExcludeFilter
           },
           ...this.model?.config
         })

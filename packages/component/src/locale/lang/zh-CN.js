@@ -45,5 +45,8 @@ export default {
   packages_component_src_inlineinput_zifuchangduxian: '字符长度限制{val1}-{val2}个字符',
   packages_component_src_inlineinput_baocun: '保存',
   packages_component_mixins_showmessage_xiangqing: '详情',
-  packages_component_src_selectlist_meiyougengduoshu: '没有更多数据'
+  packages_component_src_selectlist_meiyougengduoshu: '没有更多数据',
+  packages_component_src_classification_chuangjianfenlei: '创建分类',
+  packages_component_src_darkselect_biaoti: '标题',
+  packages_component_src_discoveryclassification_morenmuluji: '默认目录（技术）'
 }

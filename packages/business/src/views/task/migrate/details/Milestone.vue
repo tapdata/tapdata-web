@@ -5,7 +5,7 @@
       <VIcon v-if="isFold" class="v-icon ml-1">arrow-right</VIcon>
       <VIcon v-else class="v-icon ml-1">arrow-down</VIcon>
     </div>
-    <TableList
+    <VTable
       :empty-text="$t('packages_business_task_monitor_no_milestone_data')"
       :data="milestoneList"
       :columns="milestoneColumns"
@@ -33,16 +33,16 @@
 
         <!-- <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)"></StatusTag> -->
       </template>
-    </TableList>
+    </VTable>
   </div>
 </template>
 
 <script>
-import { VIcon, TableList } from '@tap/component'
+import { VIcon, VTable } from '@tap/component'
 
 export default {
   name: 'Milestone',
-  components: { TableList, VIcon },
+  components: { VTable, VIcon },
   props: {
     list: {
       type: Array,

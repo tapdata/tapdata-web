@@ -11,13 +11,8 @@
         {{ $t('packages_component_button_button') }}
       </ElButton>
       <div class="title">
-        <span>{{
-          types[0] === 'user'
-            ? $t('packages_component_classification_userTitle')
-            : $t('packages_component_classification_title')
-        }}</span>
+        <span>{{ comTitle }}</span>
       </div>
-      <!-- v-if="searchFalg" -->
       <div class="search-box">
         <ElInput class="search" size="mini" v-model="filterText">
           <span slot="suffix" class="el-input__icon h-100 ml-1">
@@ -65,13 +60,8 @@
         v-readonlybtn="authority"
         @click="showDialog()"
         class="create"
+        >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
       >
-        {{
-          types[0] === 'user'
-            ? $t('packages_component_classification_creatUserGroup')
-            : $t('packages_component_classification_creatDataClassification')
-        }}
-      </ElButton>
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -95,6 +85,7 @@
 <script>
 import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 
 export default {
   components: { VIcon },
@@ -106,6 +97,12 @@ export default {
       }
     },
     authority: {
+      type: String
+    },
+    title: {
+      type: String
+    },
+    viewPage: {
       type: String
     }
   },
@@ -132,12 +129,61 @@ export default {
       },
 
       nodeName: '',
-      parent_id: '',
-      title: ''
+      parent_id: ''
+    }
+  },
+  computed: {
+    ...mapState('classification', ['connections', 'migrate', 'sync']),
+    ...mapGetters('classification', ['stateConnections', 'stateMigrate', 'stateSync']),
+
+    comTitle() {
+      return (
+        this.title ||
+        (this.types[0] === 'user'
+          ? this.$t('packages_component_classification_userTitle')
+          : this.$t('packages_component_classification_title'))
+      )
     }
   },
   mounted() {
     this.getData()
+    //是否 默认打开/是否有选择tag
+    switch (this.viewPage) {
+      case 'connections':
+        this.isExpand = this.connections?.panelFlag
+        break
+      case 'migrate':
+        this.isExpand = this.migrate?.panelFlag
+        break
+      case 'sync':
+        this.isExpand = this.sync?.panelFlag
+        break
+    }
+  },
+  updated() {
+    switch (this.viewPage) {
+      case 'connections':
+        if (!this.isExpand) return
+        this.$nextTick(() => {
+          this.$refs.tree?.setCheckedKeys(this.connections?.classification)
+          this.$emit('nodeChecked', this.connections?.classification)
+        })
+        break
+      case 'migrate':
+        if (!this.isExpand) return
+        this.$nextTick(() => {
+          this.$refs.tree?.setCheckedKeys(this.migrate?.classification)
+          this.$emit('nodeChecked', this.migrate?.classification)
+        })
+        break
+      case 'sync':
+        if (!this.isExpand) return
+        this.$nextTick(() => {
+          this.$refs.tree?.setCheckedKeys(this.sync?.classification)
+          this.$emit('nodeChecked', this.sync?.classification)
+        })
+        break
+    }
   },
   watch: {
     types(_new, _old) {
@@ -151,8 +197,13 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('classification', ['setTag', 'setPanelFlag']),
     toggle() {
       this.isExpand = !this.isExpand
+      this.setPanelFlag({
+        panelFlag: this.isExpand,
+        type: this.viewPage
+      })
     },
     clear() {
       this.$refs.tree && this.$refs.tree.setCheckedNodes([])
@@ -178,6 +229,10 @@ export default {
     emitCheckedNodes() {
       let checkedNodes = this.$refs.tree.getCheckedKeys() || []
       this.$emit('nodeChecked', checkedNodes)
+      this.setTag({
+        value: checkedNodes,
+        type: this.viewPage
+      })
     },
     getData(cb) {
       let where = {}

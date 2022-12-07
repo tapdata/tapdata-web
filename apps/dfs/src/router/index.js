@@ -2,7 +2,8 @@ import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
-import i18n from '@/i18n'
+import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
+
 import Lang from '../views/Lang.vue'
 
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
@@ -38,6 +39,10 @@ const EtlStatistics = async () => {
   const { EtlStatistics } = await import('@tap/business')
   return EtlStatistics
 }
+const VerifyDetails = async () => {
+  const { VerifyDetails } = await import('@tap/business')
+  return VerifyDetails
+}
 const routes = [
   {
     path: '/',
@@ -48,7 +53,7 @@ const routes = [
         path: '/',
         name: 'Home',
         meta: {
-          title: i18n.t('tap_home')
+          title: 'tap_home'
         },
         redirect: { name: 'Workbench' },
         hidden: true
@@ -58,7 +63,7 @@ const routes = [
         name: 'Workbench',
         component: () => import('../views/workbench/Workbench.vue'),
         meta: {
-          title: i18n.t('tap_workbench'),
+          title: 'tap_workbench',
           icon: 'workbench',
           hideTitle: true
         },
@@ -68,7 +73,7 @@ const routes = [
             name: 'WorkbenchNotice',
             component: () => import('../views/workbench/Notice.vue'),
             meta: {
-              title: i18n.t('tap_announcement_notice')
+              title: 'tap_announcement_notice'
             }
           }
         ]
@@ -78,7 +83,7 @@ const routes = [
         name: 'SystemNotice',
         component: () => import('../views/workbench/SystemNotice.vue'),
         meta: {
-          title: i18n.t('tap_system_notification')
+          title: 'tap_system_notification'
         }
       },
       {
@@ -86,7 +91,7 @@ const routes = [
         name: 'Instance',
         component: () => import(/* webpackChunkName: "instance" */ '../views/instance/Instance.vue'),
         meta: {
-          title: i18n.t('tap_agent_management'),
+          title: 'tap_agent_management',
           icon: 'agent'
         },
         children: [
@@ -98,7 +103,7 @@ const routes = [
             // which is lazy-loaded when the route is visited.
             component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/Details.vue'),
             meta: {
-              title: i18n.t('tap_instance_details')
+              title: 'tap_instance_details'
             }
           }
         ]
@@ -109,7 +114,7 @@ const routes = [
         // component: Iframe,
         component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connection/List.tsx'),
         meta: {
-          title: i18n.t('tap_connection_management'),
+          title: 'tap_connection_management',
           icon: 'connection'
         },
         children: [
@@ -119,7 +124,7 @@ const routes = [
             component: ConnectionForm,
             //component: Iframe,
             meta: {
-              title: i18n.t('tap_create_connection')
+              title: 'tap_create_connection'
             }
           },
           {
@@ -128,7 +133,7 @@ const routes = [
             component: ConnectionForm,
             //component: Iframe,
             meta: {
-              title: i18n.t('tap_edit_connection')
+              title: 'tap_edit_connection'
             }
           }
         ]
@@ -138,7 +143,7 @@ const routes = [
         name: 'migrateList',
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/MigrationList.tsx'),
         meta: {
-          title: i18n.t('task_manage_migrate'),
+          title: 'task_manage_migrate',
           icon: 'task'
         },
         children: [
@@ -147,7 +152,7 @@ const routes = [
             name: 'MigrateDetails',
             component: MigrateDetails,
             meta: {
-              title: i18n.t('tap_task_details')
+              title: 'tap_task_details'
             }
           },
           {
@@ -155,7 +160,7 @@ const routes = [
             name: 'MigrateStatistics',
             component: MigrateDetails,
             meta: {
-              title: i18n.t('tap_monitor')
+              title: 'tap_monitor'
             }
           }
         ]
@@ -165,7 +170,7 @@ const routes = [
         name: 'dataflowList',
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/EtlList.tsx'),
         meta: {
-          title: i18n.t('task_manage_etl'),
+          title: 'task_manage_etl',
           icon: 'task'
         },
         children: [
@@ -174,7 +179,7 @@ const routes = [
             name: 'dataflowDetails',
             component: EtlDetails,
             meta: {
-              title: i18n.t('tap_task_details')
+              title: 'tap_task_details'
             }
           },
           {
@@ -182,7 +187,7 @@ const routes = [
             name: 'dataflowStatistics',
             component: EtlStatistics,
             meta: {
-              title: i18n.t('tap_monitor')
+              title: 'tap_monitor'
             }
           }
         ]
@@ -193,7 +198,7 @@ const routes = [
         name: 'OperationLog',
         component: () => import(/* webpackChunkName: "instance" */ '../views/operation-log/List.vue'),
         meta: {
-          title: i18n.t('tap_operation_log'),
+          title: 'tap_operation_log',
           icon: 'operation-log'
         }
       },
@@ -202,8 +207,29 @@ const routes = [
         name: 'userCenter',
         component: UserCenter,
         meta: {
-          title: i18n.t('tap_user_center')
+          title: 'tap_user_center'
         }
+      },
+      {
+        path: '/verify',
+        name: 'verify',
+        redirect: 'verify/',
+        meta: {
+          title: 'page_title_data_verify',
+          doNotJump: true
+        },
+        children: [
+          {
+            path: ':id/details',
+            name: 'VerifyDetails',
+            component: VerifyDetails,
+            meta: {
+              title: 'page_title_data_difference_details',
+              code: 'Data_verify',
+              isNotAside: true
+            }
+          }
+        ]
       }
     ]
   },
@@ -216,11 +242,20 @@ const routes = [
     }
   },
   {
+    path: '/dataflow/monitor/:id',
+    name: 'TaskMonitor',
+    component: MigrationMonitor,
+    meta: {
+      title: 'page_title_run_monitor',
+      code: 'Data_SYNC_menu'
+    }
+  },
+  {
     path: '/fastDownload',
     name: 'FastDownload',
     component: FastDownload,
     meta: {
-      title: i18n.t('tap_agent_download_now')
+      title: 'tap_agent_download_now'
     }
   },
   {
@@ -228,7 +263,16 @@ const routes = [
     name: 'UpgradeVersion',
     component: UpgradeVersion,
     meta: {
-      title: i18n.t('tap_upgrade')
+      title: 'tap_upgrade'
+    }
+  },
+  //付费升级
+  {
+    path: '/paidUpgrade',
+    name: 'PaidUpgrade',
+    component: PaidUpgrade,
+    meta: {
+      title: 'tap_upgrade'
     }
   },
   {
@@ -261,7 +305,7 @@ const routes = [
     name: 'DataflowEditor',
     component: DagEditor,
     meta: {
-      title: i18n.t('task_manage_etl')
+      title: 'task_manage_etl'
     }
   },
   {
@@ -269,7 +313,7 @@ const routes = [
     name: 'DataflowViewer',
     component: DagEditor,
     meta: {
-      title: i18n.t('task_manage_etl')
+      title: 'task_manage_etl'
     }
   },
   {
@@ -277,7 +321,7 @@ const routes = [
     name: 'MigrateCreate',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
@@ -285,7 +329,7 @@ const routes = [
     name: 'MigrateEditor',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
@@ -293,7 +337,7 @@ const routes = [
     name: 'MigrateViewer',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {

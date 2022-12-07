@@ -6,19 +6,25 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
-        <div class="command-item mr-6" @click="command('support')">
+        <div class="command-item mr-6" @click="command('v2')">
+          <VIcon class="mr-2" size="17">navigation_general</VIcon>
+          <span class="cursor-pointer">{{ $t('header_upgrade') }}</span>
+        </div>
+        <div class="command-item mr-6 flex align-items-center" @click="command('support')">
           <VIcon class="mr-2" size="17">question</VIcon>
           <span>{{ $t('header_technical_support') }}</span>
         </div>
-        <div class="command-item mr-6" @click="command('handbook')">
+        <div class="command-item mr-6 flex align-items-center" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
         </div>
-        <NotificationPopover class="command-item mr-6"></NotificationPopover>
-        <ElDropdown v-if="false" placement="bottom" class="mr-6" @command="changeLanguage">
-          <span class="cursor-pointer command-item langs-btn">{{ languagesItems[lang] }}</span>
+        <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
+        <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage">
+          <span class="cursor-pointer command-item icon-btn">
+            <VIcon size="20">{{ 'language-' + lang }}</VIcon>
+          </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem v-for="(value, key) in languagesItems" :key="key" :command="key">
+            <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
             </ElDropdownItem>
           </ElDropdownMenu>
@@ -34,6 +40,7 @@
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
+            <span class="ml-2 current">{{ paidPlansCode || $t('dfs_the_header_header_jichuban') }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">
@@ -60,11 +67,13 @@ export default {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       lang: '',
-      languagesItems: langMenu
+      languages: langMenu,
+      paidPlansCode: ''
     }
   },
   created() {
     this.lang = getCurrentLanguage()
+    this.getPaidPlan()
     setCurrentLanguage(this.lang, this.$i18n)
   },
   methods: {
@@ -81,7 +90,10 @@ export default {
           window.open('https://cloud.tapdata.net/contact.html', '_blank')
           break
         case 'home':
-          window.open('https://cloud.tapdata.net/', '_blank')
+          window.open('https://tapdata.net/', '_blank')
+          break
+        case 'v2':
+          window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
           break
         case 'userCenter':
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
@@ -128,6 +140,12 @@ export default {
           document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
+    },
+    //用户是否是付费用户
+    getPaidPlan() {
+      this.$axios.get('api/tcm/user/paidPlan').then(data => {
+        this.paidPlansCode = data?.paidPlans?.[0].name
+      })
     }
   }
 }
@@ -142,6 +160,14 @@ export default {
   padding: 0 7px;
   background: rgba(54, 54, 54, 1);
   box-sizing: border-box;
+  .current {
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 2px;
+    padding: 4px;
+  }
   .pointer {
     cursor: pointer;
   }
@@ -270,9 +296,5 @@ export default {
       right: 0;
     }
   }
-}
-.langs-btn {
-  border: 1px solid #ddd;
-  border-radius: 4px;
 }
 </style>

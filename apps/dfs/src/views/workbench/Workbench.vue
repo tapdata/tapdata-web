@@ -33,16 +33,8 @@
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
-                <!--                <ElLink-->
-                <!--                  v-if="item.id === 9"-->
-                <!--                  target="_blank"-->
-                <!--                  type="primary"-->
-                <!--                  class="notice-list__name flex-grow-1 ellipsis block pointer"-->
-                <!--                  href="https://sourl.cn/2f3mPF"-->
-                <!--                >-->
-                <!--                  {{ item.name }}-->
-                <!--                </ElLink>-->
                 <ElLink
+                  v-else
                   type="primary"
                   class="notice-list__name flex-grow-1 ellipsis block pointer"
                   @click="toNotice(item)"
@@ -116,6 +108,52 @@
         </div>
       </div>
     </div>
+    <!-- 版本升级弹窗-->
+    <el-dialog
+      class="dialog-upgrade"
+      :visible.sync="showUpgrade"
+      :title="$t('dfs_workbench_workbench_banbenshengjitong')"
+      width="670px"
+    >
+      <div class="dialog-upgrade__text">
+        <div>
+          <p class="mb-2">{{ $t('dfs_workbench_workbench_zunjingdeyonghu') }}</p>
+          <p class="mb-2">{{ $t('dfs_workbench_workbench_zainianyueriwo') }}</p>
+          <p>{{ $t('dfs_workbench_workbench_youyuzengjiale') }}</p>
+          <p>{{ $t('dfs_workbench_workbench_dangranruguoyou') }}</p>
+        </div>
+        <p class="mb-2 mt-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_xiamianshixinban') }}</p>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_jiyuPdk2') }}</p>
+        <ul>
+          <li>{{ $t('dfs_workbench_workbench_jiyuPdk') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_yonghukeanzhao') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_xinkaifadeshu') }}</li>
+        </ul>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_quanlianghezengliang') }}</p>
+        <ul>
+          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju3') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju2') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju') }}</li>
+        </ul>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_renwukeguance') }}</p>
+        <ul>
+          <li>{{ $t('dfs_workbench_workbench_renwuzhibiaoke') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_renwurizhike') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_renwugaojingneng') }}</li>
+        </ul>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">{{ $t('dfs_workbench_workbench_shujutongbuneng') }}</p>
+        <ul>
+          <li>{{ $t('dfs_workbench_workbench_xinzengdongtaixin') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_xinzengDdl') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi2') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi') }}</li>
+        </ul>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="showUpgrade = false">{{ $t('button_cancel') }}</el-button>
+      </span>
+    </el-dialog>
+    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
   </div>
   <RouterView v-else></RouterView>
 </template>
@@ -123,14 +161,15 @@
 <script>
 import i18n from '@/i18n'
 
-import { connectionsApi, taskApi } from '@tap/api'
-import { VIcon, Chart } from '@tap/component'
+import { connectionsApi, taskApi, paidApi } from '@tap/api'
+import { VIcon, Chart, PaidUpgradeDialog } from '@tap/component'
 import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart },
+  components: { VIcon, Chart, PaidUpgradeDialog },
+  inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
     const $t = this.$t.bind(this)
@@ -276,11 +315,12 @@ export default {
           }
         }
       },
-      colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)']
+      colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
+      showUpgrade: false, //版本升级弹窗
+      //付费升级
+      paidUpgradeVisible: false,
+      paidPlan: ''
     }
-  },
-  created() {
-    this.loadChat()
   },
   mounted() {
     this.init()
@@ -345,52 +385,10 @@ export default {
     loadNotices() {
       this.notices = [
         {
-          id: 16,
+          id: 1,
           type: '',
-          name: i18n.t('workbench_Workbench_tAPDA12'),
-          time: '2022-05-12 18:00'
-        },
-        {
-          id: 15,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA1'),
-          time: '2022-04-22 19:00'
-        },
-        {
-          id: 14,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA5'),
-          time: '2022-04-07 21:00:00'
-        },
-        {
-          id: 13,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA4'),
-          time: '2022-03-30 18:00:00'
-        },
-        {
-          id: 12,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA3'),
-          time: '2022-03-11 14:00:00'
-        },
-        {
-          id: 11,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA2'),
-          time: '2022-02-28 14:00:00'
-        },
-        {
-          id: 10,
-          type: '',
-          name: i18n.t('workbench_Workbench_tAPDA'),
-          time: '2022-02-12 14:00:00'
-        },
-        {
-          id: 8,
-          type: '',
-          name: i18n.t('workbench_Notice_tAPDA12'),
-          time: '2021-12-21'
+          name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
+          time: '2022-12-03 18:00'
         }
       ]
     },
@@ -426,21 +424,33 @@ export default {
         }
       })
     },
-    createTask() {
-      this.$router.push({
-        name: 'MigrateCreate'
+    async createTask() {
+      this.paidPlan = await paidApi.getUserPaidPlan()
+      if (!this.paidPlan?.valid) {
+        this.paidUpgradeVisible = true
+        return
+      }
+      this.checkAgent(() => {
+        this.$router.push({
+          name: 'MigrateCreate'
+        })
       })
     },
     createConnection() {
       this.$root.$emit('select-connection-type')
     },
     toNotice(item) {
-      this.$router.push({
-        name: 'WorkbenchNotice',
-        query: {
-          id: item?.id
-        }
-      })
+      if (item?.id === 1) {
+        //当前页弹窗
+        this.showUpgrade = true
+      } else {
+        this.$router.push({
+          name: 'WorkbenchNotice',
+          query: {
+            id: item?.id
+          }
+        })
+      }
     },
     clickGuide(item) {
       if (item.action) {
@@ -449,36 +459,8 @@ export default {
       }
       window.open(item.url, '_blank')
     },
-    hideCustomTip() {
-      setTimeout(() => {
-        let tDom = document.getElementById('titlediv')
-        if (tDom) {
-          tDom.style.display = 'none'
-        } else {
-          this.hideCustomTip()
-        }
-      }, 5000)
-    },
     numToThousands() {
       return numToThousands(...arguments)
-    },
-    loadChat() {
-      let $zoho = $zoho || {}
-      $zoho.salesiq = $zoho.salesiq || {
-        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
-        values: {},
-        ready: function () {}
-      }
-      window.$zoho = $zoho
-      let d = document
-      let s = d.createElement('script')
-      s.type = 'text/javascript'
-      s.id = 'zsiqscript'
-      s.defer = true
-      s.src = 'https://salesiq.zoho.com.cn/widget'
-      let t = d.getElementsByTagName('script')[0]
-      t.parentNode.insertBefore(s, t)
-      this.hideCustomTip()
     }
   }
 }
@@ -581,5 +563,20 @@ export default {
 }
 .guide-list {
   height: 190px;
+}
+.dialog-upgrade__text {
+  font-size: 12px;
+  color: map-get($fontColor, light);
+}
+.dialog-upgrade__text__header {
+  font-size: 14px;
+  color: map-get($fontColor, normal);
+}
+.dialog-upgrade {
+  ::v-deep {
+    .el-dialog__body {
+      padding: 0 20px;
+    }
+  }
 }
 </style>

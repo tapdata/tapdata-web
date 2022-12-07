@@ -102,3 +102,12 @@ export const calcElementLayout = element => {
     return 'horizontal'
   }
 }
+
+export function makePageTitle(title) {
+  const base = process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
+  return title ? `${title} - ${base}` : base
+}
+
+export function setPageTitle(title) {
+  window.document.title = makePageTitle(title)
+}

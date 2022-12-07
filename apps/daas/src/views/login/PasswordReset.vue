@@ -65,6 +65,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { usersApi } from '@tap/api'
 import LoginPage from './LoginPage'
 export default {
@@ -151,9 +153,9 @@ export default {
             })
             .catch(e => {
               if (e?.data?.message) {
-                if (e.data.message === '找不到电子邮件') {
+                if (e.data.message === i18n.t('daas_login_passwordreset_zhaobudaodianzi')) {
                   this.errorMessage = this.$t('signin_not_mailbox')
-                } else if (e.data.message === '尚未验证电子邮件') {
+                } else if (e.data.message === i18n.t('daas_login_passwordreset_shangweiyanzhengdian')) {
                   this.errorMessage = this.$t('signin_verify_email_invalid')
                 } else if (e.data.message.includes('Incorect')) {
                   this.errorMessage = this.$t('signin_verify_code_not_incorrect')

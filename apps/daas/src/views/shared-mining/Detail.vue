@@ -49,14 +49,14 @@
       </div>
     </div>
     <div class="share-detail-box share-detail-main mt-5 p-5 overflow-hidden">
-      <TableList
+      <VTable
         v-if="detailData"
         :data="detailData.taskList"
         :columns="columns"
         :remote-data="id"
         height="100%"
         :has-pagination="false"
-        ref="tableList"
+        ref="VTable"
       >
         <template slot="sourceTimestamp" slot-scope="scope">
           <span>{{ formatTime(scope.row.sourceTimestamp) }}</span>
@@ -75,7 +75,7 @@
             }}</ElButton>
           </div>
         </template>
-      </TableList>
+      </VTable>
     </div>
     <el-dialog
       width="400px"
@@ -84,7 +84,7 @@
       :close-on-click-modal="false"
       :visible.sync="tableDialogVisible"
     >
-      <TableList
+      <VTable
         :data="tableNameList"
         :columns="columnsTableName"
         :remote-data="id"
@@ -92,7 +92,7 @@
         :has-pagination="false"
         ref="tableName"
       >
-      </TableList>
+      </VTable>
       <span slot="footer" class="dialog-footer">
         <el-pagination
           @current-change="getTableNames"
@@ -109,7 +109,9 @@
 </template>
 
 <script>
-import { Chart, DatetimeRange, TableList } from '@tap/component'
+import i18n from '@/i18n'
+
+import { Chart, DatetimeRange, VTable } from '@tap/component'
 import { formatMs } from '@/utils/util'
 import dayjs from 'dayjs'
 import { measurementApi, logcollectorApi } from '@tap/api'
@@ -117,7 +119,7 @@ import { TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 export default {
   name: 'Info',
-  components: { Chart, TableList, DatetimeRange, TaskStatus },
+  components: { Chart, VTable, DatetimeRange, TaskStatus },
   data() {
     return {
       id: '',
@@ -217,7 +219,7 @@ export default {
       operations: ['start', 'stop', 'forceStop'],
       columnsTableName: [
         {
-          label: '表名称',
+          label: i18n.t('modules_header_tablename'),
           prop: 'tablename'
         }
       ],
@@ -367,7 +369,7 @@ export default {
           })
         })
         // eslint-disable-next-line
-        console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
+        console.log(i18n.t('daas_shared_mining_detail_wajuexiangqingx'), this.lineDataDeep.x.length, xArr)
         xArr.forEach((el, index) => {
           if (!this.lineDataDeep.x.includes(el)) {
             this.lineDataDeep.x.push(el)
@@ -417,7 +419,7 @@ export default {
         })
       } else {
         this.$router.push({
-          name: 'dataflowStatistics',
+          name: 'TaskMonitor',
           params: {
             id: row.id
           }

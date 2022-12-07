@@ -21,6 +21,7 @@ export const convertSchemaToTreeData = function (Schema) {
           data_type: field.data_type,
           primary_key_position: field.primary_key_position,
           table_name: field.table_name || 'table',
+          schema_field_name: field.field_name,
           original_field_name: field.original_field_name || field.field_name,
           is_deleted: field.is_deleted,
           comment: field.comment,

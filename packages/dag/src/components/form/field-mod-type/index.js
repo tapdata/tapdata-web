@@ -207,7 +207,7 @@ export const FieldModType = connect(
           if (ops.length === 0) {
             op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
               id: data.id,
-              field: nativeData.original_field_name,
+              field: data.schema_field_name || data.field_name,
               operand: data.data_type,
               originalDataType: nativeData.originalDataType,
               table_name: data.table_name,
