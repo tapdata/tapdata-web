@@ -661,54 +661,54 @@ export default [
         }
       },
       /* ---------- 用户管理  ----------*/
-      // {
-      //   path: '/user',
-      //   name: 'users',
-      //   component: () => import(/* webpackChunkName: "user" */ '@/views/user/List'),
-      //   meta: {
-      //     title: 'page_title_user',
-      //     code: 'user_management_menu'
-      //   }
-      // },
+      {
+        path: '/user',
+        name: 'users',
+        component: () => import(/* webpackChunkName: "user" */ '@/views/user/List'),
+        meta: {
+          title: 'page_title_user',
+          code: 'user_management_menu'
+        }
+      },
       /* ---------- 角色管理  ----------*/
-      // {
-      //   path: '/role',
-      //   name: 'roles',
-      //   component: Parent,
-      //   redirect: 'role/',
-      //   meta: {
-      //     title: 'page_title_role'
-      //   },
-      //   children: [
-      //     {
-      //       path: '',
-      //       name: 'roleList',
-      //       component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
-      //       meta: {
-      //         title: 'page_title_role',
-      //         code: 'role_management_menu'
-      //       }
-      //     },
-      //     {
-      //       path: 'create',
-      //       name: 'role',
-      //       component: RoleDetails,
-      //       meta: {
-      //         title: 'page_title_role',
-      //         code: 'role_creation'
-      //       }
-      //     },
-      //     {
-      //       path: ':id/edit',
-      //       name: 'editRole',
-      //       component: RoleDetails,
-      //       meta: {
-      //         title: 'page_title_role',
-      //         code: 'role_edition'
-      //       }
-      //     }
-      //   ]
-      // },
+      {
+        path: '/role',
+        name: 'roles',
+        component: Parent,
+        redirect: 'role/',
+        meta: {
+          title: 'page_title_role'
+        },
+        children: [
+          {
+            path: '',
+            name: 'roleList',
+            component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
+            meta: {
+              title: 'page_title_role',
+              code: 'role_management_menu'
+            }
+          },
+          // {
+          //   path: 'create',
+          //   name: 'role',
+          //   component: RoleDetails,
+          //   meta: {
+          //     title: 'page_title_role',
+          //     code: 'role_creation'
+          //   }
+          // },
+          // {
+          //   path: ':id/edit',
+          //   name: 'editRole',
+          //   component: RoleDetails,
+          //   meta: {
+          //     title: 'page_title_role',
+          //     code: 'role_edition'
+          //   }
+          // }
+        ]
+      },
       /* ---------- 设置  ----------*/
       {
         path: '/settingCenter',
