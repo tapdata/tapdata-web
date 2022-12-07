@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, ref } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { useForm } from '@formily/vue'
 import { onMounted, onUnmounted } from '@vue/composition-api'
