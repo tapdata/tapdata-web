@@ -134,7 +134,7 @@
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('list_operation')" width="200">
+        <ElTableColumn :label="$t('list_operation')" width="300">
           <template slot-scope="scope">
             <ElButton size="mini" type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
               $t('agent_button_deploy')
@@ -157,6 +157,8 @@
               @click="handleDel(scope.row)"
               >{{ $t('button_delete') }}</ElButton
             >
+            <ElButton size="mini" type="text" @click="handleUpload(scope.row)">上传</ElButton>
+            <ElButton size="mini" type="text" @click="open(scope.row)">日志</ElButton>
           </template>
         </ElTableColumn>
         <div v-if="!isSearching" class="instance-table__empty" slot="empty">
@@ -293,6 +295,35 @@
           </VButton>
         </div>
       </Details>
+      <!--  日志下载    -->
+      <ElDialog :visible.sync="downloadDialog" title="本地日志下载" width="1000px">
+        <el-button class="mb-4 float-end" type="primary" @click="handleUpload(currentAgentId)">本地日志上传</el-button>
+        <VTable
+          :data="downloadList"
+          :columns="downloadListCol"
+          :remote-data="id"
+          height="500px"
+          mn
+          max-height="500px"
+          ref="tableName"
+          :has-pagination="false"
+        >
+          <template slot="operation" slot-scope="scope">
+            <ElButton size="mini" type="text" @click="handleDownload(scope.row)">下载</ElButton>
+          </template>
+        </VTable>
+        <span slot="footer" class="dialog-footer">
+          <el-pagination
+            @current-change="getDownloadList"
+            :current-page="currentPage"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="downloadTotal"
+          >
+          </el-pagination>
+        </span>
+      </ElDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -306,7 +337,7 @@ import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
-import { VIcon, FilterBar } from '@tap/component'
+import { VIcon, FilterBar, VTable } from '@tap/component'
 
 let timer = null
 
@@ -316,7 +347,8 @@ export default {
     StatusTag,
     VIcon,
     Details,
-    FilterBar
+    FilterBar,
+    VTable
   },
   mixins: [timeFunction],
   data() {
@@ -350,7 +382,45 @@ export default {
       currentVersionInfo: '',
       showDetails: false,
       detailId: null,
-      filterItems: []
+      filterItems: [],
+      //日志下载
+      downloadDialog: false,
+      downloadListCol: [
+        {
+          label: '文件名',
+          prop: 'id'
+        },
+        {
+          label: '文件大小',
+          prop: 'fileSize'
+        },
+        {
+          label: '上传时间',
+          prop: 'uploadDate'
+        },
+        {
+          label: '文件状态',
+          prop: 'status'
+        },
+
+        {
+          label: '文件下载',
+          slotName: 'operation'
+        }
+      ],
+      downloadList: [
+        {
+          id: '122',
+          fileSize: 'ee',
+          uploadDate: 'ee',
+          status: 'ee',
+          agentId: 'ee'
+        }
+      ],
+      currentAgentId: '',
+      downloadTotal: 14,
+      currentPage: 1,
+      pageSize: 10
     }
   },
   computed: {
@@ -888,6 +958,35 @@ export default {
     },
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
+    },
+    //日志上传
+    handleUpload(row) {
+      this.$axios.post('/api/tcm/uploadLog', { agentId: row.id }).then(() => {
+        this.$message.success('上传成功')
+      })
+    },
+    //打开日志列表
+    open(row) {
+      this.downloadDialog = true
+      this.currentAgentId = row.id
+      this.getDownloadList()
+    },
+    //日志列表
+    getDownloadList() {
+      let filter = {
+        agentId: this.currentAgentId,
+        startNum: this.currentPage,
+        pageNum: this.pageSize
+      }
+      this.$axios.get('/api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(() => {
+        this.$message.success('上传成功')
+      })
+    },
+    //日志下载
+    handleDownload(row) {
+      this.$axios.get('/api/tcm/downloadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(() => {
+        this.$message.success('下载成功')
+      })
     }
   }
 }
