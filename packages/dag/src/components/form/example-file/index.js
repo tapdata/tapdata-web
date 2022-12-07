@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { connect, mapProps } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from '@vue/composition-api'
 import './index.scss'
 // import * as components from 'web-core/components/form'
 // import { Form, FormItem, Switch, Input, Checkbox, Radio} from '@formily/element'

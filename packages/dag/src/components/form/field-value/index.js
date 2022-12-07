@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from '@vue/composition-api'
 import { VIcon } from '@tap/component'
 import '../field-rename/index.scss'
 import { convertSchemaToTreeData } from '../field-rename/util'

@@ -1,12 +1,10 @@
-import { defineComponent, ref, watch, onMounted, computed, nextTick } from 'vue-demi'
+import { defineComponent, ref, watch, onMounted, computed, nextTick } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
-import { h as createElement, useFieldSchema, useForm, RecursionField } from '@formily/vue'
 import { observe } from '@formily/reactive'
-import { Space } from '../space'
-import { FormItem } from '@formily/element'
-import './style.scss'
+import { FormItem, Space, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
 import { getNodeIconSrc } from '@tap/business'
 import { metadataInstancesApi } from '@tap/api'
+import './style.scss'
 
 export const MergeTableTree = observer(
   defineComponent({

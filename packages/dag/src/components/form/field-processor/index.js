@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, nextTick } from 'vue-demi'
+import { defineComponent, ref, reactive, nextTick } from '@vue/composition-api'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem } from '../index'
 import { useForm } from '@formily/vue'

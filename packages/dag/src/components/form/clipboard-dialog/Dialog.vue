@@ -23,7 +23,7 @@
 import i18n from '@tap/i18n'
 
 import { VCodeEditor } from '@tap/component'
-import ClipboardButton from '../clipboard-button'
+import { ClipboardButton } from '@tap/form'
 
 export default {
   name: 'ClipboardDialog',

@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, onMounted } from 'vue-demi'
+import { defineComponent, ref, onMounted } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { useForm, useField } from '@formily/vue'
 

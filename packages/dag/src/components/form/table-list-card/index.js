@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, ref } from '@vue/composition-api'
 import { metadataInstancesApi } from '@tap/api'
 import { OverflowTooltip } from '@tap/component'
 import './style.scss'

@@ -1,8 +1,6 @@
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent, ref } from '@vue/composition-api'
 import i18n from '@tap/i18n'
-import { ref } from 'vue-demi'
-import { HighlightCode } from '../highlight-code'
-import { FormItem, JsEditor } from '../index'
+import { FormItem, HighlightCode, JsEditor } from '@tap/form'
 import './style.scss'
 
 export const JsDeclare = defineComponent({
