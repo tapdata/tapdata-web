@@ -28,6 +28,8 @@ export default {
     resize
   },
 
+  inject: ['buried'],
+
   data() {
     const dataflow = observable({
       ...DEFAULT_SETTINGS,

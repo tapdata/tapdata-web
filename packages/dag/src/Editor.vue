@@ -131,6 +131,8 @@ export default {
     ConsolePanel
   },
 
+  inject: ['buried'],
+
   data() {
     return {
       NODE_PREFIX,

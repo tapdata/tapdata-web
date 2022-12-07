@@ -134,6 +134,8 @@ export default {
     TransformLoading
   },
 
+  inject: ['buried'],
+
   data() {
     return {
       NODE_PREFIX,
