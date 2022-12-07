@@ -1,4 +1,4 @@
-import { onBeforeUnmount, watch } from 'vue-demi'
+import { onBeforeUnmount, watch } from '@vue/composition-api'
 import { observe } from '@formily/reactive'
 
 /**

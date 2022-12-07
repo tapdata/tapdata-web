@@ -1,6 +1,6 @@
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, onUnmounted } from '@vue/composition-api'
-import { FormItem, JsEditor } from '../index'
+import { FormItem, JsEditor } from '@tap/form'
 import { VCodeEditor, VirtualSelect } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { useForm } from '@formily/vue'

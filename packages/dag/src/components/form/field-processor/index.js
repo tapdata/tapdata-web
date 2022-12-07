@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, nextTick, watch } from '@vue/composition-api'
 import { metadataInstancesApi, taskApi } from '@tap/api'
-import { FormItem } from '../index'
+import { FormItem } from '@tap/form'
 import { useForm } from '@formily/vue'
 import './style.scss'
 import { VIcon, EmptyItem, OverflowTooltip } from '@tap/component'
