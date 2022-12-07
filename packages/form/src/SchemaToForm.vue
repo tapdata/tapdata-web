@@ -15,8 +15,10 @@
 </template>
 
 <script>
-import { Form, SchemaField } from '@tap/form'
 import { createForm } from '@formily/core'
+
+import { SchemaField } from './shared'
+import { Form } from './components'
 
 export default {
   name: 'SchemaToForm',

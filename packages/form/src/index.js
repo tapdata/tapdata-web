@@ -1,11 +1,13 @@
 import i18n from '@tap/i18n'
 import { registerValidateRules } from '@formily/core'
-import { createSchemaField } from '@formily/vue'
 import cronParse from 'cron-parser'
 import * as components from './components'
 import { composeExport } from '@formily/element/lib/__builtins__'
 import langs from './locale'
 import './style.scss'
+import SchemaToForm from './SchemaToForm'
+
+export { SchemaToForm }
 
 registerValidateRules({
   cron(value, rule) {
@@ -20,11 +22,8 @@ registerValidateRules({
   }
 })
 
-const { SchemaField } = createSchemaField({
-  components
-})
-
-export { SchemaField, composeExport, langs, components }
+export { composeExport, langs, components }
 
 export * from './components'
+export * from './shared'
 export * from '@formily/vue'

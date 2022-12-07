@@ -17,7 +17,3 @@ export * from './highlight-code'
 export * from './Button'
 
 export * from '@formily/element'
-
-import SchemaToForm from './SchemaToForm'
-
-export { SchemaToForm }
