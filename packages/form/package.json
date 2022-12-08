@@ -19,7 +19,6 @@
     "@formily/vue": "^2.1.2",
     "@tap/api": "workspace:^1.0.0",
     "@tap/assets": "workspace:^1.0.0",
-    "@tap/business": "workspace:^1.0.0",
     "@tap/component": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
     "@vue/composition-api": "^1.2.4",

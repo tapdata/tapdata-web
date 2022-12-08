@@ -134,6 +134,8 @@ export default {
     TransformLoading
   },
 
+  inject: ['buried'],
+
   data() {
     return {
       NODE_PREFIX,
@@ -263,10 +265,12 @@ export default {
     },
 
     async saveAsNewDataflow() {
+      this.buried('migrationSubmit')
       this.isSaving = true
       const data = this.getDataflowDataToSave()
       try {
         const dataflow = await taskApi.post(data)
+        this.buried('migrationSubmit', { result: true })
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
@@ -278,7 +282,7 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
-
+        this.buried('migrationSubmit', { result: false })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           this.newDataflow(newName)
@@ -396,6 +400,7 @@ export default {
     },
 
     async handleStart() {
+      this.buried('migrationStart')
       this.unWatchStatus?.()
       this.unWatchStatus = this.$watch('dataflow.status', v => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
@@ -423,6 +428,9 @@ export default {
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
         // this.gotoViewer()
+        this.buried('taskSubmit', { result: true })
+      } else {
+        this.buried('taskSubmit', { result: false })
       }
     },
 

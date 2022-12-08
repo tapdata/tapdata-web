@@ -90,7 +90,7 @@ export default {
           window.open('https://cloud.tapdata.net/contact.html', '_blank')
           break
         case 'home':
-          window.open('https://cloud.tapdata.net/', '_blank')
+          window.open('https://tapdata.net/', '_blank')
           break
         case 'v2':
           window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')

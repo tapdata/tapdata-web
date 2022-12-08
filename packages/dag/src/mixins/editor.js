@@ -28,6 +28,8 @@ export default {
     resize
   },
 
+  inject: ['buried'],
+
   data() {
     const dataflow = observable({
       ...DEFAULT_SETTINGS,
@@ -1676,13 +1678,21 @@ export default {
     },
 
     async handleStart() {
+      const routeName = this.$route.name
+      const isDataflow = ['DataflowNew', 'DataflowEditor', 'DataflowViewer', 'TaskMonitor'].includes(routeName)
+      const buriedCode = isDataflow ? 'taskStart' : 'migrationStart'
+      this.buried(buriedCode)
+
       const flag = await this.save(true)
       if (flag) {
         this.dataflow.disabledData.edit = true
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
+        this.buried(buriedCode, { result: true })
         this.gotoViewer()
+      } else {
+        this.buried(buriedCode, { result: false })
       }
     },
 
