@@ -131,6 +131,8 @@ export default {
     ConsolePanel
   },
 
+  inject: ['buried'],
+
   data() {
     return {
       NODE_PREFIX,
@@ -349,10 +351,12 @@ export default {
     },
 
     async saveAsNewDataflow() {
+      this.buried('taskSubmit')
       this.isSaving = true
       const data = this.getDataflowDataToSave()
       try {
         const dataflow = await taskApi.post(data)
+        this.buried('taskSubmit', { result: true })
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
@@ -367,6 +371,7 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
+        this.buried('taskSubmit', { result: true })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           this.newDataflow(newName)

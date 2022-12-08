@@ -111,16 +111,12 @@ export function calcTimeUnit(val, fix = 2, op) {
     }
   ]
   for (let i = 0, tmpTs = ts; i < units.length && tmpTs >= 0; i++) {
-    results.push({
+    results.unshift({
       value: tmpTs % units[i].interval,
       util: units[i].unit
     })
     tmpTs = parseInt(tmpTs / units[i].interval)
   }
-  if (fix > 0) {
-    results = results.slice(0, fix)
-  }
-  results = results.reverse()
   const findMsIndex = results.findIndex(t => t.util === 'ms')
   if (findMsIndex >= 1) {
     const s = results[findMsIndex - 1]
@@ -130,9 +126,12 @@ export function calcTimeUnit(val, fix = 2, op) {
       results.pop()
     }
   }
-  return results
-    .filter(t => t.value)
-    .reduce((pre, current) => {
-      return pre + (pre ? options.separator : '') + current.value + current.util
-    }, '')
+  results = results.filter(t => t.value)
+  if (fix > 0) {
+    results = results.slice(0, fix)
+  }
+
+  return results.reduce((pre, current) => {
+    return pre + (pre ? options.separator : '') + current.value + current.util
+  }, '')
 }
