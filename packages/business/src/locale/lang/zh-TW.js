@@ -607,7 +607,6 @@ export default {
   packages_business_verification_verifySetting: '校驗設置',
   packages_business_verification_batchVerify: '批量校驗',
   packages_business_verification_verifyJobName: '校驗任務名',
-  packages_business_verification_verifyjobname: '校驗任務名',
   packages_business_verification_verifyType: '校驗類型',
   packages_business_verification_verifytype: '校驗類型',
   packages_business_verification_singleRepeatingVerify: '單次/重複校驗',
@@ -673,5 +672,7 @@ export default {
   packages_business_verification_checkStatusSuffix: '狀態，無法配置校驗設置',
   packages_business_verification_backConfirmMessage: '此操作會丟失當前正在創建（編輯）的校驗任務',
   packages_business_verification_backConfirmTitle: '是否放棄創建（編輯）校驗任務？',
-  packages_business_verification_source_total_rows: '源總行數'
+  packages_business_verification_source_total_rows: '源總行數',
+  packages_business_verification_form_label_error_save_count: '錯誤保存條數',
+  packages_business_verification_button_auto_add_table: '自動添加表'
 }

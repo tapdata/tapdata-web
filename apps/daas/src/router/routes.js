@@ -449,13 +449,13 @@ export default [
             name: 'dataVerificationCreate',
             component: VerificationForm,
             meta: {
-              title: 'page_title_task_create',
+              title: 'page_title_verification_create',
               code: 'verify_job_creation'
             }
           },
           {
             path: ':id/edit',
-            name: 'dataVerificationEdit',
+            name: 'page_title_verification_edit',
             component: VerificationForm,
             meta: {
               title: 'page_title_task_edit',

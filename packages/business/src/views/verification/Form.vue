@@ -3,9 +3,7 @@
     <div class="section-wrap-box position-relative">
       <div class="verify-form-title">
         {{
-          $route.params.id
-            ? $t('packages_business_verification_title_edit')
-            : $t('packages_business_verification_title_create')
+          $route.params.id ? $t('packages_business_verification_edit') : $t('packages_business_verification_newVerify')
         }}
       </div>
       <ElForm
@@ -22,7 +20,7 @@
           required
           class="form-item"
           prop="flowId"
-          :label="$t('packages_business_verification_form_label_select_job') + ': '"
+          :label="$t('packages_business_verification_chooseJob') + ': '"
         >
           <ElSelect
             filterable
@@ -34,13 +32,11 @@
             <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem required class="form-item" :label="$t('packages_business_verification_form_label_type') + ': '">
+        <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
           <ElRadioGroup v-model="form.inspectMethod">
-            <ElRadioButton label="row_count">{{ $t('packages_business_verification_type_row_count') }}</ElRadioButton>
-            <ElRadioButton label="field">{{ $t('packages_business_verification_type_field') }}</ElRadioButton>
-            <ElRadioButton label="jointField">{{
-              $t('packages_business_verification_type_joint_field')
-            }}</ElRadioButton>
+            <ElRadioButton label="row_count">{{ $t('packages_business_verification_row_verify') }}</ElRadioButton>
+            <ElRadioButton label="field">{{ $t('packages_business_verification_content_verify') }}</ElRadioButton>
+            <ElRadioButton label="jointField">{{ $t('packages_business_verification_joint_verify') }}</ElRadioButton>
             <!-- <ElRadioButton label="cdcCount"
               >动态校验
               <ElTooltip
@@ -57,9 +53,9 @@
             <i class="el-icon-info color-primary mr-1"></i>
             <span style="font-size: 12px">{{
               {
-                row_count: $t('packages_business_verification_tips_type_row_count'),
-                field: $t('packages_business_verification_tips_type_field'),
-                jointField: $t('packages_business_verification_tips_type_joint_field')
+                row_count: $t('packages_business_verification_fastCountTip'),
+                field: $t('packages_business_verification_contentVerifyTip'),
+                jointField: $t('packages_business_verification_jointFieldTip')
               }[form.inspectMethod]
             }}</span>
           </div>
@@ -68,14 +64,14 @@
           required
           class="form-item"
           prop="name"
-          :label="$t('packages_business_verification_job_name') + ': '"
+          :label="$t('packages_business_verification_task_name') + ': '"
         >
           <ElInput class="form-input" v-model="form.name"></ElInput>
         </ElFormItem>
-        <ElFormItem class="form-item" :label="$t('packages_business_verification_form_label_frequency') + ': '">
+        <ElFormItem class="form-item" :label="$t('packages_business_verification_frequency') + ': '">
           <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
-            <ElOption :label="$t('packages_business_verification_frequency_manual')" value="manual"></ElOption>
-            <ElOption :label="$t('packages_business_verification_frequency_cron')" value="cron"></ElOption>
+            <ElOption :label="$t('packages_business_verification_single')" value="manual"></ElOption>
+            <ElOption :label="$t('packages_business_verification_repeating')" value="cron"></ElOption>
           </ElSelect>
         </ElFormItem>
         <ElFormItem
@@ -181,18 +177,18 @@
       >
         <div class="joint-table-header">
           <div>
-            <span>{{ $t('packages_business_verification_form_joint_table_header') }}</span>
+            <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
             <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
           </div>
           <ElLink type="primary" :disabled="!form.tasks.length" @click="clear">{{
-            $t('packages_business_verification_button_joint_table_clear')
+            $t('packages_business_verification_clear')
           }}</ElLink>
         </div>
         <ul class="joint-table-main" id="data-verification-form">
           <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item)">
             <div class="joint-table-setting overflow-hidden">
               <div class="setting-item">
-                <label class="item-label">{{ $t('packages_business_verification_form_label_table') }}: </label>
+                <label class="item-label">{{ $t('packages_business_verification_table') }}: </label>
                 <ElCascader
                   v-if="editId === item.id"
                   v-model="item.sourceTable"
@@ -220,7 +216,7 @@
                 }}</span>
               </div>
               <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
-                <label class="item-label">{{ $t('packages_business_verification_form_label_index_field') }}: </label>
+                <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
                 <MultiSelection
                   v-if="editId === item.id"
                   v-model="item.source.sortColumn"
@@ -310,13 +306,13 @@
                   v-model="item.showAdvancedVerification"
                   v-show="form.inspectMethod === 'field'"
                   @input="handleChangeAdvanced(item)"
-                  >{{ $t('packages_business_verification_checkbox_advance') }}</ElCheckbox
+                  >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
                 >
               </div>
               <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">
-                <label class="item-label">{{ $t('packages_business_verification_form_label_script') }}: </label>
+                <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
                 <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-                  $t('packages_business_verification_button_add_script')
+                  $t('packages_business_verification_addJS')
                 }}</ElButton>
                 <template v-else>
                   <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
@@ -338,9 +334,7 @@
           </li>
         </ul>
         <div class="joint-table-footer">
-          <ElButton size="mini" @click="addTable()">{{
-            $t('packages_business_verification_button_add_table')
-          }}</ElButton>
+          <ElButton size="mini" @click="addTable()">{{ $t('packages_business_verification_addTable') }}</ElButton>
           <ElButton type="primary" size="mini" @click="autoAddTable()">{{
             $t('packages_business_verification_button_auto_add_table')
           }}</ElButton>
@@ -658,8 +652,7 @@ export default {
       let where = {
         status: {
           inq: ['running', 'stop', 'complete']
-        },
-        syncType: 'migrate'
+        }
       }
       taskApi
         .get({
@@ -888,7 +881,7 @@ export default {
           if (target.tableNameTransform) {
             targetTableName = targetTableName[target.tableNameTransform]()
           }
-          let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source.connectionId)
+          let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source?.connectionId)
           let targetTable = tables.find(
             tb => tb.original_name === targetTableName && tb.source.id === target.connectionId
           )
@@ -899,7 +892,7 @@ export default {
             let outputLanes = target.connectionId + targetTableName
             let key = source.connectionId + name
             this.stageMap[key] = [outputLanes]
-            this.flowStages.push({
+            this.flowStages?.push({
               id: key,
               connectionId: sourceTable.source.id,
               connectionName: sourceTable.source.name,

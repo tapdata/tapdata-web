@@ -629,7 +629,6 @@ export default {
   packages_business_verification_verifySetting: 'Verify Setting',
   packages_business_verification_batchVerify: 'Batch Verify',
   packages_business_verification_verifyJobName: 'Verify Job Name',
-  packages_business_verification_verifyjobname: 'Verify job name',
   packages_business_verification_verifyType: 'Verify Type',
   packages_business_verification_verifytype: 'Verify type',
   packages_business_verification_singleRepeatingVerify: 'Single/repeating verify',
@@ -692,5 +691,7 @@ export default {
   packages_business_verification_backConfirmMessage:
     'This operation will lose the verification task currently being created (edited)',
   packages_business_verification_backConfirmTitle: 'Would you give up creating (editing) verification tasks? ',
-  packages_business_verification_history_source_total_rows: 'Source Total Rows'
+  packages_business_verification_history_source_total_rows: 'Source Total Rows',
+  packages_business_verification_form_label_error_save_count: 'Number of saved errors',
+  packages_business_verification_button_auto_add_table: 'Automatically add table'
 }

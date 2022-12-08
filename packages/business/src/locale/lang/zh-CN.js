@@ -605,7 +605,6 @@ export default {
   packages_business_verification_verifySetting: '校验设置',
   packages_business_verification_batchVerify: '批量校验',
   packages_business_verification_verifyJobName: '校验任务名',
-  packages_business_verification_verifyjobname: '校验任务名',
   packages_business_verification_verifyType: '校验类型',
   packages_business_verification_verifytype: '校验类型',
   packages_business_verification_singleRepeatingVerify: '单次/重复校验',
@@ -671,5 +670,7 @@ export default {
   packages_business_verification_checkStatusSuffix: '状态，无法配置校验设置',
   packages_business_verification_backConfirmMessage: '此操作会丢失当前正在创建（编辑）的校验任务',
   packages_business_verification_backConfirmTitle: '是否放弃创建（编辑）校验任务？',
-  packages_business_verification_history_source_total_rows: '源总行数'
+  packages_business_verification_history_source_total_rows: '源总行数',
+  packages_business_verification_form_label_error_save_count: '错误保存条数',
+  packages_business_verification_button_auto_add_table: '自动添加表'
 }

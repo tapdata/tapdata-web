@@ -124,6 +124,8 @@ export default {
   page_title_custom_node: 'Custom Nodes',
   page_title_account: 'Personal settings',
   page_title_external_storage: 'External storage',
+  page_title_verification_create: 'New verification',
+  page_title_verification_edit: 'Edit Verification',
   page_title_verification_history: 'Verification History',
   // -- 多表选择器
   component_table_selector_candidate_label: 'To be selected',
