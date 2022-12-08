@@ -1,7 +1,5 @@
 import Parent from './Parent'
-const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
-const VerificationHistory = () => import(/* webpackChunkName: "verification-history" */ '@/views/verification/History')
-const VerificationResult = () => import(/* webpackChunkName: "verification-result" */ '@/views/verification/Result')
+
 const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
 const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
 const DagEditor = async () => {
@@ -61,6 +59,32 @@ const VerifyDetails = async () => {
 const RelationTaskDetails = async () => {
   const { RelationTaskDetails } = await import('@tap/business')
   return RelationTaskDetails
+}
+
+// 数据校验
+const VerificationList = async () => {
+  const { VerificationList } = await import('@tap/business')
+  return VerificationList
+}
+
+const VerificationDetails = async () => {
+  const { VerificationDetails } = await import('@tap/business')
+  return VerificationDetails
+}
+
+const VerificationForm = async () => {
+  const { VerificationForm } = await import('@tap/business')
+  return VerificationForm
+}
+
+const VerificationHistory = async () => {
+  const { VerificationHistory } = await import('@tap/business')
+  return VerificationHistory
+}
+
+const VerificationResult = async () => {
+  const { VerificationResult } = await import('@tap/business')
+  return VerificationResult
 }
 
 export default [
@@ -414,7 +438,7 @@ export default [
           {
             path: '',
             name: 'dataVerificationList',
-            component: () => import(/* webpackChunkName: "verification-list" */ '@/views/verification/List'),
+            component: VerificationList,
             meta: {
               title: 'page_title_data_verify',
               code: 'Data_verify_menu'
@@ -441,7 +465,7 @@ export default [
           {
             path: ':id/details',
             name: 'dataVerifyDetails',
-            component: () => import(/* webpackChunkName: "verification-details" */ '@/views/verification/Details'),
+            component: VerificationDetails,
             meta: {
               title: 'page_title_task_details',
               code: 'Data_verify'
@@ -452,7 +476,7 @@ export default [
             name: 'dataVerifyHistory',
             component: VerificationHistory,
             meta: {
-              title: 'page_title_data_verification_history',
+              title: 'page_title_verification_history',
               code: 'Data_verify'
             }
           },
@@ -482,17 +506,17 @@ export default [
               title: 'page_title_data_verification_result',
               code: 'Data_verify'
             }
-          },
-          {
-            path: ':id/verifyDetails',
-            name: 'VerifyDetails',
-            component: () => import(/* webpackChunkName: "etl-list" */ '@/views/verification/Details'),
-            meta: {
-              title: 'page_title_data_verify_details',
-              code: 'Data_verify',
-              isNotAside: true
-            }
           }
+          // {
+          //   path: ':id/verifyDetails',
+          //   name: 'VerifyDetails',
+          //   component: VerificationDetails,
+          //   meta: {
+          //     title: 'page_title_data_verify_details',
+          //     code: 'Data_verify',
+          //     isNotAside: true
+          //   }
+          // }
         ]
       },
       /* ---------- 共享挖掘  ----------*/

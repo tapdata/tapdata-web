@@ -125,6 +125,7 @@ export default {
   page_title_custom_node: '自定义节点',
   page_title_account: '个人设置',
   page_title_external_storage: '外存管理',
+  page_title_verification_history: '校验历史',
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',
   component_table_selector_checked_label: '已选择表',
