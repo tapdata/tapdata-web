@@ -13,9 +13,9 @@
               class="color-info flex align-items-center"
               style="font-size: 12px"
             >
-              {{ $t('verify_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
+              {{ $t('packages_business_verification_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
               <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
-                $t('verify_button_diff_task_history')
+                $t('packages_business_verification_button_diff_task_history')
               }}</ElLink>
             </div>
           </div>
@@ -24,7 +24,9 @@
       <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
         <VIcon class="color-danger">error</VIcon>
         <span>
-          <ElLink type="danger" @click="showErrorMessage">{{ this.$t('verify_see_details') }}</ElLink>
+          <ElLink type="danger" @click="showErrorMessage">{{
+            this.$t('packages_business_verification_see_details')
+          }}</ElLink>
           <VIcon class="ml-2 color-info" size="12">close</VIcon>
         </span>
       </div>
@@ -75,9 +77,9 @@ export default {
     return {
       loading: false,
       typeMap: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        row_count: this.$t('packages_business_verification_rowVerify'),
+        field: this.$t('packages_business_verification_contentVerify'),
+        jointField: this.$t('packages_business_verification_jointVerify')
       },
       inspect: {},
       resultInfo: {},

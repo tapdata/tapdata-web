@@ -1,14 +1,14 @@
 <template>
   <div class="verification-result-view panel-box" v-loading="loading">
     <div class="header">
-      {{ $t('dataVerification.verifyDetail') }}
+      {{ $t('packages_business_verification_verifyDetail') }}
     </div>
     <div class="main">
       <ul class="inspect-result" v-if="statsInfo.status">
         <li>
           <span>
             {{
-              $t('dataVerification.sourceTable') +
+              $t('packages_business_verification_sourceTable') +
               ' : ' +
               statsInfo.source.table +
               ' / ' +
@@ -22,7 +22,7 @@
         <li>
           <span>
             {{
-              $t('dataVerification.targetTable') +
+              $t('packages_business_verification_targetTable') +
               ' : ' +
               statsInfo.target.table +
               ' / ' +
@@ -34,7 +34,7 @@
           </span>
         </li>
         <li>
-          <span>{{ $t('dataVerification.verifyResult') + ' : ' + statsInfo.result }}</span>
+          <span>{{ $t('packages_business_verification_result_title') + ' : ' + statsInfo.result }}</span>
         </li>
         <li v-if="statsInfo.result !== 'passed'">
           <span>{{ statsInfo.countResultText }}</span>
@@ -44,8 +44,8 @@
         </li>
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
-        <img style="height: 30px; margin-right: 5px" src="../../assets/images/zhuhe.png" />
-        <span>{{ $t('dataVerification.success') }}</span>
+        <img style="height: 30px; margin-right: 5px" :src="require('@tap/assets/images/passed.png')" />
+        <span>{{ $t('packages_business_verification_success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
         <VIcon size="12">warning-circle</VIcon>
@@ -55,16 +55,18 @@
         <div class="inspect-result-box" v-if="!showAdvancedVerification">
           <div v-for="item in resultList" :key="item.id" class="inspect-details">
             <ul class="father-table">
-              <li>{{ $t('dataVerification.inconsistentType') }}</li>
-              <li>{{ $t('dataVerification.sourceFieldName') }}</li>
-              <li>{{ $t('dataVerification.Value') }}</li>
-              <li>{{ $t('dataVerification.targetFieldName') }}</li>
-              <li>{{ $t('dataVerification.Value') }}</li>
+              <li>{{ $t('packages_business_verification_inconsistentType') }}</li>
+              <li>{{ $t('packages_business_verification_sourceFieldName') }}</li>
+              <li>{{ $t('packages_business_verification_Value') }}</li>
+              <li>{{ $t('packages_business_verification_targetFieldName') }}</li>
+              <li>{{ $t('packages_business_verification_Value') }}</li>
             </ul>
             <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
               <li>
                 {{
-                  detail.type === 'uniqueField' ? $t('dataVerification.uniqueField') : $t('dataVerification.otherField')
+                  detail.type === 'uniqueField'
+                    ? $t('packages_business_verification_uniqueField')
+                    : $t('packages_business_verification_otherField')
                 }}
               </li>
               <li>{{ detail.source.key }}</li>
@@ -80,16 +82,16 @@
         </div>
         <div class="inspect-ad-box" v-if="showAdvancedVerification">
           <div class="title-box">
-            <div>{{ $t('dataVerification.verifyResult') }}</div>
+            <div>{{ $t('packages_business_verification_result_title') }}</div>
           </div>
           <div v-for="item in resultList" :key="item.id" class="inspect-details">
             <div class="message-box">
-              <span>{{ $t('dataVerification.returnMsg') }}</span>
+              <span>{{ $t('packages_business_verification_returnMsg') }}</span>
               <div>{{ item.message }}</div>
             </div>
             <ul class="father-table">
-              <li>{{ $t('dataVerification.sourceTableData') }}</li>
-              <li>{{ $t('dataVerification.returnedData') }}</li>
+              <li>{{ $t('packages_business_verification_sourceTableData') }}</li>
+              <li>{{ $t('packages_business_verification_returnedData') }}</li>
             </ul>
             <ul class="sub-table">
               <li><JsonViewer :value="item.source"></JsonViewer></li>
@@ -355,15 +357,15 @@ export default {
             let diffCount = statsInfo.target_total - statsInfo.source_total
             let diffCountNum = Math.abs(diffCount)
             if (diffCount > 0) {
-              countResultText = this.$t('verify_result_count_more', [diffCountNum])
+              countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
             }
             if (diffCount < 0) {
-              countResultText = this.$t('verify_result_count_less', [diffCountNum])
+              countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
             }
             if (this.type !== 'row_count') {
               let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
               if (diffContentNum !== 0) {
-                contentResultText = this.$t('verify_result_content_diff', [diffContentNum])
+                contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
               }
             }
             statsInfo.countResultText = countResultText

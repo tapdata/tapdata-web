@@ -7,7 +7,7 @@
             class="search-input"
             v-model="keyword"
             prefix-icon="el-icon-search"
-            :placeholder="$t('packages_business_verify_details_qingshurubiaoming')"
+            :placeholder="$t('packages_business_verification_details_qingshurubiaoming')"
             size="mini"
             clearable
             style="width: 240px"
@@ -36,8 +36,8 @@
               @click="handleAgainCheck"
               >{{
                 isChecking
-                  ? $t('packages_business_verify_details_jiaoyanzhong')
-                  : $t('packages_business_verify_details_jiaoyan')
+                  ? $t('packages_business_verification_details_jiaoyanzhong')
+                  : $t('packages_business_verification_details_jiaoyan')
               }}</ElButton
             >
           </div>
@@ -58,39 +58,41 @@
           @selection-change="handleSelectionChange"
         >
           <template slot="counts" slot-scope="scope">
-            {{ scope.row.toBeCompared > 0 ? $t('packages_business_verify_details_jiaoyanzhong') : scope.row.counts }}
+            {{
+              scope.row.toBeCompared > 0 ? $t('packages_business_verification_details_jiaoyanzhong') : scope.row.counts
+            }}
           </template>
         </VTable>
       </div>
       <div class="verify-result flex flex-column flex-fit border-start">
         <div class="verify-result__title pt-6 px-4 fs-7 fw-bold font-color-dark">
-          {{ $t('packages_business_verify_details_jiaoyanjieguo') }}
+          {{ $t('packages_business_verification_details_jiaoyanjieguo') }}
         </div>
         <div class="px-4 pb-4 border-bottom">
           <div class="verify-result__line mt-2">
-            <span class="line__label">{{ $t('packages_business_verify_details_yuanbiao') }}</span>
+            <span class="line__label">{{ $t('packages_business_verification_details_yuanbiao') }}</span>
             <span v-if="row" class="font-color-dark">{{
               (row.originalTableName || '-') + '/' + (row.sourceConnName || '-')
             }}</span>
             <span v-else>-</span>
           </div>
           <div class="verify-result__line mt-2">
-            <span class="line__label">{{ $t('packages_business_verify_details_mubiaobiao') }}</span>
+            <span class="line__label">{{ $t('packages_business_verification_details_mubiaobiao') }}</span>
             <span v-if="row" class="font-color-dark">{{
               (row.targetTableName || '-') + '/' + (row.targetConnName || '-')
             }}</span>
             <span v-else>-</span>
           </div>
           <div class="verify-result__line mt-2">
-            <span class="line__label">{{ $t('packages_business_verify_details_yichangshujuhang') }}</span>
+            <span class="line__label">{{ $t('packages_business_verification_details_yichangshujuhang') }}</span>
             <span v-if="row" class="font-color-dark">{{ row.counts || 0 }}</span>
             <span v-else>-</span>
           </div>
         </div>
         <div class="flex justify-content-between pt-4 px-4">
           <ElRadioGroup v-model="showType" :disabled="detailLoading" @change="fetch(page.current)">
-            <ElRadio label="diff">{{ $t('packages_business_verify_details_jinxianshichayi') }}</ElRadio>
-            <ElRadio label="all">{{ $t('packages_business_verify_details_xianshiwanzhengzi') }}</ElRadio>
+            <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
+            <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
           </ElRadioGroup>
           <!--<ElButton type="primary">导出</ElButton>-->
         </div>
@@ -101,10 +103,10 @@
               style="height: 54px; background: #fafafa; border-radius: 4px 4px 0 0"
             >
               <ElCol :span="12">
-                <span>{{ $t('packages_business_verify_details_yuanbiaoziduanzhi') }}</span>
+                <span>{{ $t('packages_business_verification_details_yuanbiaoziduanzhi') }}</span>
               </ElCol>
               <ElCol :span="12">
-                <span>{{ $t('packages_business_verify_details_mubiaobiaoziduan') }}</span>
+                <span>{{ $t('packages_business_verification_details_mubiaobiaoziduan') }}</span>
               </ElCol>
             </ElRow>
           </div>
@@ -153,7 +155,7 @@
           </div>
           <div v-else class="table__body flex-fill flex flex-column justify-content-center text-center">
             <img :src="detailSvg" width="160" class="mx-auto" />
-            <span class="mt-4">{{ $t('packages_business_verify_details_gongxijiaoyanjie') }}</span>
+            <span class="mt-4">{{ $t('packages_business_verification_details_gongxijiaoyanjie') }}</span>
           </div>
           <ElPagination
             class="result-view-pagination"
@@ -195,16 +197,16 @@ export default {
           reserveSelection: true
         },
         {
-          label: i18n.t('packages_business_verify_details_yuanbiaoming'),
+          label: i18n.t('packages_business_verification_details_yuanbiaoming'),
           prop: 'originalTableName'
         },
         {
-          label: i18n.t('packages_business_verify_details_mubiaobiaoming'),
+          label: i18n.t('packages_business_verification_details_mubiaobiaoming'),
           prop: 'targetTableName',
           default: '-'
         },
         {
-          label: i18n.t('packages_business_verify_details_yichangshuju'),
+          label: i18n.t('packages_business_verification_details_yichangshuju'),
           prop: 'counts',
           slotName: 'counts'
         }

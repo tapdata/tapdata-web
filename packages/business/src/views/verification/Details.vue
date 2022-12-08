@@ -1,5 +1,5 @@
 <template>
-  <section class="verify-details-wrap section-wrap" v-loading="loading">
+  <section class="verify-details-wrap section-wrap h-100" v-loading="loading">
     <div class="section-wrap-box">
       <div class="verify-details-header" v-if="inspect">
         <div>
@@ -9,9 +9,9 @@
         <div v-if="inspect.inspectMethod !== 'row_count'">
           <div class="flex align-items-center">
             <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
-              {{ $t('verify_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
+              {{ $t('packages_business_verification_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
               <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
-                $t('verify_button_diff_task_history')
+                $t('packages_business_verification_button_diff_task_history')
               }}</ElLink>
             </div>
             <!-- <div
@@ -22,10 +22,10 @@
               "
               class="flex align-items-center ml-4"
             >
-              <ElButton type="primary" @click="diffInspect">{{ $t('verify_button_diff_verify') }}</ElButton>
+              <ElButton type="primary" @click="diffInspect">{{ $t('packages_business_verification_button_diff_verify') }}</ElButton>
               <ElTooltip effect="dark" placement="top">
                 <div slot="content" style="width: 232px">
-                  {{ $t('verify_button_diff_verify_tips') }}
+                  {{ $t('packages_business_verification_button_diff_verify_tips') }}
                 </div>
                 <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
               </ElTooltip>
@@ -47,7 +47,7 @@
         class="result-table mt-4"
         v-if="inspect"
         v-loading="['running', 'scheduling'].includes(inspect.status)"
-        :element-loading-text="$t('verify_checking')"
+        :element-loading-text="$t('packages_business_verification_checking')"
       >
         <template v-if="!['running', 'scheduling'].includes(inspect.status)">
           <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
@@ -97,9 +97,9 @@ export default {
     return {
       loading: false,
       typeMap: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify'),
+        row_count: this.$t('packages_business_verification_rowVerify'),
+        field: this.$t('packages_business_verification_contentVerify'),
+        jointField: this.$t('packages_business_verification_jointVerify'),
         cdcCount: '动态校验'
       },
       inspect: {},
@@ -217,13 +217,13 @@ export default {
     diffInspect() {
       let firstCheckId = this.resultInfo.firstCheckId
       if (!firstCheckId) {
-        return this.$message.error(this.$t('verify_message_old_data_not_support'))
+        return this.$message.error(this.$t('packages_business_verification_message_old_data_not_support'))
       }
       let inspect = this.inspect
       let keep = inspect?.limit?.keep || 0
       let totalFailed = inspect?.difference_number || 0
       if (keep < totalFailed) {
-        return this.$message.error(this.$t('verify_message_out_of_limit'))
+        return this.$message.error(this.$t('packages_business_verification_message_out_of_limit'))
       }
       inspectApi
         .update(
@@ -233,7 +233,7 @@ export default {
           { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: firstCheckId }
         )
         .then(() => {
-          this.$message.success(this.$t('dataVerification.startVerify'))
+          this.$message.success(this.$t('packages_business_verification_startVerify'))
           this.getData()
         })
     },

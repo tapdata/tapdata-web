@@ -8,6 +8,11 @@ import EtlStatistics from './task/etl/statistics/Index.vue'
 import ConnectionTest from './connections/Test.vue'
 import VerifyDetails from './verify/Details'
 import RelationTaskDetails from './task/relation/Details'
+import VerificationList from './verification/List'
+import VerificationForm from './verification/Form'
+import VerificationDetails from './verification/Details'
+import VerificationHistory from './verification/History'
+import VerificationResult from './verification/Result'
 
 export {
   ConnectionForm,
@@ -19,7 +24,12 @@ export {
   EtlList,
   EtlStatistics,
   VerifyDetails,
-  RelationTaskDetails
+  RelationTaskDetails,
+  VerificationList,
+  VerificationForm,
+  VerificationDetails,
+  VerificationHistory,
+  VerificationResult
 }
 
 export * from './connections/util'
