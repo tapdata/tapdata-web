@@ -163,5 +163,8 @@ export default {
   packages_form_field_inference_list_ninquerenyaohui: 'Are you sure you want to restore the current table? ',
   packages_form_field_inference_main_ninquerenyaoquan: 'Are you sure you want to restore all the defaults? ',
   packages_form_field_inference_main_ge: '',
-  packages_form_qingjianchajiedian: 'Please check node configuration'
+  packages_form_qingjianchajiedian: 'Please check node configuration',
+  packages_form_load_schema_tree_load_fail: 'Failed to load',
+  packages_form_load_schema_tree_form_values_change:
+    'The model needs to be reloaded to take effect after configuration changes'
 }

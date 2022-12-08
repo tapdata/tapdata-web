@@ -1011,13 +1011,13 @@ export default {
   dfs_workbench_workbench_jiyuPdk2: '基於PDK的數據源註冊機制',
   dfs_workbench_workbench_xiamianshixinban: '下面是新版本增加的特性：',
   dfs_workbench_workbench_dangranruguoyou:
-    '當然，如果有新的任務我們建議您在新版本中創建以便獲得更好的使用體驗，歡迎您屆時體驗我們新版功能並提出您的寶貴建議。 ',
+    '當然，如果有新的任務我們建議您在 V3.0 版本中創建以便獲得更好的使用體驗，歡迎您來體驗我們新版功能並提出您的寶貴建議。 ',
   dfs_workbench_workbench_youyuzengjiale:
-    '由於增加了很多實用功能，我們被迫捨棄了現有的版本架構重新開發，因此您在當前V2版本中創建的連接和任務將不會同步到新版本，不過放心，新版本發布後您仍然可以繼續使用舊版本進行您的數據操作，我們保證V2版本和V3版本將長期共存，\n          ',
-  dfs_workbench_workbench_zainianyueriwo: '在2022年9月29日，我們將會發布重大升級V3.0版本。 ',
+    '由於增加了很多實用功能，我們對V2版本的架構進行了重構開發，因此您之前在V2版本中創建的連接和任務將不會同步到 V3.0 版本，不過放心，新版本發布後您仍然可以繼續使用舊版本進行您的數據操作，我們保證V2版本和 V3.0 版本將長期共存。 ',
+  dfs_workbench_workbench_zainianyueriwo: '我們的重大升級版本 V3.0，已經正式發布。 ',
   dfs_workbench_workbench_zunjingdeyonghu: '尊敬的用戶，您好：',
   dfs_workbench_workbench_banbenshengjihe: '版本升級和服務切換的公告',
-  dfs_workbench_workbench_banbenshengjitong: '版本升級通知',
+  dfs_workbench_workbench_banbenshengjitong: 'Tapdata Cloud V3.0 版本正式發布通知',
   dfs_user_center_acces:
     'AccessKey是您訪問系統API的秘鑰，具有賬號的完全權限，請您務必妥善保管！不要以任何方式公開AccessKey到外部渠道（例如GitHub），避免被他人利用造成安全威脅。 ',
   dfs_user_center_kaifaxinxi: '開發信息',
@@ -1076,5 +1076,16 @@ export default {
   dfs_agent_download_paidupgrade_xingming: '姓名',
   dfs_agent_download_paidupgrade_biaozhunban: '標準版',
   dfs_agent_download_paidupgrade_fuwushengji: '服務升級',
-  dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜單'
+  dfs_agent_download_paidupgrade_fanhuicaidan: '返回菜單',
+
+  dfs_instance_instance_fenzhong: ' 分鐘',
+  dfs_instance_instance_ruxuliaojiegeng: '如需了解更多請訪問',
+  dfs_instance_instance_bencigengxinbao: '本次更新包含錯誤修復和安全性更新，建議所有用戶安裝。 ',
+  dfs_instance_instance_xinzenggongneng: '新增功能',
+  dfs_instance_instance_yujianzhuangshi: '預計安裝時間 : ',
+  dfs_instance_instance_anzhuangbao: '安裝包 : ',
+  dfs_instance_instance_banbenhao: '版本號: ',
+  dfs_instance_instance_agent: 'Agent更新',
+
+  dfs_user_center_phone_error: '該手機號碼已被其他用戶註冊過'
 }

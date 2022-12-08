@@ -187,15 +187,47 @@
         @current-change="fetch"
       >
       </ElPagination>
-      <ElDialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
-        <div class="dialog-content">{{ $t('agent_dialog_upgrade_title') }}</div>
-        <div class="dialog-btn flex justify-content-evenly mt-6">
-          <div class="text-center w-50" v-if="showAutoUpgrade">
+      <ElDialog :visible.sync="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
+        <div>
+          <div class="flex upgrade-mb24">
+            <div class="imgBox flex justify-content-center align-items-center">
+              <img :src="getImg('vector')" alt="" />
+            </div>
+            <div class="ml-6">
+              <div class="upgrade-version">
+                {{ $t('dfs_instance_instance_banbenhao') }}{{ currentVersionInfo.version }}
+              </div>
+              <div class="upgrade-version mt-1">
+                {{ $t('dfs_instance_instance_anzhuangbao') }}{{ currentVersionInfo.packageSize }}
+              </div>
+              <div class="upgrade-version mt-1">
+                {{ $t('dfs_instance_instance_yujianzhuangshi') }}{{ currentVersionInfo.estimatedUpgradeTime }}
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-desc upgrade-mb16" v-if="currentVersionInfo.changeList">
+            {{ $t('dfs_instance_instance_xinzenggongneng') }}
+          </div>
+          <ul class="upgrade-mb24" v-if="currentVersionInfo.changeList">
+            <li
+              style="white-space: pre-wrap"
+              class="upgrade-mb8 upgrade-text"
+              v-html="currentVersionInfo.changeList"
+            ></li>
+          </ul>
+          <div class="upgrade-desc upgrade-mb8">{{ $t('dfs_instance_instance_bencigengxinbao') }}</div>
+          <div class="upgrade-text upgrade-mb16">
+            {{ $t('dfs_instance_instance_ruxuliaojiegeng')
+            }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri"> Release Notes</el-link>
+          </div>
+        </div>
+        <div class="dialog-btn flex justify-content-end mt-6">
+          <div class="w-50" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('agent_button_auto_upgrade')
             }}</ElButton>
           </div>
-          <div class="text-center w-50">
+          <div class="text-end w-50">
             <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
@@ -310,6 +342,7 @@ export default {
       agentStatus: 'stop',
       version: '',
       upgradeList: [], // 升级列表
+      currentVersionInfo: '',
       showDetails: false,
       detailId: null,
       filterItems: []
@@ -461,6 +494,18 @@ export default {
           // 版本号
           if (this.list?.[0]?.id) {
             let getVersion = await this.getVersion(this.list[0]?.id)
+            //升级弹窗使用
+            let { packageSize, changeList, estimatedUpgradeTime, version, releaseNoteUri } = getVersion
+            this.currentVersionInfo = {
+              packageSize: (packageSize ? (packageSize / (1024 * 1024)).toFixed(1) + ' MB' : '-') || '-',
+              changeList: changeList || '',
+              estimatedUpgradeTime:
+                (estimatedUpgradeTime
+                  ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong')
+                  : '-') || '-',
+              releaseNoteUri: releaseNoteUri,
+              version: version
+            }
             this.version = getVersion?.version
           }
 
@@ -476,6 +521,9 @@ export default {
             this.loading = false
           }
         })
+    },
+    getImg(name) {
+      return require(`../../../public/images/agent/${name}.png`)
     },
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
@@ -898,6 +946,39 @@ export default {
   }
   .instance-table__empty {
     color: map-get($fontColor, light);
+  }
+  .upgrade-text {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: map-get($color, dark);
+  }
+  .upgrade-version {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: map-get($color, dark);
+  }
+  .upgrade-desc {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: map-get($color, light);
+  }
+  .imgBox {
+    width: 65px;
+    height: 65px;
+    background: rgba(201, 205, 212, 0.1);
+    border-radius: 4px;
+  }
+  .upgrade-mb8 {
+    margin-bottom: 8px;
+  }
+  .upgrade-mb16 {
+    margin-bottom: 16px;
+  }
+  .upgrade-mb24 {
+    margin-bottom: 24px;
   }
 }
 .upgrading-box {

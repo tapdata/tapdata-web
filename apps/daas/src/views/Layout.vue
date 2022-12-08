@@ -12,13 +12,7 @@
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown
-          v-if="$getSettingByKey('SHOW_QA_AND_HELP')"
-          class="btn"
-          placement="bottom"
-          @command="command"
-          command="help"
-        >
+        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help">
           <span class="icon-btn py-1 px-3">
             <VIcon size="18">wenda</VIcon>
           </span>
@@ -466,7 +460,8 @@ export default {
       breadcrumbData: [],
       isCollapse: false,
       isNotAside: this.$route?.meta?.isNotAside || false,
-      activeMenu: ''
+      activeMenu: '',
+      showHelp: !process.env.VUE_APP_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP')
     }
   },
   computed: {
@@ -476,8 +471,10 @@ export default {
 
     logoStyle() {
       const width = window._TAPDATA_OPTIONS_.logoWidth
+      const height = window._TAPDATA_OPTIONS_.logoHeight
       return {
-        width: width && `${width}px`
+        width: width && (!isNaN(width) ? `${width}px` : width),
+        height: height && (!isNaN(height) ? `${height}px` : height)
       }
     }
   },
@@ -613,7 +610,7 @@ export default {
           })
           break
         case 'home':
-          window.open('https://tapdata.net/', '_blank')
+          window.open(window._TAPDATA_OPTIONS_.homeUrl, '_blank')
           break
         case 'signOut':
           this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {

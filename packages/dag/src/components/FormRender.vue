@@ -9,7 +9,15 @@
 </template>
 
 <script>
-import { Form, SchemaField } from '@tap/form'
+import { Form, createSchemaField, components } from '@tap/form'
+import * as _components from '../components/form'
+
+const { SchemaField } = createSchemaField({
+  components: {
+    ...components,
+    ..._components
+  }
+})
 
 export default {
   name: 'FormRender',

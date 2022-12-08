@@ -15,8 +15,8 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 
-import List from '@tap/form/src/components/field-inference/List'
-import mixins from '@tap/form/src/components/field-inference/mixins.js'
+import List from './form/field-inference/List'
+import mixins from './form/field-inference/mixins.js'
 
 export default {
   name: 'MetaPane',

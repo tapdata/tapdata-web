@@ -92,7 +92,7 @@ export default {
           window.open('https://cloud.tapdata.net/contact.html', '_blank')
           break
         case 'home':
-          window.open('https://cloud.tapdata.net/', '_blank')
+          window.open('https://tapdata.net/', '_blank')
           break
         case 'v2':
           window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
@@ -166,8 +166,7 @@ export default {
     font-weight: 400;
     font-size: 10px;
     line-height: 14px;
-    color: map-get($color, white);
-    border: 1px solid map-get($color, white);
+    border: 1px solid rgba(255, 255, 255, 0.45);
     border-radius: 2px;
     padding: 4px;
   }

@@ -144,7 +144,6 @@
         <ul>
           <li>{{ $t('dfs_workbench_workbench_xinzengdongtaixin') }}</li>
           <li>{{ $t('dfs_workbench_workbench_xinzengDdl') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_xinzenghebingsuan') }}</li>
           <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi2') }}</li>
           <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi') }}</li>
         </ul>
@@ -378,7 +377,7 @@ export default {
           id: 1,
           type: '',
           name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
-          time: '2022-09-29 18:00'
+          time: '2022-12-03 18:00'
         }
       ]
     },
