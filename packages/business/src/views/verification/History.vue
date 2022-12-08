@@ -204,6 +204,7 @@ export default {
 
 <style lang="scss" scoped>
 .data-verify-history-wrap {
+  height: 100%;
   .data-verify-history__icon {
     color: map-get($fontColor, white);
   }
@@ -213,6 +214,7 @@ export default {
     box-sizing: border-box;
   }
   .panel-main {
+    height: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
