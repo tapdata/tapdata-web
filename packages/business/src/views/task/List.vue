@@ -80,6 +80,7 @@
           class="btn btn-create"
           type="primary"
           size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
           :loading="createBtnLoading"
           @click="create"
         >
@@ -179,7 +180,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.edit"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
               {{ $t('packages_business_button_edit') }}
@@ -197,20 +198,25 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.reset"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
               {{ $t('packages_business_task_list_reset') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="copy([row.id], row)">
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="copy([row.id], row)"
+            >
               {{ $t('packages_business_task_list_copy') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.delete"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
               {{ $t('packages_business_task_list_delete') }}

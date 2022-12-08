@@ -11,6 +11,9 @@ Vue.directive('readonlybtn', {
     }
   }
 })
+Vue.prototype.$disabledReadonlyUserBtn = function () {
+  return false
+}
 
 Vue.prototype.$has = function (code) {
   return hasPermissionByCode(code)

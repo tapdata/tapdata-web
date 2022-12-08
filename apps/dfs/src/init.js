@@ -15,6 +15,7 @@ import VConfirm from '@/components/v-confirm'
 import { startTimeOnSite, startTimeOnPage } from '@/plugins/buried'
 import { VIcon, VButton } from '@tap/component'
 import FormBuilder from '@tap/component/src/form-builder'
+import { Message } from 'element-ui'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -74,6 +75,28 @@ export default ({ routes }) => {
       },
       render: h => h(App)
     }).$mount('#app')
+
+    // 路由守卫
+    router.beforeEach((to, from, next) => {
+      let user = window.__USER_INFO__
+      let removeReadonly = localStorage.getItem('removeReadonly')
+      if (
+        [
+          'connectionCreate',
+          'connectionsEdit',
+          'DataflowNew',
+          'DataflowEditor',
+          'MigrateCreate',
+          'MigrateEditor',
+          'MigrateEditor'
+        ].includes(to.name) &&
+        user?.username === 'demo@tapdata.io' &&
+        !removeReadonly
+      ) {
+        next(false)
+      }
+    })
+    return router
   }
   loading = window.loading({ fullscreen: true })
   let count = 0
