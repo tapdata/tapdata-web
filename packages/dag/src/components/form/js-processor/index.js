@@ -13,12 +13,13 @@ export const JsProcessor = observer(
   defineComponent({
     props: ['value', 'disabled'],
     setup(props, { emit, root, attrs }) {
-      const { taskId } = root.$store.state.dataflow
+      const { taskId, syncType } = root.$store.state.dataflow
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)
       const running = ref(false)
       const runningText = ref('')
+      const isMigrate = syncType === 'migrate'
 
       let queryTimes = 0
       const params = reactive({
@@ -156,25 +157,27 @@ export const JsProcessor = observer(
             />
 
             <div class="flex align-center">
-              <FormItem.BaseItem
-                asterisk
-                class="flex-1 mr-4"
-                label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
-                layout="horizontal"
-                feedbackLayout="none"
-              >
-                <VirtualSelect
-                  value={params.tableName}
-                  filterable
-                  class="form-input"
-                  item-size={34}
-                  items={tableList.value}
-                  loading={tableLoading.value}
-                  onInput={val => {
-                    params.tableName = val
-                  }}
-                />
-              </FormItem.BaseItem>
+              {isMigrate && (
+                <FormItem.BaseItem
+                  asterisk
+                  class="flex-1 mr-4"
+                  label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
+                  layout="horizontal"
+                  feedbackLayout="none"
+                >
+                  <VirtualSelect
+                    value={params.tableName}
+                    filterable
+                    class="form-input"
+                    item-size={34}
+                    items={tableList.value}
+                    loading={tableLoading.value}
+                    onInput={val => {
+                      params.tableName = val
+                    }}
+                  />
+                </FormItem.BaseItem>
+              )}
               <div class="flex-1 flex justify-content-between">
                 <FormItem.BaseItem
                   label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
@@ -192,7 +195,7 @@ export const JsProcessor = observer(
                   ></ElInputNumber>
                 </FormItem.BaseItem>
                 <ElButton
-                  disabled={!params.tableName}
+                  disabled={isMigrate && !params.tableName}
                   loading={running.value || tableLoading.value}
                   onClick={handleRun}
                   type="primary"
