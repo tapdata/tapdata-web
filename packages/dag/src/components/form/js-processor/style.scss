@@ -57,11 +57,45 @@
           }
         }
       }
+
+      .json-view-wrap {
+        height: 100%;
+        padding: 16px;
+
+        .json-view-editor {
+          height: 100% !important;
+        }
+      }
     }
 
     &.fullscreen &-toolbar,
     &.fullscreen &-console {
       display: flex;
+    }
+
+    .el-tabs {
+      &__header {
+        margin-bottom: 0;
+      }
+      &__content {
+        flex: 1;
+      }
+    }
+  }
+
+  .json-view {
+    &-header {
+      padding: 0 8px;
+      background: #ebebeb;
+      line-height: 24px;
+      font-size: 12px;
+      border-radius: 4px 4px 0 0;
+    }
+    &-editor {
+      height: 33vh !important;
+    }
+    .ace_cursor {
+      display: none !important;
     }
   }
 }

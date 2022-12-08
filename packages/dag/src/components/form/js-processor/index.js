@@ -233,31 +233,31 @@ export const JsProcessor = observer(
                 {i18n.t('packages_form_js_processor_index_shiyunxing')}
               </ElButton>
             </div>
-          </div>)
+          </div>
+        )
 
         const jsonView = (
-          <div class="flex" v-loading={running.value} element-loading-text={runningText.value}>
-            <FormItem.BaseItem class="flex-1 mr-4" label={i18n.t('packages_form_js_processor_index_tiaoshishuru')}>
+          <div class="flex json-view-wrap" v-loading={running.value} element-loading-text={runningText.value}>
+            <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
+              <div class="json-view-header">{i18n.t('packages_form_js_processor_index_tiaoshishuru')}</div>
               <VCodeEditor
-                class="border rounded-2 py-0"
+                class="py-0 json-view-editor"
                 value={inputRef.value}
                 lang="json"
-                options={{ readOnly: true }}
+                options={{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }}
                 theme="chrome"
-                style="height: calc((100vh - 120px);"
               ></VCodeEditor>
-            </FormItem.BaseItem>
-
-            <FormItem.BaseItem class="flex-1" label={i18n.t('packages_form_js_processor_index_jieguoshuchu')}>
+            </div>
+            <div class="json-view flex-1 border rounded-2 overflow-hidden">
+              <div class="json-view-header">{i18n.t('packages_form_js_processor_index_jieguoshuchu')}</div>
               <VCodeEditor
-                class="border rounded-2 py-0"
+                class="py-0 json-view-editor"
                 value={outputRef.value}
                 lang="json"
-                options={{ readOnly: true }}
+                options={{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }}
                 theme="chrome"
-                style="height: calc((100vh - 120px);"
               ></VCodeEditor>
-            </FormItem.BaseItem>
+            </div>
           </div>
         )
 
@@ -349,7 +349,7 @@ export const JsProcessor = observer(
                   }}
                   class="js-processor-editor-console border-start"
                 >
-                  <ElTabs class="w-100">
+                  <ElTabs class="w-100 flex flex-column">
                     <ElTabPane label="输出">
                       <div class="js-processor-editor-console-panel px-3">// 暂未实现</div>
                     </ElTabPane>
@@ -369,10 +369,8 @@ export const JsProcessor = observer(
               param="schemaApplyResultList"
               handleAddCompleter={editorProps.handleAddCompleter}
             />
-
             {runTool}
-
-            {jsonView}
+            <div class="mt-4">{jsonView}</div>
           </div>
         )
       }
