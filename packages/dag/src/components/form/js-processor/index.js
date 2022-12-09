@@ -8,7 +8,7 @@ import i18n from '@tap/i18n'
 import { FormItem, JsEditor, HighlightCode } from '@tap/form'
 import { VCodeEditor, VirtualSelect } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
-import { javascriptFunctionsApi, taskApi } from '@tap/api'
+import { javascriptFunctionsApi, taskApi, monitoringLogsApi } from '@tap/api'
 import { JsDeclare } from '../js-declare'
 import './style.scss'
 
@@ -29,6 +29,7 @@ export const JsProcessor = observer(
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
 
+      let queryStart
       let queryTimes = 0
       const params = reactive({
         taskId,
@@ -72,9 +73,9 @@ export const JsProcessor = observer(
       let timer
       let version
 
-      const handleQuery = () => {
+      const handleQuery = async () => {
         let lastVersion = version
-        return taskApi
+        let isOver = await taskApi
           .getRunJsResult({
             version,
             taskId,
@@ -87,9 +88,19 @@ export const JsProcessor = observer(
             outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
             return res.over
           })
+        await monitoringLogsApi.query({
+          taskId,
+          order: 'asc',
+          page: 1,
+          pageSize: 50,
+          start: queryStart,
+          end: Date.now()
+        })
+        return isOver
       }
 
-      const resetQuery = () => {
+      const resetQuery = args => {
+        console.log(args) // eslint-disable-line
         queryTimes = 0
         running.value = false
         runningText.value = ''
@@ -124,7 +135,10 @@ export const JsProcessor = observer(
       const handleRun = () => {
         clearTimeout(timer)
         version = Date.now()
-        taskApi.testRunJs({ ...params, version, script: props.value }).then(handleAutoQuery)
+        taskApi.testRunJs({ ...params, version, script: props.value }).then(() => {
+          queryStart = Date.now()
+          handleAutoQuery()
+        })
       }
 
       onUnmounted(() => {
