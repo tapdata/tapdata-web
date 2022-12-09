@@ -9,11 +9,11 @@
   >
     <section class="agent-guide-main flex">
       <div class="agent-guide-left mt-110" v-if="step === 1">
-        <header class="agent-guide-header mb-32">欢迎使用Tapdata</header>
-        <div class="agent-guide-desc mb-4">点击下方的场景查看我们推荐的部署方案：</div>
-        <div class="agent-guide-txt mb-4">
-          您要同步的数据源/目标库是否能够给外网开放端口？（通过防火增、SSH Tunnel、VPN或其他方式）
-        </div>
+        <header class="agent-guide-header mb-32">
+          {{ $t('dfs_agent_download_agentguidedialog_huanyingshiyongT') }}
+        </header>
+        <div class="agent-guide-desc mb-4">{{ $t('dfs_agent_download_agentguidedialog_dianjixiafangde') }}</div>
+        <div class="agent-guide-txt mb-4">{{ $t('dfs_agent_download_agentguidedialog_ninyaotongbude') }}</div>
         <div class="agent-guide-link mb-8 flex">
           <div
             class="item mr-4 cursor-pointer"
@@ -21,73 +21,90 @@
             @click="changeImg('extranet')"
           >
             <VIcon size="18" class="color-primary">extranet</VIcon>
-            <div class="txt mt-2">我们的数据源和目标 可以被外网服务访问</div>
+            <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_womendeshuju') }}</div>
           </div>
           <div class="item cursor-pointer" :class="{ active: current === 'intranet' }" @click="changeImg('intranet')">
             <VIcon size="18" class="color-primary">intranet</VIcon>
-            <div class="txt mt-2">我们的数据源和目标 可以被外网服务访问</div>
+            <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_womendeshuju') }}</div>
           </div>
         </div>
         <div class="footer">
-          <el-button type="primary" @click="step = 2">下一步</el-button>
+          <el-button type="primary" @click="goStep()">{{
+            $t('dfs_agent_download_agentguidedialog_xiayibu')
+          }}</el-button>
         </div>
       </div>
       <div class="agent-guide-left mt-32" v-if="step === 2">
-        <header class="agent-guide-header mb-39">立即去安装</header>
+        <header class="agent-guide-header mb-39">{{ $t('dfs_agent_download_agentguidedialog_lijiquanzhuang') }}</header>
         <div class="agent-guide-step-2">
           <div class="step mb-39">
-            <div class="color-primary step-header mb-2">自助安装</div>
-            <div class="flex mb-4 step-content">
-              <div class="mr-4">您需要根据引导的操作，将Tapdata的数据计算引擎Agent安装可以访问您数据的机器上。</div>
+            <div class="color-primary step-header mb-2">
+              {{ $t('dfs_agent_download_agentguidedialog_zizhuanzhuang') }}
+            </div>
+            <div class="flex mb-2 step-content">
+              <div class="mr-4">{{ $t('dfs_agent_download_agentguidedialog_ninxuyaogenju') }}</div>
               <VIcon size="40" class="color-primary">selfInstall</VIcon>
             </div>
-            <el-button type="primary" @click="openAgentDownloadModal()">安装</el-button>
+            <el-button type="primary" class="mb-2" @click="openAgentDownloadModal()">{{
+              $t('dfs_agent_download_agentguidedialog_anzhuang')
+            }}</el-button>
           </div>
           <div class="step">
-            <div class="color-primary step-header mb-2">体验Demo(无需安装）</div>
-            <div class="flex mb-4 step-content">
-              <div class="mr-4">
-                我们提供了体检Demo环境，您无需安装Agent即可查看和体验Tapdata强大的数据同步和处理能力。
-              </div>
+            <div class="color-primary step-header mb-2">{{ $t('dfs_agent_download_agentguidedialog_tiyanDem') }}</div>
+            <div class="flex mb-2 step-content">
+              <div class="mr-4">{{ $t('dfs_agent_download_agentguidedialog_womentigongle') }}</div>
               <VIcon size="40" class="color-primary">demoInstall</VIcon>
             </div>
-            <el-button type="primary">体验</el-button>
+            <el-button type="primary" class="mb-2" @click="goDemo()">{{
+              $t('dfs_agent_download_agentguidedialog_tiyan')
+            }}</el-button>
           </div>
         </div>
+        <VIcon size="18" class="agent-download-icon" v-if="showClose" @click="close">close</VIcon>
       </div>
       <div class="agent-guide-init" v-show="type === 'init'">
-        <div class="agent-guide-right-txt">tapdata可以满足异构数据库实时同步、数据入湖入仓、云中数据ETL等多类场景</div>
+        <div class="agent-guide-right-txt">{{ $t('dfs_agent_download_agentguidedialog_tapda') }}</div>
       </div>
       <!--外网切换 -->
       <div class="agent-guide-sync" v-show="type === 'extranet-sync'">
         <div class="switch">
-          <span class="current cursor-pointer">数据同步</span>
-          <span class="ordinary cursor-pointer" @click="changeType('extranet-login')">入湖入仓</span>
+          <span class="current cursor-pointer">{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span>
+          <span class="ordinary cursor-pointer" @click="changeType('extranet-login')">{{
+            $t('dfs_agent_download_agentguidedialog_ruhurucang')
+          }}</span>
         </div>
       </div>
       <div class="agent-guide-login" v-show="type === 'extranet-login'">
         <div class="switch">
-          <span class="ordinary-suffix cursor-pointer" @click="changeType('extranet-sync')">数据同步</span>
-          <span class="current-suffix cursor-pointer">入湖入仓</span>
+          <span class="ordinary-suffix cursor-pointer" @click="changeType('extranet-sync')">{{
+            $t('dfs_agent_download_agentguidedialog_shujutongbu')
+          }}</span>
+          <span class="current-suffix cursor-pointer">{{ $t('dfs_agent_download_agentguidedialog_ruhurucang') }}</span>
         </div>
       </div>
       <!--内网切换 -->
       <div class="agent-guide-intranet-sync" v-show="type === 'intranet-sync'">
         <div class="switch">
-          <span class="current cursor-pointer">数据同步</span>
-          <span class="ordinary cursor-pointer" @click="changeType('intranet-login')">入湖入仓</span>
+          <span class="current cursor-pointer">{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span>
+          <span class="ordinary cursor-pointer" @click="changeType('intranet-login')">{{
+            $t('dfs_agent_download_agentguidedialog_ruhurucang')
+          }}</span>
         </div>
       </div>
       <div class="agent-guide-intranet-login" v-show="type === 'intranet-login'">
         <div class="switch">
-          <span class="ordinary-suffix cursor-pointer" @click="changeType('intranet-sync')">数据同步</span>
-          <span class="current-suffix cursor-pointer">入湖入仓</span>
+          <span class="ordinary-suffix cursor-pointer" @click="changeType('intranet-sync')">{{
+            $t('dfs_agent_download_agentguidedialog_shujutongbu')
+          }}</span>
+          <span class="current-suffix cursor-pointer">{{ $t('dfs_agent_download_agentguidedialog_ruhurucang') }}</span>
         </div>
       </div>
     </section>
   </ElDialog>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import { VIcon } from '@tap/component'
 
 export default {
@@ -102,7 +119,8 @@ export default {
     return {
       current: '',
       type: 'init',
-      step: 1
+      step: 1,
+      showClose: false //关闭按钮
     }
   },
   methods: {
@@ -113,9 +131,25 @@ export default {
     changeType(type) {
       this.type = type //init 初始化  sync 数据同步 login 入湖边入仓
     },
+    //下一步
+    goStep() {
+      if (this.current === '') {
+        this.$message.error(i18n.t('dfs_agent_download_agentguidedialog_qingdianjibushu'))
+        return
+      }
+      this.step = 2
+    },
     //关闭当前弹窗-弹出agent下载页面
     openAgentDownloadModal() {
       this.$emit('openAgentDownload')
+    },
+    close() {
+      this.$emit('update:visible', false)
+    },
+    //去demo环境体验
+    goDemo() {
+      this.showClose = true
+      window.open('https://uat.cloud.tapdata.net:9443/console/')
     }
   }
 }
@@ -148,6 +182,12 @@ export default {
     font-weight: 400;
     letter-spacing: 0px;
     text-align: left;
+  }
+  .agent-download-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #fff;
   }
   .item {
     width: 175px;

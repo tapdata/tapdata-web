@@ -1191,5 +1191,26 @@ export default {
   dfs_instance_instance_banbenhao: 'version number: ',
   dfs_instance_instance_agent: 'Agent update',
 
-  dfs_user_center_phone_error: 'This phone number has already been registered by another user'
+  dfs_user_center_phone_error: 'This phone number has already been registered by another user',
+  dfs_agent_download_agentguidedialog_qingdianjibushu: 'Please click on the deployment plan',
+  dfs_agent_download_agentguidedialog_ruhurucang: 'Entering the lake and entering the warehouse',
+  dfs_agent_download_agentguidedialog_shujutongbu: 'data synchronization',
+  dfs_agent_download_agentguidedialog_tapda:
+    'tapdata can meet various scenarios such as real-time synchronization of heterogeneous databases, data entering lakes and warehouses, and data ETL in the cloud',
+  dfs_agent_download_agentguidedialog_tiyan: 'Experience',
+  dfs_agent_download_agentguidedialog_womentigongle:
+    'We provide a physical examination Demo environment, you can view and experience Tapdata is powerful data synchronization and processing capabilities without installing Agent. (DEMO account: demo@tapdata.io password: tapdata)',
+  dfs_agent_download_agentguidedialog_tiyanDem: 'Experience Demo (no installation required)',
+  dfs_agent_download_agentguidedialog_anzhuang: 'Install',
+  dfs_agent_download_agentguidedialog_ninxuyaogenju:
+    'You need to install Tapdata is data calculation engine Agent on a machine that can access your data according to the guided operation. ',
+  dfs_agent_download_agentguidedialog_zizhuanzhuang: 'Self-service installation',
+  dfs_agent_download_agentguidedialog_lijiquanzhuang: 'install now',
+  dfs_agent_download_agentguidedialog_xiayibu: 'Next',
+  dfs_agent_download_agentguidedialog_womendeshuju:
+    'Our data source and target can be accessed by external network services',
+  dfs_agent_download_agentguidedialog_ninyaotongbude:
+    'Can the data source/target library you want to synchronize open ports to the external network? (via firewall, SSH Tunnel, VPN or other means)',
+  dfs_agent_download_agentguidedialog_dianjixiafangde: 'Click the scene below to view our recommended deployment plan:',
+  dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata'
 }

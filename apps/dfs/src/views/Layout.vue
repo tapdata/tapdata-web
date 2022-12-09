@@ -104,7 +104,7 @@ export default {
         data: {}
       },
       bindPhoneVisible: false,
-      agentGuideDialog: true
+      agentGuideDialog: false
     }
   },
   created() {
@@ -145,7 +145,7 @@ export default {
     //监听agent引导页面
     openAgentDownload() {
       this.agentGuideDialog = false
-      this.checkAgent()
+      this.agentDownload.visible = true
     },
     createConnection(item) {
       this.dialogVisible = false
@@ -193,7 +193,7 @@ export default {
     checkAgent() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
-          this.agentDownload.visible = true
+          this.agentGuideDialog = true
           this.agentDownload.data = data
         }
       })
