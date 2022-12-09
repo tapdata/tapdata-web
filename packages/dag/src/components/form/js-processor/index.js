@@ -19,7 +19,7 @@ export const JsProcessor = observer(
       resize
     },
     setup(props, { emit, root, attrs }) {
-      const { taskId, syncType } = root.$store.state.dataflow
+      const { id: taskId, testTaskId, syncType } = root.$store.state.dataflow.taskInfo
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)
@@ -89,7 +89,8 @@ export const JsProcessor = observer(
             return res.over
           })
         await monitoringLogsApi.query({
-          testTaskId: taskId,
+          taskId,
+          testTaskId,
           type: 'testRun',
           order: 'asc',
           page: 1,

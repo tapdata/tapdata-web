@@ -76,6 +76,11 @@ export default {
     }
   },
 
+  created() {
+    // 存到store里共享
+    this.setTaskInfo(this.dataflow)
+  },
+
   beforeDestroy() {
     this.destory = true
     this.stopDagWatch?.()
@@ -89,6 +94,7 @@ export default {
       'setStateReadonly',
       'setEdges',
       'setTaskId',
+      'setTaskInfo',
       'addResourceIns',
       'updateNodeProperties',
       'setActiveNode',

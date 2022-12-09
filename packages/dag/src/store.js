@@ -59,6 +59,7 @@ const getState = () => ({
   activeType: null,
   formSchema: null,
   taskId: null,
+  taskInfo: null,
   transformStatus: '', //推演状态 loading, error, finished
   transformLoading: false,
   dag: {
@@ -673,6 +674,10 @@ const mutations = {
    */
   setTaskId(state, id) {
     state.taskId = id
+  },
+
+  setTaskInfo(state, info) {
+    state.taskInfo = info
   },
 
   /**
