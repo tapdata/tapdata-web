@@ -628,7 +628,6 @@ export default {
   packages_business_verification_deleteVerifyJob: 'Delete verify job',
   packages_business_verification_verifySetting: 'Verify Setting',
   packages_business_verification_batchVerify: 'Batch Verify',
-  packages_business_verification_verifyJobName: 'Verify Job Name',
   packages_business_verification_verifyType: 'Verify Type',
   packages_business_verification_verifytype: 'Verify type',
   packages_business_verification_singleRepeatingVerify: 'Single/repeating verify',

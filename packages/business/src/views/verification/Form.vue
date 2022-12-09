@@ -19,6 +19,21 @@
         <ElFormItem
           required
           class="form-item"
+          prop="name"
+          :label="$t('packages_business_verification_task_name') + ': '"
+        >
+          <ElInput class="form-input" v-model="form.name"></ElInput>
+        </ElFormItem>
+        <ElFormItem required class="form-item" :label="'校验任务模式' + ': '">
+          <ElRadioGroup v-model="form.taskMode" @change="handleChangeTaskMode">
+            <ElRadioButton label="pipeline">为特定的PIPELINE创建的校验任务</ElRadioButton>
+            <ElRadioButton label="random">指定任意表的校验任务</ElRadioButton>
+          </ElRadioGroup>
+        </ElFormItem>
+        <ElFormItem
+          v-if="form.taskMode === 'pipeline'"
+          required
+          class="form-item"
           prop="flowId"
           :label="$t('packages_business_verification_chooseJob') + ': '"
         >
@@ -59,14 +74,6 @@
               }[form.inspectMethod]
             }}</span>
           </div>
-        </ElFormItem>
-        <ElFormItem
-          required
-          class="form-item"
-          prop="name"
-          :label="$t('packages_business_verification_task_name') + ': '"
-        >
-          <ElInput class="form-input" v-model="form.name"></ElInput>
         </ElFormItem>
         <ElFormItem class="form-item" :label="$t('packages_business_verification_frequency') + ': '">
           <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
@@ -168,8 +175,9 @@
           </ElFormItem>
         </template>
       </ElForm>
+      <FormArrayItem :task-id="form.flowId"></FormArrayItem>
       <div
-        v-if="flowStages"
+        v-if="false"
         v-loading="!flowStages.length"
         class="joint-table"
         :class="{ error: !!jointErrorMessage }"
@@ -189,14 +197,17 @@
             <div class="joint-table-setting overflow-hidden">
               <div class="setting-item">
                 <label class="item-label">{{ $t('packages_business_verification_table') }}: </label>
-                <ElCascader
-                  v-if="editId === item.id"
-                  v-model="item.sourceTable"
-                  class="item-select"
-                  :class="{ red: !item.sourceTable }"
-                  :options="item.sourceTree"
-                  @input="tableChangeHandler(item, 'source', index)"
-                ></ElCascader>
+<!--                <ElCascader-->
+<!--                  v-if="editId === item.id"-->
+<!--                  v-model="item.sourceTable"-->
+<!--                  class="item-select"-->
+<!--                  :class="{ red: !item.sourceTable }"-->
+<!--                  :options="item.sourceTree"-->
+<!--                  @input="tableChangeHandler(item, 'source', index)"-->
+<!--                ></ElCascader>-->
+                <ElSelect v-if="editId === item.id" v-model="item.sourceConnectionId" filterable class="form-select">
+                  <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
+                </ElSelect>
                 <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{
                   item.sourceTable ? item.sourceTable[1] : $t('packages_business_statistics_schedule_qingxuanze')
                 }}</span>
@@ -214,6 +225,44 @@
                 <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{
                   item.targetTable ? item.targetTable[1] : $t('packages_business_statistics_schedule_qingxuanze')
                 }}</span>
+              </div>
+              <!--              <div class="setting-item mt-4">-->
+              <!--                <label class="item-label">来源表: </label>-->
+              <!--                <ElSelect v-if="editId === item.id" filterable class="form-select" v-model="item.connectionId">-->
+              <!--                  <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>-->
+              <!--                </ElSelect>-->
+              <!--                <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{-->
+              <!--                  item.sourceTable ? item.sourceTable[1] : $t('packages_business_statistics_schedule_qingxuanze')-->
+              <!--                }}</span>-->
+              <!--                <span class="item-icon">-->
+              <!--                  <i class="el-icon-arrow-right"></i>-->
+              <!--                </span>-->
+              <!--                <ElCascader-->
+              <!--                  v-if="editId === item.id"-->
+              <!--                  v-model="item.targetTable"-->
+              <!--                  class="item-select"-->
+              <!--                  :class="{ red: !item.targetTable }"-->
+              <!--                  :options="item.targetTree"-->
+              <!--                  @input="tableChangeHandler(item, 'target')"-->
+              <!--                ></ElCascader>-->
+              <!--                <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{-->
+              <!--                  item.targetTable ? item.targetTable[1] : $t('packages_business_statistics_schedule_qingxuanze')-->
+              <!--                }}</span>-->
+              <!--              </div>-->
+              <div class="setting-item align-items-center mt-4" v-show="form.inspectMethod !== 'row_count'">
+                <label class="item-label">待校验模型: </label>
+                <ElRadioGroup v-model="item.modeType">
+                  <ElRadio label="all">全字段</ElRadio>
+                  <ElRadio label="custom">自定义</ElRadio>
+                </ElRadioGroup>
+              </div>
+              <div
+                v-if="item.modeType === 'custom'"
+                class="setting-item mt-4"
+                v-show="form.inspectMethod !== 'row_count'"
+              >
+                <label class="item-label"> </label>
+                <div>模型内容</div>
               </div>
               <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
                 <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
@@ -549,8 +598,10 @@ import { /*VCodeEditor,*/ JsEditor, GitBook } from '@tap/component'
 import { DATA_NODE_TYPES } from '@/const.js'
 import { metadataInstancesApi, taskApi, inspectApi } from '@tap/api'
 
+import FormArrayItem from "./components/FormArrayItem";
+
 export default {
-  components: { MultiSelection, /*VCodeEditor,*/ JsEditor, GitBook },
+  components: { MultiSelection, /*VCodeEditor,*/ JsEditor, GitBook, FormArrayItem },
   data() {
     let self = this
     let requiredValidator = (msg, check) => {
@@ -592,7 +643,8 @@ export default {
           keep: 100
         },
         enabled: true,
-        tasks: []
+        tasks: [],
+        taskMode: 'pipeline'
       },
       rules: {
         flowId: [
@@ -633,7 +685,8 @@ export default {
       webScript: '',
       jsEngineName: 'graal.js',
       jointErrorMessage: '',
-      allStages: null
+      allStages: null,
+      connectionsList: []
     }
   },
   created() {
@@ -763,8 +816,13 @@ export default {
       let flowStages = stages.filter(stg => types.includes(stg.type))
       let connectionIds = []
       let tableNames = []
+      let connectionsList = []
       flowStages.forEach(stg => {
         connectionIds.push(stg.connectionId)
+        connectionsList.push({
+          value: stg.connectionId,
+          label: stg.name
+        })
         // 获取节点表名称，缩小接口请求数据的范围
         if (!isDB) {
           tableNames.push(stg.tableName)
@@ -1026,7 +1084,8 @@ export default {
               showAdvancedVerification: false,
               script: '', //后台使用 需要拼接function头尾
               webScript: '', //前端使用 用于页面展示
-              jsEngineName: 'graal.js'
+              jsEngineName: 'graal.js',
+              modeType: 'all' // 待校验模型的类型
             }
             if (targetStage) {
               this.setTarget(task, targetStage)
@@ -1106,7 +1165,8 @@ export default {
         showAdvancedVerification: false,
         script: '', //后台使用 需要拼接function头尾
         webScript: '', //前端使用 用于页面展示
-        jsEngineName: 'graal.js'
+        jsEngineName: 'graal.js',
+        modeType: 'all' // 待校验模型的类型
       })
       this.getTaskTree()
     },
@@ -1414,6 +1474,22 @@ function validate(sourceRow){
 \`\`\`
 `
       }
+    },
+
+    // 加载连接列表
+    loadConnectionsList() {
+
+    },
+
+    getConnectionsList() {
+      return this.connectionsList
+    },
+
+    handleChangeTaskMode(val) {
+      if (val !== 'pipeline') {
+        this.form.flowId = ''
+      }
+      console.log('清空配置')
     }
   }
 }

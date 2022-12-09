@@ -604,7 +604,6 @@ export default {
   packages_business_verification_deleteVerifyJob: '删除',
   packages_business_verification_verifySetting: '校验设置',
   packages_business_verification_batchVerify: '批量校验',
-  packages_business_verification_verifyJobName: '校验任务名',
   packages_business_verification_verifyType: '校验类型',
   packages_business_verification_verifytype: '校验类型',
   packages_business_verification_singleRepeatingVerify: '单次/重复校验',
