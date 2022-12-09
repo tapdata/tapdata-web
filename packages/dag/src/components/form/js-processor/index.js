@@ -89,7 +89,7 @@ export const JsProcessor = observer(
             return res.over
           })
         await monitoringLogsApi.query({
-          taskId,
+          testTaskId: taskId,
           order: 'asc',
           page: 1,
           pageSize: 50,
