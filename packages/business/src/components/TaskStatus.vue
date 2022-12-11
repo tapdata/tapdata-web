@@ -1,25 +1,85 @@
 <template>
-  <span v-if="show" class="status-block" :class="['status-' + task.status]">
-    {{ $t(STATUS_MAP[task.status].i18n) }}
-  </span>
+  <div class="inline-flex align-center">
+    <span v-if="show" class="status-block" :class="['status-' + task.status]">
+      {{ $t(STATUS_MAP[task.status].i18n) }}
+    </span>
+    <template v-if="agentMap">
+      <ElTooltip v-if="pingTime" placement="top" class="color-danger">
+        <VIcon class="ml-2" size="16">warning-circle</VIcon>
+        <template #content>
+          <div class="flex align-center">
+            {{
+              $t('packages_business_task_status_agent_tooltip_time', {
+                time: pingTime
+              })
+            }}，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：<ElLink
+              @click="onClickStatus"
+              type="primary"
+              >{{ agentStatus }}</ElLink
+            >
+          </div>
+        </template>
+      </ElTooltip>
+    </template>
+  </div>
 </template>
 
 <script>
-import { STATUS_MAP } from '../shared'
+import { dayjs, STATUS_MAP } from '../shared'
 
 export default {
   name: 'TaskStatus',
   props: {
-    task: Object
+    task: Object,
+    agentMap: Object
   },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       STATUS_MAP
     }
   },
   computed: {
     show() {
       return this.task.status in this.STATUS_MAP
+    },
+
+    pingTime() {
+      const pingTime = this.task.pingTime
+      if (this.task.status === 'running' && pingTime) {
+        if (Date.now() - this.task.pingTime > 5 * 60 * 1000) {
+          return dayjs(pingTime).fromNow(true)
+        }
+      }
+      return undefined
+    },
+
+    agentInfo() {
+      return this.agentMap?.[this.task.agentId]
+    },
+
+    agentStatus() {
+      const info = this.agentInfo
+      return info ? `${info.name}（${info.status}）` : '-'
+    }
+  },
+
+  methods: {
+    onClickStatus() {
+      let route
+      if (this.isDaas) {
+        route = {
+          name: 'clusterManagement'
+        }
+      } else {
+        route = {
+          name: 'Instance',
+          query: {
+            keyword: this.agentInfo?.itemId
+          }
+        }
+      }
+      this.$router.push(route)
     }
   }
 }

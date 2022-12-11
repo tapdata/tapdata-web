@@ -1191,5 +1191,6 @@ export default {
   dfs_instance_instance_banbenhao: 'version number: ',
   dfs_instance_instance_agent: 'Agent update',
 
-  dfs_user_center_phone_error: 'This phone number has already been registered by another user'
+  dfs_user_center_phone_error: 'This phone number has already been registered by another user',
+  packages_business_task_status_agent_tooltip_agent: 'Agent'
 }
