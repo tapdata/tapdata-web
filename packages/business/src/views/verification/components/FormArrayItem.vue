@@ -1,160 +1,167 @@
 <template>
   <div class="joint-table" :class="{ error: !!jointErrorMessage }" @click="jointErrorMessage = ''">
-    <!--    <div class="joint-table-header">-->
-    <!--      <div>-->
-    <!--        <span>{{ $t('packages_business_verification_verifyCondition') }}</span>-->
-    <!--        <span class="color-danger ml-6">{{ jointErrorMessage }}</span>-->
-    <!--      </div>-->
-    <!--      <ElLink type="primary" :disabled="!list.length" @click="clear">{{-->
-    <!--        $t('packages_business_verification_clear')-->
-    <!--      }}</ElLink>-->
-    <!--    </div>-->
+    <div class="joint-table-header">
+      <div>
+        <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
+        <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
+      </div>
+      <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
+        $t('packages_business_verification_clear')
+      }}</ElLink>
+    </div>
     <ul class="joint-table-main" id="data-verification-form">
       <li class="joint-table-item" v-for="(item, index) in list" :key="item.id + index" @click="editItem(item)">
         <div class="joint-table-setting overflow-hidden">
-          <div class="setting-item" :key="'connection' + item.id + index">
+          <div class="setting-item" :key="'connection' + item.id">
             <label class="item-label">待校验连接: </label>
             <AsyncSelect
               v-if="editId === item.id"
-              v-model="item.sourceConnectionId"
+              v-model="item.source.connectionId"
               :method="getConnectionsListMethod"
               filterable
               class="item-select"
-              :key="'sourceConnectionId' + item.id + index"
+              :key="'sourceConnectionId' + item.id"
               @change="handleChangeConnection(arguments[0], item, index, 'source')"
             >
             </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.sourceConnectionId }]">{{
-              item.sourceConnectionId || $t('packages_business_statistics_schedule_qingxuanze')
+            <span v-else :class="['item-value-text', { 'color-danger': !item.source.connectionId }]">{{
+              item.source.connectionId || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
             <span class="item-icon">
               <i class="el-icon-arrow-right"></i>
             </span>
             <AsyncSelect
               v-if="editId === item.id"
-              v-model="item.targetConnectionId"
+              v-model="item.target.connectionId"
               :method="getConnectionsListMethod"
               filterable
               class="item-select"
-              :key="'targetConnectionId' + item.id + index"
+              :key="'targetConnectionId' + item.id"
               @change="handleChangeConnection(arguments[0], item, index, 'target')"
             >
             </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.targetConnectionId }]">{{
-              item.targetConnectionId || $t('packages_business_statistics_schedule_qingxuanze')
+            <span v-else :class="['item-value-text', { 'color-danger': !item.target.connectionId }]">{{
+              item.target.connectionId || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
           </div>
-          <div class="setting-item mt-4" :key="'table' + item.id + index">
+          <div class="setting-item mt-4" :key="'table' + item.id">
             <label class="item-label">来源表: </label>
             <AsyncSelect
               v-if="editId === item.id"
-              v-model="item.sourceTable"
+              v-model="item.source.table"
               :method="getTableListMethod"
               :params="{
-                connectionId: item.sourceConnectionId,
-                nodeId: item.sourceNodeId
+                connectionId: item.source.connectionId,
+                nodeId: item.source.nodeId
               }"
               itemType="string"
               filterable
               class="item-select"
-              :key="'sourceTable' + item.id + index"
-              @change="handleChangeTable(arguments[0], item, index, 'source')"
+              :key="'sourceTable' + item.id"
+              @change="handleChangeTable(arguments[0], item, index, 'source', $refs)"
             >
             </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{
-              item.sourceTable || $t('packages_business_statistics_schedule_qingxuanze')
+            <span v-else :class="['item-value-text', { 'color-danger': !item.source.table }]">{{
+              item.source.table || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
-            <span class="item-icon">
-              <i class="el-icon-arrow-right"></i>
-            </span>
+            <span class="item-icon fs-8"> 目标表:</span>
             <AsyncSelect
               v-if="editId === item.id"
-              v-model="item.targetTable"
+              v-model="item.target.table"
               :method="getTableListMethod"
               :params="{
-                connectionId: item.targetConnectionId,
-                nodeId: item.targetNodeId
+                connectionId: item.target.connectionId,
+                nodeId: item.target.nodeId
               }"
               itemType="string"
               filterable
               class="item-select"
-              :key="'targetTable' + item.id + index"
+              :key="'targetTable' + item.id"
+              @change="handleChangeTable(arguments[0], item, index, 'target')"
             >
             </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{
-              item.targetTable || $t('packages_business_statistics_schedule_qingxuanze')
+            <span v-else :class="['item-value-text', { 'color-danger': !item.target.table }]">{{
+              item.target.table || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
           </div>
-          <!--          <div class="setting-item align-items-center mt-4" v-show="form.inspectMethod !== 'row_count'">-->
-          <!--            <label class="item-label">待校验模型: </label>-->
-          <!--            <ElRadioGroup v-model="item.modeType">-->
-          <!--              <ElRadio label="all">全字段</ElRadio>-->
-          <!--              <ElRadio label="custom">自定义</ElRadio>-->
-          <!--            </ElRadioGroup>-->
-          <!--          </div>-->
-          <!--          <div v-if="item.modeType === 'custom'" class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">-->
-          <!--            <label class="item-label"> </label>-->
-          <!--            <div>模型内容</div>-->
-          <!--          </div>-->
-          <!--          <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">-->
-          <!--            <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>-->
-          <!--            <MultiSelection-->
-          <!--              v-if="editId === item.id"-->
-          <!--              v-model="item.source.sortColumn"-->
-          <!--              class="item-select"-->
-          <!--              :class="{ red: !item.source.sortColumn }"-->
-          <!--              :options="item.source.fields"-->
-          <!--              :id="'item-source-' + index"-->
-          <!--            ></MultiSelection>-->
-          <!--            <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{-->
-          <!--              item.source.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')-->
-          <!--            }}</span>-->
-          <!--            <span class="item-icon"></span>-->
-          <!--            <MultiSelection-->
-          <!--              v-if="editId === item.id"-->
-          <!--              v-model="item.target.sortColumn"-->
-          <!--              class="item-select"-->
-          <!--              :class="{ red: !item.target.sortColumn }"-->
-          <!--              :options="item.target.fields"-->
-          <!--            ></MultiSelection>-->
-          <!--            <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{-->
-          <!--              item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')-->
-          <!--            }}</span>-->
-          <!--          </div>-->
-          <!--          <div class="setting-item mt-4">-->
-          <!--            <ElCheckbox-->
-          <!--              v-if="editId === item.id"-->
-          <!--              v-model="item.showAdvancedVerification"-->
-          <!--              v-show="form.inspectMethod === 'field'"-->
-          <!--              @input="handleChangeAdvanced(item)"-->
-          <!--              >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox-->
-          <!--            >-->
-          <!--          </div>-->
-          <!--          <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">-->
-          <!--            <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>-->
-          <!--            <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{-->
-          <!--              $t('packages_business_verification_addJS')-->
-          <!--            }}</ElButton>-->
-          <!--            <template v-else>-->
-          <!--              <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>-->
-          <!--              <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>-->
-          <!--            </template>-->
-          <!--          </div>-->
-          <!--          <div-->
-          <!--            class="setting-item mt-4"-->
-          <!--            v-if="form.inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"-->
-          <!--          >-->
-          <!--            <pre class="item-script">{{ item.webScript }}</pre>-->
-          <!--          </div>-->
+          <div class="setting-item align-items-center mt-4" v-show="inspectMethod !== 'row_count'">
+            <label class="item-label">待校验模型: </label>
+            <ElRadioGroup v-model="item.modeType" @change="handleChangeModeType(arguments[0], item, index)">
+              <ElRadio label="all">全字段</ElRadio>
+              <ElRadio label="custom">自定义</ElRadio>
+            </ElRadioGroup>
+          </div>
+          <div v-if="item.modeType === 'custom'" class="mt-4" v-show="inspectMethod !== 'row_count'">
+            <!--            <label class="item-label"> </label>-->
+            <!--            <div>模型内容</div>-->
+            <FieldCheckbox
+              :options="{
+                source: item.source.fields,
+                target: item.target.fields
+              }"
+              :config="item"
+              @change="handleCheckList(arguments[0], item)"
+            ></FieldCheckbox>
+          </div>
+          <div class="setting-item mt-4" v-show="inspectMethod !== 'row_count'">
+            <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
+            <MultiSelection
+              v-if="editId === item.id"
+              v-model="item.source.sortColumn"
+              class="item-select"
+              :class="{ red: !item.source.sortColumn }"
+              :options="item.source.fields"
+              :id="'item-source-' + index"
+            ></MultiSelection>
+            <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
+              item.source.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
+            }}</span>
+            <span class="item-icon"></span>
+            <MultiSelection
+              v-if="editId === item.id"
+              v-model="item.target.sortColumn"
+              class="item-select"
+              :class="{ red: !item.target.sortColumn }"
+              :options="item.target.fields"
+            ></MultiSelection>
+            <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
+              item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
+            }}</span>
+          </div>
+          <div class="setting-item mt-4">
+            <ElCheckbox
+              v-if="editId === item.id"
+              v-model="item.showAdvancedVerification"
+              v-show="inspectMethod === 'field'"
+              @input="handleChangeAdvanced(item)"
+              >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
+            >
+          </div>
+          <div class="setting-item mt-4" v-if="item.showAdvancedVerification && inspectMethod === 'field'">
+            <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
+            <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
+              $t('packages_business_verification_addJS')
+            }}</ElButton>
+            <template v-else>
+              <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
+              <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
+            </template>
+          </div>
+          <div
+            class="setting-item mt-4"
+            v-if="inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+          >
+            <pre class="item-script">{{ item.webScript }}</pre>
+          </div>
         </div>
-        <!--        <div class="ml-6">-->
-        <!--          <a class="el-link el-link&#45;&#45;primary is-underline" @click.stop="removeItem(index)">{{ $t('button_delete') }}</a>-->
-        <!--        </div>-->
+        <div class="ml-6">
+          <a class="el-link el-link--primary is-underline" @click.stop="removeItem(index)">{{ $t('button_delete') }}</a>
+        </div>
       </li>
     </ul>
     <div class="joint-table-footer">
-      <ElButton size="mini" @click="addTable()">{{ $t('packages_business_verification_addTable') }}</ElButton>
-      <ElButton type="primary" size="mini" @click="autoAddTable()">{{
+      <ElButton size="mini" @click="addItem">{{ $t('packages_business_verification_addTable') }}</ElButton>
+      <ElButton v-if="taskId" type="primary" size="mini" :disabled="!!list.length" @click="autoAddTable">{{
         $t('packages_business_verification_button_auto_add_table')
       }}</ElButton>
     </div>
@@ -163,12 +170,17 @@
 
 <script>
 import { AsyncSelect } from '@tap/form'
-import { connectionsApi, taskApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, taskApi } from '@tap/api'
 import { merge } from 'lodash'
 import { uuid, uniqueArr } from '@tap/shared'
 
+import MultiSelection from '../MultiSelection'
+import FieldCheckbox from './FieldCheckbox'
+
 const TABLE_PARAMS = {
+  nodeId: '',
   connectionId: '',
+  connectionName: '',
   table: '',
   databaseType: '',
   sortColumn: '',
@@ -191,10 +203,11 @@ const META_INSTANCE_FIELDS = {
 export default {
   name: 'FormArrayItem',
 
-  components: { AsyncSelect },
+  components: { AsyncSelect, MultiSelection, FieldCheckbox },
 
   props: {
-    taskId: String
+    taskId: String,
+    inspectMethod: String
   },
 
   data() {
@@ -203,14 +216,15 @@ export default {
       flowStages: [],
       list: [],
       editId: '',
-      jointErrorMessage: ''
+      jointErrorMessage: '',
+      fieldsMap: {}
     }
   },
 
   watch: {
     taskId(v1, v2) {
       if (v1 !== v2) {
-        this.clear()
+        this.clearList()
       }
     }
   },
@@ -218,7 +232,6 @@ export default {
   methods: {
     async getConnectionsListMethod(filter) {
       if (this.taskId) {
-        console.log('有taskId')
         return this.getConnectionsInTask()
       }
       try {
@@ -272,7 +285,7 @@ export default {
         return { items: [], total: 0 }
       }
       if (this.taskId) {
-        return this.getTablesInTask(nodeId, connectionId)
+        return this.getTablesInTask(nodeId, connectionId, filter)
       }
       try {
         const { isSource, isTarget } = filter
@@ -353,9 +366,14 @@ export default {
       this.flowStages = stages.filter(stg => types.includes(stg.type))
       const result = uniqueArr(
         this.flowStages.map(t => {
+          const nodeId = t.id
+          const nodeName = t.name
+          const connectionId = t.connectionId
+          const connectionName = t.attrs?.connectionName
           return {
-            value: t.connectionId,
-            label: t.attrs?.connectionName
+            attrs: { nodeId, nodeName, connectionId, connectionName },
+            value: `${nodeId}/${connectionId}`,
+            label: `${nodeName} / ${connectionName}` // t.attrs?.connectionName
           }
         }),
         'value'
@@ -364,45 +382,66 @@ export default {
       return { items: result, total: result.length }
     },
 
-    async getTablesInTask(nodeId, connectionId) {
-      console.log('getTablesInTask', this.flowStages, this.taskData, nodeId, connectionId)
+    async getTablesInTask(nodeId, connectionId, filter) {
+      console.log('getTablesInTask', this.flowStages, this.taskData, nodeId)
       if (!this.flowStages?.length || !this.taskData?.id) {
         return { items: [], total: 0 }
       }
       const { isDB } = this
-      let tableNames = []
-      const filterNode = this.flowStages.filter(t => t.id === nodeId) || []
-      console.log('filterNode', filterNode, isDB)
-      filterNode.forEach(stg => {
-        // 获取节点表名称，缩小接口请求数据的范围
-        if (!isDB) {
-          tableNames.push(stg.tableName)
-        } else if (stg.syncObjects?.length) {
-          // 当stage存在syncObjects字段说明是目标节点
-          let obj = stg.syncObjects[0]
-          let tables = obj.objectNames || []
-          tables.forEach(t => {
-            // 迁移时，可以同时从目标节点获取源和目标的表名，匹配目标表名时注意大小写和前后缀配置
-            tableNames.push(t)
-            // 拼上前后缀
-            let name = (stg.tablePrefix || '') + t + (stg.tableSuffix || '')
-            // 大小写转换
-            if (stg.tableNameTransform) {
-              name = name[stg.tableNameTransform]()
-            }
-            tableNames.push(name)
+
+      const findNode = this.flowStages.find(t => t.id === nodeId)
+      if (!findNode) {
+        return { items: [], total: 0 }
+      }
+      const params = {
+        nodeId,
+        // tableFilter: op.tableFilter,
+        fields: ['original_name', 'fields', 'qualified_name'],
+        page: filter?.page || 1,
+        pageSize: filter?.size || 50
+      }
+      const res = await metadataInstancesApi.nodeSchemaPage(params)
+      console.log('res', res)
+      const tableList = res.items?.map(t => t.name) || []
+      const total = res.total
+      res.items.forEach(el => {
+        const key = [nodeId || '', connectionId, el.name].join()
+        this.fieldsMap[key] = el.fields
+      })
+      if (isDB) {
+        // 存在多表的情况，这里需要做分页
+        let tableNames = []
+        if (findNode.outputLanes.length) {
+          tableNames = tableList // findNode.tableNames || []
+        } else {
+          // let tables = findNode.syncObjects[0]?.objectNames || []
+          const { tablePrefix, tableSuffix, tableNameTransform } = findNode
+          tableNames = tableList.map(t => {
+            let name = (tablePrefix || '') + t + (tableSuffix || '')
+            return tableNameTransform ? name[tableNameTransform]() : name
           })
         }
-      })
-      tableNames = uniqueArr(tableNames).filter(t => t)
-      return { items: tableNames, total: tableNames.length }
+        return { items: tableNames, total: total }
+      }
+      return { items: tableList, total: tableList.length }
     },
 
     editItem(item) {
       this.editId = item.id
     },
 
-    clear() {
+    handleClear() {
+      this.$confirm('清空', '是否清空所有条件', {
+        type: 'warning'
+      }).then(res => {
+        if (!res) {
+          return
+        }
+        this.clearList()
+      })
+    },
+
+    clearList() {
       this.list = []
     },
 
@@ -411,25 +450,37 @@ export default {
         id: uuid(),
         source: Object.assign({}, TABLE_PARAMS),
         target: Object.assign({}, TABLE_PARAMS),
-        sourceTree: [],
-        targetTree: [],
+        // sourceTree: [],
+        // targetTree: [],
         showAdvancedVerification: false,
         script: '', //后台使用 需要拼接function头尾
         webScript: '', //前端使用 用于页面展示
         jsEngineName: 'graal.js',
-        sourceNodeId: '',
-        sourceConnectionId: '',
-        sourceConnectionName: '',
-        targetNodeId: '',
-        targetConnectionId: '',
-        targetConnectionName: '',
+        columns: null,
         modeType: 'all' // 待校验模型的类型
       }
     },
 
-    addTable() {
+    addItem() {
       this.list.push(this.getItemOptions())
-      // this.getTaskTree()
+    },
+
+    async autoAddTable() {
+      if (!this.taskId || this.list.length) return
+      const allConnectionsInTask = await this.getConnectionsInTask()
+      console.log('allConnectionsInTask', allConnectionsInTask)
+      allConnectionsInTask.items.forEach(async el => {
+        const [nodeId, connectionId] = el.value.split('/')
+        const tableList = await this.getTablesInTask(nodeId, connectionId, {
+          page: 1,
+          size: 1000
+        })
+        console.log('tableList', tableList)
+      })
+    },
+
+    removeItem(index) {
+      this.list.splice(index, 1)
     },
 
     getList() {
@@ -437,62 +488,144 @@ export default {
     },
 
     handleChangeConnection(val, item, index, type) {
-      console.log('handleChangeConnection', this.taskId, this.flowStages, val)
-      // console.log('123213', val, item, index)
-      const tableMap = {
-        source: 'sourceTable',
-        target: 'targetTable'
-      }
-      item[tableMap[type]] = '' // 重选连接，清空表
+      // console.log('handleChangeConnection', this.taskId, this.flowStages, val)
+      console.log('handleChangeConnection', val, item, index, type)
+
+      item[type].table = '' // 重选连接，清空表
+      item[type].sortColumn = '' // 重选连接，清空表
       if (!this.taskId) {
         return
       }
-      // 自动填充目标表
-      let findNode = this.flowStages.find(t => t.connectionId === val)
-      const findNodeId = findNode?.id
-      if (findNodeId) {
-        const nodeMap = {
-          source: 'sourceNodeId',
-          target: 'targetNodeId'
-        }
-        item[nodeMap[type]] = findNodeId
+      const result = val.split('/')
+      if (result.length === 1) {
+        return
+      }
+      const findNodeId = result[0]
+      item[type].nodeId = findNodeId
+
+      const fieldMap = {
+        source: 'sourceFields',
+        target: 'targetFields'
       }
     },
 
     handleChangeTable(val, item, index, type) {
       console.log('handleChangeTable', val, item, index, type)
-      if (!this.taskId || type !== 'source') return
+      const fields = this.getFieldsByItem(item, type)
+      item[type].fields = fields
+      item[type].sortColumn = this.getPrimaryKeyFieldStr(fields)
+      // 绑定任务，则自动填充目标信息
+      if (!this.taskId) {
+        return
+      }
+      if (type === 'target') {
+        return
+      }
       // 自动填充目标连接和表
       const { isDB } = this
-      const sourceNode = this.flowStages.find(t => t.id === item.sourceNodeId)
+      const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
       const targetNodeId = sourceNode?.outputLanes?.[0]
       const targetNode = this.flowStages.find(t => t.id === targetNodeId)
       if (!targetNode) return
 
+      const nodeId = targetNode.id
+      const nodeName = targetNode.name
+      const connectionId = targetNode.connectionId
+      const connectionName = targetNode.attrs?.connectionName
+      item.target.nodeId = nodeId
+      item.target.connectionId = `${nodeId}/${connectionId}`
+      item.target.connectionName = `${nodeName} / ${connectionName}`
+      item.source.connectionName = `${sourceNode.name} / ${sourceNode.attrs?.connectionName}`
       if (isDB) {
         const findSourceTableIndex = sourceNode.tableNames.findIndex(t => t === val)
         const objectNames = targetNode.syncObjects?.[0]?.objectNames || []
-        item.targetTable = objectNames[findSourceTableIndex]
-        item.targetConnectionId = targetNode.connectionId
+        item.target.table = objectNames[findSourceTableIndex]
       } else {
-        item.targetTable = targetNode.tableName
-        item.targetConnectionId = targetNode.connectionId
+        item.target.table = targetNode.tableName
       }
-      // const targetNode = this.flowStages.find(t => t.id === item.)
-      // if (!targetNode) return
-      // const targetNodeId = findNode?.outputLanes?.[0]
-      // if (!targetNodeId) {
-      //   return
-      // }
-      // this.setTargetConnectionAndTable(targetNodeId, item, index)
+
+      // 加载目标的字段
+      const targetTableName = item.target.table
+      const params = {
+        nodeId,
+        tableFilter: targetTableName,
+        page: 1,
+        pageSize: 1
+      }
+      metadataInstancesApi.nodeSchemaPage(params).then(data => {
+        console.log('nodeSchemaPage', data)
+        item.target.fields = data.items?.[0]?.fields || []
+        // 设置主键
+        item.target.sortColumn = this.getPrimaryKeyFieldStr(item.target.fields)
+
+        const key = [nodeId || '', connectionId, targetTableName].join()
+        this.fieldsMap[key] = item.target.fields
+      })
     },
 
-    setTargetConnectionAndTable(targetNodeId, item, index) {
-      const targetNode = this.flowStages.find(t => t.id === targetNodeId)
-      if (!targetNode) return
-      item.targetConnectionId = targetNode.connectionId
-      // item.targetConnectionName = targetNode.name
-      item.targetTable = targetNode.TableName
+    handleChangeModeType(val, item, index) {
+      if (val === 'custom') {
+      }
+    },
+
+    handleChangeAdvanced(item) {
+      item.target.targeFilterFalg = false
+      item.target.where = ''
+    },
+
+    addScript(index) {
+      this.formIndex = index
+      this.webScript = ''
+      this.jsEngineName = 'graal.js'
+      this.dialogAddScriptVisible = true
+    },
+
+    editScript(index) {
+      this.formIndex = index
+      let script = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].webScript))
+      this.jsEngineName = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].jsEngineName || 'nashorn'))
+      this.webScript = script
+      this.dialogAddScriptVisible = true
+    },
+
+    removeScript(index) {
+      this.$confirm(
+        this.$t('packages_business_verification_message_confirm_delete_script'),
+        this.$t('packages_business_button_delete'),
+        {
+          type: 'warning'
+        }
+      ).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        this.list[index].webScript = ''
+      })
+    },
+
+    getFieldsByItem(item, type) {
+      const { nodeId, connectionId, table } = item[type] || {}
+      return this.fieldsMap[[nodeId || '', connectionId, table].join()] || []
+    },
+
+    getPrimaryKeyFieldStr(data = []) {
+      let sortField = list => {
+        return (
+          list?.sort((a, b) => {
+            return a.field_name > b.field_name ? -1 : 1
+          }) || []
+        )
+      }
+      return sortField(data)
+        .filter(f => f.primary_key_position > 0)
+        .map(t => t.field_name)
+        .join(',')
+    },
+
+    handleCheckList(data, item) {
+      item.columns = data || []
+      console.log('item', item)
+      console.log('tlist', this.list)
     }
   }
 }
@@ -541,7 +674,7 @@ export default {
     }
     .item-icon {
       margin: 0 10px;
-      width: 20px;
+      width: 80px;
       line-height: 32px;
       color: map-get($fontColor, light);
       font-size: 16px;

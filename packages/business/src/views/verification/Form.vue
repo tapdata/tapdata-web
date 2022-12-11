@@ -175,7 +175,7 @@
           </ElFormItem>
         </template>
       </ElForm>
-      <FormArrayItem :task-id="form.flowId"></FormArrayItem>
+      <FormArrayItem :task-id="form.flowId" :inspectMethod="form.inspectMethod"></FormArrayItem>
       <div
         v-if="false"
         v-loading="!flowStages.length"
