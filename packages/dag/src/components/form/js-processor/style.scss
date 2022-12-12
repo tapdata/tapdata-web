@@ -17,7 +17,9 @@
       width: 40vw;
 
       &-panel {
-        background-color: rgba(229, 236, 255, 0.3);
+        .hljs {
+          background-color: rgba(229, 236, 255, 0.3);
+        }
       }
     }
 
@@ -96,6 +98,18 @@
     }
     .ace_cursor {
       display: none !important;
+    }
+  }
+
+  .json-view-area {
+    position: relative;
+    z-index: 9;
+  }
+
+  .js-log-list {
+    &-item {
+      line-height: 28px;
+      border-bottom: 1px solid #F0F0F0;
     }
   }
 }

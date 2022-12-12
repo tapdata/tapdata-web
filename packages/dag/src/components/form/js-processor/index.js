@@ -91,7 +91,7 @@ export const JsProcessor = observer(
             return res.over
           })
         const logData = await monitoringLogsApi.query({
-          taskId: testTaskId,
+          taskId: root.$store.state.dataflow.taskInfo.testTaskId,
           type: 'testRun',
           order: 'asc',
           page: 1,
@@ -335,7 +335,7 @@ export const JsProcessor = observer(
                 </div>
               </div>
 
-              <div class="js-editor-form-item-wrap">
+              <div class="js-editor-form-item-wrap overflow-hidden">
                 <FormItem.BaseItem class="js-editor-form-item" label={label}>
                   <JsEditor
                     value={props.value}
@@ -371,10 +371,18 @@ export const JsProcessor = observer(
                 >
                   <ElTabs class="w-100 flex flex-column">
                     <ElTabPane label="输出">
-                      <div class="js-processor-editor-console-panel px-3">
-                        <div class="log-list">
+                      <div v-loading={running.value} class="js-processor-editor-console-panel h-100 overflow-auto">
+                        <div class="js-log-list">
                           {logList.map(item => {
-                            return <div class="log-list-item">{item.message}</div>
+                            if (/^[[{]/.test(item.message)) {
+                              return (
+                                <details class="js-log-list-item">
+                                  <summary class="text-truncate px-2">{item.message}</summary>
+                                  <HighlightCode class="m-0" language="json" code={item.message}></HighlightCode>
+                                </details>
+                              )
+                            }
+                            return <div class="js-log-list-item text-truncate px-2">{item.message}</div>
                           })}
                         </div>
                       </div>
@@ -396,16 +404,7 @@ export const JsProcessor = observer(
               handleAddCompleter={editorProps.handleAddCompleter}
             />
             {runTool}
-            <div
-              class={[
-                'mt-4',
-                {
-                  none: fullscreen.value
-                }
-              ]}
-            >
-              {jsonView}
-            </div>
+            <div class="mt-4 json-view-area">{jsonView}</div>
           </div>
         )
       }
