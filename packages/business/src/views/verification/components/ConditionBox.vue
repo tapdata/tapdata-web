@@ -25,7 +25,7 @@
             >
             </AsyncSelect>
             <span v-else :class="['item-value-text', { 'color-danger': !item.source.connectionId }]">{{
-              item.source.connectionId || $t('packages_business_statistics_schedule_qingxuanze')
+              item.source.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
             <span class="item-icon">
               <i class="el-icon-arrow-right"></i>
@@ -41,7 +41,7 @@
             >
             </AsyncSelect>
             <span v-else :class="['item-value-text', { 'color-danger': !item.target.connectionId }]">{{
-              item.target.connectionId || $t('packages_business_statistics_schedule_qingxuanze')
+              item.target.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
           </div>
           <div class="setting-item mt-4" :key="'table' + item.id">
@@ -84,25 +84,6 @@
               item.target.table || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
           </div>
-          <div class="setting-item align-items-center mt-4" v-show="inspectMethod !== 'row_count'">
-            <label class="item-label">待校验模型: </label>
-            <ElRadioGroup v-model="item.modeType" @change="handleChangeModeType(arguments[0], item, index)">
-              <ElRadio label="all">全字段</ElRadio>
-              <ElRadio label="custom">自定义</ElRadio>
-            </ElRadioGroup>
-          </div>
-          <div v-if="item.modeType === 'custom'" class="mt-4" v-show="inspectMethod !== 'row_count'">
-            <!--            <label class="item-label"> </label>-->
-            <!--            <div>模型内容</div>-->
-            <FieldCheckbox
-              :options="{
-                source: item.source.fields,
-                target: item.target.fields
-              }"
-              :config="item"
-              @change="handleCheckList(arguments[0], item)"
-            ></FieldCheckbox>
-          </div>
           <div class="setting-item mt-4" v-show="inspectMethod !== 'row_count'">
             <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
             <MultiSelection
@@ -127,6 +108,24 @@
             <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
               item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
+          </div>
+          <div class="setting-item align-items-center mt-4" v-show="inspectMethod !== 'row_count'">
+            <label class="item-label">待校验模型: </label>
+            <ElRadioGroup v-model="item.modeType">
+              <ElRadio label="all">全字段</ElRadio>
+              <ElRadio label="custom">自定义</ElRadio>
+            </ElRadioGroup>
+          </div>
+          <div v-if="item.modeType === 'custom'" class="mt-4" v-show="inspectMethod !== 'row_count'">
+            <FieldList
+              :options="{
+                source: item.source.fields,
+                target: item.target.fields
+              }"
+              :config="item"
+              class="FieldList"
+              @change="handleCheckList(arguments[0], item)"
+            ></FieldList>
           </div>
           <div class="setting-item mt-4">
             <ElCheckbox
@@ -161,9 +160,15 @@
     </ul>
     <div class="joint-table-footer">
       <ElButton size="mini" @click="addItem">{{ $t('packages_business_verification_addTable') }}</ElButton>
-      <ElButton v-if="taskId" type="primary" size="mini" :disabled="!!list.length" @click="autoAddTable">{{
-        $t('packages_business_verification_button_auto_add_table')
-      }}</ElButton>
+      <ElButton
+        v-if="taskId"
+        type="primary"
+        size="mini"
+        :disabled="!!list.length"
+        :loading="autoAddTableLoading"
+        @click="autoAddTable"
+        >{{ $t('packages_business_verification_button_auto_add_table') }}</ElButton
+      >
     </div>
   </div>
 </template>
@@ -175,7 +180,7 @@ import { merge } from 'lodash'
 import { uuid, uniqueArr } from '@tap/shared'
 
 import MultiSelection from '../MultiSelection'
-import FieldCheckbox from './FieldCheckbox'
+import FieldList from './FieldList'
 
 const TABLE_PARAMS = {
   nodeId: '',
@@ -184,7 +189,8 @@ const TABLE_PARAMS = {
   table: '',
   databaseType: '',
   sortColumn: '',
-  fields: []
+  fields: [],
+  columns: null
 }
 const META_INSTANCE_FIELDS = {
   id: true,
@@ -200,10 +206,47 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 
-export default {
-  name: 'FormArrayItem',
+const DATA_NODE_TYPES = [
+  'table',
+  'view',
+  'collection',
+  'mongo_view',
+  'hive',
+  'kudu',
+  'dummy db',
+  'gridfs',
+  'file',
+  'elasticsearch',
+  'rest api',
+  'redis',
+  'field_processor',
+  'aggregation_processor',
+  'js_processor',
+  'row_filter_processor',
+  'java_processor',
+  'hive',
+  'hana',
+  'kafka',
+  'dameng',
+  'clickhouse',
+  'kudu',
+  'hbase',
+  'mq',
+  'kafka',
+  'adb_mysql',
+  'tcp_udp',
+  'cache_lookup_processor',
+  'custom_connection',
+  'mem_cache',
+  'logminer',
+  'protobuf_convert_processor',
+  'hazelcast_cloud_cluster'
+]
 
-  components: { AsyncSelect, MultiSelection, FieldCheckbox },
+export default {
+  name: 'ConditionBox',
+
+  components: { AsyncSelect, MultiSelection, FieldList },
 
   props: {
     taskId: String,
@@ -217,7 +260,8 @@ export default {
       list: [],
       editId: '',
       jointErrorMessage: '',
-      fieldsMap: {}
+      fieldsMap: {},
+      autoAddTableLoading: false
     }
   },
 
@@ -279,7 +323,6 @@ export default {
     },
 
     async getTableListMethod(filter) {
-      console.log('getTableListMethod', filter)
       const { connectionId, nodeId } = filter
       if (!connectionId) {
         return { items: [], total: 0 }
@@ -383,7 +426,6 @@ export default {
     },
 
     async getTablesInTask(nodeId, connectionId, filter) {
-      console.log('getTablesInTask', this.flowStages, this.taskData, nodeId)
       if (!this.flowStages?.length || !this.taskData?.id) {
         return { items: [], total: 0 }
       }
@@ -400,13 +442,17 @@ export default {
         page: filter?.page || 1,
         pageSize: filter?.size || 50
       }
-      const res = await metadataInstancesApi.nodeSchemaPage(params)
-      console.log('res', res)
+
+      let res = await metadataInstancesApi.nodeSchemaPage(params)
+
       const tableList = res.items?.map(t => t.name) || []
       const total = res.total
       res.items.forEach(el => {
         const key = [nodeId || '', connectionId, el.name].join()
-        this.fieldsMap[key] = el.fields
+        this.fieldsMap[key] = el.fields.map(t => {
+          const { id, field_name, primary_key_position } = t
+          return { id, field_name, primary_key_position }
+        })
       })
       if (isDB) {
         // 存在多表的情况，这里需要做分页
@@ -414,7 +460,6 @@ export default {
         if (findNode.outputLanes.length) {
           tableNames = tableList // findNode.tableNames || []
         } else {
-          // let tables = findNode.syncObjects[0]?.objectNames || []
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
           tableNames = tableList.map(t => {
             let name = (tablePrefix || '') + t + (tableSuffix || '')
@@ -424,6 +469,51 @@ export default {
         return { items: tableNames, total: total }
       }
       return { items: tableList, total: tableList.length }
+    },
+
+    getAllTablesInNode(nodeId) {
+      const findNode = this.flowStages.find(t => t.id === nodeId)
+      if (!findNode) return []
+      if (this.isDB) {
+        let tableList = findNode.tableNames || []
+        if (findNode.inputLanes.length) {
+          const objectNames = findNode.syncObjects?.[0]?.objectNames
+          const { tablePrefix, tableSuffix, tableNameTransform } = findNode
+          tableList = objectNames.map(t => {
+            let name = (tablePrefix || '') + t + (tableSuffix || '')
+            return tableNameTransform ? name[tableNameTransform]() : name
+          })
+        }
+        return tableList
+      }
+      return [findNode.tableName]
+    },
+
+    getMatchNodeList() {
+      let result = []
+      // const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
+      // const targetNodeId = sourceNode?.outputLanes?.[0]
+      // const targetNode = this.flowStages.find(t => t.id === targetNodeId)
+      // if (!targetNode) return
+      this.flowStages
+        .filter(t => t.outputLanes.length > 0)
+        .forEach(el => {
+          // const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
+          const targetNode = this.flowStages.find(t => t.id === el.outputLanes[0])
+          if (targetNode) {
+            result.push({
+              source: el.id,
+              sourceName: el.name,
+              target: targetNode.id,
+              targetName: targetNode.name,
+              sourceConnectionId: el.connectionId,
+              sourceConnectionName: el.attrs?.connectionName,
+              targetConnectionId: targetNode.connectionId,
+              targetConnectionName: targetNode.attrs?.connectionName
+            })
+          }
+        })
+      return result
     },
 
     editItem(item) {
@@ -456,7 +546,7 @@ export default {
         script: '', //后台使用 需要拼接function头尾
         webScript: '', //前端使用 用于页面展示
         jsEngineName: 'graal.js',
-        columns: null,
+        // columns: null,
         modeType: 'all' // 待校验模型的类型
       }
     },
@@ -467,16 +557,76 @@ export default {
 
     async autoAddTable() {
       if (!this.taskId || this.list.length) return
+      this.autoAddTableLoading = true
       const allConnectionsInTask = await this.getConnectionsInTask()
-      console.log('allConnectionsInTask', allConnectionsInTask)
-      allConnectionsInTask.items.forEach(async el => {
-        const [nodeId, connectionId] = el.value.split('/')
-        const tableList = await this.getTablesInTask(nodeId, connectionId, {
-          page: 1,
-          size: 1000
-        })
-        console.log('tableList', tableList)
+      let connectionIds = []
+      let tableNames = []
+      const matchNodeList = this.getMatchNodeList()
+      matchNodeList.forEach(m => {
+        connectionIds.push(m.sourceConnectionId)
+        connectionIds.push(m.targetConnectionId)
+        tableNames.push(...this.getAllTablesInNode(m.source))
+        tableNames.push(...this.getAllTablesInNode(m.target))
       })
+      let where = {
+        meta_type: {
+          inq: DATA_NODE_TYPES
+        },
+        'source.id': {
+          inq: Array.from(new Set(connectionIds))
+        },
+        original_name: {
+          inq: Array.from(new Set(tableNames))
+        }
+      }
+      metadataInstancesApi
+        .findInspect({
+          where,
+          fields: META_INSTANCE_FIELDS
+        })
+        .then(data => {
+          let list = []
+          matchNodeList.forEach(m => {
+            const {
+              source,
+              target,
+              sourceName,
+              targetName,
+              sourceConnectionId,
+              targetConnectionId,
+              sourceConnectionName,
+              targetConnectionName
+            } = m
+            const getAllTablesInNodeSource = this.getAllTablesInNode(source)
+            const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
+            getAllTablesInNodeSource.forEach((ge, geIndex) => {
+              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
+              let findTargetTable = data.find(t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex])
+              let item = this.getItemOptions()
+              item.source.nodeId = source
+              item.source.connectionId = `${source}/${sourceConnectionId}`
+              item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
+              item.source.table = findTable.original_name
+              item.source.fields = findTable.fields
+              item.source.sortColumn = this.getPrimaryKeyFieldStr(item.source.fields)
+
+              item.target.nodeId = target
+              item.target.connectionId = `${target}/${targetConnectionId}`
+              item.target.connectionName = `${targetName} / ${targetConnectionName}`
+              item.target.table = findTargetTable.original_name
+              item.target.fields = findTargetTable.fields
+              item.target.sortColumn = this.getPrimaryKeyFieldStr(item.target.fields)
+              list.push(item)
+            })
+          })
+          if (!list.length) {
+            return this.$message.error('所选任务缺少节点连线信息')
+          }
+          this.list = list
+        })
+        .finally(() => {
+          this.autoAddTableLoading = false
+        })
     },
 
     removeItem(index) {
@@ -488,9 +638,6 @@ export default {
     },
 
     handleChangeConnection(val, item, index, type) {
-      // console.log('handleChangeConnection', this.taskId, this.flowStages, val)
-      console.log('handleChangeConnection', val, item, index, type)
-
       item[type].table = '' // 重选连接，清空表
       item[type].sortColumn = '' // 重选连接，清空表
       if (!this.taskId) {
@@ -502,15 +649,9 @@ export default {
       }
       const findNodeId = result[0]
       item[type].nodeId = findNodeId
-
-      const fieldMap = {
-        source: 'sourceFields',
-        target: 'targetFields'
-      }
     },
 
     handleChangeTable(val, item, index, type) {
-      console.log('handleChangeTable', val, item, index, type)
       const fields = this.getFieldsByItem(item, type)
       item[type].fields = fields
       item[type].sortColumn = this.getPrimaryKeyFieldStr(fields)
@@ -553,8 +694,11 @@ export default {
         pageSize: 1
       }
       metadataInstancesApi.nodeSchemaPage(params).then(data => {
-        console.log('nodeSchemaPage', data)
-        item.target.fields = data.items?.[0]?.fields || []
+        item.target.fields =
+          data.items?.[0]?.fields.map(t => {
+            const { id, field_name, primary_key_position } = t
+            return { id, field_name, primary_key_position }
+          }) || []
         // 设置主键
         item.target.sortColumn = this.getPrimaryKeyFieldStr(item.target.fields)
 
@@ -563,21 +707,17 @@ export default {
       })
     },
 
-    handleChangeModeType(val, item, index) {
-      if (val === 'custom') {
-      }
-    },
-
     handleChangeAdvanced(item) {
       item.target.targeFilterFalg = false
       item.target.where = ''
     },
 
     addScript(index) {
-      this.formIndex = index
-      this.webScript = ''
-      this.jsEngineName = 'graal.js'
-      this.dialogAddScriptVisible = true
+      this.$emit('addScript')
+      // this.formIndex = index
+      // this.webScript = ''
+      // this.jsEngineName = 'graal.js'
+      // this.dialogAddScriptVisible = true
     },
 
     editScript(index) {
@@ -623,9 +763,8 @@ export default {
     },
 
     handleCheckList(data, item) {
-      item.columns = data || []
-      console.log('item', item)
-      console.log('tlist', this.list)
+      item.source.columns = data.map(t => t.source)
+      item.target.columns = data.map(t => t.target)
     }
   }
 }
@@ -728,5 +867,9 @@ export default {
       line-height: 17px;
     }
   }
+}
+
+.FieldList {
+  height: 280px;
 }
 </style>
