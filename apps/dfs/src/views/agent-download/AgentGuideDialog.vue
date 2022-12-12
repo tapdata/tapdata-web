@@ -15,7 +15,7 @@
         </header>
         <div class="agent-guide-desc mb-4">{{ $t('dfs_agent_download_agentguidedialog_dianjixiafangde') }}</div>
         <div class="agent-guide-txt mb-4">{{ $t('dfs_agent_download_agentguidedialog_ninyaotongbude') }}</div>
-        <div class="agent-guide-link mb-8 flex">
+        <div class="agent-guide-link flex">
           <div
             class="item mr-4 cursor-pointer"
             :style="{ width: style['item'] }"
@@ -35,7 +35,11 @@
             <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_neiwang') }}</div>
           </div>
         </div>
-        <div class="footer">
+        <!-- 提示-->
+        <div class="mt-1 color-danger" v-if="showTip">
+          {{ $t('dfs_agent_download_agentguidedialog_qingdianjibushu') }}
+        </div>
+        <div class="footer mt-8">
           <el-button type="primary" @click="goStep()">{{
             $t('dfs_agent_download_agentguidedialog_xiayibu')
           }}</el-button>
@@ -45,7 +49,7 @@
       <div class="agent-guide-left mt-32" v-if="step === 2">
         <header class="agent-guide-header mb-39">{{ $t('dfs_agent_download_agentguidedialog_lijiquanzhuang') }}</header>
         <div class="agent-guide-step-2">
-          <div class="step mb-39">
+          <div class="step mb-39" :style="{ width: style['step'] }">
             <div class="color-primary step-header mb-2">
               {{ $t('dfs_agent_download_agentguidedialog_zizhuanzhuang') }}
             </div>
@@ -57,7 +61,7 @@
               $t('dfs_agent_download_agentguidedialog_anzhuang')
             }}</el-button>
           </div>
-          <div class="step">
+          <div class="step" :style="{ width: style['step'] }">
             <div class="color-primary step-header mb-2">{{ $t('dfs_agent_download_agentguidedialog_tiyanDem') }}</div>
             <div class="flex mb-2 step-content">
               <div class="mr-4">{{ $t('dfs_agent_download_agentguidedialog_womentigongle') }}</div>
@@ -125,10 +129,8 @@
   </ElDialog>
 </template>
 <script>
-import i18n from '@/i18n'
-
+import { buried } from '@/plugins/buried'
 import { VIcon } from '@tap/component'
-import Cookie from '@tap/shared/src/cookie'
 
 export default {
   name: 'AgentGuideDialog',
@@ -144,7 +146,8 @@ export default {
       type: 'init',
       step: 1,
       style: {},
-      showClose: false //关闭按钮
+      showClose: false, //关闭按钮
+      showTip: false
     }
   },
   mounted() {
@@ -162,7 +165,8 @@ export default {
               item: '221px',
               dialog: '1100px',
               top: '55px',
-              'ordinary-suffix': '365px'
+              'ordinary-suffix': '365px',
+              step: '448px'
             }
           : {
               current: '135px',
@@ -170,27 +174,33 @@ export default {
               switch: '265px',
               item: '175px',
               dialog: '1017px',
-              top: '95px',
-              'ordinary-suffix': '130px'
+              top: '75px',
+              'ordinary-suffix': '130px',
+              step: '365px'
             }
     },
     changeImg(type) {
+      buried('agentGuide' + type)
+      this.showTip = false
       this.current = type //extranet外网  intranet 内网
       this.type = type + '-sync' //init 初始化  sync 数据同步 login 入湖边入仓
     },
     changeType(type) {
+      buried('agentGuide' + type)
       this.type = type //init 初始化  sync 数据同步 login 入湖边入仓
     },
     //下一步
     goStep() {
       if (this.current === '') {
-        this.$message.error(i18n.t('dfs_agent_download_agentguidedialog_qingdianjibushu'))
+        this.showTip = true
         return
       }
+      buried('agentGuideNext')
       this.step = 2
     },
     //关闭当前弹窗-弹出agent下载页面
     openAgentDownloadModal() {
+      buried('agentGuideInstall')
       this.$emit('openAgentDownload')
     },
     close() {
@@ -201,6 +211,7 @@ export default {
     },
     //去demo环境体验
     goDemo() {
+      buried('agentGuideDemo')
       this.showClose = true
       window.open('https://uat.cloud.tapdata.net:9443/console/')
     }
@@ -216,7 +227,7 @@ export default {
     margin-bottom: 32px;
   }
   .mb-39 {
-    margin-bottom: 39px;
+    margin-bottom: 30px;
   }
   .agent-guide-header {
     font-size: 32px;
@@ -343,7 +354,7 @@ export default {
   //step-2
   .step {
     width: 365px;
-    height: 178px;
+    height: 187px;
     background: #ffffff;
     /* 分割线 */
     border: 1px solid #f2f2f2;
@@ -353,7 +364,7 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    height: 80px;
+    height: 91px;
     color: #535f72;
   }
   .step-header {

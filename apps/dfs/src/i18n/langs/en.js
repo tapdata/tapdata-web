@@ -1213,5 +1213,5 @@ export default {
     'Can the data source/target library you want to synchronize open ports to the external network? (via firewall, SSH Tunnel, VPN or other means)',
   dfs_agent_download_agentguidedialog_dianjixiafangde:
     'Based on your network security policy, we will recommend a most appropriate deployment for your use. ',
-  dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata'
+  dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata Cloud'
 }
