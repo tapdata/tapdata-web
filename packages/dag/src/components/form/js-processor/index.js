@@ -374,15 +374,17 @@ export const JsProcessor = observer(
                       <div v-loading={running.value} class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
                           {logList.map(item => {
-                            if (/^[[{]/.test(item.message)) {
+                            if (/^[{].*[}]$/.test(item.message)) {
+                              const message = item.message.replace(/^\{(.*)}$/, '$1').split(', ')
+                              const code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
                               return (
-                                <details class="js-log-list-item">
+                                <details class="js-log-list-item p-2">
                                   <summary class="text-truncate px-2">{item.message}</summary>
-                                  <HighlightCode class="m-0" language="json" code={item.message}></HighlightCode>
+                                  <HighlightCode class="m-0" language="json" code={code}></HighlightCode>
                                 </details>
                               )
                             }
-                            return <div class="js-log-list-item text-truncate px-2">{item.message}</div>
+                            return <div class="js-log-list-item text-prewrap p-2">{item.message}</div>
                           })}
                         </div>
                       </div>
