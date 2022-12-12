@@ -38,7 +38,8 @@ export default {
       reader.readAsText(blob, 'utf8')
       reader.onload = () => {
         const md = new MarkdownIt({ html: true })
-        this.html = md.render(reader.result)
+        // a标签，新窗口打开
+        this.html = md.render(reader.result).replace(/<a href=/g, `<a target="_blank" href=`)
       }
     }
   }
