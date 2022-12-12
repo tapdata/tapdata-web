@@ -328,13 +328,17 @@ importers:
 
   packages/business:
     specifiers:
+      '@tap/api': workspace:^1.0.0
       '@tap/assets': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
+      '@tap/form': workspace:^1.0.0
       '@tap/i18n': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
     dependencies:
+      '@tap/api': link:../api
       '@tap/assets': link:../assets
       '@tap/component': link:../component
+      '@tap/form': link:../form
       '@tap/i18n': link:../i18n
       '@tap/shared': link:../shared
 
@@ -419,7 +423,6 @@ importers:
       '@formily/vue': ^2.1.2
       '@tap/api': workspace:^1.0.0
       '@tap/assets': workspace:^1.0.0
-      '@tap/business': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/i18n': workspace:^1.0.0
       '@vue/composition-api': ^1.2.4
@@ -440,7 +443,6 @@ importers:
       '@formily/vue': registry.npmmirror.com/@formily/vue/2.1.9_6fywhegardq2xsbixl3beuj4ua
       '@tap/api': link:../api
       '@tap/assets': link:../assets
-      '@tap/business': link:../business
       '@tap/component': link:../component
       '@tap/i18n': link:../i18n
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.6.3_vue@2.6.14

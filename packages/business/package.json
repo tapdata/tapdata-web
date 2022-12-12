@@ -7,9 +7,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@tap/api": "workspace:^1.0.0",
     "@tap/assets": "workspace:^1.0.0",
+    "@tap/component": "workspace:^1.0.0",
+    "@tap/form": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
-    "@tap/shared": "workspace:^1.0.0",
-    "@tap/component": "workspace:^1.0.0"
+    "@tap/shared": "workspace:^1.0.0"
   }
 }
