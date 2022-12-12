@@ -978,13 +978,19 @@ export default {
         startNum: this.currentPage,
         pageNum: this.pageSize
       }
-      this.$axios.get('/api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(() => {
+      this.$axios.get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(() => {
         this.$message.success('上传成功')
+      })
+    },
+    //删除下载
+    handleDeleteUploadLog(row) {
+      this.$axios.post('api/tcm/deleteUploadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(() => {
+        this.$message.success('删除成功')
       })
     },
     //日志下载
     handleDownload(row) {
-      this.$axios.get('/api/tcm/downloadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(() => {
+      this.$axios.get('api/tcm/downloadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(() => {
         this.$message.success('下载成功')
       })
     }
