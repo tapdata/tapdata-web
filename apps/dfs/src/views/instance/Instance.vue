@@ -990,7 +990,7 @@ export default {
     },
     //删除
     handleDeleteUploadLog(row) {
-      this.$axios.post('api/tcm/deleteUploadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(() => {
+      this.$axios.post('api/tcm/deleteUploadLog', { agentId: this.currentAgentId, id: row.id }).then(() => {
         this.$message.success('删除成功')
       })
     },
