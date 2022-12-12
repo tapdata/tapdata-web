@@ -310,6 +310,7 @@
         >
           <template slot="operation" slot-scope="scope">
             <ElButton size="mini" type="text" @click="handleDownload(scope.row)">下载</ElButton>
+            <ElButton size="mini" type="text" @click="handleDeleteUploadLog(scope.row)">删除</ElButton>
           </template>
         </VTable>
         <span slot="footer" class="dialog-footer">
@@ -975,8 +976,9 @@ export default {
     getDownloadList() {
       let filter = {
         agentId: this.currentAgentId,
-        startNum: this.currentPage,
-        pageNum: this.pageSize
+        page: this.currentPage,
+        size: this.pageSize,
+        isDeleted: false
       }
       this.$axios.get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(() => {
         this.$message.success('上传成功')
@@ -984,8 +986,23 @@ export default {
     },
     //删除下载
     handleDeleteUploadLog(row) {
-      this.$axios.post('api/tcm/deleteUploadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(() => {
-        this.$message.success('删除成功')
+      this.$axios.post('api/tcm/deleteUploadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(res => {
+        let data = res?.data
+        let { accessKeyId, accessKeySecret, securityToken, region, downloadAddr, bucket } = data
+        //ssl 凭证
+        const OSS = require('ali-oss')
+        const client = new OSS({
+          accessKeyId: accessKeyId,
+          accessKeySecret: accessKeySecret,
+          region: region,
+          bucket: bucket,
+          securityToken: securityToken
+        })
+        const response = {
+          'content-disposition': `attachment; filename= ${encodeURIComponent(filename)};expires:7200,`
+        }
+        const url = client.signatureUrl(downloadAddr, { response })
+        window.location.href = url
       })
     },
     //日志下载
