@@ -196,7 +196,7 @@
 </template>
 
 <script>
-import { roleMappingsApi } from '@tap/api'
+import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
 
 let pageSort = [
   // { children: [{ name: 'Dashboard_menu' }] },
@@ -574,8 +574,7 @@ export default {
     getPermission() {
       let self = this
       this.permissLoading = true
-      self
-        .$api('Permissions')
+      permissionsApi
         .get({})
         .then(data => {
           if (data && data.length) {
@@ -811,8 +810,7 @@ export default {
           })
       })
 
-      self
-        .$api('users')
+      usersApi
         .deletePermissionRoleMapping(roleId, {
           data: { data: newRoleMappings }
         })

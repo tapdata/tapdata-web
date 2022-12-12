@@ -60,6 +60,8 @@ const RelationTaskDetails = async () => {
   return RelationTaskDetails
 }
 
+const RoleDetails = () => import(/* webpackChunkName: "role-details" */ '@/views/role/Role')
+
 export default [
   {
     path: '/login',
@@ -689,24 +691,24 @@ export default [
               code: 'role_management_menu'
             }
           },
-          // {
-          //   path: 'create',
-          //   name: 'role',
-          //   component: RoleDetails,
-          //   meta: {
-          //     title: 'page_title_role',
-          //     code: 'role_creation'
-          //   }
-          // },
-          // {
-          //   path: ':id/edit',
-          //   name: 'editRole',
-          //   component: RoleDetails,
-          //   meta: {
-          //     title: 'page_title_role',
-          //     code: 'role_edition'
-          //   }
-          // }
+          {
+            path: 'create',
+            name: 'role',
+            component: RoleDetails,
+            meta: {
+              title: 'page_title_role',
+              code: 'role_creation'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'editRole',
+            component: RoleDetails,
+            meta: {
+              title: 'page_title_role',
+              code: 'role_edition'
+            }
+          }
         ]
       },
       /* ---------- 设置  ----------*/
