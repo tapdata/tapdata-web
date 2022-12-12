@@ -20,12 +20,12 @@
             :class="{ active: current === 'extranet' }"
             @click="changeImg('extranet')"
           >
-            <VIcon size="18" class="color-primary">extranet</VIcon>
+            <VIcon size="30" class="color-primary">extranet</VIcon>
             <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_womendeshuju') }}</div>
           </div>
           <div class="item cursor-pointer" :class="{ active: current === 'intranet' }" @click="changeImg('intranet')">
-            <VIcon size="18" class="color-primary">intranet</VIcon>
-            <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_womendeshuju') }}</div>
+            <VIcon size="30" class="color-primary">intranet</VIcon>
+            <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_neiwang') }}</div>
           </div>
         </div>
         <div class="footer">
@@ -106,6 +106,7 @@
 import i18n from '@/i18n'
 
 import { VIcon } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   name: 'AgentGuideDialog',
@@ -144,6 +145,9 @@ export default {
       this.$emit('openAgentDownload')
     },
     close() {
+      // Cookie.set('deployLater', 1)
+      // let user = window.__USER_INFO__
+      // Cookie.set('deployLaterUser', user.userId)
       this.$emit('update:visible', false)
     },
     //去demo环境体验
@@ -157,7 +161,7 @@ export default {
 <style lang="scss" scoped>
 .agent-guide-main {
   .mt-110 {
-    margin-top: 115px;
+    margin-top: 95px;
   }
   .mb-32 {
     margin-bottom: 32px;
@@ -191,7 +195,7 @@ export default {
   }
   .item {
     width: 175px;
-    padding: 20px;
+    padding: 14px 20px;
     box-sizing: border-box;
     background: #fff;
     /* 主题色 */
@@ -218,7 +222,7 @@ export default {
     margin-top: 72px;
   }
   .agent-guide-left {
-    width: 550px;
+    width: 600px;
     padding: 24px 32px;
   }
   .agent-guide-init {
@@ -247,7 +251,7 @@ export default {
     background-repeat: no-repeat;
   }
   .switch {
-    width: 187px;
+    width: 265px;
     height: 33px;
     border: 2px solid #ffffff;
     border-radius: 100px;
@@ -257,7 +261,7 @@ export default {
     display: inline-block;
     text-align: center;
     line-height: 30px;
-    width: 90px;
+    width: 135px;
     height: 31px;
     color: #2c65ff;
     background: #ffffff;
@@ -273,7 +277,7 @@ export default {
     display: inline-block;
     text-align: center;
     line-height: 30px;
-    width: 92px;
+    width: 130px;
     height: 31px;
     color: #2c65ff;
     background: #ffffff;
