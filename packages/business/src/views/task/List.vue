@@ -120,7 +120,7 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('packages_business_task_list_status')" :min-width="colWidth.status">
         <template #default="{ row }">
-          <TaskStatus :task="row" />
+          <TaskStatus :task="row" :agentMap="agentMap" />
         </template>
       </el-table-column>
       <el-table-column
@@ -236,6 +236,7 @@ import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
+import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { toRegExp } from '@tap/shared'
 import { FilterBar, PaidUpgradeDialog } from '@tap/component'
 
@@ -251,6 +252,8 @@ export default {
   inject: ['checkAgent', 'buried'],
 
   components: { FilterBar, TablePage, SkipError, Upload, TaskStatus, PaidUpgradeDialog },
+
+  mixins: [syncTaskAgent],
 
   data() {
     return {
@@ -345,6 +348,8 @@ export default {
     }, 8000)
     this.getFilterItems()
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
+
+    this.loop(this.isDaas ? this.getClusterStatus : this.getAgentStatus, 30000)
   },
 
   beforeDestroy() {
@@ -371,6 +376,7 @@ export default {
         listtags: true,
         syncType: true,
         stoppingTime: true,
+        pingTime: true,
         canForceStopping: true,
         currentEventTimestamp: true
       }
