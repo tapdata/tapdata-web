@@ -36,8 +36,11 @@
           </div>
         </div>
         <!-- 提示-->
-        <div class="mt-1 color-danger" v-if="showTip">
-          {{ $t('dfs_agent_download_agentguidedialog_qingdianjibushu') }}
+        <div class="mt-4" style="height: 20px">
+          <span v-if="showTip">
+            <VIcon size="14" class="color-danger mr-1">info</VIcon
+            >{{ $t('dfs_agent_download_agentguidedialog_qingdianjibushu') }}</span
+          >
         </div>
         <div class="footer mt-8">
           <el-button type="primary" @click="goStep()">{{
@@ -130,6 +133,7 @@
 </template>
 <script>
 import { buried } from '@/plugins/buried'
+import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 
 export default {
@@ -164,7 +168,7 @@ export default {
               switch: '543px',
               item: '221px',
               dialog: '1100px',
-              top: '55px',
+              top: '20px',
               'ordinary-suffix': '365px',
               step: '448px'
             }
@@ -174,7 +178,7 @@ export default {
               switch: '265px',
               item: '175px',
               dialog: '1017px',
-              top: '75px',
+              top: '60px',
               'ordinary-suffix': '130px',
               step: '365px'
             }
@@ -204,9 +208,9 @@ export default {
       this.$emit('openAgentDownload')
     },
     close() {
-      // Cookie.set('deployLater', 1)
-      // let user = window.__USER_INFO__
-      // Cookie.set('deployLaterUser', user.userId)
+      Cookie.set('deployLater', 1)
+      let user = window.__USER_INFO__
+      Cookie.set('deployLaterUser', user.userId)
       this.$emit('update:visible', false)
     },
     //去demo环境体验
@@ -315,7 +319,8 @@ export default {
     height: 33px;
     border: 2px solid #ffffff;
     border-radius: 100px;
-    margin: 28px auto;
+    margin: 0 auto;
+    margin-top: 40px;
   }
   .current {
     display: inline-block;

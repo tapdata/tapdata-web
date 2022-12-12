@@ -191,7 +191,6 @@ export default {
     },
     // 检查是否有安装过agent
     checkAgent() {
-      this.agentGuideDialog = true
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
           this.agentGuideDialog = true
