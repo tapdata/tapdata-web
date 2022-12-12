@@ -339,6 +339,7 @@ import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar, VTable } from '@tap/component'
+import OSS from 'ali-oss'
 
 let timer = null
 
@@ -962,7 +963,7 @@ export default {
     },
     //日志上传
     handleUpload(row) {
-      this.$axios.post('/api/tcm/uploadLog', { agentId: row.id }).then(() => {
+      this.$axios.post('api/tcm/uploadLog', { agentId: row.id }).then(() => {
         this.$message.success('上传成功')
       })
     },
@@ -975,22 +976,30 @@ export default {
     //日志列表
     getDownloadList() {
       let filter = {
-        agentId: this.currentAgentId,
+        where: {
+          agentId: this.currentAgentId,
+          isDeleted: false
+        },
         page: this.currentPage,
         size: this.pageSize,
-        isDeleted: false
+        sort: ['createAt desc']
       }
       this.$axios.get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(() => {
         this.$message.success('上传成功')
       })
     },
-    //删除下载
+    //删除
     handleDeleteUploadLog(row) {
-      this.$axios.post('api/tcm/deleteUploadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(res => {
+      this.$axios.post('api/tcm/deleteUploadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(() => {
+        this.$message.success('删除成功')
+      })
+    },
+    //日志下载
+    handleDownload(row) {
+      this.$axios.get('api/tcm/downloadLog?id=' + row.id).then(res => {
         let data = res?.data
         let { accessKeyId, accessKeySecret, securityToken, region, downloadAddr, bucket } = data
         //ssl 凭证
-        const OSS = require('ali-oss')
         const client = new OSS({
           accessKeyId: accessKeyId,
           accessKeySecret: accessKeySecret,
@@ -998,17 +1007,12 @@ export default {
           bucket: bucket,
           securityToken: securityToken
         })
+        let filename = 'agent 日志'
         const response = {
           'content-disposition': `attachment; filename= ${encodeURIComponent(filename)};expires:7200,`
         }
         const url = client.signatureUrl(downloadAddr, { response })
         window.location.href = url
-      })
-    },
-    //日志下载
-    handleDownload(row) {
-      this.$axios.get('api/tcm/downloadLog?agentId=' + this.currentAgentId + '&id=' + row.id).then(() => {
-        this.$message.success('下载成功')
       })
     }
   }
