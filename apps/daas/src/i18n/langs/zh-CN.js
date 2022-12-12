@@ -1997,7 +1997,7 @@ export default {
   daas_notification_center_yonghucaozuo: '用户操作',
 
   // 覆盖连接编辑、创建处的国际化文案
-  packages_business_connection_form_source_and_target_tip: `此数据连接在 ${process.env.VUE_APP_PRODUCT_TITLE} 中能同时作为源和目标使用`,
-  packages_business_connection_form_source_tip: `此数据连接在 ${process.env.VUE_APP_PRODUCT_TITLE} 中只能作为源使用，不能作用为目标`,
-  packages_business_connection_form_target_tip: `此数据连接在 ${process.env.VUE_APP_PRODUCT_TITLE} 中只能作为目标使用，不能作用为源`
+  packages_business_connection_form_source_and_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同时作为源和目标使用`,
+  packages_business_connection_form_source_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为源使用，不能作用为目标`,
+  packages_business_connection_form_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为目标使用，不能作用为源`
 }
