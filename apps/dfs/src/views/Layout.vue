@@ -33,6 +33,7 @@
       </ElMain>
     </ElContainer>
     <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
+    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
   </ElContainer>
@@ -45,6 +46,7 @@ import { PageHeader } from '@tap/business'
 
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
+import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
 import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
@@ -55,6 +57,7 @@ export default {
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
+    AgentGuideDialog,
     BindPhone,
     PageHeader
   },
@@ -100,7 +103,8 @@ export default {
         visible: false,
         data: {}
       },
-      bindPhoneVisible: false
+      bindPhoneVisible: false,
+      agentGuideDialog: false
     }
   },
   created() {
@@ -138,6 +142,11 @@ export default {
     }
   },
   methods: {
+    //监听agent引导页面
+    openAgentDownload() {
+      this.agentGuideDialog = false
+      this.agentDownload.visible = true
+    },
     createConnection(item) {
       this.dialogVisible = false
       buried('connectionCreate')
@@ -184,7 +193,7 @@ export default {
     checkAgent() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
-          this.agentDownload.visible = true
+          this.agentGuideDialog = true
           this.agentDownload.data = data
         }
       })

@@ -1084,5 +1084,25 @@ export default {
   dfs_instance_instance_banbenhao: '版本號: ',
   dfs_instance_instance_agent: 'Agent更新',
 
-  dfs_user_center_phone_error: '該手機號碼已被其他用戶註冊過'
+  dfs_user_center_phone_error: '該手機號碼已被其他用戶註冊過',
+  dfs_agent_download_agentguidedialog_qingdianjibushu: '請點擊部署方案',
+  dfs_agent_download_agentguidedialog_ruhurucang: '实时数仓供数',
+  dfs_agent_download_agentguidedialog_shujutongbu: '实时数据库同步',
+  dfs_agent_download_agentguidedialog_tapda: 'Tapdata可以滿足異構數據庫實時同步、數據入湖入倉、雲中數據ETL等多類場景',
+  dfs_agent_download_agentguidedialog_tiyan: '體驗',
+  dfs_agent_download_agentguidedialog_womentigongle:
+    '我們提供了體檢Demo環境，您無需安裝Agent即可查看和體驗Tapdata強大的數據同步和處理能力。 (DEMO賬號：demo@tapdata.io 密碼：tapdata)',
+  dfs_agent_download_agentguidedialog_tiyanDem: '體驗Demo(無需安裝）',
+  dfs_agent_download_agentguidedialog_anzhuang: '安裝',
+  dfs_agent_download_agentguidedialog_ninxuyaogenju:
+    '您需要根據引導的操作，將Tapdata的數據計算引擎Agent安裝可以訪問您數據的機器上。 ',
+  dfs_agent_download_agentguidedialog_zizhuanzhuang: '自助安裝',
+  dfs_agent_download_agentguidedialog_lijiquanzhuang: '立即去安裝',
+  dfs_agent_download_agentguidedialog_xiayibu: '下一步',
+  dfs_agent_download_agentguidedialog_womendeshuju: '我們的數據源和目標 可以被外網服務訪問',
+  dfs_agent_download_agentguidedialog_neiwang: '我們公司的安全策略 不允許這麼做',
+  dfs_agent_download_agentguidedialog_ninyaotongbude:
+    '您要同步的數據源/目標庫是否能夠給外網開放端口？ （通過防火增、SSH Tunnel、VPN或其他方式）',
+  dfs_agent_download_agentguidedialog_dianjixiafangde: '根據您的數據源的外網訪問策略，我們會為您推薦最合適的部署模式。',
+  dfs_agent_download_agentguidedialog_huanyingshiyongT: '歡迎使用Tapdata'
 }
