@@ -23,6 +23,10 @@ export default {
     this.loop(this.isDaas ? this.getClusterStatus : this.getAgentStatus, 30000)
   },
 
+  beforeDestroy() {
+    clearTimeout(this.syncTaskAgentTimer)
+  },
+
   methods: {
     async getClusterStatus() {
       const { items = [] } = await clusterApi.get()
@@ -63,7 +67,7 @@ export default {
 
     async loop(callback, timeout) {
       await callback()
-      setTimeout(() => {
+      this.syncTaskAgentTimer = setTimeout(() => {
         this.loop(callback, timeout)
       }, timeout)
     }

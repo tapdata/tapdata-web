@@ -4,19 +4,23 @@
       {{ $t(STATUS_MAP[task.status].i18n) }}
     </span>
     <template v-if="agentMap">
-      <ElTooltip v-if="pingTime" placement="top" class="color-danger">
-        <VIcon class="ml-2" size="16">warning-circle</VIcon>
+      <ElTooltip
+        v-if="pingTime"
+        placement="top"
+        popper-class="agent-tooltip__popper"
+        :visible-arrow="false"
+        effect="light"
+      >
+        <VIcon size="16" class="ml-2 color-warning">warning </VIcon>
         <template #content>
-          <div class="flex align-center">
+          <div class="flex flex-wrap align-center font-color-light">
+            <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
             {{
               $t('packages_business_task_status_agent_tooltip_time', {
                 time: pingTime
               })
-            }}，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：<ElLink
-              @click="onClickStatus"
-              type="primary"
-              >{{ agentStatus }}</ElLink
-            >
+            }}，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
+            <ElLink @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink>
           </div>
         </template>
       </ElTooltip>
@@ -123,5 +127,12 @@ export default {
 .status-stopping {
   color: #c39700;
   background-color: #fdf1c8;
+}
+</style>
+
+<style>
+.agent-tooltip__popper {
+  border: none !important;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1), 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
 }
 </style>
