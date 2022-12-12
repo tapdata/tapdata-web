@@ -516,5 +516,7 @@ export default {
   packages_business_connections_databaseform_paichubiao: 'Exclude table',
   packages_business_connections_databaseform_baohanbiao: 'Contain table',
   packages_business_connections_list_wenjianleixingde:
-    'The connection of file type does not support loading Schema at the moment'
+    'The connection of file type does not support loading Schema at the moment',
+  packages_business_task_status_agent_tooltip_time: 'It has been {time} since the last status report',
+  packages_business_task_status_agent_tooltip_agent: 'Engine'
 }
