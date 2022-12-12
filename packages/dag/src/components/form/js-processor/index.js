@@ -72,6 +72,8 @@ export const JsProcessor = observer(
 
       let timer
       let version
+      let logList = reactive([])
+      // let logLoading = ref(false)
 
       const handleQuery = async () => {
         let lastVersion = version
@@ -88,15 +90,18 @@ export const JsProcessor = observer(
             outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
             return res.over
           })
-        await monitoringLogsApi.query({
+        const logData = await monitoringLogsApi.query({
           taskId: testTaskId,
           type: 'testRun',
           order: 'asc',
           page: 1,
           pageSize: 50,
           start: queryStart,
+          nodeId: form.values.id,
           end: Date.now()
         })
+        logList = logData?.items
+
         return isOver
       }
 
@@ -366,7 +371,13 @@ export const JsProcessor = observer(
                 >
                   <ElTabs class="w-100 flex flex-column">
                     <ElTabPane label="输出">
-                      <div class="js-processor-editor-console-panel px-3">// 暂未实现</div>
+                      <div class="js-processor-editor-console-panel px-3">
+                        <div class="log-list">
+                          {logList.map(item => {
+                            return (<div class="log-list-item">{item.message}</div>)
+                          })}
+                        </div>
+                      </div>
                     </ElTabPane>
                     <ElTabPane label="对比">{fullscreen.value && jsonView}</ElTabPane>
                   </ElTabs>
