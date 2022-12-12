@@ -410,15 +410,7 @@ export default {
           slotName: 'operation'
         }
       ],
-      downloadList: [
-        {
-          id: '122',
-          fileSize: 'ee',
-          uploadDate: 'ee',
-          status: 'ee',
-          agentId: 'ee'
-        }
-      ],
+      downloadList: [],
       currentAgentId: '',
       downloadTotal: 14,
       currentPage: 1,
@@ -984,8 +976,9 @@ export default {
         size: this.pageSize,
         sort: ['createAt desc']
       }
-      this.$axios.get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(() => {
-        this.$message.success('上传成功')
+      this.$axios.get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(res => {
+        this.downloadList = res?.items || []
+        this.downloadTotal = res?.total
       })
     },
     //删除
