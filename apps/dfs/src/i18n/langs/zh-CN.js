@@ -1114,7 +1114,7 @@ export default {
   dfs_instance_instance_agent: 'Agent更新',
 
   dfs_user_center_phone_error: '该手机号码已被其他用户注册过',
-  packages_business_task_status_agent_tooltip_agent: '任务所在的Agent为'
+  packages_business_task_status_agent_tooltip_agent: '任务所在的Agent为',
   dfs_agent_download_agentguidedialog_qingdianjibushu: '请点击部署方案',
   dfs_agent_download_agentguidedialog_ruhurucang: '实时数仓供数',
   dfs_agent_download_agentguidedialog_shujutongbu: '实时数据库同步',
