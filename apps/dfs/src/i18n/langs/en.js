@@ -1194,7 +1194,7 @@ export default {
   dfs_user_center_phone_error: 'This phone number has already been registered by another user',
   dfs_agent_download_agentguidedialog_qingdianjibushu: 'Please click on the deployment plan',
   dfs_agent_download_agentguidedialog_ruhurucang: 'Entering the lake and entering the warehouse',
-  dfs_agent_download_agentguidedialog_shujutongbu: 'data synchronization',
+  dfs_agent_download_agentguidedialog_shujutongbu: 'Data synchronization',
   dfs_agent_download_agentguidedialog_tapda:
     'Tapdata can meet various scenarios such as real-time synchronization of heterogeneous databases, data entering lakes and warehouses, and data ETL in the cloud',
   dfs_agent_download_agentguidedialog_tiyan: 'Experience',
@@ -1207,8 +1207,7 @@ export default {
   dfs_agent_download_agentguidedialog_zizhuanzhuang: 'Self-service installation',
   dfs_agent_download_agentguidedialog_lijiquanzhuang: 'install now',
   dfs_agent_download_agentguidedialog_xiayibu: 'Next',
-  dfs_agent_download_agentguidedialog_womendeshuju:
-    'Our data source and target can be accessed by external network services',
+  dfs_agent_download_agentguidedialog_womendeshuju: 'Our data source and target allow by external network services',
   dfs_agent_download_agentguidedialog_neiwang: 'Our company security policy does not allow this',
   dfs_agent_download_agentguidedialog_ninyaotongbude:
     'Can the data source/target library you want to synchronize open ports to the external network? (via firewall, SSH Tunnel, VPN or other means)',

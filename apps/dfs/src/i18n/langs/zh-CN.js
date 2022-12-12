@@ -1132,6 +1132,6 @@ export default {
   dfs_agent_download_agentguidedialog_neiwang: '我们公司的安全策略 不允许这么做',
   dfs_agent_download_agentguidedialog_ninyaotongbude:
     '您要同步的数据源/目标库是否能够给外网开放端口？（通过防火增、SSH Tunnel、VPN或其他方式）',
-  dfs_agent_download_agentguidedialog_dianjixiafangde: '根據您的數據源的外網訪問策略，我們會為您推薦最合適的部署模式。',
+  dfs_agent_download_agentguidedialog_dianjixiafangde: '根据您的数据源的外网访问策略，我们会为您推荐最合适的部署模式。',
   dfs_agent_download_agentguidedialog_huanyingshiyongT: '欢迎使用Tapdata'
 }

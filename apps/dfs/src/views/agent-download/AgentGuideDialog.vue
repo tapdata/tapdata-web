@@ -1,14 +1,15 @@
 <template>
   <ElDialog
     custom-class="agent-guide-dialog"
-    width="1017px"
+    :width="style['dialog']"
     :visible.sync="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="false"
   >
     <section class="agent-guide-main flex">
-      <div class="agent-guide-left mt-110" v-if="step === 1">
+      <!--第一步-->
+      <div class="agent-guide-left mt-110" :style="{ 'margin-top': style['top'] }" v-if="step === 1">
         <header class="agent-guide-header mb-32">
           {{ $t('dfs_agent_download_agentguidedialog_huanyingshiyongT') }}
         </header>
@@ -17,13 +18,19 @@
         <div class="agent-guide-link mb-8 flex">
           <div
             class="item mr-4 cursor-pointer"
+            :style="{ width: style['item'] }"
             :class="{ active: current === 'extranet' }"
             @click="changeImg('extranet')"
           >
             <VIcon size="30" class="color-primary">extranet</VIcon>
             <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_womendeshuju') }}</div>
           </div>
-          <div class="item cursor-pointer" :class="{ active: current === 'intranet' }" @click="changeImg('intranet')">
+          <div
+            class="item cursor-pointer"
+            :style="{ width: style['item'] }"
+            :class="{ active: current === 'intranet' }"
+            @click="changeImg('intranet')"
+          >
             <VIcon size="30" class="color-primary">intranet</VIcon>
             <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_neiwang') }}</div>
           </div>
@@ -34,6 +41,7 @@
           }}</el-button>
         </div>
       </div>
+      <!--第二步 -->
       <div class="agent-guide-left mt-32" v-if="step === 2">
         <header class="agent-guide-header mb-39">{{ $t('dfs_agent_download_agentguidedialog_lijiquanzhuang') }}</header>
         <div class="agent-guide-step-2">
@@ -67,36 +75,50 @@
       </div>
       <!--外网切换 -->
       <div class="agent-guide-sync" v-show="type === 'extranet-sync'">
-        <div class="switch">
-          <span class="current cursor-pointer">{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span>
+        <div class="switch" :style="{ width: style['switch'] }">
+          <span class="current cursor-pointer" :style="{ width: style['current'] }">{{
+            $t('dfs_agent_download_agentguidedialog_shujutongbu')
+          }}</span>
           <span class="ordinary cursor-pointer" @click="changeType('extranet-login')">{{
             $t('dfs_agent_download_agentguidedialog_ruhurucang')
           }}</span>
         </div>
       </div>
       <div class="agent-guide-login" v-show="type === 'extranet-login'">
-        <div class="switch">
-          <span class="ordinary-suffix cursor-pointer" @click="changeType('extranet-sync')">{{
-            $t('dfs_agent_download_agentguidedialog_shujutongbu')
+        <div class="switch" :style="{ width: style['switch'] }">
+          <span
+            class="ordinary-suffix cursor-pointer"
+            :style="{ width: style['current-suffix'] }"
+            @click="changeType('extranet-sync')"
+            >{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span
+          >
+          <span class="current-suffix cursor-pointer" :style="{ width: style['ordinary-suffix'] }">{{
+            $t('dfs_agent_download_agentguidedialog_ruhurucang')
           }}</span>
-          <span class="current-suffix cursor-pointer">{{ $t('dfs_agent_download_agentguidedialog_ruhurucang') }}</span>
         </div>
       </div>
       <!--内网切换 -->
       <div class="agent-guide-intranet-sync" v-show="type === 'intranet-sync'">
-        <div class="switch">
-          <span class="current cursor-pointer">{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span>
+        <div class="switch" :style="{ width: style['switch'] }">
+          <span class="current cursor-pointer" :style="{ width: style['current'] }">{{
+            $t('dfs_agent_download_agentguidedialog_shujutongbu')
+          }}</span>
           <span class="ordinary cursor-pointer" @click="changeType('intranet-login')">{{
             $t('dfs_agent_download_agentguidedialog_ruhurucang')
           }}</span>
         </div>
       </div>
       <div class="agent-guide-intranet-login" v-show="type === 'intranet-login'">
-        <div class="switch">
-          <span class="ordinary-suffix cursor-pointer" @click="changeType('intranet-sync')">{{
-            $t('dfs_agent_download_agentguidedialog_shujutongbu')
+        <div class="switch" :style="{ width: style['switch'] }">
+          <span
+            class="ordinary-suffix cursor-pointer"
+            :style="{ width: style['current-suffix'] }"
+            @click="changeType('intranet-sync')"
+            >{{ $t('dfs_agent_download_agentguidedialog_shujutongbu') }}</span
+          >
+          <span class="current-suffix cursor-pointer" :style="{ width: style['ordinary-suffix'] }">{{
+            $t('dfs_agent_download_agentguidedialog_ruhurucang')
           }}</span>
-          <span class="current-suffix cursor-pointer">{{ $t('dfs_agent_download_agentguidedialog_ruhurucang') }}</span>
         </div>
       </div>
     </section>
@@ -121,10 +143,37 @@ export default {
       current: '',
       type: 'init',
       step: 1,
+      style: {},
       showClose: false //关闭按钮
     }
   },
+  mounted() {
+    this.getEnStyle()
+  },
   methods: {
+    getEnStyle() {
+      const { locale } = this.$i18n
+      this.style =
+        locale === 'en'
+          ? {
+              current: '200px',
+              'current-suffix': '200px',
+              switch: '543px',
+              item: '221px',
+              dialog: '1100px',
+              top: '55px',
+              'ordinary-suffix': '365px'
+            }
+          : {
+              current: '135px',
+              'current-suffix': '130px',
+              switch: '265px',
+              item: '175px',
+              dialog: '1017px',
+              top: '95px',
+              'ordinary-suffix': '130px'
+            }
+    },
     changeImg(type) {
       this.current = type //extranet外网  intranet 内网
       this.type = type + '-sync' //init 初始化  sync 数据同步 login 入湖边入仓

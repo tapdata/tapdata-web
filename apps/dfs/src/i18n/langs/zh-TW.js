@@ -1086,8 +1086,8 @@ export default {
 
   dfs_user_center_phone_error: '該手機號碼已被其他用戶註冊過',
   dfs_agent_download_agentguidedialog_qingdianjibushu: '請點擊部署方案',
-  dfs_agent_download_agentguidedialog_ruhurucang: '入湖入倉',
-  dfs_agent_download_agentguidedialog_shujutongbu: '數據同步',
+  dfs_agent_download_agentguidedialog_ruhurucang: '实时数仓供数',
+  dfs_agent_download_agentguidedialog_shujutongbu: '实时数据库同步',
   dfs_agent_download_agentguidedialog_tapda: 'Tapdata可以滿足異構數據庫實時同步、數據入湖入倉、雲中數據ETL等多類場景',
   dfs_agent_download_agentguidedialog_tiyan: '體驗',
   dfs_agent_download_agentguidedialog_womentigongle:
@@ -1103,6 +1103,6 @@ export default {
   dfs_agent_download_agentguidedialog_neiwang: '我們公司的安全策略 不允許這麼做',
   dfs_agent_download_agentguidedialog_ninyaotongbude:
     '您要同步的數據源/目標庫是否能夠給外網開放端口？ （通過防火增、SSH Tunnel、VPN或其他方式）',
-  dfs_agent_download_agentguidedialog_dianjixiafangde: '點擊下方的場景查看我們推薦的部署方案：',
+  dfs_agent_download_agentguidedialog_dianjixiafangde: '根據您的數據源的外網訪問策略，我們會為您推薦最合適的部署模式。',
   dfs_agent_download_agentguidedialog_huanyingshiyongT: '歡迎使用Tapdata'
 }
