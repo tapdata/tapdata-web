@@ -374,7 +374,7 @@ export const JsProcessor = observer(
                       <div class="js-processor-editor-console-panel px-3">
                         <div class="log-list">
                           {logList.map(item => {
-                            return (<div class="log-list-item">{item.message}</div>)
+                            return <div class="log-list-item">{item.message}</div>
                           })}
                         </div>
                       </div>
@@ -396,7 +396,16 @@ export const JsProcessor = observer(
               handleAddCompleter={editorProps.handleAddCompleter}
             />
             {runTool}
-            <div class="mt-4">{jsonView}</div>
+            <div
+              class={[
+                'mt-4',
+                {
+                  none: fullscreen.value
+                }
+              ]}
+            >
+              {jsonView}
+            </div>
           </div>
         )
       }
