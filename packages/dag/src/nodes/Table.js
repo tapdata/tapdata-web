@@ -387,7 +387,7 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-display': 'hidden',
                     'x-reactions': [
-                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id)}}`,
+                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id, $values.tableName)}}`,
                       {
                         target: 'conditions.*.key',
                         fulfill: {
