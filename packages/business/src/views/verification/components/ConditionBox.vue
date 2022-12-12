@@ -18,6 +18,7 @@
               v-if="editId === item.id"
               v-model="item.source.connectionId"
               :method="getConnectionsListMethod"
+              itemQuery="name"
               filterable
               class="item-select"
               :key="'sourceConnectionId' + item.id"
@@ -34,6 +35,7 @@
               v-if="editId === item.id"
               v-model="item.target.connectionId"
               :method="getConnectionsListMethod"
+              itemQuery="name"
               filterable
               class="item-select"
               :key="'targetConnectionId' + item.id"
@@ -54,6 +56,7 @@
                 connectionId: item.source.connectionId,
                 nodeId: item.source.nodeId
               }"
+              itemQuery="name"
               itemType="string"
               filterable
               class="item-select"
@@ -73,6 +76,7 @@
                 connectionId: item.target.connectionId,
                 nodeId: item.target.nodeId
               }"
+              itemQuery="name"
               itemType="string"
               filterable
               class="item-select"
@@ -192,6 +196,7 @@ const TABLE_PARAMS = {
   fields: [],
   columns: null
 }
+
 const META_INSTANCE_FIELDS = {
   id: true,
   name: true,
@@ -276,10 +281,9 @@ export default {
   methods: {
     async getConnectionsListMethod(filter) {
       if (this.taskId) {
-        return this.getConnectionsInTask()
+        return this.getConnectionsInTask(filter)
       }
       try {
-        const { isSource, isTarget } = filter
         const _filter = {
           where: {},
           fields: {
@@ -309,15 +313,11 @@ export default {
               item.status ? `(${this.$t('packages_dag_connection_status_' + item.status) || item.status})` : ''
             }`,
             value: item.id
-            // databaseType: item.database_type,
-            // connectionType: item.connection_type,
-            // accessNodeProcessId: item.accessNodeProcessId
           }
         })
 
         return result
       } catch (e) {
-        console.log('catch', e) // eslint-disable-line
         return { items: [], total: 0 }
       }
     },
@@ -349,32 +349,36 @@ export default {
           },
           order: ['status DESC', 'name ASC']
         }
-        let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter))
+        const res = await metadataInstancesApi.tapTables({
+          filter: JSON.stringify({
+            where: {
+              meta_type: 'table',
+              sourceType: 'SOURCE',
+              'source._id': connectionId
+            },
+            limit: 50
+          })
         })
-
-        result.items = result.items.map(item => {
-          return {
-            id: item.id,
-            name: item.name,
-            label: `${item.name} ${
-              item.status ? `(${this.$t('packages_dag_connection_status_' + item.status) || item.status})` : ''
-            }`,
-            value: item.id
-            // databaseType: item.database_type,
-            // connectionType: item.connection_type,
-            // accessNodeProcessId: item.accessNodeProcessId
-          }
+        let result = {}
+        result.items = res.items.map(t => t.name)
+        result.total = res.total
+        res.items.forEach(el => {
+          // 缓存起来
+          this.setFieldsByItem(
+            [nodeId, connectionId, el.name],
+            Object.values(el.nameFieldMap || {}).map(t => {
+              const { id, fieldName, primaryKeyPosition } = t
+              return { id, field_name: fieldName, primary_key_position: primaryKeyPosition }
+            })
+          )
         })
-
         return result
       } catch (e) {
-        console.log('catch', e) // eslint-disable-line
         return { items: [], total: 0 }
       }
     },
 
-    async getConnectionsInTask() {
+    async getConnectionsInTask(filter) {
       if (this.taskData?.id !== this.taskId) {
         this.taskData = await taskApi.getId(this.taskId)
         this.isDB = this.taskData.syncType === 'migrate'
@@ -407,8 +411,15 @@ export default {
         )
       })
       this.flowStages = stages.filter(stg => types.includes(stg.type))
+      const keyword = filter.where?.name?.like
+      let arr
+      if (keyword) {
+        arr = this.flowStages.filter(t => t.attrs?.connectionName.includes(filter.where?.name?.like))
+      } else {
+        arr = this.flowStages
+      }
       const result = uniqueArr(
-        this.flowStages.map(t => {
+        arr.map(t => {
           const nodeId = t.id
           const nodeName = t.name
           const connectionId = t.connectionId
@@ -416,7 +427,7 @@ export default {
           return {
             attrs: { nodeId, nodeName, connectionId, connectionName },
             value: `${nodeId}/${connectionId}`,
-            label: `${nodeName} / ${connectionName}` // t.attrs?.connectionName
+            label: `${nodeName} / ${connectionName}`
           }
         }),
         'value'
@@ -435,12 +446,16 @@ export default {
       if (!findNode) {
         return { items: [], total: 0 }
       }
-      const params = {
+
+      let params = {
         nodeId,
-        // tableFilter: op.tableFilter,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: filter?.page || 1,
         pageSize: filter?.size || 50
+      }
+      const keyword = filter.where?.name?.like
+      if (keyword) {
+        params.tableFilter = keyword
       }
 
       let res = await metadataInstancesApi.nodeSchemaPage(params)
@@ -448,17 +463,19 @@ export default {
       const tableList = res.items?.map(t => t.name) || []
       const total = res.total
       res.items.forEach(el => {
-        const key = [nodeId || '', connectionId, el.name].join()
-        this.fieldsMap[key] = el.fields.map(t => {
-          const { id, field_name, primary_key_position } = t
-          return { id, field_name, primary_key_position }
-        })
+        this.setFieldsByItem(
+          [nodeId, connectionId, el.name],
+          el.fields.map(t => {
+            const { id, field_name, primary_key_position } = t
+            return { id, field_name, primary_key_position }
+          })
+        )
       })
       if (isDB) {
         // 存在多表的情况，这里需要做分页
         let tableNames = []
         if (findNode.outputLanes.length) {
-          tableNames = tableList // findNode.tableNames || []
+          tableNames = tableList
         } else {
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
           tableNames = tableList.map(t => {
@@ -491,14 +508,9 @@ export default {
 
     getMatchNodeList() {
       let result = []
-      // const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
-      // const targetNodeId = sourceNode?.outputLanes?.[0]
-      // const targetNode = this.flowStages.find(t => t.id === targetNodeId)
-      // if (!targetNode) return
       this.flowStages
         .filter(t => t.outputLanes.length > 0)
         .forEach(el => {
-          // const sourceNode = this.flowStages.find(t => t.id === item.source.nodeId)
           const targetNode = this.flowStages.find(t => t.id === el.outputLanes[0])
           if (targetNode) {
             result.push({
@@ -540,13 +552,10 @@ export default {
         id: uuid(),
         source: Object.assign({}, TABLE_PARAMS),
         target: Object.assign({}, TABLE_PARAMS),
-        // sourceTree: [],
-        // targetTree: [],
         showAdvancedVerification: false,
         script: '', //后台使用 需要拼接function头尾
         webScript: '', //前端使用 用于页面展示
         jsEngineName: 'graal.js',
-        // columns: null,
         modeType: 'all' // 待校验模型的类型
       }
     },
@@ -601,7 +610,9 @@ export default {
             const getAllTablesInNodeTarget = this.getAllTablesInNode(target)
             getAllTablesInNodeSource.forEach((ge, geIndex) => {
               let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
-              let findTargetTable = data.find(t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex])
+              let findTargetTable = data.find(
+                t => t.source.id === targetConnectionId && t.original_name === getAllTablesInNodeTarget[geIndex]
+              )
               let item = this.getItemOptions()
               item.source.nodeId = source
               item.source.connectionId = `${source}/${sourceConnectionId}`
@@ -743,9 +754,14 @@ export default {
       })
     },
 
+    setFieldsByItem(item = [], data = []) {
+      const key = item.filter(t => t).join()
+      this.fieldsMap[key] = data
+    },
+
     getFieldsByItem(item, type) {
       const { nodeId, connectionId, table } = item[type] || {}
-      return this.fieldsMap[[nodeId || '', connectionId, table].join()] || []
+      return this.fieldsMap[[nodeId || '', connectionId, table].filter(t => t).join()] || []
     },
 
     getPrimaryKeyFieldStr(data = []) {

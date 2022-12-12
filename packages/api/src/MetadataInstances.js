@@ -122,5 +122,8 @@ export default class MetadataInstances extends Http {
   nodeSchemaPage(params) {
     return this.axios.get(this.url + '/node/schemaPage', { params })
   }
+  tapTables(params) {
+    return this.axios.get(this.url + '/tapTables?filter=' + encodeURIComponent(params.filter))
+  }
 }
 export { MetadataInstances }
