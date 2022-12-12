@@ -1085,7 +1085,7 @@ export default {
   dfs_instance_instance_agent: 'Agent更新',
 
   dfs_user_center_phone_error: '該手機號碼已被其他用戶註冊過',
-  dfs_agent_download_agentguidedialog_qingdianjibushu: '請點擊部署方案',
+  dfs_agent_download_agentguidedialog_qingdianjibushu: '請選擇網絡安全策略',
   dfs_agent_download_agentguidedialog_ruhurucang: '实时数仓供数',
   dfs_agent_download_agentguidedialog_shujutongbu: '实时数据库同步',
   dfs_agent_download_agentguidedialog_tapda: 'Tapdata可以滿足異構數據庫實時同步、數據入湖入倉、雲中數據ETL等多類場景',

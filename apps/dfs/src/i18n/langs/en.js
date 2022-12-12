@@ -1193,7 +1193,7 @@ export default {
 
   dfs_user_center_phone_error: 'This phone number has already been registered by another user',
   packages_business_task_status_agent_tooltip_agent: 'Agent',
-  dfs_agent_download_agentguidedialog_qingdianjibushu: 'Please click on the deployment plan',
+  dfs_agent_download_agentguidedialog_qingdianjibushu: 'Please select data source network access policy',
   dfs_agent_download_agentguidedialog_ruhurucang: 'Entering the lake and entering the warehouse',
   dfs_agent_download_agentguidedialog_shujutongbu: 'Data synchronization',
   dfs_agent_download_agentguidedialog_tapda:
