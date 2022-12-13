@@ -190,221 +190,9 @@
           ref="conditionBox"
           :task-id="form.flowId"
           :inspectMethod="form.inspectMethod"
+          :data="form.tasks"
           @addScript="addScript"
         ></ConditionBox>
-      </div>
-      <div
-        v-if="false"
-        v-loading="!flowStages.length"
-        class="joint-table"
-        :class="{ error: !!jointErrorMessage }"
-        @click="jointErrorMessage = ''"
-      >
-        <div class="joint-table-header">
-          <div>
-            <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
-            <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
-          </div>
-          <ElLink type="primary" :disabled="!form.tasks.length" @click="clear">{{
-            $t('packages_business_verification_clear')
-          }}</ElLink>
-        </div>
-        <ul class="joint-table-main" id="data-verification-form">
-          <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item)">
-            <div class="joint-table-setting overflow-hidden">
-              <div class="setting-item">
-                <label class="item-label">{{ $t('packages_business_verification_table') }}: </label>
-                <!--                <ElCascader-->
-                <!--                  v-if="editId === item.id"-->
-                <!--                  v-model="item.sourceTable"-->
-                <!--                  class="item-select"-->
-                <!--                  :class="{ red: !item.sourceTable }"-->
-                <!--                  :options="item.sourceTree"-->
-                <!--                  @input="tableChangeHandler(item, 'source', index)"-->
-                <!--                ></ElCascader>-->
-                <ElSelect v-if="editId === item.id" v-model="item.sourceConnectionId" filterable class="form-select">
-                  <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
-                </ElSelect>
-                <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{
-                  item.sourceTable ? item.sourceTable[1] : $t('packages_business_statistics_schedule_qingxuanze')
-                }}</span>
-                <span class="item-icon">
-                  <i class="el-icon-arrow-right"></i>
-                </span>
-                <ElCascader
-                  v-if="editId === item.id"
-                  v-model="item.targetTable"
-                  class="item-select"
-                  :class="{ red: !item.targetTable }"
-                  :options="item.targetTree"
-                  @input="tableChangeHandler(item, 'target')"
-                ></ElCascader>
-                <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{
-                  item.targetTable ? item.targetTable[1] : $t('packages_business_statistics_schedule_qingxuanze')
-                }}</span>
-              </div>
-              <!--              <div class="setting-item mt-4">-->
-              <!--                <label class="item-label">来源表: </label>-->
-              <!--                <ElSelect v-if="editId === item.id" filterable class="form-select" v-model="item.connectionId">-->
-              <!--                  <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>-->
-              <!--                </ElSelect>-->
-              <!--                <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{-->
-              <!--                  item.sourceTable ? item.sourceTable[1] : $t('packages_business_statistics_schedule_qingxuanze')-->
-              <!--                }}</span>-->
-              <!--                <span class="item-icon">-->
-              <!--                  <i class="el-icon-arrow-right"></i>-->
-              <!--                </span>-->
-              <!--                <ElCascader-->
-              <!--                  v-if="editId === item.id"-->
-              <!--                  v-model="item.targetTable"-->
-              <!--                  class="item-select"-->
-              <!--                  :class="{ red: !item.targetTable }"-->
-              <!--                  :options="item.targetTree"-->
-              <!--                  @input="tableChangeHandler(item, 'target')"-->
-              <!--                ></ElCascader>-->
-              <!--                <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{-->
-              <!--                  item.targetTable ? item.targetTable[1] : $t('packages_business_statistics_schedule_qingxuanze')-->
-              <!--                }}</span>-->
-              <!--              </div>-->
-              <div class="setting-item align-items-center mt-4" v-show="form.inspectMethod !== 'row_count'">
-                <label class="item-label">待校验模型: </label>
-                <ElRadioGroup v-model="item.modeType">
-                  <ElRadio label="all">全字段</ElRadio>
-                  <ElRadio label="custom">自定义</ElRadio>
-                </ElRadioGroup>
-              </div>
-              <div
-                v-if="item.modeType === 'custom'"
-                class="setting-item mt-4"
-                v-show="form.inspectMethod !== 'row_count'"
-              >
-                <label class="item-label"> </label>
-                <div>模型内容</div>
-              </div>
-              <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
-                <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
-                <MultiSelection
-                  v-if="editId === item.id"
-                  v-model="item.source.sortColumn"
-                  class="item-select"
-                  :class="{ red: !item.source.sortColumn }"
-                  :options="item.source.fields"
-                  :id="'item-source-' + index"
-                ></MultiSelection>
-                <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-                  item.source.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
-                }}</span>
-                <span class="item-icon"></span>
-                <MultiSelection
-                  v-if="editId === item.id"
-                  v-model="item.target.sortColumn"
-                  class="item-select"
-                  :class="{ red: !item.target.sortColumn }"
-                  :options="item.target.fields"
-                ></MultiSelection>
-                <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-                  item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
-                }}</span>
-              </div>
-              <!-- <div v-if="editId === item.id" class="setting-item mt-4">
-                <label class="item-label"></label>
-                <span class="item-select">
-                  <label class="item-label mr-2">{{ $t('packages_business_verification_form_source_filter') }}</label>
-                  <ElSwitch v-model="item.source.sourceFilterFalg" @input="item.source.where = ''"></ElSwitch>
-                </span>
-                <span class="item-icon"></span>
-                <span class="item-select">
-                  <label class="item-label mr-2">{{ $t('packages_business_verification_form_target_filter') }}</label>
-                  <ElSwitch
-                    :disabled="item.showAdvancedVerification"
-                    v-model="item.target.targeFilterFalg"
-                    @input="item.target.where = ''"
-                  ></ElSwitch>
-                </span>
-              </div>
-              <div v-if="item.source.sourceFilterFalg || item.target.targeFilterFalg" class="setting-item mt-4">
-                <label class="item-label"></label>
-                <div class="item-filter">
-                  <div v-if="item.source.sourceFilterFalg" class="item-filter-body">
-                    <template v-if="editId === item.id">
-                      <VCodeEditor
-                        v-model.trim="item.source.where"
-                        class="mb-2"
-                        lang="sql"
-                        height="200px"
-                      ></VCodeEditor>
-                      <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
-                      <div v-if="item.source.databaseType === 'mongodb'" class="filter-example">
-                        {"field": 1, "field2": "value"}
-                      </div>
-                      <div v-else class="filter-example">WHERE field1 = 1 and field2 = "value"</div>
-                    </template>
-                    <div v-else-if="item.source.where">
-                      {{ item.source.where }}
-                    </div>
-                  </div>
-                </div>
-                <span class="item-icon"></span>
-                <div class="item-filter">
-                  <div v-if="item.target.targeFilterFalg" class="item-filter-body">
-                    <template v-if="editId === item.id">
-                      <VCodeEditor
-                        v-model.trim="item.target.where"
-                        class="mb-2"
-                        lang="sql"
-                        height="200px"
-                      ></VCodeEditor>
-                      <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
-                      <div v-if="item.target.databaseType === 'mongodb'" class="filter-example">
-                        {"field": 1, "field2": "value"}
-                      </div>
-                      <div v-else class="filter-example">WHERE field1 = 1 and field2 = "value"</div>
-                    </template>
-                    <div v-else-if="item.target.where">
-                      {{ item.target.where }}
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-              <div class="setting-item mt-4">
-                <ElCheckbox
-                  v-if="editId === item.id"
-                  v-model="item.showAdvancedVerification"
-                  v-show="form.inspectMethod === 'field'"
-                  @input="handleChangeAdvanced(item)"
-                  >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
-                >
-              </div>
-              <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">
-                <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
-                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-                  $t('packages_business_verification_addJS')
-                }}</ElButton>
-                <template v-else>
-                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
-                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
-                </template>
-              </div>
-              <div
-                class="setting-item mt-4"
-                v-if="form.inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
-              >
-                <pre class="item-script">{{ item.webScript }}</pre>
-              </div>
-            </div>
-            <div class="ml-6">
-              <a class="el-link el-link--primary is-underline" @click.stop="removeItem(index)">{{
-                $t('button_delete')
-              }}</a>
-            </div>
-          </li>
-        </ul>
-        <div class="joint-table-footer">
-          <ElButton size="mini" @click="addTable()">{{ $t('packages_business_verification_addTable') }}</ElButton>
-          <ElButton type="primary" size="mini" @click="autoAddTable()">{{
-            $t('packages_business_verification_button_auto_add_table')
-          }}</ElButton>
-        </div>
       </div>
       <div class="mt-8">
         <ElButton size="mini" @click="goBack()">{{ $t('button_back') }}</ElButton>
@@ -436,29 +224,8 @@
 </template>
 
 <script>
-const TABLE_PARAMS = {
-  connectionId: '',
-  table: '',
-  databaseType: '',
-  sortColumn: '',
-  fields: []
-}
-const META_INSTANCE_FIELDS = {
-  id: true,
-  name: true,
-  original_name: true,
-  'source.id': true,
-  'source.name': true,
-  fields: true,
-  'fields.id': true,
-  'fields.field_name': true,
-  'fields.primary_key_position': true,
-  databaseId: true,
-  meta_type: true
-}
 import { cloneDeep } from 'lodash'
 
-import MultiSelection from './MultiSelection.vue'
 import { GitBook } from '@tap/component'
 import JsEditor from '@tap/component/src/JsEditor'
 
@@ -466,9 +233,10 @@ import { DATA_NODE_TYPES } from '@/const.js'
 import { metadataInstancesApi, taskApi, inspectApi } from '@tap/api'
 
 import ConditionBox from './components/ConditionBox'
+import { TABLE_PARAMS, META_INSTANCE_FIELDS } from './components/const'
 
 export default {
-  components: { MultiSelection, JsEditor, GitBook, ConditionBox },
+  components: { JsEditor, GitBook, ConditionBox },
   data() {
     let self = this
     let requiredValidator = (msg, check) => {
@@ -615,12 +383,8 @@ export default {
         .then(data => {
           if (data) {
             data.tasks = data.tasks.map(t => {
-              t.sourceTable = [t.source.connectionId, t.source.table]
-              t.targetTable = [t.target.connectionId, t.target.table]
               t.source = Object.assign({}, TABLE_PARAMS, t.source)
               t.target = Object.assign({}, TABLE_PARAMS, t.target)
-              t.sourceTree = []
-              t.targetTree = []
               t.id = t.taskId
               return t
             })
@@ -628,8 +392,10 @@ export default {
               data.timing = this.form.timing
             }
             this.form = Object.assign({}, this.form, data)
-            this.getFlowStages()
           }
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     getFlowStages() {
@@ -1214,8 +980,8 @@ export default {
               let item = document.getElementById('field-list-' + (index - 1))
               item.querySelector('.el-select').focus()
             })
-            this.jointErrorMessage = '待校验模型不能为空'
-            return this.$message.error('待校验模型不能为空')
+            this.jointErrorMessage = `第${index}个校验条件，待校验模型不能为空`
+            return this.$message.error(`第${index}个校验条件，待校验模型不能为空`)
           }
 
           // 开启高级校验后，JS校验逻辑不能为空

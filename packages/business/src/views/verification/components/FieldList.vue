@@ -27,10 +27,10 @@
         <div v-for="(item, index) in list" :key="index" class="list-table__line flex mt-3 align-items-center">
           <span class="px-2">{{ index + 1 }}</span>
           <ElSelect v-model="item.source" filterable allow-create class="flex-fill" @change="handleChange">
-            <ElOption v-for="op in sourceData" :key="op + 'source'" :label="op" :value="op"></ElOption>
+            <ElOption v-for="op in sourceItems" :key="op + 'source'" :label="op" :value="op"></ElOption>
           </ElSelect>
           <ElSelect v-model="item.target" filterable allow-create class="flex-fill ml-5" @change="handleChange">
-            <ElOption v-for="op in targetData" :key="op + 'target'" :label="op" :value="op"></ElOption>
+            <ElOption v-for="op in targetItems" :key="op + 'target'" :label="op" :value="op"></ElOption>
           </ElSelect>
           <ElButton type="text" class="mx-2 px-2 color-primary" @click="handleDelete(index)">
             <VIcon> delete</VIcon>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
+import { debounce, cloneDeep } from 'lodash'
 import { metadataInstancesApi } from '@tap/api'
 
 export default {
@@ -53,8 +53,10 @@ export default {
       type: Object,
       default: () => {
         return {
-          source: [],
-          target: []
+          sourceId: '',
+          targetId: '',
+          sourceTable: '',
+          targetTable: ''
         }
       }
     },
@@ -74,22 +76,14 @@ export default {
       type: 'all',
       keyword: '',
       loading: false,
-      list: []
-    }
-  },
-
-  computed: {
-    sourceData() {
-      return this.options.source.map(t => t.field_name)
-    },
-
-    targetData() {
-      return this.options.target.map(t => t.field_name)
+      list: [],
+      sourceItems: [],
+      targetItems: []
     }
   },
 
   mounted() {
-    this.loadList()
+    this.loadFields()
   },
 
   methods: {
@@ -99,22 +93,18 @@ export default {
 
     loadList() {
       const { source, target } = this.data
-      const { sourceData, targetData } = this
-      const haveData = source.length > 0
-      let list = sourceData.map((t, i) => {
-        // let flag = true
-        // if (haveData && !source.includes(t)) {
-        //   flag = false
-        // }
+      const { sourceItems, targetItems } = this
+
+      const loadData = !!source?.length
+      let sourceList = loadData ? cloneDeep(source) : cloneDeep(sourceItems)
+      let targetList = loadData ? cloneDeep(target) : cloneDeep(targetItems)
+
+      this.list = sourceList.map((t, i) => {
         return {
-          // checkbox: flag,
-          // originSource: t,
           source: t,
-          // originTarget: targetData[i],
-          target: targetData[i]
+          target: targetList[i]
         }
       })
-      this.list = list
     },
 
     getItem() {
@@ -136,6 +126,53 @@ export default {
     handleAdd() {
       this.list.unshift(this.getItem())
       this.handleChange()
+    },
+
+    loadFields() {
+      const { sourceId, targetId, sourceTable, targetTable } = this.options
+      if (!sourceId || !targetId) return
+      const sourceParams = {
+        where: {
+          meta_type: 'table',
+          sourceType: 'SOURCE',
+          original_name: sourceTable,
+          'source._id': sourceId
+        },
+        limit: 1
+      }
+      const targetParams = {
+        where: {
+          meta_type: 'table',
+          sourceType: 'SOURCE',
+          original_name: targetTable,
+          'source._id': targetId
+        },
+        limit: 1
+      }
+
+      this.loading = true
+      metadataInstancesApi
+        .tapTables({
+          filter: JSON.stringify(sourceParams)
+        })
+        .then(sourceItems => {
+          this.sourceItems = Object.values(sourceItems.items[0]?.nameFieldMap || {}).map(t => t.fieldName)
+          metadataInstancesApi
+            .tapTables({
+              filter: JSON.stringify(targetParams)
+            })
+            .then(targetItems => {
+              this.targetItems = Object.values(targetItems.items[0]?.nameFieldMap || {}).map(t => t.fieldName)
+            })
+            .finally(() => {
+              this.loadList()
+              this.loading = false
+            })
+        })
+        .catch(() => {
+          this.loadList()
+          this.loading = false
+        })
     }
   }
 }

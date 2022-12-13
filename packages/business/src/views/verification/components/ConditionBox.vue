@@ -18,6 +18,7 @@
               v-if="editId === item.id"
               v-model="item.source.connectionId"
               :method="getConnectionsListMethod"
+              :currentLabel="item.source.connectionName"
               itemQuery="name"
               filterable
               class="item-select"
@@ -36,6 +37,7 @@
               v-if="editId === item.id"
               v-model="item.target.connectionId"
               :method="getConnectionsListMethod"
+              :currentLabel="item.target.connectionName"
               itemQuery="name"
               filterable
               class="item-select"
@@ -115,22 +117,30 @@
               item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
           </div>
-          <div class="setting-item align-items-center mt-4" v-show="inspectMethod !== 'row_count'">
+          <div
+            v-if="editId === item.id"
+            class="setting-item align-items-center mt-4"
+            v-show="inspectMethod !== 'row_count'"
+          >
             <label class="item-label">待校验模型: </label>
             <ElRadioGroup v-model="item.modeType">
               <ElRadio label="all">全字段</ElRadio>
               <ElRadio label="custom">自定义</ElRadio>
             </ElRadioGroup>
           </div>
-          <div v-if="item.modeType === 'custom'" class="mt-4" v-show="inspectMethod !== 'row_count'">
+          <div
+            v-if="item.modeType === 'custom' && editId === item.id"
+            class="mt-4"
+            v-show="inspectMethod !== 'row_count'"
+          >
             <FieldList
-              :options="{
-                source: item.source.fields,
-                target: item.target.fields
-              }"
-              :config="item"
-              class="FieldList"
+              :options="getFieldListOptions(item)"
               :id="'field-list-' + index"
+              :data="{
+                source: item.source.columns,
+                target: item.target.columns
+              }"
+              class="FieldList"
               @change="handleFieldList(arguments[0], item)"
             ></FieldList>
           </div>
@@ -188,68 +198,7 @@ import { uuid, uniqueArr } from '@tap/shared'
 
 import MultiSelection from '../MultiSelection'
 import FieldList from './FieldList'
-
-const TABLE_PARAMS = {
-  nodeId: '',
-  connectionId: '',
-  connectionName: '',
-  table: '',
-  databaseType: '',
-  sortColumn: '',
-  fields: [],
-  columns: null
-}
-
-const META_INSTANCE_FIELDS = {
-  id: true,
-  name: true,
-  original_name: true,
-  'source.id': true,
-  'source.name': true,
-  fields: true,
-  'fields.id': true,
-  'fields.field_name': true,
-  'fields.primary_key_position': true,
-  databaseId: true,
-  meta_type: true
-}
-
-const DATA_NODE_TYPES = [
-  'table',
-  'view',
-  'collection',
-  'mongo_view',
-  'hive',
-  'kudu',
-  'dummy db',
-  'gridfs',
-  'file',
-  'elasticsearch',
-  'rest api',
-  'redis',
-  'field_processor',
-  'aggregation_processor',
-  'js_processor',
-  'row_filter_processor',
-  'java_processor',
-  'hive',
-  'hana',
-  'kafka',
-  'dameng',
-  'clickhouse',
-  'kudu',
-  'hbase',
-  'mq',
-  'kafka',
-  'adb_mysql',
-  'tcp_udp',
-  'cache_lookup_processor',
-  'custom_connection',
-  'mem_cache',
-  'logminer',
-  'protobuf_convert_processor',
-  'hazelcast_cloud_cluster'
-]
+import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
 
 export default {
   name: 'ConditionBox',
@@ -258,7 +207,11 @@ export default {
 
   props: {
     taskId: String,
-    inspectMethod: String
+    inspectMethod: String,
+    data: {
+      type: Array,
+      default: () => []
+    }
   },
 
   data() {
@@ -277,6 +230,13 @@ export default {
     taskId(v1, v2) {
       if (v1 !== v2) {
         this.clearList()
+      }
+    },
+
+    data: {
+      deep: true,
+      handler() {
+        this.loadList()
       }
     }
   },
@@ -622,14 +582,14 @@ export default {
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
               item.source.table = findTable.original_name
               item.source.fields = findTable.fields
-              item.source.sortColumn = this.getPrimaryKeyFieldStr(item.source.fields)
+              item.source.sortColumn = this.getPrimaryKeyFieldStr(findTable.fields)
 
               item.target.nodeId = target
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
               item.target.table = findTargetTable.original_name
               item.target.fields = findTargetTable.fields
-              item.target.sortColumn = this.getPrimaryKeyFieldStr(item.target.fields)
+              item.target.sortColumn = this.getPrimaryKeyFieldStr(findTargetTable.fields)
               list.push(item)
             })
           })
@@ -647,14 +607,28 @@ export default {
       this.list.splice(index, 1)
     },
 
+    loadList() {
+      let data = cloneDeep(this.data)
+      data.forEach(el => {
+        el.modeType = el.source.columns ? 'custom' : 'all'
+        if (el.taskId) {
+          el.source.connectionId = `${el.source.nodeId}/${el.source.connectionId}`
+          el.source.connectionName = `${el.source.nodeName} / ${el.source.connectionName}`
+          el.target.connectionId = `${el.target.nodeId}/${el.target.connectionId}`
+          el.target.connectionName = `${el.target.nodeName} / ${el.target.connectionName}`
+        }
+      })
+      this.list = data
+    },
+
     getList() {
       let list = cloneDeep(this.list)
       if (this.taskId) {
         list.forEach(el => {
           el.source.connectionId = el.source.connectionId.split('/')?.[1]
-          el.source.connectionName = el.source.connectionName.split(' / ')?.[1]
+          el.source.connectionName = el.source.connectionName?.split(' / ')?.[1]
           el.target.connectionId = el.target.connectionId.split('/')?.[1]
-          el.target.connectionName = el.target.connectionName.split(' / ')?.[1]
+          el.target.connectionName = el.target.connectionName?.split(' / ')?.[1]
         })
       }
       return list
@@ -676,6 +650,9 @@ export default {
 
     handleSetSelectedConnection(item, val) {
       item.connectionName = val?.name
+      if (this.taskId) {
+        item.nodeName = item.connectionName.split(' / ')?.[0]
+      }
     },
 
     handleChangeTable(val, item, index, type) {
@@ -802,6 +779,22 @@ export default {
       return (...args) => {
         handle(item, ...args)
       }
+    },
+
+    getFieldListOptions(item) {
+      let opt = {
+        sourceId: item.source.connectionId,
+        targetId: item.target.connectionId,
+        sourceTable: item.source.table,
+        targetTable: item.target.table,
+        source: item.source.fields,
+        target: item.target.fields
+      }
+      if (this.taskId) {
+        opt.sourceId = opt.sourceId?.split('/')?.[1]
+        opt.targetId = opt.targetId?.split('/')?.[1]
+      }
+      return opt
     }
   }
 }
