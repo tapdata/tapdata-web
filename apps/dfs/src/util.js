@@ -220,6 +220,32 @@ export const addEvent = (target, eventType, handle) => {
     target.attachEvent('on' + eventType, handle)
   }
 }
+export function handleUnit(limit) {
+  if (!limit) return 0
+  var size = ''
+  if (limit < 0.1 * 1024) {
+    //小于0.1KB，则转化成B
+    size = limit.toFixed(1) + 'B'
+  } else if (limit < 0.1 * 1024 * 1024) {
+    //小于0.1MB，则转化成KB
+    size = (limit / 1024).toFixed(1) + 'KB'
+  } else if (limit < 0.1 * 1024 * 1024 * 1024) {
+    //小于0.1GB，则转化成MB
+    size = (limit / (1024 * 1024)).toFixed(1) + 'M'
+  } else {
+    //其他转化成GB
+    size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'G'
+  }
+
+  var sizeStr = size + '' //转成字符串
+  var index = sizeStr.indexOf('.') //获取小数点处的索引
+  var dou = sizeStr.substr(index + 1, 1) //获取小数点后一位的值
+  if (dou === '00') {
+    //判断后两位是否为00，如果是则删除0
+    return sizeStr.substring(0, index) + sizeStr.substr(index + 2, 1)
+  }
+  return size
+}
 
 export const removeEvent = (target, eventType, handle) => {
   if (document.removeEventListener) {

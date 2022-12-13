@@ -157,7 +157,13 @@
               @click="handleDel(scope.row)"
               >{{ $t('button_delete') }}</ElButton
             >
-            <ElButton size="mini" type="text" @click="handleUpload(scope.row)">上传</ElButton>
+            <ElButton
+              size="mini"
+              type="text"
+              :disabled="scope.row.status !== 'Running'"
+              @click="handleUpload(scope.row)"
+              >上传</ElButton
+            >
             <ElButton size="mini" type="text" @click="open(scope.row)">日志</ElButton>
           </template>
         </ElTableColumn>
@@ -296,18 +302,15 @@
         </div>
       </Details>
       <!--  日志下载    -->
-      <ElDialog :visible.sync="downloadDialog" title="本地日志下载" width="1000px">
+      <ElDialog :visible.sync="downloadDialog" title="本地日志下载" width="1000px" custom-class="download-dialog">
         <el-button class="mb-4 float-end" type="primary" @click="handleUpload(currentAgentId)">本地日志上传</el-button>
-        <VTable
-          :data="downloadList"
-          :columns="downloadListCol"
-          :remote-data="id"
-          height="500px"
-          mn
-          max-height="500px"
-          ref="tableName"
-          :has-pagination="false"
-        >
+        <VTable :data="downloadList" :columns="downloadListCol" ref="tableName" :has-pagination="false">
+          <template slot="status" slot-scope="scope">
+            <span>{{ statusMaps[scope.row.status].text }}</span>
+          </template>
+          <template slot="fileSize" slot-scope="scope">
+            <span>{{ handleUnit(scope.row.fileSize) }}</span>
+          </template>
           <template slot="operation" slot-scope="scope">
             <ElButton size="mini" type="text" @click="handleDownload(scope.row)">下载</ElButton>
             <ElButton size="mini" type="text" @click="handleDeleteUploadLog(scope.row)">删除</ElButton>
@@ -334,12 +337,13 @@
 import i18n from '@/i18n'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
-import { INSTANCE_STATUS_MAP } from '../../const'
+import { INSTANCE_STATUS_MAP, AGENT_STATUS_MAP_EN } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar, VTable } from '@tap/component'
-import OSS from 'ali-oss'
+import { handleUnit } from '@/util'
+// import OSS from 'ali-oss'
 
 let timer = null
 
@@ -394,15 +398,16 @@ export default {
         },
         {
           label: '文件大小',
-          prop: 'fileSize'
+          slotName: 'fileSize'
         },
         {
           label: '上传时间',
-          prop: 'uploadDate'
+          prop: 'createAt',
+          dataType: 'time'
         },
         {
           label: '文件状态',
-          prop: 'status'
+          slotName: 'status'
         },
 
         {
@@ -414,7 +419,8 @@ export default {
       currentAgentId: '',
       downloadTotal: 14,
       currentPage: 1,
-      pageSize: 10
+      pageSize: 10,
+      statusMaps: AGENT_STATUS_MAP_EN
     }
   },
   computed: {
@@ -473,6 +479,9 @@ export default {
     timer = null
   },
   methods: {
+    handleUnit(limit) {
+      return handleUnit(limit)
+    },
     init() {
       let query = this.$route.query
       let { detailId, ...searchParams } = Object.assign(this.searchParams, query)
@@ -955,8 +964,8 @@ export default {
     },
     //日志上传
     handleUpload(row) {
-      this.$axios.post('api/tcm/uploadLog', { agentId: row.id }).then(() => {
-        this.$message.success('上传成功')
+      this.$axios.post('api/tcm/uploadLog', { agentId: row.id }).then(data => {
+        this.$message.success(data)
       })
     },
     //打开日志列表
@@ -989,10 +998,10 @@ export default {
     },
     //日志下载
     handleDownload(row) {
-      this.$axios.get('api/tcm/downloadLog?id=' + row.id).then(res => {
-        let data = res?.data
-        let { accessKeyId, accessKeySecret, securityToken, region, downloadAddr, bucket } = data
+      this.$axios.get('api/tcm/downloadLog?id=' + row.id).then(data => {
+        let { accessKeyId, accessKeySecret, securityToken, region, uploadAddr, bucket } = data
         //ssl 凭证
+        const OSS = require('ali-oss')
         const client = new OSS({
           accessKeyId: accessKeyId,
           accessKeySecret: accessKeySecret,
@@ -1000,11 +1009,10 @@ export default {
           bucket: bucket,
           securityToken: securityToken
         })
-        let filename = 'agent 日志'
         const response = {
-          'content-disposition': `attachment; filename= ${encodeURIComponent(filename)};expires:7200,`
+          'content-disposition': `attachment; expires:7200,`
         }
-        const url = client.signatureUrl(downloadAddr, { response })
+        const url = client.signatureUrl(uploadAddr, { response })
         window.location.href = url
       })
     }
@@ -1151,6 +1159,12 @@ export default {
   }
   .tooltip--notenter {
     pointer-events: none;
+  }
+  .download-dialog {
+    .el-dialog__body {
+      height: 475px;
+      padding: 0 20px 20px 20px;
+    }
   }
 }
 </style>
