@@ -322,13 +322,19 @@
           </template>
           <template slot="operation" slot-scope="scope">
             <ElButton size="mini" type="text" @click="handleDownload(scope.row)">下载</ElButton>
-            <ElButton size="mini" type="text" @click="handleDeleteUploadLog(scope.row)">删除</ElButton>
+            <ElButton
+              size="mini"
+              type="text"
+              :disabled="scope.row.status === 0"
+              @click="handleDeleteUploadLog(scope.row)"
+              >删除</ElButton
+            >
           </template>
         </VTable>
         <span slot="footer" class="dialog-footer">
           <el-pagination
             @current-change="getDownloadList"
-            :current-page="currentPage"
+            :current-page.sync="currentPage"
             :page-sizes="[20, 50, 100]"
             :page-size="pageSize"
             layout="total, prev, pager, next, jumper"
@@ -1176,7 +1182,7 @@ export default {
   .download-dialog {
     .el-dialog__body {
       height: 475px;
-      padding: 0 20px 30px 20px;
+      padding: 0 20px 40px 20px;
     }
   }
 }
