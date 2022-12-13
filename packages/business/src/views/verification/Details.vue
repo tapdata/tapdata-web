@@ -245,6 +245,9 @@ export default {
       if (data.length === 0) {
         return
       }
+      const findOne = this.tableData.find(t => t.taskId === this.taskId)
+      const sourceColumns = findOne.source?.columns || []
+      const targetColumns = findOne.target?.columns || []
       data.map(item => {
         let source = item.source || {}
         let target = item.target || {}
@@ -253,12 +256,14 @@ export default {
         let key = Array.from(new Set([...sourceKeys, ...targetKeys])) //找出所有的key的并集
         let message = item.message || ''
         let diffFields = []
+        let diffFiledIndexs = []
         if (message.includes('Different fields')) {
           diffFields = message.split(':')[1].split(',')
+        } else if (message.includes('Different index')) {
+          diffFiledIndexs = message.split(':')[1].split(',')
         }
-        const fieldIndex = Number(message.match(/Different index:(\w+)/)?.[1] || -1)
-        if (fieldIndex !== -1) {
-          this.handleLoadIndexField(item, fieldIndex)
+        if (diffFiledIndexs.length) {
+          this.handleLoadIndexField(item, diffFiledIndexs, sourceColumns, targetColumns)
         } else {
           key.forEach(i => {
             let sourceValue = ''
@@ -304,15 +309,11 @@ export default {
       url = route.href
       window.open(url, '_blank')
     },
-    handleLoadIndexField(item, index) {
-      const findOne = this.tableData.find(t => t.taskId === this.taskId)
-      if (!findOne) return
-      const sourceColumns = findOne.source?.columns || []
-      const targetColumns = findOne.target?.columns || []
+    handleLoadIndexField(item, indexArr, sourceColumns, targetColumns) {
       sourceColumns.forEach((el, i) => {
         let node = {
           type: item.type,
-          red: index === i,
+          red: indexArr.includes(i + ''),
           source: {
             key: el,
             value: item.source[el]
