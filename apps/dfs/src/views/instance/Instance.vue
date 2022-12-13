@@ -162,8 +162,8 @@
               type="text"
               :disabled="scope.row.status !== 'Running'"
               @click="handleUpload(scope.row)"
-              >上传</ElButton
-            >
+              >上传 <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
+            </ElButton>
             <ElButton size="mini" type="text" @click="open(scope.row)">日志</ElButton>
           </template>
         </ElTableColumn>
@@ -302,11 +302,20 @@
         </div>
       </Details>
       <!--  日志下载    -->
-      <ElDialog :visible.sync="downloadDialog" title="本地日志下载" width="1000px" custom-class="download-dialog">
-        <el-button class="mb-4 float-end" type="primary" @click="handleUpload(currentAgentId)">本地日志上传</el-button>
+      <ElDialog
+        :visible.sync="downloadDialog"
+        :before-close="handleClose"
+        title="本地日志下载"
+        width="1000px"
+        custom-class="download-dialog"
+      >
+        <el-button class="mb-4 float-end" type="primary" @click="handleUpload(currentAgentId)">日志上传</el-button>
         <VTable :data="downloadList" :columns="downloadListCol" ref="tableName" :has-pagination="false">
           <template slot="status" slot-scope="scope">
-            <span>{{ statusMaps[scope.row.status].text }}</span>
+            <span>{{ statusMaps[scope.row.status].text }} </span>
+            <span v-if="scope.row.uploadAgentLog && scope.row.uploadAgentLog.uploadRatio !== 100"
+              >{{ scope.row.uploadAgentLog.uploadRatio }} %
+            </span>
           </template>
           <template slot="fileSize" slot-scope="scope">
             <span>{{ handleUnit(scope.row.fileSize) }}</span>
@@ -420,7 +429,8 @@ export default {
       downloadTotal: 14,
       currentPage: 1,
       pageSize: 10,
-      statusMaps: AGENT_STATUS_MAP_EN
+      statusMaps: AGENT_STATUS_MAP_EN,
+      timer: null
     }
   },
   computed: {
@@ -974,6 +984,10 @@ export default {
       this.currentAgentId = row.id
       this.getDownloadList()
     },
+    handleClose() {
+      this.downloadDialog = false
+      clearTimeout(this.timer)
+    },
     //日志列表
     getDownloadList() {
       let filter = {
@@ -988,6 +1002,9 @@ export default {
       this.$axios.get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(res => {
         this.downloadList = res?.items || []
         this.downloadTotal = res?.total
+        this.timer = setTimeout(() => {
+          this.getDownloadList()
+        }, 10000)
       })
     },
     //删除
@@ -1007,13 +1024,9 @@ export default {
           accessKeySecret: accessKeySecret,
           region: region,
           bucket: bucket,
-          securityToken: securityToken
+          stsToken: securityToken
         })
-        const response = {
-          'content-disposition': `attachment; expires:7200,`
-        }
-        const url = client.signatureUrl(uploadAddr, { response })
-        window.location.href = url
+        client.get(uploadAddr).then()
       })
     }
   }
@@ -1163,7 +1176,7 @@ export default {
   .download-dialog {
     .el-dialog__body {
       height: 475px;
-      padding: 0 20px 20px 20px;
+      padding: 0 20px 30px 20px;
     }
   }
 }
