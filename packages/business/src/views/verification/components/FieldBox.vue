@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="field-box">
     <div class="setting-item mt-4">
       <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
       <MultiSelection
@@ -27,7 +27,7 @@
     </div>
     <div v-if="isEdit" class="setting-item align-items-center mt-4">
       <label class="item-label">待校验模型: </label>
-      <ElRadioGroup v-model="item.modeType" :disabled="getModeTypeDisabled(item)">
+      <ElRadioGroup v-model="item.modeType" :disabled="getModeTypeDisabled(item)" @change="handleChangeModeType">
         <ElRadio label="all">全字段</ElRadio>
         <ElRadio label="custom">自定义</ElRadio>
       </ElRadioGroup>
@@ -123,10 +123,14 @@ export default {
   },
 
   mounted() {
-    this.getFieldListOptions()?.sourceNodeId ? this.loadFieldsInNode() : this.loadFields()
+    this.init()
   },
 
   methods: {
+    init() {
+      this.getFieldListOptions()?.sourceNodeId ? this.loadFieldsInNode() : this.loadFields()
+    },
+
     getFieldListOptions() {
       const { item } = this
       let opt = {
@@ -323,6 +327,10 @@ export default {
     getFilterList() {
       const { keyword } = this
       return this.list.filter(t => (t.source + t.target).includes(keyword))
+    },
+
+    handleChangeModeType(val) {
+      if (val === 'custom') this.init()
     }
   }
 }

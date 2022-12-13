@@ -565,7 +565,7 @@ export default {
       let data = cloneDeep(this.data)
       data.forEach(el => {
         el.modeType = el.source.columns ? 'custom' : 'all'
-        if (el.taskId) {
+        if (this.taskId) {
           el.source.connectionId = `${el.source.nodeId}/${el.source.connectionId}`
           el.source.connectionName = `${el.source.nodeName} / ${el.source.connectionName}`
           el.target.connectionId = `${el.target.nodeId}/${el.target.connectionId}`
@@ -603,7 +603,7 @@ export default {
     },
 
     handleSetSelectedConnection(item, val) {
-      item.connectionName = val?.name
+      item.connectionName = val?.currentLabel || val?.name
       if (this.taskId) {
         item.nodeName = item.connectionName?.split(' / ')?.[0]
       }

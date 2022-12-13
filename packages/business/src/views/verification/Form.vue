@@ -391,6 +391,7 @@ export default {
             if (!data.timing) {
               data.timing = this.form.timing
             }
+            data.taskMode = data.flowId ? 'pipeline' : 'random'
             this.form = Object.assign({}, this.form, data)
           }
         })
