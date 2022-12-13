@@ -78,7 +78,7 @@ export default {
 }
 .multi-selection-data-verify {
   .item-select {
-    width: 600px;
+    width: 100%;
   }
 }
 </style>
