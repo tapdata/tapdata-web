@@ -1,6 +1,6 @@
 import { defineComponent, ref } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
-import { RecursionField, useField, useForm } from '@formily/vue'
+import { RecursionField, useField, useForm } from '@tap/form'
 
 export const PdkProperties = observer(
   defineComponent({
