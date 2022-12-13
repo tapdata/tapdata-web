@@ -375,20 +375,26 @@ export default {
     },
     goEdit(id, flowId) {
       taskApi.getId(flowId).then(data => {
-        if (['running', 'stop', 'complete'].includes(data.status)) {
-          this.$router.push({
-            name: 'dataVerificationEdit',
-            params: {
-              id: id
-            }
-          })
-        } else {
-          this.$message.info(
-            this.$t('packages_business_verification_checkStatusPre') +
-              data.status +
-              this.$t('packages_business_verification_checkStatusSuffix')
-          )
-        }
+        this.$router.push({
+          name: 'dataVerificationEdit',
+          params: {
+            id: id
+          }
+        })
+        // if (['running', 'stop', 'complete'].includes(data.status)) {
+        //   this.$router.push({
+        //     name: 'dataVerificationEdit',
+        //     params: {
+        //       id: id
+        //     }
+        //   })
+        // } else {
+        //   this.$message.info(
+        //     this.$t('packages_business_verification_checkStatusPre') +
+        //       data.status +
+        //       this.$t('packages_business_verification_checkStatusSuffix')
+        //   )
+        // }
       })
     },
     getFilterItems() {

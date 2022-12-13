@@ -455,7 +455,7 @@ export default [
           },
           {
             path: ':id/edit',
-            name: 'page_title_verification_edit',
+            name: 'dataVerificationEdit',
             component: VerificationForm,
             meta: {
               title: 'page_title_task_edit',
