@@ -1127,7 +1127,7 @@ export default {
   dfs_agent_download_agentguidedialog_ninxuyaogenju:
     '您需要根据引导的操作，将Tapdata的数据计算引擎Agent安装可以访问您数据的机器上。',
   dfs_agent_download_agentguidedialog_zizhuanzhuang: '自助安装',
-  dfs_agent_download_agentguidedialog_lijiquanzhuang: '立即去安装',
+  dfs_agent_download_agentguidedialog_lijiquanzhuang: '基于您的场景，您可以选择以下部署模式',
   dfs_agent_download_agentguidedialog_xiayibu: '下一步',
   dfs_agent_download_agentguidedialog_womendeshuju: '我们的数据源和目标 可以被外网服务访问',
   dfs_agent_download_agentguidedialog_neiwang: '我们公司的安全策略 不允许这么做',
