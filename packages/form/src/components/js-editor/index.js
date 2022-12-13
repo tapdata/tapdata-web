@@ -105,7 +105,9 @@ export const JsEditor = connect(
               <ElLink
                 onClick={() => {
                   this.fullscreen = !this.fullscreen
-                  this.$refs.jsEditor.editor.resize(true)
+                  setTimeout(() => {
+                    this.$refs.jsEditor.editor.resize(true)
+                  }, 10)
                 }}
                 class="js-editor-fullscreen"
                 type="primary"
