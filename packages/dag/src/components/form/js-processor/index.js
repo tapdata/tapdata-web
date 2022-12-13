@@ -1,12 +1,12 @@
 import { defineComponent, ref, reactive, onUnmounted } from '@vue/composition-api'
-import { useForm } from '@formily/vue'
+import { useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { groupBy } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { FormItem, JsEditor, HighlightCode } from '@tap/form'
-import { VCodeEditor, VirtualSelect } from '@tap/component'
+import { VCodeEditor, VirtualSelect, VEmpty } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 import { javascriptFunctionsApi, taskApi, monitoringLogsApi } from '@tap/api'
 import { JsDeclare } from '../js-declare'
@@ -18,8 +18,8 @@ export const JsProcessor = observer(
     directives: {
       resize
     },
-    setup(props, { emit, root, attrs }) {
-      const { id: taskId, testTaskId, syncType } = root.$store.state.dataflow.taskInfo
+    setup(props, { emit, root, attrs, refs }) {
+      const { id: taskId, syncType } = root.$store.state.dataflow.taskInfo
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)
@@ -28,6 +28,7 @@ export const JsProcessor = observer(
       const fullscreen = ref(false)
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
+      const showJsonArea = ref(false)
 
       let queryStart
       let queryTimes = 0
@@ -73,7 +74,20 @@ export const JsProcessor = observer(
       let timer
       let version
       let logList = reactive([])
-      // let logLoading = ref(false)
+
+      const queryLog = async () => {
+        const logData = await monitoringLogsApi.query({
+          taskId: root.$store.state.dataflow.taskInfo.testTaskId,
+          type: 'testRun',
+          order: 'asc',
+          page: 1,
+          pageSize: 50,
+          start: queryStart,
+          nodeId: form.values.id,
+          end: Date.now()
+        })
+        logList = logData?.items.filter(item => !item.message.startsWith(`Node JavaScript[${form.values.id}]`))
+      }
 
       const handleQuery = async () => {
         let lastVersion = version
@@ -90,23 +104,12 @@ export const JsProcessor = observer(
             outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
             return res.over
           })
-        const logData = await monitoringLogsApi.query({
-          taskId: root.$store.state.dataflow.taskInfo.testTaskId,
-          type: 'testRun',
-          order: 'asc',
-          page: 1,
-          pageSize: 50,
-          start: queryStart,
-          nodeId: form.values.id,
-          end: Date.now()
-        })
-        logList = logData?.items
+        await queryLog()
 
         return isOver
       }
 
       const resetQuery = args => {
-        console.log(args) // eslint-disable-line
         queryTimes = 0
         running.value = false
         runningText.value = ''
@@ -139,12 +142,22 @@ export const JsProcessor = observer(
       }
 
       const handleRun = () => {
+        running.value = true
+        showJsonArea.value = true
         clearTimeout(timer)
         version = Date.now()
-        taskApi.testRunJs({ ...params, version, script: props.value }).then(() => {
-          queryStart = Date.now()
-          handleAutoQuery()
-        })
+        queryStart = Date.now()
+        if (!fullscreen.value) fullscreen.value = true
+        taskApi.testRunJs({ ...params, version, script: props.value }).then(
+          () => {
+            queryStart = Date.now()
+            handleAutoQuery()
+          },
+          async () => {
+            // 脚本执行出错
+            await queryLog()
+          }
+        )
       }
 
       onUnmounted(() => {
@@ -158,7 +171,6 @@ export const JsProcessor = observer(
       const toggleDoc = event => {
         event.stopPropagation()
         showDoc.value = !showDoc.value
-        console.log('toggleDoc', showDoc.value) // eslint-disable-line
       }
 
       let functionGroup = reactive([])
@@ -184,6 +196,18 @@ export const JsProcessor = observer(
       }
 
       loadFunction()
+
+      const onTabChange = current => {
+        if (current == '1') {
+          refs.beforeJson.editor.resize(true)
+          refs.afterJson.editor.resize(true)
+
+          setTimeout(() => {
+            refs.beforeJson.editor.resize(true)
+            refs.afterJson.editor.resize(true)
+          }, 300)
+        }
+      }
 
       return () => {
         const editorProps = { ...attrs }
@@ -261,7 +285,8 @@ export const JsProcessor = observer(
             <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
               <div class="json-view-header">{i18n.t('packages_form_js_processor_index_tiaoshishuru')}</div>
               <VCodeEditor
-                class="py-0 json-view-editor"
+                ref="beforeJson"
+                class="py-0 json-view-editor flex-1"
                 value={inputRef.value}
                 lang="json"
                 options={{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }}
@@ -271,7 +296,8 @@ export const JsProcessor = observer(
             <div class="json-view flex-1 border rounded-2 overflow-hidden">
               <div class="json-view-header">{i18n.t('packages_form_js_processor_index_jieguoshuchu')}</div>
               <VCodeEditor
-                class="py-0 json-view-editor"
+                ref="afterJson"
+                class="py-0 json-view-editor flex-1"
                 value={outputRef.value}
                 lang="json"
                 options={{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }}
@@ -369,23 +395,34 @@ export const JsProcessor = observer(
                   }}
                   class="js-processor-editor-console border-start"
                 >
-                  <ElTabs class="w-100 flex flex-column">
+                  <ElTabs onInput={onTabChange} class="w-100 flex flex-column">
                     <ElTabPane label="输出">
                       <div v-loading={running.value} class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
-                          {logList.map(item => {
-                            if (/^[{].*[}]$/.test(item.message)) {
-                              const message = item.message.replace(/^\{(.*)}$/, '$1').split(', ')
-                              const code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
-                              return (
-                                <details class="js-log-list-item p-2">
-                                  <summary class="text-truncate px-2">{item.message}</summary>
-                                  <HighlightCode class="m-0" language="json" code={code}></HighlightCode>
-                                </details>
-                              )
-                            }
-                            return <div class="js-log-list-item text-prewrap p-2">{item.message}</div>
-                          })}
+                          {logList.length ? (
+                            logList.map(item => {
+                              if (/^[{[].*[\]}]$/.test(item.message)) {
+                                let code
+                                try {
+                                  code = JSON.stringify(JSON.parse(item.message), null, 2)
+                                } catch (e) {
+                                  console.log('e', e) // eslint-disable-line
+                                  const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
+                                  code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
+                                }
+
+                                return (
+                                  <details class="js-log-list-item p-2">
+                                    <summary class="text-truncate px-2">{item.message}</summary>
+                                    <HighlightCode class="m-0" language="json" code={code}></HighlightCode>
+                                  </details>
+                                )
+                              }
+                              return <div class="js-log-list-item text-prewrap p-2">{item.message}</div>
+                            })
+                          ) : (
+                            <VEmpty></VEmpty>
+                          )}
                         </div>
                       </div>
                     </ElTabPane>
@@ -398,15 +435,16 @@ export const JsProcessor = observer(
             <JsDeclare
               value={form.values.declareScript}
               onChange={val => {
+                console.log('JsDeclare', val) // eslint-disable-line
                 form.setValuesIn('declareScript', val)
               }}
               height={240}
               options={editorProps.options}
-              param="schemaApplyResultList"
+              param={editorProps.param}
               handleAddCompleter={editorProps.handleAddCompleter}
             />
             {runTool}
-            <div class="mt-4 json-view-area">{jsonView}</div>
+            {showJsonArea.value && <div class="mt-4 json-view-area">{jsonView}</div>}
           </div>
         )
       }

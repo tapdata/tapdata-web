@@ -40,6 +40,7 @@ export class JavaScript extends NodeType {
           beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
           afterRegexp: '}[^}]*$',
           after: '}',
+          param: 'tapTable',
           handleAddCompleter: '{{addDeclaredCompleterForSync}}'
         }
       }

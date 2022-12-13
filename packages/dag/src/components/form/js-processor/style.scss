@@ -64,6 +64,11 @@
         height: 100%;
         padding: 16px;
 
+        .json-view {
+          display: flex;
+          flex-direction: column;
+        }
+
         .json-view-editor {
           height: 100% !important;
         }
