@@ -302,24 +302,6 @@ export default {
               f.result = { dataType: newDataType, tapType }
               ruleAccept = newDataType
             }
-          } else if (f?.scope === 'Node') {
-            if (useToAll) {
-              // 修改批量规则
-              f.result = { dataType: newDataType, tapType }
-              ruleAccept = newDataType
-            } else {
-              // 添加字段规则
-              const op = {
-                id: uuid(),
-                scope: 'Field',
-                namespace: [nodeId, qualified_name, fieldName],
-                type: 'DataType',
-                accept: f.accept,
-                result: { dataType: newDataType, tapType }
-              }
-              ruleId = op.id
-              this.fieldChangeRules.push(op)
-            }
           } else {
             const op = {
               id: uuid(),
@@ -337,7 +319,6 @@ export default {
           this.data.fields.find(t => {
             if ((useToAll && t.data_type === ruleAccept) || t.field_name === fieldName) {
               t.changeRuleId = ruleId
-              t.source.scope = useToAll ? 'Node' : 'Field'
             }
           })
           this.editBtnLoading = false
