@@ -161,7 +161,7 @@
               size="mini"
               type="text"
               :disabled="scope.row.status !== 'Running'"
-              @click="handleUpload(scope.row)"
+              @click="handleUpload(scope.row.id)"
               >上传 <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
             </ElButton>
             <ElButton size="mini" type="text" @click="open(scope.row)">日志</ElButton>
@@ -979,8 +979,8 @@ export default {
       return row?.metric?.systemInfo?.os?.includes('win')
     },
     //日志上传
-    handleUpload(row) {
-      this.$axios.post('api/tcm/uploadLog', { agentId: row.id }).then(data => {
+    handleUpload(id) {
+      this.$axios.post('api/tcm/uploadLog', { agentId: id }).then(data => {
         this.$message.success(data)
       })
     },
