@@ -123,7 +123,7 @@
             v-show="inspectMethod !== 'row_count'"
           >
             <label class="item-label">待校验模型: </label>
-            <ElRadioGroup v-model="item.modeType">
+            <ElRadioGroup v-model="item.modeType" :disabled="getModeTypeDisabled(item)">
               <ElRadio label="all">全字段</ElRadio>
               <ElRadio label="custom">自定义</ElRadio>
             </ElRadioGroup>
@@ -625,9 +625,9 @@ export default {
       let list = cloneDeep(this.list)
       if (this.taskId) {
         list.forEach(el => {
-          el.source.connectionId = el.source.connectionId.split('/')?.[1]
+          el.source.connectionId = el.source.connectionId?.split('/')?.[1]
           el.source.connectionName = el.source.connectionName?.split(' / ')?.[1]
-          el.target.connectionId = el.target.connectionId.split('/')?.[1]
+          el.target.connectionId = el.target.connectionId?.split('/')?.[1]
           el.target.connectionName = el.target.connectionName?.split(' / ')?.[1]
         })
       }
@@ -651,7 +651,7 @@ export default {
     handleSetSelectedConnection(item, val) {
       item.connectionName = val?.name
       if (this.taskId) {
-        item.nodeName = item.connectionName.split(' / ')?.[0]
+        item.nodeName = item.connectionName?.split(' / ')?.[0]
       }
     },
 
@@ -783,18 +783,22 @@ export default {
 
     getFieldListOptions(item) {
       let opt = {
+        sourceNodeId: item.source.nodeId,
+        targetNodeId: item.target.nodeId,
         sourceId: item.source.connectionId,
         targetId: item.target.connectionId,
         sourceTable: item.source.table,
-        targetTable: item.target.table,
-        source: item.source.fields,
-        target: item.target.fields
+        targetTable: item.target.table
       }
       if (this.taskId) {
         opt.sourceId = opt.sourceId?.split('/')?.[1]
         opt.targetId = opt.targetId?.split('/')?.[1]
       }
       return opt
+    },
+
+    getModeTypeDisabled(item) {
+      return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
     }
   }
 }

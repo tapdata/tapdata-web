@@ -50,7 +50,7 @@
             </ElSelect>
           </ElFormItem>
           <ElFormItem required class="form-item" prop="inspectDifferenceMode" :label="'结果输出' + ': '">
-            <ElSelect filterable class="form-select" v-model="form.inspectDifferenceMode" @input="flowChangeHandler">
+            <ElSelect filterable class="form-select" v-model="form.inspectDifferenceMode">
               <ElOption label="输出所有不一致的数据" value="All"></ElOption>
               <ElOption label="只输出来源表不一致的数据" value="OnSourceExists"></ElOption>
             </ElSelect>

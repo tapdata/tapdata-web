@@ -56,6 +56,8 @@ export default {
       type: Object,
       default: () => {
         return {
+          sourceNodeId: '',
+          targetNodeId: '',
           sourceId: '',
           targetId: '',
           sourceTable: '',
@@ -86,7 +88,7 @@ export default {
   },
 
   mounted() {
-    this.loadFields()
+    this.options?.sourceNodeId ? this.loadFieldsInNode() : this.loadFields()
   },
 
   methods: {
@@ -154,14 +156,51 @@ export default {
         .tapTables({
           filter: JSON.stringify(sourceParams)
         })
-        .then(sourceItems => {
-          this.sourceItems = Object.values(sourceItems.items[0]?.nameFieldMap || {}).map(t => t.fieldName)
+        .then(res => {
+          this.sourceItems = Object.values(res.items[0]?.nameFieldMap || {}).map(t => t.fieldName)
           metadataInstancesApi
             .tapTables({
               filter: JSON.stringify(targetParams)
             })
-            .then(targetItems => {
-              this.targetItems = Object.values(targetItems.items[0]?.nameFieldMap || {}).map(t => t.fieldName)
+            .then(re => {
+              this.targetItems = Object.values(re.items[0]?.nameFieldMap || {}).map(t => t.fieldName)
+            })
+            .finally(() => {
+              this.loadList()
+              this.loading = false
+            })
+        })
+        .catch(() => {
+          this.loadList()
+          this.loading = false
+        })
+    },
+
+    loadFieldsInNode() {
+      const { sourceNodeId, targetNodeId, sourceTable, targetTable } = this.options
+      if (!sourceTable || !targetTable) return
+      const sourceParams = {
+        nodeId: sourceNodeId,
+        tableFilter: sourceTable,
+        fields: ['original_name', 'fields', 'qualified_name'],
+        pageSize: 20
+      }
+      const targetParams = {
+        nodeId: targetNodeId,
+        tableFilter: targetTable,
+        fields: ['original_name', 'fields', 'qualified_name'],
+        pageSize: 20
+      }
+
+      this.loading = true
+      metadataInstancesApi
+        .nodeSchemaPage(sourceParams)
+        .then(res => {
+          this.sourceItems = (res.items[0]?.fields || []).map(t => t.field_name)
+          metadataInstancesApi
+            .nodeSchemaPage(targetParams)
+            .then(re => {
+              this.targetItems = (re.items[0]?.fields || []).map(t => t.field_name)
             })
             .finally(() => {
               this.loadList()
