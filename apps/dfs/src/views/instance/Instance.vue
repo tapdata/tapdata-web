@@ -1026,7 +1026,7 @@ export default {
           bucket: bucket,
           stsToken: securityToken
         })
-        client.get(uploadAddr).then()
+        window.location.href = client.signatureUrl(uploadAddr)
       })
     }
   }
