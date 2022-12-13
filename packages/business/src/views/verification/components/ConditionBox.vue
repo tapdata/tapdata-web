@@ -92,58 +92,12 @@
               item.target.table || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
           </div>
-          <div class="setting-item mt-4" v-show="inspectMethod !== 'row_count'">
-            <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
-            <MultiSelection
-              v-if="editId === item.id"
-              v-model="item.source.sortColumn"
-              class="item-select"
-              :class="{ red: !item.source.sortColumn }"
-              :options="item.source.fields"
-              :id="'item-source-' + index"
-            ></MultiSelection>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-              item.source.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
-            }}</span>
-            <span class="item-icon"></span>
-            <MultiSelection
-              v-if="editId === item.id"
-              v-model="item.target.sortColumn"
-              class="item-select"
-              :class="{ red: !item.target.sortColumn }"
-              :options="item.target.fields"
-            ></MultiSelection>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-              item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
-            }}</span>
-          </div>
-          <div
-            v-if="editId === item.id"
-            class="setting-item align-items-center mt-4"
-            v-show="inspectMethod !== 'row_count'"
-          >
-            <label class="item-label">待校验模型: </label>
-            <ElRadioGroup v-model="item.modeType" :disabled="getModeTypeDisabled(item)">
-              <ElRadio label="all">全字段</ElRadio>
-              <ElRadio label="custom">自定义</ElRadio>
-            </ElRadioGroup>
-          </div>
-          <div
-            v-if="item.modeType === 'custom' && editId === item.id"
-            class="mt-4"
-            v-show="inspectMethod !== 'row_count'"
-          >
-            <FieldList
-              :options="getFieldListOptions(item)"
-              :id="'field-list-' + index"
-              :data="{
-                source: item.source.columns,
-                target: item.target.columns
-              }"
-              class="FieldList"
-              @change="handleFieldList(arguments[0], item)"
-            ></FieldList>
-          </div>
+          <FieldBox
+            v-if="inspectMethod !== 'row_count' && editId === item.id"
+            :is-edit="editId === item.id"
+            :item="item"
+            :index="index"
+          ></FieldBox>
           <div class="setting-item mt-4">
             <ElCheckbox
               v-if="editId === item.id"
@@ -196,14 +150,14 @@ import { connectionsApi, metadataInstancesApi, taskApi } from '@tap/api'
 import { merge, cloneDeep } from 'lodash'
 import { uuid, uniqueArr } from '@tap/shared'
 
-import MultiSelection from '../MultiSelection'
-import FieldList from './FieldList'
+import FieldBox from './FieldBox'
+
 import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
 
 export default {
   name: 'ConditionBox',
 
-  components: { AsyncSelect, MultiSelection, FieldList },
+  components: { AsyncSelect, FieldBox },
 
   props: {
     taskId: String,
@@ -678,6 +632,7 @@ export default {
       const connectionId = targetNode.connectionId
       const connectionName = targetNode.attrs?.connectionName
       item.target.nodeId = nodeId
+      item.target.nodeName = nodeName
       item.target.connectionId = `${nodeId}/${connectionId}`
       item.target.connectionName = `${nodeName} / ${connectionName}`
       if (isDB) {
@@ -770,35 +725,10 @@ export default {
         .join(',')
     },
 
-    handleFieldList(data, item) {
-      item.source.columns = data.map(t => t.source)
-      item.target.columns = data.map(t => t.target)
-    },
-
     useHandle(handle, item) {
       return (...args) => {
         handle(item, ...args)
       }
-    },
-
-    getFieldListOptions(item) {
-      let opt = {
-        sourceNodeId: item.source.nodeId,
-        targetNodeId: item.target.nodeId,
-        sourceId: item.source.connectionId,
-        targetId: item.target.connectionId,
-        sourceTable: item.source.table,
-        targetTable: item.target.table
-      }
-      if (this.taskId) {
-        opt.sourceId = opt.sourceId?.split('/')?.[1]
-        opt.targetId = opt.targetId?.split('/')?.[1]
-      }
-      return opt
-    },
-
-    getModeTypeDisabled(item) {
-      return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
     }
   }
 }
