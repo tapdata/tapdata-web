@@ -162,9 +162,11 @@
               type="text"
               :disabled="scope.row.status !== 'Running'"
               @click="handleUpload(scope.row.id)"
-              >{{$t('button_upload')}} <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
+              >{{ $t('button_upload') }} <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
             </ElButton>
-            <ElButton size="mini" type="text" @click="open(scope.row)">{{$t('dfs_instance_instance_rizhi')}}</ElButton>
+            <ElButton size="mini" type="text" @click="open(scope.row)">{{
+              $t('dfs_instance_instance_rizhi')
+            }}</ElButton>
           </template>
         </ElTableColumn>
         <div v-if="!isSearching" class="instance-table__empty" slot="empty">
@@ -309,7 +311,13 @@
         width="1000px"
         custom-class="download-dialog"
       >
-        <el-button class="mb-4 float-end" type="primary" @click="handleUpload(currentAgentId)">{{$t('dfs_instance_instance_rizhishangchuan')}}</el-button>
+        <el-button
+          class="mb-4 float-end"
+          type="primary"
+          :disabled="currentStatus !== 'Running'"
+          @click="handleUpload(currentAgentId)"
+          >{{ $t('dfs_instance_instance_rizhishangchuan') }}</el-button
+        >
         <VTable :data="downloadList" :columns="downloadListCol" ref="tableName" :has-pagination="false">
           <template slot="status" slot-scope="scope">
             <span>{{ statusMaps[scope.row.status].text }} </span>
@@ -321,13 +329,15 @@
             <span>{{ handleUnit(scope.row.fileSize) }}</span>
           </template>
           <template slot="operation" slot-scope="scope">
-            <ElButton size="mini" type="text" @click="handleDownload(scope.row)">{{$t('dfs_instance_instance_xiazai')}}</ElButton>
+            <ElButton size="mini" type="text" @click="handleDownload(scope.row)">{{
+              $t('dfs_instance_instance_xiazai')
+            }}</ElButton>
             <ElButton
               size="mini"
               type="text"
               :disabled="scope.row.status === 0"
               @click="handleDeleteUploadLog(scope.row)"
-              >{{$t('button_delete')}}</ElButton
+              >{{ $t('button_delete') }}</ElButton
             >
           </template>
         </VTable>
@@ -432,7 +442,8 @@ export default {
       ],
       downloadList: [],
       currentAgentId: '',
-      downloadTotal: 14,
+      currentStatus: '',
+      downloadTotal: 0,
       currentPage: 1,
       pageSize: 10,
       statusMaps: AGENT_STATUS_MAP_EN,
@@ -988,6 +999,7 @@ export default {
     open(row) {
       this.downloadDialog = true
       this.currentAgentId = row.id
+      this.currentStatus = row.status
       this.getDownloadList()
     },
     handleClose() {

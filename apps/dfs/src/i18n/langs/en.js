@@ -14,7 +14,7 @@ export default {
   button_confirm: 'Confirm',
   button_close: 'Close',
   button_save: 'Save',
-  button_upload: 'upload',
+  button_upload: 'Upload',
   button_export: 'export',
   button_bind: 'binding',
   button_unbind: 'unbind',
@@ -1230,14 +1230,14 @@ export default {
   dfs_agent_download_agentguidedialog_ninkeyigenzhe:
     'You can follow the guidance process and install Tapdata Agent in your server or VPC for data synchronization and processing',
   dfs_agent_download_agentguidedialog_bantuoguanyunmo: 'Semi-managed cloud mode - only need to install Agent',
-  dfs_instance_instance_shanchuchenggong: 'deleted successfully',
+  dfs_instance_instance_shanchuchenggong: 'Deleted successfully',
   dfs_instance_instance_wenjianxiazai: 'File download',
-  dfs_instance_instance_wenjianzhuangtai: 'file status',
+  dfs_instance_instance_wenjianzhuangtai: 'File status',
   dfs_instance_instance_shangchuanshijian: 'upload time',
   dfs_instance_instance_wenjiandaxiao: 'File size',
-  dfs_instance_instance_wenjianming: 'file name',
+  dfs_instance_instance_wenjianming: 'File name',
   dfs_instance_instance_xiazai: 'Download',
-  dfs_instance_instance_rizhishangchuan: 'log upload',
+  dfs_instance_instance_rizhishangchuan: 'Log upload',
   dfs_instance_instance_bendirizhixia: 'Local log download',
-  dfs_instance_instance_rizhi: 'log'
+  dfs_instance_instance_rizhi: 'Log'
 }
