@@ -5,7 +5,7 @@ import { OverflowTooltip } from '@tap/component'
 import './style.scss'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
-import { useField } from '@formily/vue'
+import { useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 
 export const TableListCard = observer(
