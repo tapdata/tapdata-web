@@ -1214,5 +1214,30 @@ export default {
     'Can the data source/target library you want to synchronize open ports to the external network? (via firewall, SSH Tunnel, VPN or other means)',
   dfs_agent_download_agentguidedialog_dianjixiafangde:
     'Based on your network security policy, we will recommend a most appropriate deployment for your use. ',
-  dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata Cloud'
+  dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata Cloud',
+  dfs_agent_download_agentguidedialog_mimatap: 'Password: tapdata',
+  dfs_agent_download_agentguidedialog_yonghumingde: 'Username: demo@tapdata.io',
+  dfs_agent_download_agentguidedialog_buxianganzhuanghuo:
+    'Do not want to install or deploy? You can experience our DEMO system first to understand the powerful functions of Tapdata',
+  dfs_agent_download_agentguidedialog_jijiangshangxian: 'coming soon',
+  dfs_agent_download_agentguidedialog_shiyongTap:
+    'Using the computing power provided by Tapdata, you only need to select the appropriate area and specifications for deployment without installing any programs. ',
+  dfs_agent_download_agentguidedialog_quantuoguanyunmo: 'Fully Managed Cloud Mode – Direct Cloud Deployment',
+  dfs_agent_download_agentguidedialog_huoquwanzhengshi: 'Get the full trial version',
+  dfs_agent_download_agentguidedialog_zainindeshuju:
+    'Install the full suite of software on your data center or cloud server, under your full control. Note that this option is not a cloud service. ',
+  dfs_agent_download_agentguidedialog_xianxiamoshizi: 'Offline mode - install a full set of software independently',
+  dfs_agent_download_agentguidedialog_ninkeyigenzhe:
+    'You can follow the guidance process and install Tapdata Agent in your server or VPC for data synchronization and processing',
+  dfs_agent_download_agentguidedialog_bantuoguanyunmo: 'Semi-managed cloud mode - only need to install Agent',
+  dfs_instance_instance_shanchuchenggong: 'deleted successfully',
+  dfs_instance_instance_wenjianxiazai: 'File download',
+  dfs_instance_instance_wenjianzhuangtai: 'file status',
+  dfs_instance_instance_shangchuanshijian: 'upload time',
+  dfs_instance_instance_wenjiandaxiao: 'File size',
+  dfs_instance_instance_wenjianming: 'file name',
+  dfs_instance_instance_xiazai: 'Download',
+  dfs_instance_instance_rizhishangchuan: 'log upload',
+  dfs_instance_instance_bendirizhixia: 'Local log download',
+  dfs_instance_instance_rizhi: 'log'
 }

@@ -162,9 +162,9 @@
               type="text"
               :disabled="scope.row.status !== 'Running'"
               @click="handleUpload(scope.row.id)"
-              >上传 <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
+              >{{$t('button_upload')}} <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
             </ElButton>
-            <ElButton size="mini" type="text" @click="open(scope.row)">日志</ElButton>
+            <ElButton size="mini" type="text" @click="open(scope.row)">{{$t('dfs_instance_instance_rizhi')}}</ElButton>
           </template>
         </ElTableColumn>
         <div v-if="!isSearching" class="instance-table__empty" slot="empty">
@@ -301,15 +301,15 @@
           </VButton>
         </div>
       </Details>
-      <!--  日志下载    -->
+      <!--  {{$t('dfs_instance_instance_rizhi')}}{{$t('dfs_instance_instance_xiazai')}}    -->
       <ElDialog
         :visible.sync="downloadDialog"
         :before-close="handleClose"
-        title="本地日志下载"
+        :title="$t('dfs_instance_instance_bendirizhixia')"
         width="1000px"
         custom-class="download-dialog"
       >
-        <el-button class="mb-4 float-end" type="primary" @click="handleUpload(currentAgentId)">日志上传</el-button>
+        <el-button class="mb-4 float-end" type="primary" @click="handleUpload(currentAgentId)">{{$t('dfs_instance_instance_rizhishangchuan')}}</el-button>
         <VTable :data="downloadList" :columns="downloadListCol" ref="tableName" :has-pagination="false">
           <template slot="status" slot-scope="scope">
             <span>{{ statusMaps[scope.row.status].text }} </span>
@@ -321,13 +321,13 @@
             <span>{{ handleUnit(scope.row.fileSize) }}</span>
           </template>
           <template slot="operation" slot-scope="scope">
-            <ElButton size="mini" type="text" @click="handleDownload(scope.row)">下载</ElButton>
+            <ElButton size="mini" type="text" @click="handleDownload(scope.row)">{{$t('dfs_instance_instance_xiazai')}}</ElButton>
             <ElButton
               size="mini"
               type="text"
               :disabled="scope.row.status === 0"
               @click="handleDeleteUploadLog(scope.row)"
-              >删除</ElButton
+              >{{$t('button_delete')}}</ElButton
             >
           </template>
         </VTable>
@@ -408,25 +408,25 @@ export default {
       downloadDialog: false,
       downloadListCol: [
         {
-          label: '文件名',
+          label: i18n.t('dfs_instance_instance_wenjianming'),
           prop: 'id'
         },
         {
-          label: '文件大小',
+          label: i18n.t('dfs_instance_instance_wenjiandaxiao'),
           slotName: 'fileSize'
         },
         {
-          label: '上传时间',
+          label: i18n.t('dfs_instance_instance_shangchuanshijian'),
           prop: 'createAt',
           dataType: 'time'
         },
         {
-          label: '文件状态',
+          label: i18n.t('dfs_instance_instance_wenjianzhuangtai'),
           slotName: 'status'
         },
 
         {
-          label: '文件下载',
+          label: i18n.t('dfs_instance_instance_wenjianxiazai'),
           slotName: 'operation'
         }
       ],
@@ -1016,7 +1016,7 @@ export default {
     //删除
     handleDeleteUploadLog(row) {
       this.$axios.post('api/tcm/deleteUploadLog', { agentId: this.currentAgentId, id: row.id }).then(() => {
-        this.$message.success('删除成功')
+        this.$message.success(i18n.t('dfs_instance_instance_shanchuchenggong'))
       })
     },
     //日志下载

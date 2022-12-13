@@ -1104,5 +1104,30 @@ export default {
   dfs_agent_download_agentguidedialog_ninyaotongbude:
     '您要同步的數據源/目標庫是否能夠給外網開放端口？ （通過防火增、SSH Tunnel、VPN或其他方式）',
   dfs_agent_download_agentguidedialog_dianjixiafangde: '根據您的數據源的外網訪問策略，我們會為您推薦最合適的部署模式。',
-  dfs_agent_download_agentguidedialog_huanyingshiyongT: '歡迎使用Tapdata'
+  dfs_agent_download_agentguidedialog_huanyingshiyongT: '歡迎使用Tapdata',
+  dfs_agent_download_agentguidedialog_mimatap: '密碼：tapdata',
+  dfs_agent_download_agentguidedialog_yonghumingde: '用戶名：demo@tapdata.io',
+  dfs_agent_download_agentguidedialog_buxianganzhuanghuo:
+    '不想安裝或部署？可以先體驗下我們的 DEMO 系統了解 Tapdata 的強大功能',
+  dfs_agent_download_agentguidedialog_jijiangshangxian: '即將上線',
+  dfs_agent_download_agentguidedialog_shiyongTap:
+    '使用 Tapdata 提供的計算能力，只需選擇合適的區域和規格進行部署，無需安裝任何程序。 ',
+  dfs_agent_download_agentguidedialog_quantuoguanyunmo: '全託管雲模式 – 直接雲中部署',
+  dfs_agent_download_agentguidedialog_huoquwanzhengshi: '獲取完整試用版',
+  dfs_agent_download_agentguidedialog_zainindeshuju:
+    '在您的數據中心或 雲服務器上安裝全套軟件， 由您完全掌控。注意這個選項不是雲服務。 ',
+  dfs_agent_download_agentguidedialog_xianxiamoshizi: '線下模式 – 自主安裝全套軟件',
+  dfs_agent_download_agentguidedialog_ninkeyigenzhe:
+    '您可以跟著引導流程，在您的服務器或者VPC內安裝 Tapdata Agent，用來進行數據同步及處理',
+  dfs_agent_download_agentguidedialog_bantuoguanyunmo: '半託管雲模式 – 僅需安裝 Agent',
+  dfs_instance_instance_shanchuchenggong: '刪除成功',
+  dfs_instance_instance_wenjianxiazai: '文件下載',
+  dfs_instance_instance_wenjianzhuangtai: '文件狀態',
+  dfs_instance_instance_shangchuanshijian: '上傳時間',
+  dfs_instance_instance_wenjiandaxiao: '文件大小',
+  dfs_instance_instance_wenjianming: '文件名',
+  dfs_instance_instance_xiazai: '下載',
+  dfs_instance_instance_rizhishangchuan: '日誌上傳',
+  dfs_instance_instance_bendirizhixia: '本地日誌下載',
+  dfs_instance_instance_rizhi: '日誌'
 }

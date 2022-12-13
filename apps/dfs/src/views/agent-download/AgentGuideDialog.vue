@@ -42,8 +42,8 @@
             >{{ $t('dfs_agent_download_agentguidedialog_qingdianjibushu') }}</span
           >
         </div>
-        <div class="footer mt-8">
-          <el-button type="primary" @click="goStep()">{{
+        <div class="footer mt-6">
+          <el-button class="step-button" type="primary" @click="goStep()">{{
             $t('dfs_agent_download_agentguidedialog_xiayibu')
           }}</el-button>
         </div>
@@ -54,47 +54,53 @@
           {{ $t('dfs_agent_download_agentguidedialog_lijiquanzhuang') }}
         </header>
         <div class="agent-guide-step-2">
+          <!--半托管云模式 – 仅需安装 Agent -->
           <div class="step mb-39" :style="{ width: style['step'] }">
-            <div class="color-primary step-header mb-2">半托管云模式 – 仅需安装 Agent</div>
-            <div class="flex mb-2 step-content">
-              <div class="mr-4">
-                您可以跟着引导流程，在您的服务器或者VPC内安装 Tapdata Agent，用来进行数据同步及处理
-              </div>
-              <VIcon size="40" class="color-primary">selfInstall</VIcon>
+            <div class="step-header mb-2">
+              <VIcon size="18" class="color-primary mr-2">demoInstall</VIcon
+              >{{ $t('dfs_agent_download_agentguidedialog_bantuoguanyunmo') }}
             </div>
-            <el-button type="primary" class="mb-2" @click="openAgentDownloadModal()">{{
+            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_ninkeyigenzhe') }}</div>
+            <el-button type="primary" class="mb-2 step-button" @click="openAgentDownloadModal()">{{
               $t('dfs_agent_download_agentguidedialog_anzhuang')
             }}</el-button>
           </div>
+          <!--线下模式 – 自主安装全套软件 -->
           <div class="step mb-39" :style="{ width: style['step'] }" v-if="current === 'intranet'">
-            <div class="color-primary step-header mb-2">线下模式 – 自主安装全套软件</div>
-            <div class="flex mb-2 step-content">
-              <div class="mr-4">在您的数据中心或 云服务器上安装全套软件， 由您完全掌控。注意这个选项不是云服务。</div>
-              <VIcon size="36" class="color-primary">selfInstall</VIcon>
+            <div class="step-header mb-2">
+              <VIcon size="16" class="color-primary mr-2">offline-install</VIcon
+              >{{ $t('dfs_agent_download_agentguidedialog_xianxiamoshizi') }}
             </div>
-            <el-button type="info" disabled class="mb-2" @click="openAgentDownloadModal()">获取完整试用版</el-button>
+            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_zainindeshuju') }}</div>
+            <el-button type="info" disabled class="mb-2" @click="openAgentDownloadModal()">{{
+              $t('dfs_agent_download_agentguidedialog_huoquwanzhengshi')
+            }}</el-button>
           </div>
+          <!--全托管云模式 – 直接云中部署 -->
           <div class="step mb-39" :style="{ width: style['step'] }" v-if="current === 'extranet'">
-            <div class="color-primary step-header mb-2">全托管云模式 – 直接云中部署</div>
-            <div class="flex mb-2 step-content">
-              <div class="mr-4">使用 Tapdata 提供的计算能力，只需选择合适的区域和规格进行部署，无需安装任何程序。</div>
-              <VIcon size="36" class="color-primary">selfInstall</VIcon>
+            <div class="step-header mb-2">
+              <VIcon size="16" class="color-primary mr-2">cloud-install</VIcon
+              >{{ $t('dfs_agent_download_agentguidedialog_quantuoguanyunmo') }}
             </div>
-            <el-button type="info" disabled class="mb-2" @click="openAgentDownloadModal()">即将上线</el-button>
+            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_shiyongTap') }}</div>
+            <el-button type="info" disabled class="mb-2" @click="openAgentDownloadModal()">{{
+              $t('dfs_agent_download_agentguidedialog_jijiangshangxian')
+            }}</el-button>
           </div>
+          <!--demo -->
           <div class="step" :style="{ width: style['step'] }">
-            <div class="color-primary step-header mb-2">{{ $t('dfs_agent_download_agentguidedialog_tiyanDem') }}</div>
-            <div class="flex mb-2 step-content">
-              <div class="mr-4">不想安装或部署？可以先体验下我们的 DEMO 系统了解 Tapdata 的强大功能</div>
-              <VIcon size="36" class="color-primary">demoInstall</VIcon>
+            <div class="step-header mb-2">
+              <VIcon size="16" class="color-primary mr-2">selfInstall</VIcon
+              >{{ $t('dfs_agent_download_agentguidedialog_tiyanDem') }}
             </div>
-            <el-button type="primary" class="mb-2" @click="goDemo()">{{
+            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_buxianganzhuanghuo') }}</div>
+            <el-button type="primary" class="mb-2 step-button" @click="goDemo()">{{
               $t('dfs_agent_download_agentguidedialog_tiyan')
             }}</el-button>
             <span class="inline-block userPassword">
-              <span class="inline-block">用户名：demo@tapdata.io</span>
+              <span class="inline-block">{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}</span>
               <br />
-              <span class="inline-block">密码：tapdata</span>
+              <span class="inline-block">{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}</span>
             </span>
           </div>
         </div>
@@ -201,7 +207,7 @@ export default {
               switch: '265px',
               item: '186px',
               dialog: '1035px',
-              top: '80px',
+              top: '110px',
               'ordinary-suffix': '130px',
               step: '382px'
             }
@@ -248,13 +254,13 @@ export default {
 <style lang="scss" scoped>
 .agent-guide-main {
   .mt-110 {
-    margin-top: 95px;
+    margin-top: 110px;
   }
   .mb-32 {
     margin-bottom: 32px;
   }
   .mb-39 {
-    margin-bottom: 10px;
+    margin-bottom: 24px;
   }
   .agent-guide-header {
     font-size: 32px;
@@ -273,6 +279,10 @@ export default {
     font-weight: 400;
     letter-spacing: 0px;
     text-align: left;
+    height: 80px;
+  }
+  .footer {
+    margin-bottom: 58px;
   }
   .agent-download-icon {
     position: absolute;
@@ -343,7 +353,7 @@ export default {
     border: 2px solid #ffffff;
     border-radius: 100px;
     margin: 0 auto;
-    margin-top: 24px;
+    margin-top: 40px;
   }
   .current {
     display: inline-block;
@@ -388,31 +398,41 @@ export default {
   }
   .step {
     width: 380px;
-    height: 140px;
-    background: #ffffff;
-    /* 分割线 */
+    height: 160px;
     border: 1px solid #f2f2f2;
     padding: 12px;
+    background: #f4f6fb;
+    border-radius: 8px;
   }
   .step-content {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
     height: 44px;
-    color: #535f72;
+    margin: 15px 0;
+    color: #86909c;
   }
   .step-header {
-    font-weight: 400;
-    font-size: 17px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #333c4a;
+  }
+  .step-button {
+    width: 120px;
   }
   .userPassword {
     vertical-align: middle;
     margin-left: 16px;
+    line-height: 18px;
     font-size: 12px;
   }
 }
 ::v-deep {
   .agent-guide-dialog {
+    margin-top: 9vh !important;
+    .el-button {
+      font-size: 16px;
+    }
     .el-dialog__header {
       padding: 0;
     }
