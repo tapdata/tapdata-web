@@ -12,7 +12,6 @@
         prefix-icon="el-icon-search"
         placeholder="请输入字段名"
         clearable
-        @input="searchFnc"
       ></ElInput>
     </div>
     <div v-loading="loading" class="field-checkbox__main">
@@ -24,7 +23,11 @@
         </ElButton>
       </div>
       <div class="list-table__content">
-        <div v-for="(item, index) in list" :key="index" class="list-table__line flex mt-3 align-items-center">
+        <div
+          v-for="(item, index) in getFilterList()"
+          :key="index"
+          class="list-table__line flex mt-3 align-items-center"
+        >
           <span class="px-2">{{ index + 1 }}</span>
           <ElSelect v-model="item.source" filterable allow-create class="flex-fill" @change="handleChange">
             <ElOption v-for="op in sourceItems" :key="op + 'source'" :label="op" :value="op"></ElOption>
@@ -42,7 +45,7 @@
 </template>
 
 <script>
-import { debounce, cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { metadataInstancesApi } from '@tap/api'
 
 export default {
@@ -87,10 +90,6 @@ export default {
   },
 
   methods: {
-    searchFnc: debounce(function () {
-      console.log('searchFnc')
-    }, 100),
-
     loadList() {
       const { source, target } = this.data
       const { sourceItems, targetItems } = this
@@ -173,6 +172,11 @@ export default {
           this.loadList()
           this.loading = false
         })
+    },
+
+    getFilterList() {
+      const { keyword } = this
+      return this.list.filter(t => (t.source + t.target).includes(keyword))
     }
   }
 }
