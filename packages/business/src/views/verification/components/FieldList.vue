@@ -18,7 +18,7 @@
     <div v-loading="loading" class="field-checkbox__main">
       <div class="list-table__header flex justify-content-between">
         <span>字段</span>
-        <ElButton type="text" class="ml-4 color-primary" @click="handleAdd(index)">
+        <ElButton type="text" class="ml-4 color-primary" @click="handleAdd">
           <VIcon> plus</VIcon>
           添加行
         </ElButton>
@@ -135,6 +135,7 @@ export default {
 
     handleAdd() {
       this.list.unshift(this.getItem())
+      this.handleChange()
     }
   }
 }

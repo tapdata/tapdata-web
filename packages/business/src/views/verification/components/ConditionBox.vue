@@ -22,7 +22,8 @@
               filterable
               class="item-select"
               :key="'sourceConnectionId' + item.id"
-              @change="handleChangeConnection(arguments[0], item, index, 'source')"
+              :onSetSelected="useHandle(handleSetSelectedConnection, item.source)"
+              @change="handleChangeConnection(arguments[0], item.source)"
             >
             </AsyncSelect>
             <span v-else :class="['item-value-text', { 'color-danger': !item.source.connectionId }]">{{
@@ -39,7 +40,8 @@
               filterable
               class="item-select"
               :key="'targetConnectionId' + item.id"
-              @change="handleChangeConnection(arguments[0], item, index, 'target')"
+              :onSetSelected="useHandle(handleSetSelectedConnection, item.target)"
+              @change="handleChangeConnection(arguments[0], item.target)"
             >
             </AsyncSelect>
             <span v-else :class="['item-value-text', { 'color-danger': !item.target.connectionId }]">{{
@@ -61,7 +63,7 @@
               filterable
               class="item-select"
               :key="'sourceTable' + item.id"
-              @change="handleChangeTable(arguments[0], item, index, 'source', $refs)"
+              @change="handleChangeTable(arguments[0], item, index, 'source')"
             >
             </AsyncSelect>
             <span v-else :class="['item-value-text', { 'color-danger': !item.source.table }]">{{
@@ -128,7 +130,8 @@
               }"
               :config="item"
               class="FieldList"
-              @change="handleCheckList(arguments[0], item)"
+              :id="'field-list-' + index"
+              @change="handleFieldList(arguments[0], item)"
             ></FieldList>
           </div>
           <div class="setting-item mt-4">
@@ -180,7 +183,7 @@
 <script>
 import { AsyncSelect } from '@tap/form'
 import { connectionsApi, metadataInstancesApi, taskApi } from '@tap/api'
-import { merge } from 'lodash'
+import { merge, cloneDeep } from 'lodash'
 import { uuid, uniqueArr } from '@tap/shared'
 
 import MultiSelection from '../MultiSelection'
@@ -378,7 +381,7 @@ export default {
       }
     },
 
-    async getConnectionsInTask(filter) {
+    async getConnectionsInTask(filter = {}) {
       if (this.taskData?.id !== this.taskId) {
         this.taskData = await taskApi.getId(this.taskId)
         this.isDB = this.taskData.syncType === 'migrate'
@@ -426,6 +429,7 @@ export default {
           const connectionName = t.attrs?.connectionName
           return {
             attrs: { nodeId, nodeName, connectionId, connectionName },
+            name: `${nodeName} / ${connectionName}`,
             value: `${nodeId}/${connectionId}`,
             label: `${nodeName} / ${connectionName}`
           }
@@ -436,7 +440,7 @@ export default {
       return { items: result, total: result.length }
     },
 
-    async getTablesInTask(nodeId, connectionId, filter) {
+    async getTablesInTask(nodeId, connectionId, filter = {}) {
       if (!this.flowStages?.length || !this.taskData?.id) {
         return { items: [], total: 0 }
       }
@@ -567,7 +571,6 @@ export default {
     async autoAddTable() {
       if (!this.taskId || this.list.length) return
       this.autoAddTableLoading = true
-      const allConnectionsInTask = await this.getConnectionsInTask()
       let connectionIds = []
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
@@ -645,12 +648,21 @@ export default {
     },
 
     getList() {
-      return this.list
+      let list = cloneDeep(this.list)
+      if (this.taskId) {
+        list.forEach(el => {
+          el.source.connectionId = el.source.connectionId.split('/')?.[1]
+          el.source.connectionName = el.source.connectionName.split(' / ')?.[1]
+          el.target.connectionId = el.target.connectionId.split('/')?.[1]
+          el.target.connectionName = el.target.connectionName.split(' / ')?.[1]
+        })
+      }
+      return list
     },
 
-    handleChangeConnection(val, item, index, type) {
-      item[type].table = '' // 重选连接，清空表
-      item[type].sortColumn = '' // 重选连接，清空表
+    handleChangeConnection(val, item) {
+      item.table = '' // 重选连接，清空表
+      item.sortColumn = '' // 重选连接，清空表
       if (!this.taskId) {
         return
       }
@@ -659,7 +671,11 @@ export default {
         return
       }
       const findNodeId = result[0]
-      item[type].nodeId = findNodeId
+      item.nodeId = findNodeId
+    },
+
+    handleSetSelectedConnection(item, val) {
+      item.connectionName = val?.name
     },
 
     handleChangeTable(val, item, index, type) {
@@ -687,7 +703,6 @@ export default {
       item.target.nodeId = nodeId
       item.target.connectionId = `${nodeId}/${connectionId}`
       item.target.connectionName = `${nodeName} / ${connectionName}`
-      item.source.connectionName = `${sourceNode.name} / ${sourceNode.attrs?.connectionName}`
       if (isDB) {
         const findSourceTableIndex = sourceNode.tableNames.findIndex(t => t === val)
         const objectNames = targetNode.syncObjects?.[0]?.objectNames || []
@@ -778,9 +793,15 @@ export default {
         .join(',')
     },
 
-    handleCheckList(data, item) {
+    handleFieldList(data, item) {
       item.source.columns = data.map(t => t.source)
       item.target.columns = data.map(t => t.target)
+    },
+
+    useHandle(handle, item) {
+      return (...args) => {
+        handle(item, ...args)
+      }
     }
   }
 }

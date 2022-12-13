@@ -409,7 +409,7 @@
       <div class="mt-8">
         <ElButton size="mini" @click="goBack()">{{ $t('button_back') }}</ElButton>
         <ElButton type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
-        <span class="ml-3 color-danger">必填选项不能为空</span>
+        <!--        <span class="ml-3 color-danger">必填选项不能为空</span>-->
       </div>
     </div>
 
@@ -1200,6 +1200,24 @@ export default {
               this.$t('packages_business_verification_message_error_joint_table_field_not_match')
             )
           }
+          // 判断字段模型是否存在空
+          index = 0
+          if (
+            ['field', 'jointField'].includes(this.form.inspectMethod) &&
+            tasks.some((c, i) => {
+              index = i + 1
+              return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
+            })
+          ) {
+            this.editId = tasks[index - 1]?.id
+            this.$nextTick(() => {
+              let item = document.getElementById('field-list-' + (index - 1))
+              item.querySelector('.el-select').focus()
+            })
+            this.jointErrorMessage = '待校验模型不能为空'
+            return this.$message.error('待校验模型不能为空')
+          }
+
           // 开启高级校验后，JS校验逻辑不能为空
           index = 0
           if (
