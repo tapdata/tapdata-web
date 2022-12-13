@@ -421,7 +421,10 @@ export class Table extends NodeType {
                               type: 'string',
                               required: 'true',
                               'x-decorator': 'FormItem',
-                              'x-component': 'FieldSelect'
+                              'x-component': 'FieldSelect',
+                              'x-component-props': {
+                                filterable: true
+                              }
                             },
                             operator: {
                               type: 'number',
