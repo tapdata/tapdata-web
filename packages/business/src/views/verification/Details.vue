@@ -256,35 +256,40 @@ export default {
         if (message.includes('Different fields')) {
           diffFields = message.split(':')[1].split(',')
         }
-        key.forEach(i => {
-          let sourceValue = ''
-          let targetValue = ''
-          if (sourceKeys.filter(v => i === v)) {
-            sourceValue = source[i]
-          } else {
-            sourceValue = ''
-          }
-          if (targetKeys.filter(v => i === v)) {
-            targetValue = target[i]
-          } else {
-            targetValue = ''
-          }
-          let isDiff = diffFields.length ? diffFields.includes(i) : sourceValue !== targetValue
-          let node = {
-            type: item.type,
-            red: isDiff,
-            source: {
-              key: i,
-              value: sourceValue
-            },
-            target: {
-              key: i,
-              value: targetValue
+        const fieldIndex = Number(message.match(/Different index:(\w+)/)?.[1] || -1)
+        if (fieldIndex !== -1) {
+          this.handleLoadIndexField(item, fieldIndex)
+        } else {
+          key.forEach(i => {
+            let sourceValue = ''
+            let targetValue = ''
+            if (sourceKeys.filter(v => i === v)) {
+              sourceValue = source[i]
+            } else {
+              sourceValue = ''
             }
-          }
-          item['details'] = item['details'] || []
-          item['details'].push(node)
-        })
+            if (targetKeys.filter(v => i === v)) {
+              targetValue = target[i]
+            } else {
+              targetValue = ''
+            }
+            let isDiff = diffFields.length ? diffFields.includes(i) : sourceValue !== targetValue
+            let node = {
+              type: item.type,
+              red: isDiff,
+              source: {
+                key: i,
+                value: sourceValue
+              },
+              target: {
+                key: i,
+                value: targetValue
+              }
+            }
+            item['details'] = item['details'] || []
+            item['details'].push(node)
+          })
+        }
       })
       return data
     },
@@ -298,6 +303,28 @@ export default {
       })
       url = route.href
       window.open(url, '_blank')
+    },
+    handleLoadIndexField(item, index) {
+      const findOne = this.tableData.find(t => t.taskId === this.taskId)
+      if (!findOne) return
+      const sourceColumns = findOne.source?.columns || []
+      const targetColumns = findOne.target?.columns || []
+      sourceColumns.forEach((el, i) => {
+        let node = {
+          type: item.type,
+          red: index === i,
+          source: {
+            key: el,
+            value: item.source[el]
+          },
+          target: {
+            key: targetColumns[i],
+            value: item.target[targetColumns[i]]
+          }
+        }
+        item['details'] = item['details'] || []
+        item['details'].push(node)
+      })
     }
   }
 }
