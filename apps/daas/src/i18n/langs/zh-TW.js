@@ -93,6 +93,7 @@ export default {
   page_title_data_develop: '數據開發',
   page_title_data_verify: '數據校驗',
   page_title_data_difference_details: '差異詳情',
+  page_title_data_verification_result: '校驗結果',
   page_title_shared_mining: '共享挖掘',
   page_title_shared_mining_details: '挖掘詳情',
   page_title_function: '函數管理',
