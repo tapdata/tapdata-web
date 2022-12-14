@@ -19,11 +19,13 @@
       >
         <div class="joint-table-setting overflow-hidden">
           <div class="flex justify-content-between">
-            <div class="cond-item__title flex align-items-center cursor-pointer flex-fill" @click="editItem(item)">
-              <span class="font-color-main fs-7">检验条件</span>
-              <span class="ml-1">{{ index + 1 }}</span>
-              <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
-            </div>
+            <ElTooltip placement="top-start" content="展开编辑">
+              <div class="cond-item__title flex align-items-center cursor-pointer flex-fill" @click="editItem(item)">
+                <span class="font-color-main fs-7">检验条件</span>
+                <span class="ml-1">{{ index + 1 }}</span>
+                <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
+              </div>
+            </ElTooltip>
             <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
           </div>
           <div class="setting-item mt-4" :key="'connection' + item.id">
