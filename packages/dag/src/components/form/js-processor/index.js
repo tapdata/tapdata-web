@@ -62,11 +62,13 @@ export const JsProcessor = observer(
           })
       }
 
-      observe(formRef.value.values.$inputs, () => {
-        loadTable()
-      })
+      if (isMigrate) {
+        observe(formRef.value.values.$inputs, () => {
+          loadTable()
+        })
 
-      loadTable()
+        loadTable()
+      }
 
       const inputRef = ref('')
       const outputRef = ref('')
