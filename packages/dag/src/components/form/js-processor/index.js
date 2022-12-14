@@ -74,6 +74,7 @@ export const JsProcessor = observer(
       let timer
       let version
       let logList = reactive([])
+      let logLoading = ref(false)
 
       const queryLog = async () => {
         const logData = await monitoringLogsApi.query({
@@ -86,7 +87,7 @@ export const JsProcessor = observer(
           nodeId: form.values.id,
           end: Date.now()
         })
-        logList = logData?.items.filter(item => !item.message.startsWith(`Node JavaScript[${form.values.id}]`))
+        logList = logData?.items.filter(item => !item.message.startsWith(`Node JavaScript[${form.values.id}]`)) || []
       }
 
       const handleQuery = async () => {
@@ -104,6 +105,9 @@ export const JsProcessor = observer(
             outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
             return res.over
           })
+
+        if (isOver) running.value = false
+
         await queryLog()
 
         return isOver
@@ -113,6 +117,7 @@ export const JsProcessor = observer(
         queryTimes = 0
         running.value = false
         runningText.value = ''
+        logLoading.value = false
       }
 
       const handleAutoQuery = () => {
@@ -143,6 +148,7 @@ export const JsProcessor = observer(
 
       const handleRun = () => {
         running.value = true
+        logLoading.value = true
         showJsonArea.value = true
         clearTimeout(timer)
         version = Date.now()
@@ -156,6 +162,7 @@ export const JsProcessor = observer(
           async () => {
             // 脚本执行出错
             await queryLog()
+            resetQuery()
           }
         )
       }
@@ -397,32 +404,38 @@ export const JsProcessor = observer(
                 >
                   <ElTabs onInput={onTabChange} class="w-100 flex flex-column">
                     <ElTabPane label="输出">
-                      <div v-loading={running.value} class="js-processor-editor-console-panel h-100 overflow-auto">
+                      <div class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
-                          {logList.length ? (
-                            logList.map(item => {
-                              if (/^[{[].*[\]}]$/.test(item.message)) {
-                                let code
-                                try {
-                                  code = JSON.stringify(JSON.parse(item.message), null, 2)
-                                } catch (e) {
-                                  console.log('e', e) // eslint-disable-line
-                                  const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
-                                  code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
-                                }
+                          {logList.length
+                            ? logList.map(item => {
+                                if (/^[{[].*[\]}]$/.test(item.message)) {
+                                  let code
+                                  try {
+                                    code = JSON.stringify(JSON.parse(item.message), null, 2)
+                                  } catch (e) {
+                                    console.log('e', e) // eslint-disable-line
+                                    const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
+                                    code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
+                                  }
 
-                                return (
-                                  <details class="js-log-list-item p-2">
-                                    <summary class="text-truncate px-2">{item.message}</summary>
-                                    <HighlightCode class="m-0" language="json" code={code}></HighlightCode>
-                                  </details>
-                                )
-                              }
-                              return <div class="js-log-list-item text-prewrap p-2">{item.message}</div>
-                            })
-                          ) : (
-                            <VEmpty></VEmpty>
-                          )}
+                                  return (
+                                    <details class="js-log-list-item p-2">
+                                      <summary class="text-truncate px-2">{item.message}</summary>
+                                      <HighlightCode class="m-0" language="json" code={code}></HighlightCode>
+                                    </details>
+                                  )
+                                }
+                                return <div class="js-log-list-item text-prewrap p-2">{item.message}</div>
+                              })
+                            : !logLoading.value && <VEmpty large></VEmpty>}
+                          <div
+                            class={['justify-content-center align-center m-0 p-2', logLoading.value ? 'flex' : 'none']}
+                          >
+                            <svg viewBox="25 25 50 50" class="circular">
+                              <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                            </svg>
+                            <span class="ml-1 font-color-light">{i18n.t('packages_dag_loading')}</span>
+                          </div>
                         </div>
                       </div>
                     </ElTabPane>

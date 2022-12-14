@@ -116,6 +116,21 @@
       line-height: 1.2;
       border-bottom: 1px solid #F0F0F0;
     }
+
+    .circular {
+      height: 16px;
+      width: 16px;
+      animation: loading-rotate 2s linear infinite;
+
+      .path {
+        animation: loading-dash 1.5s ease-in-out infinite;
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: 0;
+        stroke-width: 2;
+        stroke: map-get($color, primary);
+        stroke-linecap: round;
+      }
+    }
   }
 }
 
