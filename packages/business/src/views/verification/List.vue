@@ -374,8 +374,17 @@ export default {
       })
     },
     goEdit(id, flowId) {
+      if (!flowId) {
+        this.$router.push({
+          name: 'dataVerificationEdit',
+          params: {
+            id: id
+          }
+        })
+        return
+      }
       taskApi.getId(flowId).then(data => {
-        if (['running', 'stop', 'complete', 'done'].includes(data.status)) {
+        if (['running', 'stop', 'complete'].includes(data.status)) {
           this.$router.push({
             name: 'dataVerificationEdit',
             params: {
