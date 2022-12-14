@@ -268,6 +268,7 @@ export const JsProcessor = observer(
                 <ElInputNumber
                   style="width: 100px;"
                   value={params.rows}
+                  min={1}
                   max={10}
                   onInput={val => {
                     params.rows = val
