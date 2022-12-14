@@ -3,6 +3,7 @@
     <div class="joint-table-header">
       <div>
         <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
+        <span v-if="!list.length" class="ml-4 color-danger">请添加校验条件</span>
         <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
       </div>
       <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
@@ -12,7 +13,15 @@
     <ul class="joint-table-main" id="data-verification-form">
       <li class="joint-table-item" v-for="(item, index) in list" :key="item.id + index" @click="editItem(item)">
         <div class="joint-table-setting overflow-hidden">
-          <div class="setting-item" :key="'connection' + item.id">
+          <div class="flex justify-content-between">
+            <div class="flex align-items-center">
+              <span class="font-color-normal fs-7">检验条件</span>
+              <span class="ml-1">{{ index + 1 }}</span>
+              <VIcon size="16" :class="['arrow-icon', { active: editId === item.id }]">arrow-right</VIcon>
+            </div>
+            <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
+          </div>
+          <div class="setting-item mt-4" :key="'connection' + item.id">
             <label class="item-label">待校验连接: </label>
             <AsyncSelect
               v-if="editId === item.id"
@@ -123,9 +132,6 @@
           >
             <pre class="item-script">{{ item.webScript }}</pre>
           </div>
-        </div>
-        <div class="ml-6">
-          <a class="el-link el-link--primary is-underline" @click.stop="removeItem(index)">{{ $t('button_delete') }}</a>
         </div>
       </li>
     </ul>
@@ -447,6 +453,10 @@ export default {
     },
 
     editItem(item) {
+      if (this.editId === item.id) {
+        this.editId = ''
+        return
+      }
       this.editId = item.id
     },
 
@@ -835,5 +845,13 @@ export default {
 
 .FieldList {
   height: 280px;
+}
+
+.arrow-icon {
+  transition: 0.2s;
+  color: #4e5969;
+  &.active {
+    transform: rotate(90deg);
+  }
 }
 </style>
