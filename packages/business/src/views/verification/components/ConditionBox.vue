@@ -11,13 +11,18 @@
       }}</ElLink>
     </div>
     <ul class="joint-table-main" id="data-verification-form">
-      <li class="joint-table-item" v-for="(item, index) in list" :key="item.id + index" @click="editItem(item)">
+      <li
+        class="joint-table-item"
+        :class="['joint-table-item', { active: editId === item.id }]"
+        v-for="(item, index) in list"
+        :key="item.id + index"
+      >
         <div class="joint-table-setting overflow-hidden">
           <div class="flex justify-content-between">
-            <div class="flex align-items-center">
-              <span class="font-color-normal fs-7">检验条件</span>
+            <div class="cond-item__title flex align-items-center cursor-pointer flex-fill" @click="editItem(item)">
+              <span class="font-color-main fs-7">检验条件</span>
               <span class="ml-1">{{ index + 1 }}</span>
-              <VIcon size="16" :class="['arrow-icon', { active: editId === item.id }]">arrow-right</VIcon>
+              <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
             </div>
             <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
           </div>
@@ -766,7 +771,18 @@ export default {
     padding: 16px 24px;
     display: flex;
     border-bottom: 1px solid map-get($borderColor, light);
-    cursor: pointer;
+    //cursor: pointer;
+    &.active {
+      .cond-item__title {
+        color: map-get($color, primary);
+        .arrow-icon {
+          color: map-get($color, primary);
+        }
+      }
+      .arrow-icon {
+        transform: rotate(90deg);
+      }
+    }
   }
   .joint-table-setting {
     flex: 1;
@@ -847,11 +863,18 @@ export default {
   height: 280px;
 }
 
+.cond-item__title {
+  &:hover {
+    color: map-get($color, primary);
+    .arrow-icon {
+      color: map-get($color, primary);
+    }
+  }
+}
+
 .arrow-icon {
+  margin-top: 2px;
   transition: 0.2s;
   color: #4e5969;
-  &.active {
-    transform: rotate(90deg);
-  }
 }
 </style>
