@@ -360,6 +360,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
+        this.setTaskInfo(this.dataflow)
         // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'DataflowEditor',
