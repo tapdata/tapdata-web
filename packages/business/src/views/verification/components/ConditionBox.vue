@@ -3,7 +3,9 @@
     <div class="joint-table-header">
       <div>
         <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
-        <span v-if="!list.length" class="ml-4 color-danger">请添加校验条件</span>
+        <span v-if="!list.length" class="ml-4 color-danger">{{
+          $t('packages_business_verification_message_error_joint_table_not_set')
+        }}</span>
         <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
       </div>
       <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
@@ -19,9 +21,11 @@
       >
         <div class="joint-table-setting overflow-hidden">
           <div class="flex justify-content-between">
-            <ElTooltip placement="top-start" content="展开编辑">
+            <ElTooltip placement="top-start" :content="$t('packages_business_components_conditionbox_zhankaibianji')">
               <div class="cond-item__title flex align-items-center cursor-pointer flex-fill" @click="editItem(item)">
-                <span class="font-color-main fs-7">检验条件</span>
+                <span class="font-color-main fs-7">{{
+                  $t('packages_business_components_conditionbox_jianyantiaojian')
+                }}</span>
                 <span class="ml-1">{{ index + 1 }}</span>
                 <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
               </div>
@@ -29,7 +33,7 @@
             <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
           </div>
           <div class="setting-item mt-4" :key="'connection' + item.id">
-            <label class="item-label">待校验连接: </label>
+            <label class="item-label">{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label>
             <AsyncSelect
               v-if="editId === item.id"
               v-model="item.source.connectionId"
@@ -67,7 +71,7 @@
             }}</span>
           </div>
           <div class="setting-item mt-4" :key="'table' + item.id">
-            <label class="item-label">来源表: </label>
+            <label class="item-label">{{ $t('packages_business_components_conditionbox_laiyuanbiao') }}:</label>
             <AsyncSelect
               v-if="editId === item.id"
               v-model="item.source.table"
@@ -87,7 +91,7 @@
             <span v-else :class="['item-value-text', { 'color-danger': !item.source.table }]">{{
               item.source.table || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
-            <span class="item-icon fs-8"> 目标表:</span>
+            <span class="item-icon fs-8">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
             <AsyncSelect
               v-if="editId === item.id"
               v-model="item.target.table"
@@ -158,6 +162,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { AsyncSelect } from '@tap/form'
 import { connectionsApi, metadataInstancesApi, taskApi } from '@tap/api'
 import { merge, cloneDeep } from 'lodash'
@@ -318,7 +324,7 @@ export default {
       let edges = taskData.dag?.edges || []
       let nodes = taskData.dag?.nodes || []
       if (!edges.length) {
-        this.$message.error('所选任务缺少节点连线信息')
+        this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
         return { items: [], total: 0 }
       }
       let stages = []
@@ -468,9 +474,13 @@ export default {
     },
 
     handleClear() {
-      this.$confirm('清空', '是否清空所有条件', {
-        type: 'warning'
-      }).then(res => {
+      this.$confirm(
+        i18n.t('packages_business_verification_clear'),
+        i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
+        {
+          type: 'warning'
+        }
+      ).then(res => {
         if (!res) {
           return
         }
@@ -565,7 +575,7 @@ export default {
             })
           })
           if (!list.length) {
-            return this.$message.error('所选任务缺少节点连线信息')
+            return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
           }
           this.list = list
         })

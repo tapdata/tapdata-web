@@ -40,7 +40,9 @@
         <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
         <span>
           <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
-            expandErrorMessage ? '收起' : '展开'
+            expandErrorMessage
+              ? $t('packages_business_verification_details_shouqi')
+              : $t('packages_business_verification_details_zhankai')
           }}</ElLink>
           <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
         </span>
@@ -88,6 +90,8 @@
 }
 </style>
 <script>
+import i18n from '@tap/i18n'
+
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import dayjs from 'dayjs'
@@ -102,7 +106,7 @@ export default {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
         jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: '动态校验'
+        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan')
       },
       inspect: {},
       resultInfo: {},

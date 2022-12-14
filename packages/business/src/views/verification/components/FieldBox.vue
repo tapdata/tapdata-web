@@ -28,10 +28,10 @@
       }}</span>
     </div>
     <div v-if="isEdit" class="setting-item align-items-center mt-4">
-      <label class="item-label">待校验模型: </label>
+      <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
       <ElRadioGroup v-model="item.modeType" :disabled="getModeTypeDisabled(item)" @change="handleChangeModeType">
-        <ElRadio label="all">全字段</ElRadio>
-        <ElRadio label="custom">自定义</ElRadio>
+        <ElRadio label="all">{{ $t('packages_business_components_fieldbox_quanziduan') }}</ElRadio>
+        <ElRadio label="custom">{{ $t('packages_business_connections_databaseform_zidingyi') }}</ElRadio>
       </ElRadioGroup>
     </div>
     <div v-if="item.modeType === 'custom' && isEdit" class="mt-4">
@@ -41,17 +41,16 @@
             class="search-input"
             v-model="keyword"
             prefix-icon="el-icon-search"
-            placeholder="请输入字段名"
+            :placeholder="$t('packages_business_components_fieldbox_qingshuruziduan')"
             clearable
           ></ElInput>
         </div>
         <div v-loading="loading" class="field-checkbox__main">
           <div class="list-table__header flex justify-content-between">
-            <span>字段</span>
+            <span>{{ $t('packages_business_components_fieldbox_ziduan') }}</span>
             <ElButton type="text" class="ml-4 color-primary" @click="handleAdd">
-              <VIcon> plus</VIcon>
-              添加行
-            </ElButton>
+              <VIcon> plus</VIcon>{{ $t('packages_business_components_fieldbox_tianjiahang') }}</ElButton
+            >
           </div>
           <div class="list-table__content">
             <div

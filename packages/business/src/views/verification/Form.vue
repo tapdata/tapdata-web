@@ -25,10 +25,14 @@
           >
             <ElInput class="form-input" v-model="form.name"></ElInput>
           </ElFormItem>
-          <ElFormItem required class="form-item" :label="'校验任务模式' + ': '">
+          <ElFormItem
+            required
+            class="form-item"
+            :label="$t('packages_business_verification_form_jiaoyanrenwumo') + ': '"
+          >
             <ElRadioGroup v-model="form.taskMode" @change="handleChangeTaskMode">
-              <ElRadio label="pipeline">为特定的PIPELINE创建的校验任务</ElRadio>
-              <ElRadio label="random">指定任意表的校验任务</ElRadio>
+              <ElRadio label="pipeline">{{ $t('packages_business_verification_form_weitedingdeP') }}</ElRadio>
+              <ElRadio label="random">{{ $t('packages_business_verification_form_zhidingrenyibiao') }}</ElRadio>
             </ElRadioGroup>
           </ElFormItem>
           <ElFormItem
@@ -49,10 +53,18 @@
               <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
             </ElSelect>
           </ElFormItem>
-          <ElFormItem required class="form-item" prop="inspectDifferenceMode" :label="'结果输出' + ': '">
+          <ElFormItem
+            required
+            class="form-item"
+            prop="inspectDifferenceMode"
+            :label="$t('packages_business_verification_form_jieguoshuchu') + ': '"
+          >
             <ElSelect filterable class="form-select" v-model="form.inspectDifferenceMode">
-              <ElOption label="输出所有不一致的数据" value="All"></ElOption>
-              <ElOption label="只输出来源表不一致的数据" value="OnSourceExists"></ElOption>
+              <ElOption :label="$t('packages_business_verification_form_shuchusuoyoubu')" value="All"></ElOption>
+              <ElOption
+                :label="$t('packages_business_verification_form_zhishuchulaiyuan')"
+                value="OnSourceExists"
+              ></ElOption>
             </ElSelect>
           </ElFormItem>
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
@@ -159,26 +171,28 @@
               </ElInput>
             </ElFormItem>
             <ElFormItem class="setting-item" prop="cdcBeginDate">
-              <label class="item-label is-required">校验开始时间</label>
+              <label class="item-label is-required">{{
+                $t('packages_business_verification_form_jiaoyankaishishi')
+              }}</label>
               <ElDatePicker
                 class="item-select"
                 size="mini"
                 v-model="form.cdcBeginDate"
                 type="datetime"
-                placeholder="校验开始时间"
+                :placeholder="$t('packages_business_verification_form_jiaoyankaishishi')"
                 format="yyyy-MM-dd HH:mm"
                 value-format="yyyy-MM-dd HH:mm"
               >
               </ElDatePicker>
             </ElFormItem>
             <ElFormItem class="setting-item" v-if="form.mode === 'manual'">
-              <label class="item-label">校验结束时间</label>
+              <label class="item-label">{{ $t('packages_business_verification_form_jiaoyanjieshushi') }}</label>
               <ElDatePicker
                 class="item-select"
                 size="mini"
                 v-model="form.cdcEndDate"
                 type="datetime"
-                placeholder="校验结束时间"
+                :placeholder="$t('packages_business_verification_form_jiaoyanjieshushi')"
                 format="yyyy-MM-dd HH:mm"
                 value-format="yyyy-MM-dd HH:mm"
               >
@@ -224,6 +238,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { cloneDeep } from 'lodash'
 
 import { GitBook, VCodeEditor } from '@tap/component'
@@ -304,7 +320,7 @@ export default {
         ],
         cdcBeginDate: [
           {
-            validator: requiredValidator('请输入开始时间', () => {
+            validator: requiredValidator(i18n.t('packages_business_verification_form_qingshurukaishi'), () => {
               return self.form.inspectMethod === 'cdcCount'
             })
           }
@@ -426,7 +442,7 @@ export default {
       let edges = flowData.dag?.edges || []
       let nodes = flowData.dag?.nodes || []
       if (!edges.length) {
-        return this.$message.error('所选任务缺少节点连线信息')
+        return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
       }
       let stages = []
       nodes.forEach(n => {
@@ -602,7 +618,7 @@ export default {
             })
           } else {
             this.flowStages = null
-            this.$message.error('找不到节点对应的表信息')
+            this.$message.error(i18n.t('packages_business_verification_form_zhaobudaojiedian'))
           }
         })
       })
@@ -980,8 +996,8 @@ export default {
               let item = document.getElementById('field-list-' + (index - 1))
               item.querySelector('.el-select').focus()
             })
-            this.jointErrorMessage = `第${index}个校验条件，待校验模型不能为空`
-            return this.$message.error(`第${index}个校验条件，待校验模型不能为空`)
+            this.jointErrorMessage = i18n.t('packages_business_verification_form_diinde', { val1: index })
+            return this.$message.error(i18n.t('packages_business_verification_form_diinde', { val1: index }))
           }
 
           // 开启高级校验后，JS校验逻辑不能为空
@@ -1152,7 +1168,7 @@ function validate(sourceRow){
       if (val !== 'pipeline') {
         this.form.flowId = ''
       }
-      console.log('清空配置')
+      console.log(i18n.t('packages_business_verification_form_qingkongpeizhi'))
     }
   }
 }
