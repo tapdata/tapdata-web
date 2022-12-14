@@ -413,7 +413,6 @@ export const JsProcessor = observer(
                                   try {
                                     code = JSON.stringify(JSON.parse(item.message), null, 2)
                                   } catch (e) {
-                                    console.log('e', e) // eslint-disable-line
                                     const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
                                     code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
                                   }
@@ -448,7 +447,6 @@ export const JsProcessor = observer(
             <JsDeclare
               value={form.values.declareScript}
               onChange={val => {
-                console.log('JsDeclare', val) // eslint-disable-line
                 form.setValuesIn('declareScript', val)
               }}
               height={240}
