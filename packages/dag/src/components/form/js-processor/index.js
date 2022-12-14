@@ -89,7 +89,7 @@ export const JsProcessor = observer(
           nodeId: form.values.id,
           end: Date.now()
         })
-        logList = logData?.items.filter(item => !item.message.startsWith(`Node JavaScript[${form.values.id}]`)) || []
+        logList = logData?.items.filter(item => !new RegExp(`^.*\\[${form.values.id}]`).test(item.message)) || []
       }
 
       const handleQuery = async () => {
