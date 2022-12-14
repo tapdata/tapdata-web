@@ -492,7 +492,8 @@ export default {
         params: path.params || this.getDefaultParams(apiType),
         where: path.where || [],
         sort: path.sort || [],
-        path: path.path || ''
+        path: path.path || '',
+        aal: path.acl
       }
       this.form.description = this.data.description
       this.form.acl = path.acl
