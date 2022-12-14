@@ -210,7 +210,7 @@
       <div class="js-wrap">
         <div class="jsBox">
           <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <JsEditor v-model="webScript" class="js-editor"></JsEditor>
+          <VCodeEditor v-model="webScript" height="500" class="js-editor"></VCodeEditor>
           <div class="js-fixText">}</div>
         </div>
         <GitBook :value="doc" class="example ml-4 color-primary"></GitBook>
@@ -226,8 +226,7 @@
 <script>
 import { cloneDeep } from 'lodash'
 
-import { GitBook } from '@tap/component'
-import JsEditor from '@tap/component/src/JsEditor'
+import { GitBook, VCodeEditor } from '@tap/component'
 
 import { DATA_NODE_TYPES } from '@/const.js'
 import { metadataInstancesApi, taskApi, inspectApi } from '@tap/api'
@@ -236,7 +235,7 @@ import ConditionBox from './components/ConditionBox'
 import { TABLE_PARAMS, META_INSTANCE_FIELDS } from './components/const'
 
 export default {
-  components: { JsEditor, GitBook, ConditionBox },
+  components: { VCodeEditor, GitBook, ConditionBox },
   data() {
     let self = this
     let requiredValidator = (msg, check) => {
