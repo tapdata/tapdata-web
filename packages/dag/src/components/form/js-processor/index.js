@@ -226,9 +226,9 @@ export const JsProcessor = observer(
           <div class="position-absolute flex align-center w-100">
             <span class="formily-element-form-item-asterisk">*</span>
             <span class="flex-1">{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
-            <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+            {/*<ElLink class="mr-3" onClick={toggleDoc} type="primary">
               API文档
-            </ElLink>
+            </ElLink>*/}
             <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
               <VIcon class="mr-1">fangda</VIcon>
               {i18n.t('packages_form_js_editor_fullscreen')}
@@ -362,9 +362,9 @@ export const JsProcessor = observer(
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
                 {fullscreen && runTool}
                 <div>
-                  <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+                  {/*<ElLink class="mr-3" onClick={toggleDoc} type="primary">
                     API文档
-                  </ElLink>
+                  </ElLink>*/}
                   <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
                     <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
                   </ElLink>
