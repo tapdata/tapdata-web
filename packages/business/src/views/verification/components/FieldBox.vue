@@ -217,7 +217,7 @@ export default {
     },
 
     loadFields() {
-      const { sourceId, targetId, sourceTable, targetTable } = this.getItemOptions()
+      const { sourceId, targetId, sourceTable, targetTable } = this.getFieldListOptions()
       if (!sourceId || !targetId) return
       const sourceParams = {
         where: {
