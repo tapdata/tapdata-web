@@ -502,7 +502,7 @@ export default {
         type: 'database',
         databaseType: item.database_type,
         connectionId: item.id,
-        migrateTableSelectType: 'custom',
+        migrateTableSelectType: 'all',
         attrs: {
           connectionName: item.name,
           connectionType: item.connection_type,
