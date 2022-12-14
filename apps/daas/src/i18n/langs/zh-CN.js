@@ -95,6 +95,8 @@ export default {
   page_title_data_verify: '数据校验',
   page_title_data_difference_details: '差异详情',
   page_title_data_verification_result: '校验结果',
+  page_title_diff_verification_history: '差异校验历史',
+  page_title_diff_verification_details: '差异校验详情',
   page_title_shared_mining: '共享挖掘',
   page_title_shared_mining_details: '挖掘详情',
   page_title_function: '函数管理',

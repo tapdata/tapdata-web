@@ -21,12 +21,12 @@
         </el-table-column>
         <template v-if="$route.name === 'VerifyDiffHistory'">
           <el-table-column
-            :label="$t('packages_business_verification_history_source_rows')"
+            :label="$t('packages_business_verification_sourceTotalRows')"
             prop="source_total"
             align="center"
           ></el-table-column>
           <el-table-column
-            :label="$t('packages_business_verification_history_target_rows')"
+            :label="$t('packages_business_verification_targetTotalRows')"
             prop="target_total"
             align="center"
           ></el-table-column>
