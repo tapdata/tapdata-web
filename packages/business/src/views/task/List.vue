@@ -582,7 +582,6 @@ export default {
         this.createBtnLoading = false
         return
       }
-      this.createBtnLoading = false
       this.checkAgent(() => {
         this.$router
           .push({
