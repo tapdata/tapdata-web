@@ -14,7 +14,7 @@
                 $t('packages_business_verification_button_diff_task_history')
               }}</ElLink>
             </div>
-            <!-- <div
+            <div
               v-if="
                 inspect.result !== 'passed' &&
                 !['running', 'scheduling'].includes(inspect.status) &&
@@ -22,14 +22,16 @@
               "
               class="flex align-items-center ml-4"
             >
-              <ElButton type="primary" @click="diffInspect">{{ $t('packages_business_verification_button_diff_verify') }}</ElButton>
+              <ElButton type="primary" @click="diffInspect">{{
+                $t('packages_business_verification_button_diff_verify')
+              }}</ElButton>
               <ElTooltip effect="dark" placement="top">
                 <div slot="content" style="width: 232px">
                   {{ $t('packages_business_verification_button_diff_verify_tips') }}
                 </div>
                 <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
               </ElTooltip>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
