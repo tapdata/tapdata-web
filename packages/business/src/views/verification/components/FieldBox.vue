@@ -9,6 +9,7 @@
         :class="{ red: !item.source.sortColumn }"
         :options="sourceFields"
         :id="'item-source-' + index"
+        @focus="handleFocus"
       ></MultiSelection>
       <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
         item.source.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
@@ -20,6 +21,7 @@
         class="item-select"
         :class="{ red: !item.target.sortColumn }"
         :options="targetFields"
+        @focus="handleFocus"
       ></MultiSelection>
       <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
         item.target.sortColumn || $t('packages_business_statistics_schedule_qingxuanze')
@@ -216,112 +218,104 @@ export default {
       this.handleChange()
     },
 
-    loadFields() {
+    async loadFields() {
       const { sourceId, targetId, sourceTable, targetTable } = this.getFieldListOptions()
-      if (!sourceId || !targetId) return
-      const sourceParams = {
-        where: {
-          meta_type: 'table',
-          sourceType: 'SOURCE',
-          original_name: sourceTable,
-          'source._id': sourceId
-        },
-        limit: 1
-      }
-      const targetParams = {
-        where: {
-          meta_type: 'table',
-          sourceType: 'SOURCE',
-          original_name: targetTable,
-          'source._id': targetId
-        },
-        limit: 1
-      }
 
       this.loading = true
-      metadataInstancesApi
-        .tapTables({
-          filter: JSON.stringify(sourceParams)
+      if (sourceId) {
+        const params = {
+          where: {
+            meta_type: 'table',
+            sourceType: 'SOURCE',
+            original_name: sourceTable,
+            'source._id': sourceId
+          },
+          limit: 1
+        }
+        const res = await this.getTapTablesApi(params)
+        this.sourceFields = Object.values(res.items[0]?.nameFieldMap || {}).map(t => {
+          return {
+            id: t.id,
+            field_name: t.fieldName,
+            primary_key_position: t.primaryKeyPosition
+          }
         })
-        .then(res => {
-          this.sourceFields = Object.values(res.items[0]?.nameFieldMap || {}).map(t => {
-            return {
-              id: t.id,
-              field_name: t.fieldName,
-              primary_key_position: t.primaryKeyPosition
-            }
-          })
-          metadataInstancesApi
-            .tapTables({
-              filter: JSON.stringify(targetParams)
-            })
-            .then(re => {
-              this.targetFields = Object.values(re.items[0]?.nameFieldMap || {}).map(t => {
-                return {
-                  id: t.id,
-                  field_name: t.fieldName,
-                  primary_key_position: t.primaryKeyPosition
-                }
-              })
-            })
-            .finally(() => {
-              this.loadList()
-              this.loading = false
-            })
+      }
+
+      if (targetId) {
+        const params = {
+          where: {
+            meta_type: 'table',
+            sourceType: 'SOURCE',
+            original_name: targetTable,
+            'source._id': targetId
+          },
+          limit: 1
+        }
+        const res = await this.getTapTablesApi(params)
+        this.targetFields = Object.values(res.items[0]?.nameFieldMap || {}).map(t => {
+          return {
+            id: t.id,
+            field_name: t.fieldName,
+            primary_key_position: t.primaryKeyPosition
+          }
         })
-        .catch(() => {
-          this.loadList()
-          this.loading = false
-        })
+      }
+
+      this.loadList()
+      this.loading = false
     },
 
-    loadFieldsInNode() {
+    async loadFieldsInNode() {
       const { sourceNodeId, targetNodeId, sourceTable, targetTable } = this.getFieldListOptions()
-      if (!sourceTable || !targetTable) return
-      const sourceParams = {
-        nodeId: sourceNodeId,
-        tableFilter: sourceTable,
-        fields: ['original_name', 'fields', 'qualified_name'],
-        pageSize: 20
-      }
-      const targetParams = {
-        nodeId: targetNodeId,
-        tableFilter: targetTable,
-        fields: ['original_name', 'fields', 'qualified_name'],
-        pageSize: 20
-      }
 
       this.loading = true
-      metadataInstancesApi
-        .nodeSchemaPage(sourceParams)
-        .then(res => {
-          this.sourceFields = (res.items[0]?.fields || []).map(t => {
-            return {
-              id: t.id,
-              field_name: t.field_name,
-              primary_key_position: t.primary_key_position
-            }
-          })
-          metadataInstancesApi
-            .nodeSchemaPage(targetParams)
-            .then(re => {
-              this.targetFields = (re.items[0]?.fields || []).map(t => {
-                return {
-                  id: t.id,
-                  field_name: t.field_name,
-                  primary_key_position: t.primary_key_position
-                }
-              })
-            })
-            .finally(() => {
-              this.loadList()
-              this.loading = false
-            })
+      if (sourceTable) {
+        const params = {
+          nodeId: sourceNodeId,
+          tableFilter: sourceTable,
+          fields: ['original_name', 'fields', 'qualified_name'],
+          pageSize: 20
+        }
+        const res = await this.getNodeSchemaPageApi(params)
+        this.sourceFields = (res.items[0]?.fields || []).map(t => {
+          return {
+            id: t.id,
+            field_name: t.field_name,
+            primary_key_position: t.primary_key_position
+          }
         })
-        .catch(() => {
-          this.loadList()
-          this.loading = false
+      }
+
+      if (targetTable) {
+        const params = {
+          nodeId: targetNodeId,
+          tableFilter: targetTable,
+          fields: ['original_name', 'fields', 'qualified_name'],
+          pageSize: 20
+        }
+        const res = await this.getNodeSchemaPageApi(params)
+        this.targetFields = (res.items[0]?.fields || []).map(t => {
+          return {
+            id: t.id,
+            field_name: t.field_name,
+            primary_key_position: t.primary_key_position
+          }
         })
+      }
+
+      this.loadList()
+      this.loading = false
+    },
+
+    getTapTablesApi(params) {
+      return metadataInstancesApi.tapTables({
+        filter: JSON.stringify(params)
+      })
+    },
+
+    getNodeSchemaPageApi(params) {
+      return metadataInstancesApi.nodeSchemaPage(params)
     },
 
     getFilterList() {
@@ -330,7 +324,13 @@ export default {
     },
 
     handleChangeModeType(val) {
-      if (val === 'custom') this.init()
+      if (val === 'custom') this.handleFocus()
+    },
+
+    handleFocus() {
+      if (!this.sourceFields.length || !this.targetFields.length) {
+        this.init()
+      }
     }
   }
 }

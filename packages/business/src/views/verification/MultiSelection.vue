@@ -12,6 +12,7 @@
       @remove-tag="$emit('remove-tag', $event)"
       @change="$emit('change', $event)"
       @input="inputHandler"
+      @focus="handleFocus"
     >
       <el-option
         v-for="opt in options.filter(i => !!i)"
@@ -61,6 +62,10 @@ export default {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
       this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
+    },
+
+    handleFocus() {
+      this.$emit('focus')
     }
   }
 }
