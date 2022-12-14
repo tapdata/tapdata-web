@@ -115,7 +115,7 @@ export const JsProcessor = observer(
         return isOver
       }
 
-      const resetQuery = args => {
+      const resetQuery = () => {
         queryTimes = 0
         running.value = false
         runningText.value = ''
