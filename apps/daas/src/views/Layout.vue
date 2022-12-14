@@ -358,54 +358,54 @@ import { signOut } from '../utils/util'
 
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
-  { name: 'connectionsList', icon: 'agent', code: 'datasource_menu', parent: 'connections' },
+  { name: 'connectionsList', icon: 'agent', code: 'v2_datasource_menu', parent: 'connections' },
   {
     name: 'dataPipeline',
     label: 'page_title_data_pipeline',
     icon: 'huowuchuanshu',
-    code: 'data_transmission',
+    code: 'v2_data_pipeline',
     children: [
-      { name: 'migrateList', code: 'Data_SYNC_menu', parent: 'migrate' },
-      { name: 'dataflowList', code: 'Data_SYNC_menu', parent: 'dataflow' },
-      { name: 'sharedMiningList', code: 'log_collector_menu', parent: 'sharedMining' },
-      { name: 'functionList', code: 'SYNC_Function_management', parent: 'function' },
-      { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' },
-      { name: 'sharedCacheList', code: 'shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
+      { name: 'migrateList', code: 'v2_data_replication', parent: 'migrate' },
+      { name: 'dataflowList', code: 'v2_data_flow', parent: 'dataflow' },
+      { name: 'sharedMiningList', code: 'v2_log_collector_menu', parent: 'sharedMining' },
+      { name: 'functionList', code: 'v2_function_management_list', parent: 'function' },
+      { name: 'customNodeList', code: 'v2_custom_node_menu', parent: 'customNode' },
+      { name: 'sharedCacheList', code: 'v2_shared_cache_menu', parent: 'sharedCache' } // PDK暂时不支持共享缓存，暂时屏蔽
     ]
   },
   {
     name: 'discovery',
     label: 'page_title_data_discovery',
     icon: 'dataDiscovery_navbar',
-    code: 'system_management',
+    code: 'v2_data_discovery',
     children: [
-      { name: 'objectList', code: 'datasource_menu', parent: 'object' },
-      { name: 'catalogueList', code: 'datasource_menu', parent: 'catalogue' }
+      { name: 'objectList', code: 'v2_data_object', parent: 'object' },
+      { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' }
     ]
   },
   {
     name: 'dataService',
     label: 'page_title_data_service',
     icon: 'apiServer_navbar',
-    code: 'data_publish',
+    code: 'v2_data-server',
     children: [
-      { name: 'dataServer', code: 'API_management_menu', parent: 'dataServer' },
-      { name: 'apiClient', code: 'API_clients_menu', parent: 'apiClient' },
-      { name: 'apiServer', code: 'API_server_menu', parent: 'apiServer' },
-      { name: 'dataServerAuditList', code: 'API_server_menu', parent: 'dataServerAudit' },
-      { name: 'apiMonitor', code: 'API_server_menu', parent: 'apiMonitor' }
+      { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
+      { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
+      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },
+      { name: 'dataServerAuditList', code: 'v2_data_server_audit-list', parent: 'dataServerAudit' },
+      { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' }
     ]
   },
   {
     name: 'system',
     label: 'page_title_system',
     icon: 'system_navbar',
-    code: 'system_management',
+    code: 'v2_system-management',
     children: [
-      { name: 'clusterManagement', code: 'Cluster_management_menu' },
+      { name: 'clusterManagement', code: 'v2_cluster-management_menu' },
       // { name: 'externalStorage', code: '' }
-      { name: 'users', code: 'user_management_menu', parent: 'migrate' },
-      { name: 'roleList', code: 'role_management_menu', parent: 'migrate' }
+      { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
+      { name: 'roleList', code: 'v2_role_management_menu', parent: 'roleList' }
     ]
   }
 ]
