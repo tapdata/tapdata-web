@@ -36,7 +36,7 @@
 
 <script>
 import ClipButton from '@/components/ClipButton'
-import { getCode } from '@tap/business'
+import { getCode } from '@tap/shared'
 export default {
   components: {
     ClipButton
