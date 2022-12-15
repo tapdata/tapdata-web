@@ -38,7 +38,7 @@
 .zsiq_floatmain {
   display: block !important;
 }
-.siq_bR{
+.siq_bR {
   bottom: 75px !important;
   right: 10px;
 }
@@ -160,4 +160,9 @@
 }
 .level-error {
   color: #d44d4d;
+}
+
+body.hide-chart > [data-id='zsalesiq'] {
+  display: none !important;
+  visibility: hidden !important;
 }

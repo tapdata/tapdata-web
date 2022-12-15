@@ -506,5 +506,7 @@ export default {
   packages_business_connections_databaseform_keyicongbaohan: '可以从包含表规则匹配到的表中将指定的表排除',
   packages_business_connections_databaseform_paichubiao: '排除表',
   packages_business_connections_databaseform_baohanbiao: '包含表',
-  packages_business_connections_list_wenjianleixingde: '文件类型的连接暂不支持加载Schema'
+  packages_business_connections_list_wenjianleixingde: '文件类型的连接暂不支持加载Schema',
+  packages_business_task_status_agent_tooltip_time: '距上次状态上报时间已经{time}',
+  packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为'
 }

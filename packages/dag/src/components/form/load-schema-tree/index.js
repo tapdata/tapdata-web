@@ -1,6 +1,6 @@
 import { defineComponent, ref } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
-import { useForm } from '@formily/vue'
+import { useForm } from '@tap/form'
 import { onMounted, onUnmounted } from '@vue/composition-api'
 
 import { metadataInstancesApi, proxyApi, taskApi } from '@tap/api'
@@ -105,7 +105,15 @@ export const loadSchemaTree = observer(
                     setTimeout(() => {
                       form.setValuesIn(tableNameField || 'tableName', table)
                       isTransformed.value = false
-                      getSchemaData(true)
+                      let unwatchSaving = root.$watch(
+                        () => root.$store.state.dataflow.taskSaving,
+                        v => {
+                          if (!v) {
+                            getSchemaData(true)
+                            unwatchSaving()
+                          }
+                        }
+                      )
                     }, 200)
                   })
                   .catch(() => {

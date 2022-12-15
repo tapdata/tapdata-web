@@ -1,7 +1,8 @@
-import i18n from '@tap/i18n'
 import { defineComponent, ref, onMounted } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
-import { useForm, useField } from '@formily/vue'
+
+import i18n from '@tap/i18n'
+import { useForm, useField } from '@tap/form'
 
 const EVENT_MAP = {
   alter_field_name_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming'),

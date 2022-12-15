@@ -305,25 +305,25 @@ export class Table extends NodeType {
                   disabledEvents: {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
-                  },
+                  }
 
-                  isFilter: {
+                  /*isFilter: {
                     type: 'boolean',
                     title: '过滤设置',
                     default: false,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-reactions': {
-                      target: '*(limitWrap,nodeSchema,conditions)',
+                      target: '*(nodeSchema,conditions)',
                       fulfill: {
                         state: {
-                          visible: '{{$self.value}}'
+                          visible: '{{$self.value===true}}'
                         }
                       }
                     }
-                  },
+                  },*/
 
-                  limitWrap: {
+                  /*limitWrap: {
                     type: 'void',
                     title: '行数限制',
                     'x-decorator': 'FormItem',
@@ -381,13 +381,13 @@ export class Table extends NodeType {
                         }
                       }
                     }
-                  },
+                  },*/
 
-                  nodeSchema: {
+                  /*nodeSchema: {
                     type: 'array',
                     'x-display': 'hidden',
                     'x-reactions': [
-                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id)}}`,
+                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id, $values.tableName)}}`,
                       {
                         target: 'conditions.*.key',
                         fulfill: {
@@ -421,7 +421,10 @@ export class Table extends NodeType {
                               type: 'string',
                               required: 'true',
                               'x-decorator': 'FormItem',
-                              'x-component': 'FieldSelect'
+                              'x-component': 'FieldSelect',
+                              'x-component-props': {
+                                filterable: true
+                              }
                             },
                             operator: {
                               type: 'number',
@@ -449,15 +452,32 @@ export class Table extends NodeType {
                                 }
                               ],
                               'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                wrapperWidth: 100
+                              },
                               'x-component': 'Select'
                             },
                             value: {
                               type: 'string',
                               required: 'true',
                               'x-decorator': 'FormItem',
-                              'x-component': 'Input'
+                              'x-component': 'Input',
+                              'x-component-props': {
+                                type: 'datetime',
+                                align: 'right',
+                                format: 'yyyy-MM-dd HH:mm:ss'
+                              },
+                              'x-reactions': {
+                                dependencies: ['nodeSchema', '.key'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component':
+                                      '{{field=$deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
+                                  }
+                                }
+                              }
                             },
-                            /*add: {
+                            /!*add: {
                               type: 'void',
                               'x-component': 'ArrayItems.Addition',
                               'x-component-props': {
@@ -465,7 +485,7 @@ export class Table extends NodeType {
                                 icon: 'el-icon-plus',
                                 class: 'border-0'
                               }
-                            },*/
+                            },*!/
                             remove: {
                               type: 'void',
                               'x-component': 'ArrayItems.Remove',
@@ -487,7 +507,7 @@ export class Table extends NodeType {
                         }
                       }
                     }
-                  }
+                  }*/
                 }
               },
 
@@ -521,16 +541,17 @@ export class Table extends NodeType {
                     default: 'keepData',
                     enum: [
                       {
-                        label: '保持已存在的数据',
+                        label: '保持目标端原有表结构和数据',
                         value: 'keepData'
                       },
                       {
-                        label: '运行前删除已存在的数据',
-                        value: 'removeData'
+                        label: '清除目标端原有表结构及数据',
+                        value: 'dropTable',
+                        disabled: true
                       },
                       {
-                        label: '运行前删除表结构',
-                        value: 'dropTable'
+                        label: '保持目标端原有表结构，清除数据',
+                        value: 'removeData'
                       }
                     ],
                     'x-decorator': 'FormItem',

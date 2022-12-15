@@ -1,4 +1,4 @@
-import { connect, useForm } from '@formily/vue'
+import { connect, useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from '@vue/composition-api'
 import { Highlight } from '@tap/component'

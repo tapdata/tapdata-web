@@ -35,6 +35,11 @@ export const TOPOLOGY_MAP = topologyMap,
     invalid: { text: 'Invalid', type: 'danger' },
     testing: { text: 'Testing', type: 'warning' }
   },
+  AGENT_STATUS_MAP_EN = {
+    0: { text: '上传中', type: 'warning' },
+    1: { text: '上传成功', type: 'success' },
+    2: { text: '上传失败', type: 'danger' }
+  },
   MILESTONE_STATUS_MAP = {
     waiting: { text: i18n.t('task_milestone_waiting'), icon: 'daizhixing', type: 'warning' },
     running: { text: i18n.t('task_milestone_running'), icon: 'jinxingzhong', type: 'success' },
