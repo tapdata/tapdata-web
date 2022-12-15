@@ -83,6 +83,10 @@ export const JsEditor = connect(
 
       unbindEvent() {
         window.removeEventListener('beforeunload', this.handleBeforeunload)
+      },
+
+      resize() {
+        this.$refs.jsEditor.editor.resize(true)
       }
     },
 

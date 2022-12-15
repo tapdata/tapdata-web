@@ -175,6 +175,9 @@ export const JsProcessor = observer(
 
       const toggleFullscreen = () => {
         fullscreen.value = !fullscreen.value
+        setTimeout(() => {
+          this.$refs.jsEditor.resize()
+        }, 10)
       }
 
       const toggleDoc = event => {
@@ -374,6 +377,7 @@ export const JsProcessor = observer(
               <div class="js-editor-form-item-wrap overflow-hidden">
                 <FormItem.BaseItem class="js-editor-form-item" label={label}>
                   <JsEditor
+                    ref={jsEditor}
                     value={props.value}
                     onChange={val => {
                       emit('change', val)
