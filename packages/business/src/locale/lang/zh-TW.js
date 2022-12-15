@@ -690,7 +690,7 @@ export default {
   packages_business_verification_details_zhankai: '展開',
   packages_business_verification_details_shouqi: '收起',
   packages_business_verification_form_qingkongpeizhi: '清空配置',
-  packages_business_verification_form_diinde: '第{val1}個校驗條件，待校驗模型不能為空',
+  packages_business_verification_form_diinde: '校驗條件{val1}，待校驗模型不能為空',
   packages_business_verification_form_zhaobudaojiedian: '找不到節點對應的表信息',
   packages_business_verification_form_qingshurukaishi: '請輸入開始時間',
   packages_business_verification_form_jiaoyanjieshushi: '校驗結束時間',

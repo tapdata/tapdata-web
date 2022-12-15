@@ -123,6 +123,24 @@ export default {
     }
   },
 
+  watch: {
+    sourceSelect(v1, v2) {
+      v1 !== v2 && this.init()
+    },
+    targetSelect(v1, v2) {
+      v1 !== v2 && this.init()
+    }
+  },
+
+  computed: {
+    sourceSelect() {
+      return this.item.source.connectionId + this.item.source.table
+    },
+    targetSelect() {
+      return this.item.target.connectionId + this.item.target.table
+    }
+  },
+
   mounted() {
     this.init()
   },
@@ -186,14 +204,37 @@ export default {
 
       const loadData = !!source?.length
       let sourceList = loadData ? cloneDeep(source) : cloneDeep(sourceFields)
-      let targetList = loadData ? cloneDeep(target) : cloneDeep(targetFields)
-
-      this.list = sourceList.map((t, i) => {
+      let targetList = (loadData ? cloneDeep(target) : cloneDeep(targetFields)).map(t => {
         return {
-          source: t,
-          target: targetList[i]
+          name: t,
+          used: false
         }
       })
+
+      let list = sourceList.map((t, i) => {
+        let findTarget = targetList.find(tar => tar.name.toLowerCase() === t.toLowerCase())
+        let opt = {
+          source: t,
+          target: ''
+        }
+        if (findTarget) {
+          opt.target = findTarget.name
+          findTarget.used = true
+        }
+        return opt
+      })
+
+      targetList
+        .filter(t => !t.used)
+        .forEach(el => {
+          list.push({
+            source: '',
+            target: el.name
+          })
+        })
+
+      this.list = list
+      this.handleChange()
     },
 
     getItem() {

@@ -710,7 +710,7 @@ export default {
   packages_business_verification_details_shouqi: 'close',
   packages_business_verification_form_qingkongpeizhi: 'Clear configuration',
   packages_business_verification_form_diinde:
-    'The {val1}th verification condition, the model to be verified cannot be empty',
+    'The verification condition{val1}, the model to be verified cannot be empty',
   packages_business_verification_form_zhaobudaojiedian:
     'The table information corresponding to the node cannot be found',
   packages_business_verification_form_qingshurukaishi: 'Please enter the start time',
