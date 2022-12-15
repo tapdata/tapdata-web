@@ -23,8 +23,19 @@
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div class="flex bg-main justify-content-between pl-2" style="height: 40px">
-          {{ $t('packages_form_field_mapping_list_biaoming') }}
+        <div class="flex text-center fs-8 lh-1">
+          <div class="nav-filter__item py-1 cursor-pointer active">
+            全部表
+            <span>(123)</span>
+          </div>
+          <div class="nav-filter__item py-1 cursor-pointer">
+            更新条件异常
+            <span class="color-danger">(123)</span>
+          </div>
+          <div class="nav-filter__item py-1 cursor-pointer">
+            推演异常
+            <span class="color-danger">(123)</span>
+          </div>
         </div>
         <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
@@ -62,6 +73,17 @@
         </ElPagination>
       </div>
       <div class="field-inference__content flex-fill flex flex-column">
+        <div class="px-2">
+          <span>更新条件字段</span>
+          <ElSelect v-model="updateConditionFields" size="mini" allowCreate multiple filterable>
+            <ElOption v-for="(fItem, fIndex) in selected.fields" :key="fIndex" :value="fItem.field_name">
+              <div class="flex align-center">
+                {{ fItem.field_name }}
+                <VIcon v-if="fItem.primary_key_position > 0" size="12" class="text-warning ml-1"> key </VIcon>
+              </div>
+            </ElOption>
+          </ElSelect>
+        </div>
         <div class="flex align-items-center p-2">
           <ElInput
             v-model="searchField"
@@ -135,7 +157,8 @@ export default {
       searchField: '',
       visible: false,
       fieldChangeRules: [],
-      noData
+      noData,
+      updateConditionFields: []
     }
   },
 
@@ -294,5 +317,10 @@ export default {
   color: map-get($color, primary);
   line-height: 22px;
   background-color: map-get($bgColor, pageCount);
+}
+.nav-filter__item {
+  &.active {
+    background: map-get($bgColor, disactive);
+  }
 }
 </style>
