@@ -305,9 +305,9 @@ export class Table extends NodeType {
                   disabledEvents: {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
-                  },
+                  }
 
-                  isFilter: {
+                  /*isFilter: {
                     type: 'boolean',
                     title: '过滤设置',
                     default: false,
@@ -321,7 +321,7 @@ export class Table extends NodeType {
                         }
                       }
                     }
-                  },
+                  },*/
 
                   /*limitWrap: {
                     type: 'void',
@@ -383,7 +383,7 @@ export class Table extends NodeType {
                     }
                   },*/
 
-                  nodeSchema: {
+                  /*nodeSchema: {
                     type: 'array',
                     'x-display': 'hidden',
                     'x-reactions': [
@@ -477,7 +477,7 @@ export class Table extends NodeType {
                                 }
                               }
                             },
-                            /*add: {
+                            /!*add: {
                               type: 'void',
                               'x-component': 'ArrayItems.Addition',
                               'x-component-props': {
@@ -485,7 +485,7 @@ export class Table extends NodeType {
                                 icon: 'el-icon-plus',
                                 class: 'border-0'
                               }
-                            },*/
+                            },*!/
                             remove: {
                               type: 'void',
                               'x-component': 'ArrayItems.Remove',
@@ -507,7 +507,7 @@ export class Table extends NodeType {
                         }
                       }
                     }
-                  }
+                  }*/
                 }
               },
 
