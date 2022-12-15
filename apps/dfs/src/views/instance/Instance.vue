@@ -72,36 +72,20 @@
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_task_number')" width="140">
           <template slot-scope="scope">
-            <ElTooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
-              <div slot="content">
-                <template v-for="(item, index) in scope.row.metric.dataFlows">
-                  <div v-if="index < 3" :key="item.id">
-                    {{ $t('task_name') }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ item.name }}
-                  </div>
-                </template>
-                <ElLink
-                  v-if="scope.row.metric.runningTaskNum > 3"
-                  class="block text-center"
-                  type="primary"
-                  @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >{{ $t('data_see_more') }}</ElLink
-                >
+            <div>
+              <div class="flex align-center">
+                {{ $t('task_manage_migrate') }}：
+                <ElLink type="primary" class="" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
+                  scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0
+                }}</ElLink>
               </div>
-              <div>
-                <div class="flex align-center">
-                  {{ $t('task_manage_migrate') }}：
-                  <ElLink type="primary" class="" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
-                    scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0
-                  }}</ElLink>
-                </div>
-                <div class="flex align-center">
-                  {{ $t('task_manage_etl') }}：
-                  <ElLink type="primary" class="" @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')">{{
-                    scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0
-                  }}</ElLink>
-                </div>
+              <div class="flex align-center">
+                {{ $t('task_manage_etl') }}：
+                <ElLink type="primary" class="" @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')">{{
+                  scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0
+                }}</ElLink>
               </div>
-            </ElTooltip>
+            </div>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_version')" width="200">
