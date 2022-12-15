@@ -161,8 +161,10 @@
               size="mini"
               type="text"
               :disabled="scope.row.status !== 'Running'"
+              :loading="loadingUpload"
               @click="handleUpload(scope.row.id)"
-              >{{ $t('button_upload') }} <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
+              >{{ $t('dfs_instance_instance_rizhishangchuan') }}
+              <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
             </ElButton>
             <ElButton size="mini" type="text" @click="open(scope.row)">{{
               $t('dfs_instance_instance_rizhi')
@@ -303,22 +305,28 @@
           </VButton>
         </div>
       </Details>
-      <!--  {{$t('dfs_instance_instance_rizhi')}}{{$t('dfs_instance_instance_xiazai')}}    -->
+      <!-- 日志上传   -->
       <ElDialog
         :visible.sync="downloadDialog"
         :before-close="handleClose"
         :title="$t('dfs_instance_instance_bendirizhixia')"
-        width="1000px"
+        width="1250px"
         custom-class="download-dialog"
       >
         <el-button
           class="mb-4 float-end"
           type="primary"
-          :disabled="currentStatus !== 'Running'"
+          :loading="loadingUpload"
           @click="handleUpload(currentAgentId)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</el-button
         >
-        <VTable :data="downloadList" :columns="downloadListCol" ref="tableName" :has-pagination="false">
+        <VTable
+          :data="downloadList"
+          :columns="downloadListCol"
+          v-loading="loadingLogTable"
+          ref="tableName"
+          :has-pagination="false"
+        >
           <template slot="status" slot-scope="scope">
             <span>{{ statusMaps[scope.row.status].text }} </span>
             <span v-if="scope.row.uploadAgentLog && scope.row.uploadAgentLog.uploadRatio !== 100"
@@ -447,7 +455,9 @@ export default {
       currentPage: 1,
       pageSize: 10,
       statusMaps: AGENT_STATUS_MAP_EN,
-      timer: null
+      timer: null,
+      loadingLogTable: false,
+      loadingUpload: false
     }
   },
   computed: {
@@ -991,19 +1001,28 @@ export default {
     },
     //日志上传
     handleUpload(id) {
-      this.$axios.post('api/tcm/uploadLog', { agentId: id }).then(data => {
-        this.$message.success(data)
-      })
+      this.loadingUpload = true
+      this.$axios
+        .post('api/tcm/uploadLog', { agentId: id })
+        .then(data => {
+          this.loadingUpload = false
+          this.$message.success(data)
+        })
+        .finally(() => {
+          this.loadingUpload = false
+        })
     },
     //打开日志列表
     open(row) {
       this.downloadDialog = true
+      this.loadingLogTable = true
       this.currentAgentId = row.id
       this.currentStatus = row.status
       this.getDownloadList()
     },
     handleClose() {
       this.downloadDialog = false
+      this.loadingLogTable = false
       clearTimeout(this.timer)
     },
     //日志列表
@@ -1017,13 +1036,19 @@ export default {
         size: this.pageSize,
         sort: ['createAt desc']
       }
-      this.$axios.get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter))).then(res => {
-        this.downloadList = res?.items || []
-        this.downloadTotal = res?.total
-        this.timer = setTimeout(() => {
-          this.getDownloadList()
-        }, 10000)
-      })
+      this.$axios
+        .get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(res => {
+          this.loadingLogTable = false
+          this.downloadList = res?.items || []
+          this.downloadTotal = res?.total
+          this.timer = setTimeout(() => {
+            this.getDownloadList()
+          }, 10000)
+        })
+        .finally(() => {
+          this.loadingLogTable = false
+        })
     },
     //删除
     handleDeleteUploadLog(row) {
