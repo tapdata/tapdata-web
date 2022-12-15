@@ -59,13 +59,7 @@
               class="list-table__line flex mt-3 align-items-center"
             >
               <span class="px-2">{{ fIndex + 1 }}</span>
-              <ElSelect
-                v-model="fItem.source"
-                :allow-create="!!dynamicSchemaMap[item.source.connectionId]"
-                filterable
-                class="flex-fill"
-                @change="handleChange"
-              >
+              <ElSelect v-model="fItem.source" allow-create filterable class="flex-fill" @change="handleChange">
                 <ElOption
                   v-for="op in sourceFields"
                   :key="op.field_name + 'source'"
@@ -73,13 +67,7 @@
                   :value="op.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect
-                v-model="fItem.target"
-                :allow-create="!!dynamicSchemaMap[item.target.connectionId]"
-                filterable
-                class="flex-fill ml-5"
-                @change="handleChange"
-              >
+              <ElSelect v-model="fItem.target" allow-create filterable class="flex-fill ml-5" @change="handleChange">
                 <ElOption
                   v-for="op in targetFields"
                   :key="op.field_name + 'target'"
