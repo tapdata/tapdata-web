@@ -59,7 +59,7 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <template v-if="isDaas">
+        <template>
           <el-button
             v-show="multipleSelection.length > 0"
             v-readonlybtn="'SYNC_job_export'"
