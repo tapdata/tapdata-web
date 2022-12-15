@@ -51,7 +51,7 @@
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" :status="scope.row.status" default-status="Stopped"></StatusTag>
-            <template
+            <!--<template
               v-if="
                 scope.row.status === 'Running' &&
                 scope.row.tmInfo &&
@@ -63,7 +63,7 @@
                 <VIcon size="16" class="ml-2 color-warning">warning </VIcon>
                 <template #content>
                   <div class="flex flex-wrap align-center font-color-dark">
-                    <!--<VIcon size="16" class="mr-2 color-warning"> warning </VIcon>-->
+                    &lt;!&ndash;<VIcon size="16" class="mr-2 color-warning"> warning </VIcon>&ndash;&gt;
                     {{
                       $t('dfs_instance_instance_gengxin', {
                         val: relativeTime(scope.row.tmInfo && scope.row.tmInfo.pingTime)
@@ -72,7 +72,7 @@
                   </div>
                 </template>
               </ElTooltip>
-            </template>
+            </template>-->
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_task_number')" width="140">
@@ -349,6 +349,7 @@
           class="mb-4 float-end"
           type="primary"
           :loading="loadingUpload"
+          :disabled="currentStatus !== 'Running'"
           @click="handleUpload(currentAgentId)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</el-button
         >
