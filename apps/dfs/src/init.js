@@ -94,6 +94,8 @@ export default ({ routes }) => {
         !removeReadonly
       ) {
         next(false)
+      } else {
+        next()
       }
     })
     return router
