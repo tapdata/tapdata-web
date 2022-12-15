@@ -246,7 +246,7 @@ export default {
     goDemo() {
       buried('agentGuideDemo')
       this.showClose = true
-      window.open('https://uat.cloud.tapdata.net:9443/console/')
+      window.open('https://uat.cloud.tapdata.net:9443/console/logout')
     }
   }
 }
