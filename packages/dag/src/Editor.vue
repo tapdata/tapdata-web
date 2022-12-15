@@ -205,6 +205,10 @@ export default {
     async initNodeType() {
       let nodes = [
         {
+          name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
+          type: 'union_processor'
+        },
+        {
           name: 'JavaScript',
           type: 'js_processor'
         },

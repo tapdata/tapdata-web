@@ -303,6 +303,7 @@ export default {
   packages_dag_src_editor_ziduanjisuan: '字段計算',
   packages_dag_src_editor_zhuconghebing: '主從合併',
   packages_dag_src_editor_juhe: '聚合',
+  packages_dag_src_editor_zhuijiahebing: '追加合併',
   packages_dag_src_migrationeditor_jSchuli: 'JS處理',
   packages_dag_src_migrationeditor_ziduanbianji: '字段編輯',
   packages_dag_src_migrationeditor_biaobianji: '表編輯',
