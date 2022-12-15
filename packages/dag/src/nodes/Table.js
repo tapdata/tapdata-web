@@ -452,13 +452,30 @@ export class Table extends NodeType {
                                 }
                               ],
                               'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                wrapperWidth: 100
+                              },
                               'x-component': 'Select'
                             },
                             value: {
                               type: 'string',
                               required: 'true',
                               'x-decorator': 'FormItem',
-                              'x-component': 'Input'
+                              'x-component': 'Input',
+                              'x-component-props': {
+                                type: 'datetime',
+                                align: 'right',
+                                format: 'yyyy-MM-dd HH:mm:ss'
+                              },
+                              'x-reactions': {
+                                dependencies: ['nodeSchema', '.key'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component':
+                                      '{{field=$deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
+                                  }
+                                }
+                              }
                             },
                             /*add: {
                               type: 'void',
