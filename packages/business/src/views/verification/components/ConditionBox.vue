@@ -117,6 +117,7 @@
             :is-edit="editId === item.id"
             :item="item"
             :index="index"
+            :dynamicSchemaMap="dynamicSchemaMap"
           ></FieldBox>
           <div class="setting-item mt-4">
             <ElCheckbox
@@ -195,7 +196,8 @@ export default {
       editId: '',
       jointErrorMessage: '',
       fieldsMap: {},
-      autoAddTableLoading: false
+      autoAddTableLoading: false,
+      dynamicSchemaMap: {}
     }
   },
 
@@ -242,6 +244,10 @@ export default {
         })
 
         result.items = result.items.map(item => {
+          const findDynamicSchema = item.capabilities.find(t => t.id === 'dynamic_schema')
+          if (findDynamicSchema) {
+            this.dynamicSchemaMap[item.id] = true
+          }
           return {
             id: item.id,
             name: item.name,
@@ -360,6 +366,10 @@ export default {
           const nodeName = t.name
           const connectionId = t.connectionId
           const connectionName = t.attrs?.connectionName
+          const findDynamicSchema = t.attrs?.capabilities.find(t => t.id === 'dynamic_schema')
+          if (findDynamicSchema) {
+            this.dynamicSchemaMap[t.connectionId] = true
+          }
           return {
             attrs: { nodeId, nodeName, connectionId, connectionName },
             name: `${nodeName} / ${connectionName}`,
