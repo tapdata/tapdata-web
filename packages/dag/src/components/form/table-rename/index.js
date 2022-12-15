@@ -1,6 +1,6 @@
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, set, del, computed, watch } from '@vue/composition-api'
-import { useForm } from '@formily/vue'
+import { useForm } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { VIcon, EmptyItem } from '@tap/component'

@@ -1,5 +1,5 @@
 import { AsyncSelect } from '@tap/form'
-import { useField } from '@formily/vue'
+import { useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from '@vue/composition-api'
 

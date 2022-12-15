@@ -700,5 +700,7 @@ export default {
   packages_business_verification_form_jieguoshuchu: '結果輸出',
   packages_business_verification_form_zhidingrenyibiao: '指定任意表的校驗任務',
   packages_business_verification_form_weitedingdeP: '為特定的PIPELINE創建的校驗任務',
-  packages_business_verification_form_jiaoyanrenwumo: '校驗任務模式'
+  packages_business_verification_form_jiaoyanrenwumo: '校驗任務模式',
+  packages_business_task_status_agent_tooltip_time: '距上次狀態上報時間已經{time}',
+  packages_business_task_status_agent_tooltip_agent: '任務所在的引擎為'
 }

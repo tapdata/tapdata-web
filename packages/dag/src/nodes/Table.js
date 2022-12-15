@@ -323,7 +323,7 @@ export class Table extends NodeType {
                     }
                   },
 
-                  limitWrap: {
+                  /*limitWrap: {
                     type: 'void',
                     title: '行数限制',
                     'x-decorator': 'FormItem',
@@ -381,7 +381,7 @@ export class Table extends NodeType {
                         }
                       }
                     }
-                  },
+                  },*/
 
                   nodeSchema: {
                     type: 'array',

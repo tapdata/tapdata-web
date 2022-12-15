@@ -313,6 +313,7 @@ export default {
   created() {
     // 进入监控只读
     this.setStateReadonly(true)
+    this.setTaskInfo(this.dataflow)
   },
 
   async mounted() {
