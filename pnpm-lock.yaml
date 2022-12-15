@@ -118,6 +118,7 @@ importers:
       vue: ^2.6.14
       vue-clipboard2: ^0.3.1
       vue-echarts: ^6.0.0
+      vue-json-viewer: ^2.2.15
       vue-router: ^3.2.0
       vue-template-compiler: ^2.6.11
       vue-virtual-scroller: ^1.0.10
@@ -150,6 +151,7 @@ importers:
       vue: registry.npmmirror.com/vue/2.6.14
       vue-clipboard2: registry.npmmirror.com/vue-clipboard2/0.3.3
       vue-echarts: registry.npmmirror.com/vue-echarts/6.1.0_cksgqd6c76hace54trbgitsy7i
+      vue-json-viewer: registry.npmmirror.com/vue-json-viewer/2.2.22_vue@2.6.14
       vue-router: registry.npmmirror.com/vue-router/3.5.4_vue@2.6.14
       vue-virtual-scroller: registry.npmmirror.com/vue-virtual-scroller/1.0.10_vue@2.6.14
       vuex: registry.npmmirror.com/vuex/3.6.2_vue@2.6.14
