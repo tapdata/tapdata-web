@@ -72,7 +72,7 @@
               >{{ $t('dfs_agent_download_agentguidedialog_xianxiamoshizi') }}
             </div>
             <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_zainindeshuju') }}</div>
-            <el-button type="info" disabled class="mb-2" @click="openAgentDownloadModal()">{{
+            <el-button type="primary" class="mb-2" @click="goOnPrem()">{{
               $t('dfs_agent_download_agentguidedialog_huoquwanzhengshi')
             }}</el-button>
           </div>
@@ -241,6 +241,12 @@ export default {
       let user = window.__USER_INFO__
       Cookie.set('deployLaterUser', user.userId)
       this.$emit('update:visible', false)
+    },
+    //去官网报价
+    goOnPrem() {
+      buried('agentGuideTapdataOnPrem')
+      this.showClose = true
+      window.open('https://tapdata.net/tapdata-on-prem/demo.html')
     },
     //去demo环境体验
     goDemo() {
