@@ -162,7 +162,16 @@ export default {
 
   watch: {
     'dataflow.status'(v) {
-      this.checkGotoViewer()
+      if (this.dataflow.disabledData?.edit) {
+        this.setStateReadonly(true)
+      } else {
+        this.setStateReadonly(false)
+      }
+
+      if (v === 'starting' || v === 'running') {
+        this.gotoViewer()
+      }
+
       if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
         this.handleConsoleAutoLoad()
       }

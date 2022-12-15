@@ -314,10 +314,10 @@ export class Table extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-reactions': {
-                      target: '*(limitWrap,nodeSchema,conditions)',
+                      target: '*(nodeSchema,conditions)',
                       fulfill: {
                         state: {
-                          visible: '{{$self.value}}'
+                          visible: '{{$self.value===true}}'
                         }
                       }
                     }
@@ -524,16 +524,17 @@ export class Table extends NodeType {
                     default: 'keepData',
                     enum: [
                       {
-                        label: '保持已存在的数据',
+                        label: '保持目标端原有表结构和数据',
                         value: 'keepData'
                       },
                       {
-                        label: '运行前删除已存在的数据',
-                        value: 'removeData'
+                        label: '清除目标端原有表结构及数据',
+                        value: 'dropTable',
+                        disabled: true
                       },
                       {
-                        label: '运行前删除表结构',
-                        value: 'dropTable'
+                        label: '保持目标端原有表结构，清除数据',
+                        value: 'removeData'
                       }
                     ],
                     'x-decorator': 'FormItem',
