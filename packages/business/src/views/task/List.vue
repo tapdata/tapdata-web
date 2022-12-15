@@ -70,7 +70,13 @@
             <!--<i class="iconfont icon-export back-btn-icon"></i>-->
             <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>
           </el-button>
-          <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+          <el-button
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImport"
+          >
             <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
             <span> {{ $t('packages_business_button_bulk_import') }}</span>
           </el-button>
