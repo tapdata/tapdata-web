@@ -569,7 +569,9 @@ export default {
       let filter = { where: { version: 'v2' } }
 
       permissionsApi
-        .get({ filter })
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(data => {
           if (data && data.length) {
             self.permissionList = data
