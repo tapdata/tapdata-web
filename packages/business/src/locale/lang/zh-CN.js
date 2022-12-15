@@ -698,5 +698,7 @@ export default {
   packages_business_verification_form_jieguoshuchu: '结果输出',
   packages_business_verification_form_zhidingrenyibiao: '指定任意表的校验任务',
   packages_business_verification_form_weitedingdeP: '为特定的PIPELINE创建的校验任务',
-  packages_business_verification_form_jiaoyanrenwumo: '校验任务模式'
+  packages_business_verification_form_jiaoyanrenwumo: '校验任务模式',
+  packages_business_task_status_agent_tooltip_time: '距上次状态上报时间已经{time}',
+  packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为'
 }

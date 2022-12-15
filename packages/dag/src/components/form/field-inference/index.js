@@ -1,7 +1,7 @@
 import Main from './Main'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from '@vue/composition-api'
-import { useForm } from '@formily/vue'
+import { useForm } from '@tap/form'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 export const fieldInference = observer(
