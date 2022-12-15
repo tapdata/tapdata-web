@@ -314,10 +314,10 @@ export class Table extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-reactions': {
-                      target: '*(limitWrap,nodeSchema,conditions)',
+                      target: '*(nodeSchema,conditions)',
                       fulfill: {
                         state: {
-                          visible: '{{$self.value}}'
+                          visible: '{{$self.value===true}}'
                         }
                       }
                     }
