@@ -161,6 +161,7 @@
               size="mini"
               type="text"
               :disabled="scope.row.status !== 'Running'"
+              :loading="loadingUpload"
               @click="handleUpload(scope.row.id)"
               >{{ $t('dfs_instance_instance_rizhishangchuan') }}
               <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
@@ -309,13 +310,13 @@
         :visible.sync="downloadDialog"
         :before-close="handleClose"
         :title="$t('dfs_instance_instance_bendirizhixia')"
-        width="1000px"
+        width="1250px"
         custom-class="download-dialog"
       >
         <el-button
           class="mb-4 float-end"
           type="primary"
-          :disabled="currentStatus !== 'Running'"
+          :loading="loadingUpload"
           @click="handleUpload(currentAgentId)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</el-button
         >
@@ -455,7 +456,8 @@ export default {
       pageSize: 10,
       statusMaps: AGENT_STATUS_MAP_EN,
       timer: null,
-      loadingLogTable: false
+      loadingLogTable: false,
+      loadingUpload: false
     }
   },
   computed: {
@@ -999,9 +1001,16 @@ export default {
     },
     //日志上传
     handleUpload(id) {
-      this.$axios.post('api/tcm/uploadLog', { agentId: id }).then(data => {
-        this.$message.success(data)
-      })
+      this.loadingUpload = true
+      this.$axios
+        .post('api/tcm/uploadLog', { agentId: id })
+        .then(data => {
+          this.loadingUpload = false
+          this.$message.success(data)
+        })
+        .finally(() => {
+          this.loadingUpload = false
+        })
     },
     //打开日志列表
     open(row) {
