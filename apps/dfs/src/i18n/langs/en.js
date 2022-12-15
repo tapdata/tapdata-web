@@ -1239,5 +1239,6 @@ export default {
   dfs_instance_instance_xiazai: 'Download',
   dfs_instance_instance_rizhishangchuan: 'Log upload',
   dfs_instance_instance_bendirizhixia: 'Local log download',
-  dfs_instance_instance_rizhi: 'Log'
+  dfs_instance_instance_rizhi: 'Log',
+  dfs_instance_instance_gengxin: 'Updated {val}'
 }

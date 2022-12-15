@@ -1157,5 +1157,6 @@ export default {
   dfs_instance_instance_xiazai: '下载',
   dfs_instance_instance_rizhishangchuan: '日志上传',
   dfs_instance_instance_bendirizhixia: '本地日志下载',
-  dfs_instance_instance_rizhi: '日志'
+  dfs_instance_instance_rizhi: '日志',
+  dfs_instance_instance_gengxin: '{val}更新'
 }

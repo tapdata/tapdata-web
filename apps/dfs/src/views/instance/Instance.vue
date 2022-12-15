@@ -46,9 +46,31 @@
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" :status="scope.row.status" default-status="Stopped"></StatusTag>
+            <template
+              v-if="
+                scope.row.status === 'Running' &&
+                scope.row.tmInfo &&
+                scope.row.tmInfo.pingTime &&
+                Date.now() - scope.row.tmInfo.pingTime > 60000
+              "
+            >
+              <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+                <VIcon size="16" class="ml-2 color-warning">warning </VIcon>
+                <template #content>
+                  <div class="flex flex-wrap align-center font-color-dark">
+                    <!--<VIcon size="16" class="mr-2 color-warning"> warning </VIcon>-->
+                    {{
+                      $t('dfs_instance_instance_gengxin', {
+                        val: relativeTime(scope.row.tmInfo && scope.row.tmInfo.pingTime)
+                      })
+                    }}
+                  </div>
+                </template>
+              </ElTooltip>
+            </template>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_task_number')" width="120">
+        <ElTableColumn :label="$t('agent_task_number')" width="140">
           <template slot-scope="scope">
             <ElTooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
               <div slot="content">
@@ -65,9 +87,20 @@
                   >{{ $t('data_see_more') }}</ElLink
                 >
               </div>
-              <ElLink type="primary" class="ml-7" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
-                scope.row.metric ? scope.row.metric.runningTaskNum : 0
-              }}</ElLink>
+              <div>
+                <div class="flex align-center">
+                  {{ $t('task_manage_migrate') }}：
+                  <ElLink type="primary" class="" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
+                    scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0
+                  }}</ElLink>
+                </div>
+                <div class="flex align-center">
+                  {{ $t('task_manage_etl') }}：
+                  <ElLink type="primary" class="" @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')">{{
+                    scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0
+                  }}</ElLink>
+                </div>
+              </div>
             </ElTooltip>
           </template>
         </ElTableColumn>
@@ -375,6 +408,7 @@ import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar, VTable } from '@tap/component'
+import { dayjs } from '@tap/business'
 import { handleUnit } from '@/util'
 // import OSS from 'ali-oss'
 
@@ -516,6 +550,10 @@ export default {
     timer = null
   },
   methods: {
+    relativeTime(time) {
+      return time ? dayjs(time).fromNow() : '-'
+    },
+
     handleUnit(limit) {
       return handleUnit(limit)
     },
@@ -800,9 +838,9 @@ export default {
       }
       this.fetch(1)
     },
-    toDataFlow(id) {
+    toDataFlow(id, name = 'migrateList') {
       this.$router.push({
-        name: 'migrateList',
+        name,
         query: {
           agentId: id,
           status: 'running'
