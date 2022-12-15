@@ -367,6 +367,7 @@ let menuSetting = [
     children: [
       { name: 'migrateList', code: 'v2_data_replication', parent: 'migrate' },
       { name: 'dataflowList', code: 'v2_data_flow', parent: 'dataflow' },
+      { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
       { name: 'sharedMiningList', code: 'v2_log_collector_menu', parent: 'sharedMining' },
       { name: 'functionList', code: 'v2_function_management_list', parent: 'function' },
       { name: 'customNodeList', code: 'v2_custom_node_menu', parent: 'customNode' },

@@ -157,5 +157,6 @@ export default {
   packages_form_field_inference_main_ninquerenyaoquan: '您確認要全部恢復默認嗎？ ',
   packages_form_field_inference_main_ge: '個',
   packages_form_qingjianchajiedian: '請檢查節點配置',
-  packages_form_load_schema_tree_load_fail: '加載失敗'
+  packages_form_load_schema_tree_load_fail: '加載失敗',
+  packages_form_load_schema_tree_form_values_change: '配置更改後需重新加載模型才可生效'
 }

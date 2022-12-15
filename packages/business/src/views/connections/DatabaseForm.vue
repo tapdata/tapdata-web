@@ -109,10 +109,9 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import { action } from '@formily/reactive'
 
+import i18n from '@tap/i18n'
 import {
   clusterApi,
   connectionsApi,
@@ -120,17 +119,16 @@ import {
   logcollectorApi,
   pdkApi,
   settingsApi,
-  commandApi,
   externalStorageApi,
   proxyApi
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
-import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
+import { SchemaToForm } from '@tap/form'
+import { checkConnectionName, isEmpty } from '@tap/shared'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
-import { checkConnectionName, isEmpty, delayTrigger } from '@tap/shared'
 
 export default {
   name: 'DatabaseForm',
@@ -388,7 +386,6 @@ export default {
               this.dialogEditNameVisible = false
             })
             .catch(() => {
-              this.renameData.rename = this.model.name
               this.$refs['renameForm'].clearValidate()
               this.editBtnLoading = false
             })

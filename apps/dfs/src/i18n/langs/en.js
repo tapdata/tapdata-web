@@ -1107,13 +1107,13 @@ export default {
   dfs_workbench_workbench_jiyuPdk2: 'PDK-based data source registration mechanism',
   dfs_workbench_workbench_xiamianshixinban: 'The following are the features added in the new version:',
   dfs_workbench_workbench_dangranruguoyou:
-    'Of course, if there are new tasks, we recommend that you create them in the new version for a better user experience. You are welcome to experience our new version functions and give your valuable suggestions at that time. ',
+    'Of course, if there are new tasks, we recommend that you create them in V3.0 for a better user experience. You are welcome to experience our new features and give your valuable suggestions. ',
   dfs_workbench_workbench_youyuzengjiale:
-    'Because of the addition of many useful functions, we were forced to abandon the existing version structure and redevelop, so the connections and tasks you created in the current V2 version will not be synchronized to the new version, but rest assured, you will still be You can continue to use the old version for your data operations, we guarantee that the V2 version and the V3 version will coexist for a long time,\n ',
-  dfs_workbench_workbench_zainianyueriwo: 'On September 29, 2022, we will release a major upgrade V3.0. ',
+    'Due to the addition of many practical functions, we have refactored and developed the architecture of the V2 version, so the connections and tasks you created in the V2 version will not be synchronized to the V3.0 version, but do not worry, after the new version is released, you You can still continue to use the old version for your data operations, and we guarantee that the V2 version and the V3.0 version will coexist for a long time. ',
+  dfs_workbench_workbench_zainianyueriwo: 'Our major upgrade version V3.0 has been officially released. ',
   dfs_workbench_workbench_zunjingdeyonghu: 'Dear user, hello:',
-  dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switch',
-  dfs_workbench_workbench_banbenshengjitong: 'version upgrade notice',
+  dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switching',
+  dfs_workbench_workbench_banbenshengjitong: 'Tapdata Cloud V3.0 release notice',
   dfs_user_center_acces:
     'AccessKey is your secret key to access the system API and has full account authority, please keep it properly. Do not expose AccessKey to external channels (such as GitHub) in any way to avoid being used by others to cause security threats. ',
   dfs_user_center_kaifaxinxi: 'Development information',
@@ -1191,5 +1191,6 @@ export default {
   dfs_instance_instance_banbenhao: 'version number: ',
   dfs_instance_instance_agent: 'Agent update',
 
-  dfs_user_center_phone_error: 'This phone number has already been registered by another user'
+  dfs_user_center_phone_error: 'This phone number has already been registered by another user',
+  packages_business_task_status_agent_tooltip_agent: 'Agent'
 }

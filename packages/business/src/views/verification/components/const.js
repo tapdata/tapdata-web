@@ -1,0 +1,61 @@
+export const TABLE_PARAMS = {
+  nodeId: '',
+  connectionId: '',
+  connectionName: '',
+  table: '',
+  databaseType: '',
+  sortColumn: '',
+  fields: [],
+  columns: null
+}
+
+export const META_INSTANCE_FIELDS = {
+  id: true,
+  name: true,
+  original_name: true,
+  'source.id': true,
+  'source.name': true,
+  fields: true,
+  'fields.id': true,
+  'fields.field_name': true,
+  'fields.primary_key_position': true,
+  databaseId: true,
+  meta_type: true
+}
+
+export const DATA_NODE_TYPES = [
+  'table',
+  'view',
+  'collection',
+  'mongo_view',
+  'hive',
+  'kudu',
+  'dummy db',
+  'gridfs',
+  'file',
+  'elasticsearch',
+  'rest api',
+  'redis',
+  'field_processor',
+  'aggregation_processor',
+  'js_processor',
+  'row_filter_processor',
+  'java_processor',
+  'hive',
+  'hana',
+  'kafka',
+  'dameng',
+  'clickhouse',
+  'kudu',
+  'hbase',
+  'mq',
+  'kafka',
+  'adb_mysql',
+  'tcp_udp',
+  'cache_lookup_processor',
+  'custom_connection',
+  'mem_cache',
+  'logminer',
+  'protobuf_convert_processor',
+  'hazelcast_cloud_cluster'
+]
