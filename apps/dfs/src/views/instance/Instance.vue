@@ -340,6 +340,7 @@
           class="mb-4 float-end"
           type="primary"
           :loading="loadingUpload"
+          :disabled="currentStatus !== 'Running'"
           @click="handleUpload(currentAgentId)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</el-button
         >
