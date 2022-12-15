@@ -17,11 +17,24 @@
               </ElMenuItem>
             </template>
           </ElSubmenu>
-          <ElMenuItem v-else :key="menu.title" :index="menu.path">
-            <span class="mr-4" slot v-if="menu.icon"
+          <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <span class="mr-4" v-if="menu.icon"
               ><VIcon class="v-icon" size="12">{{ menu.icon }}</VIcon></span
             >
-            <span slot="title">{{ menu.title }}</span>
+            <span class="flex-fill">
+              {{ menu.title }}
+            </span>
+            <template v-if="menu.name === 'Instance' && showAgentWarning">
+              <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+                <VIcon size="14" class="color-warning">warning </VIcon>
+                <template #content>
+                  <div class="flex flex-wrap align-center font-color-dark">
+                    <VIcon size="14" class="mr-2 color-warning"> warning </VIcon>
+                    {{ $t('agent_tip_no_running') }}
+                  </div>
+                </template>
+              </ElTooltip>
+            </template>
           </ElMenuItem>
         </template>
       </ElMenu>
@@ -29,7 +42,7 @@
     <ElContainer direction="vertical" class="layout-main position-relative">
       <PageHeader class="py-4 px-5"></PageHeader>
       <ElMain class="main">
-        <RouterView></RouterView>
+        <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
     </ElContainer>
     <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
@@ -52,6 +65,7 @@ import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
+  inject: ['checkAgent'],
   components: {
     TheHeader,
     VIcon,
@@ -104,11 +118,13 @@ export default {
         data: {}
       },
       bindPhoneVisible: false,
-      agentGuideDialog: false
+      agentGuideDialog: false,
+      showAgentWarning: false
     }
   },
   created() {
     this.loadChat()
+    this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
@@ -135,6 +151,9 @@ export default {
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
+  },
+  beforeDestroy() {
+    clearTimeout(this.loopLoadAgentCountTimer)
   },
   watch: {
     $route(route) {
@@ -181,7 +200,7 @@ export default {
       if (this.checkWechatPhone()) {
         return
       }
-      this.checkAgent()
+      this.checkAgentInstall()
     },
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
@@ -190,7 +209,7 @@ export default {
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
-    checkAgent() {
+    checkAgentInstall() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
           this.agentGuideDialog = true
@@ -234,6 +253,23 @@ export default {
       let t = d.getElementsByTagName('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
+    },
+
+    onAgentNoRunning(flag) {
+      this.showAgentWarning = flag
+    },
+
+    loopLoadAgentCount() {
+      this.$axios
+        .get('api/tcm/agent/agentCount')
+        .then(data => {
+          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
+        })
+        .finally(() => {
+          this.loopLoadAgentCountTimer = setTimeout(() => {
+            this.loopLoadAgentCount()
+          }, 3000)
+        })
     }
   }
 }
