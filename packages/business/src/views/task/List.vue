@@ -360,7 +360,7 @@ export default {
     getData({ page, tags }) {
       let { current, size } = page
       const { syncType } = this
-      let { keyword, status, type } = this.searchParams
+      let { keyword, status, type, agentId } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -400,6 +400,9 @@ export default {
         } else {
           where.status = status
         }
+      }
+      if (agentId) {
+        where['agentId'] = agentId
       }
       let filter = {
         order: this.order,
@@ -461,6 +464,30 @@ export default {
           type: 'input'
         }
       ]
+
+      if (!this.isDaas) {
+        this.filterItems.splice(2, 0, {
+          label: i18n.t('agent_name'),
+          key: 'agentId',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: async () => {
+            let filter = {
+              where: {
+                status: { $in: ['Running'] }
+              },
+              size: 100
+            }
+            let data = await this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
+            return data.items.map(item => {
+              return {
+                label: item.name,
+                value: item.tmInfo.agentId
+              }
+            })
+          }
+        })
+      }
     },
 
     /**
