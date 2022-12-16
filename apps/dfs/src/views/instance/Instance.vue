@@ -46,29 +46,52 @@
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" :status="scope.row.status" default-status="Stopped"></StatusTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('agent_task_number')" width="120">
-          <template slot-scope="scope">
-            <ElTooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
-              <div slot="content">
-                <template v-for="(item, index) in scope.row.metric.dataFlows">
-                  <div v-if="index < 3" :key="item.id">
-                    {{ $t('task_name') }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ item.name }}
+            <!--<template
+              v-if="
+                scope.row.status === 'Running' &&
+                scope.row.tmInfo &&
+                scope.row.tmInfo.pingTime &&
+                Date.now() - scope.row.tmInfo.pingTime > 60000
+              "
+            >
+              <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+                <VIcon size="16" class="ml-2 color-warning">warning </VIcon>
+                <template #content>
+                  <div class="flex flex-wrap align-center font-color-dark">
+                    &lt;!&ndash;<VIcon size="16" class="mr-2 color-warning"> warning </VIcon>&ndash;&gt;
+                    {{
+                      $t('dfs_instance_instance_gengxin', {
+                        val: relativeTime(scope.row.tmInfo && scope.row.tmInfo.pingTime)
+                      })
+                    }}
                   </div>
                 </template>
+              </ElTooltip>
+            </template>-->
+          </template>
+        </ElTableColumn>
+        <ElTableColumn :label="$t('agent_task_number')" width="140">
+          <template slot-scope="scope">
+            <div>
+              <div class="flex align-center">
+                {{ $t('task_manage_migrate') }}：
                 <ElLink
-                  v-if="scope.row.metric.runningTaskNum > 3"
-                  class="block text-center"
                   type="primary"
+                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0) < 1"
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >{{ $t('data_see_more') }}</ElLink
+                  >{{ scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0 }}</ElLink
                 >
               </div>
-              <ElLink type="primary" class="ml-7" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
-                scope.row.metric ? scope.row.metric.runningTaskNum : 0
-              }}</ElLink>
-            </ElTooltip>
+              <div class="flex align-center">
+                {{ $t('task_manage_etl') }}：
+                <ElLink
+                  type="primary"
+                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0) < 1"
+                  @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')"
+                  >{{ scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0 }}</ElLink
+                >
+              </div>
+            </div>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_version')" width="200">
@@ -248,7 +271,13 @@
         </div>
       </ElDialog>
       <!--  详情    -->
-      <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
+      <Details
+        v-model="showDetails"
+        :detail-id="detailId"
+        :uploadAgentLog="selectedRow.uploadAgentLog"
+        @closed="detailsClosedFnc"
+        @load-data="loadDetailsData"
+      >
         <div slot="title">
           <InlineInput
             :value="selectedRow.name"
@@ -297,11 +326,13 @@
 import i18n from '@/i18n'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
-import { INSTANCE_STATUS_MAP } from '../../const'
+import { INSTANCE_STATUS_MAP, AGENT_STATUS_MAP_EN } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
+import { dayjs } from '@tap/business'
+// import OSS from 'ali-oss'
 
 let timer = null
 
@@ -345,7 +376,43 @@ export default {
       currentVersionInfo: '',
       showDetails: false,
       detailId: null,
-      filterItems: []
+      filterItems: [],
+      //日志下载
+      downloadDialog: false,
+      downloadListCol: [
+        {
+          label: i18n.t('dfs_instance_instance_wenjianming'),
+          prop: 'id'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_wenjiandaxiao'),
+          slotName: 'fileSize'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_shangchuanshijian'),
+          prop: 'createAt',
+          dataType: 'time'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_wenjianzhuangtai'),
+          slotName: 'status'
+        },
+
+        {
+          label: i18n.t('dfs_instance_instance_wenjianxiazai'),
+          slotName: 'operation'
+        }
+      ],
+      downloadList: [],
+      currentAgentId: '',
+      currentStatus: '',
+      downloadTotal: 0,
+      currentPage: 1,
+      pageSize: 10,
+      statusMaps: AGENT_STATUS_MAP_EN,
+      timer: null,
+      loadingLogTable: false,
+      loadingUpload: false
     }
   },
   computed: {
@@ -404,6 +471,9 @@ export default {
     timer = null
   },
   methods: {
+    relativeTime(time) {
+      return time ? dayjs(time).fromNow() : '-'
+    },
     init() {
       let query = this.$route.query
       let { detailId, ...searchParams } = Object.assign(this.searchParams, query)
@@ -685,9 +755,9 @@ export default {
       }
       this.fetch(1)
     },
-    toDataFlow(id) {
+    toDataFlow(id, name = 'migrateList') {
       this.$router.push({
-        name: 'migrateList',
+        name,
         query: {
           agentId: id,
           status: 'running'
@@ -1027,6 +1097,12 @@ export default {
   }
   .tooltip--notenter {
     pointer-events: none;
+  }
+  .download-dialog {
+    .el-dialog__body {
+      height: 475px;
+      padding: 0 20px 40px 20px;
+    }
   }
 }
 </style>

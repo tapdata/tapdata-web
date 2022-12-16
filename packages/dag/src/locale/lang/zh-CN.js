@@ -43,6 +43,7 @@ export default {
   packages_dag_task_setting_cdc: '增量',
   packages_dag_task_stetting_desc: '任务描述',
   packages_dag_task_setting_plan_start_date: '计划开始时间',
+  packages_dag_task_setting_crontabExpressionFlag: '定期调度任务',
   packages_dag_task_setting_cron_expression: '请输入调度表达式',
   packages_dag_task_setting_cron_tip:
     '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ?  //每分钟运行一次  0 0 2 * * ? //每天2点运行',
@@ -303,6 +304,7 @@ export default {
   packages_dag_src_editor_ziduanjisuan: '字段计算',
   packages_dag_src_editor_zhuconghebing: '主从合并',
   packages_dag_src_editor_juhe: '聚合',
+  packages_dag_src_editor_zhuijiahebing: '追加合并',
   packages_dag_src_migrationeditor_jSchuli: 'JS处理',
   packages_dag_src_migrationeditor_ziduanbianji: '字段编辑',
   packages_dag_src_migrationeditor_biaobianji: '表编辑',

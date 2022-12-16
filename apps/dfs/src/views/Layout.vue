@@ -17,11 +17,24 @@
               </ElMenuItem>
             </template>
           </ElSubmenu>
-          <ElMenuItem v-else :key="menu.title" :index="menu.path">
-            <span class="mr-4" slot v-if="menu.icon"
+          <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <span class="mr-4" v-if="menu.icon"
               ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
             >
-            <span slot="title">{{ menu.title }}</span>
+            <span class="flex-fill">
+              {{ menu.title }}
+            </span>
+            <template v-if="menu.name === 'Instance' && showAgentWarning">
+              <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+                <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                <template #content>
+                  <div class="flex flex-wrap align-center font-color-dark">
+                    <VIcon size="14" class="mr-2 color-warning"> warning </VIcon>
+                    {{ $t('agent_tip_no_running') }}
+                  </div>
+                </template>
+              </ElTooltip>
+            </template>
           </ElMenuItem>
         </template>
       </ElMenu>
@@ -29,10 +42,11 @@
     <ElContainer direction="vertical" class="layout-main position-relative">
       <PageHeader class="border-bottom"></PageHeader>
       <ElMain class="main">
-        <RouterView></RouterView>
+        <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
     </ElContainer>
     <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
+    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
   </ElContainer>
@@ -45,16 +59,19 @@ import { PageHeader } from '@tap/business'
 
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
+import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
 import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
+  inject: ['checkAgent'],
   components: {
     TheHeader,
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
+    AgentGuideDialog,
     BindPhone,
     PageHeader
   },
@@ -100,11 +117,14 @@ export default {
         visible: false,
         data: {}
       },
-      bindPhoneVisible: false
+      bindPhoneVisible: false,
+      agentGuideDialog: false,
+      showAgentWarning: false
     }
   },
   created() {
     this.loadChat()
+    this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
@@ -132,12 +152,20 @@ export default {
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
   },
+  beforeDestroy() {
+    clearTimeout(this.loopLoadAgentCountTimer)
+  },
   watch: {
     $route(route) {
       this.activeMenu = route.path
     }
   },
   methods: {
+    //监听agent引导页面
+    openAgentDownload() {
+      this.agentGuideDialog = false
+      this.agentDownload.visible = true
+    },
     createConnection(item) {
       this.dialogVisible = false
       buried('connectionCreate')
@@ -172,7 +200,7 @@ export default {
       if (this.checkWechatPhone()) {
         return
       }
-      this.checkAgent()
+      this.checkAgentInstall()
     },
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
@@ -181,10 +209,10 @@ export default {
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
-    checkAgent() {
+    checkAgentInstall() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
-          this.agentDownload.visible = true
+          this.agentGuideDialog = true
           this.agentDownload.data = data
         }
       })
@@ -225,6 +253,23 @@ export default {
       let t = d.getElementsByTagName('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
+    },
+
+    onAgentNoRunning(flag) {
+      this.showAgentWarning = flag
+    },
+
+    loopLoadAgentCount() {
+      this.$axios
+        .get('api/tcm/agent/agentCount')
+        .then(data => {
+          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
+        })
+        .finally(() => {
+          this.loopLoadAgentCountTimer = setTimeout(() => {
+            this.loopLoadAgentCount()
+          }, 10000)
+        })
     }
   }
 }
@@ -303,6 +348,10 @@ export default {
     width: 24px;
     height: 24px;
     font-size: 12px;
+  }
+
+  .el-menu-item.is-active .agent-warning-icon {
+    display: none;
   }
 }
 </style>

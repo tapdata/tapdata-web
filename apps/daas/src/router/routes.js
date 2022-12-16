@@ -1,4 +1,5 @@
 import Parent from './Parent'
+
 const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
 const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
 const DagEditor = async () => {
@@ -58,6 +59,32 @@ const VerifyDetails = async () => {
 const RelationTaskDetails = async () => {
   const { RelationTaskDetails } = await import('@tap/business')
   return RelationTaskDetails
+}
+
+// 数据校验
+const VerificationList = async () => {
+  const { VerificationList } = await import('@tap/business')
+  return VerificationList
+}
+
+const VerificationDetails = async () => {
+  const { VerificationDetails } = await import('@tap/business')
+  return VerificationDetails
+}
+
+const VerificationForm = async () => {
+  const { VerificationForm } = await import('@tap/business')
+  return VerificationForm
+}
+
+const VerificationHistory = async () => {
+  const { VerificationHistory } = await import('@tap/business')
+  return VerificationHistory
+}
+
+const VerificationResult = async () => {
+  const { VerificationResult } = await import('@tap/business')
+  return VerificationResult
 }
 
 export default [
@@ -396,6 +423,100 @@ export default [
               isNotAside: true
             }
           }
+        ]
+      },
+      /* ---------- 数据校验1.x  ----------*/
+      {
+        path: '/dataVerification',
+        name: 'dataVerification',
+        component: Parent,
+        redirect: 'dataVerification/',
+        meta: {
+          title: 'page_title_data_verify'
+        },
+        children: [
+          {
+            path: '',
+            name: 'dataVerificationList',
+            component: VerificationList,
+            meta: {
+              title: 'page_title_data_verify',
+              code: 'Data_verify_menu'
+            }
+          },
+          {
+            path: 'create',
+            name: 'dataVerificationCreate',
+            component: VerificationForm,
+            meta: {
+              title: 'page_title_verification_create',
+              code: 'verify_job_creation'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'dataVerificationEdit',
+            component: VerificationForm,
+            meta: {
+              title: 'page_title_task_edit',
+              code: 'verify_job_edition'
+            }
+          },
+          {
+            path: ':id/details',
+            name: 'dataVerifyDetails',
+            component: VerificationDetails,
+            meta: {
+              title: 'page_title_task_details',
+              code: 'Data_verify'
+            }
+          },
+          {
+            path: ':id/history',
+            name: 'dataVerifyHistory',
+            component: VerificationHistory,
+            meta: {
+              title: 'page_title_verification_history',
+              code: 'Data_verify'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id/history',
+            name: 'VerifyDiffHistory',
+            component: VerificationHistory,
+            meta: {
+              title: 'page_title_diff_verification_history',
+              code: 'Data_verify'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id/details',
+            name: 'VerifyDiffDetails',
+            component: VerificationResult,
+            meta: {
+              title: 'page_title_diff_verification_details',
+              code: 'Data_verify'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id',
+            name: 'dataVerifyResult',
+            component: VerificationResult,
+            meta: {
+              title: 'page_title_data_verification_result',
+              code: 'Data_verify'
+            }
+          }
+          // {
+          //   path: ':id/verifyDetails',
+          //   name: 'VerifyDetails',
+          //   component: VerificationDetails,
+          //   meta: {
+          //     title: 'page_title_data_verify_details',
+          //     code: 'Data_verify',
+          //     isNotAside: true
+          //   }
+          // }
         ]
       },
       /* ---------- 共享挖掘  ----------*/

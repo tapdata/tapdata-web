@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { connect, mapProps, useForm } from '@formily/vue'
+import { connect, mapProps, useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from '@vue/composition-api'
 import { VIcon } from '@tap/component'

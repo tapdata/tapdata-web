@@ -44,6 +44,7 @@ export default {
   packages_dag_task_setting_cdc: 'Incremental synchronization',
   packages_dag_task_stetting_desc: 'Task description',
   packages_dag_task_setting_plan_start_date: 'Plan start date',
+  packages_dag_task_setting_crontabExpressionFlag: 'Scheduled tasks',
   packages_dag_task_setting_cron_expression: 'Please enter the scheduling expression',
   packages_dag_task_setting_cron_tip:
     'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year * ; Example: 0 */1 * * * ?  // Run every minute 0 0 2 * * ?  // Run at 2 every day',
@@ -311,6 +312,7 @@ export default {
   packages_dag_src_editor_ziduanjisuan: 'Field calculation',
   packages_dag_src_editor_zhuconghebing: 'Master-slave merge',
   packages_dag_src_editor_juhe: 'Aggregate',
+  packages_dag_src_editor_zhuijiahebing: 'Union',
   packages_dag_src_migrationeditor_jSchuli: 'JS processing',
   packages_dag_src_migrationeditor_ziduanbianji: 'Field Edit',
   packages_dag_src_migrationeditor_biaobianji: 'Table editor',

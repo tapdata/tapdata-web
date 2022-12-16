@@ -23,7 +23,6 @@ export default observer({
 
   data() {
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
-    this.getAllNode()
     let values = this.settings
     values.isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
@@ -142,7 +141,7 @@ export default observer({
                       },
                       crontabExpressionFlag: {
                         //调度表达式
-                        title: '重复策略', //定期调度任务
+                        title: this.$t('packages_dag_task_setting_crontabExpressionFlag'), //定期调度任务
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
@@ -157,8 +156,6 @@ export default observer({
                         }
                       },
                       crontabExpression: {
-                        //调度表达式
-                        title: '重复策略', //定期调度任务
                         type: 'string',
                         required: 'true',
                         'x-validator': {
@@ -202,12 +199,29 @@ export default observer({
                         items: {
                           type: 'object',
                           properties: {
+                            nodeName: {
+                              type: 'string',
+                              'x-component': 'PreviewText.Input',
+                              'x-reactions': {
+                                dependencies: ['.connectionName'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component-props.content': `{{$deps[0] + '('+ $self.value + ')'}}`
+                                  }
+                                }
+                              }
+                            },
+                            connectionName: {
+                              'x-display': 'hidden',
+                              type: 'string',
+                              'x-component': 'PreviewText.Input'
+                            },
                             pointType: {
                               type: 'string',
+                              'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze'),
-                                style: 'margin-bottom:10px'
+                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze')
                               },
                               default: 'current',
                               enum: [
@@ -228,6 +242,7 @@ export default observer({
                             dateTime: {
                               type: 'string',
                               required: 'true',
+                              'x-decorator': 'FormItem',
                               'x-component': 'DatePicker',
                               'x-component-props': {
                                 type: 'datetime',
@@ -461,6 +476,28 @@ export default observer({
     accessNodeProcessList() {
       if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
       return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
+    },
+
+    sourceNodes() {
+      return this.allNodes
+        .filter(node => node.$outputs.length && !node.$inputs.length)
+        .map(node => ({
+          nodeId: node.id,
+          nodeName: node.name,
+          connectionId: node.connectionId,
+          connectionName: node.attrs.connectionName
+        }))
+    },
+
+    systemTimeZone() {
+      let timeZone = new Date().getTimezoneOffset() / 60
+      let systemTimeZone = ''
+      if (timeZone > 0) {
+        systemTimeZone = 0 - timeZone
+      } else {
+        systemTimeZone = '+' + -timeZone
+      }
+      return systemTimeZone
     }
   },
 
@@ -493,6 +530,34 @@ export default observer({
         })
       },
       immediate: true
+    },
+
+    sourceNodes(v) {
+      const timeZone = this.systemTimeZone
+      const oldPoints = this.settings.syncPoints
+      const oldPointsMap = oldPoints?.length
+        ? oldPoints.reduce((map, point) => {
+            if (point.nodeId) map[point.nodeId] = point
+            return map
+          }, {})
+        : {}
+      const syncPoints = this.sourceNodes.map(item => {
+        const old = oldPointsMap[item.nodeId]
+        const point = {
+          ...item,
+          timeZone,
+          pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+          dateTime: ''
+        }
+        if (old) {
+          Object.assign(point, {
+            pointType: old.pointType,
+            dateTime: old.dateTime
+          })
+        }
+        return point
+      })
+      this.settings.syncPoints = syncPoints
     }
   },
 

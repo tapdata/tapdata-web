@@ -89,6 +89,7 @@ export default {
       'setStateReadonly',
       'setEdges',
       'setTaskId',
+      'setTaskInfo',
       'addResourceIns',
       'updateNodeProperties',
       'setActiveNode',
@@ -1810,6 +1811,7 @@ export default {
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
+        this.setTaskInfo(this.dataflow)
         this.startLoopTask(id)
         this.titleSet()
         return data

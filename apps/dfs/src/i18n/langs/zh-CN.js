@@ -279,6 +279,7 @@ export default {
   agent_upgrade_step_docker_second:
     '2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
   agent_upgrade_step_docker_third: '3.出现“Update finished.”则代表Agent升级成功',
+  agent_tip_no_running: '无可用 Agent， 请检查 Agent 运行状态或者创建一个新的 Agent',
   // 连接
   connection_manage: '连接管理',
   connection_list_efficient: '有效',
@@ -1116,5 +1117,52 @@ export default {
   dfs_instance_instance_banbenhao: '版本号: ',
   dfs_instance_instance_agent: 'Agent更新',
 
-  dfs_user_center_phone_error: '该手机号码已被其他用户注册过'
+  dfs_user_center_phone_error: '该手机号码已被其他用户注册过',
+  packages_business_task_status_agent_tooltip_agent: '任务所在的Agent为',
+  dfs_agent_download_agentguidedialog_qingdianjibushu: '请选择网络安全策略',
+  dfs_agent_download_agentguidedialog_ruhurucang: '实时数仓供数',
+  dfs_agent_download_agentguidedialog_shujutongbu: '实时数据库同步',
+  dfs_agent_download_agentguidedialog_tapda: 'Tapdata可以满足异构数据库实时同步、数据入湖入仓、云中数据ETL等多类场景',
+  dfs_agent_download_agentguidedialog_tiyan: '体验',
+  dfs_agent_download_agentguidedialog_tiyanDem: '体验Demo(无需安装）',
+  dfs_agent_download_agentguidedialog_anzhuang: '安装',
+  dfs_agent_download_agentguidedialog_ninxuyaogenju:
+    '您需要根据引导的操作，将Tapdata的数据计算引擎Agent安装可以访问您数据的机器上。',
+  dfs_agent_download_agentguidedialog_zizhuanzhuang: '自助安装',
+  dfs_agent_download_agentguidedialog_lijiquanzhuang: '基于您的场景，您可以选择以下部署模式',
+  dfs_agent_download_agentguidedialog_xiayibu: '下一步',
+  dfs_agent_download_agentguidedialog_womendeshuju: '我们的数据源和目标 可以被外网服务访问',
+  dfs_agent_download_agentguidedialog_neiwang: '我们公司的安全策略 不允许这么做',
+  dfs_agent_download_agentguidedialog_ninyaotongbude:
+    '您要同步的数据源/目标库是否能够给外网开放端口？（通过防火增、SSH Tunnel、VPN或其他方式）',
+  dfs_agent_download_agentguidedialog_dianjixiafangde: '根据您的数据源的外网访问策略，我们会为您推荐最合适的部署模式。',
+  dfs_agent_download_agentguidedialog_huanyingshiyongT: '欢迎使用Tapdata',
+  dfs_agent_download_agentguidedialog_mimatap: '密码：tapdata',
+  dfs_agent_download_agentguidedialog_yonghumingde: '用户名：demo@tapdata.io',
+  dfs_agent_download_agentguidedialog_buxianganzhuanghuo:
+    '不想安装或部署？可以先体验下我们的 DEMO 系统了解 Tapdata 的强大功能',
+  dfs_agent_download_agentguidedialog_jijiangshangxian: '即将上线',
+  dfs_agent_download_agentguidedialog_shiyongTap:
+    '使用 Tapdata 提供的计算能力，只需选择合适的区域和规格进行部署，无需安装任何程序。',
+  dfs_agent_download_agentguidedialog_quantuoguanyunmo: '全托管云模式 – 直接云中部署',
+  dfs_agent_download_agentguidedialog_huoquwanzhengshi: '获取完整试用版',
+  dfs_agent_download_agentguidedialog_zainindeshuju:
+    '在您的数据中心或 云服务器上安装全套软件， 由您完全掌控。注意这个选项不是云服务。',
+  dfs_agent_download_agentguidedialog_xianxiamoshizi: '线下模式 – 自主安装全套软件',
+  dfs_agent_download_agentguidedialog_ninkeyigenzhe:
+    '您可以跟着引导流程，在您的服务器或者VPC内安装 Tapdata Agent，用来进行数据同步及处理',
+  dfs_agent_download_agentguidedialog_bantuoguanyunmo: '半托管云模式 – 仅需安装 Agent',
+  dfs_instance_instance_shanchuchenggong: '删除成功',
+  dfs_instance_instance_wenjianxiazai: '文件下载',
+  dfs_instance_instance_wenjianzhuangtai: '文件状态',
+  dfs_instance_instance_shangchuanshijian: '上传时间',
+  dfs_instance_instance_wenjiandaxiao: '文件大小',
+  dfs_instance_instance_wenjianming: '文件名',
+  dfs_instance_instance_xiazai: '下载',
+  dfs_instance_instance_rizhishangchuan: '本地日志上传',
+  dfs_instance_instance_bendirizhixia: '本地日志下载',
+  dfs_instance_instance_status_success: '上传成功',
+  dfs_instance_instance_status_false: '上传失败',
+  dfs_instance_details_shangchuanzhong: '上传中',
+  dfs_instance_instance_gengxin: '{val}更新'
 }
