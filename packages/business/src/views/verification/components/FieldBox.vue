@@ -131,10 +131,16 @@ export default {
 
   watch: {
     sourceSelect(v1, v2) {
-      v1 !== v2 && this.init()
+      if (v1 !== v2) {
+        this.handleFieldList([], this.item)
+        this.init()
+      }
     },
     targetSelect(v1, v2) {
-      v1 !== v2 && this.init()
+      if (v1 !== v2) {
+        this.handleFieldList([], this.item)
+        this.init()
+      }
     }
   },
 
@@ -152,7 +158,12 @@ export default {
   },
 
   methods: {
-    init() {
+    async init() {
+      await this.loadFieldsList()
+      this.item.modeType === 'custom' && this.loadList()
+    },
+
+    loadFieldsList() {
       this.getFieldListOptions()?.sourceNodeId ? this.loadFieldsInNode() : this.loadFields()
     },
 
@@ -198,19 +209,29 @@ export default {
       return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
     },
 
-    handleFieldList(data, item) {
-      item.source.columns = data.map(t => t.source)
-      item.target.columns = data.map(t => t.target)
+    handleFieldList(data) {
+      this.$emit('change', data)
     },
 
     loadList() {
       const { source, target } = this.getFieldListData()
+
+      if (source?.length) {
+        let list = []
+        source.forEach((el, i) => {
+          list.push({
+            source: el,
+            target: target[i]
+          })
+        })
+        this.list = list.filter(t => t.source || t.target)
+        return
+      }
+
       const sourceFields = this.sourceFields.map(t => t.field_name)
       const targetFields = this.targetFields.map(t => t.field_name)
-
-      const loadData = !!source?.length
-      let sourceList = loadData ? cloneDeep(source) : cloneDeep(sourceFields)
-      let targetList = (loadData ? cloneDeep(target) : cloneDeep(targetFields)).map(t => {
+      let sourceList = cloneDeep(sourceFields)
+      let targetList = cloneDeep(targetFields).map(t => {
         return {
           name: t,
           used: false
@@ -231,7 +252,7 @@ export default {
       })
 
       targetList
-        .filter(t => !t.used)
+        .filter(t => t.name && !t.used)
         .forEach(el => {
           list.push({
             source: '',
@@ -308,7 +329,6 @@ export default {
         })
       }
 
-      this.loadList()
       this.loading = false
     },
 
@@ -350,7 +370,6 @@ export default {
         })
       }
 
-      this.loadList()
       this.loading = false
     },
 
@@ -370,7 +389,7 @@ export default {
     },
 
     handleChangeModeType(val) {
-      if (val === 'custom') this.handleFocus()
+      if (val === 'custom') this.init()
     },
 
     handleFocus() {

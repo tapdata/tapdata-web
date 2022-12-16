@@ -118,6 +118,7 @@
             :item="item"
             :index="index"
             :dynamicSchemaMap="dynamicSchemaMap"
+            @change="handleChangeFieldBox(arguments[0], item)"
           ></FieldBox>
           <div class="setting-item mt-4">
             <ElCheckbox
@@ -766,6 +767,11 @@ export default {
       return (...args) => {
         handle(item, ...args)
       }
+    },
+
+    handleChangeFieldBox(data, item) {
+      item.source.columns = data.map(t => t.source)
+      item.target.columns = data.map(t => t.target)
     }
   }
 }
