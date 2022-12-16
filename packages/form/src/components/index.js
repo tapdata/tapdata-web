@@ -15,5 +15,6 @@ export * from './text'
 export * from './tag'
 export * from './highlight-code'
 export * from './Button'
+export * from './InputNumber'
 
 export * from '@formily/element'

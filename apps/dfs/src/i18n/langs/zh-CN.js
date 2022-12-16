@@ -279,6 +279,7 @@ export default {
   agent_upgrade_step_docker_second:
     '2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
   agent_upgrade_step_docker_third: '3.出现“Update finished.”则代表Agent升级成功',
+  agent_tip_no_running: '无可用 Agent， 请检查 Agent 运行状态或者创建一个新的 Agent',
   // 连接
   connection_manage: '连接管理',
   connection_list_efficient: '有效',
@@ -1155,8 +1156,10 @@ export default {
   dfs_instance_instance_wenjiandaxiao: '文件大小',
   dfs_instance_instance_wenjianming: '文件名',
   dfs_instance_instance_xiazai: '下载',
-  dfs_instance_instance_rizhishangchuan: '日志上传',
+  dfs_instance_instance_rizhishangchuan: '本地日志上传',
   dfs_instance_instance_bendirizhixia: '本地日志下载',
-  dfs_instance_instance_rizhi: '日志',
+  dfs_instance_instance_status_success: '上传成功',
+  dfs_instance_instance_status_false: '上传失败',
+  dfs_instance_details_shangchuanzhong: '上传中',
   dfs_instance_instance_gengxin: '{val}更新'
 }

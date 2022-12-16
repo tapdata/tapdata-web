@@ -26,7 +26,7 @@
             </span>
             <template v-if="menu.name === 'Instance' && showAgentWarning">
               <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                <VIcon size="14" class="color-warning">warning </VIcon>
+                <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
                 <template #content>
                   <div class="flex flex-wrap align-center font-color-dark">
                     <VIcon size="14" class="mr-2 color-warning"> warning </VIcon>
@@ -268,7 +268,7 @@ export default {
         .finally(() => {
           this.loopLoadAgentCountTimer = setTimeout(() => {
             this.loopLoadAgentCount()
-          }, 3000)
+          }, 10000)
         })
     }
   }
@@ -347,6 +347,10 @@ export default {
     width: 24px;
     height: 24px;
     font-size: 12px;
+  }
+
+  .el-menu-item.is-active .agent-warning-icon {
+    display: none;
   }
 }
 </style>
