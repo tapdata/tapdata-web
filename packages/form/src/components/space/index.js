@@ -14,7 +14,7 @@ const spaceSize = {
 export const Space = defineComponent({
   name: 'FSpace',
   props: ['size', 'direction', 'align', 'split', 'filterIndex', 'colSpan', 'inline'],
-  setup(props, { slots }) {
+  setup(props, { attrs, slots }) {
     const layout = useFormLayout()
 
     return () => {
@@ -67,16 +67,8 @@ export const Space = defineComponent({
       }
 
       const itemClassName = `${prefixCls}-item`
-      const marginDirection = 'marginRight' // directionConfig === 'rtl' ? 'marginLeft' : 'marginRight';
 
       const renderItems = items.map((child, i) => {
-        const style =
-          i === len - 1
-            ? {}
-            : {
-                [direction === 'vertical' ? 'marginBottom' : marginDirection]:
-                  typeof size === 'string' ? `${spaceSize[size] / (split ? 2 : 1)}px` : `${size / (split ? 2 : 1)}px`
-              }
         return [
           h(
             'div',
@@ -84,7 +76,6 @@ export const Space = defineComponent({
               class: itemClassName,
               key: `${itemClassName}-${i}`,
               style: {
-                ...style,
                 flex: colSpan[i]
               }
             },
@@ -96,8 +87,7 @@ export const Space = defineComponent({
               'span',
               {
                 class: `${itemClassName}-split`,
-                key: `${itemClassName}-split-${i}`,
-                style
+                key: `${itemClassName}-split-${i}`
               },
               {
                 default: () => [
@@ -116,7 +106,18 @@ export const Space = defineComponent({
         ]
       })
 
-      return h('div', { class: someSpaceClass }, { default: () => renderItems })
+      return h(
+        'div',
+        {
+          ...attrs,
+          class: { ...attrs.class, ...someSpaceClass },
+          style: {
+            ...attrs.style,
+            gap: typeof size === 'string' ? `${spaceSize[size]}px` : `${size}px`
+          }
+        },
+        { default: () => renderItems }
+      )
     }
   }
 })

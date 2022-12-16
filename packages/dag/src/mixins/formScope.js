@@ -361,7 +361,8 @@ export default {
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
-              isPrimaryKey: item.primary_key_position > 0
+              isPrimaryKey: item.primary_key_position > 0,
+              type: item.data_type
             }))
             .filter(item => !item.is_deleted)
         },

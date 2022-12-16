@@ -70,6 +70,7 @@ export const JsEditor = connect(
         if (this.handleAddCompleter && typeof this.handleAddCompleter === 'function') {
           this.handleAddCompleter(editor, tools)
         }
+        this.$emit('init', editor)
       },
 
       // 防止写代码时，不小心返回或者关闭页面
@@ -83,10 +84,6 @@ export const JsEditor = connect(
 
       unbindEvent() {
         window.removeEventListener('beforeunload', this.handleBeforeunload)
-      },
-
-      resize() {
-        this.$refs.jsEditor.editor.resize(true)
       }
     },
 
@@ -142,6 +139,7 @@ export const JsEditor = connect(
         </div>
       ) : (
         <_JsEditor
+          ref="jsEditor"
           class="border rounded-2 py-0"
           style={{
             background: '#fff'

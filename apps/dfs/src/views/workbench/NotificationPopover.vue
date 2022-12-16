@@ -93,8 +93,10 @@ export default {
         this.$ws.on(
           'notification',
           debounce(res => {
-            this.getUnReadNum()
             let data = res?.data
+            if (data?.msg !== 'alarm') {
+              this.getUnReadNum()
+            }
             if (data) {
               data.createTime = this.formatTime(data.createTime)
               this.listData = uniqueArr([data, ...this.listData])
