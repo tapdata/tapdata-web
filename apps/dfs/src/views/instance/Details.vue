@@ -42,12 +42,12 @@
           :loading="loadingDetailUpload"
           @click="handleUpload(agent.id, true)"
         >
-          <span v-if="uploadAgentLog && uploadAgentLog.status !== 0">
-            {{ btnDetailsTxt }}
-          </span>
           <span v-if="uploadAgentLog && uploadAgentLog.uploadRatio !== 100 && uploadAgentLog.status === 0">
-            {{ $t('dfs_instance_details_shangchuanzhong') }}
+            {{ $t('dfs_instance_instance_rizhishangchuan') }}
             <span> ({{ uploadAgentLog.uploadRatio }}）%</span>
+          </span>
+          <span v-else>
+            {{ btnDetailsTxt }}
           </span>
         </ElButton>
         <ElButton size="mini" @click="open(agent.id, agent.status)">{{
@@ -338,6 +338,8 @@ export default {
           } else {
             this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
             this.loadingUpload = false
+            //主動刷新列表
+            this.getDownloadList()
           }
         })
         .finally(() => {
@@ -393,6 +395,8 @@ export default {
     handleDeleteUploadLog(row) {
       this.$axios.post('api/tcm/deleteUploadLog', { agentId: this.currentAgentId, id: row.id }).then(() => {
         this.$message.success(i18n.t('dfs_instance_instance_shanchuchenggong'))
+        //主動刷新列表
+        this.getDownloadList()
       })
     },
     //日志下载
