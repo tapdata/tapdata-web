@@ -16,7 +16,7 @@ export const Table = {
     maxTransactionDuration: '事务最大时长(小时)',
     existDataProcessMode: {
       title: '已有数据处理',
-      dataSource: ['保持已存在的数据', '运行前删除已存在的数据', '运行前删除表结构']
+      dataSource: ['保持目标端原有表结构和数据', '清除目标端原有表结构及数据', '保持目标端原有表结构，清除数据']
     },
     writeStrategy: {
       title: '数据写入模式',
@@ -72,7 +72,7 @@ export const Table = {
     maxTransactionDuration: 'Max Transaction Duration (h)',
     existDataProcessMode: {
       title: 'Exist Data Process Mode',
-      dataSource: ['Keep Data', 'Remove Data', 'Drop Table']
+      dataSource: ['Keep Data', 'Drop Table', 'Remove Data']
     },
     writeStrategy: {
       title: 'Write Strategy',

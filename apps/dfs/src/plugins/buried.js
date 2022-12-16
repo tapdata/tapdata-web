@@ -81,6 +81,13 @@ export const startTimeOnPage = router => {
       setPageTitle(i18n.t(to.meta.title))
     }
 
+    // 隐藏客服控件
+    if (to.path.split('/').length < 3 || to.matched[0].path === '') {
+      document.body.classList.remove('hide-chart')
+    } else {
+      document.body.classList.add('hide-chart')
+    }
+
     next()
   })
   setInterval(() => {
