@@ -1,10 +1,9 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <ElButton type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()">
-      <VIcon v-if="!isExpand" size="16" class="icon">expand-list</VIcon>
-      <VIcon v-if="isExpand" size="16" class="icon">expand-list</VIcon>
+    <ElButton type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
+      <VIcon size="16" class="icon">expand-list</VIcon>
     </ElButton>
-    <div class="classification-header" v-if="isExpand">
+    <div class="classification-header" v-else>
       <ElButton type="text" class="btn-expand" size="mini" @click="toggle()">
         <VIcon size="16" class="icon">expand-list</VIcon>
       </ElButton>

@@ -67,7 +67,10 @@
               <div class="color-primary text-center fs-1">
                 {{ item.value }}
               </div>
-              <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
+              <div
+                class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1"
+                v-if="item.list.length > 0"
+              >
                 <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
                   <span>{{ detail.label }}</span>
                   <span>:</span>
@@ -234,10 +237,10 @@ export default {
           icon: 'task',
           value: 0,
           list: [
-            {
-              label: $t('workbench_overview_task_status'),
-              value: 0
-            }
+            // {
+            //   label: $t('workbench_overview_task_status'),
+            //   value: 0
+            // }
           ]
         }
       ], // 介绍列表
