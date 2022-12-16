@@ -624,7 +624,9 @@ export class Table extends NodeType {
                         fulfill: {
                           run: `
                             if (!$self.value && $self.dataSource && $self.dataSource.length) {
-                              $self.setValue($self.dataSource.filter(item => item.isPrimaryKey).map(item => item.value))
+                              let isPrimaryKeyList = $self.dataSource.filter(item => item.isPrimaryKey)
+                              let indicesUniqueList = $self.dataSource.filter(item => item.indicesUnique)
+                              $self.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
                               $self.validate()
                             }
                           `
