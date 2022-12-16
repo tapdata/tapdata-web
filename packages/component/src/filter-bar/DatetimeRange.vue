@@ -201,7 +201,7 @@ export default {
 .filter-datetime-range {
   padding: 0 8px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: $fontBaseTitle;
   &:hover {
     background-color: #eff1f4;
     border-radius: 2px;

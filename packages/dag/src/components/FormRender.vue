@@ -109,7 +109,7 @@ $headerBg: #fff;
 
     // 覆盖数字输入框的宽度
     .formily-element-form-item {
-      font-size: 13px;
+      font-size: $fontBaseTitle;
       &-label {
         label {
           color: map-get($fontColor, light);

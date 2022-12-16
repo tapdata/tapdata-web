@@ -265,6 +265,8 @@ export default {
   connection_form_creat_connection: '創建連接',
   connection_form_mq_broker_url: 'MQ連接串',
   task_manage: '任務管理',
+  task_manage_desc: '表到表数据复制和迁移',
+  task_manage_migrate_desc: '数据库到数据库的复制',
   task_manage_etl: '數據開發',
   task_manage_migrate: '數據複製',
   task_name: '任務名稱',
@@ -1057,6 +1059,7 @@ export default {
   dfs_agent_download_upgradeversion_denglualiyun: '1. 登錄阿里雲計算巢控制台，找到部署Agent的服務實例.',
 
   dfs_the_header_header_jichuban: '基礎版',
+  dfs_the_header_header_biaozhun: '標準版',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: '請選擇聯繫人手機號碼',
   dfs_agent_download_paidupgrade_qingshurulianxi: '請輸入聯繫人姓名',
   dfs_agent_download_paidupgrade_fanhuikongzhitai: '返回控制台',

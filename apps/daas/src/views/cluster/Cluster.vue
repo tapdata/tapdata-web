@@ -1,5 +1,9 @@
 <template>
-  <section class="clusterManagement-container">
+  <section class="clusterManagement-container isCardBox">
+    <!--api 集群管理 -->
+    <el-row :gutter="40" class="section-header py-6">
+      <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+    </el-row>
     <div class="section-wrap-box">
       <div class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
@@ -14,7 +18,7 @@
                     <img class="mr-4" src="../../assets/images/serve.svg" />
                     <i class="circular mr-2 mt-2" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
                     <div class="list-box-header-main">
-                      <h2 class="name fs-7">
+                      <h2 class="name fs-6">
                         {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
                       </h2>
                       <div class="uuid fs-8 my-1">{{ item.systemInfo.uuid }}</div>
@@ -639,6 +643,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .clusterManagement-container {
+  height: 100%;
+  background-color: #eff1f4;
   .header {
     padding: 15px 20px;
     background: map-get($bgColor, white);
@@ -778,7 +784,7 @@ export default {
               font-size: 12px;
               background-color: map-get($bgColor, normal);
               .txt {
-                font-size: 12px;
+                font-size: $fontBaseTitle;
                 color: map-get($fontColor, light);
               }
             }
@@ -794,7 +800,7 @@ export default {
               .txt {
                 display: inline-block;
                 width: 120px;
-                font-size: 12px;
+                font-size: $fontBaseTitle;
                 color: map-get($fontColor, dark);
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -803,7 +809,7 @@ export default {
                 }
               }
               .status {
-                padding: 3px 10px;
+                padding: 5px 10px;
                 font-weight: 500;
                 border-radius: 2px;
               }

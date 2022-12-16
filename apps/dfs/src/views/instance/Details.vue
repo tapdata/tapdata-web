@@ -17,7 +17,7 @@
         </div>
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
-          <div><StatusTag type="text" :status="agent.status"></StatusTag></div>
+          <div><StatusTag type="text" :status="agent.status" default-status="Stopped"></StatusTag></div>
         </div>
       </div>
       <div class="button-line container-item border-item pt-4 pb-5">
@@ -124,7 +124,7 @@
 
 <script>
 import { VIcon, VTable } from '@tap/component'
-import { StatusTag } from '@tap/business'
+import StatusTag from '../../components/StatusTag'
 import timeFunction from '@/mixins/timeFunction'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 import i18n from '@/i18n'
@@ -174,7 +174,7 @@ export default {
               key: 'version'
             },
             {
-              label: $t('agent_key') + $t('agent_create_time'),
+              label: $t('agent_create_time'),
               key: 'createAt'
             }
           ]

@@ -115,7 +115,7 @@ export default {
       createFormConfig: {
         form: {
           labelPosition: 'left',
-          labelWidth: '140px'
+          labelWidth: '180px'
         },
         items: [
           {
