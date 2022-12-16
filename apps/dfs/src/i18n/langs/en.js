@@ -281,6 +281,7 @@ export default {
     '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
   agent_upgrade_step_docker_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
+  agent_tip_no_running: 'No agent available, Check the Agent running status or create a new Agent',
   connection_manage: 'Connection',
   connection_list_efficient: 'effective',
   connection_list_invalidation: 'Invalid',
@@ -1237,8 +1238,10 @@ export default {
   dfs_instance_instance_wenjiandaxiao: 'File size',
   dfs_instance_instance_wenjianming: 'File name',
   dfs_instance_instance_xiazai: 'Download',
-  dfs_instance_instance_rizhishangchuan: 'Log upload',
+  dfs_instance_instance_rizhishangchuan: 'Local log upload',
   dfs_instance_instance_bendirizhixia: 'Local log download',
-  dfs_instance_instance_rizhi: 'Log',
+  dfs_instance_details_shangchuanzhong: 'uploading',
+  dfs_instance_instance_status_success: 'upload successful',
+  dfs_instance_instance_status_false: 'Upload failed',
   dfs_instance_instance_gengxin: 'Updated {val}'
 }
