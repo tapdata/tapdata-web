@@ -205,6 +205,8 @@
           :task-id="form.flowId"
           :inspectMethod="form.inspectMethod"
           :data="form.tasks"
+          :flowStages="flowStages"
+          :isDB="isDbClone"
           @addScript="addScript"
         ></ConditionBox>
       </div>
@@ -329,7 +331,7 @@ export default {
       sourceTree: [],
       targetTree: [],
       stageMap: {},
-      flowStages: null,
+      flowStages: [],
       flowOptions: null,
       dialogAddScriptVisible: false,
       formIndex: '',
@@ -419,10 +421,34 @@ export default {
       taskApi
         .getId(this.form.flowId)
         .then(data => {
-          let flowData = data
-          this.flowStages = []
-          this.isDbClone = flowData.syncType === 'migrate'
-          this.dealData(flowData, this.getTaskTree, this.isDbClone)
+          this.isDbClone = data.syncType === 'migrate'
+          // this.dealData(flowData, this.getTaskTree, this.isDbClone)
+          let types = data.syncType === 'migrate' ? ['database'] : ['table']
+          let edges = data.dag?.edges || []
+          let nodes = data.dag?.nodes || []
+          if (!edges.length) {
+            return { items: [], total: 0 }
+          }
+          let stages = []
+          nodes.forEach(n => {
+            let outputLanes = []
+            let inputLanes = []
+            edges.forEach(e => {
+              if (e.source === n.id) {
+                outputLanes.push(e.target)
+              }
+              if (e.target === n.id) {
+                inputLanes.push(e.source)
+              }
+            })
+            stages.push(
+              Object.assign({}, n, {
+                outputLanes,
+                inputLanes
+              })
+            )
+          })
+          this.flowStages = stages.filter(stg => types.includes(stg.type))
         })
         .finally(() => {
           this.loading = false

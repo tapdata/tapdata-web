@@ -182,8 +182,13 @@ export default {
 
   props: {
     taskId: String,
+    isDB: Boolean,
     inspectMethod: String,
     data: {
+      type: Array,
+      default: () => []
+    },
+    flowStages: {
       type: Array,
       default: () => []
     }
@@ -191,8 +196,6 @@ export default {
 
   data() {
     return {
-      taskData: {},
-      flowStages: [],
       list: [],
       editId: '',
       jointErrorMessage: '',
@@ -322,38 +325,6 @@ export default {
     },
 
     async getConnectionsInTask(filter = {}) {
-      if (this.taskData?.id !== this.taskId) {
-        this.taskData = await taskApi.getId(this.taskId)
-        this.isDB = this.taskData.syncType === 'migrate'
-      }
-      const { taskData, isDB } = this
-      let types = isDB ? ['database'] : ['table']
-      let edges = taskData.dag?.edges || []
-      let nodes = taskData.dag?.nodes || []
-      if (!edges.length) {
-        this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
-        return { items: [], total: 0 }
-      }
-      let stages = []
-      nodes.forEach(n => {
-        let outputLanes = []
-        let inputLanes = []
-        edges.forEach(e => {
-          if (e.source === n.id) {
-            outputLanes.push(e.target)
-          }
-          if (e.target === n.id) {
-            inputLanes.push(e.source)
-          }
-        })
-        stages.push(
-          Object.assign({}, n, {
-            outputLanes,
-            inputLanes
-          })
-        )
-      })
-      this.flowStages = stages.filter(stg => types.includes(stg.type))
       const keyword = filter.where?.name?.like
       let arr
       if (keyword) {
@@ -385,7 +356,7 @@ export default {
     },
 
     async getTablesInTask(nodeId, connectionId, filter = {}) {
-      if (!this.flowStages?.length || !this.taskData?.id) {
+      if (!this.flowStages?.length || !this.taskId) {
         return { items: [], total: 0 }
       }
       const { isDB } = this
