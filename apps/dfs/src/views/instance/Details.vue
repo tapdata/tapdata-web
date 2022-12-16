@@ -345,8 +345,6 @@ export default {
             clearTimeout(this.uploadTimer)
             this.getUploadStatus()
           } else {
-            this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
-            this.loadingUpload = false
             //主動刷新列表
             clearTimeout(this.timer)
             this.getDownloadList()
@@ -421,12 +419,17 @@ export default {
           //当前列表中是否有上传中的
           let uploading = this.downloadList?.length > 0 ? this.downloadList.filter(it => it.status === 0) : []
           this.disabledUploadDialog = uploading?.length > 0
+          if (!this.disabledUploadDialog) {
+            this.loadingUpload = false
+            this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
+          }
           this.timer = setTimeout(() => {
             this.getDownloadList()
           }, 10000)
         })
         .finally(() => {
           this.loadingLogTable = false
+          this.loadingUpload = false
         })
     },
     //删除
