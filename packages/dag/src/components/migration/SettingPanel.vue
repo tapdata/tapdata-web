@@ -142,7 +142,7 @@ export default observer({
                       },
                       crontabExpressionFlag: {
                         //调度表达式
-                        title: '重复策略', //定期调度任务
+                        title: this.$t('packages_dag_task_setting_crontabExpressionFlag'), //定期调度任务
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
@@ -157,8 +157,6 @@ export default observer({
                         }
                       },
                       crontabExpression: {
-                        //调度表达式
-                        title: '重复策略', //定期调度任务
                         type: 'string',
                         required: 'true',
                         'x-validator': {
