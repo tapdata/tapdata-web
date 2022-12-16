@@ -176,7 +176,7 @@ export const JsProcessor = observer(
       const toggleFullscreen = () => {
         fullscreen.value = !fullscreen.value
         setTimeout(() => {
-          this.$refs.jsEditor.resize()
+          jsEditor.resize(true)
         }, 10)
       }
 
@@ -219,6 +219,11 @@ export const JsProcessor = observer(
             refs.afterJson.editor.resize(true)
           }, 300)
         }
+      }
+
+      let jsEditor
+      const onEditorInit = editor => {
+        jsEditor = editor
       }
 
       return () => {
@@ -377,11 +382,12 @@ export const JsProcessor = observer(
               <div class="js-editor-form-item-wrap overflow-hidden">
                 <FormItem.BaseItem class="js-editor-form-item" label={label}>
                   <JsEditor
-                    ref={jsEditor}
+                    ref="jsEditor"
                     value={props.value}
                     onChange={val => {
                       emit('change', val)
                     }}
+                    onInit={onEditorInit}
                     height={350}
                     showFullscreen={false}
                     options={editorProps.options}
