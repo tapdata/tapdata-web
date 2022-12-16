@@ -157,7 +157,7 @@
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('list_operation')" width="300">
+        <ElTableColumn :label="$t('list_operation')" width="200">
           <template slot-scope="scope">
             <ElButton size="mini" type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
               $t('agent_button_deploy')
@@ -180,18 +180,6 @@
               @click="handleDel(scope.row)"
               >{{ $t('button_delete') }}</ElButton
             >
-            <ElButton
-              size="mini"
-              type="text"
-              :disabled="scope.row.status !== 'Running'"
-              :loading="loadingUpload"
-              @click="handleUpload(scope.row.id)"
-              >{{ $t('dfs_instance_instance_rizhishangchuan') }}
-              <span v-if="scope.row.uploadRatio">{{ scope.row.uploadRatio }}</span>
-            </ElButton>
-            <ElButton size="mini" type="text" @click="open(scope.row)">{{
-              $t('dfs_instance_instance_rizhi')
-            }}</ElButton>
           </template>
         </ElTableColumn>
         <div v-if="!isSearching" class="instance-table__empty" slot="empty">
@@ -285,7 +273,13 @@
         </div>
       </ElDialog>
       <!--  详情    -->
-      <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
+      <Details
+        v-model="showDetails"
+        :detail-id="detailId"
+        :uploadAgentLog="selectedRow.uploadAgentLog"
+        @closed="detailsClosedFnc"
+        @load-data="loadDetailsData"
+      >
         <div slot="title">
           <InlineInput
             :value="selectedRow.name"
@@ -328,62 +322,6 @@
           </VButton>
         </div>
       </Details>
-      <!-- 日志上传   -->
-      <ElDialog
-        :visible.sync="downloadDialog"
-        :before-close="handleClose"
-        :title="$t('dfs_instance_instance_bendirizhixia')"
-        width="1250px"
-        custom-class="download-dialog"
-      >
-        <el-button
-          class="mb-4 float-end"
-          type="primary"
-          :loading="loadingUpload"
-          @click="handleUpload(currentAgentId)"
-          >{{ $t('dfs_instance_instance_rizhishangchuan') }}</el-button
-        >
-        <VTable
-          :data="downloadList"
-          :columns="downloadListCol"
-          v-loading="loadingLogTable"
-          ref="tableName"
-          :has-pagination="false"
-        >
-          <template slot="status" slot-scope="scope">
-            <span>{{ statusMaps[scope.row.status].text }} </span>
-            <span v-if="scope.row.uploadAgentLog && scope.row.uploadAgentLog.uploadRatio !== 100"
-              >{{ scope.row.uploadAgentLog.uploadRatio }} %
-            </span>
-          </template>
-          <template slot="fileSize" slot-scope="scope">
-            <span>{{ handleUnit(scope.row.fileSize) }}</span>
-          </template>
-          <template slot="operation" slot-scope="scope">
-            <ElButton size="mini" type="text" :disabled="scope.row.status === 0" @click="handleDownload(scope.row)">{{
-              $t('dfs_instance_instance_xiazai')
-            }}</ElButton>
-            <ElButton
-              size="mini"
-              type="text"
-              :disabled="scope.row.status === 0"
-              @click="handleDeleteUploadLog(scope.row)"
-              >{{ $t('button_delete') }}</ElButton
-            >
-          </template>
-        </VTable>
-        <span slot="footer" class="dialog-footer">
-          <el-pagination
-            @current-change="getDownloadList"
-            :current-page.sync="currentPage"
-            :page-sizes="[20, 50, 100]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next, jumper"
-            :total="downloadTotal"
-          >
-          </el-pagination>
-        </span>
-      </ElDialog>
     </div>
   </section>
   <RouterView v-else></RouterView>
@@ -397,9 +335,8 @@ import { INSTANCE_STATUS_MAP, AGENT_STATUS_MAP_EN } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
-import { VIcon, FilterBar, VTable } from '@tap/component'
+import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
-import { handleUnit } from '@/util'
 // import OSS from 'ali-oss'
 
 let timer = null
@@ -410,8 +347,7 @@ export default {
     StatusTag,
     VIcon,
     Details,
-    FilterBar,
-    VTable
+    FilterBar
   },
   mixins: [timeFunction],
   data() {
@@ -542,10 +478,6 @@ export default {
   methods: {
     relativeTime(time) {
       return time ? dayjs(time).fromNow() : '-'
-    },
-
-    handleUnit(limit) {
-      return handleUnit(limit)
     },
     init() {
       let query = this.$route.query
@@ -1026,79 +958,6 @@ export default {
     },
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
-    },
-    //日志上传
-    handleUpload(id) {
-      this.loadingUpload = true
-      this.$axios
-        .post('api/tcm/uploadLog', { agentId: id })
-        .then(data => {
-          this.loadingUpload = false
-          this.$message.success(data)
-        })
-        .finally(() => {
-          this.loadingUpload = false
-        })
-    },
-    //打开日志列表
-    open(row) {
-      this.downloadDialog = true
-      this.loadingLogTable = true
-      this.currentAgentId = row.id
-      this.currentStatus = row.status
-      this.getDownloadList()
-    },
-    handleClose() {
-      this.downloadDialog = false
-      this.loadingLogTable = false
-      clearTimeout(this.timer)
-    },
-    //日志列表
-    getDownloadList() {
-      let filter = {
-        where: {
-          agentId: this.currentAgentId,
-          isDeleted: false
-        },
-        page: this.currentPage,
-        size: this.pageSize,
-        sort: ['createAt desc']
-      }
-      this.$axios
-        .get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        .then(res => {
-          this.loadingLogTable = false
-          this.downloadList = res?.items || []
-          this.downloadTotal = res?.total
-          this.timer = setTimeout(() => {
-            this.getDownloadList()
-          }, 10000)
-        })
-        .finally(() => {
-          this.loadingLogTable = false
-        })
-    },
-    //删除
-    handleDeleteUploadLog(row) {
-      this.$axios.post('api/tcm/deleteUploadLog', { agentId: this.currentAgentId, id: row.id }).then(() => {
-        this.$message.success(i18n.t('dfs_instance_instance_shanchuchenggong'))
-      })
-    },
-    //日志下载
-    handleDownload(row) {
-      this.$axios.get('api/tcm/downloadLog?id=' + row.id).then(data => {
-        let { accessKeyId, accessKeySecret, securityToken, region, uploadAddr, bucket } = data
-        //ssl 凭证
-        const OSS = require('ali-oss')
-        const client = new OSS({
-          accessKeyId: accessKeyId,
-          accessKeySecret: accessKeySecret,
-          region: region,
-          bucket: bucket,
-          stsToken: securityToken
-        })
-        window.location.href = client.signatureUrl(uploadAddr)
-      })
     }
   }
 }

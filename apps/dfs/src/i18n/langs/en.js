@@ -1237,8 +1237,10 @@ export default {
   dfs_instance_instance_wenjiandaxiao: 'File size',
   dfs_instance_instance_wenjianming: 'File name',
   dfs_instance_instance_xiazai: 'Download',
-  dfs_instance_instance_rizhishangchuan: 'Log upload',
+  dfs_instance_instance_rizhishangchuan: 'Local log upload',
   dfs_instance_instance_bendirizhixia: 'Local log download',
-  dfs_instance_instance_rizhi: 'Log',
+  dfs_instance_details_shangchuanzhong: 'uploading',
+  dfs_instance_instance_status_success: 'upload successful',
+  dfs_instance_instance_status_false: 'Upload failed',
   dfs_instance_instance_gengxin: 'Updated {val}'
 }
