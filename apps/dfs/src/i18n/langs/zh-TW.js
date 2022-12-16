@@ -1128,8 +1128,11 @@ export default {
   dfs_instance_instance_wenjiandaxiao: '文件大小',
   dfs_instance_instance_wenjianming: '文件名',
   dfs_instance_instance_xiazai: '下載',
-  dfs_instance_instance_rizhishangchuan: '日誌上傳',
+  dfs_instance_instance_rizhishangchuan: '本地日誌上傳',
   dfs_instance_instance_bendirizhixia: '本地日誌下載',
+  dfs_instance_details_shangchuanzhong: '上傳中',
+  dfs_instance_instance_status_success: '上傳成功',
+  dfs_instance_instance_status_false: '上傳失敗',
   dfs_instance_instance_rizhi: '日誌',
   dfs_instance_instance_gengxin: '{val}更新'
 }
