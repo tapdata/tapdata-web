@@ -385,6 +385,12 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 2,
+          type: '',
+          name: 'Tapdata Cloud 3.1.3 Release Notes',
+          time: '2022-12-15 21:00'
+        },
+        {
           id: 1,
           type: '',
           name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
@@ -443,6 +449,8 @@ export default {
       if (item?.id === 1) {
         //当前页弹窗
         this.showUpgrade = true
+      } else if (item?.id === 2) {
+        window.open('https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg')
       } else {
         this.$router.push({
           name: 'WorkbenchNotice',
