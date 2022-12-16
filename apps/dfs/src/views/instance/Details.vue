@@ -38,7 +38,7 @@
         <ElButton
           size="mini"
           type="primary"
-          :disabled="agent.status !== 'Running' || (uploadAgentLog && uploadAgentLog.status === 0)"
+          :disabled="agent.status !== 'Running' || (uploadAgentLog && uploadAgentLog.status === 0) || disabledUploadBtn"
           :loading="loadingDetailUpload"
           @click="handleUpload(agent.id, true)"
         >
@@ -70,7 +70,7 @@
             class="mb-4 mr-4"
             type="primary"
             :loading="loadingUpload"
-            :disabled="agent.status !== 'Running' || (agent.uploadAgentLog && agent.uploadAgentLog.status === 0)"
+            :disabled="agent.status !== 'Running' || disabledUploadDialog"
             @click="handleUpload(currentAgentId)"
             >{{ btnTxt }}</el-button
           >
@@ -136,7 +136,6 @@ export default {
   mixins: [timeFunction],
   props: {
     value: Boolean,
-    uploadAgentLog: Object,
     detailId: [String, Number]
   },
   data() {
@@ -248,11 +247,15 @@ export default {
       pageSize: 10,
       statusMaps: AGENT_STATUS_MAP_EN,
       timer: null,
+      uploadTimer: null,
       loadingLogTable: false,
       loadingUpload: false,
       loadingDetailUpload: false,
       btnTxt: i18n.t('dfs_instance_instance_rizhishangchuan'),
-      btnDetailsTxt: i18n.t('dfs_instance_instance_rizhishangchuan')
+      btnDetailsTxt: i18n.t('dfs_instance_instance_rizhishangchuan'),
+      disabledUploadBtn: false, //控制agent 上传频率 同时只能一个在上传
+      disabledUploadDialog: false, //控制agent 上传频率 同时只能一个在上传 在弹窗
+      uploadAgentLog: ''
     }
   },
   watch: {
@@ -304,6 +307,7 @@ export default {
             }
             this.agent = Object.assign(this.agent, data)
             this.$emit('load-data', this.agent)
+            this.uploadAgentLog = data?.uploadAgentLog || ''
           }
         })
         .finally(() => {
@@ -319,6 +323,10 @@ export default {
     },
     closedFnc() {
       this.$emit('input', this.drawer).$emit('closed')
+      clearTimeout(this.timer)
+      clearTimeout(this.uploadTimer)
+      this.uploadTimer = null
+      this.timer = null
     },
     //日志上传
     handleUpload(id, polling) {
@@ -333,19 +341,43 @@ export default {
         .post('api/tcm/uploadLog', { agentId: id })
         .then(() => {
           if (polling) {
-            this.btnDetailsTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
             this.loadingDetailUpload = false
+            clearTimeout(this.uploadTimer)
+            this.getUploadStatus()
           } else {
             this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
             this.loadingUpload = false
             //主動刷新列表
+            clearTimeout(this.timer)
             this.getDownloadList()
+          }
+        })
+        .catch(() => {
+          if (polling) {
+            clearTimeout(this.uploadTimer)
+            this.getUploadStatus()
           }
         })
         .finally(() => {
           this.loadingUpload = false
           this.loadingDetailUpload = false
         })
+    },
+    //轮询当前上传进度
+    getUploadStatus() {
+      this.$axios.get('api/tcm/agent/' + this.detailId).then(data => {
+        if (data) {
+          this.uploadAgentLog = data?.uploadAgentLog
+          this.disabledUploadBtn = data?.uploadAgentLog?.status === 0 || false
+          this.loadingDetailUpload = false
+          this.btnDetailsTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
+        }
+        if (data?.uploadAgentLog?.status === 0) {
+          this.uploadTimer = setTimeout(() => {
+            this.getUploadStatus()
+          }, 300)
+        }
+      })
     },
     handleUnit(limit) {
       return handleUnit(limit)
@@ -362,6 +394,9 @@ export default {
       this.downloadDialog = false
       this.loadingLogTable = false
       clearTimeout(this.timer)
+      clearTimeout(this.uploadTimer)
+      this.timer = null
+      this.uploadTimer = null
     },
     //日志列表
     getDownloadList(page) {
@@ -383,6 +418,9 @@ export default {
           this.loadingLogTable = false
           this.downloadList = res?.items || []
           this.downloadTotal = res?.total || 0
+          //当前列表中是否有上传中的
+          let uploading = this.downloadList?.length > 0 ? this.downloadList.filter(it => it.status === 0) : []
+          this.disabledUploadDialog = uploading?.length > 0
           this.timer = setTimeout(() => {
             this.getDownloadList()
           }, 10000)
@@ -396,6 +434,7 @@ export default {
       this.$axios.post('api/tcm/deleteUploadLog', { agentId: this.currentAgentId, id: row.id }).then(() => {
         this.$message.success(i18n.t('dfs_instance_instance_shanchuchenggong'))
         //主動刷新列表
+        clearTimeout(this.timer)
         this.getDownloadList()
       })
     },
