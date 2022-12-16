@@ -257,6 +257,7 @@ export default {
   agent_upgrade_step_docker_second:
     '2.複製下方的陞級命令直接在容器內執行，該陞級命令會自動進行備份、陞級和啟動，如果陞級失敗會自動回退版本',
   agent_upgrade_step_docker_third: '3.出現“Update finished.” 則代表Agent陞級成功',
+  agent_tip_no_running: '无可用 Agent， 请检查 Agent 运行状态或者创建一个新的 Agent',
   connection_manage: '連接管理',
   connection_list_efficient: '有效',
   connection_list_invalidation: '失效',

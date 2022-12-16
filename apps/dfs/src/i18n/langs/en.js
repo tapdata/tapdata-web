@@ -281,6 +281,7 @@ export default {
     '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
   agent_upgrade_step_docker_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
+  agent_tip_no_running: 'No agent available, Check the Agent running status or create a new Agent',
   connection_manage: 'Connection',
   connection_list_efficient: 'effective',
   connection_list_invalidation: 'Invalid',
