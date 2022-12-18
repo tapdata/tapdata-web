@@ -35,8 +35,8 @@
       </ElRadioGroup>
     </div>
     <div v-if="item.modeType === 'custom' && isEdit" class="mt-4">
-      <div class="field-checkbox">
-        <div class="field-checkbox__header mb-4">
+      <div>
+        <div class="mb-4">
           <ElInput
             class="search-input"
             v-model="keyword"
@@ -45,21 +45,28 @@
             clearable
           ></ElInput>
         </div>
-        <div v-loading="loading" class="field-checkbox__main">
+        <div v-loading="loading" class="position-relative">
           <div class="list-table__header flex justify-content-between">
             <span>{{ $t('packages_business_components_fieldbox_ziduan') }}</span>
             <ElButton type="text" class="ml-4 color-primary" @click="handleAdd">
               <VIcon> plus</VIcon>{{ $t('packages_business_components_fieldbox_tianjiahang') }}</ElButton
             >
           </div>
-          <div class="list-table__content">
+          <div class="list-table__content" :id="'list-table__content' + index">
             <div
               v-for="(fItem, fIndex) in getFilterList()"
               :key="fIndex"
               class="list-table__line flex mt-3 align-items-center"
             >
               <span class="px-2">{{ fIndex + 1 }}</span>
-              <ElSelect v-model="fItem.source" allow-create filterable class="flex-fill" @change="handleChange">
+              <ElSelect
+                v-model="fItem.source"
+                :class="['flex-fill', { 'empty-data': !fItem.source }]"
+                allow-create
+                filterable
+                class="flex-fill"
+                @change="handleChange"
+              >
                 <ElOption
                   v-for="op in sourceFields"
                   :key="op.field_name + 'source'"
@@ -67,7 +74,13 @@
                   :value="op.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect v-model="fItem.target" allow-create filterable class="flex-fill ml-5" @change="handleChange">
+              <ElSelect
+                v-model="fItem.target"
+                :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
+                allow-create
+                filterable
+                @change="handleChange"
+              >
                 <ElOption
                   v-for="op in targetFields"
                   :key="op.field_name + 'target'"
@@ -483,5 +496,14 @@ export default {
   padding-right: 16px;
   line-height: 32px;
   background: #fafafa;
+}
+.el-select {
+  &.empty-data {
+    ::v-deep {
+      .el-input__inner {
+        border-color: #d44d4d;
+      }
+    }
+  }
 }
 </style>

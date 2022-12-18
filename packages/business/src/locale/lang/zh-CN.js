@@ -687,7 +687,6 @@ export default {
   packages_business_verification_details_dongtaijiaoyan: '动态校验',
   packages_business_verification_details_zhankai: '展开',
   packages_business_verification_details_shouqi: '收起',
-  packages_business_verification_form_qingkongpeizhi: '清空配置',
   packages_business_verification_form_diinde: '校验条件{val1}，待校验模型不能为空',
   packages_business_verification_form_zhaobudaojiedian: '找不到节点对应的表信息',
   packages_business_verification_form_qingshurukaishi: '请输入开始时间',

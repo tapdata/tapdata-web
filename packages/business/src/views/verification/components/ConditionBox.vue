@@ -118,6 +118,7 @@
             :item="item"
             :index="index"
             :dynamicSchemaMap="dynamicSchemaMap"
+            :id="'field-box-' + index"
             @change="handleChangeFieldBox(arguments[0], item)"
           ></FieldBox>
           <div class="setting-item mt-4">
@@ -424,7 +425,7 @@ export default {
       }
       return [findNode.tableName]
     },
-
+    // 获取表的连线关系
     getMatchNodeList() {
       let result = []
       this.flowStages
@@ -449,10 +450,14 @@ export default {
 
     editItem(item) {
       if (this.editId === item.id) {
-        this.editId = ''
+        this.setEditId('')
         return
       }
-      this.editId = item.id
+      this.setEditId(item.id)
+    },
+
+    setEditId(id) {
+      this.editId = id
     },
 
     handleClear() {

@@ -708,7 +708,6 @@ export default {
   packages_business_verification_details_dongtaijiaoyan: 'Dynamic Verification',
   packages_business_verification_details_zhankai: 'Expand',
   packages_business_verification_details_shouqi: 'close',
-  packages_business_verification_form_qingkongpeizhi: 'Clear configuration',
   packages_business_verification_form_diinde:
     'The verification condition{val1}, the model to be verified cannot be empty',
   packages_business_verification_form_zhaobudaojiedian:

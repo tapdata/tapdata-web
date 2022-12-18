@@ -272,11 +272,8 @@ export default {
     return {
       loading: false,
       timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
-      pickerTimes: [],
       doc: '',
-      removeVisible: false,
       isDbClone: false,
-      editId: -1,
       form: {
         flowId: '',
         name: '',
@@ -328,18 +325,13 @@ export default {
           }
         ]
       },
-      sourceTree: [],
-      targetTree: [],
-      stageMap: {},
       flowStages: [],
       flowOptions: null,
       dialogAddScriptVisible: false,
       formIndex: '',
       webScript: '',
       jsEngineName: 'graal.js',
-      jointErrorMessage: '',
-      allStages: null,
-      connectionsList: []
+      jointErrorMessage: ''
     }
   },
   created() {
@@ -347,10 +339,6 @@ export default {
     this.loadDoc()
   },
   methods: {
-    handleChangeAdvanced(item) {
-      item.target.targeFilterFalg = false
-      item.target.where = ''
-    },
     //获取dataflow数据
     getFlowOptions() {
       this.loading = true
@@ -422,7 +410,6 @@ export default {
         .getId(this.form.flowId)
         .then(data => {
           this.isDbClone = data.syncType === 'migrate'
-          // this.dealData(flowData, this.getTaskTree, this.isDbClone)
           let types = data.syncType === 'migrate' ? ['database'] : ['table']
           let edges = data.dag?.edges || []
           let nodes = data.dag?.nodes || []
@@ -457,434 +444,13 @@ export default {
     //dataflow改变时
     flowChangeHandler() {
       this.form.tasks = []
-      this.sourceTree = []
-      this.targetTree = []
       let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
       this.form.name = this.form.name || flow.name || ''
       this.getFlowStages()
     },
-    dealData(flowData, callback, isDB) {
-      let types = isDB ? ['database'] : DATA_NODE_TYPES
-      let edges = flowData.dag?.edges || []
-      let nodes = flowData.dag?.nodes || []
-      if (!edges.length) {
-        return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
-      }
-      let stages = []
-      nodes.forEach(n => {
-        let outputLanes = []
-        let inputLanes = []
-        edges.forEach(e => {
-          if (e.source === n.id) {
-            outputLanes.push(e.target)
-          }
-          if (e.target === n.id) {
-            inputLanes.push(e.source)
-          }
-        })
-        stages.push(
-          Object.assign({}, n, {
-            outputLanes,
-            inputLanes
-          })
-        )
-      })
-      let flowStages = stages.filter(stg => types.includes(stg.type))
-      let connectionIds = []
-      let tableNames = []
-      let connectionsList = []
-      flowStages.forEach(stg => {
-        connectionIds.push(stg.connectionId)
-        connectionsList.push({
-          value: stg.connectionId,
-          label: stg.name
-        })
-        // 获取节点表名称，缩小接口请求数据的范围
-        if (!isDB) {
-          tableNames.push(stg.tableName)
-        } else if (stg.syncObjects?.length) {
-          // 当stage存在syncObjects字段说明是目标节点
-          let obj = stg.syncObjects[0]
-          let tables = obj.objectNames || []
-          tables.forEach(t => {
-            // 迁移时，可以同时从目标节点获取源和目标的表名，匹配目标表名时注意大小写和前后缀配置
-            tableNames.push(t)
-            // 拼上前后缀
-            let name = stg.tablePrefix + t + stg.tableSuffix
-            // 大小写转换
-            if (stg.tableNameTransform) {
-              name = name[stg.tableNameTransform]()
-            }
-            tableNames.push(name)
-          })
-        }
-      })
-      if (connectionIds.length) {
-        let where = {
-          meta_type: {
-            inq: DATA_NODE_TYPES
-          },
-          'source.id': {
-            inq: Array.from(new Set(connectionIds))
-          }
-        }
-        where.original_name = {
-          inq: Array.from(new Set(tableNames))
-        }
-        metadataInstancesApi
-          .findInspect({
-            where,
-            fields: META_INSTANCE_FIELDS
-          })
-          .then(data => {
-            let tables = data || []
-            if (isDB) {
-              this.stageMap = {}
-              this.getTreeForDBFlow(tables, flowStages)
-            } else {
-              this.flowStages = flowStages
-              this.allStages = stages
-              flowStages.forEach((stage, index) => {
-                let table = tables.find(
-                  tb => tb.source.id === stage.connectionId && tb.original_name === stage.tableName
-                )
-                if (table) {
-                  stage.connectionName = table.source.name
-                  stage.fields = table.fields
-                  if (stage.outputLanes.length) {
-                    this.getTree(this.sourceTree, stage)
-                  }
-                  if (stage.inputLanes.length) {
-                    this.getTree(this.targetTree, stage)
-                  }
-                }
-                flowStages[index] = stage
-              })
-              this.getStageMap(flowStages)
-            }
-            callback()
-          })
-          .finally(() => {
-            this.loading = false
-          })
-      }
-    },
-    //获取源表和目标表数据
-    getTree(tree, stage = {}) {
-      let parent = tree.find(c => c.value === stage.connectionId)
-      if (!parent) {
-        parent = {
-          label: stage.connectionName,
-          value: stage.connectionId,
-          level: 1,
-          children: []
-        }
-        tree.push(parent)
-      }
-      if (parent.children.every(t => t.value !== stage.tableName)) {
-        parent.children.push({
-          label: stage.tableName,
-          value: stage.tableName,
-          level: 2
-        })
-      }
-    },
-    getTreeForDBFlow(tables, flowStages) {
-      let stagesMap = {}
-      let targetStages = []
-      flowStages.forEach(stg => {
-        stagesMap[stg.id] = stg
-        if (stg.syncObjects?.length) {
-          targetStages.push(stg)
-        }
-      })
-      this.sourceTree = []
-      this.targetTree = []
-      let sourceTables = []
-      let targetTables = []
-      targetStages.forEach(stage => {
-        let target = stage
-        let source = stagesMap[target.inputLanes[0]]
-
-        let obj = target.syncObjects[0]
-        let sourceTablesNames = obj.objectNames || []
-        sourceTablesNames.forEach(name => {
-          let targetPrefix = target.tablePrefix || ''
-          let targetSuffix = target.tablePrefix || ''
-          let targetTableName = targetPrefix + name + targetSuffix
-          if (target.tableNameTransform) {
-            targetTableName = targetTableName[target.tableNameTransform]()
-          }
-          let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source?.connectionId)
-          let targetTable = tables.find(
-            tb => tb.original_name === targetTableName && tb.source.id === target.connectionId
-          )
-          if (sourceTable && targetTable) {
-            sourceTables.push(sourceTable)
-            targetTables.push(targetTable)
-
-            let outputLanes = target.connectionId + targetTableName
-            let key = source.connectionId + name
-            this.stageMap[key] = [outputLanes]
-            this.flowStages?.push({
-              id: key,
-              connectionId: sourceTable.source.id,
-              connectionName: sourceTable.source.name,
-              fields: sourceTable.fields,
-              tableName: sourceTable.original_name,
-              nodeId: source.id
-            })
-            this.flowStages.push({
-              id: outputLanes,
-              connectionId: targetTable.source.id,
-              connectionName: targetTable.source.name,
-              fields: targetTable.fields,
-              tableName: targetTable.original_name,
-              nodeId: target.id
-            })
-          } else {
-            this.flowStages = null
-            this.$message.error(i18n.t('packages_business_verification_form_zhaobudaojiedian'))
-          }
-        })
-      })
-      let getTree = (type, tables) => {
-        let tree = this[type]
-        tables.sort((a, b) => {
-          return a.original_name - b.original_name
-        })
-        tables.forEach(tb => {
-          let parent = tree.find(item => item.value === tb.source.id)
-          if (!parent) {
-            parent = {
-              label: tb.source.name,
-              value: tb.source.id,
-              children: []
-            }
-            tree.push(parent)
-          }
-
-          if (!parent.children.some(c => c.value === tb.original_name)) {
-            parent.children.push({
-              label: tb.original_name,
-              value: tb.original_name
-            })
-          }
-        })
-      }
-      getTree('sourceTree', sourceTables)
-      getTree('targetTree', targetTables)
-    },
-    //获取表的连线关系
-    getStageMap(stages) {
-      let checkOutputLanes = lanes => {
-        let result = []
-        lanes.forEach(stgId => {
-          let targetStg = this.allStages.find(it => it.id === stgId)
-          if (targetStg.outputLanes.length) {
-            result.push(...checkOutputLanes(targetStg.outputLanes))
-          } else {
-            result.push(stgId)
-          }
-        })
-        return result
-      }
-      let map = {}
-      let sMap = {}
-      stages.forEach(stg => {
-        if (stg.outputLanes.length) {
-          let stage = sMap[stg.connectionId + stg.tableName] || {}
-          let stgId = stage.id || stg.id
-          let outputLanes = map[stgId] || []
-          outputLanes.push(...checkOutputLanes(stg.outputLanes))
-          map[stgId] = outputLanes
-          sMap[stg.connectionId + stg.tableName] = stg
-        }
-      })
-      this.stageMap = map
-    },
-    getTaskTree() {
-      let sourceTree = this.sourceTree
-      let map = this.stageMap
-      let stages = this.flowStages
-
-      if (this.form.tasks && this.form.tasks.length) {
-        this.form.tasks.forEach((t, idx) => {
-          let targetTree = []
-          let sourceTable = t.sourceTable
-          if (sourceTable && sourceTable[0] && sourceTable[1]) {
-            let stageKey = null
-            if (this.isDbClone) {
-              stageKey = sourceTable.join('')
-            } else {
-              let stage = stages.find(stg => stg.connectionId === sourceTable[0] && stg.tableName === sourceTable[1])
-              if (stage) {
-                stageKey = stage.id
-              }
-            }
-            if (stageKey) {
-              let outputLanes = map[stageKey]
-              if (outputLanes && outputLanes.length) {
-                let tree = []
-                outputLanes.forEach(id => {
-                  let stg = stages.find(stg => stg.id === id)
-                  this.getTree(tree, stg)
-                })
-                targetTree = tree
-              }
-            }
-          }
-          this.form.tasks[idx].sourceTree = sourceTree
-          this.form.tasks[idx].targetTree = targetTree
-        })
-      }
-    },
-    //根据表的连线关系自动添加校验条件
-    autoAddTable() {
-      this.form.tasks = []
-      this.$nextTick(() => {
-        let stages = this.flowStages
-        let map = this.stageMap
-        for (const key in map) {
-          const lanes = map[key]
-          let stg = stages.find(stg => stg.id === key)
-          lanes.forEach(id => {
-            let targetStage = stages.find(it => it.id === id)
-            let task = {
-              id: this.$util.uuid(),
-              source: this.setTable(stg),
-              target: Object.assign({}, TABLE_PARAMS),
-              sourceTable: [stg.connectionId, stg.tableName],
-              sourceTree: [],
-              targetTree: [],
-              showAdvancedVerification: false,
-              script: '', //后台使用 需要拼接function头尾
-              webScript: '', //前端使用 用于页面展示
-              jsEngineName: 'graal.js',
-              modeType: 'all' // 待校验模型的类型
-            }
-            if (targetStage) {
-              this.setTarget(task, targetStage)
-            }
-            this.form.tasks.push(task)
-          })
-        }
-        this.getTaskTree()
-      })
-    },
-    setTarget(task, targetStage) {
-      let stages = this.flowStages
-      let source = task.source
-      if (source && source.connectionId) {
-        let sourceStage = stages.find(stg => stg.connectionId === source.connectionId && stg.tableName === source.table)
-        if (sourceStage) {
-          task.target = this.setTable(targetStage, source)
-          task.targetTable = [targetStage.connectionId, targetStage.tableName]
-          if (targetStage.joinTables) {
-            let joinTable = targetStage.joinTables.find(ts => ts.stageId === sourceStage.id)
-            if (joinTable) {
-              let sourceSortColumn = []
-              let targetSortColumn = []
-              joinTable.joinKeys.forEach(obj => {
-                if (task.source.fields.find(f => f.field_name === obj.source)) {
-                  sourceSortColumn.push(obj.source)
-                }
-                if (task.target.fields.find(f => f.field_name === obj.target)) {
-                  targetSortColumn.push(obj.target)
-                }
-              })
-              task.source.sortColumn = sourceSortColumn.join(',')
-              task.target.sortColumn = targetSortColumn.join(',')
-            }
-          }
-        }
-      }
-    },
-    setTable(stage, source) {
-      let sortColumn = ''
-      let sortField = list => {
-        return (
-          list?.sort((a, b) => {
-            return a.field_name > b.field_name ? -1 : 1
-          }) || []
-        )
-      }
-      if (stage && stage.fields && stage.fields.length) {
-        if (source && source.sortColumn) {
-          sortColumn = source.sortColumn
-        } else {
-          let pkList = stage.fields.filter(f => f.primary_key_position > 0)
-          if (pkList.length) {
-            sortColumn = sortField(pkList)
-              .map(it => it.field_name)
-              .join(',')
-          }
-        }
-      }
-      return {
-        connectionId: stage.connectionId,
-        connectionName: stage.connectionName,
-        databaseType: stage.databaseType,
-        table: stage.tableName,
-        sortColumn,
-        fields: sortField(stage.fields),
-        nodeId: stage.nodeId
-      }
-    },
-    addTable() {
-      this.form.tasks.push({
-        id: this.$util.uuid(),
-        source: Object.assign({}, TABLE_PARAMS),
-        target: Object.assign({}, TABLE_PARAMS),
-        sourceTree: [],
-        targetTree: [],
-        showAdvancedVerification: false,
-        script: '', //后台使用 需要拼接function头尾
-        webScript: '', //前端使用 用于页面展示
-        jsEngineName: 'graal.js',
-        modeType: 'all' // 待校验模型的类型
-      })
-      this.getTaskTree()
-    },
-    removeItem(idx) {
-      this.form.tasks.splice(idx, 1)
-    },
-    editItem(item) {
-      this.editId = item.id
-    },
-    clear() {
-      this.form.tasks = []
-    },
     timingChangeHandler(times) {
       this.form.timing.start = times?.[0] || ''
       this.form.timing.end = times?.[1] || ''
-    },
-    tableChangeHandler(item, type, index) {
-      let stages = this.flowStages
-      let values = item[type + 'Table']
-      if (values && values.length) {
-        let sourceStage = stages.find(stg => stg.connectionId === values[0] && stg.tableName === values[1])
-        if (sourceStage) {
-          item[type] = this.setTable(sourceStage)
-          if (type === 'source') {
-            let task = this.form.tasks[index]
-            task.target = Object.assign({}, TABLE_PARAMS)
-            task.targetTable = ['', '']
-            this.$nextTick(() => {
-              this.getTaskTree()
-              this.$nextTick(() => {
-                let targetTree = task.targetTree
-                if (targetTree.length === 1 && targetTree[0].children.length === 1) {
-                  let targetStage = stages.find(
-                    stg => stg.connectionId === targetTree[0].value && stg.tableName === targetTree[0].children[0].value
-                  )
-                  this.setTarget(task, targetStage)
-                }
-              })
-            })
-          }
-        }
-      }
     },
     handleAddScriptClose() {
       this.webScript = ''
@@ -896,27 +462,6 @@ export default {
       this.formIndex = index
       this.webScript = ''
       this.jsEngineName = 'graal.js'
-      this.dialogAddScriptVisible = true
-    },
-    removeScript(index) {
-      this.$confirm(
-        this.$t('packages_business_verification_message_confirm_delete_script'),
-        this.$t('packages_business_button_delete'),
-        {
-          type: 'warning'
-        }
-      ).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.form.tasks[index].webScript = ''
-      })
-    },
-    editScript(index) {
-      this.formIndex = index
-      let script = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].webScript))
-      this.jsEngineName = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].jsEngineName || 'nashorn'))
-      this.webScript = script
       this.dialogAddScriptVisible = true
     },
     submitScript() {
@@ -962,7 +507,7 @@ export default {
               return !c.source.table || !c.target.table
             })
           ) {
-            this.editId = tasks[index - 1]?.id
+            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
             this.$nextTick(() => {
               document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
             })
@@ -980,7 +525,7 @@ export default {
               return !c.source.sortColumn || !c.target.sortColumn
             })
           ) {
-            this.editId = tasks[index - 1]?.id
+            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
             this.$nextTick(() => {
               document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
             })
@@ -998,7 +543,7 @@ export default {
               return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
             })
           ) {
-            this.editId = tasks[index - 1]?.id
+            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
             this.$nextTick(() => {
               let item = document.getElementById('item-source-' + (index - 1))
               item.querySelector('input').focus()
@@ -1017,10 +562,17 @@ export default {
               return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
             })
           ) {
-            this.editId = tasks[index - 1]?.id
+            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
             this.$nextTick(() => {
-              let item = document.getElementById('field-list-' + (index - 1))
-              item.querySelector('.el-select').focus()
+              let item = document.getElementById('list-table__content' + (index - 1))
+              const emptyDom = item.querySelector('.el-select.empty-data')
+              const offsetTop = emptyDom?.offsetTop || 0
+              if (offsetTop) {
+                const height = emptyDom?.offsetHeight || 0
+                item.scrollTo({
+                  top: offsetTop - height
+                })
+              }
             })
             this.jointErrorMessage = i18n.t('packages_business_verification_form_diinde', { val1: index })
             return this.$message.error(i18n.t('packages_business_verification_form_diinde', { val1: index }))
@@ -1035,7 +587,7 @@ export default {
               return c.showAdvancedVerification && !c.webScript
             })
           ) {
-            this.editId = tasks[index - 1]?.id
+            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
             this.$nextTick(() => {
               document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
             })
@@ -1183,18 +735,10 @@ function validate(sourceRow){
       }
     },
 
-    // 加载连接列表
-    loadConnectionsList() {},
-
-    getConnectionsList() {
-      return this.connectionsList
-    },
-
     handleChangeTaskMode(val) {
       if (val !== 'pipeline') {
         this.form.flowId = ''
       }
-      console.log(i18n.t('packages_business_verification_form_qingkongpeizhi'))
     }
   }
 }
