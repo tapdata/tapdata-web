@@ -104,7 +104,7 @@
           <ElFormItem
             v-if="form.mode === 'cron'"
             class="form-item"
-            :label="$t('packages_business_verification_switch_job_enable_or_not') + ': '"
+            :label="$t('packages_business_verification_is_enabled') + ': '"
           >
             <ElSwitch v-model="form.enabled"></ElSwitch>
           </ElFormItem>
@@ -112,7 +112,7 @@
             <ElFormItem
               class="form-item"
               prop="timing.start"
-              :label="$t('packages_business_verification_form_label_start_and_end_time') + ': '"
+              :label="$t('packages_business_verification_startAndStopTime') + ': '"
             >
               <ElDatePicker
                 class="form-input"
@@ -131,7 +131,7 @@
             <ElFormItem
               class="form-item"
               prop="timing.intervals"
-              :label="$t('packages_business_verification_form_label_interval') + ': '"
+              :label="$t('packages_business_verification_verifyInterval') + ': '"
             >
               <ElInput
                 class="form-input"
