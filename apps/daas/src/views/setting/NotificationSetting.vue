@@ -185,13 +185,13 @@ $unreadColor: #ee5353;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  font-size: 12px;
+  font-size: $fontBaseTitle;
   .notification-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 54px;
-    font-size: 12px;
+    font-size: $fontBaseTitle;
     color: map-get($color, primary);
     padding: 20px 20px 0 24px;
     .title {
@@ -215,7 +215,7 @@ $unreadColor: #ee5353;
       padding-top: 5px;
       span {
         padding: 4px 100px 4px 20px;
-        font-size: 12px;
+        font-size: $fontBaseTitle;
         white-space: nowrap;
         color: map-get($fontColor, light);
         border: 1px solid map-get($borderColor, light);
@@ -226,7 +226,7 @@ $unreadColor: #ee5353;
     .run-notification {
       margin-top: 15px;
       .title {
-        font-size: 14px;
+        font-size: $fontBaseTitle;
         font-weight: bold;
         color: map-get($fontColor, dark);
         line-height: 32px;
@@ -331,7 +331,6 @@ $unreadColor: #ee5353;
   .el-tabs__item {
     height: 32px;
     line-height: 32px;
-    font-size: 12px;
   }
 }
 </style>

@@ -1,7 +1,10 @@
 <template>
-  <section class="api-monitor-wrap">
+  <section class="api-monitor-wrap isCardBox">
     <main class="api-monitor-main">
-      <!--api t统计 -->
+      <!--api 统计 -->
+      <el-row :gutter="40" class="section-header py-6">
+        <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+      </el-row>
       <section class="flex flex-direction bg-white api-monitor-card mb-5" v-loading="loadingTotal">
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_totalCount') }}</header>

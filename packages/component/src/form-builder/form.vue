@@ -293,7 +293,7 @@ export default {
     color: #e6a23c;
   }
   .e-form-builder-item-label {
-    font-size: 12px;
+    font-size: 14px;
     .e-form-builder-item-tips {
       margin-left: 5px;
       font-size: 14px;

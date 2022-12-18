@@ -290,6 +290,8 @@ export default {
   // 任务
   task_manage: '任务管理',
   task_manage_etl: '数据开发',
+  task_manage_desc: '表到表数据复制和迁移',
+  task_manage_migrate_desc: '数据库到数据库的复制',
   task_manage_migrate: '数据复制',
   task_name: '任务名称',
   task_status_running: '运行中',
@@ -1087,6 +1089,7 @@ export default {
   dfs_agent_download_upgradeversion_denglualiyun: '1. 登录阿里云计算巢控制台，找到部署Agent的服务实例.',
 
   dfs_the_header_header_jichuban: '基础版',
+  dfs_the_header_header_biaozhun: '标准版',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: '请选择联系人手机号码',
   dfs_agent_download_paidupgrade_qingshurulianxi: '请输入联系人姓名',
   dfs_agent_download_paidupgrade_fanhuikongzhitai: '返回控制台',

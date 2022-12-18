@@ -67,11 +67,11 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn">
-            <el-button size="mini" @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
-            <el-button size="mini" class="test" @click="startTest()">{{
+            <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
+            <el-button class="test" @click="startTest()">{{
               $t('packages_business_connection_list_test_button')
             }}</el-button>
-            <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
+            <el-button type="primary" :loading="submitBtnLoading" @click="submit">
               {{ $t('packages_business_button_save') }}
             </el-button>
           </div>
@@ -1045,7 +1045,7 @@ export default {
       .connection-from-title {
         padding-top: 20px;
         margin-bottom: 24px;
-        font-size: 14px;
+        font-size: $fontSubtitle;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
         color: map-get($fontColor, dark);
@@ -1062,14 +1062,14 @@ export default {
         }
         .label {
           width: 160px;
-          font-size: 12px;
+          font-size: $fontBaseTitle;
           color: map-get($fontColor, light);
         }
         .content-box {
           display: flex;
           max-width: 680px;
           line-height: 22px;
-          font-size: 12px;
+          font-size: $fontBaseTitle;
           font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
           color: map-get($fontColor, dark);
@@ -1154,7 +1154,6 @@ export default {
 
         ::v-deep {
           .formily-element-form-item {
-            font-size: 12px;
             .el-input-number {
               width: 180px;
             }

@@ -280,7 +280,7 @@ export default {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding-top: 68px;
+  padding-top: 52px;
   overflow: hidden;
   background-color: #fff;
   box-sizing: border-box;

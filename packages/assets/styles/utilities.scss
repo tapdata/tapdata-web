@@ -12269,3 +12269,24 @@
 .cursor-p {
   cursor: pointer;
 }
+
+//通用样式-手动输入
+/*
+* 列表头部样式
+*/
+.page-header-title{
+  font-size: 18px;
+  line-height: 24px;
+  padding: 16px 24px;
+}
+
+/*
+通用卡片布局
+ */
+.isCardBox{
+  padding: 0 24px 24px 24px;
+}
+.isCard-title{
+  font-size: 18px;
+  line-height: 24px;
+}

@@ -626,10 +626,10 @@ export default observer({
       padding-top: 0;
     }
     .formily-element-form-item-label label {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
     }
     .el-collapse-item__header {
-      font-size: 14px;
+      font-size: $fontBaseTitle;
       font-weight: 500;
     }
   }

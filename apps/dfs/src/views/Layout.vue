@@ -7,7 +7,7 @@
           <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
             <template slot="title">
               <span class="mr-4" slot v-if="menu.icon"
-                ><VIcon class="v-icon" size="12">{{ menu.icon }}</VIcon></span
+                ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
               <span slot="title">{{ menu.title }}</span>
             </template>
@@ -19,7 +19,7 @@
           </ElSubmenu>
           <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
             <span class="mr-4" v-if="menu.icon"
-              ><VIcon class="v-icon" size="12">{{ menu.icon }}</VIcon></span
+              ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
             >
             <span class="flex-fill">
               {{ menu.title }}
@@ -40,7 +40,7 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <PageHeader class="py-4 px-5"></PageHeader>
+      <PageHeader class="border-bottom"></PageHeader>
       <ElMain class="main">
         <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
@@ -103,7 +103,7 @@ export default {
         },
         {
           name: 'dataflowList',
-          title: $t('task_manage_etl') + ' Beta',
+          title: $t('task_manage_etl') + '(Beta)',
           icon: 'task'
         },
         {
@@ -278,15 +278,15 @@ export default {
 <style lang="scss" scoped>
 .layout-wrap {
   height: 100%;
-  padding-top: 68px;
+  padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
   .left-aside {
-    border-right: 1px solid #f2f4f6;
-    background: #fff;
+    border-right: map-get($borderColor, aside);
+    background: map-get($bgColor, disable);
     .el-menu-item {
       ::v-deep .v-icon {
-        color: #888;
+        color: map-get($iconFillColor, normal);
       }
       &.is-active {
         ::v-deep .v-icon {
@@ -322,7 +322,8 @@ export default {
     flex-direction: column;
     flex-basis: 0%;
     margin: 0;
-    padding: 0 24px 24px 24px;
+    padding: 0;
+    background: rgba(239, 241, 244, 1);
   }
   .breadcrumb {
     padding: 24px 0 24px 24px;

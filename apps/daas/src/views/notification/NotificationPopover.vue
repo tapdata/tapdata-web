@@ -8,7 +8,7 @@
   >
     <div class="btn" slot="reference" @click="toCenter()">
       <el-badge class="item-badge icon-btn px-3" :value="unRead" :max="99" :hidden="!unRead">
-        <VIcon size="16">xiaoxi-2</VIcon>
+        <VIcon size="18">xiaoxi-2</VIcon>
       </el-badge>
     </div>
     <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" @tab-click="tabHandler">
@@ -357,7 +357,7 @@ export default {
       border-bottom: 1px solid map-get($borderColor, light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
-          width: 270px;
+          width: 280px;
         }
       }
       .el-tabs__item {
@@ -402,7 +402,7 @@ export default {
   .notice-footer {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: $fontBaseTitle;
     height: 40px;
     line-height: 40px;
     padding: 0 25px;
@@ -432,7 +432,7 @@ export default {
       .notification-item {
         padding: 5px 20px 4px 20px;
         border-bottom: 1px solid map-get($borderColor, light);
-        font-size: 12px;
+        font-size: $fontBaseTitle;
         color: map-get($fontColor, light);
         .primary {
           color: map-get($color, primary);
