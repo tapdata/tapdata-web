@@ -1243,7 +1243,8 @@ export default {
     validateDDL() {
       let hasEnableDDL
       let hasEnableDDLAndIncreasesql
-      let hasJsNode
+      let inBlacklist = false
+      let blacklist = ['js_processor', 'custom_processor', 'migrate_js_processor', 'union_processor']
       this.allNodes.forEach(node => {
         if (node.enableDDL) {
           hasEnableDDL = true
@@ -1255,14 +1256,13 @@ export default {
             })
           }
         }
-        if (node.type === 'js_processor' || node.type === 'custom_processor' || node.type === 'migrate_js_processor') {
-          hasJsNode = true
+        if (blacklist.includes(node.type)) {
+          inBlacklist = true
         }
       })
-      if ((hasEnableDDL && hasJsNode) || hasEnableDDLAndIncreasesql) {
+      if ((hasEnableDDL && inBlacklist) || hasEnableDDLAndIncreasesql) {
         return i18n.t('packages_dag_mixins_editor_renwuzhonghanyou')
       }
-      // 任务中没有JS节点、自定义节点、并开关闭增量自定义SQL 时DDL按钮才会开放
     },
 
     async eachValidate(...fns) {
