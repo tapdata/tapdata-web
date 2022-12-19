@@ -1,5 +1,5 @@
 <template>
-  <div class="joint-table" :class="{ error: !!jointErrorMessage }" @click="jointErrorMessage = ''">
+  <div class="joint-table" :class="{ error: !!jointErrorMessage }">
     <div class="joint-table-header">
       <div>
         <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
@@ -485,6 +485,10 @@ export default {
     },
 
     addItem() {
+      const validateMsg = this.validate()
+      if (validateMsg) {
+        return this.$message.error(validateMsg)
+      }
       this.list.push(this.getItemOptions())
     },
 
@@ -740,6 +744,110 @@ export default {
     handleChangeFieldBox(data, item) {
       item.source.columns = data.map(t => t.source)
       item.target.columns = data.map(t => t.target)
+    },
+
+    validate() {
+      let tasks = this.getList()
+      let index = 0
+      let message = ''
+      const formDom = document.getElementById('data-verification-form')
+      // 判断表名称是否为空
+      if (
+        tasks.some((c, i) => {
+          index = i + 1
+          return !c.source.table || !c.target.table
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          formDom.childNodes[index - 1].querySelector('input').focus()
+        })
+        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set')
+        this.jointErrorMessage = message
+        return message
+      }
+      // 判断表字段校验时，索引字段是否为空
+      index = 0
+      if (
+        ['field', 'jointField'].includes(this.inspectMethod) &&
+        tasks.some((c, i) => {
+          index = i + 1
+          return !c.source.sortColumn || !c.target.sortColumn
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          // document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+          let item = document.getElementById('item-source-' + (index - 1))
+          item.querySelector('input').focus()
+        })
+        message = this.$t('packages_business_verification_lackIndex')
+        this.jointErrorMessage = message
+        return message
+      }
+      // 判断表字段校验时，索引字段是否个数一致
+      index = 0
+      if (
+        ['field', 'jointField'].includes(this.inspectMethod) &&
+        tasks.some((c, i) => {
+          index = i + 1
+          return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          let item = document.getElementById('item-source-' + (index - 1))
+          item.querySelector('input').focus()
+        })
+        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match')
+        this.jointErrorMessage = message
+        return message
+      }
+      // 判断字段模型是否存在空
+      index = 0
+      if (
+        ['field', 'jointField'].includes(this.inspectMethod) &&
+        tasks.some((c, i) => {
+          index = i + 1
+          return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          let item = document.getElementById('list-table__content' + (index - 1))
+          const emptyDom = item.querySelector('.el-select.empty-data')
+          const offsetTop = emptyDom?.offsetTop || 0
+          if (offsetTop) {
+            const height = emptyDom?.offsetHeight || 0
+            item.scrollTo({
+              top: offsetTop - height
+            })
+          }
+        })
+        message = this.$t('packages_business_verification_form_diinde', { val1: index })
+        this.jointErrorMessage = message
+        return message
+      }
+
+      // 开启高级校验后，JS校验逻辑不能为空
+      index = 0
+      if (
+        this.inspectMethod === 'field' &&
+        tasks.some((c, i) => {
+          index = i + 1
+          return c.showAdvancedVerification && !c.webScript
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          formDom.childNodes[index - 1].querySelector('input').focus()
+        })
+        message = this.$t('packages_business_verification_message_error_script_no_enter')
+        this.jointErrorMessage = message
+        return message
+      }
+      this.jointErrorMessage = ''
+      return
     }
   }
 }
@@ -758,6 +866,8 @@ export default {
   display: flex;
   justify-content: space-between;
   background: map-get($bgColor, normal);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 .joint-table-footer {
   padding: 16px 24px;
@@ -874,5 +984,6 @@ export default {
   margin-top: 2px;
   transition: 0.2s;
   color: #4e5969;
+  transform: rotate(-90deg);
 }
 </style>

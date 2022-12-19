@@ -489,110 +489,17 @@ export default {
       })
     },
     save() {
-      console.log('save', this.$refs.conditionBox.getList())
-      // return
       this.$refs.baseForm.validate(valid => {
         if (valid) {
-          // let tasks = this.form.tasks
           let tasks = this.$refs.conditionBox.getList()
-          let index = 0
           if (!tasks.length) {
             return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
           }
-          // 判断表名称是否为空
-          if (
-            tasks.some((c, i) => {
-              index = i + 1
-              return !c.source.table || !c.target.table
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            })
-            this.jointErrorMessage = this.$t('packages_business_verification_message_error_joint_table_field_not_set')
-            return this.$message.error(
-              this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set')
-            )
-          }
-          // 判断表字段校验时，索引字段是否为空
-          index = 0
-          if (
-            ['field', 'jointField'].includes(this.form.inspectMethod) &&
-            tasks.some((c, i) => {
-              index = i + 1
-              return !c.source.sortColumn || !c.target.sortColumn
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            })
-            this.jointErrorMessage = this.$t('packages_business_verification_message_error_joint_table_field_not_set')
-            return this.$message.error(
-              this.$t('packages_business_verification_message_error_joint_table_field_not_set')
-            )
-          }
-          // 判断表字段校验时，索引字段是否个数一致
-          index = 0
-          if (
-            ['field', 'jointField'].includes(this.form.inspectMethod) &&
-            tasks.some((c, i) => {
-              index = i + 1
-              return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              let item = document.getElementById('item-source-' + (index - 1))
-              item.querySelector('input').focus()
-            })
-            this.jointErrorMessage = this.$t('packages_business_verification_message_error_joint_table_field_not_match')
-            return this.$message.error(
-              this.$t('packages_business_verification_message_error_joint_table_field_not_match')
-            )
-          }
-          // 判断字段模型是否存在空
-          index = 0
-          if (
-            ['field', 'jointField'].includes(this.form.inspectMethod) &&
-            tasks.some((c, i) => {
-              index = i + 1
-              return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              let item = document.getElementById('list-table__content' + (index - 1))
-              const emptyDom = item.querySelector('.el-select.empty-data')
-              const offsetTop = emptyDom?.offsetTop || 0
-              if (offsetTop) {
-                const height = emptyDom?.offsetHeight || 0
-                item.scrollTo({
-                  top: offsetTop - height
-                })
-              }
-            })
-            this.jointErrorMessage = i18n.t('packages_business_verification_form_diinde', { val1: index })
-            return this.$message.error(i18n.t('packages_business_verification_form_diinde', { val1: index }))
+          const validateMsg = this.$refs.conditionBox.validate()
+          if (validateMsg) {
+            return this.$message.error(validateMsg)
           }
 
-          // 开启高级校验后，JS校验逻辑不能为空
-          index = 0
-          if (
-            this.form.inspectMethod === 'field' &&
-            tasks.some((c, i) => {
-              index = i + 1
-              return c.showAdvancedVerification && !c.webScript
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            })
-            this.jointErrorMessage = this.$t('packages_business_verification_message_error_script_no_enter')
-            return this.$message.error(this.$t('packages_business_verification_message_error_script_no_enter'))
-          }
           if (this.form.inspectMethod === 'jointField') {
             tasks.forEach(item => {
               item['fullMatch'] = false
