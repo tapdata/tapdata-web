@@ -355,7 +355,7 @@ export default {
         }
       }
       .el-form-item__label {
-        font-size: 12px;
+        font-size: $fontBaseTitle;
       }
     }
   }

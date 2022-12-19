@@ -28,7 +28,7 @@ export default {
   position: relative;
   height: 100%;
   min-width: 1440px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .second-line .el-radio-button__inner {
   margin-top: 10px;

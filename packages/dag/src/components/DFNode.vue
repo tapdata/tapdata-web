@@ -334,7 +334,7 @@ export default {
 }
 
 .df-node-text {
-  font-size: 12px;
+  font-size: $fontBaseTitle;
 }
 
 .df-node-text-tooltip {

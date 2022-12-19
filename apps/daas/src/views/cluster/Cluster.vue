@@ -1,5 +1,9 @@
 <template>
-  <section class="clusterManagement-container">
+  <section class="clusterManagement-container isCardBox">
+    <!--api 集群管理 -->
+    <el-row :gutter="40" class="section-header py-6">
+      <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+    </el-row>
     <div class="section-wrap-box">
       <div class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
@@ -14,7 +18,7 @@
                     <img class="mr-4" src="../../assets/images/serve.svg" />
                     <i class="circular mr-2 mt-2" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
                     <div class="list-box-header-main">
-                      <h2 class="name fs-7">
+                      <h2 class="name fs-6">
                         {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
                       </h2>
                       <div class="uuid fs-8 my-1">{{ item.systemInfo.uuid }}</div>
@@ -55,29 +59,37 @@
                 </div>
                 <!-- 监控数据 -->
                 <div class="list-box-footer">
-                  <el-row :gutter="20" class="list-box-footer-header">
-                    <el-col :md="9" :lg="10">
+                  <el-row :gutter="16" class="list-box-footer-header">
+                    <el-col :span="8">
                       <span class="txt fw-sub">{{ $t('cluster_name') }}</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span class="txt fw-sub">{{ $t('cluster_status') }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="7">
+                    <el-col :span="4">
+                      <span class="txt fw-sub">{{ $t('cluster_service_status') }}</span>
+                    </el-col>
+                    <el-col :span="8">
                       <div class="btn txt fw-sub">
                         {{ $t('column_operation') }}
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list">
-                    <el-col :md="9" :lg="10">
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="8">
                       <span class="txt fw-normal">{{ $t('cluster_manage_sys') }}</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span :class="['status-' + item.management.status, 'status']">{{
                         $t('cluster_' + item.management.status)
                       }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="8">
+                    <el-col :span="4">
+                      <span :class="['status-' + item.management.serviceStatus, 'status']">{{
+                        $t('cluster_' + item.management.serviceStatus)
+                      }}</span>
+                    </el-col>
+                    <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           type="text"
@@ -103,16 +115,21 @@
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list">
-                    <el-col :md="9" :lg="10">
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="8">
                       <span class="txt fw-normal">{{ $t('cluster_sync_gover') }}</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span :class="['status-' + item.engine.status, 'status']">{{
                         $t('cluster_' + item.engine.status)
                       }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="8">
+                    <el-col :span="4">
+                      <span :class="['status-' + item.engine.serviceStatus, 'status']">{{
+                        $t('cluster_' + item.engine.status)
+                      }}</span>
+                    </el-col>
+                    <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
@@ -139,16 +156,21 @@
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list">
-                    <el-col :md="9" :lg="10">
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="8">
                       <span class="txt fw-normal">API server</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span :class="['status-' + item.apiServer.status, 'status']">{{
                         $t('cluster_' + item.apiServer.status)
                       }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="8">
+                    <el-col :span="4">
+                      <span :class="['status-' + item.apiServer.serviceStatus, 'status']">{{
+                        $t('cluster_' + item.apiServer.status)
+                      }}</span>
+                    </el-col>
+                    <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
@@ -175,14 +197,17 @@
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list" v-for="child in item.customMonitorStatus" :key="child.id">
-                    <el-col :md="9" :lg="10" :offset="1">
+                  <el-row :gutter="16" class="data-list" v-for="child in item.customMonitorStatus" :key="child.id">
+                    <el-col :span="8">
                       <span class="txt">{{ child.name }}</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span :class="child.status">{{ child.status }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="8" :offset="5" v-readonlybtn="'Cluster_operation'">
+                    <el-col :span="4">
+                      <span :class="child.status">{{ child.status }}</span>
+                    </el-col>
+                    <el-col :md="8" v-readonlybtn="'Cluster_operation'">
                       <div class="btn">
                         <ElButton type="text" @click="delServe(child, item.status)">{{ $t('button_delete') }}</ElButton>
                         <ElDivider direction="vertical"></ElDivider>
@@ -639,6 +664,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .clusterManagement-container {
+  height: 100%;
+  background-color: #eff1f4;
   .header {
     padding: 15px 20px;
     background: map-get($bgColor, white);
@@ -778,7 +805,7 @@ export default {
               font-size: 12px;
               background-color: map-get($bgColor, normal);
               .txt {
-                font-size: 12px;
+                font-size: $fontBaseTitle;
                 color: map-get($fontColor, light);
               }
             }
@@ -794,7 +821,7 @@ export default {
               .txt {
                 display: inline-block;
                 width: 120px;
-                font-size: 12px;
+                font-size: $fontBaseTitle;
                 color: map-get($fontColor, dark);
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -803,7 +830,7 @@ export default {
                 }
               }
               .status {
-                padding: 3px 10px;
+                padding: 5px 10px;
                 font-weight: 500;
                 border-radius: 2px;
               }

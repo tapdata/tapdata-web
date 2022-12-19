@@ -361,7 +361,9 @@ export default {
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
-              isPrimaryKey: item.primary_key_position > 0
+              isPrimaryKey: item.primary_key_position > 0,
+              indicesUnique: !!item.indicesUnique,
+              type: item.data_type
             }))
             .filter(item => !item.is_deleted)
         },
@@ -376,7 +378,17 @@ export default {
           try {
             await this.afterTaskSaved()
             const data = await metadataInstancesApi.nodeSchema(nodeId)
-            const fields = data?.[0]?.fields || []
+            let fields = data?.[0]?.fields || []
+            const indices = (data?.[0]?.indices || []).filter(t => t.unique)
+            let columns = []
+            indices.forEach(el => {
+              columns = [...columns, ...el.columns.map(t => t.columnName)]
+            })
+            fields.forEach(el => {
+              if (columns.includes(el.field_name)) {
+                el.indicesUnique = true
+              }
+            })
             return fields
           } catch (e) {
             // eslint-disable-next-line no-console

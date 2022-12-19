@@ -515,11 +515,11 @@ export default {
   }
   .no-expand {
     position: absolute;
-    left: 18px;
+    left: 4px;
     top: 4px;
   }
   .toggle {
-    margin-top: 16px;
+    margin-top: 56px;
     // color: map-get($color, lprimary);
     z-index: 2;
   }
@@ -543,7 +543,7 @@ export default {
       position: absolute;
       top: 2px;
       right: 12px;
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       .iconfont.icon-jia {
         display: flex;
         flex-direction: row;
@@ -585,7 +585,7 @@ export default {
     padding: 0 12px;
     // background: map-get($bgColor, normal);
     // border-bottom: 1px solid #dedee4;
-    font-size: 12px;
+    font-size: $fontBaseTitle;
     line-height: 31px;
     display: flex;
     width: 214px;
@@ -637,7 +637,7 @@ export default {
     flex: 1;
     display: flex;
     align-items: center;
-    font-size: 12px;
+    font-size: $fontBaseTitle;
     padding-right: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -650,7 +650,7 @@ export default {
     }
     .table-label {
       flex: 1;
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       vertical-align: middle;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -665,7 +665,7 @@ export default {
   }
   .create {
     padding: 5px 10px;
-    font-size: 12px;
+    font-size: $fontBaseTitle;
     // color: map-get($color, primary);
     cursor: pointer;
   }

@@ -742,6 +742,7 @@ export default {
   user_form_status: '状态',
   cluster_name: '监控名称',
   cluster_status: '状态',
+  cluster_service_status: '服务状态',
   cluster_cpu_usage: 'CPU使用率',
   cluster_heap_memory_usage: '堆内存使用率',
   cluster_update: '更新',

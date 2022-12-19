@@ -162,7 +162,16 @@ export default {
 
   watch: {
     'dataflow.status'(v) {
-      this.checkGotoViewer()
+      if (this.dataflow.disabledData?.edit) {
+        this.setStateReadonly(true)
+      } else {
+        this.setStateReadonly(false)
+      }
+
+      if (v === 'starting' || v === 'running') {
+        this.gotoViewer()
+      }
+
       if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
@@ -204,6 +213,10 @@ export default {
 
     async initNodeType() {
       let nodes = [
+        {
+          name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
+          type: 'union_processor'
+        },
         {
           name: 'JavaScript',
           type: 'js_processor'

@@ -108,7 +108,7 @@
     <div
       v-else
       ref="reference"
-      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center fs-8']"
+      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center']"
       :validate-event="false"
       @mouseenter="inputHovering = true"
       @mouseleave="inputHovering = false"

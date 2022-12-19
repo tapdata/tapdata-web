@@ -323,8 +323,8 @@ export default {
       return locale === 'en'
         ? {
             taskType: 140,
-            status: 100,
-            operation: 300
+            status: 130,
+            operation: 340
           }
         : {
             taskType: 80,
@@ -360,7 +360,7 @@ export default {
     getData({ page, tags }) {
       let { current, size } = page
       const { syncType } = this
-      let { keyword, status, type } = this.searchParams
+      let { keyword, status, type, agentId } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -400,6 +400,9 @@ export default {
         } else {
           where.status = status
         }
+      }
+      if (agentId) {
+        where['agentId'] = agentId
       }
       let filter = {
         order: this.order,
@@ -461,6 +464,30 @@ export default {
           type: 'input'
         }
       ]
+
+      if (!this.isDaas) {
+        this.filterItems.splice(2, 0, {
+          label: i18n.t('agent_name'),
+          key: 'agentId',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: async () => {
+            let filter = {
+              where: {
+                status: { $in: ['Running'] }
+              },
+              size: 100
+            }
+            let data = await this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
+            return data.items.map(item => {
+              return {
+                label: item.name,
+                value: item.tmInfo.agentId
+              }
+            })
+          }
+        })
+      }
     },
 
     /**
@@ -582,7 +609,6 @@ export default {
         this.createBtnLoading = false
         return
       }
-      this.createBtnLoading = false
       this.checkAgent(() => {
         this.$router
           .push({
@@ -802,6 +828,8 @@ export default {
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
+  padding: 0 24px 24px 0;
+  background: #fff;
   .btn-refresh {
     padding: 0;
     height: 32px;

@@ -141,7 +141,7 @@ export default observer({
                       },
                       crontabExpressionFlag: {
                         //调度表达式
-                        title: '重复策略', //定期调度任务
+                        title: this.$t('packages_dag_task_setting_crontabExpressionFlag'), //定期调度任务
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
@@ -156,8 +156,6 @@ export default observer({
                         }
                       },
                       crontabExpression: {
-                        //调度表达式
-                        title: '重复策略', //定期调度任务
                         type: 'string',
                         required: 'true',
                         'x-validator': {
@@ -628,10 +626,10 @@ export default observer({
       padding-top: 0;
     }
     .formily-element-form-item-label label {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
     }
     .el-collapse-item__header {
-      font-size: 14px;
+      font-size: $fontBaseTitle;
       font-weight: 500;
     }
   }

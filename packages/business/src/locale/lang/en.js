@@ -3,7 +3,7 @@ export default {
   packages_business_connection_list_invalidation: 'Invalid',
   packages_business_connection_list_testing: 'Testing',
 
-  packages_business_connection_column_name: 'Connection name',
+  packages_business_connection_column_name: 'Connection Name',
 
   packages_business_status_running: 'Running',
   packages_business_status_paused: 'Paused',
@@ -123,7 +123,7 @@ export default {
   packages_business_button_edit: 'Edit',
   packages_business_button_delete: 'Delete',
   packages_business_button_copy: 'Copy',
-  packages_business_connection_list_column_schema_status: 'Schema status',
+  packages_business_connection_list_column_schema_status: 'Schema Status',
   packages_business_connection_list_column_schema_status_tips:
     'Connections after Schema loading can be created normally',
   packages_business_connection_list_form_database_type: 'Database type',
@@ -138,9 +138,9 @@ export default {
   packages_business_connection_list_help_doc: 'Help Documentation',
   packages_business_message_deleteOK: 'Successfully deleted',
   packages_business_connection_dataBaseStatus: 'Status',
-  packages_business_connection_connectionType: 'Connection type',
-  packages_business_connection_connectionInfo: 'Connection info',
-  packages_business_connection_lastUpdateTime: 'Update time',
+  packages_business_connection_connectionType: 'Connection Type',
+  packages_business_connection_connectionInfo: 'Connection Info',
+  packages_business_connection_lastUpdateTime: 'Update Time',
   packages_business_connection_operate: 'Operation',
   packages_business_connection_copyMsg: 'copy successfully',
   packages_business_connection_deteleDatabaseMsg: 'After deleting connection xxx, this connection cannot be restored. ',
@@ -570,8 +570,6 @@ export default {
   packages_business_verification_message_error_joint_table_not_set: 'Please add verification conditions',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     'The source table or the target table is not selected in the verification condition',
-  packages_business_verification_message_error_joint_table_field_not_set:
-    'The index field of the source table or the target table in the verification condition is not selected',
   packages_business_verification_message_error_joint_table_field_not_match:
     'The number of index fields of the source table and the target table in the verification condition are not equal',
   packages_business_verification_message_error_script_no_enter:
@@ -708,9 +706,8 @@ export default {
   packages_business_verification_details_dongtaijiaoyan: 'Dynamic Verification',
   packages_business_verification_details_zhankai: 'Expand',
   packages_business_verification_details_shouqi: 'close',
-  packages_business_verification_form_qingkongpeizhi: 'Clear configuration',
   packages_business_verification_form_diinde:
-    'The {val1}th verification condition, the model to be verified cannot be empty',
+    'The verification condition{val1}, the model to be verified cannot be empty',
   packages_business_verification_form_zhaobudaojiedian:
     'The table information corresponding to the node cannot be found',
   packages_business_verification_form_qingshurukaishi: 'Please enter the start time',

@@ -35,8 +35,8 @@
       </ElRadioGroup>
     </div>
     <div v-if="item.modeType === 'custom' && isEdit" class="mt-4">
-      <div class="field-checkbox">
-        <div class="field-checkbox__header mb-4">
+      <div>
+        <div class="mb-4">
           <ElInput
             class="search-input"
             v-model="keyword"
@@ -45,21 +45,28 @@
             clearable
           ></ElInput>
         </div>
-        <div v-loading="loading" class="field-checkbox__main">
+        <div v-loading="loading" class="position-relative">
           <div class="list-table__header flex justify-content-between">
             <span>{{ $t('packages_business_components_fieldbox_ziduan') }}</span>
             <ElButton type="text" class="ml-4 color-primary" @click="handleAdd">
               <VIcon> plus</VIcon>{{ $t('packages_business_components_fieldbox_tianjiahang') }}</ElButton
             >
           </div>
-          <div class="list-table__content">
+          <div class="list-table__content" :id="'list-table__content' + index">
             <div
               v-for="(fItem, fIndex) in getFilterList()"
               :key="fIndex"
               class="list-table__line flex mt-3 align-items-center"
             >
               <span class="px-2">{{ fIndex + 1 }}</span>
-              <ElSelect v-model="fItem.source" filterable allow-create class="flex-fill" @change="handleChange">
+              <ElSelect
+                v-model="fItem.source"
+                :class="['flex-fill', { 'empty-data': !fItem.source }]"
+                allow-create
+                filterable
+                class="flex-fill"
+                @change="handleChange"
+              >
                 <ElOption
                   v-for="op in sourceFields"
                   :key="op.field_name + 'source'"
@@ -67,7 +74,13 @@
                   :value="op.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect v-model="fItem.target" filterable allow-create class="flex-fill ml-5" @change="handleChange">
+              <ElSelect
+                v-model="fItem.target"
+                :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
+                allow-create
+                filterable
+                @change="handleChange"
+              >
                 <ElOption
                   v-for="op in targetFields"
                   :key="op.field_name + 'target'"
@@ -110,6 +123,12 @@ export default {
     isEdit: {
       type: Boolean,
       default: false
+    },
+    dynamicSchemaMap: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
 
@@ -123,12 +142,41 @@ export default {
     }
   },
 
+  watch: {
+    sourceSelect(v1, v2) {
+      if (v1 !== v2) {
+        this.handleFieldList([], this.item)
+        this.init()
+      }
+    },
+    targetSelect(v1, v2) {
+      if (v1 !== v2) {
+        this.handleFieldList([], this.item)
+        this.init()
+      }
+    }
+  },
+
+  computed: {
+    sourceSelect() {
+      return this.item.source.connectionId + this.item.source.table
+    },
+    targetSelect() {
+      return this.item.target.connectionId + this.item.target.table
+    }
+  },
+
   mounted() {
     this.init()
   },
 
   methods: {
-    init() {
+    async init() {
+      await this.loadFieldsList()
+      this.item.modeType === 'custom' && this.loadList()
+    },
+
+    loadFieldsList() {
       this.getFieldListOptions()?.sourceNodeId ? this.loadFieldsInNode() : this.loadFields()
     },
 
@@ -174,26 +222,59 @@ export default {
       return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
     },
 
-    handleFieldList(data, item) {
-      item.source.columns = data.map(t => t.source)
-      item.target.columns = data.map(t => t.target)
+    handleFieldList(data) {
+      this.$emit('change', data)
     },
 
     loadList() {
       const { source, target } = this.getFieldListData()
+
+      if (source?.length) {
+        let list = []
+        source.forEach((el, i) => {
+          list.push({
+            source: el,
+            target: target[i]
+          })
+        })
+        this.list = list.filter(t => t.source || t.target)
+        return
+      }
+
       const sourceFields = this.sourceFields.map(t => t.field_name)
       const targetFields = this.targetFields.map(t => t.field_name)
-
-      const loadData = !!source?.length
-      let sourceList = loadData ? cloneDeep(source) : cloneDeep(sourceFields)
-      let targetList = loadData ? cloneDeep(target) : cloneDeep(targetFields)
-
-      this.list = sourceList.map((t, i) => {
+      let sourceList = cloneDeep(sourceFields)
+      let targetList = cloneDeep(targetFields).map(t => {
         return {
-          source: t,
-          target: targetList[i]
+          name: t,
+          used: false
         }
       })
+
+      let list = sourceList.map((t, i) => {
+        let findTarget = targetList.find(tar => tar.name.toLowerCase() === t.toLowerCase())
+        let opt = {
+          source: t,
+          target: ''
+        }
+        if (findTarget) {
+          opt.target = findTarget.name
+          findTarget.used = true
+        }
+        return opt
+      })
+
+      targetList
+        .filter(t => t.name && !t.used)
+        .forEach(el => {
+          list.push({
+            source: '',
+            target: el.name
+          })
+        })
+
+      this.list = list
+      this.handleChange()
     },
 
     getItem() {
@@ -261,7 +342,6 @@ export default {
         })
       }
 
-      this.loadList()
       this.loading = false
     },
 
@@ -303,7 +383,6 @@ export default {
         })
       }
 
-      this.loadList()
       this.loading = false
     },
 
@@ -323,7 +402,7 @@ export default {
     },
 
     handleChangeModeType(val) {
-      if (val === 'custom') this.handleFocus()
+      if (val === 'custom') this.init()
     },
 
     handleFocus() {
@@ -409,7 +488,7 @@ export default {
   width: 350px;
 }
 .list-table__content {
-  height: 200px;
+  max-height: 300px;
   overflow-y: auto;
 }
 .list-table__header {
@@ -417,5 +496,14 @@ export default {
   padding-right: 16px;
   line-height: 32px;
   background: #fafafa;
+}
+.el-select {
+  &.empty-data {
+    ::v-deep {
+      .el-input__inner {
+        border-color: #d44d4d;
+      }
+    }
+  }
 }
 </style>

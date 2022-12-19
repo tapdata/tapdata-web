@@ -1,13 +1,13 @@
 <template>
   <div v-show="!isHidden">
-    <ElBreadcrumb v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
+    <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
       <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
         {{ item.name }}
       </ElBreadcrumbItem>
     </ElBreadcrumb>
     <div class="flex align-items-center" v-else>
-      <span class="fs-6 font-color-dark">{{ $t($route.meta.title) }}</span>
-      <Desciption class="flex align-items-center ml-4 fs-8 font-color-light" :desc="$route.meta.desc"></Desciption>
+      <span class="page-header-title font-color-dark">{{ $t($route.meta.title) }}</span>
+      <Desciption class="flex align-items-center ml-4 fs-8 font-color-light" :desc="$t($route.meta.desc)"></Desciption>
     </div>
   </div>
 </template>
@@ -79,3 +79,16 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.breadcrumb {
+  height: 50px;
+  line-height: 50px;
+  margin-left: 24px;
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner,
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
+    color: map-get($fontColor, normal) !important;
+  }
+}
+</style>

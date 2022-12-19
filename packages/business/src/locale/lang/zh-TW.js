@@ -559,7 +559,6 @@ export default {
   packages_business_verification_checking: '校驗中...',
   packages_business_verification_message_error_joint_table_not_set: '請添加校驗條件',
   packages_business_verification_message_error_joint_table_target_or_source_not_set: '校驗條件中源表或目標表未選擇',
-  packages_business_verification_message_error_joint_table_field_not_set: '校驗條件中源表或目標表的索引欄位未選擇',
   packages_business_verification_message_error_joint_table_field_not_match:
     '校驗條件中源表與目標表的索引欄位個數不相等',
   packages_business_verification_message_error_script_no_enter: '開啟高級校驗後，JS校驗邏輯不能為空',
@@ -689,8 +688,7 @@ export default {
   packages_business_verification_details_dongtaijiaoyan: '動態校驗',
   packages_business_verification_details_zhankai: '展開',
   packages_business_verification_details_shouqi: '收起',
-  packages_business_verification_form_qingkongpeizhi: '清空配置',
-  packages_business_verification_form_diinde: '第{val1}個校驗條件，待校驗模型不能為空',
+  packages_business_verification_form_diinde: '校驗條件{val1}，待校驗模型不能為空',
   packages_business_verification_form_zhaobudaojiedian: '找不到節點對應的表信息',
   packages_business_verification_form_qingshurukaishi: '請輸入開始時間',
   packages_business_verification_form_jiaoyanjieshushi: '校驗結束時間',

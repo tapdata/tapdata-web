@@ -1,6 +1,9 @@
 <template>
-  <section class="dashboard-wrap px-5 mx-n5">
+  <section class="dashboard-wrap isCardBox">
     <div v-loading="loading" class="dashboard-main">
+      <el-row :gutter="40" class="section-header py-6">
+        <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+      </el-row>
       <template v-if="noPermission">
         <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
           <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">

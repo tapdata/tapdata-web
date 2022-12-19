@@ -13,7 +13,7 @@
       >
         <VIcon size="16" class="ml-2 color-warning">warning </VIcon>
         <template #content>
-          <div class="flex flex-wrap align-center font-color-light">
+          <div class="flex flex-wrap align-center font-color-dark">
             <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
             {{
               $t('packages_business_task_status_agent_tooltip_time', {
