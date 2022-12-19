@@ -446,7 +446,7 @@ export default [
             component: VerificationList,
             meta: {
               title: 'page_title_data_verify',
-              code: 'Data_verify_menu'
+              code: 'v2_data_check_list'
             }
           },
           {
@@ -455,7 +455,7 @@ export default [
             component: VerificationForm,
             meta: {
               title: 'page_title_verification_create',
-              code: 'verify_job_creation'
+              code: 'v2_data_check_create'
             }
           },
           {
@@ -464,7 +464,7 @@ export default [
             component: VerificationForm,
             meta: {
               title: 'page_title_task_edit',
-              code: 'verify_job_edition'
+              code: 'v2_data_check_edit'
             }
           },
           {
@@ -473,7 +473,7 @@ export default [
             component: VerificationDetails,
             meta: {
               title: 'page_title_task_details',
-              code: 'Data_verify'
+              code: 'v2_data_check_details'
             }
           },
           {
@@ -482,7 +482,7 @@ export default [
             component: VerificationHistory,
             meta: {
               title: 'page_title_verification_history',
-              code: 'Data_verify'
+              code: 'v2_data_check_history'
             }
           },
           {
@@ -491,7 +491,7 @@ export default [
             component: VerificationHistory,
             meta: {
               title: 'page_title_diff_verification_history',
-              code: 'Data_verify'
+              code: 'v2_data_check_result_history'
             }
           },
           {
@@ -500,7 +500,7 @@ export default [
             component: VerificationResult,
             meta: {
               title: 'page_title_diff_verification_details',
-              code: 'Data_verify'
+              code: 'v2_data_check_result_details'
             }
           },
           {
@@ -509,7 +509,7 @@ export default [
             component: VerificationResult,
             meta: {
               title: 'page_title_data_verification_result',
-              code: 'Data_verify'
+              code: 'v2_data_check_result'
             }
           }
           // {

@@ -213,16 +213,27 @@ let pageSort = [
     ]
   },
   {
-    name: 'data_government',
+    name: 'data_transmission',
     children: [
-      { name: 'v2_data_object' },
-      { name: 'v2_data_catalogue' }
-      // { name: 'data_quality_menu' },
-      // { name: 'time_to_live_menu' },
-      // { name: 'data_lineage_menu' },
-      // { name: 'data_rules_menu' },
-      // { name: 'Topology_menu' },
-      // { name: 'dictionary_menu' }
+      { name: 'v2_data_replication' },
+      { name: 'v2_data_flow' },
+      { name: 'v2_log_collector_menu' },
+      { name: 'v2_function_management_list' },
+      { name: 'v2_custom_node_menu' },
+      { name: 'v2_shared_cache_menu' }
+    ]
+  },
+  {
+    name: 'data_verify',
+    children: [
+      { name: 'v2_data_check_list' },
+      { name: 'v2_data_check_create' },
+      { name: 'v2_data_check_edit' },
+      { name: 'v2_data_check_details' },
+      { name: 'v2_data_check_history' },
+      { name: 'v2_data_check_result_history' },
+      { name: 'v2_data_check_result_details' },
+      { name: 'v2_data_check_result' }
     ]
   },
   {
