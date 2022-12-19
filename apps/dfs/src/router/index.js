@@ -276,6 +276,11 @@ const routes = [
     }
   },
   {
+    path: '/404',
+    name: '404',
+    component: Error
+  },
+  {
     path: '/500',
     name: '500',
     component: Error

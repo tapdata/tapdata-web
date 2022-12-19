@@ -25,6 +25,11 @@
         <p class="text">{{ $t('views_Error_feiChangBaoQianChan') }}</p>
         <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
+      <div v-if="$route.path === '/404'" class="box">
+        <img class="img" src="../assets/image/404.png" />
+        <p class="label">找不到页面</p>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
+      </div>
     </div>
   </section>
 </template>
