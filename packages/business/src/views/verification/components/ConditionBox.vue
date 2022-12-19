@@ -1,5 +1,5 @@
 <template>
-  <div class="joint-table" :class="{ error: !!jointErrorMessage }" @click="jointErrorMessage = ''">
+  <div class="joint-table" :class="{ error: !!jointErrorMessage }">
     <div class="joint-table-header">
       <div>
         <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
@@ -269,7 +269,7 @@ export default {
       }
     },
 
-    async getTableListMethod(filter) {
+    async getTableListMethod(filter = {}) {
       const { connectionId, nodeId } = filter
       if (!connectionId) {
         return { items: [], total: 0 }
@@ -278,33 +278,25 @@ export default {
         return this.getTablesInTask(nodeId, connectionId, filter)
       }
       try {
-        const { isSource, isTarget } = filter
-        const _filter = {
-          where: {},
-          fields: {
-            name: 1,
-            id: 1,
-            database_type: 1,
-            connection_type: 1,
-            status: 1,
-            accessNodeType: 1,
-            accessNodeProcessId: 1,
-            accessNodeProcessIdList: 1,
-            pdkType: 1,
-            pdkHash: 1,
-            capabilities: 1
+        const size = filter.size || 20
+        const page = filter.page || 1
+        let params = {
+          where: {
+            meta_type: 'table',
+            sourceType: 'SOURCE',
+            is_deleted: false,
+            'source.id': connectionId
           },
-          order: ['status DESC', 'name ASC']
+          skip: (page - 1) * size,
+          limit: size,
+          order: 'createTime DESC'
+        }
+        const keyword = filter.where?.name?.like
+        if (keyword) {
+          params.where.name = filter.where.name
         }
         const res = await metadataInstancesApi.tapTables({
-          filter: JSON.stringify({
-            where: {
-              meta_type: 'table',
-              sourceType: 'SOURCE',
-              'source._id': connectionId
-            },
-            limit: 50
-          })
+          filter: JSON.stringify(params)
         })
         let result = {}
         result.items = res.items.map(t => t.name)
@@ -371,7 +363,7 @@ export default {
         nodeId,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: filter?.page || 1,
-        pageSize: filter?.size || 50
+        pageSize: filter?.size || 20
       }
       const keyword = filter.where?.name?.like
       if (keyword) {
@@ -391,21 +383,21 @@ export default {
           })
         )
       })
+      let tableNames = tableList
       if (isDB) {
-        // 存在多表的情况，这里需要做分页
-        let tableNames = []
-        if (findNode.outputLanes.length) {
-          tableNames = tableList
-        } else {
+        if (!findNode.outputLanes.length) {
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableNames = tableList.map(t => {
+          tableNames = tableNames.map(t => {
             let name = (tablePrefix || '') + t + (tableSuffix || '')
             return tableNameTransform ? name[tableNameTransform]() : name
           })
         }
         return { items: tableNames, total: total }
       }
-      return { items: tableList, total: tableList.length }
+      if (keyword) {
+        tableNames = tableNames.filter(t => t.toLowerCase().includes(keyword.toLowerCase()))
+      }
+      return { items: tableNames, total: tableNames.length }
     },
 
     getAllTablesInNode(nodeId) {
@@ -493,6 +485,10 @@ export default {
     },
 
     addItem() {
+      const validateMsg = this.validate()
+      if (validateMsg) {
+        return this.$message.error(validateMsg)
+      }
       this.list.push(this.getItemOptions())
     },
 
@@ -748,6 +744,110 @@ export default {
     handleChangeFieldBox(data, item) {
       item.source.columns = data.map(t => t.source)
       item.target.columns = data.map(t => t.target)
+    },
+
+    validate() {
+      let tasks = this.getList()
+      let index = 0
+      let message = ''
+      const formDom = document.getElementById('data-verification-form')
+      // 判断表名称是否为空
+      if (
+        tasks.some((c, i) => {
+          index = i + 1
+          return !c.source.table || !c.target.table
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          formDom.childNodes[index - 1].querySelector('input').focus()
+        })
+        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set')
+        this.jointErrorMessage = message
+        return message
+      }
+      // 判断表字段校验时，索引字段是否为空
+      index = 0
+      if (
+        ['field', 'jointField'].includes(this.inspectMethod) &&
+        tasks.some((c, i) => {
+          index = i + 1
+          return !c.source.sortColumn || !c.target.sortColumn
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          // document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+          let item = document.getElementById('item-source-' + (index - 1))
+          item.querySelector('input').focus()
+        })
+        message = this.$t('packages_business_verification_lackIndex')
+        this.jointErrorMessage = message
+        return message
+      }
+      // 判断表字段校验时，索引字段是否个数一致
+      index = 0
+      if (
+        ['field', 'jointField'].includes(this.inspectMethod) &&
+        tasks.some((c, i) => {
+          index = i + 1
+          return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          let item = document.getElementById('item-source-' + (index - 1))
+          item.querySelector('input').focus()
+        })
+        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match')
+        this.jointErrorMessage = message
+        return message
+      }
+      // 判断字段模型是否存在空
+      index = 0
+      if (
+        ['field', 'jointField'].includes(this.inspectMethod) &&
+        tasks.some((c, i) => {
+          index = i + 1
+          return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          let item = document.getElementById('list-table__content' + (index - 1))
+          const emptyDom = item.querySelector('.el-select.empty-data')
+          const offsetTop = emptyDom?.offsetTop || 0
+          if (offsetTop) {
+            const height = emptyDom?.offsetHeight || 0
+            item.scrollTo({
+              top: offsetTop - height
+            })
+          }
+        })
+        message = this.$t('packages_business_verification_form_diinde', { val1: index })
+        this.jointErrorMessage = message
+        return message
+      }
+
+      // 开启高级校验后，JS校验逻辑不能为空
+      index = 0
+      if (
+        this.inspectMethod === 'field' &&
+        tasks.some((c, i) => {
+          index = i + 1
+          return c.showAdvancedVerification && !c.webScript
+        })
+      ) {
+        this.setEditId(tasks[index - 1]?.id)
+        this.$nextTick(() => {
+          formDom.childNodes[index - 1].querySelector('input').focus()
+        })
+        message = this.$t('packages_business_verification_message_error_script_no_enter')
+        this.jointErrorMessage = message
+        return message
+      }
+      this.jointErrorMessage = ''
+      return
     }
   }
 }
@@ -766,11 +866,15 @@ export default {
   display: flex;
   justify-content: space-between;
   background: map-get($bgColor, normal);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 .joint-table-footer {
   padding: 16px 24px;
 }
 .joint-table-main {
+  max-height: 360px;
+  overflow-y: auto;
   .joint-table-item {
     padding: 16px 24px;
     display: flex;
@@ -880,5 +984,6 @@ export default {
   margin-top: 2px;
   transition: 0.2s;
   color: #4e5969;
+  transform: rotate(-90deg);
 }
 </style>

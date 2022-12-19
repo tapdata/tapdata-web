@@ -6,7 +6,7 @@
           $route.params.id ? $t('packages_business_verification_edit') : $t('packages_business_verification_newVerify')
         }}
       </div>
-      <div class="verify-form__main">
+      <div>
         <ElForm
           inline-message
           class="grey"
@@ -213,7 +213,6 @@
       <div class="mt-8">
         <ElButton size="mini" @click="goBack()">{{ $t('button_back') }}</ElButton>
         <ElButton type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
-        <!--        <span class="ml-3 color-danger">必填选项不能为空</span>-->
       </div>
     </div>
 
@@ -490,110 +489,17 @@ export default {
       })
     },
     save() {
-      console.log('save', this.$refs.conditionBox.getList())
-      // return
       this.$refs.baseForm.validate(valid => {
         if (valid) {
-          // let tasks = this.form.tasks
           let tasks = this.$refs.conditionBox.getList()
-          let index = 0
           if (!tasks.length) {
             return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
           }
-          // 判断表名称是否为空
-          if (
-            tasks.some((c, i) => {
-              index = i + 1
-              return !c.source.table || !c.target.table
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            })
-            this.jointErrorMessage = this.$t('packages_business_verification_message_error_joint_table_field_not_set')
-            return this.$message.error(
-              this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set')
-            )
-          }
-          // 判断表字段校验时，索引字段是否为空
-          index = 0
-          if (
-            ['field', 'jointField'].includes(this.form.inspectMethod) &&
-            tasks.some((c, i) => {
-              index = i + 1
-              return !c.source.sortColumn || !c.target.sortColumn
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            })
-            this.jointErrorMessage = this.$t('packages_business_verification_message_error_joint_table_field_not_set')
-            return this.$message.error(
-              this.$t('packages_business_verification_message_error_joint_table_field_not_set')
-            )
-          }
-          // 判断表字段校验时，索引字段是否个数一致
-          index = 0
-          if (
-            ['field', 'jointField'].includes(this.form.inspectMethod) &&
-            tasks.some((c, i) => {
-              index = i + 1
-              return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              let item = document.getElementById('item-source-' + (index - 1))
-              item.querySelector('input').focus()
-            })
-            this.jointErrorMessage = this.$t('packages_business_verification_message_error_joint_table_field_not_match')
-            return this.$message.error(
-              this.$t('packages_business_verification_message_error_joint_table_field_not_match')
-            )
-          }
-          // 判断字段模型是否存在空
-          index = 0
-          if (
-            ['field', 'jointField'].includes(this.form.inspectMethod) &&
-            tasks.some((c, i) => {
-              index = i + 1
-              return c.source.columns?.some(t => !t) || c.target.columns?.some(t => !t)
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              let item = document.getElementById('list-table__content' + (index - 1))
-              const emptyDom = item.querySelector('.el-select.empty-data')
-              const offsetTop = emptyDom?.offsetTop || 0
-              if (offsetTop) {
-                const height = emptyDom?.offsetHeight || 0
-                item.scrollTo({
-                  top: offsetTop - height
-                })
-              }
-            })
-            this.jointErrorMessage = i18n.t('packages_business_verification_form_diinde', { val1: index })
-            return this.$message.error(i18n.t('packages_business_verification_form_diinde', { val1: index }))
+          const validateMsg = this.$refs.conditionBox.validate()
+          if (validateMsg) {
+            return this.$message.error(validateMsg)
           }
 
-          // 开启高级校验后，JS校验逻辑不能为空
-          index = 0
-          if (
-            this.form.inspectMethod === 'field' &&
-            tasks.some((c, i) => {
-              index = i + 1
-              return c.showAdvancedVerification && !c.webScript
-            })
-          ) {
-            this.$refs.conditionBox.setEditId(tasks[index - 1]?.id)
-            this.$nextTick(() => {
-              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
-            })
-            this.jointErrorMessage = this.$t('packages_business_verification_message_error_script_no_enter')
-            return this.$message.error(this.$t('packages_business_verification_message_error_script_no_enter'))
-          }
           if (this.form.inspectMethod === 'jointField') {
             tasks.forEach(item => {
               item['fullMatch'] = false
@@ -760,8 +666,6 @@ function validate(sourceRow){
   font-size: 14px;
   color: map-get($fontColor, dark);
 }
-.verify-form__main {
-}
 .form-item {
   margin-bottom: 32px;
 }
@@ -771,132 +675,28 @@ function validate(sourceRow){
 .form-input {
   width: 505px;
 }
-.joint-table {
-  border-radius: 4px;
-  border: 1px solid #e8e8e8;
-  &.error {
-    border-color: map-get($color, danger);
-  }
-}
-.joint-table-header {
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  background: map-get($bgColor, normal);
-}
-.joint-table-footer {
-  padding: 16px 24px;
-}
-.joint-table-main {
-  .joint-table-item {
-    padding: 16px 24px;
+::v-deep {
+  .js-wrap {
     display: flex;
-    border-bottom: 1px solid map-get($borderColor, light);
-    cursor: pointer;
-  }
-  .joint-table-setting {
-    flex: 1;
-    background-color: map-get($bgColor, white);
-  }
-  .setting-item {
-    display: flex;
-    margin-bottom: 0;
-    .el-form-item__content {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    .jsBox {
       display: flex;
-      align-items: center;
-      line-height: 1;
-    }
-    .item-label {
-      width: 80px;
-      line-height: 32px;
-      text-align: left;
-    }
-    .item-icon {
-      margin: 0 10px;
-      width: 20px;
-      line-height: 32px;
-      color: map-get($fontColor, light);
-      font-size: 16px;
-      text-align: center;
-    }
-    .item-time-picker,
-    .item-input,
-    .item-select,
-    .item-filter {
+      flex-direction: column;
       flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .item-filter-body {
-      padding: 16px;
-      background: map-get($fontColor, normal);
-      border-radius: 2px;
-      color: map-get($fontColor, slight);
-      .filter-example-label {
-        margin-top: 8px;
-        color: #bfd0ff;
-        line-height: 17px;
+      .js-fixText {
+        line-height: 25px;
       }
-      .filter-example {
-        margin-top: 8px;
-        padding: 8px;
-        line-height: 30px;
-        background: #262838;
-        color: #82b290;
+      .js-fixContent {
+        margin-left: 60px;
       }
     }
-    .item-value-text {
-      flex: 1;
-      line-height: 32px;
-      padding: 0 16px;
+    .example {
+      width: 300px;
     }
-    .item-script {
-      margin: 0;
-      padding: 16px 24px;
-      width: 100%;
-      max-height: 130px;
-      overflow: auto;
-      border-radius: 5px;
-      border-left: 5px solid map-get($color, primary);
-      background: #eff1f4;
-      font-size: 12px;
-      font-family: PingFangSC-Medium, PingFang SC;
-      font-weight: 500;
-      color: rgba(0, 0, 0, 0.6);
-      line-height: 17px;
+    .js-editor {
+      border: 1px solid map-get($borderColor, light);
     }
-  }
-}
-</style>
-<style lang="scss">
-.joint-table {
-  .red .el-input__inner {
-    border: none;
-    border: 1px solid #ee5353;
-    border-radius: 4px;
-  }
-}
-.js-wrap {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  .jsBox {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    .js-fixText {
-      line-height: 25px;
-    }
-    .js-fixContent {
-      margin-left: 60px;
-    }
-  }
-  .example {
-    width: 300px;
-  }
-  .js-editor {
-    border: 1px solid map-get($borderColor, light);
   }
 }
 </style>

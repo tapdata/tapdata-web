@@ -1,7 +1,6 @@
 <template>
   <div class="multi-selection-data-verify">
     <el-select
-      size="mini"
       :value="values"
       multiple
       filterable
