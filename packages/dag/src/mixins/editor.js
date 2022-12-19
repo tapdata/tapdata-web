@@ -1160,6 +1160,29 @@ export default {
       }
     },
 
+    validateTaskType() {
+      const { type } = this.dataflow
+      if (type !== 'initial_sync') {
+        let hasNoStreamReadFunction = false
+        this.allNodes.forEach(node => {
+          if (node.$outputs.length && !node.$inputs.length) {
+            if (!node.attrs.capabilities?.some(t => t.id === 'stream_read_function')) {
+              // 源不支持增量
+              hasNoStreamReadFunction = true
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: i18n.t('packages_dag_mixins_editor_not_support_cdc')
+              })
+            }
+          }
+        })
+        if (hasNoStreamReadFunction) {
+          this.setActiveType('settings')
+          return i18n.t('packages_dag_mixins_editor_task_not_support_cdc')
+        }
+      }
+    },
+
     loadLeafNode(node) {
       let arr = []
       if (node.$outputs.length) {
@@ -1289,7 +1312,8 @@ export default {
         this.validateDag,
         this.validateAgent,
         this.validateLink,
-        this.validateDDL
+        this.validateDDL,
+        this.validateTaskType
       )
     },
 

@@ -322,6 +322,8 @@ export default {
     '任务中含有JS节点、自定义节点、追加合并节点或节点设置增量自定义SQL，暂不支持DDL，请手动关闭',
   packages_dag_mixins_editor_gaijiedianbuzhi: '该节点不支持在 {val1}（{val2}）上运行',
   packages_dag_mixins_editor_not_support_ddl: '该节点不支持DDL，请关闭',
+  packages_dag_mixins_editor_not_support_cdc: '该节点不支持增量，请将任务类型修改为全量',
+  packages_dag_mixins_editor_task_not_support_cdc: '任务中含有不支持增量的节点，请将任务类型修改为全量',
   packages_dag_mixins_editor_buzhichiduotiao: '不支持多条链路，请重新编辑任务链路',
   packages_dag_mixins_editor_renwulianlubu: '任务链路不完整',
   packages_dag_mixins_editor_renwushezhiyi: '任务设置异常',
