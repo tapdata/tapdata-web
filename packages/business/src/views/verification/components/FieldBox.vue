@@ -488,7 +488,7 @@ export default {
   width: 350px;
 }
 .list-table__content {
-  height: 200px;
+  max-height: 300px;
   overflow-y: auto;
 }
 .list-table__header {
