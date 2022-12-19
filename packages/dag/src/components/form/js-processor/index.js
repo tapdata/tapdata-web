@@ -74,8 +74,9 @@ export const JsProcessor = observer(
       const outputRef = ref('')
 
       let timer
+      let outTimer
       let version
-      let logList = reactive([])
+      let logList = ref([])
       let logLoading = ref(false)
 
       const queryLog = async () => {
@@ -89,7 +90,7 @@ export const JsProcessor = observer(
           nodeId: form.values.id,
           end: Date.now()
         })
-        logList = logData?.items.filter(item => !new RegExp(`^.*\\[${form.values.id}]`).test(item.message)) || []
+        logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${form.values.id}]`).test(item.message)) || []
       }
 
       const handleQuery = async () => {
@@ -120,6 +121,8 @@ export const JsProcessor = observer(
         running.value = false
         runningText.value = ''
         logLoading.value = false
+        clearTimeout(timer)
+        clearTimeout(outTimer)
       }
 
       const handleAutoQuery = () => {
@@ -142,13 +145,21 @@ export const JsProcessor = observer(
                 handleAutoQuery()
               }, 500)
             } else {
-              resetQuery()
+              if (!logList.value.length) {
+                outTimer = setTimeout(async () => {
+                  await queryLog()
+                  resetQuery()
+                }, 1000)
+              } else {
+                resetQuery()
+              }
             }
           })
           .catch(resetQuery)
       }
 
       const handleRun = () => {
+        resetQuery()
         running.value = true
         logLoading.value = true
         showJsonArea.value = true
@@ -255,6 +266,7 @@ export const JsProcessor = observer(
                 feedbackLayout="none"
               >
                 <VirtualSelect
+                  disabled={props.disabled}
                   value={params.tableName}
                   filterable
                   class="form-input"
@@ -274,6 +286,7 @@ export const JsProcessor = observer(
                 feedbackLayout="none"
               >
                 <ElInputNumber
+                  disabled={props.disabled}
                   style="width: 100px;"
                   value={params.rows}
                   min={1}
@@ -285,8 +298,9 @@ export const JsProcessor = observer(
                 ></ElInputNumber>
               </FormItem.BaseItem>
               <ElButton
+                disabled={props.disabled}
                 class="ml-4"
-                disabled={isMigrate && !params.tableName}
+                disabled={props.disabled || (isMigrate && !params.tableName)}
                 loading={running.value || tableLoading.value}
                 onClick={handleRun}
                 type="primary"
@@ -419,8 +433,8 @@ export const JsProcessor = observer(
                     <ElTabPane label="输出">
                       <div class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
-                          {logList.length
-                            ? logList.map(item => {
+                          {logList.value.length
+                            ? logList.value.map(item => {
                                 if (/^[{[].*[\]}]$/.test(item.message)) {
                                   let code
                                   try {
