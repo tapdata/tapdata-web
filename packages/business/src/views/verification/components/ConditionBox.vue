@@ -269,7 +269,7 @@ export default {
       }
     },
 
-    async getTableListMethod(filter) {
+    async getTableListMethod(filter = {}) {
       const { connectionId, nodeId } = filter
       if (!connectionId) {
         return { items: [], total: 0 }
@@ -278,33 +278,25 @@ export default {
         return this.getTablesInTask(nodeId, connectionId, filter)
       }
       try {
-        const { isSource, isTarget } = filter
-        const _filter = {
-          where: {},
-          fields: {
-            name: 1,
-            id: 1,
-            database_type: 1,
-            connection_type: 1,
-            status: 1,
-            accessNodeType: 1,
-            accessNodeProcessId: 1,
-            accessNodeProcessIdList: 1,
-            pdkType: 1,
-            pdkHash: 1,
-            capabilities: 1
+        const size = filter.size || 20
+        const page = filter.page || 1
+        let params = {
+          where: {
+            meta_type: 'table',
+            sourceType: 'SOURCE',
+            is_deleted: false,
+            'source.id': connectionId
           },
-          order: ['status DESC', 'name ASC']
+          skip: (page - 1) * size,
+          limit: size,
+          order: 'createTime DESC'
+        }
+        const keyword = filter.where?.name?.like
+        if (keyword) {
+          params.where.name = filter.where.name
         }
         const res = await metadataInstancesApi.tapTables({
-          filter: JSON.stringify({
-            where: {
-              meta_type: 'table',
-              sourceType: 'SOURCE',
-              'source._id': connectionId
-            },
-            limit: 50
-          })
+          filter: JSON.stringify(params)
         })
         let result = {}
         result.items = res.items.map(t => t.name)
@@ -371,7 +363,7 @@ export default {
         nodeId,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: filter?.page || 1,
-        pageSize: filter?.size || 50
+        pageSize: filter?.size || 20
       }
       const keyword = filter.where?.name?.like
       if (keyword) {
@@ -391,21 +383,21 @@ export default {
           })
         )
       })
+      let tableNames = tableList
       if (isDB) {
-        // 存在多表的情况，这里需要做分页
-        let tableNames = []
-        if (findNode.outputLanes.length) {
-          tableNames = tableList
-        } else {
+        if (!findNode.outputLanes.length) {
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableNames = tableList.map(t => {
+          tableNames = tableNames.map(t => {
             let name = (tablePrefix || '') + t + (tableSuffix || '')
             return tableNameTransform ? name[tableNameTransform]() : name
           })
         }
         return { items: tableNames, total: total }
       }
-      return { items: tableList, total: tableList.length }
+      if (keyword) {
+        tableNames = tableNames.filter(t => t.toLowerCase().includes(keyword.toLowerCase()))
+      }
+      return { items: tableNames, total: tableNames.length }
     },
 
     getAllTablesInNode(nodeId) {
@@ -771,6 +763,8 @@ export default {
   padding: 16px 24px;
 }
 .joint-table-main {
+  max-height: 360px;
+  overflow-y: auto;
   .joint-table-item {
     padding: 16px 24px;
     display: flex;
