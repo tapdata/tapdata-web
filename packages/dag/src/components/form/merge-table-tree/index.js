@@ -10,6 +10,7 @@ export const MergeTableTree = observer(
   defineComponent({
     props: {
       value: Array,
+      disabled: Boolean,
       findNodeById: Function,
       loadFieldsMethod: Function,
       treeWidth: {
@@ -212,14 +213,7 @@ export const MergeTableTree = observer(
 
       return () => {
         return (
-          <Space
-            class="merge-table-tree-space"
-            align="stretch"
-            size={32}
-            split={true}
-            inline={false}
-            colSpan={['unset', 1]}
-          >
+          <Space class="merge-table-tree-space" align="stretch" size={8} split={true} inline={false}>
             <FormItem.BaseItem label="表名称(支持拖拽)" tooltip="表之间可通过拖拽嵌套，确定主从关系">
               <ElTree
                 ref="tree"
@@ -229,7 +223,7 @@ export const MergeTableTree = observer(
                 defaultExpandAll={true}
                 highlightCurrent={true}
                 expandOnClickNode={false}
-                draggable={true}
+                draggable={!props.disabled}
                 scopedSlots={{
                   default: renderNode
                 }}
@@ -237,7 +231,7 @@ export const MergeTableTree = observer(
                 vOn:node-drop={handleNodeDrop}
               />
             </FormItem.BaseItem>
-            <div>
+            <div class="flex-fill">
               {currentPath.value &&
                 createElement(
                   RecursionField,
