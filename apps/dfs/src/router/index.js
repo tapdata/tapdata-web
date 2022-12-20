@@ -230,6 +230,15 @@ const routes = [
             }
           }
         ]
+      },
+      {
+        path: '/data-server',
+        name: 'dataServerList',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/data-server/list'),
+        meta: {
+          title: '数据服务',
+          icon: 'server'
+        }
       }
     ]
   },

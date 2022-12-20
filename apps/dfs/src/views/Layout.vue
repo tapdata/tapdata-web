@@ -110,6 +110,11 @@ export default {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'
+        },
+        {
+          name: 'dataServerList',
+          title: '数据服务',
+          icon: 'operation-log'
         }
       ],
       dialogVisible: false,
