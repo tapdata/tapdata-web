@@ -597,7 +597,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
-      this.getMappingModel(item.id)
+      //this.getMappingModel(item.id)
     },
     // 保存用户表单
     createNewUser() {
