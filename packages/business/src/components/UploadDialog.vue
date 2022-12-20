@@ -135,7 +135,9 @@ export default {
         this.$message.error(this.$t('packages_business_message_upload_fail'))
       } else {
         this.$message.success(this.$t('packages_business_message_upload_success'))
+        this.$emit('success')
       }
+      this.$refs.upload.clearFiles()
     },
 
     // 上传保存
