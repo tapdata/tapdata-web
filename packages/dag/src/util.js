@@ -42,7 +42,7 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     const pdkProperties = pdkPropertiesMap[values.attrs.pdkHash]
     if (pdkProperties) {
       const pdkSchema = takeFieldValue(newSchema, 'nodeConfig')
-      Object.assign(pdkSchema, pdkProperties)
+      pdkSchema && Object.assign(pdkSchema, pdkProperties)
     }
   }
 
