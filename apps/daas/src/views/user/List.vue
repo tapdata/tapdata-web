@@ -551,25 +551,25 @@ export default {
     // 创建用户弹窗
     openCreateDialog() {
       this.createDialogVisible = true
-      let roleusers = []
-      let parmas = {
-        filter: {
-          where: {
-            register_user_default: true
-          }
-        }
-      }
-      roleApi.get(parmas).then(data => {
-        let items = data?.items || []
-        items.forEach(item => {
-          roleusers.push(item.id)
-        })
-      })
+      // let roleusers = []
+      // let parmas = {
+      //   filter: {
+      //     where: {
+      //       register_user_default: true
+      //     }
+      //   }
+      // }
+      // roleApi.get(parmas).then(data => {
+      //   let items = data?.items || []
+      //   items.forEach(item => {
+      //     roleusers.push(item.id)
+      //   })
+      // })
       this.createForm = {
         username: '',
         email: '',
         password: '',
-        roleusers: roleusers,
+        roleusers: '',
         status: 'activated',
         accesscode: '',
         emailVerified: true,
