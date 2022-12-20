@@ -213,7 +213,7 @@ export const MergeTableTree = observer(
 
       return () => {
         return (
-          <Space class="merge-table-tree-space" align="stretch" size={8} split={true} inline={false}>
+          <Space class="merge-table-tree-space" align="stretch" size={12} split={true} inline={false}>
             <FormItem.BaseItem label="表名称(支持拖拽)" tooltip="表之间可通过拖拽嵌套，确定主从关系">
               <ElTree
                 ref="tree"
