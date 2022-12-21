@@ -28,9 +28,9 @@
               <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
                 <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
                 <template #content>
-                  <div class="flex flex-wrap align-center font-color-dark">
-                    <VIcon size="14" class="mr-2 color-warning"> warning </VIcon>
-                    {{ $t('agent_tip_no_running') }}
+                  <div class="font-color-dark">
+                    <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
+                    >{{ $t('agent_tip_no_running') }}
                   </div>
                 </template>
               </ElTooltip>
