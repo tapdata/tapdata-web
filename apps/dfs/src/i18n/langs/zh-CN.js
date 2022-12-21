@@ -1161,5 +1161,8 @@ export default {
   dfs_instance_instance_status_success: '上传成功',
   dfs_instance_instance_status_false: '上传失败',
   dfs_instance_details_shangchuanzhong: '上传中',
+  dfs_instance_details_status_invalid: '已失效',
+  dfs_instance_instance_upload_days: '最近{val}天的本地日志文件',
+  dfs_instance_instance_upload_days_label: '选择日志范围',
   dfs_instance_instance_gengxin: '{val}更新'
 }

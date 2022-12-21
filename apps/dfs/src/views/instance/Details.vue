@@ -35,22 +35,7 @@
         </div>
       </div>
       <div class="mt-4">
-        <ElButton
-          size="mini"
-          type="primary"
-          :disabled="agent.status !== 'Running' || (uploadAgentLog && uploadAgentLog.status === 0) || disabledUploadBtn"
-          :loading="loadingDetailUpload"
-          @click="handleUpload(agent.id, true)"
-        >
-          <span v-if="uploadAgentLog && uploadAgentLog.uploadRatio !== 100 && uploadAgentLog.status === 0">
-            {{ $t('dfs_instance_instance_rizhishangchuan') }}
-            <span> ({{ uploadAgentLog.uploadRatio }}）%</span>
-          </span>
-          <span v-else>
-            {{ btnDetailsTxt }}
-          </span>
-        </ElButton>
-        <ElButton size="mini" @click="open(agent.id, agent.status)">{{
+        <ElButton size="mini" type="primary" @click="open(agent.id, agent.status)">{{
           $t('dfs_instance_instance_bendirizhixia')
         }}</ElButton>
       </div>
@@ -66,6 +51,10 @@
       <div slot="default" class="flex justify-content-between">
         <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
         <div>
+          <label class="mr-4">{{ $t('dfs_instance_instance_upload_days_label') }}</label>
+          <el-select class="mr-4" v-model="uploadDays">
+            <el-option v-for="item in days" :label="item.label" :value="item.value" :key="item.value"></el-option>
+          </el-select>
           <el-button
             class="mb-4 mr-4"
             type="primary"
@@ -250,12 +239,36 @@ export default {
       uploadTimer: null,
       loadingLogTable: false,
       loadingUpload: false,
-      loadingDetailUpload: false,
       btnTxt: i18n.t('dfs_instance_instance_rizhishangchuan'),
-      btnDetailsTxt: i18n.t('dfs_instance_instance_rizhishangchuan'),
-      disabledUploadBtn: false, //控制agent 上传频率 同时只能一个在上传
       disabledUploadDialog: false, //控制agent 上传频率 同时只能一个在上传 在弹窗
-      uploadAgentLog: ''
+      uploadAgentLog: '',
+      uploadDays: 3,
+      days: [
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 1
+          }),
+          value: 1
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 3
+          }),
+          value: 3
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 7
+          }),
+          value: 7
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 15
+          }),
+          value: 15
+        }
+      ]
     }
   },
   watch: {
@@ -329,53 +342,19 @@ export default {
       this.timer = null
     },
     //日志上传
-    handleUpload(id, polling) {
-      if (polling) {
-        this.btnDetailsTxt = i18n.t('dfs_instance_details_shangchuanzhong')
-        this.loadingDetailUpload = true
-      } else {
-        this.loadingUpload = true
-        this.btnTxt = i18n.t('dfs_instance_details_shangchuanzhong')
-      }
+    handleUpload(id) {
+      this.loadingUpload = true
+      this.btnTxt = i18n.t('dfs_instance_details_shangchuanzhong')
       this.$axios
-        .post('api/tcm/uploadLog', { agentId: id })
+        .post('api/tcm/uploadLog', { agentId: id, uploadDays: this.uploadDays })
         .then(() => {
-          if (polling) {
-            this.loadingDetailUpload = false
-            clearTimeout(this.uploadTimer)
-            this.getUploadStatus()
-          } else {
-            //主動刷新列表
-            clearTimeout(this.timer)
-            this.getDownloadList()
-          }
-        })
-        .catch(() => {
-          if (polling) {
-            clearTimeout(this.uploadTimer)
-            this.getUploadStatus()
-          }
+          //主動刷新列表
+          clearTimeout(this.timer)
+          this.getDownloadList()
         })
         .finally(() => {
           this.loadingUpload = false
-          this.loadingDetailUpload = false
         })
-    },
-    //轮询当前上传进度
-    getUploadStatus() {
-      this.$axios.get('api/tcm/agent/' + this.detailId).then(data => {
-        if (data) {
-          this.uploadAgentLog = data?.uploadAgentLog
-          this.disabledUploadBtn = data?.uploadAgentLog?.status === 0 || false
-          this.loadingDetailUpload = false
-          this.btnDetailsTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
-        }
-        if (data?.uploadAgentLog?.status === 0) {
-          this.uploadTimer = setTimeout(() => {
-            this.getUploadStatus()
-          }, 300)
-        }
-      })
     },
     handleUnit(limit) {
       return handleUnit(limit)
@@ -404,7 +383,7 @@ export default {
       let filter = {
         where: {
           agentId: this.currentAgentId,
-          isDeleted: false
+          status: 4
         },
         page: this.currentPage,
         size: this.pageSize,
@@ -505,6 +484,10 @@ export default {
   background-color: #c4f3cb;
 }
 .status-2 {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+.status-3 {
   color: #d44d4d;
   background-color: #ffecec;
 }
