@@ -54,6 +54,7 @@
           <span class="connection-name flex">
             <img class="connection-img mr-2" :src="getConnectionIcon(row.pdkHash)" alt="" />
             <ElLink
+              role="ellipsis"
               type="primary"
               class="justify-content-start ellipsis block"
               style="line-height: 20px"
