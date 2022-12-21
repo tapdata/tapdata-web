@@ -84,9 +84,13 @@
           <span>{{ handleUnit(scope.row.fileSize) }}</span>
         </template>
         <template slot="operation" slot-scope="scope">
-          <ElButton size="mini" type="text" :disabled="scope.row.status === 0" @click="handleDownload(scope.row)">{{
-            $t('dfs_instance_instance_xiazai')
-          }}</ElButton>
+          <ElButton
+            size="mini"
+            type="text"
+            :disabled="[0, 3].includes(scope.row.status)"
+            @click="handleDownload(scope.row)"
+            >{{ $t('dfs_instance_instance_xiazai') }}</ElButton
+          >
           <ElButton
             size="mini"
             type="text"
