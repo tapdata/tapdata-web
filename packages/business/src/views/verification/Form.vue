@@ -275,6 +275,7 @@ export default {
       isDbClone: false,
       form: {
         flowId: '',
+        flowName: '',
         name: '',
         mode: 'manual',
         inspectDifferenceMode: 'All',
@@ -397,6 +398,7 @@ export default {
             }
             data.taskMode = data.flowId ? 'pipeline' : 'random'
             this.form = Object.assign({}, this.form, data)
+            this.getFlowStages()
           }
         })
         .finally(() => {
@@ -445,6 +447,7 @@ export default {
       this.form.tasks = []
       let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
       this.form.name = this.form.name || flow.name || ''
+      this.form.flowName = flow.name
       this.getFlowStages()
     },
     timingChangeHandler(times) {
