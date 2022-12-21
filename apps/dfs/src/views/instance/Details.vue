@@ -36,7 +36,7 @@
       </div>
       <div class="mt-4">
         <ElButton size="mini" type="primary" @click="open(agent.id, agent.status)">{{
-          $t('dfs_instance_instance_bendirizhixia')
+          $t('dfs_instance_instance_rizhishangchuan')
         }}</ElButton>
       </div>
     </div>
@@ -239,7 +239,7 @@ export default {
       uploadTimer: null,
       loadingLogTable: false,
       loadingUpload: false,
-      btnTxt: i18n.t('dfs_instance_instance_rizhishangchuan'),
+      btnTxt: i18n.t('dfs_instance_instance_upload_btn'),
       disabledUploadDialog: false, //控制agent 上传频率 同时只能一个在上传 在弹窗
       uploadAgentLog: '',
       uploadDays: 3,
@@ -400,7 +400,7 @@ export default {
           this.disabledUploadDialog = uploading?.length > 0
           if (!this.disabledUploadDialog) {
             this.loadingUpload = false
-            this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
+            this.btnTxt = i18n.t('dfs_instance_instance_upload_btn')
           }
           this.timer = setTimeout(() => {
             this.getDownloadList()

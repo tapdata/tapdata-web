@@ -1136,6 +1136,7 @@ export default {
   dfs_instance_details_status_invalid: '已失效',
   dfs_instance_instance_upload_days: '最近{val}天的本地日誌文件',
   dfs_instance_instance_upload_days_label: '選擇日誌範圍',
+  dfs_instance_instance_upload_btn: '開始上傳日誌',
   dfs_instance_instance_rizhi: '日誌',
   dfs_instance_instance_gengxin: '{val}更新'
 }

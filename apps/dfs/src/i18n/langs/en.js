@@ -1246,5 +1246,6 @@ export default {
   dfs_instance_details_status_invalid: 'Invalid',
   dfs_instance_instance_upload_days: 'Local log files of the last {val} days',
   dfs_instance_instance_upload_days_label: 'Please select log range',
+  dfs_instance_instance_upload_btn: 'Start uploading logs',
   dfs_instance_instance_gengxin: 'Updated {val}'
 }
