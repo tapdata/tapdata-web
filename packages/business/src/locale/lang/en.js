@@ -690,6 +690,8 @@ export default {
   packages_business_verification_form_label_error_save_count: 'Number of saved errors',
   packages_business_verification_button_auto_add_table: 'Automatically add table',
   packages_business_components_conditionbox_suoxuanrenwuque: 'The selected task lacks node connection information',
+  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong:
+    'There is a processing node, and the table cannot be added automatically',
   packages_business_components_conditionbox_shifouqingkongsuo: 'Whether to clear all conditions',
   packages_business_components_conditionbox_mubiaobiao: 'target table',
   packages_business_components_conditionbox_laiyuanbiao: 'source table',

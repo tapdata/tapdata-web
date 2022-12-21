@@ -189,7 +189,7 @@ export default {
       type: Array,
       default: () => []
     },
-    flowStages: {
+    allStages: {
       type: Array,
       default: () => []
     }
@@ -203,6 +203,13 @@ export default {
       fieldsMap: {},
       autoAddTableLoading: false,
       dynamicSchemaMap: {}
+    }
+  },
+
+  computed: {
+    flowStages() {
+      let types = this.isDB ? ['database'] : ['table']
+      return this.allStages.filter(stg => types.includes(stg.type))
     }
   },
 
@@ -494,7 +501,6 @@ export default {
 
     async autoAddTable() {
       if (!this.taskId || this.list.length) return
-      this.autoAddTableLoading = true
       let connectionIds = []
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
@@ -504,6 +510,11 @@ export default {
         tableNames.push(...this.getAllTablesInNode(m.source))
         tableNames.push(...this.getAllTablesInNode(m.target))
       })
+      if (!matchNodeList.length) {
+        if (this.allStages.length > this.flowStages.length)
+          return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
+        return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
+      }
       let where = {
         meta_type: {
           inq: DATA_NODE_TYPES
@@ -515,6 +526,7 @@ export default {
           inq: Array.from(new Set(tableNames))
         }
       }
+      this.autoAddTableLoading = true
       metadataInstancesApi
         .findInspect({
           where,

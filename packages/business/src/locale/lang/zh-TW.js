@@ -672,6 +672,7 @@ export default {
   packages_business_verification_form_label_error_save_count: '錯誤保存條數',
   packages_business_verification_button_auto_add_table: '自動添加表',
   packages_business_components_conditionbox_suoxuanrenwuque: '所選任務缺少節點連線信息',
+  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong: '存在處理節點，無法自動添加表',
   packages_business_components_conditionbox_shifouqingkongsuo: '是否清空所有條件',
   packages_business_components_conditionbox_mubiaobiao: ' 目標表',
   packages_business_components_conditionbox_laiyuanbiao: '來源表',

@@ -670,6 +670,7 @@ export default {
   packages_business_verification_form_label_error_save_count: '错误保存条数',
   packages_business_verification_button_auto_add_table: '自动添加表',
   packages_business_components_conditionbox_suoxuanrenwuque: '所选任务缺少节点连线信息',
+  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong: '存在处理节点，无法自动添加表',
   packages_business_components_conditionbox_shifouqingkongsuo: '是否清空所有条件',
   packages_business_components_conditionbox_mubiaobiao: ' 目标表',
   packages_business_components_conditionbox_laiyuanbiao: '来源表',
