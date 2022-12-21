@@ -99,6 +99,7 @@
         <template #default="{ row }">
           <span class="dataflow-name link-primary flex">
             <ElLink
+              role="ellipsis"
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
