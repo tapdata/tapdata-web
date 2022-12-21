@@ -185,14 +185,10 @@ export default {
       let opt = {
         sourceNodeId: item.source.nodeId,
         targetNodeId: item.target.nodeId,
-        sourceId: item.source.connectionId,
-        targetId: item.target.connectionId,
+        sourceId: item.source.connectionId?.replace(/.+\//g, ''),
+        targetId: item.target.connectionId?.replace(/.+\//g, ''),
         sourceTable: item.source.table,
         targetTable: item.target.table
-      }
-      if (this.taskId) {
-        opt.sourceId = opt.sourceId?.split('/')?.[1]
-        opt.targetId = opt.targetId?.split('/')?.[1]
       }
       return opt
     },
