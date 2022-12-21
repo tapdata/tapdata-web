@@ -589,6 +589,10 @@ export default {
       let list = cloneDeep(this.list)
       if (this.taskId) {
         list.forEach(el => {
+          if (el.modeType === 'all') {
+            el.source.columns = null
+            el.target.columns = null
+          }
           el.source.connectionId = el.source.connectionId?.split('/')?.[1]
           el.source.connectionName = el.source.connectionName?.split(' / ')?.[1]
           el.target.connectionId = el.target.connectionId?.split('/')?.[1]
