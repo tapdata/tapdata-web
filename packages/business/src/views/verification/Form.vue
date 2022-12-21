@@ -275,7 +275,6 @@ export default {
       isDbClone: false,
       form: {
         flowId: '',
-        flowName: '',
         name: '',
         mode: 'manual',
         inspectDifferenceMode: 'All',
@@ -414,6 +413,13 @@ export default {
           let types = data.syncType === 'migrate' ? ['database'] : ['table']
           let edges = data.dag?.edges || []
           let nodes = data.dag?.nodes || []
+          const findOne = this.flowOptions.find(t => t.id === data.id)
+          if (!findOne) {
+            this.flowOptions.unshift({
+              id: data.id,
+              name: data.name
+            })
+          }
           if (!edges.length) {
             return { items: [], total: 0 }
           }
@@ -447,7 +453,6 @@ export default {
       this.form.tasks = []
       let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
       this.form.name = this.form.name || flow.name || ''
-      this.form.flowName = flow.name
       this.getFlowStages()
     },
     timingChangeHandler(times) {
