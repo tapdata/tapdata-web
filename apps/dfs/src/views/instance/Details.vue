@@ -383,7 +383,7 @@ export default {
       let filter = {
         where: {
           agentId: this.currentAgentId,
-          status: 4
+          isDeleted: false
         },
         page: this.currentPage,
         size: this.pageSize,
