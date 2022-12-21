@@ -327,9 +327,12 @@ export default {
   packages_dag_mixins_editor_renwujiazaichu: 'Error loading task',
   packages_dag_mixins_editor_renwubucunzai: 'Task does not exist',
   packages_dag_mixins_editor_renwuzhonghanyou:
-    'The task contains JS nodes, custom nodes, or incremental custom SQL for node settings. DDL is not supported at the moment, please close it manually',
+    'The task contains JS nodes, custom nodes, Union nodes, or incremental custom SQL for node settings. DDL is not supported at the moment, please close it manually',
   packages_dag_mixins_editor_gaijiedianbuzhi: 'This node does not support running on {val1}（{val2}）',
   packages_dag_mixins_editor_not_support_ddl: 'This node does not support DDL, please close it',
+  packages_dag_mixins_editor_not_support_cdc: 'The node does not support CDC. Change the task type to full',
+  packages_dag_mixins_editor_task_not_support_cdc:
+    'The task contains nodes that do not support CDC, change the task type to full',
   packages_dag_mixins_editor_buzhichiduotiao: 'Multiple links are not supported, please re-edit the task link',
   packages_dag_mixins_editor_renwulianlubu: 'The task link is incomplete',
   packages_dag_mixins_editor_renwushezhiyi: 'The task setting is abnormal',
