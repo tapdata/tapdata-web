@@ -279,7 +279,7 @@ export default {
   agent_upgrade_step_docker_second:
     '2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
   agent_upgrade_step_docker_third: '3.出现“Update finished.”则代表Agent升级成功',
-  agent_tip_no_running: '无可用 Agent， 请检查 Agent 运行状态或者创建一个新的 Agent',
+  agent_tip_no_running: '无可用 Agent，请检查 Agent 运行状态或者创建一个新的 Agent',
   // 连接
   connection_manage: '连接管理',
   connection_list_efficient: '有效',
@@ -290,6 +290,8 @@ export default {
   // 任务
   task_manage: '任务管理',
   task_manage_etl: '数据开发',
+  task_manage_desc: '表到表数据复制和迁移',
+  task_manage_migrate_desc: '数据库到数据库的复制',
   task_manage_migrate: '数据复制',
   task_name: '任务名称',
   task_status_running: '运行中',
@@ -1087,6 +1089,7 @@ export default {
   dfs_agent_download_upgradeversion_denglualiyun: '1. 登录阿里云计算巢控制台，找到部署Agent的服务实例.',
 
   dfs_the_header_header_jichuban: '基础版',
+  dfs_the_header_header_biaozhun: '标准版',
   dfs_agent_download_paidupgrade_qingxuanzelianxi: '请选择联系人手机号码',
   dfs_agent_download_paidupgrade_qingshurulianxi: '请输入联系人姓名',
   dfs_agent_download_paidupgrade_fanhuikongzhitai: '返回控制台',
@@ -1165,5 +1168,9 @@ export default {
   dfs_instance_details_status_invalid: '已失效',
   dfs_instance_instance_upload_days: '最近{val}天的本地日志文件',
   dfs_instance_instance_upload_days_label: '选择日志范围',
-  dfs_instance_instance_gengxin: '{val}更新'
+  dfs_instance_instance_gengxin: '{val}更新',
+  dfs_online_help_docs: '在线文档',
+  dfs_instance_stopped_help_tip_prefix:
+    'Agent 离线有可能是因为网络原因或者 Agent 退出导致。请检查 Agent 所在服务器的网络及 Agent 的运行状况。您可以查看',
+  dfs_instance_stopped_help_tip_suffix: '获取更多的帮助'
 }
