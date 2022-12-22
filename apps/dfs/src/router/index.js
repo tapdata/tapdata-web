@@ -286,6 +286,21 @@ const routes = [
     component: Error
   },
   {
+    path: '/502',
+    name: '502',
+    component: Error
+  },
+  {
+    path: '/504',
+    name: '504',
+    component: Error
+  },
+  {
+    path: '/error',
+    name: 'error',
+    component: Error
+  },
+  {
     path: '/invalid',
     name: 'Invalid',
     component: Error
