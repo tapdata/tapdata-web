@@ -205,7 +205,7 @@
           :task-id="form.flowId"
           :inspectMethod="form.inspectMethod"
           :data="form.tasks"
-          :flowStages="flowStages"
+          :allStages="allStages"
           :isDB="isDbClone"
           @addScript="addScript"
         ></ConditionBox>
@@ -324,7 +324,7 @@ export default {
           }
         ]
       },
-      flowStages: [],
+      allStages: [],
       flowOptions: null,
       dialogAddScriptVisible: false,
       formIndex: '',
@@ -410,7 +410,6 @@ export default {
         .getId(this.form.flowId)
         .then(data => {
           this.isDbClone = data.syncType === 'migrate'
-          let types = data.syncType === 'migrate' ? ['database'] : ['table']
           let edges = data.dag?.edges || []
           let nodes = data.dag?.nodes || []
           const findOne = this.flowOptions.find(t => t.id === data.id)
@@ -442,7 +441,7 @@ export default {
               })
             )
           })
-          this.flowStages = stages.filter(stg => types.includes(stg.type))
+          this.allStages = stages
         })
         .finally(() => {
           this.loading = false
