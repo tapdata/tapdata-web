@@ -1164,5 +1164,9 @@ export default {
   dfs_instance_instance_status_success: '上传成功',
   dfs_instance_instance_status_false: '上传失败',
   dfs_instance_details_shangchuanzhong: '上传中',
-  dfs_instance_instance_gengxin: '{val}更新'
+  dfs_instance_instance_gengxin: '{val}更新',
+  dfs_online_help_docs: '在线文档',
+  dfs_instance_stopped_help_tip_prefix:
+    'Agent 离线有可能是因为网络原因或者 Agent 退出导致。请检查 Agent 所在服务器的网络及 Agent 的运行状况。您可以查看',
+  dfs_instance_stopped_help_tip_suffix: '获取更多的帮助'
 }

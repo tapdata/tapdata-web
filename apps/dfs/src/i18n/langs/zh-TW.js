@@ -1137,5 +1137,9 @@ export default {
   dfs_instance_instance_status_success: '上傳成功',
   dfs_instance_instance_status_false: '上傳失敗',
   dfs_instance_instance_rizhi: '日誌',
-  dfs_instance_instance_gengxin: '{val}更新'
+  dfs_instance_instance_gengxin: '{val}更新',
+  dfs_online_help_docs: '在線文檔',
+  dfs_instance_stopped_help_tip_prefix:
+    'Agent 離線有可能是因為網絡原因或者 Agent 退出導致。請檢查 Agent 所在服務器的網絡及 Agent 的運行狀況。您可以查看',
+  dfs_instance_stopped_help_tip_suffix: '獲取更多的幫助'
 }

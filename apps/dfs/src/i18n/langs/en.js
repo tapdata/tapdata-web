@@ -1244,5 +1244,9 @@ export default {
   dfs_instance_details_shangchuanzhong: 'uploading',
   dfs_instance_instance_status_success: 'upload successful',
   dfs_instance_instance_status_false: 'Upload failed',
-  dfs_instance_instance_gengxin: 'Updated {val}'
+  dfs_instance_instance_gengxin: 'Updated {val}',
+  dfs_online_help_docs: 'Document',
+  dfs_instance_stopped_help_tip_prefix:
+    'The Agent may be offline because of network reasons or Agent exit. Check the network of the Agent server and the running status of the Agent. You can view ',
+  dfs_instance_stopped_help_tip_suffix: 'get more help'
 }

@@ -46,28 +46,21 @@
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" :status="scope.row.status" default-status="Stopped"></StatusTag>
-            <!--<template
-              v-if="
-                scope.row.status === 'Running' &&
-                scope.row.tmInfo &&
-                scope.row.tmInfo.pingTime &&
-                Date.now() - scope.row.tmInfo.pingTime > 60000
-              "
-            >
-              <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                <VIcon size="16" class="ml-2 color-warning">warning </VIcon>
-                <template #content>
-                  <div class="flex flex-wrap align-center font-color-dark">
-                    &lt;!&ndash;<VIcon size="16" class="mr-2 color-warning"> warning </VIcon>&ndash;&gt;
-                    {{
-                      $t('dfs_instance_instance_gengxin', {
-                        val: relativeTime(scope.row.tmInfo && scope.row.tmInfo.pingTime)
-                      })
-                    }}
-                  </div>
-                </template>
-              </ElTooltip>
-            </template>-->
+            <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
+              <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
+              <template #content>
+                <div>
+                  {{ $t('dfs_instance_stopped_help_tip_prefix') }}
+                  <a
+                    target="_blank"
+                    href="https://docs.tapdata.io/cloud/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
+                    class="color-primary"
+                    >{{ $t('dfs_online_help_docs') }}</a
+                  >
+                  {{ $t('dfs_instance_stopped_help_tip_suffix') }}
+                </div>
+              </template>
+            </ElTooltip>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_task_number')" width="140">
