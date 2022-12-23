@@ -23,6 +23,7 @@
           <div class="flex justify-content-between">
             <ElTooltip placement="top-start" :content="$t('packages_business_components_conditionbox_zhankaibianji')">
               <div class="cond-item__title flex align-items-center cursor-pointer flex-fill" @click="editItem(item)">
+                <VIcon size="14" class="mr-1">edit-outline</VIcon>
                 <span class="font-color-main fs-7">{{
                   $t('packages_business_components_conditionbox_jianyantiaojian')
                 }}</span>
@@ -554,6 +555,7 @@ export default {
               )
               let item = this.getItemOptions()
               item.source.nodeId = source
+              item.source.nodeName = sourceName
               item.source.connectionId = `${source}/${sourceConnectionId}`
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
               item.source.table = findTable.original_name
@@ -561,6 +563,7 @@ export default {
               item.source.sortColumn = this.getPrimaryKeyFieldStr(findTable.fields)
 
               item.target.nodeId = target
+              item.target.nodeName = targetName
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
               item.target.table = findTargetTable.original_name

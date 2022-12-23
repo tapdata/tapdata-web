@@ -534,12 +534,6 @@ export default {
                   let newTarget = cloneDeep(target)
                   newSource.fields = []
                   newTarget.fields = []
-                  if (taskId) {
-                    newSource.connectionId = newSource.connectionId?.split('/')?.[0]
-                    newSource.connectionName = newSource.connectionName?.split('/')?.[0]
-                    newTarget.connectionId = newTarget.connectionId?.split('/')?.[0]
-                    newTarget.connectionName = newTarget.connectionName?.split('/')?.[0]
-                  }
                   return {
                     taskId,
                     source: newSource,
