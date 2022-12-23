@@ -98,9 +98,14 @@
               $t('dfs_agent_download_agentguidedialog_tiyan')
             }}</el-button>
             <span class="inline-block userPassword">
-              <span class="inline-block">{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}</span>
+              <span class="inline-block"
+                >{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}<span>demo@tapdata.io</span></span
+              >
               <br />
-              <span class="inline-block">{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}</span>
+              <span class="inline-block"
+                >{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}
+                <span style="margin-left: 10px">tapdata</span></span
+              >
             </span>
           </div>
         </div>

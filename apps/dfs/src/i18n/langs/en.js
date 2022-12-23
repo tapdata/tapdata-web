@@ -1216,8 +1216,8 @@ export default {
   dfs_agent_download_agentguidedialog_dianjixiafangde:
     'Based on your network security policy, we will recommend a most appropriate deployment for your use. ',
   dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata Cloud',
-  dfs_agent_download_agentguidedialog_mimatap: 'Password: tapdata',
-  dfs_agent_download_agentguidedialog_yonghumingde: 'Username: demo@tapdata.io',
+  dfs_agent_download_agentguidedialog_mimatap: 'Password:',
+  dfs_agent_download_agentguidedialog_yonghumingde: 'Username:',
   dfs_agent_download_agentguidedialog_buxianganzhuanghuo:
     'Do not want to install or deploy? You can experience our DEMO system first to understand the powerful functions of Tapdata',
   dfs_agent_download_agentguidedialog_jijiangshangxian: 'coming soon',
