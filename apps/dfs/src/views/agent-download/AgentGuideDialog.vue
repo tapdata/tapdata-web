@@ -7,7 +7,7 @@
     :close-on-press-escape="false"
     :show-close="false"
   >
-    <section class="agent-guide-main flex">
+    <section class="agent-guide-main flex" style="height: 646px">
       <!--第一步-->
       <div class="agent-guide-left mt-110" :style="{ 'margin-top': style['top'] }" v-if="step === 1">
         <header class="agent-guide-header mb-32">
@@ -49,7 +49,7 @@
         </div>
       </div>
       <!--第二步 -->
-      <div class="agent-guide-left mt-32" v-if="step === 2" style="margin-top: 174px">
+      <div class="agent-guide-left mt-32" v-if="step === 2" style="margin-top: 100px">
         <header class="step-2-guide-header mb-39">
           {{ $t('dfs_agent_download_agentguidedialog_lijiquanzhuang') }}
         </header>
