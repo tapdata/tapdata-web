@@ -23,7 +23,7 @@
             <div class="flex">
               <div>
                 <InlineInput
-                  :class="['inline-input', 'color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
+                  :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
                   :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
@@ -282,7 +282,7 @@
             :loading="selectedRow.btnLoading.deploy"
             :disabled="deployBtnDisabled(selectedRow)"
             type="primary"
-            class="flex-fill"
+            class="flex-fill min-w-0"
             @click="toDeploy(selectedRow)"
           >
             <VIcon size="12">deploy</VIcon>
@@ -292,7 +292,7 @@
             :loading="selectedRow.btnLoading.stop"
             :disabled="stopBtnDisabled(selectedRow)"
             type="primary"
-            class="flex-fill"
+            class="flex-fill min-w-0"
             @click="handleStop(selectedRow)"
           >
             <VIcon size="12">stop</VIcon>
@@ -301,7 +301,7 @@
           <VButton
             :loading="selectedRow.btnLoading.delete"
             :disabled="delBtnDisabled(selectedRow)"
-            class="flex-fill"
+            class="flex-fill min-w-0"
             @click="handleDel(selectedRow)"
           >
             <VIcon size="12">delete</VIcon>
