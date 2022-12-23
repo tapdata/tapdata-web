@@ -285,7 +285,7 @@ export default observer({
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$values.syncType === "migrate" && $values.isDaas}}'
+                              visible: '{{$values.syncType === "migrate"}}'
                             }
                           }
                         }
