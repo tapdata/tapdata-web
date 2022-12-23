@@ -76,7 +76,7 @@
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
               <i class="data-verify__icon el-icon-error"></i>
-              <span>Error</span>
+              <span>{{ $t('packages_business_status_error') }}</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
