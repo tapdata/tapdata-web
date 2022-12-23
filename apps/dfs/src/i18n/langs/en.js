@@ -14,7 +14,7 @@ export default {
   button_confirm: 'Confirm',
   button_close: 'Close',
   button_save: 'Save',
-  button_upload: 'upload',
+  button_upload: 'Upload',
   button_export: 'export',
   button_bind: 'binding',
   button_unbind: 'unbind',
@@ -281,6 +281,7 @@ export default {
     '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
   agent_upgrade_step_docker_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
+  agent_tip_no_running: 'No agent available, Check the Agent running status or create a new Agent',
   connection_manage: 'Connection',
   connection_list_efficient: 'effective',
   connection_list_invalidation: 'Invalid',
@@ -1107,13 +1108,13 @@ export default {
   dfs_workbench_workbench_jiyuPdk2: 'PDK-based data source registration mechanism',
   dfs_workbench_workbench_xiamianshixinban: 'The following are the features added in the new version:',
   dfs_workbench_workbench_dangranruguoyou:
-    'Of course, if there are new tasks, we recommend that you create them in the new version for a better user experience. You are welcome to experience our new version functions and give your valuable suggestions at that time. ',
+    'Of course, if there are new tasks, we recommend that you create them in V3.0 for a better user experience. You are welcome to experience our new features and give your valuable suggestions. ',
   dfs_workbench_workbench_youyuzengjiale:
-    'Because of the addition of many useful functions, we were forced to abandon the existing version structure and redevelop, so the connections and tasks you created in the current V2 version will not be synchronized to the new version, but rest assured, you will still be You can continue to use the old version for your data operations, we guarantee that the V2 version and the V3 version will coexist for a long time,\n ',
-  dfs_workbench_workbench_zainianyueriwo: 'On September 29, 2022, we will release a major upgrade V3.0. ',
+    'Due to the addition of many practical functions, we have refactored and developed the architecture of the V2 version, so the connections and tasks you created in the V2 version will not be synchronized to the V3.0 version, but do not worry, after the new version is released, you You can still continue to use the old version for your data operations, and we guarantee that the V2 version and the V3.0 version will coexist for a long time. ',
+  dfs_workbench_workbench_zainianyueriwo: 'Our major upgrade version V3.0 has been officially released. ',
   dfs_workbench_workbench_zunjingdeyonghu: 'Dear user, hello:',
-  dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switch',
-  dfs_workbench_workbench_banbenshengjitong: 'version upgrade notice',
+  dfs_workbench_workbench_banbenshengjihe: 'Announcement of version upgrade and service switching',
+  dfs_workbench_workbench_banbenshengjitong: 'Tapdata Cloud V3.0 release notice',
   dfs_user_center_acces:
     'AccessKey is your secret key to access the system API and has full account authority, please keep it properly. Do not expose AccessKey to external channels (such as GitHub) in any way to avoid being used by others to cause security threats. ',
   dfs_user_center_kaifaxinxi: 'Development information',
@@ -1191,5 +1192,56 @@ export default {
   dfs_instance_instance_banbenhao: 'version number: ',
   dfs_instance_instance_agent: 'Agent update',
 
-  dfs_user_center_phone_error: 'This phone number has already been registered by another user'
+  dfs_user_center_phone_error: 'This phone number has already been registered by another user',
+  packages_business_task_status_agent_tooltip_agent: 'Agent',
+  dfs_agent_download_agentguidedialog_qingdianjibushu: 'Please select data source network access policy',
+  dfs_agent_download_agentguidedialog_ruhurucang: 'Entering the lake and entering the warehouse',
+  dfs_agent_download_agentguidedialog_shujutongbu: 'Data synchronization',
+  dfs_agent_download_agentguidedialog_tapda:
+    'Tapdata can meet various scenarios such as real-time synchronization of heterogeneous databases, data entering lakes and warehouses, and data ETL in the cloud',
+  dfs_agent_download_agentguidedialog_tiyan: 'Experience',
+  dfs_agent_download_agentguidedialog_womentigongle:
+    'We provide a physical examination Demo environment, you can view and experience Tapdata is powerful data synchronization and processing capabilities without installing Agent. (DEMO account: demo@tapdata.io password: tapdata)',
+  dfs_agent_download_agentguidedialog_tiyanDem: 'Experience Demo (no installation required)',
+  dfs_agent_download_agentguidedialog_anzhuang: 'Install',
+  dfs_agent_download_agentguidedialog_ninxuyaogenju:
+    'You need to install Tapdata is data calculation engine Agent on a machine that can access your data according to the guided operation. ',
+  dfs_agent_download_agentguidedialog_zizhuanzhuang: 'Self-service installation',
+  dfs_agent_download_agentguidedialog_lijiquanzhuang: 'install now',
+  dfs_agent_download_agentguidedialog_xiayibu: 'Next',
+  dfs_agent_download_agentguidedialog_womendeshuju: 'Our data source and target allow by external network services',
+  dfs_agent_download_agentguidedialog_neiwang: 'Our company security policy does not allow this',
+  dfs_agent_download_agentguidedialog_ninyaotongbude:
+    'Can the data source/target library you want to synchronize open ports to the external network? (via firewall, SSH Tunnel, VPN or other means)',
+  dfs_agent_download_agentguidedialog_dianjixiafangde:
+    'Based on your network security policy, we will recommend a most appropriate deployment for your use. ',
+  dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata Cloud',
+  dfs_agent_download_agentguidedialog_mimatap: 'Password: tapdata',
+  dfs_agent_download_agentguidedialog_yonghumingde: 'Username: demo@tapdata.io',
+  dfs_agent_download_agentguidedialog_buxianganzhuanghuo:
+    'Do not want to install or deploy? You can experience our DEMO system first to understand the powerful functions of Tapdata',
+  dfs_agent_download_agentguidedialog_jijiangshangxian: 'coming soon',
+  dfs_agent_download_agentguidedialog_shiyongTap:
+    'Using the computing power provided by Tapdata, you only need to select the appropriate area and specifications for deployment without installing any programs. ',
+  dfs_agent_download_agentguidedialog_quantuoguanyunmo: 'Fully Managed Cloud Mode – Direct Cloud Deployment',
+  dfs_agent_download_agentguidedialog_huoquwanzhengshi: 'Get the full trial version',
+  dfs_agent_download_agentguidedialog_zainindeshuju:
+    'Install the full suite of software on your data center or cloud server, under your full control. Note that this option is not a cloud service. ',
+  dfs_agent_download_agentguidedialog_xianxiamoshizi: 'Offline mode - install a full set of software independently',
+  dfs_agent_download_agentguidedialog_ninkeyigenzhe:
+    'You can follow the guidance process and install Tapdata Agent in your server or VPC for data synchronization and processing',
+  dfs_agent_download_agentguidedialog_bantuoguanyunmo: 'Semi-managed cloud mode - only need to install Agent',
+  dfs_instance_instance_shanchuchenggong: 'Deleted successfully',
+  dfs_instance_instance_wenjianxiazai: 'File download',
+  dfs_instance_instance_wenjianzhuangtai: 'File status',
+  dfs_instance_instance_shangchuanshijian: 'upload time',
+  dfs_instance_instance_wenjiandaxiao: 'File size',
+  dfs_instance_instance_wenjianming: 'File name',
+  dfs_instance_instance_xiazai: 'Download',
+  dfs_instance_instance_rizhishangchuan: 'Local log upload',
+  dfs_instance_instance_bendirizhixia: 'Local log download',
+  dfs_instance_details_shangchuanzhong: 'uploading',
+  dfs_instance_instance_status_success: 'upload successful',
+  dfs_instance_instance_status_false: 'Upload failed',
+  dfs_instance_instance_gengxin: 'Updated {val}'
 }

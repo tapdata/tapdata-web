@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
 import Cookie from '@tap/shared/src/cookie'
 import { signOut } from '../utils/util'
-import { Message } from 'element-ui'
+import { Message } from '@/plugins/element'
 import i18n from '@/i18n'
 import Qs from 'qs'
 

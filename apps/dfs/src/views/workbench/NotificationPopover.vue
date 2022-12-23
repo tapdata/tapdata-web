@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
+
 import { TYPEMAP } from './tyepMap'
 import { VIcon } from '@tap/component'
 import { uniqueArr } from '@/util'
@@ -88,14 +90,19 @@ export default {
       }
       this.getUnreadData()
       if (this.$ws) {
-        this.$ws.on('notification', async res => {
-          this.getUnReadNum()
-          let data = res?.data
-          if (data) {
-            data.createTime = this.formatTime(data.createTime)
-            this.listData = uniqueArr([data, ...this.listData])
-          }
-        })
+        this.$ws.on(
+          'notification',
+          debounce(res => {
+            let data = res?.data
+            if (data?.msg !== 'alarm') {
+              this.getUnReadNum()
+            }
+            if (data) {
+              data.createTime = this.formatTime(data.createTime)
+              this.listData = uniqueArr([data, ...this.listData])
+            }
+          }, 800)
+        )
         this.$ws.ready(() => {
           this.$ws.send(msg)
         }, true)

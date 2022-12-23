@@ -43,6 +43,7 @@ export default {
   packages_dag_task_setting_cdc: '增量同步',
   packages_dag_task_stetting_desc: '任務描述',
   packages_dag_task_setting_plan_start_date: '计划开始时间',
+  packages_dag_task_setting_crontabExpressionFlag: '定期調度任務',
   packages_dag_task_setting_cron_expression: '請輸入調度表達式',
   packages_dag_task_setting_cron_tip:
     '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ?  //每分鐘運行一次  0 0 2 * * ?  //每天2點運行',
