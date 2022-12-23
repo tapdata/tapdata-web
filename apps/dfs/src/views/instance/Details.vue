@@ -117,11 +117,13 @@
 
 <script>
 import { VIcon, VTable } from '@tap/component'
-import { StatusTag } from '@tap/business'
+import StatusTag from '@/components/StatusTag'
 import timeFunction from '@/mixins/timeFunction'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 import i18n from '@/i18n'
 import { handleUnit } from '@/util'
+
+import { measurementApi } from '@tap/api'
 
 export default {
   name: 'Details',
@@ -189,6 +191,18 @@ export default {
             {
               label: $t('agent_detail_host_cpu_memory'),
               key: 'totalmem'
+            },
+            {
+              label: $t('agent_detail_cpu_utilization'),
+              key: 'cpuUsage'
+            },
+            {
+              label: $t('agent_detail_mem_utilization'),
+              key: 'memoryRate'
+            },
+            {
+              label: $t('agent_detail_gc_rate'),
+              key: 'gcRate'
             }
           ]
         },
@@ -291,8 +305,9 @@ export default {
       this.loading = true
       this.$axios
         .get('api/tcm/agent/' + this.detailId)
-        .then(data => {
+        .then(async data => {
           if (data) {
+            const measurement = await this.loadMeasurementData(data.tmInfo.agentId)
             // 是否显示版本号：待部署不显示
             if (!this.showVersionFlag(data) && data.spec) {
               data.spec.version = ''
@@ -322,7 +337,7 @@ export default {
               }
               data.totalmem = size
             }
-            this.agent = Object.assign(this.agent, data)
+            this.agent = Object.assign(this.agent, data, measurement)
             this.$emit('load-data', this.agent)
             this.uploadAgentLog = data?.uploadAgentLog || ''
           }
@@ -331,6 +346,46 @@ export default {
           this.loading = false
         })
     },
+
+    async loadMeasurementData(engineId) {
+      const data = await measurementApi.queryV2({
+        startAt: Date.now(),
+        endAt: Date.now(),
+        samples: {
+          data: {
+            tags: {
+              type: 'engine',
+              engineId
+            },
+            fields: ['memoryRate', 'cpuUsage', 'gcRate'],
+            type: 'instant'
+          }
+        }
+      })
+      const defaultVal = '-'
+      if (!data?.samples?.data?.[0])
+        return {
+          cpuUsage: defaultVal,
+          memoryRate: defaultVal,
+          gcRate: defaultVal
+        }
+      const { cpuUsage, gcRate, memoryRate } = data.samples.data[0]
+      return {
+        cpuUsage:
+          typeof cpuUsage === 'number'
+            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal,
+        memoryRate:
+          typeof memoryRate === 'number'
+            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal,
+        gcRate:
+          typeof gcRate === 'number'
+            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal
+      }
+    },
+
     showVersionFlag(row) {
       let { status, tmInfo } = row
       return !(status === 'Creating' && !tmInfo?.pingTime)

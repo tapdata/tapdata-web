@@ -399,11 +399,14 @@ export default {
     }
   },
   watch: {
-    $route(route) {
+    $route(route, oldRoute) {
       if (route.name === 'Instance') {
-        this.searchParams.status = route.query.status || ''
-        let pageNum = JSON.stringify(route.query) === '{}' ? undefined : 1
-        this.fetch(pageNum)
+        let oldQuery = { ...oldRoute.query, detailId: undefined }
+        let query = { ...route.query, detailId: undefined }
+        let queryStr = JSON.stringify(query)
+        if (JSON.stringify(oldQuery) === queryStr) return
+        this.searchParams.status = query.status || ''
+        this.fetch(queryStr === '{}' ? undefined : 1)
       }
     }
   },
@@ -568,7 +571,10 @@ export default {
       this.showDetails = false
       this.$router.replace({
         name: 'Instance',
-        query: this.searchParams
+        query: {
+          ...this.$route.query,
+          detailId: undefined
+        }
       })
     },
     toDeploy(row) {
