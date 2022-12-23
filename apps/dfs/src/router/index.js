@@ -11,6 +11,11 @@ const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
   return Editor
 }
+
+const DagForm = async () => {
+  const { CreateForm } = await import('@tap/dag')
+  return CreateForm
+}
 const MigrationEditor = async () => {
   const { MigrationEditor } = await import('@tap/dag')
   return MigrationEditor
@@ -147,6 +152,14 @@ const routes = [
           icon: 'task'
         },
         children: [
+          {
+            path: 'create/:id',
+            name: 'MigrateCreate',
+            component: DagForm,
+            meta: {
+              title: 'operation_log_migration_create'
+            }
+          },
           {
             path: 'details/:id',
             name: 'MigrateDetails',

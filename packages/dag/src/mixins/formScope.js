@@ -2,7 +2,7 @@ import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { merge, isEqual } from 'lodash'
-import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi } from '@tap/api'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 
@@ -176,6 +176,7 @@ export default {
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
+                console.log('field', field) // eslint-disable-line
               })
             )
           }
@@ -261,6 +262,26 @@ export default {
             console.log('catch', e) // eslint-disable-line
             return { items: [], total: 0 }
           }
+        },
+
+        loadDatabaseTypes: async () => {
+          let data = await databaseTypesApi.get()
+          if (!data) return []
+          data = data
+            .map(item => {
+              return {
+                label: item.name,
+                value: item.type
+              }
+            })
+            .sort((t1, t2) => {
+              return t1.label.localeCompare(t2.label)
+            })
+          data.unshift({
+            label: this.$t('packages_business_select_option_all'),
+            value: undefined
+          })
+          return data
         },
 
         loadTable: async (filter, config) => {
