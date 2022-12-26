@@ -720,5 +720,6 @@ export default {
   packages_business_verification_form_weitedingdeP: 'Verification task created for a specific PIPELINE',
   packages_business_verification_form_jiaoyanrenwumo: 'Verification task mode',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the last status report',
-  packages_business_task_status_agent_tooltip_agent: 'Engine'
+  packages_business_task_status_agent_tooltip_agent: 'Engine',
+  packages_business_select_placeholder: 'Please add or select'
 }

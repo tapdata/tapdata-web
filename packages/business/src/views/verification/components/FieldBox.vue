@@ -62,7 +62,12 @@
               <ElSelect
                 v-model="fItem.source"
                 :class="['flex-fill', { 'empty-data': !fItem.source }]"
-                allow-create
+                :allow-create="sourceDynamicSchema"
+                :placeholder="
+                  sourceDynamicSchema
+                    ? $t('packages_business_select_placeholder')
+                    : $t('packages_business_statistics_schedule_qingxuanze')
+                "
                 filterable
                 class="flex-fill"
                 @change="handleChange"
@@ -77,7 +82,12 @@
               <ElSelect
                 v-model="fItem.target"
                 :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
-                allow-create
+                :allow-create="targetDynamicSchema"
+                :placeholder="
+                  targetDynamicSchema
+                    ? $t('packages_business_select_placeholder')
+                    : $t('packages_business_statistics_schedule_qingxuanze')
+                "
                 filterable
                 @change="handleChange"
               >
@@ -163,6 +173,12 @@ export default {
     },
     targetSelect() {
       return this.item.target.connectionId + this.item.target.table
+    },
+    sourceDynamicSchema() {
+      return this.dynamicSchemaMap[this.item.source.connectionId]
+    },
+    targetDynamicSchema() {
+      return this.dynamicSchemaMap[this.item.target.connectionId]
     }
   },
 
