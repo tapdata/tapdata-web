@@ -715,7 +715,7 @@ export default {
   ::v-deep {
     .el-select-dropdown__item {
       span {
-        font-size: 12px;
+        font-size: $fontBaseTitle;
       }
     }
   }

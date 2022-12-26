@@ -193,7 +193,7 @@ export default {
   .filter-datetime-range {
     padding-left: 0;
     text-align: left;
-    font-size: 12px;
+    font-size: $fontBaseTitle;
     line-height: 32px;
     ::v-deep {
       .filter-datetime:first-child {
@@ -203,7 +203,7 @@ export default {
         }
       }
       .el-input {
-        font-size: 12px;
+        font-size: $fontBaseTitle;
       }
     }
   }
@@ -232,7 +232,7 @@ export default {
       align-items: center;
       line-height: 50px;
       border-bottom: 1px solid map-get($borderColor, light);
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       color: #202d40;
       .item-time {
         color: map-get($fontColor, light);
