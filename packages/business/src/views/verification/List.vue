@@ -83,9 +83,9 @@
               <span>{{ statusMap[scope.row.status] }}</span>
             </div>
             <div v-else>-</div>
-            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"
-              >ercijiaoyan</VIcon
-            >
+            <!--            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"-->
+            <!--              >ercijiaoyan</VIcon-->
+            <!--            >-->
           </div>
         </template>
       </el-table-column>
