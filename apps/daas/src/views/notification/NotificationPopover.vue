@@ -454,7 +454,7 @@ export default {
         .item-time {
           margin-top: 5px;
           color: map-get($fontColor, light);
-          font-size: 12px;
+          font-size: $fontBaseTitle;
         }
       }
     }
