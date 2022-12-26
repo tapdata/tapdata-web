@@ -123,7 +123,10 @@
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
-            :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
+            :disabled="
+              $disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
+              ['running', 'scheduling'].includes(scope.row.status)
+            "
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('packages_business_verification_configurationTip') }}</ElLink
           >
@@ -375,30 +378,11 @@ export default {
         })
       })
     },
-    goEdit(id, flowId) {
-      if (!flowId) {
-        this.$router.push({
-          name: 'dataVerificationEdit',
-          params: {
-            id: id
-          }
-        })
-        return
-      }
-      taskApi.getId(flowId).then(data => {
-        if (['running', 'stop', 'complete'].includes(data.status)) {
-          this.$router.push({
-            name: 'dataVerificationEdit',
-            params: {
-              id: id
-            }
-          })
-        } else {
-          this.$message.info(
-            this.$t('packages_business_verification_checkStatusPre') +
-              data.status +
-              this.$t('packages_business_verification_checkStatusSuffix')
-          )
+    goEdit(id) {
+      this.$router.push({
+        name: 'dataVerificationEdit',
+        params: {
+          id: id
         }
       })
     },
