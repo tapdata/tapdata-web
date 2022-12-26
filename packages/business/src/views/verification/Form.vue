@@ -655,21 +655,10 @@ function validate(sourceRow){
 .verify-form-wrap {
   height: 100%;
   overflow: hidden;
-  font-size: 12px;
   .section-wrap-box {
     height: 100%;
     flex-direction: column;
     overflow: auto;
-  }
-  ::v-deep {
-    .el-radio__label,
-    .el-radio-button__inner,
-    .el-form-item__label,
-    .el-form-item__content,
-    .el-input__inner,
-    .el-button--mini {
-      font-size: 12px;
-    }
   }
 }
 .verify-form-title {
