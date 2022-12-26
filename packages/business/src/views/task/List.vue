@@ -224,6 +224,54 @@
     <Upload v-if="isDaas" :type="'dataflow'" ref="upload"></Upload>
     <!--付费 -->
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
+    <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
+    <el-dialog title="错误提示" :visible.sync="dialogDelMsgVisible" width="52%" custom-class="dialogDelMsgDialog">
+      <span>任务删除成功，以下几个PostgreSQL连接的信息清除失败，需要您使用以下方式手动清除</span>
+      <div class="box mt-4">
+        <div class="mb-4">SQL:</div>
+        <div class="mb-4">
+          {{ copySelectSql }}
+          <ElTooltip
+            placement="top"
+            manual
+            :content="$t('agent_deploy_start_install_button_copied')"
+            popper-class="copy-tooltip"
+            :value="showTooltip"
+          >
+            <span
+              class="operaKey color-primary cursor-pointer"
+              v-clipboard:copy="copySelectSql"
+              v-clipboard:success="onCopy"
+              @mouseleave="showTooltip = false"
+            >
+              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+            </span>
+          </ElTooltip>
+        </div>
+        <div>
+          {{ copyDelSql }}
+          <ElTooltip
+            placement="top"
+            manual
+            :content="$t('agent_deploy_start_install_button_copied')"
+            popper-class="copy-tooltip"
+            :value="showDelTooltip"
+          >
+            <span
+              class="operaKey color-primary cursor-pointer"
+              v-clipboard:copy="copyDelSql"
+              v-clipboard:success="onDelCopy"
+              @mouseleave="showDelTooltip = false"
+            >
+              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+            </span>
+          </ElTooltip>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogDelMsgVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </section>
 </template>
 
@@ -298,7 +346,14 @@ export default {
       },
       //付费升级
       paidUpgradeVisible: false,
-      paidPlan: ''
+      paidPlan: '',
+      //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
+      dialogDelMsgVisible: false,
+      copySelectSql:
+        'SELECT slot_name FROM pg_replication_slots WHERE slot_name like "tapdata_cdc_%" and active="false";',
+      copyDelSql: "SELECT pg_drop_replication_slot('tapdata_cdc_24bdd533_79c5_4096_af1d_938ca1a1b392');",
+      showTooltip: false,
+      showDelTooltip: false
     }
   },
 
@@ -610,17 +665,12 @@ export default {
         return
       }
       this.checkAgent(() => {
-        this.$router
-          .push({
-            name: this.route.new
-          })
-          .catch(() => {
-            this.createBtnLoading = false
-            this.buried(this.taskBuried.newFail)
-          })
-          .finally(() => {
-            this.createBtnLoading = false
-          })
+        this.$router.push({
+          name: this.route.new
+        })
+      }).catch(() => {
+        this.createBtnLoading = false
+        this.buried(this.taskBuried.newFail)
       })
     },
 
@@ -688,9 +738,20 @@ export default {
           const { toggleRowSelection } = this.table.$refs.table
           selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
-          this.responseHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
+          this.responseDelHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
         })
       })
+    },
+    //删除任务单独提示
+    responseDelHandler(data, msg, canNotList = []) {
+      let failList = data?.filter(t => t.code === 'Clear.Slot') || []
+      failList = [...failList, ...canNotList]
+      if (failList.length) {
+        this.dialogDelMsgVisible = true
+      } else if (msg) {
+        this.$message.success(msg, false)
+      }
+      this.table.clearSelection()
     },
 
     async forceStop(ids, item = {}) {
@@ -820,6 +881,12 @@ export default {
 
     handleImport() {
       this.$refs.upload.show()
+    },
+    onCopy() {
+      this.showTooltip = true
+    },
+    onDelCopy() {
+      this.showDelTooltip = true
     }
   }
 }
@@ -896,6 +963,12 @@ export default {
           padding: 10px 0;
         }
       }
+    }
+  }
+  .dialogDelMsgDialog {
+    .box {
+      padding: 10px;
+      background-color: #f8f9fa;
     }
   }
 }
