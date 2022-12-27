@@ -106,6 +106,14 @@ export class Table extends NodeType {
           gap: 8,
           align: 'start'
         },
+        'x-reactions': {
+          dependencies: ['databaseType'],
+          fulfill: {
+            state: {
+              display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+            }
+          }
+        },
         properties: {
           tableName: {
             type: 'string',
@@ -355,7 +363,7 @@ export class Table extends NodeType {
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
-                          'x-component-props.options': `{{$values.attrs.capabilities.find(item => item.id ==='clear_table_function')?$self.dataSource:[$self.dataSource[0], $self.dataSource[2]]}}`
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
                         }
                       }
                     }
@@ -395,8 +403,7 @@ export class Table extends NodeType {
                     type: 'array',
                     required: true,
                     default: null,
-                    description:
-                      '{{ !$isDaas && $values.databaseType==="MongoDB" ? "如果要同步删除事件，请确保关联 _id" : ""}}',
+                    description: '{{ !$isDaas ? "如果源为MongoDB时，需要同步删除事件，请确保关联 _id" : ""}}',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       wrapperWidth: 300
@@ -513,6 +520,25 @@ export class Table extends NodeType {
       'attrs.connectionName': {
         type: 'string',
         'x-display': 'hidden'
+      },
+
+      loadSchemaTree: {
+        type: 'void',
+        title: '',
+        'x-decorator': 'FormItem',
+        'x-component': 'loadSchemaTree',
+        'x-component-props': {
+          tableNameField: 'tableName'
+        },
+        'x-reactions': {
+          dependencies: ['databaseType', '$outputs'],
+          fulfill: {
+            state: {
+              display:
+                '{{ ($deps[1].length > 0 && ["CSV","EXCEL","JSON","XML"].includes($deps[0])) ? "visible":"hidden"}}'
+            }
+          }
+        }
       }
     }
   }

@@ -22,19 +22,6 @@ const mapEnum = dataSource => (item, index) => {
   }
 }
 
-const takeFieldValue = (schema, fieldName) => {
-  if (schema.properties) {
-    const keys = Object.keys(schema.properties)
-    if (keys.includes(fieldName)) {
-      return schema.properties[fieldName]
-    }
-    for (let k of keys) {
-      let res = takeFieldValue(schema.properties[k], fieldName)
-      if (res) return res
-    }
-  }
-}
-
 export default {
   name: 'FormPanel',
 
@@ -111,13 +98,8 @@ export default {
         const node = this.nodeById(o)
         try {
           if (node) {
-            await validateBySchema(node.__Ctor.formSchema, node, this.scope)
-            const { pdkHash } = node?.attrs || {}
-            const nodeConfigSchema = this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
-            if (Object.keys(nodeConfigSchema || {}).length) {
-              const { nodeConfig } = node
-              await validateBySchema(nodeConfigSchema, nodeConfig, this.scope)
-            }
+            const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
+            await validateBySchema(schema, node, this.scope)
           }
 
           if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {

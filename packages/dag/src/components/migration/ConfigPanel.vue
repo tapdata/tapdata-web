@@ -19,10 +19,11 @@
             feedbackLayout: 'terse'
           }"
           @update:InputsOrOutputs="handleLoadMeta"
+          @setSchema="handleSetSchema"
         />
       </ElTabPane>
       <ElTabPane v-if="showSchemaPanel" :label="$t('packages_dag_migration_configpanel_moxing')" name="meta">
-        <MetaPane ref="metaPane" :is-show="currentTab === 'meta'"></MetaPane>
+        <MetaPane ref="metaPane" :is-show="currentTab === 'meta'" :form="form"></MetaPane>
       </ElTabPane>
       <ElTabPane v-if="isMonitor" :label="$t('packages_dag_migration_configpanel_gaojingshezhi')" name="alarm">
         <AlarmPanel
@@ -57,6 +58,8 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { cloneDeep } from 'lodash'
+
 import '@tap/component/src/directives/resize/index.scss'
 import resize from '@tap/component/src/directives/resize'
 import FormPanel from '../FormPanel'
@@ -88,7 +91,8 @@ export default {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       currentTab: 'settings',
       titleCurrentTab: '0',
-      name: this.activeNode?.name
+      name: this.activeNode?.name,
+      form: null
     }
   },
 
@@ -151,6 +155,10 @@ export default {
           metaPane.loadFields()
         }
       })
+    },
+
+    handleSetSchema() {
+      this.form = cloneDeep(this.$refs.formPanel?.form)
     }
   }
 }

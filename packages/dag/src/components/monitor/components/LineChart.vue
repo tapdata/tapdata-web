@@ -102,10 +102,10 @@ export default {
       let series = []
       if (value?.[0] instanceof Array) {
         value.forEach((el, index) => {
-          series.push(this.getSeriesItem(el?.map(t => t || 0) || [], index, name?.[index]))
+          series.push(this.getSeriesItem(el?.map(t => Math.abs(t || 0)) || [], index, name?.[index]))
         })
       } else {
-        series.push(this.getSeriesItem(value?.map(t => t || 0) || []))
+        series.push(this.getSeriesItem(value?.map(t => Math.abs(t || 0)) || []))
       }
       options.series = series
       const seriesNoData = series.every(t => !t.data.length)
@@ -185,8 +185,7 @@ export default {
               if (![null, undefined].includes(data)) {
                 if (this.timeValue) {
                   val = calcTimeUnit(data || 0, 2, {
-                    separator: ' ',
-                    autoShowMs: true
+                    digits: 2
                   })
                 } else {
                   val = (data || 0).toLocaleString('zh', {
@@ -252,7 +251,11 @@ export default {
           axisLabel: {
             color: '#535F72',
             formatter: val => {
-              return this.timeValue ? calcTimeUnit(val, 2) : calcUnit(val)
+              return this.timeValue
+                ? calcTimeUnit(val || 0, 2, {
+                    digits: 2
+                  })
+                : calcUnit(val)
             }
             // showMaxLabel: false,
             // showMinLabel: false

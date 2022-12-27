@@ -1,5 +1,11 @@
 <template>
-  <el-popover popper-class="notification-popover" placement="bottom" trigger="hover" @show="activeTab = 'system'">
+  <el-popover
+    popper-class="notification-popover"
+    placement="bottom"
+    trigger="hover"
+    @show="handleShow"
+    @hide="handleHide"
+  >
     <div class="btn" slot="reference" @click="toCenter()">
       <el-badge class="item-badge icon-btn px-3" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon size="16">xiaoxi-2</VIcon>
@@ -128,15 +134,17 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
+import dayjs from 'dayjs'
+import { mapState } from 'vuex'
+
+import { userLogsApi, notificationApi } from '@tap/api'
+import { VIcon } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
+import { ALARM_LEVEL_MAP } from '@tap/business'
+
 import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
-import { mapState } from 'vuex'
-import { VIcon } from '@tap/component'
-import { uniqueArr } from '@/utils/util'
-import Cookie from '@tap/shared/src/cookie'
-import dayjs from 'dayjs'
-import { userLogsApi, notificationApi } from '@tap/api'
-import { ALARM_LEVEL_MAP } from '@tap/business'
 
 export default {
   components: {
@@ -167,7 +175,8 @@ export default {
         Agent: 'Agent'
       },
       userOperations: [],
-      alarmData: []
+      alarmData: [],
+      isHide: true
     }
   },
   computed: mapState({
@@ -189,15 +198,19 @@ export default {
         msg.userId = Cookie.get('user_id')
       }
       this.getUnreadData()
-      this.$ws.on('notification', res => {
-        // this.getUnReadNum()
-        this.getUnreadData()
-        let data = res?.data
-        if (data) {
-          data.createTime = dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
-          self.listData = uniqueArr([data, ...this.listData])
-        }
-      })
+      this.$ws.on(
+        'notification',
+        debounce(res => {
+          let data = res?.data
+          if (data?.msg !== 'alarm') {
+            if (this.isHide) {
+              this.getUnReadNum()
+              return
+            }
+            this.getUnreadData()
+          }
+        }, 800)
+      )
       this.$ws.ready(() => {
         this.$ws.send(msg)
       }, true)
@@ -321,6 +334,14 @@ export default {
         return
       }
       this.$router.push({ name: 'notification' })
+    },
+    handleShow() {
+      this.activeTab = 'system'
+      this.isHide = false
+      this.getUnreadData()
+    },
+    handleHide() {
+      this.isHide = true
     }
   }
 }

@@ -179,7 +179,8 @@ export default {
       schemaData: null,
       schemaScope: null,
       pdkFormModel: {},
-      doc: ''
+      doc: '',
+      pathUrl: ''
     }
   },
   computed: {
@@ -191,6 +192,11 @@ export default {
     this.id = this.$route.params.id || ''
     this.getPdkForm()
     this.getPdkDoc()
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.pathUrl = from?.fullPath
+    })
   },
   methods: {
     //保存全局挖掘设置
@@ -212,9 +218,15 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push({
-          name: 'connections'
-        })
+        if (this.pathUrl === '/') {
+          this.$router.push({
+            name: 'connections'
+          })
+        } else {
+          this.$router.push({
+            path: this.pathUrl
+          })
+        }
       })
     },
     submit() {
@@ -376,7 +388,6 @@ export default {
               this.dialogEditNameVisible = false
             })
             .catch(() => {
-              this.renameData.rename = this.model.name
               this.$refs['renameForm'].clearValidate()
               this.editBtnLoading = false
             })
@@ -602,7 +613,7 @@ export default {
           loadAllTables: {
             type: 'boolean',
             default: true,
-            title: i18n.t('packages_business_connections_databaseform_duixiangshouji'),
+            title: i18n.t('packages_business_connections_databaseform_baohanbiao'),
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
@@ -632,6 +643,52 @@ export default {
               fulfill: {
                 state: {
                   display: '{{$deps[0] ? "hidden" : "visible"}}'
+                }
+              }
+            }
+          },
+          openTableExcludeFilter: {
+            title: i18n.t('packages_business_connections_databaseform_paichubiao'),
+            type: 'boolean',
+            default: false,
+            'x-decorator-props': {
+              feedbackLayout: 'none'
+            },
+            'x-decorator': 'FormItem',
+            'x-component': 'Switch'
+          },
+          openTableExcludeFilterTips: {
+            type: 'void',
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              colon: false
+            },
+            'x-component': 'Text',
+            'x-component-props': {
+              icon: 'info',
+              content: i18n.t('packages_business_connections_databaseform_keyicongbaohan')
+            }
+          },
+          tableExcludeFilter: {
+            type: 'string',
+            title: ' ',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input.TextArea',
+            'x-component-props': {
+              placeholder: this.$t('packages_business_connection_form_database_owner_tip')
+            },
+            'x-decorator-props': {
+              colon: false,
+              style: {
+                'margin-top': '-22px'
+              }
+            },
+            'x-reactions': {
+              dependencies: ['__TAPDATA.openTableExcludeFilter'],
+              fulfill: {
+                state: {
+                  display: '{{ $deps[0] ? "visible" : "hidden"}}'
                 }
               }
             }
@@ -875,9 +932,11 @@ export default {
             expireSeconds: 100000000
           }
           proxyApi.subscribe(filter).then(data => {
-            let str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
+            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const p = location.origin + location.pathname
+            let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {
-              str = `${process.env.BASE_URL || location.origin}${data.token}`
+              str = `${p.replace(/\/$/, '')}${data.token}`
             }
             $form.setValuesIn(field.name, str)
           })
@@ -932,7 +991,9 @@ export default {
           loadAllTables,
           shareCdcEnable,
           accessNodeType,
-          accessNodeProcessId
+          accessNodeProcessId,
+          openTableExcludeFilter,
+          tableExcludeFilter
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -942,7 +1003,9 @@ export default {
             loadAllTables,
             shareCdcEnable,
             accessNodeType,
-            accessNodeProcessId
+            accessNodeProcessId,
+            openTableExcludeFilter,
+            tableExcludeFilter
           },
           ...this.model?.config
         })

@@ -3,7 +3,6 @@ import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { Message } from 'element-ui'
-import { errorConfirmFnc } from '@/util'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';
@@ -138,7 +137,12 @@ const responseInterceptor = response => {
       // eslint-disable-next-line
       console.log(`${code}： ${msg}`)
       if (!skipErrorHandler) {
-        Message.error(msg)
+        // 手机号码
+        if (['Authing.User.Update.Failed'].includes(code)) {
+          Message.error(i18n.t('dfs_user_center_phone_error'))
+        } else {
+          Message.error(msg)
+        }
       }
       return reject(Object.assign(response))
     }

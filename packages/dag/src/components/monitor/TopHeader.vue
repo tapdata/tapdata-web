@@ -6,11 +6,12 @@
       </button>
       <div class="overflow-hidden">
         <div class="flex align-items-center">
-          <OverflowTooltip
-            class="task-name text-truncate fs-7 fw-sub font-color-dark"
-            placement="bottom"
-            :text="name"
-            :open-delay="400"
+          <TextEditable
+            class="overflow-hidden"
+            v-model="name"
+            :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+            :input-min-width="32"
+            @change="onNameInputChange"
           />
           <TaskStatus :task="dataflow" class="ml-4" />
         </div>
@@ -177,7 +178,7 @@ export default {
     quota: Object
   },
 
-  components: { VIcon, TaskStatus, VDivider, OverflowTooltip },
+  components: { VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)

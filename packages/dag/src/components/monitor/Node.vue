@@ -65,7 +65,7 @@ export default defineComponent({
       }
       const usedTime = Date.now() - snapshotStartAt
       const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
-      return calcTimeUnit(Math.ceil(Math.abs(time)), 2)
+      return calcTimeUnit(Math.ceil(Math.abs(time)))
     })
 
     const isSource = computed(() => {
@@ -106,8 +106,7 @@ export default defineComponent({
       const { replicateLag } = props.sample
       if (isNumber(replicateLag))
         return calcTimeUnit(replicateLag, 2, {
-          separator: ' ',
-          autoShowMs: true
+          autoHideMs: true
         })
       return null
     })
@@ -247,8 +246,7 @@ export default defineComponent({
         const replicateLagVal =
           isNumber(replicateLagProps) && replicateLagProps >= 0
             ? calcTimeUnit(replicateLagProps, 2, {
-                separator: ' ',
-                autoShowMs: true
+                autoHideMs: true
               })
             : null
         const val = getVal(

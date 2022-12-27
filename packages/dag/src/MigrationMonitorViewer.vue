@@ -113,11 +113,12 @@ import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import { VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
-import { measurementApi, taskApi } from '@tap/api'
+import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
 import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'MigrationMonitorViewer',
@@ -214,8 +215,10 @@ export default {
     this.setStateReadonly(true)
   },
 
-  mounted() {
+  async mounted() {
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
+    await this.initPdkProperties()
     this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -240,6 +243,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+
     init() {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
@@ -773,6 +778,27 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }
