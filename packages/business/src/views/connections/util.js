@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 
 import Cookie from '@tap/shared/src/cookie'
 
@@ -50,9 +51,18 @@ export const defaultModel = {
 // 数据源图标
 export const getConnectionIcon = pdkHash => {
   if (pdkHash) {
-    const token = Cookie.get('access_token')
-    let baseUrl = axios.defaults.baseURL
-    return (baseUrl + `/api/pdk/icon?access_token=${token}&pdkHash=${pdkHash}`).replace('//', '/')
+    const params = {
+      pdkHash
+    }
+    if (process.env.VUE_APP_ACCESS_TOKEN) {
+      params.__token = process.env.VUE_APP_ACCESS_TOKEN
+    }
+    const access_token = Cookie.get('access_token')
+    if (access_token) {
+      params.access_token = access_token
+    }
+    let baseUrl = axios.defaults.baseURL.replace(/\/$/, '')
+    return `${baseUrl}/api/pdk/icon?${qs.stringify(params)}`
   } else {
     return ''
   }
