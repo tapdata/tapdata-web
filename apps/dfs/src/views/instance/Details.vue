@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="mt-4">
-        <ElButton size="mini" type="primary" @click="open(agent.id, agent.status)">{{
+        <ElButton size="mini" type="primary" :disabled="!showUpload" @click="open(agent.id, agent.status)">{{
           $t('dfs_instance_instance_rizhishangchuan')
         }}</ElButton>
       </div>
@@ -87,7 +87,7 @@
           <ElButton
             size="mini"
             type="text"
-            :disabled="[0, 3].includes(scope.row.status)"
+            :disabled="[0, 2, 3].includes(scope.row.status)"
             @click="handleDownload(scope.row)"
             >{{ $t('dfs_instance_instance_xiazai') }}</ElButton
           >
@@ -259,6 +259,7 @@ export default {
       loadingUpload: false,
       btnTxt: i18n.t('dfs_instance_instance_upload_btn'),
       disabledUploadDialog: false, //控制agent 上传频率 同时只能一个在上传 在弹窗
+      showUpload: 1,
       uploadAgentLog: '',
       uploadDays: 3,
       days: [
@@ -312,6 +313,8 @@ export default {
             if (!this.showVersionFlag(data) && data.spec) {
               data.spec.version = ''
             }
+            //低于V3.1.3版本不显示日志上传下载功能
+            this.showUpload = this.handleVersion(data.spec.version)
             Object.assign(data, data?.metric || {}, data?.spec || {}, data?.tmInfo || {})
             data.hostname = data?.tmInfo?.hostname
             data.createAt = this.formatTime(data.createAt)
@@ -494,6 +497,36 @@ export default {
         })
         window.location.href = client.signatureUrl(uploadAddr)
       })
+    },
+    //比较两个版本号
+    handleVersion(version) {
+      let v1 = '3.1.3'.split('.')
+      //去掉V
+      let v2 = version.substr(1)
+      //将- 替换成 .
+      v2 = v2.replace('-', '.')
+      v2 = v2.split('.')
+      const len = Math.max(v1.length, v2.length)
+      // 调整两个版本号位数相同
+      while (v1.length < len) {
+        v1.push('0')
+      }
+      while (v2.length < len) {
+        v2.push('0')
+      }
+
+      // 循环判断每位数的大小
+      for (let i = 0; i < len; i++) {
+        const num1 = parseInt(v1[i])
+        const num2 = parseInt(v2[i])
+
+        if (num1 > num2) {
+          return false
+        } else if (num1 < num2) {
+          return true
+        }
+      }
+      return true
     }
   }
 }

@@ -1242,7 +1242,7 @@ export default {
   dfs_instance_instance_wenjiandaxiao: 'File size',
   dfs_instance_instance_wenjianming: 'File name',
   dfs_instance_instance_xiazai: 'Download',
-  dfs_instance_instance_rizhishangchuan: 'Local log upload',
+  dfs_instance_instance_rizhishangchuan: 'Local log acquisition',
   dfs_instance_instance_bendirizhixia: 'Local log download',
   dfs_instance_details_shangchuanzhong: 'uploading',
   dfs_instance_instance_status_success: 'upload successful',
