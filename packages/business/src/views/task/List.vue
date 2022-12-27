@@ -268,6 +268,7 @@
           </ElTooltip>
         </div>
       </div>
+      <div class="mt-2" v-for="item in failList" :key="item.id">连接名: {{ item.message }}</div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogDelMsgVisible = false">关闭</el-button>
       </span>
@@ -349,11 +350,11 @@ export default {
       paidPlan: '',
       //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
       dialogDelMsgVisible: false,
-      copySelectSql:
-        'SELECT slot_name FROM pg_replication_slots WHERE slot_name like "tapdata_cdc_%" and active="false";',
+      copySelectSql: `SELECT slot_name FROM pg_replication_slots WHERE slot_name like 'tapdata_cdc_%' and active="false";`,
       copyDelSql: "SELECT pg_drop_replication_slot('tapdata_cdc_24bdd533_79c5_4096_af1d_938ca1a1b392');",
       showTooltip: false,
-      showDelTooltip: false
+      showDelTooltip: false,
+      failList: [] //错误列表
     }
   },
 
@@ -744,9 +745,9 @@ export default {
     },
     //删除任务单独提示
     responseDelHandler(data, msg, canNotList = []) {
-      let failList = data?.filter(t => t.code === 'Clear.Slot') || []
-      failList = [...failList, ...canNotList]
-      if (failList.length) {
+      this.failList = data?.filter(t => t.code === 'Clear.Slot') || []
+      this.failList = [...this.failList, ...canNotList]
+      if (this.failList.length) {
         this.dialogDelMsgVisible = true
       } else if (msg) {
         this.$message.success(msg, false)
