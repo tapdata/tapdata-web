@@ -253,7 +253,10 @@ export default {
                 value: item.id,
                 databaseType: item.database_type,
                 connectionType: item.connection_type,
-                accessNodeProcessId: item.accessNodeProcessId
+                accessNodeProcessId: item.accessNodeProcessId,
+                pdkType: item.pdkType,
+                pdkHash: item.pdkHash,
+                capabilities: item.capabilities
               }
             })
 

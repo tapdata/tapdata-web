@@ -153,11 +153,19 @@ const routes = [
         },
         children: [
           {
-            path: 'create/:id',
+            path: 'create',
             name: 'MigrateCreate',
             component: DagForm,
             meta: {
               title: 'operation_log_migration_create'
+            }
+          },
+          {
+            path: 'create/:id',
+            name: 'MigrateCreate',
+            component: DagForm,
+            meta: {
+              title: 'operation_log_migration_update'
             }
           },
           {
