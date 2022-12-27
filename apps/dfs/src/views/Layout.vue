@@ -107,13 +107,13 @@ export default {
           icon: 'task'
         },
         {
-          name: 'OperationLog',
-          title: $t('operation_log_manage'),
-          icon: 'operation-log'
-        },
-        {
           name: 'dataServerList',
           title: '数据服务',
+          icon: 'data-server'
+        },
+        {
+          name: 'OperationLog',
+          title: $t('operation_log_manage'),
           icon: 'operation-log'
         }
       ],

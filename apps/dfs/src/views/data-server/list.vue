@@ -19,9 +19,10 @@
         ETL，反向把经过整理、治理的数据推送给用户；
       </div>
       <div class="header mb-2 mt-4">data services 特有功能点</div>
+      <div class="mt-2 mb-4"><img src="../../assets/image/data-server-feature.png" alt="" /></div>
       <div class="header mb-2 mt-4">Data Services 能力目前仅在 Tapdata On-Prem 版中上线</div>
       <div class="mt-4">
-        <el-button type="primary">申请试用</el-button>
+        <el-button type="primary" @click="goDemo()">申请试用</el-button>
       </div>
     </div>
   </div>
@@ -29,7 +30,12 @@
 
 <script>
 export default {
-  name: 'list'
+  name: 'list',
+  methods: {
+    goDemo() {
+      window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
+    }
+  }
 }
 </script>
 

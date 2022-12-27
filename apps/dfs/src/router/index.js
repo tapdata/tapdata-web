@@ -237,7 +237,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/data-server/list'),
         meta: {
           title: '数据服务',
-          icon: 'server'
+          icon: 'data-server'
         }
       }
     ]
