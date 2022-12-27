@@ -225,10 +225,11 @@
     <!--付费 -->
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
-    <el-dialog title="错误提示" :visible.sync="dialogDelMsgVisible" width="52%" custom-class="dialogDelMsgDialog">
+    <el-dialog title="提示" :visible.sync="dialogDelMsgVisible" width="52%" custom-class="dialogDelMsgDialog">
       <span>任务删除成功，以下几个PostgreSQL连接的信息清除失败，需要您使用以下方式手动清除</span>
       <div class="box mt-4">
-        <div class="mb-4">SQL:</div>
+        <div class="mb-4">SQL语句:</div>
+        <div class="mt-2">//第一步 查询 slot_name</div>
         <div class="mb-4">
           {{ copySelectSql }}
           <ElTooltip
@@ -248,6 +249,7 @@
             </span>
           </ElTooltip>
         </div>
+        <div class="mt-2">// 第二步 删除 slot_name</div>
         <div>
           {{ copyDelSql }}
           <ElTooltip
@@ -350,8 +352,8 @@ export default {
       paidPlan: '',
       //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
       dialogDelMsgVisible: false,
-      copySelectSql: `SELECT slot_name FROM pg_replication_slots WHERE slot_name like 'tapdata_cdc_%' and active="false";`,
-      copyDelSql: "SELECT pg_drop_replication_slot('tapdata_cdc_24bdd533_79c5_4096_af1d_938ca1a1b392');",
+      copySelectSql: `SELECT slot_name FROM pg_replication_slots WHERE slot_name like 'tapdata_cdc_%' and active='false';`,
+      copyDelSql: "SELECT pg_drop_replication_slot('${slot_name}');",
       showTooltip: false,
       showDelTooltip: false,
       failList: [] //错误列表
