@@ -337,6 +337,7 @@ importers:
       '@tap/i18n': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
       dayjs: ^1.11.2
+      qs: ^6.11.0
     dependencies:
       '@tap/api': link:../api
       '@tap/assets': link:../assets
@@ -345,6 +346,7 @@ importers:
       '@tap/i18n': link:../i18n
       '@tap/shared': link:../shared
       dayjs: registry.npmmirror.com/dayjs/1.11.3
+      qs: registry.npmmirror.com/qs/6.11.0
 
   packages/component:
     specifiers:
