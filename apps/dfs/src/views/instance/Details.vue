@@ -87,7 +87,7 @@
           <ElButton
             size="mini"
             type="text"
-            :disabled="[0, 3].includes(scope.row.status)"
+            :disabled="[0, 2, 3].includes(scope.row.status)"
             @click="handleDownload(scope.row)"
             >{{ $t('dfs_instance_instance_xiazai') }}</ElButton
           >
