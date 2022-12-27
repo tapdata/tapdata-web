@@ -412,9 +412,6 @@ export class Table extends NodeType {
                         space: {
                           type: 'void',
                           'x-component': 'Space',
-                          'x-component-props': {
-                            align: 'top'
-                          },
                           properties: {
                             key: {
                               type: 'string',
@@ -484,6 +481,7 @@ export class Table extends NodeType {
                             },
                             remove: {
                               type: 'void',
+                              'x-decorator': 'FormItem',
                               'x-component': 'ArrayItems.Remove',
                               'x-component-props': {
                                 disabled: '{{$values.conditions.length<2}}'
