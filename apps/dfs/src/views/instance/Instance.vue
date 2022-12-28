@@ -49,7 +49,7 @@
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
               <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
               <template #content>
-                <div>
+                <div style="max-width: 380px">
                   {{ $t('dfs_instance_stopped_help_tip_prefix') }}
                   <a
                     target="_blank"
