@@ -67,6 +67,26 @@
               ></ElOption>
             </ElSelect>
           </ElFormItem>
+          <ElFormItem
+            required
+            class="form-item"
+            :label="$t('packages_business_verification_form_jiaoyangaojing') + ': '"
+          >
+            <div class="flex align-items-center">
+              <span>{{ $t('packages_business_verification_form_jianyanrenwuyun') }}</span>
+              <ElCheckboxGroup v-model="form.errorNotifys" class="inline-block ml-4">
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+            </div>
+            <div class="flex align-items-center">
+              <span>{{ $t('packages_business_verification_form_jiaoyanjieguobu') }}</span>
+              <ElCheckboxGroup v-model="form.inconsistentNotifys" class="inline-block ml-4">
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+            </div>
+          </ElFormItem>
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
             <ElRadioGroup v-model="form.inspectMethod">
               <ElRadioButton label="row_count">{{ $t('packages_business_verification_row_verify') }}</ElRadioButton>
@@ -293,7 +313,9 @@ export default {
         },
         enabled: true,
         tasks: [],
-        taskMode: 'pipeline'
+        taskMode: 'pipeline',
+        errorNotifys: ['SYSTEM', 'EMAIL'],
+        inconsistentNotifys: ['SYSTEM', 'EMAIL']
       },
       rules: {
         flowId: [

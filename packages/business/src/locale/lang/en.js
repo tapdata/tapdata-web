@@ -721,5 +721,10 @@ export default {
   packages_business_verification_form_jiaoyanrenwumo: 'Verification task mode',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the last status report',
   packages_business_task_status_agent_tooltip_agent: 'Engine',
-  packages_business_select_placeholder: 'Please add or select'
+  packages_business_select_placeholder: 'Please add or select',
+  packages_business_verification_form_youjiantongzhi: 'Mail notification',
+  packages_business_verification_form_xitongtongzhi: 'System Notification',
+  packages_business_verification_form_jiaoyanjieguobu: 'Warning for inconsistent verification results',
+  packages_business_verification_form_jianyanrenwuyun: 'Verification task running error warning',
+  packages_business_verification_form_jiaoyangaojing: 'Verification warning'
 }
