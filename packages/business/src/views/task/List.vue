@@ -106,7 +106,7 @@
               >{{ row.name }}</ElLink
             >
             <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags">{{ item.value }}</span>
+              <span class="tag inline-block" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
             </span>
           </span>
         </template>

@@ -232,6 +232,15 @@ const routes = [
             }
           }
         ]
+      },
+      {
+        path: '/data-server',
+        name: 'dataServerList',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/data-server/list'),
+        meta: {
+          title: 'dfs_data_server',
+          icon: 'data-server'
+        }
       }
     ]
   },
