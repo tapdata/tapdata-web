@@ -1,3 +1,4 @@
+import Parent from './Parent'
 import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
@@ -218,6 +219,7 @@ const routes = [
           title: 'page_title_data_verify',
           doNotJump: true
         },
+        component: Parent,
         children: [
           {
             path: ':id/details',
