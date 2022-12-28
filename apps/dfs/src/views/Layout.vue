@@ -108,7 +108,7 @@ export default {
         },
         {
           name: 'dataServerList',
-          title: '数据服务',
+          title: $t('dfs_data_server'),
           icon: 'data-server'
         },
         {

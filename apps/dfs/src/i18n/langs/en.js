@@ -1258,7 +1258,7 @@ export default {
   dfs_instance_stopped_help_tip_suffix: 'get more help',
 
   //数据服务
-  dfs_data_server: 'data service',
+  dfs_data_server: 'Data Service',
   dfs_data_server_demo_title: 'Centralized data service, reusable and easy to distribute',
   dfs_data_server_demo_desc:
     ' Centralize the core data of the enterprise to the centralized data platform in real time and provide fresh real-time data for downstream interactive applications, microservices or interactive analysis through API or reverse synchronization. ',
