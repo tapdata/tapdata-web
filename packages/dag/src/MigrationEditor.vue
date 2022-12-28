@@ -190,8 +190,8 @@ export default {
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
     this.resetState()
-
     this.unWatchStatus?.()
+    this.toggleConsole(false)
   },
 
   methods: {
