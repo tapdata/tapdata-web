@@ -1145,5 +1145,20 @@ export default {
   dfs_online_help_docs: '在線文檔',
   dfs_instance_stopped_help_tip_prefix:
     'Agent 離線有可能是因為網絡原因或者 Agent 退出導致。請檢查 Agent 所在服務器的網絡及 Agent 的運行狀況。您可以查看',
-  dfs_instance_stopped_help_tip_suffix: '獲取更多的幫助'
+  dfs_instance_stopped_help_tip_suffix: '獲取更多的幫助',
+
+  //数据服务
+  dfs_data_server: '數據服務',
+  dfs_data_server_demo_title: '中央化的數據服務，可複用易分發',
+  dfs_data_server_demo_desc:
+    ' 將企業核心數據實時集中到中央化數據平台的方式並通過API 或者反向同步方式，為下游的交互式應用、微服務或交互式分析提供新鮮實時的數據。 ',
+  dfs_data_server_storage: '中央化存儲',
+  dfs_data_server_collection:
+    '在經過數據採集+傳輸以及實時計算後，再將數據放入 Storage 層進行中央化存儲，實際上已經形成了一套邏輯模型，在這裡用戶無需關心數據存儲在哪裡，只需要關注真正需要的是哪些數據信息；',
+  dfs_data_server_real_time: '數據實時服務',
+  dfs_data_server_data_service_mode:
+    '在服務層，有兩種主流的數據服務模式 Pull 和 Push。 API支持低代碼發布，可按照具體需求發布數據。當所需數據在業務系統中已有存儲時，可通過 REVERSE ETL，反向把經過整理、治理的數據推送給用戶；',
+  dfs_data_server_feature: 'Data Services 特有功能點',
+  dfs_data_server_On_Prem: 'Data Services 能力目前僅在 Tapdata On-Prem 版中上線',
+  dfs_data_server_apply_for_trial: '申請試用'
 }

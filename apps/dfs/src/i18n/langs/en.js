@@ -1255,5 +1255,20 @@ export default {
   dfs_online_help_docs: 'Document',
   dfs_instance_stopped_help_tip_prefix:
     'The Agent may be offline because of network reasons or Agent exit. Check the network of the Agent server and the running status of the Agent. You can view ',
-  dfs_instance_stopped_help_tip_suffix: 'get more help'
+  dfs_instance_stopped_help_tip_suffix: 'get more help',
+
+  //数据服务
+  dfs_data_server: 'data service',
+  dfs_data_server_demo_title: 'Centralized data service, reusable and easy to distribute',
+  dfs_data_server_demo_desc:
+    ' Centralize the core data of the enterprise to the centralized data platform in real time and provide fresh real-time data for downstream interactive applications, microservices or interactive analysis through API or reverse synchronization. ',
+  dfs_data_server_storage: 'centralized storage',
+  dfs_data_server_collection:
+    'After data collection + transmission and real-time calculation, the data is put into the Storage layer for centralized storage. In fact, a set of logical models has been formed. Here, users do not need to care about where the data is stored, but only need to pay attention to the real needs. What data information;',
+  dfs_data_server_real_time: 'data real-time service',
+  dfs_data_server_data_service_mode:
+    'In the service layer, there are two mainstream data service modes Pull and Push. The API supports low-code publishing and can publish data according to specific needs. When the required data has already been stored in the business system, the sorted and managed data can be reversely pushed to the user through REVERSE ETL;',
+  dfs_data_server_feature: 'Data Services unique features',
+  dfs_data_server_On_Prem: 'The Data Services capability is currently only available in the Tapdata On-Prem version',
+  dfs_data_server_apply_for_trial: 'Apply for trial'
 }
