@@ -219,7 +219,7 @@ export default {
     this.setValidateLanguage()
     // 收集pdk上节点的schema
     await this.initPdkProperties()
-    this.initNodeType()
+    await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -261,8 +261,9 @@ export default {
       this.loadData()
     },
 
-    initNodeType() {
+    async initNodeType() {
       this.addResourceIns(allResourceIns)
+      await this.loadCustomNode()
     },
 
     async openDataflow(id) {
