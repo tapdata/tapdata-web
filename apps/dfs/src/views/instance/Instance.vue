@@ -45,7 +45,7 @@
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
-            <StatusTag type="text" :status="scope.row.status" default-status="Stopped"></StatusTag>
+            <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
               <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
               <template #content>
@@ -324,7 +324,6 @@ import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
-// import OSS from 'ali-oss'
 
 let timer = null
 
