@@ -1,3 +1,4 @@
+import { debounce } from 'lodash'
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, nextTick, watch } from 'vue-demi'
 import { metadataInstancesApi, taskApi } from '@tap/api'
@@ -5,7 +6,6 @@ import { FormItem } from '../index'
 import { useForm } from '@formily/vue'
 import './style.scss'
 import { VIcon, EmptyItem, OverflowTooltip } from '@tap/component'
-import { delayTrigger } from 'web-core/util'
 
 export const FieldRenameProcessor = defineComponent({
   props: ['value', 'nodeId', 'disabled'],
@@ -48,27 +48,25 @@ export const FieldRenameProcessor = defineComponent({
       item.userDeletedNum = item.fieldsMapping.filter(field => !field.isShow).length
       return item
     }
+
+    const resetParams = () => {
+      config.searchTable = ''
+      config.page.current = 1
+    }
     //数据初始化
-    const loadData = (value, type, loading) => {
-      if (!loading) {
-        config.loadingNav = true
-        config.loadingTable = true
-      }
-      let where = {
+    const loadData = silence => {
+      config.loadingNav = !silence
+      config.loadingTable = !silence
+
+      const where = {
         taskId: root.$route.params.id,
         taskRecordId: root.$route.query?.taskRecordId,
-        nodeId: props.nodeId
+        nodeId: props.nodeId,
+        searchTable: config.searchTable,
+        page: config.page.current,
+        pageSize: config.page.size
       }
-      if (type === 'search') {
-        config.page.current = 1
-        where.searchTable = value
-      } else {
-        config.page.current = value || 1
-        where.searchTable = ''
-      }
-      let { size, current } = config.page
-      where.pageSize = size
-      where.page = current
+
       taskApi
         .getNodeTableInfo(where)
         .then(res => {
@@ -84,11 +82,11 @@ export const FieldRenameProcessor = defineComponent({
         })
     }
     //搜索
-    const doSearchTables = (value, type) => {
-      delayTrigger(() => {
-        loadData(value, type)
-      }, 200)
-    }
+    const doSearchTables = debounce(function () {
+      config.page.current = 1
+      loadData()
+    }, 200)
+
     const doSearchField = () => {
       if (config.searchField.trim()) {
         config.searchField = config.searchField.trim().toString() //去空格
@@ -265,7 +263,7 @@ export const FieldRenameProcessor = defineComponent({
         fieldsMapping = toList(map)
         emit('change', fieldsMapping)
         setTimeout(() => {
-          loadData(config.searchTable, 'search', true)
+          loadData(true)
         }, 2000)
       }
       if (config.checkedFields?.length > 0) {
@@ -293,10 +291,11 @@ export const FieldRenameProcessor = defineComponent({
         taskId: root.$route.params.id,
         nodeId: props.nodeId
       }
+      fieldsMapping = []
       emit('change', [])
       metadataInstancesApi.resetTable(where).then(() => {
+        resetParams()
         loadData() //更新整个数据
-        config.searchTable = '' //清除筛选条件
       })
     }
     //单个删除字段
@@ -430,7 +429,7 @@ export const FieldRenameProcessor = defineComponent({
                   suffix-icon="el-icon-search"
                   clearable
                   v-model={this.config.searchTable}
-                  onInput={() => this.doSearchTables(this.config.searchTable, 'search')}
+                  onInput={this.doSearchTables}
                 ></ElInput>
               </div>
             </div>
@@ -445,11 +444,15 @@ export const FieldRenameProcessor = defineComponent({
                 <ul>
                   <el-checkbox-group v-model={this.config.checkedTables} onChange={this.doCheckedTablesChange}>
                     {this.list.map((item, index) => (
-                      <li key={index} class={[this.config.position === index ? 'active' : '']}>
-                        <el-checkbox label={item}>
+                      <li
+                        key={index}
+                        class={[this.config.position === index ? 'active' : '']}
+                        onClick={() => this.updateView(index)}
+                      >
+                        <el-checkbox nativeOnClick={event => event.stopPropagation()} label={item}>
                           <br />
                         </el-checkbox>
-                        <div class="task-form-text-box" onClick={() => this.updateView(index)}>
+                        <div class="task-form-text-box">
                           <OverflowTooltip
                             class="w-100 text-truncate target"
                             text={item.sinkObjectName}
@@ -477,11 +480,15 @@ export const FieldRenameProcessor = defineComponent({
               small
               class="flex mt-3 din-font"
               layout="total, prev, slot, next"
-              on={{ ['update:current-page']: this.loadData }}
+              on={{
+                'current-change': page => {
+                  this.config.page.current = page
+                  this.loadData()
+                }
+              }}
               current-page={this.config.page.current}
               total={this.config.page.total}
               pager-count={5}
-              onCurrent-change={this.loadData}
             >
               <div class="text-center">
                 <span class="page__current" style="min-width: 22px">
