@@ -87,7 +87,7 @@ export default {
           this.$router.push({ name: 'Workbench' })
           break
         case 'help':
-          window.open('https://docs.tapdata.io/', '_blank')
+          window.open('https://docs.tapdata.io/cloud/what-is-tapdata-cloud', '_blank')
           break
         case 'contact-us':
           window.open('https://cloud.tapdata.net/contact.html', '_blank')
