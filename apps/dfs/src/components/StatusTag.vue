@@ -116,19 +116,19 @@ export default {
   background-color: #ecf5ff;
   color: #409eff;
   &.tag--success {
-    background-color: #f0f9eb;
-    border-color: #e1f3d8;
-    color: #67c23a;
+    color: #2b8a6a;
+    background-color: #ccf4d2;
   }
-  &.tag--info {
-    background-color: #f4f4f5;
+  &.tag--info,
+  &.tag--disable {
+    background-color: rgba(201, 205, 212, 0.2);
     border-color: #e9e9eb;
-    color: #909399;
+    color: #86909c;
   }
   &.tag--warning {
-    background-color: #fdf6ec;
+    background-color: #fdf1c8;
     border-color: #faecd8;
-    color: #e6a23c;
+    color: #c39700;
   }
   &.tag--danger {
     background-color: #fef0f0;

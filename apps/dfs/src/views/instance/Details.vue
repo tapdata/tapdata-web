@@ -59,7 +59,7 @@
             class="mb-4 mr-4"
             type="primary"
             :loading="loadingUpload"
-            :disabled="agent.status !== 'Running' || disabledUploadDialog"
+            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stop'"
             @click="handleUpload(currentAgentId)"
             >{{ btnTxt }}</el-button
           >
@@ -259,6 +259,7 @@ export default {
       loadingUpload: false,
       btnTxt: i18n.t('dfs_instance_instance_upload_btn'),
       disabledUploadDialog: false, //控制agent 上传频率 同时只能一个在上传 在弹窗
+      tapdataAgentStatus: '',
       showUpload: 1,
       uploadAgentLog: '',
       uploadDays: 3,
@@ -315,6 +316,8 @@ export default {
             }
             //低于V3.1.3版本不显示日志上传下载功能
             this.showUpload = this.handleVersion(data.spec.version)
+            //检查tapdata agent 状态
+            this.tapdataAgentStatus = data?.tapdataAgentStatus
             Object.assign(data, data?.metric || {}, data?.spec || {}, data?.tmInfo || {})
             data.hostname = data?.tmInfo?.hostname
             data.createAt = this.formatTime(data.createAt)
