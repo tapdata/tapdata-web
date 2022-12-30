@@ -126,7 +126,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
     if (code === 'ok') {
       return resolve(response.data.data)
     } else if (code === 'SystemError') {
-      Message.error(response.data.message)
+      Message.error(response.data.message || i18n.t('message_request_error').toString())
       reject(response)
     } else {
       switch (code) {
