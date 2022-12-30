@@ -239,7 +239,7 @@ export default {
       dataflow,
 
       scale: 1,
-      showBottomPanel: true,
+      showBottomPanel: false,
       timer: null,
       quotaTimeType: '5m',
       quotaTime: [],
@@ -253,7 +253,8 @@ export default {
       logTotals: [],
       refreshRate: 5000,
       extraEnterCount: 0,
-      isReset: false // 是否重置了
+      isReset: false, // 是否重置了
+      watchStatusCount: 0
     }
   },
 
@@ -305,6 +306,12 @@ export default {
     'dataflow.status'(v1, v2) {
       if (v1 !== v2) {
         this.init()
+      }
+      this.watchStatusCount++
+      if (this.watchStatusCount === 1) {
+        const flag = this.dataflow.syncType === 'migrate' && ['renewing', 'renew_failed'].includes(v1)
+        this.toggleConsole(flag)
+        this.handleBottomPanel(!flag)
       }
       this.toggleConnectionRun(v1 === 'running')
     }
