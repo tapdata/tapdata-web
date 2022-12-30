@@ -264,13 +264,7 @@
         </div>
       </ElDialog>
       <!--  详情    -->
-      <Details
-        v-model="showDetails"
-        :detail-id="detailId"
-        :uploadAgentLog="selectedRow.uploadAgentLog"
-        @closed="detailsClosedFnc"
-        @load-data="loadDetailsData"
-      >
+      <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
         <div slot="title">
           <InlineInput
             :value="selectedRow.name"
@@ -369,43 +363,7 @@ export default {
       currentVersionInfo: '',
       showDetails: false,
       detailId: null,
-      filterItems: [],
-      //日志下载
-      downloadDialog: false,
-      downloadListCol: [
-        {
-          label: i18n.t('dfs_instance_instance_wenjianming'),
-          prop: 'id'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_wenjiandaxiao'),
-          slotName: 'fileSize'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_shangchuanshijian'),
-          prop: 'createAt',
-          dataType: 'time'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_wenjianzhuangtai'),
-          slotName: 'status'
-        },
-
-        {
-          label: i18n.t('dfs_instance_instance_wenjianxiazai'),
-          slotName: 'operation'
-        }
-      ],
-      downloadList: [],
-      currentAgentId: '',
-      currentStatus: '',
-      downloadTotal: 0,
-      currentPage: 1,
-      pageSize: 10,
-      statusMaps: AGENT_STATUS_MAP_EN,
-      timer: null,
-      loadingLogTable: false,
-      loadingUpload: false
+      filterItems: []
     }
   },
   computed: {

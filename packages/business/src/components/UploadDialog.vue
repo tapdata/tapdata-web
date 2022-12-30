@@ -23,7 +23,7 @@
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_modules_dialog_file') + ':'">
         <ElUpload
-          class="upload-demo"
+          class="w-75"
           ref="upload"
           :action="importForm.action"
           :accept="importForm.accept"
@@ -33,7 +33,7 @@
           :on-change="handleChange"
           :on-remove="handleRemove"
         >
-          <ElLink type="primary" plain slot="trigger" size="mini">
+          <ElLink class="align-top" type="primary" plain slot="trigger" size="mini">
             <VIcon class="mr-1 link-primary">upload</VIcon>
             {{ $t('packages_business_modules_dialog_upload_files') }}</ElLink
           >
@@ -95,6 +95,11 @@ export default {
 
     // 上传文件成功失败钩子
     handleChange(file) {
+      /*if (!file.name.endsWith('.json.gz')) {
+        this.$message.warning('请选择名称以[.json.gz]结尾的文件')
+        this.$refs.upload.clearFiles()
+        return
+      }*/
       this.importForm.fileList = [file]
       if (this.type === 'api') {
         this.importForm.action =
@@ -131,8 +136,8 @@ export default {
     },
 
     handleSuccess(response) {
-      if (response.code === '110500' || response.code === '110401') {
-        this.$message.error(this.$t('packages_business_message_upload_fail'))
+      if (response.code !== 'ok') {
+        this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
       } else {
         this.$message.success(this.$t('packages_business_message_upload_success'))
         this.$emit('success')
@@ -163,34 +168,38 @@ export default {
 </script>
 <style lang="scss">
 .import-upload-dialog {
-  .upload-demo {
-    .el-upload-list {
-      .el-upload-list__item.is-success {
+  .el-upload-list {
+    .el-upload-list__item {
+      line-height: 28px;
+      background-color: map-get($bgColor, disable);
+      &:hover {
+        background-color: map-get($bgColor, disable);
+      }
+      &.is-success {
         .el-icon-close {
           display: none;
         }
       }
-      .el-upload-list__item-name {
-        &:hover {
-          color: map-get($color, primary);
-        }
-        i {
-          font-size: 18px;
-          color: map-get($color, primary);
-        }
-      }
-      .el-upload-list__item-status-label {
-        right: 50px;
-        top: 7px;
-      }
-      .el-upload-list__item:hover {
-        background-color: initial;
-      }
-      .el-icon-close:hover {
+    }
+    .el-upload-list__item-name {
+      margin-right: 28px;
+      background-color: unset;
+    }
+    .el-upload-list__item-name {
+      &:hover {
         color: map-get($color, primary);
       }
-      .el-icon-close:before {
-        content: '';
+      i {
+        color: map-get($color, primary);
+      }
+    }
+    .el-icon-upload-success {
+      vertical-align: middle;
+    }
+    .el-icon-close {
+      top: 7px;
+      &:hover {
+        color: map-get($color, primary);
       }
     }
   }

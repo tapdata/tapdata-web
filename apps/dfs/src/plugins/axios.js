@@ -2,7 +2,7 @@ import i18n from '@/i18n'
 import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
-import { Message } from 'element-ui'
+import { Message } from '@/plugins/element'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';

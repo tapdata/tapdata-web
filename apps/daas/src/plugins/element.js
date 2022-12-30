@@ -17,7 +17,7 @@ import {
   Switch,
   Loading,
   MessageBox,
-  Message,
+  Message as _Message,
   Menu,
   Submenu,
   MenuItem,
@@ -229,45 +229,46 @@ Vue.component(BreadcrumbItem.name, BreadcrumbItem)
 Vue.component(Empty.name, Empty)
 Vue.use(Loading.directive)
 Vue.use(InfiniteScroll)
-/***提示只显示一次**/
-// 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
-// 推荐使用this.$message.success("成功提示")或者this.$message.success(options)的方式进行调用
+
 const showMessage = Symbol('showMessage')
 
-class DoneMessage {
-  [showMessage](type, options, single) {
-    if (single) {
-      if (document.getElementsByClassName('el-message').length === 0) {
-        Message[type](options)
-      }
+class MessageConstructor {
+  constructor() {
+    const types = ['success', 'warning', 'info', 'error']
+    types.forEach(type => {
+      this[type] = options => this[showMessage](type, options)
+    })
+  }
+
+  [showMessage](type, options) {
+    const domList = document.getElementsByClassName('el-message')
+
+    if (!domList.length) {
+      return _Message[type](options)
     } else {
-      Message[type](options)
+      let canShow = true
+      const message = typeof options === 'string' ? options : options.message
+      for (const dom of domList) {
+        if (message === dom.innerText) {
+          console.log('重复消息', dom) // eslint-disable-line
+          canShow = false
+          break
+        }
+      }
+      if (canShow) {
+        return _Message[type](options)
+      }
     }
-  }
-
-  info(options, single = true) {
-    this[showMessage]('info', options, single)
-  }
-
-  warning(options, single = true) {
-    this[showMessage]('warning', options, single)
-  }
-
-  error(options, single = true) {
-    this[showMessage]('error', options, single)
-  }
-
-  success(options, single = true) {
-    this[showMessage]('success', options, single)
   }
 }
 
-export const message = new DoneMessage()
+export const Message = new MessageConstructor()
+export const message = Message
 
 Vue.prototype.$loading = Loading.service
 
 Vue.prototype.$prompt = MessageBox.prompt
 Vue.prototype.$alert = MessageBox.alert
-Vue.prototype.$message = new DoneMessage()
+Vue.prototype.$message = Message
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$notify = Notification

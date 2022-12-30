@@ -119,7 +119,6 @@ export default {
       },
       scriptRules: {
         validator: (rule, value, callback) => {
-          console.log('self.$refs.editor.editor', self.$refs.editor.editor) // eslint-disable-line
           let obj = getScriptObj(value)
           if (!value.trim()) {
             callback(new Error(this.$t('function_script_empty')))
@@ -127,7 +126,7 @@ export default {
             callback(new Error(this.$t('function_script_missing_function_name')))
           } else if (!obj.body.trim()) {
             callback(new Error(this.$t('function_script_missing_function_body')))
-          } else if (self.$refs.editor.editor.session.$annotations.some(item => item.type !== 'info')) {
+          } else if (self.$refs.editor.editor.session.$annotations.some(item => item.type === 'error')) {
             callback(new Error(this.$t('function_script_format_error')))
           } else if (obj.bodyLength.length > 1) {
             callback(new Error(this.$t('function_script_only_one')))
