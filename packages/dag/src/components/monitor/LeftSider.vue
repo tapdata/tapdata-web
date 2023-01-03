@@ -190,11 +190,11 @@
               <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
               <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
             </div>
-            <div class="mb-2">
+            <div v-if="!sourceIsFile" class="mb-2">
               <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
               <span>{{ eventDataAll.inputUpdateTotal.toLocaleString() }}</span>
             </div>
-            <div class="mb-2">
+            <div v-if="!sourceIsFile" class="mb-2">
               <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
               <span>{{ eventDataAll.inputDeleteTotal.toLocaleString() }}</span>
             </div>
@@ -215,11 +215,11 @@
                 <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
                 <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
               </div>
-              <div class="mb-2">
+              <div v-if="!sourceIsFile" class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
                 <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
               </div>
-              <div class="mb-2">
+              <div v-if="!sourceIsFile" class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
                 <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
               </div>
@@ -281,6 +281,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'
 import { VIcon, TimeSelect } from '@tap/component'
@@ -324,6 +326,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters('dataflow', ['allNodes']),
+
     // qps
     qpsData() {
       const data = this.quota.samples?.lineChartData?.[0]
@@ -430,6 +434,12 @@ export default {
     heartbeatTime() {
       const { pingTime, status } = this.dataflow
       return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : '-'
+    },
+
+    sourceIsFile() {
+      return !!this.allNodes.find(
+        t => !t.$inputs.length && t.$outputs.length && ['CSV', 'EXCEL', 'JSON', 'XML'].includes(t.databaseType)
+      )
     }
   },
 
