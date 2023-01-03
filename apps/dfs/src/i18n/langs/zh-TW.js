@@ -1150,6 +1150,8 @@ export default {
   //数据服务
   dfs_data_server: '數據服務',
   dfs_data_server_demo_title: '中央化的數據服務，可複用易分發',
+  dfs_data_server_demo_title_desc: '·中央化的数据服务 ·中央化存储 ·数据实时服务',
+  dfs_data_server_demo_title_edition: 'Tapdata On-Prem 版',
   dfs_data_server_demo_desc:
     ' 將企業核心數據實時集中到中央化數據平台的方式並通過API 或者反向同步方式，為下游的交互式應用、微服務或交互式分析提供新鮮實時的數據。 ',
   dfs_data_server_storage: '中央化存儲',

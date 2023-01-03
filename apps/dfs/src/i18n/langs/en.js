@@ -1260,6 +1260,8 @@ export default {
   //数据服务
   dfs_data_server: 'Data Service',
   dfs_data_server_demo_title: 'Centralized data service, reusable and easy to distribute',
+  dfs_data_server_demo_title_desc: '·Centralized data service·Centralized storage·Data real-time service',
+  dfs_data_server_demo_title_edition: 'Tapdata On-Prem Edition',
   dfs_data_server_demo_desc:
     ' Centralize the core data of the enterprise to the centralized data platform in real time and provide fresh real-time data for downstream interactive applications, microservices or interactive analysis through API or reverse synchronization. ',
   dfs_data_server_storage: 'centralized storage',

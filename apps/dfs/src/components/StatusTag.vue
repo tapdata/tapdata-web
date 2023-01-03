@@ -112,7 +112,6 @@ export default {
   display: inline-block;
   padding: 4px 8px;
   border-radius: 4px;
-  border: 1px solid #d9ecff;
   background-color: #ecf5ff;
   color: #409eff;
   &.tag--success {
@@ -122,17 +121,14 @@ export default {
   &.tag--info,
   &.tag--disable {
     background-color: rgba(201, 205, 212, 0.2);
-    border-color: #e9e9eb;
     color: #86909c;
   }
   &.tag--warning {
     background-color: #fdf1c8;
-    border-color: #faecd8;
     color: #c39700;
   }
   &.tag--danger {
     background-color: #fef0f0;
-    border-color: #fde2e2;
     color: #f56c6c;
   }
 }
