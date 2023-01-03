@@ -108,7 +108,7 @@ export function calcTimeUnit(val, fix = 2, op) {
     }
   ]
   let results = []
-  if (typeof val !== 'number' || val == 0) {
+  if (typeof val !== 'number' || val === 0) {
     return '0'
   } else if (val > 0 && val < 1) {
     const p = Math.pow(10, options.digits)
