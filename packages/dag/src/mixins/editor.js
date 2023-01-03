@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
-import { taskApi } from '@tap/api'
+import { databaseTypesApi, taskApi } from '@tap/api'
 import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '../style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
@@ -119,7 +119,8 @@ export default {
       'setCanBeConnectedNodeIds',
       'setValidateLanguage',
       'addProcessorNode',
-      'toggleConsole'
+      'toggleConsole',
+      'setPdkPropertiesMap'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -1985,6 +1986,27 @@ export default {
 
     titleSet() {
       setPageTitle(`${this.dataflow.name} - ${this.$t(this.$route.meta.title)}`)
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }
