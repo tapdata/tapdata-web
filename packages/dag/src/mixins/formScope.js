@@ -99,6 +99,10 @@ export default {
 
         $isDaas: process.env.VUE_APP_PLATFORM === 'DAAS', //区分云版、企业版
 
+        $hasPdkConfig: pdkHash => {
+          return !!this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
+        },
+
         findNodeById: id => {
           return this.$store.state.dataflow.NodeMap[id]
         },
