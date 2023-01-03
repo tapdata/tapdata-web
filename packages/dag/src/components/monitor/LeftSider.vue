@@ -207,11 +207,11 @@
               <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
               <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
             </div>
-            <div v-if="!isFileSource" class="mb-2">
+            <div class="mb-2">
               <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
               <span>{{ eventDataAll.inputUpdateTotal.toLocaleString() }}</span>
             </div>
-            <div v-if="!isFileSource" class="mb-2">
+            <div class="mb-2">
               <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
               <span>{{ eventDataAll.inputDeleteTotal.toLocaleString() }}</span>
             </div>
@@ -232,11 +232,11 @@
                 <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
                 <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
               </div>
-              <div v-if="!isFileSource" class="mb-2">
+              <div class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
                 <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
               </div>
-              <div v-if="!isFileSource" class="mb-2">
+              <div class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
                 <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
               </div>
@@ -453,7 +453,7 @@ export default {
       const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
       const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
-      return allNodes.some(node => !node.$inputs.length && node.$outputs.length && fileType.includes(node.databaseType))
+      return allNodes.some(node => fileType.includes(node.databaseType))
     }
   },
 
