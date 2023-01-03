@@ -134,6 +134,10 @@ export default defineComponent({
       return type !== 'database' && type !== 'table'
     })
 
+    const isFileSource = computed(() => {
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(props.node.databaseType)
+    })
+
     /**
      * 耗时
      * @type {ComputedRef<unknown>}
@@ -221,9 +225,15 @@ export default defineComponent({
               : isTarget.value
               ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
               : i18n.t('packages_dag_monitor_node_per_deal_need_time')
-            const val = getVal(
-              isTarget.value ? targetWriteTimeCostAvg.value : isProcessor.value ? timeCostAvg.value : completeTime.value
-            )
+            const val = isFileSource.value
+              ? i18n.t('packages_dag_components_node_zanbuzhichi')
+              : getVal(
+                  isTarget.value
+                    ? targetWriteTimeCostAvg.value
+                    : isProcessor.value
+                    ? timeCostAvg.value
+                    : completeTime.value
+                )
             return (
               <div class="statistic flex">
                 <div class="statistic-title">{title}：</div>

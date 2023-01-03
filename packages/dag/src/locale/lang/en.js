@@ -530,6 +530,7 @@ export default {
   packages_dag_components_node_quanliangwanchenghaixu: 'Estimated finish time',
   packages_dag_components_node_xieruhaoshi: 'Writing time:',
   packages_dag_components_node_chulihaoshi: 'Processing time:',
+  packages_dag_components_node_zanbuzhichi: 'Not supported',
   packages_dag_page_return_confirm_title: 'Return to confirm',
   packages_dag_page_return_confirm_content: 'The current task is empty. Do you want to keep it?',
   packages_dag_page_return_confirm_ok_text: "Don't keep",
