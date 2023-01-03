@@ -7,7 +7,7 @@
     :close-on-press-escape="false"
     :show-close="false"
   >
-    <section class="agent-guide-main flex">
+    <section class="agent-guide-main flex" style="height: 646px">
       <!--第一步-->
       <div class="agent-guide-left mt-110" :style="{ 'margin-top': style['top'] }" v-if="step === 1">
         <header class="agent-guide-header mb-32">
@@ -49,7 +49,7 @@
         </div>
       </div>
       <!--第二步 -->
-      <div class="agent-guide-left mt-32" v-if="step === 2">
+      <div class="agent-guide-left mt-32" v-if="step === 2" style="margin-top: 100px">
         <header class="step-2-guide-header mb-39">
           {{ $t('dfs_agent_download_agentguidedialog_lijiquanzhuang') }}
         </header>
@@ -88,26 +88,26 @@
             }}</el-button>
           </div>
           <!--demo -->
-          <div class="step" :style="{ width: style['step'] }">
-            <div class="step-header mb-2">
-              <VIcon size="16" class="color-primary mr-2">selfInstall</VIcon
-              >{{ $t('dfs_agent_download_agentguidedialog_tiyanDem') }}
-            </div>
-            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_buxianganzhuanghuo') }}</div>
-            <el-button type="primary" class="mb-2 step-button" @click="goDemo()">{{
-              $t('dfs_agent_download_agentguidedialog_tiyan')
-            }}</el-button>
-            <span class="inline-block userPassword">
-              <span class="inline-block"
-                >{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}<span>demo@tapdata.io</span></span
-              >
-              <br />
-              <span class="inline-block"
-                >{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}
-                <span style="margin-left: 10px">tapdata</span></span
-              >
-            </span>
-          </div>
+          <!--          <div class="step" :style="{ width: style['step'] }">-->
+          <!--            <div class="step-header mb-2">-->
+          <!--              <VIcon size="16" class="color-primary mr-2">selfInstall</VIcon-->
+          <!--              >{{ $t('dfs_agent_download_agentguidedialog_tiyanDem') }}-->
+          <!--            </div>-->
+          <!--            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_buxianganzhuanghuo') }}</div>-->
+          <!--            <el-button type="primary" class="mb-2 step-button" @click="goDemo()">{{-->
+          <!--              $t('dfs_agent_download_agentguidedialog_tiyan')-->
+          <!--            }}</el-button>-->
+          <!--            <span class="inline-block userPassword">-->
+          <!--              <span class="inline-block"-->
+          <!--                >{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}<span>demo@tapdata.io</span></span-->
+          <!--              >-->
+          <!--              <br />-->
+          <!--              <span class="inline-block"-->
+          <!--                >{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}-->
+          <!--                <span style="margin-left: 10px">tapdata</span></span-->
+          <!--              >-->
+          <!--            </span>-->
+          <!--          </div>-->
         </div>
         <VIcon size="18" class="agent-download-icon" v-if="showClose" @click="close">close</VIcon>
       </div>
