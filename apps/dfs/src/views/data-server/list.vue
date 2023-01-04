@@ -10,7 +10,7 @@
     <div class="data-server-desc">
       {{ $t('dfs_data_server_demo_desc') }}
     </div>
-    <div class="mt-2 mb-4"><img src="../../assets/image/data-server.png" alt="" /></div>
+    <div class="mt-2 mb-4"><img src="../../assets/image/data-server.svg" alt="" /></div>
     <div>
       <div class="title mb-4 mt-8">{{ $t('dfs_data_server_storage') }}</div>
       <div class="data-server-desc">
@@ -20,9 +20,9 @@
       <div class="data-server-desc">
         {{ $t('dfs_data_server_data_service_mode') }}
       </div>
-      <div class="mt-2 mb-4"><img src="../../assets/image/data-server-api-time.png" alt="" /></div>
+      <div class="mt-2 mb-4"><img src="../../assets/image/data-server-api-time.svg" alt="" /></div>
       <div class="title mb-4 mt-8">{{ $t('dfs_data_server_feature') }}</div>
-      <div class="mt-2 mb-4"><img src="../../assets/image/data-server-feature.png" alt="" /></div>
+      <div class="mt-2 mb-4"><img src="../../assets/image/data-server-feature.svg" alt="" /></div>
     </div>
   </div>
 </template>
