@@ -385,6 +385,12 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 3,
+          type: '',
+          name: 'Tapdata Cloud 3.1.4 Release Notes',
+          time: '2023-01-3 21:00'
+        },
+        {
           id: 2,
           type: '',
           name: 'Tapdata Cloud 3.1.3 Release Notes',
@@ -451,6 +457,8 @@ export default {
         this.showUpgrade = true
       } else if (item?.id === 2) {
         window.open('https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg')
+      } else if (item?.id === 3) {
+        window.open('https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA')
       } else {
         this.$router.push({
           name: 'WorkbenchNotice',
