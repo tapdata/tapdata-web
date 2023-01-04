@@ -370,7 +370,7 @@ export default {
       let agentList = this.agentList
       const stats = data.taskTypeStats
       if (stats) {
-        agentList[2].value = stats.total - stats.Buffer
+        agentList[2].value = stats.total
         agentList[2].list[0].value = agentList[2].value || 0
       }
     },
