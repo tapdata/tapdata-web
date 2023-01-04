@@ -7,8 +7,7 @@
         layout: 'total, ->, prev, pager, next, sizes, jumper'
       }"
       ref="table"
-      height="100"
-      class="table-list"
+      height="100%"
       hide-on-single-page
     >
       <template slot="status" slot-scope="scope">
