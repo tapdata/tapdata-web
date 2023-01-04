@@ -281,6 +281,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'
 import { VIcon, TimeSelect } from '@tap/component'
@@ -324,6 +326,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters('dataflow', ['allNodes']),
+
     // qps
     qpsData() {
       const data = this.quota.samples?.lineChartData?.[0]

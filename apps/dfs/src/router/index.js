@@ -1,3 +1,4 @@
+import Parent from './Parent'
 import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
@@ -218,6 +219,7 @@ const routes = [
           title: 'page_title_data_verify',
           doNotJump: true
         },
+        component: Parent,
         children: [
           {
             path: ':id/details',
@@ -230,6 +232,15 @@ const routes = [
             }
           }
         ]
+      },
+      {
+        path: '/data-server',
+        name: 'dataServerList',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/data-server/list'),
+        meta: {
+          title: 'dfs_data_server',
+          icon: 'data-server'
+        }
       }
     ]
   },
@@ -276,8 +287,28 @@ const routes = [
     }
   },
   {
+    path: '/404',
+    name: '404',
+    component: Error
+  },
+  {
     path: '/500',
     name: '500',
+    component: Error
+  },
+  {
+    path: '/502',
+    name: '502',
+    component: Error
+  },
+  {
+    path: '/504',
+    name: '504',
+    component: Error
+  },
+  {
+    path: '/error',
+    name: 'error',
     component: Error
   },
   {

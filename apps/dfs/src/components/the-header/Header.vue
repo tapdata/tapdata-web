@@ -6,6 +6,9 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
+        <div class="command-item mr-6" @click="command('op')">
+          <span class="cursor-pointer">线下部署版</span>
+        </div>
         <div class="command-item mr-6" @click="command('v2')">
           <VIcon class="mr-2" size="17">navigation_general</VIcon>
           <span class="cursor-pointer">{{ $t('header_upgrade') }}</span>
@@ -95,6 +98,9 @@ export default {
         case 'v2':
           window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
           break
+        case 'op':
+          window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
+          break
         case 'userCenter':
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           this.$router.push({
@@ -120,7 +126,7 @@ export default {
           window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
           break
         case 'handbook':
-          window.open('https://sourl.cn/sxuj82', '_blank')
+          window.open('https://docs.tapdata.io/cloud/what-is-tapdata-cloud', '_blank')
           break
         case 'support':
           window.open('https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community', '_blank')

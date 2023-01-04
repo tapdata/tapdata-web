@@ -107,6 +107,11 @@ export default {
           icon: 'task'
         },
         {
+          name: 'dataServerList',
+          title: $t('dfs_data_server'),
+          icon: 'data-server'
+        },
+        {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'

@@ -3,7 +3,7 @@ import { h } from '@formily/vue'
 import { stylePrefix } from '../configs'
 import { useFormLayout } from '@formily/element'
 import { VDivider } from '@tap/component'
-import './style.scss'
+import '@formily/element/lib/space/style.scss'
 
 const spaceSize = {
   small: 8,

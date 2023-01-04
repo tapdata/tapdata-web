@@ -35,23 +35,8 @@
         </div>
       </div>
       <div class="mt-4">
-        <ElButton
-          size="mini"
-          type="primary"
-          :disabled="agent.status !== 'Running' || (uploadAgentLog && uploadAgentLog.status === 0) || disabledUploadBtn"
-          :loading="loadingDetailUpload"
-          @click="handleUpload(agent.id, true)"
-        >
-          <span v-if="uploadAgentLog && uploadAgentLog.uploadRatio !== 100 && uploadAgentLog.status === 0">
-            {{ $t('dfs_instance_instance_rizhishangchuan') }}
-            <span> ({{ uploadAgentLog.uploadRatio }}）%</span>
-          </span>
-          <span v-else>
-            {{ btnDetailsTxt }}
-          </span>
-        </ElButton>
-        <ElButton size="mini" @click="open(agent.id, agent.status)">{{
-          $t('dfs_instance_instance_bendirizhixia')
+        <ElButton size="mini" type="primary" :disabled="!showUpload" @click="open(agent.id, agent.status)">{{
+          $t('dfs_instance_instance_rizhishangchuan')
         }}</ElButton>
       </div>
     </div>
@@ -66,11 +51,15 @@
       <div slot="default" class="flex justify-content-between">
         <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
         <div>
+          <label class="mr-4">{{ $t('dfs_instance_instance_upload_days_label') }}</label>
+          <el-select class="mr-4" v-model="uploadDays">
+            <el-option v-for="item in days" :label="item.label" :value="item.value" :key="item.value"></el-option>
+          </el-select>
           <el-button
             class="mb-4 mr-4"
             type="primary"
             :loading="loadingUpload"
-            :disabled="agent.status !== 'Running' || disabledUploadDialog"
+            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stop'"
             @click="handleUpload(currentAgentId)"
             >{{ btnTxt }}</el-button
           >
@@ -95,9 +84,13 @@
           <span>{{ handleUnit(scope.row.fileSize) }}</span>
         </template>
         <template slot="operation" slot-scope="scope">
-          <ElButton size="mini" type="text" :disabled="scope.row.status === 0" @click="handleDownload(scope.row)">{{
-            $t('dfs_instance_instance_xiazai')
-          }}</ElButton>
+          <ElButton
+            size="mini"
+            type="text"
+            :disabled="[0, 2, 3].includes(scope.row.status)"
+            @click="handleDownload(scope.row)"
+            >{{ $t('dfs_instance_instance_xiazai') }}</ElButton
+          >
           <ElButton
             size="mini"
             type="text"
@@ -124,11 +117,13 @@
 
 <script>
 import { VIcon, VTable } from '@tap/component'
-import { StatusTag } from '@tap/business'
+import StatusTag from '@/components/StatusTag'
 import timeFunction from '@/mixins/timeFunction'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 import i18n from '@/i18n'
 import { handleUnit } from '@/util'
+
+import { measurementApi } from '@tap/api'
 
 export default {
   name: 'Details',
@@ -196,6 +191,18 @@ export default {
             {
               label: $t('agent_detail_host_cpu_memory'),
               key: 'totalmem'
+            },
+            {
+              label: $t('agent_detail_cpu_utilization'),
+              key: 'cpuUsage'
+            },
+            {
+              label: $t('agent_detail_mem_utilization'),
+              key: 'memoryRate'
+            },
+            {
+              label: $t('agent_detail_gc_rate'),
+              key: 'gcRate'
             }
           ]
         },
@@ -250,12 +257,38 @@ export default {
       uploadTimer: null,
       loadingLogTable: false,
       loadingUpload: false,
-      loadingDetailUpload: false,
-      btnTxt: i18n.t('dfs_instance_instance_rizhishangchuan'),
-      btnDetailsTxt: i18n.t('dfs_instance_instance_rizhishangchuan'),
-      disabledUploadBtn: false, //控制agent 上传频率 同时只能一个在上传
+      btnTxt: i18n.t('dfs_instance_instance_upload_btn'),
       disabledUploadDialog: false, //控制agent 上传频率 同时只能一个在上传 在弹窗
-      uploadAgentLog: ''
+      tapdataAgentStatus: '',
+      showUpload: 1,
+      uploadAgentLog: '',
+      uploadDays: 3,
+      days: [
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 1
+          }),
+          value: 1
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 3
+          }),
+          value: 3
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 7
+          }),
+          value: 7
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 15
+          }),
+          value: 15
+        }
+      ]
     }
   },
   watch: {
@@ -274,12 +307,17 @@ export default {
       this.loading = true
       this.$axios
         .get('api/tcm/agent/' + this.detailId)
-        .then(data => {
+        .then(async data => {
           if (data) {
+            const measurement = await this.loadMeasurementData(data.tmInfo.agentId)
             // 是否显示版本号：待部署不显示
             if (!this.showVersionFlag(data) && data.spec) {
               data.spec.version = ''
             }
+            //低于V3.1.3版本不显示日志上传下载功能
+            this.showUpload = this.handleVersion(data.spec.version)
+            //检查tapdata agent 状态
+            this.tapdataAgentStatus = data?.tapdataAgentStatus
             Object.assign(data, data?.metric || {}, data?.spec || {}, data?.tmInfo || {})
             data.hostname = data?.tmInfo?.hostname
             data.createAt = this.formatTime(data.createAt)
@@ -305,7 +343,7 @@ export default {
               }
               data.totalmem = size
             }
-            this.agent = Object.assign(this.agent, data)
+            this.agent = Object.assign(this.agent, data, measurement)
             this.$emit('load-data', this.agent)
             this.uploadAgentLog = data?.uploadAgentLog || ''
           }
@@ -314,6 +352,46 @@ export default {
           this.loading = false
         })
     },
+
+    async loadMeasurementData(engineId) {
+      const data = await measurementApi.queryV2({
+        startAt: Date.now(),
+        endAt: Date.now(),
+        samples: {
+          data: {
+            tags: {
+              type: 'engine',
+              engineId
+            },
+            fields: ['memoryRate', 'cpuUsage', 'gcRate'],
+            type: 'instant'
+          }
+        }
+      })
+      const defaultVal = '-'
+      if (!data?.samples?.data?.[0])
+        return {
+          cpuUsage: defaultVal,
+          memoryRate: defaultVal,
+          gcRate: defaultVal
+        }
+      const { cpuUsage, gcRate, memoryRate } = data.samples.data[0]
+      return {
+        cpuUsage:
+          typeof cpuUsage === 'number'
+            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal,
+        memoryRate:
+          typeof memoryRate === 'number'
+            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal,
+        gcRate:
+          typeof gcRate === 'number'
+            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal
+      }
+    },
+
     showVersionFlag(row) {
       let { status, tmInfo } = row
       return !(status === 'Creating' && !tmInfo?.pingTime)
@@ -329,53 +407,19 @@ export default {
       this.timer = null
     },
     //日志上传
-    handleUpload(id, polling) {
-      if (polling) {
-        this.btnDetailsTxt = i18n.t('dfs_instance_details_shangchuanzhong')
-        this.loadingDetailUpload = true
-      } else {
-        this.loadingUpload = true
-        this.btnTxt = i18n.t('dfs_instance_details_shangchuanzhong')
-      }
+    handleUpload(id) {
+      this.loadingUpload = true
+      this.btnTxt = i18n.t('dfs_instance_details_shangchuanzhong')
       this.$axios
-        .post('api/tcm/uploadLog', { agentId: id })
+        .post('api/tcm/uploadLog', { agentId: id, uploadDays: this.uploadDays })
         .then(() => {
-          if (polling) {
-            this.loadingDetailUpload = false
-            clearTimeout(this.uploadTimer)
-            this.getUploadStatus()
-          } else {
-            //主動刷新列表
-            clearTimeout(this.timer)
-            this.getDownloadList()
-          }
-        })
-        .catch(() => {
-          if (polling) {
-            clearTimeout(this.uploadTimer)
-            this.getUploadStatus()
-          }
+          //主動刷新列表
+          clearTimeout(this.timer)
+          this.getDownloadList()
         })
         .finally(() => {
           this.loadingUpload = false
-          this.loadingDetailUpload = false
         })
-    },
-    //轮询当前上传进度
-    getUploadStatus() {
-      this.$axios.get('api/tcm/agent/' + this.detailId).then(data => {
-        if (data) {
-          this.uploadAgentLog = data?.uploadAgentLog
-          this.disabledUploadBtn = data?.uploadAgentLog?.status === 0 || false
-          this.loadingDetailUpload = false
-          this.btnDetailsTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
-        }
-        if (data?.uploadAgentLog?.status === 0) {
-          this.uploadTimer = setTimeout(() => {
-            this.getUploadStatus()
-          }, 300)
-        }
-      })
     },
     handleUnit(limit) {
       return handleUnit(limit)
@@ -421,7 +465,7 @@ export default {
           this.disabledUploadDialog = uploading?.length > 0
           if (!this.disabledUploadDialog) {
             this.loadingUpload = false
-            this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
+            this.btnTxt = i18n.t('dfs_instance_instance_upload_btn')
           }
           this.timer = setTimeout(() => {
             this.getDownloadList()
@@ -456,6 +500,36 @@ export default {
         })
         window.location.href = client.signatureUrl(uploadAddr)
       })
+    },
+    //比较两个版本号
+    handleVersion(version) {
+      let v1 = '3.1.3'.split('.')
+      //去掉V
+      let v2 = version.substr(1)
+      //将- 替换成 .
+      v2 = v2.replace('-', '.')
+      v2 = v2.split('.')
+      const len = Math.max(v1.length, v2.length)
+      // 调整两个版本号位数相同
+      while (v1.length < len) {
+        v1.push('0')
+      }
+      while (v2.length < len) {
+        v2.push('0')
+      }
+
+      // 循环判断每位数的大小
+      for (let i = 0; i < len; i++) {
+        const num1 = parseInt(v1[i])
+        const num2 = parseInt(v2[i])
+
+        if (num1 > num2) {
+          return false
+        } else if (num1 < num2) {
+          return true
+        }
+      }
+      return true
     }
   }
 }
@@ -505,6 +579,10 @@ export default {
   background-color: #c4f3cb;
 }
 .status-2 {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+.status-3 {
   color: #d44d4d;
   background-color: #ffecec;
 }
