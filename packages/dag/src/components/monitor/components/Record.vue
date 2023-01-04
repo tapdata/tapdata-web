@@ -1,7 +1,7 @@
 <template>
-  <div class="p-4 h-100">
+  <div class="record-wrap py-4 pl-4 h-100">
     <VTable
-      :remoteMethod="remoteMethod"
+      :data="taskRecord.items"
       :columns="columns"
       :page-options="{
         layout: 'total, ->, prev, pager, next, sizes, jumper'
@@ -29,7 +29,6 @@
 import i18n from '@tap/i18n'
 
 import { VTable } from '@tap/component'
-import { taskApi } from '@tap/api'
 import { TaskStatus } from '@tap/business'
 import { openUrl } from '@tap/shared'
 
@@ -42,6 +41,15 @@ export default {
     dataflow: {
       type: Object,
       default: () => {}
+    },
+    taskRecord: {
+      type: Object,
+      default: () => {
+        return {
+          total: 0,
+          items: []
+        }
+      }
     }
   },
 
@@ -86,21 +94,6 @@ export default {
   },
 
   methods: {
-    remoteMethod({ page }) {
-      const { current, size } = page
-      const { id: taskId } = this.dataflow || {}
-      let filter = {
-        limit: size,
-        skip: size * (current - 1)
-      }
-      return taskApi.records(taskId, filter).then(data => {
-        return {
-          total: data.total,
-          data: data.items || []
-        }
-      })
-    },
-
     handleDetail(row = {}) {
       const { taskId, taskRecordId, startDate, endDate } = row
       const start = startDate ? new Date(startDate).getTime() - 1000 : Date.now()
@@ -121,3 +114,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.record-wrap {
+  width: calc(100% - 16px);
+}
+</style>
