@@ -189,6 +189,9 @@ export default {
   agent_detail_host_cpu_memory: 'Host CPU RAM',
   agent_detail_installation_manual: 'Installation Directory',
   agent_detail_run_manual: 'Log Directory',
+  agent_detail_cpu_utilization: 'CPU Utilization',
+  agent_detail_mem_utilization: 'Memory Utilization',
+  agent_detail_gc_rate: 'GC Rate',
   agent_list_empty_desc1: 'Come soon',
   agent_list_empty_desc2: 'Start real-time data synchronization~',
   agent_error_check:
@@ -1217,8 +1220,8 @@ export default {
   dfs_agent_download_agentguidedialog_dianjixiafangde:
     'Based on your network security policy, we will recommend a most appropriate deployment for your use. ',
   dfs_agent_download_agentguidedialog_huanyingshiyongT: 'Welcome to Tapdata Cloud',
-  dfs_agent_download_agentguidedialog_mimatap: 'Password: tapdata',
-  dfs_agent_download_agentguidedialog_yonghumingde: 'Username: demo@tapdata.io',
+  dfs_agent_download_agentguidedialog_mimatap: 'Password:',
+  dfs_agent_download_agentguidedialog_yonghumingde: 'Username:',
   dfs_agent_download_agentguidedialog_buxianganzhuanghuo:
     'Do not want to install or deploy? You can experience our DEMO system first to understand the powerful functions of Tapdata',
   dfs_agent_download_agentguidedialog_jijiangshangxian: 'coming soon',
@@ -1239,14 +1242,35 @@ export default {
   dfs_instance_instance_wenjiandaxiao: 'File size',
   dfs_instance_instance_wenjianming: 'File name',
   dfs_instance_instance_xiazai: 'Download',
-  dfs_instance_instance_rizhishangchuan: 'Local log upload',
+  dfs_instance_instance_rizhishangchuan: 'Local log acquisition',
   dfs_instance_instance_bendirizhixia: 'Local log download',
   dfs_instance_details_shangchuanzhong: 'uploading',
   dfs_instance_instance_status_success: 'upload successful',
   dfs_instance_instance_status_false: 'Upload failed',
+  dfs_instance_details_status_invalid: 'Invalid',
+  dfs_instance_instance_upload_days: 'Local log files of the last {val} days',
+  dfs_instance_instance_upload_days_label: 'Please select log range',
+  dfs_instance_instance_upload_btn: 'Start uploading logs',
   dfs_instance_instance_gengxin: 'Updated {val}',
   dfs_online_help_docs: 'Document',
   dfs_instance_stopped_help_tip_prefix:
     'The Agent may be offline because of network reasons or Agent exit. Check the network of the Agent server and the running status of the Agent. You can view ',
-  dfs_instance_stopped_help_tip_suffix: 'get more help'
+  dfs_instance_stopped_help_tip_suffix: 'get more help',
+
+  //数据服务
+  dfs_data_server: 'Data Service',
+  dfs_data_server_demo_title: 'Centralized data service, reusable and easy to distribute',
+  dfs_data_server_demo_title_desc: '·Centralized data service·Centralized storage·Data real-time service',
+  dfs_data_server_demo_title_edition: 'Tapdata On-Prem Edition',
+  dfs_data_server_demo_desc:
+    ' Centralize the core data of the enterprise to the centralized data platform in real time and provide fresh real-time data for downstream interactive applications, microservices or interactive analysis through API or reverse synchronization. ',
+  dfs_data_server_storage: 'centralized storage',
+  dfs_data_server_collection:
+    'After data collection + transmission and real-time calculation, the data is put into the Storage layer for centralized storage. In fact, a set of logical models has been formed. Here, users do not need to care about where the data is stored, but only need to pay attention to the real needs. What data information;',
+  dfs_data_server_real_time: 'data real-time service',
+  dfs_data_server_data_service_mode:
+    'In the service layer, there are two mainstream data service modes Pull and Push. The API supports low-code publishing and can publish data according to specific needs. When the required data has already been stored in the business system, the sorted and managed data can be reversely pushed to the user through REVERSE ETL;',
+  dfs_data_server_feature: 'Data Services unique features',
+  dfs_data_server_On_Prem: 'The Data Services capability is currently only available in the Tapdata On-Prem version',
+  dfs_data_server_apply_for_trial: 'Apply for trial'
 }

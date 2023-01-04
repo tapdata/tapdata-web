@@ -107,7 +107,7 @@
               >{{ row.name }}</ElLink
             >
             <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags">{{ item.value }}</span>
+              <span class="tag inline-block" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
             </span>
           </span>
         </template>
@@ -225,6 +225,57 @@
     <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
     <!--付费 -->
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
+    <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
+    <el-dialog title="提示" :visible.sync="dialogDelMsgVisible" width="52%" custom-class="dialogDelMsgDialog">
+      <span>任务删除成功，以下几个PostgreSQL连接的信息清除失败，需要您使用以下方式手动清除</span>
+      <div class="box mt-4">
+        <div class="mb-4">SQL语句:</div>
+        <div class="mt-2">//第一步 查询 slot_name</div>
+        <div class="mb-4">
+          {{ copySelectSql }}
+          <ElTooltip
+            placement="top"
+            manual
+            :content="$t('agent_deploy_start_install_button_copied')"
+            popper-class="copy-tooltip"
+            :value="showTooltip"
+          >
+            <span
+              class="operaKey color-primary cursor-pointer"
+              v-clipboard:copy="copySelectSql"
+              v-clipboard:success="onCopy"
+              @mouseleave="showTooltip = false"
+            >
+              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+            </span>
+          </ElTooltip>
+        </div>
+        <div class="mt-2">// 第二步 删除 slot_name</div>
+        <div>
+          {{ copyDelSql }}
+          <ElTooltip
+            placement="top"
+            manual
+            :content="$t('agent_deploy_start_install_button_copied')"
+            popper-class="copy-tooltip"
+            :value="showDelTooltip"
+          >
+            <span
+              class="operaKey color-primary cursor-pointer"
+              v-clipboard:copy="copyDelSql"
+              v-clipboard:success="onDelCopy"
+              @mouseleave="showDelTooltip = false"
+            >
+              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+            </span>
+          </ElTooltip>
+        </div>
+      </div>
+      <div class="mt-2" v-for="item in failList" :key="item.id">连接名: {{ item.message }}</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogDelMsgVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </section>
 </template>
 
@@ -299,7 +350,14 @@ export default {
       },
       //付费升级
       paidUpgradeVisible: false,
-      paidPlan: ''
+      paidPlan: '',
+      //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
+      dialogDelMsgVisible: false,
+      copySelectSql: `SELECT slot_name FROM pg_replication_slots WHERE slot_name like 'tapdata_cdc_%' and active='false';`,
+      copyDelSql: "SELECT pg_drop_replication_slot('${slot_name}');",
+      showTooltip: false,
+      showDelTooltip: false,
+      failList: [] //错误列表
     }
   },
 
@@ -611,17 +669,12 @@ export default {
         return
       }
       this.checkAgent(() => {
-        this.$router
-          .push({
-            name: this.route.new
-          })
-          .catch(() => {
-            this.createBtnLoading = false
-            this.buried(this.taskBuried.newFail)
-          })
-          .finally(() => {
-            this.createBtnLoading = false
-          })
+        this.$router.push({
+          name: this.route.new
+        })
+      }).catch(() => {
+        this.createBtnLoading = false
+        this.buried(this.taskBuried.newFail)
       })
     },
 
@@ -689,9 +742,20 @@ export default {
           const { toggleRowSelection } = this.table.$refs.table
           selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
-          this.responseHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
+          this.responseDelHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
         })
       })
+    },
+    //删除任务单独提示
+    responseDelHandler(data, msg, canNotList = []) {
+      this.failList = data?.filter(t => t.code === 'Clear.Slot') || []
+      this.failList = [...this.failList, ...canNotList]
+      if (this.failList.length) {
+        this.dialogDelMsgVisible = true
+      } else if (msg) {
+        this.$message.success(msg, false)
+      }
+      this.table.clearSelection()
     },
 
     async forceStop(ids, item = {}) {
@@ -821,6 +885,12 @@ export default {
 
     handleImport() {
       this.$refs.upload.show()
+    },
+    onCopy() {
+      this.showTooltip = true
+    },
+    onDelCopy() {
+      this.showDelTooltip = true
     }
   }
 }
@@ -899,6 +969,12 @@ export default {
           padding: 10px 0;
         }
       }
+    }
+  }
+  .dialogDelMsgDialog {
+    .box {
+      padding: 10px;
+      background-color: #f8f9fa;
     }
   }
 }

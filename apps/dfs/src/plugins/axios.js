@@ -57,6 +57,23 @@ const errorCallback = error => {
     // 其他错误
     Message.error(`${error.message || error}`)
   }
+  //暂时注释 62-2 迭代先authing错误页面提示
+  // if (status === 404) {
+  //   // Message.error('服务器错误:' + error)
+  //   location.replace(location.href.split('#/')[0] + '#/404')
+  // }
+  // if (status === 500) {
+  //   // Message.error('服务器错误:' + error)
+  //   location.replace(location.href.split('#/')[0] + '#/500')
+  // }
+  // if (status === 502) {
+  //   // Message.error('服务器错误:' + error)
+  //   location.replace(location.href.split('#/')[0] + '#/502')
+  // }
+  // if (status === 504) {
+  //   // Message.error('服务器错误:' + error)
+  //   location.replace(location.href.split('#/')[0] + '#/504')
+  // }
   //先去掉全局接口异常弹窗 #125624
   // else if (error?.message !== 'cancel' && window.navigator.onLine) {
   //   errorConfirmFnc(error)

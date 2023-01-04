@@ -129,7 +129,6 @@ import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
-
 export default {
   name: 'DatabaseForm',
   components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook },
@@ -150,6 +149,7 @@ export default {
       }
     }
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       rules: [],
       id: '',
       commandCallbackFunctionId: '',
@@ -472,6 +472,7 @@ export default {
       const settings = await settingsApi.get()
       // 是否支持共享挖掘
       if (
+        this.isDaas &&
         this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function') &&
         settings.some(it => it.key === 'share_cdc_enable' && it.value === 'true')
       ) {

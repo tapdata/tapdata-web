@@ -23,7 +23,7 @@
             <div class="flex">
               <div>
                 <InlineInput
-                  :class="['inline-input', 'color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
+                  :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
                   :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
@@ -45,11 +45,11 @@
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
-            <StatusTag type="text" :status="scope.row.status" default-status="Stopped"></StatusTag>
+            <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
             <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
               <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
               <template #content>
-                <div>
+                <div style="max-width: 380px">
                   {{ $t('dfs_instance_stopped_help_tip_prefix') }}
                   <a
                     target="_blank"
@@ -157,6 +157,7 @@
             }}</ElButton>
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
+              size="mini"
               type="text"
               :disabled="stopBtnDisabled(scope.row)"
               :loading="scope.row.btnLoading.stop"
@@ -165,6 +166,7 @@
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
+              size="mini"
               type="text"
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row)"
@@ -280,26 +282,29 @@
             :loading="selectedRow.btnLoading.deploy"
             :disabled="deployBtnDisabled(selectedRow)"
             type="primary"
-            class="flex-fill"
+            class="flex-fill min-w-0"
             @click="toDeploy(selectedRow)"
           >
+            <VIcon size="12">deploy</VIcon>
             <span class="ml-1">{{ $t('agent_button_deploy') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.stop"
             :disabled="stopBtnDisabled(selectedRow)"
             type="primary"
-            class="flex-fill"
+            class="flex-fill min-w-0"
             @click="handleStop(selectedRow)"
           >
+            <VIcon size="12">stop</VIcon>
             <span class="ml-1">{{ $t('button_stop') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.delete"
             :disabled="delBtnDisabled(selectedRow)"
-            class="flex-fill"
+            class="flex-fill min-w-0"
             @click="handleDel(selectedRow)"
           >
+            <VIcon size="12">delete</VIcon>
             <span class="ml-1">{{ $t('button_delete') }}</span>
           </VButton>
         </div>
@@ -319,7 +324,6 @@ import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
-// import OSS from 'ali-oss'
 
 let timer = null
 
@@ -394,11 +398,14 @@ export default {
     }
   },
   watch: {
-    $route(route) {
+    $route(route, oldRoute) {
       if (route.name === 'Instance') {
-        this.searchParams.status = route.query.status || ''
-        let pageNum = JSON.stringify(route.query) === '{}' ? undefined : 1
-        this.fetch(pageNum)
+        let oldQuery = { ...oldRoute.query, detailId: undefined }
+        let query = { ...route.query, detailId: undefined }
+        let queryStr = JSON.stringify(query)
+        if (JSON.stringify(oldQuery) === queryStr) return
+        this.searchParams.status = query.status || ''
+        this.fetch(queryStr === '{}' ? undefined : 1)
       }
     }
   },
@@ -563,7 +570,10 @@ export default {
       this.showDetails = false
       this.$router.replace({
         name: 'Instance',
-        query: this.searchParams
+        query: {
+          ...this.$route.query,
+          detailId: undefined
+        }
       })
     },
     toDeploy(row) {
@@ -854,7 +864,12 @@ export default {
     },
     // 禁用停止
     stopBtnDisabled(row) {
-      return row.agentType === 'Cloud' || row.status !== 'Running' || row.metric.runningTaskNum > 0
+      return (
+        row.agentType === 'Cloud' ||
+        row.status !== 'Running' ||
+        row.metric.runningTaskNum > 0 ||
+        row.tapdataAgentStatus === 'stop' //tapdataAgent 失活了
+      )
     },
     // 禁用删除
     delBtnDisabled(row) {

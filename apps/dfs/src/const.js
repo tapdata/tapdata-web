@@ -36,9 +36,10 @@ export const TOPOLOGY_MAP = topologyMap,
     testing: { text: 'Testing', type: 'warning' }
   },
   AGENT_STATUS_MAP_EN = {
-    0: { text: i18n.t('dfs_instance_details_shangchuanzhong'), type: 'warning' },
-    1: { text: i18n.t('dfs_instance_instance_status_success'), type: 'success' },
-    2: { text: i18n.t('dfs_instance_instance_status_false'), type: 'danger' }
+    0: { text: i18n.t('dfs_instance_details_shangchuanzhong'), type: 'warning' }, //上传中
+    1: { text: i18n.t('dfs_instance_instance_status_success'), type: 'success' }, //上传成功
+    2: { text: i18n.t('dfs_instance_instance_status_false'), type: 'danger' }, //上传失败
+    3: { text: i18n.t('dfs_instance_details_status_invalid'), type: 'danger' } //失效
   },
   MILESTONE_STATUS_MAP = {
     waiting: { text: i18n.t('task_milestone_waiting'), icon: 'daizhixing', type: 'warning' },

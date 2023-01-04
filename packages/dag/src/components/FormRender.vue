@@ -155,6 +155,9 @@ $headerBg: #fff;
         }
       }
     }
+    .formily-element-form-item-layout-vertical .formily-element-form-item-label * {
+      line-height: 26px;
+    }
   }
 }
 </style>
