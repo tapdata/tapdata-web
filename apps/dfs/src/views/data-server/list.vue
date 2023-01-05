@@ -6,22 +6,22 @@
       <div class="data-server-desc mb-4">{{ $t('dfs_data_server_On_Prem') }}</div>
       <el-button type="primary" @click="goDemo()">{{ $t('dfs_data_server_apply_for_trial') }}</el-button>
     </div>
-    <div class="title mt-8 mb-2">{{ $t('dfs_data_server_demo_title') }}</div>
+    <div class="title mt-8mul mb-4">{{ $t('dfs_data_server_demo_title') }}</div>
     <div class="data-server-desc">
       {{ $t('dfs_data_server_demo_desc') }}
     </div>
-    <div class="mt-2 mb-4"><img src="../../assets/image/data-server.svg" alt="" /></div>
+    <div class="mt-7mul mb-4"><img src="../../assets/image/data-server.svg" alt="" /></div>
     <div>
-      <div class="title mb-4 mt-8">{{ $t('dfs_data_server_storage') }}</div>
+      <div class="title mb-4 mt-8mul">{{ $t('dfs_data_server_storage') }}</div>
       <div class="data-server-desc">
         {{ $t('dfs_data_server_collection') }}
       </div>
-      <div class="title mb-4 mt-8">{{ $t('dfs_data_server_real_time') }}</div>
+      <div class="title mb-4 mt-8mul">{{ $t('dfs_data_server_real_time') }}</div>
       <div class="data-server-desc">
         {{ $t('dfs_data_server_data_service_mode') }}
       </div>
-      <div class="mt-2 mb-4"><img src="../../assets/image/data-server-api-time.svg" alt="" /></div>
-      <div class="title mb-4 mt-8">{{ $t('dfs_data_server_feature') }}</div>
+      <!--      <div class="mt-2 mb-4"><img src="../../assets/image/data-server-api-time.svg" alt="" /></div>-->
+      <div class="title mb-4 mt-8mul">{{ $t('dfs_data_server_feature') }}</div>
       <div class="mt-2 mb-4"><img src="../../assets/image/data-server-feature.svg" alt="" /></div>
     </div>
   </div>
@@ -73,6 +73,12 @@ export default {
     font-size: 14px;
     line-height: 20px;
     color: #535f72;
+  }
+  .mt-7mul {
+    margin-top: 56px;
+  }
+  .mt-8mul {
+    margin-top: 64px;
   }
 }
 </style>
