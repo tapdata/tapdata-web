@@ -9,11 +9,18 @@
         type="primary"
         class="inline-input-link"
         style="margin-left: 5px"
+        :disabled="$disabledReadonlyUserBtn()"
         @click="editing = true"
       >
         {{ editText }}
       </ElLink>
-      <ElLink v-else class="inline-input-link" style="margin-left: 5px" @click="editing = true">
+      <ElLink
+        v-else
+        class="inline-input-link"
+        style="margin-left: 5px"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="editing = true"
+      >
         <VIcon color="#999" v-bind="iconConfig">edit-outline</VIcon>
       </ElLink>
     </span>
