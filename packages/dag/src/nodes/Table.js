@@ -307,7 +307,7 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
                   },
-                  isCustomFilter: {
+                  isFilter: {
                     type: 'boolean',
                     title: '过滤设置',
                     default: false,
