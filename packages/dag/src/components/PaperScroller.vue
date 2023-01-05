@@ -42,6 +42,8 @@ import MiniView from '../components/MiniView'
 import { NODE_HEIGHT, NODE_WIDTH } from '../constants'
 import Mousetrap from 'mousetrap'
 
+import Time from '@tap/shared/src/time'
+
 export default {
   name: 'PaperScroller',
   components: { MiniView },
@@ -440,7 +442,7 @@ export default {
 
     initState(e) {
       this.state = {
-        onMouseDownAt: Date.now(),
+        onMouseDownAt: Time.getTime(),
         startEvent: e,
         position: this.getMousePosition(e),
         inScrollerPosition: this.getMousePositionWithinScroller(e)
@@ -451,7 +453,7 @@ export default {
       const distance = Math.sqrt(
         Math.pow(e.pageX - this.state.startEvent.pageX, 2) + Math.pow(e.pageY - this.state.startEvent.pageY, 2)
       )
-      const timeDelta = Date.now() - this.state.onMouseDownAt
+      const timeDelta = Time.getTime() - this.state.onMouseDownAt
       if (timeDelta > 10 && e !== this.state.startEvent && distance > 4) {
         return true
       }
