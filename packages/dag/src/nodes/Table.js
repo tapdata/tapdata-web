@@ -475,7 +475,7 @@ export class Table extends NodeType {
                                 fulfill: {
                                   schema: {
                                     'x-component':
-                                      '{{field=$deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
+                                      '{{field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
                                   }
                                 }
                               }
