@@ -76,8 +76,8 @@ export default {
   workbench_guide_problem: '常见问题',
   workbench_guide_data_safe: 'Tapdata cloud 如何保障数据安全？',
   workbench_statistics_title: '任务数据量统计',
-  workbench_statistics__sub_title: '输入数据量',
-  workbench_statistics__sub_title_label: '累计',
+  workbench_statistics__sub_title: '处理数据量',
+  workbench_statistics__sub_title_label: '累计处理数据行数',
   // 头部
   header_scan_code: '使用过程中遇到问题？',
   header_join_group: '扫码添加小助手获得技术支持',
