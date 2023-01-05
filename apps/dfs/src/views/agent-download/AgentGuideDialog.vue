@@ -99,11 +99,11 @@
           <!--            }}</el-button>-->
           <!--            <span class="inline-block userPassword">-->
           <!--              <span class="inline-block"-->
-          <!--                >{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}<span>demo@tapdata.io</span></span-->
+            <!--                >{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}<span>demo@tapdata.io</span></span-->
           <!--              >-->
           <!--              <br />-->
           <!--              <span class="inline-block"-->
-          <!--                >{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}-->
+            <!--                >{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}-->
           <!--                <span style="margin-left: 10px">tapdata</span></span-->
           <!--              >-->
           <!--            </span>-->
@@ -257,7 +257,7 @@ export default {
     goDemo() {
       buried('agentGuideDemo')
       this.showClose = true
-      window.open('https://uat.cloud.tapdata.net:9443/console/logout')
+      window.open('https://demo.cloud.tapdata.net/console/v3/')
     }
   }
 }
