@@ -78,7 +78,7 @@ export default ({ routes }) => {
 
     // 路由守卫
     router.beforeEach((to, from, next) => {
-      let user = window.__USER_INFO__
+      let domainName = document.domain
       let removeReadonly = localStorage.getItem('removeReadonly')
       if (
         [
@@ -90,7 +90,7 @@ export default ({ routes }) => {
           'MigrateEditor',
           'MigrateEditor'
         ].includes(to.name) &&
-        user?.username === 'demo@tapdata.io' &&
+        domainName === 'demo.cloud.tapdata.net' &&
         !removeReadonly
       ) {
         next(false)
