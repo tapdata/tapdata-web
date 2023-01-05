@@ -123,10 +123,35 @@ $headerBg: #fff;
       }
     }
 
-    .formily-element-form-item-layout-vertical .formily-element-form-item-label-tooltip {
-      height: 40px;
-      i {
-        line-height: 1;
+    .formily-element-form-item-layout-horizontal {
+      .formily-element-space-horizontal {
+        .el-switch {
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+    }
+
+    .formily-element-form-item-layout-vertical {
+      .formily-element-form-item-label-tooltip {
+        height: 40px;
+
+        i {
+          line-height: 1;
+        }
+      }
+
+      .formily-element-space-horizontal {
+        .el-switch {
+          height: 40px;
+          line-height: 40px;
+        }
+      }
+    }
+
+    .formily-element-form-item-control {
+      .formily-element-space-horizontal {
+        vertical-align: top;
       }
     }
 
@@ -154,9 +179,6 @@ $headerBg: #fff;
           line-height: 1;
         }
       }
-    }
-    .formily-element-form-item-layout-vertical .formily-element-form-item-label * {
-      line-height: 26px;
     }
   }
 }
