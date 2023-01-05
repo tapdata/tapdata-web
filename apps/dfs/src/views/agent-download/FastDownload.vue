@@ -336,13 +336,13 @@ export default {
       )
     },
     linuxToAgent() {
-      window.open('https://sourl.cn/MK6mXF', '_blank')
+      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
     },
     dockerToInstall() {
       window.open('https://docs.docker.com/get-docker/', '_blank')
     },
     dockerToAgent() {
-      window.open('https://sourl.cn/MK6mXF', '_blank')
+      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
     },
     //在线小助手
     hideCustomTip() {
