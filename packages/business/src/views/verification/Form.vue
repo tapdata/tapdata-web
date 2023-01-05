@@ -8,7 +8,6 @@
       </div>
       <div>
         <ElForm
-          inline-message
           class="grey"
           ref="baseForm"
           label-position="left"
@@ -719,6 +718,14 @@ function validate(sourceRow){
     }
     .js-editor {
       border: 1px solid map-get($borderColor, light);
+    }
+  }
+}
+
+.el-form {
+  ::v-deep {
+    .el-form-item__error {
+      margin-top: 8px;
     }
   }
 }
