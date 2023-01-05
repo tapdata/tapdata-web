@@ -98,6 +98,7 @@
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
+          :disabled="$disabledReadonlyUserBtn()"
           class="mx-2"
           size="medium"
           @click="$emit('reset')"

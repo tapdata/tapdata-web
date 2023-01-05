@@ -257,7 +257,7 @@ export default {
     goDemo() {
       buried('agentGuideDemo')
       this.showClose = true
-      window.open('https://dev.cloud.tapdata.net:8443/console/')
+      window.open('https://demo.cloud.tapdata.net/console/v3/')
     }
   }
 }

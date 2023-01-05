@@ -90,7 +90,7 @@ export default ({ routes }) => {
           'MigrateEditor',
           'MigrateEditor'
         ].includes(to.name) &&
-        domainName === 'dev.cloud.tapdata.net' &&
+        domainName === 'demo.cloud.tapdata.net' &&
         !removeReadonly
       ) {
         next(false)
