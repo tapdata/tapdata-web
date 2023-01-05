@@ -106,6 +106,7 @@
         </ElButton>
         <ElButton
           v-if="dataflow.disabledData && !dataflow.disabledData.edit"
+          :disabled="$disabledReadonlyUserBtn()"
           class="mx-2"
           size="medium"
           @click="$emit('edit')"

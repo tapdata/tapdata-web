@@ -237,8 +237,13 @@
     <!--付费 -->
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
-    <el-dialog title="提示" :visible.sync="dialogDelMsgVisible" width="52%" custom-class="dialogDelMsgDialog">
-      <span>任务删除成功，以下几个PostgreSQL连接的信息清除失败，需要您使用以下方式手动清除</span>
+    <el-dialog
+      :title="$t('task_mapping_dialog_hint')"
+      :visible.sync="dialogDelMsgVisible"
+      width="52%"
+      custom-class="dialogDelMsgDialog"
+    >
+      <span> {{ $t('packages_business_task_status_error_tip') }}</span>
       <div class="box mt-4">
         <div class="mb-4">SQL语句:</div>
         <div class="mt-2">//第一步 查询 slot_name</div>
@@ -565,6 +570,7 @@ export default {
      * @param row
      */
     handleClickName(row) {
+      if (this.$disabledReadonlyUserBtn()) return
       if (!['edit', 'wait_start'].includes(row.status)) {
         this.toDetail(row)
       } else {
