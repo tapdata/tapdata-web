@@ -97,16 +97,16 @@
             <el-button type="primary" class="mb-2 step-button" @click="goDemo()">{{
               $t('dfs_agent_download_agentguidedialog_tiyan')
             }}</el-button>
-            <span class="inline-block userPassword">
-              <span class="inline-block"
-                >{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}<span>demo@tapdata.io</span></span
-              >
-              <br />
-              <span class="inline-block"
-                >{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}
-                <span style="margin-left: 10px">tapdata</span></span
-              >
-            </span>
+            <!--            <span class="inline-block userPassword">-->
+            <!--              <span class="inline-block"-->
+            <!--                >{{ $t('dfs_agent_download_agentguidedialog_yonghumingde') }}<span>demo@tapdata.io</span></span-->
+            <!--              >-->
+            <!--              <br />-->
+            <!--              <span class="inline-block"-->
+            <!--                >{{ $t('dfs_agent_download_agentguidedialog_mimatap') }}-->
+            <!--                <span style="margin-left: 10px">tapdata</span></span-->
+            <!--              >-->
+            <!--            </span>-->
           </div>
         </div>
         <VIcon size="18" class="agent-download-icon" v-if="showClose" @click="close">close</VIcon>
@@ -257,7 +257,7 @@ export default {
     goDemo() {
       buried('agentGuideDemo')
       this.showClose = true
-      window.open('https://demo.cloud.tapdata.net/console/v3/')
+      window.open('https://dev.cloud.tapdata.net:8443/console/')
     }
   }
 }

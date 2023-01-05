@@ -11,7 +11,7 @@ Vue.prototype.$disabledByPermission = function () {
 Vue.prototype.$disabledReadonlyUserBtn = function () {
   let domainName = document.domain
   let removeReadonly = localStorage.getItem('removeReadonly')
-  if (domainName === 'demo.cloud.tapdata.net' && !removeReadonly) {
+  if (domainName === 'dev.cloud.tapdata.net' && !removeReadonly) {
     return true
   }
   return false
