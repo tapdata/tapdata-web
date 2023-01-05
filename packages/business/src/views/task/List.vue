@@ -26,6 +26,7 @@
       <div class="buttons" slot="operation">
         <el-button
           v-readonlybtn="'SYNC_category_application'"
+          :disabled="$disabledReadonlyUserBtn()"
           size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
@@ -51,10 +52,13 @@
             <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_bulkStopping')
             }}</el-dropdown-item>
-            <el-dropdown-item command="initialize" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('packages_business_dataFlow_batchRest')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'">{{
+            <el-dropdown-item
+              command="initialize"
+              v-readonlybtn="'SYNC_job_operation'"
+              :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_batchRest') }}</el-dropdown-item
+            >
+            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()">{{
               $t('packages_business_dataFlow_batchDelete')
             }}</el-dropdown-item>
           </el-dropdown-menu>
@@ -62,6 +66,7 @@
         <template v-if="isDaas">
           <el-button
             v-show="multipleSelection.length > 0"
+            :disabled="$disabledReadonlyUserBtn()"
             v-readonlybtn="'SYNC_job_export'"
             size="mini"
             class="btn message-button-cancel"

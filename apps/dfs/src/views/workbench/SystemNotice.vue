@@ -13,13 +13,16 @@
           <ElButton class="btn-refresh" @click="handleReadNotice()" :disabled="multipleSelection.length < 1">
             {{ $t('notify_mark_read') }}
           </ElButton>
-          <ElButton @click="handleDelete" :disabled="multipleSelection.length < 1">
+          <ElButton
+            @click="handleDelete"
+            :disabled="multipleSelection.length < 1 || $disabledReadonlyUserBtn()"
+          >
             {{ $t('button_delete') }}
           </ElButton>
-          <ElButton type="primary" @click="handleReadNoticeAll">
+          <ElButton type="primary" :disabled="$disabledReadonlyUserBtn()" @click="handleReadNoticeAll">
             {{ $t('notify_all_read') }}
           </ElButton>
-          <ElButton @click="handleAllDelete" :disabled="list.length < 1">
+          <ElButton @click="handleAllDelete" :disabled="list.length < 1 || $disabledReadonlyUserBtn()">
             {{ $t('button_all_delete') }}
           </ElButton>
         </div>

@@ -50,9 +50,13 @@
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-            <ElDropdownItem command="userCenter">{{ $t('the_header_Header_yongHuZhongXin') }}</ElDropdownItem>
+            <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
+              $t('the_header_Header_yongHuZhongXin')
+            }}</ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
-            <ElDropdownItem command="signOut"> {{ $t('header_sign_out') }} </ElDropdownItem>
+            <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
+              {{ $t('header_sign_out') }}
+            </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
       </div>
