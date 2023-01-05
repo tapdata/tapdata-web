@@ -30,8 +30,10 @@
 <script>
 export default {
   name: 'list',
+  inject: ['buried'],
   methods: {
     goDemo() {
+      this.buried('dataServerTrial')
       window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
     }
   }
