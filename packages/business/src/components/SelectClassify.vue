@@ -31,7 +31,7 @@
     >
       <span class="custom-tree-node" slot-scope="{ data }">
         <span>
-          <span class="iconfont icon-Folder-closed filter-icon"></span>
+          <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
           <span class="table-label">{{ data.value }}</span>
         </span>
       </span>
