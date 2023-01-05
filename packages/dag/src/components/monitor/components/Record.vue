@@ -30,6 +30,7 @@ import i18n from '@tap/i18n'
 import { VTable } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import { openUrl } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'Record',
@@ -95,8 +96,8 @@ export default {
   methods: {
     handleDetail(row = {}) {
       const { taskId, taskRecordId, startDate, endDate } = row
-      const start = startDate ? new Date(startDate).getTime() - 1000 : Date.now()
-      const end = endDate ? new Date(endDate).getTime() : Date.now()
+      const start = startDate ? new Date(startDate).getTime() - 1000 : Time.getTime()
+      const end = endDate ? new Date(endDate).getTime() : Time.getTime()
       const routeUrl = this.$router.resolve({
         name: 'MigrationMonitorViewer',
         params: {

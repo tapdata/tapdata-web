@@ -167,6 +167,7 @@ import { mapGetters } from 'vuex'
 
 import { measurementApi } from '@tap/api'
 import { calcTimeUnit } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 import { TimeSelect } from '@tap/component'
 
 import EventChart from './EventChart'
@@ -359,7 +360,7 @@ export default {
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
       const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
-      const usedTime = Date.now() - snapshotStartAt
+      const usedTime = Time.getTime() - snapshotStartAt
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
         time = 0
@@ -467,7 +468,7 @@ export default {
             taskRecordId,
             nodeId
           },
-          endAt: Date.now(), // 停止时间 || 当前时间
+          endAt: Time.getTime(), // 停止时间 || 当前时间
           fields: [
             'insertTotal',
             'updateTotal',
@@ -556,7 +557,7 @@ export default {
       if (showLoading) {
         this.loading = true
       }
-      const startStamp = Date.now()
+      const startStamp = Time.getTime()
       const params = {
         totalData: {
           uri: '/api/measurement/query/v2',
@@ -602,7 +603,7 @@ export default {
               () => {
                 this.loading = false
               },
-              Date.now() - startStamp < 1000 ? 1000 : 0
+              Time.getTime() - startStamp < 1000 ? 1000 : 0
             )
         })
     },
