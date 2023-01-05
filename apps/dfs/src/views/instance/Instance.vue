@@ -63,7 +63,7 @@
             </ElTooltip>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_task_number')" width="140">
+        <ElTableColumn :label="$t('agent_task_number')" width="160">
           <template slot-scope="scope">
             <div>
               <div class="flex align-center">
