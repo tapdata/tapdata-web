@@ -1,5 +1,5 @@
 <template>
-  <section class="verify-result-wrap section-wrap" v-loading="loading">
+  <section class="verify-result-wrap section-wrap h-100" v-loading="loading">
     <div class="section-wrap-box">
       <div class="verify-result-header" v-if="inspect">
         <div>

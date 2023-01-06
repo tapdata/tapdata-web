@@ -293,6 +293,7 @@ export const FieldRenameProcessor = defineComponent({
         taskId: root.$route.params.id,
         nodeId: props.nodeId
       }
+      fieldsMapping = []
       emit('change', [])
       metadataInstancesApi.resetTable(where).then(() => {
         loadData() //更新整个数据

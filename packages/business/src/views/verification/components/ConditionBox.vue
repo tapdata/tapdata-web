@@ -27,10 +27,13 @@
                   $t('packages_business_components_conditionbox_jianyantiaojian')
                 }}</span>
                 <span class="ml-1">{{ index + 1 }}</span>
-                <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
+                <VIcon size="14" class="ml-1 color-primary">edit-outline</VIcon>
               </div>
             </ElTooltip>
-            <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
+            <div class="flex align-items-center">
+              <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
+              <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
+            </div>
           </div>
           <div class="setting-item mt-4" :key="'connection' + item.id">
             <label class="item-label">{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label>
@@ -47,10 +50,10 @@
               @change="handleChangeConnection(arguments[0], item.source)"
             >
             </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.source.connectionId }]">{{
+            <span v-else :class="['item-value-text', { 'color-disable': !item.source.connectionId }]">{{
               item.source.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
-            <span class="item-icon">
+            <span class="item-icon fs-6">
               <i class="el-icon-arrow-right"></i>
             </span>
             <AsyncSelect
@@ -66,7 +69,7 @@
               @change="handleChangeConnection(arguments[0], item.target)"
             >
             </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.target.connectionId }]">{{
+            <span v-else :class="['item-value-text', { 'color-disable': !item.target.connectionId }]">{{
               item.target.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
           </div>
@@ -88,10 +91,10 @@
               @change="handleChangeTable(arguments[0], item, index, 'source')"
             >
             </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.source.table }]">{{
+            <span v-else :class="['item-value-text', { 'color-disable': !item.source.table }]">{{
               item.source.table || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
-            <span class="item-icon fs-8">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
+            <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
             <AsyncSelect
               v-if="editId === item.id"
               v-model="item.target.table"
@@ -108,7 +111,7 @@
               @change="handleChangeTable(arguments[0], item, index, 'target')"
             >
             </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-danger': !item.target.table }]">{{
+            <span v-else :class="['item-value-text', { 'color-disable': !item.target.table }]">{{
               item.target.table || $t('packages_business_statistics_schedule_qingxuanze')
             }}</span>
           </div>
@@ -189,7 +192,7 @@ export default {
       type: Array,
       default: () => []
     },
-    flowStages: {
+    allStages: {
       type: Array,
       default: () => []
     }
@@ -203,6 +206,13 @@ export default {
       fieldsMap: {},
       autoAddTableLoading: false,
       dynamicSchemaMap: {}
+    }
+  },
+
+  computed: {
+    flowStages() {
+      let types = this.isDB ? ['database'] : ['table']
+      return this.allStages.filter(stg => types.includes(stg.type))
     }
   },
 
@@ -445,6 +455,7 @@ export default {
         this.setEditId('')
         return
       }
+      this.jointErrorMessage = ''
       this.setEditId(item.id)
     },
 
@@ -494,7 +505,6 @@ export default {
 
     async autoAddTable() {
       if (!this.taskId || this.list.length) return
-      this.autoAddTableLoading = true
       let connectionIds = []
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
@@ -504,6 +514,11 @@ export default {
         tableNames.push(...this.getAllTablesInNode(m.source))
         tableNames.push(...this.getAllTablesInNode(m.target))
       })
+      if (!matchNodeList.length) {
+        if (this.allStages.length > this.flowStages.length)
+          return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
+        return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
+      }
       let where = {
         meta_type: {
           inq: DATA_NODE_TYPES
@@ -515,6 +530,7 @@ export default {
           inq: Array.from(new Set(tableNames))
         }
       }
+      this.autoAddTableLoading = true
       metadataInstancesApi
         .findInspect({
           where,
@@ -542,6 +558,7 @@ export default {
               )
               let item = this.getItemOptions()
               item.source.nodeId = source
+              item.source.nodeName = sourceName
               item.source.connectionId = `${source}/${sourceConnectionId}`
               item.source.connectionName = `${sourceName} / ${sourceConnectionName}`
               item.source.table = findTable.original_name
@@ -549,6 +566,7 @@ export default {
               item.source.sortColumn = this.getPrimaryKeyFieldStr(findTable.fields)
 
               item.target.nodeId = target
+              item.target.nodeName = targetName
               item.target.connectionId = `${target}/${targetConnectionId}`
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
               item.target.table = findTargetTable.original_name
@@ -589,6 +607,10 @@ export default {
       let list = cloneDeep(this.list)
       if (this.taskId) {
         list.forEach(el => {
+          if (el.modeType === 'all') {
+            el.source.columns = null
+            el.target.columns = null
+          }
           el.source.connectionId = el.source.connectionId?.split('/')?.[1]
           el.source.connectionName = el.source.connectionName?.split(' / ')?.[1]
           el.target.connectionId = el.target.connectionId?.split('/')?.[1]
@@ -873,7 +895,7 @@ export default {
   padding: 16px 24px;
 }
 .joint-table-main {
-  max-height: 360px;
+  max-height: 500px;
   overflow-y: auto;
   .joint-table-item {
     padding: 16px 24px;
@@ -881,12 +903,6 @@ export default {
     border-bottom: 1px solid map-get($borderColor, light);
     //cursor: pointer;
     &.active {
-      .cond-item__title {
-        color: map-get($color, primary);
-        .arrow-icon {
-          color: map-get($color, primary);
-        }
-      }
       .arrow-icon {
         transform: rotate(90deg);
       }
@@ -908,13 +924,13 @@ export default {
       width: 80px;
       line-height: 32px;
       text-align: left;
+      color: map-get($fontColor, light);
     }
     .item-icon {
       margin: 0 10px;
       width: 80px;
       line-height: 32px;
       color: map-get($fontColor, light);
-      font-size: 16px;
       text-align: center;
     }
     .item-time-picker,
@@ -969,15 +985,6 @@ export default {
 
 .FieldList {
   height: 280px;
-}
-
-.cond-item__title {
-  &:hover {
-    color: map-get($color, primary);
-    .arrow-icon {
-      color: map-get($color, primary);
-    }
-  }
 }
 
 .arrow-icon {

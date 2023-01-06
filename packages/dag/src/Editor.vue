@@ -102,7 +102,7 @@ import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
-import { databaseTypesApi, taskApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 import { MoveNodeCommand } from './command'
 import dagre from 'dagre'
@@ -111,7 +111,6 @@ import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
-import { mapMutations } from 'vuex'
 import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
@@ -209,8 +208,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
-
     async initNodeType() {
       let nodes = [
         {
@@ -568,27 +565,6 @@ export default {
           id: this.dataflow.id
         }
       })
-    },
-
-    async initPdkProperties() {
-      const databaseItems = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          fields: {
-            messages: true,
-            pdkHash: true,
-            properties: true
-          }
-        })
-      })
-      this.setPdkPropertiesMap(
-        databaseItems.reduce((map, item) => {
-          const properties = item.properties?.node
-          if (properties) {
-            map[item.pdkHash] = properties
-          }
-          return map
-        }, {})
-      )
     }
   }
 }

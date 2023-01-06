@@ -39,7 +39,14 @@
           </div>
           <div v-else class="mb-2 flex justify-content-between">
             <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
-            <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
+            <span v-if="isFileSource" class="flex-1 text-end">{{
+              $t('packages_dag_components_node_zanbuzhichi')
+            }}</span>
+            <ElTooltip
+              v-else
+              transition="tooltip-fade-in"
+              :content="initialData.finishDuration.toLocaleString() + 'ms'"
+            >
               <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
             </ElTooltip>
           </div>
@@ -47,8 +54,18 @@
             <span class="mr-2 sync-info-item__title">{{
               $t('packages_dag_components_nodedetaildialog_quanliangtongbujin')
             }}</span>
-            <ElProgress class="flex-1 my-2" :show-text="false" style="width: 150px" :percentage="totalDataPercentage" />
-            <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+            <span v-if="isFileSource" class="flex-1 text-end">{{
+              $t('packages_dag_components_node_zanbuzhichi')
+            }}</span>
+            <template v-else>
+              <ElProgress
+                class="flex-1 my-2"
+                :show-text="false"
+                style="width: 150px"
+                :percentage="totalDataPercentage"
+              />
+              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+            </template>
           </div>
           <div
             v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
@@ -281,6 +298,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'
 import { VIcon, TimeSelect } from '@tap/component'
@@ -324,6 +343,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters('dataflow', ['allNodes']),
+
     // qps
     qpsData() {
       const data = this.quota.samples?.lineChartData?.[0]
@@ -430,6 +451,13 @@ export default {
     heartbeatTime() {
       const { pingTime, status } = this.dataflow
       return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : '-'
+    },
+
+    isFileSource() {
+      const allNodes = this.$store.getters['dataflow/allNodes']
+      if (!allNodes.length) return
+      const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
+      return allNodes.some(node => fileType.includes(node.databaseType))
     }
   },
 

@@ -8,7 +8,6 @@
       </div>
       <div>
         <ElForm
-          inline-message
           class="grey"
           ref="baseForm"
           label-position="left"
@@ -66,6 +65,26 @@
                 value="OnSourceExists"
               ></ElOption>
             </ElSelect>
+          </ElFormItem>
+          <ElFormItem
+            required
+            class="form-item"
+            :label="$t('packages_business_verification_form_jiaoyangaojing') + ': '"
+          >
+            <div class="flex align-items-center">
+              <span>{{ $t('packages_business_verification_form_jianyanrenwuyun') }}</span>
+              <ElCheckboxGroup v-model="form.errorNotifys" class="inline-block ml-4">
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+            </div>
+            <div class="flex align-items-center">
+              <span>{{ $t('packages_business_verification_form_jiaoyanjieguobu') }}</span>
+              <ElCheckboxGroup v-model="form.inconsistentNotifys" class="inline-block ml-4">
+                <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+              </ElCheckboxGroup>
+            </div>
           </ElFormItem>
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
             <ElRadioGroup v-model="form.inspectMethod">
@@ -205,7 +224,7 @@
           :task-id="form.flowId"
           :inspectMethod="form.inspectMethod"
           :data="form.tasks"
-          :flowStages="flowStages"
+          :allStages="allStages"
           :isDB="isDbClone"
           @addScript="addScript"
         ></ConditionBox>
@@ -293,7 +312,9 @@ export default {
         },
         enabled: true,
         tasks: [],
-        taskMode: 'pipeline'
+        taskMode: 'pipeline',
+        errorNotifys: ['SYSTEM', 'EMAIL'],
+        inconsistentNotifys: ['SYSTEM', 'EMAIL']
       },
       rules: {
         flowId: [
@@ -324,7 +345,7 @@ export default {
           }
         ]
       },
-      flowStages: [],
+      allStages: [],
       flowOptions: null,
       dialogAddScriptVisible: false,
       formIndex: '',
@@ -397,6 +418,7 @@ export default {
             }
             data.taskMode = data.flowId ? 'pipeline' : 'random'
             this.form = Object.assign({}, this.form, data)
+            this.getFlowStages()
           }
         })
         .finally(() => {
@@ -409,9 +431,15 @@ export default {
         .getId(this.form.flowId)
         .then(data => {
           this.isDbClone = data.syncType === 'migrate'
-          let types = data.syncType === 'migrate' ? ['database'] : ['table']
           let edges = data.dag?.edges || []
           let nodes = data.dag?.nodes || []
+          const findOne = this.flowOptions.find(t => t.id === data.id)
+          if (!findOne) {
+            this.flowOptions.unshift({
+              id: data.id,
+              name: data.name
+            })
+          }
           if (!edges.length) {
             return { items: [], total: 0 }
           }
@@ -434,7 +462,7 @@ export default {
               })
             )
           })
-          this.flowStages = stages.filter(stg => types.includes(stg.type))
+          this.allStages = stages
         })
         .finally(() => {
           this.loading = false
@@ -527,12 +555,6 @@ export default {
                   let newTarget = cloneDeep(target)
                   newSource.fields = []
                   newTarget.fields = []
-                  if (taskId) {
-                    newSource.connectionId = newSource.connectionId?.split('/')?.[0]
-                    newSource.connectionName = newSource.connectionName?.split('/')?.[0]
-                    newTarget.connectionId = newTarget.connectionId?.split('/')?.[0]
-                    newTarget.connectionName = newTarget.connectionName?.split('/')?.[0]
-                  }
                   return {
                     taskId,
                     source: newSource,
@@ -696,6 +718,14 @@ function validate(sourceRow){
     }
     .js-editor {
       border: 1px solid map-get($borderColor, light);
+    }
+  }
+}
+
+.el-form {
+  ::v-deep {
+    .el-form-item__error {
+      margin-top: 8px;
     }
   }
 }

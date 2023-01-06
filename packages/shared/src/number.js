@@ -73,13 +73,10 @@ export function calcTimeUnit(val, fix = 2, op) {
     {
       separator: ' ',
       autoHideMs: false,
-      digits: 0
+      digits: 2
     },
     op || {}
   )
-  let results = []
-  if (!val) return '0'
-  const ts = val.toFixed(options.digits)
   const units = [
     {
       unit: 'ms',
@@ -110,6 +107,15 @@ export function calcTimeUnit(val, fix = 2, op) {
       interval: 99999
     }
   ]
+  let results = []
+  if (typeof val !== 'number' || val === 0) {
+    return '0'
+  } else if (val > 0 && val < 1) {
+    const p = Math.pow(10, options.digits)
+    return Math.ceil(val * p) / p + units[0].unit
+  }
+  const ts = Math.floor(val)
+
   for (let i = 0, tmpTs = ts; i < units.length && tmpTs >= 0; i++) {
     results.unshift({
       value: tmpTs % units[i].interval,

@@ -514,7 +514,6 @@ export default {
   packages_business_verification_check_frequency: '校驗頻率',
   packages_business_verification_single_repeating_verify: '單次/重複校驗',
   packages_business_verification_is_enabled: '是否啟用',
-  packages_business_verification_result: '校驗結果',
   packages_business_verification_single: '單次校驗',
   packages_business_verification_repeating: '重複校驗',
   packages_business_verification_row_verify: '快速count校驗',
@@ -576,7 +575,6 @@ export default {
   packages_business_verification_sourceTable: '源表',
   packages_business_verification_targetTable: '目標表',
   packages_business_verification_sourceRows: '源表行數',
-  packages_business_verification_verifyResult: '校驗結果',
   packages_business_verification_rowConsistent: '行數差異',
   packages_business_verification_contConsistent: '內容差異',
   packages_business_verification_verifyHistory: '校驗歷史',
@@ -647,7 +645,7 @@ export default {
     '關聯鍵校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式.',
   packages_business_verification_waiting: '待校驗',
   packages_business_verification_scheduling: '校驗啟動中',
-  packages_business_verification_error: 'Error',
+  packages_business_verification_error: '校驗失敗',
   packages_business_verification_done: '校驗結束',
   packages_business_verification_running: '校驗中',
   packages_business_verification_success:
@@ -674,6 +672,7 @@ export default {
   packages_business_verification_form_label_error_save_count: '錯誤保存條數',
   packages_business_verification_button_auto_add_table: '自動添加表',
   packages_business_components_conditionbox_suoxuanrenwuque: '所選任務缺少節點連線信息',
+  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong: '存在處理節點，無法自動添加表',
   packages_business_components_conditionbox_shifouqingkongsuo: '是否清空所有條件',
   packages_business_components_conditionbox_mubiaobiao: ' 目標表',
   packages_business_components_conditionbox_laiyuanbiao: '來源表',
@@ -700,5 +699,11 @@ export default {
   packages_business_verification_form_weitedingdeP: '為特定的PIPELINE創建的校驗任務',
   packages_business_verification_form_jiaoyanrenwumo: '校驗任務模式',
   packages_business_task_status_agent_tooltip_time: '距上次狀態上報時間已經{time}',
-  packages_business_task_status_agent_tooltip_agent: '任務所在的引擎為'
+  packages_business_task_status_agent_tooltip_agent: '任務所在的引擎為',
+  packages_business_select_placeholder: '請添加或選擇',
+  packages_business_verification_form_youjiantongzhi: '郵件通知',
+  packages_business_verification_form_xitongtongzhi: '系統通知',
+  packages_business_verification_form_jiaoyanjieguobu: '校驗結果不一致告警',
+  packages_business_verification_form_jianyanrenwuyun: '檢驗任務運行出錯警告',
+  packages_business_verification_form_jiaoyangaojing: '校驗告警'
 }

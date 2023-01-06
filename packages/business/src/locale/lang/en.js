@@ -524,7 +524,6 @@ export default {
   packages_business_verification_check_frequency: 'Frequency',
   packages_business_verification_single_repeating_verify: 'Single/Repeat Verification',
   packages_business_verification_is_enabled: 'Enabled',
-  packages_business_verification_result: 'Result',
   packages_business_verification_single: 'Single',
   packages_business_verification_repeating: 'Repeat',
   packages_business_verification_row_verify: 'Count',
@@ -591,7 +590,6 @@ export default {
   packages_business_verification_sourceTable: 'Source Table',
   packages_business_verification_targetTable: 'Target Table',
   packages_business_verification_sourceRows: 'Source Table Rows',
-  packages_business_verification_verifyResult: 'Verify Result',
   packages_business_verification_rowConsistent: 'Count diff',
   packages_business_verification_contConsistent: 'Value diff',
   packages_business_verification_jointVerify: 'Joint field value verify',
@@ -692,6 +690,8 @@ export default {
   packages_business_verification_form_label_error_save_count: 'Number of saved errors',
   packages_business_verification_button_auto_add_table: 'Automatically add table',
   packages_business_components_conditionbox_suoxuanrenwuque: 'The selected task lacks node connection information',
+  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong:
+    'There is a processing node, and the table cannot be added automatically',
   packages_business_components_conditionbox_shifouqingkongsuo: 'Whether to clear all conditions',
   packages_business_components_conditionbox_mubiaobiao: 'target table',
   packages_business_components_conditionbox_laiyuanbiao: 'source table',
@@ -720,5 +720,11 @@ export default {
   packages_business_verification_form_weitedingdeP: 'Verification task created for a specific PIPELINE',
   packages_business_verification_form_jiaoyanrenwumo: 'Verification task mode',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the last status report',
-  packages_business_task_status_agent_tooltip_agent: 'Engine'
+  packages_business_task_status_agent_tooltip_agent: 'Engine',
+  packages_business_select_placeholder: 'Please add or select',
+  packages_business_verification_form_youjiantongzhi: 'Mail notification',
+  packages_business_verification_form_xitongtongzhi: 'System Notification',
+  packages_business_verification_form_jiaoyanjieguobu: 'Warning for inconsistent verification results',
+  packages_business_verification_form_jianyanrenwuyun: 'Verification task running error warning',
+  packages_business_verification_form_jiaoyangaojing: 'Verification warning'
 }

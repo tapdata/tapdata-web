@@ -708,7 +708,7 @@ export default {
               display: inline-block;
               width: 50px;
               text-align: left;
-              font-size: 12px;
+              font-size: $fontBaseTitle;
               &::before {
                 content: '';
               }
@@ -772,7 +772,7 @@ export default {
     justify-content: center;
     align-items: center;
     .txt {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       color: rgba(0, 0, 0, 0.43);
     }
   }

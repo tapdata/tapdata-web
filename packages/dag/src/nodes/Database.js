@@ -252,6 +252,10 @@ export class Database extends NodeType {
                 }
               }
             }
+          },
+
+          nodeConfig: {
+            type: 'object'
           }
         }
       },
@@ -485,6 +489,9 @@ export class Database extends NodeType {
                         }
                       }
                     }
+                  },
+                  nodeConfig: {
+                    type: 'object'
                   }
                 }
               }

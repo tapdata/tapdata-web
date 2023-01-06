@@ -76,16 +76,16 @@
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
               <i class="data-verify__icon el-icon-error"></i>
-              <span>Error</span>
+              <span>{{ $t('packages_business_status_error') }}</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
               <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
               <span>{{ statusMap[scope.row.status] }}</span>
             </div>
             <div v-else>-</div>
-            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"
-              >ercijiaoyan</VIcon
-            >
+            <!--            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"-->
+            <!--              >ercijiaoyan</VIcon-->
+            <!--            >-->
           </div>
         </template>
       </el-table-column>
@@ -123,7 +123,10 @@
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
-            :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
+            :disabled="
+              $disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
+              ['running', 'scheduling'].includes(scope.row.status)
+            "
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('packages_business_verification_configurationTip') }}</ElLink
           >
@@ -375,30 +378,11 @@ export default {
         })
       })
     },
-    goEdit(id, flowId) {
-      if (!flowId) {
-        this.$router.push({
-          name: 'dataVerificationEdit',
-          params: {
-            id: id
-          }
-        })
-        return
-      }
-      taskApi.getId(flowId).then(data => {
-        if (['running', 'stop', 'complete'].includes(data.status)) {
-          this.$router.push({
-            name: 'dataVerificationEdit',
-            params: {
-              id: id
-            }
-          })
-        } else {
-          this.$message.info(
-            this.$t('packages_business_verification_checkStatusPre') +
-              data.status +
-              this.$t('packages_business_verification_checkStatusSuffix')
-          )
+    goEdit(id) {
+      this.$router.push({
+        name: 'dataVerificationEdit',
+        params: {
+          id: id
         }
       })
     },

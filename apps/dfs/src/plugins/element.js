@@ -33,7 +33,7 @@ import {
   Tag,
   Breadcrumb,
   BreadcrumbItem,
-  Message,
+  Message as _Message,
   MessageBox,
   Loading,
   Dialog,
@@ -67,6 +67,40 @@ import {
   InfiniteScroll
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+
+const showMessage = Symbol('showMessage')
+
+class MessageConstructor {
+  constructor() {
+    const types = ['success', 'warning', 'info', 'error']
+    types.forEach(type => {
+      this[type] = options => this[showMessage](type, options)
+    })
+  }
+
+  [showMessage](type, options) {
+    const domList = document.getElementsByClassName('el-message')
+
+    if (!domList.length) {
+      return _Message[type](options)
+    } else {
+      let canShow = true
+      const message = typeof options === 'string' ? options : options.message
+      for (const dom of domList) {
+        if (message === dom.innerText) {
+          console.log('重复消息', dom) // eslint-disable-line
+          canShow = false
+          break
+        }
+      }
+      if (canShow) {
+        return _Message[type](options)
+      }
+    }
+  }
+}
+
+export const Message = new MessageConstructor()
 
 Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
 Vue.prototype.$message = Message

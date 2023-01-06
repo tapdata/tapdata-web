@@ -185,6 +185,9 @@ export default {
   agent_detail_host_ip: '宿主機IP',
   agent_detail_host_cpu_number: '宿主機CPU數量',
   agent_detail_host_cpu_memory: '宿主機CPU記憶體',
+  agent_detail_cpu_utilization: 'CPU使用率',
+  agent_detail_mem_utilization: '內存佔用率',
+  agent_detail_gc_rate: 'GC頻率',
   agent_detail_installation_manual: '安裝目錄',
   agent_detail_run_manual: '日誌目錄',
   agent_list_empty_desc1: '快來',
@@ -1090,7 +1093,7 @@ export default {
 
   dfs_user_center_phone_error: '該手機號碼已被其他用戶註冊過',
   dfs_agent_download_agentguidedialog_qingdianjibushu: '請選擇網絡安全策略',
-  dfs_agent_download_agentguidedialog_ruhurucang: '实时数仓供数',
+  dfs_agent_download_agentguidedialog_ruhurucang: '实时入湖仓',
   dfs_agent_download_agentguidedialog_shujutongbu: '实时数据库同步',
   dfs_agent_download_agentguidedialog_tapda: 'Tapdata可以滿足異構數據庫實時同步、數據入湖入倉、雲中數據ETL等多類場景',
   dfs_agent_download_agentguidedialog_tiyan: '體驗',
@@ -1109,8 +1112,8 @@ export default {
     '您要同步的數據源/目標庫是否能夠給外網開放端口？ （通過防火增、SSH Tunnel、VPN或其他方式）',
   dfs_agent_download_agentguidedialog_dianjixiafangde: '根據您的數據源的外網訪問策略，我們會為您推薦最合適的部署模式。',
   dfs_agent_download_agentguidedialog_huanyingshiyongT: '歡迎使用Tapdata',
-  dfs_agent_download_agentguidedialog_mimatap: '密碼：tapdata',
-  dfs_agent_download_agentguidedialog_yonghumingde: '用戶名：demo@tapdata.io',
+  dfs_agent_download_agentguidedialog_mimatap: '密碼:',
+  dfs_agent_download_agentguidedialog_yonghumingde: '用戶名：',
   dfs_agent_download_agentguidedialog_buxianganzhuanghuo:
     '不想安裝或部署？可以先體驗下我們的 DEMO 系統了解 Tapdata 的強大功能',
   dfs_agent_download_agentguidedialog_jijiangshangxian: '即將上線',
@@ -1131,11 +1134,36 @@ export default {
   dfs_instance_instance_wenjiandaxiao: '文件大小',
   dfs_instance_instance_wenjianming: '文件名',
   dfs_instance_instance_xiazai: '下載',
-  dfs_instance_instance_rizhishangchuan: '本地日誌上傳',
+  dfs_instance_instance_rizhishangchuan: '本地日誌獲取',
   dfs_instance_instance_bendirizhixia: '本地日誌下載',
   dfs_instance_details_shangchuanzhong: '上傳中',
   dfs_instance_instance_status_success: '上傳成功',
   dfs_instance_instance_status_false: '上傳失敗',
+  dfs_instance_details_status_invalid: '已失效',
+  dfs_instance_instance_upload_days: '最近{val}天的本地日誌文件',
+  dfs_instance_instance_upload_days_label: '選擇日誌範圍',
+  dfs_instance_instance_upload_btn: '開始上傳日誌',
   dfs_instance_instance_rizhi: '日誌',
-  dfs_instance_instance_gengxin: '{val}更新'
+  dfs_instance_instance_gengxin: '{val}更新',
+  dfs_online_help_docs: '在線文檔',
+  dfs_instance_stopped_help_tip_prefix:
+    'Agent 離線有可能是因為網絡原因或者 Agent 退出導致。請檢查 Agent 所在服務器的網絡及 Agent 的運行狀況。您可以查看',
+  dfs_instance_stopped_help_tip_suffix: '獲取更多的幫助',
+
+  //数据服务
+  dfs_data_server: '數據服務',
+  dfs_data_server_demo_title: '中央化的數據服務，可複用易分發',
+  dfs_data_server_demo_title_desc: '·中央化的数据服务 ·中央化存储 ·数据实时服务',
+  dfs_data_server_demo_title_edition: 'Tapdata On-Prem 版',
+  dfs_data_server_demo_desc:
+    ' 將企業核心數據實時集中到中央化數據平台的方式並通過API 或者反向同步方式，為下游的交互式應用、微服務或交互式分析提供新鮮實時的數據。 ',
+  dfs_data_server_storage: '中央化存儲',
+  dfs_data_server_collection:
+    '在經過數據採集+傳輸以及實時計算後，再將數據放入 Storage 層進行中央化存儲，實際上已經形成了一套邏輯模型，在這裡用戶無需關心數據存儲在哪裡，只需要關注真正需要的是哪些數據信息；',
+  dfs_data_server_real_time: '數據實時服務',
+  dfs_data_server_data_service_mode:
+    '在服務層，有兩種主流的數據服務模式 Pull 和 Push。 API支持低代碼發布，可按照具體需求發布數據。當所需數據在業務系統中已有存儲時，可通過 REVERSE ETL，反向把經過整理、治理的數據推送給用戶；',
+  dfs_data_server_feature: 'Data Services 特有功能點',
+  dfs_data_server_On_Prem: 'Data Services 能力目前僅在 Tapdata On-Prem 版中上線',
+  dfs_data_server_apply_for_trial: '申請試用'
 }

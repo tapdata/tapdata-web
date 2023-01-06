@@ -195,6 +195,7 @@ export default {
       loadingApiList: false,
       loadingFailRateList: false,
       loadingTotal: false,
+      silenceLoading: false,
       columns: [
         {
           label: this.$t('api_monitor_total_api_list_name'),
@@ -263,13 +264,24 @@ export default {
     }
   },
   mounted() {
-    this.getPreview()
-    this.getClientName()
-    this.remoteFailedMethod()
-    this.consumingMethod()
-    this.getApiList(1)
+    this.initData()
   },
   methods: {
+    initData() {
+      Promise.all([
+        this.getPreview(),
+        this.getClientName(),
+        this.remoteFailedMethod(),
+        this.consumingMethod(),
+        this.getApiList()
+      ]).finally(() => {
+        this.silenceLoading = true
+        setTimeout(() => {
+          this.initData()
+        }, 10000)
+      })
+    },
+
     handleUnit(limit) {
       return handleUnit(limit)
     },
@@ -280,8 +292,8 @@ export default {
     },
     //获取统计数据
     getPreview() {
-      this.loadingTotal = true
-      apiMonitorApi
+      this.loadingTotal = !this.silenceLoading
+      return apiMonitorApi
         .preview()
         .then(data => {
           this.previewData = data
@@ -292,7 +304,7 @@ export default {
     },
     //获取所有客户端
     getClientName() {
-      apiMonitorApi.apiClientName().then(data => {
+      return apiMonitorApi.apiClientName().then(data => {
         //重组数据
         if (data?.length > 0) {
           for (let i = 0; i < data.length; i++) {
@@ -349,8 +361,8 @@ export default {
         order: failRateOrder,
         skip: size * (failRateCurrent - 1)
       }
-      this.loadingFailRateList = true
-      apiMonitorApi
+      this.loadingFailRateList = !this.silenceLoading
+      return apiMonitorApi
         .rankLists({
           filter: JSON.stringify(filter)
         })
@@ -387,8 +399,8 @@ export default {
         order: consumingTimeOrder,
         skip: size * (consumingTimeCurrent - 1)
       }
-      this.loadingTimeList = true
-      apiMonitorApi
+      this.loadingTimeList = !this.silenceLoading
+      return apiMonitorApi
         .rankLists({
           filter: JSON.stringify(filter)
         })
@@ -436,8 +448,8 @@ export default {
         skip: (apiListCurrent - 1) * 5,
         where
       }
-      this.loadingApiList = true
-      apiMonitorApi
+      this.loadingApiList = !this.silenceLoading
+      return apiMonitorApi
         .apiList({
           filter: JSON.stringify(filter)
         })

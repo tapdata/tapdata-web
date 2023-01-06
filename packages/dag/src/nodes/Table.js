@@ -221,7 +221,8 @@ export class Table extends NodeType {
           dependencies: ['$inputs', '$outputs'],
           fulfill: {
             state: {
-              display: '{{$deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
+              display:
+                '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
             }
           }
         },
@@ -305,9 +306,8 @@ export class Table extends NodeType {
                   disabledEvents: {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
-                  }
-
-                  /*isFilter: {
+                  },
+                  isFilter: {
                     type: 'boolean',
                     title: '过滤设置',
                     default: false,
@@ -321,7 +321,7 @@ export class Table extends NodeType {
                         }
                       }
                     }
-                  },*/
+                  },
 
                   /*limitWrap: {
                     type: 'void',
@@ -383,7 +383,7 @@ export class Table extends NodeType {
                     }
                   },*/
 
-                  /*nodeSchema: {
+                  nodeSchema: {
                     type: 'array',
                     'x-display': 'hidden',
                     'x-reactions': [
@@ -413,9 +413,6 @@ export class Table extends NodeType {
                         space: {
                           type: 'void',
                           'x-component': 'Space',
-                          'x-component-props': {
-                            align: 'top'
-                          },
                           properties: {
                             key: {
                               type: 'string',
@@ -424,6 +421,12 @@ export class Table extends NodeType {
                               'x-component': 'FieldSelect',
                               'x-component-props': {
                                 filterable: true
+                              },
+                              'x-reactions': {
+                                effects: ['onFieldInputValueChange'],
+                                fulfill: {
+                                  run: '{{$record.value = undefined}}'
+                                }
                               }
                             },
                             operator: {
@@ -472,22 +475,14 @@ export class Table extends NodeType {
                                 fulfill: {
                                   schema: {
                                     'x-component':
-                                      '{{field=$deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
+                                      '{{field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
                                   }
                                 }
                               }
                             },
-                            /!*add: {
-                              type: 'void',
-                              'x-component': 'ArrayItems.Addition',
-                              'x-component-props': {
-                                type: 'text',
-                                icon: 'el-icon-plus',
-                                class: 'border-0'
-                              }
-                            },*!/
                             remove: {
                               type: 'void',
+                              'x-decorator': 'FormItem',
                               'x-component': 'ArrayItems.Remove',
                               'x-component-props': {
                                 disabled: '{{$values.conditions.length<2}}'
@@ -507,7 +502,7 @@ export class Table extends NodeType {
                         }
                       }
                     }
-                  }*/
+                  }
                 }
               },
 
@@ -708,8 +703,7 @@ export class Table extends NodeType {
               },
 
               nodeConfig: {
-                type: 'object' /*,
-                'x-component': 'PdkProperties'*/
+                type: 'object'
               }
             }
           }

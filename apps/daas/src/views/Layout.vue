@@ -283,11 +283,8 @@
       .submenu-item {
         font-weight: 400;
       }
-      .el-menu-item,
-      .el-submenu__title {
-        font-weight: 500;
-      }
       .is-active .el-submenu__title {
+        font-weight: 500;
         background: map-get($bgColor, disable);
       }
       .el-menu {
