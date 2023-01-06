@@ -6,8 +6,16 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
+        <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
+          <div class="marquee-box">
+            <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
+          </div>
+        </div>
+        <div v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'" class="block">
+          <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
+        </div>
         <div class="command-item mr-6" @click="command('op')">
-          <span class="cursor-pointer">线下部署版</span>
+          <span class="cursor-pointer">{{ $t('dfs_data_server_apply_for_version') }}</span>
         </div>
         <div class="command-item mr-6" @click="command('v2')">
           <VIcon class="mr-2" size="17">navigation_general</VIcon>
@@ -48,9 +56,13 @@
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-            <ElDropdownItem command="userCenter">{{ $t('the_header_Header_yongHuZhongXin') }}</ElDropdownItem>
+            <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
+              $t('the_header_Header_yongHuZhongXin')
+            }}</ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
-            <ElDropdownItem command="signOut"> {{ $t('header_sign_out') }} </ElDropdownItem>
+            <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
+              {{ $t('header_sign_out') }}
+            </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
       </div>
@@ -71,7 +83,8 @@ export default {
       USER_CENTER: window.__config__.USER_CENTER,
       lang: '',
       languages: langMenu,
-      paidPlansCode: ''
+      paidPlansCode: '',
+      domain: document.domain
     }
   },
   created() {
@@ -301,6 +314,70 @@ export default {
       top: 30px;
       right: 0;
     }
+  }
+}
+.marquee-container {
+  width: 420px;
+  height: 40px;
+  line-height: 40px;
+  .marquee-box {
+    position: absolute;
+    width: 420px;
+    height: 40px;
+    span {
+      position: absolute;
+      right: 0;
+      font-weight: 400;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 38px;
+      animation: marquee 10s linear infinite;
+    }
+  }
+}
+
+.block {
+  width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.words {
+  position: relative;
+  width: fit-content;
+  animation: move 20s linear infinite;
+  padding-left: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.words::after {
+  position: absolute;
+  right: -100%;
+  content: attr(text);
+}
+
+@keyframes move {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+@keyframes marquee {
+  /* 开始状态 */
+  0% {
+  }
+  25% {
+    transform: translateX(-30px);
+  }
+  50% {
+    transform: translateX(-60px);
+  }
+  75% {
+    transform: translateX(-90px);
+  }
+  /* 结束状态 */
+  100% {
+    transform: translateX(-120px);
   }
 }
 </style>

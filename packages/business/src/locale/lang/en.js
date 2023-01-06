@@ -518,5 +518,8 @@ export default {
   packages_business_connections_list_wenjianleixingde:
     'The connection of file type does not support loading Schema at the moment',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the last status report',
-  packages_business_task_status_agent_tooltip_agent: 'Engine'
+  packages_business_task_status_agent_tooltip_agent: 'Engine',
+
+  packages_business_task_status_error_tip:
+    "ask_list_error_tip: 'The task has been successfully deleted, but the information of the following PostgreSQL connections failed to be cleared, and you need to manually clear them in the following ways"
 }

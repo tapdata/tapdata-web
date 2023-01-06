@@ -26,6 +26,7 @@
       <div class="buttons" slot="operation">
         <el-button
           v-readonlybtn="'SYNC_category_application'"
+          :disabled="$disabledReadonlyUserBtn()"
           size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
@@ -51,17 +52,21 @@
             <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_bulkStopping')
             }}</el-dropdown-item>
-            <el-dropdown-item command="initialize" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('packages_business_dataFlow_batchRest')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'">{{
+            <el-dropdown-item
+              command="initialize"
+              v-readonlybtn="'SYNC_job_operation'"
+              :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_batchRest') }}</el-dropdown-item
+            >
+            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()">{{
               $t('packages_business_dataFlow_batchDelete')
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <template v-if="isDaas">
+        <template>
           <el-button
             v-show="multipleSelection.length > 0"
+            :disabled="$disabledReadonlyUserBtn()"
             v-readonlybtn="'SYNC_job_export'"
             size="mini"
             class="btn message-button-cancel"
@@ -70,7 +75,13 @@
             <!--<i class="iconfont icon-export back-btn-icon"></i>-->
             <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>
           </el-button>
-          <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+          <el-button
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImport"
+          >
             <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
             <span> {{ $t('packages_business_button_bulk_import') }}</span>
           </el-button>
@@ -80,6 +91,7 @@
           class="btn btn-create"
           type="primary"
           size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
           :loading="createBtnLoading"
           @click="create"
         >
@@ -179,7 +191,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.edit"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
               {{ $t('packages_business_button_edit') }}
@@ -197,20 +209,25 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.reset"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
               {{ $t('packages_business_task_list_reset') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="copy([row.id], row)">
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="copy([row.id], row)"
+            >
               {{ $t('packages_business_task_list_copy') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.delete"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
               {{ $t('packages_business_task_list_delete') }}
@@ -225,8 +242,13 @@
     <!--付费 -->
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
-    <el-dialog title="提示" :visible.sync="dialogDelMsgVisible" width="52%" custom-class="dialogDelMsgDialog">
-      <span>任务删除成功，以下几个PostgreSQL连接的信息清除失败，需要您使用以下方式手动清除</span>
+    <el-dialog
+      :title="$t('task_mapping_dialog_hint')"
+      :visible.sync="dialogDelMsgVisible"
+      width="52%"
+      custom-class="dialogDelMsgDialog"
+    >
+      <span> {{ $t('packages_business_task_status_error_tip') }}</span>
       <div class="box mt-4">
         <div class="mb-4">SQL语句:</div>
         <div class="mt-2">//第一步 查询 slot_name</div>
@@ -553,6 +575,7 @@ export default {
      * @param row
      */
     handleClickName(row) {
+      if (this.$disabledReadonlyUserBtn()) return
       if (!['edit', 'wait_start'].includes(row.status)) {
         this.toDetail(row)
       } else {

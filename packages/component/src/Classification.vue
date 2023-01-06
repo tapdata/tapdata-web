@@ -7,7 +7,14 @@
       <ElButton type="text" class="btn-expand" size="mini" @click="toggle()">
         <VIcon size="16" class="icon">expand-list</VIcon>
       </ElButton>
-      <ElButton class="btn-addIcon" size="mini" type="text" v-readonlybtn="authority" @click="showDialog()">
+      <ElButton
+        class="btn-addIcon"
+        size="mini"
+        type="text"
+        :disabled="$disabledReadonlyUserBtn()"
+        v-readonlybtn="authority"
+        @click="showDialog()"
+      >
         {{ $t('packages_component_button_button') }}
       </ElButton>
       <div class="title">
@@ -43,7 +50,9 @@
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <span class="table-label">{{ data.value }}</span>
           <ElDropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
-            <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
+            <ElButton type="text" :disabled="$disabledReadonlyUserBtn()"
+              ><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton
+            >
             <ElDropdownMenu slot="dropdown">
               <ElDropdownItem command="add">
                 {{ $t('packages_component_classification_addChildernNode') }}

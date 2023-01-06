@@ -509,5 +509,8 @@ export default {
   packages_business_connections_databaseform_baohanbiao: '包含表',
   packages_business_connections_list_wenjianleixingde: '文件類型的連接暫不支持加載Schema',
   packages_business_task_status_agent_tooltip_time: '距上次狀態上報時間已經{time}',
-  packages_business_task_status_agent_tooltip_agent: '任務所在的引擎為'
+  packages_business_task_status_agent_tooltip_agent: '任務所在的引擎為',
+
+  packages_business_task_status_error_tip:
+    '任務刪除成功，以下幾個 PostgreSQL 連接的信息清除失敗，需要您使用以下方式手動清除'
 }

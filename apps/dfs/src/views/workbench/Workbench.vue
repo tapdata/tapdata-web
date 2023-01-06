@@ -15,7 +15,12 @@
             <div class="create-list__main ml-4">
               <div class="create-list__name mb-4 fs-6">{{ item.name }}</div>
               <div class="create-list__desc">{{ item.desc }}</div>
-              <ElLink type="primary" class="float-end pointer" @click="item.action">
+              <ElLink
+                type="primary"
+                class="float-end pointer"
+                :disabled="$disabledReadonlyUserBtn()"
+                @click="item.action"
+              >
                 <span>{{ item.btnName }}</span>
                 <VIcon class="ml-2" size="12">right</VIcon>
               </ElLink>
