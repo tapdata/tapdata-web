@@ -31,7 +31,7 @@
               </el-button>
             </span>
           </el-tooltip>
-          <el-button class="flex-fill min-w-0" size="mini" @click="edit()">
+          <el-button class="flex-fill min-w-0" size="mini" @click="edit()" :disabled="$disabledReadonlyUserBtn()">
             {{ $t('packages_business_connection_preview_edit') }}
           </el-button>
           <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">

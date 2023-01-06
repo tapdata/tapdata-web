@@ -1165,5 +1165,8 @@ export default {
     '在服務層，有兩種主流的數據服務模式 Pull 和 Push。 API支持低代碼發布，可按照具體需求發布數據。當所需數據在業務系統中已有存儲時，可通過 REVERSE ETL，反向把經過整理、治理的數據推送給用戶；',
   dfs_data_server_feature: 'Data Services 特有功能點',
   dfs_data_server_On_Prem: 'Data Services 能力目前僅在 Tapdata On-Prem 版中上線',
-  dfs_data_server_apply_for_trial: '申請試用'
+  dfs_data_server_apply_for_trial: '申請試用',
+  dfs_data_server_apply_for_version: '線下部署版',
+
+  dfs_data_dashboard_Marquee: '當前demo環境為只讀環境，僅支持查看和體驗產品功能'
 }
