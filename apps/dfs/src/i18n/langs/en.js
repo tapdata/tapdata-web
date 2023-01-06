@@ -1273,5 +1273,8 @@ export default {
   dfs_data_server_feature: 'Data Services unique features',
   dfs_data_server_On_Prem: 'The Data Services capability is currently only available in the Tapdata On-Prem version',
   dfs_data_server_apply_for_trial: 'Apply for trial',
-  dfs_data_server_apply_for_version: 'Offline deployment version'
+  dfs_data_server_apply_for_version: 'Offline deployment version',
+
+  dfs_data_dashboard_Marquee:
+    'The current demo environment is a read-only environment, which only supports viewing and experiencing product functions'
 }
