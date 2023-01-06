@@ -64,27 +64,27 @@
           </el-dropdown-menu>
         </el-dropdown>
         <template>
-          <el-button
-            v-show="multipleSelection.length > 0"
-            :disabled="$disabledReadonlyUserBtn()"
-            v-readonlybtn="'SYNC_job_export'"
-            size="mini"
-            class="btn message-button-cancel"
-            @click="handleCommand('export')"
-          >
-            <!--<i class="iconfont icon-export back-btn-icon"></i>-->
-            <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>
-          </el-button>
-          <el-button
-            v-readonlybtn="'SYNC_job_import'"
-            size="mini"
-            class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImport"
-          >
-            <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
-            <span> {{ $t('packages_business_button_bulk_import') }}</span>
-          </el-button>
+          <!--          <el-button-->
+          <!--            v-show="multipleSelection.length > 0"-->
+          <!--            :disabled="$disabledReadonlyUserBtn()"-->
+          <!--            v-readonlybtn="'SYNC_job_export'"-->
+          <!--            size="mini"-->
+          <!--            class="btn message-button-cancel"-->
+          <!--            @click="handleCommand('export')"-->
+          <!--          >-->
+          <!--            &lt;!&ndash;<i class="iconfont icon-export back-btn-icon"></i>&ndash;&gt;-->
+          <!--            <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>-->
+          <!--          </el-button>-->
+          <!--          <el-button-->
+          <!--            v-readonlybtn="'SYNC_job_import'"-->
+          <!--            size="mini"-->
+          <!--            class="btn"-->
+          <!--            :disabled="$disabledReadonlyUserBtn()"-->
+          <!--            @click="handleImport"-->
+          <!--          >-->
+          <!--            &lt;!&ndash;<i class="iconfont icon-daoru back-btn-icon"></i>&ndash;&gt;-->
+          <!--            <span> {{ $t('packages_business_button_bulk_import') }}</span>-->
+          <!--          </el-button>-->
         </template>
         <el-button
           v-readonlybtn="'SYNC_job_creation'"
