@@ -120,6 +120,7 @@
           :dataflow="dataflow"
           :alarmData="alarmData"
           :logTotals="logTotals"
+          :taskRecord="taskRecord"
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
@@ -254,7 +255,11 @@ export default {
       refreshRate: 5000,
       extraEnterCount: 0,
       isReset: false, // 是否重置了
-      watchStatusCount: 0
+      watchStatusCount: 0,
+      taskRecord: {
+        total: 0,
+        items: []
+      }
     }
   },
 
@@ -812,6 +817,14 @@ export default {
         agentData: {
           uri: '/api/measurement/query/v2',
           param: this.getQuotaFilter('agentData')
+        },
+        taskRecord: {
+          uri: '/api/task/records',
+          param: {
+            taskId,
+            size: 200,
+            page: 1
+          }
         }
       }
       return params
@@ -831,7 +844,8 @@ export default {
           const map = {
             verifyTotals: this.loadVerifyTotals,
             alarmData: this.loadAlarmData,
-            logTotals: this.loadLogTotals
+            logTotals: this.loadLogTotals,
+            taskRecord: this.loadTaskRecord
           }
           for (let key in data) {
             const item = data[key]
@@ -889,6 +903,7 @@ export default {
       this.loadVerifyTotals()
       this.loadAlarmData()
       this.loadLogTotals()
+      this.loadTaskRecord()
     },
 
     loadVerifyTotals(data = {}) {
@@ -930,6 +945,11 @@ export default {
 
     loadLogTotals(data = []) {
       this.logTotals = data
+    },
+
+    loadTaskRecord(data) {
+      if (!data) return
+      this.taskRecord = data
     },
 
     getDagData(data = []) {

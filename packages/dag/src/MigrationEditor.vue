@@ -172,8 +172,10 @@ export default {
     }
   },
 
-  mounted() {
+  async mounted() {
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
+    await this.initPdkProperties()
     this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -192,8 +194,8 @@ export default {
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
     this.resetState()
-
     this.unWatchStatus?.()
+    this.toggleConsole(false)
   },
 
   methods: {
@@ -274,6 +276,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
+        this.setTaskInfo(this.dataflow)
         // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',

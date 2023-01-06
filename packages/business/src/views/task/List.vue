@@ -112,6 +112,7 @@
         <template #default="{ row }">
           <span class="dataflow-name link-primary flex">
             <ElLink
+              role="ellipsis"
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
@@ -239,7 +240,7 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload v-if="isDaas" :type="'dataflow'" ref="upload"></Upload>
+    <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
     <!--付费 -->
     <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
@@ -404,8 +405,8 @@ export default {
       return locale === 'en'
         ? {
             taskType: 140,
-            status: 100,
-            operation: 300
+            status: 130,
+            operation: 340
           }
         : {
             taskType: 80,
@@ -922,6 +923,8 @@ export default {
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
+  padding: 0 24px 24px 0;
+  background: #fff;
   .btn-refresh {
     padding: 0;
     height: 32px;

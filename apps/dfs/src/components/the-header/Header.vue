@@ -51,7 +51,9 @@
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
-            <span class="ml-2 current">{{ paidPlansCode || $t('dfs_the_header_header_jichuban') }}</span>
+            <span class="ml-2 current">{{
+              paidPlansCode === 'standard' ? $t('dfs_the_header_header_biaozhun') : $t('dfs_the_header_header_jichuban')
+            }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">
@@ -163,7 +165,7 @@ export default {
     //用户是否是付费用户
     getPaidPlan() {
       this.$axios.get('api/tcm/user/paidPlan').then(data => {
-        this.paidPlansCode = data?.paidPlans?.[0].name
+        this.paidPlansCode = data?.paidPlans?.[0].code
       })
     }
   }
@@ -175,7 +177,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 68px !important;
+  height: 52px !important;
   padding: 0 7px;
   background: rgba(54, 54, 54, 1);
   box-sizing: border-box;
@@ -208,7 +210,7 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.45);
+      color: map-get($color, white);
       &:hover {
         color: #fff;
         background-color: rgba(255, 255, 255, 0.2);
@@ -277,7 +279,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 68px !important;
+  height: 52px !important;
 }
 .dfs-header__dialog {
   .fixed-novice-guide-dialog {

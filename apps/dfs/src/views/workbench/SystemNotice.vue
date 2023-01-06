@@ -6,29 +6,24 @@
           <span>{{ $t('notify_list') }}</span>
           <span class="system-operation-setting" @click="handleSetting">
             <VIcon class="ml-2" size="12">setting</VIcon>
-            <span class="fs-8">{{ $t('header_setting') }}</span>
+            <span>{{ $t('header_setting') }}</span>
           </span>
         </div>
         <div class="system-operation-right">
-          <ElButton
-            size="mini"
-            class="btn-refresh"
-            @click="handleReadNotice()"
-            :disabled="multipleSelection.length < 1"
-          >
+          <ElButton class="btn-refresh" @click="handleReadNotice()" :disabled="multipleSelection.length < 1">
             {{ $t('notify_mark_read') }}
           </ElButton>
           <ElButton
-            size="mini"
+
             @click="handleDelete"
             :disabled="multipleSelection.length < 1 || $disabledReadonlyUserBtn()"
           >
             {{ $t('button_delete') }}
           </ElButton>
-          <ElButton size="mini" type="primary" :disabled="$disabledReadonlyUserBtn()" @click="handleReadNoticeAll">
+          <ElButton type="primary" :disabled="$disabledReadonlyUserBtn()" @click="handleReadNoticeAll">
             {{ $t('notify_all_read') }}
           </ElButton>
-          <ElButton size="mini" @click="handleAllDelete" :disabled="list.length < 1 || $disabledReadonlyUserBtn()">
+          <ElButton @click="handleAllDelete" :disabled="list.length < 1 || $disabledReadonlyUserBtn()">
             {{ $t('button_all_delete') }}
           </ElButton>
         </div>

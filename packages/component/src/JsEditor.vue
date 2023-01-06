@@ -14,7 +14,7 @@
 <script>
 import VCodeEditor from './base/VCodeEditor.vue'
 import { functionApi, sharedCacheApi } from '@tap/api'
-import { getCode } from '@tap/business'
+import { getCode } from '@tap/shared'
 
 export default {
   name: 'JsEditor',

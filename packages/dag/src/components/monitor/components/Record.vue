@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 h-100">
+  <div class="record-wrap py-4 pl-4 h-100">
     <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"
@@ -7,8 +7,7 @@
         layout: 'total, ->, prev, pager, next, sizes, jumper'
       }"
       ref="table"
-      height="100"
-      class="table-list"
+      height="100%"
       hide-on-single-page
     >
       <template slot="status" slot-scope="scope">
@@ -42,6 +41,15 @@ export default {
     dataflow: {
       type: Object,
       default: () => {}
+    },
+    taskRecord: {
+      type: Object,
+      default: () => {
+        return {
+          total: 0,
+          items: []
+        }
+      }
     }
   },
 
@@ -85,13 +93,28 @@ export default {
     }
   },
 
+  watch: {
+    taskRecord: {
+      deep: true,
+      handler(v) {
+        const page = this.getPage() || {}
+        if (
+          page.current === 1 &&
+          (v?.total !== page.total || JSON.stringify(v?.items) !== JSON.stringify(this.getTableData()))
+        ) {
+          this.fetch()
+        }
+      }
+    }
+  },
+
   methods: {
     remoteMethod({ page }) {
       const { current, size } = page
       const { id: taskId } = this.dataflow || {}
       let filter = {
-        limit: size,
-        skip: size * (current - 1)
+        page: current,
+        size: size
       }
       return taskApi.records(taskId, filter).then(data => {
         return {
@@ -117,7 +140,25 @@ export default {
         }
       })
       openUrl(routeUrl.href)
+    },
+
+    fetch() {
+      this.$refs.table?.fetch(...arguments)
+    },
+
+    getPage() {
+      return this.$refs.table?.getPage()
+    },
+
+    getTableData() {
+      return this.$refs.table?.getData()
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.record-wrap {
+  width: calc(100% - 16px);
+}
+</style>

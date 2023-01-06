@@ -253,7 +253,7 @@ $unreadColor: #ee5353;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  font-size: 12px;
+  font-size: $fontBaseTitle;
   .notification-head {
     .title {
       font-weight: bold;
@@ -333,7 +333,7 @@ $unreadColor: #ee5353;
     .list-item-time {
       float: right;
       color: map-get($fontColor, light);
-      font-size: 12px;
+      font-size: $fontBaseTitle;
     }
     &:hover {
       background: map-get($bgColor, normal);
@@ -371,7 +371,7 @@ $unreadColor: #ee5353;
   .el-tabs__item {
     height: 40px;
     line-height: 40px;
-    font-size: 14px;
+    font-size: $fontBaseTitle;
     // color: map-get($fontColor, light);
     font-weight: 400;
     &.is-active {

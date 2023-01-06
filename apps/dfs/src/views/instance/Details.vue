@@ -17,7 +17,7 @@
         </div>
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
-          <div><StatusTag type="text" :status="agent.status"></StatusTag></div>
+          <div><StatusTag type="text" :status="agent.status" default-status="Stopped"></StatusTag></div>
         </div>
       </div>
       <div class="button-line container-item border-item pt-4 pb-5">
@@ -168,7 +168,7 @@ export default {
               key: 'version'
             },
             {
-              label: $t('agent_key') + $t('agent_create_time'),
+              label: $t('agent_create_time'),
               key: 'createAt'
             }
           ]
@@ -465,7 +465,7 @@ export default {
           this.disabledUploadDialog = uploading?.length > 0
           if (!this.disabledUploadDialog) {
             this.loadingUpload = false
-            this.btnTxt = i18n.t('dfs_instance_instance_upload_btn')
+            this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
           }
           this.timer = setTimeout(() => {
             this.getDownloadList()

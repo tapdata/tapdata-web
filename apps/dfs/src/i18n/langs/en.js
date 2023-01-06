@@ -187,11 +187,11 @@ export default {
   agent_detail_host_ip: 'Host IP',
   agent_detail_host_cpu_number: 'Host CPU Cores',
   agent_detail_host_cpu_memory: 'Host CPU RAM',
+  agent_detail_installation_manual: 'Installation Directory',
+  agent_detail_run_manual: 'Log Directory',
   agent_detail_cpu_utilization: 'CPU Utilization',
   agent_detail_mem_utilization: 'Memory Utilization',
   agent_detail_gc_rate: 'GC Rate',
-  agent_detail_installation_manual: 'Installation Directory',
-  agent_detail_run_manual: 'Log Directory',
   agent_list_empty_desc1: 'Come soon',
   agent_list_empty_desc2: 'Start real-time data synchronization~',
   agent_error_check:

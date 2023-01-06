@@ -145,6 +145,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/MigrationList.tsx'),
         meta: {
           title: 'task_manage_migrate',
+          desc: 'task_manage_migrate_desc',
           icon: 'task'
         },
         children: [
@@ -172,6 +173,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/EtlList.tsx'),
         meta: {
           title: 'task_manage_etl',
+          desc: 'task_manage_desc',
           icon: 'task'
         },
         children: [

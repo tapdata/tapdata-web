@@ -838,7 +838,7 @@ $hoverBg: #eef3ff;
     .tb-item,
     .node-item {
       height: 28px;
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       &.active {
         background-color: #eef3ff;
       }
@@ -962,7 +962,7 @@ $hoverBg: #eef3ff;
     }
 
     &-txt {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       line-height: 1;
       white-space: nowrap;
     }
