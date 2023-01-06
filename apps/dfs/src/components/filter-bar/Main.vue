@@ -241,12 +241,12 @@ export default {
   }
 }
 .filter-form {
-  font-size: 12px;
+  font-size: 14px;
   ::v-deep {
     .el-form-item__content {
-      font-size: 12px;
+      font-size: 14px;
       .el-input {
-        font-size: 12px;
+        font-size: 14px;
       }
     }
   }

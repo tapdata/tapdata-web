@@ -636,7 +636,7 @@ $hoverBg: #eef3ff;
     .node-item {
       height: 42px;
       margin-bottom: 4px;
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       line-height: normal;
       &.active {
         background-color: #eef3ff;
@@ -662,7 +662,7 @@ $hoverBg: #eef3ff;
         overflow: hidden;
         > :not(:last-child) {
           margin-bottom: 4px;
-          font-size: 13px;
+          font-size: $fontBaseTitle;
         }
 
         > :last-child {
@@ -792,7 +792,7 @@ $hoverBg: #eef3ff;
     }
 
     &-txt {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       line-height: 1;
       white-space: nowrap;
     }

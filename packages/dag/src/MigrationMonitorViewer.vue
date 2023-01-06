@@ -219,7 +219,7 @@ export default {
     this.setValidateLanguage()
     // 收集pdk上节点的schema
     await this.initPdkProperties()
-    this.initNodeType()
+    await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -261,8 +261,9 @@ export default {
       this.loadData()
     },
 
-    initNodeType() {
+    async initNodeType() {
       this.addResourceIns(allResourceIns)
+      await this.loadCustomNode()
     },
 
     async openDataflow(id) {
@@ -768,10 +769,7 @@ export default {
           return
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
-        makeStatusAndDisabled(data)
-        if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
-        this.$set(this, 'dataflow', data)
-        this.$set(this.dataflow, 'disabledData', data.btnDisabled)
+        this.reformDataflow(data)
         return data
       } catch (e) {
         console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line

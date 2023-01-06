@@ -325,10 +325,6 @@ export default {
 
         .list-item-desc {
           color: #666;
-          //position: absolute;
-          //top: -5px;
-          //left: 30px;
-          //right: 20px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -340,10 +336,9 @@ export default {
             text-overflow: ellipsis;
             overflow: hidden;
           }
-
           span {
             float: left;
-            font-size: 12px;
+            font-size: $fontBaseTitle;
           }
         }
 

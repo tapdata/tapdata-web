@@ -312,7 +312,7 @@ $headerHeight: 40px;
       }
 
       > .el-tabs__content {
-        height: calc(100% - 40px);
+        height: calc(100% - 36px);
         .el-tab-pane {
           height: 100%;
         }

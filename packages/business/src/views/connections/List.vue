@@ -1,5 +1,5 @@
 <template>
-  <section class="connection-list-wrap">
+  <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap">
     <TablePage
       ref="table"
       row-key="id"
@@ -54,6 +54,7 @@
           <span class="connection-name flex">
             <img class="connection-img mr-2" :src="getConnectionIcon(row.pdkHash)" alt="" />
             <ElLink
+              role="ellipsis"
               type="primary"
               class="justify-content-start ellipsis block"
               style="line-height: 20px"
@@ -72,7 +73,7 @@
           {{ scope.row.connectionUrl }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('packages_business_connection_dataBaseStatus')" min-width="80">
+      <ElTableColumn prop="status" :label="$t('packages_business_connection_dataBaseStatus')" min-width="100">
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
@@ -81,12 +82,12 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" min-width="110" :label="$t('packages_business_connection_connectionType')">
+      <ElTableColumn prop="connection_type" min-width="135" :label="$t('packages_business_connection_connectionType')">
         <template slot-scope="scope">
           {{ $t('packages_business_connection_type_' + scope.row.connection_type) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn min-width="90">
+      <ElTableColumn min-width="140">
         <div slot="header" class="flex align-center">
           <span>{{ $t('packages_business_connection_list_column_schema_status') }}</span>
           <ElTooltip
@@ -104,14 +105,14 @@
       <ElTableColumn
         prop="last_updated"
         sortable="last_updated"
-        min-width="150"
+        min-width="160"
         :label="$t('packages_business_connection_lastUpdateTime')"
       >
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="300" :label="$t('packages_business_connection_operate')">
+      <ElTableColumn width="320" :label="$t('packages_business_connection_operate')">
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)"
             >{{ $t('packages_business_connection_list_test_button') }}
@@ -703,13 +704,18 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.paddingLeft0 {
+  padding-left: 0 !important;
+}
 .connection-list-wrap {
   height: 100%;
   overflow: hidden;
+  background: #fff;
+  padding: 0 24px 24px 24px;
   ::v-deep {
     .el-select-dropdown__item {
       span {
-        font-size: 12px;
+        font-size: $fontBaseTitle;
       }
     }
   }

@@ -145,14 +145,14 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="150">
+        <ElTableColumn prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="180">
           <template slot-scope="scope">
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('list_operation')" width="200">
+        <ElTableColumn :label="$t('list_operation')" width="240">
           <template slot-scope="scope">
-            <ElButton size="mini" type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
+            <ElButton type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
               $t('agent_button_deploy')
             }}</ElButton>
             <ElDivider direction="vertical"></ElDivider>

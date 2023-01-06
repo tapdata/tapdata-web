@@ -123,11 +123,11 @@
     line-height: 17px;
     border-bottom: 1px solid map-get($borderColor, light);
     .label {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       color: rgba(0, 0, 0, 0.6);
     }
     .value {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       color: map-get($fontColor, dark);
     }
   }

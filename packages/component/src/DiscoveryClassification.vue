@@ -310,9 +310,11 @@ export default {
         //遍历第一次， 先把所有子类按照id分成若干数组
         items.forEach(it => {
           if (it.parent_id) {
-            let children = map[it.parent_id] || []
-            children.push(it)
-            map[it.parent_id] = children
+            if (it.objCount) {
+              let children = map[it.parent_id] || []
+              children.push(it)
+              map[it.parent_id] = children
+            }
           } else {
             //默认目录国际化
             if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {

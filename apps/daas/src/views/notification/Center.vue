@@ -4,21 +4,21 @@
       <div class="left-panel pt-5">
         <ul class="menu">
           <li :class="{ active: activePanel === 'system' }" @click="selectPanel('system')">
-            <VIcon>bells</VIcon>
-            <span class="content">{{ $t('notify_system_notice') }}</span>
+            <VIcon size="14">notice-system-notice</VIcon>
+            <span class="content ml-2">{{ $t('notify_system_notice') }}</span>
             <span class="unread" v-show="unRead > 0">{{ unRead }}</span>
           </li>
           <li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
-            <i class="iconfont icon-lishijilu"></i>
-            <span class="content">{{$t('daas_notification_center_yonghucaozuo')}}</span>
+            <VIcon size="14">notice-user</VIcon>
+            <span class="content ml-2">{{ $t('daas_notification_center_yonghucaozuo') }}</span>
           </li>
           <li :class="{ active: activePanel === 'alarmNotice' }" @click="selectPanel('alarmNotice')">
-            <i class="iconfont icon-lishijilu"></i>
-            <span class="content">{{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}</span>
+            <VIcon size="14">warning</VIcon>
+            <span class="content ml-2">{{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}</span>
           </li>
           <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">
-            <i class="iconfont icon-lishijilu"></i>
-            <span class="content">{{ $t('daas_notification_center_xitonggaojing') }}</span>
+            <VIcon size="14">notice-system</VIcon>
+            <span class="content ml-2">{{ $t('daas_notification_center_xitonggaojing') }}</span>
           </li>
         </ul>
       </div>
@@ -125,7 +125,7 @@ $unreadColor: #ee5353;
         height: 44px;
         padding-left: 20px;
         align-items: center;
-        font-size: 12px;
+        font-size: $fontBaseTitle;
         font-weight: 400;
         color: map-get($fontColor, normal);
         cursor: pointer;

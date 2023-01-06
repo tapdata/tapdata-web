@@ -99,6 +99,7 @@
         <template #default="{ row }">
           <span class="dataflow-name link-primary flex">
             <ElLink
+              role="ellipsis"
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
@@ -381,8 +382,8 @@ export default {
       return locale === 'en'
         ? {
             taskType: 140,
-            status: 100,
-            operation: 300
+            status: 130,
+            operation: 340
           }
         : {
             taskType: 80,
@@ -898,6 +899,8 @@ export default {
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
+  padding: 0 24px 24px 0;
+  background: #fff;
   .btn-refresh {
     padding: 0;
     height: 32px;

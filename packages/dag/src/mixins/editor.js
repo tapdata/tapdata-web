@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
-import { taskApi } from '@tap/api'
+import { databaseTypesApi, taskApi } from '@tap/api'
 import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '../style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
@@ -89,6 +89,7 @@ export default {
       'setStateReadonly',
       'setEdges',
       'setTaskId',
+      'setTaskInfo',
       'addResourceIns',
       'updateNodeProperties',
       'setActiveNode',
@@ -118,7 +119,8 @@ export default {
       'setCanBeConnectedNodeIds',
       'setValidateLanguage',
       'addProcessorNode',
-      'toggleConsole'
+      'toggleConsole',
+      'setPdkPropertiesMap'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -1159,6 +1161,29 @@ export default {
       }
     },
 
+    validateTaskType() {
+      const { type } = this.dataflow
+      if (type !== 'initial_sync') {
+        let hasNoStreamReadFunction = false
+        this.allNodes.forEach(node => {
+          if (node.$outputs.length && !node.$inputs.length) {
+            if (!node.attrs.capabilities?.some(t => t.id === 'stream_read_function')) {
+              // 源不支持增量
+              hasNoStreamReadFunction = true
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: i18n.t('packages_dag_mixins_editor_not_support_cdc')
+              })
+            }
+          }
+        })
+        if (hasNoStreamReadFunction) {
+          this.setActiveType('settings')
+          return i18n.t('packages_dag_mixins_editor_task_not_support_cdc')
+        }
+      }
+    },
+
     loadLeafNode(node) {
       let arr = []
       if (node.$outputs.length) {
@@ -1242,7 +1267,8 @@ export default {
     validateDDL() {
       let hasEnableDDL
       let hasEnableDDLAndIncreasesql
-      let hasJsNode
+      let inBlacklist = false
+      let blacklist = ['js_processor', 'custom_processor', 'migrate_js_processor', 'union_processor']
       this.allNodes.forEach(node => {
         if (node.enableDDL) {
           hasEnableDDL = true
@@ -1254,14 +1280,13 @@ export default {
             })
           }
         }
-        if (node.type === 'js_processor' || node.type === 'custom_processor' || node.type === 'migrate_js_processor') {
-          hasJsNode = true
+        if (blacklist.includes(node.type)) {
+          inBlacklist = true
         }
       })
-      if ((hasEnableDDL && hasJsNode) || hasEnableDDLAndIncreasesql) {
+      if ((hasEnableDDL && inBlacklist) || hasEnableDDLAndIncreasesql) {
         return i18n.t('packages_dag_mixins_editor_renwuzhonghanyou')
       }
-      // 任务中没有JS节点、自定义节点、并开关闭增量自定义SQL 时DDL按钮才会开放
     },
 
     async eachValidate(...fns) {
@@ -1288,7 +1313,8 @@ export default {
         this.validateDag,
         this.validateAgent,
         this.validateLink,
-        this.validateDDL
+        this.validateDDL,
+        this.validateTaskType
       )
     },
 
@@ -1810,6 +1836,7 @@ export default {
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
+        this.setTaskInfo(this.dataflow)
         this.startLoopTask(id)
         this.titleSet()
         return data
@@ -1959,6 +1986,27 @@ export default {
 
     titleSet() {
       setPageTitle(`${this.dataflow.name} - ${this.$t(this.$route.meta.title)}`)
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }

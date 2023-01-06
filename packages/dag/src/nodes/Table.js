@@ -221,7 +221,8 @@ export class Table extends NodeType {
           dependencies: ['$inputs', '$outputs'],
           fulfill: {
             state: {
-              display: '{{$deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
+              display:
+                '{{$hasPdkConfig($values.attrs.pdkHash) || $deps[0].length > 0 || $deps[1].length > 0 ? "visible":"hidden"}}'
             }
           }
         },
@@ -306,7 +307,7 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
                   },
-                  isCustomFilter: {
+                  isFilter: {
                     type: 'boolean',
                     title: '过滤设置',
                     default: false,
@@ -618,7 +619,9 @@ export class Table extends NodeType {
                         fulfill: {
                           run: `
                             if (!$self.value && $self.dataSource && $self.dataSource.length) {
-                              $self.setValue($self.dataSource.filter(item => item.isPrimaryKey).map(item => item.value))
+                              let isPrimaryKeyList = $self.dataSource.filter(item => item.isPrimaryKey)
+                              let indicesUniqueList = $self.dataSource.filter(item => item.indicesUnique)
+                              $self.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value))
                               $self.validate()
                             }
                           `
@@ -700,8 +703,7 @@ export class Table extends NodeType {
               },
 
               nodeConfig: {
-                type: 'object' /*,
-                'x-component': 'PdkProperties'*/
+                type: 'object'
               }
             }
           }

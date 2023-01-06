@@ -14,7 +14,7 @@
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
         <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help">
           <span class="icon-btn py-1 px-3">
-            <VIcon size="16">wenda</VIcon>
+            <VIcon size="18">wenda</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app_document') }}</ElDropdownItem>
@@ -27,7 +27,7 @@
           @command="command"
         >
           <span class="icon-btn py-1 px-3">
-            <VIcon size="16">shezhi</VIcon>
+            <VIcon size="18">shezhi</VIcon>
           </span>
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
           <ElDropdownMenu slot="dropdown" class="no-triangle">
@@ -39,7 +39,7 @@
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
           <span class="icon-btn py-1 px-3">
-            <VIcon size="16">language_icon</VIcon>
+            <VIcon size="18">language_icon</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
@@ -98,11 +98,37 @@
           <i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
         </div>
       </ElAside>
-
       <ElMain class="layout-main">
         <div class="layout-main-body">
-          <PageHeader class="py-4 px-5"></PageHeader>
-          <div class="flex-fill px-5 pb-5 overflow-auto">
+          <PageHeader
+            v-if="!['dashboard', 'clusterManagement', 'apiMonitor'].includes($route.name)"
+            class="border-bottom"
+          ></PageHeader>
+          <div
+            class="flex-fill overflow-auto"
+            :class="[
+              {
+                'px-5': ![
+                  'dashboard',
+                  'clusterManagement',
+                  'apiMonitor',
+                  'migrateList',
+                  'dataflowList',
+                  'connectionsList'
+                ].includes($route.name)
+              },
+              {
+                'pb-5': ![
+                  'dashboard',
+                  'clusterManagement',
+                  'apiMonitor',
+                  'migrateList',
+                  'dataflowList',
+                  'connectionsList'
+                ].includes($route.name)
+              }
+            ]"
+          >
             <RouterView />
           </div>
         </div>
@@ -257,11 +283,8 @@
       .submenu-item {
         font-weight: 400;
       }
-      .el-menu-item,
-      .el-submenu__title {
-        font-weight: 500;
-      }
       .is-active .el-submenu__title {
+        font-weight: 500;
         background: map-get($bgColor, disable);
       }
       .el-menu {
@@ -320,7 +343,7 @@
     position: relative;
     height: 100%;
     padding: 0;
-    background: #eff1f4;
+    background: map-get($color, white);
     box-sizing: border-box;
     overflow-y: hidden;
     overflow-x: auto;
@@ -333,7 +356,7 @@
   }
   .expire-msg {
     margin-right: 25px;
-    font-size: 12px;
+    font-size: $fontBaseTitle;
     font-family: PingFangSC-Medium, PingFang SC;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
@@ -367,6 +390,7 @@ let menuSetting = [
     children: [
       { name: 'migrateList', code: 'Data_SYNC_menu', parent: 'migrate' },
       { name: 'dataflowList', code: 'Data_SYNC_menu', parent: 'dataflow' },
+      { name: 'dataVerificationList', code: 'Data_verify_menu', parent: 'dataVerification' },
       { name: 'sharedMiningList', code: 'log_collector_menu', parent: 'sharedMining' },
       { name: 'functionList', code: 'SYNC_Function_management', parent: 'function' },
       { name: 'customNodeList', code: 'custom_node_menu', parent: 'customNode' },

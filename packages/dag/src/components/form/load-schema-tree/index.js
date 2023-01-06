@@ -114,7 +114,7 @@ export const loadSchemaTree = observer(
                           }
                         }
                       )
-                    }, 200)
+                    }, 3000)
                   })
                   .catch(() => {
                     loading.value = false

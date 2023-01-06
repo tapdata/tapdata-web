@@ -430,7 +430,7 @@ $unreadColor: #ee5353;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  font-size: 12px;
+  font-size: $fontBaseTitle;
   .notification-head {
     .title {
       font-weight: bold;
@@ -510,7 +510,7 @@ $unreadColor: #ee5353;
     .list-item-time {
       float: right;
       color: map-get($fontColor, light);
-      font-size: 12px;
+      font-size: $fontBaseTitle;
     }
     &:hover {
       background: map-get($bgColor, normal);

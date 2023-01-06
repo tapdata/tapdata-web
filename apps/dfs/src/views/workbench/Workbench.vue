@@ -67,7 +67,10 @@
               <div class="color-primary text-center fs-1">
                 {{ item.value }}
               </div>
-              <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
+              <div
+                class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1"
+                v-if="item.list.length > 0"
+              >
                 <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
                   <span>{{ detail.label }}</span>
                   <span>:</span>
@@ -100,7 +103,6 @@
       <div class="p-6" style="background-color: #fff">
         <div class="fs-7" style="color: #000">
           <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
-          <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
           <span class="color-primary" style="font-family: DIN">{{ numToThousands(taskInputNumber) }}</span>
         </div>
         <div class="pr-4" style="height: 200px">
@@ -235,18 +237,10 @@ export default {
           icon: 'task',
           value: 0,
           list: [
-            {
-              label: $t('task_initial_sync'),
-              value: 0
-            },
-            {
-              label: $t('task_sync_type_cdc'),
-              value: 0
-            },
-            {
-              label: $t('task_initial_sync_cdc'),
-              value: 0
-            }
+            // {
+            //   label: $t('workbench_overview_task_status'),
+            //   value: 0
+            // }
           ]
         }
       ], // 介绍列表
@@ -376,10 +370,8 @@ export default {
       let agentList = this.agentList
       const stats = data.taskTypeStats
       if (stats) {
-        agentList[2].value = stats.total
-        agentList[2].list[0].value = stats.initial_sync || 0
-        agentList[2].list[1].value = stats.cdc || 0
-        agentList[2].list[2].value = stats['initial_sync+cdc'] || 0
+        agentList[2].value = stats.total - stats.Buffer
+        agentList[2].list[0].value = agentList[2].value || 0
       }
     },
     loadNotices() {
@@ -488,6 +480,7 @@ export default {
   min-height: 610px;
   min-width: 1100px;
   box-sizing: border-box;
+  padding: 0 24px 24px 24px;
   .pointer {
     cursor: pointer;
   }
@@ -526,7 +519,8 @@ export default {
 .create-list__desc {
   height: 110px;
   overflow: auto;
-  color: rgba(0, 0, 0, 0.49);
+  line-height: 22px;
+  color: map-get($fontColor, light);
 }
 .aside-main {
   height: 213px;
@@ -552,7 +546,7 @@ export default {
 .agent-list__detail {
   width: 232px;
   background-color: #fafafb;
-  color: rgba(0, 0, 0, 0.5);
+  color: map-get($fontColor, light);
   .agent-list__status {
     white-space: nowrap;
     margin-right: 8px;
@@ -572,7 +566,7 @@ export default {
   background: #f7f8f9;
 }
 .notice-list__time {
-  color: rgba(0, 0, 0, 0.5);
+  color: map-get($fontColor, light);
   white-space: nowrap;
   width: 80px;
   text-align: right;
