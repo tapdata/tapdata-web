@@ -1272,5 +1272,6 @@ export default {
     'In the service layer, there are two mainstream data service modes Pull and Push. The API supports low-code publishing and can publish data according to specific needs. When the required data has already been stored in the business system, the sorted and managed data can be reversely pushed to the user through REVERSE ETL;',
   dfs_data_server_feature: 'Data Services unique features',
   dfs_data_server_On_Prem: 'The Data Services capability is currently only available in the Tapdata On-Prem version',
-  dfs_data_server_apply_for_trial: 'Apply for trial'
+  dfs_data_server_apply_for_trial: 'Apply for trial',
+  dfs_data_server_apply_for_version: 'Offline deployment version'
 }
