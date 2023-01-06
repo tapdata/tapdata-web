@@ -1163,5 +1163,7 @@ export default {
   dfs_data_server_feature: 'Data Services 特有功能點',
   dfs_data_server_On_Prem: 'Data Services 能力目前僅在 Tapdata On-Prem 版中上線',
   dfs_data_server_apply_for_trial: '申請試用',
-  dfs_data_server_apply_for_version: '線下部署版'
+  dfs_data_server_apply_for_version: '線下部署版',
+
+  dfs_data_dashboard_Marquee: '當前demo環境為只讀環境，僅支持查看和體驗產品功能'
 }
