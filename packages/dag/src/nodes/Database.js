@@ -135,75 +135,19 @@ export class Database extends NodeType {
           migrateTableSelectType: {
             title: '选择表',
             type: 'string',
-            default: 'all',
+            default: 'custom',
             'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              className: 'form-item-dense',
-              feedbackLayout: 'none'
-            },
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: '全部',
-                value: 'all'
+                label: '按表名选择',
+                value: 'custom'
               },
               {
-                label: '自定义',
-                value: 'custom'
-              }
-            ],
-            'x-reactions': {
-              target: 'tableNames',
-              effects: ['onFieldInputValueChange'],
-              fulfill: {
-                state: {
-                  value: '{{$self.value === "custom" ? [] : $target.value}}'
-                }
-              }
-            }
-          },
-
-          enableDynamicTable: {
-            title: '动态新增表',
-            type: 'boolean',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              tooltip: '开启后任务将会自动处理新增表'
-            },
-            'x-component': 'Switch',
-            'x-reactions': [
-              {
-                dependencies: ['.migrateTableSelectType'],
-                fulfill: {
-                  state: {
-                    visible:
-                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
-                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
-                  }
-                }
+                label: '按表达式匹配',
+                value: 'expression'
               }
             ]
-          },
-
-          tableCard: {
-            type: 'void',
-            properties: {
-              tableNames: {
-                type: 'array',
-                'x-component': 'TableListCard',
-                'x-component-props': {
-                  connectionId: '{{$values.connectionId}}'
-                },
-                'x-reactions': {
-                  dependencies: ['migrateTableSelectType'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] !== "custom" ? "visible":"hidden"}}'
-                    }
-                  }
-                }
-              }
-            }
           },
 
           tableNames: {
@@ -227,6 +171,26 @@ export class Database extends NodeType {
                 },
                 schema: {
                   required: '{{$deps[0] === "custom"}}'
+                }
+              }
+            }
+          },
+
+          tableExpression: {
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              extra: '表达式匹配模式下，数据库新增的符合表达的表会被自动同步到目标'
+            },
+            'x-component': 'Input.TextArea',
+            'x-component-props': {
+              placeholder: '逗号分割的表达式列表，使用*代表任意长度任意字符'
+            },
+            'x-reactions': {
+              dependencies: ['migrateTableSelectType'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
                 }
               }
             }
