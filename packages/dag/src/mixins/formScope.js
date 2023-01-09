@@ -341,7 +341,7 @@ export default {
          */
         handlerSyncDatabaseChange: (form, item) => {
           const field = form.query('connectionIdWrap.clipboardButton').take()
-          field.setComponentProps({
+          field?.setComponentProps({
             content: item.name
           })
           const connectionType = form.getValuesIn('attrs.connectionType')

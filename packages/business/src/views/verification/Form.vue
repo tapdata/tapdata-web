@@ -66,7 +66,7 @@
               ></ElOption>
             </ElSelect>
           </ElFormItem>
-          <ElFormItem
+          <!--<ElFormItem
             required
             class="form-item"
             :label="$t('packages_business_verification_form_jiaoyangaojing') + ': '"
@@ -85,7 +85,7 @@
                 <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
               </ElCheckboxGroup>
             </div>
-          </ElFormItem>
+          </ElFormItem>-->
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
             <ElRadioGroup v-model="form.inspectMethod">
               <ElRadioButton label="row_count">{{ $t('packages_business_verification_row_verify') }}</ElRadioButton>

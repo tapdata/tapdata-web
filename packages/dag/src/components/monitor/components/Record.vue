@@ -1,7 +1,7 @@
 <template>
   <div class="record-wrap py-4 pl-4 h-100">
     <VTable
-      :data="taskRecord.items"
+      :remoteMethod="remoteMethod"
       :columns="columns"
       :page-options="{
         layout: 'total, ->, prev, pager, next, sizes, jumper'
@@ -28,6 +28,7 @@
 import i18n from '@tap/i18n'
 
 import { VTable } from '@tap/component'
+import { taskApi } from '@tap/api'
 import { TaskStatus } from '@tap/business'
 import { openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -93,7 +94,37 @@ export default {
     }
   },
 
+  watch: {
+    taskRecord: {
+      deep: true,
+      handler(v) {
+        const page = this.getPage() || {}
+        if (
+          page.current === 1 &&
+          (v?.total !== page.total || JSON.stringify(v?.items) !== JSON.stringify(this.getTableData()))
+        ) {
+          this.fetch()
+        }
+      }
+    }
+  },
+
   methods: {
+    remoteMethod({ page }) {
+      const { current, size } = page
+      const { id: taskId } = this.dataflow || {}
+      let filter = {
+        page: current,
+        size: size
+      }
+      return taskApi.records(taskId, filter).then(data => {
+        return {
+          total: data.total,
+          data: data.items || []
+        }
+      })
+    },
+
     handleDetail(row = {}) {
       const { taskId, taskRecordId, startDate, endDate } = row
       const start = startDate ? new Date(startDate).getTime() - 1000 : Time.getTime()
@@ -110,6 +141,18 @@ export default {
         }
       })
       openUrl(routeUrl.href)
+    },
+
+    fetch() {
+      this.$refs.table?.fetch(...arguments)
+    },
+
+    getPage() {
+      return this.$refs.table?.getPage()
+    },
+
+    getTableData() {
+      return this.$refs.table?.getData()
     }
   }
 }
