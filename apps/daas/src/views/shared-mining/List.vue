@@ -136,7 +136,6 @@
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_list_edit_title_start_time')">
           <div v-for="(item, index) in editForm.syncPoints" :key="index">
-            <div>{{ `${item.connectionName}(${item.nodeName})` }}</div>
             <el-select v-model="item.pointType" :placeholder="$t('common_placeholder_select')">
               <el-option v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></el-option>
             </el-select>
