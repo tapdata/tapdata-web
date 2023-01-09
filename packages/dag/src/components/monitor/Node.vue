@@ -7,6 +7,7 @@ import { defineComponent, computed, ref, onMounted, watch } from '@vue/compositi
 import i18n from '@tap/i18n'
 import { VIcon } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 import DFNode from '../DFNode'
 
 dayjs.extend(relativeTime)
@@ -63,7 +64,7 @@ export default defineComponent({
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !startAt) {
         return null
       }
-      const usedTime = Date.now() - snapshotStartAt
+      const usedTime = Time.getTime() - snapshotStartAt
       const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
       return calcTimeUnit(Math.ceil(Math.abs(time)))
     })

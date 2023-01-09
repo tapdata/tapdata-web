@@ -142,7 +142,7 @@
         :dataflow="dataflow"
         :node-id="nodeDetailDialogId"
         :timeFormat="timeFormat"
-        :range="[firstStartTime, lastStopTime || Date.now()]"
+        :range="[firstStartTime, lastStopTime || getTime()]"
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
@@ -167,6 +167,7 @@ import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
 import { ALARM_LEVEL_SORT } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -295,12 +296,12 @@ export default {
       const { firstStartTime, lastStopTime } = this
       let end = lastStopTime
       if (['running'].includes(this.dataflow.status)) {
-        end = Date.now()
+        end = Time.getTime()
       }
       if (end < firstStartTime) {
         end = firstStartTime + 5 * 60 * 1000
       }
-      return [firstStartTime, end || Date.now()]
+      return [firstStartTime, end || Time.getTime()]
     }
   },
 
@@ -661,7 +662,7 @@ export default {
             taskId,
             taskRecordId
           },
-          endAt: Date.now(), // 停止时间 || 当前时间
+          endAt: Time.getTime(), // 停止时间 || 当前时间
           fields: [
             'inputInsertTotal',
             'inputUpdateTotal',
@@ -767,7 +768,7 @@ export default {
             type: 'engine',
             engineId: agentId
           },
-          endAt: Date.now(),
+          endAt: Time.getTime(),
           fields: ['memoryRate', 'cpuUsage', 'gcRate'],
           type: 'instant'
         }
@@ -1030,9 +1031,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Date.now()
+      let endTimestamp = this.lastStopTime || Time.getTime()
       if (status === 'running') {
-        endTimestamp = Date.now()
+        endTimestamp = Time.getTime()
       }
       switch (type) {
         case '5m':
@@ -1167,6 +1168,10 @@ export default {
           return map
         }, {})
       )
+    },
+
+    getTime() {
+      return Time.getTime()
     }
   }
 }

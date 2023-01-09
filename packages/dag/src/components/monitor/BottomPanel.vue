@@ -42,6 +42,7 @@ import resize from '@tap/component/src/directives/resize'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import RelationList from '@tap/business/src/views/task/relation/List.vue'
+import Time from '@tap/shared/src/time'
 
 import Record from './components/Record'
 import Alert from './components/Alert'
@@ -118,7 +119,7 @@ export default {
               value: data.nodeId
             })
           data.lastOccurrenceTime &&
-            this.getLogRef()?.$refs.timeSelect.changeTime([new Date(data.lastOccurrenceTime).getTime(), Date.now()])
+            this.getLogRef()?.$refs.timeSelect.changeTime([new Date(data.lastOccurrenceTime).getTime(), Time.getTime()])
         }
       })
     }
