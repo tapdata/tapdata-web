@@ -497,6 +497,7 @@ export default {
   share_list_setting: '挖掘設置',
   share_list_status: '狀態',
   share_list_edit_title: '挖掘编辑',
+  share_list_edit_title_start_time: '挖掘開始時間',
   share_form_setting_table_name: '存儲MongoDB表名',
   share_form_setting_log_time: '日誌保存時長',
   share_form_edit_name: '挖掘名稱',

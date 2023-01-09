@@ -509,6 +509,7 @@ export default {
   share_list_status: 'Status',
   share_list_time: 'Mining Delay',
   share_list_edit_title: 'Mining Edit',
+  share_list_edit_title_start_time: 'Mining Start Time',
   share_form_setting_table_name: 'Store MongoDB table name',
   share_form_setting_log_time: 'Log save time',
   share_form_edit_name: 'Mining name',
