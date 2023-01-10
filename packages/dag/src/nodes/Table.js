@@ -307,6 +307,74 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
                   },
+                  cdcMode: {
+                    title: '增量同步方式',
+                    type: 'string',
+                    default: 'logCdc',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '特定字段的轮询方式对数据进行增量采集'
+                    },
+                    'x-component': 'Radio.Group',
+                    enum: [
+                      { label: '日志cdc', value: 'logCdc' },
+                      { label: '轮询', value: 'polling' }
+                    ],
+                    'x-reactions': {
+                      target:
+                        '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
+                      fulfill: {
+                        state: {
+                          visible: '{{$self.value==="polling"}}'
+                        }
+                      }
+                    }
+                  },
+                  cdcPollingFields: {
+                    title: '指定轮询字段',
+                    type: 'string',
+                    required: 'true',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'FieldSelect',
+                    'x-component-props': {
+                      filterable: true
+                    },
+                    'x-reactions': {
+                      effects: ['onFieldInputValueChange']
+                    }
+                  },
+                  cdcPollingFieldsDefaultValues: {
+                    title: '轮询字段默认值',
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Input'
+                  },
+                  cdcPollingInterval: {
+                    title: '轮询间隔',
+                    type: 'number',
+                    default: 500,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'InputNumber',
+                    'x-component-props': {
+                      style: {
+                        width: '140px'
+                      },
+                      min: 0
+                    }
+                  },
+                  cdcPollingBatchSize: {
+                    title: '每次读取行数',
+                    type: 'number',
+                    default: 1000,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'InputNumber',
+                    'x-component-props': {
+                      style: {
+                        width: '140px'
+                      },
+                      min: 0
+                    }
+                  },
                   isFilter: {
                     type: 'boolean',
                     title: '过滤设置',
@@ -389,7 +457,7 @@ export class Table extends NodeType {
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id, $values.tableName)}}`,
                       {
-                        target: 'conditions.*.key',
+                        target: '*(conditions.*.key,cdcPollingFields)',
                         fulfill: {
                           state: {
                             loading: '{{$self.loading}}',
