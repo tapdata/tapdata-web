@@ -323,6 +323,70 @@ export class Table extends NodeType {
                     }
                   },
 
+                  readPartitionOptions: {
+                    type: 'object',
+                    'x-decorator': 'FormItem',
+                    properties: {
+                      enable: {
+                        title: '开启分片',
+                        type: 'boolean',
+                        default: false,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              display:
+                                '{{!$values.attrs.capabilities.some(item => item.id ==="GetReadPartitionsFunction") ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      maxRecordInPartition: {
+                        title: '分片大小',
+                        type: 'number',
+                        default: 0,
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      splitType: {
+                        title: '分片方式',
+                        type: 'number',
+                        default: 10,
+                        enum: [
+                          {
+                            label: '基于count分片',
+                            value: 1
+                          },
+                          {
+                            label: '基于min/max分片',
+                            value: 10
+                          }
+                        ],
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Select',
+                        'x-reactions': {
+                          dependencies: ['.enable'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+
                   /*limitWrap: {
                     type: 'void',
                     title: '行数限制',
