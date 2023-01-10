@@ -31,6 +31,7 @@
 import { TablePage } from '@tap/business'
 import dayjs from 'dayjs'
 import { licensesApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 
 export default {
   components: { TablePage },
@@ -60,7 +61,7 @@ export default {
             total: data?.total || 0,
             data: list.map(item => {
               let expirationDate = dayjs(item.expirationDate)
-              let duration = expirationDate.valueOf() - Date.now()
+              let duration = expirationDate.valueOf() - Time.now()
               let status = 'normal'
               if (duration < 0) {
                 status = 'expired'

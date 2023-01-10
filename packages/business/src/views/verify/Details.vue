@@ -177,7 +177,7 @@
 
 <script>
 import i18n from '@tap/i18n'
-
+import Time from '@tap/shared/src/time'
 import { delayTrigger, uniqueArr } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { taskApi } from '@tap/api'
@@ -325,7 +325,7 @@ export default {
         skip: size * (current - 1)
       }
       this.detailLoading = true
-      const startStamp = Date.now()
+      const startStamp = Time.now()
       taskApi
         .autoInspectResults(this.$route.params.id, {
           filter: JSON.stringify(filter)
@@ -374,7 +374,7 @@ export default {
             () => {
               this.detailLoading = false
             },
-            Date.now() - startStamp < 1000 ? 1500 : 0
+            Time.now() - startStamp < 1000 ? 1500 : 0
           )
         })
     },

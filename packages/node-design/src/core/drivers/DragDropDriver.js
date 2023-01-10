@@ -1,4 +1,5 @@
 import { EventDriver } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 import { DragStartEvent, DragMoveEvent, DragStopEvent } from '../events'
 
 const GlobalState = {
@@ -23,7 +24,7 @@ export class DragDropDriver extends EventDriver {
     if (e.target?.['closest']?.('.monaco-editor')) return
     GlobalState.startEvent = e
     GlobalState.dragging = false
-    GlobalState.onMouseDownAt = Date.now()
+    GlobalState.onMouseDownAt = Time.now()
     this.batchAddEventListener('mouseup', this.onMouseUp)
     this.batchAddEventListener('dragend', this.onMouseUp)
     this.batchAddEventListener('dragstart', this.onStartDrag)
@@ -94,7 +95,7 @@ export class DragDropDriver extends EventDriver {
     const distance = Math.sqrt(
       Math.pow(e.pageX - GlobalState.startEvent.pageX, 2) + Math.pow(e.pageY - GlobalState.startEvent.pageY, 2)
     )
-    const timeDelta = Date.now() - GlobalState.onMouseDownAt
+    const timeDelta = Time.now() - GlobalState.onMouseDownAt
     if (timeDelta > 10 && e !== GlobalState.startEvent && distance > 4) {
       this.batchRemoveEventListener('mousemove', this.onDistanceChange)
       this.onStartDrag(e)

@@ -30,6 +30,7 @@
 
 <script>
 import { dayjs, STATUS_MAP } from '../shared'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'TaskStatus',
@@ -51,7 +52,7 @@ export default {
     pingTime() {
       const pingTime = this.task.pingTime
       if (this.task.status === 'running' && pingTime) {
-        if (Date.now() - this.task.pingTime > 5 * 60 * 1000) {
+        if (Time.now() - this.task.pingTime > 5 * 60 * 1000) {
           return dayjs(pingTime).fromNow(true)
         }
       }
