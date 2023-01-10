@@ -236,6 +236,49 @@ export class Database extends NodeType {
           }
         },
         properties: {
+          writeBachSpace: {
+            type: 'void',
+            'x-component': 'Space',
+            'x-component-props': {
+              size: 'middle'
+            },
+            'x-reactions': {
+              fulfill: {
+                state: {
+                  display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                }
+              }
+            },
+            properties: {
+              writeBatchSize: {
+                title: '批量写入条数', //增量批次读取条数
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-decorator-props': {
+                  tooltip: '全量每批次写入的条数'
+                },
+                'x-component-props': {
+                  min: 1,
+                  max: 100000
+                },
+                default: 2000
+              },
+              writeBatchWaitMs: {
+                title: '写入每批最大等待时间(ms)', //增量批次读取条数
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-decorator-props': {
+                  tooltip: '全量每批次写入的条数'
+                },
+                'x-component-props': {
+                  min: 1
+                },
+                default: 3000
+              }
+            }
+          },
           ddlEvents: {
             type: 'void',
             title: 'DDL事件应用',
