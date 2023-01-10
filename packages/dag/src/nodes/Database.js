@@ -178,13 +178,14 @@ export class Database extends NodeType {
 
           tableExpression: {
             type: 'string',
+            default: '*',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               extra: '表达式匹配模式下，数据库新增的符合表达的表会被自动同步到目标'
             },
             'x-component': 'Input.TextArea',
             'x-component-props': {
-              placeholder: '逗号分割的表达式列表，使用*代表任意长度任意字符'
+              placeholder: '逗号分割的正则表达式列表，使用*代表任意长度任意字符'
             },
             'x-reactions': {
               dependencies: ['migrateTableSelectType'],
