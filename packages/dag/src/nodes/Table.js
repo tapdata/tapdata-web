@@ -359,7 +359,7 @@ export class Table extends NodeType {
                       style: {
                         width: '140px'
                       },
-                      min: 0
+                      min: 500
                     }
                   },
                   cdcPollingBatchSize: {
@@ -372,7 +372,7 @@ export class Table extends NodeType {
                       style: {
                         width: '140px'
                       },
-                      min: 0
+                      min: 1
                     }
                   },
                   isFilter: {
