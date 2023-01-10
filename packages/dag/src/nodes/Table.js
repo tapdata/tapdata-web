@@ -337,7 +337,7 @@ export class Table extends NodeType {
                           fulfill: {
                             state: {
                               display:
-                                '{{!$values.attrs.capabilities.some(item => item.id ==="GetReadPartitionsFunction") ? "visible" :"hidden"}}'
+                                '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
                             }
                           }
                         }
@@ -345,7 +345,7 @@ export class Table extends NodeType {
                       maxRecordInPartition: {
                         title: '分片大小',
                         type: 'number',
-                        default: 0,
+                        default: 200000,
                         'x-component': 'InputNumber',
                         'x-component-props': {
                           min: 0
@@ -365,12 +365,12 @@ export class Table extends NodeType {
                         default: 10,
                         enum: [
                           {
-                            label: '基于count分片',
-                            value: 1
-                          },
-                          {
                             label: '基于min/max分片',
                             value: 10
+                          },
+                          {
+                            label: '基于count分片',
+                            value: 1
                           }
                         ],
                         'x-decorator': 'FormItem',
@@ -378,8 +378,15 @@ export class Table extends NodeType {
                         'x-reactions': {
                           dependencies: ['.enable'],
                           fulfill: {
+                            run: `
+                              if ($values.splitTyp !== 10) return;
+                              !$values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(10);
+                            `,
                             state: {
                               display: '{{$deps[0] ? "visible" :"hidden"}}'
+                            },
+                            schema: {
+                              'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
                             }
                           }
                         }
