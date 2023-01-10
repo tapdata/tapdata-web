@@ -131,6 +131,7 @@
 
       <ElButton
         v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
+        :disabled="$disabledReadonlyUserBtn()"
         key="reset"
         :class="[isViewer ? 'btn--text mx-2' : 'mx-1']"
         size="medium"
@@ -143,7 +144,7 @@
       <ElButton
         v-if="!stateIsReadonly"
         :loading="isSaving"
-        :disabled="dataflow.disabledData && dataflow.disabledData.edit"
+        :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
         class="mx-2"
         size="medium"
         @click="$emit('save')"
@@ -157,7 +158,7 @@
           key="edit"
           class="mx-1 btn--text"
           size="medium"
-          :disabled="dataflow.disabledData && dataflow.disabledData.edit"
+          :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
           @click="$emit('edit')"
         >
           <VIcon>edit</VIcon>

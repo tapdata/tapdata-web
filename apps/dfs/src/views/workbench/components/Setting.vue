@@ -12,15 +12,34 @@
       <div class="notice-setting-title">{{ $t('notify_agent_notification') }}</div>
       <ElFormItem :label="$t('notify_agent_status_offline')">
         <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
-        <ElSwitch v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue"></ElSwitch>
+        <ElSwitch
+          v-model="form.connectionInterrupted.sms"
+          size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
+          @change="handleSettingValue"
+        ></ElSwitch>
         <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
-        <ElSwitch v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue"></ElSwitch>
+        <ElSwitch
+          v-model="form.connectionInterrupted.email"
+          size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
+          @change="handleSettingValue"
+        ></ElSwitch>
       </ElFormItem>
       <ElFormItem :label="$t('notify_agent_status_running')">
         <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
-        <ElSwitch v-model="form.connected.sms" size="mini" @change="handleSettingValue"></ElSwitch>
+        <ElSwitch
+          v-model="form.connected.sms"
+          size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
+          @change="handleSettingValue"
+        ></ElSwitch>
         <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
-        <ElSwitch v-model="form.connected.email" @change="handleSettingValue"></ElSwitch>
+        <ElSwitch
+          v-model="form.connected.email"
+          :disabled="$disabledReadonlyUserBtn()"
+          @change="handleSettingValue"
+        ></ElSwitch>
       </ElFormItem>
       <!--      <div class="notice-setting-title">{{ $t('notify_task_running_notification') }}</div>-->
       <!--      <ElFormItem :label="$t('notify_agent_status_error')">-->

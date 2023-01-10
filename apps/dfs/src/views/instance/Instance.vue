@@ -6,7 +6,12 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="instance-operation-right">
-          <ElButton type="primary" @click="createAgent" :loading="createAgentLoading">
+          <ElButton
+            type="primary"
+            @click="createAgent"
+            :loading="createAgentLoading"
+            :disabled="$disabledReadonlyUserBtn()"
+          >
             <span>{{ $t('agent_button_create') }}</span>
           </ElButton>
         </div>
@@ -152,14 +157,18 @@
         </ElTableColumn>
         <ElTableColumn :label="$t('list_operation')" width="240">
           <template slot-scope="scope">
-            <ElButton type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
-              $t('agent_button_deploy')
-            }}</ElButton>
+            <ElButton
+
+              type="text"
+              :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="toDeploy(scope.row)"
+              >{{ $t('agent_button_deploy') }}</ElButton
+            >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
               size="mini"
               type="text"
-              :disabled="stopBtnDisabled(scope.row)"
+              :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               :loading="scope.row.btnLoading.stop"
               @click="handleStop(scope.row)"
               >{{ $t('button_stop') }}</ElButton
@@ -169,7 +178,7 @@
               size="mini"
               type="text"
               :loading="scope.row.btnLoading.delete"
-              :disabled="delBtnDisabled(scope.row)"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleDel(scope.row)"
               >{{ $t('button_delete') }}</ElButton
             >
@@ -280,7 +289,7 @@
         <div slot="operation" class="flex">
           <VButton
             :loading="selectedRow.btnLoading.deploy"
-            :disabled="deployBtnDisabled(selectedRow)"
+            :disabled="deployBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
             type="primary"
             class="flex-fill min-w-0"
             @click="toDeploy(selectedRow)"
@@ -290,7 +299,7 @@
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.stop"
-            :disabled="stopBtnDisabled(selectedRow)"
+            :disabled="stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
             type="primary"
             class="flex-fill min-w-0"
             @click="handleStop(selectedRow)"
@@ -300,7 +309,7 @@
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.delete"
-            :disabled="delBtnDisabled(selectedRow)"
+            :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
             class="flex-fill min-w-0"
             @click="handleDel(selectedRow)"
           >

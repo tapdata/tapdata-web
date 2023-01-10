@@ -76,6 +76,30 @@ export default ({ routes }) => {
       },
       render: h => h(App)
     }).$mount('#app')
+
+    // 路由守卫
+    router.beforeEach((to, from, next) => {
+      let domainName = document.domain
+      let removeReadonly = localStorage.getItem('removeReadonly')
+      if (
+        [
+          'connectionCreate',
+          'connectionsEdit',
+          'DataflowNew',
+          'DataflowEditor',
+          'MigrateCreate',
+          'MigrateEditor',
+          'MigrateEditor'
+        ].includes(to.name) &&
+        domainName === 'demo.cloud.tapdata.net' &&
+        !removeReadonly
+      ) {
+        next(false)
+      } else {
+        next()
+      }
+    })
+    return router
   }
   loading = window.loading({ fullscreen: true })
   let count = 0
