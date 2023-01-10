@@ -378,10 +378,7 @@ export class Table extends NodeType {
                         'x-reactions': {
                           dependencies: ['.enable'],
                           fulfill: {
-                            run: `
-                              if ($values.splitTyp === 10) return;
-                              $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1);
-                            `,
+                            run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
                             state: {
                               display: '{{$deps[0] ? "visible" :"hidden"}}'
                             },
