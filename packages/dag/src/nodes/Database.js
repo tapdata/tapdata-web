@@ -269,9 +269,6 @@ export class Database extends NodeType {
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
-                'x-decorator-props': {
-                  tooltip: '全量每批次写入的条数'
-                },
                 'x-component-props': {
                   min: 1
                 },
