@@ -307,6 +307,7 @@ import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
 import { calcTimeUnit } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'LeftSider',
@@ -401,7 +402,7 @@ export default {
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
       const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
-      const usedTime = Date.now() - snapshotStartAt
+      const usedTime = Time.getTime() - snapshotStartAt
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
         time = 0
