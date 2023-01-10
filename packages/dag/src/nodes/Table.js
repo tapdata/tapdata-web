@@ -379,8 +379,8 @@ export class Table extends NodeType {
                           dependencies: ['.enable'],
                           fulfill: {
                             run: `
-                              if ($values.splitTyp !== 10) return;
-                              !$values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(10);
+                              if ($values.splitTyp === 10) return;
+                              $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1);
                             `,
                             state: {
                               display: '{{$deps[0] ? "visible" :"hidden"}}'
