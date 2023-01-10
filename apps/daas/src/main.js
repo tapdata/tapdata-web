@@ -8,10 +8,11 @@ import VueClipboard from 'vue-clipboard2'
 // import factory from '@/api/factory'
 import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
+import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
-import { settingsApi, usersApi } from '@tap/api'
+import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import FormBuilder from '@tap/component/src/form-builder'
 
@@ -141,6 +142,10 @@ settingsApi
       configUser(user)
     }
     init(initData)
+    // 设置服务器时间
+    timeStampApi.get().then(t => {
+      Time.setTime(t)
+    })
   })
   .catch(err => {
     // eslint-disable-next-line

@@ -177,7 +177,17 @@ export default {
       })
     },
 
-    changeTime(val) {
+    changeTime(result) {
+      // 不能超出时间范围
+      const [start, end] = this.getRangeTime()
+      let val = result || []
+      if (val[0] < start) {
+        val[0] = start
+      }
+      if (val[1] > end) {
+        val[1] = end
+      }
+
       const { rangeSeparator, formatToString } = this.$refs.datetime
       const label = formatToString(val)?.join(rangeSeparator)
       const valJoin = val?.map(t => new Date(t).getTime()).join()

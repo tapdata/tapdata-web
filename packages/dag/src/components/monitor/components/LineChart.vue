@@ -12,6 +12,7 @@ import { debounce } from 'lodash'
 import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
 import { calcUnit, calcTimeUnit } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'LineChart',
@@ -114,7 +115,7 @@ export default {
       if (x.length) {
         options.xAxis.data = x
       } else {
-        const now = Date.now()
+        const now = Time.getTime()
         const count = this.limit || 5
         options.xAxis.data = Array(count)
           .fill()

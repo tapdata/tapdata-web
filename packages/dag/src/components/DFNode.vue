@@ -38,6 +38,7 @@
 
 <script>
 import i18n from '@tap/i18n'
+import Time from '@tap/shared/src/time'
 
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
@@ -159,7 +160,7 @@ export default {
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
         start: params => {
-          this.onMouseDownAt = Date.now()
+          this.onMouseDownAt = Time.getTime()
           // console.log('node-drag-start', params.pos)
           if (params.e && !this.isNodeSelected(this.nodeId)) {
             // 只有直接拖动的节点params才会有事件
@@ -211,10 +212,10 @@ export default {
               this.removeActiveAction('dragActive')
             }
 
-            if (distance < 4 || Date.now() - this.onMouseDownAt < 10) {
+            if (distance < 4 || Time.getTime() - this.onMouseDownAt < 10) {
               console.log(
                 i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
-                Date.now() - this.onMouseDownAt,
+                Time.getTime() - this.onMouseDownAt,
                 distance
               ) // eslint-disable-line
               this.removeActiveAction('dragActive')
