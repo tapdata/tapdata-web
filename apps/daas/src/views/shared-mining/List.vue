@@ -142,6 +142,7 @@
             <el-date-picker
               v-if="item.pointType !== 'current'"
               v-model="item.dateTime"
+              :picker-options="getPickerOptions(item.dateTime, item)"
               type="datetime"
               format="yyyy-MM-dd HH:mm:ss"
               valueFormat="timestamp"
@@ -165,7 +166,6 @@ import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import TaskButtons from '@/components/TaskButtons'
-import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 
 let timeout = null
 export default {
@@ -392,9 +392,12 @@ export default {
         this.currentForm = JSON.parse(JSON.stringify(this.editForm))
       } else if (event === 'details') {
         this.$router.push({
-          name: 'SharedMiningDetails',
+          name: 'relationTaskDetail',
           params: {
             id: task.id
+          },
+          query: {
+            type: 'logCollector'
           }
         })
       } else {
@@ -430,6 +433,34 @@ export default {
           })
         }
       })
+    },
+
+    getPickerOptions(val, item) {
+      const now = Date.now()
+      const formatMap = {
+        date: 'YYYY-MM-DD',
+        time: 'HH:mm:ss',
+        startTime: '00:00:00',
+        endTime: '23:59:59'
+      }
+
+      const pickDate = dayjs(val).format(formatMap.date)
+      const nowDate = dayjs(now).format(formatMap.date)
+      const nowTime = dayjs(now).format(formatMap.time)
+      if (val > now) {
+        item.dateTime = now
+      }
+      let op = {
+        disabledDate: time => {
+          return new Date(time).getTime() > now
+        }
+      }
+      if (pickDate === nowDate) {
+        op.selectableRange = `${formatMap.startTime} - ${nowTime}`
+      } else {
+        op.selectableRange = `${formatMap.startTime} - ${formatMap.endTime}`
+      }
+      return op
     }
   }
 }

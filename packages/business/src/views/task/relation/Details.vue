@@ -10,7 +10,7 @@
         }}
       </div>
       <div class="flex">
-        <div v-if="type === 'logCollector'" v-loading="!detailData" class="share-detail-head-left pr-4">
+        <div v-if="type === 'logCollector'" v-loading="!detailData.name" class="share-detail-head-left pr-4">
           <div class="flex align-items-center">
             <span class="font-color-normal fw-bold mb-4 fs-7">{{
               $t('packages_business_relation_details_wajuexinxi')
@@ -117,7 +117,7 @@ export default {
         logCollector: i18n.t('packages_business_relation_details_wajue'),
         mem_cache: i18n.t('packages_business_relation_details_huancun')
       },
-      detailData: null
+      detailData: {}
     }
   },
 
@@ -153,7 +153,6 @@ export default {
         let detailData = data || {}
         detailData.taskList = detailData.taskList?.map(makeStatusAndDisabled)
         this.detailData = detailData
-        this.getMeasurement()
       })
     },
 
