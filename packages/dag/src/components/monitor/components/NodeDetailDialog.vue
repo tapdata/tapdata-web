@@ -360,7 +360,7 @@ export default {
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
       const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
-      const usedTime = Time.getTime() - snapshotStartAt
+      const usedTime = Time.now() - snapshotStartAt
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
         time = 0
@@ -468,7 +468,7 @@ export default {
             taskRecordId,
             nodeId
           },
-          endAt: Time.getTime(), // 停止时间 || 当前时间
+          endAt: Time.now(), // 停止时间 || 当前时间
           fields: [
             'insertTotal',
             'updateTotal',
@@ -557,7 +557,7 @@ export default {
       if (showLoading) {
         this.loading = true
       }
-      const startStamp = Time.getTime()
+      const startStamp = Time.now()
       const params = {
         totalData: {
           uri: '/api/measurement/query/v2',
@@ -603,7 +603,7 @@ export default {
               () => {
                 this.loading = false
               },
-              Time.getTime() - startStamp < 1000 ? 1000 : 0
+              Time.now() - startStamp < 1000 ? 1000 : 0
             )
         })
     },

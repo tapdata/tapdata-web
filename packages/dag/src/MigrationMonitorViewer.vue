@@ -501,7 +501,7 @@ export default {
               type: 'task',
               taskId
             },
-            endAt: Time.getTime(), // 停止时间 || 当前时间
+            endAt: Time.now(), // 停止时间 || 当前时间
             fields: [
               'inputInsertTotal',
               'inputUpdateTotal',
@@ -701,9 +701,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Time.getTime()
+      let endTimestamp = this.lastStopTime || Time.now()
       if (status === 'running') {
-        endTimestamp = Time.getTime()
+        endTimestamp = Time.now()
       }
       switch (type) {
         case '5m':
@@ -800,7 +800,7 @@ export default {
     },
 
     getTime() {
-      return Time.getTime()
+      return Time.now()
     }
   }
 }

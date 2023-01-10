@@ -442,7 +442,7 @@ export default {
 
     initState(e) {
       this.state = {
-        onMouseDownAt: Time.getTime(),
+        onMouseDownAt: Time.now(),
         startEvent: e,
         position: this.getMousePosition(e),
         inScrollerPosition: this.getMousePositionWithinScroller(e)
@@ -453,7 +453,7 @@ export default {
       const distance = Math.sqrt(
         Math.pow(e.pageX - this.state.startEvent.pageX, 2) + Math.pow(e.pageY - this.state.startEvent.pageY, 2)
       )
-      const timeDelta = Time.getTime() - this.state.onMouseDownAt
+      const timeDelta = Time.now() - this.state.onMouseDownAt
       if (timeDelta > 10 && e !== this.state.startEvent && distance > 4) {
         return true
       }

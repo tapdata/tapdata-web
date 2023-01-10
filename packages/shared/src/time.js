@@ -7,7 +7,7 @@ let Time = {
     Time.systemTime = Date.now()
     Time.serverTime = t || Time.systemTime
   },
-  getTime() {
+  now() {
     const { serverTime, systemTime } = Time
     return Date.now() - systemTime + serverTime
   }

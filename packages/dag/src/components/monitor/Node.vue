@@ -64,7 +64,7 @@ export default defineComponent({
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !startAt) {
         return null
       }
-      const usedTime = Time.getTime() - snapshotStartAt
+      const usedTime = Time.now() - snapshotStartAt
       const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
       return calcTimeUnit(Math.ceil(Math.abs(time)))
     })

@@ -89,7 +89,7 @@ export const JsProcessor = observer(
           pageSize: 50,
           start: queryStart,
           nodeId: form.values.id,
-          end: Time.getTime()
+          end: Time.now()
         })
         logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${form.values.id}]`).test(item.message)) || []
       }
@@ -165,12 +165,12 @@ export const JsProcessor = observer(
         logLoading.value = true
         showJsonArea.value = true
         clearTimeout(timer)
-        version = Time.getTime()
-        queryStart = Time.getTime()
+        version = Time.now()
+        queryStart = Time.now()
         if (!fullscreen.value) fullscreen.value = true
         taskApi.testRunJs({ ...params, version, script: props.value }).then(
           () => {
-            queryStart = Time.getTime()
+            queryStart = Time.now()
             handleAutoQuery()
           },
           async () => {
