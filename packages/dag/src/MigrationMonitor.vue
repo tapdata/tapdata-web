@@ -120,6 +120,7 @@
           :dataflow="dataflow"
           :alarmData="alarmData"
           :logTotals="logTotals"
+          :taskRecord="taskRecord"
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
@@ -141,7 +142,7 @@
         :dataflow="dataflow"
         :node-id="nodeDetailDialogId"
         :timeFormat="timeFormat"
-        :range="[firstStartTime, lastStopTime || Date.now()]"
+        :range="[firstStartTime, lastStopTime || getTime()]"
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
@@ -166,6 +167,7 @@ import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
 import { ALARM_LEVEL_SORT } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -254,7 +256,11 @@ export default {
       refreshRate: 5000,
       extraEnterCount: 0,
       isReset: false, // 是否重置了
-      watchStatusCount: 0
+      watchStatusCount: 0,
+      taskRecord: {
+        total: 0,
+        items: []
+      }
     }
   },
 
@@ -290,12 +296,12 @@ export default {
       const { firstStartTime, lastStopTime } = this
       let end = lastStopTime
       if (['running'].includes(this.dataflow.status)) {
-        end = Date.now()
+        end = Time.getTime()
       }
       if (end < firstStartTime) {
         end = firstStartTime + 5 * 60 * 1000
       }
-      return [firstStartTime, end || Date.now()]
+      return [firstStartTime, end || Time.getTime()]
     }
   },
 
@@ -656,7 +662,7 @@ export default {
             taskId,
             taskRecordId
           },
-          endAt: Date.now(), // 停止时间 || 当前时间
+          endAt: Time.getTime(), // 停止时间 || 当前时间
           fields: [
             'inputInsertTotal',
             'inputUpdateTotal',
@@ -762,7 +768,7 @@ export default {
             type: 'engine',
             engineId: agentId
           },
-          endAt: Date.now(),
+          endAt: Time.getTime(),
           fields: ['memoryRate', 'cpuUsage', 'gcRate'],
           type: 'instant'
         }
@@ -812,6 +818,14 @@ export default {
         agentData: {
           uri: '/api/measurement/query/v2',
           param: this.getQuotaFilter('agentData')
+        },
+        taskRecord: {
+          uri: '/api/task/records',
+          param: {
+            taskId,
+            size: 200,
+            page: 1
+          }
         }
       }
       return params
@@ -831,7 +845,8 @@ export default {
           const map = {
             verifyTotals: this.loadVerifyTotals,
             alarmData: this.loadAlarmData,
-            logTotals: this.loadLogTotals
+            logTotals: this.loadLogTotals,
+            taskRecord: this.loadTaskRecord
           }
           for (let key in data) {
             const item = data[key]
@@ -889,6 +904,7 @@ export default {
       this.loadVerifyTotals()
       this.loadAlarmData()
       this.loadLogTotals()
+      this.loadTaskRecord()
     },
 
     loadVerifyTotals(data = {}) {
@@ -930,6 +946,11 @@ export default {
 
     loadLogTotals(data = []) {
       this.logTotals = data
+    },
+
+    loadTaskRecord(data) {
+      if (!data) return
+      this.taskRecord = data
     },
 
     getDagData(data = []) {
@@ -1010,9 +1031,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Date.now()
+      let endTimestamp = this.lastStopTime || Time.getTime()
       if (status === 'running') {
-        endTimestamp = Date.now()
+        endTimestamp = Time.getTime()
       }
       switch (type) {
         case '5m':
@@ -1147,6 +1168,10 @@ export default {
           return map
         }, {})
       )
+    },
+
+    getTime() {
+      return Time.getTime()
     }
   }
 }

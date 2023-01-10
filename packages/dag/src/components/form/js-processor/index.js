@@ -9,6 +9,7 @@ import { FormItem, JsEditor, HighlightCode } from '@tap/form'
 import { VCodeEditor, VirtualSelect, VEmpty } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 import { javascriptFunctionsApi, taskApi, monitoringLogsApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 import { JsDeclare } from '../js-declare'
 import './style.scss'
 
@@ -88,7 +89,7 @@ export const JsProcessor = observer(
           pageSize: 50,
           start: queryStart,
           nodeId: form.values.id,
-          end: Date.now()
+          end: Time.getTime()
         })
         logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${form.values.id}]`).test(item.message)) || []
       }
@@ -164,12 +165,12 @@ export const JsProcessor = observer(
         logLoading.value = true
         showJsonArea.value = true
         clearTimeout(timer)
-        version = Date.now()
-        queryStart = Date.now()
+        version = Time.getTime()
+        queryStart = Time.getTime()
         if (!fullscreen.value) fullscreen.value = true
         taskApi.testRunJs({ ...params, version, script: props.value }).then(
           () => {
-            queryStart = Date.now()
+            queryStart = Time.getTime()
             handleAutoQuery()
           },
           async () => {

@@ -1,20 +1,43 @@
 import i18n from '@tap/i18n'
 import { connect, mapProps, useForm } from '@tap/form'
+import { metadataInstancesApi } from '@tap/api'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from '@vue/composition-api'
-import { VIcon } from '@tap/component'
+import { defineComponent, ref } from '@vue/composition-api'
+import { VIcon, VirtualTree } from '@tap/component'
 import { convertSchemaToTreeData, uuid } from '../field-rename/util'
 import '../field-rename/index.scss'
+import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldAddDel = connect(
   observer(
     defineComponent({
-      props: ['loading', 'options', 'disabled'],
-      setup() {
+      props: ['disabled'],
+      setup(props, { root }) {
         const formRef = useForm()
         const form = formRef.value
+        const options = ref([])
+        const loading = ref(false)
+
+        const loadSchema = async () => {
+          loading.value = true
+          try {
+            const data = await metadataInstancesApi.nodeSchema(formRef.value.values.id)
+            options.value = data?.[0]?.fields || []
+          } catch (e) {
+            options.value = []
+          }
+          loading.value = false
+        }
+
+        loadSchema()
+
+        useAfterTaskSaved(root, formRef.value.values.$inputs, loadSchema)
+
         return {
+          loading,
+          options,
+          loadSchema,
           databaseType: form.values.databaseType,
           operations: form.values.operations || [],
           deleteAllFields: form.values.deleteAllFields || false,
@@ -47,15 +70,6 @@ export const FieldAddDel = connect(
           }
         }
       },
-      watch: {
-        operations: {
-          deep: true,
-          handler(v) {
-            this.$emit('change', v)
-            console.log('operations', v) // eslint-disable-line
-          }
-        }
-      },
 
       render() {
         // eslint-disable-next-line no-console
@@ -72,7 +86,7 @@ export const FieldAddDel = connect(
         this.deleteAllFieldsData = formValues?.deleteAllFields || false
 
         return (
-          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
+          <div class="field-processors-tree-warp bg-body pt-2" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
               <span class="flex-1 text inline-block ml-6">
@@ -110,21 +124,28 @@ export const FieldAddDel = connect(
               </span>
             </div>
             <div className="field-processors-tree-warp">
-              <ElTree
+              <VirtualTree
                 ref="tree"
+                height="calc(100vh - 240px)"
                 data={fields}
                 node-key="id"
                 default-expand-all={true}
-                //show-checkbox={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{
                   default: ({ node, data }) => (
                     <span
-                      class={['tree-node', 'flex flex-1', 'justify-content-center', 'align-items', 'flex-row']}
+                      class={[
+                        'tree-node',
+                        'flex flex-1',
+                        'justify-content-center',
+                        'align-items',
+                        'flex-row',
+                        'overflow-hidden'
+                      ]}
                       slot-scope="{ node, data }"
                     >
-                      <span class={['inline-block', 'flex-1']}>
+                      <span class={['inline-block', 'flex-1', 'text-truncate']}>
                         {this.isCreate(data.id) ? (
                           <span
                             class={[
@@ -217,6 +238,7 @@ export const FieldAddDel = connect(
           return ops && ops.length > 0
         },
         checkOps(fields) {
+          console.log('checkOps', this.operations?.length) // eslint-disable-line
           if (this.operations?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
               let index = fields.findIndex(t => t.id === this.operations[i]?.id)
@@ -289,6 +311,7 @@ export const FieldAddDel = connect(
             let op = createOps[0]
             op.field = data.field_name
           }
+          this.$emit('change', this.operations)
         },
         handleReset(node, data) {
           if (this.deleteAllFieldsData) {
@@ -298,7 +321,8 @@ export const FieldAddDel = connect(
           }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
           let parentId = node.parent.data.id
-          let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
+          const operations = [...this.operations]
+          let indexId = operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
           if (parentId && indexId.length !== 0) {
             return
           }
@@ -308,16 +332,16 @@ export const FieldAddDel = connect(
               let childNode = node.childNodes[i]
               fn(childNode, childNode.data)
             }
-            for (let i = 0; i < self.operations.length; i++) {
-              if (self.operations[i].id === data.id) {
-                let ops = self.operations[i]
+            for (let i = 0; i < operations.length; i++) {
+              if (operations[i].id === data.id) {
+                let ops = operations[i]
                 if (ops.op === 'REMOVE') {
-                  self.operations.splice(i, 1)
+                  operations.splice(i, 1)
                   i--
                   continue
                 }
                 if (ops.op === 'CREATE') {
-                  self.operations.splice(i, 1)
+                  operations.splice(i, 1)
                   i--
                   self.$refs.tree.remove(node)
                   continue
@@ -326,7 +350,8 @@ export const FieldAddDel = connect(
             }
           }
           fn(node, data)
-          this.$forceUpdate()
+          this.operations = operations
+          this.$emit('change', this.operations)
         },
         getParentFieldName(node) {
           let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
@@ -360,7 +385,7 @@ export const FieldAddDel = connect(
             level: 1
           })
           this.operations.push(newFieldOperation)
-
+          this.$emit('change', this.operations)
           let newNodeData = {
             id: fieldId,
             label: 'newFieldName',
@@ -388,26 +413,26 @@ export const FieldAddDel = connect(
         },
         handleDelete(node, data) {
           console.log('fieldProcessor.handleDelete', node, data) // eslint-disable-line
+          const operations = [...this.operations]
           let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE')
           if (createOpsIndex >= 0) {
             let fieldName = this.operations[createOpsIndex].field_name + '.'
-            this.operations.splice(createOpsIndex, 1)
+            operations.splice(createOpsIndex, 1)
 
             for (let i = 0; i < this.operations.length; i++) {
               let op = this.operations[i]
               let opFieldName = op.field || op.field_name
               if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
-                this.operations.splice(i, 1)
+                operations.splice(i, 1)
                 i--
               }
             }
             this.$refs.tree.remove(node)
           } else {
             let originalField = this.getNativeData(data.id)
-            this.operations = this.operations || []
             let self = this
             let fn = function (field) {
-              let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
+              let ops = operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
               let op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
                 id: field.id,
                 field: field.schema_field_name || field.field_name,
@@ -420,30 +445,33 @@ export const FieldAddDel = connect(
                 field_name: field.field_name
               })
               if (ops.length !== 0) {
-                let index = self.operations.findIndex(v => v.op === 'REMOVE' && v.id === field.id)
+                let index = operations.findIndex(v => v.op === 'REMOVE' && v.id === field.id)
                 if (index > -1) {
-                  self.operations.splice(index, 1)
+                  operations.splice(index, 1)
                 }
                 op.operand = true
               }
-              self.operations.push(op)
+              operations.push(op)
               if (field.children) {
                 field.children.forEach(fn)
               }
             }
             if (originalField) fn(originalField)
           }
-          this.$forceUpdate()
+          this.operations = operations
+          this.$emit('change', this.operations)
           console.log('fieldProcessor.handleDelete', this.operations) // eslint-disable-line
         },
         handleAllDelete() {
           //清掉所有operations
-          this.operations.splice(0)
+          this.operations = []
+          this.$emit('change', this.operations)
           this.form.setValuesIn('deleteAllFields', true)
         },
         handleAllReset() {
           //清掉所有operations
-          this.operations.splice(0)
+          this.operations = []
+          this.$emit('change', this.operations)
           this.form.setValuesIn('deleteAllFields', false)
         }
         // handleCheckAllChange() {

@@ -38,6 +38,7 @@
           class="btn btn-create"
           type="primary"
           size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
           @click="checkTestConnectionAvailable"
         >
           <span> {{ $t('packages_business_connection_createNewDataSource') }}</span>
@@ -133,7 +134,9 @@
           <ElButton
             v-readonlybtn="'datasource_edition'"
             type="text"
-            :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
+            :disabled="
+              $disabledByPermission('datasource_edition_all_data', scope.row.user_id) || $disabledReadonlyUserBtn()
+            "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('packages_business_button_edit') }}
           </ElButton>
@@ -142,6 +145,7 @@
             v-readonlybtn="'datasource_creation'"
             type="text"
             :loading="scope.row.copyLoading"
+            :disabled="$disabledReadonlyUserBtn()"
             @click="copy(scope.row)"
             >{{ $t('packages_business_button_copy') }}
           </ElButton>
@@ -149,7 +153,9 @@
           <ElButton
             v-readonlybtn="'datasource_delete'"
             type="text"
-            :disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
+            :disabled="
+              $disabledByPermission('datasource_delete_all_data', scope.row.user_id) || $disabledReadonlyUserBtn()
+            "
             @click="remove(scope.row)"
             >{{ $t('packages_business_button_delete') }}
           </ElButton>

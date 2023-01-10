@@ -64,3 +64,5 @@ export {
 }
 
 export * from './base'
+
+export * from './virtual-tree'

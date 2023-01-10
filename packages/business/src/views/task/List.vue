@@ -63,9 +63,10 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <template v-if="isDaas">
+        <template>
           <el-button
-            v-show="multipleSelection.length > 0"
+            v-show="multipleSelection.length > 0 && isDaas"
+            :disabled="$disabledReadonlyUserBtn()"
             :disabled="$disabledReadonlyUserBtn()"
             v-readonlybtn="'SYNC_job_export'"
             size="mini"
@@ -75,7 +76,14 @@
             <!--<i class="iconfont icon-export back-btn-icon"></i>-->
             <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>
           </el-button>
-          <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+          <el-button
+            v-if="isDaas"
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImport"
+          >
             <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
             <span> {{ $t('packages_business_button_bulk_import') }}</span>
           </el-button>
@@ -85,6 +93,7 @@
           class="btn btn-create"
           type="primary"
           size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
           :loading="createBtnLoading"
           @click="create"
         >
@@ -185,7 +194,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.edit"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
               {{ $t('packages_business_button_edit') }}
@@ -203,20 +212,25 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.reset"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
               {{ $t('packages_business_task_list_reset') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="copy([row.id], row)">
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="copy([row.id], row)"
+            >
               {{ $t('packages_business_task_list_copy') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.delete"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
               {{ $t('packages_business_task_list_delete') }}

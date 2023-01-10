@@ -31,7 +31,7 @@
               </el-button>
             </span>
           </el-tooltip>
-          <el-button class="flex-fill min-w-0" size="mini" @click="edit()">
+          <el-button class="flex-fill min-w-0" size="mini" @click="edit()" :disabled="$disabledReadonlyUserBtn()">
             {{ $t('packages_business_connection_preview_edit') }}
           </el-button>
           <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
@@ -89,7 +89,7 @@
         </div>
       </div>
     </div>
-    <Test ref="test" :formData="connection" @receive="receiveTestData"></Test>
+    <Test ref="test" :formData="formData" @receive="receiveTestData"></Test>
   </Drawer>
 </template>
 
@@ -97,6 +97,7 @@
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
+import { cloneDeep } from 'lodash'
 import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 
@@ -236,7 +237,8 @@ export default {
           //   ]
           // }
         ]
-      }
+      },
+      formData: {}
     }
   },
   beforeDestroy() {
@@ -295,6 +297,7 @@ export default {
     open(row) {
       this.visible = true
       this.showProgress = false
+      this.formData = cloneDeep(row)
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
@@ -374,6 +377,7 @@ export default {
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
+          this.formData = cloneDeep(data)
           this.connection = this.transformData(data)
           //组装数据
           this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
@@ -432,6 +436,7 @@ export default {
       if (!this.visible) return
       const result = list.find(item => item.id === this.connection.id)
       if (!result) return
+      this.formData = cloneDeep(result)
       this.connection = this.transformData(result)
     },
 
@@ -446,6 +451,7 @@ export default {
     },
 
     setConnectionData(row) {
+      this.formData = cloneDeep(row)
       this.connection = this.transformData(row)
     },
 

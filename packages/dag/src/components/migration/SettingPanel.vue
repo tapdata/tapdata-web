@@ -144,6 +144,9 @@ export default observer({
                         title: this.$t('packages_dag_task_setting_crontabExpressionFlag'), //定期调度任务
                         type: 'boolean',
                         'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: this.$t('packages_dag_task_setting_cron_tip')
+                        },
                         'x-component': 'Switch',
                         default: false,
                         'x-reactions': {
@@ -163,13 +166,11 @@ export default observer({
                           message: 'Cron表达式格式有误'
                         },
                         'x-decorator': 'FormItem',
-                        'x-component': 'Input.TextArea',
+                        'x-component': 'Input',
                         'x-component-props': {
                           placeholder: this.$t('packages_dag_task_setting_cron_expression')
                         },
-                        'x-decorator-props': {
-                          tooltip: this.$t('packages_dag_task_setting_cron_tip')
-                        },
+                        description: this.$t('packages_dag_task_setting_cron_tip'),
                         'x-reactions': {
                           dependencies: ['type', 'crontabExpressionFlag'],
                           fulfill: {
