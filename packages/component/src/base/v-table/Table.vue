@@ -211,6 +211,9 @@ export default {
     },
     doLayout() {
       this.table.doLayout()
+    },
+    getPage() {
+      return this.page
     }
   }
 }

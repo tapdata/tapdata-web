@@ -53,8 +53,9 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('packages_business_dataForm_test_result')" width="150">
         <template slot-scope="scope">
+          <!--当前检查项失败 但是不影响此次测试结果 -->
           <span v-if="scope.row.status === 'failed' && !scope.row.required">
-            <VIcon size="16" :style="{ color: colorMap[status] }">warning</VIcon>
+            <VIcon size="16" :style="{ color: colorMap['warning'] }">warning</VIcon>
             <!--<i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>-->
             {{ statusMap[scope.row.status] }}
           </span>

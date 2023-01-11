@@ -703,5 +703,7 @@ export default {
   packages_business_verification_form_xitongtongzhi: '系统通知',
   packages_business_verification_form_jiaoyanjieguobu: '校验结果不一致告警',
   packages_business_verification_form_jianyanrenwuyun: '检验任务运行出错警告',
-  packages_business_verification_form_jiaoyangaojing: '校验告警'
+  packages_business_verification_form_jiaoyangaojing: '校验告警',
+  packages_business_task_status_error_tip:
+    '任务删除成功，以下几个 PostgreSQL 连接的信息清除失败，需要您使用以下方式手动清除'
 }
