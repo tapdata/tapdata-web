@@ -12,6 +12,7 @@ import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
 import { taskApi } from '@tap/api'
+import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 
 export default observer({
   name: 'SettingPanel',
@@ -32,7 +33,8 @@ export default observer({
           return new Promise(resolve => {
             this.handleCheckName(resolve, value)
           })
-        }
+        },
+        getPickerOptionsBeforeTime
       },
 
       schema: {
@@ -250,14 +252,23 @@ export default observer({
                                 format: 'yyyy-MM-dd HH:mm:ss',
                                 valueFormat: 'timestamp'
                               },
-                              'x-reactions': {
-                                dependencies: ['.pointType'],
-                                fulfill: {
-                                  state: {
-                                    visible: '{{$deps[0] !== "current"}}'
+                              'x-reactions': [
+                                {
+                                  dependencies: ['.pointType'],
+                                  fulfill: {
+                                    state: {
+                                      visible: '{{$deps[0] !== "current"}}'
+                                    }
+                                  }
+                                },
+                                {
+                                  fulfill: {
+                                    schema: {
+                                      'x-component-props.pickerOptions': `{{getPickerOptionsBeforeTime($self.value)}}`
+                                    }
                                   }
                                 }
-                              }
+                              ]
                             }
                           }
                         }
