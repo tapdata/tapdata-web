@@ -54,8 +54,10 @@
 <script>
 import { Chart, FilterBar } from '@tap/component'
 import { formatTime } from '@/utils/util'
-import { handleUnit, formatMs } from './utils'
 import { apiMonitorApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
+import { handleUnit, formatMs } from './utils'
+
 export default {
   name: 'Detail',
   components: { FilterBar, Chart },
@@ -191,7 +193,7 @@ export default {
         id: this.id,
         guanluary: this.searchParams.guanluary || 5,
         clientId: [],
-        start: new Date().getTime(),
+        start: Time.now(),
         type: this.searchParams.type || 'visitTotalLine'
       }
       if (!hiddenLoading) {

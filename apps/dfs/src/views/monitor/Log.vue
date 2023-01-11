@@ -93,7 +93,7 @@
 </style>
 <script>
 import i18n from '@/i18n'
-
+import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import { downloadBlob } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
@@ -303,7 +303,7 @@ export default {
       this.downloadForm.select = 6
     },
     downloadNow(resetLoading) {
-      let start = Date.now() - this.downloadForm.select * 60 * 60 * 1000
+      let start = Time.now() - this.downloadForm.select * 60 * 60 * 1000
       let params = {
         dataFlowId: this.id,
         start

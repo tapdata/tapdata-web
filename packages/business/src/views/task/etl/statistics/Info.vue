@@ -130,7 +130,9 @@
           v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background justify-content-center"
         >
-          <div class="fw-bold right-box-text font-color-dark">{{ $t('packages_business_task_info_full_progress') }}</div>
+          <div class="fw-bold right-box-text font-color-dark">
+            {{ $t('packages_business_task_info_full_progress') }}
+          </div>
           <div class="flex flex-column justify-content-center">
             <div
               class="progress-box flex justify-content-center align-items-center position-relative mt-1"
@@ -167,7 +169,9 @@
           v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background justify-content-center"
         >
-          <div class="fw-bold right-box-text font-color-dark">{{ $t('packages_business_task_info_incremental_delay') }}</div>
+          <div class="fw-bold right-box-text font-color-dark">
+            {{ $t('packages_business_task_info_incremental_delay') }}
+          </div>
           <div class="flex flex-column justify-content-center">
             <div
               v-if="writeData.replicateLag"
@@ -194,6 +198,7 @@ import dayjs from 'dayjs'
 
 import { taskApi } from '@tap/api'
 import { VIcon, SelectList, Chart, DatetimeRange } from '@tap/component'
+import Time from '@tap/shared/src/time'
 
 import { formatMs, toThousandsUnit } from '../../../../shared'
 import TaskStatus from '../../../../components/TaskStatus'
@@ -477,7 +482,7 @@ export default {
       // 获取维度
       let diff =
         this.selectedTime === 'custom'
-          ? (endTimeStamp || new Date().getTime()) - startTimeStamp
+          ? (endTimeStamp || Time.now()) - startTimeStamp
           : selectedTimeItems.find(t => t.value === selectedTime).spacing
       let guanluary = this.getGuanluary(diff)
       // 维度需要展示的格式
@@ -743,7 +748,9 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          `<p>${this.$t('packages_business_task_list_edit_tip')}<span style="color:#409EFF">${this.$t('packages_business_task_list_edit_tip1')}</span>、` +
+          `<p>${this.$t('packages_business_task_list_edit_tip')}<span style="color:#409EFF">${this.$t(
+            'packages_business_task_list_edit_tip1'
+          )}</span>、` +
             `<span style="color:#409EFF">${this.$t('packages_business_task_list_node_attr')}</span>、` +
             `<span style="color:#409EFF">${this.$t('packages_business_task_list_matching_releation')}</span>,` +
             `${this.$t('packages_business_task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
@@ -779,7 +786,7 @@ export default {
       }, 200)
     },
     getTimeRangeByType(type, val) {
-      let current = new Date().getTime()
+      let current = Time.now()
       let result = [null]
       switch (type) {
         case '5min':

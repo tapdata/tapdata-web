@@ -369,6 +369,7 @@
 import dayjs from 'dayjs'
 
 import Cookie from '@tap/shared/src/cookie'
+import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { usersApi, timeStampApi, licensesApi } from '@tap/api'
@@ -651,7 +652,7 @@ export default {
     async getLicense() {
       let stime = ''
       await timeStampApi.get().then(data => {
-        stime = data || new Date().getTime()
+        stime = data || Time.now()
       })
       licensesApi.expires({}).then(data => {
         let expires_on = data?.expires_on || ''

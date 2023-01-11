@@ -264,8 +264,8 @@ import { cloneDeep } from 'lodash'
 
 import { GitBook, VCodeEditor } from '@tap/component'
 
-import { DATA_NODE_TYPES } from '@/const.js'
-import { metadataInstancesApi, taskApi, inspectApi } from '@tap/api'
+import { taskApi, inspectApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 
 import ConditionBox from './components/ConditionBox'
 import { TABLE_PARAMS, META_INSTANCE_FIELDS } from './components/const'
@@ -304,8 +304,8 @@ export default {
         timing: {
           intervals: 24 * 60,
           intervalsUnit: 'minute',
-          start: new Date().getTime(),
-          end: new Date().getTime() + 24 * 60 * 60 * 1000
+          start: Time.now(),
+          end: Time.now() + 24 * 60 * 60 * 1000
         },
         limit: {
           keep: 100
