@@ -136,17 +136,16 @@
           label="版本"
           prop="apiVersion"
           :rules="rules.apiVersion"
-          v-show="form.pathAccessMethod === 'customize'"
+          v-if="form.pathAccessMethod === 'customize'"
         >
           <ElInput v-model="form.apiVersion" placeholder="请输入版本" :disabled="!isEdit"></ElInput>
         </ElFormItem>
         <ElFormItem
-          prop="prefix"
           class="flex-1 mt-4"
           size="small"
           label="前缀"
-          :rules="rules.prefix"
-          v-show="form.pathAccessMethod === 'customize'"
+          prop="prefix"
+          v-if="form.pathAccessMethod === 'customize'"
         >
           <ElInput v-model="form.prefix" placeholder="请输入前缀" :disabled="!isEdit"></ElInput>
         </ElFormItem>
@@ -155,12 +154,11 @@
           size="small"
           label="基础路径"
           prop="basePath"
-          :rules="rules.basePath"
-          v-show="form.pathAccessMethod === 'customize'"
+          v-if="form.pathAccessMethod === 'customize'"
         >
           <ElInput v-model="form.basePath" placeholder="请输入基础路径" :disabled="!isEdit"></ElInput>
         </ElFormItem>
-        <ElFormItem class="flex-1 mt-4" size="small" label="访问路径" v-show="form.pathAccessMethod === 'customize'">
+        <ElFormItem class="flex-1 mt-4" size="small" label="访问路径" v-if="form.pathAccessMethod === 'customize'">
           <ElInput v-model="customizePath" :disabled="true"></ElInput>
         </ElFormItem>
 
@@ -441,6 +439,14 @@ export default {
         callback('只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头')
       }
     }
+    const validatePrefix = (rule, value, callback) => {
+      // eslint-disable-next-line no-control-regex
+      if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value) || value === '') {
+        callback()
+      } else {
+        callback('只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头')
+      }
+    }
 
     return {
       loading: false,
@@ -463,7 +469,7 @@ export default {
         tableName: [{ required: true, message: i18n.t('daas_data_server_drawer_qingxuanzeduixiang'), trigger: 'blur' }],
         param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }],
         basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
-        prefix: [{ required: false, validator: validateBasePath, trigger: ['blur', 'change'] }],
+        prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
         apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }]
       },
       apiTypeMap: {
