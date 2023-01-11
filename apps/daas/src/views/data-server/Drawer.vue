@@ -496,7 +496,7 @@ export default {
     customizePath() {
       let arr = []
       if (this.form?.apiVersion && this.form?.apiVersion !== '') {
-        arr.push(this.form?.apiVersion.toLowerCase())
+        arr.push(this.form?.apiVersion)
       }
       if (this.form?.prefix && this.form?.prefix !== '') {
         arr.push(this.form?.prefix)
@@ -658,6 +658,15 @@ export default {
             prefix,
             pathAccessMethod
           } = this.form
+          // basePath
+          if (basePath && basePath !== '') {
+            status = 'pending'
+          }
+          //自定义路径 数据清理
+          if (pathAccessMethod === 'default') {
+            prefix = ''
+            apiVersion = ''
+          }
           if (params.some(it => !it.name.trim())) {
             return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
           }
