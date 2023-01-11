@@ -45,9 +45,9 @@ export default {
   packages_dag_task_stetting_desc: 'Task description',
   packages_dag_task_setting_plan_start_date: 'Plan start date',
   packages_dag_task_setting_crontabExpressionFlag: 'Scheduled tasks',
-  packages_dag_task_setting_cron_expression: 'Please enter the cron expression',
+  packages_dag_task_setting_cron_expression: 'Please enter the Cron expression',
   packages_dag_task_setting_cron_tip:
-    'Enter a cron expression for when task should run\n' +
+    'Enter a Cron expression to configure the running schedule.\n' +
     'Syntax: second * minute * hour * day * month * week ? year *\n' +
     'Example:\n' +
     '0 */1 * * * ?  // Run every minute \n' +
