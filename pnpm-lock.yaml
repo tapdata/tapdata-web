@@ -340,6 +340,7 @@ importers:
       '@tap/form': workspace:^1.0.0
       '@tap/i18n': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
+      cron-parser: ^4.6.0
       dayjs: ^1.11.2
       qs: ^6.11.0
     dependencies:
@@ -349,6 +350,7 @@ importers:
       '@tap/form': link:../form
       '@tap/i18n': link:../i18n
       '@tap/shared': link:../shared
+      cron-parser: registry.npmmirror.com/cron-parser/4.6.0
       dayjs: registry.npmmirror.com/dayjs/1.11.3
       qs: registry.npmmirror.com/qs/6.11.0
 

@@ -729,5 +729,6 @@ export default {
   packages_business_verification_form_jianyanrenwuyun: 'Verification task running error warning',
   packages_business_verification_form_jiaoyangaojing: 'Verification warning',
   packages_business_task_status_error_tip:
-    "ask_list_error_tip: 'The task has been successfully deleted, but the information of the following PostgreSQL connections failed to be cleared, and you need to manually clear them in the following ways"
+    "ask_list_error_tip: 'The task has been successfully deleted, but the information of the following PostgreSQL connections failed to be cleared, and you need to manually clear them in the following ways",
+  packages_business_task_status_next_run_time: 'Next run time: {val}'
 }
