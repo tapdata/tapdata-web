@@ -315,7 +315,7 @@ export default {
       }
       this.watchStatusCount++
       if (this.watchStatusCount === 1) {
-        const flag = this.dataflow.syncType === 'migrate' && ['renewing', 'renew_failed'].includes(v1)
+        const flag = ['renewing', 'renew_failed'].includes(v1)
         this.toggleConsole(flag)
         this.handleBottomPanel(!flag)
       }
