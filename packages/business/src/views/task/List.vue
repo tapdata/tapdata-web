@@ -460,7 +460,9 @@ export default {
         stoppingTime: true,
         pingTime: true,
         canForceStopping: true,
-        currentEventTimestamp: true
+        currentEventTimestamp: true,
+        crontabExpressionFlag: true,
+        crontabExpression: true
       }
       let where = {
         syncType

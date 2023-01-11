@@ -3,6 +3,12 @@
     <span v-if="show" class="status-block" :class="['status-' + task.status]">
       {{ $t(STATUS_MAP[task.status].i18n) }}
     </span>
+    <ElTooltip v-if="showCronTip" placement="top">
+      <VIcon size="18" class="ml-2" color="#008b58">task-process</VIcon>
+      <template #content>
+        {{ getNextStartTime() }}
+      </template>
+    </ElTooltip>
     <template v-if="agentMap">
       <ElTooltip
         v-if="pingTime"
@@ -29,6 +35,8 @@
 </template>
 
 <script>
+import cronParse from 'cron-parser'
+
 import { dayjs, STATUS_MAP } from '../shared'
 
 export default {
@@ -65,6 +73,16 @@ export default {
     agentStatus() {
       const info = this.agentInfo
       return info ? `${info.name}（${info.status}）` : '-'
+    },
+
+    showCronTip() {
+      const task = this.task
+      return (
+        (task.status === 'wait_start' || task.status === 'complete') &&
+        task.type === 'initial_sync' &&
+        task.crontabExpressionFlag &&
+        task.crontabExpression
+      )
     }
   },
 
@@ -84,6 +102,20 @@ export default {
         }
       }
       this.$router.push(route)
+    },
+
+    getNextStartTime() {
+      let str = this.$t('packages_dag_task_setting_crontabExpressionFlag')
+      try {
+        if (!this.task.crontabExpression) return str
+        const interval = cronParse.parseExpression(this.task.crontabExpression)
+        return this.$t('packages_business_task_status_next_run_time', {
+          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss')
+        })
+      } catch (err) {
+        console.log('Error: ' + err.message)
+      }
+      return str
     }
   }
 }
@@ -98,6 +130,7 @@ export default {
   font-weight: 500;
   border-radius: 4px;
   box-sizing: border-box;
+  word-break: keep-all;
 }
 .status-running {
   color: #178061;
