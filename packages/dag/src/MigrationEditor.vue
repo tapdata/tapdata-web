@@ -210,6 +210,10 @@ export default {
           type: 'migrate_field_rename_processor'
         },
         {
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
+          type: 'standard_migrate_js_processor'
+        },
+        {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor'
         }
