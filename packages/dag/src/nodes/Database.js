@@ -233,7 +233,7 @@ export class Database extends NodeType {
                   fulfill: {
                     state: {
                       display:
-                        '{{!$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
+                        '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
                     }
                   }
                 }
