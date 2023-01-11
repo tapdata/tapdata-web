@@ -67,7 +67,6 @@
           <el-button
             v-show="multipleSelection.length > 0 && isDaas"
             :disabled="$disabledReadonlyUserBtn()"
-            :disabled="$disabledReadonlyUserBtn()"
             v-readonlybtn="'SYNC_job_export'"
             size="mini"
             class="btn message-button-cancel"
