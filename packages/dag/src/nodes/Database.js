@@ -219,6 +219,129 @@ export class Database extends NodeType {
             }
           },
 
+          readPartitionOptions: {
+            type: 'object',
+            'x-decorator': 'FormItem',
+            properties: {
+              enable: {
+                title: '开启分片',
+                type: 'boolean',
+                default: false,
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch',
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      display:
+                        '{{!$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              splitType: {
+                title: '分片方式',
+                type: 'number',
+                default: 10,
+                enum: [
+                  {
+                    label: '基于min/max分片',
+                    value: 10
+                  },
+                  {
+                    label: '基于count分片',
+                    value: 1
+                  }
+                ],
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                'x-reactions': {
+                  dependencies: ['.enable'],
+                  fulfill: {
+                    run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
+                    state: {
+                      display: '{{$deps[0] ? "visible" :"hidden"}}'
+                    },
+                    schema: {
+                      'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
+                    }
+                  }
+                }
+              },
+              maxRecordInPartition: {
+                title: '分片大小',
+                type: 'number',
+                default: 200000,
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 0
+                },
+                'x-reactions': {
+                  dependencies: ['.enable', '.splitType'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              minMaxSplitPieces: {
+                title: '分片数量',
+                type: 'number',
+                default: 100,
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 0
+                },
+                'x-reactions': {
+                  dependencies: ['.enable', '.splitType'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              partitionThreadCount: {
+                title: '分片并发线程数',
+                type: 'number',
+                default: 8,
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 0
+                },
+                'x-reactions': {
+                  dependencies: ['.enable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              },
+              partitionBatchCount: {
+                title: '分片一批读取上限',
+                type: 'number',
+                default: 3000,
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 0
+                },
+                'x-reactions': {
+                  dependencies: ['.enable'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] ? "visible" :"hidden"}}'
+                    }
+                  }
+                }
+              }
+            }
+          },
+
           nodeConfig: {
             type: 'object'
           }

@@ -342,23 +342,6 @@ export class Table extends NodeType {
                           }
                         }
                       },
-                      maxRecordInPartition: {
-                        title: '分片大小',
-                        type: 'number',
-                        default: 200000,
-                        'x-component': 'InputNumber',
-                        'x-component-props': {
-                          min: 0
-                        },
-                        'x-reactions': {
-                          dependencies: ['.enable'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] ? "visible" :"hidden"}}'
-                            }
-                          }
-                        }
-                      },
                       splitType: {
                         title: '分片方式',
                         type: 'number',
@@ -384,6 +367,78 @@ export class Table extends NodeType {
                             },
                             schema: {
                               'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
+                            }
+                          }
+                        }
+                      },
+                      maxRecordInPartition: {
+                        title: '分片大小',
+                        type: 'number',
+                        default: 200000,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable', '.splitType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      minMaxSplitPieces: {
+                        title: '分片数量',
+                        type: 'number',
+                        default: 100,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable', '.splitType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      partitionThreadCount: {
+                        title: '分片并发线程数',
+                        type: 'number',
+                        default: 8,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] ? "visible" :"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      partitionBatchCount: {
+                        title: '分片一批读取上限',
+                        type: 'number',
+                        default: 3000,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 0
+                        },
+                        'x-reactions': {
+                          dependencies: ['.enable'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] ? "visible" :"hidden"}}'
                             }
                           }
                         }
