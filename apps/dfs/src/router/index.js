@@ -241,6 +241,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/data-server/list'),
         meta: {
           title: 'dfs_data_server',
+          hideTitle: true,
           icon: 'data-server'
         }
       }
