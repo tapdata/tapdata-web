@@ -381,6 +381,7 @@ export default {
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
   apiaudit_visitor: '访问人员',
+  apiaudit_ip: '访问人员IP',
   apiaudit_interview_time: '访问时间',
   apiaudit_visit_result: '访问结果',
   apiaudit_reason_fail: '失败原因',

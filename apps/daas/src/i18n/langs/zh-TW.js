@@ -380,6 +380,7 @@ export default {
   apiaudit_name: 'API名稱',
   apiaudit_access_type: '訪問類型',
   apiaudit_visitor: '訪問人員',
+  apiaudit_ip: '訪問人員IP',
   apiaudit_interview_time: '訪問時間',
   apiaudit_visit_result: '訪問結果',
   apiaudit_reason_fail: '失敗原因',
