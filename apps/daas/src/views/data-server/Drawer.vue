@@ -27,14 +27,14 @@
       >
         <!-- 服务{{$t('metadata_name')}} -->
         <div class="flex justify-content-between align-items-start">
-          <div class="flex-1" size="small">
+          <ElFormItem class="flex-1 form-item-name" size="small" prop="name">
             <ElInput
               v-if="isEdit"
               v-model="form.name"
               :placeholder="$t('daas_data_discovery_previewdrawer_qingshurumingcheng')"
             ></ElInput>
             <div v-else class="fw-sub fs-7 font-color-normal">{{ data.name }}</div>
-          </div>
+          </ElFormItem>
           <template v-if="tab === 'form' && data.status !== 'active'">
             <div v-if="isEdit" class="ml-10">
               <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false">{{
@@ -135,6 +135,7 @@
           size="small"
           label="版本"
           prop="apiVersion"
+          :rules="rules.apiVersion"
           v-show="form.pathAccessMethod === 'customize'"
         >
           <ElInput v-model="form.apiVersion" placeholder="请输入版本" :disabled="!isEdit"></ElInput>
@@ -144,6 +145,7 @@
           class="flex-1 mt-4"
           size="small"
           label="前缀"
+          :rules="rules.prefix"
           v-show="form.pathAccessMethod === 'customize'"
         >
           <ElInput v-model="form.prefix" placeholder="请输入前缀" :disabled="!isEdit"></ElInput>
@@ -153,6 +155,7 @@
           size="small"
           label="基础路径"
           prop="basePath"
+          :rules="rules.basePath"
           v-show="form.pathAccessMethod === 'customize'"
         >
           <ElInput v-model="form.basePath" placeholder="请输入基础路径" :disabled="!isEdit"></ElInput>
@@ -460,7 +463,7 @@ export default {
         tableName: [{ required: true, message: i18n.t('daas_data_server_drawer_qingxuanzeduixiang'), trigger: 'blur' }],
         param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }],
         basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
-        prefix: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
+        prefix: [{ required: false, validator: validateBasePath, trigger: ['blur', 'change'] }],
         apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }]
       },
       apiTypeMap: {
@@ -637,6 +640,12 @@ export default {
     save() {
       this.$refs.form.validate(async valid => {
         if (valid) {
+          //自定义路径 数据清理
+          if (this.form.pathAccessMethod === 'default') {
+            this.form.prefix = ''
+            this.form.apiVersion = ''
+            this.path = 'api/' + this.form.basePath
+          }
           let {
             id,
             name,
@@ -661,11 +670,6 @@ export default {
           // basePath
           if (basePath && basePath !== '') {
             status = 'pending'
-          }
-          //自定义路径 数据清理
-          if (pathAccessMethod === 'default') {
-            prefix = ''
-            apiVersion = ''
           }
           if (params.some(it => !it.name.trim())) {
             return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
@@ -1018,6 +1022,15 @@ export default {
   background: map-get($bgColor, form);
   border-radius: 4px;
   font-family: PingFangSC-Regular, PingFang SC;
+}
+.data-server__form {
+  ::v-deep {
+    .form-item-name {
+      .el-form-item__content {
+        margin-left: 0 !important;
+      }
+    }
+  }
 }
 .data-server-debug__method {
   ::v-deep {
