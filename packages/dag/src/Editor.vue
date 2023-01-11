@@ -348,8 +348,8 @@ export default {
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
-        // this.toggleConsole(true)
-        // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
+        this.toggleConsole(true)
+        this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return true
       } catch (e) {
         this.isSaving = false
@@ -565,6 +565,41 @@ export default {
           id: this.dataflow.id
         }
       })
+    },
+
+    async handleStart() {
+      this.buried('taskStart')
+      this.unWatchStatus?.()
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+          this.$refs.console?.loadData()
+          if (v !== 'running') {
+            this.$refs.console?.stopAuto()
+          } else {
+            this.toggleConsole(false)
+            this.gotoViewer(false)
+          }
+          // this.unWatchStatus()
+        }
+        if (['MigrateViewer', 'DataflowViewer'].includes(this.$route.name)) {
+          if (['renewing'].includes(v)) {
+            this.handleConsoleAutoLoad()
+          } else {
+            this.toggleConsole(false)
+          }
+        }
+      })
+      const flag = await this.save(true)
+      if (flag) {
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        this.gotoViewer()
+        this.buried('taskStart', { result: true })
+      } else {
+        this.buried('taskStart', { result: false })
+      }
     }
   }
 }
