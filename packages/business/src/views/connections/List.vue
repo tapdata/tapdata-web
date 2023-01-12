@@ -526,7 +526,7 @@ export default {
         })
       } else {
         this.$router.push({
-          name: 'dataflow',
+          name: 'dataflowList',
           query: {
             keyword: item.name
           }

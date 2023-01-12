@@ -113,6 +113,18 @@ module.exports = {
         maxEntrypointSize: 10000000,
         maxAssetSize: 30000000
       }
+
+      const sassLoader = require.resolve('sass-loader')
+      config.module.rules
+        .filter(rule => {
+          return rule.test.toString().indexOf('scss') !== -1
+        })
+        .forEach(rule => {
+          rule.oneOf.forEach(oneOfRule => {
+            const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
+            oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
+          })
+        })
     }
   },
   chainWebpack(config) {
