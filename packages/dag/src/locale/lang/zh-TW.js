@@ -46,7 +46,7 @@ export default {
   packages_dag_task_setting_crontabExpressionFlag: '定期調度任務',
   packages_dag_task_setting_cron_expression: '請輸入調度表達式',
   packages_dag_task_setting_cron_tip:
-    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ?  //每分鐘運行一次  0 0 2 * * ?  //每天2點運行',
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務 \n語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 *\n舉例：\n0 */1 * * * ? //每分鐘運行一次 \n0 0 2 * * ? //每天2點運行',
   packages_dag_task_setting_sync_point: '增量採集開始時刻',
   packages_dag_task_setting_syncPoint_tip: '任務將從該時間點開始收集增量日誌',
   packages_dag_task_setting_automatic_index: '自動創建索引',

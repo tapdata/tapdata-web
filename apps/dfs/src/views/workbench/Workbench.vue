@@ -108,6 +108,7 @@
       <div class="p-6" style="background-color: #fff">
         <div class="fs-7" style="color: #000">
           <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
+          <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
           <span class="color-primary" style="font-family: DIN">{{ numToThousands(taskInputNumber) }}</span>
         </div>
         <div class="pr-4" style="height: 200px">
@@ -375,7 +376,7 @@ export default {
       let agentList = this.agentList
       const stats = data.taskTypeStats
       if (stats) {
-        agentList[2].value = stats.total - stats.Buffer
+        agentList[2].value = stats.total
         agentList[2].list[0].value = agentList[2].value || 0
       }
     },

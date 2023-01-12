@@ -14,7 +14,6 @@
             {{ $t('notify_mark_read') }}
           </ElButton>
           <ElButton
-
             @click="handleDelete"
             :disabled="multipleSelection.length < 1 || $disabledReadonlyUserBtn()"
           >

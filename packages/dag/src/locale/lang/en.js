@@ -45,9 +45,13 @@ export default {
   packages_dag_task_stetting_desc: 'Task description',
   packages_dag_task_setting_plan_start_date: 'Plan start date',
   packages_dag_task_setting_crontabExpressionFlag: 'Scheduled tasks',
-  packages_dag_task_setting_cron_expression: 'Please enter the scheduling expression',
+  packages_dag_task_setting_cron_expression: 'Please enter the Cron expression',
   packages_dag_task_setting_cron_tip:
-    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year * ; Example: 0 */1 * * * ?  // Run every minute 0 0 2 * * ?  // Run at 2 every day',
+    'Enter a Cron expression to configure the running schedule.\n' +
+    'Syntax: second * minute * hour * day * month * week ? year *\n' +
+    'Example:\n' +
+    '0 */1 * * * ?  // Run every minute \n' +
+    '0 0 2 * * ?  // Run at 2:00 AM every day',
   packages_dag_task_setting_sync_point: 'Incremental collection start time',
   packages_dag_task_setting_syncPoint_tip: 'The task will collect incremental logs from this point in time',
   packages_dag_task_setting_automatic_index: 'Automatically create an index',
