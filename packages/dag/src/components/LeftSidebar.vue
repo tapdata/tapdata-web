@@ -263,6 +263,7 @@ import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
+import { getInitialValuesInBySchema } from '@tap/form'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from './BaseNode'
@@ -740,12 +741,19 @@ export default {
     },
 
     getNodeProps(connection, tableName) {
+      // 设置pdk节点配置默认值
+      const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[connection.pdkHash]
+      let nodeConfig
+      if (pdkProperties) {
+        nodeConfig = getInitialValuesInBySchema(pdkProperties, {})
+      }
       return {
         name: tableName || connection.name,
         type: 'table',
         databaseType: connection.database_type,
         connectionId: connection.id,
         tableName,
+        nodeConfig,
         attrs: {
           connectionName: connection.name,
           connectionType: connection.connection_type,

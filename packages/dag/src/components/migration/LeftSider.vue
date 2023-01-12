@@ -186,6 +186,7 @@ import { mapGetters } from 'vuex'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
+import { getInitialValuesInBySchema } from '@tap/form'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
@@ -497,12 +498,20 @@ export default {
     },
 
     getNodeProps(item) {
+      // 设置pdk节点配置默认值
+      const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
+      let nodeConfig
+      if (pdkProperties) {
+        nodeConfig = getInitialValuesInBySchema(pdkProperties, {})
+      }
+
       return {
         name: item.name,
         type: 'database',
         databaseType: item.database_type,
         connectionId: item.id,
         migrateTableSelectType: 'all',
+        nodeConfig,
         attrs: {
           connectionName: item.name,
           connectionType: item.connection_type,
