@@ -236,8 +236,8 @@ export default {
 }
 .message-box__headerbtn {
   position: absolute;
-  top: 24px;
-  right: 24px;
+  top: 15px;
+  right: 15px;
   padding: 0;
   border: none;
   outline: 0;
