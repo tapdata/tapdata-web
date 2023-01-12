@@ -567,7 +567,8 @@ export default {
         tableName,
         basePath,
         apiVersion,
-        prefix
+        prefix,
+        pathAccessMethod
       } = formData
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       let apiType = formData?.apiType || 'defaultApi'
@@ -584,6 +585,7 @@ export default {
         basePath,
         apiVersion,
         prefix,
+        pathAccessMethod,
         method: path.method || 'GET',
         fields: path.fields || [],
         params: path.params || this.getDefaultParams(apiType),
@@ -635,6 +637,7 @@ export default {
     },
     // 切换到编辑状态
     edit() {
+      debugger
       this.isEdit = true
       this.form = cloneDeep(this.data)
       this.form.status = 'generating'
