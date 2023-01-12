@@ -332,12 +332,13 @@ export class Table extends NodeType {
                   },
                   cdcPollingFields: {
                     title: '指定轮询字段',
-                    type: 'string',
+                    type: 'array',
                     required: 'true',
                     'x-decorator': 'FormItem',
                     'x-component': 'FieldSelect',
                     'x-component-props': {
-                      filterable: true
+                      filterable: true,
+                      multiple: true
                     },
                     'x-reactions': {
                       effects: ['onFieldInputValueChange']
