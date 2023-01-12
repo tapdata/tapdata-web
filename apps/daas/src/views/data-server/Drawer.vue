@@ -637,7 +637,6 @@ export default {
     },
     // 切换到编辑状态
     edit() {
-      debugger
       this.isEdit = true
       this.form = cloneDeep(this.data)
       this.form.status = 'generating'
@@ -658,7 +657,7 @@ export default {
           if (this.form.pathAccessMethod === 'default') {
             this.form.prefix = ''
             this.form.apiVersion = ''
-            this.path = 'api/' + this.form.basePath
+            this.form.path = 'api/' + this.form.basePath
           }
           let {
             id,
