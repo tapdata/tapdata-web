@@ -123,42 +123,47 @@
           </li>
         </ul>
         <!-- 访问路径设置-->
-        <div class="mt-4 fs-7 data-server-panel__title">访问路径设置</div>
+        <div class="mt-4 fs-7 data-server-panel__title">{{ $t('daas_data_server_drawer_aPI_path_Settings') }}</div>
         <div class="flex-1 mt-4" size="small">
           <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
-            <el-radio label="default">默认访问路径</el-radio>
-            <el-radio label="customize">自定义访问路径</el-radio>
+            <el-radio label="default">{{ $t('daas_data_server_drawer_default_path') }}</el-radio>
+            <el-radio label="customize">{{ $t('daas_data_server_drawer_custom_path') }}</el-radio>
           </el-radio-group>
         </div>
         <ElFormItem
           class="flex-1 mt-4"
           size="small"
-          label="版本"
+          :label="$t('modules_header_version')"
           prop="apiVersion"
           :rules="rules.apiVersion"
           v-if="form.pathAccessMethod === 'customize'"
         >
-          <ElInput v-model="form.apiVersion" placeholder="请输入版本" :disabled="!isEdit"></ElInput>
+          <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
         </ElFormItem>
         <ElFormItem
           class="flex-1 mt-4"
           size="small"
-          label="前缀"
+          :label="$t('daas_data_server_drawer_prefix')"
           prop="prefix"
           v-if="form.pathAccessMethod === 'customize'"
         >
-          <ElInput v-model="form.prefix" placeholder="请输入前缀" :disabled="!isEdit"></ElInput>
+          <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
         </ElFormItem>
         <ElFormItem
           class="flex-1 mt-4"
           size="small"
-          label="基础路径"
+          :label="$t('daas_data_server_drawer_base_path')"
           prop="basePath"
           v-if="form.pathAccessMethod === 'customize'"
         >
-          <ElInput v-model="form.basePath" placeholder="请输入基础路径" :disabled="!isEdit"></ElInput>
+          <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
         </ElFormItem>
-        <ElFormItem class="flex-1 mt-4" size="small" label="访问路径" v-if="form.pathAccessMethod === 'customize'">
+        <ElFormItem
+          class="flex-1 mt-4"
+          size="small"
+          :label="$t('daas_data_server_drawer_path')"
+          v-if="form.pathAccessMethod === 'customize'"
+        >
           <ElInput v-model="customizePath" :disabled="true"></ElInput>
         </ElFormItem>
 
@@ -436,7 +441,7 @@ export default {
       if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value)) {
         callback()
       } else {
-        callback('只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头')
+        callback(i18n.t('daas_data_server_drawer_validate'))
       }
     }
     const validatePrefix = (rule, value, callback) => {
@@ -444,7 +449,7 @@ export default {
       if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value) || value === '') {
         callback()
       } else {
-        callback('只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头')
+        callback(i18n.t('daas_data_server_drawer_validate'))
       }
     }
 
@@ -737,8 +742,8 @@ export default {
     },
     generate() {
       if (this.data.basePath && this.data.basePath !== '') {
-        this.$confirm('确认是否重新API访问路径', '确认提示框', {
-          type: 'info'
+        this.$confirm(this.$t('daas_data_server_drawer_confirm_tip'), {
+          type: 'warning'
         }).then(resFlag => {
           if (!resFlag) {
             return

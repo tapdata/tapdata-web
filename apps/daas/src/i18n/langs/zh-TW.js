@@ -1999,5 +1999,15 @@ export default {
   daas_data_discovery_previewdrawer_shuchujiedian: '输出节点',
   daas_router_routes_guanlianrenwuxiang: '關聯任務詳情',
   daas_data_server_drawer_geshicuowu: '格式錯誤',
+
+  daas_data_server_drawer_validate: '只能包含中文、字母、數字、下劃線和美元符號,並且數字不能開頭',
+  daas_data_server_drawer_aPI_path_Settings: '訪問路徑設置',
+  daas_data_server_drawer_default_path: '默認訪問路徑',
+  daas_data_server_drawer_custom_path: '自定義訪問路徑',
+  daas_data_server_drawer_prefix: '前綴',
+  daas_data_server_drawer_base_path: '基礎路徑',
+  daas_data_server_drawer_path: '訪問路徑',
+  daas_data_server_drawer_confirm_tip: '重新生成會導致原API訪問路徑發生改變，是否確認重新生成？ ',
+
   daas_notification_center_yonghucaozuo: '用戶操作'
 }
