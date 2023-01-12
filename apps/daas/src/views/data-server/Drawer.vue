@@ -657,7 +657,7 @@ export default {
           if (this.form.pathAccessMethod === 'default') {
             this.form.prefix = ''
             this.form.apiVersion = ''
-            this.form.path = 'api/' + this.form.basePath
+            this.form.path = '/api/' + this.form.basePath
           }
           let {
             id,
