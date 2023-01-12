@@ -333,26 +333,44 @@ export class Table extends NodeType {
                   cdcPollingFields: {
                     title: '指定轮询字段',
                     type: 'array',
-                    required: 'true',
+                    required: true,
+                    default: [{ field: '', defaultValue: '' }],
                     'x-decorator': 'FormItem',
-                    'x-component': 'FieldSelect',
-                    'x-component-props': {
-                      filterable: true,
-                      multiple: true
-                    },
-                    'x-reactions': {
-                      effects: ['onFieldInputValueChange']
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        field: {
+                          type: 'string',
+                          required: 'true',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'FieldSelect',
+                          'x-component-props': {
+                            filterable: true
+                          },
+                          'x-reactions': {
+                            effects: ['onFieldInputValueChange']
+                          }
+                        },
+                        defaultValue: {
+                          title: '轮询字段默认值',
+                          type: 'string',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                          'x-reactions': {
+                            fulfill: {
+                              state: {
+                                visible: `{{$settings.type !== "cdc"}}`
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
-                  },
-                  cdcPollingFieldsDefaultValues: {
-                    title: '轮询字段默认值',
-                    type: 'string',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Input'
                   },
                   cdcPollingInterval: {
                     title: '轮询间隔',
-                    type: 'number',
+                    type: 'object',
                     default: 500,
                     'x-decorator': 'FormItem',
                     'x-component': 'InputNumber',
@@ -458,7 +476,7 @@ export class Table extends NodeType {
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id, $values.tableName)}}`,
                       {
-                        target: '*(conditions.*.key,cdcPollingFields)',
+                        target: '*(conditions.*.key,cdcPollingFields.*.field)',
                         fulfill: {
                           state: {
                             loading: '{{$self.loading}}',
