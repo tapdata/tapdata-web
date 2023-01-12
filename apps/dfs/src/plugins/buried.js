@@ -10,9 +10,11 @@ export const buried = (code, page, attrs, sid) => {
     code,
     page
   }
-  if (attrs) {
-    data.attrs = attrs
+  attrs = Object.assign({}, attrs)
+  if (sid) {
+    attrs.sid = sid
   }
+  data.attrs = attrs
   let queryStr = '?data=' + encodeURIComponent(JSON.stringify(data))
   if (sid) {
     let where = {
