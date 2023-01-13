@@ -112,7 +112,8 @@ export const updateTimeOnPage = () => {
         'timeOnPage',
         path,
         {
-          times: second + 's'
+          times: second + 's',
+          pid: sessionId
         },
         sessionId
       )
