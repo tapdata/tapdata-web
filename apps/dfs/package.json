@@ -28,9 +28,10 @@
     "@tap/component": "workspace:^1.0.0",
     "@tap/dag": "workspace:^1.0.0",
     "@tap/form": "workspace:^1.0.0",
-    "@tap/shared": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
+    "@tap/shared": "workspace:^1.0.0",
     "@vue/composition-api": "^1.2.4",
+    "ali-oss": "^6.17.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
@@ -52,8 +53,7 @@
     "vue-json-viewer": "^2.2.15",
     "vue-router": "^3.2.0",
     "vue-virtual-scroller": "^1.0.10",
-    "vuex": "^3.6.2",
-    "ali-oss": "^6.17.1"
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -67,6 +67,7 @@
     "babel-plugin-component": "^1.1.1",
     "compression-webpack-plugin": "^5.0.1",
     "cross-env": "^7.0.3",
+    "css-unicode-loader": "^1.0.3",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
