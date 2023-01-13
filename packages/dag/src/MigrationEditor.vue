@@ -29,15 +29,12 @@
     />
     <section class="layout-wrap layout-has-sider position-relative">
       <!--左侧边栏-->
-      <VExpandXTransition>
-        <LeftSider
-          v-if="!stateIsReadonly"
-          @move-node="handleDragMoveNode"
-          @drop-node="handleAddNodeByDrag"
-          @add-node="handleAddNode"
-          @toggle-expand="handleToggleExpand"
-        />
-      </VExpandXTransition>
+      <LeftSider
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+        @add-node="handleAddNode"
+        @toggle-expand="handleToggleExpand"
+      />
       <section class="layout-wrap flex-1">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">

@@ -51,7 +51,8 @@ export default {
       GlobalState.startEvent = event
       GlobalState.onMouseDownAt = Time.now()
       if (event.button === 0) {
-        onStart?.(item)
+        const ifCancel = onStart?.(item)
+        if (ifCancel === false) return false
         on(document.documentElement, eventsFor.move, handleMove, {
           capture: false,
           passive: false

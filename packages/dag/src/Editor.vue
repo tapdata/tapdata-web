@@ -30,7 +30,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSidebar
-        v-if="!stateIsReadonly && dataflow.id"
+        v-if="dataflow.id"
         v-resize.right="{
           minWidth: 260,
           maxWidth: 400

@@ -14,7 +14,14 @@
                 <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
                   >search-outline</VIcon
                 >
-                <VIcon size="20" class="click-btn" @mousedown.stop @click.stop="creat">add-outline</VIcon>
+                <VIcon
+                  size="20"
+                  class="click-btn"
+                  :class="{ 'click-btn-disabled': stateIsReadonly }"
+                  @mousedown.stop
+                  @click.stop="creat"
+                  >add-outline</VIcon
+                >
               </template>
             </div>
           </template>
@@ -62,7 +69,8 @@
                       onStop
                     }"
                     :key="db.id"
-                    class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
+                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    :class="{ grabbable: !stateIsReadonly }"
                   >
                     <div class="flex-shrink-0 mr-2 db-item-icon">
                       <NodeIcon :node="db" />
@@ -122,7 +130,8 @@
               onDrop,
               onStop
             }"
-            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-2"
+            :class="{ grabbable: !stateIsReadonly }"
           >
             <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
             <OverflowTooltip
@@ -248,7 +257,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor']),
+    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
 
     noDBMore() {
       return this.dbPage >= Math.ceil(this.dbTotal / 20)
@@ -289,7 +298,7 @@ export default {
 
     // 创建连接
     creat() {
-      this.connectionDialog = true
+      this.connectionDialog = !this.stateIsReadonly
     },
     async getDatabaseType() {
       await databaseTypesApi.get().then(res => {
@@ -439,6 +448,7 @@ export default {
     },
 
     onStart(item) {
+      if (this.stateIsReadonly) return false
       const node = this.getNodeProps(item)
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const ins = getResourceIns(node)
@@ -452,6 +462,7 @@ export default {
     },
 
     onProcessorStart(item) {
+      if (this.stateIsReadonly) return false
       const node = item
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
@@ -612,6 +623,15 @@ $hoverBg: #eef3ff;
       &:hover {
         color: map-get($color, primary);
         background: $hoverBg;
+      }
+
+      &-disabled {
+        color: currentColor;
+        cursor: not-allowed;
+        &:hover {
+          color: currentColor;
+          background: rgba(242, 243, 245);
+        }
       }
     }
 

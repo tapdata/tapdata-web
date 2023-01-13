@@ -174,16 +174,6 @@ export default {
     }
   },
 
-  watch: {
-    stateIsReadonly() {
-      // 编辑和查看切换时，视图尺寸变化，主要是侧边栏显示隐藏的切换
-      const rect = this.$el.getBoundingClientRect()
-      this.visibleArea.width = rect.width
-      this.visibleArea.left = rect.left
-      this.visibleArea.x = rect.x
-    }
-  },
-
   created() {
     this.bindEvent()
   },
@@ -659,7 +649,7 @@ export default {
     wheelToScaleArtboard(scale, scalePoint) {
       scalePoint = scalePoint || this.getScaleAbsolutePoint()
       const scaleOrigin = this.getMouseToPageOriginal(scalePoint)
-      const area = this.visibleArea
+      const area = this.windowArea
       const offset = this.paperOffset
       const left = scalePoint.x - area.left // 光标与可视区左边的距离
       const top = scalePoint.y - area.top // 光标与可视区上边的距离
@@ -683,6 +673,9 @@ export default {
         const options = { left, top }
         animate && (options.behavior = 'smooth')
         this.$el.scrollTo(options)
+        requestAnimationFrame(() => {
+          this.$el.scrollTo(options)
+        })
       })
     },
 
@@ -691,7 +684,7 @@ export default {
      * @returns {{x: *, y: *}}
      */
     getScaleAbsolutePoint() {
-      const area = this.visibleArea
+      const area = this.windowArea
       return { x: Math.round(area.width / 2) + area.left, y: Math.round(area.height / 2) + area.top }
     },
 
