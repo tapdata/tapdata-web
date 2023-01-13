@@ -123,49 +123,51 @@
           </li>
         </ul>
         <!-- 访问路径设置-->
-        <div class="mt-4 fs-7 data-server-panel__title">{{ $t('daas_data_server_drawer_aPI_path_Settings') }}</div>
-        <div class="flex-1 mt-4" size="small">
-          <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
-            <el-radio label="default">{{ $t('daas_data_server_drawer_default_path') }}</el-radio>
-            <el-radio label="customize">{{ $t('daas_data_server_drawer_custom_path') }}</el-radio>
-          </el-radio-group>
-        </div>
-        <ElFormItem
-          class="flex-1 mt-4"
-          size="small"
-          :label="$t('modules_header_version')"
-          prop="apiVersion"
-          :rules="rules.apiVersion"
-          v-if="form.pathAccessMethod === 'customize'"
-        >
-          <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
-        </ElFormItem>
-        <ElFormItem
-          class="flex-1 mt-4"
-          size="small"
-          :label="$t('daas_data_server_drawer_prefix')"
-          prop="prefix"
-          v-if="form.pathAccessMethod === 'customize'"
-        >
-          <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
-        </ElFormItem>
-        <ElFormItem
-          class="flex-1 mt-4"
-          size="small"
-          :label="$t('daas_data_server_drawer_base_path')"
-          prop="basePath"
-          v-if="form.pathAccessMethod === 'customize'"
-        >
-          <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
-        </ElFormItem>
-        <ElFormItem
-          class="flex-1 mt-4"
-          size="small"
-          :label="$t('daas_data_server_drawer_path')"
-          v-if="form.pathAccessMethod === 'customize'"
-        >
-          <ElInput v-model="customizePath" :disabled="true"></ElInput>
-        </ElFormItem>
+        <section v-if="tab === 'form'">
+          <div class="mt-4 fs-7 data-server-panel__title">{{ $t('daas_data_server_drawer_aPI_path_Settings') }}</div>
+          <div class="flex-1 mt-4" size="small">
+            <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
+              <el-radio label="default">{{ $t('daas_data_server_drawer_default_path') }}</el-radio>
+              <el-radio label="customize">{{ $t('daas_data_server_drawer_custom_path') }}</el-radio>
+            </el-radio-group>
+          </div>
+          <ElFormItem
+            class="flex-1 mt-4"
+            size="small"
+            :label="$t('modules_header_version')"
+            prop="apiVersion"
+            :rules="rules.apiVersion"
+            v-if="form.pathAccessMethod === 'customize'"
+          >
+            <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
+          </ElFormItem>
+          <ElFormItem
+            class="flex-1 mt-4"
+            size="small"
+            :label="$t('daas_data_server_drawer_prefix')"
+            prop="prefix"
+            v-if="form.pathAccessMethod === 'customize'"
+          >
+            <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
+          </ElFormItem>
+          <ElFormItem
+            class="flex-1 mt-4"
+            size="small"
+            :label="$t('daas_data_server_drawer_base_path')"
+            prop="basePath"
+            v-if="form.pathAccessMethod === 'customize'"
+          >
+            <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
+          </ElFormItem>
+          <ElFormItem
+            class="flex-1 mt-4"
+            size="small"
+            :label="$t('daas_data_server_drawer_path')"
+            v-if="form.pathAccessMethod === 'customize'"
+          >
+            <ElInput v-model="customizePath" :disabled="true"></ElInput>
+          </ElFormItem>
+        </section>
 
         <!-- {{$t('daas_data_server_drawer_shurucanshu')}} -->
         <div class="data-server-panel__title">
