@@ -19,6 +19,10 @@
           ><span class="font-text">{{ $t('apiaudit_interview_time') }}:</span>
           <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
         >
+        <ElCol class="font-color-normal pb-4" :span="12"
+          ><span class="font-text">{{ $t('apiaudit_ip') }}:</span>
+          <span class="fw-sub"> {{ auditData.userIp }}</span></ElCol
+        >
       </ElRow>
     </div>
     <div class="details-box bg-white py-6 mt-6 rounded-2">
