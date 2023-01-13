@@ -11,9 +11,11 @@ export const buried = (code, page, attrs, sid) => {
     code,
     page
   }
-  if (attrs) {
-    data.attrs = attrs
+  attrs = Object.assign({}, attrs)
+  if (sid) {
+    attrs.sid = sid
   }
+  data.attrs = attrs
   let queryStr = '?data=' + encodeURIComponent(JSON.stringify(data))
   if (sid) {
     let where = {
@@ -83,7 +85,7 @@ export const startTimeOnPage = router => {
     }
 
     // 隐藏客服控件
-    if (to.path.split('/').length < 3 || to.matched[0].path === '') {
+    if (to.path.split('/').length < 3) {
       document.body.classList.remove('hide-chart')
     } else {
       document.body.classList.add('hide-chart')
