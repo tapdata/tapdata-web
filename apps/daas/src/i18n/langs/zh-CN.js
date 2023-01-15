@@ -381,6 +381,7 @@ export default {
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
   apiaudit_visitor: '访问人员',
+  apiaudit_ip: '访问人员IP',
   apiaudit_interview_time: '访问时间',
   apiaudit_visit_result: '访问结果',
   apiaudit_reason_fail: '失败原因',
@@ -2002,6 +2003,15 @@ export default {
   daas_router_routes_guanlianrenwuxiang: '关联任务详情',
   daas_data_server_drawer_geshicuowu: '格式错误',
   daas_notification_center_yonghucaozuo: '用户操作',
+
+  daas_data_server_drawer_validate: '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
+  daas_data_server_drawer_aPI_path_Settings: '访问路径设置',
+  daas_data_server_drawer_default_path: '默认访问路径',
+  daas_data_server_drawer_custom_path: '自定义访问路径',
+  daas_data_server_drawer_prefix: '前缀',
+  daas_data_server_drawer_base_path: '基础路径',
+  daas_data_server_drawer_path: '访问路径',
+  daas_data_server_drawer_confirm_tip: '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
 
   // 覆盖连接编辑、创建处的国际化文案
   packages_business_connection_form_source_and_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同时作为源和目标使用`,

@@ -13,6 +13,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="clientName" :label="$t('apiaudit_visitor')"></el-table-column>
+      <el-table-column prop="userIp" :label="$t('apiaudit_ip')"></el-table-column>
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
