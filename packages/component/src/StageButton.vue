@@ -48,6 +48,7 @@ export default {
         } else {
           this.progress = 100 + '%'
           setTimeout(() => {
+            this.$emit('complete')
             this.loading = false
           }, 1000)
         }

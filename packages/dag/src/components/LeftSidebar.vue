@@ -111,8 +111,8 @@
           </span>
           <!--创建新表作为节点使用-->
           <ElTooltip content="重新加载" placement="top">
-            <StageButton :connection-id="activeConnection.id">
-              <VIcon class="click-btn mr-1 color-danger" size="18">refresh</VIcon>
+            <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable">
+              <VIcon class="click-btn refresh mr-1" size="16">refresh</VIcon>
             </StageButton>
           </ElTooltip>
           <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
@@ -807,7 +807,9 @@ $hoverBg: #eef3ff;
       height: 24px !important;
       z-index: 2;
       border-radius: 4px;
-
+      &.refresh {
+        color: map-get($iconFillColor, normal);
+      }
       &:hover,
       &.active {
         color: map-get($color, primary);
