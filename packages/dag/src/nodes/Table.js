@@ -628,35 +628,147 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  writeStrategy: {
-                    title: '数据写入模式',
-                    type: 'string',
-                    default: 'updateOrInsert',
-                    enum: [
-                      {
-                        label: '追加写入',
-                        value: 'appendWrite'
-                      },
-                      {
-                        label: '更新已存在或者插入新数据',
-                        value: 'updateOrInsert'
+                  // writeStrategy: {
+                  //   title: '数据写入模式',
+                  //   type: 'string',
+                  //   default: 'updateOrInsert',
+                  //   enum: [
+                  //     {
+                  //       label: '追加写入',
+                  //       value: 'appendWrite'
+                  //     },
+                  //     {
+                  //       label: '更新已存在或者插入新数据',
+                  //       value: 'updateOrInsert'
+                  //     }
+                  //   ],
+                  //   'x-decorator': 'FormItem',
+                  //   'x-decorator-props': {
+                  //     wrapperWidth: 300
+                  //   },
+                  //   'x-component': 'Select',
+                  //   'x-reactions': [
+                  //     {
+                  //       target: 'updateConditionFields',
+                  //       fulfill: {
+                  //         state: {
+                  //           display: '{{$self.value!=="appendWrite" ? "visible":"hidden"}}'
+                  //         }
+                  //       }
+                  //     }
+                  //   ]
+                  // },
+                  writeStrategyObject: {
+                    // title: '数据写入模式',
+                    type: 'void',
+                    'x-component-props': {
+                      layout: 'horizontal',
+                      colon: false,
+                      feedbackLayout: 'none'
+                    },
+                    properties: {
+                      writeStrategy: {
+                        title: '数据写入模式',
+                        type: 'string',
+                        default: 'updateOrInsert',
+                        'x-component': 'Radio.Group',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '统计追加写入: 只处理插入事件，丢弃更新和删除事件'
+                        },
+                        enum: [
+                          {
+                            label: '按事件类型处理',
+                            value: 'updateOrInsert'
+                          },
+                          {
+                            label: '统计追加写入',
+                            value: 'appendWrite'
+                          }
+                        ]
                       }
-                    ],
+                    }
+                  },
+                  dmlPolicy: {
+                    title: '数据写入策略',
+                    type: 'object',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      feedbackLayout: 'none'
                     },
-                    'x-component': 'Select',
-                    'x-reactions': [
-                      {
-                        target: 'updateConditionFields',
-                        fulfill: {
-                          state: {
-                            display: '{{$self.value!=="appendWrite" ? "visible":"hidden"}}'
+                    'x-component': 'FormLayout',
+                    'x-component-props': {
+                      layout: 'horizontal',
+                      colon: false,
+                      feedbackLayout: 'none'
+                    },
+                    properties: {
+                      insertPolicy: {
+                        type: 'string',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'font-color-dark mb-2',
+                          wrapperWidth: 300,
+                          addonBefore: '插入事件'
+                        },
+                        default: 'update_on_exists',
+                        enum: [
+                          {
+                            label: '目标存在时更新',
+                            value: 'update_on_exists'
+                          },
+                          {
+                            label: '目标存在时丢弃',
+                            value: 'ignore_on_exists'
                           }
+                        ]
+                      },
+                      updatePolicy: {
+                        type: 'string',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'font-color-dark mb-2',
+                          wrapperWidth: 300,
+                          addonBefore: '更新事件'
+                        },
+                        default: 'ignore_on_nonexists',
+                        enum: [
+                          {
+                            label: '不存在时丢弃',
+                            value: 'ignore_on_nonexists'
+                          },
+                          {
+                            label: '不存在时插入',
+                            value: 'insert_on_nonexists'
+                          }
+                        ]
+                      },
+                      deletePolicy: {
+                        type: 'void',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'font-color-dark',
+                          wrapperWidth: 300,
+                          addonBefore: '删除事件'
+                        },
+                        'x-component': 'Tag',
+                        'x-content': '不存在时丢弃',
+                        'x-component-props': {
+                          type: 'info',
+                          effect: 'light'
                         }
                       }
-                    ]
+                    },
+                    'x-reactions': {
+                      dependencies: ['writeStrategy'],
+                      fulfill: {
+                        state: {
+                          display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
+                        }
+                      }
+                    }
                   },
                   updateConditionFields: {
                     title: '更新条件字段',

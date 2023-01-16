@@ -353,6 +353,37 @@ export class Database extends NodeType {
                       }
                     }
                   },
+                  writeStrategyObject: {
+                    // title: '数据写入模式',
+                    type: 'void',
+                    'x-component-props': {
+                      layout: 'horizontal',
+                      colon: false,
+                      feedbackLayout: 'none'
+                    },
+                    properties: {
+                      writeStrategy: {
+                        title: '数据写入模式',
+                        type: 'string',
+                        default: 'updateOrInsert',
+                        'x-component': 'Radio.Group',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '统计追加写入: 只处理插入事件，丢弃更新和删除事件'
+                        },
+                        enum: [
+                          {
+                            label: '按事件类型处理',
+                            value: 'updateOrInsert'
+                          },
+                          {
+                            label: '统计追加写入',
+                            value: 'appendWrite'
+                          }
+                        ]
+                      }
+                    }
+                  },
                   dmlPolicy: {
                     title: '数据写入策略',
                     type: 'object',
@@ -422,6 +453,14 @@ export class Database extends NodeType {
                         'x-component-props': {
                           type: 'info',
                           effect: 'light'
+                        }
+                      }
+                    },
+                    'x-reactions': {
+                      dependencies: ['writeStrategy'],
+                      fulfill: {
+                        state: {
+                          display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
                         }
                       }
                     }
