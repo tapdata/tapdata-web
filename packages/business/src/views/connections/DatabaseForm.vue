@@ -762,6 +762,9 @@ export default {
         title: '模型加载频率',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        'x-decorator-props': {
+          tooltip: '数据源中模型数量大于1万时，会按本参数设置进行模型刷新'
+        },
         default: '02:00',
         enum: [
           'false',
