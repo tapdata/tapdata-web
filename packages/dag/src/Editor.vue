@@ -220,7 +220,8 @@ export default {
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
-          type: 'js_processor'
+          type: 'js_processor',
+          beta: true
         },
         {
           name: 'Row Filter',

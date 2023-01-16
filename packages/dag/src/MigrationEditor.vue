@@ -212,7 +212,8 @@ export default {
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
-          type: 'migrate_js_processor'
+          type: 'migrate_js_processor',
+          beta: true
         }
       ])
       this.addResourceIns(allResourceIns)

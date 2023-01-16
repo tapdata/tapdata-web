@@ -15,7 +15,7 @@ import './style.scss'
 
 export const JsProcessor = observer(
   defineComponent({
-    props: ['value', 'disabled'],
+    props: ['value', 'disabled', 'isStandard'],
     directives: {
       resize
     },
@@ -209,9 +209,11 @@ export const JsProcessor = observer(
             limit: 1000,
             where: {
               type: 'system',
-              category: {
-                $in: ['enhanced', 'standard']
-              }
+              category: props.isStandard
+                ? 'standard'
+                : {
+                    $in: ['enhanced', 'standard']
+                  }
             }
           })
         })

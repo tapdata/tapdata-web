@@ -141,6 +141,7 @@
               placement="top"
               :open-delay="400"
             />
+            <VIcon class="ml-1" v-if="n.beta" size="32">beta</VIcon>
           </div>
         </ElScrollbar>
       </ElCollapseItem>

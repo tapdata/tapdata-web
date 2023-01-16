@@ -9,6 +9,7 @@
           placement="top"
           :open-delay="400"
         />
+        <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
       </template>
       <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
         <div

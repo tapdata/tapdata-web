@@ -33,6 +33,7 @@ export class StandardJs extends NodeType {
         default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
         'x-component': 'JsProcessor',
         'x-component-props': {
+          isStandard: true,
           height: 500,
           options: { showPrintMargin: false, wrap: false },
           includeBeforeAndAfter: true,
