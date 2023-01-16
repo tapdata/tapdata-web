@@ -452,7 +452,7 @@ export const JsProcessor = observer(
                                     </details>
                                   )
                                 }
-                                return <div class="js-log-list-item text-prewrap p-2">{item.message}</div>
+                                return <div class="js-log-list-item text-prewrap text-break p-2">{item.message}</div>
                               })
                             : !logLoading.value && <VEmpty large></VEmpty>}
                           <div
