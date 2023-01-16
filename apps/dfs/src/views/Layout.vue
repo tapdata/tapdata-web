@@ -23,6 +23,7 @@
             >
             <span class="flex-fill">
               {{ menu.title }}
+              <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
             </span>
             <template v-if="menu.name === 'Instance' && showAgentWarning">
               <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
@@ -103,8 +104,9 @@ export default {
         },
         {
           name: 'dataflowList',
-          title: $t('task_manage_etl') + '(Beta)',
-          icon: 'task'
+          title: $t('task_manage_etl'),
+          icon: 'task',
+          beta: true
         },
         {
           name: 'dataServerList',
@@ -290,6 +292,8 @@ export default {
     border-right: map-get($borderColor, aside);
     background: map-get($bgColor, disable);
     .el-menu-item {
+      height: 40px;
+      line-height: 40px;
       ::v-deep .v-icon {
         color: map-get($iconFillColor, normal);
       }
