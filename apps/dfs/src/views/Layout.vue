@@ -292,8 +292,8 @@ export default {
     border-right: map-get($borderColor, aside);
     background: map-get($bgColor, disable);
     .el-menu-item {
-      height: 40px;
-      line-height: 40px;
+      height: 50px;
+      line-height: 50px;
       ::v-deep .v-icon {
         color: map-get($iconFillColor, normal);
       }
