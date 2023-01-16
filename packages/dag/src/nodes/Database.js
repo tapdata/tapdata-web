@@ -366,11 +366,10 @@ export class Database extends NodeType {
                         title: '数据写入模式',
                         type: 'string',
                         default: 'updateOrInsert',
-                        'x-decorator': 'FormItem',
                         'x-component': 'Radio.Group',
-                        'x-component-props': {
-                          tooltip:
-                            '选择该单选框后，隐藏【事件处理策略】配置区，当鼠标移入到提示符“！”时显示如下提示信息：只处理插入事件，丢弃更新和删除事件'
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '统计追加写入: 只处理插入事件，丢弃更新和删除事件'
                         },
                         enum: [
                           {
