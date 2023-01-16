@@ -167,7 +167,7 @@ export const JsProcessor = observer(
         clearTimeout(timer)
         version = Time.now()
         queryStart = Time.now()
-        if (!fullscreen.value) fullscreen.value = true
+        if (!fullscreen.value) toggleFullscreen()
         taskApi.testRunJs({ ...params, version, script: props.value }).then(
           () => {
             queryStart = Time.now()
