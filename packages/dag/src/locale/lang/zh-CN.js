@@ -518,5 +518,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '处理增量时间点',
   packages_dag_monitor_node_popover_targetWriteTime_title: '平均每条写入耗时',
   packages_dag_monitor_topheader_renwuxintiaoshi: '任务心跳时间',
-  packages_dag_monitor_node_per_deal_need_time: '单条处理耗时'
+  packages_dag_monitor_node_per_deal_need_time: '单条处理耗时',
+  packages_dag_api_docs: 'API文档'
 }

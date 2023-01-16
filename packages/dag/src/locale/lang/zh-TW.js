@@ -515,5 +515,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '處理增量時間點',
   packages_dag_monitor_node_popover_targetWriteTime_title: '平均每條寫入耗時',
   packages_dag_monitor_topheader_renwuxintiaoshi: '任務心跳時間',
-  packages_dag_monitor_node_per_deal_need_time: '單條處理耗時'
+  packages_dag_monitor_node_per_deal_need_time: '單條處理耗時',
+  packages_dag_api_docs: 'API文檔'
 }

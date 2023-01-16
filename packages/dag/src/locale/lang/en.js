@@ -544,5 +544,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: 'Process incremental time',
   packages_dag_monitor_node_popover_targetWriteTime_title: 'Avg time per write',
   packages_dag_monitor_topheader_renwuxintiaoshi: 'Task heartbeat time',
-  packages_dag_monitor_node_per_deal_need_time: 'Single processing time'
+  packages_dag_monitor_node_per_deal_need_time: 'Single processing time',
+  packages_dag_api_docs: 'Docs'
 }
