@@ -500,6 +500,7 @@ export default {
   share_list_status: '状态',
   share_list_time: '挖掘延迟',
   share_list_edit_title: '挖掘编辑',
+  share_list_edit_title_start_time: '挖掘开始时间',
   share_detail_title: '挖掘表详情',
   share_form_setting_table_name: '存储MongoDB表名',
   share_form_setting_log_time: '日志保存时长',

@@ -9,38 +9,68 @@
           })
         }}
       </div>
-      <VTable
-        :columns="columns"
-        :remoteMethod="remoteMethod"
-        :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
-        }"
-        ref="table"
-        height="300px"
-        class="table-list"
-      >
-        <template slot="status" slot-scope="scope">
-          <TaskStatus :task="scope.row" />
-        </template>
-        <template slot="operation" slot-scope="scope" fixed="right">
-          <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-              $t('packages_business_relation_details_chakanrenwu')
-            }}</ElButton>
+      <div class="flex">
+        <div v-if="type === 'logCollector'" v-loading="!detailData.name" class="share-detail-head-left pr-4">
+          <div class="flex align-items-center">
+            <span class="font-color-normal fw-bold mb-4 fs-7">{{
+              $t('packages_business_relation_details_wajuexinxi')
+            }}</span>
           </div>
-        </template>
-      </VTable>
+          <div class="flex justify-content-start mb-4 text-left fs-8">
+            <div class="fw-normal head-label font-color-light">
+              {{ $t('packages_business_relation_details_wajuemingcheng') }}
+            </div>
+            <ElTooltip effect="dark" :content="detailData.name" placement="top-start">
+              <div class="name font-color-dark fw-normal">{{ detailData.name }}</div>
+            </ElTooltip>
+          </div>
+          <div class="flex justify-content-start mb-4 text-left fs-8">
+            <div class="fw-normal head-label font-color-light">
+              {{ $t('packages_business_relation_details_rizhiwajueshi') }}
+            </div>
+            <div class="font-color-dark fw-normal">{{ formatTime(detailData.logTime) }}</div>
+          </div>
+          <div class="flex justify-content-start mb-4 text-left fs-8">
+            <div class="fw-normal head-label font-color-light">
+              {{ $t('packages_business_share_form_setting_log_time') }}
+            </div>
+            <div class="font-color-dark fw-normal">{{ detailData.storageTime }}</div>
+          </div>
+        </div>
+        <VTable
+          :columns="columns"
+          :remoteMethod="remoteMethod"
+          :page-options="{
+            layout: 'total, ->, prev, pager, next, sizes, jumper'
+          }"
+          ref="table"
+          height="300px"
+          class="table-list"
+        >
+          <template slot="status" slot-scope="scope">
+            <TaskStatus :task="scope.row" />
+          </template>
+          <template slot="operation" slot-scope="scope" fixed="right">
+            <div class="operate-columns">
+              <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
+                $t('packages_business_relation_details_chakanrenwu')
+              }}</ElButton>
+            </div>
+          </template>
+        </VTable>
+      </div>
       <NodeLog v-if="isShowLog" :dataflow="dataflow" hide-filter class="log-box mt-6 border-top"></NodeLog>
     </div>
   </div>
 </template>
 
 <script>
-import i18n from '@tap/i18n'
+import dayjs from 'dayjs'
 
+import i18n from '@tap/i18n'
 import { taskApi, logcollectorApi } from '@tap/api'
 import { VTable } from '@tap/component'
-import { TaskStatus, STATUS_MERGE } from '@tap/business'
+import { TaskStatus, STATUS_MERGE, makeStatusAndDisabled } from '@tap/business'
 import NodeLog from '../../../components/logs/NodeLog'
 
 export default {
@@ -86,7 +116,8 @@ export default {
       taskTypeMap: {
         logCollector: i18n.t('packages_business_relation_details_wajue'),
         mem_cache: i18n.t('packages_business_relation_details_huancun')
-      }
+      },
+      detailData: {}
     }
   },
 
@@ -106,12 +137,22 @@ export default {
   methods: {
     init() {
       this.getDataflow()
+      this.getDetail()
     },
 
     getDataflow() {
       const { id } = this.$route.params
       taskApi.get(id).then(data => {
         this.dataflow = data
+      })
+    },
+
+    getDetail() {
+      const { id } = this.$route.params
+      logcollectorApi.getDetail(id).then(data => {
+        let detailData = data || {}
+        detailData.taskList = detailData.taskList?.map(makeStatusAndDisabled)
+        this.detailData = detailData
       })
     },
 
@@ -155,6 +196,10 @@ export default {
           id: taskId
         }
       })
+    },
+
+    formatTime(date, f = 'YYYY-MM-DD HH:mm:ss') {
+      return dayjs(date).format(f)
     }
   }
 }
@@ -164,5 +209,17 @@ export default {
 .table-list,
 .log-box {
   height: 320px;
+}
+.share-detail-head-left {
+  width: 260px;
+  border-right: 1px solid map-get($borderColor, light);
+  .head-label {
+    min-width: 100px;
+  }
+  .name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 </style>

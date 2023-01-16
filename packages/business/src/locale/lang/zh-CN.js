@@ -705,5 +705,8 @@ export default {
   packages_business_verification_form_jianyanrenwuyun: '检验任务运行出错警告',
   packages_business_verification_form_jiaoyangaojing: '校验告警',
   packages_business_task_status_error_tip:
-    '任务删除成功，以下几个 PostgreSQL 连接的信息清除失败，需要您使用以下方式手动清除'
+    '任务删除成功，以下几个 PostgreSQL 连接的信息清除失败，需要您使用以下方式手动清除',
+  packages_business_relation_details_rizhiwajueshi: '日志挖掘时间',
+  packages_business_relation_details_wajuemingcheng: '挖掘名称',
+  packages_business_relation_details_wajuexinxi: '挖掘信息'
 }
