@@ -1,5 +1,5 @@
 <template>
-  <ElButton type="text" :loading="loading" @click="getProgress">
+  <ElButton type="text" :loading="loading" @click="loadSchema">
     <template v-if="loading">
       <span>{{ progress }}</span>
     </template>
@@ -9,9 +9,6 @@
         <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
       </slot>
     </template>
-    <!--    <span>{{ $t('packages_form_button_reload') }}</span>-->
-    <!--    <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>-->
-    <!--    <span>{{ loading ? progress : title }}</span>-->
   </ElButton>
 </template>
 
@@ -34,13 +31,26 @@ export default {
   },
 
   mounted() {
-    this.getProgress()
+    this.getProgress(true)
   },
 
   methods: {
-    getProgress() {
+    loadSchema() {
+      connectionsApi
+        .updateById(this.connectionId, {
+          loadCount: 0,
+          loadFieldsStatus: 'loading'
+        })
+        .then(() => {
+          this.getProgress()
+        })
+    },
+
+    getProgress(check = false) {
       if (!this.connectionId) return
-      this.loading = true
+      if (!check) {
+        this.loading = true
+      }
       this.progress = '0'
       connectionsApi.getNoSchema(this.connectionId).then(res => {
         if (res.loadFieldsStatus !== 'finished') {
