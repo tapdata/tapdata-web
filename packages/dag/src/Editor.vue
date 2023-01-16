@@ -215,7 +215,11 @@ export default {
           type: 'union_processor'
         },
         {
-          name: 'JavaScript',
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
+          type: 'standard_js_processor'
+        },
+        {
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'js_processor'
         },
         {
