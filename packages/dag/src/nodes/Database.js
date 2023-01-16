@@ -137,6 +137,9 @@ export class Database extends NodeType {
             type: 'string',
             default: 'custom',
             'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              tooltip: '表达式匹配模式下，数据库新增的符合表达的表会被自动同步到目标'
+            },
             'x-component': 'Radio.Group',
             enum: [
               {
@@ -178,14 +181,12 @@ export class Database extends NodeType {
 
           tableExpression: {
             type: 'string',
-            default: '*',
+            default: '.*',
+            description: '使用正则表达式匹配 .*代表任意长度任意字符',
             'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              extra: '表达式匹配模式下，数据库新增的符合表达的表会被自动同步到目标'
-            },
             'x-component': 'Input.TextArea',
             'x-component-props': {
-              placeholder: '逗号分割的正则表达式列表，使用*代表任意长度任意字符'
+              rows: 1
             },
             'x-reactions': {
               dependencies: ['migrateTableSelectType'],
