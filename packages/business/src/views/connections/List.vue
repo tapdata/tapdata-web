@@ -103,6 +103,11 @@
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
+      <ElTableColumn prop="last_updated" sortable="last_updated" min-width="160" label="表结构更新时间">
+        <template slot-scope="scope">
+          {{ scope.row.loadSchemaTime }}
+        </template>
+      </ElTableColumn>
       <ElTableColumn
         prop="last_updated"
         sortable="last_updated"
@@ -410,6 +415,7 @@ export default {
             item.lastUpdateTime = item.last_updated = item.last_updated
               ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               : '-'
+            item.loadSchemaTime = item.loadSchemaTime ? dayjs(item.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             return item
           })
 
