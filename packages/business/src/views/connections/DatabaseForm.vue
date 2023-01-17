@@ -757,13 +757,13 @@ export default {
           }}}`
       }
 
-      END.properties.__TAPDATA.properties.connectionSchemaUpdateHour = {
+      END.properties.__TAPDATA.properties.schemaUpdateHour = {
         type: 'string',
-        title: '模型加载频率',
+        title: i18n.t('packages_business_connections_databaseform_moxingjiazaipin'),
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-decorator-props': {
-          tooltip: '数据源中模型数量大于1万时，会按本参数设置进行模型刷新'
+          tooltip: i18n.t('packages_business_connections_databaseform_shujuyuanzhongmo')
         },
         default: '02:00',
         enum: [
