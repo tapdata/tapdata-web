@@ -195,7 +195,7 @@ export default {
   packages_dag_migration_configpanel_peizhi: 'Configuration',
   packages_dag_migration_consolepanel_quanburizhi: 'All logs',
   packages_dag_migration_settingpanel_dangrenwufuhe:
-    'When the task meets the following conditions, the verification will not be performed even if the switch task is turned on\n 1. Added an intermediate processing node\n 2. The source connection does not support verification\n 3. The target connection does not support verification',
+    'When data verification is enabled, the task will automatically perform full verification and incremental verification for the data replication consistency. The verification results can be viewed on the Task Monitoring page. Note the verification currently does not support following scenarios, when one of the following happens, this feature will have no effect:\n 1. There is a processing node in the pipeline\n 2. The source connection does not support verification\n 3. The target connection does not support verification',
   packages_dag_monitor_bottompanel_yunxingjilu: 'Running record',
   packages_dag_monitor_bottompanel_rizhi: 'Log',
   packages_dag_components_eventchart_qita: 'Other',
