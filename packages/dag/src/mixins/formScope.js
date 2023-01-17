@@ -282,14 +282,27 @@ export default {
             },
             order: ['original_name ASC']
           })
+          let existField = ''
           if (!filter.where.original_name) {
             filter.where.original_name = {
               // regexp: '^[^\\s]+$'
               neq: ''
             }
+          } else {
+            const table = filter.where.original_name?.like
+            const res = await metadataInstancesApi.checkTableExist({
+              connectionId: filter.where['source.id'],
+              tableName: table
+            })
+            if (res?.exist) {
+              existField = table
+            }
           }
           const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
+          if (existField) {
+            data.items.unshift(existField)
+          }
           return data
         },
 
