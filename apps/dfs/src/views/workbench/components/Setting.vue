@@ -2,7 +2,7 @@
   <ElDialog
     custom-class="notice-setting-dialog"
     :title="$t('notify_setting')"
-    width="600px"
+    width="700px"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     :append-to-body="true"
@@ -25,6 +25,13 @@
           :disabled="$disabledReadonlyUserBtn()"
           @change="handleSettingValue"
         ></ElSwitch>
+        <span class="notice-setting-label">微信通知</span>
+        <ElSwitch
+          v-model="form.connectionInterrupted.weChat"
+          size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
+          @change="handleSettingValue"
+        ></ElSwitch>
       </ElFormItem>
       <ElFormItem :label="$t('notify_agent_status_running')">
         <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
@@ -37,6 +44,12 @@
         <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
         <ElSwitch
           v-model="form.connected.email"
+          :disabled="$disabledReadonlyUserBtn()"
+          @change="handleSettingValue"
+        ></ElSwitch>
+        <span class="notice-setting-label">微信通知</span>
+        <ElSwitch
+          v-model="form.connected.weChat"
           :disabled="$disabledReadonlyUserBtn()"
           @change="handleSettingValue"
         ></ElSwitch>
@@ -61,15 +74,18 @@ export default {
       form: {
         connected: {
           email: true,
-          sms: false
+          sms: false,
+          weChat: false
         },
         connectionInterrupted: {
           email: true,
-          sms: false
+          sms: false,
+          weChat: false
         },
         stoppedByError: {
           email: true,
-          sms: false
+          sms: false,
+          weChat: false
         }
       }
     }
