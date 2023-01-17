@@ -30,11 +30,22 @@ export default {
     }
   },
 
+  watch: {
+    connectionId(v) {
+      v && this.init()
+    }
+  },
+
   mounted() {
-    this.getProgress(true)
+    this.init()
   },
 
   methods: {
+    init() {
+      this.loading = false
+      this.getProgress(true)
+    },
+
     loadSchema() {
       connectionsApi
         .updateById(this.connectionId, {
