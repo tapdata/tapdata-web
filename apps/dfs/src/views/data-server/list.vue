@@ -66,7 +66,7 @@ export default {
   }
   .header-content-box {
     padding-top: 224px;
-    width: 600px;
+    width: 525px;
   }
   .header {
     font-style: normal;
@@ -75,8 +75,8 @@ export default {
     line-height: 40px;
   }
   .data-server-header-gif {
-    width: 530px;
-    height: 530px;
+    width: 620px;
+    height: 518px;
     img {
       width: 100%;
       height: 100%;
