@@ -94,7 +94,7 @@ export default {
       }
 
       // 校验上一个节点配置
-      if (o) {
+      if (o && !this.stateIsReadonly) {
         const node = this.nodeById(o)
         try {
           if (node) {
