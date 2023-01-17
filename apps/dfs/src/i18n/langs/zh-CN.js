@@ -1179,7 +1179,7 @@ export default {
 
   //数据服务
   dfs_data_server: '数据服务',
-  dfs_data_server_demo_title_desc: '·中央化的数据服务 ·中央化存储 ·数据实时服务',
+  dfs_data_server_demo_title_desc: '中央化的数据服务 ·中央化存储 ·数据实时服务',
   dfs_data_server_demo_title_edition: 'Tapdata On-Prem 版',
   dfs_data_server_demo_title: '中央化的数据服务，可复用易分发',
   dfs_data_server_demo_desc:
