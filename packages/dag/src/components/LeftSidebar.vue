@@ -117,6 +117,11 @@
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
+          <ElTooltip content="重新加载" placement="top">
+            <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable">
+              <VIcon class="click-btn refresh mr-1" size="16">refresh</VIcon>
+            </StageButton>
+          </ElTooltip>
           <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
             >search-outline</VIcon
           >
@@ -286,6 +291,7 @@ import BaseNode from './BaseNode'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
 import ConnectionType from './ConnectionType'
+import StageButton from '@tap/component/src/StageButton'
 
 export default {
   name: 'LeftSidebar',
@@ -299,7 +305,8 @@ export default {
     VIcon,
     ConnectionType,
     ConnectionTypeSelector,
-    ElScrollbar: Select.components.ElScrollbar
+    ElScrollbar: Select.components.ElScrollbar,
+    StageButton
   },
 
   data() {
@@ -826,7 +833,9 @@ $hoverBg: #eef3ff;
       height: 24px !important;
       z-index: 2;
       border-radius: 4px;
-
+      &.refresh {
+        color: map-get($iconFillColor, normal);
+      }
       &:hover,
       &.active {
         color: map-get($color, primary);

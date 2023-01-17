@@ -97,10 +97,12 @@ export class Table extends NodeType {
       tableNameWrap: {
         type: 'void',
         title: '表',
-        'x-decorator': 'FormItem',
+        'x-decorator': 'StageButtonLabel',
         'x-decorator-props': {
           asterisk: true,
-          feedbackLayout: 'none'
+          feedbackLayout: 'none',
+          connectionId: '',
+          title: '表'
         },
         'x-component': 'FormFlex',
         'x-component-props': {
@@ -108,10 +110,13 @@ export class Table extends NodeType {
           align: 'start'
         },
         'x-reactions': {
-          dependencies: ['databaseType'],
+          dependencies: ['databaseType', '.connectionId'],
           fulfill: {
             state: {
               display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+            },
+            schema: {
+              'x-decorator-props.connectionId': `{{$deps[1]}}`
             }
           }
         },

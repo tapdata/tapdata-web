@@ -290,6 +290,16 @@ export default {
           }
           const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
+          const table = filter.where.original_name?.like
+          if (table && !data.items.includes(table)) {
+            const res = await metadataInstancesApi.checkTableExist({
+              connectionId: filter.where['source.id'],
+              tableName: table
+            })
+            if (res?.exist) {
+              data.items.unshift(table)
+            }
+          }
           return data
         },
 

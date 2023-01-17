@@ -710,5 +710,7 @@ export default {
     '任務刪除成功，以下幾個 PostgreSQL 連接的信息清除失敗，需要您使用以下方式手動清除',
   packages_business_relation_details_rizhiwajueshi: '日誌挖掘時間',
   packages_business_relation_details_wajuemingcheng: '挖掘名稱',
-  packages_business_relation_details_wajuexinxi: '挖掘信息'
+  packages_business_relation_details_wajuexinxi: '挖掘信息',
+  packages_business_connections_databaseform_shujuyuanzhongmo: '數據源中模型數量大於1萬時，會按本參數設置進行模型刷新',
+  packages_business_connections_databaseform_moxingjiazaipin: '模型加載頻率'
 }
