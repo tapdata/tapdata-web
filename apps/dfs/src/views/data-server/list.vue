@@ -61,7 +61,7 @@ export default {
 .data-server-wrap {
   background: #ebeef3;
   .header-box {
-    background-color: #f5f7fb;
+    background-color: #f4f6fa;
     height: 530px;
   }
   .header-content-box {
