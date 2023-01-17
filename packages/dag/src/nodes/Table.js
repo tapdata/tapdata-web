@@ -360,7 +360,7 @@ export class Table extends NodeType {
                           'x-reactions': {
                             fulfill: {
                               state: {
-                                visible: `{{$settings.type !== "cdc"}}`
+                                visible: `{{$settings.type === "cdc"}}`
                               }
                             }
                           }
@@ -401,7 +401,7 @@ export class Table extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-reactions': {
-                      target: '*(nodeSchema,conditions)',
+                      target: '*(conditions)',
                       fulfill: {
                         state: {
                           visible: '{{$self.value===true}}'
