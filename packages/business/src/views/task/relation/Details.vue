@@ -10,7 +10,11 @@
         }}
       </div>
       <div class="flex">
-        <div v-if="type === 'logCollector'" v-loading="!detailData.name" class="share-detail-head-left pr-4">
+        <div
+          v-if="type === 'logCollector' && detailData.name"
+          v-loading="!detailData.name"
+          class="share-detail-head-left pr-4"
+        >
           <div class="flex align-items-center">
             <span class="font-color-normal fw-bold mb-4 fs-7">{{
               $t('packages_business_relation_details_wajuexinxi')
