@@ -123,7 +123,32 @@ export const FieldRename = connect(
                       </span>
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label', 'ellipsis']}>
                         {data.level === 1 ? (
-                          <ElInput
+                          <div
+                            staticClass="el-input el-input--small tree-field-input text__inner"
+                            class={{
+                              'tree-field-input-primary': data.field_name !== data.original_field_name,
+                              'is-disabled': this.disabled || this.transformLoading
+                            }}
+                          >
+                            <input
+                              disabled={this.disabled || this.transformLoading}
+                              type="text"
+                              autocomplete="off"
+                              class="el-input__inner"
+                              value={data.field_name}
+                              onChange={event => {
+                                const val = event.target.value
+                                if (val) {
+                                  data.field_name = val
+                                  this.handleRename(node, data)
+                                } else {
+                                  event.target.value = data.field_name
+                                }
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          /*<ElInput
                             class={[
                               'tree-field-input',
                               'text__inner',
@@ -131,11 +156,17 @@ export const FieldRename = connect(
                                 'tree-field-input-primary': data.field_name !== data.original_field_name
                               }
                             ]}
+                            value={data.field_name}
                             disabled={this.disabled || this.transformLoading}
-                            v-model={data.field_name}
-                            onChange={() => this.handleRename(node, data)}
-                          />
-                        ) : (
+                            // v-model={data.field_name}
+                            onChange={val => {
+                              if (val) {
+                                data.field_name = val
+                                this.handleRename(node, data)
+                              } else {
+                              }
+                            }}
+                          />*/
                           <span class="text__inner">{data.field_name}</span>
                         )}
                       </span>
