@@ -380,6 +380,7 @@ export class Table extends NodeType {
                         },
                         defaultValue: {
                           title: '轮询字段默认值',
+                          required: true,
                           type: 'string',
                           'x-decorator': 'FormItem',
                           'x-component': 'Input',
