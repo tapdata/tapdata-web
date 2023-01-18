@@ -52,8 +52,9 @@ export default {
           loadCount: 0,
           loadFieldsStatus: 'loading'
         })
-        .then(() => {
+        .then(data => {
           this.getProgress()
+          this.startByConnection(data, true, false)
         })
     },
 
@@ -65,16 +66,37 @@ export default {
       this.progress = '0'
       connectionsApi.getNoSchema(this.connectionId).then(res => {
         if (res.loadFieldsStatus !== 'finished') {
-          setTimeout(this.getProgress, 2000)
+          setTimeout(this.getProgress, 1000)
         } else {
           this.progress = 100 + '%'
           setTimeout(() => {
             this.$emit('complete')
             this.loading = false
-          }, 1000)
+          }, 200)
         }
       })
-    }
+    },
+
+    startByConnection(connection, updateSchema, editTest) {
+      let msg = {
+        type: 'testConnection',
+        data: connection
+      }
+      msg.data['updateSchema'] = false
+      msg.data['editTest'] = false
+      if (updateSchema) {
+        msg.data['updateSchema'] = updateSchema
+      }
+      if (editTest) {
+        msg.data['editTest'] = editTest
+      }
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
+        this.$ws.once('401', () => {
+          this.$ws.send(msg)
+        })
+      })
+    },
   }
 }
 </script>
