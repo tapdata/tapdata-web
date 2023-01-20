@@ -162,67 +162,65 @@ export default {
       this.clearInterval()
     },
     handleWS() {
-      this.$ws.ready(() => {
-        //接收数据
-        this.$ws.on('testConnectionResult', data => {
-          this.isTimeout = false //有回调
-          let result = data.result || []
-          this.wsError = data.status
-          this.wsErrorMsg = data.error
-          clearTimeout(this.timer)
-          this.timer = null
-          let testData = {
-            wsError: data.status
-          }
-          if (result.response_body) {
-            let validate_details = result.response_body.validate_details || []
-            let details = validate_details.filter(item => item.status !== 'waiting')
-            // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
-            if (details.length === 0) {
-              validate_details = validate_details.map(item => {
-                item.status = 'unTest'
-                return item
-              })
-            }
-            // if (unPassedNums.length === 0) {
-            // 	this.hideTableInfo = true;
-            // }
-            this.testData.testLogs = validate_details
-            testData['testLogs '] = validate_details
-            testData['status'] = result.status
-            this.status = result.status
-          } else {
-            let logs = this.testData.testLogs.map(item => {
-              item.status = 'invalid'
+      //接收数据
+      this.$ws.on('testConnectionResult', data => {
+        this.isTimeout = false //有回调
+        let result = data.result || []
+        this.wsError = data.status
+        this.wsErrorMsg = data.error
+        clearTimeout(this.timer)
+        this.timer = null
+        let testData = {
+          wsError: data.status
+        }
+        if (result.response_body) {
+          let validate_details = result.response_body.validate_details || []
+          let details = validate_details.filter(item => item.status !== 'waiting')
+          // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
+          if (details.length === 0) {
+            validate_details = validate_details.map(item => {
+              item.status = 'unTest'
               return item
             })
-            this.testData.testLogs = logs
-            testData['testLogs '] = logs
-            testData['status'] = data.status
-            this.status = data.status
-            this.wsError = data.status
-            //this.wsErrorMsg = data.error
           }
-          this.$emit('returnTestData', testData)
-        })
-        //长连接失败
-        this.$ws.on('testConnection', data => {
+          // if (unPassedNums.length === 0) {
+          // 	this.hideTableInfo = true;
+          // }
+          this.testData.testLogs = validate_details
+          testData['testLogs '] = validate_details
+          testData['status'] = result.status
+          this.status = result.status
+        } else {
+          let logs = this.testData.testLogs.map(item => {
+            item.status = 'invalid'
+            return item
+          })
+          this.testData.testLogs = logs
+          testData['testLogs '] = logs
+          testData['status'] = data.status
+          this.status = data.status
           this.wsError = data.status
-          this.wsErrorMsg = data.error
-          let testData = {
-            wsError: data.status
-          }
-          this.$emit('returnTestData', testData)
-        })
-        //长连接失败
-        this.$ws.on('pipe', data => {
-          this.wsError = data.status
-          this.wsErrorMsg = data.error
-          let testData = {
-            wsError: data.status
-          }
-          this.$emit('returnTestData', testData)
-        })
+          //this.wsErrorMsg = data.error
+        }
+        this.$emit('returnTestData', testData)
+      })
+      //长连接失败
+      this.$ws.on('testConnection', data => {
+        this.wsError = data.status
+        this.wsErrorMsg = data.error
+        let testData = {
+          wsError: data.status
+        }
+        this.$emit('returnTestData', testData)
+      })
+      //长连接失败
+      this.$ws.on('pipe', data => {
+        this.wsError = data.status
+        this.wsErrorMsg = data.error
+        let testData = {
+          wsError: data.status
+        }
+        this.$emit('returnTestData', testData)
       })
     },
     start(updateSchema, editTest) {
@@ -247,24 +245,22 @@ export default {
       if (editTest) {
         msg.data['editTest'] = editTest //是否编辑测试
       }
-      this.$ws.ready(() => {
+      this.$ws.send(msg)
+      // 连接测试时出现access_token过期,重发消息
+      this.$ws.once('401', () => {
         this.$ws.send(msg)
-        // 连接测试时出现access_token过期,重发消息
-        this.$ws.once('401', () => {
-          this.$ws.send(msg)
-        })
-        this.timer && clearTimeout(this.timer)
-        this.timer = null
-        this.timer = setTimeout(() => {
-          this.isTimeout = true //重置
-          this.wsError = 'ERROR'
-          this.wsErrorMsg = this.wsErrorMsg ? this.wsErrorMsg : this.$t('packages_business_dataForm_test_retryTest')
-          let testData = {
-            wsError: 'ERROR'
-          }
-          this.$emit('returnTestData', testData)
-        }, 120000)
       })
+      this.timer && clearTimeout(this.timer)
+      this.timer = null
+      this.timer = setTimeout(() => {
+        this.isTimeout = true //重置
+        this.wsError = 'ERROR'
+        this.wsErrorMsg = this.wsErrorMsg ? this.wsErrorMsg : this.$t('packages_business_dataForm_test_retryTest')
+        let testData = {
+          wsError: 'ERROR'
+        }
+        this.$emit('returnTestData', testData)
+      }, 120000)
     },
     clearInterval() {
       // 取消长连接

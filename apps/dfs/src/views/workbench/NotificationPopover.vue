@@ -103,9 +103,7 @@ export default {
             }
           }, 800)
         )
-        this.$ws.ready(() => {
-          this.$ws.send(msg)
-        }, true)
+        this.$ws.send(msg)
         // this.$root.$on('notificationUpdate', () => {
         //   this.$ws.send(msg)
         // })

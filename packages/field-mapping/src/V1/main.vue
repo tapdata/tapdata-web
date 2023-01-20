@@ -491,9 +491,7 @@ export default {
           stageId: this.transform.nodeId
         }
       }
-      this.$ws.ready(() => {
-        this.$ws.send(msg)
-      }, true)
+      this.$ws.send(msg)
 
       //总任务
       let msgData = {
@@ -502,9 +500,7 @@ export default {
           dataFlowId: id
         }
       }
-      this.$ws.ready(() => {
-        this.$ws.send(msgData)
-      }, true)
+      this.$ws.send(msgData)
     }
   }
 }

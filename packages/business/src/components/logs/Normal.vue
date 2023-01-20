@@ -145,9 +145,7 @@ export default {
         data && this.resetData()
       })
 
-      this.$ws.ready(() => {
-        this.$ws.send(msg)
-      }, true)
+      this.$ws.send(msg)
     },
     scrollFnc(ev) {
       const target = ev.target

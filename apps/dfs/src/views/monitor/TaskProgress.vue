@@ -635,10 +635,8 @@ export default {
       }
       let msgStr = JSON.stringify(msg)
       if (lastMsg !== msgStr) {
-        this.$ws.ready(() => {
-          lastMsg = msgStr
-          this.$ws.send(msg)
-        })
+        lastMsg = msgStr
+        this.$ws.send(msg)
       }
     },
     // 通过api获取数据

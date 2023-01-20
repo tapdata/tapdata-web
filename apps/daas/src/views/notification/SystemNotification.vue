@@ -310,9 +310,7 @@ export default {
           let msg = {
             type: 'notification'
           }
-          this.$ws.ready(() => {
-            this.$ws.send(msg)
-          }, true)
+          this.$ws.send(msg)
         })
       }
     },
@@ -339,9 +337,7 @@ export default {
         let msg = {
           type: 'notification'
         }
-        this.$ws.ready(() => {
-          this.$ws.send(msg)
-        }, true)
+        this.$ws.send(msg)
       })
     },
 
@@ -361,9 +357,7 @@ export default {
         let msg = {
           type: 'notification'
         }
-        this.$ws.ready(() => {
-          this.$ws.send(msg)
-        }, true)
+        this.$ws.send(msg)
       })
     },
     handleClick(tab) {

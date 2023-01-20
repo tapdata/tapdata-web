@@ -90,13 +90,11 @@ export default {
       if (editTest) {
         msg.data['editTest'] = editTest
       }
-      this.$ws.ready(() => {
+      this.$ws.send(msg)
+      this.$ws.once('401', () => {
         this.$ws.send(msg)
-        this.$ws.once('401', () => {
-          this.$ws.send(msg)
-        })
       })
-    },
+    }
   }
 }
 </script>
