@@ -1,5 +1,6 @@
 import WSClient from './plugins/ws-client'
 import * as _util from './util'
+import WorkerClient from '@/plugins/WorkerClient'
 
 const install = Vue => {
   Vue.prototype.$util = _util
@@ -10,7 +11,9 @@ const install = Vue => {
       let wsOptions = this.$options.wsOptions
       // 根实例才有ws
       if (wsOptions) {
-        Vue.prototype.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
+        let worker = new WorkerClient('/static/js/ws.worker.js')
+
+        Vue.prototype.$ws = worker
       }
     }
   })
