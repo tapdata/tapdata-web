@@ -244,6 +244,11 @@ const routes = [
           hideTitle: true,
           icon: 'data-server'
         }
+      },
+      {
+        path: '/lang',
+        name: 'lang',
+        component: Lang
       }
     ]
   },
@@ -384,12 +389,5 @@ const routes = [
     }
   }
 ]
-if (process.env.NODE_ENV === 'development') {
-  routes[0].children?.push({
-    path: '/lang',
-    name: 'lang',
-    component: Lang
-  })
-}
 
 export default routes

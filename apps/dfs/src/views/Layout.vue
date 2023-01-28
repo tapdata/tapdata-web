@@ -115,6 +115,11 @@ export default {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'
+        },
+        {
+          name: 'lang',
+          title: 'language',
+          icon: 'operation-log'
         }
       ],
       dialogVisible: false,
