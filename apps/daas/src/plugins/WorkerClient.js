@@ -1,3 +1,5 @@
+import { Message } from 'element-ui'
+import { merge } from 'lodash'
 import EventEmitter from './event-emitter'
 
 class WebSocketMessage {
@@ -15,8 +17,18 @@ class WorkerClientMessage {
 }
 
 class WorkerClient extends EventEmitter {
-  constructor(url) {
+  constructor(url, wsOptions) {
     super()
+    const _wsOptions = {
+      url: undefined,
+      protocols: undefined, // 不能为null
+      retryTimes: Number.MAX_VALUE, // 无限次尝试重连
+      retryInterval: 500, // 断开立即重连
+      query: {
+        id: this.__getId()
+      }
+    }
+    this.wsOptions = merge({}, _wsOptions, wsOptions)
     this.init(url)
   }
 
@@ -31,9 +43,35 @@ class WorkerClient extends EventEmitter {
     this.worker = worker
   }
 
+  getWSURL() {
+    const { wsOptions } = this
+    let query = {}
+    if (wsOptions.getQuery && typeof wsOptions.getQuery === 'function') {
+      Object.assign(query, wsOptions.query, wsOptions.getQuery() || {})
+    }
+    const url = new URL(wsOptions.url)
+    Object.keys(query).forEach(key => {
+      url.searchParams.append(key, query[key])
+    })
+    return url.toString()
+  }
+
   send(msg) {
     msg = typeof msg === 'string' ? msg : JSON.stringify(msg)
     this.worker.port.postMessage(new WebSocketMessage(msg))
+  }
+
+  __getId() {
+    let id = this.__id
+    if (!id) {
+      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = (Math.random() * 16) | 0,
+          v = c === 'x' ? r : (r & 0x3) | 0x8
+        return v.toString(16)
+      })
+      this.__id = id
+    }
+    return id
   }
 
   __receiveMessage(event) {

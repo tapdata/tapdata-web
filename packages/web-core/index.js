@@ -11,7 +11,7 @@ const install = Vue => {
       let wsOptions = this.$options.wsOptions
       // 根实例才有ws
       if (wsOptions) {
-        let worker = new WorkerClient('/static/js/ws.worker.js')
+        let worker = new WorkerClient('/static/js/ws.worker.js', wsOptions)
 
         Vue.prototype.$ws = worker
       }
