@@ -75,7 +75,6 @@ class WSClient extends EventEmitter {
     } catch (e) {
       if (!this.retryCount) {
         // eslint-disable-next-line
-        console.log('websocket 连接失败，准备尝试重连', e)
       }
       this.reconnect()
     }
@@ -87,12 +86,10 @@ class WSClient extends EventEmitter {
       this.retryCount++
       setTimeout(() => {
         // eslint-disable-next-line
-        console.log('websocket 尝试第' + this.retryCount + '次重连')
         this.connect()
       }, opts.retryInterval)
     } else {
       // eslint-disable-next-line
-      console.log('websocket 超过最大重连次数 ' + this.retryTimes)
       this.retryCount = 0
     }
   }
@@ -108,7 +105,6 @@ class WSClient extends EventEmitter {
     let ws = this.ws
     ws.onopen = () => {
       // eslint-disable-next-line
-      console.log('websocket 已连接')
       this.emit('open')
     }
     ws.onmessage = e => {
@@ -116,7 +112,6 @@ class WSClient extends EventEmitter {
     }
     ws.onerror = () => {
       // eslint-disable-next-line
-      console.log('websocket 断开连接')
       this.ws = null
       if (this.retryCount === 0) {
         this.reconnect()
@@ -124,7 +119,6 @@ class WSClient extends EventEmitter {
     }
     ws.onclose = () => {
       // eslint-disable-next-line
-      console.log('websocket 已关闭')
       this.ws = null
       if (this.retryCount === 0) {
         this.reconnect()
@@ -159,7 +153,6 @@ class WSClient extends EventEmitter {
       }
     } catch (e) {
       // eslint-disable-next-line
-      console.log('websocket 消息解析失败: ' + msg, e)
     }
   }
 
