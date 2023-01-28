@@ -734,5 +734,6 @@ export default {
   packages_business_relation_details_wajuexinxi: 'Mining information',
   packages_business_connections_databaseform_shujuyuanzhongmo:
     'When the number of models in the data source is greater than 10,000, the model will be refreshed according to this parameter setting',
-  packages_business_connections_databaseform_moxingjiazaipin: 'Model Load Frequency'
+  packages_business_connections_databaseform_moxingjiazaipin: 'Model Load Frequency',
+  packages_business_connections_list_biaojiegougengxin: 'Table structure update time'
 }
