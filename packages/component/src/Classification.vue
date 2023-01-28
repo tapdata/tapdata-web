@@ -15,7 +15,7 @@
         v-readonlybtn="authority"
         @click="showDialog()"
       >
-        {{ $t('packages_component_button_button') }}
+        <VIcon size="16" class="icon">add-fill</VIcon>
       </ElButton>
       <div class="title">
         <span>{{ comTitle }}</span>
@@ -528,7 +528,7 @@ export default {
     top: 4px;
   }
   .toggle {
-    margin-top: 56px;
+    margin-top: 18px;
     // color: map-get($color, lprimary);
     z-index: 2;
   }
@@ -550,7 +550,6 @@ export default {
 
     .btn-addIcon {
       position: absolute;
-      top: 2px;
       right: 12px;
       font-size: $fontBaseTitle;
       .iconfont.icon-jia {
