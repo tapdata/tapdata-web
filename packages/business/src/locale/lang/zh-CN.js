@@ -710,5 +710,6 @@ export default {
   packages_business_relation_details_wajuemingcheng: '挖掘名称',
   packages_business_relation_details_wajuexinxi: '挖掘信息',
   packages_business_connections_databaseform_shujuyuanzhongmo: '数据源中模型数量大于1万时，会按本参数设置进行模型刷新',
-  packages_business_connections_databaseform_moxingjiazaipin: '模型加载频率'
+  packages_business_connections_databaseform_moxingjiazaipin: '模型加载频率',
+  packages_business_connections_list_biaojiegougengxin: '表结构更新时间'
 }

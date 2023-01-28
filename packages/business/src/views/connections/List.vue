@@ -103,7 +103,12 @@
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="last_updated" sortable="last_updated" min-width="160" label="表结构更新时间">
+      <ElTableColumn
+        prop="last_updated"
+        sortable="last_updated"
+        min-width="160"
+        :label="$t('packages_business_connections_list_biaojiegougengxin')"
+      >
         <template slot-scope="scope">
           {{ scope.row.loadSchemaTime }}
         </template>
