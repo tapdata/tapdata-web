@@ -37,4 +37,15 @@ i18n.merge(dagLangs)
 // apps语言文件，最后覆盖
 i18n.merge(localLangs)
 
+let localLangModifyZhCN = localStorage.getItem('localLangModifyZhCN')
+let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
+let localLangModifyEn = localStorage.getItem('localLangModifyEn')
+// 矫正的文案
+let modifyObject = {
+  en: localLangModifyEn ? JSON.parse(localLangModifyEn) : {},
+  'zh-TW': localLangModifyZhTW ? JSON.parse(localLangModifyZhTW) : {},
+  'zh-CN': localLangModifyZhCN ? JSON.parse(localLangModifyZhCN) : {}
+}
+i18n.merge(modifyObject)
+
 export default i18n
