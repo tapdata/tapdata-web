@@ -2,79 +2,32 @@
   <div v-if="$route.name === 'Workbench'" class="workbench-container">
     <!--	快速开始	-->
     <div class="workbench-start workbench-section">
-      <ElRow :gutter="40" class="section-body pt-6">
-        <ElCol :span="6">
-          <div class="create-list__item quick-start-video flex justify-content-center align-items-center">
-            <VIcon size="50" class="mr-4">quick-start-read</VIcon>
-            <div class="flex flex-column">
-              <div class="color-white mb-2">新人教程视频</div>
-              <el-button size="mini" round>点击查看</el-button>
-            </div>
-          </div>
-        </ElCol>
+      <ElRow :gutter="40" class="section-header py-6">
+        <ElCol :span="18" class="main-title">{{ $t('workbench_quick_start') }}</ElCol>
+        <ElCol :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
+      </ElRow>
+      <ElRow :gutter="40" class="section-body">
         <ElCol :span="6" v-for="(item, index) in createList" :key="index">
           <div class="create-list__item flex p-6">
+            <div class="create-list__index block flex justify-content-center align-items-center flex-shrink-0">
+              {{ index + 1 }}
+            </div>
             <div class="create-list__main ml-4">
-              <ElLink class="pointer" :disabled="$disabledReadonlyUserBtn()" @click="item.action">
-                {{ index + 1 }}.{{ item.name }}
-                <VIcon class="float-end ml-2" size="12">add</VIcon>
+              <div class="create-list__name mb-4 fs-6">{{ item.name }}</div>
+              <div class="create-list__desc">{{ item.desc }}</div>
+              <ElLink
+                type="primary"
+                class="float-end pointer"
+                :disabled="$disabledReadonlyUserBtn()"
+                @click="item.action"
+              >
+                <span>{{ item.btnName }}</span>
+                <VIcon class="ml-2" size="12">right</VIcon>
               </ElLink>
             </div>
           </div>
         </ElCol>
-      </ElRow>
-    </div>
-    <!--	探索示例	-->
-    <div class="workbench-overview workbench-section">
-      <ElRow :gutter="40" class="section-header py-6">
-        <ElCol :span="18" class="main-title">探索示例</ElCol>
-      </ElRow>
-      <el-tabs class="explore-examples" active-name="first">
-        <el-tab-pane label="全部" name="first">
-          <ul class="flex flex-row">
-            <li class="mr-6" v-for="(item, index) in examplesList" :key="index">
-              <div class="position-relative">
-                <img :src="getImg(item.img)" />
-                <div v-if="item.title" class="position-absolute position-text">{{ item.title }}</div>
-                <div v-if="item.subTitle" class="position-absolute position-text">{{ item.subTitle }}</div>
-              </div>
-              <div class="text-center">{{ item.title }}</div>
-            </li>
-          </ul>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-    <!--	概览	-->
-    <div class="workbench-overview workbench-section">
-      <ElRow :gutter="40" class="section-header py-6">
-        <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
-        <ElCol :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
-      </ElRow>
-      <ElRow :gutter="40" class="section-body">
-        <ElCol :span="18">
-          <ul class="agent-list__list flex-grow-1 flex justify-content-around px-5">
-            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item py-6" :ref="item.key">
-              <div class="agent-list__name flex align-items-center mx-auto mb-3">
-                <VIcon size="14" class="icon" color="#888">{{ item.icon }}</VIcon>
-                <span class="ml-1 fs-7">{{ item.name }}</span>
-              </div>
-              <div class="color-primary text-center fs-1">
-                {{ item.value }}
-              </div>
-              <div
-                class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1"
-                v-if="item.list.length > 0"
-              >
-                <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
-                  <span>{{ detail.label }}</span>
-                  <span>:</span>
-                  <span :class="['ml-1']">{{ detail.value }}</span>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </ElCol>
-        <ElCol :span="6" style="border: 1px solid #e1e3e9; border-radius: 8px">
+        <ElCol :span="6">
           <div class="aside-main notice-list flex-grow-1 p-6">
             <ul class="notice-list__list">
               <li
@@ -98,6 +51,53 @@
                 </div>
               </li>
             </ul>
+          </div>
+        </ElCol>
+      </ElRow>
+    </div>
+    <!--	概览	-->
+    <div class="workbench-overview workbench-section">
+      <ElRow :gutter="40" class="section-header py-6">
+        <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
+        <ElCol :span="6" class="aside-title">{{ $t('workbench_guide') }}</ElCol>
+      </ElRow>
+      <ElRow :gutter="40" class="section-body">
+        <ElCol :span="18">
+          <ul class="agent-list__list flex-grow-1 flex justify-content-around px-5">
+            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item py-6" :ref="item.key">
+              <div class="agent-list__name flex align-items-center justify-content-center mx-auto mb-3">
+                <VIcon size="14" class="icon" color="#888">{{ item.icon }}</VIcon>
+                <span class="ml-1 fs-7">{{ item.name }}</span>
+              </div>
+              <div class="color-primary text-center fs-1">
+                {{ item.value }}
+              </div>
+              <div
+                class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1"
+                v-if="item.list.length > 0"
+              >
+                <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
+                  <span>{{ detail.label }}</span>
+                  <span>:</span>
+                  <span :class="['ml-1']">{{ detail.value }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </ElCol>
+        <ElCol :span="6">
+          <div class="aside-main guide-list flex-grow-1 p-6">
+            <div class="guide-list__list">
+              <ElLink
+                v-for="(item, index) in guides"
+                :key="index"
+                type="primary"
+                class="guide-list__item mb-4 block pointer"
+                @click="clickGuide(item)"
+              >
+                {{ item.name }}
+              </ElLink>
+            </div>
           </div>
         </ElCol>
       </ElRow>
@@ -319,37 +319,7 @@ export default {
       showUpgrade: false, //版本升级弹窗
       //付费升级
       paidUpgradeVisible: false,
-      paidPlan: '',
-      //探索实例
-      examplesList: [
-        {
-          type: 'all',
-          title: 'MySQL 主从同步',
-          img: 'mysql'
-        },
-        {
-          type: 'all',
-          title: 'Oracle 数据备份',
-          img: 'oracle'
-        },
-        {
-          type: 'all',
-          title: 'Oracle 国产替代',
-          img: 'oracle-replace'
-        },
-        {
-          type: 'all',
-          title: '缓存加速',
-          subTitle: 'MySQL - Redis',
-          img: 'mySQL-redis'
-        },
-        {
-          type: 'all',
-          title: '全文检索',
-          subTitle: 'SQLServer - Elastic Search',
-          img: 'SQLServer'
-        }
-      ]
+      paidPlan: ''
     }
   },
   mounted() {
@@ -505,11 +475,6 @@ export default {
     },
     numToThousands() {
       return numToThousands(...arguments)
-    },
-
-    //获取探索示例-背景图
-    getImg(name) {
-      return require(`../../../public/images/dashboard/${name}.png`)
     }
   }
 }
@@ -533,11 +498,14 @@ export default {
 }
 // 快速开始
 .create-list__item {
-  height: 70px;
   background-color: #fff;
+  //min-width: 200px;
+  height: 213px;
   box-sizing: border-box;
-  border: 1px solid #e1e3e9;
-  border-radius: 8px;
+  border-radius: 4px;
+  &:hover {
+    box-shadow: 0 2px 11px 8px #e0e2e7;
+  }
 }
 .create-list__index {
   width: 22px;
@@ -554,7 +522,12 @@ export default {
   color: #000;
   white-space: nowrap;
 }
-
+.create-list__desc {
+  height: 110px;
+  overflow: auto;
+  line-height: 22px;
+  color: map-get($fontColor, light);
+}
 .aside-main {
   height: 213px;
   background-color: #fff;
@@ -562,14 +535,14 @@ export default {
   border-radius: 4px;
 }
 .agent-list__list {
-  background: #ffffff;
+  background-color: #fff;
+  border-radius: 4px;
 }
 .agent-list__item {
   //min-width: 250px;
-  width: 264px;
   height: 190px;
-  border: 1px solid #e1e3e9;
-  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: #fff;
 }
 .agent-list__name {
   .vicon {
@@ -621,31 +594,5 @@ export default {
       padding: 0 20px;
     }
   }
-}
-.notice-list {
-  height: 190px;
-  width: 327px;
-  border: 1px solid #e1e3e9;
-  border-radius: 8px;
-}
-.quick-start-video {
-  background: linear-gradient(
-    89.97deg,
-    rgba(128, 61, 217, 0.8) 0.03%,
-    rgba(131, 132, 255, 0.8) 50.06%,
-    rgba(104, 142, 247, 0.8) 76.93%,
-    rgba(93, 153, 248, 0.8) 99.98%
-  );
-}
-.explore-examples {
-  background: #ffffff;
-  border: 1px solid #e1e3e9;
-  border-radius: 10px;
-  padding: 20px;
-}
-.position-text {
-  top: 15px;
-  left: 52px;
-  color: map-get($color, white);
 }
 </style>

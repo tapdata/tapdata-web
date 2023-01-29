@@ -332,7 +332,7 @@ export default {
     flex-basis: 0%;
     margin: 0;
     padding: 0;
-    background: rgba(239, 241, 244, 1);
+    //background: rgba(239, 241, 244, 1);
   }
   .breadcrumb {
     padding: 24px 0 24px 24px;
