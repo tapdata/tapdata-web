@@ -2,8 +2,8 @@
   <div v-if="$route.name === 'Workbench'" class="workbench-container">
     <!--	快速开始	-->
     <div class="workbench-start workbench-section">
-      <ElRow :gutter="40" class="section-body pt-6">
-        <ElCol :span="6">
+      <ul class="flex pt-6">
+        <li>
           <div class="create-list__item quick-start-video flex justify-content-center align-items-center">
             <VIcon size="50" class="mr-4">quick-start-read</VIcon>
             <div class="flex flex-column">
@@ -11,18 +11,17 @@
               <el-button size="mini" round>点击查看</el-button>
             </div>
           </div>
-        </ElCol>
-        <ElCol :span="6" v-for="(item, index) in createList" :key="index">
-          <div class="create-list__item flex p-6">
-            <div class="create-list__main ml-4">
-              <ElLink class="pointer" :disabled="$disabledReadonlyUserBtn()" @click="item.action">
-                {{ index + 1 }}.{{ item.name }}
-                <VIcon class="float-end ml-2" size="12">add</VIcon>
-              </ElLink>
-            </div>
+        </li>
+        <li v-for="(item, index) in createList" :key="index">
+          <div class="create-list__item flex justify-content-center align-items-center p-2">
+            <el-link class="create-list__main ml-4" :disabled="$disabledReadonlyUserBtn()" @click="item.action">
+              <VIcon class="ml-2 mr-2" size="20">{{ item.icon }}</VIcon>
+              <span> {{ index + 1 }}. {{ item.name }} </span>
+              <VIcon class="ml-8" size="14">add</VIcon>
+            </el-link>
           </div>
-        </ElCol>
-      </ElRow>
+        </li>
+      </ul>
     </div>
     <!--	探索示例	-->
     <div class="workbench-overview workbench-section">
@@ -32,13 +31,18 @@
       <el-tabs class="explore-examples" active-name="first">
         <el-tab-pane label="全部" name="first">
           <ul class="flex flex-row">
-            <li class="mr-6" v-for="(item, index) in examplesList" :key="index">
+            <li
+              class="cursor-pointer mr-6"
+              v-for="(item, index) in examplesList"
+              :key="index"
+              @click="goScenes(item.url)"
+            >
               <div class="position-relative">
                 <img :src="getImg(item.img)" />
                 <div v-if="item.title" class="position-absolute position-text">{{ item.title }}</div>
-                <div v-if="item.subTitle" class="position-absolute position-text">{{ item.subTitle }}</div>
+                <div v-if="item.subTitle" class="position-absolute position-sub-text">{{ item.subTitle }}</div>
               </div>
-              <div class="text-center">{{ item.title }}</div>
+              <div class="text-center">{{ item.title }}{{ item.subTitle }}</div>
             </li>
           </ul>
         </el-tab-pane>
@@ -46,26 +50,23 @@
     </div>
     <!--	概览	-->
     <div class="workbench-overview workbench-section">
-      <ElRow :gutter="40" class="section-header py-6">
+      <ElRow :gutter="24" class="section-header py-6">
         <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
         <ElCol :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
       </ElRow>
-      <ElRow :gutter="40" class="section-body">
+      <ElRow :gutter="24" class="section-body">
         <ElCol :span="18">
-          <ul class="agent-list__list flex-grow-1 flex justify-content-around px-5">
-            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item py-6" :ref="item.key">
+          <ul class="agent-list__list flex">
+            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item" :ref="item.key">
               <div class="agent-list__name flex align-items-center mx-auto mb-3">
-                <VIcon size="14" class="icon" color="#888">{{ item.icon }}</VIcon>
+                <VIcon size="14" class="icon">{{ item.icon }}</VIcon>
                 <span class="ml-1 fs-7">{{ item.name }}</span>
               </div>
-              <div class="color-primary text-center fs-1">
+              <div class="fs-1">
                 {{ item.value }}
               </div>
-              <div
-                class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1"
-                v-if="item.list.length > 0"
-              >
-                <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
+              <div class="mt-3 py-2 px-1" v-if="item.list.length > 0">
+                <div class="mb-2" v-for="(detail, dIndex) in item.list" :key="dIndex">
                   <span>{{ detail.label }}</span>
                   <span>:</span>
                   <span :class="['ml-1']">{{ detail.value }}</span>
@@ -74,7 +75,7 @@
             </li>
           </ul>
         </ElCol>
-        <ElCol :span="6" style="border: 1px solid #e1e3e9; border-radius: 8px">
+        <ElCol :span="6">
           <div class="aside-main notice-list flex-grow-1 p-6">
             <ul class="notice-list__list">
               <li
@@ -85,12 +86,7 @@
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
-                <ElLink
-                  v-else
-                  type="primary"
-                  class="notice-list__name flex-grow-1 ellipsis block pointer"
-                  @click="toNotice(item)"
-                >
+                <ElLink v-else class="notice-list__name flex-grow-1 ellipsis block pointer" @click="toNotice(item)">
                   {{ item.name }}
                 </ElLink>
                 <div class="notice-list__time">
@@ -187,19 +183,22 @@ export default {
           name: $t('agent_manage'),
           desc: $t('workbench_agent_desc'),
           btnName: $t('workbench_agent_button_create'),
-          action: this.createAgent
+          action: this.createAgent,
+          icon: 'dashboard-agent'
         },
         {
           name: $t('connection_manage'),
           desc: $t('workbench_connection_desc'),
           btnName: $t('workbench_connection_button_create'),
-          action: this.createConnection
+          action: this.createConnection,
+          icon: 'dashboard-connection'
         },
         {
           name: $t('task_manage'),
           desc: $t('workbench_task_desc'),
           btnName: $t('workbench_task_button_create'),
-          action: this.createTask
+          action: this.createTask,
+          icon: 'dashboard-task'
         }
       ], // 创建列表
       agentList: [
@@ -324,30 +323,29 @@ export default {
       examplesList: [
         {
           type: 'all',
-          title: 'MySQL 主从同步',
-          img: 'mysql'
+          title: '将数据导入阿里云 Tablestore',
+          img: 'table-store',
+          url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
         {
           type: 'all',
-          title: 'Oracle 数据备份',
-          img: 'oracle'
+          title: '集成阿里云计算巢',
+          img: 'alibaba-nest',
+          url: 'https://tapdata.net/automatic-deployment-on-the-cloud.html?fromColId=104'
         },
         {
           type: 'all',
-          title: 'Oracle 国产替代',
-          img: 'oracle-replace'
+          title: '数据入湖仓 ',
+          subTitle: 'MySQL → Doris',
+          img: 'mysql-doris',
+          url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
         },
         {
           type: 'all',
-          title: '缓存加速',
-          subTitle: 'MySQL - Redis',
-          img: 'mySQL-redis'
-        },
-        {
-          type: 'all',
-          title: '全文检索',
-          subTitle: 'SQLServer - Elastic Search',
-          img: 'SQLServer'
+          title: '异构实时同步',
+          subTitle: 'Oracle → MySQL ',
+          img: 'oracle-mysql',
+          url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
         }
       ]
     }
@@ -510,6 +508,9 @@ export default {
     //获取探索示例-背景图
     getImg(name) {
       return require(`../../../public/images/dashboard/${name}.png`)
+    },
+    goScenes(url) {
+      window.open(url)
     }
   }
 }
@@ -533,7 +534,9 @@ export default {
 }
 // 快速开始
 .create-list__item {
+  width: 230px;
   height: 70px;
+  margin-right: 24px;
   background-color: #fff;
   box-sizing: border-box;
   border: 1px solid #e1e3e9;
@@ -562,18 +565,23 @@ export default {
   border-radius: 4px;
 }
 .agent-list__list {
-  background: #ffffff;
+  background: map-get($color, white);
 }
 .agent-list__item {
-  //min-width: 250px;
-  width: 264px;
+  width: 33%;
   height: 190px;
   border: 1px solid #e1e3e9;
   border-radius: 8px;
+  margin-right: 24px;
+  padding: 16px;
+  color: map-get($fontColor, dark);
+}
+.agent-list__item:last-child {
+  margin-right: 0;
 }
 .agent-list__name {
   .vicon {
-    color: #888;
+    color: map-get($fontColor, dark);
   }
 }
 .agent-list__detail {
@@ -624,7 +632,6 @@ export default {
 }
 .notice-list {
   height: 190px;
-  width: 327px;
   border: 1px solid #e1e3e9;
   border-radius: 8px;
 }
@@ -645,6 +652,11 @@ export default {
 }
 .position-text {
   top: 15px;
+  left: 52px;
+  color: map-get($color, white);
+}
+.position-sub-text {
+  top: 33px;
   left: 52px;
   color: map-get($color, white);
 }
