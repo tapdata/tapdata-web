@@ -9,7 +9,9 @@
     :before-close="handleClose"
   >
     <ElForm ref="form" class="e-form" label-width="150px" :model="form">
-      <div class="mb-4" v-if="!isOpenid">您的账号未绑定微信，若需要微信通知，请退出登录,扫码登录完成微信绑定。</div>
+      <div class="mb-4" v-if="!isOpenid">
+        您的账户还没有进行微信绑定，如需通过微信接收通知信息，请先退出登录后通过微信扫码完成绑定
+      </div>
       <div class="notice-setting-title">{{ $t('notify_agent_notification') }}</div>
       <ElFormItem :label="$t('notify_agent_status_offline')">
         <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
