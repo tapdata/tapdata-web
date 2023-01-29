@@ -9,6 +9,7 @@
     :before-close="handleClose"
   >
     <ElForm ref="form" class="e-form" label-width="150px" :model="form">
+      <div class="mb-4" v-if="!isOpenid">您的账号未绑定微信，若需要微信通知，请退出登录,扫码登录完成微信绑定。</div>
       <div class="notice-setting-title">{{ $t('notify_agent_notification') }}</div>
       <ElFormItem :label="$t('notify_agent_status_offline')">
         <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
@@ -29,7 +30,7 @@
         <ElSwitch
           v-model="form.connectionInterrupted.weChat"
           size="mini"
-          :disabled="$disabledReadonlyUserBtn()"
+          :disabled="$disabledReadonlyUserBtn() || !isOpenid"
           @change="handleSettingValue"
         ></ElSwitch>
       </ElFormItem>
@@ -50,7 +51,7 @@
         <span class="notice-setting-label">微信通知</span>
         <ElSwitch
           v-model="form.connected.weChat"
-          :disabled="$disabledReadonlyUserBtn()"
+          :disabled="$disabledReadonlyUserBtn() || !isOpenid"
           @change="handleSettingValue"
         ></ElSwitch>
       </ElFormItem>
@@ -86,7 +87,8 @@ export default {
           email: true,
           sms: false,
           weChat: false
-        }
+        },
+        isOpenid: false
       }
     }
   },
@@ -101,6 +103,8 @@ export default {
       }
     })
     this.dialogVisible = this.visible
+    //是否绑定微信
+    this.isOpenid = window.__USER_INFO__?.openid
   },
   methods: {
     handleSettingValue() {
