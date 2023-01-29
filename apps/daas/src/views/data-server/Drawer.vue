@@ -53,6 +53,11 @@
             :disabled="!isEdit"
           ></ElInput>
         </div>
+        <ElFormItem prop="acl" class="flex-1 mt-4" size="small" label="权限范围" required>
+          <ElSelect v-model="form.acl" multiple :disabled="!isEdit">
+            <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
+          </ElSelect>
+        </ElFormItem>
 
         <!-- 基础信息 -->
         <ul v-if="tab === 'form'" class="flex flex-wrap bg-main p-2 mt-4 rounded-1">
@@ -169,7 +174,7 @@
           </ElFormItem>
         </section>
 
-        <!-- {{$t('daas_data_server_drawer_shurucanshu')}} -->
+        <!-- 輸入参数 -->
         <div class="data-server-panel__title">
           <div>
             <span>{{ $t('daas_data_server_drawer_shurucanshu') }}</span>
@@ -246,7 +251,7 @@
         </ElTable>
 
         <template v-if="data.apiType === 'customerQuery' || form.apiType === 'customerQuery'">
-          <!-- {{$t('daas_data_server_drawer_shaixuantiaojian')}} -->
+          <!-- 筛选条件 -->
           <div class="data-server-panel__title">
             <div>
               <span>{{ $t('daas_data_server_drawer_shaixuantiaojian') }}</span>
@@ -296,7 +301,7 @@
             </li>
           </ul>
 
-          <!-- {{$t('daas_data_server_drawer_pailietiaojian')}} -->
+          <!-- 排列条件 -->
           <div class="data-server-panel__title">
             <div>
               <span>{{ $t('daas_data_server_drawer_pailietiaojian') }}</span>
@@ -328,7 +333,7 @@
           </ul>
         </template>
 
-        <!-- {{$t('daas_data_server_drawer_shuchujieguo')}} -->
+        <!-- 输出结果 -->
         <template v-if="tab === 'form'">
           <div class="data-server-panel__title">{{ $t('daas_data_server_drawer_shuchujieguo') }}</div>
           <ElTable
@@ -418,7 +423,7 @@ import i18n from '@/i18n'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
-import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi, applicationApi } from '@tap/api'
+import { databaseTypesApi, connectionsApi, metadataInstancesApi, modulesApi, applicationApi, roleApi } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
 
@@ -501,7 +506,8 @@ export default {
       templates: {},
       templateType: 'java',
 
-      token: ''
+      token: '',
+      roles: []
     }
   },
   computed: {
@@ -523,6 +529,9 @@ export default {
       this.form.path = '/api/' + arr.join('/')
       return '/api/' + arr.join('/')
     }
+  },
+  mounted() {
+    this.getRoles()
   },
   methods: {
     // 打开并初始化抽屉
@@ -593,9 +602,11 @@ export default {
         params: path.params || this.getDefaultParams(apiType),
         where: path.where || [],
         sort: path.sort || [],
-        path: path.path || ''
+        path: path.path || '',
+        aal: path.acl
       }
       this.form.description = this.data.description
+      this.form.acl = path.acl
       let host = this.host
       let _path = this.data.path
       let baseUrl = host + _path
@@ -609,6 +620,12 @@ export default {
           this.templates = getTemplate(baseUrl, token)
         })
       }
+    },
+    // 获取角色
+    getRoles() {
+      roleApi.get({}).then(data => {
+        this.roles = data?.items || []
+      })
     },
     getDefaultParams(apiType) {
       let params = [
@@ -678,6 +695,7 @@ export default {
             method,
             path,
             status,
+            acl,
             connectionType,
             connectionName,
             apiVersion,
@@ -720,7 +738,7 @@ export default {
                 name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage', // 冗余老字段
                 result: 'Page<Document>', // 冗余老字段
                 type: apiType === 'customerQuery' ? 'customerQuery' : 'preset', // 冗余老字段
-                acl: ['admin'], // 冗余老字段
+                acl: acl, // 冗余老字段
 
                 method,
                 params,

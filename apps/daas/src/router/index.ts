@@ -41,6 +41,9 @@ export default i18n => {
         } else {
           next()
         }
+      } else if (from.name === 'login') {
+        //from为login 上一次重定向无权限跳转到 控制台
+        next('/')
       } else {
         Message.error({
           message: i18n.t('app_signIn_permission_denied')
