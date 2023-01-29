@@ -101,7 +101,7 @@
     <!--  任务数据量统计  -->
     <div class="workbench-overview workbench-section">
       <div class="main-title py-6">{{ $t('workbench_statistics_title') }}</div>
-      <div class="p-6" style="background-color: #fff">
+      <div class="p-6 common-card">
         <div class="fs-7" style="color: #000">
           <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
           <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
@@ -632,6 +632,10 @@ export default {
 }
 .notice-list {
   height: 190px;
+  border: 1px solid #e1e3e9;
+  border-radius: 8px;
+}
+.common-card {
   border: 1px solid #e1e3e9;
   border-radius: 8px;
 }
