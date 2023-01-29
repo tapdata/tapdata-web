@@ -396,7 +396,7 @@ export class Table extends NodeType {
                     }
                   },
                   cdcPollingInterval: {
-                    title: '轮询间隔',
+                    title: '轮询间隔(ms)',
                     type: 'object',
                     default: 500,
                     'x-decorator': 'FormItem',

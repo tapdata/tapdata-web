@@ -214,6 +214,11 @@ export default observer({
                                 }
                               }
                             },
+                            hiddenPointType: {
+                              'x-display': 'hidden',
+                              type: 'boolean',
+                              'x-component': 'PreviewText.Input'
+                            },
                             connectionName: {
                               'x-display': 'hidden',
                               type: 'string',
@@ -239,6 +244,16 @@ export default observer({
                                 {
                                   label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
                                   value: 'current'
+                                }
+                              ],
+                              'x-reactions': [
+                                {
+                                  dependencies: ['.hiddenPointType'],
+                                  fulfill: {
+                                    state: {
+                                      disabled: `{{$deps[0]}}`
+                                    }
+                                  }
                                 }
                               ]
                             },
@@ -496,6 +511,7 @@ export default observer({
         .map(node => ({
           nodeId: node.id,
           nodeName: node.name,
+          hiddenPointType: node?.cdcMode === 'polling', //源节点开启了日志轮询则禁用增量采集时刻配置
           connectionId: node.connectionId,
           connectionName: node.attrs.connectionName
         }))
