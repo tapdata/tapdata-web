@@ -215,15 +215,19 @@ let pageSort = [
   {
     name: 'data_verify',
     children: [
-      { name: 'v2_data_check_list' },
-      { name: 'v2_data_check_create' },
-      { name: 'v2_data_check_edit' },
-      { name: 'v2_data_check_details' },
-      { name: 'v2_data_check_history' },
-      { name: 'v2_data_check_result_history' },
-      { name: 'v2_data_check_result_details' },
-      { name: 'v2_data_check_result' }
+      { name: 'v2_data_check_list' }
+      // { name: 'v2_data_check_create' },
+      // { name: 'v2_data_check_edit' },
+      // { name: 'v2_data_check_details' },
+      // { name: 'v2_data_check_history' },
+      // { name: 'v2_data_check_result_history' },
+      // { name: 'v2_data_check_result_details' },
+      // { name: 'v2_data_check_result' }
     ]
+  },
+  {
+    name: 'v2_data_discovery',
+    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }]
   },
   {
     name: 'data_publish',
