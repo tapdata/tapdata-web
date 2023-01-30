@@ -280,7 +280,7 @@ export default observer({
                                   dependencies: ['.pointType'],
                                   fulfill: {
                                     schema: {
-                                      'x-component-props.pickerOptions': `{{getPickerOptionsBeforeTime($self.value, $deps[0] === "localTZ" ? Date.now() : "")}}`
+                                      'x-component-props.pickerOptions': `{{$deps[0] === "localTZ" ? getPickerOptionsBeforeTime($self.value, Date.now()) : null}}`
                                     }
                                   }
                                 }
