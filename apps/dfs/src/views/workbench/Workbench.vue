@@ -65,11 +65,20 @@
               <div class="fs-1">
                 {{ item.value }}
               </div>
-              <div class="mt-3 py-2 px-1" v-if="item.list.length > 0">
-                <div class="mb-2" v-for="(detail, dIndex) in item.list" :key="dIndex">
-                  <span>{{ detail.label }}</span>
-                  <span>:</span>
-                  <span :class="['ml-1']">{{ detail.value }}</span>
+              <div
+                class="flex justify-content-between align-items-center mt-3 px-1"
+                style="height: 80px"
+                v-if="item.list.length > 0"
+              >
+                <div>
+                  <div class="mb-2" v-for="(detail, dIndex) in item.list" :key="dIndex">
+                    <span>{{ detail.label }}</span>
+                    <span>:</span>
+                    <span :class="['ml-1']">{{ detail.value }}</span>
+                  </div>
+                </div>
+                <div style="height: 60px; width: 60px">
+                  <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
                 </div>
               </div>
             </li>
@@ -108,7 +117,7 @@
           <span class="color-primary" style="font-family: DIN">{{ numToThousands(taskInputNumber) }}</span>
         </div>
         <div class="pr-4" style="height: 200px">
-          <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+          <Chart type="pie" :extend="getLineOption()"></Chart>
         </div>
       </div>
     </div>
@@ -242,10 +251,18 @@ export default {
           icon: 'task',
           value: 0,
           list: [
-            // {
-            //   label: $t('workbench_overview_task_status'),
-            //   value: 0
-            // }
+            {
+              label: $t('task_initial_sync'),
+              value: 0
+            },
+            {
+              label: $t('task_sync_type_cdc'),
+              value: 0
+            },
+            {
+              label: $t('task_initial_sync_cdc'),
+              value: 0
+            }
           ]
         }
       ], // 介绍列表
@@ -267,6 +284,8 @@ export default {
       isGuide: true,
       taskInputNumber: 0,
       barData: [],
+      lineDataX: [],
+      lineDataY: [],
       barOptions: {
         barWidth: '50%',
         grid: {
@@ -405,7 +424,9 @@ export default {
       const stats = data.taskTypeStats
       if (stats) {
         agentList[2].value = stats.total
-        agentList[2].list[0].value = agentList[2].value || 0
+        agentList[2].list[0].value = stats.initial_sync || 0
+        agentList[2].list[1].value = stats.cdc || 0
+        agentList[2].list[2].value = stats['initial_sync+cdc'] || 0
       }
     },
     loadNotices() {
@@ -441,16 +462,13 @@ export default {
         .then(data => {
           const list = data.inputDataStatistics || []
           this.taskInputNumber = data.totalInputDataCount || 0
-          this.barData = list.map((el, index) => {
+          this.lineDataX = list.map(el => el.time)
+          this.lineDataY = list.map(el => {
             let value = el.count
             if (value === 1) {
               value = 1.1
             }
-            return {
-              name: el.time,
-              value: value,
-              color: this.colorList[index % 2]
-            }
+            return value
           })
         })
     },
@@ -511,6 +529,131 @@ export default {
     },
     goScenes(url) {
       window.open(url)
+    },
+    //图表数据组装
+    getPieOption(index) {
+      let data = [
+        {
+          itemStyle: {
+            color: '#00b42a'
+          },
+          value: this.agentList[index].list[0].value,
+          name: this.agentList[index].list[0].label
+        },
+        {
+          itemStyle: {
+            color: '#ff7d00'
+          },
+          value: this.agentList[index].list[1].value,
+          name: this.agentList[index].list[1].label
+        }
+      ]
+      if (index === 2) {
+        let node = {
+          itemStyle: {
+            color: '#2C65FF'
+          },
+          value: this.agentList[index].list[2].value,
+          name: this.agentList[index].list[2].label
+        }
+        data.push(node)
+      }
+      return {
+        tooltip: {
+          trigger: 'item'
+        },
+        series: [
+          {
+            type: 'pie',
+            labelLine: {
+              show: false
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            avoidLabelOverlap: false,
+            data: data,
+            radius: ['40%', '70%']
+          }
+        ]
+      }
+    },
+    //折线面积图
+    getLineOption() {
+      return {
+        grid: {
+          top: 20,
+          bottom: 20,
+          left: 20,
+          right: 20
+        },
+        xAxis: {
+          boundaryGap: false,
+          axisLabel: {
+            formatter: val => {
+              return this.formatTime(val, '', 'MM-DD')
+            }
+          },
+          data: this.lineDataX
+        },
+        yAxis: {
+          show: true,
+          type: 'log',
+          min: 1,
+          logBase: 10,
+          axisLabel: {
+            formatter: val => {
+              let res = val === 1 ? 0 : val
+              if (res / 1000 >= 1) {
+                res = res / 1000 + 'K'
+              }
+              return res
+            }
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: params => {
+            let item = params
+            let val = item.value
+            if (val === 1.1) {
+              val = 1
+            }
+            val = numToThousands(val)
+            let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
+            return html
+          }
+        },
+        series: [
+          {
+            data: this.lineDataY,
+            connectNulls: true,
+            type: 'line',
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 1,
+                y: 0,
+                x2: 0,
+                y2: 0,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: 'rgba(0, 102, 255, 0.2)' // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: 'rgba(44, 127, 252, 0)' // 100% 处的颜色
+                  }
+                ],
+                global: false // 缺省为 false
+              }
+            },
+            color: '#2C65FF' //线条颜色
+          }
+        ]
+      }
     }
   }
 }
