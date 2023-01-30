@@ -578,7 +578,7 @@ export default observer({
           pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
           dateTime: ''
         }
-        if (old) {
+        if (old && !item.hiddenPointType) {
           Object.assign(point, {
             pointType: old.pointType,
             dateTime: old.dateTime
