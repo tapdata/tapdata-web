@@ -213,17 +213,6 @@ let pageSort = [
     ]
   },
   {
-    name: 'data_transmission',
-    children: [
-      { name: 'v2_data_replication' },
-      { name: 'v2_data_flow' },
-      { name: 'v2_log_collector_menu' },
-      { name: 'v2_function_management_list' },
-      { name: 'v2_custom_node_menu' },
-      { name: 'v2_shared_cache_menu' }
-    ]
-  },
-  {
     name: 'data_verify',
     children: [
       { name: 'v2_data_check_list' },

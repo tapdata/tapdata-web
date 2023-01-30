@@ -114,7 +114,8 @@
                   'apiMonitor',
                   'migrateList',
                   'dataflowList',
-                  'connectionsList'
+                  'connectionsList',
+                  'users'
                 ].includes($route.name)
               },
               {
@@ -124,7 +125,8 @@
                   'apiMonitor',
                   'migrateList',
                   'dataflowList',
-                  'connectionsList'
+                  'connectionsList',
+                  'users'
                 ].includes($route.name)
               }
             ]"
