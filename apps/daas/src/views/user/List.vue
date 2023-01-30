@@ -252,6 +252,7 @@ export default {
       notActivatedCount: 0,
       notVerifiedCount: 0,
       rejectedCount: 0,
+      filterItems: [],
       createForm: {
         username: '',
         email: '',
@@ -377,6 +378,12 @@ export default {
       return this.$refs.table
     }
   },
+  watch: {
+    '$route.query'() {
+      this.searchParams = this.$route.query
+      this.table.fetch(1)
+    }
+  },
   methods: {
     // 重置
     reset(name) {
@@ -430,7 +437,6 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          this.getCount()
           let list = data?.items || []
           return {
             total: data?.total,
@@ -913,6 +919,7 @@ export default {
 </style>
 <style lang="scss">
 .user-list-wrap {
+  padding: 0 24px 24px 0;
   .table-page-container {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);

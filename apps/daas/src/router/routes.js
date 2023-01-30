@@ -820,7 +820,7 @@ export default [
             name: 'role',
             component: RoleDetails,
             meta: {
-              title: 'page_title_role',
+              title: 'role_list_setting_permissions',
               code: 'v2_role_creation'
             }
           },
@@ -829,7 +829,7 @@ export default [
             name: 'editRole',
             component: RoleDetails,
             meta: {
-              title: 'page_title_role',
+              title: 'role_list_setting_permissions',
               code: 'v2_role_edition'
             }
           }

@@ -213,28 +213,21 @@ let pageSort = [
     ]
   },
   {
-    name: 'data_transmission',
+    name: 'data_verify',
     children: [
-      { name: 'v2_data_replication' },
-      { name: 'v2_data_flow' },
-      { name: 'v2_log_collector_menu' },
-      { name: 'v2_function_management_list' },
-      { name: 'v2_custom_node_menu' },
-      { name: 'v2_shared_cache_menu' }
+      { name: 'v2_data_check_list' }
+      // { name: 'v2_data_check_create' },
+      // { name: 'v2_data_check_edit' },
+      // { name: 'v2_data_check_details' },
+      // { name: 'v2_data_check_history' },
+      // { name: 'v2_data_check_result_history' },
+      // { name: 'v2_data_check_result_details' },
+      // { name: 'v2_data_check_result' }
     ]
   },
   {
-    name: 'data_verify',
-    children: [
-      { name: 'v2_data_check_list' },
-      { name: 'v2_data_check_create' },
-      { name: 'v2_data_check_edit' },
-      { name: 'v2_data_check_details' },
-      { name: 'v2_data_check_history' },
-      { name: 'v2_data_check_result_history' },
-      { name: 'v2_data_check_result_details' },
-      { name: 'v2_data_check_result' }
-    ]
+    name: 'v2_data_discovery',
+    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }]
   },
   {
     name: 'data_publish',
