@@ -8,7 +8,7 @@
             <VIcon size="50" class="mr-4">quick-start-read</VIcon>
             <div class="flex flex-column">
               <div class="color-white mb-2">新人教程视频</div>
-              <el-button size="mini" round>点击查看</el-button>
+              <el-button size="mini" class="quick-start-button">点击查看</el-button>
             </div>
           </div>
         </li>
@@ -28,25 +28,43 @@
       <ElRow :gutter="40" class="section-header py-6">
         <ElCol :span="18" class="main-title">探索示例</ElCol>
       </ElRow>
-      <el-tabs class="explore-examples" active-name="first">
-        <el-tab-pane label="全部" name="first">
-          <ul class="flex flex-row">
-            <li
-              class="cursor-pointer mr-6"
-              v-for="(item, index) in examplesList"
-              :key="index"
-              @click="goScenes(item.url)"
-            >
-              <div class="position-relative">
-                <img :src="getImg(item.img)" />
-                <div v-if="item.title" class="position-absolute position-text">{{ item.title }}</div>
-                <div v-if="item.subTitle" class="position-absolute position-sub-text">{{ item.subTitle }}</div>
-              </div>
-              <div class="text-center">{{ item.title }}{{ item.subTitle }}</div>
-            </li>
-          </ul>
-        </el-tab-pane>
-      </el-tabs>
+      <!--      <el-tabs class="explore-examples" active-name="first">-->
+      <!--        <el-tab-pane label="全部" name="first">-->
+      <!--          <ul class="flex flex-row">-->
+      <!--            <li-->
+      <!--              class="cursor-pointer mr-6"-->
+      <!--              v-for="(item, index) in examplesList"-->
+      <!--              :key="index"-->
+      <!--              @click="goScenes(item.url)"-->
+      <!--            >-->
+      <!--              <div class="position-relative">-->
+      <!--                <img :src="getImg(item.img)" />-->
+      <!--                <div v-if="item.title" class="position-absolute position-text">{{ item.title }}</div>-->
+      <!--                <div v-if="item.subTitle" class="position-absolute position-sub-text">{{ item.subTitle }}</div>-->
+      <!--              </div>-->
+      <!--              <div class="text-center">{{ item.title }}{{ item.subTitle }}</div>-->
+      <!--            </li>-->
+      <!--          </ul>-->
+      <!--        </el-tab-pane>-->
+      <!--      </el-tabs>-->
+      <!--暂时不分类-->
+      <div class="explore-examples">
+        <ul class="flex flex-row">
+          <li
+            class="cursor-pointer mr-6"
+            v-for="(item, index) in examplesList"
+            :key="index"
+            @click="goScenes(item.url)"
+          >
+            <div class="position-relative">
+              <img :src="getImg(item.img)" />
+              <div v-if="item.title" class="position-absolute position-text">{{ item.title }}</div>
+              <div v-if="item.subTitle" class="position-absolute position-sub-text">{{ item.subTitle }}</div>
+            </div>
+            <div class="text-center">{{ item.title }}{{ item.subTitle }}</div>
+          </li>
+        </ul>
+      </div>
     </div>
     <!--	概览	-->
     <div class="workbench-overview workbench-section">
@@ -77,7 +95,7 @@
                     <span :class="['ml-1']">{{ detail.value }}</span>
                   </div>
                 </div>
-                <div style="height: 60px; width: 60px">
+                <div style="height: 80px; width: 80px; margin-bottom: 16px">
                   <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
                 </div>
               </div>
@@ -574,7 +592,7 @@ export default {
             },
             avoidLabelOverlap: false,
             data: data,
-            radius: ['40%', '70%']
+            radius: ['50%', '70%']
           }
         ]
       }
@@ -621,7 +639,7 @@ export default {
               val = 1
             }
             val = numToThousands(val)
-            let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
+            let html = item.marker + params.name + val
             return html
           }
         },
@@ -674,6 +692,7 @@ export default {
 .aside-title {
   font-size: 18px;
   line-height: 24px;
+  font-weight: 500;
 }
 // 快速开始
 .create-list__item {
@@ -806,5 +825,9 @@ export default {
   top: 33px;
   left: 52px;
   color: map-get($color, white);
+}
+.quick-start-button {
+  padding: 4px 15px;
+  border-radius: 5px;
 }
 </style>
