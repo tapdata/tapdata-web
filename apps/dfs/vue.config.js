@@ -5,7 +5,7 @@ const crypto = require('crypto')
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
-  test: 'https://dev.cloud.tapdata.net:8443',
+  test: 'https://test3.cloud.tapdata.net:7443',
   local: 'https://v3.test.cloud.tapdata.net',
   localTm: 'http://127.0.0.1:3030'
 }
