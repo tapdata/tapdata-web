@@ -304,6 +304,7 @@ export default {
               }
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               item.logTime = item.logTime ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              item.delayTime = item.delayTime < 0 ? '-' : item.delayTime
               makeStatusAndDisabled(item)
               if (item.status === 'edit') {
                 item.btnDisabled.start = false
