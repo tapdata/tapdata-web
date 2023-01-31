@@ -177,7 +177,7 @@ export default defineComponent({
     const inputTotal = computed(() => {
       return ['inputDdlTotal', 'inputDeleteTotal', 'inputInsertTotal', 'inputOthersTotal', 'inputUpdateTotal'].reduce(
         (total, key) => {
-          return total + props.sample[key] || 0
+          return total + (props.sample[key] || 0)
         },
         0
       )
@@ -195,7 +195,7 @@ export default defineComponent({
         'outputOthersTotal',
         'outputUpdateTotal'
       ].reduce((total, key) => {
-        return total + props.sample[key] || 0
+        return total + (props.sample[key] || 0)
       }, 0)
     })
 
