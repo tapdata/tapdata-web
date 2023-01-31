@@ -12,19 +12,18 @@ onconnect = function (e) {
         console.log('websocket发送消息', data) // eslint-disable-line
         ws.send(data)
         break
-      case 'worker':
-        switch (data) {
-          case 'close-port':
-            const index = portPool.findIndex(p => p === port)
-            portPool.splice(index, 1)
-            break
-          case 'open':
-            ws.connect()
-            break
-          case 'close':
-            ws.disconnect()
-            break
-        }
+      case 'websocket:connect':
+        ws.connect(data)
+        break
+      case 'websocket:refresh':
+        ws.refresh(data)
+        break
+      case 'websocket:close':
+        ws.disconnect()
+        break
+      case 'worker:close':
+        const index = portPool.findIndex(p => p === port)
+        portPool.splice(index, 1)
         break
     }
   }
@@ -35,7 +34,7 @@ const sendMessage = (...args) => {
 }
 
 class WSClient {
-  constructor(url, protocols, options = {}) {
+  constructor(options = {}) {
     const defaultOptions = {
       url: undefined,
       protocols: undefined, // 不能为null
@@ -44,47 +43,19 @@ class WSClient {
       query: {}
     }
     this.options = Object.assign({}, defaultOptions, options)
-    /*this.options = merge({}, defaultOptions, options, {
-      url,
-      protocols,
-      query: {
-        id: this.__getId()
-      }
-    })*/
     this.ws = null
     this.retryCount = 0
-    // this.connect()
-    // this.bindNetworkEvent()
   }
 
-  __getId() {
-    let id = this.__id
-    if (!id) {
-      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        let r = (Math.random() * 16) | 0,
-          v = c === 'x' ? r : (r & 0x3) | 0x8
-        return v.toString(16)
-      })
-      this.__id = id
-    }
-    return id
-  }
+  connect(options) {
+    this.wsOptions = options
 
-  connect() {
     if (this.ws && this.ws.readyState == 1) {
       return
     }
-    let opts = this.options
-
-    // 包含获取参数方法
-    if (opts.getQuery && typeof opts.getQuery === 'function') {
-      Object.assign(opts.query, opts.getQuery() || {})
-    }
 
     try {
-      let url =
-        'ws://localhost:8080/ws/agent?id=e86fc151-2a71-42f1-80c1-2ef515a8ce79&access_token=c4521457d02640628d98cd767968f99f415081d6a3964c7199b8aad535e8d1ce'
-      this.ws = new WebSocket(url, opts.protocols)
+      this.ws = new WebSocket(options.url, options.protocols)
       this.retryCount = 0
       this.__bindEvent()
     } catch (e) {
@@ -93,6 +64,13 @@ class WSClient {
         console.log('websocket 连接失败，准备尝试重连', e)
       }
       this.reconnect()
+    }
+  }
+
+  refresh(options) {
+    if (options.url !== this.wsOptions.url) {
+      this.disconnect()
+      this.connect(options)
     }
   }
 

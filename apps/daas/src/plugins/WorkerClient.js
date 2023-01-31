@@ -1,20 +1,7 @@
 import { Message } from 'element-ui'
 import { merge } from 'lodash'
+import i18n from '@/i18n'
 import EventEmitter from './event-emitter'
-
-class WebSocketMessage {
-  type = 'websocket'
-  constructor(data) {
-    this.data = data
-  }
-}
-
-class WorkerClientMessage {
-  type = 'worker'
-  constructor(data) {
-    this.data = data
-  }
-}
 
 class WorkerClient extends EventEmitter {
   constructor(url, wsOptions) {
@@ -25,25 +12,54 @@ class WorkerClient extends EventEmitter {
       retryTimes: Number.MAX_VALUE, // 无限次尝试重连
       retryInterval: 500, // 断开立即重连
       query: {
-        id: this.__getId()
+        id: this.getId()
       }
     }
     this.wsOptions = merge({}, _wsOptions, wsOptions)
     this.init(url)
+    this.bindNetworkEvent()
   }
 
   init(url) {
     let worker = new SharedWorker(url, 'tapdata-worker')
     worker.port.onmessage = event => {
       console.debug('收到websocket消息', event.data) // eslint-disable-line
-      this.__receiveMessage(event)
+      this.receiveMessage(event)
     }
     worker.port.start()
-    worker.port.postMessage(new WorkerClientMessage('open'))
     this.worker = worker
+    this.connect()
   }
 
-  getWSURL() {
+  connect() {
+    this.worker.port.postMessage({
+      type: 'websocket:connect',
+      data: {
+        ...this.wsOptions,
+        getQuery: undefined,
+        url: this.getURL()
+      }
+    })
+  }
+
+  refresh() {
+    this.worker.port.postMessage({
+      type: 'websocket:refresh',
+      data: {
+        ...this.wsOptions,
+        getQuery: undefined,
+        url: this.getURL()
+      }
+    })
+  }
+
+  close() {
+    this.worker.port.postMessage({
+      type: 'websocket:close'
+    })
+  }
+
+  getURL() {
     const { wsOptions } = this
     let query = {}
     if (wsOptions.getQuery && typeof wsOptions.getQuery === 'function') {
@@ -58,10 +74,39 @@ class WorkerClient extends EventEmitter {
 
   send(msg) {
     msg = typeof msg === 'string' ? msg : JSON.stringify(msg)
-    this.worker.port.postMessage(new WebSocketMessage(msg))
+    this.worker.port.postMessage({
+      type: 'websocket',
+      data: msg
+    })
   }
 
-  __getId() {
+  bindNetworkEvent() {
+    window.addEventListener('online', this.onLine.bind(this))
+    window.addEventListener('offline', this.offLine.bind(this))
+  }
+
+  onLine() {
+    this.send('ping') // 网络恢复立即发送ping
+    if (this.msg?.visible) {
+      Object.assign(this.msg, {
+        message: i18n.t('message_network_connected'),
+        type: 'success',
+        duration: 3000
+      })
+      this.msg.startTimer()
+      this.msg = null
+    }
+  }
+
+  offLine() {
+    this.msg = Message.error({
+      duration: 0,
+      showClose: true,
+      message: i18n.t('message_network_unconnected')
+    })
+  }
+
+  getId() {
     let id = this.__id
     if (!id) {
       id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -74,15 +119,14 @@ class WorkerClient extends EventEmitter {
     return id
   }
 
-  __receiveMessage(event) {
+  receiveMessage(event) {
     let msg = event.data
     let message = {}
     try {
       if (msg === 'UserId is blank') {
-        // access_token 过期
         console.debug('access_token 过期', event) // eslint-disable-line
         this.emit('401')
-        this.connect()
+        this.refresh()
       } else if (typeof msg === 'string' && /^"?\{.*\}"?$/.test(msg)) {
         message = JSON.parse(msg)
         if (message.type === 'pipe') {
