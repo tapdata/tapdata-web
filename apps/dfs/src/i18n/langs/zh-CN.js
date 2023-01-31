@@ -95,11 +95,14 @@ export default {
   header_view_notifications: '查看所有通知',
   // 通知
   notify_setting: '通知设置',
-  notify_agent_notification: 'agent通知',
+  notify_agent_notification: 'Agent通知',
   notify_sms_notification: '短信通知',
   notify_email_notification: '邮件通知',
-  notify_agent_status_offline: 'agent状态为离线时',
-  notify_agent_status_running: 'agent状态为运行中时',
+  notify_webchat_notification: '微信通知',
+  notify_no_webchat_notification:
+    '您的账户还没有进行微信绑定，如需通过微信接收通知信息，请先退出登录后通过微信扫码完成绑定',
+  notify_agent_status_offline: 'Agent状态为离线时',
+  notify_agent_status_running: 'Agent状态为运行中时',
   notify_agent_status_error: '任务运行出错时',
   notify_task_running_notification: '任务运行通知',
   notify_sync_task: '同步任务',

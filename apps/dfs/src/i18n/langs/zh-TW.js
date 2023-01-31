@@ -78,7 +78,10 @@ export default {
   header_setting: '設定',
   header_view_notifications: '查看所有通知',
   notify_setting: '通知設定',
-  notify_agent_notification: 'agent通知',
+  notify_agent_notification: 'Agent通知',
+  notify_webchat_notification: '微信通知',
+  notify_no_webchat_notification:
+    '您的賬戶還沒有進行微信綁定，如需通過微信接收通知信息，請先退出登錄後通過微信掃碼完成綁定',
   notify_sms_notification: '簡訊通知',
   notify_email_notification: '郵件通知',
   notify_agent_status_offline: 'agent狀態為離線時',
