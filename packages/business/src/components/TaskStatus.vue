@@ -78,12 +78,18 @@ export default {
 
     showCronTip() {
       const task = this.task
-      return (
-        (task.status === 'wait_start' || task.status === 'complete') &&
-        task.type === 'initial_sync' &&
-        task.crontabExpressionFlag &&
-        task.crontabExpression
-      )
+      let ifShow =
+        task.status !== 'edit' && task.type === 'initial_sync' && task.crontabExpressionFlag && task.crontabExpression
+      if (!ifShow) return ifShow
+      try {
+        if (cronParse.parseExpression(this.task.crontabExpression).hasNext()) {
+          return true
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log('Error: ' + err.message)
+      }
+      return false
     }
   },
 
@@ -106,9 +112,8 @@ export default {
     },
 
     getNextStartTime() {
-      let str = this.$t('packages_dag_task_setting_crontabExpressionFlag')
       try {
-        if (!this.task.crontabExpression) return str
+        if (!this.task.crontabExpression) return
         const interval = cronParse.parseExpression(this.task.crontabExpression)
         return this.$t('packages_business_task_status_next_run_time', {
           val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss')
@@ -116,7 +121,6 @@ export default {
       } catch (err) {
         console.log('Error: ' + err.message)
       }
-      return str
     }
   }
 }
