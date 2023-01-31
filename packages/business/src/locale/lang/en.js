@@ -319,6 +319,7 @@ export default {
   packages_business_button_bulk_import: 'Bulk Import',
   packages_business_message_save_fail: 'Save failed',
   packages_business_column_create_time: 'Create Time',
+  packages_business_column_last_start_time: 'Start Time',
   packages_business_column_event_time: 'Event Time',
   packages_business_task_list_transform_running: 'Field mapping running',
   packages_business_task_list_transform_done: 'Field mapping completed',
