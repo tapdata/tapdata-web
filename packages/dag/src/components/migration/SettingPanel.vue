@@ -12,6 +12,7 @@ import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
 import { taskApi } from '@tap/api'
+import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 
 export default observer({
   name: 'SettingPanel',
@@ -32,7 +33,8 @@ export default observer({
           return new Promise(resolve => {
             this.handleCheckName(resolve, value)
           })
-        }
+        },
+        getPickerOptionsBeforeTime
       },
 
       schema: {
@@ -212,6 +214,11 @@ export default observer({
                                 }
                               }
                             },
+                            hiddenPointType: {
+                              'x-display': 'hidden',
+                              type: 'boolean',
+                              'x-component': 'PreviewText.Input'
+                            },
                             connectionName: {
                               'x-display': 'hidden',
                               type: 'string',
@@ -238,6 +245,16 @@ export default observer({
                                   label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
                                   value: 'current'
                                 }
+                              ],
+                              'x-reactions': [
+                                {
+                                  dependencies: ['.hiddenPointType'],
+                                  fulfill: {
+                                    state: {
+                                      disabled: `{{$deps[0]}}`
+                                    }
+                                  }
+                                }
                               ]
                             },
                             dateTime: {
@@ -250,14 +267,24 @@ export default observer({
                                 format: 'yyyy-MM-dd HH:mm:ss',
                                 valueFormat: 'timestamp'
                               },
-                              'x-reactions': {
-                                dependencies: ['.pointType'],
-                                fulfill: {
-                                  state: {
-                                    visible: '{{$deps[0] !== "current"}}'
+                              'x-reactions': [
+                                {
+                                  dependencies: ['.pointType'],
+                                  fulfill: {
+                                    state: {
+                                      visible: '{{$deps[0] !== "current"}}'
+                                    }
+                                  }
+                                },
+                                {
+                                  dependencies: ['.pointType'],
+                                  fulfill: {
+                                    schema: {
+                                      'x-component-props.pickerOptions': `{{$deps[0] === "localTZ" ? getPickerOptionsBeforeTime($self.value, Date.now()) : null}}`
+                                    }
                                   }
                                 }
-                              }
+                              ]
                             }
                           }
                         }
@@ -485,6 +512,7 @@ export default observer({
         .map(node => ({
           nodeId: node.id,
           nodeName: node.name,
+          hiddenPointType: node?.cdcMode === 'polling', //源节点开启了日志轮询则禁用增量采集时刻配置
           connectionId: node.connectionId,
           connectionName: node.attrs.connectionName
         }))
@@ -550,7 +578,7 @@ export default observer({
           pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
           dateTime: ''
         }
-        if (old) {
+        if (old && !item.hiddenPointType) {
           Object.assign(point, {
             pointType: old.pointType,
             dateTime: old.dateTime

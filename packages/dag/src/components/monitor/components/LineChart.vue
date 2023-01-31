@@ -115,7 +115,7 @@ export default {
       if (x.length) {
         options.xAxis.data = x
       } else {
-        const now = Time.getTime()
+        const now = Time.now()
         const count = this.limit || 5
         options.xAxis.data = Array(count)
           .fill()

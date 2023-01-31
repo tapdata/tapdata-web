@@ -296,12 +296,12 @@ export default {
       const { firstStartTime, lastStopTime } = this
       let end = lastStopTime
       if (['running'].includes(this.dataflow.status)) {
-        end = Time.getTime()
+        end = Time.now()
       }
       if (end < firstStartTime) {
         end = firstStartTime + 5 * 60 * 1000
       }
-      return [firstStartTime, end || Time.getTime()]
+      return [firstStartTime, end || Time.now()]
     }
   },
 
@@ -315,7 +315,7 @@ export default {
       }
       this.watchStatusCount++
       if (this.watchStatusCount === 1) {
-        const flag = this.dataflow.syncType === 'migrate' && ['renewing', 'renew_failed'].includes(v1)
+        const flag = ['renewing', 'renew_failed'].includes(v1)
         this.toggleConsole(flag)
         this.handleBottomPanel(!flag)
       }
@@ -662,7 +662,7 @@ export default {
             taskId,
             taskRecordId
           },
-          endAt: Time.getTime(), // 停止时间 || 当前时间
+          endAt: Time.now(), // 停止时间 || 当前时间
           fields: [
             'inputInsertTotal',
             'inputUpdateTotal',
@@ -768,7 +768,7 @@ export default {
             type: 'engine',
             engineId: agentId
           },
-          endAt: Time.getTime(),
+          endAt: Time.now(),
           fields: ['memoryRate', 'cpuUsage', 'gcRate'],
           type: 'instant'
         }
@@ -1031,9 +1031,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Time.getTime()
+      let endTimestamp = this.lastStopTime || Time.now()
       if (status === 'running') {
-        endTimestamp = Time.getTime()
+        endTimestamp = Time.now()
       }
       switch (type) {
         case '5m':
@@ -1171,7 +1171,7 @@ export default {
     },
 
     getTime() {
-      return Time.getTime()
+      return Time.now()
     }
   }
 }

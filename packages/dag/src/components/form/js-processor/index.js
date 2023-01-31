@@ -1,4 +1,4 @@
-import { defineComponent, ref, reactive, onUnmounted } from '@vue/composition-api'
+import { defineComponent, ref, reactive, onUnmounted, watch } from '@vue/composition-api'
 import { useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
@@ -15,7 +15,7 @@ import './style.scss'
 
 export const JsProcessor = observer(
   defineComponent({
-    props: ['value', 'disabled'],
+    props: ['value', 'disabled', 'isStandard'],
     directives: {
       resize
     },
@@ -89,7 +89,7 @@ export const JsProcessor = observer(
           pageSize: 50,
           start: queryStart,
           nodeId: form.values.id,
-          end: Time.getTime()
+          end: Time.now()
         })
         logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${form.values.id}]`).test(item.message)) || []
       }
@@ -165,12 +165,12 @@ export const JsProcessor = observer(
         logLoading.value = true
         showJsonArea.value = true
         clearTimeout(timer)
-        version = Time.getTime()
-        queryStart = Time.getTime()
-        if (!fullscreen.value) fullscreen.value = true
+        version = Time.now()
+        queryStart = Time.now()
+        if (!fullscreen.value) toggleFullscreen()
         taskApi.testRunJs({ ...params, version, script: props.value }).then(
           () => {
-            queryStart = Time.getTime()
+            queryStart = Time.now()
             handleAutoQuery()
           },
           async () => {
@@ -197,7 +197,7 @@ export const JsProcessor = observer(
         showDoc.value = !showDoc.value
       }
 
-      let functionGroup = reactive([])
+      let functionGroup = ref({})
       const classDescMap = {
         DateUtil: '日期处理',
         idGen: 'ID生成器',
@@ -208,15 +208,19 @@ export const JsProcessor = observer(
           filter: JSON.stringify({
             limit: 1000,
             where: {
-              type: 'system'
+              type: 'system',
+              category: props.isStandard
+                ? 'standard'
+                : {
+                    $in: ['enhanced', 'standard']
+                  }
             }
           })
         })
         const group = groupBy(data.items, 'className')
         const noClassFunction = group['']
         delete group['']
-        functionGroup = group
-        // console.log('loadFunction', groupBy(data.items, 'className')) // eslint-disable-line
+        functionGroup.value = group
       }
 
       loadFunction()
@@ -246,9 +250,9 @@ export const JsProcessor = observer(
           <div class="position-absolute flex align-center w-100">
             <span class="formily-element-form-item-asterisk">*</span>
             <span class="flex-1">{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
-            {/*<ElLink class="mr-3" onClick={toggleDoc} type="primary">
-              API文档
-            </ElLink>*/}
+            <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+              {i18n.t('packages_dag_api_docs')}
+            </ElLink>
             <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
               <VIcon class="mr-1">fangda</VIcon>
               {i18n.t('packages_form_js_editor_fullscreen')}
@@ -345,7 +349,8 @@ export const JsProcessor = observer(
             <ElDrawer
               append-to-body
               modal={false}
-              title="API"
+              title={i18n.t('packages_dag_api_docs')}
+              size={600}
               visible={showDoc.value}
               on={{
                 ['update:visible']: v => {
@@ -355,19 +360,19 @@ export const JsProcessor = observer(
               }}
             >
               <div class="px-4 js-doc-content">
-                {Object.keys(functionGroup).map(className => {
+                {Object.keys(functionGroup.value).map(className => {
                   return [
                     <h2>{className}</h2>,
                     classDescMap[className] && <p>{classDescMap[className]}</p>,
                     <h3>方法</h3>,
-                    functionGroup[className].map(item => {
+                    functionGroup.value[className].map(item => {
                       return [
                         <h4>{item.methodName}</h4>,
                         <ul>
-                          <li>作用</li>
-                          <li>用法</li>
+                          <li>作用：{item.desc}</li>
+                          <li>用法：</li>
                         </ul>,
-                        <HighlightCode code={item.format}></HighlightCode>
+                        <HighlightCode code={item.example}></HighlightCode>
                       ]
                     })
                   ]
@@ -385,9 +390,9 @@ export const JsProcessor = observer(
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
                 {fullscreen && runTool}
                 <div>
-                  {/*<ElLink class="mr-3" onClick={toggleDoc} type="primary">
-                    API文档
-                  </ElLink>*/}
+                  <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+                    {i18n.t('packages_dag_api_docs')}
+                  </ElLink>
                   <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
                     <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
                   </ElLink>
@@ -452,7 +457,7 @@ export const JsProcessor = observer(
                                     </details>
                                   )
                                 }
-                                return <div class="js-log-list-item text-prewrap p-2">{item.message}</div>
+                                return <div class="js-log-list-item text-prewrap text-break p-2">{item.message}</div>
                               })
                             : !logLoading.value && <VEmpty large></VEmpty>}
                           <div

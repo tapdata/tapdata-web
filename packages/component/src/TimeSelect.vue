@@ -34,10 +34,10 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import dayjs from 'dayjs'
 
+import i18n from '@tap/i18n'
+import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 
 export default {
@@ -90,7 +90,7 @@ export default {
     },
     range: {
       type: Array,
-      default: () => [Date.now() - 5 * 60 * 1000, Date.now()]
+      default: () => [Time.now() - 5 * 60 * 1000, Time.now()]
     }
   },
 

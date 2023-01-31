@@ -97,10 +97,12 @@ export class Table extends NodeType {
       tableNameWrap: {
         type: 'void',
         title: '表',
-        'x-decorator': 'FormItem',
+        'x-decorator': 'StageButtonLabel',
         'x-decorator-props': {
           asterisk: true,
-          feedbackLayout: 'none'
+          feedbackLayout: 'none',
+          connectionId: '',
+          title: '表'
         },
         'x-component': 'FormFlex',
         'x-component-props': {
@@ -108,10 +110,13 @@ export class Table extends NodeType {
           align: 'start'
         },
         'x-reactions': {
-          dependencies: ['databaseType'],
+          dependencies: ['databaseType', '.connectionId'],
           fulfill: {
             state: {
               display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+            },
+            schema: {
+              'x-decorator-props.connectionId': `{{$deps[1]}}`
             }
           }
         },
@@ -275,6 +280,27 @@ export class Table extends NodeType {
                   //     }
                   //   }
                   // },
+                  readBatchSize: {
+                    title: '批量读取条数', //增量批次读取条数
+                    type: 'string',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'InputNumber',
+                    'x-decorator-props': {
+                      tooltip: '全量每批次读取的条数'
+                    },
+                    'x-component-props': {
+                      min: 1,
+                      max: 100000
+                    },
+                    default: 100,
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                        }
+                      }
+                    }
+                  },
                   enableDDL: {
                     title: 'DDL事件采集',
                     type: 'boolean',
@@ -307,6 +333,94 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-component': 'DdlEventCheckbox'
                   },
+                  cdcMode: {
+                    title: '增量同步方式',
+                    type: 'string',
+                    default: 'logCdc',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '特定字段的轮询方式对数据进行增量采集'
+                    },
+                    'x-component': 'Radio.Group',
+                    enum: [
+                      { label: '日志cdc', value: 'logCdc' },
+                      { label: '轮询', value: 'polling' }
+                    ],
+                    'x-reactions': {
+                      target:
+                        '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
+                      fulfill: {
+                        state: {
+                          visible: '{{$self.value==="polling"}}'
+                        }
+                      }
+                    }
+                  },
+                  cdcPollingFields: {
+                    title: '指定轮询字段',
+                    type: 'array',
+                    required: true,
+                    default: [{ field: '', defaultValue: '' }],
+                    'x-decorator': 'FormItem',
+                    'x-component': 'ArrayItems',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        field: {
+                          type: 'string',
+                          required: 'true',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'FieldSelect',
+                          'x-component-props': {
+                            filterable: true
+                          },
+                          'x-reactions': {
+                            effects: ['onFieldInputValueChange']
+                          }
+                        },
+                        defaultValue: {
+                          title: '轮询字段默认值',
+                          required: true,
+                          type: 'string',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                          'x-reactions': {
+                            fulfill: {
+                              state: {
+                                visible: `{{$settings.type === "cdc"}}`
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  cdcPollingInterval: {
+                    title: '轮询间隔(ms)',
+                    type: 'object',
+                    default: 500,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'InputNumber',
+                    'x-component-props': {
+                      style: {
+                        width: '140px'
+                      },
+                      min: 500
+                    }
+                  },
+                  cdcPollingBatchSize: {
+                    title: '每次读取行数',
+                    type: 'number',
+                    default: 1000,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'InputNumber',
+                    'x-component-props': {
+                      style: {
+                        width: '140px'
+                      },
+                      min: 1
+                    }
+                  },
                   isFilter: {
                     type: 'boolean',
                     title: '过滤设置',
@@ -314,7 +428,7 @@ export class Table extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-reactions': {
-                      target: '*(nodeSchema,conditions)',
+                      target: '*(conditions)',
                       fulfill: {
                         state: {
                           visible: '{{$self.value===true}}'
@@ -389,7 +503,7 @@ export class Table extends NodeType {
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id, $values.tableName)}}`,
                       {
-                        target: 'conditions.*.key',
+                        target: '*(conditions.*.key,cdcPollingFields.*.field)',
                         fulfill: {
                           state: {
                             loading: '{{$self.loading}}',
@@ -518,6 +632,46 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
+                  writeBachSpace: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle'
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                        }
+                      }
+                    },
+                    properties: {
+                      writeBatchSize: {
+                        title: '批量写入条数', //增量批次读取条数
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-decorator-props': {
+                          tooltip: '全量每批次写入的条数'
+                        },
+                        'x-component-props': {
+                          min: 1,
+                          max: 100000
+                        },
+                        default: 2000
+                      },
+                      writeBatchWaitMs: {
+                        title: '写入每批最大等待时间(ms)', //增量批次读取条数
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber',
+                        'x-component-props': {
+                          min: 1
+                        },
+                        default: 3000
+                      }
+                    }
+                  },
                   ddlEvents: {
                     type: 'void',
                     title: 'DDL事件应用',
@@ -567,35 +721,147 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  writeStrategy: {
-                    title: '数据写入模式',
-                    type: 'string',
-                    default: 'updateOrInsert',
-                    enum: [
-                      {
-                        label: '追加写入',
-                        value: 'appendWrite'
-                      },
-                      {
-                        label: '更新已存在或者插入新数据',
-                        value: 'updateOrInsert'
+                  // writeStrategy: {
+                  //   title: '数据写入模式',
+                  //   type: 'string',
+                  //   default: 'updateOrInsert',
+                  //   enum: [
+                  //     {
+                  //       label: '追加写入',
+                  //       value: 'appendWrite'
+                  //     },
+                  //     {
+                  //       label: '更新已存在或者插入新数据',
+                  //       value: 'updateOrInsert'
+                  //     }
+                  //   ],
+                  //   'x-decorator': 'FormItem',
+                  //   'x-decorator-props': {
+                  //     wrapperWidth: 300
+                  //   },
+                  //   'x-component': 'Select',
+                  //   'x-reactions': [
+                  //     {
+                  //       target: 'updateConditionFields',
+                  //       fulfill: {
+                  //         state: {
+                  //           display: '{{$self.value!=="appendWrite" ? "visible":"hidden"}}'
+                  //         }
+                  //       }
+                  //     }
+                  //   ]
+                  // },
+                  writeStrategyObject: {
+                    // title: '数据写入模式',
+                    type: 'void',
+                    'x-component-props': {
+                      layout: 'horizontal',
+                      colon: false,
+                      feedbackLayout: 'none'
+                    },
+                    properties: {
+                      writeStrategy: {
+                        title: '数据写入模式',
+                        type: 'string',
+                        default: 'updateOrInsert',
+                        'x-component': 'Radio.Group',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '统计追加写入: 只处理插入事件，丢弃更新和删除事件'
+                        },
+                        enum: [
+                          {
+                            label: '按事件类型处理',
+                            value: 'updateOrInsert'
+                          },
+                          {
+                            label: '统计追加写入',
+                            value: 'appendWrite'
+                          }
+                        ]
                       }
-                    ],
+                    }
+                  },
+                  dmlPolicy: {
+                    title: '数据写入策略',
+                    type: 'object',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 300
+                      feedbackLayout: 'none'
                     },
-                    'x-component': 'Select',
-                    'x-reactions': [
-                      {
-                        target: 'updateConditionFields',
-                        fulfill: {
-                          state: {
-                            display: '{{$self.value!=="appendWrite" ? "visible":"hidden"}}'
+                    'x-component': 'FormLayout',
+                    'x-component-props': {
+                      layout: 'horizontal',
+                      colon: false,
+                      feedbackLayout: 'none'
+                    },
+                    properties: {
+                      insertPolicy: {
+                        type: 'string',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'font-color-dark mb-2',
+                          wrapperWidth: 300,
+                          addonBefore: '插入事件'
+                        },
+                        default: 'update_on_exists',
+                        enum: [
+                          {
+                            label: '目标存在时更新',
+                            value: 'update_on_exists'
+                          },
+                          {
+                            label: '目标存在时丢弃',
+                            value: 'ignore_on_exists'
                           }
+                        ]
+                      },
+                      updatePolicy: {
+                        type: 'string',
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'font-color-dark mb-2',
+                          wrapperWidth: 300,
+                          addonBefore: '更新事件'
+                        },
+                        default: 'ignore_on_nonexists',
+                        enum: [
+                          {
+                            label: '不存在时丢弃',
+                            value: 'ignore_on_nonexists'
+                          },
+                          {
+                            label: '不存在时插入',
+                            value: 'insert_on_nonexists'
+                          }
+                        ]
+                      },
+                      deletePolicy: {
+                        type: 'void',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'font-color-dark',
+                          wrapperWidth: 300,
+                          addonBefore: '删除事件'
+                        },
+                        'x-component': 'Tag',
+                        'x-content': '不存在时丢弃',
+                        'x-component-props': {
+                          type: 'info',
+                          effect: 'light'
                         }
                       }
-                    ]
+                    },
+                    'x-reactions': {
+                      dependencies: ['writeStrategy'],
+                      fulfill: {
+                        state: {
+                          display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
+                        }
+                      }
+                    }
                   },
                   updateConditionFields: {
                     title: '更新条件字段',

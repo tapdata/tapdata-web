@@ -107,6 +107,16 @@
         prop="last_updated"
         sortable="last_updated"
         min-width="160"
+        :label="$t('packages_business_connections_list_biaojiegougengxin')"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.loadSchemaTime }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="last_updated"
+        sortable="last_updated"
+        min-width="160"
         :label="$t('packages_business_connection_lastUpdateTime')"
       >
         <template slot-scope="scope">
@@ -410,6 +420,7 @@ export default {
             item.lastUpdateTime = item.last_updated = item.last_updated
               ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               : '-'
+            item.loadSchemaTime = item.loadSchemaTime ? dayjs(item.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             return item
           })
 
@@ -526,7 +537,7 @@ export default {
         })
       } else {
         this.$router.push({
-          name: 'dataflow',
+          name: 'dataflowList',
           query: {
             keyword: item.name
           }

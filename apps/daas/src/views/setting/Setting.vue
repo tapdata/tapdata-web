@@ -192,6 +192,7 @@ import { uniq, find } from 'lodash'
 import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'Setting',
@@ -360,7 +361,7 @@ export default {
     // 连接测试
     connectAndTest() {
       let lastTime = localStorage.getItem('Tapdata_settings_email_countdown')
-      let now = Date.now()
+      let now = Time.now()
       let duration = Math.floor((now - lastTime) / 1000)
       if (lastTime && duration < 60) {
         this.$message.success(this.$t('setting_test_email_countdown') + '(' + (60 - duration) + 's)')

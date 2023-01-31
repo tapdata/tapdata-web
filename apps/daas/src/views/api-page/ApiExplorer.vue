@@ -219,6 +219,7 @@ import dayjs from 'dayjs'
 import { ApiClient, settingsApi, workerApi, usersApi, apiServerApi, modulesApi } from '@tap/api'
 import { JsEditor, SelectList } from '@tap/component'
 import { TablePage } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 import BrowseQuery from './BrowseQuery'
 
@@ -527,7 +528,7 @@ export default {
     // 获取表头
     async getTableHeader() {
       let _this = this
-      time = new Date().getTime()
+      time = Time.now()
 
       this.tableHeader = []
       // 获取当前选中表
@@ -997,7 +998,7 @@ export default {
         fields: {}, // 查询所有字段
         where
       }
-      time = new Date().getTime()
+      time = Time.now()
       _this.queryTime = 0
       _this.renderTime = 0
       // 获取字段
@@ -1091,7 +1092,7 @@ export default {
             }
 
             this.tableData = tableData
-            _this.queryTime = formatTime(new Date().getTime() - time)
+            _this.queryTime = formatTime(Time.now() - time)
             return {
               total: data.total.count,
               data: this.tableData
@@ -1109,9 +1110,9 @@ export default {
           //   }
           // })
           .finally(() => {
-            let renderStart = new Date().getTime()
+            let renderStart = Time.now()
             _this.$nextTick(() => {
-              _this.renderTime = formatTime(new Date().getTime() - renderStart)
+              _this.renderTime = formatTime(Time.now() - renderStart)
             })
           })
       )

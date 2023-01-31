@@ -1,4 +1,6 @@
 import i18n from '@tap/i18n'
+import Time from '@tap/shared/src/time'
+import { dayjs } from './dayjs'
 
 // 毫秒换算成时分秒
 export const formatMs = (msTime = 0, type = 'time') => {
@@ -53,4 +55,33 @@ export function toThousandsUnit(val) {
   } else {
     return val
   }
+}
+
+// datepicker配置，有效时间为 当前时间~以前
+export function getPickerOptionsBeforeTime(val = Time.now(), nowTimestamp, cb) {
+  const now = nowTimestamp || Time.now()
+  const formatMap = {
+    date: 'YYYY-MM-DD',
+    time: 'HH:mm:ss',
+    startTime: '00:00:00',
+    endTime: '23:59:59'
+  }
+
+  const pickDate = dayjs(val).format(formatMap.date)
+  const nowDate = dayjs(now).format(formatMap.date)
+  const nowTime = dayjs(now).format(formatMap.time)
+  if (val > now) {
+    cb?.()
+  }
+  let op = {
+    disabledDate: time => {
+      return new Date(time).getTime() > now
+    }
+  }
+  if (pickDate === nowDate) {
+    op.selectableRange = `${formatMap.startTime} - ${nowTime}`
+  } else {
+    op.selectableRange = `${formatMap.startTime} - ${formatMap.endTime}`
+  }
+  return op
 }

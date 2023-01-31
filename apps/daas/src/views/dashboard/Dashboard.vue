@@ -5,7 +5,7 @@
         <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
       </el-row>
       <template v-if="noPermission">
-        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
           <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
             <div class="dashboard-col-box">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_' + item.key) }}</div>
@@ -29,7 +29,7 @@
           </el-col>
         </el-row>
         <!-- 复制任务概览 -->
-        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
           <el-col :span="12" class="dashboard-col col">
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
@@ -152,7 +152,7 @@
           </el-col>
         </el-row>
         <!-- 服务器进程 -->
-        <div class="dashboard-row dashboard-col col" v-readonlybtn="'Cluster_management_menu'">
+        <div class="dashboard-row dashboard-col col" v-readonlybtn="'v2_cluster-management_menu'">
           <div class="dashboard-col">
             <div class="dashboard-col-box">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_server_title') }}</div>
@@ -381,17 +381,17 @@ export default {
       unitData: [],
       kbData: [],
       unitType: '',
-      noPermission: this.$has('Data_SYNC_menu') || this.$has('Data_verify_menu') || this.$has('Cluster_management_menu')
+      noPermission: this.$has('v2_data_pipeline') || this.$has('Data_verify_menu') || this.$has('management_menu')
     }
   },
 
   mounted() {
-    if (this.$has('Data_SYNC') || this.$has('Data_verify')) {
+    if (this.$has('v2_data_pipeline') || this.$has('Data_verify')) {
       this.getDataFlowApi()
       // this.getMeasurement()
     }
 
-    if (this.$has('Cluster_management') || this.$has('Cluster_management_menu')) {
+    if (this.$has('v2_cluster-management_menu')) {
       this.getClsterDataApi()
     }
   },

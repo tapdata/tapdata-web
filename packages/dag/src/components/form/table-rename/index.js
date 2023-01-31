@@ -6,8 +6,8 @@ import { observer } from '@formily/reactive-vue'
 import { VIcon, EmptyItem } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
-// import 'vue-virtual-scroller/dist/vue-visafrtual-scroller.css'
-// import { RecycleScroller } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import { RecycleScroller } from 'vue-virtual-scroller'
 import './style.scss'
 
 export const TableRename = observer(
@@ -28,11 +28,11 @@ export const TableRename = observer(
       )
       const config = reactive({
         search: '',
-        replaceBefore: '',
-        replaceAfter: '',
-        prefix: '',
-        suffix: '',
-        transferCase: '',
+        replaceBefore: form.values.replaceBefore, // 替换前
+        replaceAfter: form.values.replaceAfter || '', // 替换后
+        prefix: form.values.prefix || '', // 前缀
+        suffix: form.values.suffix || '', // 后缀
+        transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
         transformLoading: root.$store.state.dataflow.transformLoading
       })
 
@@ -85,12 +85,16 @@ export const TableRename = observer(
         return tableDataRef.value
       })
 
+      const handleReplace = (value, config) => {}
+
       const doModify = () => {
-        const target = filterNames.value
+        const target = tableDataRef.value
         let flag
         target.forEach(n => {
           let after = n
-          after = after.replace(new RegExp(config.replaceBefore, 'g'), config.replaceAfter)
+          after = config.replaceBefore
+            ? after.replace(new RegExp(config.replaceBefore, 'g'), config.replaceAfter)
+            : after
           after = config.prefix + after + config.suffix
           if (config.transferCase) {
             after = after[config.transferCase]()
@@ -103,6 +107,15 @@ export const TableRename = observer(
             flag = true
           }
         })
+
+        form.setValues({
+          replaceBefore: config.replaceBefore, // 替换前
+          replaceAfter: config.replaceAfter, // 替换后
+          prefix: config.prefix, // 前缀
+          suffix: config.suffix, // 后缀
+          transferCase: config.transferCase // toUpperCase ｜ toLowerCase
+        })
+
         flag && emitChange()
       }
 
@@ -157,101 +170,6 @@ export const TableRename = observer(
     render() {
       return (
         <div class="table-rename" v-loading={this.$store.state.dataflow.transformLoading || this.loading}>
-          <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}>
-            <ElInput
-              v-model={this.config.search}
-              disabled={this.disabled}
-              prefixIcon="el-icon-search"
-              clearable
-            ></ElInput>
-          </FormItem.BaseItem>
-
-          <div
-            class="name-list flex flex-column border border-form rounded-2 overflow-hidden mt-4"
-            style={this.listStyle}
-          >
-            <div class="name-list-header flex flex-shrink-0">
-              <div class="name-list-title px-4">{i18n.t('packages_form_table_rename_index_yuanbiaoming')}</div>
-              <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
-              <div class="name-list-header-extra px-4">
-                <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
-                  {i18n.t('packages_form_button_reset')}
-                </ElButton>
-              </div>
-            </div>
-            <div class="name-list-content font-color-light overflow-auto">
-              {this.filterNames.length ? (
-                /*<RecycleScroller
-                  items={this.filterNames}
-                  itemSize={38}
-                  buffer={50}
-                  scopedSlots={{
-                    default: ({ item: name }) => (
-                      <div key={name} class="name-list-item flex align-center position-relative">
-                        <div class="flex-1 px-4 text-truncate">
-                          <span title={name}>{name}</span>
-                        </div>
-                        <div
-                          class={[
-                            'flex-1 px-4 text-truncate',
-                            {
-                              'color-primary': !!this.nameMap[name]
-                            }
-                          ]}
-                        >
-                          <input
-                            readOnly={this.disabled}
-                            class="name-list-item-input"
-                            value={this.nameMap[name] || name}
-                            onChange={event => {
-                              this.updateName(event.target.value, name)
-                              this.emitChange()
-                            }}
-                          />
-                        </div>
-                        <VIcon size="12" class="name-list-item-center font-color-light">
-                          left
-                        </VIcon>
-                      </div>
-                    )
-                  }}
-                ></RecycleScroller>*/
-                this.filterNames.map(name => {
-                  return (
-                    <div key={name} class="name-list-item flex align-center position-relative">
-                      <div class="flex-1 px-4 text-truncate">
-                        <span title={name}>{name}</span>
-                      </div>
-                      <div
-                        class={[
-                          'flex-1 px-4 text-truncate',
-                          {
-                            'color-primary': !!this.nameMap[name]
-                          }
-                        ]}
-                      >
-                        <input
-                          readOnly={this.disabled}
-                          class="name-list-item-input px-2"
-                          value={this.nameMap[name] || name}
-                          onChange={event => {
-                            this.updateName(event.target.value, name)
-                            this.emitChange()
-                          }}
-                        />
-                      </div>
-                      <VIcon size="12" class="name-list-item-center font-color-light">
-                        left
-                      </VIcon>
-                    </div>
-                  )
-                })
-              ) : (
-                <EmptyItem></EmptyItem>
-              )}
-            </div>
-          </div>
-
           <div class="border border-form p-4 mt-4 rounded-2">
             <div class="font-color-light">{i18n.t('packages_form_table_rename_index_yixiacaozuojin')}</div>
             <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
@@ -281,6 +199,119 @@ export const TableRename = observer(
               <ElButton onClick={this.doReset} disabled={this.disabled} size="small">
                 {i18n.t('packages_form_table_rename_index_qingkong')}
               </ElButton>
+            </div>
+          </div>
+
+          <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_sousuobiaoming')}>
+            <ElInput
+              v-model={this.config.search}
+              disabled={this.disabled}
+              prefixIcon="el-icon-search"
+              clearable
+            ></ElInput>
+          </FormItem.BaseItem>
+
+          <div
+            class="name-list flex flex-column border border-form rounded-2 overflow-hidden mt-4"
+            style={this.listStyle}
+          >
+            <div class="name-list-header flex flex-shrink-0">
+              <div class="name-list-title px-4">{i18n.t('packages_form_table_rename_index_yuanbiaoming')}</div>
+              <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
+              <div class="name-list-header-extra px-4">
+                <ElButton disabled={this.disabled} onClick={this.resetNames} size="mini" type="text">
+                  {i18n.t('packages_form_button_reset')}
+                </ElButton>
+              </div>
+            </div>
+            <div class="name-list-content font-color-light overflow-auto">
+              {this.filterNames.length ? (
+                <RecycleScroller
+                  items={this.filterNames}
+                  itemSize={38}
+                  buffer={50}
+                  scopedSlots={{
+                    default: ({ item: name }) => (
+                      <div class="name-list-item flex align-center position-relative">
+                        <div class="flex-1 px-4 text-truncate">
+                          <span title={name}>{name}</span>
+                        </div>
+                        <div
+                          class={[
+                            'flex-1 px-4 text-truncate',
+                            {
+                              'color-primary': !!this.nameMap[name]
+                            }
+                          ]}
+                        >
+                          <input
+                            readOnly={this.disabled}
+                            class="name-list-item-input px-2"
+                            value={this.nameMap[name] || name}
+                            onChange={event => {
+                              const val = event.target.value
+                              if (val) {
+                                this.updateName(val, name)
+                                this.emitChange()
+                              } else {
+                                event.target.value = name
+                                if (this.nameMap[name]) {
+                                  this.$delete(this.nameMap, name)
+                                  this.emitChange()
+                                }
+                              }
+                            }}
+                          />
+                        </div>
+                        <VIcon size="12" class="name-list-item-center font-color-light">
+                          left
+                        </VIcon>
+                      </div>
+                    )
+                  }}
+                ></RecycleScroller>
+              ) : (
+                /*this.filterNames.map(name => {
+                  return (
+                    <div key={name} class="name-list-item flex align-center position-relative">
+                      <div class="flex-1 px-4 text-truncate">
+                        <span title={name}>{name}</span>
+                      </div>
+                      <div
+                        class={[
+                          'flex-1 px-4 text-truncate',
+                          {
+                            'color-primary': !!this.nameMap[name]
+                          }
+                        ]}
+                      >
+                        <input
+                          readOnly={this.disabled}
+                          class="name-list-item-input px-2"
+                          value={this.nameMap[name] || name}
+                          onChange={event => {
+                            const val = event.target.value
+                            if (val) {
+                              this.updateName(val, name)
+                              this.emitChange()
+                            } else {
+                              event.target.value = name
+                              if (this.nameMap[name]) {
+                                this.$delete(this.nameMap, name)
+                                this.emitChange()
+                              }
+                            }
+                          }}
+                        />
+                      </div>
+                      <VIcon size="12" class="name-list-item-center font-color-light">
+                        left
+                      </VIcon>
+                    </div>
+                  )
+                })*/
+                <EmptyItem></EmptyItem>
+              )}
             </div>
           </div>
         </div>
