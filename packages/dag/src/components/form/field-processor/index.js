@@ -359,7 +359,13 @@ export const FieldRenameProcessor = defineComponent({
             class="rename-table-item-input px-2"
             value={row.targetFieldName}
             onChange={event => {
-              updateName(row, event.target.value)
+              const val = event.target.value
+              if (val) {
+                row.targetFieldName = val
+                updateName(row, event.target.value)
+              } else {
+                event.target.value = row.targetFieldName
+              }
             }}
           />
         </div>
