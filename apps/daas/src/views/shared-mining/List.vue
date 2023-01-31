@@ -303,7 +303,7 @@ export default {
                 item.pointTime = item.syncTimeZone
               }
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              item.logTime = dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
+              item.logTime = item.logTime ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               makeStatusAndDisabled(item)
               if (item.status === 'edit') {
                 item.btnDisabled.start = false
