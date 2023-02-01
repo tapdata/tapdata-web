@@ -25,8 +25,10 @@
               $t('packages_business_task_status_agent_tooltip_time', {
                 time: pingTime
               })
-            }}，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
-            <ElLink @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink>
+            }}<template v-if="agentStatus"
+              >，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
+              <ElLink @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink></template
+            >
           </div>
         </template>
       </ElTooltip>
@@ -73,7 +75,7 @@ export default {
 
     agentStatus() {
       const info = this.agentInfo
-      return info ? `${info.name}（${info.status}）` : '-'
+      return info ? `${info.name}（${info.status}）` : null
     },
 
     showCronTip() {
