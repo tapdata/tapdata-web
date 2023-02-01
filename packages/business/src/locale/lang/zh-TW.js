@@ -312,6 +312,7 @@ export default {
   packages_business_button_bulk_import: '導入',
   packages_business_message_save_fail: '保存失敗',
   packages_business_column_create_time: '創建時間',
+  packages_business_column_last_start_time: '上次運行時間',
   packages_business_column_event_time: '增量時間點',
   packages_business_task_list_transform_done: '推演完成',
   packages_business_task_list_transform_error: '推演失敗',
@@ -708,6 +709,7 @@ export default {
   packages_business_verification_form_jiaoyangaojing: '校驗告警',
   packages_business_task_status_error_tip:
     '任務刪除成功，以下幾個 PostgreSQL 連接的信息清除失敗，需要您使用以下方式手動清除',
+  packages_business_task_status_next_run_time: '下次運行時間：{val}',
   packages_business_relation_details_rizhiwajueshi: '日誌挖掘時間',
   packages_business_relation_details_wajuemingcheng: '挖掘名稱',
   packages_business_relation_details_wajuexinxi: '挖掘信息',

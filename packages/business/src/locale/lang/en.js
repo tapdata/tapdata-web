@@ -319,6 +319,7 @@ export default {
   packages_business_button_bulk_import: 'Bulk Import',
   packages_business_message_save_fail: 'Save failed',
   packages_business_column_create_time: 'Create Time',
+  packages_business_column_last_start_time: 'Start Time',
   packages_business_column_event_time: 'Event Time',
   packages_business_task_list_transform_running: 'Field mapping running',
   packages_business_task_list_transform_done: 'Field mapping completed',
@@ -729,6 +730,7 @@ export default {
   packages_business_verification_form_jiaoyangaojing: 'Verification warning',
   packages_business_task_status_error_tip:
     "ask_list_error_tip: 'The task has been successfully deleted, but the information of the following PostgreSQL connections failed to be cleared, and you need to manually clear them in the following ways",
+  packages_business_task_status_next_run_time: 'Next run time: {val}',
   packages_business_relation_details_rizhiwajueshi: 'Log mining time',
   packages_business_relation_details_wajuemingcheng: 'Mining name',
   packages_business_relation_details_wajuexinxi: 'Mining information',
