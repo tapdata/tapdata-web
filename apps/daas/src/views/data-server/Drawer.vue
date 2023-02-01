@@ -35,7 +35,7 @@
               <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false">{{
                 $t('button_cancel')
               }}</ElButton>
-              <ElButton type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
+              <ElButton type="primary" size="mini" @click="save()">{{ $t('button_save') }}</ElButton>
             </div>
             <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{ $t('button_edit') }}</ElButton>
           </template>
@@ -608,7 +608,8 @@ export default {
             ]
           }
           if (!type) {
-            formData = this.allFields
+            //生成按钮 不提交fields不覆盖数据库已有字段 (打开抽屉this.allFields 被清空了)
+            formData.fields = this.allFields
           }
           const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
             this.loading = false
