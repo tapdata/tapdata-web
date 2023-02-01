@@ -544,7 +544,7 @@ export default {
       }
     },
     // 保存，新建和修改
-    save() {
+    save(type) {
       this.$refs.form.validate(async valid => {
         if (valid) {
           let {
@@ -569,7 +569,7 @@ export default {
             return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
           }
           this.loading = true
-          const data = await modulesApi[id ? 'patch' : 'post']({
+          let formData = {
             id,
             status,
             name,
@@ -605,10 +605,12 @@ export default {
                 fields,
                 path
               }
-            ],
-
-            fields: this.allFields
-          }).finally(() => {
+            ]
+          }
+          if (!type) {
+            formData = this.allFields
+          }
+          const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
             this.loading = false
           })
           data.connection = connectionId
@@ -630,7 +632,7 @@ export default {
       this.form.status = 'pending'
       this.$nextTick(() => {
         // save会校验表单项，不加nextTick会导致验证不通过
-        this.save()
+        this.save('generate')
       })
     },
     // 获取可选数据源类型
