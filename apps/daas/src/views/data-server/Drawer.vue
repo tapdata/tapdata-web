@@ -35,7 +35,7 @@
               <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false">{{
                 $t('button_cancel')
               }}</ElButton>
-              <ElButton type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
+              <ElButton type="primary" size="mini" @click="save()">{{ $t('button_save') }}</ElButton>
             </div>
             <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{ $t('button_edit') }}</ElButton>
           </template>
@@ -544,7 +544,7 @@ export default {
       }
     },
     // 保存，新建和修改
-    save() {
+    save(type) {
       this.$refs.form.validate(async valid => {
         if (valid) {
           let {
@@ -569,7 +569,7 @@ export default {
             return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
           }
           this.loading = true
-          const data = await modulesApi[id ? 'patch' : 'post']({
+          let formData = {
             id,
             status,
             name,
@@ -605,10 +605,13 @@ export default {
                 fields,
                 path
               }
-            ],
-
-            fields: this.allFields
-          }).finally(() => {
+            ]
+          }
+          if (!type) {
+            //生成按钮 不提交fields不覆盖数据库已有字段 (打开抽屉this.allFields 被清空了)
+            formData.fields = this.allFields
+          }
+          const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
             this.loading = false
           })
           data.connection = connectionId
@@ -630,7 +633,7 @@ export default {
       this.form.status = 'pending'
       this.$nextTick(() => {
         // save会校验表单项，不加nextTick会导致验证不通过
-        this.save()
+        this.save('generate')
       })
     },
     // 获取可选数据源类型
