@@ -238,7 +238,7 @@ export default defineComponent({
         </Drawer>
         <el-drawer
           class="object-drawer-wrap"
-          size="56%"
+          size="58%"
           title={i18n.t('datadiscovery_catalogue_ziyuanbangding')}
           visible={this.data.isShowSourceDrawer}
           on={{ ['update:visible']: this.closeSourceDrawer }}
