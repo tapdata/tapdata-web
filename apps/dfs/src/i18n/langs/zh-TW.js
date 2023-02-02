@@ -995,6 +995,12 @@ export default {
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服務重啟失敗',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC滯後超時',
 
+  _workbench_workbench_yigoushishitong: '異構實時同步',
+  _workbench_workbench_shujuruhucang: '數據入湖倉 ',
+  _workbench_workbench_jichengaliyun: '集成阿里雲計算巢',
+  _workbench_workbench_jiangshujudaoru: '將數據導入阿里雲 Tablestore',
+  _workbench_workbench_tansuoshili: '探索示例',
+
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升級和服務切換重要公告',
   dfs_workbench_workbench_xinzengzidingyi: '· 新增自定義算子支持，用戶可通過靈活的JS能力來定義自己的算子',
   dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定義函數用戶可通過jar包導入自定義函數進行使用',

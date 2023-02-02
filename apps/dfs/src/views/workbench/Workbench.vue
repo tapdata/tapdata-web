@@ -3,15 +3,15 @@
     <!--	快速开始	-->
     <div class="workbench-start workbench-section">
       <ul class="flex pt-6">
-        <li>
-          <div class="create-list__item quick-start-video flex justify-content-center align-items-center">
-            <VIcon size="50" class="mr-4">quick-start-read</VIcon>
-            <div class="flex flex-column">
-              <div class="color-white mb-2">新人教程视频</div>
-              <el-button size="mini" class="quick-start-button">点击查看</el-button>
-            </div>
-          </div>
-        </li>
+        <!--        <li>-->
+        <!--          <div class="create-list__item quick-start-video flex justify-content-center align-items-center">-->
+        <!--            <VIcon size="50" class="mr-4">quick-start-read</VIcon>-->
+        <!--            <div class="flex flex-column">-->
+        <!--              <div class="color-white mb-2">新人教程视频</div>-->
+        <!--              <el-button size="mini" class="quick-start-button">点击查看</el-button>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </li>-->
         <li v-for="(item, index) in createList" :key="index">
           <div class="create-list__item flex justify-content-center align-items-center p-2">
             <el-link class="create-list__main ml-4" :disabled="$disabledReadonlyUserBtn()" @click="item.action">
@@ -23,10 +23,10 @@
         </li>
       </ul>
     </div>
-    <!--	探索示例	-->
+    <!--	{{$t('_workbench_workbench_tansuoshili')}}	-->
     <div class="workbench-overview workbench-section">
       <ElRow :gutter="40" class="section-header py-6">
-        <ElCol :span="18" class="main-title">探索示例</ElCol>
+        <ElCol :span="18" class="main-title">{{ $t('_workbench_workbench_tansuoshili') }}</ElCol>
       </ElRow>
       <!--      <el-tabs class="explore-examples" active-name="first">-->
       <!--        <el-tab-pane label="全部" name="first">-->
@@ -58,10 +58,12 @@
           >
             <div class="position-relative">
               <img :src="getImg(item.img)" />
-              <div v-if="item.title" class="position-absolute position-text">{{ item.title }}</div>
-              <div v-if="item.subTitle" class="position-absolute position-sub-text">{{ item.subTitle }}</div>
+              <div class="position-absolute position-text flex justify-content-center align-items-center flex-column">
+                <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">{{ item.title }}</div>
+                <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
+              </div>
             </div>
-            <div class="text-center">{{ item.title }}{{ item.subTitle }}</div>
+            <div class="text-center explore-examples-ellipsis">{{ item.title }}{{ item.subTitle }}</div>
           </li>
         </ul>
       </div>
@@ -360,26 +362,26 @@ export default {
       examplesList: [
         {
           type: 'all',
-          title: '将数据导入阿里云 Tablestore',
+          title: i18n.t('_workbench_workbench_jiangshujudaoru'),
           img: 'table-store',
           url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
         {
           type: 'all',
-          title: '集成阿里云计算巢',
+          title: i18n.t('_workbench_workbench_jichengaliyun'),
           img: 'alibaba-nest',
           url: 'https://tapdata.net/automatic-deployment-on-the-cloud.html?fromColId=104'
         },
         {
           type: 'all',
-          title: '数据入湖仓 ',
+          title: i18n.t('_workbench_workbench_shujuruhucang'),
           subTitle: 'MySQL → Doris',
           img: 'mysql-doris',
           url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
         },
         {
           type: 'all',
-          title: '异构实时同步',
+          title: i18n.t('_workbench_workbench_yigoushishitong'),
           subTitle: 'Oracle → MySQL ',
           img: 'oracle-mysql',
           url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
@@ -543,7 +545,7 @@ export default {
 
     //获取探索示例-背景图
     getImg(name) {
-      return require(`../../../public/images/dashboard/${name}.png`)
+      return require(`../../../public/images/dashboard/${name}.svg`)
     },
     goScenes(url) {
       window.open(url)
@@ -811,15 +813,23 @@ export default {
   );
 }
 .explore-examples {
-  background: #ffffff;
+  background: #f4f6fc;
   border: 1px solid #e1e3e9;
   border-radius: 10px;
   padding: 20px;
 }
 .position-text {
-  top: 15px;
-  left: 52px;
+  top: 0;
+  left: 0;
   color: map-get($color, white);
+  width: 100%;
+  height: 60px;
+}
+.explore-examples-ellipsis {
+  /* white-space: nowrap; */
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .position-sub-text {
   top: 33px;

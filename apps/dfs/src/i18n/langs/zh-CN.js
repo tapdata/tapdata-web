@@ -1027,6 +1027,12 @@ export default {
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服务重启失败',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC滞后超时',
 
+  _workbench_workbench_yigoushishitong: '异构实时同步',
+  _workbench_workbench_shujuruhucang: '数据入湖仓 ',
+  _workbench_workbench_jichengaliyun: '集成阿里云计算巢',
+  _workbench_workbench_jiangshujudaoru: '将数据导入阿里云 Tablestore',
+  _workbench_workbench_tansuoshili: '探索示例',
+
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升级和服务切换重要公告',
   dfs_workbench_workbench_xinzengzidingyi: '· 新增自定义算子支持，用户可通过灵活的JS能力来定义自己的算子',
   dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定义函数用户可通过jar包导入自定义函数进行使用',
