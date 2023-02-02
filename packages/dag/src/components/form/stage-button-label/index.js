@@ -8,11 +8,12 @@ export const StageButtonLabel = observer(
   defineComponent({
     props: ['value', 'disabled', 'connectionId', 'title'],
     setup(props, { emit, root, attrs, refs, slots }) {
+      const { taskId, activeNodeId } = root.$store.state?.dataflow || {}
       return () => {
         const label = (
           <div class="inline-flex align-center">
             <span class="mr-2">{props.title}</span>
-            <StageButton connection-id={props.connectionId}></StageButton>
+            <StageButton connection-id={props.connectionId} task-id={taskId} node-id={activeNodeId}></StageButton>
           </div>
         )
 
