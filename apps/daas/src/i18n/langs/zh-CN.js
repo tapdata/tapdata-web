@@ -1946,6 +1946,7 @@ export default {
   daas_data_server_drawer_qingxuanzeduixiang: '请选择对象名称',
   daas_data_server_drawer_qingxuanzelianjie: '请选择连接类型',
   daas_data_server_drawer_qingshurufuwu: '请输入服务名称',
+  daas_data_server_drawer_selectPermissions: '请选择权限范围',
   daas_data_server_drawer_shilidaima: '示例代码',
   daas_data_server_drawer_shilidaima2: '示例代码',
   daas_data_server_drawer_fanhuijieguo: '返回结果',

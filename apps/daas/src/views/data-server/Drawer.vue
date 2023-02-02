@@ -40,7 +40,7 @@
               <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false">{{
                 $t('button_cancel')
               }}</ElButton>
-              <ElButton type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
+              <ElButton type="primary" size="mini" @click="save()">{{ $t('button_save') }}</ElButton>
             </div>
             <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{ $t('button_edit') }}</ElButton>
           </template>
@@ -53,8 +53,8 @@
             :disabled="!isEdit"
           ></ElInput>
         </div>
-        <ElFormItem prop="acl" class="flex-1 mt-4" size="small" label="权限范围" required>
-          <ElSelect v-model="form.acl" multiple :disabled="!isEdit">
+        <ElFormItem class="flex-1 mt-4" size="small" label="权限范围" prop="acl">
+          <ElSelect v-model="form.acl" multiple :disabled="!isEdit" @change="aclChanged">
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
@@ -468,12 +468,14 @@ export default {
         pathAccessMethod: 'default',
         apiVersion: 'v1',
         prefix: '',
-        basePath: ''
+        basePath: '',
+        acl: ['admin']
       },
       tab: 'form',
       isEdit: false,
       rules: {
         name: [{ required: true, message: i18n.t('daas_data_server_drawer_qingshurufuwu'), trigger: 'blur' }],
+        acl: [{ required: true, message: i18n.t('daas_data_server_drawer_selectPermissions'), trigger: 'blur' }],
         connectionType: [
           { required: true, message: i18n.t('daas_data_server_drawer_qingxuanzelianjie'), trigger: 'blur' }
         ],
@@ -603,10 +605,10 @@ export default {
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
-        aal: path.acl
+        acl: path.acl
       }
       this.form.description = this.data.description
-      this.form.acl = path.acl
+      this.form.acl = path.acl || ['admin']
       let host = this.host
       let _path = this.data.path
       let baseUrl = host + _path
@@ -659,6 +661,9 @@ export default {
       this.isEdit = true
       this.form = cloneDeep(this.data)
       this.form.status = 'generating'
+      // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
+      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
+      this.form.acl = this.data?.path?.acl || ['admin']
       this.getDatabaseTypes()
       let { connectionId, tableName } = this.form
       if (connectionId) {
@@ -669,7 +674,7 @@ export default {
       }
     },
     // 保存，新建和修改
-    save() {
+    save(type) {
       this.$refs.form.validate(async valid => {
         if (valid) {
           //自定义路径 数据清理
@@ -710,7 +715,7 @@ export default {
             return this.$message.error(i18n.t('daas_data_server_drawer_qingshurucanshu'))
           }
           this.loading = true
-          const data = await modulesApi[id ? 'patch' : 'post']({
+          let formData = {
             id,
             status,
             name,
@@ -747,10 +752,13 @@ export default {
                 fields,
                 path
               }
-            ],
-
-            fields: this.allFields
-          }).finally(() => {
+            ]
+          }
+          if (!type) {
+            //生成按钮 不传fields覆盖数据库已有数据 (open 抽屉this.allFields 就清空了数据)
+            formData.fields = this.allFields
+          }
+          const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
             this.loading = false
           })
           data.connection = connectionId
@@ -786,7 +794,7 @@ export default {
       this.form.status = 'pending'
       this.$nextTick(() => {
         // save会校验表单项，不加nextTick会导致验证不通过
-        this.save()
+        this.save('generate')
       })
     },
     // 获取可选数据源类型
@@ -895,6 +903,9 @@ export default {
       this.allFields = []
       this.getFields()
       this.$refs?.form?.clearValidate('tableName')
+    },
+    aclChanged() {
+      this.$refs?.form?.clearValidate('acl')
     },
     fieldsChanged(val) {
       this.form.fields = val

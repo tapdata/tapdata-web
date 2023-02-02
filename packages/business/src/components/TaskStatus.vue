@@ -3,6 +3,12 @@
     <span v-if="show" class="status-block" :class="['status-' + task.status]">
       {{ $t(STATUS_MAP[task.status].i18n) }}
     </span>
+    <ElTooltip v-if="showCronTip" placement="top">
+      <VIcon size="18" class="ml-2" color="#008b58">task-process</VIcon>
+      <template #content>
+        {{ getNextStartTime() }}
+      </template>
+    </ElTooltip>
     <template v-if="agentMap">
       <ElTooltip
         v-if="pingTime"
@@ -19,8 +25,10 @@
               $t('packages_business_task_status_agent_tooltip_time', {
                 time: pingTime
               })
-            }}，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
-            <ElLink @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink>
+            }}<template v-if="agentStatus"
+              >，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
+              <ElLink @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink></template
+            >
           </div>
         </template>
       </ElTooltip>
@@ -29,6 +37,8 @@
 </template>
 
 <script>
+import cronParse from 'cron-parser'
+
 import { dayjs, STATUS_MAP } from '../shared'
 import Time from '@tap/shared/src/time'
 
@@ -65,7 +75,23 @@ export default {
 
     agentStatus() {
       const info = this.agentInfo
-      return info ? `${info.name}（${info.status}）` : '-'
+      return info ? `${info.name}（${info.status}）` : null
+    },
+
+    showCronTip() {
+      const task = this.task
+      let ifShow =
+        task.status !== 'edit' && task.type === 'initial_sync' && task.crontabExpressionFlag && task.crontabExpression
+      if (!ifShow) return ifShow
+      try {
+        if (cronParse.parseExpression(this.task.crontabExpression).hasNext()) {
+          return true
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log('Error: ' + err.message)
+      }
+      return false
     }
   },
 
@@ -85,6 +111,18 @@ export default {
         }
       }
       this.$router.push(route)
+    },
+
+    getNextStartTime() {
+      try {
+        if (!this.task.crontabExpression) return
+        const interval = cronParse.parseExpression(this.task.crontabExpression)
+        return this.$t('packages_business_task_status_next_run_time', {
+          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss')
+        })
+      } catch (err) {
+        console.log('Error: ' + err.message)
+      }
     }
   }
 }
@@ -99,6 +137,7 @@ export default {
   font-weight: 500;
   border-radius: 4px;
   box-sizing: border-box;
+  word-break: keep-all;
 }
 .status-running {
   color: #178061;

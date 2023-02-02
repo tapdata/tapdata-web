@@ -141,20 +141,20 @@
         sortable
         prop="currentEventTimestamp"
         :label="$t('packages_business_column_event_time')"
-        min-width="160"
+        min-width="164"
       >
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
         </template>
       </el-table-column>
       <el-table-column
-        prop="createTime"
-        :label="$t('packages_business_column_create_time')"
-        min-width="160"
+        prop="lastStartDate"
+        :label="$t('packages_business_column_last_start_time')"
+        min-width="164"
         sortable="custom"
       >
         <template #default="{ row }">
-          {{ formatTime(row.createTime) }}
+          {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('packages_business_column_operation')" :width="colWidth.operation">
@@ -460,7 +460,10 @@ export default {
         stoppingTime: true,
         pingTime: true,
         canForceStopping: true,
-        currentEventTimestamp: true
+        currentEventTimestamp: true,
+        crontabExpressionFlag: true,
+        crontabExpression: true,
+        lastStartDate: true
       }
       let where = {
         syncType
