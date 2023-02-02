@@ -76,6 +76,7 @@ export const JsProcessor = observer(
 
       let timer
       let outTimer
+      let logTimer
       let version
       let logList = ref([])
       let logLoading = ref(false)
@@ -123,6 +124,7 @@ export const JsProcessor = observer(
         runningText.value = ''
         logLoading.value = false
         clearTimeout(timer)
+        clearTimeout(logTimer)
         clearTimeout(outTimer)
       }
 
@@ -146,10 +148,15 @@ export const JsProcessor = observer(
                 handleAutoQuery()
               }, 500)
             } else {
+              // 没有拿到日志数据，继续定时轮询
               if (!logList.value.length) {
-                outTimer = setTimeout(async () => {
-                  await queryLog()
-                  resetQuery()
+                outTimer = setTimeout(() => {
+                  logTimer = setInterval(async () => {
+                    await queryLog()
+                    if (logList.value.length) {
+                      resetQuery()
+                    }
+                  }, 500)
                 }, 1000)
               } else {
                 resetQuery()
