@@ -265,7 +265,8 @@ export default observer({
                               'x-component-props': {
                                 type: 'datetime',
                                 format: 'yyyy-MM-dd HH:mm:ss',
-                                valueFormat: 'timestamp'
+                                valueFormat: 'timestamp',
+                                popperClass: 'setting-panel__dateTimePicker'
                               },
                               'x-reactions': [
                                 {
@@ -660,6 +661,15 @@ export default observer({
     .el-collapse-item__header {
       font-size: $fontBaseTitle;
       font-weight: 500;
+    }
+  }
+}
+</style>
+<style lang="scss">
+.setting-panel__dateTimePicker {
+  .el-picker-panel__footer {
+    .el-button--text {
+      display: none;
     }
   }
 }
