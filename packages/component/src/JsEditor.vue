@@ -111,8 +111,8 @@ export default {
             jar: 1,
             system: 2
           }
-          let aName = a.caption.toLowerCase()
-          let bName = b.caption.toLowerCase()
+          let aName = a.caption?.toLowerCase()
+          let bName = b.caption?.toLowerCase()
           if (a.originType && b.originType && a.originType !== b.originType) {
             return scoreMap[a.originType] - scoreMap[b.originType]
           } else {
