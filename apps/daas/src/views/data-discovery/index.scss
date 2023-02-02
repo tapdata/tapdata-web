@@ -126,6 +126,9 @@
   font-weight: 400;
 }
 .discovery-page-wrap{
+  .page-left {
+    width: 240px;
+  }
   .border-right{
     border-right: 1px solid map-get($borderColor, light);
   }
