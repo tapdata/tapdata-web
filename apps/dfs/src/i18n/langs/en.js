@@ -1078,11 +1078,11 @@ export default {
   dfs_workbench_tyepmap_guanliduanfuwu7: 'Management service restart failed',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC lag timeout',
 
-  _workbench_workbench_yigoushishitong: 'Heterogeneous real-time synchronization',
-  _workbench_workbench_shujuruhucang: 'Data into the lake warehouse',
+  _workbench_workbench_yigoushishitong: 'Hetrogeneous Database Replication',
+  _workbench_workbench_shujuruhucang: 'Ingestion into Data Lake',
   _workbench_workbench_jichengaliyun: 'Integrate Alibaba Cloud Computing Nest',
-  _workbench_workbench_jiangshujudaoru: 'Import data into Alibaba Cloud Tablestore',
-  _workbench_workbench_tansuoshili: 'Explore Examples',
+  _workbench_workbench_jiangshujudaoru: 'Sync to AliCloud Tablestore',
+  _workbench_workbench_tansuoshili: 'Explore Use Cases',
 
   dfs_workbench_workbench_zhongyaobanbensheng:
     '[Important] Important announcement on version upgrade and service switching',

@@ -366,12 +366,12 @@ export default {
           img: 'table-store',
           url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_jichengaliyun'),
-          img: 'alibaba-nest',
-          url: 'https://tapdata.net/automatic-deployment-on-the-cloud.html?fromColId=104'
-        },
+        // {
+        //   type: 'all',
+        //   title: i18n.t('_workbench_workbench_jichengaliyun'),
+        //   img: 'alibaba-nest',
+        //   url: 'https://tapdata.net/automatic-deployment-on-the-cloud.html?fromColId=104'
+        // },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujuruhucang'),
