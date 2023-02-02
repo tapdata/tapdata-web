@@ -76,18 +76,15 @@ export default {
         } else {
           this.progress = 100 + '%'
           const { taskId, nodeId } = this
-          !check &&
-            taskId &&
-            nodeId &&
+          if (!check && taskId && nodeId) {
             metadataInstancesApi
               .logicSchema(taskId, {
                 nodeId
               })
               .then(this.updateDag)
-          setTimeout(() => {
-            this.$emit('complete')
-            this.loading = false
-          }, 200)
+          }
+          this.$emit('complete')
+          this.loading = false
         }
       })
     },
