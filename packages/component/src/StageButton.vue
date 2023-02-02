@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 
 export default {
@@ -43,6 +45,8 @@ export default {
   },
 
   methods: {
+    ...mapActions('dataflow', ['updateDag']),
+
     init() {
       this.loading = false
       this.getProgress(true)
@@ -75,9 +79,11 @@ export default {
           !check &&
             taskId &&
             nodeId &&
-            metadataInstancesApi.logicSchema(taskId, {
-              nodeId
-            })
+            metadataInstancesApi
+              .logicSchema(taskId, {
+                nodeId
+              })
+              .then(this.updateDag)
           setTimeout(() => {
             this.$emit('complete')
             this.loading = false
