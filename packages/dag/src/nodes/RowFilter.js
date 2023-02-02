@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class RowFilter extends NodeType {
@@ -16,23 +17,23 @@ export class RowFilter extends NodeType {
     properties: {
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
       },
       action: {
-        title: '执行动作',
+        title: i18n.t('packages_dag_nodes_rowfilter_zhixingdongzuo'),
         type: 'string',
         required: true,
         default: 'retain',
         enum: [
           {
-            label: '保留匹配数据',
+            label: i18n.t('packages_dag_nodes_jointcache_baoliupipeishu'),
             value: 'retain'
           },
           {
-            label: '丢弃匹配数据',
+            label: i18n.t('packages_dag_nodes_rowfilter_diuqipipeishu'),
             value: 'discard'
           }
         ],
@@ -43,7 +44,7 @@ export class RowFilter extends NodeType {
         }
       },
       expression: {
-        title: '条件表达式',
+        title: i18n.t('packages_dag_nodes_rowfilter_tiaojianbiaodashi'),
         type: 'string',
         required: true,
         'x-decorator': 'FormItem',

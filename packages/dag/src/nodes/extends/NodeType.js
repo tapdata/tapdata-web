@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 export class NodeType {
   constructor() {}
   /**
@@ -26,7 +27,7 @@ export class NodeType {
   }
 
   selector(node) {
-    if (!this.type) throw new Error('缺少必要的type属性！')
+    if (!this.type) throw new Error(i18n.t('packages_dag_extends_nodetype_queshaobiyaode'))
     return node.type === this.type
   }
 }
