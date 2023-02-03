@@ -441,6 +441,7 @@ export default {
 
     checkGotoViewer() {
       console.log('editor:checkGotoViewer') // eslint-disable-line
+      if (!this.dataflow.disabledData) return
       if (this.dataflow.disabledData.edit) {
         // 不可编辑
         // this.gotoViewer()
