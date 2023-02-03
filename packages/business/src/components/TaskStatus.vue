@@ -60,8 +60,8 @@ export default {
     pingTime() {
       const pingTime = this.task.pingTime
       if (this.task.status === 'running' && pingTime) {
-        if (Time.now() - this.task.pingTime > 5 * 60 * 1000) {
-          return dayjs(pingTime).fromNow(true)
+        if (Time.getTime() - this.task.pingTime > 5 * 60 * 1000) {
+          return dayjs(pingTime).from(Time.getTime(), true)
         }
       }
       return undefined
