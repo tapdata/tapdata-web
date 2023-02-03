@@ -1998,6 +1998,7 @@ export default {
   daas_data_server_drawer_qingxuanzeduixiang: 'Please select the object name',
   daas_data_server_drawer_qingxuanzelianjie: 'Please Select connection type',
   daas_data_server_drawer_qingshurufuwu: 'Please enter service name',
+  daas_data_server_drawer_quanxianfanwei: 'Authority Range',
   daas_data_server_drawer_selectPermissions: 'Please select the scope of authority',
   daas_data_server_drawer_shilidaima: 'Sample Code',
   daas_data_server_drawer_shilidaima2: 'Sample Code',

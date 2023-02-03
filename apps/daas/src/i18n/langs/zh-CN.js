@@ -1959,6 +1959,7 @@ export default {
   daas_data_server_drawer_canshumingcheng: '参数名称',
   daas_data_server_drawer_shurucanshu: '输入参数',
   daas_data_server_drawer_lianjiemingcheng: '连接名称',
+  daas_data_server_drawer_quanxianfanwei: '权限范围',
   daas_data_server_drawer_jiekouleixing: '接口类型',
   daas_data_server_drawer_fabujiedian: '发布节点',
   daas_data_server_drawer_caozuoleixing: '操作类型',
