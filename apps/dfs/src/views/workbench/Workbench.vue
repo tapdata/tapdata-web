@@ -49,7 +49,7 @@
       <!--      </el-tabs>-->
       <!--暂时不分类-->
       <div class="explore-examples explore-examples-wrap">
-        <div class="main-title mb-4">{{ $t('_workbench_workbench_tansuoshili') }}</div>
+        <div class="main-title mb-2">{{ $t('_workbench_workbench_tansuoshili') }}</div>
         <ul class="flex flex-row">
           <li
             class="cursor-pointer mr-6"
@@ -71,7 +71,7 @@
     </div>
     <!--	概览	-->
     <div class="workbench-overview workbench-section">
-      <ElRow :gutter="24" class="section-header py-6">
+      <ElRow :gutter="24" class="section-header py-4">
         <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
         <ElCol :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
       </ElRow>
@@ -815,7 +815,6 @@ export default {
 }
 .explore-examples {
   background: #f4f6fc;
-  border: 1px solid #e1e3e9;
   border-radius: 10px;
   padding: 20px;
 }
