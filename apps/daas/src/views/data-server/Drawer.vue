@@ -663,7 +663,7 @@ export default {
       this.form.status = 'generating'
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
-      this.form.acl = this.data?.path?.acl || ['admin']
+      this.form.acl = this.data?.path?.acl
       this.getDatabaseTypes()
       let { connectionId, tableName } = this.form
       if (connectionId) {
