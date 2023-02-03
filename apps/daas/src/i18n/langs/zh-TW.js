@@ -1943,6 +1943,7 @@ export default {
   daas_data_server_drawer_qingxuanzeduixiang: '請選擇對象名稱',
   daas_data_server_drawer_qingxuanzelianjie: '請選擇連接類型',
   daas_data_server_drawer_qingshurufuwu: '請輸入服務名稱',
+  daas_data_server_drawer_quanxianfanwei: '權限範圍',
   daas_data_server_drawer_selectPermissions: '請選擇權限範圍',
   daas_data_server_drawer_shilidaima: '示例代碼',
   daas_data_server_drawer_shilidaima2: '示例代碼',
