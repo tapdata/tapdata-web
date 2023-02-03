@@ -44,7 +44,7 @@
               >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
             >
           </el-tooltip>-->
-          <span class="table-label"
+          <span class="table-label el-tree-node__label"
             >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
           >
           <span class="btn-menu" v-if="!data.readOnly">
@@ -738,12 +738,6 @@ export default {
 }
 </style>
 <style lang="scss">
-.classification-header {
-  .el-input .el-input__inner {
-    height: 24px;
-    line-height: 24px;
-  }
-}
 .classification-tree {
   padding-bottom: 50px;
   .el-tree-node__content {
