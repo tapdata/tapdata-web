@@ -25,9 +25,9 @@
     </div>
     <!--	{{$t('_workbench_workbench_tansuoshili')}}	-->
     <div class="workbench-overview workbench-section">
-      <ElRow :gutter="40" class="section-header py-6">
-        <ElCol :span="18" class="main-title">{{ $t('_workbench_workbench_tansuoshili') }}</ElCol>
-      </ElRow>
+      <!-- <ElRow :gutter="40" class="section-header py-6">-->
+      <!--  <ElCol :span="18" class="main-title">{{ $t('_workbench_workbench_tansuoshili') }}</ElCol>-->
+      <!--  </ElRow>-->
       <!--      <el-tabs class="explore-examples" active-name="first">-->
       <!--        <el-tab-pane label="全部" name="first">-->
       <!--          <ul class="flex flex-row">-->
@@ -48,7 +48,8 @@
       <!--        </el-tab-pane>-->
       <!--      </el-tabs>-->
       <!--暂时不分类-->
-      <div class="explore-examples">
+      <div class="explore-examples explore-examples-wrap">
+        <div class="main-title mb-4">{{ $t('_workbench_workbench_tansuoshili') }}</div>
         <ul class="flex flex-row">
           <li
             class="cursor-pointer mr-6"
@@ -641,7 +642,7 @@ export default {
               val = 1
             }
             val = numToThousands(val)
-            let html = item.marker + params.name + val
+            let html = val
             return html
           }
         },
@@ -817,6 +818,9 @@ export default {
   border: 1px solid #e1e3e9;
   border-radius: 10px;
   padding: 20px;
+}
+.explore-examples-wrap {
+  margin-top: 24px;
 }
 .position-text {
   top: 0;
