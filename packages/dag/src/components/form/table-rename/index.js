@@ -8,6 +8,7 @@ import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
+import List from './List.vue'
 import './style.scss'
 
 export const TableRename = observer(
@@ -226,51 +227,69 @@ export const TableRename = observer(
             </div>
             <div class="name-list-content font-color-light overflow-auto">
               {this.filterNames.length ? (
-                <RecycleScroller
+                <List
+                  disabled={this.disabled}
+                  items={this.filterNames}
+                  itemSize={38}
+                  buffer={50}
+                  nameMap={this.nameMap}
+                  tableData={this.tableData}
+                  updateName={this.updateName}
+                  emitChange={this.emitChange}
+                ></List>
+              ) : (
+                /*<RecycleScroller
                   items={this.filterNames}
                   itemSize={38}
                   buffer={50}
                   scopedSlots={{
-                    default: ({ item: name }) => (
-                      <div class="name-list-item flex align-center position-relative">
-                        <div class="flex-1 px-4 text-truncate">
-                          <span title={name}>{name}</span>
-                        </div>
-                        <div
-                          class={[
-                            'flex-1 px-4 text-truncate',
-                            {
-                              'color-primary': !!this.nameMap[name]
-                            }
-                          ]}
-                        >
-                          <input
-                            readOnly={this.disabled}
-                            class="name-list-item-input px-2"
-                            value={this.nameMap[name] || name}
-                            onChange={event => {
-                              const val = event.target.value
-                              if (val) {
-                                this.updateName(val, name)
-                                this.emitChange()
-                              } else {
-                                event.target.value = name
-                                if (this.nameMap[name]) {
-                                  this.$delete(this.nameMap, name)
-                                  this.emitChange()
-                                }
+                    default: ({ item: name }) => {
+                      let inputVal = this.nameMap[name] || name
+                      return (
+                        <div class="name-list-item flex align-center position-relative">
+                          <div class="flex-1 px-4 text-truncate">
+                            <span title={name}>{name}</span>
+                          </div>
+                          <div
+                            class={[
+                              'flex-1 px-4 text-truncate',
+                              {
+                                'color-primary': !!this.nameMap[name]
                               }
-                            }}
-                          />
+                            ]}
+                          >
+                            <input
+                              readOnly={this.disabled}
+                              class="name-list-item-input px-2"
+                              v-model={inputVal}
+                              onChange={event => {
+                                const val = event.target.value
+                                console.log('this.nameMap', this.nameMap) // eslint-disable-line
+                                if (val) {
+                                  if (this.tableData.includes(val) || Object.values(this.nameMap).includes(val)) {
+                                    event.target.value = this.nameMap[name] || name
+                                    return
+                                  }
+                                  this.updateName(val, name)
+                                  this.emitChange()
+                                } else {
+                                  event.target.value = name
+                                  if (this.nameMap[name]) {
+                                    this.$delete(this.nameMap, name)
+                                    this.emitChange()
+                                  }
+                                }
+                              }}
+                            />
+                          </div>
+                          <VIcon size="12" class="name-list-item-center font-color-light">
+                            left
+                          </VIcon>
                         </div>
-                        <VIcon size="12" class="name-list-item-center font-color-light">
-                          left
-                        </VIcon>
-                      </div>
-                    )
+                      )
+                    }
                   }}
-                ></RecycleScroller>
-              ) : (
+                ></RecycleScroller>*/
                 /*this.filterNames.map(name => {
                   return (
                     <div key={name} class="name-list-item flex align-center position-relative">
