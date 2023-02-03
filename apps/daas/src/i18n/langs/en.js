@@ -1082,7 +1082,7 @@ export default {
   datadiscovery_catalogue_ziyuanbangding: 'Resource binding',
   datadiscovery_catalogue_lianjieduixiangming: 'Connection object name',
   datadiscovery_catalogue_ziyuanleixing: 'Resource Type',
-  datadiscovery_objectlist_duixiangminglaiyuan: 'object name/source name',
+  datadiscovery_objectlist_duixiangminglaiyuan: 'Object name/Source information',
   datadiscovery_objectlist_laiyuanfenlei: 'Source classification',
   datadiscovery_previewdrawer_shujuxiang: 'Data item',
   datadiscovery_previewdrawer_yewumingcheng: 'Business name',
