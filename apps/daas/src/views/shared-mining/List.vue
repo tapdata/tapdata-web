@@ -439,7 +439,12 @@ export default {
     },
 
     getPickerOptions(val, item) {
-      const now = item.pointType === 'localTZ' ? Date.now() : Time.now()
+      if (item.pointType === 'connTZ')
+        return {
+          disabledDate: null,
+          selectableRange: null
+        }
+      const now = Date.now()
       const formatMap = {
         date: 'YYYY-MM-DD',
         time: 'HH:mm:ss',
