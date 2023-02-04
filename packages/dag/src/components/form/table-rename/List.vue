@@ -35,16 +35,8 @@ import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const InnerInput = {
-  /*template: `
-    <input
-      class="name-list-item-input px-2"
-      :readOnly="readOnly"
-      :value="val"
-      @change="$emit('change')"
-    />
-  `,*/
   name: 'InnerInput',
-  props: ['value', 'readOnly', 'nameMap'],
+  props: ['value', 'readOnly'],
   data() {
     return {
       val: null
@@ -53,7 +45,6 @@ const InnerInput = {
   watch: {
     value(val) {
       this.val = val
-      console.log('watch:value', this.value) // eslint-disable-line
     }
   },
   created() {
@@ -80,7 +71,10 @@ export default {
       const val = event.target.value
       console.log('this.nameMap', this.nameMap) // eslint-disable-line
       if (val) {
-        if (this.tableData.includes(val) || Object.values(this.nameMap).includes(val)) {
+        if (
+          (this.tableData.includes(val) && (!this.nameMap[val] || this.nameMap[val] === val)) ||
+          Object.values(this.nameMap).includes(val)
+        ) {
           event.target.value = this.nameMap[name] || name
           return
         }

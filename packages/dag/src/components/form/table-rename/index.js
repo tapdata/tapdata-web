@@ -101,6 +101,14 @@ export const TableRename = observer(
             after = after[config.transferCase]()
           }
           if (n !== after) {
+            if (nameMap[n] === after) return
+            if (
+              (target.includes(after) && (!nameMap[after] || nameMap[after] === after)) ||
+              Object.values(nameMap).includes(after)
+            ) {
+              console.log('导致表名重复') // eslint-disable-line
+              return
+            }
             set(nameMap, n, after)
             flag = true
           } else if (n in nameMap) {
