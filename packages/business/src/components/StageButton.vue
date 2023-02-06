@@ -29,8 +29,9 @@ export default {
   data() {
     return {
       loading: false,
+      destroyStatus: false,
       title: '重新加载',
-      progress: ''
+      progress: '0%'
     }
   },
 
@@ -42,6 +43,10 @@ export default {
 
   mounted() {
     this.init()
+  },
+
+  beforeDestroy() {
+    this.destroyStatus = true
   },
 
   methods: {
@@ -59,19 +64,21 @@ export default {
           loadFieldsStatus: 'loading'
         })
         .then(data => {
+          this.progress = '0%'
           this.getProgress()
           this.startByConnection(data, true, false)
         })
     },
 
     getProgress(check = false) {
+      if (this.destroyStatus) return
       if (!this.connectionId) return
       if (!check) {
         this.loading = true
       }
-      this.progress = '0'
       connectionsApi.getNoSchema(this.connectionId).then(res => {
         if (res.loadFieldsStatus === 'loading') {
+          this.progress = (Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0) + '%'
           setTimeout(this.getProgress, 1000)
         } else {
           this.progress = 100 + '%'
@@ -83,7 +90,7 @@ export default {
               })
               .then(this.updateDag)
           }
-          this.$emit('complete')
+          !check && this.$emit('complete')
           this.loading = false
         }
       })

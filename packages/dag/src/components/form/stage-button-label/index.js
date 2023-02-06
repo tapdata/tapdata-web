@@ -1,7 +1,7 @@
 import { defineComponent } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 
-import StageButton from '@tap/component/src/StageButton'
+import StageButton from '@tap/business/src/components/StageButton'
 import { FormItem, useForm } from '@tap/form'
 
 export const StageButtonLabel = observer(
@@ -13,8 +13,8 @@ export const StageButtonLabel = observer(
       const formRef = useForm()
 
       const trigger = () => {
-        const field = formRef.value.query('tableNameWrap.tableName').take()
-        field.setComponentProps({
+        const field = formRef.value.query('tableNameWrap.tableName').take() || formRef.value.query('tableNames').take()
+        field?.setComponentProps({
           reloadTime: Date.now()
         })
       }
