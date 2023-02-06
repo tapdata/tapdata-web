@@ -715,5 +715,10 @@ export default {
   packages_business_relation_details_wajuexinxi: '挖掘信息',
   packages_business_connections_databaseform_shujuyuanzhongmo: '數據源中模型數量大於1萬時，會按本參數設置進行模型刷新',
   packages_business_connections_databaseform_moxingjiazaipin: '模型加載頻率',
-  packages_business_connections_list_biaojiegougengxin: '表結構更新時間'
+  packages_business_connections_list_biaojiegougengxin: '表結構更新時間',
+  packages_business_components_stagebutton_chongxinjiazai: '重新加載',
+  packages_business_task_list_lianjieming: '連接名: ',
+  packages_business_task_list_dierbushanchu: '// 第二步 刪除 slot_name',
+  packages_business_task_list_diyibuchaxun: '//第一步 查詢 slot_name',
+  packages_business_task_list_sqLyuju: 'SQL語句:'
 }
