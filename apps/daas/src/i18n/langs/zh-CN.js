@@ -1060,7 +1060,7 @@ export default {
   datadiscovery_catalogue_ziyuanbangding: '资源绑定',
   datadiscovery_catalogue_lianjieduixiangming: '连接对象名',
   datadiscovery_catalogue_ziyuanleixing: '资源类型',
-  datadiscovery_objectlist_duixiangminglaiyuan: '对象名称/来源信息',
+  datadiscovery_objectlist_duixiangminglaiyuan: '对象名称/数据源',
   datadiscovery_objectlist_laiyuanfenlei: '来源分类',
   datadiscovery_previewdrawer_shujuxiang: '数据项',
   datadiscovery_previewdrawer_yewumingcheng: '业务名称',
