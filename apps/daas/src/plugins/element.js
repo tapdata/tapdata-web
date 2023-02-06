@@ -17,7 +17,7 @@ import {
   Switch,
   Loading,
   MessageBox,
-  Message,
+  Message as _Message,
   Menu,
   Submenu,
   MenuItem,
@@ -70,11 +70,65 @@ import {
   BreadcrumbItem,
   Empty
 } from 'element-ui'
+import { getCell, getColumnByCell } from 'element-ui/packages/table/src/util'
+import { getStyle, hasClass } from 'element-ui/src/utils/dom'
 
 // 组件默认尺寸为small
 Vue.prototype.$ELEMENT = { size: 'small' }
 // 提示框默认不显示箭头
 Tooltip.props.visibleArrow.default = false
+
+// 优化任务名称和标签一起显示，超出显示提示框的逻辑
+Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) {
+  const table = this.table
+  const cell = getCell(event)
+
+  if (cell) {
+    const column = getColumnByCell(table, cell)
+    const hoverState = (table.hoverState = { cell, column, row })
+    table.$emit('cell-mouse-enter', hoverState.row, hoverState.column, hoverState.cell, event)
+  }
+
+  // 判断是否text-overflow, 如果是就显示tooltip
+  const cellChild = event.target.querySelector('.cell')
+  if (!(hasClass(cellChild, 'el-tooltip') && cellChild.childNodes.length)) {
+    return
+  }
+
+  const showTooltip = () => {
+    const tooltip = this.$refs.tooltip
+    // TODO 会引起整个 Table 的重新渲染，需要优化
+    this.tooltipContent = cell.innerText || cell.textContent
+    tooltip.referenceElm = cell
+    tooltip.$refs.popper && (tooltip.$refs.popper.style.display = 'none')
+    tooltip.doDestroy()
+    tooltip.setExpectedState(true)
+    this.activateTooltip(tooltip)
+  }
+
+  const $ellipsis = cellChild.querySelector('[role="ellipsis"]')
+
+  // 任务名称场景的特殊处理
+  if ($ellipsis) {
+    $ellipsis.scrollWidth > $ellipsis.offsetWidth && showTooltip()
+    return
+  }
+
+  // use range width instead of scrollWidth to determine whether the text is overflowing
+  // to address a potential FireFox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1074543#c3
+  const range = document.createRange()
+  range.setStart(cellChild, 0)
+  range.setEnd(cellChild, cellChild.childNodes.length)
+  const rangeWidth = range.getBoundingClientRect().width
+  const padding =
+    (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) + (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0)
+  if (
+    (rangeWidth + padding > cellChild.offsetWidth || cellChild.scrollWidth > cellChild.offsetWidth) &&
+    this.$refs.tooltip
+  ) {
+    showTooltip()
+  }
+}
 
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function (option, byClick) {
@@ -175,45 +229,46 @@ Vue.component(BreadcrumbItem.name, BreadcrumbItem)
 Vue.component(Empty.name, Empty)
 Vue.use(Loading.directive)
 Vue.use(InfiniteScroll)
-/***提示只显示一次**/
-// 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
-// 推荐使用this.$message.success("成功提示")或者this.$message.success(options)的方式进行调用
+
 const showMessage = Symbol('showMessage')
 
-class DoneMessage {
-  [showMessage](type, options, single) {
-    if (single) {
-      if (document.getElementsByClassName('el-message').length === 0) {
-        Message[type](options)
-      }
+class MessageConstructor {
+  constructor() {
+    const types = ['success', 'warning', 'info', 'error']
+    types.forEach(type => {
+      this[type] = options => this[showMessage](type, options)
+    })
+  }
+
+  [showMessage](type, options) {
+    const domList = document.getElementsByClassName('el-message')
+
+    if (!domList.length) {
+      return _Message[type](options)
     } else {
-      Message[type](options)
+      let canShow = true
+      const message = typeof options === 'string' ? options : options.message
+      for (const dom of domList) {
+        if (message === dom.innerText) {
+          console.log('重复消息', dom) // eslint-disable-line
+          canShow = false
+          break
+        }
+      }
+      if (canShow) {
+        return _Message[type](options)
+      }
     }
-  }
-
-  info(options, single = true) {
-    this[showMessage]('info', options, single)
-  }
-
-  warning(options, single = true) {
-    this[showMessage]('warning', options, single)
-  }
-
-  error(options, single = true) {
-    this[showMessage]('error', options, single)
-  }
-
-  success(options, single = true) {
-    this[showMessage]('success', options, single)
   }
 }
 
-export const message = new DoneMessage()
+export const Message = new MessageConstructor()
+export const message = Message
 
 Vue.prototype.$loading = Loading.service
 
 Vue.prototype.$prompt = MessageBox.prompt
 Vue.prototype.$alert = MessageBox.alert
-Vue.prototype.$message = new DoneMessage()
+Vue.prototype.$message = Message
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$notify = Notification

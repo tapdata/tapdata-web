@@ -1,25 +1,128 @@
 <template>
-  <span v-if="show" class="status-block" :class="['status-' + task.status]">
-    {{ $t(STATUS_MAP[task.status].i18n) }}
-  </span>
+  <div class="inline-flex align-center">
+    <span v-if="show" class="status-block" :class="['status-' + task.status]">
+      {{ $t(STATUS_MAP[task.status].i18n) }}
+    </span>
+    <ElTooltip v-if="showCronTip" placement="top">
+      <VIcon size="18" class="ml-2" color="#008b58">task-process</VIcon>
+      <template #content>
+        {{ getNextStartTime() }}
+      </template>
+    </ElTooltip>
+    <template v-if="agentMap">
+      <ElTooltip
+        v-if="pingTime"
+        placement="top"
+        popper-class="agent-tooltip__popper"
+        :visible-arrow="false"
+        effect="light"
+      >
+        <VIcon size="16" class="ml-2 color-warning">warning </VIcon>
+        <template #content>
+          <div class="flex flex-wrap align-center font-color-dark">
+            <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
+            {{
+              $t('packages_business_task_status_agent_tooltip_time', {
+                time: pingTime
+              })
+            }}<template v-if="agentStatus"
+              >，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
+              <ElLink @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink></template
+            >
+          </div>
+        </template>
+      </ElTooltip>
+    </template>
+  </div>
 </template>
 
 <script>
-import { STATUS_MAP } from '../shared'
+import cronParse from 'cron-parser'
+
+import { dayjs, STATUS_MAP } from '../shared'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'TaskStatus',
   props: {
-    task: Object
+    task: Object,
+    agentMap: Object
   },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       STATUS_MAP
     }
   },
   computed: {
     show() {
       return this.task.status in this.STATUS_MAP
+    },
+
+    pingTime() {
+      const pingTime = this.task.pingTime
+      if (this.task.status === 'running' && pingTime) {
+        if (Time.now() - this.task.pingTime > 5 * 60 * 1000) {
+          return dayjs(pingTime).from(Time.now(), true)
+        }
+      }
+      return undefined
+    },
+
+    agentInfo() {
+      return this.agentMap?.[this.task.agentId]
+    },
+
+    agentStatus() {
+      const info = this.agentInfo
+      return info ? `${info.name}（${info.status}）` : null
+    },
+
+    showCronTip() {
+      const task = this.task
+      let ifShow =
+        task.status !== 'edit' && task.type === 'initial_sync' && task.crontabExpressionFlag && task.crontabExpression
+      if (!ifShow) return ifShow
+      try {
+        if (cronParse.parseExpression(this.task.crontabExpression).hasNext()) {
+          return true
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log('Error: ' + err.message)
+      }
+      return false
+    }
+  },
+
+  methods: {
+    onClickStatus() {
+      let route
+      if (this.isDaas) {
+        route = {
+          name: 'clusterManagement'
+        }
+      } else {
+        route = {
+          name: 'Instance',
+          query: {
+            keyword: this.agentInfo?.itemId
+          }
+        }
+      }
+      this.$router.push(route)
+    },
+
+    getNextStartTime() {
+      try {
+        if (!this.task.crontabExpression) return
+        const interval = cronParse.parseExpression(this.task.crontabExpression)
+        return this.$t('packages_business_task_status_next_run_time', {
+          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss')
+        })
+      } catch (err) {
+        console.log('Error: ' + err.message)
+      }
     }
   }
 }
@@ -34,6 +137,7 @@ export default {
   font-weight: 500;
   border-radius: 4px;
   box-sizing: border-box;
+  word-break: keep-all;
 }
 .status-running {
   color: #178061;
@@ -63,5 +167,12 @@ export default {
 .status-stopping {
   color: #c39700;
   background-color: #fdf1c8;
+}
+</style>
+
+<style>
+.agent-tooltip__popper {
+  border: none !important;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1), 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
 }
 </style>

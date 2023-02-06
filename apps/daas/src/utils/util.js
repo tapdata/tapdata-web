@@ -30,6 +30,7 @@ export function signOut() {
   Cookie.remove('isAdmin')
   Cookie.remove('user_id')
   sessionStorage.setItem('lastLocationHref', location.href)
+  sessionStorage.removeItem('tapdata_permissions')
   location.href = location.href.split('#')[0] + '#/login'
   return null
 }

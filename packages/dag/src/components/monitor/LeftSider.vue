@@ -39,16 +39,33 @@
           </div>
           <div v-else class="mb-2 flex justify-content-between">
             <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
-            <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-              <span>{{ calcTimeUnit(initialData.finishDuration, 2) }}</span>
+            <span v-if="isFileSource" class="flex-1 text-end">{{
+              $t('packages_dag_components_node_zanbuzhichi')
+            }}</span>
+            <ElTooltip
+              v-else
+              transition="tooltip-fade-in"
+              :content="initialData.finishDuration.toLocaleString() + 'ms'"
+            >
+              <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
             </ElTooltip>
           </div>
           <div class="mb-2 flex align-items-center">
             <span class="mr-2 sync-info-item__title">{{
               $t('packages_dag_components_nodedetaildialog_quanliangtongbujin')
             }}</span>
-            <ElProgress class="flex-1 my-2" :show-text="false" style="width: 150px" :percentage="totalDataPercentage" />
-            <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+            <span v-if="isFileSource" class="flex-1 text-end">{{
+              $t('packages_dag_components_node_zanbuzhichi')
+            }}</span>
+            <template v-else>
+              <ElProgress
+                class="flex-1 my-2"
+                :show-text="false"
+                style="width: 150px"
+                :percentage="totalDataPercentage"
+              />
+              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+            </template>
           </div>
           <div
             v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
@@ -66,12 +83,7 @@
         <template v-if="dataflow.type !== 'initial_sync'">
           <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
             <span>{{ $t('packages_dag_monitor_leftsider_zuidazengliangyan') }}</span>
-            <span>{{
-              calcTimeUnit(initialData.replicateLag, 2, {
-                separator: ' ',
-                autoShowMs: true
-              })
-            }}</span>
+            <span>{{ getReplicateLag(initialData.replicateLag) }}</span>
           </div>
         </template>
       </div>
@@ -286,6 +298,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'
 import { VIcon, TimeSelect } from '@tap/component'
@@ -293,6 +307,7 @@ import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
 import { calcTimeUnit } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'LeftSider',
@@ -329,6 +344,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters('dataflow', ['allNodes']),
+
     // qps
     qpsData() {
       const data = this.quota.samples?.lineChartData?.[0]
@@ -385,7 +402,7 @@ export default {
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
       const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
-      const usedTime = Date.now() - snapshotStartAt
+      const usedTime = Time.now() - snapshotStartAt
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
         time = 0
@@ -435,6 +452,13 @@ export default {
     heartbeatTime() {
       const { pingTime, status } = this.dataflow
       return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : '-'
+    },
+
+    isFileSource() {
+      const allNodes = this.$store.getters['dataflow/allNodes']
+      if (!allNodes.length) return
+      const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
+      return allNodes.some(node => fileType.includes(node.databaseType))
     }
   },
 
@@ -484,6 +508,14 @@ export default {
 
     calcTimeUnit() {
       return typeof arguments[0] === 'number' ? calcTimeUnit(...arguments) : '-'
+    },
+
+    getReplicateLag(val) {
+      return typeof val === 'number' && val >= 0
+        ? calcTimeUnit(val, 2, {
+            autoHideMs: true
+          })
+        : i18n.t('packages_dag_dag_dialog_field_mapping_no_data')
     }
   }
 }
@@ -499,7 +531,7 @@ export default {
 }
 
 .layout-sidebar.--left {
-  z-index: 11;
+  z-index: unset; // 防止侧边栏出现的dialog被节点覆盖
   overflow: hidden auto;
   will-change: width;
   $headerH: 34px;

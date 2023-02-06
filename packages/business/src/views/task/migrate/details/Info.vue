@@ -194,6 +194,7 @@ import dayjs from 'dayjs'
 
 import { subtaskApi } from '@tap/api'
 import { VIcon, SelectList, Chart, DatetimeRange } from '@tap/component'
+import Time from '@tap/shared/src/time'
 
 import { StatusTag } from '../../../../components'
 import { formatMs, toThousandsUnit } from '../../../../shared'
@@ -535,7 +536,7 @@ export default {
       // 获取维度
       let diff =
         this.selectedTime === 'custom'
-          ? (endTimeStamp || new Date().getTime()) - startTimeStamp
+          ? (endTimeStamp || Time.now()) - startTimeStamp
           : selectedTimeItems.find(t => t.value === selectedTime).spacing
       let guanluary = this.getGuanluary(diff)
       // 维度需要展示的格式
@@ -819,7 +820,7 @@ export default {
       }, 200)
     },
     getTimeRangeByType(type, val) {
-      let current = new Date().getTime()
+      let current = Time.now()
       let result = [null]
       switch (type) {
         case '5min':

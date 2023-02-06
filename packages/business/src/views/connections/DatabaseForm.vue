@@ -67,11 +67,11 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn">
-            <el-button size="mini" @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
-            <el-button size="mini" class="test" @click="startTest()">{{
+            <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
+            <el-button class="test" @click="startTest()">{{
               $t('packages_business_connection_list_test_button')
             }}</el-button>
-            <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
+            <el-button type="primary" :loading="submitBtnLoading" @click="submit">
               {{ $t('packages_business_button_save') }}
             </el-button>
           </div>
@@ -109,10 +109,9 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import { action } from '@formily/reactive'
 
+import i18n from '@tap/i18n'
 import {
   clusterApi,
   connectionsApi,
@@ -120,17 +119,15 @@ import {
   logcollectorApi,
   pdkApi,
   settingsApi,
-  commandApi,
   externalStorageApi,
   proxyApi
 } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
-import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
+import { SchemaToForm } from '@tap/form'
+import { checkConnectionName, isEmpty } from '@tap/shared'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
-
-import { checkConnectionName, isEmpty, delayTrigger } from '@tap/shared'
 
 export default {
   name: 'DatabaseForm',
@@ -152,6 +149,7 @@ export default {
       }
     }
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       rules: [],
       id: '',
       commandCallbackFunctionId: '',
@@ -388,7 +386,6 @@ export default {
               this.dialogEditNameVisible = false
             })
             .catch(() => {
-              this.renameData.rename = this.model.name
               this.$refs['renameForm'].clearValidate()
               this.editBtnLoading = false
             })
@@ -475,6 +472,7 @@ export default {
       const settings = await settingsApi.get()
       // 是否支持共享挖掘
       if (
+        this.isDaas &&
         this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function') &&
         settings.some(it => it.key === 'share_cdc_enable' && it.value === 'true')
       ) {
@@ -673,6 +671,44 @@ export default {
             }
           }}}`
       }
+
+      END.properties.__TAPDATA.properties.schemaUpdateHour = {
+        type: 'string',
+        title: i18n.t('packages_business_connections_databaseform_moxingjiazaipin'),
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-decorator-props': {
+          tooltip: i18n.t('packages_business_connections_databaseform_shujuyuanzhongmo')
+        },
+        default: '02:00',
+        enum: [
+          'false',
+          '00:00',
+          '01:00',
+          '02:00',
+          '03:00',
+          '04:00',
+          '05:00',
+          '06:00',
+          '07:00',
+          '08:00',
+          '09:00',
+          '10:00',
+          '11:00',
+          '12:00',
+          '13:00',
+          '14:00',
+          '15:00',
+          '16:00',
+          '17:00',
+          '18:00',
+          '19:00',
+          '20:00',
+          '21:00',
+          '22:00',
+          '23:00'
+        ]
+      }
       let result = {
         type: 'object',
         'x-component-props': {
@@ -848,9 +884,11 @@ export default {
             expireSeconds: 100000000
           }
           proxyApi.subscribe(filter).then(data => {
-            let str = `${process.env.BASE_URL || location.origin}/api/proxy/callback/${data.token}`
+            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const p = location.origin + location.pathname
+            let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {
-              str = `${process.env.BASE_URL || location.origin}${data.token}`
+              str = `${p.replace(/\/$/, '')}${data.token}`
             }
             $form.setValuesIn(field.name, str)
           })
@@ -961,7 +999,7 @@ export default {
       .connection-from-title {
         padding-top: 20px;
         margin-bottom: 24px;
-        font-size: 14px;
+        font-size: $fontSubtitle;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
         color: map-get($fontColor, dark);
@@ -978,14 +1016,14 @@ export default {
         }
         .label {
           width: 160px;
-          font-size: 12px;
+          font-size: $fontBaseTitle;
           color: map-get($fontColor, light);
         }
         .content-box {
           display: flex;
           max-width: 680px;
           line-height: 22px;
-          font-size: 12px;
+          font-size: $fontBaseTitle;
           font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
           color: map-get($fontColor, dark);
@@ -1070,7 +1108,6 @@ export default {
 
         ::v-deep {
           .formily-element-form-item {
-            font-size: 12px;
             .el-input-number {
               width: 180px;
             }

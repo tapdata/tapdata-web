@@ -14,10 +14,24 @@
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" size="mini" class="flex-fill min-w-0" @click="reload()">
-            {{ $t('packages_business_connection_preview_load_schema') }}
-          </el-button>
-          <el-button class="flex-fill min-w-0" size="mini" @click="edit()">
+          <el-tooltip
+            :disabled="!isFileSource()"
+            :content="$t('packages_business_connections_list_wenjianleixingde')"
+            placement="top"
+            class="load-schema__tooltip"
+          >
+            <span>
+              <el-button
+                :disabled="isFileSource()"
+                type="primary"
+                size="mini"
+                class="flex-fill min-w-0"
+                @click="reload()"
+                >{{ $t('packages_business_connection_preview_load_schema') }}
+              </el-button>
+            </span>
+          </el-tooltip>
+          <el-button class="flex-fill min-w-0" size="mini" @click="edit()" :disabled="$disabledReadonlyUserBtn()">
             {{ $t('packages_business_connection_preview_edit') }}
           </el-button>
           <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
@@ -75,7 +89,7 @@
         </div>
       </div>
     </div>
-    <Test ref="test" :formData="connection" @receive="receiveTestData"></Test>
+    <Test ref="test" :formData="formData" @receive="receiveTestData"></Test>
   </Drawer>
 </template>
 
@@ -83,6 +97,7 @@
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
+import { cloneDeep } from 'lodash'
 import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 
@@ -222,7 +237,8 @@ export default {
           //   ]
           // }
         ]
-      }
+      },
+      formData: {}
     }
   },
   beforeDestroy() {
@@ -281,6 +297,7 @@ export default {
     open(row) {
       this.visible = true
       this.showProgress = false
+      this.formData = cloneDeep(row)
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
@@ -360,6 +377,7 @@ export default {
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
+          this.formData = cloneDeep(data)
           this.connection = this.transformData(data)
           //组装数据
           this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
@@ -418,6 +436,7 @@ export default {
       if (!this.visible) return
       const result = list.find(item => item.id === this.connection.id)
       if (!result) return
+      this.formData = cloneDeep(result)
       this.connection = this.transformData(result)
     },
 
@@ -432,7 +451,12 @@ export default {
     },
 
     setConnectionData(row) {
+      this.formData = cloneDeep(row)
       this.connection = this.transformData(row)
+    },
+
+    isFileSource() {
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(this.connection?.database_type)
     }
   }
 }
@@ -472,6 +496,9 @@ export default {
     width: 100%;
     height: 100%;
   }
+}
+.load-schema__tooltip {
+  margin-right: 10px;
 }
 </style>
 <style lang="scss">

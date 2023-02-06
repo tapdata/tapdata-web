@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
-import { taskApi } from '@tap/api'
+import { databaseTypesApi, taskApi } from '@tap/api'
 import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '../style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
@@ -20,11 +20,15 @@ import dagre from 'dagre'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
+import { setPageTitle } from '@tap/shared'
+import { getSchema } from '../util'
 
 export default {
   directives: {
     resize
   },
+
+  inject: ['buried'],
 
   data() {
     const dataflow = observable({
@@ -76,6 +80,7 @@ export default {
     this.destory = true
     this.stopDagWatch?.()
     this.stopLoopTask()
+    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
@@ -84,6 +89,7 @@ export default {
       'setStateReadonly',
       'setEdges',
       'setTaskId',
+      'setTaskInfo',
       'addResourceIns',
       'updateNodeProperties',
       'setActiveNode',
@@ -113,7 +119,8 @@ export default {
       'setCanBeConnectedNodeIds',
       'setValidateLanguage',
       'addProcessorNode',
-      'toggleConsole'
+      'toggleConsole',
+      'setPdkPropertiesMap'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -277,6 +284,7 @@ export default {
     async newDataflow(name) {
       this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
+      this.titleSet()
     },
 
     async makeTaskName(source) {
@@ -1031,7 +1039,8 @@ export default {
 
     async validateNode(node) {
       try {
-        await validateBySchema(node.__Ctor.formSchema, node, this.formScope || this.scope)
+        const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
+        await validateBySchema(schema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -1152,6 +1161,29 @@ export default {
       }
     },
 
+    validateTaskType() {
+      const { type } = this.dataflow
+      if (type !== 'initial_sync') {
+        let hasNoStreamReadFunction = false
+        this.allNodes.forEach(node => {
+          if (node.$outputs.length && !node.$inputs.length) {
+            if (!node.attrs.capabilities?.some(t => t.id === 'stream_read_function')) {
+              // 源不支持增量
+              hasNoStreamReadFunction = true
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: i18n.t('packages_dag_mixins_editor_not_support_cdc')
+              })
+            }
+          }
+        })
+        if (hasNoStreamReadFunction) {
+          this.setActiveType('settings')
+          return i18n.t('packages_dag_mixins_editor_task_not_support_cdc')
+        }
+      }
+    },
+
     loadLeafNode(node) {
       let arr = []
       if (node.$outputs.length) {
@@ -1235,7 +1267,8 @@ export default {
     validateDDL() {
       let hasEnableDDL
       let hasEnableDDLAndIncreasesql
-      let hasJsNode
+      let inBlacklist = false
+      let blacklist = ['js_processor', 'custom_processor', 'migrate_js_processor', 'union_processor']
       this.allNodes.forEach(node => {
         if (node.enableDDL) {
           hasEnableDDL = true
@@ -1247,14 +1280,13 @@ export default {
             })
           }
         }
-        if (node.type === 'js_processor' || node.type === 'custom_processor' || node.type === 'migrate_js_processor') {
-          hasJsNode = true
+        if (blacklist.includes(node.type)) {
+          inBlacklist = true
         }
       })
-      if ((hasEnableDDL && hasJsNode) || hasEnableDDLAndIncreasesql) {
+      if ((hasEnableDDL && inBlacklist) || hasEnableDDLAndIncreasesql) {
         return i18n.t('packages_dag_mixins_editor_renwuzhonghanyou')
       }
-      // 任务中没有JS节点、自定义节点、并开关闭增量自定义SQL 时DDL按钮才会开放
     },
 
     async eachValidate(...fns) {
@@ -1281,7 +1313,8 @@ export default {
         this.validateDag,
         this.validateAgent,
         this.validateLink,
-        this.validateDDL
+        this.validateDDL,
+        this.validateTaskType
       )
     },
 
@@ -1644,6 +1677,7 @@ export default {
       taskApi.rename(this.dataflow.id, name).then(
         () => {
           this.$message.success(this.$t('packages_dag_message_task_rename_success'))
+          this.titleSet()
         },
         error => {
           this.dataflow.name = oldName
@@ -1655,6 +1689,10 @@ export default {
     handleEditFlush(result) {
       console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
+        if (result.data.id !== this.dataflow.id) {
+          console.debug('ws收到了其他任务的返回', result.data)
+          return
+        }
         this.reformDataflow(result.data, true)
         this.setTransformLoading(!result.data.transformed)
       }
@@ -1666,13 +1704,21 @@ export default {
     },
 
     async handleStart() {
+      const routeName = this.$route.name
+      const isDataflow = ['DataflowNew', 'DataflowEditor', 'DataflowViewer', 'TaskMonitor'].includes(routeName)
+      const buriedCode = isDataflow ? 'taskStart' : 'migrationStart'
+      this.buried(buriedCode)
+
       const flag = await this.save(true)
       if (flag) {
         this.dataflow.disabledData.edit = true
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
+        this.buried(buriedCode, { result: true })
         this.gotoViewer()
+      } else {
+        this.buried(buriedCode, { result: false })
       }
     },
 
@@ -1790,7 +1836,9 @@ export default {
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         this.reformDataflow(data)
+        this.setTaskInfo(this.dataflow)
         this.startLoopTask(id)
+        this.titleSet()
         return data
       } catch (e) {
         this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
@@ -1827,7 +1875,7 @@ export default {
 
           this.startLoopTask(id)
         }
-      }, 8000)
+      }, 5000)
     },
 
     stopLoopTask() {
@@ -1934,6 +1982,31 @@ export default {
           this.handleAutoLayout()
         }
       }
+    },
+
+    titleSet() {
+      setPageTitle(`${this.dataflow.name} - ${this.$t(this.$route.meta.title)}`)
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
     }
   }
 }

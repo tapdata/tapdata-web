@@ -53,20 +53,21 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('packages_business_dataForm_test_result')" width="150">
         <template slot-scope="scope">
-          <span v-if="scope.row.status === 'failed' && !scope.row.required" :style="`color: ${colorMap['warning']};`">
-            <VIcon size="12" :style="{ color: colorMap[status] }">warning</VIcon>
+          <!--当前检查项失败 但是不影响此次测试结果 -->
+          <span v-if="scope.row.status === 'failed' && !scope.row.required">
+            <VIcon size="16" :style="{ color: colorMap['warning'] }">warning</VIcon>
             <!--<i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>-->
             {{ statusMap[scope.row.status] }}
           </span>
-          <span v-else-if="scope.row.status === 'unTest'" :style="`color: ${colorMap[scope.row.status]};`">
+          <span v-else-if="scope.row.status === 'unTest'">
             <el-image
               style="width: 20px; height: 20px; vertical-align: bottom"
               :src="require('@tap/assets/images/loading.gif')"
             ></el-image>
             {{ statusMap[scope.row.status] }}
           </span>
-          <span v-else :style="`color: ${colorMap[scope.row.status]};`">
-            <VIcon size="12" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
+          <span v-else>
+            <VIcon size="16" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
             {{ statusMap[scope.row.status] }}
           </span>
         </template>

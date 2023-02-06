@@ -102,8 +102,7 @@
             <template v-if="item.category !== 'license'">
               <span class="btns py-3" v-if="item.category === 'SMTP'">
                 <a class="link-primary" @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
-                <!--后端暂无法支持跟产品沟通先行屏蔽-->
-                <!--<a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>-->
+                <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
               </span>
             </template>
           </div>
@@ -193,6 +192,7 @@ import { uniq, find } from 'lodash'
 import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'Setting',
@@ -257,7 +257,7 @@ export default {
       let result = {}
       let items = this.formData.items
       if (items && items.length) {
-        let SMTP = find(this.items, item => {
+        let SMTP = find(items, item => {
           return item.category === 'SMTP'
         })
         if (SMTP && SMTP.items) {
@@ -361,15 +361,18 @@ export default {
     // 连接测试
     connectAndTest() {
       let lastTime = localStorage.getItem('Tapdata_settings_email_countdown')
-      let now = new Date().getTime()
+      let now = Time.now()
       let duration = Math.floor((now - lastTime) / 1000)
       if (lastTime && duration < 60) {
-        return this.snackbarfun(
-          this.$message.success(this.$t('setting_test_email_countdown')) + '(' + (60 - duration) + 's)',
-          2
-        )
+        this.$message.success(this.$t('setting_test_email_countdown') + '(' + (60 - duration) + 's)')
+        return
       }
-      settingsApi.testEmail().then(() => {
+      const params = {
+        ...this.SMTP,
+        title: `Tapdata Notification:`,
+        text: 'This is a test email'
+      }
+      settingsApi.testEmail(params).then(() => {
         localStorage.setItem('Tapdata_settings_email_countdown', now)
         this.$message.success(this.$t('setting_test_email_success'))
       })

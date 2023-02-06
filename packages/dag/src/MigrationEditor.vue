@@ -29,15 +29,12 @@
     />
     <section class="layout-wrap layout-has-sider position-relative">
       <!--左侧边栏-->
-      <VExpandXTransition>
-        <LeftSider
-          v-if="!stateIsReadonly"
-          @move-node="handleDragMoveNode"
-          @drop-node="handleAddNodeByDrag"
-          @add-node="handleAddNode"
-          @toggle-expand="handleToggleExpand"
-        />
-      </VExpandXTransition>
+      <LeftSider
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+        @add-node="handleAddNode"
+        @toggle-expand="handleToggleExpand"
+      />
       <section class="layout-wrap flex-1">
         <!--内容体-->
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
@@ -134,6 +131,8 @@ export default {
     TransformLoading
   },
 
+  inject: ['buried'],
+
   data() {
     return {
       NODE_PREFIX,
@@ -163,24 +162,17 @@ export default {
 
   watch: {
     'dataflow.status'(v) {
-      console.log(i18n.t('packages_dag_src_migrationeditor_zhuangtaijianting'), v) // eslint-disable-line
-      if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
-        // this.$refs.console?.loadData()
-        if (v === 'running') {
-          this.setStateReadonly(true)
-          // this.gotoViewer(true)
-        } else {
-          this.setStateReadonly(false)
-        }
-      }
+      this.checkGotoViewer()
       if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) && ['renewing', 'renew_failed'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
     }
   },
 
-  mounted() {
+  async mounted() {
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
+    await this.initPdkProperties()
     this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -199,9 +191,8 @@ export default {
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
     this.resetState()
-    this.$ws.off('editFlush', this.handleEditFlush)
-
     this.unWatchStatus?.()
+    this.toggleConsole(false)
   },
 
   methods: {
@@ -216,8 +207,13 @@ export default {
           type: 'migrate_field_rename_processor'
         },
         {
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
+          type: 'standard_migrate_js_processor'
+        },
+        {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
-          type: 'migrate_js_processor'
+          type: 'migrate_js_processor',
+          beta: true
         }
       ])
       this.addResourceIns(allResourceIns)
@@ -245,6 +241,7 @@ export default {
     },
 
     gotoViewer(newTab) {
+      if (this.$route.name === 'MigrationMonitor') return
       if (newTab) {
         window.open(
           this.$router.resolve({
@@ -272,13 +269,16 @@ export default {
     },
 
     async saveAsNewDataflow() {
+      this.buried('migrationSubmit')
       this.isSaving = true
       const data = this.getDataflowDataToSave()
       try {
         const dataflow = await taskApi.post(data)
+        this.buried('migrationSubmit', { result: true })
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
+        this.setTaskInfo(this.dataflow)
         // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'MigrateEditor',
@@ -287,10 +287,14 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
-
+        this.buried('migrationSubmit', { result: false })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           this.newDataflow(newName)
+        } else if (e?.data?.code === 'InvalidPaidPlan') {
+          this.$router.push({
+            name: 'migrateList'
+          })
         } else {
           this.handleError(e)
         }
@@ -401,6 +405,7 @@ export default {
     },
 
     async handleStart() {
+      this.buried('migrationStart')
       this.unWatchStatus?.()
       this.unWatchStatus = this.$watch('dataflow.status', v => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
@@ -408,12 +413,17 @@ export default {
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
           } else {
+            this.toggleConsole(false)
             this.gotoViewer(false)
           }
           // this.unWatchStatus()
         }
-        if (['MigrateViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
-          this.handleConsoleAutoLoad()
+        if (['MigrateViewer'].includes(this.$route.name)) {
+          if (['renewing'].includes(v)) {
+            this.handleConsoleAutoLoad()
+          } else {
+            this.toggleConsole(false)
+          }
         }
       })
       const flag = await this.save(true)
@@ -423,10 +433,15 @@ export default {
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
         // this.gotoViewer()
+        this.buried('taskSubmit', { result: true })
+      } else {
+        this.buried('taskSubmit', { result: false })
       }
     },
 
     checkGotoViewer() {
+      console.log('editor:checkGotoViewer') // eslint-disable-line
+      if (!this.dataflow.disabledData) return
       if (this.dataflow.disabledData.edit) {
         // 不可编辑
         // this.gotoViewer()

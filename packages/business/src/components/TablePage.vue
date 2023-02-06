@@ -261,7 +261,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 20px;
+    padding: 8px 0 0 0;
     // background-color: map-get($bgColor, white);
     border-radius: 4px;
     .el-table--border {
@@ -273,7 +273,7 @@ export default {
       align-items: flex-end;
       flex-wrap: wrap-reverse;
       .table-page-search-bar {
-        margin: 0 5px 15px 0;
+        margin: 0 5px 12px 0;
       }
 
       .table-page-operation-bar {
@@ -286,6 +286,7 @@ export default {
       flex: 1;
       border-bottom: none;
       border-radius: 3px;
+      font-size: 14px;
       background-color: map-get($bgColor, white);
       overflow: hidden;
       // .el-table__fixed-right {

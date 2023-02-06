@@ -116,6 +116,7 @@ import { formatMs } from '@/utils/util'
 import dayjs from 'dayjs'
 import { measurementApi, logcollectorApi } from '@tap/api'
 import { TaskStatus, makeStatusAndDisabled } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'Info',
@@ -319,12 +320,12 @@ export default {
       let end = this.timeRange?.[1]
       if (!(start && !isNaN(start)) && !(end && !isNaN(end))) {
         // 默认最近一分钟范围
-        start = Date.now() - 60 * 1000
+        start = Time.now() - 60 * 1000
       }
       if (start && !isNaN(start)) {
         params.samples[0].start = start
       } else {
-        start = Date.now() - 60 * 1000
+        start = Time.now() - 60 * 1000
       }
       if (end && !isNaN(end)) {
         params.samples[0].end = end

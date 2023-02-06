@@ -83,7 +83,7 @@
         :dataflow="dataflow"
         :node-id="nodeDetailDialogId"
         :timeFormat="timeFormat"
-        :range="[firstStartTime, lastStopTime || Date.now()]"
+        :range="[firstStartTime, lastStopTime || getTime()]"
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
@@ -95,7 +95,7 @@
 
 <script>
 import i18n from '@tap/i18n'
-import { makeStatusAndDisabled } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -113,11 +113,12 @@ import formScope from './mixins/formScope'
 import editor from './mixins/editor'
 import { VEmpty } from '@tap/component'
 import { observable } from '@formily/reactive'
-import { measurementApi, taskApi } from '@tap/api'
+import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
 import dagre from 'dagre'
 import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'MigrationMonitorViewer',
@@ -214,9 +215,11 @@ export default {
     this.setStateReadonly(true)
   },
 
-  mounted() {
+  async mounted() {
     this.setValidateLanguage()
-    this.initNodeType()
+    // 收集pdk上节点的schema
+    await this.initPdkProperties()
+    await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -240,6 +243,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations('dataflow', ['setPdkPropertiesMap', 'setTaskInfo']),
+
     init() {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
@@ -256,8 +261,9 @@ export default {
       this.loadData()
     },
 
-    initNodeType() {
+    async initNodeType() {
       this.addResourceIns(allResourceIns)
+      await this.loadCustomNode()
     },
 
     async openDataflow(id) {
@@ -495,7 +501,7 @@ export default {
               type: 'task',
               taskId
             },
-            endAt: Date.now(), // 停止时间 || 当前时间
+            endAt: Time.now(), // 停止时间 || 当前时间
             fields: [
               'inputInsertTotal',
               'inputUpdateTotal',
@@ -695,9 +701,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Date.now()
+      let endTimestamp = this.lastStopTime || Time.now()
       if (status === 'running') {
-        endTimestamp = Date.now()
+        endTimestamp = Time.now()
       }
       switch (type) {
         case '5m':
@@ -763,16 +769,39 @@ export default {
           return
         }
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
-        makeStatusAndDisabled(data)
-        if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
-        this.$set(this, 'dataflow', data)
-        this.$set(this.dataflow, 'disabledData', data.btnDisabled)
+        this.reformDataflow(data)
+        this.setTaskInfo(this.dataflow)
         return data
       } catch (e) {
         console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
       } finally {
         this.loading = false
       }
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
+    },
+
+    getTime() {
+      return Time.now()
     }
   }
 }

@@ -11,6 +11,9 @@
     }
   }
 }
+.catalogue-drawer-resource-wrap{
+  padding: 0 24px 24px 24px;
+}
 .discovery-page-main-box{
   display: flex;
   -ms-flex: 1;
@@ -71,7 +74,7 @@
     font-weight: 500;
   }
   .max-label {
-    width: 50px;
+    width: 60px;
     color: map-get($fontColor, light);
   }
   .details_data_info {

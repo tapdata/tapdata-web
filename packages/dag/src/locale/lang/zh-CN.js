@@ -43,9 +43,10 @@ export default {
   packages_dag_task_setting_cdc: '增量',
   packages_dag_task_stetting_desc: '任务描述',
   packages_dag_task_setting_plan_start_date: '计划开始时间',
+  packages_dag_task_setting_crontabExpressionFlag: '定期调度任务',
   packages_dag_task_setting_cron_expression: '请输入调度表达式',
   packages_dag_task_setting_cron_tip:
-    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ;例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
+    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务 \n语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：\n0 */1 * * * ? //每分钟运行一次 \n0 0 2 * * ? //每天2点运行',
   packages_dag_task_setting_sync_point: '增量采集开始时刻',
   packages_dag_task_setting_syncPoint_tip: '任务将从该时间点开始收集增量日志',
   packages_dag_task_setting_automatic_index: '自动创建索引',
@@ -184,7 +185,7 @@ export default {
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日志',
   packages_dag_migration_settingpanel_dangrenwufuhe:
-    '当任务符合以下情况下，即使开启开关任务也不会进行校验\n 1.添加了中间处理节点\n 2.源连接不支持校验\n 3.目标连接不支持校验',
+    '开启数据校验开关后，任务会自动对同步结果的一致性进行全量校验和增量校验，并会在运行监控页面将校验不一致的数据行数展示出来。需要注意，当任务符合以下情况时，即使开启校验开关任务也不会进行校验\n 1. 添加了中间处理节点\n 2. 源连接不支持校验\n 3. 目标连接不支持校验',
   packages_dag_monitor_bottompanel_yunxingjilu: '运行记录',
   packages_dag_monitor_bottompanel_rizhi: '日志',
   packages_dag_components_eventchart_qita: '其他',
@@ -303,7 +304,9 @@ export default {
   packages_dag_src_editor_ziduanjisuan: '字段计算',
   packages_dag_src_editor_zhuconghebing: '主从合并',
   packages_dag_src_editor_juhe: '聚合',
-  packages_dag_src_migrationeditor_jSchuli: 'JS处理',
+  packages_dag_src_editor_zhuijiahebing: '追加合并',
+  packages_dag_src_migrationeditor_jSchuli: '增强JS',
+  packages_dag_src_migrationeditor_jSchuli_standard: '标准JS',
   packages_dag_src_migrationeditor_ziduanbianji: '字段编辑',
   packages_dag_src_migrationeditor_biaobianji: '表编辑',
   packages_dag_src_migrationeditor_zhuangtaijianting: '状态监听',
@@ -317,9 +320,11 @@ export default {
   packages_dag_mixins_editor_renwujiazaichu: '任务加载出错',
   packages_dag_mixins_editor_renwubucunzai: '任务不存在',
   packages_dag_mixins_editor_renwuzhonghanyou:
-    '任务中含有JS节点、自定义节点、或节点设置增量自定义SQL，暂不支持DDL，请手动关闭',
+    '任务中含有JS节点、自定义节点、追加合并节点或节点设置增量自定义SQL，暂不支持DDL，请手动关闭',
   packages_dag_mixins_editor_gaijiedianbuzhi: '该节点不支持在 {val1}（{val2}）上运行',
   packages_dag_mixins_editor_not_support_ddl: '该节点不支持DDL，请关闭',
+  packages_dag_mixins_editor_not_support_cdc: '该节点不支持增量，请将任务类型修改为全量',
+  packages_dag_mixins_editor_task_not_support_cdc: '任务中含有不支持增量的节点，请将任务类型修改为全量',
   packages_dag_mixins_editor_buzhichiduotiao: '不支持多条链路，请重新编辑任务链路',
   packages_dag_mixins_editor_renwulianlubu: '任务链路不完整',
   packages_dag_mixins_editor_renwushezhiyi: '任务设置异常',
@@ -504,6 +509,7 @@ export default {
   packages_dag_components_node_quanliangwanchenghaixu: '全量完成还需',
   packages_dag_components_node_xieruhaoshi: '写入耗时：',
   packages_dag_components_node_chulihaoshi: '处理耗时：',
+  packages_dag_components_node_zanbuzhichi: '暂不支持',
   packages_dag_page_return_confirm_title: '返回确认',
   packages_dag_page_return_confirm_content: '当前任务内容为空，是否要保留？',
   packages_dag_page_return_confirm_ok_text: '不保留',
@@ -513,5 +519,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '处理增量时间点',
   packages_dag_monitor_node_popover_targetWriteTime_title: '平均每条写入耗时',
   packages_dag_monitor_topheader_renwuxintiaoshi: '任务心跳时间',
-  packages_dag_monitor_node_per_deal_need_time: '单条处理耗时'
+  packages_dag_monitor_node_per_deal_need_time: '单条处理耗时',
+  packages_dag_api_docs: 'API文档'
 }

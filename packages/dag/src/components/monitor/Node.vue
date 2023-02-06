@@ -7,6 +7,7 @@ import { defineComponent, computed, ref, onMounted, watch } from '@vue/compositi
 import i18n from '@tap/i18n'
 import { VIcon } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 import DFNode from '../DFNode'
 
 dayjs.extend(relativeTime)
@@ -63,9 +64,9 @@ export default defineComponent({
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !startAt) {
         return null
       }
-      const usedTime = Date.now() - snapshotStartAt
+      const usedTime = Time.now() - snapshotStartAt
       const time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
-      return calcTimeUnit(Math.ceil(Math.abs(time)), 2)
+      return calcTimeUnit(Math.ceil(Math.abs(time)))
     })
 
     const isSource = computed(() => {
@@ -106,8 +107,7 @@ export default defineComponent({
       const { replicateLag } = props.sample
       if (isNumber(replicateLag))
         return calcTimeUnit(replicateLag, 2, {
-          separator: ' ',
-          autoShowMs: true
+          autoHideMs: true
         })
       return null
     })
@@ -133,6 +133,10 @@ export default defineComponent({
     const isProcessor = computed(() => {
       const { type } = props.node
       return type !== 'database' && type !== 'table'
+    })
+
+    const isFileSource = computed(() => {
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(props.node.databaseType)
     })
 
     /**
@@ -173,7 +177,7 @@ export default defineComponent({
     const inputTotal = computed(() => {
       return ['inputDdlTotal', 'inputDeleteTotal', 'inputInsertTotal', 'inputOthersTotal', 'inputUpdateTotal'].reduce(
         (total, key) => {
-          return total + props.sample[key] || 0
+          return total + (props.sample[key] || 0)
         },
         0
       )
@@ -191,7 +195,7 @@ export default defineComponent({
         'outputOthersTotal',
         'outputUpdateTotal'
       ].reduce((total, key) => {
-        return total + props.sample[key] || 0
+        return total + (props.sample[key] || 0)
       }, 0)
     })
 
@@ -222,9 +226,15 @@ export default defineComponent({
               : isTarget.value
               ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
               : i18n.t('packages_dag_monitor_node_per_deal_need_time')
-            const val = getVal(
-              isTarget.value ? targetWriteTimeCostAvg.value : isProcessor.value ? timeCostAvg.value : completeTime.value
-            )
+            const val = isFileSource.value
+              ? i18n.t('packages_dag_components_node_zanbuzhichi')
+              : getVal(
+                  isTarget.value
+                    ? targetWriteTimeCostAvg.value
+                    : isProcessor.value
+                    ? timeCostAvg.value
+                    : completeTime.value
+                )
             return (
               <div class="statistic flex">
                 <div class="statistic-title">{title}：</div>
@@ -243,8 +253,15 @@ export default defineComponent({
           : isTarget.value
           ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
           : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+        const replicateLagProps = props.sample.replicateLag
+        const replicateLagVal =
+          isNumber(replicateLagProps) && replicateLagProps >= 0
+            ? calcTimeUnit(replicateLagProps, 2, {
+                autoHideMs: true
+              })
+            : null
         const val = getVal(
-          isSource.value ? replicateLag.value : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
+          isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
         )
         return (
           <div class="statistic flex">

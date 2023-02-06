@@ -26,6 +26,7 @@
       <div class="buttons" slot="operation">
         <el-button
           v-readonlybtn="'SYNC_category_application'"
+          :disabled="$disabledReadonlyUserBtn()"
           size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
@@ -51,17 +52,21 @@
             <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'">{{
               $t('packages_business_dataFlow_bulkStopping')
             }}</el-dropdown-item>
-            <el-dropdown-item command="initialize" v-readonlybtn="'SYNC_job_operation'">{{
-              $t('packages_business_dataFlow_batchRest')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'">{{
+            <el-dropdown-item
+              command="initialize"
+              v-readonlybtn="'SYNC_job_operation'"
+              :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_batchRest') }}</el-dropdown-item
+            >
+            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()">{{
               $t('packages_business_dataFlow_batchDelete')
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <template v-if="isDaas">
+        <template>
           <el-button
-            v-show="multipleSelection.length > 0"
+            v-show="multipleSelection.length > 0 && isDaas"
+            :disabled="$disabledReadonlyUserBtn()"
             v-readonlybtn="'SYNC_job_export'"
             size="mini"
             class="btn message-button-cancel"
@@ -70,7 +75,14 @@
             <!--<i class="iconfont icon-export back-btn-icon"></i>-->
             <span> {{ $t('packages_business_dataFlow_dataFlowExport') }}</span>
           </el-button>
-          <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
+          <el-button
+            v-if="isDaas"
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImport"
+          >
             <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
             <span> {{ $t('packages_business_button_bulk_import') }}</span>
           </el-button>
@@ -80,6 +92,7 @@
           class="btn btn-create"
           type="primary"
           size="mini"
+          :disabled="$disabledReadonlyUserBtn()"
           :loading="createBtnLoading"
           @click="create"
         >
@@ -99,6 +112,7 @@
         <template #default="{ row }">
           <span class="dataflow-name link-primary flex">
             <ElLink
+              role="ellipsis"
               type="primary"
               class="justify-content-start ellipsis block"
               :class="['name', { 'has-children': row.hasChildren }]"
@@ -106,7 +120,7 @@
               >{{ row.name }}</ElLink
             >
             <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags">{{ item.value }}</span>
+              <span class="tag inline-block" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
             </span>
           </span>
         </template>
@@ -120,27 +134,27 @@
       </el-table-column>
       <el-table-column prop="status" :label="$t('packages_business_task_list_status')" :min-width="colWidth.status">
         <template #default="{ row }">
-          <TaskStatus :task="row" />
+          <TaskStatus :task="row" :agentMap="agentMap" />
         </template>
       </el-table-column>
       <el-table-column
         sortable
         prop="currentEventTimestamp"
         :label="$t('packages_business_column_event_time')"
-        min-width="160"
+        min-width="164"
       >
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
         </template>
       </el-table-column>
       <el-table-column
-        prop="createTime"
-        :label="$t('packages_business_column_create_time')"
-        min-width="160"
+        prop="lastStartDate"
+        :label="$t('packages_business_column_last_start_time')"
+        min-width="164"
         sortable="custom"
       >
         <template #default="{ row }">
-          {{ formatTime(row.createTime) }}
+          {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('packages_business_column_operation')" :width="colWidth.operation">
@@ -179,7 +193,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.edit"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
               {{ $t('packages_business_button_edit') }}
@@ -197,20 +211,25 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.reset"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
               {{ $t('packages_business_task_list_reset') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="copy([row.id], row)">
+            <ElLink
+              v-readonlybtn="'SYNC_job_edition'"
+              type="primary"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="copy([row.id], row)"
+            >
               {{ $t('packages_business_task_list_copy') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.delete"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
               {{ $t('packages_business_task_list_delete') }}
@@ -221,7 +240,65 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload v-if="isDaas" :type="'dataflow'" ref="upload"></Upload>
+    <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
+    <!--付费 -->
+    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
+    <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
+    <el-dialog
+      :title="$t('task_mapping_dialog_hint')"
+      :visible.sync="dialogDelMsgVisible"
+      width="52%"
+      custom-class="dialogDelMsgDialog"
+    >
+      <span> {{ $t('packages_business_task_status_error_tip') }}</span>
+      <div class="box mt-4">
+        <div class="mb-4">SQL语句:</div>
+        <div class="mt-2">//第一步 查询 slot_name</div>
+        <div class="mb-4">
+          {{ copySelectSql }}
+          <ElTooltip
+            placement="top"
+            manual
+            :content="$t('agent_deploy_start_install_button_copied')"
+            popper-class="copy-tooltip"
+            :value="showTooltip"
+          >
+            <span
+              class="operaKey color-primary cursor-pointer"
+              v-clipboard:copy="copySelectSql"
+              v-clipboard:success="onCopy"
+              @mouseleave="showTooltip = false"
+            >
+              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+            </span>
+          </ElTooltip>
+        </div>
+        <div class="mt-2">// 第二步 删除 slot_name</div>
+        <div>
+          {{ copyDelSql }}
+          <ElTooltip
+            placement="top"
+            manual
+            :content="$t('agent_deploy_start_install_button_copied')"
+            popper-class="copy-tooltip"
+            :value="showDelTooltip"
+          >
+            <span
+              class="operaKey color-primary cursor-pointer"
+              v-clipboard:copy="copyDelSql"
+              v-clipboard:success="onDelCopy"
+              @mouseleave="showDelTooltip = false"
+            >
+              <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+            </span>
+          </ElTooltip>
+        </div>
+      </div>
+      <div class="mt-2" v-for="item in failList" :key="item.id">连接名: {{ item.message }}</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogDelMsgVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </section>
 </template>
 
@@ -229,13 +306,14 @@
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
-import { taskApi, workerApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
+import { taskApi, workerApi, paidApi } from '@tap/api'
 import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
+import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { toRegExp } from '@tap/shared'
+import { FilterBar, PaidUpgradeDialog } from '@tap/component'
 
 export default {
   name: 'List',
@@ -248,7 +326,9 @@ export default {
 
   inject: ['checkAgent', 'buried'],
 
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
+  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus, PaidUpgradeDialog },
+
+  mixins: [syncTaskAgent],
 
   data() {
     return {
@@ -290,7 +370,17 @@ export default {
         keyword: '',
         status: '',
         type: ''
-      }
+      },
+      //付费升级
+      paidUpgradeVisible: false,
+      paidPlan: '',
+      //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
+      dialogDelMsgVisible: false,
+      copySelectSql: `SELECT slot_name FROM pg_replication_slots WHERE slot_name like 'tapdata_cdc_%' and active='false';`,
+      copyDelSql: "SELECT pg_drop_replication_slot('${slot_name}');",
+      showTooltip: false,
+      showDelTooltip: false,
+      failList: [] //错误列表
     }
   },
 
@@ -315,8 +405,8 @@ export default {
       return locale === 'en'
         ? {
             taskType: 140,
-            status: 100,
-            operation: 300
+            status: 130,
+            operation: 340
           }
         : {
             taskType: 80,
@@ -340,6 +430,8 @@ export default {
     }, 8000)
     this.getFilterItems()
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
+
+    this.loop(this.isDaas ? this.getClusterStatus : this.getAgentStatus, 30000)
   },
 
   beforeDestroy() {
@@ -350,7 +442,7 @@ export default {
     getData({ page, tags }) {
       let { current, size } = page
       const { syncType } = this
-      let { keyword, status, type } = this.searchParams
+      let { keyword, status, type, agentId } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -366,8 +458,12 @@ export default {
         listtags: true,
         syncType: true,
         stoppingTime: true,
+        pingTime: true,
         canForceStopping: true,
-        currentEventTimestamp: true
+        currentEventTimestamp: true,
+        crontabExpressionFlag: true,
+        crontabExpression: true,
+        lastStartDate: true
       }
       let where = {
         syncType
@@ -389,6 +485,9 @@ export default {
         } else {
           where.status = status
         }
+      }
+      if (agentId) {
+        where['agentId'] = agentId
       }
       let filter = {
         order: this.order,
@@ -450,6 +549,30 @@ export default {
           type: 'input'
         }
       ]
+
+      if (!this.isDaas) {
+        this.filterItems.splice(2, 0, {
+          label: i18n.t('agent_name'),
+          key: 'agentId',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: async () => {
+            let filter = {
+              where: {
+                status: { $in: ['Running'] }
+              },
+              size: 100
+            }
+            let data = await this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
+            return data.items.map(item => {
+              return {
+                label: item.name,
+                value: item.tmInfo.agentId
+              }
+            })
+          }
+        })
+      }
     },
 
     /**
@@ -457,6 +580,7 @@ export default {
      * @param row
      */
     handleClickName(row) {
+      if (this.$disabledReadonlyUserBtn()) return
       if (!['edit', 'wait_start'].includes(row.status)) {
         this.toDetail(row)
       } else {
@@ -559,21 +683,25 @@ export default {
       return tagList
     },
 
-    create() {
+    async create() {
       this.buried(this.taskBuried.new)
       this.createBtnLoading = true
+      if (!this.isDaas) {
+        // true 付费计划有效，false 付费计划无效
+        this.paidPlan = await paidApi.getUserPaidPlan()
+      }
+      if (!this.isDaas && !this.paidPlan?.valid) {
+        this.paidUpgradeVisible = true
+        this.createBtnLoading = false
+        return
+      }
       this.checkAgent(() => {
-        this.$router
-          .push({
-            name: this.route.new
-          })
-          .catch(() => {
-            this.createBtnLoading = false
-            this.buried(this.taskBuried.newFail)
-          })
-          .finally(() => {
-            this.createBtnLoading = false
-          })
+        this.$router.push({
+          name: this.route.new
+        })
+      }).catch(() => {
+        this.createBtnLoading = false
+        this.buried(this.taskBuried.newFail)
       })
     },
 
@@ -641,9 +769,20 @@ export default {
           const { toggleRowSelection } = this.table.$refs.table
           selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
-          this.responseHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
+          this.responseDelHandler(data, this.$t('packages_business_message_deleteOK'), canNotList)
         })
       })
+    },
+    //删除任务单独提示
+    responseDelHandler(data, msg, canNotList = []) {
+      this.failList = data?.filter(t => t.code === 'Clear.Slot') || []
+      this.failList = [...this.failList, ...canNotList]
+      if (this.failList.length) {
+        this.dialogDelMsgVisible = true
+      } else if (msg) {
+        this.$message.success(msg, false)
+      }
+      this.table.clearSelection()
     },
 
     async forceStop(ids, item = {}) {
@@ -773,6 +912,12 @@ export default {
 
     handleImport() {
       this.$refs.upload.show()
+    },
+    onCopy() {
+      this.showTooltip = true
+    },
+    onDelCopy() {
+      this.showDelTooltip = true
     }
   }
 }
@@ -781,6 +926,8 @@ export default {
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
+  padding: 0 24px 24px 0;
+  background: #fff;
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -849,6 +996,12 @@ export default {
           padding: 10px 0;
         }
       }
+    }
+  }
+  .dialogDelMsgDialog {
+    .box {
+      padding: 10px;
+      background-color: #f8f9fa;
     }
   }
 }

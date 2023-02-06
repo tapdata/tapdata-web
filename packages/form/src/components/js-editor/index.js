@@ -70,6 +70,7 @@ export const JsEditor = connect(
         if (this.handleAddCompleter && typeof this.handleAddCompleter === 'function') {
           this.handleAddCompleter(editor, tools)
         }
+        this.$emit('init', editor)
       },
 
       // 防止写代码时，不小心返回或者关闭页面
@@ -105,7 +106,9 @@ export const JsEditor = connect(
               <ElLink
                 onClick={() => {
                   this.fullscreen = !this.fullscreen
-                  this.$refs.jsEditor.editor.resize(true)
+                  setTimeout(() => {
+                    this.$refs.jsEditor.editor.resize(true)
+                  }, 10)
                 }}
                 class="js-editor-fullscreen"
                 type="primary"
@@ -136,6 +139,7 @@ export const JsEditor = connect(
         </div>
       ) : (
         <_JsEditor
+          ref="jsEditor"
           class="border rounded-2 py-0"
           style={{
             background: '#fff'

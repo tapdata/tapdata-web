@@ -7,7 +7,7 @@
           <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
             <template slot="title">
               <span class="mr-4" slot v-if="menu.icon"
-                ><VIcon class="v-icon" size="12">{{ menu.icon }}</VIcon></span
+                ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
               <span slot="title">{{ menu.title }}</span>
             </template>
@@ -17,22 +17,36 @@
               </ElMenuItem>
             </template>
           </ElSubmenu>
-          <ElMenuItem v-else :key="menu.title" :index="menu.path">
-            <span class="mr-4" slot v-if="menu.icon"
-              ><VIcon class="v-icon" size="12">{{ menu.icon }}</VIcon></span
+          <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center">
+            <span class="mr-4" v-if="menu.icon"
+              ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
             >
-            <span slot="title">{{ menu.title }}</span>
+            <span class="flex-fill">
+              {{ menu.title }}
+            </span>
+            <template v-if="menu.name === 'Instance' && showAgentWarning">
+              <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
+                <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                <template #content>
+                  <div class="font-color-dark">
+                    <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
+                    >{{ $t('agent_tip_no_running') }}
+                  </div>
+                </template>
+              </ElTooltip>
+            </template>
           </ElMenuItem>
         </template>
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <PageHeader class="py-4 px-5"></PageHeader>
+      <PageHeader class="border-bottom"></PageHeader>
       <ElMain class="main">
-        <RouterView></RouterView>
+        <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>
     </ElContainer>
     <ConnectionTypeDialog :dialogVisible.sync="dialogVisible" @databaseType="createConnection"></ConnectionTypeDialog>
+    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
     <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
   </ElContainer>
@@ -45,16 +59,19 @@ import { PageHeader } from '@tap/business'
 
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
+import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
 import { buried } from '@/plugins/buried'
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
+  inject: ['checkAgent'],
   components: {
     TheHeader,
     VIcon,
     ConnectionTypeDialog,
     AgentDownloadModal,
+    AgentGuideDialog,
     BindPhone,
     PageHeader
   },
@@ -86,8 +103,13 @@ export default {
         },
         {
           name: 'dataflowList',
-          title: $t('task_manage_etl') + ' Beta',
+          title: $t('task_manage_etl') + '(Beta)',
           icon: 'task'
+        },
+        {
+          name: 'dataServerList',
+          title: $t('dfs_data_server'),
+          icon: 'data-server'
         },
         {
           name: 'OperationLog',
@@ -100,11 +122,14 @@ export default {
         visible: false,
         data: {}
       },
-      bindPhoneVisible: false
+      bindPhoneVisible: false,
+      agentGuideDialog: false,
+      showAgentWarning: false
     }
   },
   created() {
     this.loadChat()
+    this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
@@ -132,12 +157,20 @@ export default {
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
     this.checkDialogState()
   },
+  beforeDestroy() {
+    clearTimeout(this.loopLoadAgentCountTimer)
+  },
   watch: {
     $route(route) {
       this.activeMenu = route.path
     }
   },
   methods: {
+    //监听agent引导页面
+    openAgentDownload() {
+      this.agentGuideDialog = false
+      this.agentDownload.visible = true
+    },
     createConnection(item) {
       this.dialogVisible = false
       buried('connectionCreate')
@@ -172,7 +205,7 @@ export default {
       if (this.checkWechatPhone()) {
         return
       }
-      this.checkAgent()
+      this.checkAgentInstall()
     },
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
@@ -181,10 +214,10 @@ export default {
       return this.bindPhoneVisible
     },
     // 检查是否有安装过agent
-    checkAgent() {
+    checkAgentInstall() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
-          this.agentDownload.visible = true
+          this.agentGuideDialog = true
           this.agentDownload.data = data
         }
       })
@@ -225,6 +258,23 @@ export default {
       let t = d.getElementsByTagName('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
+    },
+
+    onAgentNoRunning(flag) {
+      this.showAgentWarning = flag
+    },
+
+    loopLoadAgentCount() {
+      this.$axios
+        .get('api/tcm/agent/agentCount')
+        .then(data => {
+          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
+        })
+        .finally(() => {
+          this.loopLoadAgentCountTimer = setTimeout(() => {
+            this.loopLoadAgentCount()
+          }, 10000)
+        })
     }
   }
 }
@@ -233,15 +283,15 @@ export default {
 <style lang="scss" scoped>
 .layout-wrap {
   height: 100%;
-  padding-top: 68px;
+  padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
   .left-aside {
-    border-right: 1px solid #f2f4f6;
-    background: #fff;
+    border-right: map-get($borderColor, aside);
+    background: map-get($bgColor, disable);
     .el-menu-item {
       ::v-deep .v-icon {
-        color: #888;
+        color: map-get($iconFillColor, normal);
       }
       &.is-active {
         ::v-deep .v-icon {
@@ -277,7 +327,8 @@ export default {
     flex-direction: column;
     flex-basis: 0%;
     margin: 0;
-    padding: 0 24px 24px 24px;
+    padding: 0;
+    background: rgba(239, 241, 244, 1);
   }
   .breadcrumb {
     padding: 24px 0 24px 24px;
@@ -302,6 +353,10 @@ export default {
     width: 24px;
     height: 24px;
     font-size: 12px;
+  }
+
+  .el-menu-item.is-active .agent-warning-icon {
+    display: none;
   }
 }
 </style>

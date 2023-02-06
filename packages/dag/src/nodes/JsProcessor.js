@@ -8,6 +8,8 @@ export class JavaScript extends NodeType {
 
   type = 'migrate_js_processor'
 
+  beta = true
+
   maxInputs = 1 // 最大输入个数
   maxOutputs = 1 // 最大输出个数
 
@@ -41,6 +43,7 @@ export class JavaScript extends NodeType {
           beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
           afterRegexp: '}[^}]*$',
           after: '}',
+          param: 'schemaApplyResultList',
           handleAddCompleter: '{{addDeclaredCompleterForMigrate}}'
         }
       }

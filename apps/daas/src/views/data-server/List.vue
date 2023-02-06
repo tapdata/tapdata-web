@@ -42,7 +42,7 @@
           <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn width="180" :label="$t('column_operation')">
+      <ElTableColumn width="200" :label="$t('column_operation')">
         <template #default="{ row }">
           <ElButton
             v-if="row.status !== 'active'"

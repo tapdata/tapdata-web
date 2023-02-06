@@ -1,4 +1,6 @@
 import i18n from '@/i18n'
+import { setPageTitle } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 const TIME_ON_SITE_KEY = 'TAPDATA_SITE_SESSTION'
 const TIME_ON_PAGE_KEY = 'TAPDATA_PAGE_SESSTION'
 
@@ -9,9 +11,11 @@ export const buried = (code, page, attrs, sid) => {
     code,
     page
   }
-  if (attrs) {
-    data.attrs = attrs
+  attrs = Object.assign({}, attrs)
+  if (sid) {
+    attrs.sid = sid
   }
+  data.attrs = attrs
   let queryStr = '?data=' + encodeURIComponent(JSON.stringify(data))
   if (sid) {
     let where = {
@@ -20,7 +24,8 @@ export const buried = (code, page, attrs, sid) => {
     queryStr = queryStr + '&where=' + encodeURIComponent(JSON.stringify(where))
   }
   // eslint-disable-next-line
-  process.env.NODE_ENV !== 'production' && console.log(i18n.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
+  process.env.NODE_ENV !== 'production' &&
+    console.log(i18n.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
 
   window.axios.get('api/tcm/user/behavior' + queryStr)
 }
@@ -28,7 +33,7 @@ export const buried = (code, page, attrs, sid) => {
 export const startTimeOnSite = () => {
   let sessionId = sessionStorage.getItem(TIME_ON_SITE_KEY)
   if (!sessionId) {
-    sessionId = new Date().getTime()
+    sessionId = Time.now()
     sessionStorage.setItem(TIME_ON_SITE_KEY, sessionId)
   }
   setInterval(() => {
@@ -39,7 +44,7 @@ export const startTimeOnSite = () => {
 export const updateTimeOnSite = () => {
   let sessionId = sessionStorage.getItem(TIME_ON_SITE_KEY)
   if (sessionId) {
-    let count = new Date().getTime() - Number(sessionId)
+    let count = Time.now() - Number(sessionId)
     buried(
       'timeOnSite',
       '/',
@@ -61,7 +66,7 @@ export const startTimeOnPage = router => {
     let sessionId = sessionStorage.getItem(TIME_ON_PAGE_KEY)
     let arr = sessionId?.split('_') || []
     const createSessionItem = () => {
-      sessionId = to.path + '_' + new Date().getTime()
+      sessionId = to.path + '_' + Time.now()
       sessionStorage.setItem(TIME_ON_PAGE_KEY, sessionId)
       buried('accessPage', to.path || '/', null, sessionId)
     }
@@ -74,6 +79,18 @@ export const startTimeOnPage = router => {
     } else {
       createSessionItem()
     }
+
+    if (to.meta.title) {
+      setPageTitle(i18n.t(to.meta.title))
+    }
+
+    // 隐藏客服控件
+    if (to.path.split('/').length < 3) {
+      document.body.classList.remove('hide-chart')
+    } else {
+      document.body.classList.add('hide-chart')
+    }
+
     next()
   })
   setInterval(() => {
@@ -89,7 +106,7 @@ export const updateTimeOnPage = () => {
   let arr = sessionId?.split('_') || []
   if (arr.length) {
     let path = arr[0] || '/'
-    let time = new Date().getTime() - Number(arr[1] || 0)
+    let time = Time.now() - Number(arr[1] || 0)
     let second = Math.floor(time / 1000)
     if (second > 5) {
       buried(

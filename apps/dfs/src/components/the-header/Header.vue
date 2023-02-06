@@ -6,6 +6,17 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
+        <div v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'" class="marquee-container cursor-pointer">
+          <div class="marquee-box">
+            <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
+          </div>
+        </div>
+        <div v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'" class="block">
+          <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
+        </div>
+        <div class="command-item mr-6" @click="command('op')">
+          <span class="cursor-pointer">{{ $t('dfs_data_server_apply_for_version') }}</span>
+        </div>
         <div class="command-item mr-6" @click="command('v2')">
           <VIcon class="mr-2" size="17">navigation_general</VIcon>
           <span class="cursor-pointer">{{ $t('header_upgrade') }}</span>
@@ -40,13 +51,20 @@
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
+            <span class="ml-2 current">{{
+              paidPlansCode === 'standard' ? $t('dfs_the_header_header_biaozhun') : $t('dfs_the_header_header_jichuban')
+            }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-            <ElDropdownItem command="userCenter">{{ $t('the_header_Header_yongHuZhongXin') }}</ElDropdownItem>
+            <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
+              $t('the_header_Header_yongHuZhongXin')
+            }}</ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
-            <ElDropdownItem command="signOut"> {{ $t('header_sign_out') }} </ElDropdownItem>
+            <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
+              {{ $t('header_sign_out') }}
+            </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
       </div>
@@ -66,11 +84,14 @@ export default {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       lang: '',
-      languages: langMenu
+      languages: langMenu,
+      paidPlansCode: '',
+      domain: document.domain
     }
   },
   created() {
     this.lang = getCurrentLanguage()
+    this.getPaidPlan()
     setCurrentLanguage(this.lang, this.$i18n)
   },
   methods: {
@@ -87,10 +108,13 @@ export default {
           window.open('https://cloud.tapdata.net/contact.html', '_blank')
           break
         case 'home':
-          window.open('https://cloud.tapdata.net/', '_blank')
+          window.open('https://tapdata.net/', '_blank')
           break
         case 'v2':
           window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
+          break
+        case 'op':
+          window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
           break
         case 'userCenter':
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
@@ -117,7 +141,7 @@ export default {
           window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
           break
         case 'handbook':
-          window.open('https://sourl.cn/sxuj82', '_blank')
+          window.open('https://docs.tapdata.io/cloud/what-is-tapdata-cloud', '_blank')
           break
         case 'support':
           window.open('https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community', '_blank')
@@ -137,6 +161,12 @@ export default {
           document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
+    },
+    //用户是否是付费用户
+    getPaidPlan() {
+      this.$axios.get('api/tcm/user/paidPlan').then(data => {
+        this.paidPlansCode = data?.paidPlans?.[0].code
+      })
     }
   }
 }
@@ -147,10 +177,18 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 68px !important;
+  height: 52px !important;
   padding: 0 7px;
   background: rgba(54, 54, 54, 1);
   box-sizing: border-box;
+  .current {
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 2px;
+    padding: 4px;
+  }
   .pointer {
     cursor: pointer;
   }
@@ -172,7 +210,7 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.45);
+      color: map-get($color, white);
       &:hover {
         color: #fff;
         background-color: rgba(255, 255, 255, 0.2);
@@ -241,7 +279,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 68px !important;
+  height: 52px !important;
 }
 .dfs-header__dialog {
   .fixed-novice-guide-dialog {
@@ -278,6 +316,70 @@ export default {
       top: 30px;
       right: 0;
     }
+  }
+}
+.marquee-container {
+  width: 420px;
+  height: 40px;
+  line-height: 40px;
+  .marquee-box {
+    position: absolute;
+    width: 420px;
+    height: 40px;
+    span {
+      position: absolute;
+      right: 0;
+      font-weight: 400;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 38px;
+      animation: marquee 10s linear infinite;
+    }
+  }
+}
+
+.block {
+  width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.words {
+  position: relative;
+  width: fit-content;
+  animation: move 20s linear infinite;
+  padding-left: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.words::after {
+  position: absolute;
+  right: -100%;
+  content: attr(text);
+}
+
+@keyframes move {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+@keyframes marquee {
+  /* 开始状态 */
+  0% {
+  }
+  25% {
+    transform: translateX(-30px);
+  }
+  50% {
+    transform: translateX(-60px);
+  }
+  75% {
+    transform: translateX(-90px);
+  }
+  /* 结束状态 */
+  100% {
+    transform: translateX(-120px);
   }
 }
 </style>

@@ -200,7 +200,7 @@ export default defineComponent({
   },
   render() {
     return (
-      <section class="discovery-page-wrap">
+      <section class="discovery-page-wrap catalogue-drawer-resource-wrap">
         <TablePage
           ref="multipleTable"
           row-key="id"
@@ -238,7 +238,12 @@ export default defineComponent({
             label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
             prop="sourceCategory"
           ></el-table-column>
-          <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
+          <el-table-column
+            label={this.$t('object_list_source_information')}
+            prop="sourceInfo"
+            show-overflow-tooltip
+            width="350px"
+          ></el-table-column>
         </TablePage>
       </section>
     )

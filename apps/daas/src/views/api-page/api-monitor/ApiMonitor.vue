@@ -1,7 +1,10 @@
 <template>
-  <section class="api-monitor-wrap">
+  <section class="api-monitor-wrap isCardBox">
     <main class="api-monitor-main">
-      <!--api t统计 -->
+      <!--api 统计 -->
+      <el-row :gutter="40" class="section-header py-6">
+        <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+      </el-row>
       <section class="flex flex-direction bg-white api-monitor-card mb-5" v-loading="loadingTotal">
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_totalCount') }}</header>
@@ -177,7 +180,7 @@
 
 <script>
 import { Chart, FilterBar, VTable } from '@tap/component'
-import { formatMs, handleUnit } from './utils'
+import { handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
 import { apiMonitorApi } from '@tap/api'
@@ -192,6 +195,7 @@ export default {
       loadingApiList: false,
       loadingFailRateList: false,
       loadingTotal: false,
+      silenceLoading: false,
       columns: [
         {
           label: this.$t('api_monitor_total_api_list_name'),
@@ -260,25 +264,36 @@ export default {
     }
   },
   mounted() {
-    this.getPreview()
-    this.getClientName()
-    this.remoteFailedMethod()
-    this.consumingMethod()
-    this.getApiList(1)
+    this.initData()
   },
   methods: {
+    initData() {
+      Promise.all([
+        this.getPreview(),
+        this.getClientName(),
+        this.remoteFailedMethod(),
+        this.consumingMethod(),
+        this.getApiList()
+      ]).finally(() => {
+        this.silenceLoading = true
+        setTimeout(() => {
+          this.initData()
+        }, 10000)
+      })
+    },
+
     handleUnit(limit) {
       return handleUnit(limit)
     },
     formatMs(time) {
       if (time === 0 || !time) return 0
       if (time < 1000) return time + ' ms'
-      return calcTimeUnit(time, 2)
+      return calcTimeUnit(time)
     },
     //获取统计数据
     getPreview() {
-      this.loadingTotal = true
-      apiMonitorApi
+      this.loadingTotal = !this.silenceLoading
+      return apiMonitorApi
         .preview()
         .then(data => {
           this.previewData = data
@@ -289,7 +304,7 @@ export default {
     },
     //获取所有客户端
     getClientName() {
-      apiMonitorApi.apiClientName().then(data => {
+      return apiMonitorApi.apiClientName().then(data => {
         //重组数据
         if (data?.length > 0) {
           for (let i = 0; i < data.length; i++) {
@@ -346,8 +361,8 @@ export default {
         order: failRateOrder,
         skip: size * (failRateCurrent - 1)
       }
-      this.loadingFailRateList = true
-      apiMonitorApi
+      this.loadingFailRateList = !this.silenceLoading
+      return apiMonitorApi
         .rankLists({
           filter: JSON.stringify(filter)
         })
@@ -384,8 +399,8 @@ export default {
         order: consumingTimeOrder,
         skip: size * (consumingTimeCurrent - 1)
       }
-      this.loadingTimeList = true
-      apiMonitorApi
+      this.loadingTimeList = !this.silenceLoading
+      return apiMonitorApi
         .rankLists({
           filter: JSON.stringify(filter)
         })
@@ -433,8 +448,8 @@ export default {
         skip: (apiListCurrent - 1) * 5,
         where
       }
-      this.loadingApiList = true
-      apiMonitorApi
+      this.loadingApiList = !this.silenceLoading
+      return apiMonitorApi
         .apiList({
           filter: JSON.stringify(filter)
         })

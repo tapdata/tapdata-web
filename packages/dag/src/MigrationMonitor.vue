@@ -120,6 +120,7 @@
           :dataflow="dataflow"
           :alarmData="alarmData"
           :logTotals="logTotals"
+          :taskRecord="taskRecord"
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
@@ -141,7 +142,7 @@
         :dataflow="dataflow"
         :node-id="nodeDetailDialogId"
         :timeFormat="timeFormat"
-        :range="[firstStartTime, lastStopTime || Date.now()]"
+        :range="[firstStartTime, lastStopTime || getTime()]"
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
@@ -153,19 +154,20 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
+import { mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
 import { debounce } from 'lodash'
 
+import i18n from '@tap/i18n'
 import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
-import { measurementApi, taskApi } from '@tap/api'
+import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
 import { ALARM_LEVEL_SORT } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/monitor/TopHeader'
@@ -239,7 +241,7 @@ export default {
       dataflow,
 
       scale: 1,
-      showBottomPanel: true,
+      showBottomPanel: false,
       timer: null,
       quotaTimeType: '5m',
       quotaTime: [],
@@ -252,11 +254,19 @@ export default {
       alarmData: null,
       logTotals: [],
       refreshRate: 5000,
-      extraEnterCount: 0
+      extraEnterCount: 0,
+      isReset: false, // 是否重置了
+      watchStatusCount: 0,
+      taskRecord: {
+        total: 0,
+        items: []
+      }
     }
   },
 
   computed: {
+    ...mapState('dataflow', ['showConsole']),
+
     formScope() {
       return {
         ...this.scope,
@@ -286,12 +296,12 @@ export default {
       const { firstStartTime, lastStopTime } = this
       let end = lastStopTime
       if (['running'].includes(this.dataflow.status)) {
-        end = Date.now()
+        end = Time.now()
       }
       if (end < firstStartTime) {
         end = firstStartTime + 5 * 60 * 1000
       }
-      return [firstStartTime, end || Date.now()]
+      return [firstStartTime, end || Time.now()]
     }
   },
 
@@ -302,6 +312,12 @@ export default {
     'dataflow.status'(v1, v2) {
       if (v1 !== v2) {
         this.init()
+      }
+      this.watchStatusCount++
+      if (this.watchStatusCount === 1) {
+        const flag = ['renewing', 'renew_failed'].includes(v1)
+        this.toggleConsole(flag)
+        this.handleBottomPanel(!flag)
       }
       this.toggleConnectionRun(v1 === 'running')
     }
@@ -314,6 +330,8 @@ export default {
 
   async mounted() {
     this.setValidateLanguage()
+    // 收集pdk上节点的schema
+    await this.initPdkProperties()
     await this.initNodeType()
     this.jsPlumbIns.ready(async () => {
       try {
@@ -339,6 +357,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
+
     init: debounce(function () {
       this.timer && clearTimeout(this.timer)
       this.startLoadData()
@@ -616,6 +636,7 @@ export default {
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.$t('packages_dag_message_operation_succuess'))
         this.isSaving = false
+        this.isReset = false
         this.loadDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
@@ -641,7 +662,7 @@ export default {
             taskId,
             taskRecordId
           },
-          endAt: Date.now(), // 停止时间 || 当前时间
+          endAt: Time.now(), // 停止时间 || 当前时间
           fields: [
             'inputInsertTotal',
             'inputUpdateTotal',
@@ -747,7 +768,7 @@ export default {
             type: 'engine',
             engineId: agentId
           },
-          endAt: Date.now(),
+          endAt: Time.now(),
           fields: ['memoryRate', 'cpuUsage', 'gcRate'],
           type: 'instant'
         }
@@ -797,6 +818,14 @@ export default {
         agentData: {
           uri: '/api/measurement/query/v2',
           param: this.getQuotaFilter('agentData')
+        },
+        taskRecord: {
+          uri: '/api/task/records',
+          param: {
+            taskId,
+            size: 200,
+            page: 1
+          }
         }
       }
       return params
@@ -806,13 +835,18 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
+      if (this.isReset) {
+        this.loadResetQuotaData()
+        return
+      }
       measurementApi
         .batch(this.getParams())
         .then(data => {
           const map = {
             verifyTotals: this.loadVerifyTotals,
             alarmData: this.loadAlarmData,
-            logTotals: this.loadLogTotals
+            logTotals: this.loadLogTotals,
+            taskRecord: this.loadTaskRecord
           }
           for (let key in data) {
             const item = data[key]
@@ -855,6 +889,24 @@ export default {
       this.dagData = this.getDagData(this.quota.samples.dagData)
     },
 
+    loadResetQuotaData() {
+      let quota = {
+        samples: {},
+        time: [],
+        interval: 5000
+      }
+      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
+      arr.forEach(el => {
+        quota.samples[el] = []
+      })
+      this.quota = quota
+      this.dagData = {}
+      this.loadVerifyTotals()
+      this.loadAlarmData()
+      this.loadLogTotals()
+      this.loadTaskRecord()
+    },
+
     loadVerifyTotals(data = {}) {
       const { diffRecords = 0, diffTables = 0, totals = 0, ignore = 0 } = data
       this.verifyTotals = {
@@ -894,6 +946,11 @@ export default {
 
     loadLogTotals(data = []) {
       this.logTotals = data
+    },
+
+    loadTaskRecord(data) {
+      if (!data) return
+      this.taskRecord = data
     },
 
     getDagData(data = []) {
@@ -974,9 +1031,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Date.now()
+      let endTimestamp = this.lastStopTime || Time.now()
       if (status === 'running') {
-        endTimestamp = Date.now()
+        endTimestamp = Time.now()
       }
       switch (type) {
         case '5m':
@@ -1047,6 +1104,9 @@ export default {
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('packages_dag_message_operation_succuess'))
+          if (!data?.fail?.length) {
+            this.isReset = true
+          }
           // this.init()
           this.loadDataflow(this.dataflow?.id)
         } catch (e) {
@@ -1085,8 +1145,33 @@ export default {
 
     handleStopAuto() {
       setTimeout(() => {
-        this.showConsole && this.$refs.console?.autoLoad('reset')
+        this.showConsole && this.$refs.console?.autoLoad()
       }, 5000)
+    },
+
+    async initPdkProperties() {
+      const databaseItems = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          fields: {
+            messages: true,
+            pdkHash: true,
+            properties: true
+          }
+        })
+      })
+      this.setPdkPropertiesMap(
+        databaseItems.reduce((map, item) => {
+          const properties = item.properties?.node
+          if (properties) {
+            map[item.pdkHash] = properties
+          }
+          return map
+        }, {})
+      )
+    },
+
+    getTime() {
+      return Time.now()
     }
   }
 }

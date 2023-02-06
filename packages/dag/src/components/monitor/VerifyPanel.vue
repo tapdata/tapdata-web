@@ -106,6 +106,7 @@ import { debounce } from 'lodash'
 
 import { Chart } from '@tap/component'
 import { calcUnit, deepCopy } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 
@@ -235,7 +236,7 @@ export default {
     },
 
     loadData(loadMore = false) {
-      const startStamp = Date.now()
+      const startStamp = Time.now()
       taskApi
         .autoInspectResultsGroupByTable(this.getFilter())
         .then(({ total, items = [] }) => {
@@ -266,7 +267,7 @@ export default {
               this.moreLoading = false
               this.loading = false
             },
-            Date.now() - startStamp < 1000 ? 1500 : 0
+            Time.now() - startStamp < 1000 ? 1500 : 0
           )
         })
     },

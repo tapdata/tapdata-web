@@ -2,8 +2,7 @@ import i18n from '@/i18n'
 import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
-import { Message } from 'element-ui'
-import { errorConfirmFnc } from '@/util'
+import { Message } from '@/plugins/element'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';
@@ -58,6 +57,23 @@ const errorCallback = error => {
     // 其他错误
     Message.error(`${error.message || error}`)
   }
+  //暂时注释 62-2 迭代先authing错误页面提示
+  // if (status === 404) {
+  //   // Message.error('服务器错误:' + error)
+  //   location.replace(location.href.split('#/')[0] + '#/404')
+  // }
+  // if (status === 500) {
+  //   // Message.error('服务器错误:' + error)
+  //   location.replace(location.href.split('#/')[0] + '#/500')
+  // }
+  // if (status === 502) {
+  //   // Message.error('服务器错误:' + error)
+  //   location.replace(location.href.split('#/')[0] + '#/502')
+  // }
+  // if (status === 504) {
+  //   // Message.error('服务器错误:' + error)
+  //   location.replace(location.href.split('#/')[0] + '#/504')
+  // }
   //先去掉全局接口异常弹窗 #125624
   // else if (error?.message !== 'cancel' && window.navigator.onLine) {
   //   errorConfirmFnc(error)
@@ -138,7 +154,12 @@ const responseInterceptor = response => {
       // eslint-disable-next-line
       console.log(`${code}： ${msg}`)
       if (!skipErrorHandler) {
-        Message.error(msg)
+        // 手机号码
+        if (['Authing.User.Update.Failed'].includes(code)) {
+          Message.error(i18n.t('dfs_user_center_phone_error'))
+        } else {
+          Message.error(msg)
+        }
       }
       return reject(Object.assign(response))
     }

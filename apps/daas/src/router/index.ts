@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import { Message } from 'element-ui'
 import routes from './routes'
 import Cookie from '@tap/shared/src/cookie'
+import { setPageTitle } from '@tap/shared'
 
 Vue.use(Router)
 
@@ -20,7 +21,7 @@ export default i18n => {
       return
     }
     if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
-      document.title = i18n.t(to.meta.title)
+      setPageTitle(i18n.t(to.meta.title))
     }
     const token = Cookie.get('access_token')
     if (token) {
@@ -40,6 +41,9 @@ export default i18n => {
         } else {
           next()
         }
+      } else if (from.name === 'login') {
+        //from为login 上一次重定向无权限跳转到 控制台
+        next('/')
       } else {
         Message.error({
           message: i18n.t('app_signIn_permission_denied')

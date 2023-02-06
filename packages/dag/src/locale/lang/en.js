@@ -44,9 +44,14 @@ export default {
   packages_dag_task_setting_cdc: 'Incremental synchronization',
   packages_dag_task_stetting_desc: 'Task description',
   packages_dag_task_setting_plan_start_date: 'Plan start date',
-  packages_dag_task_setting_cron_expression: 'Please enter the scheduling expression',
+  packages_dag_task_setting_crontabExpressionFlag: 'Scheduled tasks',
+  packages_dag_task_setting_cron_expression: 'Please enter the Cron expression',
   packages_dag_task_setting_cron_tip:
-    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year * ; Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
+    'Enter a Cron expression to configure the running schedule.\n' +
+    'Syntax: second * minute * hour * day * month * week ? year *\n' +
+    'Example:\n' +
+    '0 */1 * * * ?  // Run every minute \n' +
+    '0 0 2 * * ?  // Run at 2:00 AM every day',
   packages_dag_task_setting_sync_point: 'Incremental collection start time',
   packages_dag_task_setting_syncPoint_tip: 'The task will collect incremental logs from this point in time',
   packages_dag_task_setting_automatic_index: 'Automatically create an index',
@@ -190,7 +195,7 @@ export default {
   packages_dag_migration_configpanel_peizhi: 'Configuration',
   packages_dag_migration_consolepanel_quanburizhi: 'All logs',
   packages_dag_migration_settingpanel_dangrenwufuhe:
-    'When the task meets the following conditions, the verification will not be performed even if the switch task is turned on\n 1. Added an intermediate processing node\n 2. The source connection does not support verification\n 3. The target connection does not support verification',
+    'When data verification is enabled, the task will automatically perform full verification and incremental verification for the data replication consistency. The verification results can be viewed on the Task Monitoring page. Note the verification currently does not support following scenarios, when one of the following happens, this feature will have no effect:\n 1. There is a processing node in the pipeline\n 2. The source connection does not support verification\n 3. The target connection does not support verification',
   packages_dag_monitor_bottompanel_yunxingjilu: 'Running record',
   packages_dag_monitor_bottompanel_rizhi: 'Log',
   packages_dag_components_eventchart_qita: 'Other',
@@ -311,7 +316,9 @@ export default {
   packages_dag_src_editor_ziduanjisuan: 'Field calculation',
   packages_dag_src_editor_zhuconghebing: 'Master-slave merge',
   packages_dag_src_editor_juhe: 'Aggregate',
-  packages_dag_src_migrationeditor_jSchuli: 'JS processing',
+  packages_dag_src_editor_zhuijiahebing: 'Union',
+  packages_dag_src_migrationeditor_jSchuli: 'Enhanced JS',
+  packages_dag_src_migrationeditor_jSchuli_standard: 'Standard JS',
   packages_dag_src_migrationeditor_ziduanbianji: 'Field Edit',
   packages_dag_src_migrationeditor_biaobianji: 'Table editor',
   packages_dag_src_migrationeditor_zhuangtaijanting: 'Status monitoring',
@@ -325,9 +332,12 @@ export default {
   packages_dag_mixins_editor_renwujiazaichu: 'Error loading task',
   packages_dag_mixins_editor_renwubucunzai: 'Task does not exist',
   packages_dag_mixins_editor_renwuzhonghanyou:
-    'The task contains JS nodes, custom nodes, or incremental custom SQL for node settings. DDL is not supported at the moment, please close it manually',
+    'The task contains JS nodes, custom nodes, Union nodes, or incremental custom SQL for node settings. DDL is not supported at the moment, please close it manually',
   packages_dag_mixins_editor_gaijiedianbuzhi: 'This node does not support running on {val1}（{val2}）',
   packages_dag_mixins_editor_not_support_ddl: 'This node does not support DDL, please close it',
+  packages_dag_mixins_editor_not_support_cdc: 'The node does not support CDC. Change the task type to full',
+  packages_dag_mixins_editor_task_not_support_cdc:
+    'The task contains nodes that do not support CDC, change the task type to full',
   packages_dag_mixins_editor_buzhichiduotiao: 'Multiple links are not supported, please re-edit the task link',
   packages_dag_mixins_editor_renwulianlubu: 'The task link is incomplete',
   packages_dag_mixins_editor_renwushezhiyi: 'The task setting is abnormal',
@@ -525,6 +535,7 @@ export default {
   packages_dag_components_node_quanliangwanchenghaixu: 'Estimated finish time',
   packages_dag_components_node_xieruhaoshi: 'Writing time:',
   packages_dag_components_node_chulihaoshi: 'Processing time:',
+  packages_dag_components_node_zanbuzhichi: 'Not supported',
   packages_dag_page_return_confirm_title: 'Return to confirm',
   packages_dag_page_return_confirm_content: 'The current task is empty. Do you want to keep it?',
   packages_dag_page_return_confirm_ok_text: "Don't keep",
@@ -534,5 +545,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: 'Process incremental time',
   packages_dag_monitor_node_popover_targetWriteTime_title: 'Avg time per write',
   packages_dag_monitor_topheader_renwuxintiaoshi: 'Task heartbeat time',
-  packages_dag_monitor_node_per_deal_need_time: 'Single processing time'
+  packages_dag_monitor_node_per_deal_need_time: 'Single processing time',
+  packages_dag_api_docs: 'Docs'
 }

@@ -1,74 +1,56 @@
 <template>
-  <div class="metadata-list-wrap">
-    <!--<div class="total mb-2 mt-4">
-      {{ $t('packages_dag_components_metapane_gongyou') }}{{ tableData.length
-      }}{{ $t('packages_dag_components_metapane_geziduan') }}
-    </div>-->
-    <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
-      <ElTableColumn width="56" type="index" :label="$t('packages_dag_meta_table_index')"> </ElTableColumn>
-      <ElTableColumn prop="field_name" :label="$t('packages_dag_meta_table_field_name')">
-        <template #default="{ row }">
-          <span class="flex align-center"
-            >{{ row.field_name }}
-            <VIcon v-if="row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
-          </span>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="data_type" :label="$t('packages_dag_meta_table_field_type')"> </ElTableColumn>
-      <!--      <ElTableColumn prop="scale" :label="$t('packages_dag_meta_table_scale')"> </ElTableColumn>-->
-      <!--      <ElTableColumn prop="precision" :label="$t('packages_dag_meta_table_precision')"> </ElTableColumn>-->
-      <ElTableColumn prop="default_value" :label="$t('packages_dag_meta_table_default')"> </ElTableColumn>
-      <ElTableColumn prop="is_nullable" :label="$t('packages_dag_meta_table_not_null')">
-        <template #default="{ row }">
-          {{ nullableMap[!row.is_nullable] }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="comment" :label="$t('packages_dag_meta_table_comment')"> </ElTableColumn>
-    </ElTable>
+  <div v-loading="loading" class="metadata-list-wrap">
+    <List
+      ref="table"
+      v-bind="$attrs"
+      :data="selected"
+      :form="form"
+      :readonly="stateIsReadonly || !isTarget"
+      :fieldChangeRules.sync="fieldChangeRules"
+      hide-batch
+    ></List>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
-import { metadataInstancesApi } from '@tap/api'
-import { VIcon } from '@tap/component'
-import i18n from '@tap/i18n'
+import List from './form/field-inference/List'
+import mixins from './form/field-inference/mixins.js'
 
 export default {
   name: 'MetaPane',
-  components: { VIcon },
+
+  components: { List },
+
+  mixins: [mixins],
+
   props: {
-    isShow: Boolean
+    isShow: Boolean,
+    form: Object
   },
 
   data() {
     return {
+      selected: {},
       tableData: [],
       loading: false,
-      isTarget: false,
-      showFieldMapping: false,
-      transform: {
-        showBtn: true,
-        mode: 'metaData',
-        nodeId: '',
-        field_process: [],
-        fieldsNameTransform: '',
-        batchOperationList: []
-      },
-      nullableMap: {
-        true: i18n.t('packages_dag_meta_table_true'),
-        false: i18n.t('packages_dag_meta_table_false')
-      }
+      data: '',
+      fieldChangeRules: []
     }
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId', 'taskSaving', 'stateIsDirty', 'transformLoading']),
-    ...mapGetters('dataflow', ['activeNode']),
+    ...mapState('dataflow', ['activeNodeId', 'taskSaving', 'transformLoading']),
+    ...mapGetters('dataflow', ['activeNode', 'stateIsReadonly']),
 
     showLoading() {
       return this.loading
+    },
+
+    isTarget() {
+      const { type, $outputs } = this.activeNode || {}
+      return (type === 'database' || type === 'table') && !$outputs.length
     }
   },
 
@@ -101,62 +83,32 @@ export default {
       }
     }
   },
-  mounted() {
-    if (this.stateIsReadonly) {
-      this.transform.mode = 'readOnly'
-    }
-  },
 
   methods: {
     async loadFields() {
-      this.$refs.table.doLayout()
+      this.$refs.table?.doLayout()
       this.loading = true
-
+      this.loadFieldChangeRules()
       try {
-        let data = await metadataInstancesApi.nodeSchema(this.activeNode.id)
-        let fields = data?.[0]?.fields || []
-        fields = fields.filter(f => !f.is_deleted)
-        /*fields.sort((a, b) => {
-          const aIsPrimaryKey = a.primary_key_position > 0
-          const bIsPrimaryKey = b.primary_key_position > 0
-
-          if (aIsPrimaryKey !== bIsPrimaryKey) {
-            return aIsPrimaryKey ? -1 : 1
-          } else {
-            return a.field_name.localeCompare(b.field_name)
-          }
-        })*/
-        this.tableData = fields
+        const { items } = await this.getData()
+        this.selected = items?.[0] || {}
       } catch (e) {
-        this.tableData = []
+        // catch
       }
 
       this.loading = false
     },
-    getDataflowDataToSave() {
-      const dag = this.$store.getters['dataflow/dag']
-      const editVersion = this.$store.state.dataflow.editVersion
-      let dataflow = this.$store.state.dataflow
-      return {
-        dag,
-        editVersion,
-        ...dataflow
-      }
-    },
-    getDataFlow() {
-      const data = this.getDataflowDataToSave()
-      return data
+
+    loadFieldChangeRules() {
+      this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .metadata-list-wrap {
   height: 100%;
   overflow: auto;
-  .total {
-    margin-left: 10px;
-    color: map-get($color, info);
-  }
 }
 </style>

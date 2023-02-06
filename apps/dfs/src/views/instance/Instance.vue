@@ -6,7 +6,12 @@
           <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
         </div>
         <div class="instance-operation-right">
-          <ElButton type="primary" @click="createAgent" :loading="createAgentLoading">
+          <ElButton
+            type="primary"
+            @click="createAgent"
+            :loading="createAgentLoading"
+            :disabled="$disabledReadonlyUserBtn()"
+          >
             <span>{{ $t('agent_button_create') }}</span>
           </ElButton>
         </div>
@@ -23,7 +28,7 @@
             <div class="flex">
               <div>
                 <InlineInput
-                  :class="['inline-input', 'color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
+                  :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
                   :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
@@ -45,30 +50,46 @@
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
-            <StatusTag type="text" :status="scope.row.status" default-status="Stopped"></StatusTag>
+            <StatusTag type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
+            <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
+              <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
+              <template #content>
+                <div style="max-width: 380px">
+                  {{ $t('dfs_instance_stopped_help_tip_prefix') }}
+                  <a
+                    target="_blank"
+                    href="https://docs.tapdata.io/cloud/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
+                    class="color-primary"
+                    >{{ $t('dfs_online_help_docs') }}</a
+                  >
+                  {{ $t('dfs_instance_stopped_help_tip_suffix') }}
+                </div>
+              </template>
+            </ElTooltip>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_task_number')" width="120">
+        <ElTableColumn :label="$t('agent_task_number')" width="160">
           <template slot-scope="scope">
-            <ElTooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
-              <div slot="content">
-                <template v-for="(item, index) in scope.row.metric.dataFlows">
-                  <div v-if="index < 3" :key="item.id">
-                    {{ $t('task_name') }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ item.name }}
-                  </div>
-                </template>
+            <div>
+              <div class="flex align-center">
+                {{ $t('task_manage_migrate') }}：
                 <ElLink
-                  v-if="scope.row.metric.runningTaskNum > 3"
-                  class="block text-center"
                   type="primary"
+                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0) < 1"
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >{{ $t('data_see_more') }}</ElLink
+                  >{{ scope.row.metric ? scope.row.metric.runningTask.migrate || 0 : 0 }}</ElLink
                 >
               </div>
-              <ElLink type="primary" class="ml-7" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
-                scope.row.metric ? scope.row.metric.runningTaskNum : 0
-              }}</ElLink>
-            </ElTooltip>
+              <div class="flex align-center">
+                {{ $t('task_manage_etl') }}：
+                <ElLink
+                  type="primary"
+                  :disabled="(scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0) < 1"
+                  @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')"
+                  >{{ scope.row.metric ? scope.row.metric.runningTask.sync || 0 : 0 }}</ElLink
+                >
+              </div>
+            </div>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_version')" width="200">
@@ -129,21 +150,25 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="150">
+        <ElTableColumn prop="createAt" sortable="custom" :label="$t('agent_create_time')" width="180">
           <template slot-scope="scope">
             <span>{{ formatTime(scope.row.createAt) }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('list_operation')" width="200">
+        <ElTableColumn :label="$t('list_operation')" width="240">
           <template slot-scope="scope">
-            <ElButton size="mini" type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
-              $t('agent_button_deploy')
-            }}</ElButton>
+            <ElButton
+
+              type="text"
+              :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
+              @click="toDeploy(scope.row)"
+              >{{ $t('agent_button_deploy') }}</ElButton
+            >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
               size="mini"
               type="text"
-              :disabled="stopBtnDisabled(scope.row)"
+              :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               :loading="scope.row.btnLoading.stop"
               @click="handleStop(scope.row)"
               >{{ $t('button_stop') }}</ElButton
@@ -153,7 +178,7 @@
               size="mini"
               type="text"
               :loading="scope.row.btnLoading.delete"
-              :disabled="delBtnDisabled(scope.row)"
+              :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="handleDel(scope.row)"
               >{{ $t('button_delete') }}</ElButton
             >
@@ -189,15 +214,47 @@
         @current-change="fetch"
       >
       </ElPagination>
-      <ElDialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
-        <div class="dialog-content">{{ $t('agent_dialog_upgrade_title') }}</div>
-        <div class="dialog-btn flex justify-content-evenly mt-6">
-          <div class="text-center w-50" v-if="showAutoUpgrade">
+      <ElDialog :visible.sync="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
+        <div>
+          <div class="flex upgrade-mb24">
+            <div class="imgBox flex justify-content-center align-items-center">
+              <img :src="getImg('vector')" alt="" />
+            </div>
+            <div class="ml-6">
+              <div class="upgrade-version">
+                {{ $t('dfs_instance_instance_banbenhao') }}{{ currentVersionInfo.version }}
+              </div>
+              <div class="upgrade-version mt-1">
+                {{ $t('dfs_instance_instance_anzhuangbao') }}{{ currentVersionInfo.packageSize }}
+              </div>
+              <div class="upgrade-version mt-1">
+                {{ $t('dfs_instance_instance_yujianzhuangshi') }}{{ currentVersionInfo.estimatedUpgradeTime }}
+              </div>
+            </div>
+          </div>
+          <div class="upgrade-desc upgrade-mb16" v-if="currentVersionInfo.changeList">
+            {{ $t('dfs_instance_instance_xinzenggongneng') }}
+          </div>
+          <ul class="upgrade-mb24" v-if="currentVersionInfo.changeList">
+            <li
+              style="white-space: pre-wrap"
+              class="upgrade-mb8 upgrade-text"
+              v-html="currentVersionInfo.changeList"
+            ></li>
+          </ul>
+          <div class="upgrade-desc upgrade-mb8">{{ $t('dfs_instance_instance_bencigengxinbao') }}</div>
+          <div class="upgrade-text upgrade-mb16">
+            {{ $t('dfs_instance_instance_ruxuliaojiegeng')
+            }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri"> Release Notes</el-link>
+          </div>
+        </div>
+        <div class="dialog-btn flex justify-content-end mt-6">
+          <div class="w-50" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('agent_button_auto_upgrade')
             }}</ElButton>
           </div>
-          <div class="text-center w-50">
+          <div class="text-end w-50">
             <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
@@ -232,9 +289,9 @@
         <div slot="operation" class="flex">
           <VButton
             :loading="selectedRow.btnLoading.deploy"
-            :disabled="deployBtnDisabled(selectedRow)"
+            :disabled="deployBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
             type="primary"
-            class="flex-fill"
+            class="flex-fill min-w-0"
             @click="toDeploy(selectedRow)"
           >
             <VIcon size="12">deploy</VIcon>
@@ -242,9 +299,9 @@
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.stop"
-            :disabled="stopBtnDisabled(selectedRow)"
+            :disabled="stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
             type="primary"
-            class="flex-fill"
+            class="flex-fill min-w-0"
             @click="handleStop(selectedRow)"
           >
             <VIcon size="12">stop</VIcon>
@@ -252,8 +309,8 @@
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.delete"
-            :disabled="delBtnDisabled(selectedRow)"
-            class="flex-fill"
+            :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
+            class="flex-fill min-w-0"
             @click="handleDel(selectedRow)"
           >
             <VIcon size="12">delete</VIcon>
@@ -275,6 +332,8 @@ import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
+import { dayjs } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 let timer = null
 
@@ -315,6 +374,7 @@ export default {
       agentStatus: 'stop',
       version: '',
       upgradeList: [], // 升级列表
+      currentVersionInfo: '',
       showDetails: false,
       detailId: null,
       filterItems: []
@@ -348,11 +408,14 @@ export default {
     }
   },
   watch: {
-    $route(route) {
+    $route(route, oldRoute) {
       if (route.name === 'Instance') {
-        this.searchParams.status = route.query.status || ''
-        let pageNum = JSON.stringify(route.query) === '{}' ? undefined : 1
-        this.fetch(pageNum)
+        let oldQuery = { ...oldRoute.query, detailId: undefined }
+        let query = { ...route.query, detailId: undefined }
+        let queryStr = JSON.stringify(query)
+        if (JSON.stringify(oldQuery) === queryStr) return
+        this.searchParams.status = query.status || ''
+        this.fetch(queryStr === '{}' ? undefined : 1)
       }
     }
   },
@@ -376,6 +439,9 @@ export default {
     timer = null
   },
   methods: {
+    relativeTime(time) {
+      return time ? dayjs(time).fromNow() : '-'
+    },
     init() {
       let query = this.$route.query
       let { detailId, ...searchParams } = Object.assign(this.searchParams, query)
@@ -466,6 +532,18 @@ export default {
           // 版本号
           if (this.list?.[0]?.id) {
             let getVersion = await this.getVersion(this.list[0]?.id)
+            //升级弹窗使用
+            let { packageSize, changeList, estimatedUpgradeTime, version, releaseNoteUri } = getVersion
+            this.currentVersionInfo = {
+              packageSize: (packageSize ? (packageSize / (1024 * 1024)).toFixed(1) + ' MB' : '-') || '-',
+              changeList: changeList || '',
+              estimatedUpgradeTime:
+                (estimatedUpgradeTime
+                  ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong')
+                  : '-') || '-',
+              releaseNoteUri: releaseNoteUri,
+              version: version
+            }
             this.version = getVersion?.version
           }
 
@@ -481,6 +559,9 @@ export default {
             this.loading = false
           }
         })
+    },
+    getImg(name) {
+      return require(`../../../public/images/agent/${name}.png`)
     },
     sortChange({ prop, order }) {
       this.order = `${order ? prop : 'createAt'} ${order === 'ascending' ? 'asc' : 'desc'}`
@@ -499,7 +580,10 @@ export default {
       this.showDetails = false
       this.$router.replace({
         name: 'Instance',
-        query: this.searchParams
+        query: {
+          ...this.$route.query,
+          detailId: undefined
+        }
       })
     },
     toDeploy(row) {
@@ -642,9 +726,9 @@ export default {
       }
       this.fetch(1)
     },
-    toDataFlow(id) {
+    toDataFlow(id, name = 'migrateList') {
       this.$router.push({
-        name: 'migrateList',
+        name,
         query: {
           agentId: id,
           status: 'running'
@@ -790,7 +874,12 @@ export default {
     },
     // 禁用停止
     stopBtnDisabled(row) {
-      return row.agentType === 'Cloud' || row.status !== 'Running' || row.metric.runningTaskNum > 0
+      return (
+        row.agentType === 'Cloud' ||
+        row.status !== 'Running' ||
+        row.metric.runningTaskNum > 0 ||
+        row.tapdataAgentStatus === 'stop' //tapdataAgent 失活了
+      )
     },
     // 禁用删除
     delBtnDisabled(row) {
@@ -817,7 +906,7 @@ export default {
     },
     upgradeFlag(row) {
       let { tmInfo } = row
-      let isOvertime = (new Date().getTime() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
+      let isOvertime = (Time.now() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
       // 刚完成5分钟内
       return tmInfo.updateStatus === 'done' && !isOvertime
     },
@@ -904,6 +993,39 @@ export default {
   .instance-table__empty {
     color: map-get($fontColor, light);
   }
+  .upgrade-text {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: map-get($color, dark);
+  }
+  .upgrade-version {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: map-get($color, dark);
+  }
+  .upgrade-desc {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: map-get($color, light);
+  }
+  .imgBox {
+    width: 65px;
+    height: 65px;
+    background: rgba(201, 205, 212, 0.1);
+    border-radius: 4px;
+  }
+  .upgrade-mb8 {
+    margin-bottom: 8px;
+  }
+  .upgrade-mb16 {
+    margin-bottom: 16px;
+  }
+  .upgrade-mb24 {
+    margin-bottom: 24px;
+  }
 }
 .upgrading-box {
   width: 20px;
@@ -951,6 +1073,12 @@ export default {
   }
   .tooltip--notenter {
     pointer-events: none;
+  }
+  .download-dialog {
+    .el-dialog__body {
+      height: 475px;
+      padding: 0 20px 40px 20px;
+    }
   }
 }
 </style>

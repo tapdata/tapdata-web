@@ -30,7 +30,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSidebar
-        v-if="!stateIsReadonly && dataflow.id"
+        v-if="dataflow.id"
         v-resize.right="{
           minWidth: 260,
           maxWidth: 400
@@ -102,7 +102,7 @@ import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
-import { databaseTypesApi, taskApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 import { MoveNodeCommand } from './command'
 import dagre from 'dagre'
@@ -111,7 +111,6 @@ import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
-import { mapMutations } from 'vuex'
 import ConsolePanel from './components/migration/ConsolePanel'
 
 export default {
@@ -130,6 +129,8 @@ export default {
     TransformLoading,
     ConsolePanel
   },
+
+  inject: ['buried'],
 
   data() {
     return {
@@ -160,6 +161,16 @@ export default {
 
   watch: {
     'dataflow.status'(v) {
+      if (this.dataflow.disabledData?.edit) {
+        this.setStateReadonly(true)
+      } else {
+        this.setStateReadonly(false)
+      }
+
+      if (v === 'starting' || v === 'running') {
+        this.gotoViewer()
+      }
+
       if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
@@ -194,17 +205,23 @@ export default {
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
     this.resetState()
-    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setPdkPropertiesMap']),
-
     async initNodeType() {
       let nodes = [
         {
-          name: 'JavaScript',
-          type: 'js_processor'
+          name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
+          type: 'union_processor'
+        },
+        {
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
+          type: 'standard_js_processor'
+        },
+        {
+          name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
+          type: 'js_processor',
+          beta: true
         },
         {
           name: 'Row Filter',
@@ -273,6 +290,7 @@ export default {
     },
 
     gotoViewer() {
+      if (this.$route.name === 'TaskMonitor') return
       this.$router
         .push({
           name: 'TaskMonitor',
@@ -335,8 +353,8 @@ export default {
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
-        // this.toggleConsole(true)
-        // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
+        this.toggleConsole(true)
+        this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return true
       } catch (e) {
         this.isSaving = false
@@ -348,13 +366,16 @@ export default {
     },
 
     async saveAsNewDataflow() {
+      this.buried('taskSubmit')
       this.isSaving = true
       const data = this.getDataflowDataToSave()
       try {
         const dataflow = await taskApi.post(data)
+        this.buried('taskSubmit', { result: true })
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
+        this.setTaskInfo(this.dataflow)
         // this.$message.success(this.$t('packages_dag_message_save_ok'))
         await this.$router.replace({
           name: 'DataflowEditor',
@@ -366,9 +387,14 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
+        this.buried('taskSubmit', { result: true })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           this.newDataflow(newName)
+        } else if (e?.data?.code === 'InvalidPaidPlan') {
+          this.$router.push({
+            name: 'dataflowList'
+          })
         } else {
           this.handleError(e)
         }
@@ -546,25 +572,39 @@ export default {
       })
     },
 
-    async initPdkProperties() {
-      const databaseItems = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          fields: {
-            messages: true,
-            pdkHash: true,
-            properties: true
+    async handleStart() {
+      this.buried('taskStart')
+      this.unWatchStatus?.()
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+          this.$refs.console?.loadData()
+          if (v !== 'running') {
+            this.$refs.console?.stopAuto()
+          } else {
+            this.toggleConsole(false)
+            this.gotoViewer(false)
           }
-        })
+          // this.unWatchStatus()
+        }
+        if (['MigrateViewer', 'DataflowViewer'].includes(this.$route.name)) {
+          if (['renewing'].includes(v)) {
+            this.handleConsoleAutoLoad()
+          } else {
+            this.toggleConsole(false)
+          }
+        }
       })
-      this.setPdkPropertiesMap(
-        databaseItems.reduce((map, item) => {
-          const properties = item.properties?.node
-          if (properties) {
-            map[item.pdkHash] = properties
-          }
-          return map
-        }, {})
-      )
+      const flag = await this.save(true)
+      if (flag) {
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        this.gotoViewer()
+        this.buried('taskStart', { result: true })
+      } else {
+        this.buried('taskStart', { result: false })
+      }
     }
   }
 }

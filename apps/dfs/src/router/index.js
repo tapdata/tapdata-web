@@ -1,7 +1,10 @@
+import Parent from './Parent'
 import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
+import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
+
 import Lang from '../views/Lang.vue'
 
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
@@ -142,6 +145,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/MigrationList.tsx'),
         meta: {
           title: 'task_manage_migrate',
+          desc: 'task_manage_migrate_desc',
           icon: 'task'
         },
         children: [
@@ -169,6 +173,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/EtlList.tsx'),
         meta: {
           title: 'task_manage_etl',
+          desc: 'task_manage_desc',
           icon: 'task'
         },
         children: [
@@ -216,6 +221,7 @@ const routes = [
           title: 'page_title_data_verify',
           doNotJump: true
         },
+        component: Parent,
         children: [
           {
             path: ':id/details',
@@ -228,6 +234,16 @@ const routes = [
             }
           }
         ]
+      },
+      {
+        path: '/data-server',
+        name: 'dataServerList',
+        component: () => import(/* webpackChunkName: "task-migration" */ '../views/data-server/list'),
+        meta: {
+          title: 'dfs_data_server',
+          hideTitle: true,
+          icon: 'data-server'
+        }
       }
     ]
   },
@@ -264,9 +280,38 @@ const routes = [
       title: 'tap_upgrade'
     }
   },
+  //付费升级
+  {
+    path: '/paidUpgrade',
+    name: 'PaidUpgrade',
+    component: PaidUpgrade,
+    meta: {
+      title: 'tap_upgrade'
+    }
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: Error
+  },
   {
     path: '/500',
     name: '500',
+    component: Error
+  },
+  {
+    path: '/502',
+    name: '502',
+    component: Error
+  },
+  {
+    path: '/504',
+    name: '504',
+    component: Error
+  },
+  {
+    path: '/error',
+    name: 'error',
     component: Error
   },
   {
@@ -310,7 +355,7 @@ const routes = [
     name: 'MigrateCreate',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
@@ -318,7 +363,7 @@ const routes = [
     name: 'MigrateEditor',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {
@@ -326,7 +371,7 @@ const routes = [
     name: 'MigrateViewer',
     component: MigrationEditor,
     meta: {
-      title: 'tap_edit_task'
+      title: 'task_manage_migrate'
     }
   },
   {

@@ -15,6 +15,8 @@ import VConfirm from '@/components/v-confirm'
 import { startTimeOnSite, startTimeOnPage } from '@/plugins/buried'
 import { VIcon, VButton } from '@tap/component'
 import FormBuilder from '@tap/component/src/form-builder'
+import { timeStampApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -74,6 +76,30 @@ export default ({ routes }) => {
       },
       render: h => h(App)
     }).$mount('#app')
+
+    // 路由守卫
+    router.beforeEach((to, from, next) => {
+      let domainName = document.domain
+      let removeReadonly = localStorage.getItem('removeReadonly')
+      if (
+        [
+          'connectionCreate',
+          'connectionsEdit',
+          'DataflowNew',
+          'DataflowEditor',
+          'MigrateCreate',
+          'MigrateEditor',
+          'MigrateEditor'
+        ].includes(to.name) &&
+        domainName === 'demo.cloud.tapdata.net' &&
+        !removeReadonly
+      ) {
+        next(false)
+      } else {
+        next()
+      }
+    })
+    return router
   }
   loading = window.loading({ fullscreen: true })
   let count = 0
@@ -87,6 +113,11 @@ export default ({ routes }) => {
 
         loading.close()
         init()
+
+        // 设置服务器时间
+        timeStampApi.get().then(t => {
+          Time.setTime(t)
+        })
       })
       .catch(err => {
         // 获取用户信息失败

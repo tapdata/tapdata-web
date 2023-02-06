@@ -15,7 +15,12 @@
             <div class="create-list__main ml-4">
               <div class="create-list__name mb-4 fs-6">{{ item.name }}</div>
               <div class="create-list__desc">{{ item.desc }}</div>
-              <ElLink type="primary" class="float-end pointer" @click="item.action">
+              <ElLink
+                type="primary"
+                class="float-end pointer"
+                :disabled="$disabledReadonlyUserBtn()"
+                @click="item.action"
+              >
                 <span>{{ item.btnName }}</span>
                 <VIcon class="ml-2" size="12">right</VIcon>
               </ElLink>
@@ -67,7 +72,10 @@
               <div class="color-primary text-center fs-1">
                 {{ item.value }}
               </div>
-              <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
+              <div
+                class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1"
+                v-if="item.list.length > 0"
+              >
                 <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
                   <span>{{ detail.label }}</span>
                   <span>:</span>
@@ -145,7 +153,6 @@
         <ul>
           <li>{{ $t('dfs_workbench_workbench_xinzengdongtaixin') }}</li>
           <li>{{ $t('dfs_workbench_workbench_xinzengDdl') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_xinzenghebingsuan') }}</li>
           <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi2') }}</li>
           <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi') }}</li>
         </ul>
@@ -154,6 +161,7 @@
         <el-button type="primary" @click="showUpgrade = false">{{ $t('button_cancel') }}</el-button>
       </span>
     </el-dialog>
+    <PaidUpgradeDialog :visible.sync="paidUpgradeVisible" :paidPlan="paidPlan"></PaidUpgradeDialog>
   </div>
   <RouterView v-else></RouterView>
 </template>
@@ -161,14 +169,15 @@
 <script>
 import i18n from '@/i18n'
 
-import { connectionsApi, taskApi } from '@tap/api'
-import { VIcon, Chart } from '@tap/component'
+import { connectionsApi, taskApi, paidApi } from '@tap/api'
+import { VIcon, Chart, PaidUpgradeDialog } from '@tap/component'
 import { numToThousands } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart },
+  components: { VIcon, Chart, PaidUpgradeDialog },
+  inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
     const $t = this.$t.bind(this)
@@ -234,18 +243,10 @@ export default {
           icon: 'task',
           value: 0,
           list: [
-            {
-              label: $t('task_initial_sync'),
-              value: 0
-            },
-            {
-              label: $t('task_sync_type_cdc'),
-              value: 0
-            },
-            {
-              label: $t('task_initial_sync_cdc'),
-              value: 0
-            }
+            // {
+            //   label: $t('workbench_overview_task_status'),
+            //   value: 0
+            // }
           ]
         }
       ], // 介绍列表
@@ -315,7 +316,10 @@ export default {
         }
       },
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
-      showUpgrade: false //版本升级弹窗
+      showUpgrade: false, //版本升级弹窗
+      //付费升级
+      paidUpgradeVisible: false,
+      paidPlan: ''
     }
   },
   mounted() {
@@ -373,18 +377,28 @@ export default {
       const stats = data.taskTypeStats
       if (stats) {
         agentList[2].value = stats.total
-        agentList[2].list[0].value = stats.initial_sync || 0
-        agentList[2].list[1].value = stats.cdc || 0
-        agentList[2].list[2].value = stats['initial_sync+cdc'] || 0
+        agentList[2].list[0].value = agentList[2].value || 0
       }
     },
     loadNotices() {
       this.notices = [
         {
+          id: 3,
+          type: '',
+          name: 'Tapdata Cloud 3.1.4 Release Notes',
+          time: '2023-01-3 21:00'
+        },
+        {
+          id: 2,
+          type: '',
+          name: 'Tapdata Cloud 3.1.3 Release Notes',
+          time: '2022-12-15 21:00'
+        },
+        {
           id: 1,
           type: '',
           name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
-          time: '2022-09-29 18:00'
+          time: '2022-12-03 18:00'
         }
       ]
     },
@@ -420,9 +434,16 @@ export default {
         }
       })
     },
-    createTask() {
-      this.$router.push({
-        name: 'MigrateCreate'
+    async createTask() {
+      this.paidPlan = await paidApi.getUserPaidPlan()
+      if (!this.paidPlan?.valid) {
+        this.paidUpgradeVisible = true
+        return
+      }
+      this.checkAgent(() => {
+        this.$router.push({
+          name: 'MigrateCreate'
+        })
       })
     },
     createConnection() {
@@ -432,6 +453,10 @@ export default {
       if (item?.id === 1) {
         //当前页弹窗
         this.showUpgrade = true
+      } else if (item?.id === 2) {
+        window.open('https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg')
+      } else if (item?.id === 3) {
+        window.open('https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA')
       } else {
         this.$router.push({
           name: 'WorkbenchNotice',
@@ -461,6 +486,7 @@ export default {
   min-height: 610px;
   min-width: 1100px;
   box-sizing: border-box;
+  padding: 0 24px 24px 24px;
   .pointer {
     cursor: pointer;
   }
@@ -499,7 +525,8 @@ export default {
 .create-list__desc {
   height: 110px;
   overflow: auto;
-  color: rgba(0, 0, 0, 0.49);
+  line-height: 22px;
+  color: map-get($fontColor, light);
 }
 .aside-main {
   height: 213px;
@@ -525,7 +552,7 @@ export default {
 .agent-list__detail {
   width: 232px;
   background-color: #fafafb;
-  color: rgba(0, 0, 0, 0.5);
+  color: map-get($fontColor, light);
   .agent-list__status {
     white-space: nowrap;
     margin-right: 8px;
@@ -545,7 +572,7 @@ export default {
   background: #f7f8f9;
 }
 .notice-list__time {
-  color: rgba(0, 0, 0, 0.5);
+  color: map-get($fontColor, light);
   white-space: nowrap;
   width: 80px;
   text-align: right;

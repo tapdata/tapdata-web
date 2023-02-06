@@ -13,7 +13,7 @@
             :input-min-width="32"
             @change="onNameInputChange"
           />
-          <TaskStatus :task="dataflow" class="ml-4" />
+          <TaskStatus :task="dataflow" :agent-map="agentMap" class="ml-4" />
         </div>
         <div class="flex align-items-center font-color-light mt-1">
           <span class="mr-2">{{ syncType[dataflow.type] }}</span>
@@ -98,6 +98,7 @@
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
+          :disabled="$disabledReadonlyUserBtn()"
           class="mx-2"
           size="medium"
           @click="$emit('reset')"
@@ -106,6 +107,7 @@
         </ElButton>
         <ElButton
           v-if="dataflow.disabledData && !dataflow.disabledData.edit"
+          :disabled="$disabledReadonlyUserBtn()"
           class="mx-2"
           size="medium"
           @click="$emit('edit')"
@@ -159,6 +161,7 @@ import dayjs from 'dayjs'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
 import { TaskStatus } from '@tap/business'
+import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
 
 export default {
   name: 'TopHeader',
@@ -177,6 +180,8 @@ export default {
     },
     quota: Object
   },
+
+  mixins: [syncTaskAgent],
 
   components: { VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
 

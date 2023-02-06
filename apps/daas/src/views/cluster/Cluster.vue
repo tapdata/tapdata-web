@@ -1,42 +1,24 @@
 <template>
-  <section class="clusterManagement-container">
+  <section class="clusterManagement-container isCardBox">
+    <!--api 集群管理 -->
+    <el-row :gutter="40" class="section-header py-6">
+      <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+    </el-row>
     <div class="section-wrap-box">
       <div class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
       </div>
       <div class="main">
-        <!-- <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              size="mini"
-              v-model="sourch"
-              :debounce="800"
-              :placeholder="$t('cluster_placeholderServer')"
-              @input="getDataApi"
-            >
-            </el-input>
-          </li>
-          <li>
-            <el-button type="text" class="restBtn" size="mini" @click="rest()">
-              {{ $t('button_reset') }}
-            </el-button>
-          </li>
-        </ul> -->
         <div class="content" v-if="waterfallData.length">
           <el-row :gutter="20" class="waterfall">
-            <el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
-              <div
-                :class="['grid-content', 'list-box', { 'mt-4': index > 0 }]"
-                v-for="(item, index) in element"
-                :key="item.ip"
-              >
+            <el-col class="list" :md="12" :sm="24" v-for="item in waterfallData" :key="item.id">
+              <div :class="['grid-content', 'list-box']">
                 <div class="list-box-header">
                   <div class="list-box-header-left">
                     <img class="mr-4" src="../../assets/images/serve.svg" />
                     <i class="circular mr-2 mt-2" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
                     <div class="list-box-header-main">
-                      <h2 class="name fs-7">
+                      <h2 class="name fs-6">
                         {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
                       </h2>
                       <div class="uuid fs-8 my-1">{{ item.systemInfo.uuid }}</div>
@@ -77,29 +59,37 @@
                 </div>
                 <!-- 监控数据 -->
                 <div class="list-box-footer">
-                  <el-row :gutter="20" class="list-box-footer-header">
-                    <el-col :md="9" :lg="10">
+                  <el-row :gutter="16" class="list-box-footer-header">
+                    <el-col :span="8">
                       <span class="txt fw-sub">{{ $t('cluster_name') }}</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span class="txt fw-sub">{{ $t('cluster_status') }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="7">
+                    <el-col :span="4">
+                      <span class="txt fw-sub">{{ $t('cluster_service_status') }}</span>
+                    </el-col>
+                    <el-col :span="8">
                       <div class="btn txt fw-sub">
                         {{ $t('column_operation') }}
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list">
-                    <el-col :md="9" :lg="10">
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="8">
                       <span class="txt fw-normal">{{ $t('cluster_manage_sys') }}</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span :class="['status-' + item.management.status, 'status']">{{
                         $t('cluster_' + item.management.status)
                       }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="8">
+                    <el-col :span="4">
+                      <span :class="['status-' + item.management.serviceStatus, 'status']">{{
+                        $t('cluster_' + item.management.serviceStatus)
+                      }}</span>
+                    </el-col>
+                    <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           type="text"
@@ -125,16 +115,21 @@
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list">
-                    <el-col :md="9" :lg="10">
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="8">
                       <span class="txt fw-normal">{{ $t('cluster_sync_gover') }}</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span :class="['status-' + item.engine.status, 'status']">{{
                         $t('cluster_' + item.engine.status)
                       }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="8">
+                    <el-col :span="4">
+                      <span :class="['status-' + item.engine.serviceStatus, 'status']">{{
+                        $t('cluster_' + item.engine.status)
+                      }}</span>
+                    </el-col>
+                    <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
@@ -161,16 +156,21 @@
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list">
-                    <el-col :md="9" :lg="10">
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="8">
                       <span class="txt fw-normal">API server</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span :class="['status-' + item.apiServer.status, 'status']">{{
                         $t('cluster_' + item.apiServer.status)
                       }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="8">
+                    <el-col :span="4">
+                      <span :class="['status-' + item.apiServer.serviceStatus, 'status']">{{
+                        $t('cluster_' + item.apiServer.status)
+                      }}</span>
+                    </el-col>
+                    <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
@@ -197,14 +197,17 @@
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list" v-for="child in item.customMonitorStatus" :key="child.id">
-                    <el-col :md="9" :lg="10" :offset="1">
+                  <el-row :gutter="16" class="data-list" v-for="child in item.customMonitorStatus" :key="child.id">
+                    <el-col :span="8">
                       <span class="txt">{{ child.name }}</span>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                       <span :class="child.status">{{ child.status }}</span>
                     </el-col>
-                    <el-col :md="9" :lg="8" :offset="5" v-readonlybtn="'Cluster_operation'">
+                    <el-col :span="4">
+                      <span :class="child.status">{{ child.status }}</span>
+                    </el-col>
+                    <el-col :md="8" v-readonlybtn="'Cluster_operation'">
                       <div class="btn">
                         <ElButton type="text" @click="delServe(child, item.status)">{{ $t('button_delete') }}</ElButton>
                         <ElDivider direction="vertical"></ElDivider>
@@ -329,27 +332,13 @@ export default {
   created() {
     this.getDataApi()
   },
+  watch: {
+    '$route.query'() {
+      this.searchParams = this.$route.query
+      this.getDataApi()
+    }
+  },
   methods: {
-    // 获取最大cpu、内存使用率
-    getUsageRate(processId) {
-      let where = {
-        process_id: {
-          inq: processId
-        }
-      }
-      workerApi.get({ filter: JSON.stringify({ where: where }) }).then(data => {
-        let items = data?.items || []
-        if (items?.length) {
-          let metricValuesData = []
-          items.forEach(item => {
-            if (item.metricValues) {
-              metricValuesData.push(item)
-            }
-          })
-          this.processIdData = metricValuesData
-        }
-      })
-    },
     // 提交
     async submitForm() {
       let getFrom = this.$refs.childRules.ruleForm
@@ -513,17 +502,9 @@ export default {
       this.canUpdate = false
     },
     async getVersion(datas) {
-      for (let i = 0; i < datas.length; i++) datas[i].canUpdate = false //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
       let [...waterfallData] = datas
       let [...newWaterfallData] = [[], []]
       waterfallData.forEach((item, index) => {
-        this.processIdData.forEach(processId => {
-          if (item.systemInfo.process_id === processId.process_id) {
-            processId.metricValues.CpuUsage = (processId.metricValues.CpuUsage * 100).toFixed(2) + '%'
-            processId.metricValues.HeapMemoryUsage = (processId.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
-            this.$set(item, 'metricValues', processId.metricValues)
-          }
-        })
         if (index % 2) {
           newWaterfallData[1].push(item)
         } else {
@@ -538,7 +519,16 @@ export default {
         this.getDataApi()
       })
     },
-
+    // 获取最大cpu、内存使用率
+    getUsageRate(processId) {
+      let where = {
+        process_id: {
+          inq: processId
+        },
+        worker_type: 'connector'
+      }
+      return workerApi.get({ filter: JSON.stringify({ where: where }) })
+    },
     // 获取数据
     async getDataApi() {
       let params = { index: 1 }
@@ -569,22 +559,33 @@ export default {
           }
         }
       }
-      clusterApi.get(params).then(data => {
-        let items = data?.items || []
-        let processId = []
-        if (items?.length > 0) {
-          items.forEach(item => {
-            if (item.systemInfo.process_id) {
-              processId.push(item.systemInfo.process_id)
-            }
-          })
+      let clusterData = await clusterApi.get(params)
+      clusterData = clusterData?.items || []
+      let processId = clusterData.map(it => it?.systemInfo?.process_id)
+      let workerData = await this.getUsageRate(processId)
+      //处理worker 数据
+      workerData = workerData?.items || []
+      let metricValuesData = {}
+      if (workerData?.length) {
+        workerData.forEach(item => {
+          if (item.metricValues) {
+            item.metricValues.CpuUsage = (item.metricValues.CpuUsage * 100).toFixed(2) + '%'
+            item.metricValues.HeapMemoryUsage = (item.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
+          }
+          metricValuesData[item.process_id] = item.metricValues
+        })
+      }
+      //匹配CPU使用率
+      for (let i = 0; i < clusterData.length; i++) {
+        clusterData[i].canUpdate = false //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
+        clusterData[i]['metricValues'] = metricValuesData[clusterData[i].systemInfo?.process_id]
+          ? metricValuesData[clusterData[i].systemInfo?.process_id]
+          : { CpuUsage: '-', HeapMemoryUsage: '-' }
+        if (clusterData[i]?.engine?.status !== 'running') {
+          clusterData[i]['metricValues'] = { CpuUsage: '-', HeapMemoryUsage: '-' }
         }
-
-        // 获取最大内存、cpu使用率
-        this.getUsageRate(processId)
-        //自动升级
-        this.getVersion(items)
-      })
+      }
+      this.waterfallData = clusterData
     },
     // 关闭弹窗并且清空验证
     closeDialogForm() {
@@ -669,6 +670,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .clusterManagement-container {
+  height: 100%;
+  background-color: #eff1f4;
   .header {
     padding: 15px 20px;
     background: map-get($bgColor, white);
@@ -808,7 +811,7 @@ export default {
               font-size: 12px;
               background-color: map-get($bgColor, normal);
               .txt {
-                font-size: 12px;
+                font-size: $fontBaseTitle;
                 color: map-get($fontColor, light);
               }
             }
@@ -824,7 +827,7 @@ export default {
               .txt {
                 display: inline-block;
                 width: 120px;
-                font-size: 12px;
+                font-size: $fontBaseTitle;
                 color: map-get($fontColor, dark);
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -833,7 +836,7 @@ export default {
                 }
               }
               .status {
-                padding: 3px 10px;
+                padding: 5px 10px;
                 font-weight: 500;
                 border-radius: 2px;
               }

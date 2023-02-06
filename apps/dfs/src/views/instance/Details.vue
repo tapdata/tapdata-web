@@ -17,7 +17,7 @@
         </div>
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
-          <div><StatusTag type="text" :status="agent.status"></StatusTag></div>
+          <div><StatusTag type="text" :status="agent.status" default-status="Stopped"></StatusTag></div>
         </div>
       </div>
       <div class="button-line container-item border-item pt-4 pb-5">
@@ -34,18 +34,100 @@
           </div>
         </div>
       </div>
+      <div class="mt-4">
+        <ElButton size="mini" type="primary" :disabled="!showUpload" @click="open(agent.id, agent.status)">{{
+          $t('dfs_instance_instance_rizhishangchuan')
+        }}</ElButton>
+      </div>
     </div>
+    <!-- 日志上传   -->
+    <ElDialog
+      :visible.sync="downloadDialog"
+      :show-close="false"
+      width="1250px"
+      custom-class="download-dialog"
+      append-to-body
+    >
+      <div slot="default" class="flex justify-content-between">
+        <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
+        <div>
+          <label class="mr-4">{{ $t('dfs_instance_instance_upload_days_label') }}</label>
+          <el-select class="mr-4" v-model="uploadDays">
+            <el-option v-for="item in days" :label="item.label" :value="item.value" :key="item.value"></el-option>
+          </el-select>
+          <el-button
+            class="mb-4 mr-4"
+            type="primary"
+            :loading="loadingUpload"
+            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stop'"
+            @click="handleUpload(currentAgentId)"
+            >{{ btnTxt }}</el-button
+          >
+          <VIcon @click="handleClose">close</VIcon>
+        </div>
+      </div>
+
+      <VTable
+        :data="downloadList"
+        :columns="downloadListCol"
+        v-loading="loadingLogTable"
+        ref="tableName"
+        :has-pagination="false"
+      >
+        <template slot="status" slot-scope="scope">
+          <span class="status-block" :class="['status-' + scope.row.status]"
+            >{{ statusMaps[scope.row.status].text }}
+            <span v-if="scope.row.uploadRatio && scope.row.uploadRatio !== 100">（{{ scope.row.uploadRatio }}%） </span>
+          </span>
+        </template>
+        <template slot="fileSize" slot-scope="scope">
+          <span>{{ handleUnit(scope.row.fileSize) }}</span>
+        </template>
+        <template slot="operation" slot-scope="scope">
+          <ElButton
+            size="mini"
+            type="text"
+            :disabled="[0, 2, 3].includes(scope.row.status)"
+            @click="handleDownload(scope.row)"
+            >{{ $t('dfs_instance_instance_xiazai') }}</ElButton
+          >
+          <ElButton
+            size="mini"
+            type="text"
+            :disabled="scope.row.status === 0"
+            @click="handleDeleteUploadLog(scope.row)"
+            >{{ $t('button_delete') }}</ElButton
+          >
+        </template>
+      </VTable>
+      <span slot="footer" class="dialog-footer">
+        <el-pagination
+          @current-change="getDownloadList"
+          :current-page.sync="currentPage"
+          :page-sizes="[20, 50, 100]"
+          :page-size="pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="downloadTotal"
+        >
+        </el-pagination>
+      </span>
+    </ElDialog>
   </ElDrawer>
 </template>
 
 <script>
-import { VIcon } from '@tap/component'
-import { StatusTag } from '@tap/business'
+import { VIcon, VTable } from '@tap/component'
+import StatusTag from '@/components/StatusTag'
 import timeFunction from '@/mixins/timeFunction'
+import { AGENT_STATUS_MAP_EN } from '../../const'
+import i18n from '@/i18n'
+import { handleUnit } from '@/util'
+import { measurementApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'Details',
-  components: { VIcon, StatusTag },
+  components: { VIcon, StatusTag, VTable },
   mixins: [timeFunction],
   props: {
     value: Boolean,
@@ -86,7 +168,7 @@ export default {
               key: 'version'
             },
             {
-              label: $t('agent_key') + $t('agent_create_time'),
+              label: $t('agent_create_time'),
               key: 'createAt'
             }
           ]
@@ -109,6 +191,18 @@ export default {
             {
               label: $t('agent_detail_host_cpu_memory'),
               key: 'totalmem'
+            },
+            {
+              label: $t('agent_detail_cpu_utilization'),
+              key: 'cpuUsage'
+            },
+            {
+              label: $t('agent_detail_mem_utilization'),
+              key: 'memoryRate'
+            },
+            {
+              label: $t('agent_detail_gc_rate'),
+              key: 'gcRate'
             }
           ]
         },
@@ -124,6 +218,75 @@ export default {
               key: 'logDir'
             }
           ]
+        }
+      ],
+      //日志下载
+      downloadDialog: false,
+      downloadListCol: [
+        {
+          label: i18n.t('dfs_instance_instance_wenjianming'),
+          prop: 'id'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_wenjiandaxiao'),
+          slotName: 'fileSize'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_shangchuanshijian'),
+          prop: 'createAt',
+          dataType: 'time'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_wenjianzhuangtai'),
+          slotName: 'status'
+        },
+
+        {
+          label: i18n.t('dfs_instance_instance_wenjianxiazai'),
+          slotName: 'operation'
+        }
+      ],
+      downloadList: [],
+      currentAgentId: '',
+      currentStatus: '',
+      downloadTotal: 0,
+      currentPage: 1,
+      pageSize: 10,
+      statusMaps: AGENT_STATUS_MAP_EN,
+      timer: null,
+      uploadTimer: null,
+      loadingLogTable: false,
+      loadingUpload: false,
+      btnTxt: i18n.t('dfs_instance_instance_upload_btn'),
+      disabledUploadDialog: false, //控制agent 上传频率 同时只能一个在上传 在弹窗
+      tapdataAgentStatus: '',
+      showUpload: 1,
+      uploadAgentLog: '',
+      uploadDays: 3,
+      days: [
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 1
+          }),
+          value: 1
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 3
+          }),
+          value: 3
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 7
+          }),
+          value: 7
+        },
+        {
+          label: $t('dfs_instance_instance_upload_days', {
+            val: 15
+          }),
+          value: 15
         }
       ]
     }
@@ -144,12 +307,17 @@ export default {
       this.loading = true
       this.$axios
         .get('api/tcm/agent/' + this.detailId)
-        .then(data => {
+        .then(async data => {
           if (data) {
+            const measurement = await this.loadMeasurementData(data.tmInfo.agentId)
             // 是否显示版本号：待部署不显示
             if (!this.showVersionFlag(data) && data.spec) {
               data.spec.version = ''
             }
+            //低于V3.1.3版本不显示日志上传下载功能
+            this.showUpload = this.handleVersion(data.spec.version)
+            //检查tapdata agent 状态
+            this.tapdataAgentStatus = data?.tapdataAgentStatus
             Object.assign(data, data?.metric || {}, data?.spec || {}, data?.tmInfo || {})
             data.hostname = data?.tmInfo?.hostname
             data.createAt = this.formatTime(data.createAt)
@@ -175,14 +343,55 @@ export default {
               }
               data.totalmem = size
             }
-            this.agent = Object.assign(this.agent, data)
+            this.agent = Object.assign(this.agent, data, measurement)
             this.$emit('load-data', this.agent)
+            this.uploadAgentLog = data?.uploadAgentLog || ''
           }
         })
         .finally(() => {
           this.loading = false
         })
     },
+
+    async loadMeasurementData(engineId) {
+      const data = await measurementApi.queryV2({
+        startAt: Time.now(),
+        endAt: Time.now(),
+        samples: {
+          data: {
+            tags: {
+              type: 'engine',
+              engineId
+            },
+            fields: ['memoryRate', 'cpuUsage', 'gcRate'],
+            type: 'instant'
+          }
+        }
+      })
+      const defaultVal = '-'
+      if (!data?.samples?.data?.[0])
+        return {
+          cpuUsage: defaultVal,
+          memoryRate: defaultVal,
+          gcRate: defaultVal
+        }
+      const { cpuUsage, gcRate, memoryRate } = data.samples.data[0]
+      return {
+        cpuUsage:
+          typeof cpuUsage === 'number'
+            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal,
+        memoryRate:
+          typeof memoryRate === 'number'
+            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal,
+        gcRate:
+          typeof gcRate === 'number'
+            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            : defaultVal
+      }
+    },
+
     showVersionFlag(row) {
       let { status, tmInfo } = row
       return !(status === 'Creating' && !tmInfo?.pingTime)
@@ -192,6 +401,135 @@ export default {
     },
     closedFnc() {
       this.$emit('input', this.drawer).$emit('closed')
+      clearTimeout(this.timer)
+      clearTimeout(this.uploadTimer)
+      this.uploadTimer = null
+      this.timer = null
+    },
+    //日志上传
+    handleUpload(id) {
+      this.loadingUpload = true
+      this.btnTxt = i18n.t('dfs_instance_details_shangchuanzhong')
+      this.$axios
+        .post('api/tcm/uploadLog', { agentId: id, uploadDays: this.uploadDays })
+        .then(() => {
+          //主動刷新列表
+          clearTimeout(this.timer)
+          this.getDownloadList()
+        })
+        .finally(() => {
+          this.loadingUpload = false
+        })
+    },
+    handleUnit(limit) {
+      return handleUnit(limit)
+    },
+    //打开日志列表
+    open(id, status) {
+      this.downloadDialog = true
+      this.loadingLogTable = true
+      this.currentAgentId = id
+      this.currentStatus = status
+      this.getDownloadList()
+    },
+    handleClose() {
+      this.downloadDialog = false
+      this.loadingLogTable = false
+      clearTimeout(this.timer)
+      clearTimeout(this.uploadTimer)
+      this.timer = null
+      this.uploadTimer = null
+    },
+    //日志列表
+    getDownloadList(page) {
+      if (page) {
+        this.loadingLogTable = true
+      }
+      let filter = {
+        where: {
+          agentId: this.currentAgentId,
+          isDeleted: false
+        },
+        page: this.currentPage,
+        size: this.pageSize,
+        sort: ['createAt desc']
+      }
+      this.$axios
+        .get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(res => {
+          this.loadingLogTable = false
+          this.downloadList = res?.items || []
+          this.downloadTotal = res?.total || 0
+          //当前列表中是否有上传中的
+          let uploading = this.downloadList?.length > 0 ? this.downloadList.filter(it => it.status === 0) : []
+          this.disabledUploadDialog = uploading?.length > 0
+          if (!this.disabledUploadDialog) {
+            this.loadingUpload = false
+            this.btnTxt = i18n.t('dfs_instance_instance_rizhishangchuan')
+          }
+          this.timer = setTimeout(() => {
+            this.getDownloadList()
+          }, 10000)
+        })
+        .finally(() => {
+          this.loadingLogTable = false
+          this.loadingUpload = false
+        })
+    },
+    //删除
+    handleDeleteUploadLog(row) {
+      this.$axios.post('api/tcm/deleteUploadLog', { agentId: this.currentAgentId, id: row.id }).then(() => {
+        this.$message.success(i18n.t('dfs_instance_instance_shanchuchenggong'))
+        //主動刷新列表
+        clearTimeout(this.timer)
+        this.getDownloadList()
+      })
+    },
+    //日志下载
+    handleDownload(row) {
+      this.$axios.get('api/tcm/downloadLog?id=' + row.id).then(data => {
+        let { accessKeyId, accessKeySecret, securityToken, region, uploadAddr, bucket } = data
+        //ssl 凭证
+        const OSS = require('ali-oss')
+        const client = new OSS({
+          accessKeyId: accessKeyId,
+          accessKeySecret: accessKeySecret,
+          region: region,
+          bucket: bucket,
+          stsToken: securityToken
+        })
+        window.location.href = client.signatureUrl(uploadAddr)
+      })
+    },
+    //比较两个版本号
+    handleVersion(version) {
+      let v1 = '3.1.3'.split('.')
+      //去掉V
+      let v2 = version.substr(1)
+      //将- 替换成 .
+      v2 = v2.replace('-', '.')
+      v2 = v2.split('.')
+      const len = Math.max(v1.length, v2.length)
+      // 调整两个版本号位数相同
+      while (v1.length < len) {
+        v1.push('0')
+      }
+      while (v2.length < len) {
+        v2.push('0')
+      }
+
+      // 循环判断每位数的大小
+      for (let i = 0; i < len; i++) {
+        const num1 = parseInt(v1[i])
+        const num2 = parseInt(v2[i])
+
+        if (num1 > num2) {
+          return false
+        } else if (num1 < num2) {
+          return true
+        }
+      }
+      return true
     }
   }
 }
@@ -226,5 +564,37 @@ export default {
 .box-line__value {
   margin-top: 8px;
   color: #000;
+}
+.status-block {
+  display: inline-block;
+  min-width: 60px;
+  padding: 3px 10px;
+  text-align: center;
+  font-weight: 500;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.status-1 {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.status-2 {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+.status-3 {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+::v-deep {
+  .download-dialog {
+    .el-dialog__body {
+      padding: 0 20px 40px 20px;
+      height: 470px;
+    }
+    .el-pager li.active {
+      color: map-get($color, primary);
+    }
+  }
 }
 </style>

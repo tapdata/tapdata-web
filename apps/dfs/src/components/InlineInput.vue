@@ -9,15 +9,22 @@
         type="primary"
         class="inline-input-link"
         style="margin-left: 5px"
+        :disabled="$disabledReadonlyUserBtn()"
         @click="editing = true"
       >
         {{ editText }}
       </ElLink>
-      <ElLink v-else class="inline-input-link" style="margin-left: 5px" @click="editing = true">
+      <ElLink
+        v-else
+        class="inline-input-link"
+        style="margin-left: 5px"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="editing = true"
+      >
         <VIcon color="#999" v-bind="iconConfig">edit-outline</VIcon>
       </ElLink>
     </span>
-    <span class="inline-input-body" v-show="editing">
+    <span class="inline-input-body gap-2" v-show="editing">
       <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :value="disabled">
         <ElInput
           class="input"
@@ -29,28 +36,24 @@
         ></ElInput>
       </ElTooltip>
       <template v-if="type === 'icon'">
-        <ElButton class="icon-button ml-4" size="medium" :disabled="disabled" @click="save"
+        <ElButton class="icon-button min-w-0" size="medium" :disabled="disabled" @click="save"
           ><VIcon size="12">check</VIcon></ElButton
         >
-        <ElButton class="icon-button ml-2" size="medium" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
+        <ElButton class="icon-button min-w-0 m-0" size="medium" @click="cancel"
+          ><VIcon size="12">close</VIcon></ElButton
+        >
       </template>
       <template v-else-if="type === 'text'">
-        <ElButton type="text" class="icon-button ml-4" size="medium" :disabled="disabled" @click="save">{{
+        <ElButton type="text" class="icon-button min-w-0" size="medium" :disabled="disabled" @click="save">{{
           saveText
         }}</ElButton>
-        <ElButton type="text" class="icon-button ml-2" size="medium" @click="cancel">{{ cancelText }}</ElButton>
+        <ElButton type="text" class="icon-button m-0 min-w-0" size="medium" @click="cancel">{{ cancelText }}</ElButton>
       </template>
       <template v-else>
-        <ElButton
-          class="inline-input-button"
-          style="margin-left: 10px"
-          type="primary"
-          size="mini"
-          :disabled="disabled"
-          @click="save"
-          >{{ $t('button_save') }}</ElButton
-        >
-        <ElButton class="inline-input-button" size="mini" @click="cancel">{{ $t('button_cancel') }}</ElButton>
+        <ElButton class="inline-input-button" type="primary" size="mini" :disabled="disabled" @click="save">{{
+          $t('button_save')
+        }}</ElButton>
+        <ElButton class="inline-input-button m-0" size="mini" @click="cancel">{{ $t('button_cancel') }}</ElButton>
       </template>
     </span>
   </div>
@@ -173,6 +176,10 @@ export default {
     &:hover {
       border-color: #d9d9d9;
       background-color: #f5f6f7;
+    }
+
+    > span {
+      display: contents;
     }
   }
   .inline-input-button {

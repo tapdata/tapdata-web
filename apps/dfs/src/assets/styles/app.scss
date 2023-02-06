@@ -1,13 +1,13 @@
 @import '~@tap/assets/styles/var';
 @import '~@tap/assets/styles/reboot';
 @import '~@tap/assets/styles/utilities';
-@import '~@tap/assets//fonts/DIN/index.css';
+@import '~@tap/assets/fonts/DIN/index.css';
 
 @import 'overrides';
 
 .g-panel-container {
   background: #fff;
-  padding: 24px;
+  padding: 8px 24px 24px 24px;
   border-radius: 4px;
   box-sizing: border-box;
 }
@@ -38,7 +38,7 @@
 .zsiq_floatmain {
   display: block !important;
 }
-.siq_bR{
+.siq_bR {
   bottom: 75px !important;
   right: 10px;
 }
@@ -160,4 +160,9 @@
 }
 .level-error {
   color: #d44d4d;
+}
+
+body.hide-chart > [data-id='zsalesiq'] {
+  display: none !important;
+  visibility: hidden !important;
 }

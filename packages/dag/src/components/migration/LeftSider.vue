@@ -14,7 +14,14 @@
                 <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
                   >search-outline</VIcon
                 >
-                <VIcon size="20" class="click-btn" @mousedown.stop @click.stop="creat">add-outline</VIcon>
+                <VIcon
+                  size="20"
+                  class="click-btn"
+                  :class="{ 'click-btn-disabled': stateIsReadonly }"
+                  @mousedown.stop
+                  @click.stop="creat"
+                  >add-outline</VIcon
+                >
               </template>
             </div>
           </template>
@@ -62,7 +69,8 @@
                       onStop
                     }"
                     :key="db.id"
-                    class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
+                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    :class="{ grabbable: !stateIsReadonly }"
                   >
                     <div class="flex-shrink-0 mr-2 db-item-icon">
                       <NodeIcon :node="db" />
@@ -122,7 +130,8 @@
               onDrop,
               onStop
             }"
-            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-2"
+            :class="{ grabbable: !stateIsReadonly }"
           >
             <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
             <OverflowTooltip
@@ -132,6 +141,7 @@
               placement="top"
               :open-delay="400"
             />
+            <VIcon class="ml-1" v-if="n.beta" size="32">beta</VIcon>
           </div>
         </ElScrollbar>
       </ElCollapseItem>
@@ -186,6 +196,7 @@ import { mapGetters } from 'vuex'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
 import { ConnectionTypeSelector } from '@tap/business'
+import { getInitialValuesInBySchema } from '@tap/form'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
@@ -247,7 +258,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor']),
+    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
 
     noDBMore() {
       return this.dbPage >= Math.ceil(this.dbTotal / 20)
@@ -264,8 +275,8 @@ export default {
     }
   },
 
-  created() {
-    this.getDatabaseType()
+  async created() {
+    await this.getDatabaseType()
 
     this.init()
   },
@@ -288,10 +299,10 @@ export default {
 
     // 创建连接
     creat() {
-      this.connectionDialog = true
+      this.connectionDialog = !this.stateIsReadonly
     },
-    getDatabaseType() {
-      databaseTypesApi.get().then(res => {
+    async getDatabaseType() {
+      await databaseTypesApi.get().then(res => {
         if (res) {
           this.getPdkData(res)
         }
@@ -315,6 +326,8 @@ export default {
     },
 
     getDbFilter() {
+      const databaseTypeList =
+        this.database?.map(t => t.type).filter(t => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
       const filter = {
         page: this.dbPage,
         size: 20,
@@ -342,12 +355,17 @@ export default {
           capabilities: 1,
           config: 1
         },
-        order: ['status DESC', 'name ASC']
+        order: ['status DESC', 'name ASC'],
+        where: {
+          database_type: {
+            in: databaseTypeList
+          }
+        }
       }
       const txt = escapeRegExp(this.dbSearchTxt.trim())
 
       if (txt) {
-        filter.where = { name: { like: txt, options: 'i' } }
+        filter.where.name = { like: txt, options: 'i' }
       }
 
       return { filter: JSON.stringify(filter) }
@@ -431,6 +449,7 @@ export default {
     },
 
     onStart(item) {
+      if (this.stateIsReadonly) return false
       const node = this.getNodeProps(item)
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const ins = getResourceIns(node)
@@ -444,6 +463,7 @@ export default {
     },
 
     onProcessorStart(item) {
+      if (this.stateIsReadonly) return false
       const node = item
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
@@ -490,12 +510,20 @@ export default {
     },
 
     getNodeProps(item) {
+      // 设置pdk节点配置默认值
+      const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
+      let nodeConfig
+      if (pdkProperties) {
+        nodeConfig = getInitialValuesInBySchema(pdkProperties, {})
+      }
+
       return {
         name: item.name,
         type: 'database',
         databaseType: item.database_type,
         connectionId: item.id,
-        migrateTableSelectType: 'all',
+        migrateTableSelectType: 'custom',
+        nodeConfig,
         attrs: {
           connectionName: item.name,
           connectionType: item.connection_type,
@@ -597,6 +625,15 @@ $hoverBg: #eef3ff;
         color: map-get($color, primary);
         background: $hoverBg;
       }
+
+      &-disabled {
+        color: currentColor;
+        cursor: not-allowed;
+        &:hover {
+          color: currentColor;
+          background: rgba(242, 243, 245);
+        }
+      }
     }
 
     .badge {
@@ -629,7 +666,7 @@ $hoverBg: #eef3ff;
     .node-item {
       height: 42px;
       margin-bottom: 4px;
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       line-height: normal;
       &.active {
         background-color: #eef3ff;
@@ -655,7 +692,7 @@ $hoverBg: #eef3ff;
         overflow: hidden;
         > :not(:last-child) {
           margin-bottom: 4px;
-          font-size: 13px;
+          font-size: $fontBaseTitle;
         }
 
         > :last-child {
@@ -785,7 +822,7 @@ $hoverBg: #eef3ff;
     }
 
     &-txt {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
       line-height: 1;
       white-space: nowrap;
     }

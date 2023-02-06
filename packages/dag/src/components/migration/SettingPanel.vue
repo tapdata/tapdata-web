@@ -12,6 +12,7 @@ import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
 import { taskApi } from '@tap/api'
+import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 
 export default observer({
   name: 'SettingPanel',
@@ -23,7 +24,6 @@ export default observer({
 
   data() {
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
-    this.getAllNode()
     let values = this.settings
     values.isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
@@ -33,7 +33,8 @@ export default observer({
           return new Promise(resolve => {
             this.handleCheckName(resolve, value)
           })
-        }
+        },
+        getPickerOptionsBeforeTime
       },
 
       schema: {
@@ -113,7 +114,7 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
                         default: false,
-                        target: '*(crontabExpression,syncPoints)',
+                        target: '*(syncPoints)',
                         fulfill: {
                           state: {
                             visible: '{{$self.value}}'
@@ -140,31 +141,47 @@ export default observer({
                           }
                         }
                       },
-                      /*crontabExpression: {
+                      crontabExpressionFlag: {
                         //调度表达式
-                        title: '重复策略', //定期调度任务
+                        title: this.$t('packages_dag_task_setting_crontabExpressionFlag'), //定期调度任务
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: this.$t('packages_dag_task_setting_cron_tip')
+                        },
+                        'x-component': 'Switch',
+                        default: false,
+                        'x-reactions': {
+                          dependencies: ['type'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      crontabExpression: {
                         type: 'string',
+                        required: 'true',
                         'x-validator': {
                           cron: true,
                           message: 'Cron表达式格式有误'
                         },
                         'x-decorator': 'FormItem',
-                        'x-component': 'Input.TextArea',
+                        'x-component': 'Input',
                         'x-component-props': {
                           placeholder: this.$t('packages_dag_task_setting_cron_expression')
                         },
-                        'x-decorator-props': {
-                          tooltip: this.$t('packages_dag_task_setting_cron_tip')
-                        },
+                        description: this.$t('packages_dag_task_setting_cron_tip'),
                         'x-reactions': {
-                          dependencies: ['type', 'planStartDateFlag'],
+                          dependencies: ['type', 'crontabExpressionFlag'],
                           fulfill: {
                             state: {
                               display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
                             }
                           }
                         }
-                      },*/
+                      },
                       syncPoints: {
                         title: this.$t('packages_dag_task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',
@@ -185,12 +202,34 @@ export default observer({
                         items: {
                           type: 'object',
                           properties: {
+                            nodeName: {
+                              type: 'string',
+                              'x-component': 'PreviewText.Input',
+                              'x-reactions': {
+                                dependencies: ['.connectionName'],
+                                fulfill: {
+                                  schema: {
+                                    'x-component-props.content': `{{$deps[0] + '('+ $self.value + ')'}}`
+                                  }
+                                }
+                              }
+                            },
+                            hiddenPointType: {
+                              'x-display': 'hidden',
+                              type: 'boolean',
+                              'x-component': 'PreviewText.Input'
+                            },
+                            connectionName: {
+                              'x-display': 'hidden',
+                              type: 'string',
+                              'x-component': 'PreviewText.Input'
+                            },
                             pointType: {
                               type: 'string',
+                              'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze'),
-                                style: 'margin-bottom:10px'
+                                placeholder: i18n.t('packages_dag_components_formpanel_qingxuanze')
                               },
                               default: 'current',
                               enum: [
@@ -206,25 +245,47 @@ export default observer({
                                   label: this.$t('packages_dag_dataFlow_SyncInfo_currentType'),
                                   value: 'current'
                                 }
+                              ],
+                              'x-reactions': [
+                                {
+                                  dependencies: ['.hiddenPointType'],
+                                  fulfill: {
+                                    state: {
+                                      disabled: `{{$deps[0]}}`
+                                    }
+                                  }
+                                }
                               ]
                             },
                             dateTime: {
                               type: 'string',
                               required: 'true',
+                              'x-decorator': 'FormItem',
                               'x-component': 'DatePicker',
                               'x-component-props': {
                                 type: 'datetime',
                                 format: 'yyyy-MM-dd HH:mm:ss',
-                                valueFormat: 'timestamp'
+                                valueFormat: 'timestamp',
+                                popperClass: 'setting-panel__dateTimePicker'
                               },
-                              'x-reactions': {
-                                dependencies: ['.pointType'],
-                                fulfill: {
-                                  state: {
-                                    visible: '{{$deps[0] !== "current"}}'
+                              'x-reactions': [
+                                {
+                                  dependencies: ['.pointType'],
+                                  fulfill: {
+                                    state: {
+                                      visible: '{{$deps[0] !== "current"}}'
+                                    }
+                                  }
+                                },
+                                {
+                                  dependencies: ['.pointType'],
+                                  fulfill: {
+                                    schema: {
+                                      'x-component-props.pickerOptions': `{{$deps[0] === "localTZ" ? getPickerOptionsBeforeTime($self.value, Date.now()) : null}}`
+                                    }
                                   }
                                 }
-                              }
+                              ]
                             }
                           }
                         }
@@ -270,7 +331,7 @@ export default observer({
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$values.syncType === "migrate" && $values.isDaas}}'
+                              visible: '{{$values.syncType === "migrate"}}'
                             }
                           }
                         }
@@ -444,6 +505,29 @@ export default observer({
     accessNodeProcessList() {
       if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
       return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
+    },
+
+    sourceNodes() {
+      return this.allNodes
+        .filter(node => node.$outputs.length && !node.$inputs.length)
+        .map(node => ({
+          nodeId: node.id,
+          nodeName: node.name,
+          hiddenPointType: node?.cdcMode === 'polling', //源节点开启了日志轮询则禁用增量采集时刻配置
+          connectionId: node.connectionId,
+          connectionName: node.attrs.connectionName
+        }))
+    },
+
+    systemTimeZone() {
+      let timeZone = new Date().getTimezoneOffset() / 60
+      let systemTimeZone = ''
+      if (timeZone > 0) {
+        systemTimeZone = 0 - timeZone
+      } else {
+        systemTimeZone = '+' + -timeZone
+      }
+      return systemTimeZone
     }
   },
 
@@ -476,6 +560,34 @@ export default observer({
         })
       },
       immediate: true
+    },
+
+    sourceNodes(v) {
+      const timeZone = this.systemTimeZone
+      const oldPoints = this.settings.syncPoints
+      const oldPointsMap = oldPoints?.length
+        ? oldPoints.reduce((map, point) => {
+            if (point.nodeId) map[point.nodeId] = point
+            return map
+          }, {})
+        : {}
+      const syncPoints = this.sourceNodes.map(item => {
+        const old = oldPointsMap[item.nodeId]
+        const point = {
+          ...item,
+          timeZone,
+          pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+          dateTime: ''
+        }
+        if (old && !item.hiddenPointType) {
+          Object.assign(point, {
+            pointType: old.pointType,
+            dateTime: old.dateTime
+          })
+        }
+        return point
+      })
+      this.settings.syncPoints = syncPoints
     }
   },
 
@@ -544,11 +656,20 @@ export default observer({
       padding-top: 0;
     }
     .formily-element-form-item-label label {
-      font-size: 12px;
+      font-size: $fontBaseTitle;
     }
     .el-collapse-item__header {
-      font-size: 14px;
+      font-size: $fontBaseTitle;
       font-weight: 500;
+    }
+  }
+}
+</style>
+<style lang="scss">
+.setting-panel__dateTimePicker {
+  .el-picker-panel__footer {
+    .el-button--text {
+      display: none;
     }
   }
 }

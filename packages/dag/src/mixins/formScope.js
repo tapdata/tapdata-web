@@ -99,6 +99,10 @@ export default {
 
         $isDaas: process.env.VUE_APP_PLATFORM === 'DAAS', //区分云版、企业版
 
+        $hasPdkConfig: pdkHash => {
+          return !!this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
+        },
+
         findNodeById: id => {
           return this.$store.state.dataflow.NodeMap[id]
         },
@@ -286,6 +290,16 @@ export default {
           }
           const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
+          const table = filter.where.original_name?.like
+          if (table && !data.items.includes(table)) {
+            const res = await metadataInstancesApi.checkTableExist({
+              connectionId: filter.where['source.id'],
+              tableName: table
+            })
+            if (res?.exist) {
+              data.items.unshift(table)
+            }
+          }
           return data
         },
 
@@ -337,7 +351,7 @@ export default {
          */
         handlerSyncDatabaseChange: (form, item) => {
           const field = form.query('connectionIdWrap.clipboardButton').take()
-          field.setComponentProps({
+          field?.setComponentProps({
             content: item.name
           })
           const connectionType = form.getValuesIn('attrs.connectionType')
@@ -361,7 +375,9 @@ export default {
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
-              isPrimaryKey: item.primary_key_position > 0
+              isPrimaryKey: item.primary_key_position > 0,
+              indicesUnique: !!item.indicesUnique,
+              type: item.data_type
             }))
             .filter(item => !item.is_deleted)
         },
@@ -376,7 +392,17 @@ export default {
           try {
             await this.afterTaskSaved()
             const data = await metadataInstancesApi.nodeSchema(nodeId)
-            const fields = data?.[0]?.fields || []
+            let fields = data?.[0]?.fields || []
+            const indices = (data?.[0]?.indices || []).filter(t => t.unique)
+            let columns = []
+            indices.forEach(el => {
+              columns = [...columns, ...el.columns.map(t => t.columnName)]
+            })
+            fields.forEach(el => {
+              if (columns.includes(el.field_name)) {
+                el.indicesUnique = true
+              }
+            })
             return fields
           } catch (e) {
             // eslint-disable-next-line no-console

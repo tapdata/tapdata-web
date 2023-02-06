@@ -94,6 +94,10 @@
         <div class="ml-2">{{ $t('dfs_agent_download_upgradeversion_ruguoninbushu') }}</div>
         <div>{{ $t('dfs_agent_download_upgradeversion_dianjishiliming') }}</div>
         <div>{{ $t('dfs_agent_download_upgradeversion_dengluchenggonghou') }}</div>
+        <div class="box title-text">
+          <div>sudo su</div>
+          <div>cd /data/tapdata</div>
+        </div>
         <div>{{ $t('dfs_agent_download_upgradeversion_zaiTapd') }}</div>
         <div v-if="agentId">
           <div class="box title-text">
@@ -276,7 +280,7 @@ export default {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding-top: 68px;
+  padding-top: 52px;
   overflow: hidden;
   background-color: #fff;
   box-sizing: border-box;

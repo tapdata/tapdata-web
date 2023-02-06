@@ -135,75 +135,19 @@ export class Database extends NodeType {
           migrateTableSelectType: {
             title: '选择表',
             type: 'string',
-            default: 'all',
+            default: 'custom',
             'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              className: 'form-item-dense',
-              feedbackLayout: 'none'
-            },
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: '全部',
-                value: 'all'
+                label: '按表名选择',
+                value: 'custom'
               },
               {
-                label: '自定义',
-                value: 'custom'
-              }
-            ],
-            'x-reactions': {
-              target: 'tableNames',
-              effects: ['onFieldInputValueChange'],
-              fulfill: {
-                state: {
-                  value: '{{$self.value === "custom" ? [] : $target.value}}'
-                }
-              }
-            }
-          },
-
-          enableDynamicTable: {
-            title: '动态新增表',
-            type: 'boolean',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              tooltip: '开启后任务将会自动处理新增，删除表'
-            },
-            'x-component': 'Switch',
-            'x-reactions': [
-              {
-                dependencies: ['.migrateTableSelectType'],
-                fulfill: {
-                  state: {
-                    visible:
-                      '{{ $deps[0] === "all" && $values.attrs.capabilities.find(({ id }) => id === "get_table_names_function") && $settings.type !== "initial_sync"  }}',
-                    value: '{{$deps[0] !== "all" ? false : $self.value}}'
-                  }
-                }
+                label: '按正则表达式匹配',
+                value: 'expression'
               }
             ]
-          },
-
-          tableCard: {
-            type: 'void',
-            properties: {
-              tableNames: {
-                type: 'array',
-                'x-component': 'TableListCard',
-                'x-component-props': {
-                  connectionId: '{{$values.connectionId}}'
-                },
-                'x-reactions': {
-                  dependencies: ['migrateTableSelectType'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] !== "custom" ? "visible":"hidden"}}'
-                    }
-                  }
-                }
-              }
-            }
           },
 
           tableNames: {
@@ -232,6 +176,25 @@ export class Database extends NodeType {
             }
           },
 
+          tableExpression: {
+            type: 'string',
+            default: '.*',
+            description: '正则表达式匹配模式下，数据库新增的符合表达式的表会被自动同步到目标',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input.TextArea',
+            'x-component-props': {
+              rows: 1
+            },
+            'x-reactions': {
+              dependencies: ['migrateTableSelectType'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
+                }
+              }
+            }
+          },
+
           readBatchSize: {
             title: '批量读取条数', //增量批次读取条数
             type: 'string',
@@ -252,6 +215,10 @@ export class Database extends NodeType {
                 }
               }
             }
+          },
+
+          nodeConfig: {
+            type: 'object'
           }
         }
       },
@@ -267,6 +234,46 @@ export class Database extends NodeType {
           }
         },
         properties: {
+          writeBachSpace: {
+            type: 'void',
+            'x-component': 'Space',
+            'x-component-props': {
+              size: 'middle'
+            },
+            'x-reactions': {
+              fulfill: {
+                state: {
+                  display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                }
+              }
+            },
+            properties: {
+              writeBatchSize: {
+                title: '批量写入条数', //增量批次读取条数
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-decorator-props': {
+                  tooltip: '全量每批次写入的条数'
+                },
+                'x-component-props': {
+                  min: 1,
+                  max: 100000
+                },
+                default: 2000
+              },
+              writeBatchWaitMs: {
+                title: '写入每批最大等待时间(ms)', //增量批次读取条数
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1
+                },
+                default: 3000
+              }
+            }
+          },
           ddlEvents: {
             type: 'void',
             title: 'DDL事件应用',
@@ -284,7 +291,12 @@ export class Database extends NodeType {
             type: 'void',
             title: '推演结果',
             'x-decorator': 'FormItem',
-            'x-component': 'SchemaFiledMapping'
+            'x-component': 'fieldInference',
+            'x-component-props': {
+              style: {
+                'margin-top': '-36px'
+              }
+            }
           },
           collapse: {
             type: 'void',
@@ -335,6 +347,37 @@ export class Database extends NodeType {
                           // ⚠️👇表达式依赖enum的顺序
                           'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
                         }
+                      }
+                    }
+                  },
+                  writeStrategyObject: {
+                    // title: '数据写入模式',
+                    type: 'void',
+                    'x-component-props': {
+                      layout: 'horizontal',
+                      colon: false,
+                      feedbackLayout: 'none'
+                    },
+                    properties: {
+                      writeStrategy: {
+                        title: '数据写入模式',
+                        type: 'string',
+                        default: 'updateOrInsert',
+                        'x-component': 'Radio.Group',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '统计追加写入: 只处理插入事件，丢弃更新和删除事件'
+                        },
+                        enum: [
+                          {
+                            label: '按事件类型处理',
+                            value: 'updateOrInsert'
+                          },
+                          {
+                            label: '统计追加写入',
+                            value: 'appendWrite'
+                          }
+                        ]
                       }
                     }
                   },
@@ -409,6 +452,14 @@ export class Database extends NodeType {
                           effect: 'light'
                         }
                       }
+                    },
+                    'x-reactions': {
+                      dependencies: ['writeStrategy'],
+                      fulfill: {
+                        state: {
+                          display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
+                        }
+                      }
                     }
                   },
 
@@ -480,6 +531,9 @@ export class Database extends NodeType {
                         }
                       }
                     }
+                  },
+                  nodeConfig: {
+                    type: 'object'
                   }
                 }
               }

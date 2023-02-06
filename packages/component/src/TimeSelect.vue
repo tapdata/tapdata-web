@@ -34,10 +34,10 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import dayjs from 'dayjs'
 
+import i18n from '@tap/i18n'
+import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 
 export default {
@@ -90,7 +90,7 @@ export default {
     },
     range: {
       type: Array,
-      default: () => [Date.now() - 5 * 60 * 1000, Date.now()]
+      default: () => [Time.now() - 5 * 60 * 1000, Time.now()]
     }
   },
 
@@ -177,7 +177,17 @@ export default {
       })
     },
 
-    changeTime(val) {
+    changeTime(result) {
+      // 不能超出时间范围
+      const [start, end] = this.getRangeTime()
+      let val = result || []
+      if (val[0] < start) {
+        val[0] = start
+      }
+      if (val[1] > end) {
+        val[1] = end
+      }
+
       const { rangeSeparator, formatToString } = this.$refs.datetime
       const label = formatToString(val)?.join(rangeSeparator)
       const valJoin = val?.map(t => new Date(t).getTime()).join()

@@ -192,12 +192,46 @@
           <li>
             <div class="my-2 text-style">{{ $t('dfs_agent_download_agentdownloadmodal_shilibanben') }}</div>
           </li>
-          <li class="box title-text my-2">{{ version }}</li>
+          <li class="box title-text my-2">
+            <span class="link-line">{{ version }}</span>
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_start_install_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltipVersion"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="version"
+                v-clipboard:success="onCopyVersion"
+                @mouseleave="showTooltipVersion = false"
+              >
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              </span>
+            </ElTooltip>
+          </li>
           <li>
             <div class="my-2 text-style">{{ $t('dfs_agent_download_agentdownloadmodal_shilitok') }}</div>
           </li>
-          <li class="box title-text link-line my-2">
-            {{ token }}
+          <li class="box title-text my-2">
+            <span class="link-line">{{ token }}</span>
+            <ElTooltip
+              placement="top"
+              manual
+              :content="$t('agent_deploy_start_install_button_copied')"
+              popper-class="copy-tooltip"
+              :value="showTooltip"
+            >
+              <span
+                class="operaKey"
+                v-clipboard:copy="token"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <i class="click-style">{{ $t('agent_deploy_start_install_button_copy') }}</i>
+              </span>
+            </ElTooltip>
           </li>
           <li>{{ $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao') }}</li>
           <li>
@@ -232,6 +266,7 @@ export default {
         { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
       ],
       showTooltip: false,
+      showTooltipVersion: false,
       windowsLink: '',
       linuxLink: '',
       dockerLink: '',
@@ -275,6 +310,10 @@ export default {
     onCopy() {
       this.showTooltip = true
     },
+    // 复制命令行
+    onCopyVersion() {
+      this.showTooltipVersion = true
+    },
     handleNextStep() {
       this.$router.push({ name: 'Instance' })
     },
@@ -297,13 +336,13 @@ export default {
       )
     },
     linuxToAgent() {
-      window.open('https://sourl.cn/MK6mXF', '_blank')
+      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
     },
     dockerToInstall() {
       window.open('https://docs.docker.com/get-docker/', '_blank')
     },
     dockerToAgent() {
-      window.open('https://sourl.cn/MK6mXF', '_blank')
+      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
     },
     //在线小助手
     hideCustomTip() {
@@ -344,7 +383,7 @@ export default {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding-top: 68px;
+  padding-top: 52px;
   overflow: hidden;
   background-color: #fff;
   box-sizing: border-box;

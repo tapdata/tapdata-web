@@ -1,21 +1,24 @@
-import { connect, mapProps, mapReadPretty } from '@formily/vue'
-import { getComponentByTag } from './utils'
-import PreviewText from './preview-text'
+import { InputNumber as _InputNumber } from '@formily/element'
+import { defineComponent } from '@vue/composition-api'
 
-const ElInputNumber = getComponentByTag('el-input-number', {
-  change: 'input'
+export const InputNumber = defineComponent({
+  setup(props, { attrs, listeners }) {
+    return () => {
+      const { value } = attrs
+      return (
+        <_InputNumber
+          attrs={{ ...attrs }}
+          on={{
+            ...listeners,
+            change: val => {
+              // 输入框首次渲染，如果是必填且没有值的时候会触发校验
+              if (val !== undefined || value !== val) {
+                listeners.change(val)
+              }
+            }
+          }}
+        />
+      )
+    }
+  }
 })
-
-export const InputNumber = connect(
-  ElInputNumber,
-  mapProps({ readOnly: 'readonly' }, props => {
-    let controlsPosition = 'right'
-    if (props.controlsPosition) {
-      controlsPosition = props.controlsPosition
-    }
-    return {
-      controlsPosition
-    }
-  }),
-  mapReadPretty(PreviewText.Input)
-)

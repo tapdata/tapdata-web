@@ -84,7 +84,7 @@
           size="mini"
           @click="openCreateDialog"
         >
-          <span>{{ $t('user_creatUser') }}</span>
+          <span>{{ $t('button_create') }}</span>
         </el-button>
       </div>
       <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
@@ -252,6 +252,7 @@ export default {
       notActivatedCount: 0,
       notVerifiedCount: 0,
       rejectedCount: 0,
+      filterItems: [],
       createForm: {
         username: '',
         email: '',
@@ -377,6 +378,12 @@ export default {
       return this.$refs.table
     }
   },
+  watch: {
+    '$route.query'() {
+      this.searchParams = this.$route.query
+      this.table.fetch(1)
+    }
+  },
   methods: {
     // 重置
     reset(name) {
@@ -430,7 +437,6 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(data => {
-          this.getCount()
           let list = data?.items || []
           return {
             total: data?.total,
@@ -551,25 +557,25 @@ export default {
     // 创建用户弹窗
     openCreateDialog() {
       this.createDialogVisible = true
-      let roleusers = []
-      let parmas = {
-        filter: {
-          where: {
-            register_user_default: true
-          }
-        }
-      }
-      roleApi.get(parmas).then(data => {
-        let items = data?.items || []
-        items.forEach(item => {
-          roleusers.push(item.id)
-        })
-      })
+      // let roleusers = []
+      // let parmas = {
+      //   filter: {
+      //     where: {
+      //       register_user_default: true
+      //     }
+      //   }
+      // }
+      // roleApi.get(parmas).then(data => {
+      //   let items = data?.items || []
+      //   items.forEach(item => {
+      //     roleusers.push(item.id)
+      //   })
+      // })
       this.createForm = {
         username: '',
         email: '',
         password: '',
-        roleusers: roleusers,
+        roleusers: '',
         status: 'activated',
         accesscode: '',
         emailVerified: true,
@@ -597,7 +603,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
-      this.getMappingModel(item.id)
+      //this.getMappingModel(item.id)
     },
     // 保存用户表单
     createNewUser() {
@@ -636,9 +642,7 @@ export default {
               break
           }
           // delete params.status;
-          that
-            .$api('users')
-            [that.createForm.id ? 'patch' : 'post'](params)
+          usersApi[that.createForm.id ? 'patch' : 'post'](params)
             .then(data => {
               if (data) {
                 // 过滤不存在角色
@@ -655,7 +659,7 @@ export default {
 
                 // 删除以前角色id
                 that.roleMappding.forEach(rolemapping => {
-                  that.$api('roleMapping').delete(rolemapping.id)
+                  roleMappingsApi.delete(rolemapping.id)
                 })
 
                 let newRoleMappings = []
@@ -666,12 +670,9 @@ export default {
                     roleId: roleuser
                   })
                 })
-                that
-                  .$api('roleMapping')
-                  .saveAll(newRoleMappings)
-                  .then(() => {
-                    that.$message.success(this.$t('message_save_ok'))
-                  })
+                roleMappingsApi.saveAll(newRoleMappings).then(() => {
+                  that.$message.success(this.$t('message_save_ok'))
+                })
                 this.table.fetch()
               }
             })
@@ -918,6 +919,7 @@ export default {
 </style>
 <style lang="scss">
 .user-list-wrap {
+  padding: 0 24px 24px 0;
   .table-page-container {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);

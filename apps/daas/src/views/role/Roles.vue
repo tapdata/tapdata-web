@@ -5,16 +5,16 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <div slot="operation">
-        <el-button
-          v-readonlybtn="'role_creation'"
-          type="primary"
-          class="btn btn-create"
-          size="mini"
-          @click="openCreateDialog()"
-        >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-          <span>{{ $t('role_list_create') }}</span>
-        </el-button>
+        <!--        <el-button-->
+        <!--          v-readonlybtn="'role_creation'"-->
+        <!--          type="primary"-->
+        <!--          class="btn btn-create"-->
+        <!--          size="mini"-->
+        <!--          @click="openCreateDialog()"-->
+        <!--        >-->
+        <!--          &lt;!&ndash; <i class="iconfont icon-jia add-btn-icon"></i> &ndash;&gt;-->
+        <!--          <span>{{ $t('role_list_create') }}</span>-->
+        <!--        </el-button>-->
       </div>
       <el-table-column :label="$t('role_list_role_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
@@ -77,14 +77,14 @@
             {{ $t('button_edit') }}
           </el-button>
           <ElDivider direction="vertical"></ElDivider>
-          <el-button
-            type="text"
-            @click="handleDelete(scope.row)"
-            :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"
-            v-readonlybtn="'role_delete'"
-          >
-            {{ $t('button_delete') }}
-          </el-button>
+          <!--          <el-button-->
+          <!--            type="text"-->
+          <!--            @click="handleDelete(scope.row)"-->
+          <!--            :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"-->
+          <!--            v-readonlybtn="'role_delete'"-->
+          <!--          >-->
+          <!--            {{ $t('button_delete') }}-->
+          <!--          </el-button>-->
         </template>
       </el-table-column>
     </TablePage>

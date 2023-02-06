@@ -8,10 +8,11 @@ import VueClipboard from 'vue-clipboard2'
 // import factory from '@/api/factory'
 import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
+import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
-import { settingsApi, usersApi } from '@tap/api'
+import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import FormBuilder from '@tap/component/src/form-builder'
 
@@ -39,7 +40,9 @@ window._TAPDATA_OPTIONS_ = {
   loginUrl: require(`@/assets/images/${process.env.VUE_APP_LOGIN_IMG}`),
   loadingImg: require(`@/assets/icons/${process.env.VUE_APP_LOADING_IMG}`),
   logoWidth: process.env.VUE_APP_LOGO_WIDTH,
-  loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE
+  logoHeight: process.env.VUE_APP_LOGO_HEIGHT,
+  loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE,
+  homeUrl: process.env.VUE_APP_HOME_URL
 }
 
 window.getSettingByKey = key => {
@@ -98,7 +101,7 @@ let init = settings => {
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
-  document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
+  document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
 
   var loc = window.location,
     wsUrl = 'ws:'
@@ -139,6 +142,10 @@ settingsApi
       configUser(user)
     }
     init(initData)
+    // 设置服务器时间
+    timeStampApi.get().then(t => {
+      Time.setTime(t)
+    })
   })
   .catch(err => {
     // eslint-disable-next-line

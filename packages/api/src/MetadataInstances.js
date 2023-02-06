@@ -108,5 +108,28 @@ export default class MetadataInstances extends Http {
   resetTable(params) {
     return this.axios.post(this.url + '/migrate/reset', params)
   }
+
+  //61迭代 新增可以修改目标节点类型 新增接口
+  changeFields(params) {
+    return this.axios.post(this.url + '/changeFields', params)
+  }
+  changeFieldsReset(params) {
+    return this.axios.post(this.url + '/changeFields/reset', params)
+  }
+  dataType2TapType(params) {
+    return this.axios.post(this.url + '/dataType2TapType', params)
+  }
+  nodeSchemaPage(params) {
+    return this.axios.get(this.url + '/node/schemaPage', { params })
+  }
+  tapTables(params) {
+    return this.axios.get(this.url + '/tapTables?filter=' + encodeURIComponent(params.filter))
+  }
+  checkTableExist(params) {
+    return this.axios.get(this.url + '/check/table/exist', { params })
+  }
+  logicSchema(taskId, params) {
+    return this.axios.delete(this.url + '/logic/schema/' + taskId, { params })
+  }
 }
 export { MetadataInstances }

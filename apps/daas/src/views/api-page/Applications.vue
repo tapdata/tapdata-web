@@ -11,7 +11,7 @@
       <div slot="search" class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
-      <!--<div slot="operation">
+      <div slot="operation">
         <ElButton
           v-readonlybtn="'API_creation'"
           class="btn btn-create"
@@ -21,7 +21,7 @@
         >
           <span>{{ $t('application_create') }}</span>
         </ElButton>
-      </div>-->
+      </div>
       <el-table-column :label="$t('application_header_id')" :show-overflow-tooltip="true" prop="id" width="220">
         <!-- <template slot-scope="scope"> -->
       </el-table-column>
@@ -355,7 +355,7 @@ export default {
         }
       }
       .el-form-item__label {
-        font-size: 12px;
+        font-size: $fontBaseTitle;
       }
     }
   }

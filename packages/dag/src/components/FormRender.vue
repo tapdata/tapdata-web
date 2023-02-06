@@ -9,7 +9,15 @@
 </template>
 
 <script>
-import { Form, SchemaField } from '@tap/form'
+import { Form, createSchemaField, components } from '@tap/form'
+import * as _components from '../components/form'
+
+const { SchemaField } = createSchemaField({
+  components: {
+    ...components,
+    ..._components
+  }
+})
 
 export default {
   name: 'FormRender',
@@ -101,7 +109,7 @@ $headerBg: #fff;
 
     // 覆盖数字输入框的宽度
     .formily-element-form-item {
-      font-size: 13px;
+      font-size: $fontBaseTitle;
       &-label {
         label {
           color: map-get($fontColor, light);
@@ -113,12 +121,42 @@ $headerBg: #fff;
       .el-input-number--small {
         width: 130px;
       }
+
+      &-help,
+      &-extra {
+        white-space: pre-wrap;
+      }
     }
 
-    .formily-element-form-item-layout-vertical .formily-element-form-item-label-tooltip {
-      height: 40px;
-      i {
-        line-height: 1;
+    .formily-element-form-item-layout-horizontal {
+      .formily-element-space-horizontal {
+        .el-switch {
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+    }
+
+    .formily-element-form-item-layout-vertical {
+      .formily-element-form-item-label-tooltip {
+        height: 40px;
+
+        i {
+          line-height: 1;
+        }
+      }
+
+      .formily-element-space-horizontal {
+        .el-switch {
+          height: 40px;
+          line-height: 40px;
+        }
+      }
+    }
+
+    .formily-element-form-item-control {
+      .formily-element-space-horizontal {
+        vertical-align: top;
       }
     }
 

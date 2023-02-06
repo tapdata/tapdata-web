@@ -25,7 +25,7 @@
       <div class="flex mb-2 align-items-center">
         <TimeSelect
           :options="timeOptions"
-          :range="[firstStartTime, lastStopTime || Date.now()]"
+          :range="[firstStartTime, lastStopTime || getTime()]"
           ref="timeSelect"
           @change="changeTime"
         ></TimeSelect>
@@ -157,6 +157,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { debounce } from 'lodash'
 
 import { uniqueArr, downloadBlob, deepCopy } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 import { VIcon, TimeSelect, VCollapse } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi } from '@tap/api'
@@ -371,7 +372,7 @@ export default {
       this.resList()
       this.resetNewPage()
       this.resetOldPage()
-      this.resetDataTime = Date.now()
+      this.resetDataTime = Time.now()
       this.loadOld(this.pollingData)
     },
 
@@ -518,23 +519,22 @@ export default {
       let result = deepCopy(rowData)
       result.forEach(row => {
         let obj = {}
+        row.timestamp = new Date(row.date).getTime()
         obj.level = row.level
         obj.timestamp = this.formatTime(row.timestamp)
         obj.nodeName = this.getHighlightSpan(row.nodeName)
-        obj.taskName = row.taskName
         obj.logTags = row.logTags?.map(t => `[${this.getHighlightSpan(t)}]`) || []
         obj.data = row.data.length ? JSON.stringify(row.data?.slice(0, 10)) : ''
         obj.message = row.message?.slice(0, 10000)
         obj.errorStack = row.errorStack?.slice(0, 20000)
 
-        const { level, timestamp, nodeName, taskName, logTags, data, message, errorStack } = obj
+        const { level, timestamp, nodeName, logTags, data, message, errorStack } = obj
         const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
         row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
         row.jsonDomStr = this.getJsonString([
           { level },
           { timestamp },
           { nodeName },
-          { taskName },
           { logTags },
           { data },
           { message },
@@ -603,7 +603,7 @@ export default {
     },
 
     getNewFilter() {
-      const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Date.now()]
+      const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Time.now()]
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
@@ -714,9 +714,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Date.now()
+      let endTimestamp = this.lastStopTime || Time.now()
       if (status === 'running') {
-        endTimestamp = Date.now()
+        endTimestamp = Time.now()
       }
       switch (type) {
         case '6h':
@@ -742,13 +742,17 @@ export default {
         result[0] = endTimestamp - 5 * 60 * 1000
       }
       if (result[0] >= result[1]) {
-        result[1] = Date.now() + 5 * 1000
+        result[1] = Time.now() + 5 * 1000
       }
       return result
     },
 
     resList() {
       this.list = []
+    },
+
+    getTime() {
+      return Time.now()
     }
   }
 }
