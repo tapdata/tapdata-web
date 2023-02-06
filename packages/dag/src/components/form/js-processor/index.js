@@ -454,7 +454,9 @@ export const JsProcessor = observer(
                                     code = JSON.stringify(JSON.parse(item.message), null, 2)
                                   } catch (e) {
                                     const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
-                                    code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
+                                    code = `${item.message.charAt(0)}\n${message
+                                      .map(line => `  ${line}`)
+                                      .join('\n')}\n${item.message.charAt(item.message.length - 1)}`
                                   }
 
                                   return (
@@ -464,7 +466,11 @@ export const JsProcessor = observer(
                                     </details>
                                   )
                                 }
-                                return <div class="js-log-list-item text-prewrap text-break p-2">{item.message}</div>
+                                return (
+                                  <div class="js-log-list-item text-prewrap text-break p-2">
+                                    {item.errorStack || item.message}
+                                  </div>
+                                )
                               })
                             : !logLoading.value && <VEmpty large></VEmpty>}
                           <div
