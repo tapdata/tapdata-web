@@ -23,6 +23,7 @@
             >
             <span class="flex-fill">
               {{ menu.title }}
+              <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
             </span>
             <template v-if="menu.name === 'Instance' && showAgentWarning">
               <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
@@ -103,8 +104,9 @@ export default {
         },
         {
           name: 'dataflowList',
-          title: $t('task_manage_etl') + '(Beta)',
-          icon: 'task'
+          title: $t('task_manage_etl'),
+          icon: 'task',
+          beta: true
         },
         {
           name: 'dataServerList',
@@ -258,6 +260,15 @@ export default {
       let t = d.getElementsByTagName('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
+
+      $zoho.salesiq.ready = function () {
+        const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.info({
+          tapdata_username: user.nickname || user.username,
+          tapdata_phone: user.telephone,
+          tapdata_email: user.email
+        })
+      }
     },
 
     onAgentNoRunning(flag) {
@@ -290,6 +301,8 @@ export default {
     border-right: map-get($borderColor, aside);
     background: map-get($bgColor, disable);
     .el-menu-item {
+      height: 50px;
+      line-height: 50px;
       ::v-deep .v-icon {
         color: map-get($iconFillColor, normal);
       }
@@ -328,7 +341,7 @@ export default {
     flex-basis: 0%;
     margin: 0;
     padding: 0;
-    background: rgba(239, 241, 244, 1);
+    //background: rgba(239, 241, 244, 1);
   }
   .breadcrumb {
     padding: 24px 0 24px 24px;

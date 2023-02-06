@@ -95,11 +95,14 @@ export default {
   header_view_notifications: '查看所有通知',
   // 通知
   notify_setting: '通知设置',
-  notify_agent_notification: 'agent通知',
+  notify_agent_notification: 'Agent通知',
   notify_sms_notification: '短信通知',
   notify_email_notification: '邮件通知',
-  notify_agent_status_offline: 'agent状态为离线时',
-  notify_agent_status_running: 'agent状态为运行中时',
+  notify_webchat_notification: '微信通知',
+  notify_no_webchat_notification:
+    '您的账户还没有进行微信绑定，如需通过微信接收通知信息，请先退出登录后通过微信扫码完成绑定',
+  notify_agent_status_offline: 'Agent状态为离线时',
+  notify_agent_status_running: 'Agent状态为运行中时',
   notify_agent_status_error: '任务运行出错时',
   notify_task_running_notification: '任务运行通知',
   notify_sync_task: '同步任务',
@@ -1024,6 +1027,12 @@ export default {
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服务重启失败',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC滞后超时',
 
+  _workbench_workbench_yigoushishitong: '异构实时同步',
+  _workbench_workbench_shujuruhucang: '数据入湖仓 ',
+  _workbench_workbench_jichengaliyun: '集成阿里云计算巢',
+  _workbench_workbench_jiangshujudaoru: '将数据导入阿里云 Tablestore',
+  _workbench_workbench_tansuoshili: '探索示例',
+
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升级和服务切换重要公告',
   dfs_workbench_workbench_xinzengzidingyi: '· 新增自定义算子支持，用户可通过灵活的JS能力来定义自己的算子',
   dfs_workbench_workbench_xinzengzidingyi2: '· 新增自定义函数用户可通过jar包导入自定义函数进行使用',
@@ -1179,7 +1188,7 @@ export default {
 
   //数据服务
   dfs_data_server: '数据服务',
-  dfs_data_server_demo_title_desc: '·中央化的数据服务 ·中央化存储 ·数据实时服务',
+  dfs_data_server_demo_title_desc: '中央化的数据服务 ·中央化存储 ·数据实时服务',
   dfs_data_server_demo_title_edition: 'Tapdata On-Prem 版',
   dfs_data_server_demo_title: '中央化的数据服务，可复用易分发',
   dfs_data_server_demo_desc:

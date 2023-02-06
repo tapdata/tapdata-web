@@ -148,13 +148,13 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="createTime"
-        :label="$t('packages_business_column_create_time')"
+        prop="lastStartDate"
+        :label="$t('packages_business_column_last_start_time')"
         min-width="160"
         sortable="custom"
       >
         <template #default="{ row }">
-          {{ formatTime(row.createTime) }}
+          {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('packages_business_column_operation')" :width="colWidth.operation">
@@ -460,7 +460,10 @@ export default {
         stoppingTime: true,
         pingTime: true,
         canForceStopping: true,
-        currentEventTimestamp: true
+        currentEventTimestamp: true,
+        crontabExpressionFlag: true,
+        crontabExpression: true,
+        lastStartDate: true
       }
       let where = {
         syncType

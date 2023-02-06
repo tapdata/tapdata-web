@@ -99,7 +99,8 @@
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
-        <template slot-scope="scope">
+        <div v-if="isFileSource(scope.row)" slot-scope="scope">-</div>
+        <template v-else slot-scope="scope">
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
