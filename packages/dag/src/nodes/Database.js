@@ -139,7 +139,13 @@ export class Database extends NodeType {
             title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
             type: 'string',
             default: 'custom',
-            'x-decorator': 'FormItem',
+            'x-decorator': 'StageButtonLabel',
+            'x-decorator-props': {
+              asterisk: true,
+              feedbackLayout: 'none',
+              connectionId: '',
+              title: i18n.t('packages_dag_nodes_database_xuanzebiao')
+            },
             'x-component': 'Radio.Group',
             enum: [
               {
@@ -150,7 +156,15 @@ export class Database extends NodeType {
                 label: i18n.t('packages_dag_nodes_database_anzhengzebiaoda'),
                 value: 'expression'
               }
-            ]
+            ],
+            'x-reactions': {
+              dependencies: ['.connectionId'],
+              fulfill: {
+                schema: {
+                  'x-decorator-props.connectionId': `{{$deps[0]}}`
+                }
+              }
+            }
           },
 
           tableNames: {
@@ -164,7 +178,8 @@ export class Database extends NodeType {
                 height: 'unset',
                 minHeight: 0,
                 maxHeight: 'calc((100vh - 120px) * 0.618)'
-              }
+              },
+              hideReload: true
             },
             'x-reactions': {
               dependencies: ['migrateTableSelectType'],
