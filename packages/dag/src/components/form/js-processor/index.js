@@ -148,8 +148,17 @@ export const JsProcessor = observer(
                 handleAutoQuery()
               }, 500)
             } else {
-              // 没有拿到日志数据，继续定时轮询
-              if (!logList.value.length) {
+              // 两秒后再去拿一次日志，如果没有日志就继续轮询
+              outTimer = setTimeout(() => {
+                logTimer = setInterval(async () => {
+                  await queryLog()
+                  if (logList.value.length) {
+                    resetQuery()
+                  }
+                }, 1000)
+              }, 2000)
+
+              /*if (!logList.value.length) {
                 outTimer = setTimeout(() => {
                   logTimer = setInterval(async () => {
                     await queryLog()
@@ -160,7 +169,7 @@ export const JsProcessor = observer(
                 }, 1000)
               } else {
                 resetQuery()
-              }
+              }*/
             }
           })
           .catch(resetQuery)
