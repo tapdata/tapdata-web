@@ -13,13 +13,17 @@
 </template>
 
 <script>
-import { connectionsApi } from '@tap/api'
+import { mapActions } from 'vuex'
+
+import { connectionsApi, metadataInstancesApi } from '@tap/api'
 
 export default {
   name: 'StageButton',
 
   props: {
-    connectionId: String
+    connectionId: String,
+    taskId: String,
+    nodeId: String
   },
 
   data() {
@@ -41,6 +45,8 @@ export default {
   },
 
   methods: {
+    ...mapActions('dataflow', ['updateDag']),
+
     init() {
       this.loading = false
       this.getProgress(true)
@@ -65,14 +71,20 @@ export default {
       }
       this.progress = '0'
       connectionsApi.getNoSchema(this.connectionId).then(res => {
-        if (res.loadFieldsStatus !== 'finished') {
+        if (res.loadFieldsStatus === 'loading') {
           setTimeout(this.getProgress, 1000)
         } else {
           this.progress = 100 + '%'
-          setTimeout(() => {
-            this.$emit('complete')
-            this.loading = false
-          }, 200)
+          const { taskId, nodeId } = this
+          if (!check && taskId && nodeId) {
+            metadataInstancesApi
+              .logicSchema(taskId, {
+                nodeId
+              })
+              .then(this.updateDag)
+          }
+          this.$emit('complete')
+          this.loading = false
         }
       })
     },
@@ -96,7 +108,7 @@ export default {
           this.$ws.send(msg)
         })
       })
-    },
+    }
   }
 }
 </script>

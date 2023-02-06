@@ -3,7 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { useForm } from '@tap/form'
 import { onMounted, onUnmounted } from '@vue/composition-api'
 
-import { metadataInstancesApi, proxyApi, taskApi } from '@tap/api'
+import { metadataInstancesApi, proxyApi, taskApi, connectionsApi } from '@tap/api'
 
 import './style.scss'
 
@@ -97,30 +97,37 @@ export const loadSchemaTree = observer(
                   },
                   order: ['original_name ASC']
                 }
-                metadataInstancesApi
-                  .get({ filter: JSON.stringify(filter) })
-                  .then(metaData => {
-                    const table = metaData.items?.[0]?.original_name
-                    form.setValuesIn(tableNameField || 'tableName', '')
-                    setTimeout(() => {
-                      form.setValuesIn(tableNameField || 'tableName', table)
-                      isTransformed.value = false
-                      let unwatchSaving = root.$watch(
-                        () => root.$store.state.dataflow.taskSaving,
-                        v => {
-                          if (!v) {
-                            getSchemaData(true)
-                            unwatchSaving()
-                          }
-                        }
-                      )
-                    }, 3000)
-                  })
-                  .catch(() => {
+                connectionsApi.get(connectionId).then(con => {
+                  if (con.loadFieldErrMsg) {
+                    errorMsg.value = con.loadFieldErrMsg
+                    loadStatus.value = true
                     loading.value = false
-                  })
-                loadStatus.value = false
-                errorMsg.value = ''
+                  } else {
+                    metadataInstancesApi
+                      .get({ filter: JSON.stringify(filter) })
+                      .then(metaData => {
+                        const table = metaData.items?.[0]?.original_name
+                        form.setValuesIn(tableNameField || 'tableName', '')
+                        setTimeout(() => {
+                          form.setValuesIn(tableNameField || 'tableName', table)
+                          isTransformed.value = false
+                          let unwatchSaving = root.$watch(
+                            () => root.$store.state.dataflow.taskSaving,
+                            v => {
+                              if (!v) {
+                                getSchemaData(true)
+                                unwatchSaving()
+                              }
+                            }
+                          )
+                        }, 3000)
+                      })
+                      .finally(() => {
+                        loadStatus.value = false
+                        loading.value = false
+                      })
+                  }
+                })
               })
               .catch(err => {
                 loadStatus.value = true

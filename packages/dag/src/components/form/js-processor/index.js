@@ -76,6 +76,7 @@ export const JsProcessor = observer(
 
       let timer
       let outTimer
+      let logTimer
       let version
       let logList = ref([])
       let logLoading = ref(false)
@@ -123,6 +124,7 @@ export const JsProcessor = observer(
         runningText.value = ''
         logLoading.value = false
         clearTimeout(timer)
+        clearTimeout(logTimer)
         clearTimeout(outTimer)
       }
 
@@ -146,14 +148,28 @@ export const JsProcessor = observer(
                 handleAutoQuery()
               }, 500)
             } else {
-              if (!logList.value.length) {
-                outTimer = setTimeout(async () => {
+              // 两秒后再去拿一次日志，如果没有日志就继续轮询
+              outTimer = setTimeout(() => {
+                logTimer = setInterval(async () => {
                   await queryLog()
-                  resetQuery()
+                  if (logList.value.length) {
+                    resetQuery()
+                  }
+                }, 1000)
+              }, 2000)
+
+              /*if (!logList.value.length) {
+                outTimer = setTimeout(() => {
+                  logTimer = setInterval(async () => {
+                    await queryLog()
+                    if (logList.value.length) {
+                      resetQuery()
+                    }
+                  }, 500)
                 }, 1000)
               } else {
                 resetQuery()
-              }
+              }*/
             }
           })
           .catch(resetQuery)
@@ -447,7 +463,9 @@ export const JsProcessor = observer(
                                     code = JSON.stringify(JSON.parse(item.message), null, 2)
                                   } catch (e) {
                                     const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
-                                    code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
+                                    code = `${item.message.charAt(0)}\n${message
+                                      .map(line => `  ${line}`)
+                                      .join('\n')}\n${item.message.charAt(item.message.length - 1)}`
                                   }
 
                                   return (
@@ -457,7 +475,11 @@ export const JsProcessor = observer(
                                     </details>
                                   )
                                 }
-                                return <div class="js-log-list-item text-prewrap text-break p-2">{item.message}</div>
+                                return (
+                                  <div class="js-log-list-item text-prewrap text-break p-2">
+                                    {item.errorStack || item.message}
+                                  </div>
+                                )
                               })
                             : !logLoading.value && <VEmpty large></VEmpty>}
                           <div

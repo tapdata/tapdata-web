@@ -2,17 +2,33 @@ import { defineComponent } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 
 import StageButton from '@tap/component/src/StageButton'
-import { FormItem } from '@tap/form'
+import { FormItem, useForm } from '@tap/form'
 
 export const StageButtonLabel = observer(
   defineComponent({
     props: ['value', 'disabled', 'connectionId', 'title'],
     setup(props, { emit, root, attrs, refs, slots }) {
+      const { taskId, activeNodeId } = root.$store.state?.dataflow || {}
+
+      const formRef = useForm()
+
+      const trigger = () => {
+        const field = formRef.value.query('tableNameWrap.tableName').take()
+        field.setComponentProps({
+          reloadTime: Date.now()
+        })
+      }
+
       return () => {
         const label = (
           <div class="inline-flex align-center">
             <span class="mr-2">{props.title}</span>
-            <StageButton connection-id={props.connectionId}></StageButton>
+            <StageButton
+              connection-id={props.connectionId}
+              task-id={taskId}
+              node-id={activeNodeId}
+              on={{ complete: trigger }}
+            ></StageButton>
           </div>
         )
 

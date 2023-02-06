@@ -143,6 +143,7 @@
               v-if="item.pointType !== 'current'"
               v-model="item.dateTime"
               :picker-options="getPickerOptions(item.dateTime, item)"
+              popperClass="hide-current__dateTime"
               type="datetime"
               format="yyyy-MM-dd HH:mm:ss"
               valueFormat="timestamp"
@@ -164,6 +165,7 @@ import dayjs from 'dayjs'
 import { logcollectorApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 import TaskButtons from '@/components/TaskButtons'
 
@@ -437,6 +439,11 @@ export default {
     },
 
     getPickerOptions(val, item) {
+      if (item.pointType === 'connTZ')
+        return {
+          disabledDate: null,
+          selectableRange: null
+        }
       const now = Date.now()
       const formatMap = {
         date: 'YYYY-MM-DD',
@@ -532,6 +539,15 @@ export default {
           }
         }
       }
+    }
+  }
+}
+</style>
+<style lang="scss">
+.hide-current__dateTime {
+  .el-picker-panel__footer {
+    .el-button--text {
+      display: none;
     }
   }
 }

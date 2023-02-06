@@ -1,13 +1,12 @@
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, set, del, computed, watch } from '@vue/composition-api'
-import { useForm } from '@tap/form'
+import { useForm, useField } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { VIcon, EmptyItem } from '@tap/component'
+import { EmptyItem } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { RecycleScroller } from 'vue-virtual-scroller'
+import List from './List.vue'
 import './style.scss'
 
 export const TableRename = observer(
@@ -90,6 +89,7 @@ export const TableRename = observer(
       const doModify = () => {
         const target = tableDataRef.value
         let flag
+        // let skipTableName = []
         target.forEach(n => {
           let after = n
           after = config.replaceBefore
@@ -100,6 +100,15 @@ export const TableRename = observer(
             after = after[config.transferCase]()
           }
           if (n !== after) {
+            if (nameMap[n] === after) return
+            /*if (
+              (target.includes(after) && (!nameMap[after] || nameMap[after] === after)) ||
+              Object.values(nameMap).includes(after)
+            ) {
+              skipTableName.push(n)
+              console.log('导致表名重复') // eslint-disable-line
+              return
+            }*/
             set(nameMap, n, after)
             flag = true
           } else if (n in nameMap) {
@@ -117,6 +126,15 @@ export const TableRename = observer(
         })
 
         flag && emitChange()
+
+        /*if (skipTableName.length) {
+          // `自动跳过针对 [${skipTableName.join(', ')}] 表名的操作，原因是会导致表名重复`
+          root.$message.warning(
+            i18n.t('packages_form_table_rename_index_daozhibiaomingchongfu', {
+              val1: skipTableName.join(', ')
+            })
+          )
+        }*/
       }
 
       const doReset = () => {
@@ -226,51 +244,69 @@ export const TableRename = observer(
             </div>
             <div class="name-list-content font-color-light overflow-auto">
               {this.filterNames.length ? (
-                <RecycleScroller
+                <List
+                  disabled={this.disabled}
+                  items={this.filterNames}
+                  itemSize={38}
+                  buffer={50}
+                  nameMap={this.nameMap}
+                  tableData={this.tableData}
+                  updateName={this.updateName}
+                  emitChange={this.emitChange}
+                ></List>
+              ) : (
+                /*<RecycleScroller
                   items={this.filterNames}
                   itemSize={38}
                   buffer={50}
                   scopedSlots={{
-                    default: ({ item: name }) => (
-                      <div class="name-list-item flex align-center position-relative">
-                        <div class="flex-1 px-4 text-truncate">
-                          <span title={name}>{name}</span>
-                        </div>
-                        <div
-                          class={[
-                            'flex-1 px-4 text-truncate',
-                            {
-                              'color-primary': !!this.nameMap[name]
-                            }
-                          ]}
-                        >
-                          <input
-                            readOnly={this.disabled}
-                            class="name-list-item-input px-2"
-                            value={this.nameMap[name] || name}
-                            onChange={event => {
-                              const val = event.target.value
-                              if (val) {
-                                this.updateName(val, name)
-                                this.emitChange()
-                              } else {
-                                event.target.value = name
-                                if (this.nameMap[name]) {
-                                  this.$delete(this.nameMap, name)
-                                  this.emitChange()
-                                }
+                    default: ({ item: name }) => {
+                      let inputVal = this.nameMap[name] || name
+                      return (
+                        <div class="name-list-item flex align-center position-relative">
+                          <div class="flex-1 px-4 text-truncate">
+                            <span title={name}>{name}</span>
+                          </div>
+                          <div
+                            class={[
+                              'flex-1 px-4 text-truncate',
+                              {
+                                'color-primary': !!this.nameMap[name]
                               }
-                            }}
-                          />
+                            ]}
+                          >
+                            <input
+                              readOnly={this.disabled}
+                              class="name-list-item-input px-2"
+                              v-model={inputVal}
+                              onChange={event => {
+                                const val = event.target.value
+                                console.log('this.nameMap', this.nameMap) // eslint-disable-line
+                                if (val) {
+                                  if (this.tableData.includes(val) || Object.values(this.nameMap).includes(val)) {
+                                    event.target.value = this.nameMap[name] || name
+                                    return
+                                  }
+                                  this.updateName(val, name)
+                                  this.emitChange()
+                                } else {
+                                  event.target.value = name
+                                  if (this.nameMap[name]) {
+                                    this.$delete(this.nameMap, name)
+                                    this.emitChange()
+                                  }
+                                }
+                              }}
+                            />
+                          </div>
+                          <VIcon size="12" class="name-list-item-center font-color-light">
+                            left
+                          </VIcon>
                         </div>
-                        <VIcon size="12" class="name-list-item-center font-color-light">
-                          left
-                        </VIcon>
-                      </div>
-                    )
+                      )
+                    }
                   }}
-                ></RecycleScroller>
-              ) : (
+                ></RecycleScroller>*/
                 /*this.filterNames.map(name => {
                   return (
                     <div key={name} class="name-list-item flex align-center position-relative">

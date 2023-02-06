@@ -53,7 +53,7 @@
             :disabled="!isEdit"
           ></ElInput>
         </div>
-        <ElFormItem class="flex-1 mt-4" size="small" label="权限范围" prop="acl">
+        <ElFormItem class="flex-1 mt-4" size="small" :label="$t('daas_data_server_drawer_quanxianfanwei')" prop="acl">
           <ElSelect v-model="form.acl" multiple :disabled="!isEdit" @change="aclChanged">
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
@@ -353,7 +353,7 @@
           <div class="data-server-panel__title">
             <span>{{ $t('daas_data_server_drawer_fuwufangwen') }}</span>
             <ElButton
-              v-if="form.pathAccessMethod === 'default' && data.status !== 'active'"
+              v-if="this.data.id && form.pathAccessMethod === 'default' && data.status !== 'active'"
               type="primary"
               size="mini"
               @click="generate"
@@ -663,7 +663,6 @@ export default {
       this.form.status = 'generating'
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
-      this.form.acl = this.data?.path?.acl || ['admin']
       this.getDatabaseTypes()
       let { connectionId, tableName } = this.form
       if (connectionId) {
