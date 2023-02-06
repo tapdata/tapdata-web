@@ -44,7 +44,8 @@
               >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
             >
           </el-tooltip>-->
-          <span class="table-label el-tree-node__label"
+          <VIcon v-if="!node.isLeaf" class="tree-item-icon mr-1" size="24">folder</VIcon>
+          <span class="table-label"
             >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
           >
           <span class="btn-menu" v-if="!data.readOnly">
@@ -517,19 +518,22 @@ export default {
       return type === 'inner' && !dropNode.data.readOnly
     },
 
-    makeDragNodeImage(node, parent = document.body) {
+    makeDragNodeImage($icon, node, parent = document.body) {
       const div = document.createElement('div')
 
       if (!node) return div
-      div.classList.add('el-tree-drag-node-image')
+      div.classList.add('drag-node-image')
       div.style.position = 'absolute'
       div.style.zIndex = '-100'
       div.style.opacity = '1'
       parent.appendChild(div)
       const container = document.createElement('div')
-      container.className = 'dnd-preview-container'
-      const icon = document.createElement('div')
-      icon.className = 'dnd-preview-icon'
+      container.className = 'drag-node-image-preview'
+      if ($icon) {
+        const icon = $icon.cloneNode(true)
+        icon.className = 'drag-node-image-preview-icon'
+        container.appendChild(icon)
+      }
       const text = document.createElement('div')
       text.className = 'dnd-preview-fileName ellipsis'
       text.innerHTML = node.data.value
@@ -541,7 +545,11 @@ export default {
 
     handleDragStart(draggingNode, ev) {
       this.draggingNode = draggingNode
-      this.draggingNodeImage = this.makeDragNodeImage(draggingNode, this.$el)
+      this.draggingNodeImage = this.makeDragNodeImage(
+        ev.currentTarget.querySelector('.tree-item-icon'),
+        draggingNode,
+        this.$el
+      )
       let { dataTransfer } = ev
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
     },
@@ -734,22 +742,48 @@ export default {
   }
 
   ::v-deep {
-    .el-tree-drag-node-image {
+    .classification-tree {
+      padding-bottom: 50px;
+      .el-tree-node {
+        margin-bottom: 1px;
+        &__content {
+          height: 32px;
+          overflow: hidden;
+          border-radius: 4px;
+        }
+
+        &.is-current > .el-tree-node__content {
+          background-color: #eef3ff;
+        }
+
+        &.is-drop-inner > .el-tree-node__content {
+          background-color: #d0deff;
+        }
+      }
+    }
+    .drag-node-image {
       display: flex;
       align-items: center;
       width: 240px;
       height: 32px;
+      z-index: 103;
+      background-color: rgba(0, 0, 0, 0);
+      .drag-node-image-preview {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 104;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        padding-left: 12px;
+        padding-right: 12px;
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+        background-color: #fff;
+      }
     }
-  }
-}
-</style>
-<style lang="scss">
-.classification-tree {
-  padding-bottom: 50px;
-  .el-tree-node__content {
-    height: 32px;
-    overflow: hidden;
-    border-radius: 4px;
   }
 }
 </style>
