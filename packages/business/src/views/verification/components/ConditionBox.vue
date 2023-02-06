@@ -784,7 +784,9 @@ export default {
         this.$nextTick(() => {
           formDom.childNodes[index - 1].querySelector('input').focus()
         })
-        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set')
+        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
+          val: index
+        })
         this.jointErrorMessage = message
         return message
       }
@@ -803,7 +805,7 @@ export default {
           let item = document.getElementById('item-source-' + (index - 1))
           item.querySelector('input').focus()
         })
-        message = this.$t('packages_business_verification_lackIndex')
+        message = this.$t('packages_business_verification_lackIndex', { val: index })
         this.jointErrorMessage = message
         return message
       }
@@ -821,7 +823,7 @@ export default {
           let item = document.getElementById('item-source-' + (index - 1))
           item.querySelector('input').focus()
         })
-        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match')
+        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match', { val: index })
         this.jointErrorMessage = message
         return message
       }

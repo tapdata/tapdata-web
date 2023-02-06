@@ -557,9 +557,10 @@ export default {
   packages_business_verification_form_target_filter: '目标表数据过滤',
   packages_business_verification_checking: '校验中...',
   packages_business_verification_message_error_joint_table_not_set: '请添加校验条件',
-  packages_business_verification_message_error_joint_table_target_or_source_not_set: '校验条件中源表或目标表未选择',
+  packages_business_verification_message_error_joint_table_target_or_source_not_set:
+    '校验条件{val}中源表或目标表未选择',
   packages_business_verification_message_error_joint_table_field_not_match:
-    '校验条件中源表与目标表的索引字段个数不相等',
+    '校验条件{val}中源表与目标表的索引字段个数不相等',
   packages_business_verification_message_error_script_no_enter: '开启高级校验后，JS校验逻辑不能为空',
   packages_business_verification_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
   packages_business_verification_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
@@ -656,7 +657,7 @@ export default {
   packages_business_verification_tasksVerifyCondition: '请添加校验条件',
   packages_business_verification_tasksVerifyInterval: '请输入校验间隔',
   packages_business_verification_lackSource: '校验条件中源表或目标表未选择',
-  packages_business_verification_lackIndex: '校验条件中源表或目标表的索引字段未选择',
+  packages_business_verification_lackIndex: '校验条件{val}中源表或目标表的索引字段未选择',
   packages_business_verification_tasksAmount: '校验条件中源表与目标表的索引字段个数不相等',
   packages_business_verification_uniqueField: '唯一字段差异',
   packages_business_verification_otherField: '其他字段差异',

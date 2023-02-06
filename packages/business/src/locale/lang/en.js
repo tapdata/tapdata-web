@@ -569,9 +569,9 @@ export default {
   packages_business_verification_checking: 'Checking...',
   packages_business_verification_message_error_joint_table_not_set: 'Please add verification conditions',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
-    'The source table or the target table is not selected in the verification condition',
+    'The source table or the target table is not selected in the verification condition {val}',
   packages_business_verification_message_error_joint_table_field_not_match:
-    'The number of index fields of the source table and the target table in the verification condition are not equal',
+    'The number of index fields of the source table and the target table in the verification condition {val} are not equal',
   packages_business_verification_message_error_script_no_enter:
     'After enabling advanced verification, the JS verification logic cannot be empty',
   packages_business_verification_message_confirm_delete_script:
@@ -674,7 +674,7 @@ export default {
   packages_business_verification_tasksVerifyCondition: 'Please set verify condition',
   packages_business_verification_tasksVerifyInterval: 'Please choose data verify interval',
   packages_business_verification_lackSource: 'Lack source or target table in verify condition',
-  packages_business_verification_lackIndex: 'Lack index field of source or target table in verify condition',
+  packages_business_verification_lackIndex: 'Lack index field of source or target table in verify condition {val}',
   packages_business_verification_tasksAmount:
     'The amount of index field of source table does not equal to target table in verify condition',
   packages_business_verification_uniqueField: 'Unique field inconsistent ',
