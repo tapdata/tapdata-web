@@ -1192,8 +1192,6 @@ export default {
       }
     },
 
-    validateTableReNameNode() {},
-
     loadLeafNode(node) {
       let arr = []
       if (node.$outputs.length) {
@@ -1324,8 +1322,7 @@ export default {
         this.validateAgent,
         this.validateLink,
         this.validateDDL,
-        this.validateTaskType,
-        this.validateTableReNameNode
+        this.validateTaskType
       )
     },
 
