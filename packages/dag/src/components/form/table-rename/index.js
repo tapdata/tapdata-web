@@ -1,13 +1,11 @@
 import i18n from '@tap/i18n'
 import { defineComponent, ref, reactive, set, del, computed, watch } from '@vue/composition-api'
-import { useForm } from '@tap/form'
+import { useForm, useField } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { VIcon, EmptyItem } from '@tap/component'
+import { EmptyItem } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { RecycleScroller } from 'vue-virtual-scroller'
 import List from './List.vue'
 import './style.scss'
 
@@ -91,6 +89,7 @@ export const TableRename = observer(
       const doModify = () => {
         const target = tableDataRef.value
         let flag
+        // let skipTableName = []
         target.forEach(n => {
           let after = n
           after = config.replaceBefore
@@ -102,13 +101,14 @@ export const TableRename = observer(
           }
           if (n !== after) {
             if (nameMap[n] === after) return
-            if (
+            /*if (
               (target.includes(after) && (!nameMap[after] || nameMap[after] === after)) ||
               Object.values(nameMap).includes(after)
             ) {
+              skipTableName.push(n)
               console.log('导致表名重复') // eslint-disable-line
               return
-            }
+            }*/
             set(nameMap, n, after)
             flag = true
           } else if (n in nameMap) {
@@ -126,6 +126,15 @@ export const TableRename = observer(
         })
 
         flag && emitChange()
+
+        /*if (skipTableName.length) {
+          // `自动跳过针对 [${skipTableName.join(', ')}] 表名的操作，原因是会导致表名重复`
+          root.$message.warning(
+            i18n.t('packages_form_table_rename_index_daozhibiaomingchongfu', {
+              val1: skipTableName.join(', ')
+            })
+          )
+        }*/
       }
 
       const doReset = () => {

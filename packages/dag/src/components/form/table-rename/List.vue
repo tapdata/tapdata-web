@@ -5,16 +5,15 @@
         <div class="flex-1 px-4 text-truncate">
           <span :title="name">{{ name }}</span>
         </div>
-        <div
-          class="flex-1 px-4 text-truncate"
-          :class="{
-            'color-primary': !!nameMap[name]
-          }"
-        >
+        <div class="flex-1 px-4 text-truncate">
           <InnerInput
             :nameMap="nameMap"
             :readOnly="disabled"
             :value="nameMap[name] || name"
+            :class="{
+              'color-primary': !!nameMap[name],
+              'color-danger border-danger': tableData.includes(nameMap[name]) && !nameMap[nameMap[name]]
+            }"
             @change="handleChange(name, $event)"
           ></InnerInput>
           <!--<input

@@ -108,7 +108,15 @@ export default {
         } catch (e) {
           // eslint-disable-next-line no-console
           console.error(e)
-          this.setNodeError(o)
+          if (node.type === 'table_rename_processor') {
+            // 节点的特殊处理，直接拿表单校验结果设置错误信息
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: e[0].messages[0]
+            })
+          } else {
+            this.setNodeError(node.id)
+          }
         }
       }
 
@@ -144,6 +152,7 @@ export default {
       'setNodeValue',
       'updateNodeProperties',
       'setNodeError',
+      'setNodeErrorMsg',
       'clearNodeError',
       'setNodeInputsWatcher',
       'setNodeOutputsWatcher'
