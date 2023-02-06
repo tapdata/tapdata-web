@@ -61,6 +61,7 @@
         <ElFormItem
           v-if="form.type === 'mongodb'"
           :label="$t('daas_external_storage_list_waicunbiaoming')"
+          required
           prop="table"
         >
           <ElInput v-model="form.table"></ElInput>
