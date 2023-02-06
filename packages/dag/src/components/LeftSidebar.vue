@@ -117,7 +117,7 @@
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
-          <ElTooltip content="重新加载" placement="top">
+          <ElTooltip :content="$t('packages_dag_components_leftsidebar_chongxinjiazai')" placement="top">
             <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable">
               <VIcon class="click-btn refresh mr-1" size="16">refresh</VIcon>
             </StageButton>

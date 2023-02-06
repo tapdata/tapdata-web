@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 
@@ -25,7 +26,7 @@ export class JavaScript extends NodeType {
       },
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'

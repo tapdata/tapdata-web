@@ -165,7 +165,7 @@ export default observer({
                         required: 'true',
                         'x-validator': {
                           cron: true,
-                          message: 'Cron表达式格式有误'
+                          message: i18n.t('packages_dag_migration_settingpanel_cronbiao')
                         },
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',

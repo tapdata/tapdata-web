@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { defineComponent, ref, watch, onMounted, computed, nextTick } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
@@ -214,7 +215,10 @@ export const MergeTableTree = observer(
       return () => {
         return (
           <Space class="merge-table-tree-space" align="stretch" size={12} split={true} inline={false}>
-            <FormItem.BaseItem label="表名称(支持拖拽)" tooltip="表之间可通过拖拽嵌套，确定主从关系">
+            <FormItem.BaseItem
+              label={i18n.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
+              tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
+            >
               <ElTree
                 ref="tree"
                 style={treeStyle.value}

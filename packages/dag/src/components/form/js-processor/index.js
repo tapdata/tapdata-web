@@ -206,9 +206,9 @@ export const JsProcessor = observer(
 
       let functionGroup = ref({})
       const classDescMap = {
-        DateUtil: '日期处理',
-        idGen: 'ID生成器',
-        networkUtil: '网络工具'
+        DateUtil: i18n.t('packages_dag_js_processor_index_riqichuli'),
+        idGen: i18n.t('packages_dag_js_processor_index_iDshengchengqi'),
+        networkUtil: i18n.t('packages_dag_js_processor_index_wangluogongju')
       }
       const loadFunction = async () => {
         const data = await javascriptFunctionsApi.get({
@@ -371,13 +371,16 @@ export const JsProcessor = observer(
                   return [
                     <h2>{className}</h2>,
                     classDescMap[className] && <p>{classDescMap[className]}</p>,
-                    <h3>方法</h3>,
+                    <h3>{i18n.t('packages_dag_js_processor_index_fangfa')}</h3>,
                     functionGroup.value[className].map(item => {
                       return [
                         <h4>{item.methodName}</h4>,
                         <ul>
-                          <li>作用：{item.desc}</li>
-                          <li>用法：</li>
+                          <li>
+                            {i18n.t('packages_dag_js_processor_index_zuoyong')}
+                            {item.desc}
+                          </li>
+                          <li>{i18n.t('packages_dag_js_processor_index_yongfa')}</li>
                         </ul>,
                         <HighlightCode code={item.example}></HighlightCode>
                       ]
@@ -443,7 +446,7 @@ export const JsProcessor = observer(
                   class="js-processor-editor-console border-start"
                 >
                   <ElTabs onInput={onTabChange} class="w-100 flex flex-column">
-                    <ElTabPane label="输出">
+                    <ElTabPane label={i18n.t('packages_dag_components_nodedetaildialog_shuchu')}>
                       <div class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
                           {logList.value.length
@@ -478,7 +481,9 @@ export const JsProcessor = observer(
                         </div>
                       </div>
                     </ElTabPane>
-                    <ElTabPane label="对比">{fullscreen.value && jsonView}</ElTabPane>
+                    <ElTabPane label={i18n.t('packages_dag_js_processor_index_duibi')}>
+                      {fullscreen.value && jsonView}
+                    </ElTabPane>
                   </ElTabs>
                 </div>
               </div>

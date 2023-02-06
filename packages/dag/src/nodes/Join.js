@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 
@@ -40,7 +41,7 @@ export class Join extends NodeType {
       },
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -55,13 +56,13 @@ export class Join extends NodeType {
       },
 
       joinType: {
-        title: '连接类型',
+        title: i18n.t('packages_dag_nodes_join_lianjieleixing'),
         type: 'string',
         required: true,
         default: 'left',
         enum: [
           {
-            label: '左连接',
+            label: i18n.t('packages_dag_nodes_join_zuolianjie'),
             value: 'left'
           } /*,
                   {
@@ -82,7 +83,7 @@ export class Join extends NodeType {
       },
 
       joinExpressions: {
-        title: '连接字段设置',
+        title: i18n.t('packages_dag_nodes_join_lianjieziduanshe'),
         type: 'array',
         required: true,
         default: [{ left: '', right: '', expression: '=' }],
@@ -90,7 +91,7 @@ export class Join extends NodeType {
           type: 'object',
           properties: {
             left: {
-              title: '左侧',
+              title: i18n.t('packages_dag_nodes_join_zuoce'),
               type: 'string',
               required: true,
               'x-decorator': 'FormItem',
@@ -105,7 +106,7 @@ export class Join extends NodeType {
               }
             },
             right: {
-              title: '右侧',
+              title: i18n.t('packages_dag_nodes_join_youce'),
               type: 'string',
               required: true,
               'x-decorator': 'FormItem',
