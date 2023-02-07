@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class TargetDatabase extends NodeType {
@@ -47,13 +48,13 @@ export class TargetDatabase extends NodeType {
         properties: {
           'attrs.connectionName': {
             type: 'string',
-            title: '连接名称',
+            title: i18n.t('packages_dag_nodes_database_lianjiemingcheng'),
             'x-decorator': 'FormItem',
             'x-component': 'PreviewText.Input'
           },
           'attrs.accessNodeProcessId': {
             type: 'string',
-            title: '所属agent',
+            title: i18n.t('packages_dag_nodes_database_suoshuage'),
             'x-decorator': 'FormItem',
             'x-component': 'PreviewText.Input',
             'x-component-props': {
@@ -73,7 +74,7 @@ export class TargetDatabase extends NodeType {
 
       desc: {
         type: 'string',
-        title: '节点描述',
+        title: i18n.t('packages_dag_nodes_targetdatabase_jiedianmiaoshu'),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
         'x-component-props': {
@@ -88,10 +89,10 @@ export class TargetDatabase extends NodeType {
 
       ddlEvents: {
         type: 'void',
-        title: 'DDL事件应用',
+        title: i18n.t('packages_dag_nodes_database_ddLshijian'),
         'x-decorator': 'FormItem',
         'x-decorator-props': {
-          tooltip: '当前节点支持处理的DDL事件',
+          tooltip: i18n.t('packages_dag_nodes_database_dangqianjiedianzhi'),
           feedbackLayout: 'none'
         },
         'x-component': 'DdlEventList',
@@ -106,7 +107,7 @@ export class TargetDatabase extends NodeType {
       },
       fieldMapping: {
         type: 'void',
-        title: '推演结果',
+        title: i18n.t('packages_dag_nodes_database_tuiyanjieguo'),
         'x-decorator': 'FormItem',
         'x-component': 'SchemaFiledMapping'
       },
@@ -119,24 +120,24 @@ export class TargetDatabase extends NodeType {
             type: 'void',
             'x-component': 'FormCollapse.Item',
             'x-component-props': {
-              title: '高级设置'
+              title: i18n.t('packages_dag_task_stetting_most_setting')
             },
             properties: {
               existDataProcessMode: {
                 type: 'string',
-                title: '重复处理策略',
+                title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
                 default: 'keepData',
                 enum: [
                   {
-                    label: '清除目标端原有表结构及数据',
+                    label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
                     value: 'dropTable'
                   },
                   {
-                    label: '保持目标端原有表结构，清除数据',
+                    label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
                     value: 'removeData'
                   },
                   {
-                    label: '保持目标端原有表结构和数据',
+                    label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
                     value: 'keepData'
                   }
                 ],
@@ -145,7 +146,7 @@ export class TargetDatabase extends NodeType {
                 'x-component': 'Select'
               },
               dmlPolicy: {
-                title: '数据写入策略',
+                title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                 type: 'object',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
@@ -165,16 +166,16 @@ export class TargetDatabase extends NodeType {
                     'x-decorator-props': {
                       className: 'font-color-dark mb-2',
                       wrapperWidth: 300,
-                      addonBefore: '插入事件'
+                      addonBefore: i18n.t('packages_dag_nodes_database_charushijian')
                     },
                     default: 'update_on_exists',
                     enum: [
                       {
-                        label: '目标存在时更新',
+                        label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
                         value: 'update_on_exists'
                       },
                       {
-                        label: '目标存在时丢弃',
+                        label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
                         value: 'ignore_on_exists'
                       }
                     ]
@@ -186,16 +187,16 @@ export class TargetDatabase extends NodeType {
                     'x-decorator-props': {
                       className: 'font-color-dark mb-2',
                       wrapperWidth: 300,
-                      addonBefore: '更新事件'
+                      addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian')
                     },
                     default: 'ignore_on_nonexists',
                     enum: [
                       {
-                        label: '不存在时丢弃',
+                        label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
                         value: 'ignore_on_nonexists'
                       },
                       {
-                        label: '不存在时插入',
+                        label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
                         value: 'insert_on_nonexists'
                       }
                     ]
@@ -206,10 +207,10 @@ export class TargetDatabase extends NodeType {
                     'x-decorator-props': {
                       className: 'font-color-dark',
                       wrapperWidth: 300,
-                      addonBefore: '删除事件'
+                      addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian')
                     },
                     'x-component': 'Tag',
-                    'x-content': '不存在时丢弃',
+                    'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
                     'x-component-props': {
                       type: 'info',
                       effect: 'light'
@@ -219,7 +220,7 @@ export class TargetDatabase extends NodeType {
               },
 
               initialConcurrentSpace: {
-                title: '全量多线程写入',
+                title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   layout: 'horizontal'
@@ -255,7 +256,7 @@ export class TargetDatabase extends NodeType {
               },
               cdcConcurrentSpace: {
                 type: 'void',
-                title: '增量多线程写入',
+                title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   layout: 'horizontal'

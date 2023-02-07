@@ -107,7 +107,7 @@
     <div class="my-4">{{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}</div>
     <div class="flex justify-content-between">
       <div v-loading="loading" class="chart-box rounded-2">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal flex align-items-center">
           <span class="mr-2">QPS</span>
           <ElTooltip
             transition="tooltip-fade-in"
@@ -127,9 +127,9 @@
         </div>
       </div>
       <div v-loading="loading" class="chart-box rounded-2">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal flex align-items-center">
           <span class="mr-2">{{ delayLineTitle }}</span>
-          <ElTooltip transition="tooltip-fade-in" placement="top">
+          <ElTooltip transition="tooltip-fade-in" placement="top" class="inline-flex align-items-center">
             <VIcon class="color-primary">info</VIcon>
             <div v-if="isSource" slot="content">
               <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshiyuan') }}</div>

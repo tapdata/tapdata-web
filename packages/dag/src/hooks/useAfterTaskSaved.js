@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { onBeforeUnmount, watch } from '@vue/composition-api'
 import { observe } from '@formily/reactive'
 
@@ -30,7 +31,7 @@ export const useAfterTaskSaved = (root, obs, callback) => {
     () => root.$store.state.dataflow.transformLoading,
     v => {
       if (!v) {
-        console.debug('模型已生成，执行 callback')
+        console.debug(i18n.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng'))
         callback()
       }
     }
