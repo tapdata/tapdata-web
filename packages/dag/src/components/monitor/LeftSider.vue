@@ -139,8 +139,8 @@
             placement="top"
             :content="$t('packages_dag_monitor_leftsider_qpSshizhi')"
           >
-            <span>
-              <span class="mr-2 font-color-dark fw-sub">QPS（Q/S）</span>
+            <span class="inline-flex align-items-center">
+              <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
               <VIcon size="14" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
@@ -157,7 +157,7 @@
             placement="top"
             :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
           >
-            <span>
+            <span class="inline-flex align-items-center">
               <span class="mr-2 font-color-dark fw-sub">{{
                 $t('packages_dag_components_nodedetaildialog_zengliangyanchi')
               }}</span>
@@ -269,7 +269,7 @@
       <LineChart
         :data="qpsData"
         :color="['#26CF6C', '#2C65FF']"
-        title="QPS（Q/S）"
+        title="QPS(Q/S)"
         :time-format="timeFormat"
         style="height: 200px"
       ></LineChart>

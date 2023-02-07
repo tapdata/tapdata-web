@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 
@@ -21,7 +22,7 @@ export class Aggregate extends NodeType {
       },
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -65,7 +66,7 @@ export class Aggregate extends NodeType {
             properties: {
               aggFunction: {
                 type: 'string',
-                title: '聚合函数',
+                title: i18n.t('packages_dag_nodes_aggregate_juhehanshu'),
                 enum: [
                   {
                     label: 'AVG',
@@ -94,7 +95,7 @@ export class Aggregate extends NodeType {
               },
               aggExpression: {
                 type: 'string',
-                title: '作用目标',
+                title: i18n.t('packages_dag_nodes_aggregate_zuoyongmubiao'),
                 required: true,
                 'x-decorator': 'FormItem',
                 'x-decorator-props': { gridSpan: 2 },
@@ -117,7 +118,7 @@ export class Aggregate extends NodeType {
             }
           },
           groupByExpression: {
-            title: '分组字段',
+            title: i18n.t('packages_dag_nodes_aggregate_fenzuziduan'),
             type: 'array',
             'x-decorator': 'FormItem',
             'x-component': 'FieldSelect',
@@ -146,7 +147,7 @@ export class Aggregate extends NodeType {
       // },
 
       return: {
-        title: '返回示例',
+        title: i18n.t('packages_dag_nodes_aggregate_fanhuishili'),
         type: 'void',
         'x-decorator': 'FormItem',
         'x-component': 'ArrayAggregate'
