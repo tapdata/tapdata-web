@@ -37,23 +37,33 @@ export class TableProcessor extends NodeType {
         },
         'x-validator': {
           validator: `{{(value, rule) => {
+            console.debug('[DEBUG]: tableNames validate', value)
             if (!value.length) return
             const parents = findParentNodes($values.id)
             if (parents && parents.length && parents[0].tableNames.length) {
               let tableNames = parents[0].tableNames
+              let countByName = {}
+              let duplicateTableNames = new Set()
               let tableNameMap = value.reduce((obj, item) => {
                 obj[item.previousTableName] = item.currentTableName
+                if (item.currentTableName in countByName) {
+                  countByName[item.currentTableName]++
+                  duplicateTableNames.add(item.currentTableName)
+                } else {
+                  countByName[item.currentTableName] = 1
+                }
                 return obj
               }, {})
               let currentTableNames = Object.values(tableNameMap)
-              if (currentTableNames.length !== new Set(currentTableNames).size) return rule.message
-              let hasDuplicateTableName = tableNames.some(name => {
+              // if (currentTableNames.length !== new Set(currentTableNames).size) return rule.message
+              tableNames.forEach(name => {
                 if (currentTableNames.includes(name) && !tableNameMap[name]) {
-                  return true
+                  duplicateTableNames.add(name)
                 }
               })
-              
-              return hasDuplicateTableName ? rule.message : ''
+              if (duplicateTableNames.size) {
+                return \`\${rule.message}: \${[...duplicateTableNames].join(', ')}\` 
+              }
             }
           }}}`,
           message: '表名重复'

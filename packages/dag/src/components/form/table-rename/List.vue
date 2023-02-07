@@ -12,7 +12,8 @@
             :value="nameMap[name] || name"
             :class="{
               'color-primary': !!nameMap[name],
-              'color-danger border-danger': tableData.includes(nameMap[name]) && !nameMap[nameMap[name]]
+              'color-danger border-danger':
+                (tableData.includes(nameMap[name]) && !nameMap[nameMap[name]]) || countByName[nameMap[name] || name] > 1
             }"
             @change="handleChange(name, $event)"
           ></InnerInput>
@@ -63,12 +64,11 @@ const InnerInput = {
 
 export default {
   name: 'List',
-  props: ['nameMap', 'tableData', 'updateName', 'emitChange', 'disabled'],
+  props: ['nameMap', 'tableData', 'updateName', 'emitChange', 'disabled', 'countByName'],
   components: { RecycleScroller, InnerInput },
   methods: {
     handleChange(name, event) {
       const val = event.target.value
-      console.log('this.nameMap', this.nameMap) // eslint-disable-line
       if (val) {
         if (
           (this.tableData.includes(val) && (!this.nameMap[val] || this.nameMap[val] === val)) ||
