@@ -23,13 +23,13 @@ export const TableListCard = observer(
           .then(data => {
             list.value = data
             if (!data?.length) {
-              fieldRef.value.setRequired(true)
+              fieldRef.value?.setRequired(true)
             } else {
-              fieldRef.value.setRequired(false)
+              fieldRef.value?.setRequired(false)
             }
             if (data?.join(',') !== props.value?.join(',')) {
               emit('change', data)
-              fieldRef.value.validate()
+              fieldRef.value?.validate()
             }
           })
           .finally(() => (loading.value = false))

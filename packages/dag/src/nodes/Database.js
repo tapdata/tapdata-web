@@ -143,7 +143,7 @@ export class Database extends NodeType {
             'x-decorator-props': {
               asterisk: true,
               feedbackLayout: 'none',
-              connectionId: '',
+              connectionId: '{{$values.connectionId}}',
               title: i18n.t('packages_dag_nodes_database_xuanzebiao')
             },
             'x-component': 'Radio.Group',
@@ -156,15 +156,7 @@ export class Database extends NodeType {
                 label: i18n.t('packages_dag_nodes_database_anzhengzebiaoda'),
                 value: 'expression'
               }
-            ],
-            'x-reactions': {
-              dependencies: ['.connectionId'],
-              fulfill: {
-                schema: {
-                  'x-decorator-props.connectionId': `{{$deps[0]}}`
-                }
-              }
-            }
+            ]
           },
 
           tableNames: {

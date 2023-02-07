@@ -101,7 +101,7 @@ export class Table extends NodeType {
         'x-decorator-props': {
           asterisk: true,
           feedbackLayout: 'none',
-          connectionId: '',
+          connectionId: '{{$values.connectionId}}',
           title: i18n.t('packages_dag_dag_table')
         },
         'x-component': 'FormFlex',
@@ -110,13 +110,10 @@ export class Table extends NodeType {
           align: 'start'
         },
         'x-reactions': {
-          dependencies: ['databaseType', '.connectionId'],
+          dependencies: ['databaseType'],
           fulfill: {
             state: {
               display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
-            },
-            schema: {
-              'x-decorator-props.connectionId': `{{$deps[1]}}`
             }
           }
         },
