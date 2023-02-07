@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref, watch } from '@vue/composition-api'
 import { metadataInstancesApi } from '@tap/api'
 import { OverflowTooltip } from '@tap/component'
 import './style.scss'
@@ -10,13 +10,14 @@ import { observer } from '@formily/reactive-vue'
 
 export const TableListCard = observer(
   defineComponent({
-    props: ['connectionId', 'value'],
+    props: ['connectionId', 'value', 'title', 'params'],
     setup(props, { emit }) {
       const fieldRef = useField()
       const loading = ref(false)
       const list = ref([])
       const loadData = () => {
         loading.value = true
+        console.log('params', props.params)
         metadataInstancesApi
           .getSourceTables(props.connectionId)
           .then(data => {
@@ -34,11 +35,18 @@ export const TableListCard = observer(
           .finally(() => (loading.value = false))
       }
       loadData()
+
+      watch(
+        () => props.params,
+        () => {
+          loadData()
+        }
+      )
       return () => {
         return (
           <ElCard class="table-list-card" shadow="never">
             <div slot="header" class="clearfix">
-              <span>{i18n.t('packages_form_field_mapping_list_biaoming')}</span>
+              <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
               {!loading.value && <span class="font-color-light float-end">{list.value.length}</span>}
             </div>
             <RecycleScroller

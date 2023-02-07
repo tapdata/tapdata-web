@@ -213,6 +213,26 @@ export class Database extends NodeType {
             }
           },
 
+          tableListCard: {
+            type: 'void',
+            'x-decorator': 'FormItem',
+            'x-component': 'TableListCard',
+            'x-component-props': {
+              rows: 1,
+              title: '匹配到的表',
+              connectionId: '{{$values.connectionId}}',
+              params: '{{ {tableExpression: $values.tableExpression} }}'
+            },
+            'x-reactions': {
+              dependencies: ['migrateTableSelectType'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
+                }
+              }
+            }
+          },
+
           readBatchSize: {
             title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
             type: 'string',
