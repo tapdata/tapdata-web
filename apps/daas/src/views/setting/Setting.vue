@@ -109,7 +109,9 @@
         </div>
 
         <div class="footer">
-          <el-button @click="save" size="mini" type="primary">{{ $t('button_save') }}</el-button>
+          <el-button v-if="email === 'admin@admin.com'" @click="save" size="mini" type="primary">{{
+            $t('button_save')
+          }}</el-button>
         </div>
       </el-form>
     </div>
@@ -193,6 +195,7 @@ import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   name: 'Setting',
@@ -246,11 +249,13 @@ export default {
           label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
           slotName: 'valueSlot'
         }
-      ]
+      ],
+      email: ''
     }
   },
   created() {
     this.getData()
+    this.email = Cookie.get('email')
   },
   computed: {
     SMTP() {
