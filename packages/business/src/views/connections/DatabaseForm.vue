@@ -1030,7 +1030,8 @@ export default {
           accessNodeType,
           accessNodeProcessId,
           openTableExcludeFilter,
-          tableExcludeFilter
+          tableExcludeFilter,
+          schemaUpdateHour
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -1042,7 +1043,8 @@ export default {
             accessNodeType,
             accessNodeProcessId,
             openTableExcludeFilter,
-            tableExcludeFilter
+            tableExcludeFilter,
+            schemaUpdateHour
           },
           ...this.model?.config
         })
