@@ -96,7 +96,7 @@
           <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
           <div class="body ml-4">
             <label class="label">{{ item.label }}</label>
-            <p class="value mt-2">{{ item.value }}</p>
+            <p class="value mt-2">{{ item.value || '-' }}</p>
           </div>
         </li>
       </ul>
@@ -279,7 +279,7 @@ export default {
           value: row.typeFmt,
           icon: 'name'
         },
-        { label: this.$t('daas_external_storage_list_waicunbiaoming'), value: row.tableFmt, icon: 'table' },
+        { label: this.$t('daas_external_storage_list_waicunbiaoming'), value: row.table, icon: 'table' },
         { label: this.$t('column_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('daas_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
         { label: this.$t('daas_external_storage_list_sheweimoren'), value: row.defaultStorage, icon: 'record' }
