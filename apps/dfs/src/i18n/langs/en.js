@@ -76,9 +76,12 @@ export default {
   header_setting: 'Settings',
   header_view_notifications: 'View all notifications',
   notify_setting: 'Notify settings',
-  notify_agent_notification: 'agent notification',
-  notify_sms_notification: 'SMS notification',
-  notify_email_notification: 'email notification',
+  notify_agent_notification: 'Agent Notification',
+  notify_sms_notification: 'SMS Notification',
+  notify_email_notification: 'Email Notification',
+  notify_webchat_notification: 'WeChat Notification',
+  notify_no_webchat_notification:
+    'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.',
   notify_agent_status_offline: 'Agent status is offline',
   notify_agent_status_running: 'Agent status is running',
   notify_agent_status_error: 'Error in task operation',
@@ -1074,6 +1077,12 @@ export default {
   dfs_workbench_tyepmap_apIfuwu7: 'API service restart failed',
   dfs_workbench_tyepmap_guanliduanfuwu7: 'Management service restart failed',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC lag timeout',
+
+  _workbench_workbench_yigoushishitong: 'Hetrogeneous Database Replication',
+  _workbench_workbench_shujuruhucang: 'Ingestion into Data Lake',
+  _workbench_workbench_jichengaliyun: 'Integrate Alibaba Cloud Computing Nest',
+  _workbench_workbench_jiangshujudaoru: 'Sync to AliCloud Tablestore',
+  _workbench_workbench_tansuoshili: 'Explore Use Cases',
 
   dfs_workbench_workbench_zhongyaobanbensheng:
     '[Important] Important announcement on version upgrade and service switching',

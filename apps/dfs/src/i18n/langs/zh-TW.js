@@ -78,7 +78,10 @@ export default {
   header_setting: '設定',
   header_view_notifications: '查看所有通知',
   notify_setting: '通知設定',
-  notify_agent_notification: 'agent通知',
+  notify_agent_notification: 'Agent通知',
+  notify_webchat_notification: '微信通知',
+  notify_no_webchat_notification:
+    '您的賬戶還沒有進行微信綁定，如需通過微信接收通知信息，請先退出登錄後通過微信掃碼完成綁定',
   notify_sms_notification: '簡訊通知',
   notify_email_notification: '郵件通知',
   notify_agent_status_offline: 'agent狀態為離線時',
@@ -991,6 +994,12 @@ export default {
   dfs_workbench_tyepmap_apIfuwu7: 'API服務重啟失敗',
   dfs_workbench_tyepmap_guanliduanfuwu7: '管理端服務重啟失敗',
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC滯後超時',
+
+  _workbench_workbench_yigoushishitong: '異構實時同步',
+  _workbench_workbench_shujuruhucang: '數據入湖倉 ',
+  _workbench_workbench_jichengaliyun: '集成阿里雲計算巢',
+  _workbench_workbench_jiangshujudaoru: '將數據導入阿里雲 Tablestore',
+  _workbench_workbench_tansuoshili: '探索示例',
 
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升級和服務切換重要公告',
   dfs_workbench_workbench_xinzengzidingyi: '· 新增自定義算子支持，用戶可通過靈活的JS能力來定義自己的算子',
