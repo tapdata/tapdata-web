@@ -119,7 +119,7 @@ export default {
               value: data.nodeId
             })
           data.lastOccurrenceTime &&
-            this.getLogRef()?.$refs.timeSelect.changeTime([new Date(data.lastOccurrenceTime).getTime(), Time.getTime()])
+            this.getLogRef()?.$refs.timeSelect.changeTime([new Date(data.lastOccurrenceTime).getTime(), Time.now()])
         }
       })
     }

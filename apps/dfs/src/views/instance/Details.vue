@@ -122,8 +122,8 @@ import timeFunction from '@/mixins/timeFunction'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 import i18n from '@/i18n'
 import { handleUnit } from '@/util'
-
 import { measurementApi } from '@tap/api'
+import Time from '@tap/shared/src/time'
 
 export default {
   name: 'Details',
@@ -355,8 +355,8 @@ export default {
 
     async loadMeasurementData(engineId) {
       const data = await measurementApi.queryV2({
-        startAt: Date.now(),
-        endAt: Date.now(),
+        startAt: Time.now(),
+        endAt: Time.now(),
         samples: {
           data: {
             tags: {

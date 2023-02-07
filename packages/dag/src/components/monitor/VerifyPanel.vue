@@ -236,7 +236,7 @@ export default {
     },
 
     loadData(loadMore = false) {
-      const startStamp = Time.getTime()
+      const startStamp = Time.now()
       taskApi
         .autoInspectResultsGroupByTable(this.getFilter())
         .then(({ total, items = [] }) => {
@@ -267,7 +267,7 @@ export default {
               this.moreLoading = false
               this.loading = false
             },
-            Time.getTime() - startStamp < 1000 ? 1500 : 0
+            Time.now() - startStamp < 1000 ? 1500 : 0
           )
         })
     },

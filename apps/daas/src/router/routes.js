@@ -61,6 +61,8 @@ const RelationTaskDetails = async () => {
   return RelationTaskDetails
 }
 
+const RoleDetails = () => import(/* webpackChunkName: "role-details" */ '@/views/role/Role')
+
 // 数据校验
 const VerificationList = async () => {
   const { VerificationList } = await import('@tap/business')
@@ -142,7 +144,7 @@ export default [
     component: DagEditor,
     meta: {
       title: 'page_title_data_develop',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_flow_dag_edit'
     }
   },
   {
@@ -151,7 +153,7 @@ export default [
     component: DagEditor,
     meta: {
       title: 'page_title_data_develop',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_flow_edit'
     }
   },
   {
@@ -160,7 +162,7 @@ export default [
     component: DagEditor,
     meta: {
       title: 'page_title_data_develop',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_flow_details'
     }
   },
   {
@@ -169,7 +171,7 @@ export default [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_flow_monitor'
     }
   },
 
@@ -179,7 +181,7 @@ export default [
     component: MigrationEditor,
     meta: {
       title: 'page_title_data_copy',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_replication_dag_edit'
     }
   },
   {
@@ -188,7 +190,7 @@ export default [
     component: MigrationEditor,
     meta: {
       title: 'page_title_data_copy',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_replication_dag_edit'
     }
   },
   {
@@ -197,7 +199,7 @@ export default [
     component: MigrationEditor,
     meta: {
       title: 'page_title_data_copy',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_replication_details'
     }
   },
   {
@@ -206,7 +208,7 @@ export default [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_replication_monitor'
     }
   },
   {
@@ -215,13 +217,14 @@ export default [
     component: MigrationMonitorViewer,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'Data_SYNC_menu'
+      code: 'v2_data_replication_record_monitor'
     }
   },
   {
     path: '/',
     name: 'layout',
     redirect: 'dashboard',
+    code: 'v2_dashboard',
     component: () => import('@/views/Layout'),
     children: [
       /* ---------- 控制台  ----------*/
@@ -229,7 +232,9 @@ export default [
         path: 'dashboard',
         name: 'dashboard',
         component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Dashboard'),
-        meta: { title: 'page_title_overview' }
+        meta: {
+          title: 'page_title_overview'
+        }
       },
       /* ---------- 连接管理  ----------*/
       {
@@ -247,7 +252,7 @@ export default [
             component: ConnectionList,
             meta: {
               title: 'page_title_connections',
-              code: 'datasource_menu'
+              code: 'v2_datasource_menu'
             }
           },
           {
@@ -256,7 +261,7 @@ export default [
             component: ConnectionForm,
             meta: {
               title: 'page_title_connections_create',
-              code: 'datasource_creation'
+              code: 'v2_datasource_creation'
             }
           },
           {
@@ -265,7 +270,7 @@ export default [
             component: ConnectionForm,
             meta: {
               title: 'page_title_connections_edit',
-              code: 'datasource_edition'
+              code: 'v2_datasource_edition'
             }
           }
         ]
@@ -286,7 +291,7 @@ export default [
             component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/ObjectList.tsx'),
             meta: {
               title: 'page_title_data_object',
-              code: 'datasource_menu'
+              code: 'v2_data_object'
             }
           }
         ]
@@ -307,7 +312,7 @@ export default [
             component: () => import(/* webpackChunkName: "connection-list" */ '@/views/data-discovery/Catalogue.tsx'),
             meta: {
               title: 'page_title_data_catalogue',
-              code: ''
+              code: 'v2_data_catalogue'
             }
           }
         ]
@@ -328,7 +333,7 @@ export default [
             component: MigrateList,
             meta: {
               title: 'page_title_data_copy',
-              code: 'Data_SYNC_menu'
+              code: 'v2_data_replication'
             }
           },
           {
@@ -337,7 +342,7 @@ export default [
             component: MigrateDetails,
             meta: {
               title: 'page_title_task_details',
-              code: 'Data_SYNC_menu'
+              code: 'v2_data_replication'
             }
           },
           {
@@ -346,7 +351,7 @@ export default [
             component: MigrateDetails,
             meta: {
               title: 'page_title_run_monitor',
-              code: 'Data_SYNC_menu'
+              code: 'v2_data_replication'
             }
           }
         ]
@@ -367,7 +372,7 @@ export default [
             component: EtlList,
             meta: {
               title: 'page_title_data_develop',
-              code: 'Data_SYNC_menu'
+              code: 'v2_data_flow'
             }
           },
           {
@@ -376,7 +381,7 @@ export default [
             component: EtlStatistics,
             meta: {
               title: 'page_title_task_stat',
-              code: 'Data_SYNC_menu'
+              code: 'v2_data_flow'
             }
           },
           /* ---------- 数据开发任务详情  ----------*/
@@ -441,7 +446,7 @@ export default [
             component: VerificationList,
             meta: {
               title: 'page_title_data_verify',
-              code: 'Data_verify_menu'
+              code: 'v2_data_check_list'
             }
           },
           {
@@ -450,7 +455,7 @@ export default [
             component: VerificationForm,
             meta: {
               title: 'page_title_verification_create',
-              code: 'verify_job_creation'
+              code: 'v2_data_check_create'
             }
           },
           {
@@ -459,7 +464,7 @@ export default [
             component: VerificationForm,
             meta: {
               title: 'page_title_task_edit',
-              code: 'verify_job_edition'
+              code: 'v2_data_check_edit'
             }
           },
           {
@@ -468,7 +473,7 @@ export default [
             component: VerificationDetails,
             meta: {
               title: 'page_title_task_details',
-              code: 'Data_verify'
+              code: 'v2_data_check_details'
             }
           },
           {
@@ -477,7 +482,7 @@ export default [
             component: VerificationHistory,
             meta: {
               title: 'page_title_verification_history',
-              code: 'Data_verify'
+              code: 'v2_data_check_history'
             }
           },
           {
@@ -486,7 +491,7 @@ export default [
             component: VerificationHistory,
             meta: {
               title: 'page_title_diff_verification_history',
-              code: 'Data_verify'
+              code: 'v2_data_check_result_history'
             }
           },
           {
@@ -495,7 +500,7 @@ export default [
             component: VerificationResult,
             meta: {
               title: 'page_title_diff_verification_details',
-              code: 'Data_verify'
+              code: 'v2_data_check_result_details'
             }
           },
           {
@@ -504,7 +509,7 @@ export default [
             component: VerificationResult,
             meta: {
               title: 'page_title_data_verification_result',
-              code: 'Data_verify'
+              code: 'v2_data_check_result'
             }
           }
           // {
@@ -535,7 +540,7 @@ export default [
             component: () => import(/* webpackChunkName: "shared-mining" */ '@/views/shared-mining/List'),
             meta: {
               title: 'page_title_shared_mining',
-              code: 'log_collector_menu'
+              code: 'v2_log_collector_menu'
             }
           },
           {
@@ -544,7 +549,7 @@ export default [
             component: () => import(/* webpackChunkName: "shared-mining-details" */ '@/views/shared-mining/Detail'),
             meta: {
               title: 'page_title_shared_mining_details',
-              code: 'log_collector_menu'
+              code: 'v2_log_collector_detail'
             }
           }
         ]
@@ -565,7 +570,7 @@ export default [
             component: () => import(/* webpackChunkName: "function-list" */ '@/views/function/List'),
             meta: {
               title: 'page_title_function',
-              code: 'SYNC_Function_management'
+              code: 'v2_function_management_list'
             }
           },
           {
@@ -574,7 +579,7 @@ export default [
             component: FunctionForm,
             meta: {
               title: 'page_title_function_create',
-              code: 'SYNC_Function_management'
+              code: 'v2_function_management_create'
             }
           },
           {
@@ -583,7 +588,7 @@ export default [
             component: () => import(/* webpackChunkName: "function-import" */ '@/views/function/ImportForm'),
             meta: {
               title: 'page_title_function_import',
-              code: 'SYNC_Function_management'
+              code: 'v2_function_management_import'
             }
           },
           {
@@ -592,7 +597,7 @@ export default [
             component: FunctionForm,
             meta: {
               title: 'page_title_function_edit',
-              code: 'SYNC_Function_management'
+              code: 'v2_function_management_edit'
             }
           },
           {
@@ -601,7 +606,7 @@ export default [
             component: () => import(/* webpackChunkName: "function-details" */ '@/views/function/Details'),
             meta: {
               title: 'page_title_function_details',
-              code: 'SYNC_Function_management'
+              code: 'v2_function_management_details'
             }
           }
         ]
@@ -623,7 +628,7 @@ export default [
               import(/* webpackChunkName: "custom-proccessor-node" */ '@/views/custom-proccessor-node/List'),
             meta: {
               title: 'page_title_custom_node',
-              code: 'custom_node_menu'
+              code: 'v2_custom_node_menu'
             }
           }
         ]
@@ -644,7 +649,7 @@ export default [
             component: () => import(/* webpackChunkName: "shared-cache" */ '@/views/shared-cache/List'),
             meta: {
               title: 'page_title_shared_cache',
-              code: 'shared_cache_menu'
+              code: 'v2_shared_cache_menu'
             }
           },
           {
@@ -653,7 +658,7 @@ export default [
             component: SharedCacheForm,
             meta: {
               title: 'page_title_shared_cache_create',
-              code: 'shared_cache_menu'
+              code: 'v2_shared_cache_create'
             }
           },
           {
@@ -662,7 +667,7 @@ export default [
             component: SharedCacheForm,
             meta: {
               title: 'page_title_shared_cache_edit',
-              code: 'shared_cache_menu'
+              code: 'v2_shared_cache_edit'
             }
           }
         ]
@@ -674,7 +679,7 @@ export default [
         component: () => import(/* webpackChunkName: "data-server" */ '@/views/data-server/List.vue'),
         meta: {
           title: 'page_title_data_server_list',
-          code: 'API_data_explorer_menu'
+          code: 'v2_data-server-list'
         }
       },
       /* ---------- API客户端  ----------*/
@@ -684,7 +689,7 @@ export default [
         component: () => import(/* webpackChunkName: "api-client" */ '@/views/api-page/Applications'),
         meta: {
           title: 'page_title_api_client',
-          code: 'API_clients_menu'
+          code: 'v2_api-client'
         }
       },
       /* ---------- API服务端  ----------*/
@@ -694,7 +699,7 @@ export default [
         component: () => import(/* webpackChunkName: "api-server" */ '@/views/api-page/ApiServer'),
         meta: {
           title: 'page_title_api_servers',
-          code: 'API_server_menu'
+          code: 'v2_api-servers'
         }
       },
       /* ---------- 服务审计  ----------*/
@@ -705,7 +710,7 @@ export default [
         redirect: 'data-server-audit/',
         meta: {
           title: 'page_title_api_audit',
-          code: 'API_clients_menu'
+          code: 'v2_data_server_audit-list'
         },
         children: [
           {
@@ -714,7 +719,7 @@ export default [
             component: () => import(/* webpackChunkName: "data-server-audit" */ '@/views/data-server-audit/List'),
             meta: {
               title: 'page_title_api_audit',
-              code: 'API_clients_menu'
+              code: 'v2_data_server_audit-list'
             }
           },
           {
@@ -724,7 +729,7 @@ export default [
               import(/* webpackChunkName: "data-server-audit-details" */ '@/views/data-server-audit/Info'),
             meta: {
               title: 'page_title_api_audit_details',
-              code: 'API_clients_menu'
+              code: 'v2_data_server_audit-details'
             }
           }
         ]
@@ -769,7 +774,7 @@ export default [
         component: () => import(/* webpackChunkName: "cluster" */ '@/views/cluster/Cluster'),
         meta: {
           title: 'page_title_cluster',
-          code: 'Cluster_management_menu'
+          code: 'v2_cluster-management_menu'
         }
       },
       {
@@ -782,54 +787,54 @@ export default [
         }
       },
       /* ---------- 用户管理  ----------*/
-      // {
-      //   path: '/user',
-      //   name: 'users',
-      //   component: () => import(/* webpackChunkName: "user" */ '@/views/user/List'),
-      //   meta: {
-      //     title: 'page_title_user',
-      //     code: 'user_management_menu'
-      //   }
-      // },
+      {
+        path: '/user',
+        name: 'users',
+        component: () => import(/* webpackChunkName: "user" */ '@/views/user/List'),
+        meta: {
+          title: 'page_title_user',
+          code: 'v2_user_management_menu'
+        }
+      },
       /* ---------- 角色管理  ----------*/
-      // {
-      //   path: '/role',
-      //   name: 'roles',
-      //   component: Parent,
-      //   redirect: 'role/',
-      //   meta: {
-      //     title: 'page_title_role'
-      //   },
-      //   children: [
-      //     {
-      //       path: '',
-      //       name: 'roleList',
-      //       component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
-      //       meta: {
-      //         title: 'page_title_role',
-      //         code: 'role_management_menu'
-      //       }
-      //     },
-      //     {
-      //       path: 'create',
-      //       name: 'role',
-      //       component: RoleDetails,
-      //       meta: {
-      //         title: 'page_title_role',
-      //         code: 'role_creation'
-      //       }
-      //     },
-      //     {
-      //       path: ':id/edit',
-      //       name: 'editRole',
-      //       component: RoleDetails,
-      //       meta: {
-      //         title: 'page_title_role',
-      //         code: 'role_edition'
-      //       }
-      //     }
-      //   ]
-      // },
+      {
+        path: '/role',
+        name: 'roles',
+        component: Parent,
+        redirect: 'role/',
+        meta: {
+          title: 'page_title_role'
+        },
+        children: [
+          {
+            path: '',
+            name: 'roleList',
+            component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
+            meta: {
+              title: 'page_title_role',
+              code: 'v2_role_management_menu'
+            }
+          },
+          {
+            path: 'create',
+            name: 'role',
+            component: RoleDetails,
+            meta: {
+              title: 'role_list_setting_permissions',
+              code: 'v2_role_creation'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'editRole',
+            component: RoleDetails,
+            meta: {
+              title: 'role_list_setting_permissions',
+              code: 'v2_role_edition'
+            }
+          }
+        ]
+      },
       /* ---------- 设置  ----------*/
       {
         path: '/settingCenter',
@@ -844,12 +849,14 @@ export default [
           {
             path: 'accountSetting',
             name: 'accountSetting',
+            code: 'v2_account-setting-setting',
             component: () => import(/* webpackChunkName: "account-setting" */ '@/views/setting/AccountSetting'),
             meta: { title: 'page_title_account', isNotAside: true }
           },
           {
             path: 'notificationSetting',
             name: 'notificationSetting',
+            code: 'v2_notification-setting',
             component: () =>
               import(/* webpackChunkName: "notification-setting" */ '@/views/setting/NotificationSetting'),
             meta: { title: 'notify_setting', isNotAside: true }
@@ -861,7 +868,7 @@ export default [
             component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/Setting'),
             meta: {
               title: 'page_title_setting',
-              code: 'system_settings_menu',
+              code: 'v2_system_settings_menu',
               isNotAside: true
             }
           },
@@ -872,7 +879,7 @@ export default [
             component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/AlarmNotification'),
             meta: {
               title: 'page_title_setting',
-              code: 'system_settings_menu',
+              code: 'v2_alarm_settings_menu',
               isNotAside: true
             }
           }

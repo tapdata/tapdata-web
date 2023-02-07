@@ -326,12 +326,13 @@
 import i18n from '@/i18n'
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
-import { INSTANCE_STATUS_MAP, AGENT_STATUS_MAP_EN } from '../../const'
+import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import timeFunction from '@/mixins/timeFunction'
 import { buried } from '@/plugins/buried'
 import { VIcon, FilterBar } from '@tap/component'
 import { dayjs } from '@tap/business'
+import Time from '@tap/shared/src/time'
 
 let timer = null
 
@@ -906,7 +907,7 @@ export default {
     },
     upgradeFlag(row) {
       let { tmInfo } = row
-      let isOvertime = (new Date().getTime() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
+      let isOvertime = (Time.now() - (tmInfo?.updatePingTime ?? 0)) / 1000 / 60 > 5
       // 刚完成5分钟内
       return tmInfo.updateStatus === 'done' && !isOvertime
     },

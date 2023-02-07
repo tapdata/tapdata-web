@@ -14,7 +14,14 @@
                 <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
                   >search-outline</VIcon
                 >
-                <VIcon size="20" class="click-btn" @mousedown.stop @click.stop="creat">add-outline</VIcon>
+                <VIcon
+                  size="20"
+                  class="click-btn"
+                  :class="{ 'click-btn-disabled': stateIsReadonly }"
+                  @mousedown.stop
+                  @click.stop="creat"
+                  >add-outline</VIcon
+                >
               </template>
               <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
             </div>
@@ -64,8 +71,8 @@
                       onStop
                     }"
                     :key="db.id"
-                    class="db-item grabbable flex align-center px-1 user-select-none rounded-2"
-                    :class="{ active: activeConnection.id === db.id }"
+                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    :class="{ grabbable: !stateIsReadonly, active: activeConnection.id === db.id }"
                     @click="handleSelectDB(db)"
                   >
                     <div class="flex-shrink-0 mr-2 db-item-icon">
@@ -110,11 +117,22 @@
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
+          <ElTooltip content="重新加载" placement="top">
+            <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable">
+              <VIcon class="click-btn refresh mr-1" size="16">refresh</VIcon>
+            </StageButton>
+          </ElTooltip>
           <VIcon size="18" class="click-btn mr-1" :class="{ active: showTBInput }" @click.stop="handleShowTBInput"
             >search-outline</VIcon
           >
           <ElTooltip :content="$t('packages_dag_dag_create_table_as_node')" placement="top">
-            <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
+            <VIcon
+              size="20"
+              class="click-btn"
+              :class="{ 'click-btn-disabled': stateIsReadonly }"
+              @click.stop="handleAddTable"
+              >add-outline</VIcon
+            >
           </ElTooltip>
         </div>
 
@@ -165,7 +183,8 @@
                       onStop
                     }"
                     :key="tb.id"
-                    class="tb-item grabbable flex align-center px-2 user-select-none rounded-2"
+                    class="tb-item flex align-center px-2 user-select-none rounded-2"
+                    :class="{ grabbable: !stateIsReadonly }"
                   >
                     <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
                   </div>
@@ -204,10 +223,12 @@
               onDrop,
               onStop
             }"
-            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-2"
+            :class="{ grabbable: !stateIsReadonly }"
           >
             <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
             <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
+            <VIcon class="ml-1" v-if="n.beta" size="32">beta</VIcon>
           </div>
         </ElScrollbar>
       </ElCollapseItem>
@@ -270,6 +291,7 @@ import BaseNode from './BaseNode'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
 import ConnectionType from './ConnectionType'
+import StageButton from '@tap/component/src/StageButton'
 
 export default {
   name: 'LeftSidebar',
@@ -283,7 +305,8 @@ export default {
     VIcon,
     ConnectionType,
     ConnectionTypeSelector,
-    ElScrollbar: Select.components.ElScrollbar
+    ElScrollbar: Select.components.ElScrollbar,
+    StageButton
   },
 
   data() {
@@ -342,7 +365,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor']),
+    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
 
     noMore() {
       return this.tbPage >= Math.ceil(this.tbTotal / 20)
@@ -387,7 +410,7 @@ export default {
   methods: {
     // 创建连接
     creat() {
-      this.connectionDialog = true
+      this.connectionDialog = !this.stateIsReadonly
     },
     getDatabaseType() {
       databaseTypesApi.get().then(res => {
@@ -616,6 +639,7 @@ export default {
     },
 
     initStart(node) {
+      if (this.stateIsReadonly) return false
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
@@ -629,15 +653,16 @@ export default {
 
     onStart(item) {
       const node = this.getNodeProps(item, '')
-      this.initStart(node)
+      return this.initStart(node)
     },
 
     onTBStart(item) {
       const node = this.getNodeProps(this.activeConnection, item.name)
-      this.initStart(node)
+      return this.initStart(node)
     },
 
     onProcessorStart(item) {
+      if (this.stateIsReadonly) return false
       const node = item
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
@@ -721,7 +746,7 @@ export default {
     }, 100),
 
     handleAddTable() {
-      this.dialogData.visible = true
+      this.dialogData.visible = !this.stateIsReadonly
     },
 
     handleSaveTable(name) {
@@ -808,11 +833,22 @@ $hoverBg: #eef3ff;
       height: 24px !important;
       z-index: 2;
       border-radius: 4px;
-
+      &.refresh {
+        color: map-get($iconFillColor, normal);
+      }
       &:hover,
       &.active {
         color: map-get($color, primary);
         background: $hoverBg;
+      }
+
+      &-disabled {
+        color: currentColor;
+        cursor: not-allowed;
+        &:hover {
+          color: currentColor;
+          background: rgba(242, 243, 245);
+        }
       }
     }
 

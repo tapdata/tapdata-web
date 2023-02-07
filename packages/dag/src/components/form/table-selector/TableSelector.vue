@@ -623,7 +623,14 @@ export default {
             setTimeout(() => {
               this.showProgress = false
               this.progress = 0 //加载完成
-              this.getTables() //更新schema
+              const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
+              metadataInstancesApi
+                .logicSchema(taskId, {
+                  nodeId: activeNodeId
+                })
+                .then(() => {
+                  this.getTables() //更新schema
+                })
             }, 1000)
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100

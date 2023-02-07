@@ -707,5 +707,11 @@ export default {
   packages_business_verification_form_jiaoyangaojing: '校验告警',
   packages_business_task_status_error_tip:
     '任务删除成功，以下几个 PostgreSQL 连接的信息清除失败，需要您使用以下方式手动清除',
-  packages_business_task_status_next_run_time: '下次运行时间：{val}'
+  packages_business_task_status_next_run_time: '下次运行时间：{val}',
+  packages_business_relation_details_rizhiwajueshi: '日志挖掘时间',
+  packages_business_relation_details_wajuemingcheng: '挖掘名称',
+  packages_business_relation_details_wajuexinxi: '挖掘信息',
+  packages_business_connections_databaseform_shujuyuanzhongmo: '数据源中模型数量大于1万时，会按本参数设置进行模型刷新',
+  packages_business_connections_databaseform_moxingjiazaipin: '模型加载频率',
+  packages_business_connections_list_biaojiegougengxin: '表结构更新时间'
 }

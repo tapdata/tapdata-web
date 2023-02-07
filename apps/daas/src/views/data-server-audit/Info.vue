@@ -11,13 +11,17 @@
           ><span class="font-text">{{ $t('apiaudit_name') }}:</span>
           <span class="fw-sub">{{ auditData.name || '-' }}</span></ElCol
         >
-        <ElCol class="font-color-normal" :span="12"
+        <ElCol class="font-color-normal pb-4" :span="12"
           ><span class="font-text">{{ $t('apiaudit_link') }}:</span>
           <span class="fw-sub">{{ auditData.apiPath || '-' }}</span></ElCol
         >
-        <ElCol class="font-color-normal" :span="12"
+        <ElCol class="font-color-normal pb-4" :span="12"
           ><span class="font-text">{{ $t('apiaudit_interview_time') }}:</span>
           <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
+        >
+        <ElCol class="font-color-normal pb-4" :span="12"
+          ><span class="font-text">{{ $t('apiaudit_ip') }}:</span>
+          <span class="fw-sub"> {{ auditData.userIp }}</span></ElCol
         >
       </ElRow>
     </div>

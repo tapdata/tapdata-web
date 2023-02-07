@@ -8,6 +8,8 @@ export class JavaScript extends NodeType {
 
   type = 'js_processor'
 
+  beta = true
+
   maxInputs = 1 // 最大输入个数
 
   group = 'processor'

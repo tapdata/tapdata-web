@@ -1,27 +1,23 @@
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 
-export class JavaScript extends NodeType {
+export class StandardJs extends NodeType {
   constructor() {
     super()
   }
 
-  type = 'migrate_js_processor'
-
-  beta = true
+  type = 'standard_js_processor'
 
   maxInputs = 1 // 最大输入个数
-  maxOutputs = 1 // 最大输出个数
 
   group = 'processor'
 
   formSchema = {
     type: 'object',
     properties: {
-      // 组件内需要监听$inputs的响应
       $inputs: {
         type: 'array',
-        display: 'none'
+        'x-display': 'hidden'
       },
       name: {
         type: 'string',
@@ -31,11 +27,13 @@ export class JavaScript extends NodeType {
         'x-component': 'Input'
       },
       script: {
+        title: '脚本',
         type: 'string',
         required: true,
         default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
         'x-component': 'JsProcessor',
         'x-component-props': {
+          isStandard: true,
           height: 500,
           options: { showPrintMargin: false, wrap: false },
           includeBeforeAndAfter: true,
@@ -43,8 +41,8 @@ export class JavaScript extends NodeType {
           beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
           afterRegexp: '}[^}]*$',
           after: '}',
-          param: 'schemaApplyResultList',
-          handleAddCompleter: '{{addDeclaredCompleterForMigrate}}'
+          param: 'tapTable',
+          handleAddCompleter: '{{addDeclaredCompleterForSync}}'
         }
       }
     }

@@ -111,6 +111,7 @@ import i18n from '@tap/i18n'
 
 import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   components: { VIcon },
@@ -216,7 +217,8 @@ export default {
           objCount: 1,
           parent_id: 1,
           desc: 1,
-          readOnly: 1
+          readOnly: 1,
+          user_id: 1
         }
       }
       if (this.types[0] === 'user') {
@@ -304,21 +306,23 @@ export default {
     },
     //格式化分类数据
     formatData(items) {
+      const userId = Cookie.get('user_id')
       if (items && items.length) {
         let map = {}
         let nodes = []
         //遍历第一次， 先把所有子类按照id分成若干数组
         items.forEach(it => {
           if (it.parent_id) {
-            if (it.objCount) {
-              let children = map[it.parent_id] || []
-              children.push(it)
-              map[it.parent_id] = children
-            }
+            let children = map[it.parent_id] || []
+            children.push(it)
+            map[it.parent_id] = children
           } else {
             //默认目录国际化
             if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
               it.value = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
+              if (it?.userName && it?.user_id !== userId) {
+                it.value += `| ${it.userName}`
+              }
             }
             nodes.push(it)
           }

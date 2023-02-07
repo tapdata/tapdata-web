@@ -372,7 +372,7 @@ export default {
       this.resList()
       this.resetNewPage()
       this.resetOldPage()
-      this.resetDataTime = Time.getTime()
+      this.resetDataTime = Time.now()
       this.loadOld(this.pollingData)
     },
 
@@ -603,7 +603,7 @@ export default {
     },
 
     getNewFilter() {
-      const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Time.getTime()]
+      const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Time.now()]
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
@@ -714,9 +714,9 @@ export default {
     getTimeRange(type) {
       let result
       const { status } = this.dataflow || {}
-      let endTimestamp = this.lastStopTime || Time.getTime()
+      let endTimestamp = this.lastStopTime || Time.now()
       if (status === 'running') {
-        endTimestamp = Time.getTime()
+        endTimestamp = Time.now()
       }
       switch (type) {
         case '6h':
@@ -742,7 +742,7 @@ export default {
         result[0] = endTimestamp - 5 * 60 * 1000
       }
       if (result[0] >= result[1]) {
-        result[1] = Time.getTime() + 5 * 1000
+        result[1] = Time.now() + 5 * 1000
       }
       return result
     },
@@ -752,7 +752,7 @@ export default {
     },
 
     getTime() {
-      return Time.getTime()
+      return Time.now()
     }
   }
 }

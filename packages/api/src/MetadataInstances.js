@@ -125,5 +125,11 @@ export default class MetadataInstances extends Http {
   tapTables(params) {
     return this.axios.get(this.url + '/tapTables?filter=' + encodeURIComponent(params.filter))
   }
+  checkTableExist(params) {
+    return this.axios.get(this.url + '/check/table/exist', { params })
+  }
+  logicSchema(taskId, params) {
+    return this.axios.delete(this.url + '/logic/schema/' + taskId, { params })
+  }
 }
 export { MetadataInstances }

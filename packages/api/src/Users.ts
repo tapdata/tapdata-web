@@ -83,5 +83,9 @@ export default class Users extends Http {
   getInfo() {
     return this.axios.get(`${this.url}/byToken`)
   }
+  //新增-权限增删
+  updatePermissionRoleMapping(id, params) {
+    return this.axios.put(`${this.url}/updatePermissionRoleMapping?id=${id}`, params)
+  }
 }
 export { Users }

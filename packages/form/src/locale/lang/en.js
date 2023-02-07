@@ -101,7 +101,7 @@ export default {
   packages_form_field_processor_index_xiaoxie: 'lowercase',
   packages_form_field_processor_index_daxie: 'uppercase',
   packages_form_field_processor_index_bubian: 'unchanged',
-  packages_form_field_processor_index_daxiaoxie: 'Case',
+  packages_form_field_processor_index_daxiaoxie: 'Table name case',
   packages_form_field_processor_index_houzhui: 'suffix',
   packages_form_field_processor_index_qianzhui: 'prefix',
   packages_form_field_processor_index_piliangcaozuo: 'Batch operation',
@@ -128,8 +128,7 @@ export default {
   packages_form_table_rename_index_yingyong: 'Application',
   packages_form_table_rename_index_gaiwei: 'change to',
   packages_form_table_rename_index_tihuan: 'Replace',
-  packages_form_table_rename_index_yixiacaozuojin:
-    'The following operations are only valid for the original table name that has been searched',
+  packages_form_table_rename_index_yixiacaozuojin: 'The following operations take effect for all original table names',
   packages_form_table_rename_index_xinbiaoming: 'New table name',
   packages_form_table_rename_index_yuanbiaoming: 'Original table name',
   packages_form_table_rename_index_sousuobiaoming: 'Search table name',

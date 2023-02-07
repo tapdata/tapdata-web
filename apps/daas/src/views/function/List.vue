@@ -105,7 +105,9 @@ export default {
     getData({ page }) {
       let { type } = this.searchParams
       let { current, size } = page
-      let where = {}
+      let where = {
+        category: null
+      }
       type && (where.type = type)
       let filter = {
         where,

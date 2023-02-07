@@ -185,7 +185,7 @@ export default {
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日志',
   packages_dag_migration_settingpanel_dangrenwufuhe:
-    '当任务符合以下情况下，即使开启开关任务也不会进行校验\n 1.添加了中间处理节点\n 2.源连接不支持校验\n 3.目标连接不支持校验',
+    '开启数据校验开关后，任务会自动对同步结果的一致性进行全量校验和增量校验，并会在运行监控页面将校验不一致的数据行数展示出来。需要注意，当任务符合以下情况时，即使开启校验开关任务也不会进行校验\n 1. 添加了中间处理节点\n 2. 源连接不支持校验\n 3. 目标连接不支持校验',
   packages_dag_monitor_bottompanel_yunxingjilu: '运行记录',
   packages_dag_monitor_bottompanel_rizhi: '日志',
   packages_dag_components_eventchart_qita: '其他',
@@ -305,7 +305,8 @@ export default {
   packages_dag_src_editor_zhuconghebing: '主从合并',
   packages_dag_src_editor_juhe: '聚合',
   packages_dag_src_editor_zhuijiahebing: '追加合并',
-  packages_dag_src_migrationeditor_jSchuli: 'JS处理',
+  packages_dag_src_migrationeditor_jSchuli: '增强JS',
+  packages_dag_src_migrationeditor_jSchuli_standard: '标准JS',
   packages_dag_src_migrationeditor_ziduanbianji: '字段编辑',
   packages_dag_src_migrationeditor_biaobianji: '表编辑',
   packages_dag_src_migrationeditor_zhuangtaijianting: '状态监听',
@@ -518,5 +519,6 @@ export default {
   packages_dag_monitor_node_popover_cdcTimeTitle_processor: '处理增量时间点',
   packages_dag_monitor_node_popover_targetWriteTime_title: '平均每条写入耗时',
   packages_dag_monitor_topheader_renwuxintiaoshi: '任务心跳时间',
-  packages_dag_monitor_node_per_deal_need_time: '单条处理耗时'
+  packages_dag_monitor_node_per_deal_need_time: '单条处理耗时',
+  packages_dag_api_docs: 'API文档'
 }

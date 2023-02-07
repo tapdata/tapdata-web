@@ -332,6 +332,12 @@ export default {
   created() {
     this.getDataApi()
   },
+  watch: {
+    '$route.query'() {
+      this.searchParams = this.$route.query
+      this.getDataApi()
+    }
+  },
   methods: {
     // 提交
     async submitForm() {
