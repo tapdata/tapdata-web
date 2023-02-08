@@ -23,7 +23,7 @@
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div class="nav-filter__list flex text-center fs-8 lh-1 mb-2">
+        <div class="nav-filter__list flex text-center lh-1 mb-2">
           <div
             v-for="(item, index) in tableClassification"
             :key="index"
@@ -258,6 +258,7 @@ export default {
     handleTableClass(type) {
       if (this.activeClassification === type) return
       this.activeClassification = type
+      this.loadData()
     }
   }
 }
@@ -297,7 +298,6 @@ export default {
     .task-form-text-box {
       width: 140px;
       .target {
-        font-size: 12px;
         height: 40px;
         line-height: 40px;
         white-space: nowrap;
