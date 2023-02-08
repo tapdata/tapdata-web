@@ -269,6 +269,26 @@ export default {
           tapdata_phone: user.telephone,
           tapdata_email: user.email
         })
+
+        $zoho.salesiq.onload = function () {
+          let siqiframe = document.getElementById('siqiframe')
+
+          if (siqiframe) {
+            siqiframe.contentWindow.document.styleSheets[0].insertRule('.botactions em { white-space: nowrap; }', 0)
+          }
+        }
+
+        /*$zoho.salesiq.floatbutton.click(function () {
+          let siqiframe = document.getElementById('siqiframe')
+          console.log('siqiframe', siqiframe) // eslint-disable-line
+
+          if (siqiframe) {
+            let style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+          }
+        })*/
       }
     },
 
