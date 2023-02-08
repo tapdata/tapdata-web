@@ -1,18 +1,20 @@
+import { debounce } from 'lodash'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import { RecycleScroller } from 'vue-virtual-scroller'
+
 import i18n from '@tap/i18n'
 import { defineComponent, ref, watch } from '@vue/composition-api'
 import { metadataInstancesApi } from '@tap/api'
 import { OverflowTooltip } from '@tap/component'
-import './style.scss'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { RecycleScroller } from 'vue-virtual-scroller'
 import { useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
+
+import './style.scss'
 
 export const TableListCard = observer(
   defineComponent({
     props: ['connectionId', 'value', 'title', 'params'],
     setup(props, { emit }) {
-      const fieldRef = useField()
       const loading = ref(false)
       const list = ref([])
       const loadData = () => {
@@ -22,26 +24,12 @@ export const TableListCard = observer(
           .getSourceTables(props.connectionId)
           .then(data => {
             list.value = data
-            if (!data?.length) {
-              fieldRef.value?.setRequired(true)
-            } else {
-              fieldRef.value?.setRequired(false)
-            }
-            if (data?.join(',') !== props.value?.join(',')) {
-              emit('change', data)
-              fieldRef.value?.validate()
-            }
           })
           .finally(() => (loading.value = false))
       }
       loadData()
 
-      watch(
-        () => props.params,
-        () => {
-          loadData()
-        }
-      )
+      watch(() => props.params, debounce(loadData, 300))
       return () => {
         return (
           <ElCard class="table-list-card" shadow="never">
