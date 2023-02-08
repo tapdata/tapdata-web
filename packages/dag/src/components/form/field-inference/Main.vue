@@ -23,18 +23,16 @@
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div class="flex text-center fs-8 lh-1">
-          <div class="nav-filter__item py-1 cursor-pointer active">
-            全部表
-            <span>(123)</span>
-          </div>
-          <div class="nav-filter__item py-1 cursor-pointer">
-            更新条件异常
-            <span class="color-danger">(123)</span>
-          </div>
-          <div class="nav-filter__item py-1 cursor-pointer">
-            推演异常
-            <span class="color-danger">(123)</span>
+        <div class="nav-filter__list flex text-center fs-8 lh-1 mb-2">
+          <div
+            v-for="(item, index) in tableClassification"
+            :key="index"
+            class="nav-filter__item py-1 cursor-pointer"
+            :class="{ active: activeClassification === item.type }"
+            @click="handleTableClass(item.type)"
+          >
+            {{ item.title }}
+            <span :class="[item.total ? 'color-danger' : 'color-info']">({{ item.total }})</span>
           </div>
         </div>
         <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
@@ -158,7 +156,25 @@ export default {
       visible: false,
       fieldChangeRules: [],
       noData,
-      updateConditionFields: []
+      updateConditionFields: [],
+      activeClassification: 'all',
+      tableClassification: [
+        {
+          type: 'all',
+          title: '全部表',
+          total: 0
+        },
+        {
+          type: 'updateError',
+          title: '更新条件异常',
+          total: 234
+        },
+        {
+          type: 'metaError',
+          title: '推演异常',
+          total: 123
+        }
+      ]
     }
   },
 
@@ -237,7 +253,12 @@ export default {
 
     handleSearchField: debounce(function () {
       this.filterFields()
-    }, 200)
+    }, 200),
+
+    handleTableClass(type) {
+      if (this.activeClassification === type) return
+      this.activeClassification = type
+    }
   }
 }
 </script>
@@ -317,6 +338,9 @@ export default {
   color: map-get($color, primary);
   line-height: 22px;
   background-color: map-get($bgColor, pageCount);
+}
+.nav-filter__list {
+  background-color: #fafafa;
 }
 .nav-filter__item {
   &.active {
