@@ -27,11 +27,11 @@
           <div
             v-for="(item, index) in tableClassification"
             :key="index"
-            class="nav-filter__item py-1 cursor-pointer"
+            class="nav-filter__item flex-fill py-1 cursor-pointer"
             :class="{ active: activeClassification === item.type }"
             @click="handleTableClass(item.type)"
           >
-            {{ item.title }}
+            <div class="mb-2 text-center">{{ item.title }}</div>
             <span :class="[item.total ? 'color-danger' : 'color-info']">({{ item.total }})</span>
           </div>
         </div>

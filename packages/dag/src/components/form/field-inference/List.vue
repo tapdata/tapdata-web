@@ -6,8 +6,8 @@
       :has-pagination="false"
       ref="table"
       height="100%"
-      stripe
       :key="!!canRevokeRules.length + ''"
+      :row-class-name="tableRowClassName"
     >
       <template slot="field_name" slot-scope="scope">
         <span class="flex align-center"
@@ -381,6 +381,10 @@ export default {
         Field: 'color-primary'
       }
       return map[this.getFieldScope(row)] || 'color-disable'
+    },
+
+    tableRowClassName({ row, rowIndex }) {
+      return !row.is_deleted ? 'warning-row' : ''
     }
   }
 }
@@ -389,5 +393,10 @@ export default {
 <style lang="scss" scoped>
 .field-inference__list {
   height: 100%;
+  ::v-deep {
+    .warning-row {
+      background: rgb(254, 229, 216);
+    }
+  }
 }
 </style>
