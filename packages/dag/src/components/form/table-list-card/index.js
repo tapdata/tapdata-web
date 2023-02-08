@@ -16,12 +16,16 @@ export const TableListCard = observer(
     setup(props, { emit }) {
       const loading = ref(false)
       const list = ref([])
+      const total = ref(0)
+
       const loadData = () => {
         loading.value = true
+        const params = { ...{ connectionId: props.connectionId }, ...props.params }
         metadataInstancesApi
-          .getSourceTables(props.connectionId)
+          .pageTables(params)
           .then(data => {
-            list.value = data
+            list.value = data?.items || []
+            total.value = data?.total || 0
           })
           .finally(() => (loading.value = false))
       }
@@ -33,7 +37,7 @@ export const TableListCard = observer(
           <ElCard class="table-list-card" shadow="never">
             <div slot="header" class="clearfix">
               <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
-              {!loading.value && <span class="font-color-light float-end">{list.value.length}</span>}
+              {!loading.value && <span class="font-color-light float-end">{total.value}</span>}
             </div>
             <RecycleScroller
               v-loading={loading.value}

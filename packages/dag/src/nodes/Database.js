@@ -189,9 +189,10 @@ export class Database extends NodeType {
           tableExpression: {
             type: 'string',
             default: '.*',
+            required: true,
             description: i18n.t('packages_dag_nodes_database_zhengzebiaodashi'),
             'x-decorator': 'FormItem',
-            'x-component': 'Input.TextArea',
+            'x-component': 'Input',
             'x-component-props': {
               rows: 1
             },
@@ -213,7 +214,7 @@ export class Database extends NodeType {
               rows: 1,
               title: '匹配到的表',
               connectionId: '{{$values.connectionId}}',
-              params: '{{ {tableExpression: $values.tableExpression} }}'
+              params: '{{ {regex: $values.tableExpression,limit:0} }}'
             },
             'x-reactions': {
               dependencies: ['migrateTableSelectType'],
