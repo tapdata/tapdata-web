@@ -319,12 +319,12 @@ export default {
   }
 }
 .marquee-container {
-  width: 420px;
+  width: 400px;
   height: 40px;
   line-height: 40px;
   .marquee-box {
     position: absolute;
-    width: 420px;
+    width: 400px;
     height: 40px;
     span {
       position: absolute;
