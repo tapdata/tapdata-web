@@ -33,12 +33,9 @@ export const TableListCard = observer(
 
       watch(() => props.params, debounce(loadData, 300))
       return () => {
-        return (
-          <ElCard class="table-list-card" shadow="never">
-            <div slot="header" class="clearfix">
-              <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
-              {!loading.value && <span class="font-color-light float-end">{total.value}</span>}
-            </div>
+        let listDom
+        if (total.value) {
+          listDom = (
             <RecycleScroller
               v-loading={loading.value}
               class="h-100 p-2 flex-1"
@@ -57,6 +54,26 @@ export const TableListCard = observer(
                 )
               }}
             />
+          )
+        } else {
+          listDom = (
+            <div className="flex-1 flex flex-column justify-center">
+              <ElEmpty
+                image-size="111"
+                image={require('@tap/assets/images/img_empty.png')}
+                description={i18n.t('packages_dag_table_list_card_index_zanshimeiyoupi')}
+              ></ElEmpty>
+            </div>
+          )
+        }
+
+        return (
+          <ElCard class="table-list-card" shadow="never">
+            <div slot="header" class="clearfix">
+              <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
+              {!loading.value && <span class="font-color-light float-end">{total.value}</span>}
+            </div>
+            {listDom}
           </ElCard>
         )
       }
