@@ -561,5 +561,8 @@ export default {
   packages_dag_nodes_table_lunxun: '輪詢',
   packages_dag_nodes_table_rizhicdc: '日誌cdc',
   packages_dag_nodes_table_tedingziduande: '特定字段的輪詢方式對數據進行增量採集',
-  packages_dag_nodes_table_zengliangtongbufang: '增量同步方式'
+  packages_dag_nodes_table_zengliangtongbufang: '增量同步方式',
+  packages_dag_table_list_card_index_zanshimeiyoupi: '暫時沒有匹配的表',
+  packages_dag_nodes_database_pipeidaodebiao: '匹配到的表',
+  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重複'
 }

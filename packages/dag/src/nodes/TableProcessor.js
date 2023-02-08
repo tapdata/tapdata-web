@@ -67,7 +67,7 @@ export class TableProcessor extends NodeType {
               }
             }
           }}}`,
-          message: '表名重复'
+          message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
         }
       }
     }

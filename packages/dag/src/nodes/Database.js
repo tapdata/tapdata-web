@@ -212,7 +212,7 @@ export class Database extends NodeType {
             'x-component': 'TableListCard',
             'x-component-props': {
               rows: 1,
-              title: '匹配到的表',
+              title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
               connectionId: '{{$values.connectionId}}',
               params: '{{ {regex: $values.tableExpression,limit:0} }}'
             },
