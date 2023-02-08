@@ -131,5 +131,8 @@ export default class MetadataInstances extends Http {
   logicSchema(taskId, params) {
     return this.axios.delete(this.url + '/logic/schema/' + taskId, { params })
   }
+  pageTables(params) {
+    return this.axios.get(this.url + '/page-tables', { params })
+  }
 }
 export { MetadataInstances }
