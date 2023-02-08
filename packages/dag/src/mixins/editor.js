@@ -1045,7 +1045,15 @@ export default {
       } catch (e) {
         // eslint-disable-next-line no-console
         console.log(i18n.t('packages_dag_mixins_editor_jiedianjiaoyancuo'), e)
-        this.setNodeError(node.id)
+        if (node.type === 'table_rename_processor') {
+          // 节点的特殊处理，直接拿表单校验结果设置错误信息
+          this.setNodeErrorMsg({
+            id: node.id,
+            msg: e[0].messages[0]
+          })
+        } else {
+          this.setNodeError(node.id)
+        }
       }
     },
 
@@ -1869,6 +1877,7 @@ export default {
           }
           // 需要实时更新的字段
           this.dataflow.lastStartDate = data.lastStartDate
+          this.dataflow.startTime = data.startTime
           this.dataflow.pingTime = data.pingTime
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)

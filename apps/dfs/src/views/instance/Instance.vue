@@ -158,7 +158,6 @@
         <ElTableColumn :label="$t('list_operation')" width="240">
           <template slot-scope="scope">
             <ElButton
-
               type="text"
               :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
               @click="toDeploy(scope.row)"
@@ -749,10 +748,11 @@ export default {
     },
     autoUpgradeFnc() {
       this.closeDialog() // 关闭升级方式选择窗口
-      if (this.selectedRow?.metric?.runningTaskNum) {
-        this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
-        return
-      }
+      //由于云版升级引擎导致原来任务执行的中断-前端 #132709
+      // if (this.selectedRow?.metric?.runningTaskNum) {
+      //   this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
+      //   return
+      // }
       let row = this.selectedRow
       this.$axios.get('api/tcm/config/version/latest/' + row.id).then(({ token }) => {
         this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
@@ -773,17 +773,18 @@ export default {
     manualUpgradeFnc() {
       let row = this.selectedRow
       this.closeDialog() // 关闭升级方式选择窗口
-      if (row.metric?.runningTaskNum) {
-        this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
-      } else {
-        let routeUrl = this.$router.resolve({
-          name: 'UpgradeVersion',
-          query: {
-            agentId: row.id
-          }
-        })
-        window.open(routeUrl.href, '_blank')
-      }
+      //由于云版升级引擎导致原来任务执行的中断-前端 #132709
+      // if (row.metric?.runningTaskNum) {
+      //   this.$alert(this.$t('agent_auto_upgrade_tip_running_task'))
+      // }
+
+      let routeUrl = this.$router.resolve({
+        name: 'UpgradeVersion',
+        query: {
+          agentId: row.id
+        }
+      })
+      window.open(routeUrl.href, '_blank')
     },
     closeDialog() {
       this.upgradeDialog = false

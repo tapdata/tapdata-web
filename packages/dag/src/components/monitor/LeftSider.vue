@@ -451,7 +451,7 @@ export default {
 
     heartbeatTime() {
       const { pingTime, status } = this.dataflow
-      return status === 'running' && pingTime ? dayjs().to(dayjs(pingTime)) : '-'
+      return status === 'running' && pingTime ? dayjs(Time.getTime()).to(dayjs(pingTime)) : '-'
     },
 
     isFileSource() {

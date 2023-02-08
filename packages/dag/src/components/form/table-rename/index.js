@@ -1,28 +1,35 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, set, del, computed, watch } from '@vue/composition-api'
+import { defineComponent, ref, reactive, set, del, computed } from '@vue/composition-api'
 import { useForm } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { VIcon, EmptyItem } from '@tap/component'
+import { EmptyItem } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { RecycleScroller } from 'vue-virtual-scroller'
 import List from './List.vue'
 import './style.scss'
 
 export const TableRename = observer(
   defineComponent({
     props: ['findParentNode', 'value', 'listStyle', 'disabled'],
-    setup(props, { emit, root }) {
+    setup(props, { emit, root, refs }) {
+      const itemSize = 38
       const formRef = useForm()
       const form = formRef.value
       const tableDataRef = ref([])
+      let tableMap = {}
       const loading = ref(false)
+      let countByName = ref({})
       let nameMap = reactive(
         props.value
           ? props.value.reduce((obj, item) => {
               obj[item.previousTableName] = item.currentTableName
+
+              if (item.currentTableName in countByName.value) {
+                countByName.value[item.currentTableName]++
+              } else {
+                countByName.value[item.currentTableName] = 1
+              }
               return obj
             }, {})
           : {}
@@ -52,8 +59,10 @@ export const TableRename = observer(
             })
             .then(({ items = [] }) => {
               prevMap = {}
+              tableMap = {}
               tableDataRef.value = items.map(item => {
                 prevMap[item.previousTableName] = item.sourceObjectName
+                tableMap[item.previousTableName] = true
                 return item.previousTableName
               })
             })
@@ -86,11 +95,10 @@ export const TableRename = observer(
         return tableDataRef.value
       })
 
-      const handleReplace = (value, config) => {}
-
       const doModify = () => {
         const target = tableDataRef.value
         let flag
+        // let skipTableName = []
         target.forEach(n => {
           let after = n
           after = config.replaceBefore
@@ -102,13 +110,14 @@ export const TableRename = observer(
           }
           if (n !== after) {
             if (nameMap[n] === after) return
-            if (
+            /*if (
               (target.includes(after) && (!nameMap[after] || nameMap[after] === after)) ||
               Object.values(nameMap).includes(after)
             ) {
+              skipTableName.push(n)
               console.log('导致表名重复') // eslint-disable-line
               return
-            }
+            }*/
             set(nameMap, n, after)
             flag = true
           } else if (n in nameMap) {
@@ -126,6 +135,15 @@ export const TableRename = observer(
         })
 
         flag && emitChange()
+
+        /*if (skipTableName.length) {
+          // `自动跳过针对 [${skipTableName.join(', ')}] 表名的操作，原因是会导致表名重复`
+          root.$message.warning(
+            i18n.t('packages_form_table_rename_index_daozhibiaomingchongfu', {
+              val1: skipTableName.join(', ')
+            })
+          )
+        }*/
       }
 
       const doReset = () => {
@@ -149,6 +167,7 @@ export const TableRename = observer(
 
       const emitChange = () => {
         const arr = []
+        let _countByName = {}
         Object.entries(nameMap).forEach(([previousTableName, currentTableName]) => {
           const originTableName = prevMap[previousTableName]
           if (originTableName) {
@@ -157,9 +176,19 @@ export const TableRename = observer(
               previousTableName,
               currentTableName
             })
+            if (currentTableName in _countByName) {
+              _countByName[currentTableName]++
+            } else {
+              _countByName[currentTableName] = 1
+            }
           }
         })
+        countByName.value = _countByName
         emit('change', arr)
+      }
+
+      const scrollToItem = index => {
+        refs.nameList.scrollTop = index * itemSize
       }
 
       return {
@@ -172,7 +201,9 @@ export const TableRename = observer(
         emitChange,
         nameMap,
         tableData: tableDataRef,
-        loading
+        loading,
+        countByName,
+        itemSize
       }
     },
 
@@ -233,13 +264,14 @@ export const TableRename = observer(
                 </ElButton>
               </div>
             </div>
-            <div class="name-list-content font-color-light overflow-auto">
+            <div ref="nameList" class="name-list-content font-color-light overflow-auto">
               {this.filterNames.length ? (
                 <List
                   disabled={this.disabled}
                   items={this.filterNames}
-                  itemSize={38}
+                  itemSize={this.itemSize}
                   buffer={50}
+                  countByName={this.countByName}
                   nameMap={this.nameMap}
                   tableData={this.tableData}
                   updateName={this.updateName}

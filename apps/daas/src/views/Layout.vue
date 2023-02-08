@@ -31,7 +31,9 @@
           </span>
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
           <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
+            <ElDropdownItem command="settings" v-if="settingCode && email === 'admin@admin.com'">{{
+              $t('page_title_setting')
+            }}</ElDropdownItem>
             <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
               $t('notify_setting')
             }}</ElDropdownItem>
@@ -453,6 +455,7 @@ export default {
         (this.$has('datasource_creation') && this.$has('datasource_menu')),
       menus: [],
       userName: '',
+      email: '',
       dialogVisible: false,
       isShowCustomerService: false,
       licenseExpire: '',
@@ -490,6 +493,7 @@ export default {
     this.getActiveMenu()
 
     this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
+    this.email = Cookie.get('email')
 
     window.iframeRouterChange = route => {
       this.$router.push(route)

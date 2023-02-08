@@ -5,16 +5,16 @@
         <div class="flex-1 px-4 text-truncate">
           <span :title="name">{{ name }}</span>
         </div>
-        <div
-          class="flex-1 px-4 text-truncate"
-          :class="{
-            'color-primary': !!nameMap[name]
-          }"
-        >
+        <div class="flex-1 px-4 text-truncate">
           <InnerInput
             :nameMap="nameMap"
             :readOnly="disabled"
             :value="nameMap[name] || name"
+            :class="{
+              'color-primary': !!nameMap[name],
+              'color-danger border-danger':
+                (tableData.includes(nameMap[name]) && !nameMap[nameMap[name]]) || countByName[nameMap[name] || name] > 1
+            }"
             @change="handleChange(name, $event)"
           ></InnerInput>
           <!--<input
@@ -64,12 +64,11 @@ const InnerInput = {
 
 export default {
   name: 'List',
-  props: ['nameMap', 'tableData', 'updateName', 'emitChange', 'disabled'],
+  props: ['nameMap', 'tableData', 'updateName', 'emitChange', 'disabled', 'countByName'],
   components: { RecycleScroller, InnerInput },
   methods: {
     handleChange(name, event) {
       const val = event.target.value
-      console.log('this.nameMap', this.nameMap) // eslint-disable-line
       if (val) {
         if (
           (this.tableData.includes(val) && (!this.nameMap[val] || this.nameMap[val] === val)) ||

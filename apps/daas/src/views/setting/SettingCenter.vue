@@ -11,7 +11,7 @@
               @click="changeName(item.key)"
             >
               <!-- <i :class="['iconfont', item.icon]"></i> -->
-              <VIcon class="mr-2">{{ item.icon }}</VIcon>
+              <VIcon :size="item.size" class="mr-2">{{ item.icon }}</VIcon>
               <span slot="title">{{ item.name }}</span>
             </li>
           </ul>
@@ -28,30 +28,29 @@
 import i18n from '@/i18n'
 
 import { VIcon } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
 export default {
   components: { VIcon },
   data() {
     return {
       settingList: [
         {
-          icon: 'setting',
-          name: this.$t('account_systemSetting'),
-          key: 'settings'
-        },
-        {
           icon: 'bells',
           name: this.$t('notify_setting'),
-          key: 'notificationSetting'
+          key: 'notificationSetting',
+          size: 20
         },
         {
-          icon: 'bells',
+          icon: 'warning',
           name: i18n.t('daas_setting_settingcenter_gaojingshezhi'),
-          key: 'alarmSetting'
+          key: 'alarmSetting',
+          size: 14
         },
         {
           icon: 'account',
           name: this.$t('account_accountSettings'),
-          key: 'accountSetting'
+          key: 'accountSetting',
+          size: 20
         }
       ],
       activePanel: '',
@@ -70,6 +69,16 @@ export default {
   },
   created() {
     this.activePanel = this.$route.name
+    //admin才有系统设置权限
+    if (Cookie.get('email') === 'admin@admin.com') {
+      let node = {
+        icon: 'setting',
+        name: this.$t('account_systemSetting'),
+        key: 'settings',
+        size: 20
+      }
+      this.settingList.unshift(node)
+    }
   },
   methods: {
     changeName(name) {

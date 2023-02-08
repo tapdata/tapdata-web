@@ -148,8 +148,17 @@ export const JsProcessor = observer(
                 handleAutoQuery()
               }, 500)
             } else {
-              // 没有拿到日志数据，继续定时轮询
-              if (!logList.value.length) {
+              // 两秒后再去拿一次日志，如果没有日志就继续轮询
+              outTimer = setTimeout(() => {
+                logTimer = setInterval(async () => {
+                  await queryLog()
+                  if (logList.value.length) {
+                    resetQuery()
+                  }
+                }, 1000)
+              }, 2000)
+
+              /*if (!logList.value.length) {
                 outTimer = setTimeout(() => {
                   logTimer = setInterval(async () => {
                     await queryLog()
@@ -160,7 +169,7 @@ export const JsProcessor = observer(
                 }, 1000)
               } else {
                 resetQuery()
-              }
+              }*/
             }
           })
           .catch(resetQuery)
@@ -457,7 +466,9 @@ export const JsProcessor = observer(
                                     code = JSON.stringify(JSON.parse(item.message), null, 2)
                                   } catch (e) {
                                     const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
-                                    code = `{\n${message.map(line => `  ${line}`).join('\n')}\n}`
+                                    code = `${item.message.charAt(0)}\n${message
+                                      .map(line => `  ${line}`)
+                                      .join('\n')}\n${item.message.charAt(item.message.length - 1)}`
                                   }
 
                                   return (
@@ -467,7 +478,11 @@ export const JsProcessor = observer(
                                     </details>
                                   )
                                 }
-                                return <div class="js-log-list-item text-prewrap text-break p-2">{item.message}</div>
+                                return (
+                                  <div class="js-log-list-item text-prewrap text-break p-2">
+                                    {item.errorStack || item.message}
+                                  </div>
+                                )
                               })
                             : !logLoading.value && <VEmpty large></VEmpty>}
                           <div
