@@ -529,10 +529,8 @@ export default {
         obj.errorStack = row.errorStack?.slice(0, 20000)
 
         const { level, timestamp, nodeName, logTags, data, message, errorStack } = obj
-        // const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
-        const jsonStr = message?.slice(0, 200)
-        // row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
-        row.titleDomStr = this.getTitleStringDom({ timestamp }, jsonStr)
+        const jsonStr = JSON.stringify(Object.assign({ message, errorStack }, obj), null, '\t')?.slice(0, 200)
+        row.titleDomStr = this.getTitleStringDom({ timestamp, nodeName }, jsonStr)
         row.jsonDomStr = this.getJsonString([
           { level },
           { timestamp },
@@ -547,7 +545,7 @@ export default {
     },
     getTitleStringDom(row = {}, extra = '') {
       let result = ''
-      result += `<span class="ml-1" style="color: #cacaca">[${row.timestamp}]</span>`
+      result += `<span class="ml-1">${row.timestamp}</span>`
       if (row.nodeName) {
         result += `<span class="ml-1">[${this.getHighlightSpan(row.nodeName)}]</span>`
       }
