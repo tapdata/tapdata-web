@@ -6,7 +6,6 @@ import i18n from '@tap/i18n'
 import { defineComponent, ref, watch } from '@vue/composition-api'
 import { metadataInstancesApi } from '@tap/api'
 import { OverflowTooltip } from '@tap/component'
-import { useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 
 import './style.scss'
@@ -19,7 +18,6 @@ export const TableListCard = observer(
       const list = ref([])
       const loadData = () => {
         loading.value = true
-        console.log('params', props.params)
         metadataInstancesApi
           .getSourceTables(props.connectionId)
           .then(data => {
