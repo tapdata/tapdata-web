@@ -396,6 +396,11 @@ export default {
   ::v-deep {
     .warning-row {
       background: rgb(254, 229, 216);
+      &:hover {
+        > td.el-table__cell {
+          background: rgb(254, 229, 216);
+        }
+      }
     }
   }
 }
