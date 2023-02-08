@@ -307,53 +307,6 @@ export default {
       barData: [],
       lineDataX: [],
       lineDataY: [],
-      barOptions: {
-        barWidth: '50%',
-        grid: {
-          top: 20,
-          bottom: 0,
-          left: 0,
-          right: 0
-        },
-        xAxis: {
-          axisLabel: {
-            formatter: val => {
-              return this.formatTime(val, '', 'MM-DD')
-            }
-          },
-          axisLine: {
-            onZero: false
-          }
-        },
-        yAxis: {
-          show: true,
-          type: 'log',
-          min: 1,
-          logBase: 10,
-          axisLabel: {
-            formatter: val => {
-              let res = val === 1 ? 0 : val
-              if (res / 1000 >= 1) {
-                res = res / 1000 + 'K'
-              }
-              return res
-            }
-          }
-        },
-        tooltip: {
-          trigger: 'item',
-          formatter: params => {
-            let item = params
-            let val = item.value
-            if (val === 1.1) {
-              val = 1
-            }
-            val = numToThousands(val)
-            let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
-            return html
-          }
-        }
-      },
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
       showUpgrade: false, //版本升级弹窗
       //付费升级
@@ -606,7 +559,7 @@ export default {
         grid: {
           top: 20,
           bottom: 20,
-          left: 20,
+          left: 55,
           right: 20
         },
         xAxis: {
