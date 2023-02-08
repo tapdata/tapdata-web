@@ -102,7 +102,8 @@ export class Table extends NodeType {
           asterisk: true,
           feedbackLayout: 'none',
           connectionId: '{{$values.connectionId}}',
-          title: i18n.t('packages_dag_dag_table')
+          title: i18n.t('packages_dag_dag_table'),
+          target: 'tableNameWrap.tableName'
         },
         'x-component': 'FormFlex',
         'x-component-props': {

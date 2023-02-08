@@ -6,14 +6,14 @@ import { FormItem, useForm } from '@tap/form'
 
 export const StageButtonLabel = observer(
   defineComponent({
-    props: ['value', 'disabled', 'connectionId', 'title'],
+    props: ['value', 'disabled', 'connectionId', 'title', 'target'],
     setup(props, { emit, root, attrs, refs, slots }) {
       const { taskId, activeNodeId } = root.$store.state?.dataflow || {}
 
       const formRef = useForm()
 
       const trigger = () => {
-        const field = formRef.value.query('tableNameWrap.tableName').take() || formRef.value.query('tableNames').take()
+        const field = formRef.value.query(props.target).take()
         field?.setComponentProps({
           reloadTime: Date.now()
         })

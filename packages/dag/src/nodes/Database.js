@@ -144,9 +144,17 @@ export class Database extends NodeType {
               asterisk: true,
               feedbackLayout: 'none',
               connectionId: '{{$values.connectionId}}',
-              title: i18n.t('packages_dag_nodes_database_xuanzebiao')
+              title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
+              target: ''
             },
             'x-component': 'Radio.Group',
+            'x-reactions': {
+              fulfill: {
+                schema: {
+                  'x-decorator-props.target': `{{$self.value==='expression'?'tableListCard':'tableNames'}}`
+                }
+              }
+            },
             enum: [
               {
                 label: i18n.t('packages_dag_nodes_database_anbiaomingxuanze'),

@@ -12,7 +12,7 @@ import './style.scss'
 
 export const TableListCard = observer(
   defineComponent({
-    props: ['connectionId', 'value', 'title', 'params'],
+    props: ['connectionId', 'value', 'title', 'params', 'reloadTime'],
     setup(props, { emit }) {
       const loading = ref(false)
       const list = ref([])
@@ -31,7 +31,7 @@ export const TableListCard = observer(
       }
       loadData()
 
-      watch(() => props.params, debounce(loadData, 300))
+      watch(() => [props.params, props.reloadTime], debounce(loadData, 300))
       return () => {
         let listDom
         if (total.value) {
@@ -59,7 +59,7 @@ export const TableListCard = observer(
           listDom = (
             <div className="flex-1 flex flex-column justify-center">
               <ElEmpty
-                image-size="111"
+                image-size={111}
                 image={require('@tap/assets/images/img_empty.png')}
                 description={i18n.t('packages_dag_table_list_card_index_zanshimeiyoupi')}
               ></ElEmpty>
