@@ -220,7 +220,6 @@ export default {
         this.submitBtnLoading = true
         // 保存数据源
         let id = this.$route.params?.id
-        debugger
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
         let { __TAPDATA } = formValues
