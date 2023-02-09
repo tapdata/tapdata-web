@@ -37,10 +37,16 @@
         :label="$t('column_create_time')"
         prop="createTimeFmt"
       ></ElTableColumn>
-      <ElTableColumn width="120" :label="$t('column_operation')">
+      <ElTableColumn width="220" :label="$t('column_operation')">
         <template #default="{ row }">
-          <!-- <ElButton type="text" :disabled="!row.canEdit" @click="openDialog(row)">{{ $t('button_edit') }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider> -->
+          <span class="mr-2">{{ $t('daas_external_storage_list_sheweimoren') }}</span>
+          <ElSwitch
+            type="text"
+            v-model="row.defaultStorage"
+            :disabled="row.defaultStorage"
+            @change="handleDefault(row)"
+          ></ElSwitch>
+          <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{ $t('button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
@@ -258,6 +264,11 @@ export default {
           this.dialogVisible = false
           this.loading = false
         }
+      })
+    },
+    handleDefault(row) {
+      externalStorageApi.changeExternalStorage(row.id).then(() => {
+        this.$message.success(i18n.t('message_request_error'))
       })
     },
     async remove(row) {

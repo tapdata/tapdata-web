@@ -112,16 +112,7 @@
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
-import {
-  clusterApi,
-  connectionsApi,
-  databaseTypesApi,
-  logcollectorApi,
-  pdkApi,
-  settingsApi,
-  externalStorageApi,
-  proxyApi
-} from '@tap/api'
+import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
 import { checkConnectionName, isEmpty } from '@tap/shared'
@@ -154,7 +145,6 @@ export default {
       id: '',
       commandCallbackFunctionId: '',
       visible: false,
-      showSystemConfig: false,
       model: {
         config: null
       },
@@ -197,10 +187,6 @@ export default {
     })
   },
   methods: {
-    //保存全局挖掘设置
-    saveSetting(digSettingForm) {
-      logcollectorApi.patchSystemConfig(digSettingForm)
-    },
     goBack() {
       let msg = this.$route.params.id
         ? i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
@@ -234,6 +220,7 @@ export default {
         this.submitBtnLoading = true
         // 保存数据源
         let id = this.$route.params?.id
+        debugger
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
         let { __TAPDATA } = formValues
@@ -259,16 +246,6 @@ export default {
             config: formValues
           }
         )
-        if (this.showSystemConfig) {
-          //打开挖掘配置
-          let digSettingForm = {
-            persistenceMode: 'MongoDB',
-            persistenceMongodb_uri_db: params.persistenceMongodb_uri_db,
-            persistenceMongodb_collection: params.persistenceMongodb_collection,
-            share_cdc_ttl_day: params.share_cdc_ttl_day
-          }
-          this.saveSetting(digSettingForm)
-        }
         let promise = null
         if (id) {
           params.id = id
@@ -469,13 +446,8 @@ export default {
           }
         }
       }
-      const settings = await settingsApi.get()
       // 是否支持共享挖掘
-      if (
-        this.isDaas &&
-        this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function') &&
-        settings.some(it => it.key === 'share_cdc_enable' && it.value === 'true')
-      ) {
+      if (this.isDaas && this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
         END.properties.__TAPDATA.properties.shareCdcEnable = {
           type: 'boolean',
           default: false,
@@ -490,9 +462,8 @@ export default {
           }
         }
         // 共享挖掘设置
-        this.showSystemConfig = true
         let config = {
-          externalStorageId: {
+          shareCDCExternalStorageId: {
             title: this.$t('packages_business_external_storage'), //外存配置
             type: 'string',
             'x-decorator': 'FormItem',
@@ -801,7 +772,7 @@ export default {
         this.getPdkData(id)
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
-      //this.showSystemConfig = true
+
       this.schemaScope = {
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {

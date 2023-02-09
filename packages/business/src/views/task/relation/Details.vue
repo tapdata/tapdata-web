@@ -40,7 +40,7 @@
             </div>
             <div class="font-color-dark fw-normal">{{ detailData.storageTime }}</div>
           </div>
-          <section v-if="detailData.ExternalStorage">
+          <section v-if="detailData.externalStorage">
             <div class="flex align-items-center">
               <span class="font-color-normal fw-bold mb-4 fs-7">{{
                 $t('packages_business_relation_details_waicunxinxi')
@@ -50,21 +50,21 @@
               <div class="fw-normal head-label font-color-light">
                 {{ $t('daas_external_storage_list_waicunmingcheng') }}
               </div>
-              <ElTooltip effect="dark" :content="detailData.ExternalStorage.name" placement="top-start">
-                <div class="name font-color-dark fw-normal">{{ detailData.ExternalStorage.name || '-' }}</div>
+              <ElTooltip effect="dark" :content="detailData.externalStorage.name" placement="top-start">
+                <div class="name font-color-dark fw-normal">{{ detailData.externalStorage.name || '-' }}</div>
               </ElTooltip>
             </div>
             <div class="flex justify-content-start mb-4 text-left fs-8">
               <div class="fw-normal head-label font-color-light">
                 {{ $t('daas_external_storage_list_waicunleixing') }}
               </div>
-              <div class="font-color-dark fw-normal">{{ typeMapping[detailData.ExternalStorage.type] || '-' }}</div>
+              <div class="font-color-dark fw-normal">{{ typeMapping[detailData.externalStorage.type] || '-' }}</div>
             </div>
             <div class="flex justify-content-start mb-4 text-left fs-8">
               <div class="fw-normal head-label font-color-light">
                 {{ $t('daas_external_storage_list_waicunxinxi') }}
               </div>
-              <div class="font-color-dark fw-normal text-break">{{ detailData.ExternalStorage.uri || '-' }}</div>
+              <div class="font-color-dark fw-normal text-break">{{ detailData.externalStorage.uri || '-' }}</div>
             </div>
           </section>
         </div>
