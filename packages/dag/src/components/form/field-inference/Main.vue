@@ -73,7 +73,16 @@
       <div class="field-inference__content flex-fill flex flex-column">
         <div class="px-2">
           <span>更新条件字段</span>
-          <ElSelect v-model="updateConditionFields" size="mini" allowCreate multiple filterable>
+          <ElSelect
+            v-model="updateList"
+            :disabled="navLoading"
+            size="mini"
+            allowCreate
+            multiple
+            filterable
+            @visible-change="handleVisibleChange"
+            @remove-tag="handleRemoveTag"
+          >
             <ElOption v-for="(fItem, fIndex) in selected.fields" :key="fIndex" :value="fItem.field_name">
               <div class="flex align-center">
                 {{ fItem.field_name }}
@@ -118,7 +127,7 @@
 import i18n from '@tap/i18n'
 
 import { mapGetters, mapState } from 'vuex'
-import { debounce } from 'lodash'
+import { debounce, cloneDeep } from 'lodash'
 
 import noData from 'web-core/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
@@ -156,7 +165,8 @@ export default {
       visible: false,
       fieldChangeRules: [],
       noData,
-      updateConditionFields: [],
+      updateList: [],
+      updateConditionFieldMap: {},
       activeClassification: '',
       tableClassification: [
         {
@@ -200,6 +210,7 @@ export default {
     async loadData() {
       this.navLoading = true
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
+      this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page
       const res = await this.getData({
         page: current,
@@ -233,6 +244,7 @@ export default {
         fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       this.selected = Object.assign({}, item, { fields })
+      this.updateList = this.updateConditionFieldMap[this.selected.name] || []
     },
 
     handleSelect(item, index = 0) {
@@ -269,6 +281,19 @@ export default {
       if (this.activeClassification === type) return
       this.activeClassification = type
       this.loadData()
+    },
+
+    handleVisibleChange(val) {
+      !val && this.handleUpdateList()
+    },
+
+    handleRemoveTag: debounce(function () {
+      this.handleUpdateList()
+    }, 1000),
+
+    handleUpdateList() {
+      this.updateConditionFieldMap[this.selected.name] = this.updateList
+      this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
     }
   }
 }
