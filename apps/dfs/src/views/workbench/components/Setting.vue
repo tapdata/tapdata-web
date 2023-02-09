@@ -8,71 +8,14 @@
     :append-to-body="true"
     :before-close="handleClose"
   >
-    <ElForm ref="form" class="e-form" label-width="200px" :model="form">
-      <div class="mb-4" v-if="!isOpenid">
-        <VIcon size="16" class="color-danger">warning</VIcon>
-        {{ $t('notify_no_webchat_notification') }}
-      </div>
-      <div class="notice-setting-title">
-        <span class="divider inline-block"></span>{{ $t('notify_agent_notification') }}
-      </div>
-      <ElFormItem :label="$t('notify_agent_status_offline')">
-        <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
-        <ElSwitch
-          v-model="form.connectionInterrupted.sms"
-          size="mini"
-          :disabled="$disabledReadonlyUserBtn()"
-          @change="handleSettingValue"
-        ></ElSwitch>
-        <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
-        <ElSwitch
-          v-model="form.connectionInterrupted.email"
-          size="mini"
-          :disabled="$disabledReadonlyUserBtn()"
-          @change="handleSettingValue"
-        ></ElSwitch>
-        <span class="notice-setting-label"> {{ $t('notify_webchat_notification') }}</span>
-        <ElSwitch
-          v-model="form.connectionInterrupted.weChat"
-          size="mini"
-          :disabled="$disabledReadonlyUserBtn() || !isOpenid"
-          @change="handleSettingValue"
-        ></ElSwitch>
-      </ElFormItem>
-      <ElFormItem :label="$t('notify_agent_status_running')">
-        <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
-        <ElSwitch
-          v-model="form.connected.sms"
-          size="mini"
-          :disabled="$disabledReadonlyUserBtn()"
-          @change="handleSettingValue"
-        ></ElSwitch>
-        <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
-        <ElSwitch
-          v-model="form.connected.email"
-          :disabled="$disabledReadonlyUserBtn()"
-          @change="handleSettingValue"
-        ></ElSwitch>
-        <span class="notice-setting-label">{{ $t('notify_webchat_notification') }}</span>
-        <ElSwitch
-          v-model="form.connected.weChat"
-          :disabled="$disabledReadonlyUserBtn() || !isOpenid"
-          @change="handleSettingValue"
-        ></ElSwitch>
-      </ElFormItem>
-      <!--      <div class="notice-setting-title">{{ $t('notify_task_running_notification') }}</div>-->
-      <!--      <ElFormItem :label="$t('notify_agent_status_error')">-->
-      <!--        <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>-->
-      <!--        <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>-->
-      <!--        <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>-->
-      <!--        <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>-->
-      <!--      </ElFormItem>-->
-    </ElForm>
+    <BusinessAlarmNotification></BusinessAlarmNotification>
   </ElDialog>
 </template>
 <script>
+import { BusinessAlarmNotification } from '@tap/business'
 export default {
   props: ['visible'],
+  components: { BusinessAlarmNotification },
   data() {
     return {
       dialogVisible: false,

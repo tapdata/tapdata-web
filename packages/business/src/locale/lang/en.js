@@ -37,11 +37,12 @@ export default {
   packages_business_task_status_not_running: 'Not running',
   packages_business_task_status_error: 'Error',
 
-  packages_business_task_info_ms: 'milliseconds',
-  packages_business_task_info_s: 'seconds',
-  packages_business_task_info_m: 'minutes',
+  packages_business_task_info_ms: 'Milliseconds',
+  packages_business_task_info_s: 'Seconds',
+  packages_business_task_info_m: 'Minutes',
   packages_business_task_info_h: 'Hour',
-  packages_business_task_info_d: 'day',
+  packages_business_task_info_d: 'Day',
+  packages_business_task_info_w: 'Week',
 
   packages_business_connection_form_data_source: 'Data source',
   packages_business_connection_selector_desc1: 'The trial version is not currently supported',
@@ -737,5 +738,36 @@ export default {
   packages_business_connections_databaseform_shujuyuanzhongmo:
     'When the number of models in the data source is greater than 10,000, the model will be refreshed according to this parameter setting',
   packages_business_connections_databaseform_moxingjiazaipin: 'Model Load Frequency',
-  packages_business_connections_list_biaojiegougengxin: 'Table structure update time'
+  packages_business_connections_list_biaojiegougengxin: 'Table structure update time',
+
+  notify_sms_notification: 'SMS Notification',
+  notify_email_notification: 'Email Notification',
+  notify_webchat_notification: 'WeChat Notification',
+  notify_system_notice: 'System Notification',
+  packages_business_setting_alarm_notification_notify_noticeInterval: 'Send Interval',
+  packages_business_setting_alarm_notification_describtion: 'Description',
+  packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alarm Notification',
+  packages_business_setting_alarmnotification_gaojingzhibiao: 'Alarm Indicator',
+  packages_business_setting_alarmnotification_dangjiediandeping: 'When the average processing time of the node',
+  packages_business_setting_alarmnotification_dangshujuyuanjie:
+    'When the average processing time of the data source node',
+  packages_business_setting_alarmnotification_dangshujuyuanxie: 'When the data source protocol connection takes time',
+  packages_business_setting_alarmnotification_dangshujuyuanwang: 'When the data source network connection takes time',
+  packages_business_setting_alarmnotification_dangshujuwufa:
+    'It takes time when the data cannot be connected to the network',
+  packages_business_setting_alarmnotification_dangrenwudezeng: 'When the incremental delay of the task',
+  packages_business_setting_alarmnotification_dangrenwutingzhi: 'When the task stops',
+  packages_business_setting_alarmnotification_dangrenwuzengliang: 'When the task increment start',
+  packages_business_setting_alarmnotification_dangrenwuquanliang: 'When the task is fully completed',
+  packages_business_setting_alarmnotification_dangrenwujiaoyan: 'When the task verification error occurs',
+  packages_business_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
+  packages_business_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
+  packages_business_setting_alarmnotification_msshigaojing: 'Alarm when ms',
+  packages_business_setting_alarmnotification_gedian: 'points',
+  packages_business_setting_alarmnotification_lianxu: 'Continuous',
+  packages_business_setting_alarmnotification_cichugaojinggui:
+    'The alarm rule setting here is the system global alarm rule setting, and the priority of the alarm rule setting on the task running monitoring page is higher than the system global setting',
+  packages_business_setting_alarmnotification_renwumorengao: 'Task default alarm rule setting',
+  packages_business_setting_alarmnotification_morengaojinggui: 'Default alarm rule',
+  packages_business_setting_alarmnotification_renwugaojingshe: 'Task alarm setting'
 }

@@ -42,6 +42,7 @@ export default {
   packages_business_task_info_m: '分鐘',
   packages_business_task_info_h: '小時',
   packages_business_task_info_d: '天',
+  packages_business_task_info_w: '周',
 
   packages_business_connection_form_data_source: '數據源',
   packages_business_connection_selector_desc1: '試用版暫不支持',
@@ -715,5 +716,34 @@ export default {
   packages_business_relation_details_wajuexinxi: '挖掘信息',
   packages_business_connections_databaseform_shujuyuanzhongmo: '數據源中模型數量大於1萬時，會按本參數設置進行模型刷新',
   packages_business_connections_databaseform_moxingjiazaipin: '模型加載頻率',
-  packages_business_connections_list_biaojiegougengxin: '表結構更新時間'
+  packages_business_connections_list_biaojiegougengxin: '表結構更新時間',
+
+  notify_webchat_notification: '微信通知',
+  notify_sms_notification: '簡訊通知',
+  notify_email_notification: '郵件通知',
+  notify_system_notice: '系统通知',
+  packages_business_setting_alarm_notification_notify_noticeInterval: '发送间隔',
+  packages_business_setting_alarm_notification_describtion: '描述',
+  packages_business_setting_notification_alarm_notification_gaojingtongzhi: '告警通知',
+  packages_business_setting_alarmnotification_gaojingzhibiao: '告警指標',
+  packages_business_setting_alarmnotification_dangjiediandeping: '當節點的平均處理耗時',
+  packages_business_setting_alarmnotification_dangshujuyuanjie: '當數據源節點的平均處理耗時',
+  packages_business_setting_alarmnotification_dangshujuyuanxie: '當數據源協議連接耗時',
+  packages_business_setting_alarmnotification_dangshujuyuanwang: '當數據源網络連接耗時',
+  packages_business_setting_alarmnotification_dangshujuwufa: '當數據無法網络連接耗時',
+  packages_business_setting_alarmnotification_dangrenwudezeng: '當任務的增量延遲',
+  packages_business_setting_alarmnotification_dangrenwutingzhi: '當任務停止時',
+  packages_business_setting_alarmnotification_dangrenwuzengliang: '當任務增量开始時',
+  packages_business_setting_alarmnotification_dangrenwuquanliang: '當任務全量完成時',
+  packages_business_setting_alarmnotification_dangrenwujiaoyan: '當任務校驗出錯時',
+  packages_business_setting_alarmnotification_dangrenwuyudao: '當任務遇到錯誤時',
+  packages_business_setting_alarmnotification_dangrenwustop: 'Agent服務停止時',
+  packages_business_setting_alarmnotification_msshigaojing: 'ms時告警',
+  packages_business_setting_alarmnotification_gedian: '個點',
+  packages_business_setting_alarmnotification_lianxu: '連續',
+  packages_business_setting_alarmnotification_cichugaojinggui:
+    '此處告警規則設置為系統全局告警規則設置，任務運行監控頁面的告警規則設置優先級高於系統全局設置',
+  packages_business_setting_alarmnotification_renwumorengao: '任務默認告警規則設置',
+  packages_business_setting_alarmnotification_morengaojinggui: '默認告警規則',
+  packages_business_setting_alarmnotification_renwugaojingshe: '任務告警設置'
 }
