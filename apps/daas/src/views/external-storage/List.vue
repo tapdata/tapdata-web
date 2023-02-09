@@ -68,6 +68,9 @@
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
+        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
+          <ElInput v-model="form.uri" type="textarea" resize="none"></ElInput>
+        </ElFormItem>
         <ElFormItem
           v-if="form.type === 'mongodb'"
           :label="$t('daas_external_storage_list_waicunbiaoming')"
@@ -75,9 +78,6 @@
           prop="table"
         >
           <ElInput v-model="form.table"></ElInput>
-        </ElFormItem>
-        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
-          <ElInput v-model="form.uri" type="textarea" resize="none"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('daas_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
