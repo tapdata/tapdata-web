@@ -32,7 +32,7 @@
             @click="handleTableClass(item.type)"
           >
             <div class="mb-2 text-center">{{ item.title }}</div>
-            <span :class="[item.total ? 'color-danger' : 'color-info']">({{ item.total }})</span>
+            <span :class="[item.total && item.type ? 'color-danger' : 'color-info']">({{ item.total }})</span>
           </div>
         </div>
         <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
@@ -201,14 +201,22 @@ export default {
       this.navLoading = true
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
       const { size, current } = this.page
-      const { items, total } = await this.getData({
+      const res = await this.getData({
         page: current,
         pageSize: size,
         tableFilter: this.searchTable,
         filterType: this.activeClassification
       })
+      const { items, total } = res
       this.navList = items
       this.page.total = total
+      this.tableClassification.forEach(el => {
+        if (!el.type) {
+          el.total = res.wholeNum
+        } else {
+          el.total = res[el.type + 'Num']
+        }
+      })
       this.page.count = total ? Math.ceil(total / this.page.size) : 1
       this.handleSelect(this.navList[0])
       this.navLoading = false
