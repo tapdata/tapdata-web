@@ -35,9 +35,15 @@
         @node-click="nodeClickHandler"
         @check="checkHandler"
         @node-drag-start="handleDragStart"
+        @node-drag-over="handleDragOver"
         @node-drop="handleDrop"
       >
-        <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span
+          class="custom-tree-node"
+          slot-scope="{ node, data }"
+          @dragover.stop="handleTreeDragOver"
+          @drop.stop="handleTreeDrop"
+        >
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <!--<el-tooltip :content="`${data.value} (${data.objCount})`" placement="bottom-start" :open-delay="400">
             <span class="table-label"
@@ -528,14 +534,14 @@ export default {
       div.style.opacity = '1'
       parent.appendChild(div)
       const container = document.createElement('div')
-      container.className = 'drag-node-image-preview'
+      container.className = 'drag-preview-container'
       if ($icon) {
         const icon = $icon.cloneNode(true)
-        icon.className = 'drag-node-image-preview-icon'
+        icon.className = 'drag-preview--icon'
         container.appendChild(icon)
       }
       const text = document.createElement('div')
-      text.className = 'dnd-preview-fileName ellipsis'
+      text.className = 'drag-preview-name ellipsis'
       text.innerHTML = node.data.value
       container.appendChild(text)
       div.appendChild(container)
@@ -552,6 +558,10 @@ export default {
       )
       let { dataTransfer } = ev
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
+    },
+
+    handleDragOver() {
+      console.log('handleDragOver', arguments) // eslint-disable-line
     },
 
     handleDragEnd() {
@@ -576,6 +586,15 @@ export default {
         .catch(err => {
           this.$message.error(err.message)
         })
+    },
+
+    handleTreeDragOver(ev) {
+      ev.preventDefault()
+      console.log('treeDragOver', ev) // eslint-disable-line
+    },
+
+    handleTreeDrop(ev) {
+      console.log('treeDrop', ev) // eslint-disable-line
     }
   }
 }
@@ -745,9 +764,9 @@ export default {
     .classification-tree {
       padding-bottom: 50px;
       .el-tree-node {
-        margin-bottom: 1px;
         &__content {
           height: 32px;
+          margin-bottom: 1px;
           overflow: hidden;
           border-radius: 4px;
         }
@@ -759,29 +778,6 @@ export default {
         &.is-drop-inner > .el-tree-node__content {
           background-color: #d0deff;
         }
-      }
-    }
-    .drag-node-image {
-      display: flex;
-      align-items: center;
-      width: 240px;
-      height: 32px;
-      z-index: 103;
-      background-color: rgba(0, 0, 0, 0);
-      .drag-node-image-preview {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 104;
-        pointer-events: none;
-        display: flex;
-        align-items: center;
-        padding-left: 12px;
-        padding-right: 12px;
-        width: 100%;
-        height: 100%;
-        border-radius: 4px;
-        background-color: #fff;
       }
     }
   }
