@@ -122,9 +122,10 @@ export default {
       this.showForm = false
     },
 
-    handleSuccess(data) {
-      console.log('handleSuccess', data)
+    handleSuccess() {
+      this.$emit('success', ...arguments)
       this.dialogVisible = false
+      this.handleClose()
     }
   }
 }

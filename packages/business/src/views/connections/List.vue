@@ -174,11 +174,7 @@
       </ElTableColumn>
     </TablePage>
     <Preview ref="preview" @test="testConnection"></Preview>
-    <CreateConnection
-      :dialogVisible="dialogDatabaseTypeVisible"
-      @dialogVisible="handleDialogDatabaseTypeVisible"
-      @databaseType="handleDatabaseType"
-    ></CreateConnection>
+    <CreateConnection :dialogVisible="dialogDatabaseTypeVisible" @success="table.fetch(1)"></CreateConnection>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <ElDialog :title="$t('packages_business_connections_list_tishi')" width="40%" :visible.sync="connectionTaskDialog">
       <span>{{ $t('packages_business_connections_list_gailianjieyibei') }}</span>
