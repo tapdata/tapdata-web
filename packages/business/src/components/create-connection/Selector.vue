@@ -21,7 +21,7 @@
       </li>
     </ul>
     <div class="text-end">
-      <ElButton type="primary" @click="handleSumbit">CONFIGURE</ElButton>
+      <ElButton :disabled="!selected.pdkId" type="primary" @click="handleSumbit">CONFIGURE</ElButton>
     </div>
   </div>
 </template>
@@ -198,9 +198,6 @@ export default {
   width: 80px;
   flex: 1;
   margin-right: 40px;
-  &:nth-child(7n) {
-    margin-right: 0;
-  }
   &.active,
   &:hover {
     .img-box {

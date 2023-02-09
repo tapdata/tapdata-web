@@ -63,7 +63,7 @@
           </div>
         </div>
         <footer slot="footer" class="footer">
-          <div class="footer-btn">
+          <div class="footer-btn pr-10">
             <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
             <el-button class="test" @click="startTest()">{{
               $t('packages_business_connection_list_test_button')
@@ -270,23 +270,12 @@ export default {
           promise = connectionsApi.create(params, { id: commandCallbackFunctionId })
         }
         promise
-          .then(() => {
+          .then(data => {
             this.buried('connectionSubmit', '', {
               result: true
             })
             this.$message.success(this.$t('packages_business_message_saveOK'))
-            if (this.params.step) {
-              this.$router.push({
-                name: 'connections',
-                query: {
-                  step: this.params.step
-                }
-              })
-            } else {
-              this.$router.push({
-                name: 'connections'
-              })
-            }
+            this.$emit('success', data)
           })
           .catch(() => {
             this.buried('connectionSubmit', '', {
@@ -1210,7 +1199,7 @@ export default {
     .footer-btn {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: flex-end;
       margin: 0 auto;
       padding-top: 18px;
     }

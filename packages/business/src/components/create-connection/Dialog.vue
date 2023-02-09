@@ -4,7 +4,7 @@
     :visible="dialogVisible"
     :append-to-body="true"
     fullscreen
-    custom-class="connection-dialog"
+    custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     :before-close="handleClose"
   >
     <div slot="title" class="flex align-items-center">
@@ -29,7 +29,7 @@
         @select="handleSelect"
       ></ConnectionSelector>
     </div>
-    <ConnectionForm v-else :params="params" @back="handleBack"></ConnectionForm>
+    <ConnectionForm v-else :params="params" @back="handleBack" @success="handleSuccess"></ConnectionForm>
   </ElDialog>
 </template>
 
@@ -120,6 +120,11 @@ export default {
     handleBack() {
       this.params = {}
       this.showForm = false
+    },
+
+    handleSuccess(data) {
+      console.log('handleSuccess', data)
+      this.dialogVisible = false
     }
   }
 }
@@ -197,9 +202,13 @@ export default {
   }
 }
 ::v-deep {
-  .connection-dialog {
+  .ldp-conection-dialog {
     .el-dialog__body {
-      padding: 0 20px 30px 20px;
+      flex: 1;
+      height: 0;
+    }
+    .el-dialog__body {
+      padding: 0;
     }
   }
 }
