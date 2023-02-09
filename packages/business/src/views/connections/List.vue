@@ -174,11 +174,11 @@
       </ElTableColumn>
     </TablePage>
     <Preview ref="preview" @test="testConnection"></Preview>
-    <DatabaseTypeDialog
+    <CreateConnection
       :dialogVisible="dialogDatabaseTypeVisible"
       @dialogVisible="handleDialogDatabaseTypeVisible"
       @databaseType="handleDatabaseType"
-    ></DatabaseTypeDialog>
+    ></CreateConnection>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <ElDialog :title="$t('packages_business_connections_list_tishi')" width="40%" :visible.sync="connectionTaskDialog">
       <span>{{ $t('packages_business_connections_list_gailianjieyibei') }}</span>
@@ -202,9 +202,9 @@ import dayjs from 'dayjs'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
+import CreateConnection from '@tap/business/src/components/create-connection/Dialog'
 
 import { TablePage, SchemaProgress } from '../../components'
-import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
@@ -212,7 +212,7 @@ import { defaultModel, verify, getConnectionIcon } from './util'
 let timeout = null
 
 export default {
-  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
+  components: { TablePage, Preview, Test, VIcon, SchemaProgress, FilterBar, CreateConnection },
   inject: ['checkAgent', 'buried'],
   data() {
     return {
