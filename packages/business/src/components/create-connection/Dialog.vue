@@ -11,7 +11,7 @@
       <VIcon class="mr-3">warning</VIcon>
       <span class="font-color-normal">{{ title }}</span>
     </div>
-    <div class="pl-7 pt-3">
+    <div v-if="!showForm" class="px-7 pt-3">
       <div class="mb-6 font-color-normal">
         Choose a data source connector from below and configure the connection & credentials.
       </div>
@@ -28,8 +28,8 @@
         :large="true"
         @select="handleSelect"
       ></ConnectionSelector>
-      <ConnectionForm :params="params"></ConnectionForm>
     </div>
+    <ConnectionForm v-else :params="params" @back="handleBack"></ConnectionForm>
   </ElDialog>
 </template>
 
@@ -73,7 +73,8 @@ export default {
         showBeta: true,
         showAlpha: true
       },
-      params: {}
+      params: {},
+      showForm: false
     }
   },
   watch: {
@@ -86,14 +87,18 @@ export default {
   created() {
     this.getDatabaseType()
   },
+  beforeDestroy() {
+    this.showForm = false
+  },
   methods: {
     handleClose() {
       this.$emit('dialogVisible', false)
       this.$emit('update:dialogVisible', false)
     },
     handleSelect(item) {
-      // this.$emit('databaseType', item)
-      console.log('handleSelect', item)
+      this.showForm = true
+      const { pdkHash } = item
+      this.params = { pdkHash }
     },
     getDatabaseType() {
       databaseTypesApi
@@ -110,6 +115,11 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+
+    handleBack() {
+      this.params = {}
+      this.showForm = false
     }
   }
 }

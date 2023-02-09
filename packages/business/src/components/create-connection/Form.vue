@@ -4,12 +4,12 @@
       <main class="connection-from-main">
         <div class="connection-from-title">
           {{
-            $route.params.id
+            params.id
               ? this.$t('packages_business_connection_form_edit_connection')
               : this.$t('packages_business_connection_form_creat_connection')
           }}
         </div>
-        <div class="connection-from-label" v-if="$route.params.id">
+        <div class="connection-from-label" v-if="params.id">
           <label class="label">{{ $t('packages_business_connection_form_connection_name') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
@@ -125,6 +125,14 @@ export default {
   name: 'DatabaseForm',
   components: { Test, VIcon, SchemaToForm, GitBook },
   inject: ['checkAgent', 'buried'],
+  props: {
+    params: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
@@ -178,7 +186,7 @@ export default {
     }
   },
   created() {
-    this.id = this.$route.params.id || ''
+    this.id = this.params.id || ''
     this.getPdkForm()
     this.getPdkDoc()
   },
@@ -193,10 +201,10 @@ export default {
       logcollectorApi.patchSystemConfig(digSettingForm)
     },
     goBack() {
-      let msg = this.$route.params.id
+      let msg = this.params.id
         ? i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
         : i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
-      // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
+      // let title = this.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
 
       this.$confirm(msg, '', {
         confirmButtonText: this.$t('packages_business_connection_form_give_up'),
@@ -207,15 +215,7 @@ export default {
         if (!resFlag) {
           return
         }
-        if (this.pathUrl === '/') {
-          this.$router.push({
-            name: 'connections'
-          })
-        } else {
-          this.$router.push({
-            path: this.pathUrl
-          })
-        }
+        this.$emit('back')
       })
     },
     submit() {
@@ -224,7 +224,7 @@ export default {
       this.schemaFormInstance?.validate().then(() => {
         this.submitBtnLoading = true
         // 保存数据源
-        let id = this.$route.params?.id
+        let id = this.params?.id
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
         let { __TAPDATA } = formValues
@@ -275,11 +275,11 @@ export default {
               result: true
             })
             this.$message.success(this.$t('packages_business_message_saveOK'))
-            if (this.$route.query.step) {
+            if (this.params.step) {
               this.$router.push({
                 name: 'connections',
                 query: {
-                  step: this.$route.query.step
+                  step: this.params.step
                 }
               })
             } else {
@@ -322,9 +322,9 @@ export default {
       delete formValues['__TAPDATA']
       this.model.config = formValues
       this.model.pdkType = 'pdk'
-      this.model.pdkHash = this.$route.query?.pdkHash
+      this.model.pdkHash = this.params?.pdkHash
       this.dialogTestVisible = true
-      if (this.$route.params.id) {
+      if (this.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
         this.$refs.test.start(false, true)
       } else {
@@ -384,9 +384,9 @@ export default {
       })
     },
     async getPdkForm() {
-      const pdkHash = this.$route.query?.pdkHash
+      const pdkHash = this.params?.pdkHash
       const data = await databaseTypesApi.pdkHash(pdkHash)
-      let id = this.id || this.$route.params.id
+      let id = this.id || this.params.id
       this.pdkOptions = data || {}
       if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
         this.commandCallbackFunctionId = await proxyApi.getId()
@@ -1033,11 +1033,11 @@ export default {
       })
     },
     getConnectionIcon() {
-      const { pdkHash } = this.$route.query || {}
+      const { pdkHash } = this.params || {}
       return getConnectionIcon(pdkHash)
     },
     getPdkDoc() {
-      const { pdkHash } = this.$route.query || {}
+      const { pdkHash } = this.params || {}
       pdkApi.doc(pdkHash).then(res => {
         this.doc = res?.data
       })

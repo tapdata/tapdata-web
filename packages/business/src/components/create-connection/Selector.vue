@@ -3,24 +3,25 @@
     <ElTabs v-model="active">
       <ElTabPane v-for="item in tabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
     </ElTabs>
-    <div>
-      <ul v-loading="loading" class="database-ul overflow-auto">
-        <li
-          v-for="(item, index) in filterList"
-          :key="index"
-          class="database-item float-start mb-4 cursor-pointer"
-          :class="{ active: item.pdkId === selectType }"
-          @click="handleSelect(item)"
-        >
-          <div class="img-box rounded-3">
-            <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
-            <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
-          </div>
-          <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-            <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
-          </ElTooltip>
-        </li>
-      </ul>
+    <ul v-loading="loading" class="database-ul overflow-auto">
+      <li
+        v-for="(item, index) in filterList"
+        :key="index"
+        class="database-item float-start mb-4 cursor-pointer"
+        :class="{ active: item.pdkId === selected.pdkId }"
+        @click="handleSelect(item)"
+      >
+        <div class="img-box rounded-3">
+          <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
+          <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
+        </div>
+        <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
+          <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
+        </ElTooltip>
+      </li>
+    </ul>
+    <div class="text-end">
+      <ElButton type="primary" @click="handleSumbit">CONFIGURE</ElButton>
     </div>
   </div>
 </template>
@@ -54,7 +55,7 @@ export default {
   data() {
     return {
       active: '',
-      selectType: '',
+      selected: {},
       comingTypes: [
         { name: 'MongoDB', type: 'mongodb' },
         { name: 'MySQL', type: 'mysql' },
@@ -179,9 +180,11 @@ export default {
     },
 
     handleSelect(item) {
-      console.log('handleSelect', item)
-      this.selectType = item.pdkId
-      console.log('this.selectType', this.selectType)
+      this.selected = item
+    },
+
+    handleSumbit() {
+      this.$emit('select', this.selected)
     }
   }
 }
