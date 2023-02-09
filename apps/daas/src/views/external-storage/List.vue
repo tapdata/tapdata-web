@@ -268,7 +268,8 @@ export default {
     },
     handleDefault(row) {
       externalStorageApi.changeExternalStorage(row.id).then(() => {
-        this.$message.success(i18n.t('message_request_error'))
+        this.$message.success(i18n.t('message_operation_succuess'))
+        this.table.fetch()
       })
     },
     async remove(row) {
