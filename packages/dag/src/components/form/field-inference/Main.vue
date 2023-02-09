@@ -157,22 +157,22 @@ export default {
       fieldChangeRules: [],
       noData,
       updateConditionFields: [],
-      activeClassification: 'all',
+      activeClassification: '',
       tableClassification: [
         {
-          type: 'all',
+          type: '',
           title: '全部表',
           total: 0
         },
         {
-          type: 'updateError',
+          type: 'updateEx',
           title: '更新条件异常',
-          total: 234
+          total: 0
         },
         {
-          type: 'metaError',
+          type: 'transformEx',
           title: '推演异常',
-          total: 123
+          total: 0
         }
       ]
     }
@@ -192,6 +192,7 @@ export default {
   },
 
   mounted() {
+    this.activeClassification = this.tableClassification[0].type
     this.loadData()
   },
 
@@ -203,7 +204,8 @@ export default {
       const { items, total } = await this.getData({
         page: current,
         pageSize: size,
-        tableFilter: this.searchTable
+        tableFilter: this.searchTable,
+        filterType: this.activeClassification
       })
       this.navList = items
       this.page.total = total
