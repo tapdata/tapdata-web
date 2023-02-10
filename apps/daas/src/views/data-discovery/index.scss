@@ -10,6 +10,71 @@
       max-width: unset;
     }
   }
+
+  .drag-node-image {
+    $h: 36px;
+    display: flex;
+    align-items: center;
+    width: 240px;
+    height: $h;
+    z-index: 103;
+    background-color: rgba(0, 0, 0, 0);
+    .drag-preview-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 104;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      padding-left: 12px;
+      padding-right: 12px;
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      background-color: #fff;
+
+      .drag-preview-icon {
+        display: flex;
+        align-items: center;
+        margin-right: 4px;
+      }
+    }
+
+    .drag-preview-layerEffect {
+      position: absolute;
+      z-index: 102;
+      top: 3px;
+      left: 3px;
+      width: 100%;
+      height: $h;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+
+    .drag-preview-dot {
+      position: absolute;
+      right: -12px;
+      top: -12px;
+      background-color: map-get($color, danger);
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 50px;
+      z-index: 104;
+      text-align: center;
+
+      &.expand {
+        width: auto;
+        padding: 0 7px;
+        border-radius: 16px;
+        right: -18px;
+      }
+    }
+  }
 }
 .catalogue-drawer-resource-wrap{
   padding: 0 24px 24px 24px;
@@ -126,6 +191,9 @@
   font-weight: 400;
 }
 .discovery-page-wrap{
+  .page-left {
+    width: 240px;
+  }
   .border-right{
     border-right: 1px solid map-get($borderColor, light);
   }

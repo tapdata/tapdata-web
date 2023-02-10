@@ -33,7 +33,7 @@
               <slot name="operation"></slot>
             </div>
           </div>
-          <el-table
+          <DragTable
             ref="table"
             v-loading="loading"
             class="table-page-table"
@@ -43,6 +43,7 @@
             :span-method="spanMethod"
             :data="list"
             :default-sort="defaultSort"
+            :draggable="draggable"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sort-change', $event)"
             v-on="$listeners"
@@ -52,7 +53,7 @@
               <VIcon size="140">no-data-color</VIcon>
               <slot name="noDataText"></slot>
             </div>
-          </el-table>
+          </DragTable>
           <div class="table-footer">
             <slot name="tableFooter"></slot>
           </div>
@@ -82,7 +83,7 @@
 
 <script>
 import { delayTrigger } from '@tap/shared'
-import { VIcon, Classification } from '@tap/component'
+import { VIcon, Classification, DragTable } from '@tap/component'
 
 import SelectClassify from './SelectClassify'
 
@@ -90,7 +91,8 @@ export default {
   components: {
     Classification,
     SelectClassify,
-    VIcon
+    VIcon,
+    DragTable
   },
   props: {
     title: String,
@@ -110,7 +112,8 @@ export default {
     remoteMethod: Function,
     rowKey: [String, Function],
     spanMethod: [Function],
-    defaultSort: Object
+    defaultSort: Object,
+    draggable: Boolean
   },
   data() {
     return {

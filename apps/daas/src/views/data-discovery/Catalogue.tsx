@@ -1,6 +1,6 @@
 import i18n from '@/i18n'
 import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
-import { FilterBar, Drawer, DiscoveryClassification } from '@tap/component'
+import { FilterBar, Drawer, DiscoveryClassification, VIcon } from '@tap/component'
 import { TablePage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
 import DrawerContent from '@/views/data-discovery/PreviewDrawer'
@@ -126,6 +126,11 @@ export default defineComponent({
     const renderNode = ({ row }) => {
       return (
         <div class="cursor-pointer">
+          <span class="tree-item-icon none">
+            <VIcon class="color-primary" size={16}>
+              table
+            </VIcon>
+          </span>
           <span
             class="col-new-field-name inline-block ellipsis align-middle color-primary  mr-4 "
             onClick={event => {
@@ -150,6 +155,89 @@ export default defineComponent({
       // @ts-ignore
       refs.table.fetch(1)
     })
+
+    const dragState = reactive({
+      isDragging: false,
+      draggingObjects: [],
+      dropNode: null,
+      allowDrop: true
+    })
+
+    let draggingNodeImage
+    const handleDragStart = (row, column, ev) => {
+      dragState.isDragging = true
+      console.log('nodeDragStart', row, column, event) // eslint-disable-line
+      let draggingRow = [row]
+
+      if (row.id in multipleSelectionMap.value) {
+        let selectionRows = Object.values(multipleSelectionMap.value)
+        draggingRow.length = selectionRows.length
+        dragState.draggingObjects = selectionRows
+      } else {
+        dragState.draggingObjects = [row]
+      }
+
+      draggingNodeImage = makeDragNodeImage(
+        ev.currentTarget.querySelector('.tree-item-icon'),
+        draggingRow,
+        'table-item',
+        refs.root
+      )
+      ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
+    }
+
+    const handleDragEnd = (row, column, event) => {
+      dragState.isDragging = false
+      dragState.draggingObjects = []
+      dragState.dropNode = null
+      refs.root.removeChild(draggingNodeImage)
+    }
+
+    const multipleSelectionMap = ref({})
+    const handleSelectionChange = val => {
+      multipleSelectionMap.value = val.reduce((obj, item) => {
+        obj[item.id] = item
+        return obj
+      }, {})
+    }
+
+    const makeDragNodeImage = ($icon, node, nodeType = 'tree-item', parent = document.body) => {
+      const dragImage = document.createElement('div')
+
+      if (!node?.length) return dragImage
+      dragImage.classList.add('drag-node-image')
+      dragImage.style.position = 'absolute'
+      dragImage.style.zIndex = '-100'
+      dragImage.style.opacity = '1'
+      parent.appendChild(dragImage)
+      const container = document.createElement('div')
+      container.className = 'drag-preview-container'
+
+      if ($icon) {
+        const icon = $icon.cloneNode(true)
+        icon.className = 'drag-preview-icon'
+        container.appendChild(icon)
+      }
+
+      const text = document.createElement('div')
+      text.className = 'drag-preview-name ellipsis'
+      text.innerHTML = nodeType === 'tree-item' ? node[0].data.value : node[0].name
+      container.appendChild(text)
+      dragImage.appendChild(container)
+
+      if (node.length > 1) {
+        let layer = document.createElement('div')
+        layer.className = 'drag-preview-layerEffect'
+        let dot = document.createElement('div')
+        dot.className = node.length > 9 ? 'drag-preview-dot expand' : 'drag-preview-dot'
+        dot.innerHTML = node.length
+        dragImage.appendChild(layer)
+        dragImage.appendChild(dot)
+      }
+
+      return dragImage
+    }
+
     return {
       list,
       data,
@@ -159,12 +247,16 @@ export default defineComponent({
       renderNode,
       getNodeChecked,
       loadData,
-      rest
+      rest,
+      handleDragStart,
+      handleDragEnd,
+      handleSelectionChange,
+      dragState
     }
   },
   render() {
     return (
-      <section class="discovery-page-wrap flex">
+      <section ref="root" class="discovery-page-wrap flex">
         <div
           {...{
             directives: [
@@ -185,10 +277,21 @@ export default defineComponent({
           <DiscoveryClassification
             v-model={this.data.searchParams}
             ref="classify"
+            dragState={this.dragState}
             {...{ on: { nodeChecked: this.getNodeChecked } }}
           ></DiscoveryClassification>
         </div>
-        <TablePage ref="table" row-key="id" remoteMethod={this.loadData}>
+        <TablePage
+          ref="table"
+          row-key="id"
+          remoteMethod={this.loadData}
+          draggable
+          on={{
+            'row-dragstart': this.handleDragStart,
+            'row-dragend': this.handleDragEnd,
+            'selection-change': this.handleSelectionChange
+          }}
+        >
           <template slot="search">
             <div class="flex flex-row align-items-center mb-2">
               <span class="discovery-title ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
@@ -216,6 +319,7 @@ export default defineComponent({
               </el-button>
             )}
           </template>
+          <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
             label={i18n.t('metadata_name')}
             prop="name"

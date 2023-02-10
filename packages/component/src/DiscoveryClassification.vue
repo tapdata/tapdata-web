@@ -1,6 +1,6 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <div class="classification-header">
+    <div class="classification-header pl-0">
       <ElButton class="btn-addIcon" size="mini" type="text" @click="showDialog()">
         <VIcon size="12">add</VIcon>
       </ElButton>
@@ -16,7 +16,7 @@
         </ElInput>
       </div>
     </div>
-    <div class="tree-block" v-if="isExpand" v-loading="loadingTree">
+    <div class="tree-block pr-3" v-if="isExpand" v-loading="loadingTree">
       <ElTree
         v-if="treeData && treeData.length > 0"
         class="classification-tree"
@@ -25,19 +25,36 @@
         highlight-current
         :props="props"
         :data="treeData"
+        draggable
         :default-expanded-keys="expandedKeys"
         :filter-node-method="filterNode"
         :render-after-expand="false"
+        :expand-on-click-node="false"
+        :allow-drag="checkAllowDrag"
+        :allow-drop="checkAllowDrop"
         @node-click="nodeClickHandler"
         @check="checkHandler"
+        @node-drag-start="handleDragStart"
+        @node-drop="handleDrop"
       >
-        <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span
+          class="custom-tree-node"
+          slot-scope="{ node, data }"
+          @dragover.stop="handleTreeDragOver($event, data, node)"
+          @dragenter.stop="handleTreeDragEnter($event, data, node)"
+          @dragleave.stop="handleTreeDragLeave($event, data, node)"
+          @drop.stop="handleTreeDrop($event, data, node)"
+        >
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <el-tooltip :content="`${data.value} (${data.objCount})`" placement="bottom-start" :open-delay="400">
+          <!--<el-tooltip :content="`${data.value} (${data.objCount})`" placement="bottom-start" :open-delay="400">
             <span class="table-label"
               >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
             >
-          </el-tooltip>
+          </el-tooltip>-->
+          <VIcon v-if="!node.isLeaf" class="tree-item-icon mr-1" size="24">folder</VIcon>
+          <span class="table-label"
+            >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
+          >
           <span class="btn-menu" v-if="!data.readOnly">
             <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
               ><VIcon size="12" class="color-primary">add</VIcon></ElButton
@@ -110,7 +127,7 @@
 import i18n from '@tap/i18n'
 
 import { VIcon } from '@tap/component'
-import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
+import { metadataDefinitionsApi, userGroupsApi, discoveryApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
@@ -124,7 +141,8 @@ export default {
     },
     authority: {
       type: String
-    }
+    },
+    dragState: Object
   },
   data() {
     return {
@@ -375,7 +393,7 @@ export default {
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
         isParent: (type === 'add' && !node) || (type === 'edit' && node?.level === 1),
-        desc: node?.data?.desc,
+        desc: type === 'edit' ? node?.data?.desc : '',
         title:
           type === 'add'
             ? node
@@ -498,12 +516,146 @@ export default {
           })
         }
       })
-    }
+    },
+
+    checkAllowDrag(node) {
+      return !node.data.readOnly
+    },
+
+    checkAllowDrop(draggingNode, dropNode, type) {
+      return type === 'inner' && !dropNode.data.readOnly
+    },
+
+    makeDragNodeImage($icon, node, parent = document.body) {
+      const div = document.createElement('div')
+
+      if (!node) return div
+      div.classList.add('drag-node-image')
+      div.style.position = 'absolute'
+      div.style.zIndex = '-100'
+      div.style.opacity = '1'
+      parent.appendChild(div)
+      const container = document.createElement('div')
+      container.className = 'drag-preview-container'
+      if ($icon) {
+        const icon = $icon.cloneNode(true)
+        icon.className = 'drag-preview--icon'
+        container.appendChild(icon)
+      }
+      const text = document.createElement('div')
+      text.className = 'drag-preview-name ellipsis'
+      text.innerHTML = node.data.value
+      container.appendChild(text)
+      div.appendChild(container)
+
+      return div
+    },
+
+    handleDragStart(draggingNode, ev) {
+      this.draggingNode = draggingNode
+      this.draggingNodeImage = this.makeDragNodeImage(
+        ev.currentTarget.querySelector('.tree-item-icon'),
+        draggingNode,
+        this.$el
+      )
+      let { dataTransfer } = ev
+      dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
+    },
+
+    handleDragEnd() {
+      this.$el.removeChild(this.draggingNodeImage)
+      this.draggingNode = null
+      this.draggingNodeImage = null
+    },
+
+    handleDrop(draggingNode, dropNode, dropType, ev) {
+      console.log('handleDrop', ...arguments) // eslint-disable-line
+      // return
+      metadataDefinitionsApi
+        .changeById({
+          id: draggingNode.data.id,
+          parent_id: dropNode.data.id
+        })
+        .then(() => {
+          this.$message.success('操作成功')
+          draggingNode.data.parent_id = dropNode.data.id
+          // this.getData()
+        })
+        .catch(err => {
+          this.$message.error(err.message)
+        })
+    },
+
+    findParentNodeByClassName(el, cls) {
+      let parent = el.parentNode
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
+    },
+
+    handleTreeDragOver(ev) {
+      ev.preventDefault()
+    },
+
+    handleTreeDragEnter(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly || !this.dragState.isDragging) return
+
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      dropNode.classList.add('is-drop-inner')
+    },
+
+    handleTreeDragLeave(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly) return
+
+      if (!ev.currentTarget.contains(ev.relatedTarget)) {
+        const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+        dropNode.classList.remove('is-drop-inner')
+      }
+    },
+
+    handleTreeDrop(ev, data) {
+      if (data.readOnly) return
+
+      const { draggingObjects } = this.dragState
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+
+      if (!draggingObjects?.length || !dropNode) return
+
+      dropNode.classList.remove('is-drop-inner')
+
+      this.bindTag(data, draggingObjects)
+      console.log('treeDrop', draggingObjects) // eslint-disable-line
+    },
+
+    bindTag(tag, objects) {
+      discoveryApi
+        .postTags({
+          tagBindingParams: objects.map(t => {
+            return {
+              id: t.id,
+              objCategory: t.category
+            }
+          }),
+          tagIds: [tag.id]
+        })
+        .then(() => {
+          this.getData()
+          this.$message.success(this.$t('message_operation_succuess'))
+        })
+    },
+
+    unbindTag() {}
   }
 }
 </script>
 
 <style scoped lang="scss">
+$nodeH: 28px;
 .classification {
   position: relative;
   display: flex;
@@ -619,18 +771,18 @@ export default {
     position: relative;
     width: 100%;
     flex: 1;
-    padding: 0 10px;
+    //padding: 0 10px;
     overflow: auto;
   }
   .custom-tree-node {
     flex: 1;
     display: flex;
     align-items: center;
-    font-size: 12px;
+    font-size: 14px;
     padding-right: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 26px;
+    line-height: $nodeH;
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
@@ -639,7 +791,6 @@ export default {
     }
     .table-label {
       flex: 1;
-      font-size: 12px;
       vertical-align: middle;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -648,7 +799,6 @@ export default {
       color: map-get($fontColor, normal);
     }
     .count-label {
-      font-size: 12px;
       color: map-get($fontColor, sslight);
     }
     .btn-menu {
@@ -664,20 +814,27 @@ export default {
     // color: map-get($color, primary);
     cursor: pointer;
   }
-}
-</style>
-<style lang="scss">
-.classification-header {
-  .el-input .el-input__inner {
-    height: 24px;
-    line-height: 24px;
-  }
-}
-.classification-tree {
-  padding-bottom: 50px;
-  .el-tree-node__content {
-    height: 26px;
-    overflow: hidden;
+
+  ::v-deep {
+    .classification-tree {
+      padding-bottom: 50px;
+      .el-tree-node {
+        &__content {
+          height: $nodeH;
+          margin-bottom: 1px;
+          overflow: hidden;
+          border-radius: 4px;
+        }
+
+        &.is-current > .el-tree-node__content {
+          background-color: #eef3ff;
+        }
+
+        &.is-drop-inner > .el-tree-node__content {
+          background-color: #d0deff;
+        }
+      }
+    }
   }
 }
 </style>
