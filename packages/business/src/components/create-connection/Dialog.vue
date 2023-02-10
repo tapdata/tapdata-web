@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="title"
-    :visible="dialogVisible"
+    :visible="visible"
     :append-to-body="true"
     fullscreen
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
@@ -16,9 +16,9 @@
         Choose a data source connector from below and configure the connection & credentials.
       </div>
       <div class="flex align-items-center mb-6">
-        <el-switch v-model="settings.showBeta"> </el-switch>
+        <ElSwitch v-model="settings.showBeta"> </ElSwitch>
         <span class="ml-3">Show Connectors in BETA State</span>
-        <el-switch v-model="settings.showAlpha" class="ml-6"> </el-switch>
+        <ElSwitch v-model="settings.showAlpha" class="ml-6"> </ElSwitch>
         <span class="ml-3">Show Connectors in ALPHA State</span>
       </div>
       <ConnectionSelector
@@ -53,7 +53,7 @@ export default {
         return 'Choose Data Source Type' || i18n.t('connection_form_creat_connection')
       }
     },
-    dialogVisible: {
+    visible: {
       required: true,
       value: Boolean
     },
@@ -78,22 +78,18 @@ export default {
     }
   },
   watch: {
-    dialogVisible(v) {
-      if (v) {
-        this.getDatabaseType()
-      }
+    visible(v) {
+      v && this.init(0)
     }
   },
-  created() {
-    this.getDatabaseType()
-  },
-  beforeDestroy() {
-    this.showForm = false
-  },
   methods: {
+    init() {
+      this.showForm = false
+      this.getDatabaseType()
+    },
     handleClose() {
-      this.$emit('dialogVisible', false)
-      this.$emit('update:dialogVisible', false)
+      this.$emit('visible', false)
+      this.$emit('update:visible', false)
     },
     handleSelect(item) {
       this.showForm = true
@@ -101,6 +97,7 @@ export default {
       this.params = { pdkHash }
     },
     getDatabaseType() {
+      this.loading = true
       databaseTypesApi
         .get()
         .then(data => {
@@ -124,7 +121,6 @@ export default {
 
     handleSuccess() {
       this.$emit('success', ...arguments)
-      this.dialogVisible = false
       this.handleClose()
     }
   }
