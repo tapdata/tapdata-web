@@ -155,30 +155,41 @@ export default defineComponent({
       // @ts-ignore
       refs.table.fetch(1)
     })
+
+    const dragState = reactive({
+      isDragging: false,
+      draggingObjects: [],
+      dropNode: null,
+      allowDrop: true
+    })
+
     let draggingNodeImage
     const handleDragStart = (row, column, ev) => {
+      dragState.isDragging = true
       console.log('nodeDragStart', row, column, event) // eslint-disable-line
       let draggingRow = [row]
+
       if (row.id in multipleSelectionMap.value) {
-        let selectionIds = Object.keys(multipleSelectionMap.value)
-        draggingRow.length = selectionIds.length
+        let selectionRows = Object.values(multipleSelectionMap.value)
+        draggingRow.length = selectionRows.length
+        dragState.draggingObjects = selectionRows
+      } else {
+        dragState.draggingObjects = [row]
       }
+
       draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         draggingRow,
         'table-item',
         refs.root
       )
-      let { dataTransfer } = ev
-      dataTransfer.setDragImage(draggingNodeImage, 0, 0)
-    }
-
-    const handleDragOver = (row, column, event) => {
-      // console.log('nodeDragOver', 'handleDragOver', row, column, event) // eslint-disable-line
+      ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
     }
 
     const handleDragEnd = (row, column, event) => {
-      console.log('nodeDragEnd', row, column, event) // eslint-disable-line
+      dragState.isDragging = false
+      dragState.draggingObjects = []
+      dragState.dropNode = null
       refs.root.removeChild(draggingNodeImage)
     }
 
@@ -238,9 +249,9 @@ export default defineComponent({
       loadData,
       rest,
       handleDragStart,
-      handleDragOver,
       handleDragEnd,
-      handleSelectionChange
+      handleSelectionChange,
+      dragState
     }
   },
   render() {
@@ -266,6 +277,7 @@ export default defineComponent({
           <DiscoveryClassification
             v-model={this.data.searchParams}
             ref="classify"
+            dragState={this.dragState}
             {...{ on: { nodeChecked: this.getNodeChecked } }}
           ></DiscoveryClassification>
         </div>
@@ -276,7 +288,6 @@ export default defineComponent({
           draggable
           on={{
             'row-dragstart': this.handleDragStart,
-            'row-dragover': this.handleDragOver,
             'row-dragend': this.handleDragEnd,
             'selection-change': this.handleSelectionChange
           }}

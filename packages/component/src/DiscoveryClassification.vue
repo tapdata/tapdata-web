@@ -35,14 +35,15 @@
         @node-click="nodeClickHandler"
         @check="checkHandler"
         @node-drag-start="handleDragStart"
-        @node-drag-over="handleDragOver"
         @node-drop="handleDrop"
       >
         <span
           class="custom-tree-node"
           slot-scope="{ node, data }"
-          @dragover.stop="handleTreeDragOver"
-          @drop.stop="handleTreeDrop"
+          @dragover.stop="handleTreeDragOver($event, data, node)"
+          @dragenter.stop="handleTreeDragEnter($event, data, node)"
+          @dragleave.stop="handleTreeDragLeave($event, data, node)"
+          @drop.stop="handleTreeDrop($event, data, node)"
         >
           <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
           <!--<el-tooltip :content="`${data.value} (${data.objCount})`" placement="bottom-start" :open-delay="400">
@@ -126,7 +127,7 @@
 import i18n from '@tap/i18n'
 
 import { VIcon } from '@tap/component'
-import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
+import { metadataDefinitionsApi, userGroupsApi, discoveryApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
@@ -140,7 +141,8 @@ export default {
     },
     authority: {
       type: String
-    }
+    },
+    dragState: Object
   },
   data() {
     return {
@@ -560,10 +562,6 @@ export default {
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
     },
 
-    handleDragOver() {
-      console.log('handleDragOver', arguments) // eslint-disable-line
-    },
-
     handleDragEnd() {
       this.$el.removeChild(this.draggingNodeImage)
       this.draggingNode = null
@@ -588,19 +586,76 @@ export default {
         })
     },
 
-    handleTreeDragOver(ev) {
-      ev.preventDefault()
-      console.log('treeDragOver', ev) // eslint-disable-line
+    findParentNodeByClassName(el, cls) {
+      let parent = el.parentNode
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
     },
 
-    handleTreeDrop(ev) {
-      console.log('treeDrop', ev) // eslint-disable-line
-    }
+    handleTreeDragOver(ev) {
+      ev.preventDefault()
+    },
+
+    handleTreeDragEnter(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly || !this.dragState.isDragging) return
+
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      dropNode.classList.add('is-drop-inner')
+    },
+
+    handleTreeDragLeave(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly) return
+
+      if (!ev.currentTarget.contains(ev.relatedTarget)) {
+        const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+        dropNode.classList.remove('is-drop-inner')
+      }
+    },
+
+    handleTreeDrop(ev, data) {
+      if (data.readOnly) return
+
+      const { draggingObjects } = this.dragState
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+
+      if (!draggingObjects?.length || !dropNode) return
+
+      dropNode.classList.remove('is-drop-inner')
+
+      this.bindTag(data, draggingObjects)
+      console.log('treeDrop', draggingObjects) // eslint-disable-line
+    },
+
+    bindTag(tag, objects) {
+      discoveryApi
+        .postTags({
+          tagBindingParams: objects.map(t => {
+            return {
+              id: t.id,
+              objCategory: t.category
+            }
+          }),
+          tagIds: [tag.id]
+        })
+        .then(() => {
+          this.getData()
+          this.$message.success(this.$t('message_operation_succuess'))
+        })
+    },
+
+    unbindTag() {}
   }
 }
 </script>
 
 <style scoped lang="scss">
+$nodeH: 28px;
 .classification {
   position: relative;
   display: flex;
@@ -727,7 +782,7 @@ export default {
     padding-right: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 32px;
+    line-height: $nodeH;
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
@@ -765,7 +820,7 @@ export default {
       padding-bottom: 50px;
       .el-tree-node {
         &__content {
-          height: 32px;
+          height: $nodeH;
           margin-bottom: 1px;
           overflow: hidden;
           border-radius: 4px;
