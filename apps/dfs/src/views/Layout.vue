@@ -117,6 +117,11 @@ export default {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'
+        },
+        {
+          name: 'swimLane',
+          title: '泳道',
+          icon: 'operation-log'
         }
       ],
       dialogVisible: false,

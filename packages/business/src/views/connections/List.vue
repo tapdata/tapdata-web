@@ -422,7 +422,7 @@ export default {
           })
 
           // 同步抽屉数据
-          this.$refs.preview.sync(list)
+          this.$refs.preview?.sync(list)
           return {
             total: data?.total,
             data: list

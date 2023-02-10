@@ -29,7 +29,7 @@
         @select="handleSelect"
       ></ConnectionSelector>
     </div>
-    <ConnectionForm v-else :params="params" @back="handleBack" @success="handleSuccess"></ConnectionForm>
+    <ConnectionForm v-else :params="formParams" @back="handleBack" @success="handleSuccess"></ConnectionForm>
   </ElDialog>
 </template>
 
@@ -57,10 +57,10 @@ export default {
       required: true,
       value: Boolean
     },
-    allwoType: {
-      value: Array,
+    params: {
+      type: Object,
       default: () => {
-        return []
+        return {}
       }
     }
   },
@@ -73,7 +73,7 @@ export default {
         showBeta: true,
         showAlpha: true
       },
-      params: {},
+      formParams: {},
       showForm: false
     }
   },
@@ -94,7 +94,7 @@ export default {
     handleSelect(item) {
       this.showForm = true
       const { pdkHash } = item
-      this.params = { pdkHash }
+      this.formParams = { pdkHash }
     },
     getDatabaseType() {
       this.loading = true
@@ -115,7 +115,7 @@ export default {
     },
 
     handleBack() {
-      this.params = {}
+      this.formParams = {}
       this.showForm = false
     },
 

@@ -13,6 +13,7 @@ import VerificationForm from './verification/Form'
 import VerificationDetails from './verification/Details'
 import VerificationHistory from './verification/History'
 import VerificationResult from './verification/Result'
+import SwimlaneDashboard from './swimlane/Dashboard'
 
 export {
   ConnectionForm,
@@ -29,7 +30,8 @@ export {
   VerificationForm,
   VerificationDetails,
   VerificationHistory,
-  VerificationResult
+  VerificationResult,
+  SwimlaneDashboard
 }
 
 export * from './connections/util'
