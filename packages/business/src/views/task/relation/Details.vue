@@ -2,7 +2,7 @@
   <div>
     <div class="my-4 fs-5">{{ dataflow.name || $t('packages_business_task_name') }}</div>
     <div class="bg-white p-6">
-      <div class="mb-4 fs-8 fw-bold">
+      <div class="mb-4 fw-bold">
         {{
           $t('packages_business_relation_details_shiyonggaiguanlian', {
             val: taskTypeMap[type] || $t('packages_business_relation_details_renwu')
@@ -65,6 +65,15 @@
                 {{ $t('daas_external_storage_list_waicunxinxi') }}
               </div>
               <div class="font-color-dark fw-normal text-break">{{ detailData.externalStorage.uri || '-' }}</div>
+            </div>
+            <div
+              class="flex justify-content-start mb-4 text-left fs-8"
+              v-if="detailData.externalStorage && detailData.externalStorage.type === 'mongodb'"
+            >
+              <div class="fw-normal head-label font-color-light">
+                {{ $t('daas_external_storage_list_waicunbiaoming') }}
+              </div>
+              <div class="font-color-dark fw-normal text-break">{{ detailData.externalStorage.table || '-' }}</div>
             </div>
           </section>
         </div>

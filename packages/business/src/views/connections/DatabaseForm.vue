@@ -915,7 +915,8 @@ export default {
           accessNodeType,
           accessNodeProcessId,
           openTableExcludeFilter,
-          tableExcludeFilter
+          tableExcludeFilter,
+          shareCDCExternalStorageId
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -927,7 +928,8 @@ export default {
             accessNodeType,
             accessNodeProcessId,
             openTableExcludeFilter,
-            tableExcludeFilter
+            tableExcludeFilter,
+            shareCDCExternalStorageId
           },
           ...this.model?.config
         })
