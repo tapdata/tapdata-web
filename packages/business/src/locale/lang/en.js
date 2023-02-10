@@ -506,7 +506,7 @@ export default {
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
     'Stay tuned for the following data sources to open',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta data source',
-  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'QA data source',
+  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'GA data source',
   packages_business_connections_preview_lianjiechajianlai: 'Link plugin source',
   packages_business_connections_list_lianjiefenlei: 'Connection Category',
   packages_business_task_migratelist_renwufenlei: 'Task classification',
