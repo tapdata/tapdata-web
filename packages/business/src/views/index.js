@@ -13,7 +13,8 @@ import VerificationForm from './verification/Form'
 import VerificationDetails from './verification/Details'
 import VerificationHistory from './verification/History'
 import VerificationResult from './verification/Result'
-import BusinessAlarmNotification from './setting/AlarmNotification'
+import AlarmSetting from './setting/AlarmSetting'
+import AlarmNotification from './setting/AlarmNotification'
 
 export {
   ConnectionForm,
@@ -31,7 +32,8 @@ export {
   VerificationDetails,
   VerificationHistory,
   VerificationResult,
-  BusinessAlarmNotification
+  AlarmSetting,
+  AlarmNotification
 }
 
 export * from './connections/util'

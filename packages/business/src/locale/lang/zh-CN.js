@@ -744,5 +744,14 @@ export default {
     '此处告警规则设置为系统全局告警规则设置，任务运行监控页面的告警规则设置优先级高于系统全局设置',
   packages_business_setting_alarmnotification_renwumorengao: '任务默认告警规则设置',
   packages_business_setting_alarmnotification_morengaojinggui: '默认告警规则',
-  packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置'
+  packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置',
+
+  //消息通知
+  packages_business_notify_user_all_notice: '全部通知',
+  packages_business_notify_unread_notice: '未读消息',
+  packages_business_notify_mask_read: '标记本页为已读',
+  packages_business_notify_mask_read_all: '标记全部为已读',
+  packages_business_notify_notice_type: '消息类型',
+  packages_business_notify_notice_level: '消息级别',
+  packages_business_notify_no_notice: '暂无通知'
 }
