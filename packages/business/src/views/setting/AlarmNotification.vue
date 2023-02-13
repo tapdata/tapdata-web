@@ -1,159 +1,404 @@
 <template>
-  <section class="flex flex-1 flex-column ml-4 mr-4 overflow-hidden">
-    <header class="flex justify-content-between mb-4 mt-4">
-      <div>{{ $t('packages_business_setting_alarmnotification_renwugaojingshe') }}</div>
-      <div class="color-primary cursor-pointer" @click="showAlarmRlues">
-        {{ $t('packages_business_setting_alarmnotification_morengaojinggui') }}
+  <div class="system-notification" v-loading="loading">
+    <div class="notification-head pt-8 pb-4 px-6">
+      <div class="title font-color-dark fs-7">
+        {{ $t('packages_business_setting_notification_alarm_notification_gaojingtongzhi') }}
       </div>
-    </header>
-    <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
-      <template slot="key" slot-scope="scope">
-        <span>{{ keyMapping[scope.row.key] }}</span>
-      </template>
-      <template slot="notify" slot-scope="scope">
-        <div class="flex">
-          <el-switch style="margin-right: 80px" v-model="scope.row.open"></el-switch>
-          <el-checkbox-group v-model="scope.row.notify">
-            <el-checkbox label="SYSTEM">{{ $t('packages_business_notify_system_notice') }}</el-checkbox>
-            <el-checkbox label="EMAIL">{{ $t('packages_business_notify_email_notification') }}</el-checkbox>
-          </el-checkbox-group>
+    </div>
+
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <div class="operation">
+        <ElButton type="primary" size="mini" @click="handlePageRead()">{{
+          $t('packages_business_notify_mask_read')
+        }}</ElButton>
+        <ElButton size="mini" @click="handleAllRead()">{{ $t('packages_business_notify_mask_read_all') }}</ElButton>
+        <ElButton size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+          {{ $t('notify_setting') }}
+        </ElButton>
+      </div>
+      <el-tab-pane :label="$t('packages_business_notify_user_all_notice')" name="first"></el-tab-pane>
+      <el-tab-pane :label="$t('packages_business_notify_unread_notice')" name="second"></el-tab-pane>
+    </el-tabs>
+    <div class="py-2 pl-4">
+      <SelectList
+        v-if="options.length"
+        v-model="searchParams.search"
+        :items="options"
+        :inner-label="$t('packages_business_notify_notice_level')"
+        none-border
+        last-page-text=""
+        clearable
+        menu-min-width="240px"
+        @change="getData()"
+      ></SelectList>
+    </div>
+    <ul class="cuk-list clearfix cuk-list-type-block" v-if="listData && listData.length">
+      <li
+        class="list-item"
+        :style="{ cursor: item.read ? 'default' : 'pointer' }"
+        v-for="item in listData"
+        :key="item.id"
+        @click="handleRead(item)"
+      >
+        <div class="list-item-content">
+          <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
+          <div class="list-item-desc">
+            <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
+            <span>{{ item.title }}</span>
+          </div>
         </div>
-      </template>
-      <template slot="interval" slot-scope="scope">
-        <el-input-number :controls="false" style="width: 100px" v-model="scope.row.interval"></el-input-number>
-        <el-select style="width: 100px" class="ml-2" v-model="scope.row.unit">
-          <el-option :label="$t('packages_business_task_info_ms')" value="MS"></el-option>
-          <el-option :label="$t('packages_business_task_info_s')" value="SECOND"></el-option>
-          <el-option :label="$t('packages_business_task_info_m')" value="MINUTE"></el-option>
-          <el-option :label="$t('packages_business_task_info_h')" value="HOUR"></el-option>
-          <el-option :label="$t('packages_business_task_info_d')" value="DAY"></el-option>
-          <el-option :label="$t('packages_business_task_info_w')" value="WEEK"></el-option>
-        </el-select>
-      </template>
-    </VTable>
-    <footer class="flex justify-content-end mb-4">
-      <el-button size="mini" @click="remoteMethod()">{{ $t('button_cancel') }}</el-button>
-      <el-button size="mini" type="primary" @click="save()">{{ $t('button_save') }}</el-button>
-    </footer>
-    <el-dialog
-      :title="$t('packages_business_setting_alarmnotification_renwumorengao')"
-      width="70%"
-      append-to-body
-      :visible.sync="alarmRulesVisible"
+      </li>
+    </ul>
+    <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+      <div>
+        <VIcon size="140">no-notice</VIcon>
+        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+          {{ $t('packages_business_notify_no_notice') }}
+        </div>
+      </div>
+    </div>
+    <el-pagination
+      class="pagination"
+      background
+      layout="total,prev, pager, next,sizes"
+      :page-sizes="[20, 30, 50, 100]"
+      :page-size="pagesize"
+      :total="total"
+      :current-page.sync="currentPage"
+      @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
     >
-      <div class="mb-4">{{ $t('packages_business_setting_alarmnotification_cichugaojinggui') }}</div>
-      <VTable ref="table" class="table-list" :data="alarmData" :columns="alarmRulesColumns" :hasPagination="false">
-        <template slot="keySlot" slot-scope="scope">
-          <span>{{ keyMapping[scope.row.key] }}</span>
-        </template>
-        <template slot="valueSlot" slot-scope="scope">
-          <span class="mr-2">{{ $t('packages_business_setting_alarmnotification_lianxu') }}</span>
-          <el-input-number :controls="false" style="width: 100px" v-model="scope.row.point"></el-input-number>
-          <span class="ml-2 mr-2"> {{ $t('packages_business_setting_alarmnotification_gedian') }}</span>
-          <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
-            <el-option label=">=" :value="1"></el-option>
-            <el-option label="<=" :value="-1"></el-option>
-          </el-select>
-          <el-input-number :controls="false" v-model="scope.row.ms" style="width: 80px"></el-input-number>
-          <span class="ml-2">{{ $t('packages_business_setting_alarmnotification_msshigaojing') }}</span>
-        </template>
-      </VTable>
-      <footer class="flex justify-content-end mt-4">
-        <el-button size="mini" @click="alarmRulesVisible = false">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveAlarmRules()">{{ $t('button_save') }}</el-button>
-      </footer>
-    </el-dialog>
-  </section>
+    </el-pagination>
+    <ElDialog
+      custom-class="notice-setting-dialog"
+      :title="$t('notify_setting')"
+      width="1024px"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+    >
+      <AlarmSetting></AlarmSetting>
+    </ElDialog>
+  </div>
 </template>
 
 <script>
-import i18n from '@/i18n'
+import { SelectList } from '@tap/component'
+import { ALARM_LEVEL_MAP } from '../../shared/const'
+import AlarmSetting from './AlarmSetting'
+import { notificationApi } from '@tap/api'
 
-import { VTable } from '@tap/component'
-import { alarmRuleApi, settingsApi } from '@tap/api'
 export default {
-  name: 'AlarmNotification',
-  components: { VTable },
+  components: { SelectList, AlarmSetting },
   data() {
     return {
-      columns: [
-        {
-          label: i18n.t('packages_business_setting_alarm_notification_describtion'),
-          slotName: 'key'
-        },
-        {
-          label: i18n.t('packages_business_setting_notification_alarm_notification_gaojingtongzhi'),
-          prop: 'notify',
-          slotName: 'notify'
-        },
-        {
-          label: i18n.t('packages_business_setting_alarm_notification_notify_noticeInterval'),
-          prop: 'interval',
-          slotName: 'interval'
-        }
-      ],
-      keyMapping: {
-        TASK_STATUS_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwuyudao'),
-        TASK_INSPECT_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwujiaoyan'),
-        TASK_FULL_COMPLETE: i18n.t('packages_business_setting_alarmnotification_dangrenwuquanliang'),
-        TASK_INCREMENT_START: i18n.t('packages_business_setting_alarmnotification_dangrenwuzengliang'),
-        TASK_STATUS_STOP: i18n.t('packages_business_setting_alarmnotification_dangrenwutingzhi'),
-        TASK_INCREMENT_DELAY: i18n.t('packages_business_setting_alarmnotification_dangrenwudezeng'),
-        DATANODE_CANNOT_CONNECT: i18n.t('packages_business_setting_alarmnotification_dangshujuwufa'),
-        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanwang'),
-        DATANODE_TCP_CONNECT_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanxie'),
-        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
-        SYSTEM_FLOW_EGINGE_DOWN: i18n.t('packages_business_setting_alarmnotification_dangrenwustop')
+      filterItems: [],
+      activeName: 'first',
+      listData: [],
+      read: true,
+      loading: false,
+      searchParams: {
+        search: '',
+        msg: ''
       },
-      alarmRulesColumns: [
+
+      currentPage: 1,
+      pagesize: 20,
+      total: 0,
+      options: [
         {
-          label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'keySlot'
+          label: this.$t('packages_business_components_alert_huifu'),
+          value: 'RECOVERY'
         },
         {
-          label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'valueSlot'
+          label: this.$t('packages_business_shared_const_yiban'),
+          value: 'NORMAL'
+        },
+        {
+          label: this.$t('packages_business_shared_const_jinggao'),
+          value: 'WARNING'
+        },
+        {
+          label: this.$t('packages_business_shared_const_yanzhong'),
+          value: 'CRITICAL'
+        },
+        {
+          label: this.$t('packages_business_shared_const_jinji'),
+          value: 'EMERGENCY'
         }
       ],
-      alarmRulesVisible: false,
-      alarmData: [],
-      tableData: []
+      dialogVisible: false
     }
   },
-  mounted() {
-    this.remoteMethod()
+  created() {
+    this.getData()
+    this.getFilterItems()
   },
   methods: {
-    remoteMethod() {
-      settingsApi.findAlarm().then(data => {
-        this.tableData = data
+    getData() {
+      let where = {
+        msgType: 'ALARM',
+        page: this.currentPage,
+        size: this.pagesize
+      }
+      if (this.searchParams.search) {
+        where.level = this.searchParams.search
+      }
+      if (!this.read) {
+        where.read = false
+      }
+      this.loading = true
+      notificationApi
+        .list(where)
+        .then(data => {
+          let list = data?.items || []
+          this.listData = list.map(item => {
+            item.levelLabel = ALARM_LEVEL_MAP[item.level].text
+            item.levelType = ALARM_LEVEL_MAP[item.level].type
+            return item
+          })
+          this.total = data?.total || 0
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      // this.getCount(this.read)
+    },
+    handleCurrentChange(cpage) {
+      this.currentPage = cpage
+      this.getData()
+    },
+    handleSizeChange(psize) {
+      this.pagesize = psize
+      this.getData()
+    },
+    handleRead(item) {
+      let read = this.read
+      if (!item.read) {
+        notificationApi.patch({ read: true, id: item.id }).then(() => {
+          this.read = read
+          let msg = {
+            type: 'notification'
+          }
+          this.$ws.ready(() => {
+            this.$ws.send(msg)
+          }, true)
+          this.getData()
+        })
+      }
+    },
+    // 标记本页已读
+    handlePageRead() {
+      let ids = []
+      this.listData.map(item => {
+        ids.push(item.id)
+      })
+      let id = {
+        inq: ids
+      }
+
+      let data = {
+        read: true,
+        id
+      }
+      let read = this.read
+      notificationApi.pageRead(data).then(() => {
+        // this.getUnreadNum() //未读消息数量
+        this.getData()
+        this.read = read
+        this.$root.$emit('notificationUpdate')
+        let msg = {
+          type: 'notification'
+        }
+        this.$ws.ready(() => {
+          this.$ws.send(msg)
+        }, true)
       })
     },
-    save() {
-      settingsApi.saveAlarm(this.tableData).then(() => {
-        this.$message.success(i18n.t('message_save_ok'))
+
+    // 标记全部已读
+    handleAllRead() {
+      let where = {}
+      // let data = {
+      //   read: true
+      // }
+      where = JSON.stringify(where)
+      let read = this.read
+      notificationApi.readAll(where).then(() => {
+        // this.getUnreadNum() //未读消息数量
+        this.getData()
+        this.read = read
+        this.$root.$emit('notificationUpdate')
+        let msg = {
+          type: 'notification'
+        }
+        this.$ws.ready(() => {
+          this.$ws.send(msg)
+        }, true)
       })
     },
-    showAlarmRlues() {
-      this.alarmRulesVisible = true
-      this.getAlarmData()
+    handleClick(tab) {
+      this.currentPage = 1
+      if (tab.name === 'first') {
+        this.read = true // 全部信息
+      } else {
+        this.read = false //未读
+      }
+      this.getData()
     },
-    //告警设置 单独请求接口 单独提交数据
-    getAlarmData() {
-      alarmRuleApi.find().then(data => {
-        this.alarmData = data
-      })
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('packages_business_notify_notice_level'),
+          key: 'search',
+          type: 'select-inner',
+          items: this.options,
+          selectedWidth: '200px'
+        }
+      ]
     },
-    saveAlarmRules() {
-      //告警设置单独保存
-      alarmRuleApi.save(this.alarmData).then(() => {
-        this.alarmRulesVisible = false
-        this.$message.success(this.$t('message_save_ok'))
-      })
+    handleSetting() {
+      if (process.env.VUE_APP_PLATFORM === 'DAAS') {
+        this.$router.push({ name: 'alarmSetting' })
+      } else {
+        this.dialogVisible = true
+      }
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+$unreadColor: #ee5353;
+.system-notification {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  font-size: $fontBaseTitle;
+  .notification-head {
+    .title {
+      font-weight: bold;
+    }
+    .search {
+      margin-top: 10px;
+      margin-right: 10px;
+      width: 200px;
+    }
+  }
+  .operation {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    cursor: pointer;
+    span {
+      display: inline-block;
+      margin-left: 10px;
+    }
+  }
+  ul.cuk-list {
+    list-style: none;
+    flex: 1;
+    padding-left: 24px;
+    overflow: auto;
+    .inner-select {
+      &:first-child {
+        padding-left: 0;
+      }
+    }
+  }
+  .clearfix {
+    zoom: 1;
+  }
+  .clearfix:after,
+  .clearfix:before {
+    content: ' ';
+    display: table;
+  }
+  [class*='cuk-'],
+  [class*='cuk-'] :after,
+  [class*='cuk-'] :before {
+    box-sizing: border-box;
+  }
+  .list-item {
+    position: relative;
+    background-color: map-get($bgColor, white);
+    border-bottom: 1px solid map-get($bgColor, disable);
+    margin-right: 30px;
+    .list-item-content {
+      position: relative;
+      height: 50px;
+      line-height: 50px;
+      box-sizing: border-box;
+      overflow: hidden;
+      display: block;
+    }
+    .unread-1zPaAXtSu {
+      position: absolute;
+      top: 22px;
+      left: 8px;
+      width: 6px;
+      height: 6px;
+      background: $unreadColor;
+      border-radius: 50%;
+    }
+    .list-item-desc {
+      color: map-get($fontColor, light);
+      position: absolute;
+      top: 0;
+      left: 30px;
+      right: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .list-item-time {
+      float: right;
+      color: map-get($fontColor, light);
+      font-size: $fontBaseTitle;
+    }
+    &:hover {
+      background: map-get($bgColor, normal);
+    }
+  }
+}
+.pagination {
+  text-align: right;
+  padding: 10px 0 20px 0;
+}
+</style>
+<style lang="scss">
+.system-notification {
+  .el-tabs {
+    position: relative;
+    .el-tabs__header {
+      padding: 0 24px;
+    }
+    .el-tabs__content {
+      overflow: initial;
+      .operation {
+        position: absolute;
+        top: -55px;
+        right: 24px;
+      }
+    }
+  }
+  ul.cuk-list {
+    .v-select-list {
+      &:first-child .inner-select {
+        padding-left: 0;
+      }
+    }
+  }
+  .el-tabs__item {
+    height: 40px;
+    line-height: 40px;
+    font-size: $fontBaseTitle;
+    // color: map-get($fontColor, light);
+    font-weight: 400;
+    &.is-active {
+      font-weight: 500;
+      // color: map-get($color, primary);
+    }
+  }
+}
+</style>
