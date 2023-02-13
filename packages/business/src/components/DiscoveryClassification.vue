@@ -277,6 +277,7 @@ export default {
             {
               name: '所有目录',
               isRoot: true,
+              readOnly: true,
               children: treeData
             }
           ]
@@ -517,12 +518,11 @@ export default {
 
     handleDrop(draggingNode, dropNode, dropType, ev) {
       console.log('handleDrop', ...arguments) // eslint-disable-line
-      // return
       if (!draggingNode.data.isObject) {
         metadataDefinitionsApi
           .changeById({
             id: draggingNode.data.id,
-            parent_id: dropNode.data.id
+            parent_id: dropNode.data.id || ''
           })
           .then(() => {
             this.$message.success('操作成功')
@@ -636,7 +636,7 @@ export default {
 
     async handleNodeExpand(data, node, el) {
       // 十秒内加载过资源，不再继续加载
-      if (node.loadTime && Date.now() - node.loadTime < 10000) return
+      if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000)) return
 
       node.loadTime = Date.now()
       const objects = await this.loadObjects(data)
