@@ -16,39 +16,34 @@
       <div v-for="(item, index) in options" :key="index" class="list__item flex-fill">
         <div class="list__title flex justify-content-between p-4">
           <span class="fs-6">{{ item.title }}</span>
-          <div class="opration">
+          <div class="operation">
             <VIcon v-if="item.add" size="16" class="icon-color" @click="handleAdd(item.type)">add-fill</VIcon>
             <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
           </div>
         </div>
-        <div>
-          <div class="p-4 flex align-items-center">
-            <ElInput
-              class="search-input flex-fill"
-              v-model="keyword"
-              prefix-icon="el-icon-search"
-              size="mini"
-              clearable
-              style="width: 240px"
-              @input="searchFnc"
-            ></ElInput>
-            <VIcon class="ml-2">filter</VIcon>
-          </div>
-          <div class="px-4">内容</div>
-        </div>
+        <component :is="item.component" :ref="item.component"></component>
       </div>
     </div>
-    <CreateConnection :visible.sync="visible" :params="createConnectionParams" @success="handleSuccess"></CreateConnection>
+    <CreateConnection
+      :visible.sync="visible"
+      :params="createConnectionParams"
+      @success="handleSuccess"
+    ></CreateConnection>
   </div>
 </template>
 
 <script>
 import CreateConnection from '@tap/business/src/components/create-connection/Dialog'
 
+import SourceItem from './Source'
+import TargetItem from './Target'
+import FDMItem from './FDM'
+import MDMItem from './MDM'
+
 export default {
   name: 'Dashboard',
 
-  components: { CreateConnection },
+  components: { CreateConnection, SourceItem, TargetItem, FDMItem, MDMItem },
 
   data() {
     return {
@@ -57,18 +52,22 @@ export default {
         {
           title: 'SOURCES',
           type: 'source',
-          add: true
+          add: true,
+          component: 'SourceItem'
         },
         {
-          title: 'FDM / CACHE'
+          title: 'FDM / CACHE',
+          component: 'FDMItem'
         },
         {
-          title: 'MDM / CURATED MODELS'
+          title: 'MDM / CURATED MODELS',
+          component: 'MDMItem'
         },
         {
           title: 'SERVICES / TARGETS',
-          type: 'target',
-          add: true
+          type: ' ',
+          add: true,
+          component: 'TargetItem'
         }
       ],
       visible: false,
@@ -86,7 +85,7 @@ export default {
     },
 
     handleSuccess() {
-      console.log('handleSuccess')
+      console.log('handleSuccess', this.createConnectionParams.type)
     }
   }
 }
