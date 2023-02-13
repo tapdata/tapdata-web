@@ -300,6 +300,13 @@ export default observer({
         },
         default: ['SYSTEM']
       }
+      if (process.env.VUE_APP_PLATFORM !== 'DAAS') {
+        let enums = [
+          { label: i18n.t('packages_business_notify_webchat_notification'), value: 'WECHAT' },
+          { label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' }
+        ]
+        options.enum = [...options.enum, ...enums]
+      }
       if (key) {
         options['x-reactions'] = {
           dependencies: [key],
@@ -366,9 +373,9 @@ export default observer({
         'x-component': 'Space',
         properties: {}
       }
-      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 3)
+      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 10)
       result.properties[key2] = this.getSelect(i18n.t('packages_dag_migration_alarmpanel_gedian'))
-      result.properties[key3] = this.getInputNumber('', 500)
+      result.properties[key3] = this.getInputNumber('', 1000)
       result.properties.ms = {
         title: 'ms',
         type: 'void',
