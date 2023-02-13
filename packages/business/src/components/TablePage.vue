@@ -33,7 +33,7 @@
               <slot name="operation"></slot>
             </div>
           </div>
-          <DragTable
+          <ProTable
             ref="table"
             v-loading="loading"
             class="table-page-table"
@@ -53,7 +53,7 @@
               <VIcon size="140">no-data-color</VIcon>
               <slot name="noDataText"></slot>
             </div>
-          </DragTable>
+          </ProTable>
           <div class="table-footer">
             <slot name="tableFooter"></slot>
           </div>
@@ -83,7 +83,7 @@
 
 <script>
 import { delayTrigger } from '@tap/shared'
-import { VIcon, Classification, DragTable } from '@tap/component'
+import { VIcon, Classification, ProTable } from '@tap/component'
 
 import SelectClassify from './SelectClassify'
 
@@ -92,7 +92,7 @@ export default {
     Classification,
     SelectClassify,
     VIcon,
-    DragTable
+    ProTable
   },
   props: {
     title: String,

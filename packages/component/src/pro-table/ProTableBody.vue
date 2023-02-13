@@ -4,7 +4,7 @@ import TableRow from 'element-ui/packages/table/src/table-row'
 // let TableBody = {}
 // let TableRow = {}
 export default {
-  name: 'DragTableBody',
+  name: 'ProTableBody',
   extends: TableBody,
 
   components: { TableRow },

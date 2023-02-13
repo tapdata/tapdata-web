@@ -67,4 +67,4 @@ export * from './base'
 
 export * from './virtual-tree'
 
-export * from './drag-table'
+export * from './pro-table'

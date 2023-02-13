@@ -229,9 +229,9 @@
 
 <script>
 import { Table } from 'element-ui'
-import TableBody from './DragTableBody'
+import TableBody from './ProTableBody.vue'
 export default {
-  name: 'DragTable',
+  name: 'ProTable',
 
   extends: Table,
 
