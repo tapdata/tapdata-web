@@ -453,7 +453,7 @@ export default {
               if (item.account_status === 0) {
                 item.status = 'rejected'
               }
-              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdatedFmt = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
               return item
             })
           }
