@@ -91,6 +91,8 @@ import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi, discoveryApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 
+import { makeDragNodeImage } from '../shared/classification'
+
 export default {
   components: { VIcon },
   props: {
@@ -100,11 +102,10 @@ export default {
         return []
       }
     },
-    authority: {
-      type: String
-    },
-    dragState: Object,
-    makeDragNodeImage: Function
+    dragState: {
+      type: Object,
+      default: () => ({})
+    }
   },
   data() {
     return {
@@ -501,7 +502,7 @@ export default {
 
     handleDragStart(draggingNode, ev) {
       this.draggingNode = draggingNode
-      this.draggingNodeImage = this.makeDragNodeImage(
+      this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         [draggingNode],
         this.$el
