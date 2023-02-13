@@ -4,6 +4,8 @@ export default {
   packages_business_connection_list_testing: 'Testing',
 
   packages_business_connection_column_name: 'Connection Name',
+  packages_business_agent_status_running: 'Running',
+  packages_business_agent_status_stopped: 'Stopped',
 
   packages_business_status_running: 'Running',
   packages_business_status_paused: 'Paused',

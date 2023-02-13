@@ -5,6 +5,9 @@ export default {
 
   packages_business_connection_column_name: '连接名称',
 
+  packages_business_agent_status_running: '运行中',
+  packages_business_agent_status_stopped: '离线',
+
   packages_business_status_running: '运行中',
   packages_business_status_paused: '待启动',
   packages_business_status_draft: '待启动',
