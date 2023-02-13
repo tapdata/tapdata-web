@@ -37,7 +37,7 @@
       .drag-preview-icon {
         display: flex;
         align-items: center;
-        margin-right: 4px;
+        margin-right: 8px;
       }
     }
 
@@ -192,7 +192,7 @@
 }
 .discovery-page-wrap{
   .page-left {
-    width: 240px;
+    width: 300px;
   }
   .border-right{
     border-right: 1px solid map-get($borderColor, light);

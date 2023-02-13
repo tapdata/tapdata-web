@@ -180,8 +180,8 @@ export default defineComponent({
       draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         draggingRow,
-        'table-item',
-        refs.root
+        refs.root,
+        'table-item'
       )
       ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
     }
@@ -201,7 +201,7 @@ export default defineComponent({
       }, {})
     }
 
-    const makeDragNodeImage = ($icon, node, nodeType = 'tree-item', parent = document.body) => {
+    const makeDragNodeImage = ($icon, node, parent = document.body, nodeType = 'tree-item') => {
       const dragImage = document.createElement('div')
 
       if (!node?.length) return dragImage
@@ -221,7 +221,7 @@ export default defineComponent({
 
       const text = document.createElement('div')
       text.className = 'drag-preview-name ellipsis'
-      text.innerHTML = nodeType === 'tree-item' ? node[0].data.value : node[0].name
+      text.innerHTML = nodeType === 'tree-item' ? node[0].data.name : node[0].name
       container.appendChild(text)
       dragImage.appendChild(container)
 
@@ -251,7 +251,8 @@ export default defineComponent({
       handleDragStart,
       handleDragEnd,
       handleSelectionChange,
-      dragState
+      dragState,
+      makeDragNodeImage
     }
   },
   render() {
@@ -263,8 +264,8 @@ export default defineComponent({
               {
                 name: 'resize',
                 value: {
-                  minWidth: 215,
-                  maxWidth: 500
+                  minWidth: 300,
+                  maxWidth: 600
                 },
                 modifiers: {
                   right: true
@@ -278,7 +279,8 @@ export default defineComponent({
             v-model={this.data.searchParams}
             ref="classify"
             dragState={this.dragState}
-            {...{ on: { nodeChecked: this.getNodeChecked } }}
+            makeDragNodeImage={this.makeDragNodeImage}
+            onNodeChecked={this.getNodeChecked}
           ></DiscoveryClassification>
         </div>
         <TablePage

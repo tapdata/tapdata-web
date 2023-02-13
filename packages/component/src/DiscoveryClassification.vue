@@ -1,12 +1,12 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
     <div class="classification-header pl-0">
-      <ElButton class="btn-addIcon" size="mini" type="text" @click="showDialog()">
+      <!--<ElButton class="btn-addIcon" size="mini" type="text" @click="showDialog()">
         <VIcon size="12">add</VIcon>
       </ElButton>
       <div class="title">
         <span>{{ $t('packages_component_src_discoveryclassification_suoyoumulu') }}</span>
-      </div>
+      </div>-->
       <!-- v-if="searchFalg" -->
       <div class="search-box">
         <ElInput size="mini" v-model="filterText">
@@ -18,66 +18,27 @@
     </div>
     <div class="tree-block pr-3" v-if="isExpand" v-loading="loadingTree">
       <ElTree
-        v-if="treeData && treeData.length > 0"
         class="classification-tree"
         ref="tree"
         node-key="id"
         highlight-current
-        :props="props"
         :data="treeData"
+        :props="props"
         draggable
         :default-expanded-keys="expandedKeys"
         :filter-node-method="filterNode"
-        :render-after-expand="false"
+        :render-content="renderContent"
         :expand-on-click-node="false"
         :allow-drag="checkAllowDrag"
         :allow-drop="checkAllowDrop"
         @node-click="nodeClickHandler"
-        @check="checkHandler"
         @node-drag-start="handleDragStart"
         @node-drop="handleDrop"
-      >
-        <span
-          class="custom-tree-node"
-          slot-scope="{ node, data }"
-          @dragover.stop="handleTreeDragOver($event, data, node)"
-          @dragenter.stop="handleTreeDragEnter($event, data, node)"
-          @dragleave.stop="handleTreeDragLeave($event, data, node)"
-          @drop.stop="handleTreeDrop($event, data, node)"
-        >
-          <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <!--<el-tooltip :content="`${data.value} (${data.objCount})`" placement="bottom-start" :open-delay="400">
-            <span class="table-label"
-              >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
-            >
-          </el-tooltip>-->
-          <VIcon v-if="!node.isLeaf" class="tree-item-icon mr-1" size="24">folder</VIcon>
-          <span class="table-label"
-            >{{ data.value }}<span class="count-label mr-2 ml-2">({{ data.objCount }})</span></span
-          >
-          <span class="btn-menu" v-if="!data.readOnly">
-            <ElButton class="mr-2" type="text" @click="showDialog(node, 'add')"
-              ><VIcon size="12" class="color-primary">add</VIcon></ElButton
-            >
-            <ElDropdown size="mini" @command="handleRowCommand($event, node)">
-              <ElButton type="text"><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton>
-              <ElDropdownMenu slot="dropdown">
-                <ElDropdownItem command="edit">{{ $t('packages_component_classification_editNode') }}</ElDropdownItem>
-                <ElDropdownItem command="delete">{{
-                  $t('packages_component_classification_deleteNode')
-                }}</ElDropdownItem>
-              </ElDropdownMenu>
-            </ElDropdown>
-          </span>
-        </span>
-      </ElTree>
-      <ElButton v-if="treeData && treeData.length === 0 && isExpand" type="text" @click="showDialog()" class="create">
-        {{
-          types[0] === 'user'
-            ? $t('packages_component_classification_creatUserGroup')
-            : $t('packages_component_classification_creatDataClassification')
-        }}
-      </ElButton>
+        @node-expand="handleNodeExpand"
+      />
+      <!--<ElButton v-if="treeData && treeData.length === 0 && isExpand" type="text" @click="showDialog()" class="create">
+        {{ $t('packages_component_classification_creatDataClassification') }}
+      </ElButton>-->
     </div>
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -142,7 +103,8 @@ export default {
     authority: {
       type: String
     },
-    dragState: Object
+    dragState: Object,
+    makeDragNodeImage: Function
   },
   data() {
     return {
@@ -155,7 +117,7 @@ export default {
       loadingTree: false,
       props: {
         key: 'id',
-        label: 'value'
+        label: 'name'
       },
       isActive: true,
 
@@ -172,7 +134,11 @@ export default {
 
       nodeName: '',
       parent_id: '',
-      title: ''
+      title: '',
+      iconMap: {
+        table: 'table',
+        defaultApi: 'apiServer_navbar'
+      }
     }
   },
   mounted() {
@@ -181,7 +147,6 @@ export default {
   watch: {
     types(_new, _old) {
       if (_new.toString() !== _old.toString()) {
-        this.clear()
         this.getData()
       }
     },
@@ -190,36 +155,97 @@ export default {
     }
   },
   methods: {
-    toggle() {
-      this.isExpand = !this.isExpand
-    },
-    clear() {
-      this.$refs.tree && this.$refs.tree.setCheckedNodes([])
-    },
-    checkHandler(data, { checkedKeys }) {
-      let checked = checkedKeys.includes(data.id)
-      let setChecked = arr => {
-        if (arr && arr.length) {
-          arr.forEach(node => {
-            this.$refs.tree.setChecked(node, checked, true)
-            setChecked(node.children)
-          })
-        }
+    renderContent(h, { node, data, store }) {
+      let icon = 'folder-outline'
+
+      if (data.isObject) {
+        icon = this.iconMap[data.type]
       }
-      setChecked(data.children)
-      this.emitCheckedNodes()
+
+      if (data.objCount > 0) {
+        node.isLeaf = false
+      }
+
+      return (
+        <div
+          class="custom-tree-node"
+          on={{
+            dragenter: ev => {
+              ev.stopPropagation()
+              this.handleTreeDragEnter(ev, data, node)
+            },
+            dragover: ev => {
+              ev.stopPropagation()
+              this.handleTreeDragOver(ev, data, node)
+            },
+            dragleave: ev => {
+              ev.stopPropagation()
+              this.handleTreeDragLeave(ev, data, node)
+            },
+            drop: ev => {
+              ev.stopPropagation()
+              this.handleTreeDrop(ev, data, node)
+            }
+          }}
+        >
+          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="16">{icon}</VIcon>}</div>
+          <span class="table-label">{data.name}</span>
+          {!data.readOnly && !data.isObject && (
+            <span class="btn-menu">
+              <VIcon
+                size="14"
+                class="color-primary mr-2"
+                onClick={ev => {
+                  ev.stopPropagation()
+                  data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                }}
+              >
+                add
+              </VIcon>
+              {!data.isRoot && (
+                <ElDropdown
+                  class="inline-flex"
+                  placement="bottom"
+                  trigger="click"
+                  onCommand={ev => this.handleRowCommand(ev, node)}
+                >
+                  <VIcon
+                    onClick={ev => {
+                      ev.stopPropagation()
+                    }}
+                    size="16"
+                    class="color-primary"
+                  >
+                    more-circle
+                  </VIcon>
+                  <ElDropdownMenu slot="dropdown">
+                    <ElDropdownItem command="edit">
+                      {this.$t('packages_component_classification_editNode')}
+                    </ElDropdownItem>
+                    <ElDropdownItem command="delete">
+                      {this.$t('packages_component_classification_deleteNode')}
+                    </ElDropdownItem>
+                  </ElDropdownMenu>
+                </ElDropdown>
+              )}
+            </span>
+          )}
+        </div>
+      )
     },
-    nodeClickHandler(data, node) {
-      this.clear()
-      node.checked = !node.checked
-      this.emitCheckedNodes(node)
+
+    nodeClickHandler(data) {
+      let { currentNode = {} } = this
+      if (data.id === currentNode.id || data.isObject) return
+      this.currentNode = data
+      this.emitCheckedNodes(data)
     },
+
     emitCheckedNodes(node) {
       if (!node) return
-      this.$emit('nodeChecked', node?.data)
-      //将当前选中的目录缓存
-      this.$store.commit('catalogueKey', node?.data)
+      this.$emit('nodeChecked', node)
     },
+
     getData(cb) {
       let where = {}
       where.item_type = {
@@ -239,88 +265,38 @@ export default {
           user_id: 1
         }
       }
-      if (this.types[0] === 'user') {
-        userGroupsApi
-          .get({
-            filter: JSON.stringify({
-              limit: 999
-            })
-          })
-          .then(data => {
-            let treeData = []
-            let items = data?.items || []
-            if (items.length) {
-              treeData = items.map(item => ({
-                value: item.name,
-                name: item.name,
-                id: item.id,
-                gid: item.gid,
-                parent_id: item.parent_id,
-                last_updated: item.last_updated,
-                user_id: item.user_id
-              }))
+      this.loadingTree = true
+      metadataDefinitionsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          let items = data?.items || []
+          let treeData = this.formatData(items)
+          this.treeData = [
+            {
+              name: '所有目录',
+              isRoot: true,
+              children: treeData
             }
-            this.treeData = this.formatData(treeData)
-
-            cb && cb(treeData)
+          ]
+          cb && cb(items)
+          //默认选中第一个
+          this.$nextTick(() => {
+            let key = treeData?.[0]?.id
+            this.expandedKeys = [key]
+            this.$refs.tree.setCurrentKey(key)
+            this.emitCheckedNodes(treeData?.[0])
           })
-      } else {
-        this.loadingTree = true
-        metadataDefinitionsApi
-          .get({
-            filter: JSON.stringify(filter)
-          })
-          .then(data => {
-            let items = data?.items || []
-            this.treeData = this.formatData(items)
-            cb && cb(items)
-            //默认选中第一个
-            this.$nextTick(() => {
-              let data = this.$store.state.catalogueKey
-              if (!data) {
-                this.$store.commit('catalogueKey', this.treeData?.[0])
-                this.$emit('nodeChecked', this.treeData?.[0])
-              } else {
-                this.$emit('nodeChecked', data)
-              }
-              let key = data?.id || this.treeData?.[0]?.id
-              this.$refs.tree.setCurrentKey(key)
-              this.expandedKeys = [key]
-            })
-          })
-          .finally(() => {
-            this.loadingTree = false
-          })
-      }
+        })
+        .finally(() => {
+          this.loadingTree = false
+        })
     },
     getDataAll(cb) {
-      if (this.types[0] === 'user') {
-        userGroupsApi
-          .get({
-            filter: JSON.stringify({
-              limit: 999
-            })
-          })
-          .then(data => {
-            let items = data?.items || []
-            let treeData = []
-            if (items?.length) {
-              treeData = items.map(item => ({
-                value: item.name,
-                id: item.id,
-                gid: item.gid,
-                parent_id: item.parent_id,
-                last_updated: item.last_updated,
-                user_id: item.user_id
-              }))
-            }
-            cb && cb(treeData)
-          })
-      } else {
-        metadataDefinitionsApi.get().then(data => {
-          cb && cb(data?.items || [])
-        })
-      }
+      metadataDefinitionsApi.get().then(data => {
+        cb && cb(data?.items || [])
+      })
     },
     //格式化分类数据
     formatData(items) {
@@ -328,8 +304,11 @@ export default {
       if (items && items.length) {
         let map = {}
         let nodes = []
+
         //遍历第一次， 先把所有子类按照id分成若干数组
         items.forEach(it => {
+          it.name = it.value
+          it.isLeaf = it.objCount === 0
           if (it.parent_id) {
             let children = map[it.parent_id] || []
             children.push(it)
@@ -337,9 +316,9 @@ export default {
           } else {
             //默认目录国际化
             if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
-              it.value = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
+              it.name = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
               if (it?.userName && it?.user_id !== userId) {
-                it.value += `| ${it.userName}`
+                it.name += `| ${it.userName}`
               }
             }
             nodes.push(it)
@@ -360,14 +339,7 @@ export default {
     },
     filterNode(value, data) {
       if (!value) return true
-      return data.value.indexOf(value) !== -1
-    },
-    handleDefault_expanded() {
-      let self = this
-      let treeList = this.treeData
-      for (let i = 0; i < treeList.length; i++) {
-        self.$refs.tree.store.nodesMap[treeList[i].id].expanded = false
-      }
+      return data.name.indexOf(value) !== -1
     },
     handleRowCommand(command, node) {
       switch (command) {
@@ -512,7 +484,7 @@ export default {
           })
         } else {
           this.getDataAll(items => {
-            resolve(items.find(it => it.value === value))
+            resolve(items.find(it => it.name === value))
           })
         }
       })
@@ -523,39 +495,14 @@ export default {
     },
 
     checkAllowDrop(draggingNode, dropNode, type) {
-      return type === 'inner' && !dropNode.data.readOnly
-    },
-
-    makeDragNodeImage($icon, node, parent = document.body) {
-      const div = document.createElement('div')
-
-      if (!node) return div
-      div.classList.add('drag-node-image')
-      div.style.position = 'absolute'
-      div.style.zIndex = '-100'
-      div.style.opacity = '1'
-      parent.appendChild(div)
-      const container = document.createElement('div')
-      container.className = 'drag-preview-container'
-      if ($icon) {
-        const icon = $icon.cloneNode(true)
-        icon.className = 'drag-preview--icon'
-        container.appendChild(icon)
-      }
-      const text = document.createElement('div')
-      text.className = 'drag-preview-name ellipsis'
-      text.innerHTML = node.data.value
-      container.appendChild(text)
-      div.appendChild(container)
-
-      return div
+      return type === 'inner' && !dropNode.data.readOnly && !dropNode.data.isObject
     },
 
     handleDragStart(draggingNode, ev) {
       this.draggingNode = draggingNode
       this.draggingNodeImage = this.makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode,
+        [draggingNode],
         this.$el
       )
       let { dataTransfer } = ev
@@ -571,19 +518,23 @@ export default {
     handleDrop(draggingNode, dropNode, dropType, ev) {
       console.log('handleDrop', ...arguments) // eslint-disable-line
       // return
-      metadataDefinitionsApi
-        .changeById({
-          id: draggingNode.data.id,
-          parent_id: dropNode.data.id
-        })
-        .then(() => {
-          this.$message.success('操作成功')
-          draggingNode.data.parent_id = dropNode.data.id
-          // this.getData()
-        })
-        .catch(err => {
-          this.$message.error(err.message)
-        })
+      if (!draggingNode.data.isObject) {
+        metadataDefinitionsApi
+          .changeById({
+            id: draggingNode.data.id,
+            parent_id: dropNode.data.id
+          })
+          .then(() => {
+            this.$message.success('操作成功')
+            draggingNode.data.parent_id = dropNode.data.id
+            // this.getData()
+          })
+          .catch(err => {
+            this.$message.error(err.message)
+          })
+      } else {
+        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [draggingNode.data])
+      }
     },
 
     findParentNodeByClassName(el, cls) {
@@ -628,8 +579,11 @@ export default {
 
       dropNode.classList.remove('is-drop-inner')
 
-      this.bindTag(data, draggingObjects)
-      console.log('treeDrop', draggingObjects) // eslint-disable-line
+      if (this.currentNode.readOnly) {
+        this.bindTag(data, draggingObjects)
+      } else {
+        this.moveTag(this.currentNode.id, data.id, draggingObjects)
+      }
     },
 
     bindTag(tag, objects) {
@@ -649,7 +603,68 @@ export default {
         })
     },
 
-    unbindTag() {}
+    async moveTag(from, to, objects) {
+      if (from === to) return
+
+      const tagBindingParams = objects.map(t => {
+        return {
+          id: t.id,
+          objCategory: t.category
+        }
+      })
+      await discoveryApi.patchTags({
+        tagBindingParams,
+        tagIds: [from]
+      })
+      await discoveryApi.postTags({
+        tagBindingParams,
+        tagIds: [to]
+      })
+      objects.forEach(item => (item.parent_id = to))
+      this.$message.success(this.$t('message_operation_succuess'))
+    },
+
+    loadNode(node, resolve) {
+      console.log('loadNode', node, node.level) // eslint-disable-line
+      if (node.level === 0) {
+        return resolve([{ name: '所有目录' }])
+      }
+      setTimeout(() => {
+        resolve()
+      }, 2000)
+    },
+
+    async handleNodeExpand(data, node, el) {
+      // 十秒内加载过资源，不再继续加载
+      if (node.loadTime && Date.now() - node.loadTime < 10000) return
+
+      node.loadTime = Date.now()
+      const objects = await this.loadObjects(data)
+      console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
+      const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
+      objects.forEach(item => {
+        if (childrenMap[item.id]) return
+        item.parent_id = data.id
+        item.isObject = true
+        this.$refs.tree.append(item, node)
+      })
+    },
+
+    handleCurrentChange() {
+      console.log('handleCurrentChange', ...arguments) // eslint-disable-line
+    },
+
+    loadObjects(node) {
+      let where = {
+        page: 1,
+        pageSize: 10000,
+        tagId: node.id
+      }
+      return discoveryApi.discoveryList(where).then(res => {
+        let { total, items } = res
+        return res.items
+      })
+    }
   }
 }
 </script>
@@ -774,40 +789,7 @@ $nodeH: 28px;
     //padding: 0 10px;
     overflow: auto;
   }
-  .custom-tree-node {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    padding-right: 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: $nodeH;
-    .icon-folder {
-      margin-right: 5px;
-      font-size: 12px;
-      color: map-get($color, primary);
-      // color: map-get($color, lprimary);
-    }
-    .table-label {
-      flex: 1;
-      vertical-align: middle;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 120px;
-      font-weight: 400;
-      color: map-get($fontColor, normal);
-    }
-    .count-label {
-      color: map-get($fontColor, sslight);
-    }
-    .btn-menu {
-      display: none;
-    }
-    &:hover .btn-menu {
-      display: block;
-    }
-  }
+
   .create {
     padding: 5px 10px;
     font-size: 12px;
@@ -832,6 +814,40 @@ $nodeH: 28px;
 
         &.is-drop-inner > .el-tree-node__content {
           background-color: #d0deff;
+        }
+      }
+
+      .custom-tree-node {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        padding-right: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: $nodeH;
+        .icon-folder {
+          margin-right: 5px;
+          font-size: 12px;
+          color: map-get($color, primary);
+          // color: map-get($color, lprimary);
+        }
+        .table-label {
+          flex: 1;
+          vertical-align: middle;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: 400;
+          color: map-get($fontColor, normal);
+        }
+        .count-label {
+          color: map-get($fontColor, sslight);
+        }
+        .btn-menu {
+          display: none;
+        }
+        &:hover .btn-menu {
+          display: flex;
         }
       }
     }
