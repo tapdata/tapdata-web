@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-column h-100">
     <div class="p-4 flex align-items-center">
       <ElInput
         class="search-input flex-fill"
@@ -8,28 +8,195 @@
         size="mini"
         clearable
         style="width: 240px"
-        @input="searchFnc"
+        @input="handleSearch"
       ></ElInput>
       <VIcon class="ml-2">filter</VIcon>
     </div>
-    <div class="px-4">内容</div>
+    <div class="px-4 flex-fill tree-list">
+      <ElTree
+        class="classification-tree"
+        ref="tree"
+        node-key="id"
+        highlight-current
+        :props="props"
+        :data="treeData"
+        draggable
+        lazy
+        :load="loadNode"
+        :filter-node-method="filterNode"
+        :render-after-expand="false"
+        :expand-on-click-node="false"
+        @node-click="nodeClickHandler"
+        @check="checkHandler"
+        @node-drag-start="handleDragStart"
+        @node-drop="handleDrop"
+      >
+        <span
+          class="custom-tree-node flex align-items-center"
+          slot-scope="{ node, data }"
+          @dragover.stop="handleTreeDragOver($event, data, node)"
+          @dragenter.stop="handleTreeDragEnter($event, data, node)"
+          @dragleave.stop="handleTreeDragLeave($event, data, node)"
+          @drop.stop="handleTreeDrop($event, data, node)"
+        >
+          <VIcon
+            v-if="node.data.loadFieldsStatus === 'loading'"
+            class="v-icon animation-rotate"
+            size="14"
+            color="rgb(61, 156, 64)"
+            >loading-circle</VIcon
+          >
+          <ElProgress
+            v-if="node.data.loadFieldsStatus === 'loading'"
+            type="circle"
+            :percentage="node.data.progress"
+            :show-text="false"
+            :width="20"
+            :stroke-width="2"
+            class="mr-2"
+          ></ElProgress>
+          <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-1" />
+          <div v-else-if="node.data.isEmpty" class="flex align-items-center">
+            <span>无数据</span>
+            <ElLink type="primary" @click.stop="handleReload(node)">重新加载</ElLink>
+          </div>
+          <VIcon v-else class="tree-item-icon mr-1" size="18">table</VIcon>
+          <span :class="[{ 'color-disable': data.disabled }, 'table-label']">{{ data.label }}</span>
+        </span>
+      </ElTree>
+    </div>
   </div>
 </template>
 
 <script>
+import { debounce } from 'lodash'
+
+import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import NodeIcon from '@tap/dag/src/components/NodeIcon'
+
 export default {
   name: 'Source',
 
+  components: { NodeIcon },
+
   data() {
     return {
-      keyword: ''
+      keyword: '',
+      treeData: [],
+      expandedKeys: [],
+      props: {
+        isLeaf: 'isLeaf',
+        disabled: 'disabled'
+      }
     }
   },
 
   methods: {
-    searchFnc() {}
+    async getConnectionList() {
+      let filter = {
+        limit: 999
+      }
+      const res = await connectionsApi.get({
+        filter: JSON.stringify(filter)
+      })
+
+      return res.items.map(t => {
+        const { id, status, loadFieldsStatus, loadCount, tableCount } = t
+        const disabled = status !== 'ready'
+        return {
+          id,
+          status,
+          loadFieldsStatus,
+          loadCount,
+          tableCount,
+          progress: Math.round((loadCount / tableCount) * 10000) / 100,
+          label: t.name,
+          children: [],
+          pdkHash: t.pdkHash,
+          isLeaf: false,
+          disabled
+        }
+      })
+    },
+
+    async getTableList(id) {
+      const res = await metadataInstancesApi.getSourceTables(id)
+      const data = res.map(t => {
+        return {
+          id: t,
+          label: t,
+          isLeaf: true
+        }
+      })
+      return data.length
+        ? data
+        : [
+            {
+              id: '',
+              label: '',
+              isLeaf: true,
+              isEmpty: true
+            }
+          ]
+    },
+
+    getData() {
+      let filter = {
+        limit: 999
+      }
+      connectionsApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(data => {
+          const tree = data.items.map(t => {
+            return {
+              id: t.id,
+              value: t.name,
+              label: t.name,
+              children: []
+            }
+          })
+          return tree
+        })
+    },
+
+    handleSearch: debounce(function (val) {
+      this.$refs.tree.filter(val)
+    }, 300),
+
+    filterNode(value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
+    },
+
+    nodeClickHandler(data, node) {},
+
+    checkHandler() {},
+
+    handleDragStart(draggingNode, ev) {},
+
+    handleDragEnd() {},
+
+    handleDrop(draggingNode, dropNode, dropType, ev) {},
+
+    async loadNode(node, resolve) {
+      if (node.level === 0) {
+        return resolve(await this.getConnectionList())
+      }
+      return resolve(await this.getTableList(node.data?.id))
+    },
+
+    handleReload(node) {
+      const parentId = node.parent.data?.id
+    }
   }
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.tree-list {
+  overflow: auto;
+  height: 0;
+}
+</style>
