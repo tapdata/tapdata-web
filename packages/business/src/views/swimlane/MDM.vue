@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="p-4 flex align-items-center">
+  <div class="flex flex-column flex-1 min-h-0">
+    <div class="p-3 flex align-items-center">
       <ElInput
         class="search-input flex-fill"
         v-model="keyword"
@@ -12,13 +12,16 @@
       ></ElInput>
       <VIcon class="ml-2">filter</VIcon>
     </div>
-    <div class="px-4">内容</div>
+    <ClassificationTree ref="classify" class="px-3 flex-1 overflow-auto"></ClassificationTree>
   </div>
 </template>
 
 <script>
+import ClassificationTree from '../../components/ClassificationTree'
 export default {
   name: 'MDM',
+
+  components: { ClassificationTree },
 
   data() {
     return {

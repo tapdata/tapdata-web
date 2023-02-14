@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="p-4 flex align-items-center">
+    <div class="p-3 flex align-items-center">
       <ElInput
         class="search-input flex-fill"
         v-model="keyword"
@@ -12,7 +12,7 @@
       ></ElInput>
       <VIcon class="ml-2">filter</VIcon>
     </div>
-    <div class="px-4">内容</div>
+    <div class="px-3"></div>
   </div>
 </template>
 

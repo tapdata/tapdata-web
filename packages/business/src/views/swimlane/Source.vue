@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-column h-100">
-    <div class="p-4 flex align-items-center">
+  <div class="flex flex-column flex-1 min-h-0">
+    <div class="p-3 flex align-items-center">
       <ElInput
         class="search-input flex-fill"
         v-model="keyword"
@@ -12,9 +12,9 @@
       ></ElInput>
       <VIcon class="ml-2">filter</VIcon>
     </div>
-    <div class="px-4 flex-fill tree-list">
-      <ElTree
-        class="classification-tree"
+    <div class="px-3 flex-fill tree-list">
+      <VirtualTree
+        class="ldp-tree"
         ref="tree"
         node-key="id"
         highlight-current
@@ -55,15 +55,15 @@
             :stroke-width="2"
             class="mr-2"
           ></ElProgress>
-          <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-1" />
+          <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
           <div v-else-if="node.data.isEmpty" class="flex align-items-center">
             <span>无数据</span>
             <ElLink type="primary" @click.stop="handleReload(node)">重新加载</ElLink>
           </div>
-          <VIcon v-else class="tree-item-icon mr-1" size="18">table</VIcon>
-          <span :class="[{ 'color-disable': data.disabled }, 'table-label']">{{ data.label }}</span>
+          <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
+          <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.label">{{ data.label }}</span>
         </span>
-      </ElTree>
+      </VirtualTree>
     </div>
   </div>
 </template>
@@ -72,12 +72,13 @@
 import { debounce } from 'lodash'
 
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import { VirtualTree } from '@tap/component'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 
 export default {
   name: 'Source',
 
-  components: { NodeIcon },
+  components: { NodeIcon, VirtualTree },
 
   data() {
     return {

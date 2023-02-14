@@ -12,8 +12,8 @@
         @input="searchFnc"
       ></ElInput>
     </div>
-    <div class="list flex flex-fill">
-      <div v-for="(item, index) in options" :key="index" class="list__item flex-fill">
+    <div class="list flex flex-fill overflow-hidden">
+      <div v-for="(item, index) in options" :key="index" class="list__item flex flex-column flex-1 overflow-hidden">
         <div class="list__title flex justify-content-between p-4">
           <span class="fs-6">{{ item.title }}</span>
           <div class="operation">
