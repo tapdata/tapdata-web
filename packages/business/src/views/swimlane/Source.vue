@@ -74,6 +74,7 @@ import { debounce } from 'lodash'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { VirtualTree } from '@tap/component'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
+import { makeDragNodeImage } from '../../shared'
 
 export default {
   name: 'Source',
@@ -175,7 +176,15 @@ export default {
 
     checkHandler() {},
 
-    handleDragStart(draggingNode, ev) {},
+    handleDragStart(draggingNode, ev) {
+      this.draggingNode = draggingNode
+      this.draggingNodeImage = makeDragNodeImage(
+        ev.currentTarget.querySelector('.tree-item-icon'),
+        draggingNode.data.label
+      )
+      let { dataTransfer } = ev
+      dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
+    },
 
     handleDragEnd() {},
 
