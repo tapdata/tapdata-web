@@ -7,19 +7,18 @@
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     :before-close="handleClose"
   >
-    <div slot="title" class="flex align-items-center">
-      <VIcon class="mr-3">warning</VIcon>
-      <span class="font-color-normal">{{ title }}</span>
+    <div slot="title" class="text-center font-color-dark fs-5 fw-bold">
+      {{ title }}
     </div>
-    <div v-if="!showForm" class="px-7 pt-3">
-      <div class="mb-6 font-color-normal">
+    <div v-if="!showForm" class="px-7 pt-3 text-center">
+      <div class="mb-4 font-color-light">
         Choose a data source connector from below and configure the connection & credentials.
       </div>
-      <div class="flex align-items-center mb-6">
-        <ElSwitch v-model="settings.showBeta"> </ElSwitch>
-        <span class="ml-3">Show Connectors in BETA State</span>
-        <ElSwitch v-model="settings.showAlpha" class="ml-6"> </ElSwitch>
-        <span class="ml-3">Show Connectors in ALPHA State</span>
+      <div class="inline-flex align-items-center mb-4">
+        <ElCheckbox v-model="settings.showBeta">Show Connectors in BETA State</ElCheckbox>
+        <!--        <span class="ml-1">Show Connectors in BETA State</span>-->
+        <ElCheckbox v-model="settings.showAlpha" class="ml-6">Show Connectors in ALPHA State</ElCheckbox>
+        <!--        <span class="ml-1">Show Connectors in ALPHA State</span>-->
       </div>
       <ConnectionSelector
         :loading="loading"
