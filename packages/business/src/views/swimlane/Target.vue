@@ -6,7 +6,7 @@
         <div class="flex-fill ml-2">
           <div class="flex justify-content-between">
             <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
-            <span>
+            <span class="operation-line">
               <VIcon size="16">copy</VIcon>
               <VIcon size="18" class="ml-3">setting</VIcon>
             </span>
@@ -81,5 +81,8 @@ export default {
 }
 .item__icon {
   //border: 1px solid #4e5969;
+}
+.operation-line {
+  min-width: 50px;
 }
 </style>
