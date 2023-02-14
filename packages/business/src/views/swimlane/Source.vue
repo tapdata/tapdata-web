@@ -96,7 +96,12 @@ export default {
   methods: {
     async getConnectionList() {
       let filter = {
-        limit: 999
+        limit: 999,
+        where: {
+          connection_type: {
+            in: ['source_and_target', 'source']
+          }
+        }
       }
       const res = await connectionsApi.get({
         filter: JSON.stringify(filter)
