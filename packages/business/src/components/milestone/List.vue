@@ -1,6 +1,11 @@
 <template>
   <div class="flex h-100">
-    <NodeList v-model="activeNodeId" title="整体进度" class="border-end mr-4" @change="handleChange"></NodeList>
+    <NodeList
+      v-model="activeNodeId"
+      title="整体进度"
+      class="node-list border-end mr-4"
+      @change="handleChange"
+    ></NodeList>
     <div v-if="activeNodeId" class="flex-fill overflow-auto">
       <VTable ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4">
         <template slot="statusLabel" slot-scope="scope">
@@ -13,11 +18,16 @@
     </div>
     <div v-else class="flex-fill overflow-auto">
       <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex mt-4">
-        <VIcon :class="[item.color]">{{ item.icon }}</VIcon>
+        <VIcon :class="[item.color, 'mt-1']">{{ item.icon }}</VIcon>
         <div class="ml-4 flex-fill">
           <span class="font-color-normal fw-bold">{{ item.label }}</span>
           <div v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</div>
-          <ElProgress :percentage="item.percentage" class="mt-1" :show-text="false"></ElProgress>
+          <ElProgress
+            v-if="typeof item.percentage === 'number'"
+            :percentage="item.percentage"
+            class="mt-1"
+            :show-text="false"
+          ></ElProgress>
         </div>
       </div>
     </div>
@@ -27,6 +37,7 @@
 <script>
 import { VTable } from '@tap/component'
 import { calcTimeUnit } from '@tap/shared'
+import Time from '@tap/shared/src/time'
 
 import NodeList from '../nodes/List'
 
@@ -35,6 +46,12 @@ export default {
 
   props: {
     dataflow: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    quota: {
       type: Object,
       default: () => {
         return {}
@@ -84,6 +101,29 @@ export default {
       const { activeNodeId } = this
       if (!activeNodeId) return {}
       return this.dataflow.attrs?.nodeMilestones?.[activeNodeId] || {}
+    },
+
+    totalData() {
+      const {
+        tableTotal = 0,
+        snapshotTableTotal = 0,
+        currentSnapshotTableInsertRowTotal = 0,
+        currentSnapshotTableRowTotal = 0,
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        snapshotDoneAt,
+        snapshotStartAt
+      } = this.quota.samples?.totalData?.[0] || {}
+      return {
+        tableTotal,
+        snapshotTableTotal,
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+        snapshotRowTotal,
+        snapshotInsertRowTotal,
+        snapshotDoneAt,
+        snapshotStartAt
+      }
     }
   },
 
@@ -109,6 +149,7 @@ export default {
           label: '表结构迁移'
         },
         {
+          key: 'FULL_SYNC',
           label: '全量数据迁移',
           status: 'finish'
         },
@@ -117,26 +158,52 @@ export default {
           label: '增量数据迁移'
         }
       ]
+      const finishOpt = {
+        status: 'FINISH',
+        desc: '完成',
+        icon: 'success',
+        color: 'color-success'
+      }
+      const runningOpt = {
+        status: 'RUNNING',
+        desc: '进行中',
+        icon: 'loading-circle',
+        progress: 0,
+        color: 'color-primary'
+      }
+      const waitingOpt = {
+        status: 'WAITING',
+        desc: '等待中',
+        icon: 'wait-fill',
+        color: 'color-primary'
+      }
       result.forEach(el => {
-        const item = milestone[el.key]
-        if (item?.status) {
-          el.status = item.status
-          if (item.status === 'FINISH') {
-            el.desc = '完成'
-            el.icon = 'success'
-            el.progress = 100
-            el.color = 'color-success'
+        if (el.key === 'FULL_SYNC') {
+          const { snapshotTableTotal, snapshotDoneAt } = this.totalData
+          if (snapshotDoneAt) {
+            Object.assign(el, finishOpt)
+          } else if (!snapshotTableTotal) {
+            Object.assign(el, waitingOpt)
           } else {
-            el.desc = '进行中'
-            el.icon = 'loading'
-            el.progress = (item.progress / item.totals) * 100
-            el.color = 'color-primary'
+            const { progress, time } = this.getDueTimeAndProgress(this.totalData)
+            Object.assign(el, runningOpt, {
+              progress,
+              desc: `进行中，${progress}%已完成，预计剩余时间${calcTimeUnit(time)}`
+            })
           }
         } else {
-          el.status = 'waiting'
-          el.desc = '等待中'
-          el.icon = 'wait-fill'
-          el.color = 'color-warning'
+          const item = milestone[el.key]
+          if (item?.status) {
+            if (item.status === 'FINISH') {
+              Object.assign(el, finishOpt)
+            } else {
+              Object.assign(el, runningOpt, {
+                progress: (item.progress / item.totals) * 100
+              })
+            }
+          } else {
+            Object.assign(el, waitingOpt)
+          }
         }
       })
       const len = result.length
@@ -215,9 +282,22 @@ export default {
       this.data = NODE_MAP[node.nodeType].map(el => {
         const data = nodeMilestones[el.key]
         let t = Object.assign({}, el, data)
-        const { status } = t
+        let { status } = t
+        let label = ''
+        if (el.key === 'BATCH_READ') {
+          const { snapshotTableTotal, snapshotDoneAt } = this.totalData
+          if (snapshotDoneAt) {
+            status = 'FINISH'
+          } else if (!snapshotTableTotal) {
+            status = 'WAITING'
+          } else {
+            status = 'RUNNING'
+            const { progress, time } = this.getDueTimeAndProgress(this.totalData)
+            label = STATUS_MAP[status]?.label + `(${progress}%,剩余${calcTimeUnit(time)})`
+          }
+        }
         t.statusColor = STATUS_MAP[status]?.color
-        t.statusLabel = STATUS_MAP[status]?.label || '-'
+        t.statusLabel = label || STATUS_MAP[status]?.label || '-'
         t.diff =
           t.begin && t.end
             ? calcTimeUnit(t.end - t.begin, 2, {
@@ -237,6 +317,32 @@ export default {
         type: 'warning',
         closeOnClickModal: false
       })
+    },
+
+    getDueTimeAndProgress(data = {}) {
+      const {
+        tableTotal,
+        snapshotTableTotal,
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+        snapshotRowTotal,
+        snapshotInsertRowTotal,
+        snapshotDoneAt,
+        snapshotStartAt
+      } = data
+      const progress = snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
+      const usedTime = Time.now() - snapshotStartAt
+      let time
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+        time = 0
+      } else {
+        time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+      }
+
+      return {
+        progress,
+        time
+      }
     }
   }
 }
@@ -245,5 +351,8 @@ export default {
 <style lang="scss" scoped>
 .pro-line {
   width: 400px;
+}
+.node-list {
+  width: 200px;
 }
 </style>
