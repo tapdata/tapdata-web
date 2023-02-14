@@ -719,5 +719,6 @@ export default {
   packages_business_task_list_lianjieming: '连接名: ',
   packages_business_task_list_dierbushanchu: '// 第二步 删除 slot_name',
   packages_business_task_list_diyibuchaxun: '//第一步 查询 slot_name',
-  packages_business_task_list_sqLyuju: 'SQL语句:'
+  packages_business_task_list_sqLyuju: 'SQL语句:',
+  packages_business_relation_details_waicunxinxi: '使用的外存信息'
 }

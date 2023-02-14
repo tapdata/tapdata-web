@@ -86,8 +86,7 @@
           ></ElInputNumber>
           <span class="ml-1">M</span>
         </ElFormItem>
-        <!-- // TODO 按时屏蔽外存功能 -->
-        <!-- <ElFormItem prop="externalStorageId" label="外存配置">
+        <ElFormItem prop="externalStorageId" label="外存配置">
           <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
             <ElOption
               v-for="opt in externalStorageOptions"
@@ -96,7 +95,7 @@
               :label="opt.label"
             ></ElOption>
           </ElSelect>
-        </ElFormItem> -->
+        </ElFormItem>
         <ElFormItem>
           <template slot="label">
             <span>{{ $t('shared_cache_code') }}</span>
@@ -165,11 +164,10 @@ export default {
         tableName: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_table') }],
         cacheKeys: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_keys') }],
         fields: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_fields') }],
-        maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }]
-        // TODO 按时屏蔽外存功能
-        // externalStorageId: [
-        //   { required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_external_storage') }
-        // ]
+        maxMemory: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_memory') }],
+        externalStorageId: [
+          { required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_external_storage') }
+        ]
       }
     }
   },

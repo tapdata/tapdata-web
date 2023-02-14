@@ -14,7 +14,11 @@
         min-width="180"
         :label="$t('daas_external_storage_list_waicunmingcheng')"
         prop="name"
-      ></ElTableColumn>
+      >
+        <template #default="{ row }">
+          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
+        </template>
+      </ElTableColumn>
       <ElTableColumn
         show-overflow-tooltip
         min-width="100"
@@ -33,10 +37,16 @@
         :label="$t('column_create_time')"
         prop="createTimeFmt"
       ></ElTableColumn>
-      <ElTableColumn width="120" :label="$t('column_operation')">
+      <ElTableColumn width="220" :label="$t('column_operation')">
         <template #default="{ row }">
-          <!-- <ElButton type="text" :disabled="!row.canEdit" @click="openDialog(row)">{{ $t('button_edit') }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider> -->
+          <span class="mr-2">{{ $t('daas_external_storage_list_sheweimoren') }}</span>
+          <ElSwitch
+            type="text"
+            v-model="row.defaultStorage"
+            :disabled="row.defaultStorage"
+            @change="handleDefault(row)"
+          ></ElSwitch>
+          <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{ $t('button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
@@ -58,15 +68,16 @@
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
         </ElFormItem>
+        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
+          <ElInput v-model="form.uri" type="textarea" resize="none"></ElInput>
+        </ElFormItem>
         <ElFormItem
           v-if="form.type === 'mongodb'"
           :label="$t('daas_external_storage_list_waicunbiaoming')"
+          required
           prop="table"
         >
           <ElInput v-model="form.table"></ElInput>
-        </ElFormItem>
-        <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
-          <ElInput v-model="form.uri" type="textarea" resize="none"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('daas_external_storage_list_sheweimoren')">
           <ElSwitch v-model="form.defaultStorage"></ElSwitch>
@@ -77,6 +88,25 @@
         <ElButton type="primary" size="mini" @click="submit">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
+    <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
+      <div v-if="details.id" class="shared-cache-details--header flex pb-3">
+        <div class="img-box">
+          <VIcon class="icon">text</VIcon>
+        </div>
+        <div class="flex-fill ml-4 overflow-hidden">
+          <div class="fs-6 ellipsis">{{ details.name }}</div>
+        </div>
+      </div>
+      <ul class="mt-2">
+        <li v-for="item in info" :key="item.label" class="drawer-info__item">
+          <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
+          <div class="body ml-4">
+            <label class="label">{{ item.label }}</label>
+            <p class="value mt-2">{{ item.value || '-' }}</p>
+          </div>
+        </li>
+      </ul>
+    </Drawer>
   </section>
 </template>
 <script>
@@ -87,10 +117,10 @@ import { cloneDeep } from 'lodash'
 
 import { externalStorageApi } from '@tap/api'
 import { TablePage } from '@tap/business'
-import { FilterBar } from '@tap/component'
+import { FilterBar, Drawer } from '@tap/component'
 
 export default {
-  components: { TablePage, FilterBar },
+  components: { TablePage, FilterBar, Drawer },
   data() {
     var checkTable = (rule, value, callback) => {
       if (this.form.type === 'mongodb' && value === '') {
@@ -118,7 +148,10 @@ export default {
         name: [{ required: true, message: i18n.t('daas_external_storage_list_qingshuruwaicun'), trigger: 'blur' }],
         uri: [{ required: true, message: i18n.t('daas_external_storage_list_qingshurucunchu'), trigger: 'blur' }],
         table: [{ validator: checkTable, trigger: 'blur' }]
-      }
+      },
+      isShowDetails: false,
+      details: '',
+      info: []
     }
   },
   computed: {
@@ -233,6 +266,12 @@ export default {
         }
       })
     },
+    handleDefault(row) {
+      externalStorageApi.changeExternalStorage(row.id).then(() => {
+        this.$message.success(i18n.t('message_operation_succuess'))
+        this.table.fetch()
+      })
+    },
     async remove(row) {
       const flag = await this.$confirm(i18n.t('daas_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
@@ -242,6 +281,22 @@ export default {
         await externalStorageApi.delete(row.id)
         this.table.fetch()
       }
+    },
+    checkDetails(row) {
+      this.details = row
+      this.info = [
+        //{ label: this.$t('daas_external_storage_list_waicunmingcheng'), value: row.name, icon: 'createUser' },
+        {
+          label: this.$t('daas_external_storage_list_waicunleixing'),
+          value: row.typeFmt,
+          icon: 'name'
+        },
+        { label: this.$t('daas_external_storage_list_waicunbiaoming'), value: row.table, icon: 'table' },
+        { label: this.$t('column_create_time'), value: row.createTimeFmt, icon: 'cacheTimeAtFmt' },
+        { label: this.$t('daas_external_storage_list_cunchulujing'), value: row.uri, icon: 'database' },
+        { label: this.$t('daas_external_storage_list_sheweimoren'), value: row.defaultStorage, icon: 'record' }
+      ]
+      this.isShowDetails = true
     }
   }
 }
@@ -250,5 +305,58 @@ export default {
 .external-storage-wrapper {
   height: 100%;
   overflow: hidden;
+}
+.shared-cache-list-wrap {
+  overflow: hidden;
+}
+.icon-status {
+  display: block;
+  width: 60px;
+  height: 25px;
+  line-height: 25px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-align: center;
+  &.icon-status--success {
+    color: #178061;
+    background: #c4f3cb;
+  }
+  &.icon-status--warning {
+    color: #d5760e;
+    background: #ffe9cf;
+  }
+  &.icon-status--danger {
+    color: map-get($color, danger);
+    background: #ffecec;
+  }
+}
+.shared-cache-details {
+  padding: 16px;
+}
+.shared-cache-details--header {
+  border-bottom: 1px solid map-get($borderColor, light);
+  .icon {
+    font-size: 18px;
+  }
+}
+.drawer-info__item {
+  display: flex;
+  .body {
+    flex: 1;
+    padding: 8px 0;
+    line-height: 17px;
+    border-bottom: 1px solid map-get($borderColor, light);
+    .label {
+      font-size: $fontBaseTitle;
+      color: rgba(0, 0, 0, 0.6);
+    }
+    .value {
+      font-size: $fontBaseTitle;
+      color: map-get($fontColor, dark);
+    }
+  }
 }
 </style>

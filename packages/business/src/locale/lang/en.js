@@ -742,5 +742,6 @@ export default {
   packages_business_task_list_lianjieming: 'Connection name: ',
   packages_business_task_list_dierbushanchu: '// The second step delete slot_name',
   packages_business_task_list_diyibuchaxun: '//The first step is to query slot_name',
-  packages_business_task_list_sqLyuju: 'SQL statement:'
+  packages_business_task_list_sqLyuju: 'SQL statement:',
+  packages_business_relation_details_waicunxinxi: 'External storage information used'
 }
