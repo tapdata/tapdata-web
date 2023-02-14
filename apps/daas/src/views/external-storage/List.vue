@@ -21,7 +21,7 @@
       </ElTableColumn>
       <ElTableColumn
         show-overflow-tooltip
-        min-width="100"
+        min-width="150"
         :label="$t('daas_external_storage_list_waicunleixing')"
         prop="typeFmt"
       ></ElTableColumn>
@@ -58,7 +58,15 @@
         form.id ? $t('daas_external_storage_list_bianjiwaicun') : $t('daas_external_storage_list_chuangjianwaicun')
       "
     >
-      <ElForm class="" ref="form" label-position="left" label-width="120px" size="mini" :model="form" :rules="rules">
+      <ElForm
+        class=""
+        ref="form"
+        label-position="left"
+        :label-width="labelWidth"
+        size="mini"
+        :model="form"
+        :rules="rules"
+      >
         <ElFormItem :label="$t('daas_external_storage_list_waicunmingcheng')" prop="name">
           <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
@@ -151,7 +159,8 @@ export default {
       },
       isShowDetails: false,
       details: '',
-      info: []
+      info: [],
+      labelWidth: '120px'
     }
   },
   computed: {
@@ -167,6 +176,8 @@ export default {
   created() {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
     this.getFilterItems()
+    const { locale } = this.$i18n
+    this.labelWidth = locale === 'en' ? '220px' : '120px'
   },
   methods: {
     getFilterItems() {
