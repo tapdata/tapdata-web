@@ -1,7 +1,7 @@
-export const makeDragNodeImage = ($icon, node, parent = document.body, nodeType = 'tree-item') => {
+export const makeDragNodeImage = ($icon, nodeName, size = 1, parent = document.body) => {
   const dragImage = document.createElement('div')
 
-  if (!node?.length) return dragImage
+  if (!nodeName) return dragImage
   dragImage.classList.add('drag-node-image')
   dragImage.style.position = 'absolute'
   dragImage.style.zIndex = '-100'
@@ -18,16 +18,16 @@ export const makeDragNodeImage = ($icon, node, parent = document.body, nodeType 
 
   const text = document.createElement('div')
   text.className = 'drag-preview-name ellipsis'
-  text.innerHTML = nodeType === 'tree-item' ? node[0].data.name : node[0].name
+  text.innerHTML = nodeName
   container.appendChild(text)
   dragImage.appendChild(container)
 
-  if (node.length > 1) {
+  if (size > 1) {
     let layer = document.createElement('div')
     layer.className = 'drag-preview-layerEffect'
     let dot = document.createElement('div')
-    dot.className = node.length > 9 ? 'drag-preview-dot expand' : 'drag-preview-dot'
-    dot.innerHTML = node.length
+    dot.className = size > 9 ? 'drag-preview-dot expand' : 'drag-preview-dot'
+    dot.innerHTML = size
     dragImage.appendChild(layer)
     dragImage.appendChild(dot)
   }

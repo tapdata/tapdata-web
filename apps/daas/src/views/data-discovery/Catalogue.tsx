@@ -179,9 +179,8 @@ export default defineComponent({
 
       draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingRow,
-        refs.root,
-        'table-item'
+        row.name,
+        dragState.draggingObjects.length
       )
       ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
     }
@@ -190,7 +189,8 @@ export default defineComponent({
       dragState.isDragging = false
       dragState.draggingObjects = []
       dragState.dropNode = null
-      refs.root.removeChild(draggingNodeImage)
+      document.body.removeChild(draggingNodeImage)
+      draggingNodeImage = null
     }
 
     const multipleSelectionMap = ref({})
@@ -214,8 +214,7 @@ export default defineComponent({
       handleDragStart,
       handleDragEnd,
       handleSelectionChange,
-      dragState,
-      makeDragNodeImage
+      dragState
     }
   },
   render() {
@@ -242,7 +241,6 @@ export default defineComponent({
             v-model={this.data.searchParams}
             ref="classify"
             dragState={this.dragState}
-            makeDragNodeImage={this.makeDragNodeImage}
             onNodeChecked={this.getNodeChecked}
           ></DiscoveryClassification>
         </div>

@@ -518,15 +518,14 @@ export default {
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
-        [draggingNode],
-        this.$el
+        draggingNode.data.name
       )
       let { dataTransfer } = ev
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
     },
 
     handleDragEnd() {
-      this.$el.removeChild(this.draggingNodeImage)
+      document.body.removeChild(this.draggingNodeImage)
       this.draggingNode = null
       this.draggingNodeImage = null
     },
