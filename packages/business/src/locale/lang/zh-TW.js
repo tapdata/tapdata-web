@@ -741,6 +741,7 @@ export default {
   packages_business_setting_alarmnotification_dangrenwujiaoyan: '當任務校驗出錯時',
   packages_business_setting_alarmnotification_dangrenwuyudao: '當任務遇到錯誤時',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服務停止時',
+  packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
   packages_business_setting_alarmnotification_msshigaojing: 'ms時告警',
   packages_business_setting_alarmnotification_gedian: '個點',
   packages_business_setting_alarmnotification_lianxu: '連續',

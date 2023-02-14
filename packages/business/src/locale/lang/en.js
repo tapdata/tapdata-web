@@ -764,6 +764,7 @@ export default {
   packages_business_setting_alarmnotification_dangrenwujiaoyan: 'When the task verification error occurs',
   packages_business_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
+  packages_business_setting_alarmnotification_dangrenwuuP: 'When the Agent service start',
   packages_business_setting_alarmnotification_msshigaojing: 'Alarm when ms',
   packages_business_setting_alarmnotification_gedian: 'points',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
