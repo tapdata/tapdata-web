@@ -53,7 +53,13 @@ export default {
     ...mapGetters('dataflow', ['allNodes']),
 
     items() {
-      return this.allNodes
+      return this.allNodes.map(t => {
+        const { type, $inputs, $outputs } = t
+        const isSource = (type === 'database' || type === 'table') && !$inputs.length
+        const isTarget = (type === 'database' || type === 'table') && !$outputs.length
+        t.nodeType = isSource ? 'source' : isTarget ? 'target' : 'processor'
+        return t
+      })
     }
   },
 
@@ -63,7 +69,11 @@ export default {
         return
       }
       this.activeNodeId = itemId
-      this.$emit('input', this.activeNodeId).$emit('change', this.activeNodeId)
+      this.$emit('input', this.activeNodeId).$emit(
+        'change',
+        this.activeNodeId,
+        this.items.find(t => t.id === this.activeNodeId)
+      )
     }
   }
 }
