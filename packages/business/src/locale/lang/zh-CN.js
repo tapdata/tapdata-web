@@ -732,7 +732,7 @@ export default {
   packages_business_setting_alarmnotification_dangshujuyuanjie: '当数据源节点的平均处理耗时',
   packages_business_setting_alarmnotification_dangshujuyuanxie: '当数据源协议连接耗时',
   packages_business_setting_alarmnotification_dangshujuyuanwang: '当数据源网络连接耗时',
-  packages_business_setting_alarmnotification_dangshujuwufa: '当数据无法网络连接耗时',
+  packages_business_setting_alarmnotification_dangshujuwufa: '当数据源无法连接网络时',
   packages_business_setting_alarmnotification_dangrenwudezeng: '当任务的增量延迟',
   packages_business_setting_alarmnotification_dangrenwutingzhi: '当任务停止时',
   packages_business_setting_alarmnotification_dangrenwuzengliang: '当任务增量开始时',

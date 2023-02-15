@@ -35,8 +35,8 @@
         </el-select>
       </template>
     </VTable>
-    <footer class="flex justify-content-end mb-4">
-      <el-button size="mini" @click="remoteMethod()">{{ $t('button_cancel') }}</el-button>
+    <footer class="flex justify-content-end mt-4">
+      <el-button size="mini" @click="remoteMethod('close')">{{ $t('button_cancel') }}</el-button>
       <el-button size="mini" type="primary" @click="save()">{{ $t('button_save') }}</el-button>
     </footer>
     <el-dialog
@@ -131,14 +131,20 @@ export default {
     this.remoteMethod()
   },
   methods: {
-    remoteMethod() {
+    remoteMethod(type) {
       settingsApi.findAlarm().then(data => {
         this.tableData = data
+        if (!this.isDaas && type) {
+          this.$emit('updateVisible', false)
+        }
       })
     },
     save() {
       settingsApi.saveAlarm(this.tableData).then(() => {
-        this.$message.success(i18n.t('message_save_ok'))
+        this.$message.success(i18n.t('packages_business_message_save_ok'))
+        if (!this.isDaas) {
+          this.$emit('updateVisible', false)
+        }
       })
     },
     showAlarmRlues() {
@@ -155,7 +161,7 @@ export default {
       //告警设置单独保存
       alarmRuleApi.save(this.alarmData).then(() => {
         this.alarmRulesVisible = false
-        this.$message.success(this.$t('message_save_ok'))
+        this.$message.success(this.$t('packages_business_message_save_ok'))
       })
     }
   }

@@ -76,7 +76,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
     >
-      <AlarmSetting></AlarmSetting>
+      <AlarmSetting @updateVisible="dialogVisible = false"></AlarmSetting>
     </ElDialog>
   </div>
 </template>
