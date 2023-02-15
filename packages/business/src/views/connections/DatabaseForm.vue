@@ -768,7 +768,7 @@ export default {
         default: '02:00',
         enum: [
           {
-            label: i18n.t('packages_business_dataForm_close'),
+            label: i18n.t('packages_business_connections_databaseform_bujiazai'),
             value: 'false'
           },
           '00:00',
