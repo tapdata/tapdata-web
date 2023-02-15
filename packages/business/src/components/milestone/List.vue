@@ -3,7 +3,7 @@
     <NodeList
       v-model="activeNodeId"
       show-type
-      label="整体进度"
+      :label="$t('packages_business_milestone_list_zhengtijindu')"
       class="node-list border-end mr-4"
       @change="handleChange"
     ></NodeList>
@@ -11,7 +11,9 @@
       <VTable ref="table" row-key="id" :columns="columns" :data="nodeData" height="100%" class="mt-4">
         <template slot="statusLabel" slot-scope="scope">
           <div v-if="scope.row.status === 'ERROR'" :class="scope.row.statusColor">
-            <span class="color-danger underline cursor-pointer" @click="handleError(scope.row)">任务出错</span>
+            <span class="color-danger underline cursor-pointer" @click="handleError(scope.row)">{{
+              $t('packages_business_milestone_list_renwuchucuo')
+            }}</span>
           </div>
           <div v-else :class="scope.row.statusColor">{{ scope.row.statusLabel }}</div>
         </template>
@@ -36,6 +38,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { VTable } from '@tap/component'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -68,25 +72,25 @@ export default {
       activeNode: {},
       columns: [
         {
-          label: '关键步骤',
+          label: i18n.t('packages_business_milestone_list_guanjianbuzhou'),
           prop: 'label'
         },
         {
-          label: '状态',
+          label: i18n.t('packages_business_connection_list_status'),
           slotName: 'statusLabel'
         },
         {
-          label: '开始时间',
+          label: i18n.t('packages_business_task_info_start_time'),
           dataType: 'time',
           prop: 'begin'
         },
         {
-          label: '结束时间',
+          label: i18n.t('packages_business_verification_LastTime'),
           dataType: 'time',
           prop: 'end'
         },
         {
-          label: '耗时',
+          label: i18n.t('packages_business_milestone_list_haoshi'),
           prop: 'diff'
         }
       ]
@@ -129,42 +133,42 @@ export default {
       let result = [
         {
           key: 'TASK',
-          label: '任务调度'
+          label: i18n.t('packages_business_milestone_list_renwudiaodu')
         },
         {
           key: 'DATA_NODE_INIT',
-          label: '数据节点初始化'
+          label: i18n.t('packages_business_milestone_list_shujujiedianchu')
         },
         {
           key: 'TABLE_INIT',
-          label: '表结构迁移'
+          label: i18n.t('packages_business_milestone_list_biaojiegouqianyi')
         },
         {
           key: 'FULL_SYNC',
-          label: '全量数据迁移',
+          label: i18n.t('packages_business_milestone_list_quanliangshujuqian'),
           status: 'finish'
         },
         {
           key: 'STREAM_READ',
-          label: '增量数据迁移'
+          label: i18n.t('packages_business_milestone_list_zengliangshujuqian')
         }
       ]
       const finishOpt = {
         status: 'FINISH',
-        desc: '完成',
+        desc: i18n.t('packages_business_milestone_list_wancheng'),
         icon: 'success',
         color: 'color-success'
       }
       const runningOpt = {
         status: 'RUNNING',
-        desc: '进行中',
+        desc: i18n.t('packages_business_milestone_list_status_progressing'),
         icon: 'loading-circle',
         progress: 0,
         color: 'color-primary'
       }
       const waitingOpt = {
         status: 'WAITING',
-        desc: '等待中',
+        desc: i18n.t('packages_business_milestone_list_dengdaizhong'),
         icon: 'time',
         color: 'color-primary'
       }
@@ -179,7 +183,10 @@ export default {
             const { progress, time } = this.getDueTimeAndProgress(this.totalData)
             Object.assign(el, runningOpt, {
               progress,
-              desc: `进行中，${progress}%已完成，预计剩余时间${calcTimeUnit(time)}`
+              desc: i18n.t('packages_business_milestone_list_jinhangzhongpr')(
+                'packages_business_milestone_list_jinhangzhongpr',
+                { val1: progress, val2: calcTimeUnit(time) }
+              )
             })
           }
         } else {
@@ -201,10 +208,16 @@ export default {
       const finishedLen = result.filter(t => t.status === 'FINISH').length
       const per = (finishedLen / len) * 100
       result.unshift({
-        label: '整体进度',
+        label: i18n.t('packages_business_milestone_list_zhengtijindu'),
         icon: 'device',
         percentage: per,
-        desc: per === 1 ? '完成' : `${finishedLen}/${len}完成，全量数据同步中`
+        desc:
+          per === 1
+            ? i18n.t('packages_business_milestone_list_wancheng')
+            : i18n.t('packages_business_milestone_list_finis', {
+                val1: finishedLen,
+                val2: len
+              })
       })
       return result
     },
@@ -215,61 +228,61 @@ export default {
         source: [
           {
             key: 'NODE',
-            label: '连接并验证账号权限'
+            label: i18n.t('packages_business_milestone_list_lianjiebingyanzheng')
           },
           {
             key: 'BATCH_READ',
-            label: '读取全量数据'
+            label: i18n.t('packages_business_milestone_list_duququanliangshu')
           },
           {
             key: 'OPEN_STREAM_READ',
-            label: '开启增量'
+            label: i18n.t('packages_business_milestone_list_kaiqizengliang')
           },
           {
             key: 'STREAM_READ',
-            label: '读取增量数据'
+            label: i18n.t('packages_business_milestone_list_duquzengliangshu')
           }
         ],
         target: [
           {
             key: 'NODE',
-            label: '连接并验证账号权限'
+            label: i18n.t('packages_business_milestone_list_lianjiebingyanzheng')
           },
           {
             key: 'TABLE_INIT',
-            label: '创建目标表'
+            label: i18n.t('packages_business_milestone_list_chuangjianmubiaobiao')
           },
           {
             key: 'WRITE_RECORD',
-            label: '目标数据写入'
+            label: i18n.t('packages_business_milestone_list_mubiaoshujuxie')
           }
         ],
         processor: [
           {
             key: 'NODE',
-            label: '数据处理'
+            label: i18n.t('packages_business_milestone_list_shujuchuli')
           }
         ]
       }
       const STATUS_MAP = {
         FINISH: {
-          label: '已完成',
+          label: i18n.t('packages_business_status_complete'),
           color: 'color-success'
         },
         RUNNING: {
-          label: '进行中',
+          label: i18n.t('packages_business_milestone_list_status_progressing'),
           color: 'color-primary'
         },
         WAITING: {
-          label: '等待中',
+          label: i18n.t('packages_business_milestone_list_dengdaizhong'),
           color: 'color-info'
         },
         STOP: {
-          label: '已停止',
+          label: i18n.t('packages_business_status_stop'),
           color: 'color-warning'
         },
         ERROR: {
-          label: '出错',
+          label: i18n.t('packages_business_milestone_list_chucuo'),
           color: 'color-danger'
         }
       }
@@ -288,7 +301,12 @@ export default {
           } else {
             status = 'RUNNING'
             const { progress, time } = this.getDueTimeAndProgress(this.totalData)
-            label = STATUS_MAP[status]?.label + `(${progress}%,剩余${calcTimeUnit(time)})`
+            label =
+              STATUS_MAP[status]?.label +
+              i18n.t('packages_business_milestone_list_progr', {
+                val1: progress,
+                val2: calcTimeUnit(time)
+              })
           }
         }
         t.statusColor = STATUS_MAP[status]?.color
@@ -304,12 +322,13 @@ export default {
     }
   },
 
-  methods: {handleChange(val, node) {
+  methods: {
+    handleChange(val, node) {
       this.activeNode = val ? node : {}
     },
 
     handleError(row = {}) {
-      this.$confirm(row.errorMessage, '错误信息', {
+      this.$confirm(row.errorMessage, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
         type: 'warning',
         closeOnClickModal: false
       })

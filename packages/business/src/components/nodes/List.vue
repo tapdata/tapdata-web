@@ -53,9 +53,9 @@ export default {
     return {
       activeNodeId: '',
       typeMap: {
-        source: '来源',
-        target: '目标',
-        processor: '处理节点'
+        source: i18n.t('packages_business_nodes_list_laiyuan'),
+        target: i18n.t('packages_business_connection_form_target'),
+        processor: i18n.t('packages_business_nodes_list_chulijiedian')
       }
     }
   },
