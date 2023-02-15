@@ -121,6 +121,7 @@
           :alarmData="alarmData"
           :logTotals="logTotals"
           :taskRecord="taskRecord"
+          :quota="quota"
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
