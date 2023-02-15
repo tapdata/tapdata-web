@@ -751,5 +751,6 @@ export default {
   packages_business_setting_alarmnotification_morengaojinggui: '默認告警規則',
   packages_business_setting_alarmnotification_renwugaojingshe: '任務告警設置',
   packages_business_notify_no_webchat_notification:
-    '您的賬戶還沒有進行微信綁定，如需通過微信接收通知信息，請先退出登錄後通過微信掃碼完成綁定'
+    '您的賬戶還沒有進行微信綁定，如需通過微信接收通知信息，請先退出登錄後通過微信掃碼完成綁定',
+  packages_business_connections_databaseform_bujiazai: '不加載'
 }

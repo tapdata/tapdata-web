@@ -774,5 +774,6 @@ export default {
   packages_business_setting_alarmnotification_morengaojinggui: 'Default alarm rule',
   packages_business_setting_alarmnotification_renwugaojingshe: 'Task alarm setting',
   packages_business_notify_no_webchat_notification:
-    'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.'
+    'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.',
+  packages_business_connections_databaseform_bujiazai: 'not loaded'
 }
