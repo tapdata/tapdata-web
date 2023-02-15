@@ -21,7 +21,12 @@
             <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
           </div>
         </div>
-        <component :is="item.component" :ref="item.component"></component>
+        <component
+          :is="item.component"
+          :ref="item.component"
+          :dragState="dragState"
+          @node-drag-end="handleDragEnd"
+        ></component>
       </div>
     </div>
     <CreateConnection
@@ -71,7 +76,13 @@ export default {
         }
       ],
       visible: false,
-      createConnectionParams: {}
+      createConnectionParams: {},
+      dragState: {
+        isDragging: false,
+        draggingObjects: [],
+        dropNode: null,
+        form: ''
+      }
     }
   },
 
@@ -86,6 +97,13 @@ export default {
 
     handleSuccess() {
       console.log('handleSuccess', this.createConnectionParams.type)
+    },
+
+    handleDragEnd() {
+      this.dragState.isDragging = false
+      this.dragState.draggingObjects = []
+      this.dragState.dropNode = null
+      this.dragState.form = ''
     }
   }
 }

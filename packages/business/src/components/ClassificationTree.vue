@@ -613,7 +613,7 @@ export default {
         })
         .then(() => {
           this.getData()
-          this.$message.success(this.$t('message_operation_succuess'))
+          this.$message.success('操作成功')
         })
     },
 
@@ -635,7 +635,7 @@ export default {
         tagIds: [to]
       })
       objects.forEach(item => (item.parent_id = to))
-      this.$message.success(this.$t('message_operation_succuess'))
+      this.$message.success('操作成功')
     },
 
     loadNode(node, resolve) {

@@ -1,7 +1,15 @@
 <template>
   <div class="p-4 flex-fill min-h-0 overflow-auto">
-    <div v-for="(item, index) in list" :key="index" class="wrap__item rounded-2 mb-4">
-      <div class="item__header flex p-4">
+    <div
+      v-for="(item, index) in list"
+      :key="index"
+      class="wrap__item rounded-2 mb-4"
+      @dragover.stop="handleDragOver"
+      @dragenter.stop="handleDragEnter"
+      @dragleave.stop="handleDragLeave"
+      @drop.stop="handleDrop($event, item)"
+    >
+      <div class="item__header flex p-3">
         <NodeIcon :node="item" :size="20" class="item__icon mt-1 rounded-circle" />
         <div class="flex-fill ml-2">
           <div class="flex justify-content-between">
@@ -11,28 +19,91 @@
               <VIcon size="18" class="ml-3">setting</VIcon>
             </span>
           </div>
-          <div class="mt-2 font-color-light">Sync data to SelectDB for analytics</div>
+          <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
         </div>
       </div>
-      <div class="item__content py-2 px-4">
-        <span class="font-color-sslight">No tasks configured for this target</span>
+      <div class="item__content p-2">
+        <span v-if="!item.taskList || !item.taskList.length" class="font-color-sslight"
+          >No tasks configured for this target</span
+        >
+        <div v-else class="task-list">
+          <div class="task-list-header flex font-color-dark">
+            <div class="px-2 py-1 flex-1">PIPELINE</div>
+            <div class="p-1" style="width: 70px">STATUS</div>
+            <div class="p-1" style="width: 90px">ACTION</div>
+          </div>
+
+          <div class="task-list-content">
+            <div v-for="(task, i) in item.taskList" :key="i" class="task-list-item flex">
+              <div class="px-2 py-1 ellipsis flex-1">{{ task.name }}</div>
+              <div class="p-1" style="width: 70px">{{ task.status }}</div>
+              <div class="p-1" style="width: 90px">
+                <ElLink @click="handleEditInDag(task)" type="primary" size="small">Edit in DAG</ElLink>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
+      <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+      <ElForm ref="form" :model="dialogConfig" label-width="180px">
+        <div class="pipeline-desc p-4 mb-4">{{ dialogConfig.desc }}</div>
+        <ElFormItem label="Pipeline Name">
+          <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
+        </ElFormItem>
+      </ElForm>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="hideDialog">{{ $t('packages_component_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="dialogSubmit">
+          {{ $t('packages_component_button_confirm') }}
+        </ElButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
 <script>
-import { connectionsApi } from '@tap/api'
+import { connectionsApi, taskApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
+import { uuid } from '@tap/shared'
+
+const DEFAULT_SETTINGS = {
+  name: '', // 任务名称
+  desc: '', // 任务描述
+  type: 'initial_sync+cdc', // 任务类型：全量+增量
+  isAutoCreateIndex: true, // 自动创建索引
+  isOpenAutoDDL: false, // 自动DDL
+  increOperationMode: false, // 增量数据处理模式：批量,
+  increaseReadSize: 1, // 增量批次读取行数
+  processorThreadNum: 1, // 处理器线程数
+  shareCdcEnable: false, //开启共享挖掘
+  isSchedule: false,
+  cronExpression: ' ',
+  accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+  isAutoInspect: false
+}
 
 export default {
   name: 'Target',
+
+  props: {
+    dragState: Object
+  },
 
   components: { NodeIcon },
 
   data() {
     return {
-      list: []
+      list: [],
+      dialogConfig: {
+        title: '',
+        desc: '',
+        taskName: '',
+        syncType: '',
+        visible: false
+      }
     }
   },
 
@@ -58,15 +129,195 @@ export default {
         filter: JSON.stringify(filter)
       })
 
-      return res.items.map(t => {
-        const { id, status, name, pdkHash } = t
-        return {
-          id,
-          status,
-          name,
-          pdkHash
+      return res.items
+    },
+
+    findParentByClassName(parent, cls) {
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
+    },
+
+    handleDragOver(ev) {
+      ev.preventDefault()
+    },
+
+    handleDragEnter(ev) {
+      ev.preventDefault()
+
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
+      dropNode.classList.add('is-drop-inner')
+    },
+
+    handleDragLeave(ev) {
+      if (!ev.currentTarget.contains(ev.relatedTarget)) {
+        const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
+        dropNode.classList.remove('is-drop-inner')
+      }
+    },
+
+    handleDrop(ev, item) {
+      ev.preventDefault()
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'wrap__item')
+      dropNode.classList.remove('is-drop-inner')
+      console.log('handleDrop', this.dragState, item) // eslint-disable-line
+
+      const { draggingObjects } = this.dragState
+      if (!draggingObjects.length) return
+      const object = draggingObjects[0]
+
+      if (object.data.type === 'connection') {
+        this.dialogConfig.from = object.data
+        this.dialogConfig.to = item
+        this.dialogConfig.title = 'Create Migrate Pipeline'
+        this.dialogConfig.syncType = 'migrate'
+        this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
+      } else if (object.data.type === 'table') {
+        this.dialogConfig.from = object.parent.data
+        this.dialogConfig.tableName = object.data.name
+        this.dialogConfig.to = item
+        this.dialogConfig.title = 'Create Sync Pipeline'
+        this.dialogConfig.syncType = 'sync'
+        this.dialogConfig.desc = `Tapdata will create a pipeline task to sync [ ${object.data.name} ] from [ ${object.parent.data.name} ] to [ ${item.name} ],  please click button below to continue. You can also change the pipeline name`
+      }
+
+      this.showDialog()
+    },
+
+    makeMigrateTask(from, to) {
+      let source = uuid()
+      let target = uuid()
+      return {
+        ...DEFAULT_SETTINGS,
+        syncType: 'migrate',
+        name: this.dialogConfig.taskName,
+        dag: {
+          edges: [{ source, target }],
+          nodes: [
+            {
+              id: source,
+              name: from.name,
+              connectionId: from.id,
+              databaseType: from.database_type,
+              migrateTableSelectType: 'expression',
+              tableExpression: '.*',
+              attrs: {
+                connectionName: from.name,
+                connectionType: from.connection_type,
+                accessNodeProcessId: from.accessNodeProcessId,
+                pdkType: from.pdkType,
+                pdkHash: from.pdkHash,
+                capabilities: from.capabilities || []
+              }
+            },
+            {
+              id: target,
+              name: to.name,
+              connectionId: to.id,
+              databaseType: to.database_type,
+              attrs: {
+                connectionName: to.name,
+                connectionType: to.connection_type,
+                accessNodeProcessId: to.accessNodeProcessId,
+                pdkType: to.pdkType,
+                pdkHash: to.pdkHash,
+                capabilities: to.capabilities || []
+              }
+            }
+          ]
         }
-      })
+      }
+    },
+
+    makeSyncTask(fromConnection, tableName, to) {
+      let source = uuid()
+      let target = uuid()
+      return {
+        ...DEFAULT_SETTINGS,
+        name: this.dialogConfig.taskName,
+        dag: {
+          edges: [{ source, target }],
+          nodes: [
+            {
+              id: source,
+              name: tableName,
+              tableName,
+              connectionId: fromConnection.id,
+              databaseType: fromConnection.database_type,
+              attrs: {
+                connectionName: fromConnection.name,
+                connectionType: fromConnection.connection_type,
+                accessNodeProcessId: fromConnection.accessNodeProcessId,
+                pdkType: fromConnection.pdkType,
+                pdkHash: fromConnection.pdkHash,
+                capabilities: fromConnection.capabilities || []
+              }
+            },
+            {
+              id: target,
+              name: 'NEW__' + tableName,
+              connectionId: to.id,
+              databaseType: to.database_type,
+              attrs: {
+                connectionName: to.name,
+                connectionType: to.connection_type,
+                accessNodeProcessId: to.accessNodeProcessId,
+                pdkType: to.pdkType,
+                pdkHash: to.pdkHash,
+                capabilities: to.capabilities || []
+              }
+            }
+          ]
+        }
+      }
+    },
+
+    showDialog() {
+      this.dialogConfig.visible = true
+      this.dialogConfig.taskName = ''
+    },
+
+    hideDialog() {
+      this.dialogConfig.visible = false
+    },
+
+    async dialogSubmit() {
+      const { syncType, from, to, tableName } = this.dialogConfig
+      let task
+
+      if (syncType === 'sync') {
+        task = this.makeSyncTask(from, tableName, to)
+      } else if (syncType === 'migrate') {
+        task = this.makeMigrateTask(from, to)
+      }
+
+      this.dialogConfig.visible = false
+      let taskInfo = await taskApi.post(task)
+      const taskList = to.taskList || []
+      taskList.push(taskInfo)
+      this.$set(to, 'taskList', taskList)
+      this.$message.success('任务创建成功')
+    },
+
+    handleEditInDag(task) {
+      if (!task.id) return
+
+      if (task.syncType === 'migrate') {
+        this.$router.push({
+          name: 'MigrateEditor',
+          params: {
+            id: task.id
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'DataflowEditor',
+          params: {
+            id: task.id
+          }
+        })
+      }
     }
   }
 }
@@ -75,6 +326,14 @@ export default {
 <style lang="scss" scoped>
 .wrap__item {
   border: 1px solid #e1e3e9;
+
+  &:hover {
+    background-color: #f2f3f5;
+  }
+
+  &.is-drop-inner {
+    background-color: #d0deff;
+  }
 }
 .item__header {
   border-bottom: 1px solid #e1e3e9;
@@ -84,5 +343,10 @@ export default {
 }
 .operation-line {
   min-width: 50px;
+}
+
+.pipeline-desc {
+  background-color: #f8f8fa;
+  border-radius: 8px;
 }
 </style>

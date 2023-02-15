@@ -26,19 +26,12 @@
         :filter-node-method="filterNode"
         :render-after-expand="false"
         :expand-on-click-node="false"
+        :allow-drop="() => false"
         @node-click="nodeClickHandler"
         @check="checkHandler"
         @node-drag-start="handleDragStart"
-        @node-drop="handleDrop"
       >
-        <span
-          class="custom-tree-node flex align-items-center"
-          slot-scope="{ node, data }"
-          @dragover.stop="handleTreeDragOver($event, data, node)"
-          @dragenter.stop="handleTreeDragEnter($event, data, node)"
-          @dragleave.stop="handleTreeDragLeave($event, data, node)"
-          @drop.stop="handleTreeDrop($event, data, node)"
-        >
+        <span class="custom-tree-node flex align-items-center" slot-scope="{ node, data }">
           <VIcon
             v-if="node.data.loadFieldsStatus === 'loading'"
             class="v-icon animation-rotate"
@@ -61,7 +54,7 @@
             <ElLink type="primary" @click.stop="handleReload(node)">重新加载</ElLink>
           </div>
           <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-          <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.label">{{ data.label }}</span>
+          <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
         </span>
       </VirtualTree>
     </div>
@@ -78,6 +71,10 @@ import { makeDragNodeImage } from '../../shared'
 
 export default {
   name: 'Source',
+
+  props: {
+    dragState: Object
+  },
 
   components: { NodeIcon, VirtualTree },
 
@@ -111,17 +108,12 @@ export default {
         const { id, status, loadFieldsStatus, loadCount, tableCount } = t
         const disabled = status !== 'ready'
         return {
-          id,
-          status,
-          loadFieldsStatus,
-          loadCount,
-          tableCount,
+          ...t,
           progress: Math.round((loadCount / tableCount) * 10000) / 100,
-          label: t.name,
           children: [],
-          pdkHash: t.pdkHash,
           isLeaf: false,
-          disabled
+          disabled,
+          type: 'connection'
         }
       })
     },
@@ -131,8 +123,9 @@ export default {
       const data = res.map(t => {
         return {
           id: t,
-          label: t,
-          isLeaf: true
+          name: t,
+          isLeaf: true,
+          type: 'table'
         }
       })
       return data.length
@@ -140,32 +133,11 @@ export default {
         : [
             {
               id: '',
-              label: '',
+              name: '',
               isLeaf: true,
               isEmpty: true
             }
           ]
-    },
-
-    getData() {
-      let filter = {
-        limit: 999
-      }
-      connectionsApi
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(data => {
-          const tree = data.items.map(t => {
-            return {
-              id: t.id,
-              value: t.name,
-              label: t.name,
-              children: []
-            }
-          })
-          return tree
-        })
     },
 
     handleSearch: debounce(function (val) {
@@ -174,7 +146,7 @@ export default {
 
     filterNode(value, data) {
       if (!value) return true
-      return data.label.indexOf(value) !== -1
+      return data.name.indexOf(value) !== -1
     },
 
     nodeClickHandler(data, node) {},
@@ -185,15 +157,18 @@ export default {
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode.data.label
+        draggingNode.data.name
       )
       let { dataTransfer } = ev
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
+      this.dragState.isDragging = true
+      this.dragState.draggingObjects = [draggingNode]
+      this.dragState.form = 'SOURCE'
     },
 
-    handleDragEnd() {},
-
-    handleDrop(draggingNode, dropNode, dropType, ev) {},
+    handleDragEnd() {
+      this.$emit('node-drag-end')
+    },
 
     async loadNode(node, resolve) {
       if (node.level === 0) {
