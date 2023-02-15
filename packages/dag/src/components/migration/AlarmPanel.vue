@@ -84,6 +84,9 @@ export default observer({
         for (let key in el) {
           el[key] = values[el.key][key]
         }
+        //单位转化
+        el['point'] = Math.ceil(el['point'] * 12) < 1 ? 1 : Math.ceil(el['point'] * 12)
+        el['ms'] = Math.ceil(el['ms'] * 1000) < 1 ? 1 : Math.ceil(el['ms'] * 1000)
       })
       taskApi.patch({
         id,
@@ -107,6 +110,9 @@ export default observer({
         for (let key in el) {
           el[key] = values[el.key][key]
         }
+        //单位转化
+        el['point'] = Math.ceil(el['point'] * 12) < 1 ? 1 : Math.ceil(el['point'] * 12)
+        el['ms'] = Math.ceil(el['ms'] * 1000) < 1 ? 1 : Math.ceil(el['ms'] * 1000)
       })
       const dag = {
         edges: allEdges,
@@ -259,6 +265,9 @@ export default observer({
       }
       const alarmRulesMap =
         alarmRules.reduce((cur, next) => {
+          //单位转化
+          next.point = Math.ceil(next.point / 12) < 1 ? 1 : Math.ceil(next.point / 12)
+          next.ms = Math.ceil(next.ms / 1000) < 1 ? 1 : Math.ceil(next.ms / 1000)
           return { ...cur, [next.key]: next }
         }, {}) || {}
       let values =
@@ -333,6 +342,7 @@ export default observer({
         'x-component': 'InputNumber',
         'x-component-props': {
           min: 1,
+          precision: 0,
           style: {
             width: '100px'
           }
@@ -378,7 +388,7 @@ export default observer({
       result.properties[key2] = this.getSelect(i18n.t('packages_dag_migration_alarmpanel_gedian'))
       result.properties[key3] = this.getInputNumber('', 1000)
       result.properties.ms = {
-        title: 'ms',
+        title: 's',
         type: 'void',
         default: 0,
         'x-decorator': 'FormItem',

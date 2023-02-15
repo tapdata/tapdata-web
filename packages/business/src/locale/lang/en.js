@@ -765,8 +765,8 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
   packages_business_setting_alarmnotification_dangrenwuuP: 'When the Agent service start',
-  packages_business_setting_alarmnotification_msshigaojing: 'Alarm when ms',
-  packages_business_setting_alarmnotification_gedian: 'points',
+  packages_business_setting_alarmnotification_msshigaojing: 'Alarm when s',
+  packages_business_setting_alarmnotification_gedian: 'Minutes',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
   packages_business_setting_alarmnotification_cichugaojinggui:
     'The alarm rule setting here is the system global alarm rule setting, and the priority of the alarm rule setting on the task running monitoring page is higher than the system global setting',

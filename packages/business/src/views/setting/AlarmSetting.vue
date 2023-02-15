@@ -62,13 +62,25 @@
         </template>
         <template slot="valueSlot" slot-scope="scope">
           <span class="mr-2">{{ $t('packages_business_setting_alarmnotification_lianxu') }}</span>
-          <el-input-number :controls="false" style="width: 100px" v-model="scope.row.point"></el-input-number>
+          <el-input-number
+            :controls="false"
+            :precision="0"
+            :min="1"
+            style="width: 100px"
+            v-model="scope.row.point"
+          ></el-input-number>
           <span class="ml-2 mr-2"> {{ $t('packages_business_setting_alarmnotification_gedian') }}</span>
           <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
             <el-option label=">=" :value="1"></el-option>
             <el-option label="<=" :value="-1"></el-option>
           </el-select>
-          <el-input-number :controls="false" v-model="scope.row.ms" style="width: 80px"></el-input-number>
+          <el-input-number
+            :controls="false"
+            :precision="0"
+            :min="1"
+            v-model="scope.row.ms"
+            style="width: 80px"
+          ></el-input-number>
           <span class="ml-2">{{ $t('packages_business_setting_alarmnotification_msshigaojing') }}</span>
         </template>
       </VTable>
@@ -169,11 +181,28 @@ export default {
     //告警设置 单独请求接口 单独提交数据
     getAlarmData() {
       alarmRuleApi.find().then(data => {
-        this.alarmData = data
+        this.alarmData = data.map(item => {
+          item.point = this.getPoints(item.point)
+          item.ms = this.getSecond(item.ms)
+          return item
+        })
       })
+    },
+    getPoints(data) {
+      //5s一个点 向上取整 ，1分钟12个点
+      return Math.ceil(data / 12) < 1 ? 1 : Math.ceil(data / 12)
+    },
+    getSecond(data) {
+      //ms => s 1000ms = 1s
+      return Math.ceil(data / 1000) < 1 ? 1 : Math.ceil(data / 1000)
     },
     saveAlarmRules() {
       //告警设置单独保存
+      this.alarmData = this.alarmData.map(item => {
+        item.point = Math.ceil(item.point * 12) < 1 ? 1 : Math.ceil(item.point * 12)
+        item.ms = Math.ceil(item.ms * 1000) < 1 ? 1 : Math.ceil(item.ms * 1000)
+        return item
+      })
       alarmRuleApi.save(this.alarmData).then(() => {
         this.alarmRulesVisible = false
         this.$message.success(this.$t('packages_business_message_save_ok'))

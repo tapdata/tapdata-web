@@ -742,8 +742,8 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuyudao: '當任務遇到錯誤時',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服務停止時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
-  packages_business_setting_alarmnotification_msshigaojing: 'ms時告警',
-  packages_business_setting_alarmnotification_gedian: '個點',
+  packages_business_setting_alarmnotification_msshigaojing: 's 時告警',
+  packages_business_setting_alarmnotification_gedian: '分钟',
   packages_business_setting_alarmnotification_lianxu: '連續',
   packages_business_setting_alarmnotification_cichugaojinggui:
     '此處告警規則設置為系統全局告警規則設置，任務運行監控頁面的告警規則設置優先級高於系統全局設置',
