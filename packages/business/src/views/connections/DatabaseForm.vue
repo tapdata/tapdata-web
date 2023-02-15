@@ -767,7 +767,10 @@ export default {
         },
         default: '02:00',
         enum: [
-          'false',
+          {
+            label: i18n.t('packages_business_dataForm_close'),
+            value: 'false'
+          },
           '00:00',
           '01:00',
           '02:00',
