@@ -2,12 +2,13 @@
   <div class="flex h-100">
     <NodeList
       v-model="activeNodeId"
-      title="整体进度"
+      show-type
+      label="整体进度"
       class="node-list border-end mr-4"
       @change="handleChange"
     ></NodeList>
     <div v-if="activeNodeId" class="flex-fill overflow-auto">
-      <VTable ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4">
+      <VTable ref="table" row-key="id" :columns="columns" :data="nodeData" height="100%" class="mt-4">
         <template slot="statusLabel" slot-scope="scope">
           <div v-if="scope.row.status === 'ERROR'" :class="scope.row.statusColor">
             <span class="color-danger underline cursor-pointer" @click="handleError(scope.row)">任务出错</span>
@@ -18,7 +19,7 @@
     </div>
     <div v-else class="flex-fill overflow-auto">
       <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex mt-4">
-        <VIcon :class="[item.color, 'mt-1']">{{ item.icon }}</VIcon>
+        <VIcon :class="[item.color, 'mt-1']" size="16">{{ item.icon }}</VIcon>
         <div class="ml-4 flex-fill">
           <span class="font-color-normal fw-bold">{{ item.label }}</span>
           <div v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</div>
@@ -64,7 +65,7 @@ export default {
   data() {
     return {
       activeNodeId: '',
-      wholeItems: [],
+      activeNode: {},
       columns: [
         {
           label: '关键步骤',
@@ -88,15 +89,11 @@ export default {
           label: '耗时',
           prop: 'diff'
         }
-      ],
-      data: []
+      ]
     }
   },
 
   computed: {
-    milestone() {
-      return this.dataflow.attrs?.milestone || {}
-    },
     nodeMilestones() {
       const { activeNodeId } = this
       if (!activeNodeId) return {}
@@ -124,16 +121,10 @@ export default {
         snapshotDoneAt,
         snapshotStartAt
       }
-    }
-  },
+    },
 
-  mounted() {
-    this.getWholeItems()
-  },
-
-  methods: {
-    getWholeItems() {
-      const { milestone } = this
+    wholeItems() {
+      const milestone = this.dataflow.attrs?.milestone || {}
 
       let result = [
         {
@@ -174,7 +165,7 @@ export default {
       const waitingOpt = {
         status: 'WAITING',
         desc: '等待中',
-        icon: 'wait-fill',
+        icon: 'time',
         color: 'color-primary'
       }
       result.forEach(el => {
@@ -211,14 +202,14 @@ export default {
       const per = (finishedLen / len) * 100
       result.unshift({
         label: '整体进度',
-        icon: 'auto-layout',
+        icon: 'device',
         percentage: per,
         desc: per === 1 ? '完成' : `${finishedLen}/${len}完成，全量数据同步中`
       })
-      this.wholeItems = result
+      return result
     },
 
-    getNodeData(node) {
+    nodeData() {
       const { nodeMilestones } = this
       const NODE_MAP = {
         source: [
@@ -229,6 +220,10 @@ export default {
           {
             key: 'BATCH_READ',
             label: '读取全量数据'
+          },
+          {
+            key: 'OPEN_STREAM_READ',
+            label: '开启增量'
           },
           {
             key: 'STREAM_READ',
@@ -279,10 +274,10 @@ export default {
         }
       }
 
-      this.data = NODE_MAP[node.nodeType].map(el => {
+      return NODE_MAP[this.activeNode.nodeType].map(el => {
         const data = nodeMilestones[el.key]
         let t = Object.assign({}, el, data)
-        let { status } = t
+        let { status = 'WAITING' } = t
         let label = ''
         if (el.key === 'BATCH_READ') {
           const { snapshotTableTotal, snapshotDoneAt } = this.totalData
@@ -306,10 +301,11 @@ export default {
             : '-'
         return t
       })
-    },
+    }
+  },
 
-    handleChange(val, node) {
-      val ? this.getNodeData(node) : this.getWholeItems()
+  methods: {handleChange(val, node) {
+      this.activeNode = val ? node : {}
     },
 
     handleError(row = {}) {
@@ -350,9 +346,9 @@ export default {
 
 <style lang="scss" scoped>
 .pro-line {
-  width: 400px;
+  width: 650px;
 }
 .node-list {
-  width: 200px;
+  width: 224px;
 }
 </style>

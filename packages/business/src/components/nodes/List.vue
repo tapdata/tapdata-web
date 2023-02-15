@@ -5,7 +5,7 @@
       :class="{ active: activeNodeId === '' }"
       @click="changeItem()"
     >
-      <VIcon size="20" class="mr-1">folder</VIcon>{{ title }}
+      <VIcon size="18" class="mr-2">device</VIcon>{{ label }}
     </div>
     <div
       v-for="node in items"
@@ -14,8 +14,9 @@
       :class="{ active: activeNodeId === node.id }"
       @click="changeItem(node.id)"
     >
-      <NodeIcon :node="node" :size="18" />
-      <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
+      <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
+      <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
+      <ElTag v-if="showType" class="ml-2" effect="plain" size="mini">{{ typeMap[node.nodeType] }}</ElTag>
     </div>
   </div>
 </template>
@@ -25,27 +26,37 @@ import { mapGetters } from 'vuex'
 
 import i18n from '@tap/i18n'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
+import { OverflowTooltip } from '@tap/component'
 
 export default {
   name: 'List',
 
-  components: { NodeIcon },
+  components: { NodeIcon, OverflowTooltip },
 
   props: {
     value: {
       type: String
     },
-    title: {
+    label: {
       type: String,
       default: () => {
         return i18n.t('packages_dag_components_log_quanbu')
       }
+    },
+    showType: {
+      type: Boolean,
+      default: false
     }
   },
 
   data() {
     return {
-      activeNodeId: ''
+      activeNodeId: '',
+      typeMap: {
+        source: '来源',
+        target: '目标',
+        processor: '处理节点'
+      }
     }
   },
 

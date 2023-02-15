@@ -76,7 +76,7 @@ export default {
 
   data() {
     return {
-      currentTab: 'log',
+      currentTab: 'milestone',
       name: this.activeNode?.name
     }
   },
