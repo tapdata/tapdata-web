@@ -19,7 +19,7 @@
         </template>
       </VTable>
     </div>
-    <div v-else class="flex-fill overflow-auto">
+    <div v-else class="flex-fill overflow-auto pb-4">
       <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex mt-4">
         <VIcon :class="[item.color, 'mt-1']" size="16">{{ item.icon }}</VIcon>
         <div class="ml-4 flex-fill">
@@ -183,10 +183,10 @@ export default {
             const { progress, time } = this.getDueTimeAndProgress(this.totalData)
             Object.assign(el, runningOpt, {
               progress,
-              desc: i18n.t('packages_business_milestone_list_jinhangzhongpr')(
-                'packages_business_milestone_list_jinhangzhongpr',
-                { val1: progress, val2: calcTimeUnit(time) }
-              )
+              desc: i18n.t('packages_business_milestone_list_jinhangzhongpr', {
+                val1: progress,
+                val2: calcTimeUnit(time)
+              })
             })
           }
         } else {
