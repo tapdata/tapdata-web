@@ -16,10 +16,20 @@
           <el-checkbox-group v-model="scope.row.notify">
             <el-checkbox label="SYSTEM">{{ $t('packages_business_notify_system_notice') }}</el-checkbox>
             <el-checkbox label="EMAIL">{{ $t('packages_business_notify_email_notification') }}</el-checkbox>
-            <el-checkbox label="WECHAT" v-if="!isDaas">{{
+            <el-tooltip
+              placement="top"
+              :content="$t('packages_business_notify_no_webchat_notification')"
+              v-if="!isOpenid && !isDaas"
+              ><el-checkbox label="WECHAT" v-if="!isDaas" :disabled="!isOpenid">{{
+                $t('packages_business_notify_webchat_notification')
+              }}</el-checkbox></el-tooltip
+            >
+            <el-checkbox label="WECHAT" v-if="!isDaas && isOpenid">{{
               $t('packages_business_notify_webchat_notification')
             }}</el-checkbox>
-            <el-checkbox label="SMS" v-if="!isDaas">{{ $t('packages_business_notify_sms_notification') }}</el-checkbox>
+            <el-checkbox label="SMS" v-if="!isDaas" :disabled="isOpenid">{{
+              $t('packages_business_notify_sms_notification')
+            }}</el-checkbox>
           </el-checkbox-group>
         </div>
       </template>
@@ -124,11 +134,16 @@ export default {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       alarmRulesVisible: false,
       alarmData: [],
-      tableData: []
+      tableData: [],
+      isOpenid: false
     }
   },
   mounted() {
     this.remoteMethod()
+    if (!this.isDaas) {
+      //是否绑定微信
+      this.isOpenid = window.__USER_INFO__?.openid
+    }
   },
   methods: {
     remoteMethod(type) {

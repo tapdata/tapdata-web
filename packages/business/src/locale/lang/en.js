@@ -772,5 +772,7 @@ export default {
     'The alarm rule setting here is the system global alarm rule setting, and the priority of the alarm rule setting on the task running monitoring page is higher than the system global setting',
   packages_business_setting_alarmnotification_renwumorengao: 'Task default alarm rule setting',
   packages_business_setting_alarmnotification_morengaojinggui: 'Default alarm rule',
-  packages_business_setting_alarmnotification_renwugaojingshe: 'Task alarm setting'
+  packages_business_setting_alarmnotification_renwugaojingshe: 'Task alarm setting',
+  packages_business_notify_no_webchat_notification:
+    'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.'
 }

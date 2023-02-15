@@ -301,8 +301,9 @@ export default observer({
         default: ['SYSTEM']
       }
       if (process.env.VUE_APP_PLATFORM !== 'DAAS') {
+        let isOpenid = window.__USER_INFO__?.openid
         let enums = [
-          { label: i18n.t('packages_business_notify_webchat_notification'), value: 'WECHAT' },
+          { label: i18n.t('packages_business_notify_webchat_notification'), value: 'WECHAT', disabled: !isOpenid },
           { label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' }
         ]
         options.enum = [...options.enum, ...enums]
