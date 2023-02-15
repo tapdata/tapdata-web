@@ -8,7 +8,7 @@
       @change="handleChange"
     ></NodeList>
     <div v-if="activeNodeId" class="flex-fill overflow-auto">
-      <VTable ref="table" row-key="id" :columns="columns" :data="nodeData" height="100%" class="mt-4">
+      <VTable ref="table" row-key="id" :columns="columns" :data="nodeData" hide-on-single-page class="pt-4">
         <template slot="statusLabel" slot-scope="scope">
           <div v-if="scope.row.status === 'ERROR'" :class="scope.row.statusColor">
             <span class="color-danger underline cursor-pointer" @click="handleError(scope.row)">{{
