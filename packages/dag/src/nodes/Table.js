@@ -668,6 +668,9 @@ export class Table extends NodeType {
                         'x-component-props': {
                           min: 1
                         },
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_nodes_database_xierumeipizui_tips')
+                        },
                         default: 3000
                       }
                     }
@@ -868,6 +871,7 @@ export class Table extends NodeType {
                   updateConditionFields: {
                     title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
                     type: 'array',
+                    'x-index': 1,
                     required: true,
                     default: null,
                     description: `{{ !$isDaas ? "${i18n.t(

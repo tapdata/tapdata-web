@@ -542,6 +542,7 @@ export default {
   packages_dag_nodes_database_tongjizhuijiaxie2: '統計追加寫入: 只處理插入事件，丟棄更新和刪除事件',
   packages_dag_nodes_database_setting_cdc_changjing_desc: '純增量場景下，不支持對目標表結構和數據的清除操作。 ',
   packages_dag_nodes_database_xierumeipizui: '寫入每批最大等待時間(ms)',
+  packages_dag_nodes_database_xierumeipizui_tips: '寫入每批最大等待時間(ms)',
   packages_dag_nodes_database_quanliangmeipici2: '全量每批次寫入的條數',
   packages_dag_nodes_database_piliangxierutiao: '批量寫入條數',
   packages_dag_nodes_database_zhengzebiaodashi: '正則表達式匹配模式下，數據庫新增的符合表達式的表會被自動同步到目標',

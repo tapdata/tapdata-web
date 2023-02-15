@@ -574,6 +574,7 @@ export default {
   packages_dag_nodes_database_setting_cdc_changjing_desc:
     'In the pure incremental scenario, the clearing operation on the target table structure and data is not supported. ',
   packages_dag_nodes_database_xierumeipizui: 'Write the maximum waiting time for each batch (ms)',
+  packages_dag_nodes_database_xierumeipizui_tips: 'Write the maximum waiting time for each batch (ms)',
   packages_dag_nodes_database_quanliangmeipici2: 'The number of entries written in each batch of the full amount',
   packages_dag_nodes_database_piliangxierutiao: 'Number of batch writes',
   packages_dag_nodes_database_zhengzebiaodashi:
