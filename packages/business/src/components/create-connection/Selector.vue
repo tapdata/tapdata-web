@@ -7,11 +7,11 @@
       <li
         v-for="(item, index) in filterList"
         :key="index"
-        class="database-item float-start mb-4 cursor-pointer"
+        class="database-item float-start cursor-pointer text-center"
         :class="{ active: item.pdkId === selected.pdkId }"
         @click="handleSelect(item)"
       >
-        <div class="img-box rounded-3">
+        <div class="img-box inline-flex justify-content-center align-items-center rounded-circle">
           <ElImage v-if="item.pdkType" :src="getPdkIcon(item)">{{ item.pdkType }}</ElImage>
           <ElImage v-else :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
@@ -122,7 +122,8 @@ export default {
 .database-item {
   width: 80px;
   flex: 1;
-  margin-right: 40px;
+  margin-right: 53px;
+  margin-bottom: 48px;
   &.active,
   &:hover {
     .img-box {
@@ -136,15 +137,12 @@ export default {
   }
 }
 .img-box {
-  width: 80px;
-  height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #f2f2f2;
+  width: 65px;
+  height: 65px;
+  border: 1px solid rgba(221, 221, 221, 0.4);
 }
 .el-image {
-  width: 50px;
+  width: 42px;
   text-align: center;
 }
 .my-database__desc {
@@ -153,6 +151,10 @@ export default {
 ::v-deep {
   .el-tabs__nav-wrap.is-top {
     padding: 0;
+  }
+  .el-tabs__nav-scroll {
+    display: flex;
+    justify-content: center;
   }
 }
 </style>

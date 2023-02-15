@@ -70,7 +70,7 @@ export default {
         },
         {
           title: 'SERVICES / TARGETS',
-          type: ' ',
+          type: 'target',
           add: true,
           component: 'TargetItem'
         }

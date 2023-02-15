@@ -3,22 +3,23 @@
     :title="title"
     :visible="visible"
     :append-to-body="true"
-    fullscreen
+    width="80%"
+    top="10vh"
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     :before-close="handleClose"
   >
-    <div slot="title" class="text-center font-color-dark fs-5 fw-bold">
-      {{ title }}
+    <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
+      {{ showForm ? 'Configure SaaS Source' : title }}
     </div>
-    <div v-if="!showForm" class="px-7 pt-3 text-center">
+    <div v-if="!showForm" class="px-7 text-center">
       <div class="mb-4 font-color-light">
         Choose a data source connector from below and configure the connection & credentials.
       </div>
-      <div class="inline-flex align-items-center mb-4">
-        <ElCheckbox v-model="settings.showBeta">Show Connectors in BETA State</ElCheckbox>
-        <!--        <span class="ml-1">Show Connectors in BETA State</span>-->
-        <ElCheckbox v-model="settings.showAlpha" class="ml-6">Show Connectors in ALPHA State</ElCheckbox>
-        <!--        <span class="ml-1">Show Connectors in ALPHA State</span>-->
+      <div class="inline-flex align-items-center mt-2 mb-4">
+        <ElCheckbox v-model="settings.showBeta" class="m-0"></ElCheckbox>
+        <span class="ml-2">Show Connectors in BETA State</span>
+        <ElCheckbox v-model="settings.showAlpha" class="ml-8 mr-0"></ElCheckbox>
+        <span class="ml-2">Show Connectors in ALPHA State</span>
       </div>
       <ConnectionSelector
         :loading="loading"
@@ -28,7 +29,10 @@
         @select="handleSelect"
       ></ConnectionSelector>
     </div>
-    <ConnectionForm v-else :params="formParams" @back="handleBack" @success="handleSuccess"></ConnectionForm>
+    <div v-else class="form__content">
+      <div class="mb-4 text-center font-color-light">Connect & Authorize Tapdata to access your Zoho Desk account:</div>
+      <ConnectionForm :params="formParams" @back="init" @success="handleSuccess"></ConnectionForm>
+    </div>
   </ElDialog>
 </template>
 
@@ -73,17 +77,26 @@ export default {
         showAlpha: true
       },
       formParams: {},
-      showForm: false
+      showForm: false,
+      timer: null
     }
   },
   watch: {
     visible(v) {
-      v && this.init(0)
+      this.timer && clearInterval(this.timer)
+      if (v) {
+        this.init()
+        this.timer = setInterval(() => {
+          this.getDatabaseType(true)
+        }, 3000)
+      }
     }
   },
   methods: {
     init() {
       this.showForm = false
+      this.database = []
+      this.formParams = {}
       this.getDatabaseType()
     },
     handleClose() {
@@ -95,13 +108,15 @@ export default {
       const { pdkHash } = item
       this.formParams = { pdkHash }
     },
-    getDatabaseType() {
-      this.loading = true
+    getDatabaseType(noLoading = false) {
+      if (!noLoading) this.loading = true
       databaseTypesApi
         .get()
         .then(data => {
           if (data) {
-            let items = data?.filter(t => !this.database.length || !this.database.some(d => d.pdkHash === t.pdkHash))
+            let items = data?.filter(
+              t => t.connectionType.includes(this.params?.type) && !this.database?.some(d => d.pdkHash === t.pdkHash)
+            )
             if (!items.length) {
               return
             }
@@ -111,11 +126,6 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-
-    handleBack() {
-      this.formParams = {}
-      this.showForm = false
     },
 
     handleSuccess() {
@@ -147,7 +157,7 @@ export default {
       height: 70px;
       justify-content: center;
       align-items: center;
-      background: map-get($bgColor, normal);
+      background: rgba(239, 241, 244, 0.2);
       border: 1px solid #dedee4;
       border-radius: 3px;
       cursor: pointer;
@@ -199,6 +209,7 @@ export default {
 }
 ::v-deep {
   .ldp-conection-dialog {
+    border-radius: 4px;
     .el-dialog__body {
       flex: 1;
       height: 0;
@@ -207,5 +218,8 @@ export default {
       padding: 0;
     }
   }
+}
+.form__content {
+  height: 640px;
 }
 </style>
