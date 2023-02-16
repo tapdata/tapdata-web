@@ -490,7 +490,7 @@ export default {
   packages_dag_migration_alarmpanel_renwuquanliangwan: '任务全量完成通知',
   packages_dag_migration_alarmpanel_renwujiaoyanchu: '任务校验出错告警',
   packages_dag_migration_alarmpanel_renwuyunxingchu: '任务运行出错告警',
-  packages_dag_migration_alarmpanel_jiedianpingjunchu: '节点平均处理耗时告警',
+  packages_dag_migration_alarmpanel_jiedianpingjunchu: '当节点的平均处理耗时',
   packages_dag_migration_alarmpanel_shujuyuanxieyi: '数据源协议连接耗时告警',
   packages_dag_migration_alarmpanel_shujuyuanwangluo: '数据源网络连接耗时告警',
   packages_dag_migration_alarmpanel_shujuyuanwufa: '数据源无法连接告警',

@@ -99,11 +99,8 @@ export default {
               this.getUnReadNum()
             }
             if (data) {
-              data = data.map(item => {
-                item.levelLabel = ALARM_LEVEL_MAP[item.level].text
-                item.levelType = ALARM_LEVEL_MAP[item.level].type
-                return item
-              })
+              data.levelLabel = ALARM_LEVEL_MAP[data.level].text
+              data.levelType = ALARM_LEVEL_MAP[data.level].type
               this.listData = uniqueArr([data, ...this.listData])
             }
           }, 800)
