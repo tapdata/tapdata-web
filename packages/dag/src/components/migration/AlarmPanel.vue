@@ -171,7 +171,8 @@ export default observer({
                   space3: this.getSpace(
                     'DATANODE_AVERAGE_HANDLE_CONSUME.point',
                     'DATANODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
-                    'DATANODE_AVERAGE_HANDLE_CONSUME.ms'
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.ms',
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.open'
                   )
                 }
               }
@@ -195,7 +196,8 @@ export default observer({
                   space1: this.getSpace(
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.point',
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
-                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.ms'
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.ms',
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open'
                   )
                 }
               }
@@ -242,7 +244,8 @@ export default observer({
                   space1: this.getSpace(
                     'TASK_INCREMENT_DELAY.point',
                     'TASK_INCREMENT_DELAY.equalsFlag',
-                    'TASK_INCREMENT_DELAY.ms'
+                    'TASK_INCREMENT_DELAY.ms',
+                    'TASK_INCREMENT_DELAY.open'
                   )
                 }
               }
@@ -330,7 +333,7 @@ export default observer({
       return options
     },
 
-    getInputNumber(title, defaultNum = 0) {
+    getInputNumber(title, defaultNum = 0, key = '') {
       return {
         title,
         type: 'number',
@@ -345,6 +348,14 @@ export default observer({
           precision: 0,
           style: {
             width: '100px'
+          }
+        },
+        'x-reactions': {
+          dependencies: [key],
+          fulfill: {
+            state: {
+              disabled: `{{!$deps[0]}}`
+            }
           }
         }
       }
@@ -367,10 +378,6 @@ export default observer({
         },
         enum: [
           {
-            label: '<=',
-            value: -1
-          },
-          {
             label: '>=',
             value: 1
           }
@@ -378,15 +385,15 @@ export default observer({
       }
     },
 
-    getSpace(key1, key2, key3) {
+    getSpace(key1, key2, key3, key4) {
       let result = {
         type: 'void',
         'x-component': 'Space',
         properties: {}
       }
-      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 10)
+      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 10, key4)
       result.properties[key2] = this.getSelect(i18n.t('packages_dag_migration_alarmpanel_gedian'))
-      result.properties[key3] = this.getInputNumber('', 1000)
+      result.properties[key3] = this.getInputNumber('', 1000, key4)
       result.properties.ms = {
         title: 's',
         type: 'void',
