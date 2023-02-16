@@ -440,8 +440,8 @@ export default {
         currentSnapshotTableInsertRowTotal = 0,
         currentSnapshotTableRowTotal = 0,
         snapshotDoneCost,
-        outputQpsMax,
-        outputQpsAvg
+        outputQpsMax = 0,
+        outputQpsAvg = 0
       } = this.quota.samples?.totalData?.[0] || {}
       return {
         tableTotal,
