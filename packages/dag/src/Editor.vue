@@ -597,19 +597,17 @@ export default {
       })
       const flag = await this.save(true)
       this.checkWarnAndError()
-      // 检查是否需要弹窗
-      // this.$refs.console
 
-      // if (flag) {
-      //   this.dataflow.disabledData.edit = true
-      //   this.dataflow.disabledData.start = true
-      //   this.dataflow.disabledData.stop = true
-      //   this.dataflow.disabledData.reset = true
-      //   this.gotoViewer()
-      //   this.buried('taskStart', { result: true })
-      // } else {
-      //   this.buried('taskStart', { result: false })
-      // }
+      if (flag) {
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        // this.gotoViewer()
+        // this.buried('taskStart', { result: true })
+      } else {
+        // this.buried('taskStart', { result: false })
+      }
     },
 
     checkWarnAndError() {
@@ -624,13 +622,27 @@ export default {
             cancelButtonText: i18n.t('packages_dag_src_editor_shaohouqidong')
           }).then(resFlag => {
             if (resFlag) {
-              taskApi.batchStart([this.dataflow.id])
+              this.startTask()
+              return
             }
+            this.buried('taskStart', { result: false })
           })
         } else {
-          taskApi.batchStart([this.dataflow.id])
+          this.startTask()
         }
       }
+    },
+
+    startTask() {
+      taskApi
+        .batchStart([this.dataflow.id])
+        .then(() => {
+          this.buried('taskStart', { result: true })
+          this.gotoViewer()
+        })
+        .catch(() => {
+          this.buried('taskStart', { result: false })
+        })
     }
   }
 }
