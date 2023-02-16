@@ -618,31 +618,17 @@ export default {
         setTimeout(this.checkWarnAndError, 800)
       } else {
         if (warnNum && errorNum) {
-          this.$confirm(`任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务`, '', {
+          this.$confirm(i18n.t('packages_dag_src_editor_renwubaocunjianceshi'), '', {
             type: 'warning',
-            confirmButtonText: '继续启动',
-            cancelButtonText: '稍后启动'
+            confirmButtonText: i18n.t('packages_dag_src_editor_jixuqidong'),
+            cancelButtonText: i18n.t('packages_dag_src_editor_shaohouqidong')
           }).then(resFlag => {
             if (resFlag) {
-              taskApi
-                .batchStart([this.dataflow.id])
-                .then(d => {
-                  console.log('启动成功')
-                })
-                .catch(e => {
-                  console.log('启动失败')
-                })
+              taskApi.batchStart([this.dataflow.id])
             }
           })
         } else {
-          taskApi
-            .batchStart([this.dataflow.id])
-            .then(d => {
-              console.log('自动启动成功')
-            })
-            .catch(e => {
-              console.log('自动启动失败')
-            })
+          taskApi.batchStart([this.dataflow.id])
         }
       }
     }

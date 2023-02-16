@@ -605,5 +605,10 @@ export default {
   packages_dag_nodes_tableprocessor_biaomingchongfu: 'The table name is repeated',
   packages_dag_monitor_leftsider_zuidaQps: 'Maximum QPS(Q/S)',
   packages_dag_monitor_leftsider_pingjunQps: 'Average QPS(Q/S)',
-  packages_dag_monitor_leftsider_quanliangwanchenghao: 'Time-consuming for full completion'
+  packages_dag_monitor_leftsider_quanliangwanchenghao: 'Time-consuming for full completion',
+  packages_dag_monitor_bottompanel_renwujindu: 'Task Progress',
+  packages_dag_src_editor_shaohouqidong: 'Start later',
+  packages_dag_src_editor_jixuqidong: 'Continue to start',
+  packages_dag_src_editor_renwubaocunjianceshi:
+    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task'
 }

@@ -576,5 +576,10 @@ export default {
   packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重复',
   packages_dag_monitor_leftsider_zuidaQps: '最大QPS(Q/S)',
   packages_dag_monitor_leftsider_pingjunQps: '平均QPS(Q/S)',
-  packages_dag_monitor_leftsider_quanliangwanchenghao: '全量完成耗时'
+  packages_dag_monitor_leftsider_quanliangwanchenghao: '全量完成耗时',
+  packages_dag_monitor_bottompanel_renwujindu: '任务进度',
+  packages_dag_src_editor_shaohouqidong: '稍后启动',
+  packages_dag_src_editor_jixuqidong: '继续启动',
+  packages_dag_src_editor_renwubaocunjianceshi:
+    '任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务'
 }
