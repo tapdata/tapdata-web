@@ -31,7 +31,12 @@
     </div>
     <div v-else class="form__content">
       <div class="mb-4 text-center font-color-light">Connect & Authorize Tapdata to access your Zoho Desk account:</div>
-      <ConnectionForm :params="formParams" @back="init" @success="handleSuccess"></ConnectionForm>
+      <ConnectionForm
+        :params="formParams"
+        @back="init"
+        @success="handleSuccess"
+        @saveAndMore="handleSaveAndMore"
+      ></ConnectionForm>
     </div>
   </ElDialog>
 </template>
@@ -131,6 +136,11 @@ export default {
     handleSuccess() {
       this.$emit('success', ...arguments)
       this.handleClose()
+    },
+
+    handleSaveAndMore() {
+      this.$emit('saveAndMore', ...arguments)
+      this.init()
     }
   }
 }

@@ -63,18 +63,19 @@
           </div>
         </div>
         <footer slot="footer" class="footer">
-          <div class="footer-btn pr-10">
-            <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>
+          <div class="footer-btn text-start py-4">
+            <!--            <el-button @click="goBack()">{{ $t('packages_business_button_back') }}</el-button>-->
             <el-button class="test" @click="startTest()">{{
               $t('packages_business_connection_list_test_button')
             }}</el-button>
             <el-button type="primary" :loading="submitBtnLoading" @click="submit">
               {{ $t('packages_business_button_save') }}
             </el-button>
+            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">SAVE & ADD MORE</el-button>
           </div>
         </footer>
       </main>
-      <GitBook :value="doc"></GitBook>
+      <GitBook :value="doc" class="git-book"></GitBook>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <el-dialog
@@ -163,6 +164,7 @@ export default {
       dialogTestVisible: false,
       dialogEditNameVisible: false,
       submitBtnLoading: false,
+      saveAndMoreLoading: false,
       editBtnLoading: false,
       renameData: {
         rename: ''
@@ -218,11 +220,11 @@ export default {
         this.$emit('back')
       })
     },
-    submit() {
+    submit(addNext = false) {
       this.buried('connectionSubmit')
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
-        this.submitBtnLoading = true
+        if (!addNext) this.submitBtnLoading = true
         // 保存数据源
         let id = this.params?.id
         let { pdkOptions } = this
@@ -275,7 +277,7 @@ export default {
               result: true
             })
             this.$message.success(this.$t('packages_business_message_saveOK'))
-            this.$emit('success', data)
+            this.$emit(addNext ? 'saveAndMore' : 'success', data)
           })
           .catch(() => {
             this.buried('connectionSubmit', '', {
@@ -284,8 +286,13 @@ export default {
           })
           .finally(() => {
             this.submitBtnLoading = false
+            this.saveAndMoreLoading = false
           })
       })
+    },
+    saveAndMore() {
+      this.saveAndMoreLoading = true
+      this.submit(true)
     },
     //开始测试
     async startTest() {
@@ -1053,6 +1060,7 @@ export default {
       display: flex;
       flex: 1;
       flex-direction: column;
+      border-top: 1px solid #e1e3e9;
       .connection-from-title {
         padding-top: 20px;
         margin-bottom: 24px;
@@ -1191,18 +1199,22 @@ export default {
   }
   .footer {
     width: 100%;
-    height: 62px;
+    //height: 62px;
     background-color: map-get($bgColor, white);
     border-left: none;
-    line-height: 62px;
-    border-top: 1px solid #dedee4;
+    //line-height: 62px;
+    border-top: 1px solid #e1e3e9;
     .footer-btn {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      margin: 0 auto;
-      padding-top: 18px;
+      //display: flex;
+      //align-items: center;
+      //justify-content: flex-end;
+      //margin: 0 auto;
+      //padding-top: 18px;
     }
   }
+}
+
+.git-book {
+  border-top: 1px solid #e1e3e9;
 }
 </style>
