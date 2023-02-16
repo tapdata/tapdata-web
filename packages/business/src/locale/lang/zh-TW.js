@@ -725,6 +725,7 @@ export default {
   notify_sms_notification: '簡訊通知',
   notify_email_notification: '郵件通知',
   notify_system_notice: '系统通知',
+  packages_business_notify_alarm_title: 'Agent告警设置',
   packages_business_setting_alarm_notification_notify_noticeInterval: '发送间隔',
   packages_business_setting_alarm_notification_describtion: '描述',
   packages_business_setting_notification_alarm_notification_gaojingtongzhi: '告警通知',

@@ -723,6 +723,7 @@ export default {
   packages_business_notify_sms_notification: '短信通知',
   packages_business_notify_email_notification: '邮件通知',
   packages_business_notify_webchat_notification: '微信通知',
+  packages_business_notify_alarm_title: 'Agent告警设置',
   packages_business_notify_system_notice: '系统通知',
   packages_business_setting_alarm_notification_notify_noticeInterval: '发送间隔',
   packages_business_setting_alarm_notification_describtion: '描述',

@@ -746,6 +746,7 @@ export default {
   notify_email_notification: 'Email Notification',
   notify_webchat_notification: 'WeChat Notification',
   notify_system_notice: 'System Notification',
+  packages_business_notify_alarm_title: 'Agent Alarm Setting',
   packages_business_setting_alarm_notification_notify_noticeInterval: 'Send Interval',
   packages_business_setting_alarm_notification_describtion: 'Description',
   packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alarm Notification',

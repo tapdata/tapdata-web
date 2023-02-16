@@ -47,7 +47,7 @@
     </VTable>
     <section v-if="!isDaas">
       <header class="flex justify-content-between mb-4 mt-4" style="border-bottom: 1px solid #ebeef5">
-        <div class="mb-4">Agent告警设置</div>
+        <div class="mb-4">{{ $t('packages_business_notify_alarm_title') }}</div>
       </header>
       <ElForm ref="form" class="e-form" label-position="left" label-width="390px" :model="form">
         <ElFormItem :label="$t('notify_agent_status_offline')" style="border-bottom: 1px solid #ebeef5">
@@ -222,7 +222,8 @@ export default {
           weChat: false
         }
       },
-      userId: ''
+      userId: '',
+      currentData: []
     }
   },
   mounted() {
@@ -248,9 +249,14 @@ export default {
         if (!this.isDaas && type) {
           this.$emit('updateVisible', false)
         }
+        //过滤掉agent停止时
+        this.currentData = data.filter(item => item.key === 'SYSTEM_FLOW_EGINGE_DOWN')
+        this.tableData = this.tableData.filter(item => item.key !== 'SYSTEM_FLOW_EGINGE_DOWN')
       })
     },
     save() {
+      //合并agent停止时
+      this.tableData = [...this.tableData, ...this.currentData]
       settingsApi.saveAlarm(this.tableData).then(() => {
         this.$message.success(i18n.t('packages_business_message_save_ok'))
         if (!this.isDaas) {
