@@ -348,7 +348,8 @@ export default {
 
       try {
         this.initWS()
-        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await taskApi.save(data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
@@ -595,15 +596,54 @@ export default {
         }
       })
       const flag = await this.save(true)
-      if (flag) {
-        this.dataflow.disabledData.edit = true
-        this.dataflow.disabledData.start = true
-        this.dataflow.disabledData.stop = true
-        this.dataflow.disabledData.reset = true
-        this.gotoViewer()
-        this.buried('taskStart', { result: true })
+      this.checkWarnAndError()
+      // 检查是否需要弹窗
+      // this.$refs.console
+
+      // if (flag) {
+      //   this.dataflow.disabledData.edit = true
+      //   this.dataflow.disabledData.start = true
+      //   this.dataflow.disabledData.stop = true
+      //   this.dataflow.disabledData.reset = true
+      //   this.gotoViewer()
+      //   this.buried('taskStart', { result: true })
+      // } else {
+      //   this.buried('taskStart', { result: false })
+      // }
+    },
+
+    checkWarnAndError() {
+      const { warnNum, errorNum, over } = this.$refs.console?.getData() || {}
+      if (!over) {
+        setTimeout(this.checkWarnAndError, 800)
       } else {
-        this.buried('taskStart', { result: false })
+        if (warnNum && errorNum) {
+          this.$confirm(`任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务`, '', {
+            type: 'warning',
+            confirmButtonText: '继续启动',
+            cancelButtonText: '稍后启动'
+          }).then(resFlag => {
+            if (resFlag) {
+              taskApi
+                .batchStart([this.dataflow.id])
+                .then(d => {
+                  console.log('启动成功')
+                })
+                .catch(e => {
+                  console.log('启动失败')
+                })
+            }
+          })
+        } else {
+          taskApi
+            .batchStart([this.dataflow.id])
+            .then(d => {
+              console.log('自动启动成功')
+            })
+            .catch(e => {
+              console.log('自动启动失败')
+            })
+        }
       }
     }
   }

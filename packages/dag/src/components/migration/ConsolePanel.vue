@@ -54,6 +54,12 @@
               <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
             </svg><span class="ml-1 font-color-light">{{$t('packages_dag_loading')}}</span>
           </pre>
+          <pre v-if="warnNum || errorNum" class="flex m-0 px-1">
+            <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
+            <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('packages_dag_migration_consolepanel_ge') }}WARN,</span>
+            <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('packages_dag_migration_consolepanel_ge') }}ERROR,</span>
+            <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
+          </pre>
         </code>
       </div>
     </div>
@@ -89,7 +95,10 @@ export default {
       nodeId: '',
       ifAuto: false,
       loading: false,
-      type: ''
+      type: '',
+      over: false,
+      warnNum: 0,
+      errorNum: 0
     }
   },
 
@@ -140,6 +149,10 @@ export default {
       const modelList = data.modelList || []
       this.loading = false
       this.logList = list.concat(modelList).concat(this.getResetList(resetList)) || []
+      const { warnNum = 0, errorNum = 0 } = data || {}
+      this.warnNum = warnNum + 1 // TODO 减一
+      this.errorNum = errorNum + 1 // TODO
+      this.over = data.over
 
       const nodeList = []
       Object.keys(data.nodes).forEach(id => {
@@ -230,6 +243,20 @@ export default {
         }
       })
       return result
+    },
+
+    getList() {
+      return this.logList
+    },
+
+    getWarnAndError() {
+      const { warnNum = 0, errorNum = 0 } = this
+      return { warnNum, errorNum }
+    },
+
+    getData() {
+      const { warnNum = 0, errorNum = 0, over, logList } = this
+      return { warnNum, errorNum, over, logList }
     }
   }
 }

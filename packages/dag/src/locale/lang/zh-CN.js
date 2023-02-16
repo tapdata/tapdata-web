@@ -184,6 +184,9 @@ export default {
   packages_dag_migration_configpanel_moxing: '模型',
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日志',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: '当前检测共发现',
+  packages_dag_migration_consolepanel_qingguanzhu: '请关注',
+  packages_dag_migration_consolepanel_ge: '个',
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '开启数据校验开关后，任务会自动对同步结果的一致性进行全量校验和增量校验，并会在运行监控页面将校验不一致的数据行数展示出来。需要注意，当任务符合以下情况时，即使开启校验开关任务也不会进行校验\n 1. 添加了中间处理节点\n 2. 源连接不支持校验\n 3. 目标连接不支持校验',
   packages_dag_monitor_bottompanel_yunxingjilu: '运行记录',
