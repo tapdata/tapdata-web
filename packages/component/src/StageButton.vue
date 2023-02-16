@@ -44,6 +44,10 @@ export default {
     this.init()
   },
 
+  beforeDestroy() {
+    clearTimeout(this.timer)
+  },
+
   methods: {
     ...mapActions('dataflow', ['updateDag']),
 
@@ -70,9 +74,10 @@ export default {
         this.loading = true
       }
       this.progress = '0'
+      clearTimeout(this.timer)
       connectionsApi.getNoSchema(this.connectionId).then(res => {
         if (res.loadFieldsStatus === 'loading') {
-          setTimeout(this.getProgress, 1000)
+          this.timer = setTimeout(this.getProgress, 1000)
         } else {
           this.progress = 100 + '%'
           const { taskId, nodeId } = this
@@ -83,7 +88,7 @@ export default {
               })
               .then(this.updateDag)
           }
-          this.$emit('complete')
+          !check && this.$emit('complete') // 防止跟父组件的加载重复
           this.loading = false
         }
       })
