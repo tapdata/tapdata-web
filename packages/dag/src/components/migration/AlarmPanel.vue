@@ -138,11 +138,11 @@ export default observer({
               layout: {
                 type: 'void',
                 properties: {
-                  'DATANODE_CANNOT_CONNECT.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_shujuyuanwufa'),
-                    'DATANODE_CANNOT_CONNECT.notify'
-                  ),
-                  'DATANODE_CANNOT_CONNECT.notify': this.getCheckboxGroup('DATANODE_CANNOT_CONNECT.open'),
+                  // 'DATANODE_CANNOT_CONNECT.open': this.getSwitch(
+                  //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanwufa'),
+                  //   'DATANODE_CANNOT_CONNECT.notify'
+                  // ),
+                  // 'DATANODE_CANNOT_CONNECT.notify': this.getCheckboxGroup('DATANODE_CANNOT_CONNECT.open'),
                   // 'DATANODE_HTTP_CONNECT_CONSUME.open': this.getSwitch(
                   //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanwangluo')
                   // ),
