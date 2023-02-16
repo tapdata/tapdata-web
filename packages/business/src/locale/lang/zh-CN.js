@@ -741,8 +741,8 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuyudao: '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
-  packages_business_setting_alarmnotification_msshigaojing: 'ms时告警',
-  packages_business_setting_alarmnotification_gedian: '个点',
+  packages_business_setting_alarmnotification_msshigaojing: 's 时告警',
+  packages_business_setting_alarmnotification_gedian: '分钟',
   packages_business_setting_alarmnotification_lianxu: '连续',
   packages_business_setting_alarmnotification_cichugaojinggui:
     '此处告警规则设置为系统全局告警规则设置，任务运行监控页面的告警规则设置优先级高于系统全局设置',
@@ -760,6 +760,7 @@ export default {
   packages_business_notify_no_notice: '暂无通知',
   packages_business_notify_no_webchat_notification:
     '您的账户还没有进行微信绑定，如需通过微信接收通知信息，请先退出登录后通过微信扫码完成绑定',
+  packages_business_connections_databaseform_bujiazai: '不加载',
 
   packages_business_custom_node_name: '节点名称',
   packages_business_new: '新增',

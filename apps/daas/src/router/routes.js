@@ -89,6 +89,11 @@ const VerificationResult = async () => {
   return VerificationResult
 }
 
+//告警设置
+const AlarmSetting = async () => {
+  const { AlarmSetting } = await import('@tap/business')
+  return AlarmSetting
+}
 export default [
   {
     path: '/login',
@@ -876,7 +881,7 @@ export default [
           {
             path: 'alarmSetting',
             name: 'alarmSetting',
-            component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/AlarmNotification'),
+            component: AlarmSetting,
             meta: {
               title: 'page_title_setting',
               code: 'v2_alarm_settings_menu',

@@ -765,8 +765,8 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
   packages_business_setting_alarmnotification_dangrenwuuP: 'When the Agent service start',
-  packages_business_setting_alarmnotification_msshigaojing: 'Alarm when ms',
-  packages_business_setting_alarmnotification_gedian: 'points',
+  packages_business_setting_alarmnotification_msshigaojing: 'Alarm when s',
+  packages_business_setting_alarmnotification_gedian: 'Minutes',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
   packages_business_setting_alarmnotification_cichugaojinggui:
     'The alarm rule setting here is the system global alarm rule setting, and the priority of the alarm rule setting on the task running monitoring page is higher than the system global setting',
@@ -775,6 +775,7 @@ export default {
   packages_business_setting_alarmnotification_renwugaojingshe: 'Task alarm setting',
   packages_business_notify_no_webchat_notification:
     'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.',
+  packages_business_connections_databaseform_bujiazai: 'not loaded',
 
   packages_business_custom_node_name: 'Node Name',
   packages_business_new: 'Add',
