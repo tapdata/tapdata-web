@@ -998,7 +998,8 @@ export default {
   _workbench_workbench_yigoushishitong: '異構實時同步',
   _workbench_workbench_shujuruhucang: '數據入湖倉 ',
   _workbench_workbench_jichengaliyun: '集成阿里雲計算巢',
-  _workbench_workbench_jiangshujudaoru: '將數據導入阿里雲 Tablestore',
+  _workbench_workbench_jiangshujudaoru: '數據導入阿里雲 Tablestore',
+  _workbench_workbench_jiangshujudaorusub: '阿里雲 Tablestore',
   _workbench_workbench_tansuoshili: '探索示例',
 
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升級和服務切換重要公告',
