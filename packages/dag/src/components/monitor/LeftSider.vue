@@ -57,15 +57,31 @@
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
             }}</span>
-            <template v-else>
-              <ElProgress
-                class="flex-1 my-2"
-                :show-text="false"
-                style="width: 150px"
-                :percentage="totalDataPercentage"
-              />
-              <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
-            </template>
+            <ElTooltip v-else placement="bottom">
+              <div class="inline-flex">
+                <ElProgress
+                  class="flex-1 my-2"
+                  :show-text="false"
+                  style="width: 150px"
+                  :percentage="totalDataPercentage"
+                />
+                <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
+              </div>
+              <div slot="content" class="fs-8">
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchenghao') }}:</span>
+                  <span class="ml-2">{{ calcTimeUnit(totalData.snapshotDoneCost) }}</span>
+                </div>
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_pingjunQps') }}:</span>
+                  <span class="ml-2">{{ totalData.outputQpsAvg }}</span>
+                </div>
+                <div>
+                  <span>{{ $t('packages_dag_monitor_leftsider_zuidaQps') }}:</span>
+                  <span class="ml-2">{{ totalData.outputQpsMax }}</span>
+                </div>
+              </div>
+            </ElTooltip>
           </div>
           <div
             v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
@@ -422,9 +438,20 @@ export default {
         tableTotal = 0,
         snapshotTableTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
-        currentSnapshotTableRowTotal = 0
+        currentSnapshotTableRowTotal = 0,
+        snapshotDoneCost,
+        outputQpsMax,
+        outputQpsAvg
       } = this.quota.samples?.totalData?.[0] || {}
-      return { tableTotal, snapshotTableTotal, currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal }
+      return {
+        tableTotal,
+        snapshotTableTotal,
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+        snapshotDoneCost,
+        outputQpsMax: Math.ceil(outputQpsMax),
+        outputQpsAvg: Math.ceil(outputQpsAvg)
+      }
     },
 
     totalDataPercentage() {

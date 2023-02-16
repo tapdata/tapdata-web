@@ -602,5 +602,8 @@ export default {
   packages_dag_nodes_table_zengliangtongbufang: 'Incremental synchronization method',
   packages_dag_table_list_card_index_zanshimeiyoupi: 'There is no matching table yet',
   packages_dag_nodes_database_pipeidaodebiao: 'Matched table',
-  packages_dag_nodes_tableprocessor_biaomingchongfu: 'The table name is repeated'
+  packages_dag_nodes_tableprocessor_biaomingchongfu: 'The table name is repeated',
+  packages_dag_monitor_leftsider_zuidaQps: 'Maximum QPS(Q/S)',
+  packages_dag_monitor_leftsider_pingjunQps: 'Average QPS(Q/S)',
+  packages_dag_monitor_leftsider_quanliangwanchenghao: 'Time-consuming for full completion'
 }

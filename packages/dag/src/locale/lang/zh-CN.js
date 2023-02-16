@@ -364,7 +364,8 @@ export default {
   packages_dag_nodes_database_ddLshijian: 'DDL事件应用',
   packages_dag_nodes_database_kaiqihourenwu: '开启后任务将会自动采集选中的源端DDL事件',
   packages_dag_nodes_database_dongtaixinzengbiao: '动态新增表',
-  packages_dag_nodes_database_quanliangmeipici: '全量每批次读取的条数, 一般保持默认值即可, 如果你的下游较慢, 任务出现源的游标丢失的情况, 请调小此值',
+  packages_dag_nodes_database_quanliangmeipici:
+    '全量每批次读取的条数, 一般保持默认值即可, 如果你的下游较慢, 任务出现源的游标丢失的情况, 请调小此值',
   packages_dag_nodes_database_piliangduqutiao: '每批读取条数',
   packages_dag_nodes_database_zidingyi: '自定义',
   packages_dag_nodes_database_xuanzebiao: '选择表',
@@ -567,9 +568,13 @@ export default {
   packages_dag_nodes_table_zhidinglunxunzi: '指定轮询字段',
   packages_dag_nodes_table_lunxun: '字段轮询',
   packages_dag_nodes_table_rizhicdc: '实时日志解析',
-  packages_dag_nodes_table_tedingziduande: '实时日志方式使用数据源事务日志进行解析同步增量事件, 字段轮询通过对字段的轮询进行增量事件同步, 字段轮询往往无法同步删除事件',
+  packages_dag_nodes_table_tedingziduande:
+    '实时日志方式使用数据源事务日志进行解析同步增量事件, 字段轮询通过对字段的轮询进行增量事件同步, 字段轮询往往无法同步删除事件',
   packages_dag_nodes_table_zengliangtongbufang: '增量同步方式',
   packages_dag_table_list_card_index_zanshimeiyoupi: '暂时没有匹配的表',
   packages_dag_nodes_database_pipeidaodebiao: '匹配到的表',
-  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重复'
+  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重复',
+  packages_dag_monitor_leftsider_zuidaQps: '最大QPS(Q/S)',
+  packages_dag_monitor_leftsider_pingjunQps: '平均QPS(Q/S)',
+  packages_dag_monitor_leftsider_quanliangwanchenghao: '全量完成耗时'
 }

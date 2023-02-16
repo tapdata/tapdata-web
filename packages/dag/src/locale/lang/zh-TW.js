@@ -568,5 +568,8 @@ export default {
   packages_dag_nodes_table_zengliangtongbufang: '增量同步方式',
   packages_dag_table_list_card_index_zanshimeiyoupi: '暫時沒有匹配的表',
   packages_dag_nodes_database_pipeidaodebiao: '匹配到的表',
-  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重複'
+  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重複',
+  packages_dag_monitor_leftsider_zuidaQps: '最大QPS(Q/S)',
+  packages_dag_monitor_leftsider_pingjunQps: '平均QPS(Q/S)',
+  packages_dag_monitor_leftsider_quanliangwanchenghao: '全量完成耗時'
 }
