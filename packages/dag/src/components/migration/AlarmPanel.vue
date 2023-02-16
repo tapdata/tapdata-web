@@ -12,7 +12,7 @@ import FormRender from '../FormRender'
 import { debounce } from 'lodash'
 import { taskApi } from '@tap/api'
 
-export default observer({
+export default {
   name: 'SettingPanel',
   components: { FormRender },
   props: {
@@ -30,9 +30,7 @@ export default observer({
 
       schema: null,
 
-      form: createForm({
-        effects: this.useEffects
-      }),
+      form: createForm(),
 
       allNodesResult: []
     }
@@ -61,7 +59,6 @@ export default observer({
         }
       }
       this.loadSchema()
-      this.loadSchemaForm()
     }, 300),
 
     // 绑定表单事件
@@ -126,9 +123,14 @@ export default observer({
       })
     }, 300),
 
-    loadSchema() {
+    async loadSchema() {
       const nodeType = this.isNode ? this.getNodeType() : ''
       this.schema = null
+
+      await this.$nextTick()
+
+      this.loadSchemaForm()
+
       switch (nodeType) {
         case 'source':
         case 'target':
@@ -263,18 +265,22 @@ export default observer({
         alarmSettings = activeNode.alarmSettings || []
         alarmRules = activeNode.alarmRules || []
       }
-      const alarmRulesMap =
-        alarmRules.reduce((cur, next) => {
-          //单位转化
-          next.point = Math.ceil(next.point / 12) < 1 ? 1 : Math.ceil(next.point / 12)
-          next.ms = Math.ceil(next.ms / 1000) < 1 ? 1 : Math.ceil(next.ms / 1000)
-          return { ...cur, [next.key]: next }
-        }, {}) || {}
-      let values =
-        alarmSettings.reduce((cur, next) => {
-          return { ...cur, [next.key]: Object.assign({}, next, alarmRulesMap[next.key]) }
-        }, {}) || {}
-      this.form.setValues(values)
+      const alarmRulesMap = alarmRules.reduce((cur, next) => {
+        let rule = (cur[next.key] = { ...next })
+        //单位转化
+        rule.point = Math.ceil(next.point / 12) < 1 ? 1 : Math.ceil(next.point / 12)
+        rule.ms = Math.ceil(next.ms / 1000) < 1 ? 1 : Math.ceil(next.ms / 1000)
+        return cur
+      }, {})
+      let values = alarmSettings.reduce((cur, next) => {
+        cur[next.key] = { ...next, ...alarmRulesMap[next.key] }
+        return cur
+      }, {})
+
+      this.form = createForm({
+        values,
+        effects: this.useEffects
+      })
     },
 
     getSwitch(title, key = '') {
@@ -410,7 +416,7 @@ export default observer({
       return 'process'
     }
   }
-})
+}
 </script>
 <style lang="scss" scoped>
 .attr-panel {
