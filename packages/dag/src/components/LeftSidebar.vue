@@ -118,7 +118,7 @@
           </span>
           <!--创建新表作为节点使用-->
           <ElTooltip :content="$t('packages_dag_components_leftsidebar_chongxinjiazai')" placement="top">
-            <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable">
+            <StageButton :connection-id="activeConnection.id" @complete="loadDatabaseTable()">
               <VIcon class="click-btn refresh mr-1" size="16">refresh</VIcon>
             </StageButton>
           </ElTooltip>
@@ -162,39 +162,36 @@
             wrap-class="tb-list"
             :wrap-style="scrollbarWrapStyle"
           >
-            <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
+            <ElSkeleton v-show="tbLoading" class="position-absolute top-0 w-100 bg-white" :loading="tbLoading" animated>
               <template #template>
                 <div v-for="i in 5" :key="i" class="flex p-4 align-center">
                   <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
               </template>
-              <!--多加一层div包裹，避免骨架屏出现时，v-infinite-scroll指令dom指向骨架屏-->
-              <div>
-                <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pb-2">
-                  <div
-                    v-for="tb in tbList"
-                    v-mouse-drag="{
-                      item: tb,
-                      container: '#dfEditorContent',
-                      getDragDom,
-                      onStart: onTBStart,
-                      onMove,
-                      onDrop,
-                      onStop
-                    }"
-                    :key="tb.id"
-                    class="tb-item flex align-center px-2 user-select-none rounded-2"
-                    :class="{ grabbable: !stateIsReadonly }"
-                  >
-                    <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
-                  </div>
-                  <VEmpty v-if="!tbList.length" />
-                  <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
-                  </div>
-                </div>
-              </div>
             </ElSkeleton>
+            <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pb-2">
+              <div
+                v-for="tb in tbList"
+                v-mouse-drag="{
+                  item: tb,
+                  container: '#dfEditorContent',
+                  getDragDom,
+                  onStart: onTBStart,
+                  onMove,
+                  onDrop,
+                  onStop
+                }"
+                :key="tb.id"
+                class="tb-item flex align-center px-2 user-select-none rounded-2"
+                :class="{ grabbable: !stateIsReadonly }"
+              >
+                <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+              </div>
+              <VEmpty v-if="!tbList.length" />
+              <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+                {{ $t('packages_dag_loading') }}<span class="dotting"></span>
+              </div>
+            </div>
           </ElScrollbar>
         </div>
       </div>
@@ -385,7 +382,7 @@ export default {
 
     scrollbarWrapStyle() {
       let gutter = scrollbarWidth()
-      return `height: calc(100% + ${gutter}px);`
+      return `position:relative;height: calc(100% + ${gutter}px);`
     }
   },
 
@@ -708,7 +705,7 @@ export default {
     },
 
     scrollTopOfTableList() {
-      if (this.$refs.tbList) this.$refs.tbList.wrap.scrollTop = 0
+      if (this.$refs.tbList && this.$refs.tbList.wrap.scrollTop > 0) this.$refs.tbList.wrap.scrollTop = 0
     },
 
     handleShowTBInput() {
