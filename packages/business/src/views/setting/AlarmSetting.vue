@@ -45,6 +45,63 @@
         </el-select>
       </template>
     </VTable>
+    <section v-if="!isDaas">
+      <header class="flex justify-content-between mb-4 mt-4" style="border-bottom: 1px solid #ebeef5">
+        <div class="mb-4">Agent告警设置</div>
+      </header>
+      <ElForm ref="form" class="e-form" label-position="left" label-width="390px" :model="form">
+        <ElFormItem :label="$t('notify_agent_status_offline')" style="border-bottom: 1px solid #ebeef5">
+          <el-checkbox v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue">{{
+            $t('notify_sms_notification')
+          }}</el-checkbox>
+          <el-checkbox v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue">{{
+            $t('notify_email_notification')
+          }}</el-checkbox>
+          <br />
+          <el-tooltip
+            placement="top"
+            :content="$t('packages_business_notify_no_webchat_notification')"
+            v-if="!isOpenid && !isDaas"
+            ><el-checkbox
+              label="WECHAT"
+              v-if="!isDaas"
+              v-model="form.connectionInterrupted.weChat"
+              :disabled="!isOpenid"
+              >{{ $t('packages_business_notify_webchat_notification') }}</el-checkbox
+            ></el-tooltip
+          >
+          <el-checkbox
+            v-if="isOpenid && !isDaas"
+            v-model="form.connectionInterrupted.weChat"
+            size="mini"
+            :disabled="!isOpenid"
+            @change="handleSettingValue"
+          >
+            {{ $t('notify_webchat_notification') }}</el-checkbox
+          >
+        </ElFormItem>
+        <ElFormItem :label="$t('notify_agent_status_running')" style="border-bottom: 1px solid #ebeef5">
+          <el-checkbox v-model="form.connected.sms" size="mini" @change="handleSettingValue">{{
+            $t('notify_sms_notification')
+          }}</el-checkbox>
+          <el-checkbox v-model="form.connected.email" @change="handleSettingValue">{{
+            $t('notify_email_notification')
+          }}</el-checkbox>
+          <br />
+          <el-tooltip
+            placement="top"
+            :content="$t('packages_business_notify_no_webchat_notification')"
+            v-if="!isOpenid && !isDaas"
+            ><el-checkbox label="WECHAT" v-if="!isDaas" v-model="form.connected.weChat" :disabled="!isOpenid">{{
+              $t('packages_business_notify_webchat_notification')
+            }}</el-checkbox></el-tooltip
+          >
+          <el-checkbox v-if="isOpenid && !isDaas" v-model="form.connected.weChat" @change="handleSettingValue">{{
+            $t('notify_webchat_notification')
+          }}</el-checkbox>
+        </ElFormItem>
+      </ElForm>
+    </section>
     <footer class="flex justify-content-end mt-4">
       <el-button size="mini" @click="remoteMethod('close')">{{ $t('button_cancel') }}</el-button>
       <el-button size="mini" type="primary" @click="save()">{{ $t('button_save') }}</el-button>
@@ -147,13 +204,40 @@ export default {
       alarmRulesVisible: false,
       alarmData: [],
       tableData: [],
-      isOpenid: false
+      isOpenid: false,
+      form: {
+        connected: {
+          email: true,
+          sms: false,
+          weChat: false
+        },
+        connectionInterrupted: {
+          email: true,
+          sms: false,
+          weChat: false
+        },
+        stoppedByError: {
+          email: true,
+          sms: false,
+          weChat: false
+        }
+      },
+      userId: ''
     }
   },
   mounted() {
     this.remoteMethod()
     if (!this.isDaas) {
       //是否绑定微信
+      // 获取tm用户id
+      this.$axios.get('tm/api/users/self').then(data => {
+        if (data) {
+          this.userId = data.id
+          if (data.notification) {
+            this.form = data.notification
+          }
+        }
+      })
       this.isOpenid = window.__USER_INFO__?.openid
     }
   },
@@ -207,6 +291,12 @@ export default {
         this.alarmRulesVisible = false
         this.$message.success(this.$t('packages_business_message_save_ok'))
       })
+    },
+    handleSettingValue() {
+      let data = {
+        notification: this.form
+      }
+      this.$axios.patch(`tm/api/users/${this.userId}`, data)
     }
   }
 }
