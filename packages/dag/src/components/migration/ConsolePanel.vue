@@ -47,6 +47,13 @@
             class="log-list-item m-0 px-1"
           ><span class="log-list-item-level mr-1" :class="`log-${item.grade}`">[{{item.grade}}]</span><span>{{item.log}}</span></pre>
 
+          <pre v-if="warnNum || errorNum" class="flex m-0 px-1">
+            <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
+            <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('packages_dag_migration_consolepanel_ge') }}WARN,</span>
+            <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('packages_dag_migration_consolepanel_ge') }}ERROR,</span>
+            <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
+          </pre>
+
           <pre
             class="justify-content-center align-center m-0 p-1"
             :class="ifAuto || loading ? 'flex' : 'none'"
@@ -89,7 +96,10 @@ export default {
       nodeId: '',
       ifAuto: false,
       loading: false,
-      type: ''
+      type: '',
+      over: false,
+      warnNum: 0,
+      errorNum: 0
     }
   },
 
@@ -140,6 +150,10 @@ export default {
       const modelList = data.modelList || []
       this.loading = false
       this.logList = list.concat(modelList).concat(this.getResetList(resetList)) || []
+      const { warnNum = 0, errorNum = 0 } = data || {}
+      this.warnNum = warnNum
+      this.errorNum = errorNum
+      this.over = data.over
 
       const nodeList = []
       Object.keys(data.nodes).forEach(id => {
@@ -230,6 +244,20 @@ export default {
         }
       })
       return result
+    },
+
+    getList() {
+      return this.logList
+    },
+
+    getWarnAndError() {
+      const { warnNum = 0, errorNum = 0 } = this
+      return { warnNum, errorNum }
+    },
+
+    getData() {
+      const { warnNum = 0, errorNum = 0, over, logList } = this
+      return { warnNum, errorNum, over, logList }
     }
   }
 }

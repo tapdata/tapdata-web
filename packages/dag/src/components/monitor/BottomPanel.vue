@@ -3,13 +3,12 @@
     <NodeLog v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
     <div v-else class="panel-header flex h-100">
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column" key="bottomPanel">
-        <ElTabPane label="任务进度" name="milestone">
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
           <MilestoneList
             v-if="currentTab === 'milestone'"
             v-bind="$attrs"
             :currentTab="currentTab"
             ref="log"
-            title="整体进度"
           ></MilestoneList>
         </ElTabPane>
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_rizhi')" name="log">

@@ -348,7 +348,8 @@ export default {
 
       try {
         this.initWS()
-        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await taskApi.save(data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('packages_dag_message_save_ok'))
         this.setEditVersion(result.editVersion)
@@ -595,13 +596,15 @@ export default {
         }
       })
       const flag = await this.save(true)
+
       if (flag) {
         this.dataflow.disabledData.edit = true
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
-        this.gotoViewer()
-        this.buried('taskStart', { result: true })
+        this.beforeStartTask()
+        // this.gotoViewer()
+        // this.buried('taskStart', { result: true })
       } else {
         this.buried('taskStart', { result: false })
       }

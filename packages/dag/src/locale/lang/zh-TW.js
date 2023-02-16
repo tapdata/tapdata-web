@@ -184,6 +184,9 @@ export default {
   packages_dag_migration_configpanel_moxing: '模型',
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日誌',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: '當前檢測共發現',
+  packages_dag_migration_consolepanel_qingguanzhu: '請關注',
+  packages_dag_migration_consolepanel_ge: '個',
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '開啟數據校驗開關後，任務會自動對同步結果的一致性進行全量校驗和增量校驗，並會在運行監控頁面將校驗不一致的數據行數展示出來。需要注意，當任務符合以下情況時，即使開啟校驗開關任務也不會進行校驗\n 1. 添加了中間處理節點\n 2. 源連接不支持校驗\n 3. 目標連接不支持校驗',
   packages_dag_monitor_bottompanel_yunxingjilu: '運行記錄',
@@ -565,5 +568,13 @@ export default {
   packages_dag_nodes_table_zengliangtongbufang: '增量同步方式',
   packages_dag_table_list_card_index_zanshimeiyoupi: '暫時沒有匹配的表',
   packages_dag_nodes_database_pipeidaodebiao: '匹配到的表',
-  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重複'
+  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重複',
+  packages_dag_monitor_leftsider_zuidaQps: '最大QPS(Q/S)',
+  packages_dag_monitor_leftsider_pingjunQps: '平均QPS(Q/S)',
+  packages_dag_monitor_leftsider_quanliangwanchenghao: '全量完成耗時',
+  packages_dag_monitor_bottompanel_renwujindu: '任務進度',
+  packages_dag_src_editor_shaohouqidong: '稍後啟動',
+  packages_dag_src_editor_jixuqidong: '繼續啟動',
+  packages_dag_src_editor_renwubaocunjianceshi:
+    '任務保存檢測時發現了告警，可能會導致任務運行出現異常，建議您查看並解決告警後再啟動任務'
 }

@@ -689,7 +689,10 @@ export default {
             'currentSnapshotTableInsertRowTotal',
             'replicateLag',
             'snapshotStartAt',
-            'currentEventTimestamp'
+            'currentEventTimestamp',
+            'snapshotDoneCost',
+            'outputQpsMax',
+            'outputQpsAvg'
           ],
           type: 'instant' // 瞬时值
         },

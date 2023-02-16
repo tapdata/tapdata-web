@@ -194,6 +194,9 @@ export default {
   packages_dag_migration_configpanel_moxing: 'model',
   packages_dag_migration_configpanel_peizhi: 'Configuration',
   packages_dag_migration_consolepanel_quanburizhi: 'All logs',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: 'Current detection and co-discovery',
+  packages_dag_migration_consolepanel_qingguanzhu: 'Please pay attention',
+  packages_dag_migration_consolepanel_ge: 'a',
   packages_dag_migration_settingpanel_dangrenwufuhe:
     'When data verification is enabled, the task will automatically perform full verification and incremental verification for the data replication consistency. The verification results can be viewed on the Task Monitoring page. Note the verification currently does not support following scenarios, when one of the following happens, this feature will have no effect:\n 1. There is a processing node in the pipeline\n 2. The source connection does not support verification\n 3. The target connection does not support verification',
   packages_dag_monitor_bottompanel_yunxingjilu: 'Running record',
@@ -599,5 +602,13 @@ export default {
   packages_dag_nodes_table_zengliangtongbufang: 'Incremental synchronization method',
   packages_dag_table_list_card_index_zanshimeiyoupi: 'There is no matching table yet',
   packages_dag_nodes_database_pipeidaodebiao: 'Matched table',
-  packages_dag_nodes_tableprocessor_biaomingchongfu: 'The table name is repeated'
+  packages_dag_nodes_tableprocessor_biaomingchongfu: 'The table name is repeated',
+  packages_dag_monitor_leftsider_zuidaQps: 'Maximum QPS(Q/S)',
+  packages_dag_monitor_leftsider_pingjunQps: 'Average QPS(Q/S)',
+  packages_dag_monitor_leftsider_quanliangwanchenghao: 'Time-consuming for full completion',
+  packages_dag_monitor_bottompanel_renwujindu: 'Task Progress',
+  packages_dag_src_editor_shaohouqidong: 'Start later',
+  packages_dag_src_editor_jixuqidong: 'Continue to start',
+  packages_dag_src_editor_renwubaocunjianceshi:
+    'An alarm was found during task saving detection, which may cause the task to run abnormally. It is recommended that you check and resolve the alarm before starting the task'
 }

@@ -184,6 +184,9 @@ export default {
   packages_dag_migration_configpanel_moxing: '模型',
   packages_dag_migration_configpanel_peizhi: '配置',
   packages_dag_migration_consolepanel_quanburizhi: '全部日志',
+  packages_dag_migration_consolepanel_dangqianjiancefaxian: '当前检测共发现',
+  packages_dag_migration_consolepanel_qingguanzhu: '请关注',
+  packages_dag_migration_consolepanel_ge: '个',
   packages_dag_migration_settingpanel_dangrenwufuhe:
     '开启数据校验开关后，任务会自动对同步结果的一致性进行全量校验和增量校验，并会在运行监控页面将校验不一致的数据行数展示出来。需要注意，当任务符合以下情况时，即使开启校验开关任务也不会进行校验\n 1. 添加了中间处理节点\n 2. 源连接不支持校验\n 3. 目标连接不支持校验',
   packages_dag_monitor_bottompanel_yunxingjilu: '运行记录',
@@ -361,7 +364,8 @@ export default {
   packages_dag_nodes_database_ddLshijian: 'DDL事件应用',
   packages_dag_nodes_database_kaiqihourenwu: '开启后任务将会自动采集选中的源端DDL事件',
   packages_dag_nodes_database_dongtaixinzengbiao: '动态新增表',
-  packages_dag_nodes_database_quanliangmeipici: '全量每批次读取的条数, 一般保持默认值即可, 如果你的下游较慢, 任务出现源的游标丢失的情况, 请调小此值',
+  packages_dag_nodes_database_quanliangmeipici:
+    '全量每批次读取的条数, 一般保持默认值即可, 如果你的下游较慢, 任务出现源的游标丢失的情况, 请调小此值',
   packages_dag_nodes_database_piliangduqutiao: '每批读取条数',
   packages_dag_nodes_database_zidingyi: '自定义',
   packages_dag_nodes_database_xuanzebiao: '选择表',
@@ -564,9 +568,18 @@ export default {
   packages_dag_nodes_table_zhidinglunxunzi: '指定轮询字段',
   packages_dag_nodes_table_lunxun: '字段轮询',
   packages_dag_nodes_table_rizhicdc: '实时日志解析',
-  packages_dag_nodes_table_tedingziduande: '实时日志方式使用数据源事务日志进行解析同步增量事件, 字段轮询通过对字段的轮询进行增量事件同步, 字段轮询往往无法同步删除事件',
+  packages_dag_nodes_table_tedingziduande:
+    '实时日志方式使用数据源事务日志进行解析同步增量事件, 字段轮询通过对字段的轮询进行增量事件同步, 字段轮询往往无法同步删除事件',
   packages_dag_nodes_table_zengliangtongbufang: '增量同步方式',
   packages_dag_table_list_card_index_zanshimeiyoupi: '暂时没有匹配的表',
   packages_dag_nodes_database_pipeidaodebiao: '匹配到的表',
-  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重复'
+  packages_dag_nodes_tableprocessor_biaomingchongfu: '表名重复',
+  packages_dag_monitor_leftsider_zuidaQps: '最大QPS(Q/S)',
+  packages_dag_monitor_leftsider_pingjunQps: '平均QPS(Q/S)',
+  packages_dag_monitor_leftsider_quanliangwanchenghao: '全量完成耗时',
+  packages_dag_monitor_bottompanel_renwujindu: '任务进度',
+  packages_dag_src_editor_shaohouqidong: '稍后启动',
+  packages_dag_src_editor_jixuqidong: '继续启动',
+  packages_dag_src_editor_renwubaocunjianceshi:
+    '任务保存检测时发现了告警，可能会导致任务运行出现异常，建议您查看并解决告警后再启动任务'
 }
