@@ -596,53 +596,18 @@ export default {
         }
       })
       const flag = await this.save(true)
-      this.checkWarnAndError()
 
       if (flag) {
         this.dataflow.disabledData.edit = true
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
+        this.beforeStartTask()
         // this.gotoViewer()
         // this.buried('taskStart', { result: true })
       } else {
-        // this.buried('taskStart', { result: false })
+        this.buried('taskStart', { result: false })
       }
-    },
-
-    checkWarnAndError() {
-      const { warnNum, errorNum, over } = this.$refs.console?.getData() || {}
-      if (!over) {
-        setTimeout(this.checkWarnAndError, 800)
-      } else {
-        if (warnNum && errorNum) {
-          this.$confirm(i18n.t('packages_dag_src_editor_renwubaocunjianceshi'), '', {
-            type: 'warning',
-            confirmButtonText: i18n.t('packages_dag_src_editor_jixuqidong'),
-            cancelButtonText: i18n.t('packages_dag_src_editor_shaohouqidong')
-          }).then(resFlag => {
-            if (resFlag) {
-              this.startTask()
-              return
-            }
-            this.buried('taskStart', { result: false })
-          })
-        } else {
-          this.startTask()
-        }
-      }
-    },
-
-    startTask() {
-      taskApi
-        .batchStart([this.dataflow.id])
-        .then(() => {
-          this.buried('taskStart', { result: true })
-          this.gotoViewer()
-        })
-        .catch(() => {
-          this.buried('taskStart', { result: false })
-        })
     }
   }
 }
