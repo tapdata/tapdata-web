@@ -162,7 +162,7 @@ export default observer({
                   //   'DATANODE_TCP_CONNECT_CONSUME.ms'
                   // ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_jiedianpingjunchu'),
+                    i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
                     'DATANODE_AVERAGE_HANDLE_CONSUME.notify'
                   ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
@@ -186,7 +186,7 @@ export default observer({
                 type: 'void',
                 properties: {
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_jiedianpingjunchu'),
+                    i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify'
                   ),
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
