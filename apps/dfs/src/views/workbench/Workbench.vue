@@ -64,7 +64,6 @@
                 <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
               </div>
             </div>
-            <div class="text-center explore-examples-ellipsis">{{ item.title }}{{ item.subTitle }}</div>
           </li>
         </ul>
       </div>
@@ -317,6 +316,7 @@ export default {
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_jiangshujudaoru'),
+          subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
           img: 'table-store',
           url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
