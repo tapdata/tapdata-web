@@ -534,6 +534,12 @@ export default observer({
   watch: {
     stateIsReadonly(v) {
       this.form.setState({ disabled: v })
+      if (v) {
+        // 监控模式禁用
+        this.form.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+          disabled: true
+        })
+      }
     },
 
     accessNodeProcessIdArr: {
