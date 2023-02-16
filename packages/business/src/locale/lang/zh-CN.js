@@ -759,5 +759,11 @@ export default {
   packages_business_notify_notice_level: '消息级别',
   packages_business_notify_no_notice: '暂无通知',
   packages_business_notify_no_webchat_notification:
-    '您的账户还没有进行微信绑定，如需通过微信接收通知信息，请先退出登录后通过微信扫码完成绑定'
+    '您的账户还没有进行微信绑定，如需通过微信接收通知信息，请先退出登录后通过微信扫码完成绑定',
+
+  packages_business_custom_node_name: '节点名称',
+  packages_business_new: '新增',
+  packages_business_desc: '描述',
+  packages_business_last_updated: '更新时间',
+  packages_business_custom_node_placeholder: '请输入节点名称搜索'
 }

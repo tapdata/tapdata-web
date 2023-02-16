@@ -15,6 +15,7 @@ import VerificationHistory from './verification/History'
 import VerificationResult from './verification/Result'
 import AlarmSetting from './setting/AlarmSetting'
 import AlarmNotification from './setting/AlarmNotification'
+import CustomNodeList from './custom-node/List'
 
 export {
   ConnectionForm,
@@ -33,7 +34,8 @@ export {
   VerificationHistory,
   VerificationResult,
   AlarmSetting,
-  AlarmNotification
+  AlarmNotification,
+  CustomNodeList
 }
 
 export * from './connections/util'

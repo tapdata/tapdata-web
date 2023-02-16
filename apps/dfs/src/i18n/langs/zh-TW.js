@@ -1177,5 +1177,9 @@ export default {
   dfs_data_server_apply_for_trial: '申請試用',
   dfs_data_server_apply_for_version: '線下部署版',
 
-  dfs_data_dashboard_Marquee: '當前demo環境為只讀環境，僅支持查看和體驗產品功能'
+  dfs_data_dashboard_Marquee: '當前demo環境為只讀環境，僅支持查看和體驗產品功能',
+
+  page_title_custom_node: '自定義節點',
+  packages_nodeDesign_custom_node_name_required: '請輸入節點名稱',
+  packages_nodeDesign_message_save_ok: '保存成功'
 }

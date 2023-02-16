@@ -1,25 +1,25 @@
 <template>
-  <section class="function-list-wrapper h-100">
+  <section class="px-6 pb-6 h-100">
     <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
         <ElButton type="primary" class="btn-create" size="mini" @click="toCreate">
-          <span>{{ $t('button_button') }}</span>
+          <span>{{ $t('packages_business_new') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn :label="$t('custom_node_name')" prop="name"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_describe_label')" prop="desc"> </ElTableColumn>
+      <ElTableColumn :label="$t('packages_business_custom_node_name')" prop="name"> </ElTableColumn>
+      <ElTableColumn :label="$t('packages_business_desc')" prop="desc"> </ElTableColumn>
 
-      <ElTableColumn prop="createTime" :label="$t('column_create_time')"></ElTableColumn>
+      <ElTableColumn prop="createTime" :label="$t('packages_business_column_create_time')"></ElTableColumn>
       <ElTableColumn
         prop="last_updated"
         sortable="last_updated"
-        :label="$t('function_last_update_label')"
+        :label="$t('packages_business_last_updated')"
       ></ElTableColumn>
 
-      <ElTableColumn width="150" :label="$t('column_operation')">
+      <ElTableColumn width="150" :label="$t('packages_business_column_operation')">
         <template #default="{ row }">
           <ElLink type="primary" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
@@ -34,7 +34,8 @@
 import dayjs from 'dayjs'
 import { customNodeApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage, makeStatusAndDisabled } from '@tap/business'
+import { TablePage } from '../../components'
+import { makeStatusAndDisabled } from '../../shared'
 
 export default {
   components: { FilterBar, TablePage },
@@ -42,18 +43,13 @@ export default {
     return {
       filterItems: [
         {
-          placeholder: this.$t('custom_node_name_placeholder'),
+          placeholder: this.$t('packages_business_custom_node_placeholder'),
           key: 'name',
           type: 'input'
         }
       ],
       searchParams: {
         name: ''
-      },
-      typeMapping: {
-        custom: this.$t('function_type_option_custom'),
-        jar: this.$t('function_type_option_jar'),
-        system: this.$t('function_type_option_system')
       },
       order: 'last_updated DESC'
     }

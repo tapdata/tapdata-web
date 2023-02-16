@@ -117,7 +117,8 @@
                   'migrateList',
                   'dataflowList',
                   'connectionsList',
-                  'users'
+                  'users',
+                  'customNodeList'
                 ].includes($route.name)
               },
               {
@@ -128,7 +129,8 @@
                   'migrateList',
                   'dataflowList',
                   'connectionsList',
-                  'users'
+                  'users',
+                  'customNodeList'
                 ].includes($route.name)
               }
             ]"

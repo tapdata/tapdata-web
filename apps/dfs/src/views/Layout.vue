@@ -109,6 +109,12 @@ export default {
           beta: true
         },
         {
+          name: 'customNodeList',
+          title: $t('page_title_custom_node'),
+          icon: 'custom',
+          beta: true
+        },
+        {
           name: 'dataServerList',
           title: $t('dfs_data_server'),
           icon: 'data-server'

@@ -1204,5 +1204,9 @@ export default {
   dfs_data_server_apply_for_trial: '申请试用',
   dfs_data_server_apply_for_version: '线下部署版',
 
-  dfs_data_dashboard_Marquee: '当前demo环境为只读环境，仅支持查看和体验产品功能'
+  dfs_data_dashboard_Marquee: '当前demo环境为只读环境，仅支持查看和体验产品功能',
+
+  page_title_custom_node: '自定义节点',
+  packages_nodeDesign_custom_node_name_required: '请输入节点名称',
+  packages_nodeDesign_message_save_ok: '保存成功'
 }

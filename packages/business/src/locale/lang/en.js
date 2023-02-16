@@ -774,5 +774,11 @@ export default {
   packages_business_setting_alarmnotification_morengaojinggui: 'Default alarm rule',
   packages_business_setting_alarmnotification_renwugaojingshe: 'Task alarm setting',
   packages_business_notify_no_webchat_notification:
-    'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.'
+    'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.',
+
+  packages_business_custom_node_name: 'Node Name',
+  packages_business_new: 'Add',
+  packages_business_desc: 'Description',
+  packages_business_last_updated: 'Update time',
+  packages_business_custom_node_placeholder: 'Please enter the node name to search'
 }
