@@ -18,6 +18,10 @@ const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
 }
+const CustomNodeList = async () => {
+  const { CustomNodeList } = await import('@tap/business')
+  return CustomNodeList
+}
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
@@ -629,8 +633,7 @@ export default [
           {
             path: '',
             name: 'customNodeList',
-            component: () =>
-              import(/* webpackChunkName: "custom-proccessor-node" */ '@/views/custom-proccessor-node/List'),
+            component: CustomNodeList,
             meta: {
               title: 'page_title_custom_node',
               code: 'v2_custom_node_menu'
