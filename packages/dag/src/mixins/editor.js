@@ -1084,6 +1084,7 @@ export default {
           someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
             val1: node.name
           })
+          this.handleLocateNode(node)
           return true
         }
 
@@ -1707,8 +1708,10 @@ export default {
     },
 
     handleLocateNode(node) {
-      this.$refs.paperScroller.centerNode(node)
       this.nodeSelectedById(node.id, true, true)
+      setTimeout(() => {
+        this.$refs.paperScroller.centerNode(node)
+      }, 300)
     },
 
     async handleStart() {
