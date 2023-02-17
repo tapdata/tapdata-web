@@ -178,20 +178,20 @@
 </template>
 
 <script>
-import 'web-core/assets/icons/svg/magnify.svg'
-import 'web-core/assets/icons/svg/table.svg'
-import 'web-core/assets/icons/svg/javascript.svg'
-import 'web-core/assets/icons/svg/joint-cache.svg'
-import 'web-core/assets/icons/svg/row-filter.svg'
-import 'web-core/assets/icons/svg/aggregator.svg'
-import 'web-core/assets/icons/svg/field-processor.svg'
-import 'web-core/assets/icons/svg/join.svg'
-import 'web-core/assets/icons/svg/custom-node.svg'
-import 'web-core/assets/icons/svg/merge_table.svg'
-import 'web-core/assets/icons/svg/field_calc.svg'
-import 'web-core/assets/icons/svg/field_add_del.svg'
-import 'web-core/assets/icons/svg/field_rename.svg'
-import 'web-core/assets/icons/svg/field_mod_type.svg'
+import '@tap/assets/icons/svg/magnify.svg'
+import '@tap/assets/icons/svg/table.svg'
+import '@tap/assets/icons/svg/javascript.svg'
+import '@tap/assets/icons/svg/joint-cache.svg'
+import '@tap/assets/icons/svg/row-filter.svg'
+import '@tap/assets/icons/svg/aggregator.svg'
+import '@tap/assets/icons/svg/field-processor.svg'
+import '@tap/assets/icons/svg/join.svg'
+import '@tap/assets/icons/svg/custom-node.svg'
+import '@tap/assets/icons/svg/merge_table.svg'
+import '@tap/assets/icons/svg/field_calc.svg'
+import '@tap/assets/icons/svg/field_add_del.svg'
+import '@tap/assets/icons/svg/field_rename.svg'
+import '@tap/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
@@ -440,7 +440,7 @@ export default {
     },
 
     genIconSrc(item) {
-      return require(`web-core/assets/icons/node/${item.databaseType}.svg`)
+      return require(`assets/icons/node/${item.databaseType}.svg`)
     },
 
     async getDragDom() {

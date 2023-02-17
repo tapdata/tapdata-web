@@ -130,14 +130,14 @@ module.exports = {
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
-    const webCoreIconDir = resolve('../../packages/web-core/assets/icons/svg')
+    const assetsIconDir = resolve('../../packages/assets/icons/svg')
 
     // svg loader排除 icon 目录
     config.module
       .rule('svg')
       .exclude.add(iconDir)
       .add(colorIconDir)
-      .add(webCoreIconDir)
+      .add(assetsIconDir)
       .end()
       .use('svgo-loader')
       .loader('svgo-loader')
@@ -148,7 +148,7 @@ module.exports = {
       .rule('svg-sprite')
       .test(/\.svg$/)
       .include.add(iconDir)
-      .add(webCoreIconDir)
+      .add(assetsIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -219,7 +219,7 @@ module.exports = {
       .loader('markdown-loader')
       .end()
 
-    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
+    config.resolve.alias.set('@', resolve('src'))
     config.plugins.delete('prefetch-index')
 
     // ============ ts处理 ============

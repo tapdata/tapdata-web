@@ -267,7 +267,7 @@ export default {
       if (!type) {
         type = 'default'
       }
-      return require(`web-core/assets/icons/node/${type.toLowerCase()}.svg`)
+      return require(`assets/icons/node/${type.toLowerCase()}.svg`)
     },
     transformData(row) {
       row.database_host = row.config.host

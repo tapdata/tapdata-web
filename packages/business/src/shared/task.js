@@ -86,7 +86,7 @@ export function getNodeIconSrc(node) {
     return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
-  return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+  return icon ? require(`assets/icons/node/${icon}.svg`) : null
 }
 
 export const STATUS_MAP = {

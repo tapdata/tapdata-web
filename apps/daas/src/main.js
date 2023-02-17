@@ -6,9 +6,9 @@ import store from '@/vuex' // 引入全局数据控制
 import i18n from './i18n'
 import VueClipboard from 'vue-clipboard2'
 // import factory from '@/api/factory'
-import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
+import WSClient from '@tap/business/src/shared/ws-client'
 import { VIcon } from '@tap/component'
 import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
@@ -27,8 +27,18 @@ import { configUser, getUrlSearch } from '@/utils/util'
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
-Vue.use(TapdataWebCore)
 Vue.use(FormBuilder)
+
+Vue.mixin({
+  created() {
+    // 创建实例时传入wsOptions，即可默认开启websocket
+    let wsOptions = this.$options.wsOptions
+    // 根实例才有ws
+    if (wsOptions) {
+      Vue.prototype.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
+    }
+  }
+})
 
 // Vue.prototype.$api = factory
 

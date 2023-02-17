@@ -39,9 +39,9 @@
 </template>
 
 <script>
-import 'web-core/assets/icons/svg/component.svg'
-import 'web-core/assets/icons/svg/outline.svg'
-import 'web-core/assets/icons/svg/history.svg'
+import '@tap/assets/icons/svg/component.svg'
+import '@tap/assets/icons/svg/outline.svg'
+import '@tap/assets/icons/svg/history.svg'
 
 import {
   Designer,

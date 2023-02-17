@@ -7,7 +7,7 @@ export function getNodeIconSrc(node) {
     return getConnectionIcon(pdkHash)
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
-  return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+  return icon ? require(`assets/icons/node/${icon}.svg`) : null
 }
 
 const takeFieldValue = (schema, fieldName) => {
