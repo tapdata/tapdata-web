@@ -256,8 +256,8 @@ export default {
     },
     save() {
       //合并agent停止时
-      this.tableData = [...this.tableData, ...this.currentData]
-      settingsApi.saveAlarm(this.tableData).then(() => {
+      let data = [...this.tableData, ...this.currentData]
+      settingsApi.saveAlarm(data).then(() => {
         this.$message.success(i18n.t('packages_business_message_save_ok'))
         if (!this.isDaas) {
           this.$emit('updateVisible', false)

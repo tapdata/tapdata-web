@@ -75,6 +75,7 @@
       width="1024px"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
+      destroy-on-close
     >
       <AlarmSetting @updateVisible="dialogVisible = false"></AlarmSetting>
     </ElDialog>
