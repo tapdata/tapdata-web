@@ -10,7 +10,7 @@
       @drop.stop="handleDrop($event, item)"
     >
       <div class="item__header flex p-3">
-        <NodeIcon :node="item" :size="20" class="item__icon mt-1 rounded-circle" />
+        <NodeIcon :node="item" :size="20" class="item__icon mt-1" />
         <div class="flex-fill ml-2">
           <div class="flex justify-content-between">
             <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
