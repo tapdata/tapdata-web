@@ -313,6 +313,9 @@ export default {
         color: map-get($iconFillColor, normal);
       }
       &.is-active {
+        background-color: #eaf0ff;
+      }
+      &.is-active {
         ::v-deep .v-icon {
           color: map-get($color, primary);
         }
