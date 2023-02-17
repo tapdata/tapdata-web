@@ -186,89 +186,71 @@ export default {
     },
 
     makeMigrateTask(from, to) {
-      let source = uuid()
-      let target = uuid()
+      let source = this.getDatabaseNode(fromConnection)
+      let target = this.getDatabaseNode(to)
+
+      Object.assign(source, {
+        migrateTableSelectType: 'expression',
+        tableExpression: '.*'
+      })
+
       return {
         ...DEFAULT_SETTINGS,
         syncType: 'migrate',
         name: this.dialogConfig.taskName,
         dag: {
-          edges: [{ source, target }],
-          nodes: [
-            {
-              id: source,
-              name: from.name,
-              connectionId: from.id,
-              databaseType: from.database_type,
-              migrateTableSelectType: 'expression',
-              tableExpression: '.*',
-              attrs: {
-                connectionName: from.name,
-                connectionType: from.connection_type,
-                accessNodeProcessId: from.accessNodeProcessId,
-                pdkType: from.pdkType,
-                pdkHash: from.pdkHash,
-                capabilities: from.capabilities || []
-              }
-            },
-            {
-              id: target,
-              name: to.name,
-              connectionId: to.id,
-              databaseType: to.database_type,
-              attrs: {
-                connectionName: to.name,
-                connectionType: to.connection_type,
-                accessNodeProcessId: to.accessNodeProcessId,
-                pdkType: to.pdkType,
-                pdkHash: to.pdkHash,
-                capabilities: to.capabilities || []
-              }
-            }
-          ]
+          edges: [{ source: source.id, target: target.id }],
+          nodes: [source, target]
+        }
+      }
+    },
+
+    getDatabaseNode(db) {
+      return {
+        id: uuid(),
+        type: 'database',
+        name: db.name,
+        connectionId: db.id,
+        databaseType: db.database_type,
+        attrs: {
+          connectionName: db.name,
+          connectionType: db.connection_type,
+          accessNodeProcessId: db.accessNodeProcessId,
+          pdkType: db.pdkType,
+          pdkHash: db.pdkHash,
+          capabilities: db.capabilities || []
+        }
+      }
+    },
+
+    getTableNode(db, tableName) {
+      return {
+        id: uuid(),
+        type: 'table',
+        name: tableName,
+        tableName,
+        connectionId: db.id,
+        databaseType: db.database_type,
+        attrs: {
+          connectionName: db.name,
+          connectionType: db.connection_type,
+          accessNodeProcessId: db.accessNodeProcessId,
+          pdkType: db.pdkType,
+          pdkHash: db.pdkHash,
+          capabilities: db.capabilities || []
         }
       }
     },
 
     makeSyncTask(fromConnection, tableName, to) {
-      let source = uuid()
-      let target = uuid()
+      let source = this.getTableNode(fromConnection, tableName)
+      let target = this.getTableNode(to, tableName)
       return {
         ...DEFAULT_SETTINGS,
         name: this.dialogConfig.taskName,
         dag: {
-          edges: [{ source, target }],
-          nodes: [
-            {
-              id: source,
-              name: tableName,
-              tableName,
-              connectionId: fromConnection.id,
-              databaseType: fromConnection.database_type,
-              attrs: {
-                connectionName: fromConnection.name,
-                connectionType: fromConnection.connection_type,
-                accessNodeProcessId: fromConnection.accessNodeProcessId,
-                pdkType: fromConnection.pdkType,
-                pdkHash: fromConnection.pdkHash,
-                capabilities: fromConnection.capabilities || []
-              }
-            },
-            {
-              id: target,
-              name: 'NEW__' + tableName,
-              connectionId: to.id,
-              databaseType: to.database_type,
-              attrs: {
-                connectionName: to.name,
-                connectionType: to.connection_type,
-                accessNodeProcessId: to.accessNodeProcessId,
-                pdkType: to.pdkType,
-                pdkHash: to.pdkHash,
-                capabilities: to.capabilities || []
-              }
-            }
-          ]
+          edges: [{ source: source.id, target: target.id }],
+          nodes: [source, target]
         }
       }
     },
@@ -293,8 +275,10 @@ export default {
       }
 
       this.dialogConfig.visible = false
+
       let taskInfo = await taskApi.post(task)
       const taskList = to.taskList || []
+
       taskList.push(taskInfo)
       this.$set(to, 'taskList', taskList)
       this.$message.success('任务创建成功')
@@ -303,21 +287,14 @@ export default {
     handleEditInDag(task) {
       if (!task.id) return
 
-      if (task.syncType === 'migrate') {
-        this.$router.push({
-          name: 'MigrateEditor',
+      window.open(
+        this.$router.resolve({
+          name: task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor',
           params: {
             id: task.id
           }
-        })
-      } else {
-        this.$router.push({
-          name: 'DataflowEditor',
-          params: {
-            id: task.id
-          }
-        })
-      }
+        }).href
+      )
     }
   }
 }
