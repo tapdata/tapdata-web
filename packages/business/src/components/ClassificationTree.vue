@@ -689,6 +689,10 @@ export default {
 <style lang="scss">
 $nodeH: 28px;
 .ldp-tree {
+  &.el-tree.is-dragging.is-drop-not-allow .el-tree-node__content {
+    cursor: default;
+  }
+
   .el-tree-node {
     &__content {
       height: $nodeH;

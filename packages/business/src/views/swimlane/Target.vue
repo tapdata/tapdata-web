@@ -141,6 +141,7 @@ export default {
 
     handleDragOver(ev) {
       ev.preventDefault()
+      ev.dataTransfer.dropEffect = 'copy'
     },
 
     handleDragEnter(ev) {

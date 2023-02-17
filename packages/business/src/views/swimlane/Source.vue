@@ -159,8 +159,8 @@ export default {
         ev.currentTarget.querySelector('.tree-item-icon'),
         draggingNode.data.name
       )
-      let { dataTransfer } = ev
-      dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
+      ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
+      ev.dataTransfer.effectAllowed = 'copy'
       this.dragState.isDragging = true
       this.dragState.draggingObjects = [draggingNode]
       this.dragState.form = 'SOURCE'
