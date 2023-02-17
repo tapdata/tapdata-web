@@ -19,7 +19,7 @@ export default {
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
   packages_dag_dataFlow_setting_intellect: '智能去重写入',
   packages_dag_dataFlow_setting_compel: '强制去重写入',
-  packages_dag_dataFlow_SyncInfo_localTZType: '用户浏览器时区',
+  packages_dag_dataFlow_SyncInfo_localTZType: '用户指定时间',
   packages_dag_dataFlow_SyncInfo_connTZType: '数据库时区',
   packages_dag_dataFlow_SyncInfo_currentType: '此刻',
   packages_dag_dag_property_setting: '属性设置',
