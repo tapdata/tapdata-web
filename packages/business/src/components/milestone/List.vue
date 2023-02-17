@@ -345,7 +345,7 @@ export default {
         snapshotDoneAt,
         snapshotStartAt
       } = data
-      const progress = snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
+      const progress = snapshotTableTotal && tableTotal ? Math.round((snapshotTableTotal / tableTotal) * 100) : 0
       const usedTime = Time.now() - snapshotStartAt
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
