@@ -2029,7 +2029,7 @@ export default {
       if (!over) {
         setTimeout(this.beforeStartTask, 800)
       } else {
-        if (warnNum && errorNum) {
+        if (warnNum || errorNum) {
           this.$confirm(i18n.t('packages_dag_src_editor_renwubaocunjianceshi'), '', {
             type: 'warning',
             confirmButtonText: i18n.t('packages_dag_src_editor_jixuqidong'),
