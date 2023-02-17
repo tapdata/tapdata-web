@@ -605,7 +605,7 @@ export default {
   packages_dag_nodes_tableprocessor_biaomingchongfu: 'The table name is repeated',
   packages_dag_monitor_leftsider_zuidaQps: 'Maximum QPS(Q/S)',
   packages_dag_monitor_leftsider_pingjunQps: 'Average QPS(Q/S)',
-  packages_dag_monitor_leftsider_quanliangwanchenghao: 'Time-consuming for full completion',
+  packages_dag_monitor_leftsider_quanliangwanchenghao: 'Full Sync Duration',
   packages_dag_monitor_bottompanel_renwujindu: 'Task Progress',
   packages_dag_src_editor_shaohouqidong: 'Start later',
   packages_dag_src_editor_jixuqidong: 'Continue to start',
