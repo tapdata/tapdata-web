@@ -742,10 +742,10 @@ export default {
   packages_business_connections_databaseform_moxingjiazaipin: 'Model Load Frequency',
   packages_business_connections_list_biaojiegougengxin: 'Table structure update time',
 
-  notify_sms_notification: 'SMS Notification',
-  notify_email_notification: 'Email Notification',
-  notify_webchat_notification: 'WeChat Notification',
-  notify_system_notice: 'System Notification',
+  packages_business_notify_sms_notification: 'SMS Notification',
+  packages_business_notify_email_notification: 'Email Notification',
+  packages_business_notify_webchat_notification: 'WeChat Notification',
+  packages_business_notify_system_notice: 'System Notification',
   packages_business_notify_alarm_title: 'Agent Alarm Setting',
   packages_business_setting_alarm_notification_notify_noticeInterval: 'Send Interval',
   packages_business_setting_alarm_notification_describtion: 'Description',
@@ -769,11 +769,18 @@ export default {
   packages_business_setting_alarmnotification_msshigaojing: 'Alarm when s',
   packages_business_setting_alarmnotification_gedian: 'Minutes',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
+
+  packages_business_notify_user_all_notice: 'All',
+  packages_business_notify_unread_notice: 'Unread Message',
+  packages_business_notify_mask_read: 'Mark this page as read',
+  packages_business_notify_mask_read_all: 'Mark All Read',
+  packages_business_notify_no_notice: 'No Notice',
+
   packages_business_setting_alarmnotification_cichugaojinggui:
     'The alarm rule setting here is the system global alarm rule setting, and the priority of the alarm rule setting on the task running monitoring page is higher than the system global setting',
   packages_business_setting_alarmnotification_renwumorengao: 'Task default alarm rule setting',
-  packages_business_setting_alarmnotification_morengaojinggui: 'Default alarm rule',
-  packages_business_setting_alarmnotification_renwugaojingshe: 'Task alarm setting',
+  packages_business_setting_alarmnotification_morengaojinggui: 'Default Alarm Rule',
+  packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alarm Setting',
   packages_business_notify_no_webchat_notification:
     'Your account has not been bound to WeChat. If you want to receive notification information through WeChat, please log out and log in first and then scan the code to complete the binding through WeChat.',
   packages_business_connections_databaseform_bujiazai: 'not loaded',
@@ -781,6 +788,6 @@ export default {
   packages_business_custom_node_name: 'Node Name',
   packages_business_new: 'Add',
   packages_business_desc: 'Description',
-  packages_business_last_updated: 'Update time',
+  packages_business_last_updated: 'Update Time',
   packages_business_custom_node_placeholder: 'Please enter the node name to search'
 }

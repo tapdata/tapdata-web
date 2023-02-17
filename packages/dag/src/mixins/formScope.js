@@ -616,7 +616,7 @@ export default {
             item.status === 'running'
               ? i18n.t('packages_business_agent_status_running')
               : i18n.t('packages_business_agent_status_stopped')
-          }）（${item.ip}）`,
+          }）`,
           disabled: item.status !== 'running'
         }
       })

@@ -726,6 +726,7 @@ export default {
   notify_email_notification: '郵件通知',
   notify_system_notice: '系统通知',
   packages_business_notify_alarm_title: 'Agent告警设置',
+
   packages_business_setting_alarm_notification_notify_noticeInterval: '发送间隔',
   packages_business_setting_alarm_notification_describtion: '描述',
   packages_business_setting_notification_alarm_notification_gaojingtongzhi: '告警通知',
@@ -751,6 +752,17 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任務默認告警規則設置',
   packages_business_setting_alarmnotification_morengaojinggui: '默認告警規則',
   packages_business_setting_alarmnotification_renwugaojingshe: '任務告警設置',
+
+  //消息通知
+
+  packages_business_notify_user_all_notice: '全部通知',
+  packages_business_notify_unread_notice: '未讀消息',
+  packages_business_notify_mask_read: '標記本頁為已讀',
+  packages_business_notify_mask_read_all: '標記全部為已讀',
+  packages_business_notify_notice_type: '消息類型',
+  packages_business_notify_notice_level: '消息級別',
+  packages_business_notify_no_notice: '暫無通知',
+
   packages_business_notify_no_webchat_notification:
     '您的賬戶還沒有進行微信綁定，如需通過微信接收通知信息，請先退出登錄後通過微信掃碼完成綁定',
   packages_business_connections_databaseform_bujiazai: '不加載',
