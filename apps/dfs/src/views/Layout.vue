@@ -130,7 +130,7 @@ export default {
     }
   },
   created() {
-    this.loadChat()
+    // this.loadChat()
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []

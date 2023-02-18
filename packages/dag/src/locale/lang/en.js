@@ -345,7 +345,7 @@ export default {
   packages_dag_mixins_editor_jiedianjiaoyancuo: 'Node check error',
   packages_dag_mixins_editor_shanchulianjie: 'Delete connection',
   packages_dag_mixins_editor_initV: 'Monitor enabled by initView-dataflowEdit',
-  packages_dag_mixins_editor_xinrenwu: 'New task@',
+  packages_dag_mixins_editor_xinrenwu: 'New Task@',
   packages_dag_mixins_editor_source: "'{val1}' does not support the node '{val2}' as a target",
   packages_dag_mixins_editor_gaijiedianta: 'The node "{val1}" is only supported as a source',
   packages_dag_mixins_editor_gaijiedianyijing: 'The node has reached the maximum connection limit',

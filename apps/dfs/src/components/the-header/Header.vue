@@ -14,21 +14,12 @@
         <div v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'" class="block">
           <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
         </div>
-        <div class="command-item mr-6" @click="command('op')">
-          <span class="cursor-pointer">{{ $t('dfs_data_server_apply_for_version') }}</span>
+
+        <div class="command-item mr-6" v-for="item in topBarLinks" @click="handleGo(item)">
+          <VIcon v-if="item.icon" class="mr-2" size="17">{{ item.icon }}</VIcon>
+          <span class="cursor-pointer">{{ $t(item.text) }}</span>
         </div>
-        <div class="command-item mr-6" @click="command('v2')">
-          <VIcon class="mr-2" size="17">navigation_general</VIcon>
-          <span class="cursor-pointer">{{ $t('header_upgrade') }}</span>
-        </div>
-        <div class="command-item mr-6 flex align-items-center" @click="command('support')">
-          <VIcon class="mr-2" size="17">question</VIcon>
-          <span>{{ $t('header_technical_support') }}</span>
-        </div>
-        <div class="command-item mr-6 flex align-items-center" @click="command('handbook')">
-          <VIcon class="mr-2" size="17">send</VIcon>
-          <span>{{ $t('header_manual') }}</span>
-        </div>
+
         <NotificationPopover class="command-item mr-2 flex align-items-center"></NotificationPopover>
         <ElDropdown class="mr-2" placement="bottom" @command="changeLanguage">
           <span class="cursor-pointer command-item icon-btn">
@@ -83,6 +74,8 @@ export default {
     return {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
+      topBarLinks: window.__config__?.topBarLinks,
+      officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
       lang: '',
       languages: langMenu,
       paidPlansCode: '',
@@ -108,7 +101,7 @@ export default {
           window.open('https://cloud.tapdata.net/contact.html', '_blank')
           break
         case 'home':
-          window.open('https://tapdata.net/', '_blank')
+          window.open(this.officialWebsiteAddress, '_blank')
           break
         case 'v2':
           window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
@@ -167,6 +160,11 @@ export default {
       this.$axios.get('api/tcm/user/paidPlan').then(data => {
         this.paidPlansCode = data?.paidPlans?.[0].code
       })
+    },
+
+    //处理跳转
+    handleGo(item) {
+      window.open(item.link, '_blank')
     }
   }
 }

@@ -1,4 +1,25 @@
 {
   "ENV": "test",
-  "USER_CENTER": "https://tapdata.authing.cn/u"
+  "USER_CENTER": "https://tapdata.authing.cn/u",
+  "topBarLinks": [{
+    "text": "dfs_data_server_apply_for_version", //线下部署
+    "link": "https://tapdata.net/tapdata-on-prem/demo.html",
+    "type": "op"
+  },{
+    "text": "header_upgrade", //旧版本访问
+    "link": "https://cloud.tapdata.net/console/#/workbench/",
+    "icon": "navigation_general",
+    "type": "v2"
+  },{
+    "text": "header_technical_support", //技术支持
+    "link": "https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community",
+    "icon": "question",
+    "type": "support"
+  },{
+    "text": "header_manual", //使用手册
+    "link": "https://docs.tapdata.io/cloud/what-is-tapdata-clou",
+    "icon": "send",
+    "type": "handbook"
+  }],
+  "officialWebsiteAddress": "https://tapdata.net"
 }
