@@ -209,7 +209,7 @@ export default {
   },
   created() {
     this.loadData()
-    this.loadChat()
+    // this.loadChat()
   },
   methods: {
     loadData() {

@@ -280,7 +280,7 @@ export default {
   },
   created() {
     this.getUrl()
-    this.loadChat()
+    //this.loadChat()
   },
   methods: {
     getUrl() {
