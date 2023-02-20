@@ -187,7 +187,7 @@ export default {
     },
 
     makeMigrateTask(from, to) {
-      let source = this.getDatabaseNode(fromConnection)
+      let source = this.getDatabaseNode(from)
       let target = this.getDatabaseNode(to)
 
       Object.assign(source, {
