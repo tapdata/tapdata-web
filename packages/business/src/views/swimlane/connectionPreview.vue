@@ -10,52 +10,62 @@
         <div class="color-info">{{ viewData.connection_type }}</div>
         <div class="flex justify-content-end mt-4 mb-4">
           <el-button type="primary" size="mini">加载Schema</el-button>
-          <el-button>编辑</el-button>
-          <el-button>加载Schema</el-button>
+          <el-button @click="edit">编辑</el-button>
+          <el-button>测试连接</el-button>
         </div>
       </header>
       <section class="basics-info text-center">
         <el-row>
-          <el-col :span="4">
+          <el-col :span="3">
             <div>包含表数量</div>
-            <div class="mt-2">235</div>
+            <div class="mt-2">{{ viewData.tableCount }}</div>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <div>模型更新时间</div>
-            <div class="mt-2">235</div>
+            <div class="mt-2">{{ viewData.loadSchemaTime }}</div>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <div>创建时间</div>
-            <div class="mt-2">235</div>
+            <div class="mt-2">{{ viewData.createTime }}</div>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <div>修改时间</div>
-            <div class="mt-2">235</div>
+            <div class="mt-2">{{ viewData.last_updated }}</div>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3">
             <div>Schema 状态</div>
-            <div class="mt-2">235</div>
+            <div class="mt-2">{{ viewData.loadFieldsStatus }}</div>
           </el-col>
         </el-row>
       </section>
-      <section class="detailed-info">
+      <section class="detailed-info" v-if="viewData.config">
         <el-row class="mb-2">
           <el-col :span="12">
             <span class="label inline-block">数据库地址：</span>
-            <span>192.168.1.183</span>
+            <span>{{ viewData.config.host }}</span>
           </el-col>
           <el-col :span="12">
             <span class="label inline-block">数据库端口：</span>
-            <span>33063</span>
+            <span>{{ viewData.config.port || '-' }}</span>
           </el-col>
         </el-row>
         <el-row class="mb-2">
-          <el-col :span="12"><span class="label inline-block">账号：</span><span>root</span></el-col>
-          <el-col :span="12"><span class="label inline-block">Schema:</span><span>192.168.1.2</span></el-col>
+          <el-col :span="12"
+            ><span class="label inline-block">账号：</span><span>{{ viewData.config.user || '-' }}</span></el-col
+          >
+          <el-col :span="12"
+            ><span class="label inline-block">Schema:</span><span>{{ viewData.config.schema || '-' }}</span></el-col
+          >
         </el-row>
         <el-row class="mb-2">
-          <el-col :span="12"><span class="label inline-block">其它连接串参数:</span><span>charset=utf8</span></el-col>
-          <el-col :span="12"><span class="label inline-block">时间类型的时区:</span><span>+08:00</span></el-col>
+          <el-col :span="12"
+            ><span class="label inline-block">其它连接串参数:</span
+            ><span>{{ viewData.config.additionalString || '-' }}</span></el-col
+          >
+          <el-col :span="12"
+            ><span class="label inline-block">时间类型的时区:</span
+            ><span>{{ viewData.config.database_datetype_without_timezone || '-' }}</span></el-col
+          >
         </el-row>
       </section>
       <section class="table-info">
@@ -70,6 +80,8 @@
 
 <script>
 import { Drawer } from '@tap/component'
+import dayjs from 'dayjs'
+
 export default {
   name: 'connectionPreview',
   props: ['connectionId', 'viewData'],
@@ -83,6 +95,23 @@ export default {
     open(row) {
       this.visible = true
       this.viewData = row
+      //组装数据
+      this.viewData['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      this.viewData['createTime'] = dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss')
+      this.viewData['loadSchemaTime'] = dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
+    },
+    edit() {
+      const { id, pdkHash } = this.viewData
+      let query = {
+        pdkHash
+      }
+      this.$router.push({
+        name: 'connectionsEdit',
+        params: {
+          id
+        },
+        query
+      })
     }
   }
 }

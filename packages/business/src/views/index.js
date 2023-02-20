@@ -35,3 +35,4 @@ export {
 }
 
 export * from './connections/util'
+export * from './detail/PreviewDrawer'

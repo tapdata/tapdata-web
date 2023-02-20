@@ -1,0 +1,192 @@
+.discovery-page-wrap{
+  overflow: hidden;
+  height: 100%;
+
+  .classification {
+    &.expand, .classification-header {
+      width: 100%;
+    }
+    .custom-tree-node .table-label {
+      max-width: unset;
+    }
+  }
+}
+.catalogue-drawer-resource-wrap{
+  padding: 0 24px 24px 24px;
+}
+.discovery-page-main-box{
+  display: flex;
+  -ms-flex: 1;
+  flex: 1;
+  width: 100%;
+  border-radius: 4px;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+  min-width: 720px;
+}
+
+.discovery-page-right {
+  -ms-flex: 1;
+  flex: 1;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 4px;
+}
+.el-table::before{
+  height: 0;
+}
+
+.discovery-page-table,.discovery-page-api-table{
+  flex: 1;
+  border-bottom: none;
+  border-radius: 3px;
+  background-color: map-get($bgColor, white);
+  overflow: auto;
+  .el-table__fixed-body-wrapper {
+    background-color: map-get($bgColor, white);
+  }
+  .el-table__fixed {
+    height: auto !important; //设置高优先，以覆盖内联样式
+  }
+}
+.object-page-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap-reverse;
+  .object-page-search-bar {
+    margin: 0 5px 15px 0;
+  }
+  .object-page-operation-bar {
+    margin-bottom: 10px;
+    text-align: right;
+  }
+}
+.object-drawer-wrap {
+  .drawer__header_text {
+    height: 22px;
+    font-size: 14px;
+    line-height: 7px;
+    font-weight: 500;
+  }
+  .max-label {
+    width: 60px;
+    color: map-get($fontColor, light);
+  }
+  .details_data_info {
+    background: #fafafa;
+    border-radius: 4px;
+  }
+}
+.table-page-pagination {
+  margin-top: 5px;
+}
+.min-h{
+  min-height: calc(100vh - 90px)
+}
+.catalogue-page-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap-reverse;
+  .catalogue-page-search-bar {
+    margin: 0 5px 15px 0;
+  }
+  .catalogue-page-operation-bar {
+    margin-bottom: 10px;
+    text-align: right;
+  }
+}
+.object-drawer-wrap{
+  .el-drawer__header{
+    height: 62px;
+    color: map-get($fontColor, dark);
+    border-bottom: 1px solid map-get($borderColor, light);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom:0;
+    padding-bottom: 10px;
+  }
+}
+.discovery-desc{
+  color: map-get($fontColor, slight);
+}
+.discovery-title{
+  color: map-get($fontColor, dark);
+  font-size: 14px;
+  font-weight: 500;
+}
+.discovery-secondary-title{
+  color: map-get($fontColor, light);
+  font-size: 12px;
+  font-weight: 400;
+}
+.discovery-page-wrap{
+  .page-left {
+    width: 300px;
+  }
+  .border-right{
+    border-right: 1px solid map-get($borderColor, light);
+  }
+  .el-table th.el-table__cell > .cell{
+    font-weight: 700;
+  }
+
+  .discovery-page-table{
+    .el-table__body-wrapper {
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: calc(100vh - 460px)
+    }
+  }
+  .discovery-page-api-table{
+    .el-table__body-wrapper {
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 170px
+    }
+  }
+  .table-page-container .table-page-body .table-page-topbar{
+    align-items:center;
+  }
+}
+.drawer-tabs {
+  .el-tabs__nav-wrap.is-top {
+    padding-left: 112px;
+  }
+  .el-tabs__header.is-top {
+    margin: 0;
+  }
+}
+.data-api-path__item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  font-family: PingFangSC-Regular, PingFang SC;
+}
+.data-api-path__method {
+  margin-right: 40px;
+  width: 62px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 2px;
+
+  color: map-get($fontColor, white);
+  &.method--POST {
+    background: #478c6c;
+  }
+  &.method--GET {
+    background: #09819c;
+  }
+  &.method--PATCH {
+    background: #09819c;
+  }
+  &.method--TOKEN {
+    background: #f2994b;
+  }
+}

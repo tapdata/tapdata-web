@@ -24,7 +24,7 @@
             <div class="flex justify-content-between">
               <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
               <span class="operation-line">
-                <VIcon size="16">copy</VIcon>
+                <VIcon size="16" class="cursor-pointer" @click="openView(item)">copy</VIcon>
                 <VIcon size="18" class="ml-3">setting</VIcon>
               </span>
             </div>
@@ -70,6 +70,7 @@
           </ElButton>
         </span>
       </ElDialog>
+      <connectionPreview ref="targetconnectionView"></connectionPreview>
     </div>
   </div>
 </template>
@@ -77,6 +78,7 @@
 <script>
 import { connectionsApi, taskApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
+import connectionPreview from './connectionPreview'
 import { uuid } from '@tap/shared'
 
 const DEFAULT_SETTINGS = {
@@ -102,7 +104,7 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon },
+  components: { NodeIcon, connectionPreview },
 
   data() {
     return {
@@ -310,6 +312,10 @@ export default {
           }
         }).href
       )
+    },
+    //打开连接详情
+    openView(row) {
+      this.$refs.targetconnectionView.open(row)
     }
   }
 }
