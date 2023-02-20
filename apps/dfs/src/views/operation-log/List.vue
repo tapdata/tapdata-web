@@ -36,8 +36,6 @@
         </div>
         <div v-else class="migration-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
-          <VIcon>rollback_kennen</VIcon>
-          <VIcon>row-filter</VIcon>
           <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
             <span style="line-height: 20px">{{ $t('data_no_find_result') }}</span>
             <ElLink type="primary" class="fs-7" @click="reset">{{ $t('link_back_to_list') }}</ElLink>
