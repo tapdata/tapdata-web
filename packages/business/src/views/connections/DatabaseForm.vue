@@ -110,6 +110,7 @@
 
 <script>
 import { action } from '@formily/reactive'
+import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
@@ -918,10 +919,19 @@ export default {
           }
         },
         goToAuthorized: async params => {
+          const routeQuery = cloneDeep(this.$route.query)
+          const routeParams = this.$route.params
+          delete routeQuery['connectionConfig']
+          let routeUrl = this.$router.resolve({
+            name: routeParams?.id ? 'connectionsEdit' : 'connectionCreate',
+            query: routeQuery,
+            params: routeParams
+          })
+
           this.schemaFormInstance?.validate().then(async () => {
             const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
             const data = Object.assign({}, params, {
-              url: location.href,
+              url: location.origin + location.pathname + routeUrl.href,
               connectionConfig: {
                 __TAPDATA,
                 __TAPDATA_CONFIG
