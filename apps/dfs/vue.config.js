@@ -128,16 +128,19 @@ module.exports = {
     }
   },
   chainWebpack(config) {
+    config.resolve.alias.set('@', resolve('src'))
+
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
-    const assetsIconDir = resolve('../../packages/assets/icons/svg')
-
+    const assetsIconDir = resolve('packages/assets/icons/svg')
+    const assetsColorIconDir = resolve('packages/assets/icons/colorSvg')
     // svg loader排除 icon 目录
     config.module
       .rule('svg')
-      .exclude.add(iconDir)
+      .exclude.add(assetsIconDir)
+      .add(assetsColorIconDir)
+      .add(iconDir)
       .add(colorIconDir)
-      .add(assetsIconDir)
       .end()
       .use('svgo-loader')
       .loader('svgo-loader')
@@ -147,8 +150,8 @@ module.exports = {
     config.module
       .rule('svg-sprite')
       .test(/\.svg$/)
-      .include.add(iconDir)
-      .add(assetsIconDir)
+      .include.add(assetsIconDir)
+      .add(iconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -183,7 +186,8 @@ module.exports = {
     config.module
       .rule('color-svg-sprite')
       .test(/\.svg$/)
-      .include.add(colorIconDir)
+      .include.add(assetsColorIconDir)
+      .add(colorIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')

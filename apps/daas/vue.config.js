@@ -49,6 +49,7 @@ module.exports = {
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
     const assetsIconDir = resolve('../../packages/assets/icons/svg')
+    const assetsColorIconDir = resolve('../../packages/assets/icons/colorSvg')
 
     // svg loader排除 icon 目录
     config.module
@@ -56,6 +57,7 @@ module.exports = {
       .exclude.add(iconDir)
       .add(colorIconDir)
       .add(assetsIconDir)
+      .add(assetsColorIconDir)
       .end()
       .use('svgo-loader')
       .loader('svgo-loader')
@@ -102,6 +104,7 @@ module.exports = {
       .rule('color-svg-sprite')
       .test(/\.svg$/)
       .include.add(colorIconDir)
+      .add(assetsColorIconDir)
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
