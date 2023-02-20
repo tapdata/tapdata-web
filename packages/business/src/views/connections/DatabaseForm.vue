@@ -115,7 +115,7 @@ import i18n from '@tap/i18n'
 import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
 import { VIcon, GitBook } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty } from '@tap/shared'
+import { checkConnectionName, isEmpty, submitForm } from '@tap/shared'
 import Test from './Test'
 import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -898,6 +898,19 @@ export default {
           } catch (e) {
             return []
           }
+        },
+        goToAuthorized: async params => {
+          this.schemaFormInstance?.validate().then(async () => {
+            const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
+            const data = Object.assign({}, params, {
+              url: location.href,
+              connectionConfig: {
+                __TAPDATA,
+                __TAPDATA_CONFIG
+              }
+            })
+            submitForm(params?.target, data)
+          })
         }
       }
       this.schemaData = result
