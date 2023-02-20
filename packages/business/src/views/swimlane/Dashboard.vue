@@ -6,28 +6,22 @@
         class="search-input ml-4"
         v-model="keyword"
         prefix-icon="el-icon-search"
-        size="mini"
+        size="small"
         clearable
         style="width: 240px"
         @input="searchFnc"
       ></ElInput>
     </div>
     <div class="list flex flex-fill overflow-hidden">
-      <div v-for="(item, index) in options" :key="index" class="list__item flex flex-column flex-1 overflow-hidden">
-        <div class="list__title flex justify-content-between p-4">
-          <span class="fs-6">{{ item.title }}</span>
-          <div class="operation">
-            <VIcon v-if="item.add" size="16" class="icon-color" @click="handleAdd(item.type)">add-fill</VIcon>
-            <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
-          </div>
-        </div>
-        <component
-          :is="item.component"
-          :ref="item.component"
-          :dragState="dragState"
-          @node-drag-end="handleDragEnd"
-        ></component>
-      </div>
+      <component
+        v-for="(item, index) in options"
+        :key="index"
+        :is="item.component"
+        :ref="item.component"
+        :dragState="dragState"
+        @create-connection="handleAdd"
+        @node-drag-end="handleDragEnd"
+      ></component>
     </div>
     <CreateConnection
       :visible.sync="visible"
@@ -38,7 +32,7 @@
 </template>
 
 <script>
-import CreateConnection from '@tap/business/src/components/create-connection/Dialog'
+import CreateConnection from '../../components/create-connection/Dialog'
 
 import SourceItem from './Source'
 import TargetItem from './Target'
@@ -90,7 +84,6 @@ export default {
     searchFnc() {},
 
     handleAdd(type) {
-      console.log('handleAdd', type)
       this.createConnectionParams.type = type
       this.visible = true
     },
@@ -110,20 +103,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.list__title {
-  background: #f3f7fa;
-}
-.list__item {
-  border-left: 1px solid #e1e3e9;
-  &:first-child {
-    border-left: none;
+.list {
+  ::v-deep {
+    .list__title {
+      background: #f3f7fa;
+    }
+    .list__item {
+      border-left: 1px solid #e1e3e9;
+      &:first-child {
+        border-left: none;
+      }
+    }
+    .list__title {
+      border-top: 1px solid #e1e3e9;
+      border-bottom: 1px solid #e1e3e9;
+    }
+    .icon-color {
+      color: map-get($iconFillColor, normal);
+    }
   }
-}
-.list__title {
-  border-top: 1px solid #e1e3e9;
-  border-bottom: 1px solid #e1e3e9;
-}
-.icon-color {
-  color: map-get($iconFillColor, normal);
 }
 </style>

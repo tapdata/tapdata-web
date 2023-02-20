@@ -1,18 +1,13 @@
 <template>
-  <div>
-    <div class="p-3 flex align-items-center">
-      <ElInput
-        class="search-input flex-fill"
-        v-model="keyword"
-        prefix-icon="el-icon-search"
-        size="mini"
-        clearable
-        style="width: 240px"
-        @input="searchFnc"
-      ></ElInput>
-      <VIcon class="ml-2">filter</VIcon>
+  <div class="list__item flex flex-column flex-1 overflow-hidden">
+    <div class="list__title flex justify-content-between p-4">
+      <span class="fs-6">FDM / CACHE</span>
+      <div class="operation">
+        <VIcon size="16" class="icon-color ml-3">search-outline</VIcon>
+        <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
+      </div>
     </div>
-    <div class="px-3"></div>
+    <div class="p-3"></div>
   </div>
 </template>
 
