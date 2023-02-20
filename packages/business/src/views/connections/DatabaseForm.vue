@@ -774,13 +774,14 @@ export default {
 
       const { connectionConfig } = this.$route.query || {}
       if (connectionConfig) {
-        const { __TAPDATA, __TAPDATA_CONFIG = {} } = JSON.parse(connectionConfig) || {}
+        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = JSON.parse(connectionConfig) || {}
         Object.assign(this.model, __TAPDATA, {
           config: __TAPDATA_CONFIG
         })
         this.schemaFormInstance.setValues({
           __TAPDATA,
-          ...__TAPDATA_CONFIG
+          ...__TAPDATA_CONFIG,
+          ...trace
         })
       }
 
