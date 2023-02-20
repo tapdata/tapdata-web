@@ -772,6 +772,18 @@ export default {
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
 
+      const { connectionConfig } = this.$route.query || {}
+      if (connectionConfig) {
+        const { __TAPDATA, __TAPDATA_CONFIG = {} } = JSON.parse(connectionConfig) || {}
+        Object.assign(this.model, __TAPDATA, {
+          config: __TAPDATA_CONFIG
+        })
+        this.schemaFormInstance.setValues({
+          __TAPDATA,
+          ...__TAPDATA_CONFIG
+        })
+      }
+
       this.schemaScope = {
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
