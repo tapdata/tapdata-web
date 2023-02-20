@@ -1,66 +1,76 @@
 <template>
-  <div class="p-4 flex-fill min-h-0 overflow-auto">
-    <div
-      v-for="(item, index) in list"
-      :key="index"
-      class="wrap__item rounded-2 mb-4"
-      @dragover.stop="handleDragOver"
-      @dragenter.stop="handleDragEnter"
-      @dragleave.stop="handleDragLeave"
-      @drop.stop="handleDrop($event, item)"
-    >
-      <div class="item__header flex p-3">
-        <NodeIcon :node="item" :size="20" class="item__icon mt-1" />
-        <div class="flex-fill ml-2">
-          <div class="flex justify-content-between">
-            <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
-            <span class="operation-line">
-              <VIcon size="16">copy</VIcon>
-              <VIcon size="18" class="ml-3">setting</VIcon>
-            </span>
-          </div>
-          <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
-        </div>
+  <div class="list__item flex flex-column flex-1 overflow-hidden">
+    <div class="list__title flex justify-content-between p-4">
+      <span class="fs-6">SERVICES / TARGETS</span>
+      <div class="operation">
+        <VIcon size="16" class="icon-color" @click="handleAdd">add-fill</VIcon>
+        <VIcon size="16" class="icon-color ml-3">search-outline</VIcon>
+        <VIcon size="16" class="icon-color ml-3 rotate-90">more</VIcon>
       </div>
-      <div class="item__content p-2">
-        <span v-if="!item.taskList || !item.taskList.length" class="font-color-sslight"
-          >No tasks configured for this target</span
-        >
-        <div v-else class="task-list">
-          <div class="task-list-header flex font-color-dark">
-            <div class="px-2 py-1 flex-1">PIPELINE</div>
-            <div class="p-1" style="width: 70px">STATUS</div>
-            <div class="p-1" style="width: 90px">ACTION</div>
+    </div>
+    <div class="p-3 flex-fill min-h-0 overflow-auto">
+      <div
+        v-for="(item, index) in list"
+        :key="index"
+        class="wrap__item rounded-2 mb-4"
+        @dragover.stop="handleDragOver"
+        @dragenter.stop="handleDragEnter"
+        @dragleave.stop="handleDragLeave"
+        @drop.stop="handleDrop($event, item)"
+      >
+        <div class="item__header flex p-3">
+          <NodeIcon :node="item" :size="20" class="item__icon mt-1" />
+          <div class="flex-fill ml-2">
+            <div class="flex justify-content-between">
+              <span class="font-color-normal fw-sub fs-6">{{ item.name }}</span>
+              <span class="operation-line">
+                <VIcon size="16">copy</VIcon>
+                <VIcon size="18" class="ml-3">setting</VIcon>
+              </span>
+            </div>
+            <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
           </div>
+        </div>
+        <div class="item__content p-2">
+          <span v-if="!item.taskList || !item.taskList.length" class="font-color-sslight"
+            >No tasks configured for this target</span
+          >
+          <div v-else class="task-list">
+            <div class="task-list-header flex font-color-dark">
+              <div class="px-2 py-1 flex-1">PIPELINE</div>
+              <div class="p-1" style="width: 70px">STATUS</div>
+              <div class="p-1" style="width: 90px">ACTION</div>
+            </div>
 
-          <div class="task-list-content">
-            <div v-for="(task, i) in item.taskList" :key="i" class="task-list-item flex">
-              <div class="px-2 py-1 ellipsis flex-1">{{ task.name }}</div>
-              <div class="p-1" style="width: 70px">{{ task.status }}</div>
-              <div class="p-1" style="width: 90px">
-                <ElLink @click="handleEditInDag(task)" type="primary" size="small">Edit in DAG</ElLink>
+            <div class="task-list-content">
+              <div v-for="(task, i) in item.taskList" :key="i" class="task-list-item flex">
+                <div class="px-2 py-1 ellipsis flex-1">{{ task.name }}</div>
+                <div class="p-1" style="width: 70px">{{ task.status }}</div>
+                <div class="p-1" style="width: 90px">
+                  <ElLink @click="handleEditInDag(task)" type="primary" size="small">Edit in DAG</ElLink>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
-      <ElForm ref="form" :model="dialogConfig" label-width="180px">
-        <div class="pipeline-desc p-4 mb-4">{{ dialogConfig.desc }}</div>
-        <ElFormItem label="Pipeline Name">
-          <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
-        </ElFormItem>
-      </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog">{{ $t('packages_component_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="dialogSubmit">
-          {{ $t('packages_component_button_confirm') }}
-        </ElButton>
-      </span>
-    </ElDialog>
+      <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
+        <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+        <ElForm ref="form" :model="dialogConfig" label-width="180px">
+          <div class="pipeline-desc p-4 mb-4">{{ dialogConfig.desc }}</div>
+          <ElFormItem label="Pipeline Name">
+            <ElInput size="small" v-model="dialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
+          </ElFormItem>
+        </ElForm>
+        <span slot="footer" class="dialog-footer">
+          <ElButton size="mini" @click="hideDialog">{{ $t('packages_component_button_cancel') }}</ElButton>
+          <ElButton size="mini" type="primary" @click="dialogSubmit">
+            {{ $t('packages_component_button_confirm') }}
+          </ElButton>
+        </span>
+      </ElDialog>
+    </div>
   </div>
 </template>
 
@@ -114,6 +124,10 @@ export default {
   methods: {
     async init() {
       this.list = await this.getData()
+    },
+
+    handleAdd() {
+      this.$emit('create-connection', 'target')
     },
 
     async getData() {
