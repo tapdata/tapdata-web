@@ -118,8 +118,10 @@ export default {
             this.getLogRef()?.changeItem({
               value: data.nodeId
             })
-          data.lastOccurrenceTime &&
-            this.getLogRef()?.$refs.timeSelect.changeTime([new Date(data.lastOccurrenceTime).getTime(), Time.now()])
+          const t = new Date(data.lastOccurrenceTime).getTime()
+          const start = t - 10 * 1000
+          const end = t + 10 * 1000
+          data.lastOccurrenceTime && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
       })
     }
