@@ -55,9 +55,11 @@
           </div>
           <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
           <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
+          <VIcon size="16" @click="openView(node.data)">copy</VIcon>
         </span>
       </VirtualTree>
     </div>
+    <connectionPreview ref="connectionView"></connectionPreview>
   </div>
 </template>
 
@@ -66,6 +68,7 @@ import { debounce } from 'lodash'
 
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { VirtualTree } from '@tap/component'
+import connectionPreview from './connectionPreview'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { makeDragNodeImage } from '../../shared'
 
@@ -76,7 +79,7 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, VirtualTree },
+  components: { NodeIcon, VirtualTree, connectionPreview },
 
   data() {
     return {
@@ -179,6 +182,10 @@ export default {
 
     handleReload(node) {
       const parentId = node.parent.data?.id
+    },
+    //打开连接详情
+    openView(row) {
+      this.$refs.connectionView.open(row)
     }
   }
 }
