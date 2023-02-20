@@ -32,22 +32,17 @@
           </div>
         </div>
         <div class="item__content p-2">
-          <span v-if="!item.taskList || !item.taskList.length" class="font-color-sslight"
+          <span v-if="!connectionTaskMap[item.id] || !connectionTaskMap[item.id].length" class="font-color-sslight"
             >No tasks configured for this target</span
           >
           <div v-else class="task-list">
-            <div class="task-list-header flex font-color-dark">
-              <div class="px-2 py-1 flex-1">PIPELINE</div>
-              <div class="p-1" style="width: 70px">STATUS</div>
-              <div class="p-1" style="width: 90px">ACTION</div>
-            </div>
-
             <div class="task-list-content">
-              <div v-for="(task, i) in item.taskList" :key="i" class="task-list-item flex">
-                <div class="px-2 py-1 ellipsis flex-1">{{ task.name }}</div>
-                <div class="p-1" style="width: 70px">{{ task.status }}</div>
-                <div class="p-1" style="width: 90px">
-                  <ElLink @click="handleEditInDag(task)" type="primary" size="small">Edit in DAG</ElLink>
+              <div v-for="(task, i) in connectionTaskMap[item.id]" :key="i" class="task-list-item flex">
+                <div class="p-1 ellipsis flex-1 align-center">
+                  <ElLink @click="handleEditInDag(task)" type="primary" size="small">{{ task.name }}</ElLink>
+                </div>
+                <div class="p-1">
+                  <TaskStatus :task="task"></TaskStatus>
                 </div>
               </div>
             </div>
@@ -79,6 +74,9 @@ import { connectionsApi, taskApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { uuid } from '@tap/shared'
 
+import { makeStatusAndDisabled } from '../../shared'
+import { TaskStatus } from '../../components'
+
 const DEFAULT_SETTINGS = {
   name: '', // 任务名称
   desc: '', // 任务描述
@@ -102,7 +100,7 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon },
+  components: { NodeIcon, TaskStatus },
 
   data() {
     return {
@@ -113,7 +111,8 @@ export default {
         taskName: '',
         syncType: '',
         visible: false
-      }
+      },
+      connectionTaskMap: {}
     }
   },
 
@@ -124,6 +123,7 @@ export default {
   methods: {
     async init() {
       this.list = await this.getData()
+      this.loadTask(this.list)
     },
 
     handleAdd() {
@@ -144,6 +144,19 @@ export default {
       })
 
       return res.items
+    },
+
+    async loadTask(list) {
+      if (!list.length) return
+      const ids = list.map(item => item.id)
+      const data = await taskApi.getTaskByConnection({
+        connectionIds: ids.join(','),
+        position: 'target'
+      })
+
+      Object.keys(data).forEach(key => {
+        this.$set(this.connectionTaskMap, key, data[key].map(this.mapTask))
+      })
     },
 
     findParentByClassName(parent, cls) {
@@ -292,10 +305,14 @@ export default {
       this.dialogConfig.visible = false
 
       let taskInfo = await taskApi.post(task)
-      const taskList = to.taskList || []
+      taskInfo = this.mapTask(taskInfo)
 
-      taskList.push(taskInfo)
-      this.$set(to, 'taskList', taskList)
+      if (this.connectionTaskMap[to.id]) {
+        this.connectionTaskMap[to.id].push(taskInfo)
+      } else {
+        this.$set(this.connectionTaskMap, to.id, [taskInfo])
+      }
+
       this.$message.success('任务创建成功')
     },
 
@@ -310,6 +327,12 @@ export default {
           }
         }).href
       )
+    },
+
+    mapTask(task) {
+      makeStatusAndDisabled(task)
+      const { id, name, status, syncType } = task
+      return { id, name, status, syncType }
     }
   }
 }
