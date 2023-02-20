@@ -179,6 +179,7 @@
 </template>
 
 <script>
+import { delayTrigger } from '@tap/shared'
 import { VIcon } from '@tap/component'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import rollback from '@tap/assets/icons/svg/rollback.svg'
@@ -320,7 +321,6 @@ export default {
     },
     search() {
       this.$nextTick(() => {
-        const { delayTrigger } = this.$util
         delayTrigger(() => {
           if (this.searchField.trim()) {
             this.searchField = this.searchField.trim().toString() //去空格

@@ -36,6 +36,8 @@
         </div>
         <div v-else class="migration-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
+          <VIcon>rollback_kennen</VIcon>
+          <VIcon>row-filter</VIcon>
           <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
             <span style="line-height: 20px">{{ $t('data_no_find_result') }}</span>
             <ElLink type="primary" class="fs-7" @click="reset">{{ $t('link_back_to_list') }}</ElLink>
@@ -49,6 +51,7 @@
 
 <script>
 import { VIcon, FilterBar, VTable } from '@tap/component'
+import { delayTrigger, toRegExp } from '@tap/shared'
 
 import i18n from '@/i18n'
 import { isEmpty } from '@/util'
@@ -399,7 +402,6 @@ export default {
           query[key] = searchParams[key]
         }
       }
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.$router.replace({
           name: 'OperationLog',
@@ -433,7 +435,6 @@ export default {
       ]
     },
     getData({ page }) {
-      const { toRegExp } = this.$util
       let { current, size } = page
       let { operationType, parameter1, start, end, username } = this.searchParams
       let where = {

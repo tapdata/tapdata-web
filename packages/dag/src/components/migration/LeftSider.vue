@@ -207,6 +207,7 @@ import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import NodeIcon from '../NodeIcon'
 import { escapeRegExp } from 'lodash'
 import ConnectionType from '../ConnectionType'
+import { getIcon } from '@tap/assets/icons'
 
 export default {
   name: 'LeftSider',
@@ -440,7 +441,7 @@ export default {
     },
 
     genIconSrc(item) {
-      return require(`assets/icons/node/${item.databaseType}.svg`)
+      return getIcon(item.databaseType)
     },
 
     async getDragDom() {

@@ -42,6 +42,8 @@
 <script>
 import dayjs from 'dayjs'
 import { logsApi } from '@tap/api'
+import { delayTrigger, toRegExp } from '@tap/shared'
+
 export default {
   props: {
     id: String
@@ -121,7 +123,6 @@ export default {
         }
       }
       if (keyword) {
-        const { toRegExp } = this.$util
         let query = { like: toRegExp(keyword), options: 'i' }
         filter.where.or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }
@@ -186,7 +187,6 @@ export default {
       }
     },
     searchFnc(debounce) {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.getLogs(true)
       }, debounce)

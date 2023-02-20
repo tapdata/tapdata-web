@@ -100,6 +100,7 @@ import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
 import { connectionsApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
+import { getIcon } from '@tap/assets/icons'
 
 import { StatusTag } from '../../components'
 import Test from '../connections/Test.vue'
@@ -267,9 +268,12 @@ export default {
       if (!type) {
         type = 'default'
       }
-      return require(`assets/icons/node/${type.toLowerCase()}.svg`)
+      return getIcon(type.toLowerCase())
     },
     transformData(row) {
+      if (!row.config) {
+        row.config = {}
+      }
       row.database_host = row.config.host
       row.database_port = row.config.port
       row.database_name = row.config.database

@@ -580,6 +580,7 @@
 
 <script>
 import i18n from '@/i18n'
+import { delayTrigger } from '@tap/shared'
 
 import VIcon from '../VIcon'
 export default {
@@ -1065,7 +1066,6 @@ export default {
      * 按表搜索 按字段名搜索
      * */
     search(type) {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         if (type === 'table') {
           if (this.searchTable.trim()) {
