@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="8px" viewBox="0 0 24 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 12</title>
+    <g id="41迭代" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="库迁移-连接" transform="translate(-265.000000, -312.000000)">
+            <g id="编组-12" transform="translate(265.000000, 313.000000)">
+                <circle id="椭圆形" stroke="#76CDEE" stroke-width="2" cx="12" cy="3" r="3"></circle>
+                <rect id="矩形" fill="#76CDEE" x="15" y="2" width="9" height="2" rx="1"></rect>
+                <rect id="矩形" fill="#76CDEE" x="0" y="2" width="9" height="2" rx="1"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

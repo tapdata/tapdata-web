@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 9</title>
+    <g id="缓存管理" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="缓存管理-查看" transform="translate(-1154.000000, -379.000000)" stroke="#595959">
+            <g id="编组-9" transform="translate(1154.650414, 380.024257)">
+                <rect id="矩形" x="0" y="0" width="12.1578947" height="12.1578947" rx="1"></rect>
+                <line x1="0.496811983" y1="4.16217882" x2="11.8495859" y2="4.16217882" id="直线" stroke-linecap="square"></line>
+                <line x1="0.496811983" y1="8.16003678" x2="11.8495859" y2="8.16003678" id="直线" stroke-linecap="square"></line>
+                <line x1="4.0722472" y1="4.82702271" x2="4.0722472" y2="11.8664454" id="直线" stroke-linecap="square"></line>
+                <line x1="8.08564753" y1="4.16217882" x2="8.08564753" y2="12.1578947" id="直线" stroke-linecap="square"></line>
+            </g>
+        </g>
+    </g>
+</svg>
