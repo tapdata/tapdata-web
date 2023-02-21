@@ -77,7 +77,16 @@
           </ElSelect>
         </ElFormItem>
         <ElFormItem :label="$t('daas_external_storage_list_cunchulujing')" prop="uri">
-          <ElInput v-model="form.uri" type="textarea" resize="none"></ElInput>
+          <ElInput
+            v-model="form.uri"
+            :placeholder="
+              form.type === 'mongodb'
+                ? 'Example: mongodb://admin:password@127.0.0.1:27017/mydb?replicaSet=xxx&authSource=admin'
+                : 'Example: /xxx/xxx'
+            "
+            type="textarea"
+            resize="none"
+          ></ElInput>
         </ElFormItem>
         <ElFormItem
           v-if="form.type === 'mongodb'"
@@ -122,6 +131,7 @@ import i18n from '@/i18n'
 
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
+import { toRegExp } from '@tap/shared'
 
 import { externalStorageApi } from '@tap/api'
 import { TablePage } from '@tap/business'
@@ -209,7 +219,7 @@ export default {
       let where = {}
 
       if (keyword && keyword.trim()) {
-        where['name'] = { like: keyword, options: 'i' }
+        where.name = { like: toRegExp(keyword), options: 'i' }
       }
       type && (where.type = type)
 
@@ -275,13 +285,24 @@ export default {
             this.loading = false
           }
           if (id) {
-            await externalStorageApi.updateById(id, params).catch(catchFunc)
+            await externalStorageApi
+              .updateById(id, params)
+              .then(() => {
+                this.table.fetch()
+                this.dialogVisible = false
+                this.loading = false
+              })
+              .catch(catchFunc)
           } else {
-            await externalStorageApi.post(params).catch(catchFunc)
+            await externalStorageApi
+              .post(params)
+              .then(() => {
+                this.table.fetch()
+                this.dialogVisible = false
+                this.loading = false
+              })
+              .catch(catchFunc)
           }
-          this.table.fetch()
-          this.dialogVisible = false
-          this.loading = false
         }
       })
     },
