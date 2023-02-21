@@ -299,7 +299,11 @@ export default {
     },
 
     handleLog(row = {}) {
-      this.$emit('change-tab', 'log', row)
+      const params = {
+        start: row.lastOccurrenceTime,
+        nodeId: row.nodeId
+      }
+      this.$emit('change-tab', 'log', params)
     }
   }
 }

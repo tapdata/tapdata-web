@@ -90,6 +90,17 @@ export default {
     }
   },
 
+  mounted() {
+    if (['MigrationMonitorViewer'].includes(this.$route.name)) {
+      this.currentTab = 'log'
+      const { start, end } = this.$route.query
+      this.changeTab(this.currentTab, {
+        start: start * 1,
+        end: end * 1
+      })
+    }
+  },
+
   methods: {
     ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
     ...mapActions('dataflow', ['updateDag']),
@@ -127,10 +138,11 @@ export default {
             this.getLogRef()?.changeItem({
               value: data.nodeId
             })
-          const t = new Date(data.lastOccurrenceTime).getTime()
-          const start = t - 10 * 1000
-          const end = t + 10 * 1000
-          data.lastOccurrenceTime && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
+          const t = new Date(data.start).getTime()
+          const len = 10 * 1000
+          const start = t - len
+          const end = data.end ? data.end + len : Time.now()
+          data.start && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
       })
     }
