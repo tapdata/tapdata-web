@@ -69,9 +69,6 @@
                 </div>
                 <ul class="column" v-if="item.columns && item.columns.length > 0">
                   <li v-for="filed in item.columns" :key="filed.field_name">
-                    <!-- <div class="image-box">
-                      <el-image :src="getImgByType(filed.type)"></el-image>
-                    </div> -->
                     <div class="color-info">
                       {{ filed.type }}
                     </div>
@@ -128,7 +125,6 @@ export default {
     }
   },
   methods: {
-    // getImgByType,
     handleSearch(id) {
       if (this.keyword === '') {
         this.showNoSearch = true

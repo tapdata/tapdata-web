@@ -76,13 +76,6 @@ export function delayTrigger(func, t = 500) {
   }
 }
 
-// TODO 去掉
-export const getImgByType = function (type) {
-  if (!type) {
-    type = 'default'
-  }
-  return require(`@/assets/images/types/${type.toLowerCase()}.png`)
-}
 export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 // TODO 去掉
 export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
