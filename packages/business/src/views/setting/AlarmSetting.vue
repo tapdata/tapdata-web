@@ -27,9 +27,7 @@
             <el-checkbox label="WECHAT" v-if="!isDaas && isOpenid">{{
               $t('packages_business_notify_webchat_notification')
             }}</el-checkbox>
-            <el-checkbox label="SMS" v-if="!isDaas" :disabled="isOpenid">{{
-              $t('packages_business_notify_sms_notification')
-            }}</el-checkbox>
+            <el-checkbox label="SMS" v-if="!isDaas">{{ $t('packages_business_notify_sms_notification') }}</el-checkbox>
           </el-checkbox-group>
         </div>
       </template>
