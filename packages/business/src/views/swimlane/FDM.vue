@@ -12,7 +12,27 @@
         </ElDropdown>
       </div>
     </div>
-    <div class="p-3"></div>
+    <div
+      class="flex flex-column flex-1 min-h-0 position-relative fdm-tree-wrap"
+      @dragover.stop="handleDragOver"
+      @dragenter.stop="handleDragEnter"
+      @dragleave.stop="handleDragLeave"
+      @drop.stop="handleDrop"
+    >
+      <VirtualTree
+        class="ldp-tree"
+        ref="tree"
+        node-key="id"
+        highlight-current
+        :data="treeData"
+        draggable
+        :render-after-expand="false"
+        :expand-on-click-node="false"
+        :allow-drop="() => false"
+      ></VirtualTree>
+
+      <div class="drop-mask justify-center align-center absolute-fill font-color-light">Clone To FDM</div>
+    </div>
 
     <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px"> Configure FDM </span>
@@ -43,12 +63,13 @@
 <script>
 import { connectionsApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
+import { VirtualTree } from '@tap/component'
 import { merge } from 'lodash'
 
 export default {
   name: 'FDM',
 
-  components: { AsyncSelect },
+  components: { AsyncSelect, VirtualTree },
 
   data() {
     return {
@@ -60,7 +81,8 @@ export default {
         taskName: '',
         syncType: '',
         visible: false
-      }
+      },
+      treeData: []
     }
   },
 
@@ -125,9 +147,53 @@ export default {
     dialogSubmit() {
       localStorage.setItem('LDP_FDM_CONNECTION_ID', this.dialogConfig.connectionId)
       this.dialogConfig.visible = false
+    },
+
+    handleDragOver(ev) {
+      ev.preventDefault()
+    },
+
+    handleDragEnter(ev) {
+      ev.preventDefault()
+
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
+      dropNode.classList.add('is-drop-inner')
+    },
+
+    handleDragLeave(ev) {
+      ev.preventDefault()
+
+      if (!ev.currentTarget.contains(ev.relatedTarget)) {
+        const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
+        dropNode.classList.remove('is-drop-inner')
+      }
+    },
+
+    handleDrop(ev) {
+      ev.preventDefault()
+
+      const dropNode = this.findParentByClassName(ev.currentTarget, 'fdm-tree-wrap')
+      dropNode.classList.remove('is-drop-inner')
+      console.log('handleDrop', this.dragState) // eslint-disable-line
+    },
+
+    findParentByClassName(parent, cls) {
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.drop-mask {
+  display: none;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.is-drop-inner .drop-mask {
+  display: flex;
+}
+</style>
