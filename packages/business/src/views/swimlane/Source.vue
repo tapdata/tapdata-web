@@ -206,7 +206,7 @@ export default {
     openView(row, isLeaf) {
       if (isLeaf) {
         let node = {
-          id: row.id,
+          id: row.tableId,
           category: 'storage',
           type: 'table'
         }
