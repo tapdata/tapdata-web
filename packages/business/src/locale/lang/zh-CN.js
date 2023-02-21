@@ -732,7 +732,7 @@ export default {
   packages_business_milestone_list_duquzengliangshu: '读取增量数据',
   packages_business_milestone_list_kaiqizengliang: '开启增量',
   packages_business_milestone_list_duququanliangshu: '读取全量数据',
-  packages_business_milestone_list_finis: '{val1}/{val2}完成，全量数据同步中',
+  packages_business_milestone_list_finis: '{val1}/{val2}完成，{val3}进行中',
   packages_business_milestone_list_wancheng: '完成',
   packages_business_milestone_list_zhengtijindu: '整体进度',
   packages_business_milestone_list_jinhangzhongpr: '进行中，{val1}%已完成，预计剩余时间{val2}',

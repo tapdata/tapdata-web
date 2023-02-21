@@ -755,7 +755,7 @@ export default {
   packages_business_milestone_list_duquzengliangshu: 'Read incremental data',
   packages_business_milestone_list_kaiqizengliang: 'Open incremental',
   packages_business_milestone_list_duququanliangshu: 'Read full data',
-  packages_business_milestone_list_finis: '{val1}/{val2} completed, full data synchronization in progress',
+  packages_business_milestone_list_finis: '{val1}/{val2} completed, {val3} in progress',
   packages_business_milestone_list_wancheng: 'Complete',
   packages_business_milestone_list_zhengtijindu: 'Overall Progress',
   packages_business_milestone_list_jinhangzhongpr: 'In progress, {val1}% completed, estimated remaining time {val2}',

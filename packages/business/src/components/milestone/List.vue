@@ -225,7 +225,8 @@ export default {
             ? i18n.t('packages_business_milestone_list_wancheng')
             : i18n.t('packages_business_milestone_list_finis', {
                 val1: finishedLen,
-                val2: len
+                val2: len,
+                val3: result.find(t => t.status !== 'FINISH')?.label
               })
       })
       return result
