@@ -146,7 +146,7 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
     searchFnc() {},
 
     renderContent(h, { node, data }) {
-      let icon = node.isLeaf ? 'table' : 'folder-outline'
+      let icon = data.type === 'table' ? 'table' : 'folder-outline'
 
       return (
         <div class="custom-tree-node">
@@ -279,11 +279,12 @@ ${this.taskDialogConfig.prefix}<original_table_name>`
         this.taskDialogConfig.to = this.dialogConfig.connection
         this.taskDialogConfig.tableName = null
 
+        this.taskDialogConfig.treeData = {
+          ...object.data
+        }
+
         if (object.childNodes.length) {
-          this.taskDialogConfig.treeData = {
-            ...object.data,
-            children: object.childNodes.map(node => node.data)
-          }
+          this.taskDialogConfig.treeData.children = object.childNodes.map(node => node.data)
         }
       } else if (object.data.type === 'table') {
         this.taskDialogConfig.from = object.parent.data
