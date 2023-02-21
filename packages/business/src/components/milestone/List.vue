@@ -233,6 +233,7 @@ export default {
 
     nodeData() {
       const { nodeMilestones } = this
+      const dataflowType = this.dataflow.type
       const NODE_MAP = {
         source: [
           {
@@ -296,38 +297,45 @@ export default {
         }
       }
 
-      return NODE_MAP[this.activeNode.nodeType].map(el => {
-        const data = nodeMilestones[el.key]
-        let t = Object.assign({}, el, data)
-        let { status = 'WAITING' } = t
-        let label = ''
-        if (el.key === 'BATCH_READ') {
-          const { snapshotTableTotal, snapshotDoneAt } = this.totalData
-          if (snapshotDoneAt) {
-            status = 'FINISH'
-          } else if (!snapshotTableTotal) {
-            status = 'WAITING'
-          } else {
-            status = 'RUNNING'
-            const { progress, time } = this.getDueTimeAndProgress(this.totalData)
-            label =
-              STATUS_MAP[status]?.label +
-              i18n.t('packages_business_milestone_list_progr', {
-                val1: progress,
-                val2: calcTimeUnit(time)
-              })
+      return NODE_MAP[this.activeNode.nodeType]
+        .filter(
+          t =>
+            dataflowType === 'initial_sync+cdc' ||
+            (dataflowType === 'cdc' && !['BATCH_READ'].includes(t.key)) ||
+            (dataflowType === 'initial_sync' && !['OPEN_STREAM_READ', 'STREAM_READ'].includes(t.key))
+        )
+        .map(el => {
+          const data = nodeMilestones[el.key]
+          let t = Object.assign({}, el, data)
+          let { status = 'WAITING' } = t
+          let label = ''
+          if (el.key === 'BATCH_READ') {
+            const { snapshotTableTotal, snapshotDoneAt } = this.totalData
+            if (snapshotDoneAt) {
+              status = 'FINISH'
+            } else if (!snapshotTableTotal) {
+              status = 'WAITING'
+            } else {
+              status = 'RUNNING'
+              const { progress, time } = this.getDueTimeAndProgress(this.totalData)
+              label =
+                STATUS_MAP[status]?.label +
+                i18n.t('packages_business_milestone_list_progr', {
+                  val1: progress,
+                  val2: calcTimeUnit(time)
+                })
+            }
           }
-        }
-        t.statusColor = STATUS_MAP[status]?.color
-        t.statusLabel = label || STATUS_MAP[status]?.label || '-'
-        t.diff =
-          t.begin && t.end
-            ? calcTimeUnit(t.end - t.begin, 2, {
-                autoHideMs: true
-              })
-            : '-'
-        return t
-      })
+          t.statusColor = STATUS_MAP[status]?.color
+          t.statusLabel = label || STATUS_MAP[status]?.label || '-'
+          t.diff =
+            t.begin && t.end
+              ? calcTimeUnit(t.end - t.begin, 2, {
+                  autoHideMs: true
+                })
+              : '-'
+          return t
+        })
     }
   },
 
