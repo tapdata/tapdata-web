@@ -132,8 +132,8 @@ module.exports = {
 
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
-    const assetsIconDir = resolve('packages/assets/icons/svg')
-    const assetsColorIconDir = resolve('packages/assets/icons/colorSvg')
+    const assetsIconDir = resolve('../../packages/assets/icons/svg')
+    const assetsColorIconDir = resolve('../../packages/assets/icons/colorSvg')
     // svg loader排除 icon 目录
     config.module
       .rule('svg')
