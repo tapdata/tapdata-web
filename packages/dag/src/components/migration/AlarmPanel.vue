@@ -218,11 +218,11 @@ export default {
                     'TASK_STATUS_ERROR.notify'
                   ),
                   'TASK_STATUS_ERROR.notify': this.getCheckboxGroup('TASK_STATUS_ERROR.open'),
-                  'TASK_INSPECT_ERROR.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwujiaoyanchu'),
-                    'TASK_INSPECT_ERROR.notify'
-                  ),
-                  'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup('TASK_INSPECT_ERROR.open'),
+                  // 'TASK_INSPECT_ERROR.open': this.getSwitch(
+                  //   i18n.t('packages_dag_migration_alarmpanel_renwujiaoyanchu'),
+                  //   'TASK_INSPECT_ERROR.notify'
+                  // ),
+                  // 'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup('TASK_INSPECT_ERROR.open'),
                   'TASK_FULL_COMPLETE.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
                     'TASK_FULL_COMPLETE.notify'
