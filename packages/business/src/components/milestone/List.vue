@@ -153,6 +153,15 @@ export default {
           label: i18n.t('packages_business_milestone_list_zengliangshujuqian')
         }
       ]
+
+      const dataflowType = this.dataflow.type
+      result = result.filter(
+        t =>
+          dataflowType === 'initial_sync+cdc' ||
+          (dataflowType === 'cdc' && t.key !== 'FULL_SYNC') ||
+          (dataflowType === 'initial_sync' && t.key !== 'STREAM_READ')
+      )
+
       const finishOpt = {
         status: 'FINISH',
         desc: i18n.t('packages_business_milestone_list_wancheng'),
@@ -212,7 +221,7 @@ export default {
         icon: 'device',
         percentage: per,
         desc:
-          per === 1
+          per >= 100
             ? i18n.t('packages_business_milestone_list_wancheng')
             : i18n.t('packages_business_milestone_list_finis', {
                 val1: finishedLen,
