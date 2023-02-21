@@ -31,7 +31,7 @@
             <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
           </div>
         </div>
-        <TaskList :list="connectionTaskMap[item.id] || []"></TaskList>
+        <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
       </div>
 
       <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
