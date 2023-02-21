@@ -37,9 +37,15 @@
           >
           <div v-else class="task-list">
             <div class="task-list-content">
-              <div v-for="(task, i) in connectionTaskMap[item.id]" :key="i" class="task-list-item flex">
+              <div v-for="(task, i) in connectionTaskMap[item.id]" :key="i" class="task-list-item flex align-center">
                 <div class="p-1 ellipsis flex-1 align-center">
-                  <ElLink @click="handleEditInDag(task)" type="primary" size="small">{{ task.name }}</ElLink>
+                  <a
+                    class="el-link el-link--primary w-100 justify-content-start"
+                    :title="task.name"
+                    @click="handleEditInDag(task)"
+                  >
+                    <span class="ellipsis">{{ task.name }}</span>
+                  </a>
                 </div>
                 <div class="p-1">
                   <TaskStatus :task="task"></TaskStatus>
