@@ -141,11 +141,11 @@ export default {
     },
 
     async getTableList(id) {
-      const res = await metadataInstancesApi.getSourceTables(id)
+      const res = await metadataInstancesApi.getSourceTablesValues(id)
       const data = res.map(t => {
         return {
-          id: t,
-          name: t,
+          id: t.tableId,
+          name: t.tableName,
           isLeaf: true,
           type: 'table'
         }
@@ -206,7 +206,7 @@ export default {
     openView(row, isLeaf) {
       if (isLeaf) {
         let node = {
-          id: row.tableId,
+          id: row.id,
           category: 'storage',
           type: 'table'
         }
