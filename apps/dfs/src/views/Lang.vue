@@ -85,6 +85,7 @@
 <script>
 import i18n from '@/i18n'
 import { FilterBar, VTable } from '@tap/component'
+import { delayTrigger } from '@tap/shared'
 
 const zhCN = i18n.messages?.['zh-CN'] || {}
 const zhTWSource = i18n.messages?.['zh-TW'] || {}
@@ -210,7 +211,6 @@ export default {
       this.$message.success('success, please refresh page!')
     },
     search(debounce) {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         let { status, key, value } = this.searchParams
         let data = this.list

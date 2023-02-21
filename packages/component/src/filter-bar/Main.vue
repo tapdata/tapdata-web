@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { delayTrigger } from '@tap/shared'
+
 import VIcon from '../base/VIcon.vue'
 import SelectList from '../SelectList'
 import PopInput from './PopInput'
@@ -161,7 +163,6 @@ export default {
       }
       this.$refs.filterForm.validate(valid => {
         if (valid) {
-          const { delayTrigger } = this.$util
           delayTrigger(() => {
             this.$emit('input', this.getValue())
             this.$emit('search', this.getValue())

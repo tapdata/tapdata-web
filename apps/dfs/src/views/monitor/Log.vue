@@ -97,6 +97,7 @@ import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import { downloadBlob } from '@/util'
 import timeFunction from '@/mixins/timeFunction'
+import { delayTrigger, toRegExp } from '@tap/shared'
 
 export default {
   components: { VIcon },
@@ -159,7 +160,6 @@ export default {
   },
   methods: {
     search() {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.getLogs(true)
       }, 1000)
@@ -236,7 +236,6 @@ export default {
         }
       }
       if (keyword) {
-        const { toRegExp } = this.$util
         let query = { $regex: toRegExp(keyword), $options: 'i' }
         filter.where.$or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }

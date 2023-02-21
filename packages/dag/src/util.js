@@ -1,4 +1,5 @@
 import { getConnectionIcon } from '@tap/business'
+import { getIcon } from '@tap/assets/icons'
 
 export function getNodeIconSrc(node) {
   if (!node) return
@@ -7,7 +8,7 @@ export function getNodeIconSrc(node) {
     return getConnectionIcon(pdkHash)
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
-  return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+  return icon ? getIcon(icon) : null
 }
 
 const takeFieldValue = (schema, fieldName) => {

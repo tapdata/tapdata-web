@@ -49,6 +49,7 @@
 
 <script>
 import { VIcon, FilterBar, VTable } from '@tap/component'
+import { delayTrigger, toRegExp } from '@tap/shared'
 
 import i18n from '@/i18n'
 import { isEmpty } from '@/util'
@@ -399,7 +400,6 @@ export default {
           query[key] = searchParams[key]
         }
       }
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.$router.replace({
           name: 'OperationLog',
@@ -433,7 +433,6 @@ export default {
       ]
     },
     getData({ page }) {
-      const { toRegExp } = this.$util
       let { current, size } = page
       let { operationType, parameter1, start, end, username } = this.searchParams
       let where = {

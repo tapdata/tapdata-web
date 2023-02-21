@@ -82,6 +82,7 @@
 
 <script>
 import { VIcon } from '@tap/component'
+import { delayTrigger } from '@tap/shared'
 
 import timeFunction from '@/mixins/timeFunction'
 import Setting from './components/Setting'
@@ -136,7 +137,6 @@ export default {
       this.visible = false
     },
     fetch(pageNum, debounce) {
-      const { delayTrigger } = this.$util
       delayTrigger(() => {
         this.loading = true
         let where = {
