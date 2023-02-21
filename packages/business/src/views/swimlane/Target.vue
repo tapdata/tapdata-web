@@ -31,23 +31,7 @@
             <div class="mt-2 font-color-light">Sync data to {{ item.database_type }} for analytics</div>
           </div>
         </div>
-        <div class="item__content p-2">
-          <span v-if="!connectionTaskMap[item.id] || !connectionTaskMap[item.id].length" class="font-color-sslight"
-            >No tasks configured for this target</span
-          >
-          <div v-else class="task-list">
-            <div class="task-list-content">
-              <div v-for="(task, i) in connectionTaskMap[item.id]" :key="i" class="task-list-item flex">
-                <div class="p-1 ellipsis flex-1 align-center">
-                  <ElLink @click="handleEditInDag(task)" type="primary" size="small">{{ task.name }}</ElLink>
-                </div>
-                <div class="p-1">
-                  <TaskStatus :task="task"></TaskStatus>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TaskList :list="connectionTaskMap[item.id] || []" @edit-in-dag="handleEditInDag"></TaskList>
       </div>
 
       <ElDialog :visible.sync="dialogConfig.visible" width="600" :close-on-click-modal="false">
@@ -78,6 +62,7 @@ import { uuid } from '@tap/shared'
 
 import { makeStatusAndDisabled } from '../../shared'
 import { TaskStatus } from '../../components'
+import { defineComponent, ref } from '@vue/composition-api'
 
 const DEFAULT_SETTINGS = {
   name: '', // 任务名称
@@ -95,6 +80,58 @@ const DEFAULT_SETTINGS = {
   isAutoInspect: false
 }
 
+const TaskList = defineComponent({
+  props: ['list'],
+  setup(props, { emit }) {
+    const limit = 3
+    const isLimit = ref(true)
+    return () => {
+      const list = isLimit.value ? props.list.slice(0, limit) : props.list
+      return (
+        <div staticClass="item__content position-relative p-2" class={{ 'has-more': props.list.length > limit }}>
+          {props.list.length ? (
+            <div class="task-list">
+              <div class="task-list-content">
+                {list.map((task, i) => (
+                  <div key={i} class="task-list-item flex align-center">
+                    <div class="p-1 ellipsis flex-1 align-center">
+                      <a
+                        class="el-link el-link--primary w-100 justify-content-start"
+                        title={task.name}
+                        onClick={() => emit('edit-in-dag', task)}
+                      >
+                        <span class="ellipsis">{task.name}</span>
+                      </a>
+                    </div>
+                    <div class="p-1">
+                      <TaskStatus task={task}></TaskStatus>
+                    </div>
+                  </div>
+                ))}{' '}
+              </div>
+            </div>
+          ) : (
+            <span class="font-color-sslight">No tasks configured for this target</span>
+          )}
+
+          <ElButton
+            onClick={() => {
+              isLimit.value = !isLimit.value
+            }}
+            size="mini"
+            round
+            staticClass="task-list-item-more position-absolute fs-8"
+            class={{ 'is-reverse': !isLimit.value }}
+          >
+            {isLimit.value ? '查看更多' : '收起'}
+            <VIcon class="ml-1">arrow-down</VIcon>
+          </ElButton>
+        </div>
+      )
+    }
+  }
+})
+
 export default {
   name: 'Target',
 
@@ -102,7 +139,7 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, connectionPreview, TaskStatus },
+  components: { NodeIcon, connectionPreview, TaskList },
 
   data() {
     return {
@@ -354,6 +391,35 @@ export default {
 
   &.is-drop-inner {
     background-color: #d0deff;
+  }
+
+  ::v-deep {
+    .task-list-item-more {
+      display: none;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+
+      .v-icon {
+        vertical-align: -0.125em;
+        transition: transform 0.3s;
+        transform: rotate(0deg);
+      }
+
+      &.is-reverse .v-icon {
+        transform: rotate(180deg);
+      }
+    }
+
+    .has-more {
+      .task-list {
+        padding-bottom: 36px;
+      }
+
+      .task-list-item-more {
+        display: inline-flex;
+      }
+    }
   }
 }
 .item__header {
