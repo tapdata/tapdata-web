@@ -5,9 +5,13 @@
         <div>
           <span class="fs-6 mb-2 ellipsis">{{ viewData.name }}</span>
           <span class="color-primary ml-4">改名</span>
-          <span class="ml-4">{{ viewData.status }}</span>
+          <span class="ml-4">
+            <span :class="['status-connection-' + viewData.status, 'status-block']">
+              {{ $t('packages_business_connection_status_' + viewData.status) }}
+            </span>
+          </span>
         </div>
-        <div class="color-info">{{ viewData.connection_type }}</div>
+        <div class="color-info">{{ $t('packages_business_connection_type_' + viewData.connection_type) }}</div>
         <div class="flex justify-content-end mt-4 mb-4">
           <el-button type="primary" size="mini">加载Schema</el-button>
           <el-button @click="edit">编辑</el-button>
@@ -34,7 +38,10 @@
           </el-col>
           <el-col :span="3">
             <div>Schema 状态</div>
-            <div class="mt-2">{{ viewData.loadFieldsStatus }}</div>
+            <div class="mt-2" v-if="isFileSource(viewData.database_type)">-</div>
+            <div class="flex justify-content-center mt-2" v-else>
+              <SchemaProgress :data="viewData"></SchemaProgress>
+            </div>
           </el-col>
         </el-row>
       </section>
@@ -42,7 +49,7 @@
         <el-row class="mb-2">
           <el-col :span="12">
             <span class="label inline-block">数据库地址：</span>
-            <span>{{ viewData.config.host }}</span>
+            <span>{{ viewData.config.host || viewData.config.uri }}</span>
           </el-col>
           <el-col :span="12">
             <span class="label inline-block">数据库端口：</span>
@@ -80,12 +87,13 @@
 
 <script>
 import { Drawer } from '@tap/component'
+import { SchemaProgress } from '../../components'
 import dayjs from 'dayjs'
 
 export default {
   name: 'connectionPreview',
   props: ['connectionId', 'viewData'],
-  components: { Drawer },
+  components: { Drawer, SchemaProgress },
   data() {
     return {
       visible: false
@@ -112,6 +120,9 @@ export default {
         },
         query
       })
+    },
+    isFileSource(database_type) {
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(database_type)
     }
   }
 }
