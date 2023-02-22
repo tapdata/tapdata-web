@@ -1,5 +1,5 @@
 <template>
-  <div class="px-2 py-3">
+  <div class="px-2 py-3 overflow-y-auto">
     <div
       class="node-list-item px-2 mb-1 flex align-center font-color-dark"
       :class="{ active: activeNodeId === '' }"
@@ -64,13 +64,16 @@ export default {
     ...mapGetters('dataflow', ['allNodes']),
 
     items() {
-      return this.allNodes.map(t => {
-        const { type, $inputs, $outputs } = t
-        const isSource = (type === 'database' || type === 'table') && !$inputs.length
-        const isTarget = (type === 'database' || type === 'table') && !$outputs.length
-        t.nodeType = isSource ? 'source' : isTarget ? 'target' : 'processor'
-        return t
-      })
+      return this.allNodes
+        .map(t => {
+          const { type, $inputs, $outputs } = t
+          const isSource = (type === 'database' || type === 'table') && !$inputs.length
+          const isTarget = (type === 'database' || type === 'table') && !$outputs.length
+          t.nodeType = isSource ? 'source' : isTarget ? 'target' : 'processor'
+          t.index = isSource ? 1 : isTarget ? 3 : 2
+          return t
+        })
+        .sort((a, b) => a.index - b.index)
     }
   },
 
