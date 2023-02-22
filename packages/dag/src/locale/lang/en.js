@@ -375,7 +375,8 @@ export default {
   packages_dag_nodes_database_tuiyanjieguo: 'Deduction result',
   packages_dag_nodes_database_dangqianjiedianzhi: 'The current node supports processing DDL events',
   packages_dag_nodes_database_ddLshijian: 'DDL event collection',
-  packages_dag_nodes_database_kaiqihourenwu: 'After opening, the task will automatically process new and delete tables',
+  packages_dag_nodes_database_kaiqihourenwu:
+    'After opening, the task will automatically collect the selected source DDL events',
   packages_dag_nodes_database_dongtaixinzengbiao: 'Dynamic new table',
   packages_dag_nodes_database_quanliangmeipici: 'The number of full reads per batch',
   packages_dag_nodes_database_piliangduqutiao: 'Batch read number',
