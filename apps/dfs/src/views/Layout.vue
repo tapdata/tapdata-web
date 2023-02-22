@@ -141,7 +141,9 @@ export default {
     }
   },
   created() {
-    this.loadChat()
+    if (!window.__config__?.disabledOnlineChat) {
+      this.loadChat()
+    }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
@@ -274,11 +276,36 @@ export default {
 
       $zoho.salesiq.ready = function () {
         const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
           tapdata_email: user.email
         })
+
+        $zoho.salesiq.onload = function () {
+          let siqiframe = document.getElementById('siqiframe')
+          console.log('siqiframe', siqiframe) // eslint-disable-line
+
+          if (siqiframe) {
+            let style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+          }
+        }
+
+        /*$zoho.salesiq.floatbutton.click(function () {
+          let siqiframe = document.getElementById('siqiframe')
+          console.log('siqiframe', siqiframe) // eslint-disable-line
+
+          if (siqiframe) {
+            let style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+          }
+        })*/
       }
     },
 
