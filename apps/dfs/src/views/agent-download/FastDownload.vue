@@ -280,7 +280,16 @@ export default {
   },
   created() {
     this.getUrl()
-    //this.loadChat()
+    if (!window.__config__?.disabledOnlineChat) {
+      this.loadChat()
+    }
+    if (window.__config__?.disabledAlibabaCloudComputingNest) {
+      this.downType = [
+        { name: 'Linux (64 bit)', value: 'Linux' },
+        { name: 'Docker', value: 'Docker' },
+        { name: 'Windows (64 bit)', value: 'windows' }
+      ]
+    }
   },
   methods: {
     getUrl() {

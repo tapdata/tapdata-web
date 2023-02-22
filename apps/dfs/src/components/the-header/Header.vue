@@ -86,6 +86,37 @@ export default {
     this.lang = getCurrentLanguage()
     this.getPaidPlan()
     setCurrentLanguage(this.lang, this.$i18n)
+    if (window.__config__?.onlyEnglishLanguage) {
+      this.languages = { en: 'English' }
+    }
+    //如果没有配置topBarLinks 给默认值
+    if (!window.__config__?.topBarLinks) {
+      this.topBarLinks = [
+        {
+          text: 'dfs_data_server_apply_for_version', //线下部署
+          link: 'https://tapdata.net/tapdata-on-prem/demo.html',
+          type: 'op'
+        },
+        {
+          text: 'header_upgrade', //旧版本访问
+          link: 'https://cloud.tapdata.net/console/#/workbench/',
+          icon: 'navigation_general',
+          type: 'v2'
+        },
+        {
+          text: 'header_technical_support', //技术支持
+          link: 'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
+          icon: 'question',
+          type: 'support'
+        },
+        {
+          text: 'header_manual', //使用手册
+          link: 'https://docs.tapdata.io/cloud/what-is-tapdata-clou',
+          icon: 'send',
+          type: 'handbook'
+        }
+      ]
+    }
   },
   methods: {
     command(command) {

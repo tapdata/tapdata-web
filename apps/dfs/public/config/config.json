@@ -21,5 +21,8 @@
     "icon": "send",
     "type": "handbook"
   }],
-  "officialWebsiteAddress": "https://tapdata.net"
+  "officialWebsiteAddress": "https://tapdata.net",
+  "disabledOnlineChat": true,
+  "onlyEnglishLanguage": true,
+  "disabledAlibabaCloudComputingNest":true
 }
