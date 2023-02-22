@@ -68,7 +68,7 @@
             <el-button class="test" @click="startTest()">{{
               $t('packages_business_connection_list_test_button')
             }}</el-button>
-            <el-button type="primary" :loading="submitBtnLoading" @click="submit">
+            <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
               {{ $t('packages_business_button_save') }}
             </el-button>
             <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">SAVE & ADD MORE</el-button>

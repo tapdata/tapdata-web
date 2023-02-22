@@ -21,7 +21,7 @@
         ></ElInput>
         <VIcon class="ml-2">filter</VIcon>
       </div>-->
-      <div class="p-3 flex-fill tree-list">
+      <div v-loading="loading" class="p-3 flex-fill tree-list">
         <VirtualTree
           class="ldp-tree"
           ref="tree"
@@ -36,6 +36,7 @@
           :render-after-expand="false"
           :expand-on-click-node="false"
           :allow-drop="() => false"
+          :key="treeTime"
           @node-click="nodeClickHandler"
           @check="checkHandler"
           @node-drag-start="handleDragStart"
@@ -101,8 +102,14 @@ export default {
       props: {
         isLeaf: 'isLeaf',
         disabled: 'disabled'
-      }
+      },
+      loading: false,
+      treeTime: ''
     }
+  },
+
+  created() {
+    this.reload()
   },
 
   methods: {
@@ -191,9 +198,13 @@ export default {
 
     async loadNode(node, resolve) {
       if (node.level === 0) {
-        return resolve(await this.getConnectionList())
+        const data = await this.getConnectionList()
+        this.loading = false
+        return resolve(data)
       }
-      return resolve(await this.getTableList(node.data?.id))
+      const data = await this.getTableList(node.data?.id)
+      this.loading = false
+      return resolve(data)
     },
 
     handleReload(node) {
@@ -211,6 +222,11 @@ export default {
       } else {
         this.$refs.connectionView.open(row)
       }
+    },
+
+    reload() {
+      this.loading = true
+      this.treeTime = new Date() + ''
     }
   }
 }
