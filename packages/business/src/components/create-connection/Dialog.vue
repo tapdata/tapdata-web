@@ -12,14 +12,12 @@
       {{ showForm ? 'Configure SaaS Source' : title }}
     </div>
     <div v-if="!showForm" class="px-7 text-center">
-      <div class="mb-4 font-color-light">
-        Choose a data source connector from below and configure the connection & credentials.
-      </div>
+      <div class="mb-4 font-color-light">{{ $t('packages_business_create_connection_dialog_neirongCho') }}</div>
       <div class="inline-flex align-items-center mt-2 mb-4">
         <ElCheckbox v-model="settings.showBeta" class="m-0"></ElCheckbox>
-        <span class="ml-2">Show Connectors in BETA State</span>
+        <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho2') }}</span>
         <ElCheckbox v-model="settings.showAlpha" class="ml-8 mr-0"></ElCheckbox>
-        <span class="ml-2">Show Connectors in ALPHA State</span>
+        <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho') }}</span>
       </div>
       <ConnectionSelector
         :loading="loading"
@@ -30,7 +28,9 @@
       ></ConnectionSelector>
     </div>
     <div v-else class="form__content">
-      <div class="mb-4 text-center font-color-light">Connect & Authorize Tapdata to access your Zoho Desk account:</div>
+      <div class="mb-4 text-center font-color-light">
+        {{ $t('packages_business_create_connection_dialog_neirongCon') }}
+      </div>
       <ConnectionForm
         :params="formParams"
         @back="init"
@@ -58,7 +58,7 @@ export default {
     title: {
       type: String,
       default: () => {
-        return 'Choose Data Source Type' || i18n.t('connection_form_creat_connection')
+        return i18n.t('packages_business_create_connection_dialog_xuanzeshujuyuan')
       }
     },
     visible: {

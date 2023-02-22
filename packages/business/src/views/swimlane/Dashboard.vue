@@ -89,7 +89,7 @@ export default {
     },
 
     handleSuccess() {
-      console.log('handleSuccess', this.createConnectionParams.type)
+      console.log('handleSuccess', this.createConnectionParams.type, this.$refs)
     },
 
     handleDragEnd() {
