@@ -540,7 +540,7 @@ export default {
   packages_dag_migration_settingpanel_cronbiao: 'Cron表达式格式有误',
   packages_dag_hooks_useaftertasksaved_moxingyishengcheng: '模型已生成，执行 callback',
   packages_dag_mixins_editor_wsshoudaole: 'ws收到了其他任务的返回',
-  packages_dag_nodes_database_tongjizhuijiaxie: '统计追加写入',
+  packages_dag_nodes_database_tongjizhuijiaxie: '统一追加写入',
   packages_dag_nodes_database_anshijianleixing: '按事件类型处理',
   packages_dag_nodes_database_tongjizhuijiaxie2: '统计追加写入: 只处理插入事件，丢弃更新和删除事件',
   packages_dag_nodes_database_setting_cdc_changjing_desc: '纯增量场景下，不支持对目标表结构和数据的清除操作。',

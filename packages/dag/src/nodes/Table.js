@@ -782,7 +782,15 @@ export class Table extends NodeType {
                             label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
                             value: 'appendWrite'
                           }
-                        ]
+                        ],
+                        'x-reactions': {
+                          target: '*(dmlPolicy,updateConditionFields)',
+                          fulfill: {
+                            state: {
+                              display: '{{$self.value === "appendWrite" ? "hidden":"visible"}}'
+                            }
+                          }
+                        }
                       }
                     }
                   },
@@ -855,14 +863,6 @@ export class Table extends NodeType {
                         'x-component-props': {
                           type: 'info',
                           effect: 'light'
-                        }
-                      }
-                    },
-                    'x-reactions': {
-                      dependencies: ['writeStrategy'],
-                      fulfill: {
-                        state: {
-                          display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
                         }
                       }
                     }
