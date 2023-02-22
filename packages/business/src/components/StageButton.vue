@@ -5,7 +5,7 @@
     </template>
     <template v-else>
       <slot>
-        <span>重新加载</span>
+        <span>{{ $t('packages_business_components_stagebutton_chongxinjiazai') }}</span>
         <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
       </slot>
     </template>
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import i18n from '@tap/i18n'
+
 import { mapActions } from 'vuex'
 
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
@@ -29,8 +31,9 @@ export default {
   data() {
     return {
       loading: false,
-      title: '重新加载',
-      progress: ''
+      destroyStatus: false,
+      title: i18n.t('packages_business_components_stagebutton_chongxinjiazai'),
+      progress: '0%'
     }
   },
 
@@ -45,6 +48,7 @@ export default {
   },
 
   beforeDestroy() {
+    this.destroyStatus = true
     clearTimeout(this.timer)
   },
 
@@ -63,20 +67,22 @@ export default {
           loadFieldsStatus: 'loading'
         })
         .then(data => {
+          this.progress = '0%'
           this.getProgress()
           this.startByConnection(data, true, false)
         })
     },
 
     getProgress(check = false) {
+      if (this.destroyStatus) return
       if (!this.connectionId) return
       if (!check) {
         this.loading = true
       }
-      this.progress = '0'
       clearTimeout(this.timer)
       connectionsApi.getNoSchema(this.connectionId).then(res => {
         if (res.loadFieldsStatus === 'loading') {
+          this.progress = (Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0) + '%'
           this.timer = setTimeout(this.getProgress, 1000)
         } else {
           this.progress = 100 + '%'

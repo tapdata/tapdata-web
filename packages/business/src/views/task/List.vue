@@ -252,8 +252,8 @@
     >
       <span> {{ $t('packages_business_task_status_error_tip') }}</span>
       <div class="box mt-4">
-        <div class="mb-4">SQL语句:</div>
-        <div class="mt-2">//第一步 查询 slot_name</div>
+        <div class="mb-4">{{ $t('packages_business_task_list_sqLyuju') }}</div>
+        <div class="mt-2">{{ $t('packages_business_task_list_diyibuchaxun') }}</div>
         <div class="mb-4">
           {{ copySelectSql }}
           <ElTooltip
@@ -273,7 +273,7 @@
             </span>
           </ElTooltip>
         </div>
-        <div class="mt-2">// 第二步 删除 slot_name</div>
+        <div class="mt-2">{{ $t('packages_business_task_list_dierbushanchu') }}</div>
         <div>
           {{ copyDelSql }}
           <ElTooltip
@@ -294,9 +294,13 @@
           </ElTooltip>
         </div>
       </div>
-      <div class="mt-2" v-for="item in failList" :key="item.id">连接名: {{ item.message }}</div>
+      <div class="mt-2" v-for="item in failList" :key="item.id">
+        {{ $t('packages_business_task_list_lianjieming') }}{{ item.message }}
+      </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogDelMsgVisible = false">关闭</el-button>
+        <el-button type="primary" @click="dialogDelMsgVisible = false">{{
+          $t('packages_business_button_close')
+        }}</el-button>
       </span>
     </el-dialog>
   </section>

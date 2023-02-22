@@ -288,7 +288,7 @@ import BaseNode from './BaseNode'
 import CreateTable from './CreateTable'
 import NodeIcon from './NodeIcon'
 import ConnectionType from './ConnectionType'
-import StageButton from '@tap/component/src/StageButton'
+import StageButton from '@tap/business/src/components/StageButton'
 
 export default {
   name: 'LeftSidebar',

@@ -123,6 +123,11 @@ export default {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
           icon: 'operation-log'
+        },
+        {
+          name: 'swimLane',
+          title: '泳道',
+          icon: 'operation-log'
         }
       ],
       dialogVisible: false,
@@ -304,7 +309,7 @@ export default {
   word-wrap: break-word;
   word-break: break-word;
   .left-aside {
-    border-right: map-get($borderColor, aside);
+    border-right: 1px map-get($borderColor, aside) solid;
     background: map-get($bgColor, disable);
     .el-menu-item {
       height: 50px;

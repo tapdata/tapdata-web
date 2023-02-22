@@ -595,5 +595,8 @@ export default {
   packages_dag_nodes_table_lunxun: 'Polling',
   packages_dag_nodes_table_rizhicdc: 'log cdc',
   packages_dag_nodes_table_tedingziduande: 'Incremental collection of data by polling of specific fields',
-  packages_dag_nodes_table_zengliangtongbufang: 'Incremental synchronization method'
+  packages_dag_nodes_table_zengliangtongbufang: 'Incremental synchronization method',
+  packages_dag_table_list_card_index_zanshimeiyoupi: 'There is no matching table yet',
+  packages_dag_nodes_database_pipeidaodebiao: 'Matched table',
+  packages_dag_nodes_tableprocessor_biaomingchongfu: 'The table name is repeated'
 }

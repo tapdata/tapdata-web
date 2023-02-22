@@ -15,7 +15,6 @@ import VButton from './base/VButton.vue'
 import Highlight from './base/Highlight.js'
 import VCollapse from './base/VCollapse'
 import Classification from './Classification.vue'
-import DiscoveryClassification from './DiscoveryClassification'
 import FilterBar from './filter-bar'
 import DatetimeRange from './filter-bar/DatetimeRange.vue'
 import SelectList from './SelectList.vue'
@@ -56,7 +55,6 @@ export {
   GitBook,
   Drawer,
   InlineInput,
-  DiscoveryClassification,
   OverflowTooltip,
   DarkSelect,
   TimeSelect,
@@ -66,3 +64,5 @@ export {
 export * from './base'
 
 export * from './virtual-tree'
+
+export * from './pro-table'

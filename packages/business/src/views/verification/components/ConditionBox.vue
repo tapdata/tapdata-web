@@ -12,146 +12,169 @@
         $t('packages_business_verification_clear')
       }}</ElLink>
     </div>
-    <ul class="joint-table-main" id="data-verification-form">
-      <li
-        class="joint-table-item"
-        :class="['joint-table-item', { active: editId === item.id }]"
-        v-for="(item, index) in list"
-        :key="item.id + index"
-      >
-        <div class="joint-table-setting overflow-hidden">
-          <div class="flex justify-content-between">
-            <ElTooltip placement="top-start" :content="$t('packages_business_components_conditionbox_zhankaibianji')">
-              <div class="cond-item__title flex align-items-center cursor-pointer flex-fill" @click="editItem(item)">
-                <span class="font-color-main fs-7">{{
-                  $t('packages_business_components_conditionbox_jianyantiaojian')
-                }}</span>
-                <span class="ml-1">{{ index + 1 }}</span>
-                <VIcon size="14" class="ml-1 color-primary">edit-outline</VIcon>
+    <DynamicScroller
+      :items="list"
+      :min-item-size="30"
+      id="data-verification-form"
+      ref="virtualScroller"
+      key-field="id"
+      class="joint-table-main scroller px-2 py-1 h-100"
+    >
+      <template #default="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :data-index="index"
+          :size-dependencies="[item.id, item.source, item.target]"
+        >
+          <div
+            class="joint-table-item"
+            :class="['joint-table-item', { active: editId === item.id }]"
+            :key="item.id + index"
+          >
+            <div class="joint-table-setting overflow-hidden">
+              <div class="flex justify-content-between">
+                <ElTooltip
+                  placement="top-start"
+                  :content="$t('packages_business_components_conditionbox_zhankaibianji')"
+                >
+                  <div
+                    class="cond-item__title flex align-items-center cursor-pointer flex-fill"
+                    @click="editItem(item)"
+                  >
+                    <span class="font-color-main fs-7">{{
+                      $t('packages_business_components_conditionbox_jianyantiaojian')
+                    }}</span>
+                    <span class="ml-1">{{ index + 1 }}</span>
+                    <VIcon size="14" class="ml-1 color-primary">edit-outline</VIcon>
+                  </div>
+                </ElTooltip>
+                <div class="flex align-items-center">
+                  <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
+                  <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
+                </div>
               </div>
-            </ElTooltip>
-            <div class="flex align-items-center">
-              <ElButton type="text" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElButton>
-              <VIcon size="16" class="arrow-icon ml-1">arrow-right</VIcon>
+              <div class="setting-item mt-4" :key="'connection' + item.id">
+                <label class="item-label"
+                  >{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label
+                >
+                <AsyncSelect
+                  v-if="editId === item.id"
+                  v-model="item.source.connectionId"
+                  :method="getConnectionsListMethod"
+                  :currentLabel="item.source.connectionName"
+                  itemQuery="name"
+                  filterable
+                  class="item-select"
+                  :key="'sourceConnectionId' + item.id"
+                  :onSetSelected="useHandle(handleSetSelectedConnection, item.source)"
+                  @change="handleChangeConnection(arguments[0], item.source)"
+                >
+                </AsyncSelect>
+                <span v-else :class="['item-value-text', { 'color-disable': !item.source.connectionId }]">{{
+                  item.source.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
+                }}</span>
+                <span class="item-icon fs-6">
+                  <i class="el-icon-arrow-right"></i>
+                </span>
+                <AsyncSelect
+                  v-if="editId === item.id"
+                  v-model="item.target.connectionId"
+                  :method="getConnectionsListMethod"
+                  :currentLabel="item.target.connectionName"
+                  itemQuery="name"
+                  filterable
+                  class="item-select"
+                  :key="'targetConnectionId' + item.id"
+                  :onSetSelected="useHandle(handleSetSelectedConnection, item.target)"
+                  @change="handleChangeConnection(arguments[0], item.target)"
+                >
+                </AsyncSelect>
+                <span v-else :class="['item-value-text', { 'color-disable': !item.target.connectionId }]">{{
+                  item.target.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
+                }}</span>
+              </div>
+              <div class="setting-item mt-4" :key="'table' + item.id">
+                <label class="item-label">{{ $t('packages_business_components_conditionbox_laiyuanbiao') }}:</label>
+                <AsyncSelect
+                  v-if="editId === item.id"
+                  v-model="item.source.table"
+                  :method="getTableListMethod"
+                  :params="{
+                    connectionId: item.source.connectionId,
+                    nodeId: item.source.nodeId
+                  }"
+                  itemQuery="name"
+                  itemType="string"
+                  filterable
+                  class="item-select"
+                  :key="'sourceTable' + item.id"
+                  @change="handleChangeTable(arguments[0], item, index, 'source')"
+                >
+                </AsyncSelect>
+                <span v-else :class="['item-value-text', { 'color-disable': !item.source.table }]">{{
+                  item.source.table || $t('packages_business_statistics_schedule_qingxuanze')
+                }}</span>
+                <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
+                <AsyncSelect
+                  v-if="editId === item.id"
+                  v-model="item.target.table"
+                  :method="getTableListMethod"
+                  :params="{
+                    connectionId: item.target.connectionId,
+                    nodeId: item.target.nodeId
+                  }"
+                  itemQuery="name"
+                  itemType="string"
+                  filterable
+                  class="item-select"
+                  :key="'targetTable' + item.id"
+                  @change="handleChangeTable(arguments[0], item, index, 'target')"
+                >
+                </AsyncSelect>
+                <span v-else :class="['item-value-text', { 'color-disable': !item.target.table }]">{{
+                  item.target.table || $t('packages_business_statistics_schedule_qingxuanze')
+                }}</span>
+              </div>
+              <FieldBox
+                v-if="inspectMethod !== 'row_count' && editId === item.id"
+                :is-edit="editId === item.id"
+                :item="item"
+                :index="index"
+                :dynamicSchemaMap="dynamicSchemaMap"
+                :id="'field-box-' + index"
+                @change="handleChangeFieldBox(arguments[0], item)"
+              ></FieldBox>
+              <div class="setting-item mt-4">
+                <ElCheckbox
+                  v-if="editId === item.id"
+                  v-model="item.showAdvancedVerification"
+                  v-show="inspectMethod === 'field'"
+                  @input="handleChangeAdvanced(item)"
+                  >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
+                >
+              </div>
+              <div class="setting-item mt-4" v-if="item.showAdvancedVerification && inspectMethod === 'field'">
+                <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
+                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
+                  $t('packages_business_verification_addJS')
+                }}</ElButton>
+                <template v-else>
+                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
+                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
+                </template>
+              </div>
+              <div
+                class="setting-item mt-4"
+                v-if="inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+              >
+                <pre class="item-script">{{ item.webScript }}</pre>
+              </div>
             </div>
           </div>
-          <div class="setting-item mt-4" :key="'connection' + item.id">
-            <label class="item-label">{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label>
-            <AsyncSelect
-              v-if="editId === item.id"
-              v-model="item.source.connectionId"
-              :method="getConnectionsListMethod"
-              :currentLabel="item.source.connectionName"
-              itemQuery="name"
-              filterable
-              class="item-select"
-              :key="'sourceConnectionId' + item.id"
-              :onSetSelected="useHandle(handleSetSelectedConnection, item.source)"
-              @change="handleChangeConnection(arguments[0], item.source)"
-            >
-            </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-disable': !item.source.connectionId }]">{{
-              item.source.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
-            }}</span>
-            <span class="item-icon fs-6">
-              <i class="el-icon-arrow-right"></i>
-            </span>
-            <AsyncSelect
-              v-if="editId === item.id"
-              v-model="item.target.connectionId"
-              :method="getConnectionsListMethod"
-              :currentLabel="item.target.connectionName"
-              itemQuery="name"
-              filterable
-              class="item-select"
-              :key="'targetConnectionId' + item.id"
-              :onSetSelected="useHandle(handleSetSelectedConnection, item.target)"
-              @change="handleChangeConnection(arguments[0], item.target)"
-            >
-            </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-disable': !item.target.connectionId }]">{{
-              item.target.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
-            }}</span>
-          </div>
-          <div class="setting-item mt-4" :key="'table' + item.id">
-            <label class="item-label">{{ $t('packages_business_components_conditionbox_laiyuanbiao') }}:</label>
-            <AsyncSelect
-              v-if="editId === item.id"
-              v-model="item.source.table"
-              :method="getTableListMethod"
-              :params="{
-                connectionId: item.source.connectionId,
-                nodeId: item.source.nodeId
-              }"
-              itemQuery="name"
-              itemType="string"
-              filterable
-              class="item-select"
-              :key="'sourceTable' + item.id"
-              @change="handleChangeTable(arguments[0], item, index, 'source')"
-            >
-            </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-disable': !item.source.table }]">{{
-              item.source.table || $t('packages_business_statistics_schedule_qingxuanze')
-            }}</span>
-            <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
-            <AsyncSelect
-              v-if="editId === item.id"
-              v-model="item.target.table"
-              :method="getTableListMethod"
-              :params="{
-                connectionId: item.target.connectionId,
-                nodeId: item.target.nodeId
-              }"
-              itemQuery="name"
-              itemType="string"
-              filterable
-              class="item-select"
-              :key="'targetTable' + item.id"
-              @change="handleChangeTable(arguments[0], item, index, 'target')"
-            >
-            </AsyncSelect>
-            <span v-else :class="['item-value-text', { 'color-disable': !item.target.table }]">{{
-              item.target.table || $t('packages_business_statistics_schedule_qingxuanze')
-            }}</span>
-          </div>
-          <FieldBox
-            v-if="inspectMethod !== 'row_count' && editId === item.id"
-            :is-edit="editId === item.id"
-            :item="item"
-            :index="index"
-            :dynamicSchemaMap="dynamicSchemaMap"
-            :id="'field-box-' + index"
-            @change="handleChangeFieldBox(arguments[0], item)"
-          ></FieldBox>
-          <div class="setting-item mt-4">
-            <ElCheckbox
-              v-if="editId === item.id"
-              v-model="item.showAdvancedVerification"
-              v-show="inspectMethod === 'field'"
-              @input="handleChangeAdvanced(item)"
-              >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
-            >
-          </div>
-          <div class="setting-item mt-4" v-if="item.showAdvancedVerification && inspectMethod === 'field'">
-            <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
-            <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-              $t('packages_business_verification_addJS')
-            }}</ElButton>
-            <template v-else>
-              <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
-              <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
-            </template>
-          </div>
-          <div
-            class="setting-item mt-4"
-            v-if="inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
-          >
-            <pre class="item-script">{{ item.webScript }}</pre>
-          </div>
-        </div>
-      </li>
-    </ul>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
     <div class="joint-table-footer">
       <ElButton size="mini" @click="addItem">{{ $t('packages_business_verification_addTable') }}</ElButton>
       <ElButton
@@ -168,6 +191,8 @@
 </template>
 
 <script>
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+
 import i18n from '@tap/i18n'
 
 import { AsyncSelect } from '@tap/form'
@@ -182,7 +207,7 @@ import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
 export default {
   name: 'ConditionBox',
 
-  components: { AsyncSelect, FieldBox },
+  components: { AsyncSelect, FieldBox, DynamicScroller, DynamicScrollerItem },
 
   props: {
     taskId: String,
@@ -784,7 +809,9 @@ export default {
         this.$nextTick(() => {
           formDom.childNodes[index - 1].querySelector('input').focus()
         })
-        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set')
+        message = this.$t('packages_business_verification_message_error_joint_table_target_or_source_not_set', {
+          val: index
+        })
         this.jointErrorMessage = message
         return message
       }
@@ -803,7 +830,7 @@ export default {
           let item = document.getElementById('item-source-' + (index - 1))
           item.querySelector('input').focus()
         })
-        message = this.$t('packages_business_verification_lackIndex')
+        message = this.$t('packages_business_verification_lackIndex', { val: index })
         this.jointErrorMessage = message
         return message
       }
@@ -821,7 +848,7 @@ export default {
           let item = document.getElementById('item-source-' + (index - 1))
           item.querySelector('input').focus()
         })
-        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match')
+        message = this.$t('packages_business_verification_message_error_joint_table_field_not_match', { val: index })
         this.jointErrorMessage = message
         return message
       }

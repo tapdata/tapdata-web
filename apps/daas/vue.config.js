@@ -41,6 +41,11 @@ module.exports = {
       }
     }
   },
+  transpileDependencies: [
+    // 按需添加需要babel处理的模块
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/
+  ],
   chainWebpack(config) {
     //  ============ 配置别名 ============
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
@@ -133,6 +138,12 @@ module.exports = {
       .use('babel')
       .loader('babel-loader')
       .end()
+
+    /*console.log('js config :>> ', config.module.rule('js').toConfig())
+    // element-ui 特殊处理
+    config.module.rule('js').merge({
+      include: [resolve('node_modules/element-ui/packages/table/src/table-body.js')]
+    })*/
   },
   configureWebpack: config => {
     // 尽量保证项目中文件后缀的精确

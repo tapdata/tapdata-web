@@ -44,10 +44,17 @@ const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
 }
+
+const SwimlaneDashboard = async () => {
+  const { SwimlaneDashboard } = await import('@tap/business')
+  return SwimlaneDashboard
+}
+
 const CustomNodeList = async () => {
   const { CustomNodeList } = await import('@tap/business')
   return CustomNodeList
 }
+
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
@@ -248,6 +255,16 @@ const routes = [
         path: '/data-server',
         name: 'dataServerList',
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/data-server/list'),
+        meta: {
+          title: 'dfs_data_server',
+          hideTitle: true,
+          icon: 'data-server'
+        }
+      },
+      {
+        path: '/swim-lane',
+        name: 'swimLane',
+        component: SwimlaneDashboard,
         meta: {
           title: 'dfs_data_server',
           hideTitle: true,

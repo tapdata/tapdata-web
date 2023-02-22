@@ -139,8 +139,22 @@ export class Database extends NodeType {
             title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
             type: 'string',
             default: 'custom',
-            'x-decorator': 'FormItem',
+            'x-decorator': 'StageButtonLabel',
+            'x-decorator-props': {
+              asterisk: true,
+              feedbackLayout: 'none',
+              connectionId: '{{$values.connectionId}}',
+              title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
+              target: ''
+            },
             'x-component': 'Radio.Group',
+            'x-reactions': {
+              fulfill: {
+                schema: {
+                  'x-decorator-props.target': `{{$self.value==='expression'?'tableListCard':'tableNames'}}`
+                }
+              }
+            },
             enum: [
               {
                 label: i18n.t('packages_dag_nodes_database_anbiaomingxuanze'),
@@ -164,7 +178,8 @@ export class Database extends NodeType {
                 height: 'unset',
                 minHeight: 0,
                 maxHeight: 'calc((100vh - 120px) * 0.618)'
-              }
+              },
+              hideReload: true
             },
             'x-reactions': {
               dependencies: ['migrateTableSelectType'],
@@ -182,11 +197,32 @@ export class Database extends NodeType {
           tableExpression: {
             type: 'string',
             default: '.*',
+            required: true,
             description: i18n.t('packages_dag_nodes_database_zhengzebiaodashi'),
             'x-decorator': 'FormItem',
-            'x-component': 'Input.TextArea',
+            'x-component': 'Input',
             'x-component-props': {
               rows: 1
+            },
+            'x-reactions': {
+              dependencies: ['migrateTableSelectType'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
+                }
+              }
+            }
+          },
+
+          tableListCard: {
+            type: 'void',
+            'x-decorator': 'FormItem',
+            'x-component': 'TableListCard',
+            'x-component-props': {
+              rows: 1,
+              title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
+              connectionId: '{{$values.connectionId}}',
+              params: '{{ {regex: $values.tableExpression,limit:0} }}'
             },
             'x-reactions': {
               dependencies: ['migrateTableSelectType'],
