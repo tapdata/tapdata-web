@@ -27,7 +27,7 @@
         <OverflowTooltip
           class="agent-name__item text-truncate mb-2 font-color-dark"
           placement="bottom"
-          :text="dataflow.hostName"
+          :text="dataflow.agentName"
           :open-delay="400"
         />
         <div v-if="agentData" class="font-color-sslight agent-statistical">

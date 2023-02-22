@@ -612,7 +612,12 @@ export default {
       this.scope.$agents = data.map(item => {
         return {
           value: item.processId,
-          label: `${item.hostName}（${item.ip}）`
+          label: `${item.hostName}（${
+            item.status === 'running'
+              ? i18n.t('packages_business_agent_status_running')
+              : i18n.t('packages_business_agent_status_stopped')
+          }）`,
+          disabled: item.status !== 'running'
         }
       })
       this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})

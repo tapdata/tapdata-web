@@ -1,3 +1,4 @@
+import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class Database extends NodeType {
@@ -39,7 +40,7 @@ export class Database extends NodeType {
 
       name: {
         type: 'string',
-        title: '节点名称',
+        title: i18n.t('packages_dag_nodes_database_jiedianmingcheng'),
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input'
@@ -58,13 +59,13 @@ export class Database extends NodeType {
         properties: {
           'attrs.connectionName': {
             type: 'string',
-            title: '连接名称',
+            title: i18n.t('packages_dag_nodes_database_lianjiemingcheng'),
             'x-decorator': 'FormItem',
             'x-component': 'PreviewText.Input'
           },
           'attrs.accessNodeProcessId': {
             type: 'string',
-            title: '所属agent',
+            title: i18n.t('packages_dag_nodes_database_suoshuage'),
             'x-decorator': 'FormItem',
             'x-component': 'PreviewText.Input',
             'x-component-props': {
@@ -94,12 +95,12 @@ export class Database extends NodeType {
         },
         properties: {
           enableDDL: {
-            title: 'DDL事件采集',
+            title: i18n.t('packages_dag_nodes_table_ddLshijian'),
             type: 'boolean',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
-              tooltip: '开启后任务将会自动采集选中的源端DDL事件',
+              tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu'),
               feedbackLayout: 'none'
               // wrapperStyle: {
               //   width: 'auto'
@@ -120,7 +121,9 @@ export class Database extends NodeType {
                 fulfill: {
                   state: {
                     disabled: true,
-                    description: `{{$values.databaseType + '暂不支持DDL事件采集'}}`
+                    description: `{{$values.databaseType + '${i18n.t(
+                      'packages_dag_nodes_database_value_zanbuzhiciddl'
+                    )}'}}`
                   }
                 }
               }
@@ -133,18 +136,18 @@ export class Database extends NodeType {
           },
 
           migrateTableSelectType: {
-            title: '选择表',
+            title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
             type: 'string',
             default: 'custom',
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
               {
-                label: '按表名选择',
+                label: i18n.t('packages_dag_nodes_database_anbiaomingxuanze'),
                 value: 'custom'
               },
               {
-                label: '按正则表达式匹配',
+                label: i18n.t('packages_dag_nodes_database_anzhengzebiaoda'),
                 value: 'expression'
               }
             ]
@@ -179,7 +182,7 @@ export class Database extends NodeType {
           tableExpression: {
             type: 'string',
             default: '.*',
-            description: '正则表达式匹配模式下，数据库新增的符合表达式的表会被自动同步到目标',
+            description: i18n.t('packages_dag_nodes_database_zhengzebiaodashi'),
             'x-decorator': 'FormItem',
             'x-component': 'Input.TextArea',
             'x-component-props': {
@@ -196,12 +199,12 @@ export class Database extends NodeType {
           },
 
           readBatchSize: {
-            title: '批量读取条数', //增量批次读取条数
+            title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'InputNumber',
             'x-decorator-props': {
-              tooltip: '全量每批次读取的条数'
+              tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici')
             },
             'x-component-props': {
               min: 1,
@@ -249,12 +252,12 @@ export class Database extends NodeType {
             },
             properties: {
               writeBatchSize: {
-                title: '批量写入条数', //增量批次读取条数
+                title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
                 'x-decorator-props': {
-                  tooltip: '全量每批次写入的条数'
+                  tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2')
                 },
                 'x-component-props': {
                   min: 1,
@@ -263,7 +266,7 @@ export class Database extends NodeType {
                 default: 2000
               },
               writeBatchWaitMs: {
-                title: '写入每批最大等待时间(ms)', //增量批次读取条数
+                title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
@@ -276,10 +279,10 @@ export class Database extends NodeType {
           },
           ddlEvents: {
             type: 'void',
-            title: 'DDL事件应用',
+            title: i18n.t('packages_dag_nodes_database_ddLshijian'),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              tooltip: '当前节点支持处理的DDL事件',
+              tooltip: i18n.t('packages_dag_nodes_database_dangqianjiedianzhi'),
               feedbackLayout: 'none'
             },
             'x-component': 'DdlEventList',
@@ -289,7 +292,7 @@ export class Database extends NodeType {
           },
           fieldMapping: {
             type: 'void',
-            title: '推演结果',
+            title: i18n.t('packages_dag_nodes_database_tuiyanjieguo'),
             'x-decorator': 'FormItem',
             'x-component': 'fieldInference',
             'x-component-props': {
@@ -313,25 +316,25 @@ export class Database extends NodeType {
                 type: 'void',
                 'x-component': 'FormCollapse.Item',
                 'x-component-props': {
-                  title: '高级设置'
+                  title: i18n.t('packages_dag_task_stetting_most_setting')
                 },
                 properties: {
                   existDataProcessMode: {
                     type: 'string',
-                    title: '重复处理策略',
+                    title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
                     default: 'keepData',
                     enum: [
                       {
-                        label: '保持目标端原有表结构和数据',
+                        label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
                         value: 'keepData'
                       },
                       {
-                        label: '清除目标端原有表结构及数据',
+                        label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
                         value: 'dropTable',
                         disabled: true
                       },
                       {
-                        label: '保持目标端原有表结构，清除数据',
+                        label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
                         value: 'removeData'
                       }
                     ],
@@ -341,7 +344,9 @@ export class Database extends NodeType {
                       fulfill: {
                         run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
                         state: {
-                          description: `{{$settings.type === "cdc" ? '纯增量场景下，不支持对目标表结构和数据的清除操作。':''}}`
+                          description: `{{$settings.type === "cdc" ? '${i18n.t(
+                            'packages_dag_nodes_database_setting_cdc_changjing_desc'
+                          )}':''}}`
                         },
                         schema: {
                           // ⚠️👇表达式依赖enum的顺序
@@ -360,21 +365,21 @@ export class Database extends NodeType {
                     },
                     properties: {
                       writeStrategy: {
-                        title: '数据写入模式',
+                        title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
                         type: 'string',
                         default: 'updateOrInsert',
                         'x-component': 'Radio.Group',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: '统计追加写入: 只处理插入事件，丢弃更新和删除事件'
+                          tooltip: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie2')
                         },
                         enum: [
                           {
-                            label: '按事件类型处理',
+                            label: i18n.t('packages_dag_nodes_database_anshijianleixing'),
                             value: 'updateOrInsert'
                           },
                           {
-                            label: '统计追加写入',
+                            label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
                             value: 'appendWrite'
                           }
                         ]
@@ -382,7 +387,7 @@ export class Database extends NodeType {
                     }
                   },
                   dmlPolicy: {
-                    title: '数据写入策略',
+                    title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                     type: 'object',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
@@ -402,16 +407,16 @@ export class Database extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark mb-2',
                           wrapperWidth: 300,
-                          addonBefore: '插入事件'
+                          addonBefore: i18n.t('packages_dag_nodes_database_charushijian')
                         },
                         default: 'update_on_exists',
                         enum: [
                           {
-                            label: '目标存在时更新',
+                            label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
                             value: 'update_on_exists'
                           },
                           {
-                            label: '目标存在时丢弃',
+                            label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
                             value: 'ignore_on_exists'
                           }
                         ]
@@ -423,16 +428,16 @@ export class Database extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark mb-2',
                           wrapperWidth: 300,
-                          addonBefore: '更新事件'
+                          addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian')
                         },
                         default: 'ignore_on_nonexists',
                         enum: [
                           {
-                            label: '不存在时丢弃',
+                            label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
                             value: 'ignore_on_nonexists'
                           },
                           {
-                            label: '不存在时插入',
+                            label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
                             value: 'insert_on_nonexists'
                           }
                         ]
@@ -443,10 +448,10 @@ export class Database extends NodeType {
                         'x-decorator-props': {
                           className: 'font-color-dark',
                           wrapperWidth: 300,
-                          addonBefore: '删除事件'
+                          addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian')
                         },
                         'x-component': 'Tag',
-                        'x-content': '不存在时丢弃',
+                        'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
                         'x-component-props': {
                           type: 'info',
                           effect: 'light'
@@ -464,7 +469,7 @@ export class Database extends NodeType {
                   },
 
                   initialConcurrentSpace: {
-                    title: '全量多线程写入',
+                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       layout: 'horizontal'
@@ -500,7 +505,7 @@ export class Database extends NodeType {
                   },
                   cdcConcurrentSpace: {
                     type: 'void',
-                    title: '增量多线程写入',
+                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       layout: 'horizontal'

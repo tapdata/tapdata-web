@@ -16,23 +16,16 @@ export const JsDeclare = defineComponent({
     const before = `function declare(${props.param}) {`
     const after = `  return ${props.param}\n}`
     const dialogVisible = ref(false)
-    const codeExample = `// 增加一个字段，如果字段已存在则不操作
-TapModelDeclare.addField(${props.param}, 'fieldName', 'TapString')
-// 移除一个已存在字段
-TapModelDeclare.removeField(${props.param}, 'fieldName')
-// 更新一个已存在的字段
-TapModelDeclare.updateField(${props.param}, 'fieldName', 'TapString')
-// 更新字段，如果不存在则新增
-TapModelDeclare.upsertField(${props.param}, 'fieldName', 'TapString')
-// 设置字段为主键
-TapModelDeclare.setPk(${props.param}, 'fieldName')
-// 取消主键
-TapModelDeclare.unSetPk(${props.param}, 'fieldName')
-// 增加索引
-TapModelDeclare.addIndex(${props.param}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])
-// 移除索引
-TapModelDeclare.removeIndex(${props.param}, 'indexName')
-`
+    const codeExample = i18n.t('packages_dag_js_declare_index_zengjiayigezi', {
+      val1: props.param,
+      val2: props.param,
+      val3: props.param,
+      val4: props.param,
+      val5: props.param,
+      val6: props.param,
+      val7: props.param,
+      val8: props.param
+    })
     return () => {
       const editorProps = { ...attrs }
       editorProps.options.readOnly = props.disabled
@@ -46,7 +39,7 @@ TapModelDeclare.removeIndex(${props.param}, 'indexName')
               <span class="font-color-light fw-normal">
                 {i18n.t('packages_form_js_processor_index_moxingshengming')}
               </span>
-              <el-tooltip content="显式声明来定义和修改模型" placement="top">
+              <el-tooltip content={i18n.t('packages_dag_js_declare_index_xianshishengminglai')} placement="top">
                 <i class="ml-1 font-color-sslight header-icon el-icon-info"></i>
               </el-tooltip>
               <div class="flex-grow-1"></div>
@@ -55,11 +48,11 @@ TapModelDeclare.removeIndex(${props.param}, 'indexName')
                 type="primary"
                 class="mx-4"
               >
-                使用帮助
+                {i18n.t('packages_dag_js_declare_index_shiyongbangzhu')}
               </el-link>
 
               <el-dialog
-                title="模型声明"
+                title={i18n.t('packages_dag_nodes_javascript_moxingshengming')}
                 visible={dialogVisible.value}
                 on={{
                   'update:visible': v => (dialogVisible.value = v)
@@ -73,12 +66,12 @@ TapModelDeclare.removeIndex(${props.param}, 'indexName')
                     class="m-0"
                     code="type TapType = 'TapNumber' | 'TapString' | 'TapBoolean' | 'TapBinary' | 'TapDate' | 'TapDateTime' | 'TapTime' | 'TapYear' | 'TapRaw' | 'TapArray' | 'TapMap'"
                   ></HighlightCode>
-                  <div class="fs-6 my-4">示例代码</div>
+                  <div class="fs-6 my-4">{i18n.t('packages_dag_js_declare_index_shilidaima')}</div>
                   <HighlightCode class="m-0" code={codeExample}></HighlightCode>
                 </div>
                 <span slot="footer" class="dialog-footer">
                   <el-button type="primary" onClick={() => (dialogVisible.value = false)}>
-                    确 定
+                    {i18n.t('packages_dag_js_declare_index_queding')}
                   </el-button>
                 </span>
               </el-dialog>

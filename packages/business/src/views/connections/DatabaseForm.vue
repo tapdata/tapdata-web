@@ -767,7 +767,10 @@ export default {
         },
         default: '02:00',
         enum: [
-          'false',
+          {
+            label: i18n.t('packages_business_connections_databaseform_bujiazai'),
+            value: 'false'
+          },
           '00:00',
           '01:00',
           '02:00',
@@ -920,11 +923,17 @@ export default {
         },
         loadAccessNode: async () => {
           const data = await clusterApi.findAccessNodeInfo()
+
           return (
             data?.map(item => {
               return {
                 value: item.processId,
-                label: `${item.hostName}（${item.ip}）`
+                label: `${item.hostName}（${
+                  item.status === 'running'
+                    ? i18n.t('packages_business_agent_status_running')
+                    : i18n.t('packages_business_agent_status_stopped')
+                }）`,
+                disabled: item.status !== 'running'
               }
             }) || []
           )

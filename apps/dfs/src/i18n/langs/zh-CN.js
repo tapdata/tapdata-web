@@ -1030,7 +1030,8 @@ export default {
   _workbench_workbench_yigoushishitong: '异构实时同步',
   _workbench_workbench_shujuruhucang: '数据入湖仓 ',
   _workbench_workbench_jichengaliyun: '集成阿里云计算巢',
-  _workbench_workbench_jiangshujudaoru: '将数据导入阿里云 Tablestore',
+  _workbench_workbench_jiangshujudaoru: '数据导入',
+  _workbench_workbench_jiangshujudaorusub: '阿里云 Tablestore',
   _workbench_workbench_tansuoshili: '探索示例',
 
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升级和服务切换重要公告',
@@ -1204,5 +1205,9 @@ export default {
   dfs_data_server_apply_for_trial: '申请试用',
   dfs_data_server_apply_for_version: '线下部署版',
 
-  dfs_data_dashboard_Marquee: '当前demo环境为只读环境，仅支持查看和体验产品功能'
+  dfs_data_dashboard_Marquee: '当前demo环境为只读环境，仅支持查看和体验产品功能',
+
+  page_title_custom_node: '自定义节点',
+  packages_nodeDesign_custom_node_name_required: '请输入节点名称',
+  packages_nodeDesign_message_save_ok: '保存成功'
 }

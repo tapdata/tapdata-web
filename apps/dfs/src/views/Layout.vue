@@ -109,6 +109,12 @@ export default {
           beta: true
         },
         {
+          name: 'customNodeList',
+          title: $t('page_title_custom_node'),
+          icon: 'custom',
+          beta: true
+        },
+        {
           name: 'dataServerList',
           title: $t('dfs_data_server'),
           icon: 'data-server'
@@ -305,6 +311,9 @@ export default {
       line-height: 50px;
       ::v-deep .v-icon {
         color: map-get($iconFillColor, normal);
+      }
+      &.is-active {
+        background-color: #eaf0ff;
       }
       &.is-active {
         ::v-deep .v-icon {

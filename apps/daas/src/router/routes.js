@@ -18,6 +18,10 @@ const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
 }
+const CustomNodeList = async () => {
+  const { CustomNodeList } = await import('@tap/business')
+  return CustomNodeList
+}
 const NodeEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
@@ -89,6 +93,11 @@ const VerificationResult = async () => {
   return VerificationResult
 }
 
+//告警设置
+const AlarmSetting = async () => {
+  const { AlarmSetting } = await import('@tap/business')
+  return AlarmSetting
+}
 export default [
   {
     path: '/login',
@@ -624,8 +633,7 @@ export default [
           {
             path: '',
             name: 'customNodeList',
-            component: () =>
-              import(/* webpackChunkName: "custom-proccessor-node" */ '@/views/custom-proccessor-node/List'),
+            component: CustomNodeList,
             meta: {
               title: 'page_title_custom_node',
               code: 'v2_custom_node_menu'
@@ -876,7 +884,7 @@ export default [
           {
             path: 'alarmSetting',
             name: 'alarmSetting',
-            component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/AlarmNotification'),
+            component: AlarmSetting,
             meta: {
               title: 'page_title_setting',
               code: 'v2_alarm_settings_menu',
