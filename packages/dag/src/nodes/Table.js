@@ -346,15 +346,24 @@ export class Table extends NodeType {
                       { label: i18n.t('packages_dag_nodes_table_rizhicdc'), value: 'logCdc' },
                       { label: i18n.t('packages_dag_nodes_table_lunxun'), value: 'polling' }
                     ],
-                    'x-reactions': {
-                      target:
-                        '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
-                      fulfill: {
-                        state: {
-                          visible: '{{$self.value==="polling"}}'
+                    'x-reactions': [
+                      {
+                        fulfill: {
+                          state: {
+                            visible: `{{$values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
+                          }
+                        }
+                      },
+                      {
+                        target:
+                          '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
+                        fulfill: {
+                          state: {
+                            visible: '{{$self.value==="polling"}}'
+                          }
                         }
                       }
-                    }
+                    ]
                   },
                   cdcPollingFields: {
                     title: i18n.t('packages_dag_nodes_table_zhidinglunxunzi'),
