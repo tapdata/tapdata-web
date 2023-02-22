@@ -24,19 +24,19 @@
             <el-row>
               <el-col :span="4">
                 <div class="table-dec-label">Rows</div>
-                <div class="table-dec-txt mt-2">2.7M</div>
+                <div class="table-dec-txt mt-4">2.7M</div>
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Columns</div>
-                <div class="table-dec-txt mt-2">2.7M</div>
+                <div class="table-dec-txt mt-4">2.7M</div>
               </el-col>
               <el-col :span="4">
                 <div class="table-dec-label">Storage Size</div>
-                <div class="table-dec-txt mt-2">27M</div>
+                <div class="table-dec-txt mt-4">27M</div>
               </el-col>
               <el-col :span="6">
                 <div class="table-dec-label">Connection</div>
-                <div class="table-dec-txt mt-2" v-if="detailData">{{ detailData.connectionName }}</div>
+                <div class="table-dec-txt mt-4" v-if="detailData">{{ detailData.connectionName }}</div>
               </el-col>
             </el-row>
           </section>
@@ -197,7 +197,7 @@ export default {
     color: #535f72;
   }
   .table-dec-txt {
-    font-weight: 400;
+    font-weight: 500;
     color: #1d2129;
   }
   .change-history {
