@@ -5,7 +5,7 @@
     </template>
     <template v-else>
       <slot>
-        <span>{{ $t('packages_business_components_stagebutton_chongxinjiazai') }}</span>
+        <span>{{ label }}</span>
         <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
       </slot>
     </template>
@@ -25,14 +25,19 @@ export default {
   props: {
     connectionId: String,
     taskId: String,
-    nodeId: String
+    nodeId: String,
+    label: {
+      type: String,
+      default: () => {
+        return i18n.t('packages_business_components_stagebutton_chongxinjiazai')
+      }
+    }
   },
 
   data() {
     return {
       loading: false,
       destroyStatus: false,
-      title: i18n.t('packages_business_components_stagebutton_chongxinjiazai'),
       progress: '0%'
     }
   },
@@ -69,6 +74,7 @@ export default {
         .then(data => {
           this.progress = '0%'
           this.getProgress()
+          this.$emit('start')
           this.startByConnection(data, true, false)
         })
     },

@@ -61,7 +61,7 @@
             <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
             <div v-else-if="node.data.isEmpty" class="flex align-items-center">
               <span>无数据</span>
-              <ElLink type="primary" @click.stop="handleReload(node)">重新加载</ElLink>
+              <StageButton :connection-id="getConnectionId(node)" @complete="reload"> </StageButton>
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
             <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
@@ -83,6 +83,7 @@ import { VirtualTree } from '@tap/component'
 import connectionPreview from './connectionPreview'
 import TablePreview from './TablePreview'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
+import StageButton from '@tap/business/src/components/StageButton'
 import { makeDragNodeImage } from '../../shared'
 
 export default {
@@ -92,7 +93,7 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, VirtualTree, connectionPreview, TablePreview },
+  components: { NodeIcon, VirtualTree, connectionPreview, TablePreview, StageButton },
 
   data() {
     return {
@@ -207,9 +208,6 @@ export default {
       return resolve(data)
     },
 
-    handleReload(node) {
-      const parentId = node.parent.data?.id
-    },
     //打开连接详情
     openView(row, isLeaf) {
       if (isLeaf) {
@@ -227,6 +225,10 @@ export default {
     reload() {
       this.loading = true
       this.treeTime = new Date() + ''
+    },
+
+    getConnectionId(node) {
+      return node.parent.data?.id
     }
   }
 }
