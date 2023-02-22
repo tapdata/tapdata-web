@@ -70,9 +70,7 @@
       </div>
     </div>
     <connectionPreview ref="connectionView"></connectionPreview>
-    <Drawer class="object-drawer-wrap" width="850px" :visible.sync="isShowDetails">
-      <PreviewDrawer ref="drawerContent"></PreviewDrawer>
-    </Drawer>
+    <TablePreview ref="tablePreview"></TablePreview>
   </div>
 </template>
 
@@ -80,9 +78,9 @@
 import { debounce } from 'lodash'
 
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
-import { VirtualTree, Drawer } from '@tap/component'
-import PreviewDrawer from '../detail/PreviewDrawer'
+import { VirtualTree } from '@tap/component'
 import connectionPreview from './connectionPreview'
+import TablePreview from './TablePreview'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { makeDragNodeImage } from '../../shared'
 
@@ -93,14 +91,13 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, VirtualTree, connectionPreview, PreviewDrawer, Drawer },
+  components: { NodeIcon, VirtualTree, connectionPreview, TablePreview },
 
   data() {
     return {
       keyword: '',
       treeData: [],
       expandedKeys: [],
-      isShowDetails: false,
       props: {
         isLeaf: 'isLeaf',
         disabled: 'disabled'
@@ -210,8 +207,7 @@ export default {
           category: 'storage',
           type: 'table'
         }
-        this.isShowDetails = true
-        this.$refs.drawerContent.loadData(node)
+        this.$refs.tablePreview.open(node)
       } else {
         this.$refs.connectionView.open(row)
       }
