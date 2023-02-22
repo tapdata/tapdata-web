@@ -216,9 +216,14 @@
         <div v-loading="!eventDataAll" class="flex">
           <div v-if="eventDataAll" class="w-50 pr-4">
             <div>{{ $t('packages_dag_components_eventchart_zongshuru') }}</div>
-            <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
-              {{ eventDataAll.inputTotals.toLocaleString() }}
-            </div>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              :content="eventDataAll.inputTotals.toLocaleString()"
+              class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
+            >
+              <div>{{ eventDataAll.inputTotalsLabel }}</div>
+            </ElTooltip>
             <div class="mb-2">
               <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
               <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
@@ -241,9 +246,16 @@
             <div class="output-item__divider"></div>
             <div class="ml-4">
               <div>{{ $t('packages_dag_components_eventchart_zongshuchu') }}</div>
-              <div class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font">
-                {{ eventDataAll.outputTotals.toLocaleString() }}
-              </div>
+              <ElTooltip
+                transition="tooltip-fade-in"
+                placement="top"
+                :content="eventDataAll.outputTotals.toLocaleString()"
+                class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
+              >
+                <div>
+                  {{ eventDataAll.outputTotalsLabel }}
+                </div>
+              </ElTooltip>
               <div class="mb-2">
                 <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
                 <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
@@ -322,7 +334,7 @@ import { VIcon, TimeSelect } from '@tap/component'
 import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
-import { calcTimeUnit } from '@tap/shared'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
 export default {
@@ -530,6 +542,12 @@ export default {
       result.outputTotals = outputArr.reduce((total, key) => {
         return total + result[key] || 0
       }, 0)
+      const limit = 1000000000
+      result.inputTotalsLabel =
+        result.inputTotals >= limit ? calcUnit(result.inputTotals) : result.inputTotals.toLocaleString()
+
+      result.outputTotalsLabel =
+        result.outputTotals >= limit ? calcUnit(result.outputTotals) : result.outputTotals.toLocaleString()
       return result
     },
 
