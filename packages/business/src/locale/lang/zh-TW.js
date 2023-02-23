@@ -824,5 +824,10 @@ export default {
   meta_table_not_null: '非空',
   page_title_overview: '概览',
   metadata_meta_type_table: '数据表',
-  column_create_time: '创建时间'
+  column_create_time: '创建时间',
+  packages_business_create_connection_dialog_xuanzeshujuyuan: '選擇數據源類型',
+  packages_business_create_connection_dialog_neirongCon: '連接並授權 Tapdata 訪問您的 Zoho Desk 帳戶：',
+  packages_business_create_connection_dialog_neirongSho: '顯示處於 ALPHA 狀態的連接器',
+  packages_business_create_connection_dialog_neirongSho2: '顯示處於測試狀態的連接器',
+  packages_business_create_connection_dialog_neirongCho: '從下面選擇一個數據源連接器並配置連接和憑據。'
 }

@@ -21,7 +21,7 @@
         ></ElInput>
         <VIcon class="ml-2">filter</VIcon>
       </div>-->
-      <div class="p-3 flex-fill tree-list">
+      <div v-loading="loading" class="p-3 flex-fill tree-list">
         <VirtualTree
           class="ldp-tree"
           ref="tree"
@@ -36,6 +36,7 @@
           :render-after-expand="false"
           :expand-on-click-node="false"
           :allow-drop="() => false"
+          :key="treeTime"
           @node-click="nodeClickHandler"
           @check="checkHandler"
           @node-drag-start="handleDragStart"
@@ -60,7 +61,7 @@
             <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
             <div v-else-if="node.data.isEmpty" class="flex align-items-center">
               <span>无数据</span>
-              <ElLink type="primary" @click.stop="handleReload(node)">重新加载</ElLink>
+              <StageButton :connection-id="getConnectionId(node)" @complete="reload"> </StageButton>
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
             <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
@@ -70,9 +71,7 @@
       </div>
     </div>
     <connectionPreview ref="connectionView"></connectionPreview>
-    <Drawer class="object-drawer-wrap" width="850px" :visible.sync="isShowDetails">
-      <PreviewDrawer ref="drawerContent"></PreviewDrawer>
-    </Drawer>
+    <TablePreview ref="tablePreview"></TablePreview>
   </div>
 </template>
 
@@ -80,10 +79,11 @@
 import { debounce } from 'lodash'
 
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
-import { VirtualTree, Drawer } from '@tap/component'
-import PreviewDrawer from '../detail/PreviewDrawer'
+import { VirtualTree } from '@tap/component'
 import connectionPreview from './connectionPreview'
+import TablePreview from './TablePreview'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
+import StageButton from '@tap/business/src/components/StageButton'
 import { makeDragNodeImage } from '../../shared'
 
 export default {
@@ -93,19 +93,24 @@ export default {
     dragState: Object
   },
 
-  components: { NodeIcon, VirtualTree, connectionPreview, PreviewDrawer, Drawer },
+  components: { NodeIcon, VirtualTree, connectionPreview, TablePreview, StageButton },
 
   data() {
     return {
       keyword: '',
       treeData: [],
       expandedKeys: [],
-      isShowDetails: false,
       props: {
         isLeaf: 'isLeaf',
         disabled: 'disabled'
-      }
+      },
+      loading: false,
+      treeTime: ''
     }
+  },
+
+  created() {
+    this.reload()
   },
 
   methods: {
@@ -194,14 +199,15 @@ export default {
 
     async loadNode(node, resolve) {
       if (node.level === 0) {
-        return resolve(await this.getConnectionList())
+        const data = await this.getConnectionList()
+        this.loading = false
+        return resolve(data)
       }
-      return resolve(await this.getTableList(node.data?.id))
+      const data = await this.getTableList(node.data?.id)
+      this.loading = false
+      return resolve(data)
     },
 
-    handleReload(node) {
-      const parentId = node.parent.data?.id
-    },
     //打开连接详情
     openView(row, isLeaf) {
       if (isLeaf) {
@@ -210,11 +216,19 @@ export default {
           category: 'storage',
           type: 'table'
         }
-        this.isShowDetails = true
-        this.$refs.drawerContent.loadData(node)
+        this.$refs.tablePreview.open(node)
       } else {
         this.$refs.connectionView.open(row)
       }
+    },
+
+    reload() {
+      this.loading = true
+      this.treeTime = new Date() + ''
+    },
+
+    getConnectionId(node) {
+      return node.parent.data?.id
     }
   }
 }

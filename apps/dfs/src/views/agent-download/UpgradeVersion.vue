@@ -209,7 +209,16 @@ export default {
   },
   created() {
     this.loadData()
-    this.loadChat()
+    if (!window.__config__?.disabledOnlineChat) {
+      this.loadChat()
+    }
+    if (window.__config__?.disabledAlibabaCloudComputingNest) {
+      this.downType = [
+        { name: 'Linux (64 bit)', value: 'Linux' },
+        { name: 'Docker', value: 'Docker' },
+        { name: 'Windows (64 bit)', value: 'windows' }
+      ]
+    }
   },
   methods: {
     loadData() {
@@ -272,6 +281,7 @@ export default {
 
       $zoho.salesiq.ready = function () {
         const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,

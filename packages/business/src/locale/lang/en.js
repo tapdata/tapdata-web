@@ -839,5 +839,12 @@ export default {
   meta_table_not_null: 'Not Null',
   page_title_overview: 'Overview',
   metadata_meta_type_table: 'Data Table',
-  column_create_time: 'Create Time'
+  column_create_time: 'Create Time',
+  packages_business_create_connection_dialog_xuanzeshujuyuan: 'Choose Data Source Type',
+  packages_business_create_connection_dialog_neirongCon:
+    'Connect & Authorize Tapdata to access your Zoho Desk account:',
+  packages_business_create_connection_dialog_neirongSho: 'Show Connectors in ALPHA State',
+  packages_business_create_connection_dialog_neirongSho2: 'Show Connectors in BETA State',
+  packages_business_create_connection_dialog_neirongCho:
+    'Choose a data source connector from below and configure the connection & credentials.'
 }

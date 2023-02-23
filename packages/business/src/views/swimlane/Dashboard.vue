@@ -27,6 +27,7 @@
       :visible.sync="visible"
       :params="createConnectionParams"
       @success="handleSuccess"
+      @saveAndMore="handleSuccess"
     ></CreateConnection>
   </div>
 </template>
@@ -89,7 +90,8 @@ export default {
     },
 
     handleSuccess() {
-      console.log('handleSuccess', this.createConnectionParams.type)
+      const component = this.options.find(t => t.type === this.createConnectionParams.type)?.component
+      this.$refs[component]?.[0]?.reload?.()
     },
 
     handleDragEnd() {
