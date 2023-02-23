@@ -373,9 +373,15 @@ export default {
       const { id, name, status, syncType } = task
       return { id, name, status, syncType }
     },
+
     //打开连接详情
     openView(row) {
       this.$refs.targetconnectionView.open(row)
+    },
+
+    addItem(value) {
+      this.list.unshift(value)
+      this.loadTask([value])
     }
   }
 }
