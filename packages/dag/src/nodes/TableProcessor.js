@@ -31,7 +31,7 @@ export class TableProcessor extends NodeType {
         type: 'array',
         'x-component': 'TableRename',
         'x-component-props': {
-          findParentNode: '{{findParentNode}}',
+          findParentNodes: '{{findParentNodes}}',
           listStyle: {
             maxHeight: 'calc((100vh - 120px) * 0.618)'
           }
