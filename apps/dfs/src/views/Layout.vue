@@ -1,7 +1,7 @@
 <template>
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
-    <ElAside class="left-aside" width="200px">
+    <ElAside class="left-aside" width="220px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
         <template v-for="menu in menus">
           <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
