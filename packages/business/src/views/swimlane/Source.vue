@@ -52,7 +52,7 @@
             <ElProgress
               v-if="node.data.loadFieldsStatus === 'loading'"
               type="circle"
-              :percentage="node.data.progress"
+              :percentage="getPercentage(node)"
               :show-text="false"
               :width="20"
               :stroke-width="2"
@@ -132,11 +132,11 @@ export default {
       })
 
       return res.items.map(t => {
-        const { id, status, loadFieldsStatus, loadCount, tableCount } = t
+        const { status, loadCount = 0, tableCount = 0 } = t
         const disabled = status !== 'ready'
         return {
           ...t,
-          progress: Math.round((loadCount / tableCount) * 10000) / 100,
+          progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
           children: [],
           isLeaf: false,
           disabled,
@@ -229,6 +229,10 @@ export default {
 
     getConnectionId(node) {
       return node.parent.data?.id
+    },
+
+    getPercentage(node = {}) {
+      return node.data?.progress || 0
     }
   }
 }
