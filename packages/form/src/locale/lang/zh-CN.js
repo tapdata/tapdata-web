@@ -158,5 +158,10 @@ export default {
   packages_form_field_inference_main_ge: '个',
   packages_form_qingjianchajiedian: '请检查节点配置',
   packages_form_load_schema_tree_load_fail: '加载失败',
-  packages_form_load_schema_tree_form_values_change: '配置更改后需重新加载模型才可生效'
+  packages_form_load_schema_tree_form_values_change: '配置更改后需重新加载模型才可生效',
+  packages_form_batch_add_field_title: '批量新增',
+  packages_form_batch_add_field_prefix: '字段前缀',
+  packages_form_batch_add_field_type: '字段类型',
+  packages_form_batch_add_field_count: '字段数量',
+  packages_form_batch_add_field_start: '开始数字'
 }
