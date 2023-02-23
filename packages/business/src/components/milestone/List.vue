@@ -145,8 +145,7 @@ export default {
         },
         {
           key: 'FULL_SYNC',
-          label: i18n.t('packages_business_milestone_list_quanliangshujuqian'),
-          status: 'finish'
+          label: i18n.t('packages_business_milestone_list_quanliangshujuqian')
         },
         {
           key: 'STREAM_READ',
@@ -200,14 +199,12 @@ export default {
           }
         } else {
           const item = milestone[el.key]
-          if (item?.status) {
-            if (item.status === 'FINISH') {
-              Object.assign(el, finishOpt)
-            } else {
-              Object.assign(el, runningOpt, {
-                progress: (item.progress / item.totals) * 100
-              })
-            }
+          if (item?.status === 'FINISH') {
+            Object.assign(el, finishOpt)
+          } else if (item?.status === 'RUNNING') {
+            Object.assign(el, runningOpt, {
+              progress: (item.progress / item.totals) * 100
+            })
           } else {
             Object.assign(el, waitingOpt)
           }

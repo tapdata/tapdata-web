@@ -747,7 +747,7 @@ export default {
   packages_business_milestone_list_cuowuxinxi: 'Error information',
   packages_business_milestone_list_progr: '({val1}%, remaining {val2})',
   packages_business_milestone_list_chucuo: 'Error',
-  packages_business_milestone_list_dengdaizhong: 'waiting',
+  packages_business_milestone_list_dengdaizhong: 'Waiting',
   packages_business_milestone_list_shujuchuli: 'data processing',
   packages_business_milestone_list_mubiaoshujuxie: 'Write target data',
   packages_business_milestone_list_chuangjianmubiaobiao: 'Create target table',
