@@ -22,7 +22,9 @@
     "type": "handbook"
   }],
   "officialWebsiteAddress": "https://tapdata.net",
-  "disabledOnlineChat": true,
-  "onlyEnglishLanguage": true,
-  "disabledAlibabaCloudComputingNest":true
+  "disabledOnlineChat": true, //控制小助手
+  "onlyEnglishLanguage": true, //支持语言
+  "disabledAlibabaCloudComputingNest":true, //计算巢
+  "disabledBindingPhone": true, //手机号绑定
+  "disabledDataService": true // 数据服务
 }
