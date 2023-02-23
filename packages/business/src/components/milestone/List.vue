@@ -19,10 +19,13 @@
         </template>
       </VTable>
     </div>
-    <div v-else class="flex-fill overflow-auto pb-4">
-      <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex mt-4">
-        <VIcon :class="[item.color, 'mt-1']" size="16">{{ item.icon }}</VIcon>
-        <div class="ml-4 flex-fill">
+    <div v-else class="flex-fill overflow-auto py-4">
+      <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex">
+        <div class="position-relative">
+          <div v-if="index + 1 !== wholeItems.length" class="step__line position-absolute"></div>
+          <VIcon :class="[item.color, 'mt-1 position-relative']" size="16">{{ item.icon }}</VIcon>
+        </div>
+        <div class="ml-4 pb-4 flex-fill">
           <span class="font-color-normal fw-bold">{{ item.label }}</span>
           <div v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</div>
           <ElProgress
@@ -384,5 +387,12 @@ export default {
 }
 .node-list {
   width: 224px;
+}
+.step__line {
+  left: 50%;
+  top: 28px;
+  bottom: 4px;
+  border-left: 1px dashed #dee2e6;
+  transform: translateX(-50%);
 }
 </style>
