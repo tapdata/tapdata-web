@@ -89,9 +89,9 @@ export default {
       this.visible = true
     },
 
-    handleSuccess() {
+    handleSuccess(value) {
       const component = this.options.find(t => t.type === this.createConnectionParams.type)?.component
-      this.$refs[component]?.[0]?.reload?.()
+      this.$refs[component]?.[0]?.addItem(value)
     },
 
     handleDragEnd() {

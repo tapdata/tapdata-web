@@ -9,18 +9,6 @@
       </div>
     </div>
     <div class="flex flex-column flex-1 min-h-0">
-      <!--<div class="p-3 flex align-items-center">
-        <ElInput
-          class="search-input flex-fill"
-          v-model="keyword"
-          prefix-icon="el-icon-search"
-          size="mini"
-          clearable
-          style="width: 240px"
-          @input="handleSearch"
-        ></ElInput>
-        <VIcon class="ml-2">filter</VIcon>
-      </div>-->
       <div v-loading="loading" class="p-3 flex-fill tree-list">
         <VirtualTree
           class="ldp-tree"
@@ -28,7 +16,6 @@
           node-key="id"
           highlight-current
           :props="props"
-          :data="treeData"
           draggable
           lazy
           :load="loadNode"
@@ -36,8 +23,6 @@
           :render-after-expand="false"
           :expand-on-click-node="false"
           :allow-drop="() => false"
-          :key="treeTime"
-          @node-click="nodeClickHandler"
           @check="checkHandler"
           @node-drag-start="handleDragStart"
         >
@@ -49,19 +34,10 @@
               color="rgb(61, 156, 64)"
               >loading-circle</VIcon
             >
-            <ElProgress
-              v-if="node.data.loadFieldsStatus === 'loading'"
-              type="circle"
-              :percentage="getPercentage(node)"
-              :show-text="false"
-              :width="20"
-              :stroke-width="2"
-              class="mr-2"
-            ></ElProgress>
             <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
             <div v-else-if="node.data.isEmpty" class="flex align-items-center">
-              <span>无数据</span>
-              <StageButton :connection-id="getConnectionId(node)" @complete="reload"> </StageButton>
+              <span class="mr-1">{{ $t('packages_business_dag_dialog_field_mapping_no_data') }}</span>
+              <StageButton :connection-id="getConnectionId(node)"> </StageButton>
             </div>
             <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
             <span :class="[{ 'color-disable': data.disabled }, 'table-label']" :title="data.name">{{ data.name }}</span>
@@ -104,13 +80,8 @@ export default {
         isLeaf: 'isLeaf',
         disabled: 'disabled'
       },
-      loading: false,
-      treeTime: ''
+      loading: false
     }
-  },
-
-  created() {
-    this.reload()
   },
 
   methods: {
@@ -176,8 +147,6 @@ export default {
       return data.name.indexOf(value) !== -1
     },
 
-    nodeClickHandler(data, node) {},
-
     checkHandler() {},
 
     handleDragStart(draggingNode, ev) {
@@ -222,17 +191,22 @@ export default {
       }
     },
 
-    reload() {
-      this.loading = true
-      this.treeTime = new Date() + ''
-    },
-
     getConnectionId(node) {
       return node.parent.data?.id
     },
 
     getPercentage(node = {}) {
       return node.data?.progress || 0
+    },
+
+    addItem(data) {
+      const { root = {} } = this.$refs.tree
+      const firstChildKey = root.childNodes[0]?.key
+      if (firstChildKey) {
+        this.$refs.tree.insertBefore(data, firstChildKey)
+      } else {
+        this.$refs.tree.append(data, 0)
+      }
     }
   }
 }
