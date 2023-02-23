@@ -126,7 +126,7 @@ export default {
         },
         {
           name: 'swimLane',
-          title: '泳道',
+          title: 'Data Console(Preview)',
           icon: 'operation-log'
         }
       ],
