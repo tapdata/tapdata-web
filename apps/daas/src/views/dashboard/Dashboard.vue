@@ -706,7 +706,7 @@ export default {
             }
             span {
               display: inline-block;
-              width: 50px;
+              width: 60px;
               text-align: left;
               font-size: $fontBaseTitle;
               &::before {
