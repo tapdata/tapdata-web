@@ -10,6 +10,7 @@ const serveUrlMap = {
   localTm: 'http://127.0.0.1:3030'
 }
 // const userId = '60b60af1147bce7705727188' // zed?
+// const userId = '637b268fe377c481ae013dc2' // lemon
 const userId = '60cc0c304e190a579cbe306c' // jason
 let origin
 const { argv } = process
@@ -93,6 +94,11 @@ module.exports = {
                   )
           }
   },
+  transpileDependencies: [
+    // 按需添加需要babel处理的模块
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/
+  ],
   configureWebpack: config => {
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
 

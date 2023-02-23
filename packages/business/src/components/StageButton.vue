@@ -5,7 +5,7 @@
     </template>
     <template v-else>
       <slot>
-        <span>{{ $t('packages_business_components_stagebutton_chongxinjiazai') }}</span>
+        <span>{{ label }}</span>
         <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
       </slot>
     </template>
@@ -25,14 +25,19 @@ export default {
   props: {
     connectionId: String,
     taskId: String,
-    nodeId: String
+    nodeId: String,
+    label: {
+      type: String,
+      default: () => {
+        return i18n.t('packages_business_components_stagebutton_chongxinjiazai')
+      }
+    }
   },
 
   data() {
     return {
       loading: false,
       destroyStatus: false,
-      title: i18n.t('packages_business_components_stagebutton_chongxinjiazai'),
       progress: '0%'
     }
   },
@@ -49,6 +54,7 @@ export default {
 
   beforeDestroy() {
     this.destroyStatus = true
+    clearTimeout(this.timer)
   },
 
   methods: {
@@ -68,6 +74,7 @@ export default {
         .then(data => {
           this.progress = '0%'
           this.getProgress()
+          this.$emit('start')
           this.startByConnection(data, true, false)
         })
     },
@@ -78,10 +85,11 @@ export default {
       if (!check) {
         this.loading = true
       }
+      clearTimeout(this.timer)
       connectionsApi.getNoSchema(this.connectionId).then(res => {
         if (res.loadFieldsStatus === 'loading') {
           this.progress = (Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0) + '%'
-          setTimeout(this.getProgress, 1000)
+          this.timer = setTimeout(this.getProgress, 1000)
         } else {
           this.progress = 100 + '%'
           const { taskId, nodeId } = this
@@ -92,7 +100,7 @@ export default {
               })
               .then(this.updateDag)
           }
-          !check && this.$emit('complete')
+          !check && this.$emit('complete') // 防止跟父组件的加载重复
           this.loading = false
         }
       })

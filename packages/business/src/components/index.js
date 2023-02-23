@@ -8,6 +8,7 @@ import TablePage from './TablePage.vue'
 import ConnectionTypeSelector from './ConnectionTypeSelector'
 import TaskStatus from './TaskStatus'
 import PageHeader from './PageHeader'
+import DiscoveryClassification from './DiscoveryClassification'
 
 export {
   StatusItem,
@@ -19,5 +20,6 @@ export {
   TablePage,
   ConnectionTypeSelector,
   TaskStatus,
-  PageHeader
+  PageHeader,
+  DiscoveryClassification
 }

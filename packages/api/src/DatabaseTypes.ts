@@ -7,5 +7,8 @@ export default class DatabaseTypes extends Http {
   pdkHash(pdkHash: string) {
     return this.axios.get(this.url + '/pdkHash/' + pdkHash)
   }
+  getDatabases(params) {
+    return this.axios.get(this.url + '/getDatabases', { params })
+  }
 }
 export { DatabaseTypes }

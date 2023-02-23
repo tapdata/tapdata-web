@@ -1080,8 +1080,10 @@ export default {
 
   _workbench_workbench_yigoushishitong: 'Hetrogeneous Database Replication',
   _workbench_workbench_shujuruhucang: 'Ingestion into Data Lake',
+  _workbench_workbench_shujurucang: 'Data Warehousing',
   _workbench_workbench_jichengaliyun: 'Integrate Alibaba Cloud Computing Nest',
-  _workbench_workbench_jiangshujudaoru: 'Sync to AliCloud Tablestore',
+  _workbench_workbench_jiangshujudaoru: 'Sync to',
+  _workbench_workbench_jiangshujudaorusub: 'AliCloud Tablestore',
   _workbench_workbench_tansuoshili: 'Explore Use Cases',
 
   dfs_workbench_workbench_zhongyaobanbensheng:
@@ -1285,5 +1287,9 @@ export default {
   dfs_data_server_apply_for_version: 'Offline deployment version',
 
   dfs_data_dashboard_Marquee:
-    'The current demo environment is a read-only environment, which only supports viewing and experiencing product functions'
+    'The current demo environment is a read-only environment, which only supports viewing and experiencing product functions',
+
+  page_title_custom_node: 'Custom Nodes',
+  packages_nodeDesign_custom_node_name_required: 'Please enter the node name',
+  packages_nodeDesign_message_save_ok: 'Save successfully'
 }

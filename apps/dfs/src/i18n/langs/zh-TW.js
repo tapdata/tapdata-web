@@ -996,9 +996,11 @@ export default {
   dfs_workbench_tyepmap_cdCzhihou2: 'CDC滯後超時',
 
   _workbench_workbench_yigoushishitong: '異構實時同步',
-  _workbench_workbench_shujuruhucang: '數據入湖倉 ',
+  _workbench_workbench_shujuruhucang: '數據入湖倉',
+  _workbench_workbench_shujurucang: '數據入倉',
   _workbench_workbench_jichengaliyun: '集成阿里雲計算巢',
-  _workbench_workbench_jiangshujudaoru: '將數據導入阿里雲 Tablestore',
+  _workbench_workbench_jiangshujudaoru: '數據導入阿里雲 Tablestore',
+  _workbench_workbench_jiangshujudaorusub: '阿里雲 Tablestore',
   _workbench_workbench_tansuoshili: '探索示例',
 
   dfs_workbench_workbench_zhongyaobanbensheng: '【重要】版本升級和服務切換重要公告',
@@ -1177,5 +1179,9 @@ export default {
   dfs_data_server_apply_for_trial: '申請試用',
   dfs_data_server_apply_for_version: '線下部署版',
 
-  dfs_data_dashboard_Marquee: '當前demo環境為只讀環境，僅支持查看和體驗產品功能'
+  dfs_data_dashboard_Marquee: '當前demo環境為只讀環境，僅支持查看和體驗產品功能',
+
+  page_title_custom_node: '自定義節點',
+  packages_nodeDesign_custom_node_name_required: '請輸入節點名稱',
+  packages_nodeDesign_message_save_ok: '保存成功'
 }

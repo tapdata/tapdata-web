@@ -480,7 +480,7 @@ export default {
   packages_dag_auto_reset_start: '任務將自動在{resetInterval}秒後對清理失敗項嘗試{rest}次重置清理',
   packages_dag_auto_reset_start_nth: '任務開始進行第{resetTimes}次自動重置清理',
   packages_dag_auto_reset_start_result: '任務重置失敗，請稍後再試',
-  packages_dag_migration_alarmpanel_gedian: '个点',
+  packages_dag_migration_alarmpanel_gedian: '分钟',
   packages_dag_migration_alarmpanel_lianxu: '连续',
   packages_dag_migration_alarmpanel_youjiantongzhi: '邮件通知',
   packages_dag_migration_alarmpanel_xitongtongzhi: '系统通知',

@@ -81,8 +81,16 @@ export default class MetadataInstances extends Http {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId)
   }
 
+  getTablesValue(connectionId) {
+    return this.axios.get(this.url + '/tablesValue?connectionId=' + connectionId)
+  }
+
   getSourceTables(connectionId) {
     return this.axios.get(this.url + '/tables?connectionId=' + connectionId + '&sourceType=SOURCE')
+  }
+
+  getSourceTablesValues(connectionId) {
+    return this.axios.get(this.url + '/tablesValue?connectionId=' + connectionId + '&sourceType=SOURCE')
   }
 
   /**

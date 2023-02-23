@@ -1,7 +1,7 @@
 <template>
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
-    <ElAside class="left-aside" width="200px">
+    <ElAside class="left-aside" width="220px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
         <template v-for="menu in menus">
           <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
@@ -109,6 +109,12 @@ export default {
           beta: true
         },
         {
+          name: 'customNodeList',
+          title: $t('page_title_custom_node'),
+          icon: 'custom',
+          beta: true
+        },
+        {
           name: 'dataServerList',
           title: $t('dfs_data_server'),
           icon: 'data-server'
@@ -116,6 +122,11 @@ export default {
         {
           name: 'OperationLog',
           title: $t('operation_log_manage'),
+          icon: 'operation-log'
+        },
+        {
+          name: 'swimLane',
+          title: 'Data Console(Preview)',
           icon: 'operation-log'
         }
       ],
@@ -130,7 +141,13 @@ export default {
     }
   },
   created() {
-    this.loadChat()
+    if (!window.__config__?.disabledOnlineChat) {
+      this.loadChat()
+    }
+    if (window.__config__?.disabledDataService) {
+      //海外版隐藏数据服务
+      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
+    }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
@@ -263,11 +280,36 @@ export default {
 
       $zoho.salesiq.ready = function () {
         const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
           tapdata_email: user.email
         })
+
+        $zoho.salesiq.onload = function () {
+          let siqiframe = document.getElementById('siqiframe')
+          console.log('siqiframe', siqiframe) // eslint-disable-line
+
+          if (siqiframe) {
+            let style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+          }
+        }
+
+        /*$zoho.salesiq.floatbutton.click(function () {
+          let siqiframe = document.getElementById('siqiframe')
+          console.log('siqiframe', siqiframe) // eslint-disable-line
+
+          if (siqiframe) {
+            let style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+          }
+        })*/
       }
     },
 
@@ -298,13 +340,16 @@ export default {
   word-wrap: break-word;
   word-break: break-word;
   .left-aside {
-    border-right: map-get($borderColor, aside);
+    border-right: 1px map-get($borderColor, aside) solid;
     background: map-get($bgColor, disable);
     .el-menu-item {
       height: 50px;
       line-height: 50px;
       ::v-deep .v-icon {
         color: map-get($iconFillColor, normal);
+      }
+      &.is-active {
+        background-color: #eaf0ff;
       }
       &.is-active {
         ::v-deep .v-icon {

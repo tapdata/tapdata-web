@@ -64,7 +64,6 @@
                 <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
               </div>
             </div>
-            <div class="text-center explore-examples-ellipsis">{{ item.title }}{{ item.subTitle }}</div>
           </li>
         </ul>
       </div>
@@ -307,53 +306,6 @@ export default {
       barData: [],
       lineDataX: [],
       lineDataY: [],
-      barOptions: {
-        barWidth: '50%',
-        grid: {
-          top: 20,
-          bottom: 0,
-          left: 0,
-          right: 0
-        },
-        xAxis: {
-          axisLabel: {
-            formatter: val => {
-              return this.formatTime(val, '', 'MM-DD')
-            }
-          },
-          axisLine: {
-            onZero: false
-          }
-        },
-        yAxis: {
-          show: true,
-          type: 'log',
-          min: 1,
-          logBase: 10,
-          axisLabel: {
-            formatter: val => {
-              let res = val === 1 ? 0 : val
-              if (res / 1000 >= 1) {
-                res = res / 1000 + 'K'
-              }
-              return res
-            }
-          }
-        },
-        tooltip: {
-          trigger: 'item',
-          formatter: params => {
-            let item = params
-            let val = item.value
-            if (val === 1.1) {
-              val = 1
-            }
-            val = numToThousands(val)
-            let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
-            return html
-          }
-        }
-      },
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
       showUpgrade: false, //版本升级弹窗
       //付费升级
@@ -364,15 +316,10 @@ export default {
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_jiangshujudaoru'),
+          subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
           img: 'table-store',
           url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
-        // {
-        //   type: 'all',
-        //   title: i18n.t('_workbench_workbench_jichengaliyun'),
-        //   img: 'alibaba-nest',
-        //   url: 'https://tapdata.net/automatic-deployment-on-the-cloud.html?fromColId=104'
-        // },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujuruhucang'),
@@ -386,6 +333,20 @@ export default {
           subTitle: 'Oracle → MySQL ',
           img: 'oracle-mysql',
           url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
+        },
+        {
+          type: 'all',
+          title: i18n.t('_workbench_workbench_shujurucang'),
+          subTitle: 'SQL Server → BigQuery ',
+          img: 'bigQuery',
+          url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
+        },
+        {
+          type: 'all',
+          title: i18n.t('_workbench_workbench_shujurucang'),
+          subTitle: 'MySQL → ClickHouse',
+          img: 'clickHouse',
+          url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
         }
       ]
     }
@@ -453,15 +414,38 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 6,
+          type: '',
+          name: 'Tapdata Cloud 3.1.7 Release Notes',
+          link: 'https://mp.weixin.qq.com/s/npognQxT4O4xzc4u1bb4mg',
+          time: '2023-02-21 21:00'
+        },
+        {
+          id: 5,
+          type: '',
+          name: 'Tapdata Cloud 3.1.6 Release Notes',
+          link: 'https://mp.weixin.qq.com/s/rG_ag8LY-WSte4VnIgThXA',
+          time: '2023-02-3 21:00'
+        },
+        {
+          id: 4,
+          type: '',
+          name: 'Tapdata Cloud 3.1.5 Release Notes',
+          link: 'https://mp.weixin.qq.com/s/JYPt9aExnCL9tyOENe7QOA',
+          time: '2023-01-20 21:00'
+        },
+        {
           id: 3,
           type: '',
           name: 'Tapdata Cloud 3.1.4 Release Notes',
+          link: 'https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA',
           time: '2023-01-3 21:00'
         },
         {
           id: 2,
           type: '',
           name: 'Tapdata Cloud 3.1.3 Release Notes',
+          link: 'https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg',
           time: '2022-12-15 21:00'
         },
         {
@@ -520,10 +504,8 @@ export default {
       if (item?.id === 1) {
         //当前页弹窗
         this.showUpgrade = true
-      } else if (item?.id === 2) {
-        window.open('https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg')
-      } else if (item?.id === 3) {
-        window.open('https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA')
+      } else if (item?.link) {
+        window.open(item.link)
       } else {
         this.$router.push({
           name: 'WorkbenchNotice',
@@ -606,7 +588,7 @@ export default {
         grid: {
           top: 20,
           bottom: 20,
-          left: 20,
+          left: 55,
           right: 20
         },
         xAxis: {

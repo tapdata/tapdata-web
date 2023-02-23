@@ -78,7 +78,7 @@
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
-              {{ $t('packages_business_connection_status_' + row.status) }}
+              {{ row.status ? $t('packages_business_connection_status_' + row.status) : '-' }}
             </span>
           </div>
         </template>

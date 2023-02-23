@@ -12,7 +12,7 @@ import FormRender from '../FormRender'
 import { debounce } from 'lodash'
 import { taskApi } from '@tap/api'
 
-export default observer({
+export default {
   name: 'SettingPanel',
   components: { FormRender },
   props: {
@@ -30,9 +30,7 @@ export default observer({
 
       schema: null,
 
-      form: createForm({
-        effects: this.useEffects
-      }),
+      form: createForm(),
 
       allNodesResult: []
     }
@@ -61,7 +59,6 @@ export default observer({
         }
       }
       this.loadSchema()
-      this.loadSchemaForm()
     }, 300),
 
     // 绑定表单事件
@@ -84,6 +81,9 @@ export default observer({
         for (let key in el) {
           el[key] = values[el.key][key]
         }
+        //单位转化
+        el['point'] = Math.ceil(el['point'] * 12) < 1 ? 1 : Math.ceil(el['point'] * 12)
+        el['ms'] = Math.ceil(el['ms'] * 1000) < 1 ? 1 : Math.ceil(el['ms'] * 1000)
       })
       taskApi.patch({
         id,
@@ -107,6 +107,9 @@ export default observer({
         for (let key in el) {
           el[key] = values[el.key][key]
         }
+        //单位转化
+        el['point'] = Math.ceil(el['point'] * 12) < 1 ? 1 : Math.ceil(el['point'] * 12)
+        el['ms'] = Math.ceil(el['ms'] * 1000) < 1 ? 1 : Math.ceil(el['ms'] * 1000)
       })
       const dag = {
         edges: allEdges,
@@ -120,9 +123,14 @@ export default observer({
       })
     }, 300),
 
-    loadSchema() {
+    async loadSchema() {
       const nodeType = this.isNode ? this.getNodeType() : ''
       this.schema = null
+
+      await this.$nextTick()
+
+      this.loadSchemaForm()
+
       switch (nodeType) {
         case 'source':
         case 'target':
@@ -132,11 +140,11 @@ export default observer({
               layout: {
                 type: 'void',
                 properties: {
-                  'DATANODE_CANNOT_CONNECT.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_shujuyuanwufa'),
-                    'DATANODE_CANNOT_CONNECT.notify'
-                  ),
-                  'DATANODE_CANNOT_CONNECT.notify': this.getCheckboxGroup('DATANODE_CANNOT_CONNECT.open'),
+                  // 'DATANODE_CANNOT_CONNECT.open': this.getSwitch(
+                  //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanwufa'),
+                  //   'DATANODE_CANNOT_CONNECT.notify'
+                  // ),
+                  // 'DATANODE_CANNOT_CONNECT.notify': this.getCheckboxGroup('DATANODE_CANNOT_CONNECT.open'),
                   // 'DATANODE_HTTP_CONNECT_CONSUME.open': this.getSwitch(
                   //   i18n.t('packages_dag_migration_alarmpanel_shujuyuanwangluo')
                   // ),
@@ -156,7 +164,7 @@ export default observer({
                   //   'DATANODE_TCP_CONNECT_CONSUME.ms'
                   // ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_jiedianpingjunchu'),
+                    i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
                     'DATANODE_AVERAGE_HANDLE_CONSUME.notify'
                   ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
@@ -165,7 +173,8 @@ export default observer({
                   space3: this.getSpace(
                     'DATANODE_AVERAGE_HANDLE_CONSUME.point',
                     'DATANODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
-                    'DATANODE_AVERAGE_HANDLE_CONSUME.ms'
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.ms',
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.open'
                   )
                 }
               }
@@ -180,7 +189,7 @@ export default observer({
                 type: 'void',
                 properties: {
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_jiedianpingjunchu'),
+                    i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify'
                   ),
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
@@ -189,7 +198,8 @@ export default observer({
                   space1: this.getSpace(
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.point',
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
-                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.ms'
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.ms',
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open'
                   )
                 }
               }
@@ -208,11 +218,11 @@ export default observer({
                     'TASK_STATUS_ERROR.notify'
                   ),
                   'TASK_STATUS_ERROR.notify': this.getCheckboxGroup('TASK_STATUS_ERROR.open'),
-                  'TASK_INSPECT_ERROR.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwujiaoyanchu'),
-                    'TASK_INSPECT_ERROR.notify'
-                  ),
-                  'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup('TASK_INSPECT_ERROR.open'),
+                  // 'TASK_INSPECT_ERROR.open': this.getSwitch(
+                  //   i18n.t('packages_dag_migration_alarmpanel_renwujiaoyanchu'),
+                  //   'TASK_INSPECT_ERROR.notify'
+                  // ),
+                  // 'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup('TASK_INSPECT_ERROR.open'),
                   'TASK_FULL_COMPLETE.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
                     'TASK_FULL_COMPLETE.notify'
@@ -236,7 +246,8 @@ export default observer({
                   space1: this.getSpace(
                     'TASK_INCREMENT_DELAY.point',
                     'TASK_INCREMENT_DELAY.equalsFlag',
-                    'TASK_INCREMENT_DELAY.ms'
+                    'TASK_INCREMENT_DELAY.ms',
+                    'TASK_INCREMENT_DELAY.open'
                   )
                 }
               }
@@ -257,15 +268,22 @@ export default observer({
         alarmSettings = activeNode.alarmSettings || []
         alarmRules = activeNode.alarmRules || []
       }
-      const alarmRulesMap =
-        alarmRules.reduce((cur, next) => {
-          return { ...cur, [next.key]: next }
-        }, {}) || {}
-      let values =
-        alarmSettings.reduce((cur, next) => {
-          return { ...cur, [next.key]: Object.assign({}, next, alarmRulesMap[next.key]) }
-        }, {}) || {}
-      this.form.setValues(values)
+      const alarmRulesMap = alarmRules.reduce((cur, next) => {
+        let rule = (cur[next.key] = { ...next })
+        //单位转化
+        rule.point = Math.ceil(next.point / 12) < 1 ? 1 : Math.ceil(next.point / 12)
+        rule.ms = Math.ceil(next.ms / 1000) < 1 ? 1 : Math.ceil(next.ms / 1000)
+        return cur
+      }, {})
+      let values = alarmSettings.reduce((cur, next) => {
+        cur[next.key] = { ...next, ...alarmRulesMap[next.key] }
+        return cur
+      }, {})
+
+      this.form = createForm({
+        values,
+        effects: this.useEffects
+      })
     },
 
     getSwitch(title, key = '') {
@@ -300,6 +318,14 @@ export default observer({
         },
         default: ['SYSTEM']
       }
+      if (process.env.VUE_APP_PLATFORM !== 'DAAS') {
+        let isOpenid = window.__USER_INFO__?.openid
+        let enums = [
+          { label: i18n.t('packages_business_notify_webchat_notification'), value: 'WECHAT', disabled: !isOpenid },
+          { label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' }
+        ]
+        options.enum = [...options.enum, ...enums]
+      }
       if (key) {
         options['x-reactions'] = {
           dependencies: [key],
@@ -313,7 +339,7 @@ export default observer({
       return options
     },
 
-    getInputNumber(title, defaultNum = 0) {
+    getInputNumber(title, defaultNum = 0, key = '') {
       return {
         title,
         type: 'number',
@@ -325,8 +351,17 @@ export default observer({
         'x-component': 'InputNumber',
         'x-component-props': {
           min: 1,
+          precision: 0,
           style: {
             width: '100px'
+          }
+        },
+        'x-reactions': {
+          dependencies: [key],
+          fulfill: {
+            state: {
+              disabled: `{{!$deps[0]}}`
+            }
           }
         }
       }
@@ -349,10 +384,6 @@ export default observer({
         },
         enum: [
           {
-            label: '<=',
-            value: -1
-          },
-          {
             label: '>=',
             value: 1
           }
@@ -360,17 +391,17 @@ export default observer({
       }
     },
 
-    getSpace(key1, key2, key3) {
+    getSpace(key1, key2, key3, key4) {
       let result = {
         type: 'void',
         'x-component': 'Space',
         properties: {}
       }
-      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 3)
+      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 10, key4)
       result.properties[key2] = this.getSelect(i18n.t('packages_dag_migration_alarmpanel_gedian'))
-      result.properties[key3] = this.getInputNumber('', 500)
+      result.properties[key3] = this.getInputNumber('', 1000, key4)
       result.properties.ms = {
-        title: 'ms',
+        title: 's',
         type: 'void',
         default: 0,
         'x-decorator': 'FormItem',
@@ -392,7 +423,7 @@ export default observer({
       return 'process'
     }
   }
-})
+}
 </script>
 <style lang="scss" scoped>
 .attr-panel {

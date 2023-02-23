@@ -44,6 +44,22 @@ const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
 }
+
+const SwimlaneDashboard = async () => {
+  const { SwimlaneDashboard } = await import('@tap/business')
+  return SwimlaneDashboard
+}
+
+const CustomNodeList = async () => {
+  const { CustomNodeList } = await import('@tap/business')
+  return CustomNodeList
+}
+
+const NodeEditor = async () => {
+  const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
+  return Editor
+}
+
 const routes = [
   {
     path: '/',
@@ -244,6 +260,25 @@ const routes = [
           hideTitle: true,
           icon: 'data-server'
         }
+      },
+      {
+        path: '/swim-lane',
+        name: 'swimLane',
+        component: SwimlaneDashboard,
+        meta: {
+          title: 'dfs_data_server',
+          hideTitle: true,
+          icon: 'data-server'
+        }
+      },
+      /* ---------- 自定义节点  ----------*/
+      {
+        path: '/custom-node',
+        name: 'customNodeList',
+        component: CustomNodeList,
+        meta: {
+          title: 'page_title_custom_node'
+        }
       }
     ]
   },
@@ -382,6 +417,16 @@ const routes = [
       title: 'page_title_run_monitor',
       code: 'Data_SYNC_menu'
     }
+  },
+  {
+    path: '/node/editor',
+    name: 'NodeNew',
+    component: NodeEditor
+  },
+  {
+    path: '/node/editor/:id',
+    name: 'NodeEditor',
+    component: NodeEditor
   }
 ]
 if (process.env.NODE_ENV === 'development') {

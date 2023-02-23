@@ -132,10 +132,11 @@ export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, valu
   return merge
 }, {})
 
+//'renewing' 不可以删除
 const BUTTON_WITH_STATUS = {
   start: ['wait_start', 'complete', 'error', 'stop'],
   edit: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renew_failed'],
-  delete: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renewing', 'renew_failed'],
+  delete: ['edit', 'wait_start', 'complete', 'error', 'stop', 'renew_failed'],
   stop: ['running'],
   forceStop: ['stopping'],
   reset: ['wait_start', 'complete', 'error', 'stop', 'renew_failed'],
