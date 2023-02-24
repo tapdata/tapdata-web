@@ -31,8 +31,8 @@
 <rect opacity="0.15" x="189" y="3" width="1" height="117" fill="white" fill-opacity="0.5"/>
 <rect opacity="0.15" x="200" y="3" width="1" height="117" fill="white" fill-opacity="0.5"/>
 <path d="M20 64C20 58.4772 24.4772 54 30 54H184C189.523 54 194 58.4772 194 64V121H20V64Z" fill="white" fill-opacity="0.8"/>
-<path d="M64 66C64 63.2386 66.2386 61 69 61H184C186.761 61 189 63.2386 189 66V121H64V66Z" fill="white" fill-opacity="0.7"/>
-<path d="M20 64C20 58.4772 24.4772 54 30 54H60V121H20V64Z" fill="white" fill-opacity="0.8"/>
+<path d="M64 66C64 63.2386 66.2386 61 69 61H184C186.761 61 189 63.2386 189 66V120H64V66Z" fill="white" fill-opacity="0.7"/>
+<path d="M20 64C20 58.4772 24.4772 54 30 54H60V120H20V64Z" fill="white" fill-opacity="0.8"/>
 <circle cx="28.5" cy="60.5" r="1.5" fill="#E96058"/>
 <circle cx="33.5" cy="60.5" r="1.5" fill="#F6C644"/>
 <circle cx="38.5" cy="60.5" r="1.5" fill="#4FAD7A"/>
