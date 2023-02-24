@@ -320,12 +320,6 @@ export default {
           img: 'table-store',
           url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
         },
-        // {
-        //   type: 'all',
-        //   title: i18n.t('_workbench_workbench_jichengaliyun'),
-        //   img: 'alibaba-nest',
-        //   url: 'https://tapdata.net/automatic-deployment-on-the-cloud.html?fromColId=104'
-        // },
         {
           type: 'all',
           title: i18n.t('_workbench_workbench_shujuruhucang'),
@@ -339,6 +333,20 @@ export default {
           subTitle: 'Oracle → MySQL ',
           img: 'oracle-mysql',
           url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
+        },
+        {
+          type: 'all',
+          title: i18n.t('_workbench_workbench_shujurucang'),
+          subTitle: 'SQL Server → BigQuery ',
+          img: 'bigQuery',
+          url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
+        },
+        {
+          type: 'all',
+          title: i18n.t('_workbench_workbench_shujurucang'),
+          subTitle: 'MySQL → ClickHouse',
+          img: 'clickHouse',
+          url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
         }
       ]
     }

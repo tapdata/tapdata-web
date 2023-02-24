@@ -33,7 +33,12 @@
             <div class="user-item__label">{{ $t('user_phone_number') }}</div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{ $t('user_Center_xiuGai') }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">{{ $t('button_bind') }}</ElLink>
+            <ElLink
+              v-if="!disabledBindingPhone && !userData.telephone"
+              type="primary"
+              @click="dialogObj.bindPhone = true"
+              >{{ $t('button_bind') }}</ElLink
+            >
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_avatar') }}</div>
@@ -529,7 +534,8 @@ export default {
       },
       isEdit: false,
       accessKeyTooltip: false,
-      secretKeyTooltip: false
+      secretKeyTooltip: false,
+      disabledBindingPhone: window.__config__?.disabledBindingPhone
     }
   },
   mounted() {

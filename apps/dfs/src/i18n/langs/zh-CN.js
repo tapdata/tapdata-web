@@ -1029,6 +1029,7 @@ export default {
 
   _workbench_workbench_yigoushishitong: '异构实时同步',
   _workbench_workbench_shujuruhucang: '数据入湖仓 ',
+  _workbench_workbench_shujurucang: '数据入仓',
   _workbench_workbench_jichengaliyun: '集成阿里云计算巢',
   _workbench_workbench_jiangshujudaoru: '数据导入',
   _workbench_workbench_jiangshujudaorusub: '阿里云 Tablestore',

@@ -144,6 +144,10 @@ export default {
     if (!window.__config__?.disabledOnlineChat) {
       this.loadChat()
     }
+    if (window.__config__?.disabledDataService) {
+      //海外版隐藏数据服务
+      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
+    }
     this.loopLoadAgentCount()
     this.activeMenu = this.$route.path
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
