@@ -43,7 +43,7 @@
               {{ $t('packages_business_dag_dialog_field_mapping_no_data') }}
             </div>
             <div v-show="preLoading">
-              <i class="el-icon-loading"></i>
+              <el-icon><el-icon-loading /></el-icon>
             </div>
           </div>
         </template>
@@ -67,11 +67,11 @@
                 }}</span>
                 <!--产品决定临时屏蔽-->
                 <!--<span
-                    v-if="item.params.errorCode"
-                    class="color-primary cursor-pointer ml-2"
-                    @click="toSolutions(item.params.errorCode)"
-                    >{{ $t('packages_business_customer_logs_to_solutions') }}</span
-                  >-->
+                      v-if="item.params.errorCode"
+                      class="color-primary cursor-pointer ml-2"
+                      @click="toSolutions(item.params.errorCode)"
+                      >{{ $t('packages_business_customer_logs_to_solutions') }}</span
+                    >-->
               </div>
             </div>
           </DynamicScrollerItem>
@@ -82,6 +82,7 @@
 </template>
 
 <script>
+import { Loading as ElIconLoading } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -89,11 +90,12 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { customerJobLogsApi } from '@tap/api'
 import { delayTrigger } from '@tap/shared'
 export default {
-  name: 'Normal',
   components: {
     DynamicScroller,
-    DynamicScrollerItem
+    DynamicScrollerItem,
+    ElIconLoading
   },
+  name: 'Normal',
   props: {
     id: String
   },
@@ -127,7 +129,6 @@ export default {
   mounted() {
     this.init()
   },
-
   methods: {
     init() {
       this.pollingData()
@@ -357,7 +358,6 @@ export default {
       })
     }
   },
-
   unmounted() {
     clearInterval(this.timer)
     this.timer = null

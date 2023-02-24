@@ -1,4 +1,4 @@
-import { Button } from 'element-ui'
+import { ElButton as Button } from 'element-plus'
 import { ArrayItems, Form, Input, FormItem } from '@tap/form'
 import { createForm } from '@formily/core'
 import { observer } from '@formily/reactive-vue'

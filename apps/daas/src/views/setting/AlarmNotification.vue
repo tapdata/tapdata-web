@@ -12,16 +12,16 @@
       </template>
       <template v-slot:notify="scope">
         <div class="flex">
-          <el-switch style="margin-right: 80px" v-model:value="scope.row.open"></el-switch>
-          <el-checkbox-group v-model:value="scope.row.notify">
+          <el-switch style="margin-right: 80px" v-model="scope.row.open"></el-switch>
+          <el-checkbox-group v-model="scope.row.notify">
             <el-checkbox label="SYSTEM">{{ $t('notify_system_notice') }}</el-checkbox>
             <el-checkbox label="EMAIL">{{ $t('notify_email_notice') }}</el-checkbox>
           </el-checkbox-group>
         </div>
       </template>
       <template v-slot:interval="scope">
-        <el-input-number :controls="false" style="width: 100px" v-model:value="scope.row.interval"></el-input-number>
-        <el-select style="width: 100px" class="ml-2" v-model:value="scope.row.unit">
+        <el-input-number :controls="false" style="width: 100px" v-model="scope.row.interval"></el-input-number>
+        <el-select style="width: 100px" class="ml-2" v-model="scope.row.unit">
           <el-option :label="$t('task_info_ms')" value="MS"></el-option>
           <el-option :label="$t('dag_data_setting_second')" value="SECOND"></el-option>
           <el-option :label="$t('dataFlow_min')" value="MINUTE"></el-option>
@@ -35,11 +35,7 @@
       <el-button size="mini" @click="remoteMethod()">{{ $t('button_cancel') }}</el-button>
       <el-button size="mini" type="primary" @click="save()">{{ $t('button_save') }}</el-button>
     </footer>
-    <el-dialog
-      :title="$t('daas_setting_alarmnotification_renwumorengao')"
-      width="70%"
-      v-model:visible="alarmRulesVisible"
-    >
+    <el-dialog :title="$t('daas_setting_alarmnotification_renwumorengao')" width="70%" v-model="alarmRulesVisible">
       <div class="mb-4">
         {{ $t('daas_setting_alarmnotification_cichugaojinggui') }}
       </div>
@@ -49,13 +45,13 @@
         </template>
         <template v-slot:valueSlot="scope">
           <span class="mr-2">{{ $t('daas_setting_alarmnotification_lianxu') }}</span>
-          <el-input-number :controls="false" style="width: 100px" v-model:value="scope.row.point"></el-input-number>
+          <el-input-number :controls="false" style="width: 100px" v-model="scope.row.point"></el-input-number>
           <span class="ml-2 mr-2"> {{ $t('daas_setting_alarmnotification_gedian') }}</span>
-          <el-select style="width: 100px" class="mr-2" v-model:value="scope.row.equalsFlag">
+          <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
             <el-option label=">=" :value="1"></el-option>
             <el-option label="<=" :value="-1"></el-option>
           </el-select>
-          <el-input-number :controls="false" v-model:value="scope.row.ms" style="width: 80px"></el-input-number>
+          <el-input-number :controls="false" v-model="scope.row.ms" style="width: 80px"></el-input-number>
           <span class="ml-2">{{ $t('daas_setting_alarmnotification_msshigaojing') }}</span>
         </template>
       </VTable>

@@ -21,13 +21,13 @@
                 range-separator="-"
                 :start-placeholder="$t('cluster_selectDate')"
                 :end-placeholder="$t('cluster_selectDate')"
-                :value="[searchParams.startDate, searchParams.closeDate]"
+                :model-value="[searchParams.startDate, searchParams.closeDate]"
                 @change="handleChangeDate"
               ></el-date-picker>
             </li>
             <li>
               <el-select
-                v-model:value="searchParams.ip"
+                v-model="searchParams.ip"
                 size="mini"
                 :placeholder="$t('cluster_placeholderSelect')"
                 @input="table.fetch(1)"
@@ -37,7 +37,7 @@
             </li>
             <li>
               <el-select
-                v-model:value="searchParams.serverType"
+                v-model="searchParams.serverType"
                 size="mini"
                 :placeholder="$t('cluster_placeholderSelect')"
                 @input="table.fetch(1)"
@@ -52,7 +52,7 @@
             </li>
             <li>
               <el-select
-                v-model:value="searchParams.level"
+                v-model="searchParams.level"
                 size="mini"
                 :placeholder="$t('cluster_placeholderSelect')"
                 @input="table.fetch(1)"

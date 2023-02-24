@@ -1,11 +1,11 @@
 import { Schema } from '@formily/json-schema'
 import { clone, uid } from '@tap/shared'
 
-const createOptions = options => {
+const createOptions = (options) => {
   return {
     designableFieldName: 'Field',
     designableFormName: 'Form',
-    ...options
+    ...options,
   }
 }
 
@@ -27,12 +27,12 @@ const findNode = (node, finder) => {
  */
 export const transformToSchema = (node, options) => {
   const realOptions = createOptions(options)
-  const root = findNode(node, child => {
+  const root = findNode(node, (child) => {
     return child.componentName === realOptions.designableFormName
   })
   const schema = {
     type: 'object',
-    properties: {}
+    properties: {},
   }
   if (!root) return { schema }
   const createSchema = (node, schema = {}) => {
@@ -42,7 +42,9 @@ export const transformToSchema = (node, options) => {
     schema['x-designable-id'] = node.id
     if (schema.type === 'array') {
       if (node.children[0]) {
-        if (node.children[0].componentName === realOptions.designableFieldName) {
+        if (
+          node.children[0].componentName === realOptions.designableFieldName
+        ) {
           schema.items = createSchema(node.children[0])
           schema['x-index'] = 0
         }
@@ -79,10 +81,10 @@ export const transformToTreeNode = (formily = {}, options) => {
   const root = {
     componentName: realOptions.designableFormName,
     props: formily.form,
-    children: []
+    children: [],
   }
   const schema = new Schema(formily.schema)
-  const cleanProps = props => {
+  const cleanProps = (props) => {
     if (props['name'] === props['x-designable-id']) {
       delete props.name
     }
@@ -96,18 +98,18 @@ export const transformToTreeNode = (formily = {}, options) => {
       id: schema['x-designable-id'] || uid(),
       componentName: realOptions.designableFieldName,
       props: cleanProps(schema.toJSON(false)),
-      children: []
+      children: [],
     }
     parent.children.push(current)
     if (schema.items && !Array.isArray(schema.items)) {
       appendTreeNode(current, schema.items)
     }
-    schema.mapProperties(schema => {
+    schema.mapProperties((schema) => {
       schema['x-designable-id'] = schema['x-designable-id'] || uid()
       appendTreeNode(current, schema)
     })
   }
-  schema.mapProperties(schema => {
+  schema.mapProperties((schema) => {
     schema['x-designable-id'] = schema['x-designable-id'] || uid()
     appendTreeNode(root, schema)
   })

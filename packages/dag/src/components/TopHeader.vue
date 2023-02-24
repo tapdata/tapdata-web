@@ -60,10 +60,10 @@
       </ElTooltip>
       <!--移动画布-->
       <!--<ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_move_paper')">
-          <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
-            <VIcon size="20">hand</VIcon>
-          </button>
-        </ElTooltip>-->
+            <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
+              <VIcon size="20">hand</VIcon>
+            </button>
+          </ElTooltip>-->
       <!--拖选画布-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_mouse_selection')">
         <button @click="toggleShiftKeyPressed()" class="icon-btn" :class="{ active: shiftKeyPressed }">

@@ -18,12 +18,12 @@
       ></queryCond>
       <div v-if="cond.type != 'group'" class="item">
         <div class="field">
-          <el-select v-model:value="cond.field" filterable size="mini" placeholder="select field">
+          <el-select v-model="cond.field" filterable size="mini" placeholder="select field">
             <el-option v-for="item in primaryKeyOptions" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </div>
         <div class="field">
-          <el-select v-model:value="cond.command" size="mini" placeholder="select op">
+          <el-select v-model="cond.command" size="mini" placeholder="select op">
             <el-option v-for="item in calculationList" :label="item" :value="item" :key="item"></el-option>
           </el-select>
         </div>
@@ -33,12 +33,12 @@
             placeholder="enter value"
             v-if="!cond.isDatetime"
             type="text"
-            v-model:value="cond.value"
+            v-model="cond.value"
             size="mini"
           ></el-input>
           <el-date-picker
             v-if="cond.isDatetime"
-            v-model:value="cond.value"
+            v-model="cond.value"
             type="datetime"
             :placeholder="$t('daas_components_querycond_xuanzeriqishi')"
           ></el-date-picker>

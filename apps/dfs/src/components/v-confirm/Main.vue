@@ -24,7 +24,7 @@
             @click="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
             @keydown.enter="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
           >
-            <i class="el-message-box__close el-icon-close"></i>
+            <el-icon class="el-message-box__close"><el-icon-close /></el-icon>
           </button>
         </div>
         <div class="message-box__body">
@@ -76,6 +76,7 @@
 </template>
 
 <script>
+import { Close as ElIconClose } from '@element-plus/icons'
 import { VIcon } from '@tap/component'
 import error from '@tap/assets/icons/svg/error.svg'
 import info from '@tap/assets/icons/svg/info.svg'
@@ -84,7 +85,10 @@ import warning from '@tap/assets/icons/svg/warning.svg'
 import i18n from '@/i18n'
 
 export default {
-  components: { VIcon },
+  components: {
+    VIcon,
+    ElIconClose
+  },
   props: {
     value: Boolean
   },

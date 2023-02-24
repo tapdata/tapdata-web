@@ -8,16 +8,12 @@
           </header>
           <el-input
             :placeholder="$t('metadata_metadataSearch_placeholder')"
-            v-model:value="keyword"
+            v-model="keyword"
             class="input-with"
             maxlength="100"
           >
             <template v-slot:prepend>
-              <el-select
-                v-model:value="meta_type"
-                :placeholder="$t('common_placeholder_select')"
-                class="input-with-select"
-              >
+              <el-select v-model="meta_type" :placeholder="$t('common_placeholder_select')" class="input-with-select">
                 <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
                 <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
               </el-select>
@@ -38,17 +34,13 @@
             <el-input
               class="input-with"
               :placeholder="$t('metadata_metadataSearch_placeholder')"
-              v-model:value="keyword"
+              v-model="keyword"
               ref="searchInput"
               maxlength="100"
               @keyup.Enter="handleSearch('')"
             >
               <template v-slot:prepend>
-                <el-select
-                  v-model:value="meta_type"
-                  :placeholder="$t('common_placeholder_select')"
-                  class="input-with-select"
-                >
+                <el-select v-model="meta_type" :placeholder="$t('common_placeholder_select')" class="input-with-select">
                   <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
                   <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
                 </el-select>

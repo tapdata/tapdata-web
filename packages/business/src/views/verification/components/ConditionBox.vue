@@ -74,7 +74,7 @@
                   item.source.connectionName || $t('packages_business_statistics_schedule_qingxuanze')
                 }}</span>
                 <span class="item-icon fs-6">
-                  <i class="el-icon-arrow-right"></i>
+                  <el-icon><el-icon-arrow-right /></el-icon>
                 </span>
                 <AsyncSelect
                   v-if="editId === item.id"
@@ -187,6 +187,7 @@
 </template>
 
 <script>
+import { ArrowRight as ElIconArrowRight } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
@@ -202,8 +203,14 @@ import FieldBox from './FieldBox'
 import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
 
 export default {
+  components: {
+    AsyncSelect,
+    FieldBox,
+    DynamicScroller,
+    DynamicScrollerItem,
+    ElIconArrowRight
+  },
   name: 'ConditionBox',
-  components: { AsyncSelect, FieldBox, DynamicScroller, DynamicScrollerItem },
   props: {
     taskId: String,
     isDB: Boolean,

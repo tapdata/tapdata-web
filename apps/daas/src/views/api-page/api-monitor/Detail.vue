@@ -60,12 +60,12 @@
       </div>
     </div>
     <div class="pt-5 ml-4" style="width: 200px">
-      <el-checkbox :indeterminate="isIndeterminate" v-model:value="checkAll" @change="handleCheckAllChange">{{
+      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
         $t('role_all_check')
       }}</el-checkbox>
       <span class="ml-2">{{ clientName.length }}/{{ clientNameList.length }}</span>
       <div style="margin: 15px 0"></div>
-      <el-checkbox-group v-model:value="clientName" @change="handleCheckedCitiesChange">
+      <el-checkbox-group v-model="clientName" @change="handleCheckedCitiesChange">
         <el-checkbox v-for="item in clientNameList" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
       </el-checkbox-group>
     </div>

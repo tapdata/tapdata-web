@@ -262,14 +262,14 @@
       <!-- :automationType="automationType" -->
     </ElDialog>
     <!-- <ElDialog
-        title="创建连接"
-        width="60%"
-        :visible.sync="connectionFormDialog"
-        :close-on-click-modal="false"
-        :append-to-body="true"
-      >
-        <Form v-if="connectionFormDialog" :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
-      </ElDialog> -->
+          title="创建连接"
+          width="60%"
+          :visible.sync="connectionFormDialog"
+          :close-on-click-modal="false"
+          :append-to-body="true"
+        >
+          <Form v-if="connectionFormDialog" :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
+        </ElDialog> -->
 
     <CreateTable :dialog="dialogData" @handleTable="handleSaveTable"></CreateTable>
   </aside>
@@ -279,7 +279,7 @@
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
 import { debounce, escapeRegExp } from 'lodash'
-import { Select } from 'element-ui'
+import { ElSelect as Select } from 'element-plus'
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'

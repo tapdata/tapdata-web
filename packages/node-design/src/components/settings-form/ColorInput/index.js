@@ -1,4 +1,4 @@
-import { Input, ColorPicker } from 'element-ui'
+import { ElInput as Input, ElColorPicker as ColorPicker } from 'element-plus'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
 import { defineComponent } from 'vue-demi'

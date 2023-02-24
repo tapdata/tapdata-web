@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" v-model:visible="dialogVisible" width="60%">
+  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" v-model="dialogVisible" width="60%">
     <div class="skip-tip">
       {{ $t('packages_business_dataFlow_skipError_tip') }}
     </div>
@@ -12,11 +12,11 @@
     </div>
     <ul class="error-list">
       <span class="check-all"
-        ><el-checkbox :indeterminate="isIndeterminate" v-model:value="checkAll" @change="handleCheckAllChange">{{
+        ><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
           $t('packages_business_dataFlow_selectAll')
         }}</el-checkbox></span
       >
-      <el-checkbox-group v-model:value="checkedData" @change="handleCheckedDataChange" class="list-box">
+      <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
         <li v-for="(item, index) in errorEvents" :key="item.index">
           <el-checkbox :label="index">
             <div class="error-content">

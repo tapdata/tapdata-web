@@ -73,7 +73,7 @@
     </div>
     <el-input
       ref="reference"
-      v-model:value="selectedLabel"
+      v-model="selectedLabel"
       type="text"
       :placeholder="currentPlaceholder"
       :name="name"
@@ -118,11 +118,7 @@
           </span>
           <template v-else>
             <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
-            <i
-              v-if="showClose"
-              class="el-select__caret el-input__icon el-icon-circle-close"
-              @click="handleClearClick"
-            ></i>
+            <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
           </template>
         </slot>
       </template>
@@ -154,12 +150,13 @@
 </template>
 
 <script>
-import { Select } from 'element-ui'
-
+import { CircleClose as ElIconCircleClose } from '@element-plus/icons'import { ElSelect as Select } from 'element-plus'
 export default {
+  components: {
+    ElIconCircleClose,
+  },
   name: 'Select',
-
-  extends: Select
+extends: Select
 }
 </script>
 

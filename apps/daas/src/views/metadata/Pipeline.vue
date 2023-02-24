@@ -3,7 +3,7 @@
   <section class="pipeline-list-wrap">
     <el-form :model="model" :rules="rules" ref="form" label-position="top">
       <el-form-item :label="$t('metadata_details_pipeline_collection')" prop="collection" required>
-        <el-select v-model:value="model.collection" size="mini">
+        <el-select v-model="model.collection" size="mini">
           <el-option
             v-for="item in collections"
             :key="item.original_name"
@@ -13,20 +13,20 @@
           </el-option>
         </el-select>
         <!-- <el-input
-            type="text"
-            size="mini"
-            v-model="model.collection"
-            :placeholder="
-              $t('metadata_details_select') +
-              $t('metadata_details_pipeline_collection')
-            "
-          ></el-input> -->
+              type="text"
+              size="mini"
+              v-model="model.collection"
+              :placeholder="
+                $t('metadata_details_select') +
+                $t('metadata_details_pipeline_collection')
+              "
+            ></el-input> -->
       </el-form-item>
       <el-form-item :label="$t('metadata_details_pipeline_pipeline')" prop="pipeline" required>
         <el-input
           type="textarea"
           size="mini"
-          v-model:value="model.pipeline"
+          v-model="model.pipeline"
           :placeholder="$t('metadata_details_enter') + $t('metadata_details_pipeline_pipeline')"
         ></el-input>
       </el-form-item>

@@ -104,7 +104,7 @@
               <el-input
                 @keyup.enter="editOk(scope.row, item.text, item.type)"
                 ref="editInput"
-                v-model:value="editValue"
+                v-model="editValue"
                 class="edit-input"
                 type="text"
                 size="mini"
@@ -174,7 +174,7 @@
       custom-class="export-dialog"
       :title="$t('dataExplorer_export')"
       :close-on-click-modal="false"
-      v-model:visible="exportDialog"
+      v-model="exportDialog"
     >
       <span class="pr-5">{{ $t('dataExplorer_type') }}:</span>
       <ElButton size="mini" @click="exportData('csv')">CSV</ElButton>
@@ -198,7 +198,7 @@
       custom-class="create-dialog"
       :title="$t('dataExplorer_new_document')"
       :close-on-click-modal="false"
-      v-model:visible="openCreateDialog"
+      v-model="openCreateDialog"
     >
       <div class="create-dialog-box">
         <JsEditor v-model:value="jsonDoc" height="200"></JsEditor>

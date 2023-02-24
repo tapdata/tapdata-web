@@ -8,17 +8,17 @@
           <span class="text"> {{ item.value }} </span>
           <ElButton type="text" v-if="item.key !== 'email'" @click="handleChange(item.key)">{{ item.icon }}</ElButton>
           <!-- <i
-              :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
-              v-if="item.key !== 'email'"
-              @click="handleChange(item.key)"
-            ></i> -->
+                :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
+                v-if="item.key !== 'email'"
+                @click="handleChange(item.key)"
+              ></i> -->
         </li>
       </ul>
     </div>
     <!-- 修改密码 -->
     <el-dialog
       :title="$t('account_changePassword')"
-      v-model:visible="passwordDialogFalg"
+      v-model="passwordDialogFalg"
       :close-on-click-modal="false"
       width="600px"
     >
@@ -26,7 +26,7 @@
         <el-form-item prop="oldPassword">
           <el-input
             :type="oldPasswordType"
-            v-model:value="pwd.oldPassword"
+            v-model="pwd.oldPassword"
             :placeholder="$t('account_currentPassword')"
             autocomplete="off"
           >
@@ -42,7 +42,7 @@
         </el-form-item>
         <el-form-item prop="newPassword">
           <el-input
-            v-model:value="pwd.newPassword"
+            v-model="pwd.newPassword"
             :type="newPasswordType"
             :placeholder="$t('account_newPassword')"
             autocomplete="off"
@@ -59,7 +59,7 @@
         </el-form-item>
         <el-form-item prop="comfirmPassword">
           <el-input
-            v-model:value="pwd.comfirmPassword"
+            v-model="pwd.comfirmPassword"
             :type="comfirmPasswordType"
             :placeholder="$t('account_confirmPassword')"
             autocomplete="off"
@@ -82,27 +82,13 @@
       </template>
     </el-dialog>
     <!-- 修改邮箱 -->
-    <el-dialog
-      :title="$t('account_changeEmail')"
-      v-model:visible="emailDialogFalg"
-      :close-on-click-modal="false"
-      width="600px"
-    >
+    <el-dialog :title="$t('account_changeEmail')" v-model="emailDialogFalg" :close-on-click-modal="false" width="600px">
       <el-form :model="form" class="form">
         <el-form-item>
-          <el-input
-            v-model:value="form.newEmail"
-            :placeholder="$t('account_enterMailbox')"
-            autocomplete="off"
-            min
-          ></el-input>
+          <el-input v-model="form.newEmail" :placeholder="$t('account_enterMailbox')" autocomplete="off" min></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input
-            v-model:value="form.password"
-            :placeholder="$t('account_enterNewMailbox')"
-            autocomplete="off"
-          ></el-input>
+          <el-input v-model="form.password" :placeholder="$t('account_enterNewMailbox')" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <template v-slot:footer>
@@ -114,14 +100,14 @@
     <!-- 用户名称 -->
     <el-dialog
       :title="$t('account_changeUsername')"
-      v-model:visible="usernameDialogFalg"
+      v-model="usernameDialogFalg"
       :close-on-click-modal="false"
       width="600px"
     >
       <el-form class="form">
         <el-form-item>
           <el-input
-            v-model:value="userName"
+            v-model="userName"
             :placeholder="$t('account_newUsername')"
             maxlength="100"
             show-word-limit

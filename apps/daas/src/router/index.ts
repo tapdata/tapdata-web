@@ -1,6 +1,6 @@
 import * as Vue from 'vue'
 import * as VueRouter from 'vue-router'
-import { Message } from 'element-ui'
+import { ElMessage as Message } from 'element-plus'
 import routes from './routes'
 import Cookie from '@tap/shared/src/cookie'
 import { setPageTitle } from '@tap/shared'

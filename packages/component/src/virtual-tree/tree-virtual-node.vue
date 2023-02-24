@@ -35,7 +35,7 @@
       ></span>
       <el-checkbox
         v-if="showCheckbox"
-        v-model:value="source.checked"
+        v-model="source.checked"
         :indeterminate="source.indeterminate"
         :disabled="!!source.disabled"
         @click.stop

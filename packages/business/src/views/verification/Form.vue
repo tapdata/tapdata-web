@@ -67,44 +67,44 @@
             </ElSelect>
           </ElFormItem>
           <!--<ElFormItem
-              required
-              class="form-item"
-              :label="$t('packages_business_verification_form_jiaoyangaojing') + ': '"
-            >
-              <div class="flex align-items-center">
-                <span>{{ $t('packages_business_verification_form_jianyanrenwuyun') }}</span>
-                <ElCheckboxGroup v-model="form.errorNotifys" class="inline-block ml-4">
-                  <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
-                  <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
-                </ElCheckboxGroup>
-              </div>
-              <div class="flex align-items-center">
-                <span>{{ $t('packages_business_verification_form_jiaoyanjieguobu') }}</span>
-                <ElCheckboxGroup v-model="form.inconsistentNotifys" class="inline-block ml-4">
-                  <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
-                  <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
-                </ElCheckboxGroup>
-              </div>
-            </ElFormItem>-->
+                required
+                class="form-item"
+                :label="$t('packages_business_verification_form_jiaoyangaojing') + ': '"
+              >
+                <div class="flex align-items-center">
+                  <span>{{ $t('packages_business_verification_form_jianyanrenwuyun') }}</span>
+                  <ElCheckboxGroup v-model="form.errorNotifys" class="inline-block ml-4">
+                    <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                    <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+                  </ElCheckboxGroup>
+                </div>
+                <div class="flex align-items-center">
+                  <span>{{ $t('packages_business_verification_form_jiaoyanjieguobu') }}</span>
+                  <ElCheckboxGroup v-model="form.inconsistentNotifys" class="inline-block ml-4">
+                    <ElCheckbox label="SYSTEM">{{ $t('packages_business_verification_form_xitongtongzhi') }}</ElCheckbox>
+                    <ElCheckbox label="EMAIL">{{ $t('packages_business_verification_form_youjiantongzhi') }}</ElCheckbox>
+                  </ElCheckboxGroup>
+                </div>
+              </ElFormItem>-->
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
             <ElRadioGroup v-model:value="form.inspectMethod">
               <ElRadioButton label="row_count">{{ $t('packages_business_verification_row_verify') }}</ElRadioButton>
               <ElRadioButton label="field">{{ $t('packages_business_verification_content_verify') }}</ElRadioButton>
               <ElRadioButton label="jointField">{{ $t('packages_business_verification_joint_verify') }}</ElRadioButton>
               <!-- <ElRadioButton label="cdcCount"
-                >动态校验
-                <ElTooltip
-                  class="item"
-                  effect="dark"
-                  content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
-                  placement="top"
-                >
-                  <i class="el-icon-warning-outline"></i>
-                </ElTooltip>
-              </ElRadioButton> -->
+                  >动态校验
+                  <ElTooltip
+                    class="item"
+                    effect="dark"
+                    content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
+                    placement="top"
+                  >
+                    <i class="el-icon-warning-outline"></i>
+                  </ElTooltip>
+                </ElRadioButton> -->
             </ElRadioGroup>
             <div>
-              <i class="el-icon-info color-primary mr-1"></i>
+              <el-icon class="color-primary mr-1"><el-icon-info /></el-icon>
               <span style="font-size: 12px">{{
                 {
                   row_count: $t('packages_business_verification_fastCountTip'),
@@ -262,6 +262,7 @@
 </template>
 
 <script>
+import { Info as ElIconInfo } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import { cloneDeep } from 'lodash'
@@ -275,7 +276,12 @@ import ConditionBox from './components/ConditionBox'
 import { TABLE_PARAMS, META_INSTANCE_FIELDS } from './components/const'
 
 export default {
-  components: { VCodeEditor, GitBook, ConditionBox },
+  components: {
+    VCodeEditor,
+    GitBook,
+    ConditionBox,
+    ElIconInfo
+  },
   data() {
     let self = this
     let requiredValidator = (msg, check) => {
@@ -602,15 +608,15 @@ export default {
 Full Example: This is an example MongoDB query
 \`\`\`\`javascript
 function validate(sourceRow){
-    // step 1
-    var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-    // step 2
-    if(sourceRow.USER_ID === targetRow[0].USER_ID){
-        // step 3
-        return {result: 'passed',message: "",data: ""}
-    }else{
-        return {result: 'failed', message: "Inconsistent records", data: targetRow}
-    }
+// step 1
+var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
+// step 2
+if(sourceRow.USER_ID === targetRow[0].USER_ID){
+  // step 3
+  return {result: 'passed',message: "",data: ""}
+}else{
+  return {result: 'failed', message: "Inconsistent records", data: targetRow}
+}
 }
 \`\`\`\``
       } else if (this.$i18n.locale === 'zh-TW') {
@@ -627,15 +633,15 @@ function validate(sourceRow){
 完整示例：此為MongoDB查詢示例
 \`\`\`javascript
 function validate(sourceRow){
-    // 第1步
-    var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-    // 第2步
-    if(sourceRow.USER_ID === targetRow[0].USER_ID){
-        // 第3步
-        return {result: 'passed',message: "",data: ""}
-    }else{
-        return {result: 'failed',message: "記錄不一致",data: targetRow}
-    }
+// 第1步
+var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
+// 第2步
+if(sourceRow.USER_ID === targetRow[0].USER_ID){
+  // 第3步
+  return {result: 'passed',message: "",data: ""}
+}else{
+  return {result: 'failed',message: "記錄不一致",data: targetRow}
+}
 }
 \`\`\``
       } else {
@@ -652,15 +658,15 @@ function validate(sourceRow){
 完整示例：此为MongoDB查询示例
 \`\`\`javascript
 function validate(sourceRow){
-    // 第1步
-    var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-    // 第2步
-    if(sourceRow.USER_ID === targetRow[0].USER_ID){
-        // 第3步
-        return {result: 'passed',message: "",data: ""}
-    }else{
-        return {result: 'failed',message: "记录不一致",data: targetRow}
-    }
+// 第1步
+var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
+// 第2步
+if(sourceRow.USER_ID === targetRow[0].USER_ID){
+  // 第3步
+  return {result: 'passed',message: "",data: ""}
+}else{
+  return {result: 'failed',message: "记录不一致",data: targetRow}
+}
 }
 \`\`\`
 `

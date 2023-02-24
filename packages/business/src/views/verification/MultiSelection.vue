@@ -1,7 +1,7 @@
 <template>
   <div class="multi-selection-data-verify">
     <el-select
-      :value="values"
+      :model-value="values"
       multiple
       filterable
       allow-create

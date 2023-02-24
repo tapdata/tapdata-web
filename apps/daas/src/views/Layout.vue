@@ -60,7 +60,9 @@
         <ElDropdown class="menu-user btn pl-2" placement="bottom" @command="command">
           <span class="icon-btn">
             <span class="user-initials mr-2">{{ initials }}</span>
-            <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
+            <span
+              >{{ userName }}<el-icon class="ml-2"><el-icon-arrow-down /></el-icon
+            ></span>
           </span>
           <template v-slot:dropdown>
             <ElDropdownMenu class="no-triangle">
@@ -109,7 +111,7 @@
           </template>
         </ElMenu>
         <div class="menu-footer" @click="isCollapse = !isCollapse">
-          <i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
+          <el-icon class="btn-collapse"><el-icon-d-arrow-left /></el-icon>
         </div>
       </ElAside>
       <ElMain class="layout-main">
@@ -158,6 +160,7 @@
 </template>
 
 <script>
+import { ArrowDown as ElIconArrowDown, DArrowLeft as ElIconDArrowLeft } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import dayjs from 'dayjs'
 
@@ -262,7 +265,9 @@ export default {
     newDataFlow,
     NotificationPopover,
     PageHeader,
-    VIcon
+    VIcon,
+    ElIconArrowDown,
+    ElIconDArrowLeft
   },
   data() {
     return {

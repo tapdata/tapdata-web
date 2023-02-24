@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="需要更多的服务？"
-    v-model:visible="visible"
+    v-model="visible"
     :append-to-body="true"
     width="680px"
     custom-class="paid-upgrade-dialog"

@@ -1,4 +1,4 @@
-import { Loading } from 'element-ui'
+import { ElLoading as Loading } from 'element-plus'
 
 export const loading = async (loadingText = 'Loading...', processor) => {
   let loadingInstance = null

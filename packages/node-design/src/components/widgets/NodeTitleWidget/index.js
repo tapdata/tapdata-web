@@ -5,7 +5,7 @@ import { defineComponent } from 'vue-demi'
 export const NodeTitleWidget = observer(
   defineComponent({
     props: ['node'],
-    setup: props => {
+    setup: (props) => {
       const takeNode = () => {
         const node = props.node
         if (node.componentName === '$$ResourceNode$$') {
@@ -16,8 +16,12 @@ export const NodeTitleWidget = observer(
 
       return () => {
         const node = takeNode()
-        return <FragmentComponent>{node.getMessage('title') || node.componentName}</FragmentComponent>
+        return (
+          <FragmentComponent>
+            {node.getMessage('title') || node.componentName}
+          </FragmentComponent>
+        )
       }
-    }
+    },
   })
 )

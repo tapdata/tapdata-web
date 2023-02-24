@@ -4,12 +4,12 @@
     <div class="query-build-header">
       <div class="query-build-header-left">
         <span class="fw-sub pr-5">{{ $t('query_build_match_condition') }}</span>
-        <el-radio v-model:value="value.operator" label="and">{{ $t('query_build_all') }}</el-radio>
-        <el-radio v-model:value="value.operator" label="or">{{ $t('query_build_any') }}</el-radio>
+        <el-radio v-model="value.operator" label="and">{{ $t('query_build_all') }}</el-radio>
+        <el-radio v-model="value.operator" label="or">{{ $t('query_build_any') }}</el-radio>
         <!-- <el-radio-group v-model="value.operator" size="mini" class="query-build-header-radio">
-            <el-radio-button label="and">{{ $t('query_build_all') }}</el-radio-button>
-            <el-radio-button label="or">{{ $t('query_build_any') }}</el-radio-button>
-          </el-radio-group> -->
+              <el-radio-button label="and">{{ $t('query_build_all') }}</el-radio-button>
+              <el-radio-button label="or">{{ $t('query_build_any') }}</el-radio-button>
+            </el-radio-group> -->
       </div>
       <div class="query-build-header-right">
         <el-tooltip class="item" effect="dark" :content="$t('query_build_addGroup')" placement="top">

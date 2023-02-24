@@ -8,13 +8,13 @@
             {{ $t('app_signIn_newPasswordTip') }}
           </div>
           <div class="error-tips" v-show="errorMessage">
-            <i class="el-icon-warning-outline"></i>
+            <el-icon><el-icon-warning-outline /></el-icon>
             {{ errorMessage }}
           </div>
           <el-form ref="form" :model="form" :rules="rules">
             <el-form-item prop="email">
               <el-input
-                v-model:value="form.email"
+                v-model="form.email"
                 autocomplete="username"
                 type="email"
                 :placeholder="$t('app_signIn_email_placeholder')"
@@ -22,7 +22,7 @@
             </el-form-item>
             <el-form-item prop="newPassword">
               <el-input
-                v-model:value="form.newPassword"
+                v-model="form.newPassword"
                 autocomplete="current-password"
                 :type="passwordType"
                 :placeholder="$t('app_signIn_newpassword_placeholder')"
@@ -42,7 +42,7 @@
               <el-row :gutter="10">
                 <el-col :span="17">
                   <el-input
-                    v-model:value="form.validateCode"
+                    v-model="form.validateCode"
                     type="text"
                     maxlength="6"
                     :placeholder="$t('signin_verify_code')"
@@ -68,13 +68,17 @@
 </template>
 
 <script>
+import { WarningOutline as ElIconWarningOutline } from '@element-plus/icons'
 import i18n from '@/i18n'
 
 import { usersApi } from '@tap/api'
 import LoginPage from './LoginPage'
 export default {
+  components: {
+    LoginPage,
+    ElIconWarningOutline
+  },
   name: 'SignIn',
-  components: { LoginPage },
   data() {
     return {
       loading: false,
@@ -135,7 +139,6 @@ export default {
       }
     }
   },
-
   methods: {
     passwordTypeChange() {
       this.flag = !this.flag

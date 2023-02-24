@@ -1,4 +1,4 @@
-import { Button } from 'element-ui'
+import { ElButton as Button } from 'element-plus'
 import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'

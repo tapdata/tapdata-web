@@ -52,7 +52,7 @@
       custom-class="setting-dialog"
       :title="$t('share_list_setting')"
       :close-on-click-modal="false"
-      v-model:visible="settingDialogVisible"
+      v-model="settingDialogVisible"
     >
       <el-form
         ref="digSettingForm"
@@ -63,7 +63,7 @@
         :rules="rules"
       >
         <el-form-item prop="persistenceMode" size="mini" :label="$t('shared_cdc_setting_select_mode')">
-          <el-select v-model:value="digSettingForm.persistenceMode">
+          <el-select v-model="digSettingForm.persistenceMode">
             <el-option v-for="item in enumsItems" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
@@ -74,7 +74,7 @@
           size="mini"
           label="MongoDB URI"
         >
-          <el-input type="textarea" v-model:value="digSettingForm.persistenceMongodb_uri_db"></el-input>
+          <el-input type="textarea" v-model="digSettingForm.persistenceMongodb_uri_db"></el-input>
         </el-form-item>
         <el-form-item
           v-if="digSettingForm.persistenceMode === 'MongoDB'"
@@ -82,7 +82,7 @@
           size="mini"
           :label="$t('share_form_setting_table_name')"
         >
-          <el-input v-model:value="digSettingForm.persistenceMongodb_collection"> </el-input>
+          <el-input v-model="digSettingForm.persistenceMongodb_collection"> </el-input>
         </el-form-item>
         <el-form-item
           v-if="digSettingForm.persistenceMode === 'RocksDB'"
@@ -90,7 +90,7 @@
           size="mini"
           :label="$t('setting_share_cdc_persistence_rocksdb_path')"
         >
-          <el-input type="textarea" v-model:value="digSettingForm.persistenceRocksdb_path"></el-input>
+          <el-input type="textarea" v-model="digSettingForm.persistenceRocksdb_path"></el-input>
         </el-form-item>
         <el-form-item
           v-if="['MongoDB', 'RocksDB'].includes(digSettingForm.persistenceMode)"
@@ -100,7 +100,7 @@
           <el-select
             allow-create
             filterable
-            v-model:value="digSettingForm.share_cdc_ttl_day"
+            v-model="digSettingForm.share_cdc_ttl_day"
             :placeholder="$t('shared_cdc_setting_select_time_tip')"
           >
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
@@ -124,27 +124,33 @@
       :title="$t('share_list_edit_title')"
       :close-on-click-modal="false"
       :destroy-on-close="true"
-      v-model:visible="editDialogVisible"
+      v-model="editDialogVisible"
     >
       <el-form ref="editForm" label-position="left" label-width="150px" :model="editForm" :rules="rulesEdit">
         <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="name">
-          <el-input clearable v-model:value="editForm.name"></el-input>
+          <el-input clearable v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
-          <el-select v-model:value="editForm.storageTime" :placeholder="$t('common_placeholder_select')">
+          <el-select v-model="editForm.storageTime" :placeholder="$t('common_placeholder_select')">
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_list_edit_title_start_time')">
           <div v-for="(item, index) in editForm.syncPoints" :key="index">
-            <el-select v-model:value="item.pointType" :placeholder="$t('common_placeholder_select')">
+            <el-select v-model="item.pointType" :placeholder="$t('common_placeholder_select')">
               <el-option v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></el-option>
             </el-select>
             <el-date-picker
+              :shortcuts="getPickerOptions(item.dateTime, item) && getPickerOptions(item.dateTime, item).shortcuts"
+              :disabled-date="
+                getPickerOptions(item.dateTime, item) && getPickerOptions(item.dateTime, item).disabledDate
+              "
+              :cell-class-name="
+                getPickerOptions(item.dateTime, item) && getPickerOptions(item.dateTime, item).cellClassName
+              "
               v-if="item.pointType !== 'current'"
-              v-model:value="item.dateTime"
-              :picker-options="getPickerOptions(item.dateTime, item)"
+              v-model="item.dateTime"
               popperClass="hide-current__dateTime"
               type="datetime"
               format="yyyy-MM-dd HH:mm:ss"

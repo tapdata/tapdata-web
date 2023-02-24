@@ -64,7 +64,7 @@
           <div class="flex align-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-                <i class="data-verify__icon el-icon-error"></i>
+                <el-icon class="data-verify__icon"><el-icon-error /></el-icon>
 
                 <span v-if="scope.row.inspectMethod === 'row_count'">
                   {{ $t('packages_business_verification_inconsistent') }}
@@ -74,12 +74,12 @@
                 </span>
               </div>
               <div v-else class="data-verify__status success">
-                <i class="data-verify__icon el-icon-success"></i>
+                <el-icon class="data-verify__icon"><el-icon-success /></el-icon>
                 <span>{{ $t('packages_business_verification_consistent') }}</span>
               </div>
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-              <i class="data-verify__icon el-icon-error"></i>
+              <el-icon class="data-verify__icon"><el-icon-error /></el-icon>
               <span>{{ $t('packages_business_status_error') }}</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
@@ -137,7 +137,7 @@
           <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
             <ElLink type="primary" class="rotate-90">
-              <i class="el-icon-more"></i>
+              <el-icon><el-icon-more /></el-icon>
             </ElLink>
             <template v-slot:dropdown>
               <ElDropdownMenu class="dataflow-table-more-dropdown-menu">
@@ -160,6 +160,7 @@
 </template>
 
 <script>
+import { Error as ElIconError, Success as ElIconSuccess, More as ElIconMore } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -175,7 +176,10 @@ export default {
   components: {
     TablePage,
     VIcon,
-    FilterBar
+    FilterBar,
+    ElIconError,
+    ElIconSuccess,
+    ElIconMore
   },
   data() {
     return {

@@ -1,6 +1,6 @@
 import { useOperation, usePrefix } from '../../../hooks'
 import { IconWidget } from '../IconWidget'
-import { Button } from 'element-ui'
+import { ElButton as Button } from 'element-plus'
 import { defineComponent } from 'vue-demi'
 
 export const Copy = defineComponent({

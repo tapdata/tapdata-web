@@ -2,7 +2,7 @@
   <div :class="['echart-head', { flex: data.classFlex }]">
     <h2 v-if="data.title">{{ data.title }}</h2>
     <ElTooltip v-if="data.tip" style="margin-left: 10px" placement="top-start" :content="data.tip">
-      <i class="echart-head-tooltip__icon el-icon-warning-outline"></i>
+      <el-icon class="echart-head-tooltip__icon"><el-icon-warning-outline /></el-icon>
     </ElTooltip>
     <span style="flex: 1">
       <VIcon v-if="data && data.loading">loading-circle</VIcon>
@@ -27,11 +27,15 @@
 </template>
 
 <script>
+import { WarningOutline as ElIconWarningOutline } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {
+  components: {
+    VIcon,
+    ElIconWarningOutline
+  },
   name: 'EchartHeader',
-  components: { VIcon },
   props: {
     data: {
       type: Object,

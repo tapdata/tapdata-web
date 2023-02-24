@@ -1,4 +1,4 @@
-import { Dialog, Button } from 'element-ui'
+import { ElDialog as Dialog, ElButton as Button } from 'element-plus'
 import { observable } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { FragmentComponent } from '@formily/vue'

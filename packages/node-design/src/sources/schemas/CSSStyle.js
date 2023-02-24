@@ -4,15 +4,15 @@ export const CSSStyle = {
     'style.width': {
       type: 'string',
       'x-decorator': 'FormItem',
-      'x-component': 'SizeInput'
+      'x-component': 'SizeInput',
     },
     'style.height': {
       type: 'string',
       'x-decorator': 'FormItem',
-      'x-component': 'SizeInput'
+      'x-component': 'SizeInput',
     },
     'style.display': {
-      'x-component': 'DisplayStyleSetter'
+      'x-component': 'DisplayStyleSetter',
     },
     // 'style.background': {
     //   'x-component': 'BackgroundStyleSetter'
@@ -43,8 +43,8 @@ export const CSSStyle = {
         defaultValue: 1,
         min: 0,
         max: 1,
-        step: 0.01
-      }
-    }
-  }
+        step: 0.01,
+      },
+    },
+  },
 }

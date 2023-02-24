@@ -1,7 +1,7 @@
 import { useField, Field, FragmentComponent } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { FormItem } from '@tap/form'
-import { RadioGroup, RadioButton } from 'element-ui'
+import { ElRadioGroup as RadioGroup, ElRadioButton as RadioButton } from 'element-plus'
 import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import { FlexStyleSetter } from '../FlexStyleSetter'

@@ -1,16 +1,22 @@
 import { CursorStatus } from '../models'
-import { MouseMoveEvent, DragStartEvent, DragMoveEvent, DragStopEvent } from '../events'
+import {
+  MouseMoveEvent,
+  DragStartEvent,
+  DragMoveEvent,
+  DragStopEvent,
+} from '../events'
 
-export const useCursorEffect = engine => {
-  engine.subscribeTo(MouseMoveEvent, event => {
+export const useCursorEffect = (engine) => {
+  engine.subscribeTo(MouseMoveEvent, (event) => {
     engine.cursor.setStatus(
-      engine.cursor.status === CursorStatus.Dragging || engine.cursor.status === CursorStatus.DragStart
+      engine.cursor.status === CursorStatus.Dragging ||
+        engine.cursor.status === CursorStatus.DragStart
         ? engine.cursor.status
         : CursorStatus.Normal
     )
     engine.cursor.setPosition(event.data)
   })
-  engine.subscribeTo(DragStartEvent, event => {
+  engine.subscribeTo(DragStartEvent, (event) => {
     engine.cursor.setStatus(CursorStatus.DragStart)
     engine.cursor.setDragStartPosition(event.data)
   })
@@ -22,13 +28,13 @@ export const useCursorEffect = engine => {
       engine.cursor.setStatus(CursorStatus.Normal)
     }, 1000)
   })
-  engine.subscribeTo(DragStopEvent, event => {
+  engine.subscribeTo(DragStopEvent, (event) => {
     clearTimeout(cleanStatusRequest)
     engine.cursor.setStatus(CursorStatus.DragStop)
     engine.cursor.setDragEndPosition(event.data)
     engine.cursor.setStatus(CursorStatus.Normal)
   })
-  engine.subscribeTo(MouseMoveEvent, event => {
+  engine.subscribeTo(MouseMoveEvent, (event) => {
     const currentWorkspace = event?.context?.workspace
     if (!currentWorkspace) return
     const operation = currentWorkspace.operation

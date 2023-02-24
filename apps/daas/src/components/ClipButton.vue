@@ -4,7 +4,7 @@
     manual
     :content="$t('dialog_tip_copied')"
     popper-class="copy-tooltip"
-    :value="showTooltip"
+    :model-value="showTooltip"
   >
     <i
       class="buton-icon iconfont icon-fuzhi1"

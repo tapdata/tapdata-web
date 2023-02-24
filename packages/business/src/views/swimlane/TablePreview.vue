@@ -15,7 +15,7 @@
       >
     </header>
     <section class="mt-6">
-      <el-tabs v-model:value="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="OverView" name="overView">
           <section class="mt-2">
             <div class="mb-4">
@@ -44,7 +44,7 @@
             </el-row>
           </section>
           <section class="mt-6">
-            <el-tabs v-model:value="activeNameItems" @tab-click="handleClick">
+            <el-tabs v-model="activeNameItems" @tab-click="handleClick">
               <el-tab-pane label="Columns Preview" name="columnsPreview">
                 <VTable
                   class="discovery-page-table"

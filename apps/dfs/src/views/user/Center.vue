@@ -195,7 +195,7 @@
       <div class="text-center">
         <UploadFile :upload="upload" accept="image/*">
           <img v-if="avatar" :src="avatar" class="avatar" />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <el-icon class="avatar-uploader-icon"><el-icon-plus /></el-icon>
           <div class="my-4 font-color-main">
             {{ $t('user_Center_zhiChiJPG') }}
           </div>
@@ -509,6 +509,7 @@
 </template>
 
 <script>
+import { Plus as ElIconPlus } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
@@ -519,8 +520,13 @@ import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
 
 export default {
+  components: {
+    InlineInput,
+    VerificationCode,
+    UploadFile,
+    ElIconPlus
+  },
   name: 'Center',
-  components: { InlineInput, VerificationCode, UploadFile },
   data() {
     return {
       userData: {

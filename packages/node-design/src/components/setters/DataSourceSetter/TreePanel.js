@@ -1,4 +1,4 @@
-import { Tree, Button } from 'element-ui'
+import { ElTree as Tree, ElButton as Button } from 'element-plus'
 import { uid } from '@tap/shared'
 import { observer } from '@formily/reactive-vue'
 import { FragmentComponent } from '@formily/vue'

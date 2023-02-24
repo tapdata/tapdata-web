@@ -4,7 +4,7 @@
     <!-- 选择字段 -->
     <div class="condition-warp-group">
       <div class="condition-warp-group-item">
-        <el-select v-model:value="model.queryField" size="mini" @change="queryFieldChange" style="width: 170px">
+        <el-select v-model="model.queryField" size="mini" @change="queryFieldChange" style="width: 170px">
           <el-option
             v-for="field in fieldList"
             :label="field[fieldLabel]"
@@ -15,7 +15,7 @@
 
         <template v-if="model.queryField">
           <el-select
-            v-model:value="model.queryCommand"
+            v-model="model.queryCommand"
             @change="commandChange"
             size="mini"
             style="width: 100px; padding: 0 10px"
@@ -28,14 +28,14 @@
             ></el-option>
           </el-select>
           <el-input
-            v-model:value="model.queryValue"
+            v-model="model.queryValue"
             v-if="model.queryCommand !== 'between' && !isDatetime"
             :placeholder="$t('query_build_queryValue')"
             size="mini"
             style="width: 250px; padding-right: 10px"
           ></el-input>
           <el-date-picker
-            v-model:value="model.queryValue"
+            v-model="model.queryValue"
             v-if="model.queryCommand !== 'between' && isDatetime"
             type="datetime"
             format="yyyy-MM-dd HH:mm:ss"
@@ -44,21 +44,21 @@
           >
           </el-date-picker>
           <el-input
-            v-model:value="model.smallerValue"
+            v-model="model.smallerValue"
             :placeholder="$t('query_build_queryValue')"
             size="mini"
             v-if="model.queryCommand === 'between' && !isDatetime"
             style="width: 125px; padding-right: 10px"
           ></el-input>
           <el-input
-            v-model:value="model.largerValue"
+            v-model="model.largerValue"
             v-if="model.queryCommand === 'between' && !isDatetime"
             :placeholder="$t('query_build_queryValue')"
             size="mini"
             style="width: 125px; padding-right: 10px"
           ></el-input>
           <el-date-picker
-            v-model:value="model.smallerValue"
+            v-model="model.smallerValue"
             v-if="model.queryCommand === 'between' && isDatetime"
             type="datetime"
             format="yyyy-MM-dd HH:mm:ss"
@@ -67,7 +67,7 @@
           >
           </el-date-picker>
           <el-date-picker
-            v-model:value="model.largerValue"
+            v-model="model.largerValue"
             v-if="model.queryCommand === 'between' && isDatetime"
             type="datetime"
             format="yyyy-MM-dd HH:mm:ss"

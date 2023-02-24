@@ -3,7 +3,7 @@
     <el-button class="float-end" type="text" @click="visible = true">{{
       $t('packages_form_clipboard_dialog_dialog_huoquchuangjianming')
     }}</el-button>
-    <el-dialog v-model:visible="visible" width="50%" append-to-body :close-on-click-modal="false">
+    <el-dialog v-model="visible" width="50%" append-to-body :close-on-click-modal="false">
       <template v-slot:title>
         <div>
           <span class="mr-2">{{ $t('packages_form_clipboard_dialog_dialog_chuangjianmingling') }}</span>

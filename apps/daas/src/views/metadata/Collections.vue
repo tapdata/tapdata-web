@@ -2,12 +2,12 @@
   <!-- 数据集 -->
   <section class="collection-list-wrap">
     <!-- <TablePage
-        ref="table"
-        row-key="id"
-        class="metadata-list"
-        :remoteMethod="getData"
-        @sort-change="handleSortTable"
-      > -->
+          ref="table"
+          row-key="id"
+          class="metadata-list"
+          :remoteMethod="getData"
+          @sort-change="handleSortTable"
+        > -->
     <div class="collection-box">
       <div class="table-page-operation-bar">
         <el-button
@@ -60,14 +60,14 @@
       custom-class="create-dialog"
       :title="$t('metadata_details_createCollection')"
       :close-on-click-modal="false"
-      v-model:visible="createDialogVisible"
+      v-model="createDialogVisible"
     >
       <el-form ref="form" :model="createForm" class="dataRule-form">
         <el-form-item :label="$t('metadata_details_collectionName')" props="name">
           <el-input
             type="text"
             size="mini"
-            v-model:value="createForm.name"
+            v-model="createForm.name"
             :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_collectionName')"
           ></el-input>
         </el-form-item>

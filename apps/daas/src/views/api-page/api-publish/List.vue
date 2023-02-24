@@ -120,13 +120,13 @@
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_creation'"></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
-              {{ $t('button_preview') }}
-            </ElButton>
-            <ElDivider direction="vertical"></ElDivider>
-            <ElButton v-readonlybtn="'API_doc_&_test'" size="mini" type="text" @click="toDocumentTest(scope.row)">
-              {{ $t('modules_api_test') }}
-            </ElButton>
-            <ElDivider direction="vertical"></ElDivider> -->
+                {{ $t('button_preview') }}
+              </ElButton>
+              <ElDivider direction="vertical"></ElDivider>
+              <ElButton v-readonlybtn="'API_doc_&_test'" size="mini" type="text" @click="toDocumentTest(scope.row)">
+                {{ $t('modules_api_test') }}
+              </ElButton>
+              <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_publish'"
             v-if="scope.row.status === 'pending'"
@@ -153,9 +153,9 @@
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_edition'"></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
-              {{ $t('modules_export') }}
-            </ElButton>
-            <ElDivider direction="vertical"></ElDivider> -->
+                {{ $t('modules_export') }}
+              </ElButton>
+              <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_delete'"
             size="mini"
@@ -167,7 +167,7 @@
           <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
           <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)" trigger="click">
             <ElLink type="primary" class="rotate-90">
-              <i class="el-icon-more"></i>
+              <el-icon><el-icon-more /></el-icon>
             </ElLink>
             <template v-slot:dropdown>
               <ElDropdownMenu class="dataflow-table-more-dropdown-menu">
@@ -192,6 +192,7 @@
 </template>
 
 <script>
+import { More as ElIconMore } from '@element-plus/icons'
 import dayjs from 'dayjs'
 
 import { modulesApi, workerApi, metadataInstancesApi } from '@tap/api'
@@ -201,12 +202,13 @@ import { TablePage, UploadDialog } from '@tap/business'
 import { toRegExp } from '@/utils/util'
 
 export default {
-  name: 'ApiPublish',
   components: {
     TablePage,
     FilterBar,
-    Upload: UploadDialog
+    Upload: UploadDialog,
+    ElIconMore
   },
+  name: 'ApiPublish',
   data() {
     return {
       searchParams: {
@@ -245,13 +247,11 @@ export default {
       // classifyList: []
     }
   },
-
   watch: {
     '$route.query'() {
       this.table.fetch(1)
     }
   },
-
   created() {
     this.getWorkers()
     this.getFilterItems()

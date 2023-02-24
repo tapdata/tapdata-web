@@ -20,7 +20,7 @@
         @click="addToLeft"
         :disabled="rightChecked.length === 0"
       >
-        <i class="el-icon-arrow-left"></i>
+        <el-icon><el-icon-arrow-left /></el-icon>
         <span v-if="buttonTexts[0] !== undefined">{{ buttonTexts[0] }}</span>
       </el-button>
       <el-button
@@ -30,7 +30,7 @@
         :disabled="leftChecked.length === 0"
       >
         <span v-if="buttonTexts[1] !== undefined">{{ buttonTexts[1] }}</span>
-        <i class="el-icon-arrow-right"></i>
+        <el-icon><el-icon-arrow-right /></el-icon>
       </el-button>
     </div>
     <VirtualTransferPanel
@@ -50,13 +50,18 @@
 </template>
 
 <script>
+import { ArrowLeft as ElIconArrowLeft, ArrowRight as ElIconArrowRight } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { Transfer } from 'element-ui'
+import { ElTransfer as Transfer } from 'element-plus'
 import VirtualTransferPanel from './VirtualTransferPanel'
 
 export default {
+  components: {
+    VirtualTransferPanel,
+    ElIconArrowLeft,
+    ElIconArrowRight
+  },
   name: 'VirtualTransfer',
-  components: { VirtualTransferPanel },
   extends: Transfer,
   computed: {
     sourceData() {

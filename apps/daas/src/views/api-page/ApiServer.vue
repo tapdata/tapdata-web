@@ -78,7 +78,7 @@
       custom-class="create-dialog"
       :title="createForm.id ? $t('button_edit') : $t('api_server_create_server')"
       :close-on-click-modal="false"
-      v-model:visible="createDialogVisible"
+      v-model="createDialogVisible"
     >
       <FormBuilder ref="form" v-model:value="createForm" :config="createFormConfig"></FormBuilder>
       <template v-slot:footer>

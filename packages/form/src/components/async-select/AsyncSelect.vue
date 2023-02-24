@@ -120,11 +120,7 @@
           </span>
           <template v-else>
             <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
-            <i
-              v-if="showClose"
-              class="el-select__caret el-input__icon el-icon-circle-close"
-              @click="handleClearClick"
-            ></i>
+            <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
           </template>
         </slot>
       </template>
@@ -203,15 +199,19 @@
 </template>
 
 <script>
+import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { merge, escapeRegExp, uniqBy, debounce } from 'lodash'
-import { Select } from 'element-ui'
+import { ElSelect as Select } from 'element-plus'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
 import { CancelToken } from '@tap/api'
 import { valueEquals } from 'element-ui/src/utils/util'
 
 export default {
+  components: {
+    ElIconCircleClose
+  },
   name: 'AsyncSelect',
   extends: Select,
   props: {
@@ -605,14 +605,14 @@ export default {
         this.emitChange(option.value, option)
         !option.created && (this.visible = false)
         /*if (option.created) {
-        // 因为调整了setSelected为异步
-        setTimeout(() => {
-          this.visible = false
-        }, 0)
-        this.$emit('create', option.value)
-      } else {
-        this.visible = false
-      }*/
+// 因为调整了setSelected为异步
+setTimeout(() => {
+  this.visible = false
+}, 0)
+this.$emit('create', option.value)
+} else {
+this.visible = false
+}*/
       }
       this.isSilentBlur = byClick
       this.setSoftFocus()

@@ -18,11 +18,11 @@
             @change="handleChange(name, $event)"
           ></InnerInput>
           <!--<input
-              class="name-list-item-input px-2"
-              :readOnly="disabled"
-              :value="nameMap[name] || name"
-              @change="handleChange"
-            />-->
+                class="name-list-item-input px-2"
+                :readOnly="disabled"
+                :value="nameMap[name] || name"
+                @change="handleChange"
+              />-->
         </div>
         <VIcon size="12" class="name-list-item-center font-color-light"> left </VIcon>
       </div>

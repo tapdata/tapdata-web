@@ -48,19 +48,19 @@
           ><span class="log-list-item-level mr-1" :class="`log-${item.grade}`">[{{ item.grade }}]</span><span>{{ item.log }}</span></pre>
 
           <pre v-if="warnNum || errorNum" class="flex m-0 px-1">
-              <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
-              <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('packages_dag_migration_consolepanel_ge') }}WARN,</span>
-              <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('packages_dag_migration_consolepanel_ge') }}ERROR,</span>
-              <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
-            </pre>
+                <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
+                <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('packages_dag_migration_consolepanel_ge') }}WARN,</span>
+                <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('packages_dag_migration_consolepanel_ge') }}ERROR,</span>
+                <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
+              </pre>
 
           <pre
             class="justify-content-center align-center m-0 p-1"
             :class="ifAuto || loading ? 'flex' : 'none'"
           ><svg viewBox="25 25 50 50" class="circular">
-                <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
-              </svg><span class="ml-1 font-color-light">{{ $t('packages_dag_loading') }}</span>
-            </pre>
+                  <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                </svg><span class="ml-1 font-color-light">{{ $t('packages_dag_loading') }}</span>
+              </pre>
         </code>
       </div>
     </div>

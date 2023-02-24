@@ -2,7 +2,7 @@
   <div class="multi-selection">
     <el-select
       size="mini"
-      :value="values"
+      :model-value="values"
       multiple
       filterable
       allow-create

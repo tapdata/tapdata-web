@@ -135,7 +135,7 @@
             {{ $t('daas_data_server_drawer_aPI_path_Settings') }}
           </div>
           <div class="flex-1 mt-4" size="small">
-            <el-radio-group v-model:value="form.pathAccessMethod" :disabled="!isEdit">
+            <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
               <el-radio label="default">{{ $t('daas_data_server_drawer_default_path') }}</el-radio>
               <el-radio label="customize">{{ $t('daas_data_server_drawer_custom_path') }}</el-radio>
             </el-radio-group>
@@ -182,11 +182,7 @@
         <div class="data-server-panel__title">
           <div>
             <span>{{ $t('daas_data_server_drawer_shurucanshu') }}</span>
-            <i
-              v-if="isEdit && form.apiType === 'customerQuery'"
-              class="el-icon-circle-plus icon-button color-primary ml-4"
-              @click="addItem('params')"
-            ></i>
+            <el-icon class="icon-button color-primary ml-4"><el-icon-circle-plus /></el-icon>
           </div>
         </div>
         <ElTable class="flex-1" :data="isEdit ? form.params : data.params">
@@ -238,7 +234,7 @@
           </ElTableColumn>
           <ElTableColumn v-if="isEdit && form.apiType === 'customerQuery'" align="center" width="60">
             <template #default="{ $index }">
-              <i v-if="$index > 1" class="el-icon-remove icon-button" @click="removeItem('params', $index)"></i>
+              <el-icon class="icon-button"><el-icon-remove /></el-icon>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -248,7 +244,7 @@
           <div class="data-server-panel__title">
             <div>
               <span>{{ $t('daas_data_server_drawer_shaixuantiaojian') }}</span>
-              <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('where')"></i>
+              <el-icon class="icon-button color-primary ml-4"><el-icon-circle-plus /></el-icon>
             </div>
           </div>
           <ul v-if="isEdit">
@@ -281,7 +277,7 @@
                   ></ElOption>
                 </template>
               </ElSelect>
-              <i class="el-icon-remove icon-button" @click="removeItem('where', index)"></i>
+              <el-icon class="icon-button"><el-icon-remove /></el-icon>
             </li>
           </ul>
           <ul v-else>
@@ -297,7 +293,7 @@
           <div class="data-server-panel__title">
             <div>
               <span>{{ $t('daas_data_server_drawer_pailietiaojian') }}</span>
-              <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('sort')"></i>
+              <el-icon class="icon-button color-primary ml-4"><el-icon-circle-plus /></el-icon>
             </div>
           </div>
           <ul v-if="isEdit">
@@ -314,7 +310,7 @@
                 <ElOption value="asc" label="ASC"></ElOption>
                 <ElOption value="desc" label="DESC"></ElOption>
               </ElSelect>
-              <i class="el-icon-remove icon-button" @click="removeItem('sort', index)"></i>
+              <el-icon class="icon-button"><el-icon-remove /></el-icon>
             </li>
           </ul>
           <ul v-else>
@@ -421,6 +417,7 @@
 </template>
 
 <script>
+import { CirclePlus as ElIconCirclePlus, Remove as ElIconRemove } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
@@ -434,7 +431,12 @@ import { uid } from '@tap/shared'
 import getTemplate from './template'
 
 export default {
-  components: { Drawer, VCodeEditor },
+  components: {
+    Drawer,
+    VCodeEditor,
+    ElIconCirclePlus,
+    ElIconRemove
+  },
   props: {
     host: String
   },

@@ -1,2 +1,2 @@
-import { Tag } from 'element-ui'
+import { ElTag as Tag } from 'element-plus'
 export { Tag }

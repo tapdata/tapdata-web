@@ -118,7 +118,7 @@
         </span>
         <template v-else>
           <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]" />
-          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
+          <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
         </template>
       </template>
     </ElInput>
@@ -162,165 +162,159 @@
 </template>
 
 <script>
-import { Select } from 'element-ui'
+import { CircleClose as ElIconCircleClose } from '@element-plus/icons'import { ElSelect as Select } from 'element-plus'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 
 export default {
-  name: 'VirtualSelect',
-
   components: {
-    RecycleScroller
+    RecycleScroller,
+    ElIconCircleClose,
   },
+  name: 'VirtualSelect',
+extends: Select,
+props: {
+items: {
+type: Array,
+required: true
+},
+buffer: {
+type: Number,
+default: 30
+},
+itemSize: {
+type: Number,
+default: null
+},
+filterDelay: {
+type: Number,
+default: 200
+}
+},
+data() {
+return {
+lazySearch: '',
+filteredItems: this.items
+}
+},
+computed: {
+scrollerStyle() {
+const count = Math.min(this.filteredItems.length, 5)
+const height = this.itemSize * count
+return `height: ${height}px`
+},
 
-  extends: Select,
+debounce() {
+return this.filterDelay
+},
 
-  props: {
-    items: {
-      type: Array,
-      required: true
-    },
-    buffer: {
-      type: Number,
-      default: 30
-    },
-    itemSize: {
-      type: Number,
-      default: null
-    },
-    filterDelay: {
-      type: Number,
-      default: 200
-    }
-  },
-
-  data() {
-    return {
-      lazySearch: '',
-      filteredItems: this.items
-    }
-  },
-
-  computed: {
-    scrollerStyle() {
-      const count = Math.min(this.filteredItems.length, 5)
-      const height = this.itemSize * count
-      return `height: ${height}px`
-    },
-
-    debounce() {
-      return this.filterDelay
-    },
-
-    emptyText() {
-      if (this.loading) {
-        return this.loadingText || this.$t('packages_component_loading')
-      } else {
-        if (this.remote && this.query === '' && this.options.length === 0) return false
-        if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
-          return this.noMatchText || this.$t('packages_component_no_match')
-        }
-        if (this.filteredItems.length === 0) {
-          return this.noDataText || this.$t('packages_component_no_data')
-        }
-      }
-      return null
-    }
-  },
-
-  watch: {
-    items(val) {
-      this.filteredItems = val
-    },
-    visible(val) {
-      if (val) {
-        this.filteredItems = this.items
-      }
-    }
-  },
-
-  methods: {
-    handleQueryChange(val) {
-      if (this.previousQuery === val || this.isOnComposition) return
-      if (
-        this.previousQuery === null &&
-        (typeof this.filterMethod === 'function' || typeof this.remoteMethod === 'function')
-      ) {
-        this.previousQuery = val
-        return
-      }
-      this.previousQuery = val
-      this.$nextTick(() => {
-        if (this.visible) this.broadcast('ElSelectDropdown', 'updatePopper')
-      })
-      this.hoverIndex = -1
-      if (this.multiple && this.filterable) {
-        this.$nextTick(() => {
-          const length = this.$refs.input.value.length * 15 + 20
-          this.inputLength = this.collapseTags ? Math.min(50, length) : length
-          this.managePlaceholder()
-          this.resetInputHeight()
-        })
-      }
-      if (this.remote && typeof this.remoteMethod === 'function') {
-        this.hoverIndex = -1
-        this.remoteMethod(val)
-      } else if (typeof this.filterMethod === 'function') {
-        this.filterMethod(val)
-        this.broadcast('ElOptionGroup', 'queryChange')
-      } else {
-        if (val) {
-          this.filteredItems = this.items.filter(item => {
-            return item.label.toLowerCase().includes(val.toLowerCase())
-          })
-        } else {
-          this.filteredItems = this.items
-        }
-        this.filteredOptionsCount = this.filteredItems.length
-      }
-      if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
-        this.checkDefaultFirstOption()
-      }
-    },
-
-    scrollToOption(option) {
-      const $option = Array.isArray(option) ? option[0] : option
-      if ($option) {
-        const { value } = $option
-        const index = this.items.findIndex(item => item.value === value)
-        this.$refs.virtualScroller.scrollToItem(index)
-      }
-    },
-
-    getOption(value) {
-      let option
-      const isObject = Object.prototype.toString.call(value).toLowerCase() === '[object object]'
-      const isNull = Object.prototype.toString.call(value).toLowerCase() === '[object null]'
-      const isUndefined = Object.prototype.toString.call(value).toLowerCase() === '[object undefined]'
-
-      for (let i = this.items.length - 1; i >= 0; i--) {
-        const cachedOption = this.items[i]
-        const isEqual = isObject
-          ? getValueByPath(cachedOption.value, this.valueKey) === getValueByPath(value, this.valueKey)
-          : cachedOption.value === value
-        if (isEqual) {
-          option = { ...cachedOption, currentLabel: cachedOption.label }
-          break
-        }
-      }
-      if (option) return option
-      const label = !isObject && !isNull && !isUndefined ? String(value) : ''
-      let newOption = {
-        value: value,
-        currentLabel: label
-      }
-      if (this.multiple) {
-        newOption.hitState = false
-      }
-      return newOption
-    }
+emptyText() {
+if (this.loading) {
+  return this.loadingText || this.$t('packages_component_loading')
+} else {
+  if (this.remote && this.query === '' && this.options.length === 0) return false
+  if (this.filterable && this.query && this.options.length > 0 && this.filteredOptionsCount === 0) {
+    return this.noMatchText || this.$t('packages_component_no_match')
   }
+  if (this.filteredItems.length === 0) {
+    return this.noDataText || this.$t('packages_component_no_data')
+  }
+}
+return null
+}
+},
+watch: {
+items(val) {
+this.filteredItems = val
+},
+visible(val) {
+if (val) {
+  this.filteredItems = this.items
+}
+}
+},
+methods: {
+handleQueryChange(val) {
+if (this.previousQuery === val || this.isOnComposition) return
+if (
+  this.previousQuery === null &&
+  (typeof this.filterMethod === 'function' || typeof this.remoteMethod === 'function')
+) {
+  this.previousQuery = val
+  return
+}
+this.previousQuery = val
+this.$nextTick(() => {
+  if (this.visible) this.broadcast('ElSelectDropdown', 'updatePopper')
+})
+this.hoverIndex = -1
+if (this.multiple && this.filterable) {
+  this.$nextTick(() => {
+    const length = this.$refs.input.value.length * 15 + 20
+    this.inputLength = this.collapseTags ? Math.min(50, length) : length
+    this.managePlaceholder()
+    this.resetInputHeight()
+  })
+}
+if (this.remote && typeof this.remoteMethod === 'function') {
+  this.hoverIndex = -1
+  this.remoteMethod(val)
+} else if (typeof this.filterMethod === 'function') {
+  this.filterMethod(val)
+  this.broadcast('ElOptionGroup', 'queryChange')
+} else {
+  if (val) {
+    this.filteredItems = this.items.filter(item => {
+      return item.label.toLowerCase().includes(val.toLowerCase())
+    })
+  } else {
+    this.filteredItems = this.items
+  }
+  this.filteredOptionsCount = this.filteredItems.length
+}
+if (this.defaultFirstOption && (this.filterable || this.remote) && this.filteredOptionsCount) {
+  this.checkDefaultFirstOption()
+}
+},
+
+scrollToOption(option) {
+const $option = Array.isArray(option) ? option[0] : option
+if ($option) {
+  const { value } = $option
+  const index = this.items.findIndex(item => item.value === value)
+  this.$refs.virtualScroller.scrollToItem(index)
+}
+},
+
+getOption(value) {
+let option
+const isObject = Object.prototype.toString.call(value).toLowerCase() === '[object object]'
+const isNull = Object.prototype.toString.call(value).toLowerCase() === '[object null]'
+const isUndefined = Object.prototype.toString.call(value).toLowerCase() === '[object undefined]'
+
+for (let i = this.items.length - 1; i >= 0; i--) {
+  const cachedOption = this.items[i]
+  const isEqual = isObject
+    ? getValueByPath(cachedOption.value, this.valueKey) === getValueByPath(value, this.valueKey)
+    : cachedOption.value === value
+  if (isEqual) {
+    option = { ...cachedOption, currentLabel: cachedOption.label }
+    break
+  }
+}
+if (option) return option
+const label = !isObject && !isNull && !isUndefined ? String(value) : ''
+let newOption = {
+  value: value,
+  currentLabel: label
+}
+if (this.multiple) {
+  newOption.hitState = false
+}
+return newOption
+}
+}
 }
 </script>
 

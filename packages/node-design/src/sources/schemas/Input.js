@@ -4,17 +4,17 @@ export const Input = {
     clearable: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch'
+      'x-component': 'Switch',
     },
     maxLength: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'InputNumber'
+      'x-component': 'InputNumber',
     },
     placeholder: {
       type: 'string',
       'x-decorator': 'FormItem',
-      'x-component': 'Input'
+      'x-component': 'Input',
     },
     size: {
       type: 'string',
@@ -22,10 +22,10 @@ export const Input = {
       'x-decorator': 'FormItem',
       'x-component': 'Select',
       'x-component-props': {
-        defaultValue: 'middle'
-      }
-    }
-  }
+        defaultValue: 'middle',
+      },
+    },
+  },
 }
 
 Input.TextArea = {
@@ -34,21 +34,21 @@ Input.TextArea = {
     maxLength: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'InputNumber'
+      'x-component': 'InputNumber',
     },
     placeholder: {
       type: 'string',
       'x-decorator': 'FormItem',
-      'x-component': 'Input'
+      'x-component': 'Input',
     },
     autosize: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch'
+      'x-component': 'Switch',
     },
     showWordLimit: {
       'x-decorator': 'FormItem',
-      'x-component': 'Switch'
-    }
-  }
+      'x-component': 'Switch',
+    },
+  },
 }

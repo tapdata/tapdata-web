@@ -54,9 +54,9 @@
                 >{{ $t('module_form_customer_Api') }}</el-button
               >
               <!-- <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
-                  $t('module_form_security')
-                }}</el-button>
-                <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button> -->
+                    $t('module_form_security')
+                  }}</el-button>
+                  <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button> -->
               <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
                 $t('module_form_document')
               }}</el-button>
@@ -74,12 +74,7 @@
                 <div class="module-path-button-box">
                   <div class="module-path-item-role fw-sub">
                     <span>{{ $t('module_form_permission') }}: </span>
-                    <el-select
-                      v-model:value="item.acl"
-                      multiple
-                      size="mini"
-                      :placeholder="$t('common_placeholder_select')"
-                    >
+                    <el-select v-model="item.acl" multiple size="mini" :placeholder="$t('common_placeholder_select')">
                       <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
                       </el-option>
                     </el-select>
@@ -92,10 +87,10 @@
                       </ElButton>
                     </el-tooltip>
                     <!-- <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
-                        <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
-                          ><i class="fa fa-edit el-icon-edit-outline"></i
-                        ></span>
-                      </el-tooltip> -->
+                          <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
+                            ><i class="fa fa-edit el-icon-edit-outline"></i
+                          ></span>
+                        </el-tooltip> -->
                   </div>
                 </div>
               </div>

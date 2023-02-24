@@ -6,20 +6,16 @@
         <el-card class="sign-in-panel">
           <div class="title">{{ $t('app_signIn_registry') }}</div>
           <div class="error-tips" v-show="errorMessage">
-            <i class="el-icon-warning-outline"></i>
+            <el-icon><el-icon-warning-outline /></el-icon>
             {{ errorMessage }}
           </div>
           <el-form ref="form" :model="form">
             <el-form-item prop="email">
-              <el-input
-                v-model:value="form.email"
-                type="email"
-                :placeholder="$t('app_signIn_email_placeholder')"
-              ></el-input>
+              <el-input v-model="form.email" type="email" :placeholder="$t('app_signIn_email_placeholder')"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input
-                v-model:value="form.password"
+                v-model="form.password"
                 :type="passwordType"
                 :placeholder="$t('app_signIn_password_placeholder')"
                 @keyup.Enter="submit"
@@ -36,12 +32,12 @@
             </el-form-item>
             <el-form-item prop="inviteCode">
               <el-input
-                v-model:value="form.inviteCode"
+                v-model="form.inviteCode"
                 type="text"
                 :placeholder="$t('app_signIn_inviteCode_placeholder')"
               ></el-input>
             </el-form-item>
-            <el-checkbox class="keep-sign-in" v-model:value="keepSignIn" style="display: none">
+            <el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display: none">
               <span class="font-color-light"
                 >{{ $t('app_signIn_registry_tip') }} <i>{{ $t('app_signIn_userPplicy') }}</i></span
               >
@@ -76,13 +72,17 @@
 </template>
 
 <script>
+import { WarningOutline as ElIconWarningOutline } from '@element-plus/icons'
 import Header from './Header'
 import Cookie from '@tap/shared/src/cookie'
 import { usersApi } from '@tap/api'
 
 export default {
+  components: {
+    Header,
+    ElIconWarningOutline
+  },
   name: 'SignIn',
-  components: { Header },
   data() {
     return {
       loading: false,
@@ -98,7 +98,6 @@ export default {
       flag: false
     }
   },
-
   methods: {
     passwordTypeChange() {
       this.flag = !this.flag

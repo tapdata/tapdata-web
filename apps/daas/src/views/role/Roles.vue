@@ -45,7 +45,7 @@
       <el-table-column :label="$t('role_list_default_role')" width="90">
         <template v-slot="scope">
           <el-switch
-            v-model:value="scope.row.register_user_default"
+            v-model="scope.row.register_user_default"
             :disabled="!$has('role_edition')"
             @change="changeRowDefault(scope.row)"
           >
@@ -96,7 +96,7 @@
     <el-dialog
       :title="roleId ? $t('role_list_edit') : $t('role_list_create')"
       :close-on-click-modal="false"
-      v-model:visible="dialogFormVisible"
+      v-model="dialogFormVisible"
       custom-class="create-role"
       width="600px"
     >
@@ -106,7 +106,7 @@
           prop="name"
           :rules="[{ required: true, message: $t('role_null'), trigger: 'blur' }]"
         >
-          <el-input v-model:value="form.name" :placeholder="$t('role_list_select_role_name')" size="small"></el-input>
+          <el-input v-model="form.name" :placeholder="$t('role_list_select_role_name')" size="small"></el-input>
         </el-form-item>
         <el-form-item
           :label="$t('role_list_description')"
@@ -121,7 +121,7 @@
         >
           <el-input
             type="textarea"
-            v-model:value="form.description"
+            v-model="form.description"
             autocomplete="off"
             maxlength="200"
             show-word-limit
@@ -129,7 +129,7 @@
         </el-form-item>
         <el-form-item :label="$t('role_list_default_role')">
           <el-switch
-            v-model:value="form.register_user_default"
+            v-model="form.register_user_default"
             inactive-color="#dcdfe6"
             :active-text="form.register_user_default ? $t('role_form_yes') : $t('role_form_no')"
             style="margin-right: 20px"
@@ -148,11 +148,11 @@
     <el-dialog
       :title="$t('role_list_associat_users')"
       :close-on-click-modal="false"
-      v-model:visible="dialogUserVisible"
+      v-model="dialogUserVisible"
       width="600px"
     >
       <div class="userBox">
-        <el-select v-model:value="roleusers" filterable multiple :placeholder="$t('role_form_selectUser')">
+        <el-select v-model="roleusers" filterable multiple :placeholder="$t('role_form_selectUser')">
           <el-option v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id"> </el-option>
         </el-select>
         <div class="num fs-8">{{ $t('role_form_connected') }}: {{ roleusers.length }}</div>

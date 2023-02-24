@@ -16,7 +16,7 @@
           >
         </div>
         <span v-if="showProgress" class="ml-2 color-primary">
-          <i class="el-icon-loading mx-2"></i>
+          <el-icon class="mx-2"><el-icon-loading /></el-icon>
           <span>{{ progress }}%</span>
         </span>
         <ElLink v-else-if="!disabled && !hideReload" type="primary" :disabled="stateIsReadonly" @click="reload()">
@@ -71,7 +71,7 @@
           }"
           @click="add"
         >
-          <i class="el-icon-arrow-right"></i>
+          <el-icon><el-icon-arrow-right /></el-icon>
         </span>
         <span
           class="btn-transfer mt-4"
@@ -81,7 +81,7 @@
           }"
           @click="remove"
         >
-          <i class="el-icon-arrow-left"></i>
+          <el-icon><el-icon-arrow-left /></el-icon>
         </span>
       </div>
     </div>
@@ -205,6 +205,11 @@
 </template>
 
 <script>
+import {
+  Loading as ElIconLoading,
+  ArrowRight as ElIconArrowRight,
+  ArrowLeft as ElIconArrowLeft
+} from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -215,7 +220,15 @@ import VIcon from '@tap/component/src/base/VIcon'
 import ConnectionTest from '@tap/business/src/views/connections/Test'
 
 export default {
-  components: { RecycleScroller, OverflowTooltip, ConnectionTest, VIcon },
+  components: {
+    RecycleScroller,
+    OverflowTooltip,
+    ConnectionTest,
+    VIcon,
+    ElIconLoading,
+    ElIconArrowRight,
+    ElIconArrowLeft
+  },
   props: {
     connectionId: {
       type: String,

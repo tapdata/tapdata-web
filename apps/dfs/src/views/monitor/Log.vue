@@ -22,7 +22,7 @@
     </div>
     <div ref="logs" class="log-container flex-fit mt-6 py-6 overflow-auto" @scroll="loadOld">
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
-        <i class="el-icon-loading"></i>
+        <el-icon><el-icon-loading /></el-icon>
       </div>
       <div v-show="logs && logs.length && noMore" class="font-color-sub text-center pb-4">
         {{ $t('monitor_Log_meiYouGengDuoLe') }}
@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import { Loading as ElIconLoading } from '@element-plus/icons'
 import i18n from '@/i18n'
 import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
@@ -78,7 +79,10 @@ import timeFunction from '@/mixins/timeFunction'
 import { delayTrigger, toRegExp } from '@tap/shared'
 
 export default {
-  components: { VIcon },
+  components: {
+    VIcon,
+    ElIconLoading
+  },
   mixins: [timeFunction],
   props: {
     id: String

@@ -32,13 +32,13 @@
       custom-class="create-dialog"
       :title="$t('metadata_details_validation_create')"
       :close-on-click-modal="false"
-      v-model:visible="createDialogVisible"
+      v-model="createDialogVisible"
     >
       <!-- 数据验证弹窗表单 start -->
       <el-form ref="form" :model="createForm" class="dataRule-form">
         <el-form-item :label="$t('metadata_details_validation_field_name')">
           <el-select
-            v-model:value="createForm.field_name"
+            v-model="createForm.field_name"
             size="mini"
             filterable
             allow-create
@@ -50,7 +50,7 @@
         </el-form-item>
         <el-form-item :label="$t('metadata_details_validation_ruleTem')">
           <el-select
-            v-model:value="createForm.rule_def"
+            v-model="createForm.rule_def"
             size="mini"
             filterable
             default-first-option
@@ -76,7 +76,7 @@
                   }"
                 >
                   <el-select
-                    v-model:value="createForm.ruleType"
+                    v-model="createForm.ruleType"
                     clearable
                     size="mini"
                     :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_classification')"
@@ -101,7 +101,7 @@
                       trigger: 'blur'
                     }"
                   >
-                    <el-checkbox v-model:value="createForm.rule.checked"></el-checkbox>
+                    <el-checkbox v-model="createForm.rule.checked"></el-checkbox>
                   </el-form-item>
                 </el-col>
               </template>
@@ -116,7 +116,7 @@
                     }"
                   >
                     <el-select
-                      v-model:value="createForm.rule.dataType"
+                      v-model="createForm.rule.dataType"
                       size="mini"
                       :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_classification')"
                     >
@@ -141,7 +141,7 @@
                     }"
                   >
                     <el-input
-                      v-model:value="createForm.rule.dataRegex"
+                      v-model="createForm.rule.dataRegex"
                       size="mini"
                       :placeholder="$t('dataRule_pleaseInput') + $t('dataRule_data_Regex')"
                     ></el-input>
@@ -159,7 +159,7 @@
                     }"
                   >
                     <el-input
-                      v-model:value="createForm.rule.enumData"
+                      v-model="createForm.rule.enumData"
                       size="mini"
                       :placeholder="$t('dataRule_pleaseInput') + $t('dataRule_data_Enum')"
                     ></el-input>
@@ -177,7 +177,7 @@
                     }"
                   >
                     <el-select
-                      v-model:value="createForm.rule.gt"
+                      v-model="createForm.rule.gt"
                       size="mini"
                       :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_greater_that')"
                     >
@@ -208,7 +208,7 @@
                     }"
                   >
                     <el-select
-                      v-model:value="createForm.rule.lt"
+                      v-model="createForm.rule.lt"
                       size="mini"
                       :placeholder="$t('dataRule_pleaseSelect') + $t('dataRule_less_that')"
                     >

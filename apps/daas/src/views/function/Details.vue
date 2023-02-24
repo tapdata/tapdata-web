@@ -2,10 +2,10 @@
   <section class="function-details-wrapper">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
-          {{ $t('function_details') }}
-        </div> -->
+            {{ $t('function_details') }}
+          </div> -->
       <!-- <div class="function-details__body" v-loading="!details.id">
-          <div class="main px-6 py-4"> -->
+            <div class="main px-6 py-4"> -->
       <ElForm label-position="left" label-width="160px" size="small" :model="details">
         <ElFormItem :label="$t('function_name_label') + ':'">
           <span class="details-value">{{ details.function_name }}</span>
@@ -54,7 +54,7 @@
     </div>
 
     <!-- </div>
-      </div> -->
+        </div> -->
   </section>
 </template>
 

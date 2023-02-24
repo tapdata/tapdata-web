@@ -44,7 +44,7 @@
             <el-button class="btn-dropdowm" size="mini">
               <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
               <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
-              <i class="el-icon-arrow-down el-icon--right"></i>
+              <el-icon class="el-icon--right"><el-icon-arrow-down /></el-icon>
             </el-button>
             <template v-slot:dropdown>
               <el-dropdown-menu>
@@ -253,7 +253,7 @@
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('task_mapping_dialog_hint')"
-      v-model:visible="dialogDelMsgVisible"
+      v-model="dialogDelMsgVisible"
       width="52%"
       custom-class="dialogDelMsgDialog"
     >
@@ -320,6 +320,7 @@
 </template>
 
 <script>
+import { ArrowDown as ElIconArrowDown } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -333,27 +334,23 @@ import { toRegExp } from '@tap/shared'
 import { FilterBar, PaidUpgradeDialog } from '@tap/component'
 
 export default {
-  name: 'List',
-
-  props: {
-    route: {},
-    taskBuried: {},
-    syncType: String
-  },
-
-  inject: ['checkAgent', 'buried'],
-
   components: {
     FilterBar,
     TablePage,
     SkipError,
     Upload,
     TaskStatus,
-    PaidUpgradeDialog
+    PaidUpgradeDialog,
+    ElIconArrowDown
   },
-
+  name: 'List',
+  props: {
+    route: {},
+    taskBuried: {},
+    syncType: String
+  },
+  inject: ['checkAgent', 'buried'],
   mixins: [syncTaskAgent],
-
   data() {
     return {
       STATUS_MAP,
@@ -407,7 +404,6 @@ export default {
       failList: [] //错误列表
     }
   },
-
   computed: {
     table() {
       return this.$refs.table
@@ -442,14 +438,12 @@ export default {
           }
     }
   },
-
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
     }
   },
-
   created() {
     //定时轮询
     this.timeout = setInterval(() => {
@@ -460,11 +454,9 @@ export default {
 
     this.loop(this.isDaas ? this.getClusterStatus : this.getAgentStatus, 30000)
   },
-
   beforeUnmount() {
     clearInterval(this.timeout)
   },
-
   methods: {
     getData({ page, tags }) {
       let { current, size } = page

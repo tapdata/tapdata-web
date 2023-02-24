@@ -26,7 +26,7 @@
               <el-col class="e-col borderRight" :span="21">
                 <template v-for="second in item.children">
                   <el-checkbox
-                    v-model:value="second.checkAll"
+                    v-model="second.checkAll"
                     v-if="second.id"
                     @change="handleCheckChange($event, item, second)"
                     v-cloak
@@ -38,7 +38,7 @@
                 </template>
               </el-col>
               <el-col class="e-col" :span="3">
-                <el-checkbox v-model:value="item.checked" @change="handleAllCheck($event, item)" v-cloak>
+                <el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
                   <span>
                     {{ $t('role_all_check') }}
                   </span>

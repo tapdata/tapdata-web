@@ -6,7 +6,7 @@
       </div>
     </div>
 
-    <el-tabs v-model:value="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="operation">
         <ElButton type="primary" size="mini" @click="handlePageRead()">{{
           $t('packages_business_notify_mask_read')

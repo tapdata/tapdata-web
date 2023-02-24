@@ -228,7 +228,7 @@
 </template>
 
 <script>
-import { Table } from 'element-ui'
+import { ElTable as Table } from 'element-plus'
 import TableBody from './ProTableBody.vue'
 export default {
   name: 'ProTable',

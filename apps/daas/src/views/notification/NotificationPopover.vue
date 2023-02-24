@@ -8,12 +8,12 @@
   >
     <template v-slot:reference>
       <div class="btn" @click="toCenter()">
-        <el-badge class="item-badge icon-btn px-3" :value="unRead" :max="99" :hidden="!unRead">
+        <el-badge class="item-badge icon-btn px-3" :model-value="unRead" :max="99" :hidden="!unRead">
           <VIcon size="18">xiaoxi-2</VIcon>
         </el-badge>
       </div>
     </template>
-    <el-tabs stretch class="notification-popover-wrap" v-model:value="activeTab" @tab-click="tabHandler">
+    <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" @tab-click="tabHandler">
       <ElButton type="text" v-if="activeTab === 'system'" @click="handleNotify">{{
         $t('notify_view_all_notify')
       }}</ElButton>

@@ -3,7 +3,7 @@
  * Todo: JSON、富文本，公式
  */
 import { createPolyInput } from '../PolyInput'
-import { Button, Popover, Select, Option } from 'element-ui'
+import { ElButton as Button, ElPopover as Popover, ElSelect as Select, ElOption as Option } from 'element-plus'
 import { Input, InputNumber } from '@tap/form'
 import { TextWidget } from '../../widgets'
 import { defineComponent } from 'vue-demi'

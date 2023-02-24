@@ -1,7 +1,4 @@
-/**
- * websocket 封装类
- */
-import { Message } from 'element-ui'
+import { ElMessage as Message } from 'element-plus'
 import { merge } from 'lodash'
 import EventEmitter from './event'
 import i18n from '@/i18n'

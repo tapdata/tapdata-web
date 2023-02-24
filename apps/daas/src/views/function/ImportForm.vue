@@ -2,10 +2,10 @@
   <section class="import-form-wrapper">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
-          {{ $t('function_button_import_jar') }}
-        </div> -->
+            {{ $t('function_button_import_jar') }}
+          </div> -->
       <!-- <div class="import-form__body">
-          <div class="main px-6 py-4"> -->
+            <div class="main px-6 py-4"> -->
       <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form" :rules="rules">
         <ElFormItem prop="fileId" :label="$t('function_file_label') + ':'">
           <div class="flex align-center">
@@ -54,7 +54,7 @@
                     placement="top"
                     :content="$t('function_tips_name_repeat')"
                   >
-                    <i class="el-icon-warning mr-2 color-danger"></i>
+                    <el-icon class="mr-2 color-danger"><el-icon-warning /></el-icon>
                   </ElTooltip>
                   <span class="ellipsis">{{ row.function_name }}</span>
                   <ElButton
@@ -92,7 +92,7 @@
           </ElTableColumn>
         </ElTable>
         <!-- </div>
-          </div> -->
+            </div> -->
       </div>
       <div class="footer mt-6">
         <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
@@ -144,6 +144,7 @@
 </template>
 
 <script>
+import { Warning as ElIconWarning } from '@element-plus/icons'
 import i18n from '@/i18n'
 
 import Cookie from '@tap/shared/src/cookie'
@@ -151,6 +152,9 @@ import { javascriptFunctionsApi, fileApi } from '@tap/api'
 
 let timer = null
 export default {
+  components: {
+    ElIconWarning
+  },
   data() {
     return {
       loading: false,

@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :title="$t('packages_form_field_mapping_dialog_bianjituiyanjie')"
-    :visible="visible"
+    :model-value="visible"
     width="70%"
     append-to-body
     custom-class="field-mapping-table-dialog"

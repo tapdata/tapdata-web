@@ -47,7 +47,7 @@
           <template v-slot:label>
             <span>{{ $t('shared_cache_keys') }}</span>
             <el-tooltip placement="top" :content="$t('shared_cache_keys_tooltip')">
-              <i class="el-icon-info color-primary ml-1"></i>
+              <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
             </el-tooltip>
             <span>:</span>
           </template>
@@ -62,7 +62,7 @@
           <template v-slot:label>
             <span>{{ $t('shared_cache_fields') }}</span>
             <el-tooltip placement="top" :content="$t('shared_cache_fields_tooltip')">
-              <i class="el-icon-info color-primary ml-1"></i>
+              <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
             </el-tooltip>
             <span>:</span>
           </template>
@@ -77,7 +77,7 @@
           <template v-slot:label>
             <span>{{ $t('shared_cache_max_memory') }}</span>
             <el-tooltip placement="top" :content="$t('shared_cache_max_memory_tooltip')">
-              <i class="el-icon-info color-primary ml-1"></i>
+              <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
             </el-tooltip>
             <span>:</span>
           </template>
@@ -104,7 +104,7 @@
           <template v-slot:label>
             <span>{{ $t('shared_cache_code') }}</span>
             <el-tooltip placement="top" :content="$t('shared_cache_code_tooltip')">
-              <i class="el-icon-info color-primary ml-1"></i>
+              <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
             </el-tooltip>
             <span>:</span>
           </template>
@@ -120,13 +120,19 @@
 </template>
 
 <script>
+import { Info as ElIconInfo } from '@element-plus/icons'
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
 import CodeView from './CodeView.vue'
 import { sharedCacheApi, metadataInstancesApi, connectionsApi, externalStorageApi } from '@tap/api'
 
 export default {
-  components: { VirtualSelect, FieldSelector, CodeView },
+  components: {
+    VirtualSelect,
+    FieldSelector,
+    CodeView,
+    ElIconInfo
+  },
   data() {
     return {
       loading: false,

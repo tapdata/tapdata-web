@@ -40,10 +40,10 @@
                     >
                     <VIcon class="link-primary" @click="editAgent(item)">cluster-setting</VIcon>
                     <!-- <i
-                        class="iconfont icon-icon_tianjia"
-                        v-readonlybtn="'Cluster_operation'"
-                        @click="addServeFn(item)"
-                      ></i> -->
+                          class="iconfont icon-icon_tianjia"
+                          v-readonlybtn="'Cluster_operation'"
+                          @click="addServeFn(item)"
+                        ></i> -->
                     <!-- <i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i> -->
                     <i v-show="item.status !== 'running'" class="iconfont icon-shanchu" @click="delConfirm(item)"></i>
                   </div>
@@ -237,7 +237,7 @@
     <el-dialog
       :title="$t('cluster_add_server_mon')"
       custom-class="serverDialog"
-      v-model:visible="dialogForm"
+      v-model="dialogForm"
       :append-to-body="true"
       :lock-scroll="false"
       :close-on-click-modal="false"
@@ -255,7 +255,7 @@
     <el-dialog
       :title="$t('cluster_agentSetting')"
       custom-class="serverDialog"
-      v-model:visible="editAgentDialog"
+      v-model="editAgentDialog"
       :lock-scroll="false"
       :close-on-click-modal="false"
       width="600px"
@@ -266,7 +266,7 @@
           <div class="name-box">
             <el-input
               style="width: 85%"
-              v-model:value="agentName"
+              v-model="agentName"
               size="mini"
               show-word-limit
               :placeholder="$t('cluster_placeholder_mon_server')"
@@ -275,7 +275,7 @@
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster_ip_display')" prop="command">
-          <el-select v-model:value="custIP" :placeholder="$t('cluster_ip_display')" size="mini" style="width: 85%">
+          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" size="mini" style="width: 85%">
             <el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
           </el-select>
           <div class="ip-tip pt-2">{{ $t('cluster_ip_tip') }}</div>

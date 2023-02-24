@@ -73,7 +73,7 @@
               class="before-scroll-content text-center font-color-light pb-2"
             >
               <div v-show="preLoading">
-                <i class="el-icon-loading"></i>
+                <el-icon><el-icon-loading /></el-icon>
               </div>
               <ElAlert
                 v-show="showNoMore"
@@ -151,6 +151,7 @@
 </template>
 
 <script>
+import { Loading as ElIconLoading } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -166,8 +167,6 @@ import { monitoringLogsApi, taskApi } from '@tap/api'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 
 export default {
-  name: 'NodeLog',
-
   components: {
     NodeIcon,
     VIcon,
@@ -175,9 +174,10 @@ export default {
     DynamicScroller,
     DynamicScrollerItem,
     VEmpty,
-    VCollapse
+    VCollapse,
+    ElIconLoading
   },
-
+  name: 'NodeLog',
   props: {
     dataflow: {
       type: Object,
@@ -201,7 +201,6 @@ export default {
       default: () => []
     }
   },
-
   data() {
     return {
       activeNodeId: 'all',
@@ -286,7 +285,6 @@ export default {
       extraEnterCount: 0
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
@@ -335,7 +333,6 @@ export default {
       return this.dataflow?.logSetting || {}
     }
   },
-
   watch: {
     'dataflow.status'(v) {
       if (v === 'edit') return
@@ -348,15 +345,12 @@ export default {
       this.init()
     }
   },
-
   mounted() {
     this.init()
   },
-
   unmounted() {
     this.clearTimer()
   },
-
   methods: {
     init: debounce(function () {
       if (this.$route.name === 'MigrationMonitorViewer') {

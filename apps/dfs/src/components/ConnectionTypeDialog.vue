@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :title="$t('connection_form_creat_connection')"
-    :visible="dialogVisible"
+    :model-value="dialogVisible"
     :append-to-body="true"
     width="848px"
     custom-class="connection-dialog"

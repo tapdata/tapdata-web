@@ -17,21 +17,21 @@
         :formatter="formatBoolean"
       >
         <!-- <template slot-scope="scope">
-          {{scope.row[.]}}
-        </template> -->
+            {{scope.row[.]}}
+          </template> -->
       </el-table-column>
       <!-- </el-table> -->
       <!-- <el-pagination
-        align="center"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="pageCurrent"
-        :page-sizes="[1, 5, 10, 20]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pageTotal"
-      >
-      </el-pagination> -->
+          align="center"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageCurrent"
+          :page-sizes="[1, 5, 10, 20]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageTotal"
+        >
+        </el-pagination> -->
     </TablePage>
   </section>
 </template>

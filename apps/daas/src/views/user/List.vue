@@ -191,7 +191,7 @@
       width="600px"
       :title="createForm.id ? $t('user_list_edit_user') : $t('user_list_creat_user')"
       :close-on-click-modal="false"
-      v-model:visible="createDialogVisible"
+      v-model="createDialogVisible"
       custom-class="creatDialog"
     >
       <FormBuilder ref="form" v-model:value="createForm" :config="createFormConfig"></FormBuilder>
@@ -204,7 +204,7 @@
           manual
           :content="$t('dialog_tip_copied')"
           popper-class="copy-tooltip"
-          :value="showTooltip"
+          :model-value="showTooltip"
           v-if="createForm.accesscode"
         >
           <span

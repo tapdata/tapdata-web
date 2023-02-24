@@ -65,7 +65,7 @@
               "
             />
             <div v-show="moreLoading">
-              <i class="el-icon-loading"></i>
+              <el-icon><el-icon-loading /></el-icon>
             </div>
             <div v-show="!moreLoading && noMore">
               {{ $t('packages_dag_customer_logs_no_more_data') }}
@@ -100,6 +100,7 @@
 </template>
 
 <script>
+import { Loading as ElIconLoading } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
@@ -113,8 +114,14 @@ import { taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 
 export default {
+  components: {
+    Chart,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VEmpty,
+    ElIconLoading
+  },
   name: 'VerifyPanel',
-  components: { Chart, DynamicScroller, DynamicScrollerItem, VEmpty },
   props: {
     dataflow: Object,
     data: {

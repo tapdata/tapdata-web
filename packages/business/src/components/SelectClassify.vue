@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :title="$t('packages_business_dataFlow_batchSortOperation')"
-    :visible="dialogVisible"
+    :model-value="dialogVisible"
     width="600px"
     class="SelectClassify-dialog"
     :before-close="handleClose"

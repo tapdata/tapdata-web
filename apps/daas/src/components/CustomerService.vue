@@ -3,7 +3,7 @@
     <!-- 客服 -->
     <header>
       <span>{{ $t('app_qa') }}</span>
-      <i class="btn-close el-icon-close" @click="close"></i>
+      <el-icon class="btn-close"><el-icon-close /></el-icon>
     </header>
     <main>
       <div class="panel">
@@ -30,8 +30,12 @@
 </template>
 
 <script>
+import { Close as ElIconClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 export default {
+  components: {
+    ElIconClose
+  },
   name: 'CustomerService',
   props: {
     value: Boolean

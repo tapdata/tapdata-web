@@ -106,7 +106,7 @@
       </template>
       <template v-slot:suffix>
         <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]" />
-        <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
+        <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
       </template>
     </ElInput>
     <div
@@ -127,7 +127,7 @@
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
     </div>
     <div v-if="loading" class="el-select__loading">
-      <i class="el-icon-loading"></i>
+      <el-icon><el-icon-loading /></el-icon>
     </div>
     <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
       <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
@@ -174,24 +174,24 @@
 </template>
 
 <script>
+import { CircleClose as ElIconCircleClose, Loading as ElIconLoading } from '@element-plus/icons'
 import i18n from '@/i18n'
 
 import { deepCopy, uniqueArr } from '@/util'
-import { Select } from 'element-ui'
+import { ElSelect as Select } from 'element-plus'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { VIcon } from '@tap/component'
 
 export default {
-  name: 'SelectList',
-
   components: {
     RecycleScroller,
-    VIcon
+    VIcon,
+    ElIconCircleClose,
+    ElIconLoading
   },
-
+  name: 'SelectList',
   extends: Select,
-
   props: {
     items: {
       type: [Array, Function],
@@ -257,7 +257,6 @@ export default {
       default: '80px'
     }
   },
-
   data() {
     return {
       list: [], // 本地数据
@@ -269,7 +268,6 @@ export default {
       }
     }
   },
-
   computed: {
     scrollerStyle() {
       const count = Math.min(this.filteredItems.length, 5)
@@ -312,7 +310,6 @@ export default {
     //   return items || []
     // }
   },
-
   watch: {
     visible(val) {
       val && this.initWidth()

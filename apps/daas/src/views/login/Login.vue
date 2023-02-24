@@ -8,7 +8,7 @@
             <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
           </div>
           <div class="error-tips align-center justify-content-start" v-show="errorMessage">
-            <i class="el-icon-warning-outline mr-2"></i>
+            <el-icon class="mr-2"><el-icon-warning-outline /></el-icon>
             {{ errorMessage }}
           </div>
           <form>
@@ -28,7 +28,7 @@
               @keyup.Enter="submit"
             />
           </form>
-          <el-checkbox class="keep-sign-in" v-model:value="keepSignIn">
+          <el-checkbox class="keep-sign-in" v-model="keepSignIn">
             {{ $t('app_signIn_keepSignIn') }}
           </el-checkbox>
           <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { WarningOutline as ElIconWarningOutline } from '@element-plus/icons'
 import i18n from '@/i18n'
 
 import cryptoJS from 'crypto-js'
@@ -54,8 +55,11 @@ import { usersApi, timeStampApi } from '@tap/api'
 import { configUser } from '@/utils/util'
 
 export default {
+  components: {
+    LoginPage,
+    ElIconWarningOutline
+  },
   name: 'SignIn',
-  components: { LoginPage },
   data() {
     return {
       loading: false,

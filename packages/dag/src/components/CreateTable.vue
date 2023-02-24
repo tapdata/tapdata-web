@@ -10,7 +10,7 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" @submit.prevent>
       <el-form-item prop="newTable">
         <el-input
-          v-model:value="ruleForm.newTable"
+          v-model="ruleForm.newTable"
           :placeholder="dialog.placeholder"
           maxlength="50"
           show-word-limit

@@ -23,7 +23,7 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
-import { Select } from 'element-ui'
+import { ElSelect as Select } from 'element-plus'
 import { mapGetters } from 'vuex'
 
 export default {

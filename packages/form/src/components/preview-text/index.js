@@ -10,7 +10,7 @@ import { observer } from '@formily/reactive-vue'
 import { h, useField } from '@formily/vue'
 import { isArr, isValid } from '@formily/shared'
 import { Space } from '../space'
-import { Tag } from 'element-ui'
+import { ElTag as Tag } from 'element-plus'
 import { formatDate } from 'element-ui/src/utils/date-util'
 
 const prefixCls = `${stylePrefix}-preview-text`

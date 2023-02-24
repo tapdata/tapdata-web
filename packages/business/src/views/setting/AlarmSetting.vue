@@ -14,8 +14,8 @@
       </template>
       <template v-slot:notify="scope">
         <div class="flex">
-          <el-switch style="margin-right: 20px" v-model:value="scope.row.open"></el-switch>
-          <el-checkbox-group v-model:value="scope.row.notify">
+          <el-switch style="margin-right: 20px" v-model="scope.row.open"></el-switch>
+          <el-checkbox-group v-model="scope.row.notify">
             <el-checkbox label="SYSTEM">{{ $t('packages_business_notify_system_notice') }}</el-checkbox>
             <el-checkbox label="EMAIL">{{ $t('packages_business_notify_email_notification') }}</el-checkbox>
             <el-tooltip
@@ -34,8 +34,8 @@
         </div>
       </template>
       <template v-slot:interval="scope">
-        <el-input-number :controls="false" style="width: 100px" v-model:value="scope.row.interval"></el-input-number>
-        <el-select style="width: 100px" class="ml-2" v-model:value="scope.row.unit">
+        <el-input-number :controls="false" style="width: 100px" v-model="scope.row.interval"></el-input-number>
+        <el-select style="width: 100px" class="ml-2" v-model="scope.row.unit">
           <el-option :label="$t('packages_business_task_info_ms')" value="MS"></el-option>
           <el-option :label="$t('packages_business_task_info_s')" value="SECOND"></el-option>
           <el-option :label="$t('packages_business_task_info_m')" value="MINUTE"></el-option>
@@ -51,10 +51,10 @@
       </header>
       <ElForm ref="form" class="e-form" label-position="left" label-width="390px" :model="form">
         <ElFormItem :label="$t('notify_agent_status_offline')" style="border-bottom: 1px solid #ebeef5">
-          <el-checkbox v-model:value="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue">{{
+          <el-checkbox v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue">{{
             $t('notify_sms_notification')
           }}</el-checkbox>
-          <el-checkbox v-model:value="form.connectionInterrupted.email" size="mini" @change="handleSettingValue">{{
+          <el-checkbox v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue">{{
             $t('notify_email_notification')
           }}</el-checkbox>
           <br />
@@ -65,14 +65,14 @@
             ><el-checkbox
               label="WECHAT"
               v-if="!isDaas"
-              v-model:value="form.connectionInterrupted.weChat"
+              v-model="form.connectionInterrupted.weChat"
               :disabled="!isOpenid"
               >{{ $t('packages_business_notify_webchat_notification') }}</el-checkbox
             ></el-tooltip
           >
           <el-checkbox
             v-if="isOpenid && !isDaas"
-            v-model:value="form.connectionInterrupted.weChat"
+            v-model="form.connectionInterrupted.weChat"
             size="mini"
             :disabled="!isOpenid"
             @change="handleSettingValue"
@@ -81,10 +81,10 @@
           >
         </ElFormItem>
         <ElFormItem :label="$t('notify_agent_status_running')" style="border-bottom: 1px solid #ebeef5">
-          <el-checkbox v-model:value="form.connected.sms" size="mini" @change="handleSettingValue">{{
+          <el-checkbox v-model="form.connected.sms" size="mini" @change="handleSettingValue">{{
             $t('notify_sms_notification')
           }}</el-checkbox>
-          <el-checkbox v-model:value="form.connected.email" @change="handleSettingValue">{{
+          <el-checkbox v-model="form.connected.email" @change="handleSettingValue">{{
             $t('notify_email_notification')
           }}</el-checkbox>
           <br />
@@ -92,11 +92,11 @@
             placement="top"
             :content="$t('packages_business_notify_no_webchat_notification')"
             v-if="!isOpenid && !isDaas"
-            ><el-checkbox label="WECHAT" v-if="!isDaas" v-model:value="form.connected.weChat" :disabled="!isOpenid">{{
+            ><el-checkbox label="WECHAT" v-if="!isDaas" v-model="form.connected.weChat" :disabled="!isOpenid">{{
               $t('packages_business_notify_webchat_notification')
             }}</el-checkbox></el-tooltip
           >
-          <el-checkbox v-if="isOpenid && !isDaas" v-model:value="form.connected.weChat" @change="handleSettingValue">{{
+          <el-checkbox v-if="isOpenid && !isDaas" v-model="form.connected.weChat" @change="handleSettingValue">{{
             $t('notify_webchat_notification')
           }}</el-checkbox>
         </ElFormItem>
@@ -110,7 +110,7 @@
       :title="$t('packages_business_setting_alarmnotification_renwumorengao')"
       width="70%"
       append-to-body
-      v-model:visible="alarmRulesVisible"
+      v-model="alarmRulesVisible"
     >
       <div class="mb-4">
         {{ $t('packages_business_setting_alarmnotification_cichugaojinggui') }}
@@ -126,10 +126,10 @@
             :precision="0"
             :min="1"
             style="width: 100px"
-            v-model:value="scope.row.point"
+            v-model="scope.row.point"
           ></el-input-number>
           <span class="ml-2 mr-2"> {{ $t('packages_business_setting_alarmnotification_gedian') }}</span>
-          <el-select style="width: 100px" class="mr-2" v-model:value="scope.row.equalsFlag">
+          <el-select style="width: 100px" class="mr-2" v-model="scope.row.equalsFlag">
             <el-option label=">=" :value="1"></el-option>
             <el-option label="<=" :value="-1"></el-option>
           </el-select>
@@ -137,7 +137,7 @@
             :controls="false"
             :precision="0"
             :min="1"
-            v-model:value="scope.row.ms"
+            v-model="scope.row.ms"
             style="width: 80px"
           ></el-input-number>
           <span class="ml-2">{{ $t('packages_business_setting_alarmnotification_msshigaojing') }}</span>

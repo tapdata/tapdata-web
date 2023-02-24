@@ -13,7 +13,7 @@
           </li>
           <li class="item">
             <ElButton plain class="btn-refresh" size="mini" @click="table.fetch()">
-              <i class="el-icon-refresh"></i>
+              <el-icon><el-icon-refresh /></el-icon>
             </ElButton>
           </li>
         </ul>
@@ -80,12 +80,16 @@
 </template>
 
 <script>
+import { Refresh as ElIconRefresh } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { javascriptFunctionsApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 
 export default {
-  components: { TablePage },
+  components: {
+    TablePage,
+    ElIconRefresh
+  },
   data() {
     return {
       searchParams: {

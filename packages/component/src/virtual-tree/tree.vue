@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { Tree } from 'element-ui'
+import { ElTree as Tree } from 'element-plus'
 import VirtualList from 'vue-virtual-scroll-list'
 import ElTreeNode from 'element-ui/packages/tree/src/tree-node.vue'
 import ElVirtualNode from './tree-virtual-node.vue'

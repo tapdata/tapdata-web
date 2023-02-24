@@ -1,4 +1,4 @@
-import { Switch } from 'element-ui'
+import { ElSwitch as Switch } from 'element-plus'
 import { defineComponent } from 'vue-demi'
 
 export const FormItemSwitcher = defineComponent({

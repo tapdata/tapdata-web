@@ -9,10 +9,10 @@
   >
     <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
       <ElFormItem :label="$t('packages_business_modules_dialog_condition') + ':'">
-        <el-radio v-model:value="importForm.upsert" :label="1">{{
+        <el-radio v-model="importForm.upsert" :label="1">{{
           $t('packages_business_modules_dialog_overwrite_data')
         }}</el-radio>
-        <el-radio v-model:value="importForm.upsert" :label="0">{{
+        <el-radio v-model="importForm.upsert" :label="0">{{
           $t('packages_business_modules_dialog_skip_data')
         }}</el-radio>
       </ElFormItem>

@@ -92,7 +92,7 @@
       custom-class="edit-dialog"
       :title="$t('share_detail_title')"
       :close-on-click-modal="false"
-      v-model:visible="tableDialogVisible"
+      v-model="tableDialogVisible"
     >
       <VTable
         :data="tableNameList"

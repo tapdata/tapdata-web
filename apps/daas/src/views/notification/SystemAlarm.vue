@@ -5,7 +5,7 @@
         {{ $t('daas_notification_center_xitonggaojing') }}
       </div>
     </div>
-    <el-tabs v-model:value="activeName">
+    <el-tabs v-model="activeName">
       <el-tab-pane :label="$t('daas_notification_systemalarm_quanbugaojing')" name="first"></el-tab-pane>
     </el-tabs>
     <TablePage

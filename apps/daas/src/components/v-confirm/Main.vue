@@ -23,7 +23,7 @@
             @click="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
             @keydown.enter="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
           >
-            <i class="el-message-box__close el-icon-close"></i>
+            <el-icon class="el-message-box__close"><el-icon-close /></el-icon>
           </button>
         </div>
         <div class="el-message-box__content" :class="{ 'mt-3': !title }">
@@ -45,7 +45,7 @@
           </div>
           <div class="el-message-box__input" v-show="showInput">
             <el-input
-              v-model:value="inputValue"
+              v-model="inputValue"
               :type="inputType"
               @keydown.enter="handleInputEnter"
               :placeholder="inputPlaceholder"
@@ -92,15 +92,17 @@
 </template>
 
 <script>
+import { Close as ElIconClose } from '@element-plus/icons'
 import { VIcon } from '@tap/component'
 import MsgBox from 'element-ui/packages/message-box/src/main.vue'
 import i18n from '@/i18n'
 
 export default {
+  components: {
+    VIcon,
+    ElIconClose
+  },
   extends: MsgBox,
-
-  components: { VIcon },
-
   data() {
     return {
       width: null,
@@ -108,7 +110,6 @@ export default {
       confirmButtonTextDefault: i18n.t('button_confirm')
     }
   },
-
   computed: {
     icon() {
       const { type } = this

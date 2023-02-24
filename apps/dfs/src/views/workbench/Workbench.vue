@@ -150,7 +150,7 @@
     <!-- 版本升级弹窗-->
     <el-dialog
       class="dialog-upgrade"
-      v-model:visible="showUpgrade"
+      v-model="showUpgrade"
       :title="$t('dfs_workbench_workbench_banbenshengjitong')"
       width="670px"
     >

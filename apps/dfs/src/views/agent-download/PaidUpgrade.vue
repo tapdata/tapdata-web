@@ -12,10 +12,10 @@
       <div class="main">
         <el-form :model="form" ref="paidForm" :rules="rules">
           <el-form-item :label="$t('dfs_agent_download_paidupgrade_xingming')" required prop="contactName">
-            <el-input v-model:value="form.contactName"></el-input>
+            <el-input v-model="form.contactName"></el-input>
           </el-form-item>
           <el-form-item :label="$t('dfs_agent_download_paidupgrade_dianhua')" required prop="contactTelephone">
-            <el-input :max="11" v-model:value="form.contactTelephone"></el-input>
+            <el-input :max="11" v-model="form.contactTelephone"></el-input>
           </el-form-item>
         </el-form>
         <div class="currentList paid-upgrade-mb16">
@@ -30,7 +30,7 @@
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb8">
           <span
-            ><el-checkbox class="mr-2" v-model:value="checked" @change="handleChecked"></el-checkbox
+            ><el-checkbox class="mr-2" v-model="checked" @change="handleChecked"></el-checkbox
             >{{ $t('dfs_agent_download_paidupgrade_meigeewaide') }}</span
           >
           <span class="version">¥3600</span>
@@ -39,7 +39,7 @@
           <el-input-number
             size="mini"
             controls-position="right"
-            v-model:value="form.extraPipelines"
+            v-model="form.extraPipelines"
             :min="0"
           ></el-input-number
           ><span class="desc">× {{ form.extraPipelines || 0 }}</span>

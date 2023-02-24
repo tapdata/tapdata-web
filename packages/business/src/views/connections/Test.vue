@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     class="connection-test-dialog"
-    :visible="visible"
+    :model-value="visible"
     width="770px"
     :show-close="false"
     append-to-body
@@ -15,7 +15,7 @@
         style="color: #d54e21"
         class="flex align-items-baseline"
       >
-        <i class="el-icon-warning" style="color: #d54e21"></i>
+        <el-icon style="color: #d54e21"><el-icon-warning /></el-icon>
         <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto mt-0"></pre>
         <span v-else>{{ $t('packages_business_dataForm_test_error') }}</span>
       </div>
@@ -25,7 +25,7 @@
           <span class="test-title">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
         </div>
         <div class="test-status" v-if="['ready'].includes(status)">
-          <i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
+          <el-icon><el-icon-success /></el-icon>
           <span class="test-title">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
         </div>
         <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
@@ -93,11 +93,16 @@
 </template>
 
 <script>
+import { Warning as ElIconWarning, Success as ElIconSuccess } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {
+  components: {
+    VIcon,
+    ElIconWarning,
+    ElIconSuccess
+  },
   name: 'Test',
-  components: { VIcon },
   props: {
     visible: {
       value: Boolean

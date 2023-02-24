@@ -36,13 +36,13 @@
           </div>
 
           <!-- <ul>
-  						<li>来源表：2</li>
-  						<li>去向表：2</li>
-  						<li>任务引用：2</li>
-  						<li>API引用：2</li>
-  						<li>表分层：MDM</li>
-  						<li>业务域：2</li>
-  					</ul> -->
+    						<li>来源表：2</li>
+    						<li>去向表：2</li>
+    						<li>任务引用：2</li>
+    						<li>API引用：2</li>
+    						<li>表分层：MDM</li>
+    						<li>业务域：2</li>
+    					</ul> -->
         </div>
       </el-header>
       <!-- 元数据管理详情 头部信息 end -->
@@ -123,7 +123,7 @@
         <!-- 元数据管理详情 主要内容 start -->
         <div class="metadata-main-content" :class="{ boxWidth: !asideFalg }">
           <!-- tab页面 start -->
-          <el-tabs v-model:value="activePanel">
+          <el-tabs v-model="activePanel">
             <template v-for="item in menuList">
               <el-tab-pane
                 v-if="item.mateTypes.includes(metadataDataObj.meta_type)"
@@ -139,7 +139,7 @@
                           <el-input
                             :placeholder="$t('metadata_details_searchPlaceholder')"
                             clearable
-                            v-model:value="searchParams.keyword"
+                            v-model="searchParams.keyword"
                             size="mini"
                             style="width: 160px"
                           >
@@ -328,7 +328,7 @@
       width="600px"
       :title="$t('metadata_details_businessAttrTitle')"
       :close-on-click-modal="false"
-      v-model:visible="businessDialogVisible"
+      v-model="businessDialogVisible"
       custom-class="dialogForm"
     >
       <FormBuilder ref="form" v-model:value="businessForm" :config="businessFormConfig"></FormBuilder>
@@ -345,7 +345,7 @@
       width="600px"
       :title="$t('metadata_details_editAliasNameTitle')"
       :close-on-click-modal="false"
-      v-model:visible="editNameDialogVisible"
+      v-model="editNameDialogVisible"
       custom-class="dialogForm"
     >
       <el-form :model="editNameForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -353,7 +353,7 @@
           {{ editNameForm.original_name }}
         </el-form-item>
         <el-form-item :label="$t('metadata_details_alias')" prop="name">
-          <el-input v-model:value="editNameForm.alias_name" size="small" maxlength="100" show-word-limit></el-input>
+          <el-input v-model="editNameForm.alias_name" size="small" maxlength="100" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <template v-slot:footer>
@@ -369,12 +369,12 @@
       width="600px"
       :title="$t('metadata_details_editCommentTitle')"
       :close-on-click-modal="false"
-      v-model:visible="editCommentDialogVisible"
+      v-model="editCommentDialogVisible"
       custom-class="dialogForm"
     >
       <el-form :model="editCommentForm" ref="ruleForm" label-width="90px" class="demo-ruleForm">
         <el-form-item :label="$t('metadata_details_description')" prop="name">
-          <el-input type="textarea" v-model:value="editCommentForm.comment" maxlength="500" show-word-limit></el-input>
+          <el-input type="textarea" v-model="editCommentForm.comment" maxlength="500" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <template v-slot:footer>

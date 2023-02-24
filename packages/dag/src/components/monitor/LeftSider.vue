@@ -192,24 +192,24 @@
         </div>
         <!--指标不准确，暂时隐藏-->
         <!--<div class="line-chart__box mb-2">
-            <ElTooltip
-              transition="tooltip-fade-in"
-              placement="top"
-              :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
-            >
-              <span>
-                <span class="mr-2 font-color-dark fw-sub">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
-                <VIcon size="14" class="color-primary">info</VIcon>
-              </span>
-            </ElTooltip>
-            <LineChart
-              :data="delayData"
-              :color="['#2C65FF']"
-              :time-format="timeFormat"
-              time-value
-              class="line-chart"
-            ></LineChart>
-          </div>-->
+              <ElTooltip
+                transition="tooltip-fade-in"
+                placement="top"
+                :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
+              >
+                <span>
+                  <span class="mr-2 font-color-dark fw-sub">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
+                  <VIcon size="14" class="color-primary">info</VIcon>
+                </span>
+              </ElTooltip>
+              <LineChart
+                :data="delayData"
+                :color="['#2C65FF']"
+                :time-format="timeFormat"
+                time-value
+                class="line-chart"
+              ></LineChart>
+            </div>-->
       </div>
       <div class="info-box py-2 px-4">
         <div class="flex justify-content-between mb-2">

@@ -57,7 +57,7 @@
           <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
           <div>
             <label class="mr-4">{{ $t('dfs_instance_instance_upload_days_label') }}</label>
-            <el-select class="mr-4" v-model:value="uploadDays">
+            <el-select class="mr-4" v-model="uploadDays">
               <el-option v-for="item in days" :label="item.label" :value="item.value" :key="item.value"></el-option>
             </el-select>
             <el-button

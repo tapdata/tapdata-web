@@ -124,7 +124,7 @@
       custom-class="create-dialog"
       :title="$t('metadata_form_create')"
       :close-on-click-modal="false"
-      v-model:visible="createDialogVisible"
+      v-model="createDialogVisible"
     >
       <ElForm ref="form" label-position="left" label-width="100px" size="mini" :model="createForm" :rules="createRules">
         <ElFormItem :label="$t('metadata_form_type')" required prop="model_type">
@@ -162,11 +162,11 @@
       custom-class="change-name"
       :title="$t('metadata_change_name')"
       :close-on-click-modal="false"
-      v-model:visible="changeNameDialogVisible"
+      v-model="changeNameDialogVisible"
     >
       <div class="flex fs-8">
         <span class="change-name-label">{{ $t('metadata_name') }}:</span>
-        <el-input v-model:value="changeNameValue"></el-input>
+        <el-input v-model="changeNameValue"></el-input>
       </div>
 
       <template v-slot:footer>

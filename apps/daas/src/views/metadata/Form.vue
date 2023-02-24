@@ -3,14 +3,14 @@
     :title="title"
     :close-on-click-modal="false"
     :before-close="handleClose"
-    v-model:visible="dialogFormVisible"
+    v-model="dialogFormVisible"
     custom-class="dialogInfo-form"
   >
     <el-form :model="form" :rules="rules" ref="form" label-width="120" class="e-form" label-position="left">
       <div class="box">
         <el-form-item :label="$t('metadata_details_filedName')" prop="field_name" required>
           <el-input
-            v-model:value="form.field_name"
+            v-model="form.field_name"
             :placeholder="$t('metadata_details_enter') + $t('metadata_details_filedName')"
             autocomplete="off"
             :disabled="fieldNameDisabled"
@@ -21,7 +21,7 @@
         </el-form-item>
         <el-form-item :label="$t('metadata_details_alias')">
           <el-input
-            v-model:value="form.alias_name"
+            v-model="form.alias_name"
             :placeholder="$t('metadata_details_enter') + $t('metadata_details_alias')"
             autocomplete="off"
             size="mini"
@@ -33,7 +33,7 @@
           <el-input
             type="textarea"
             :placeholder="$t('metadata_details_enter') + $t('metadata_details_description')"
-            v-model:value="form.comment"
+            v-model="form.comment"
             maxlength="50"
             show-word-limit
           >
@@ -50,9 +50,9 @@
           <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         </el-form-item>
         <el-form-item style="margin-left: 100px">
-          <el-checkbox v-model:value="form.is_auto_allowed">{{ $t('metadata_details_allowOverwrite') }}</el-checkbox>
-          <el-checkbox v-model:value="form.autoincrement">{{ $t('metadata_details_selfIncreasing') }}</el-checkbox>
-          <el-checkbox v-model:value="form.primary_key">{{ $t('metadata_details_primaryKey') }}</el-checkbox>
+          <el-checkbox v-model="form.is_auto_allowed">{{ $t('metadata_details_allowOverwrite') }}</el-checkbox>
+          <el-checkbox v-model="form.autoincrement">{{ $t('metadata_details_selfIncreasing') }}</el-checkbox>
+          <el-checkbox v-model="form.primary_key">{{ $t('metadata_details_primaryKey') }}</el-checkbox>
         </el-form-item>
         <!--        <el-form-item :label="$t('metadata_details_fieldLength')">-->
         <!--          <el-input-number v-model="form.columnSize" :min="0" size="mini"></el-input-number>-->
@@ -66,43 +66,43 @@
       </div>
       <!-- 字典模板 -->
       <!-- <div class="box">
-          <h2>{{ $t('metadata_details_dictionarySettings') }}</h2>
-          <el-table :data="form.dictionary" border class="e-table" style="width: 100%">
-            <el-table-column prop="key" :label="$t('metadata_details_initialValue')">
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.key" size="mini"> </el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="value" :label="$t('metadata_details_mappedValue')">
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.value" size="mini"> </el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="address" :label="$t('metadata_details_opera')" width="60">
-              <template slot-scope="scope">
-                <el-button
-                  @click="delDictionary(scope.$index, 0)"
-                  type="text"
-                  class="iconfont icon-quxiao"
-                  size="mini"
-                ></el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div class="addBtn">
-            <el-button @click="addDictionary" size="mini">+ {{ $t('metadata_details_newMapping') }}</el-button>
-            <el-button @click="handleSelectTemplate(form)" size="mini">{{
-              $t('metadata_details_chooseTemplate')
-            }}</el-button>
-          </div>
-        </div> -->
+            <h2>{{ $t('metadata_details_dictionarySettings') }}</h2>
+            <el-table :data="form.dictionary" border class="e-table" style="width: 100%">
+              <el-table-column prop="key" :label="$t('metadata_details_initialValue')">
+                <template slot-scope="scope">
+                  <el-input v-model="scope.row.key" size="mini"> </el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="value" :label="$t('metadata_details_mappedValue')">
+                <template slot-scope="scope">
+                  <el-input v-model="scope.row.value" size="mini"> </el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="address" :label="$t('metadata_details_opera')" width="60">
+                <template slot-scope="scope">
+                  <el-button
+                    @click="delDictionary(scope.$index, 0)"
+                    type="text"
+                    class="iconfont icon-quxiao"
+                    size="mini"
+                  ></el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="addBtn">
+              <el-button @click="addDictionary" size="mini">+ {{ $t('metadata_details_newMapping') }}</el-button>
+              <el-button @click="handleSelectTemplate(form)" size="mini">{{
+                $t('metadata_details_chooseTemplate')
+              }}</el-button>
+            </div>
+          </div> -->
       <!-- 外键设置 -->
       <div class="box">
         <h2>{{ $t('metadata_details_foreignKeySetting') }}</h2>
         <el-table :data="form.relation" border class="e-table" style="width: 100%">
           <el-table-column prop="table_name" :label="$t('metadata_details_associationTable')">
             <template v-slot="scope">
-              <el-select v-model:value="scope.row.table_name" @change="changeRecordTable($event)" size="mini">
+              <el-select v-model="scope.row.table_name" @change="changeRecordTable($event)" size="mini">
                 <el-option
                   v-for="item in getAvailableTable(scope.$index)"
                   :label="item.original_name"
@@ -114,11 +114,7 @@
           </el-table-column>
           <el-table-column prop="field_name" :label="$t('metadata_details_associationField')">
             <template v-slot="scope">
-              <el-select
-                v-model:value="scope.row.field_name"
-                @focus="changeRecordTable(scope.row.table_name)"
-                size="mini"
-              >
+              <el-select v-model="scope.row.field_name" @focus="changeRecordTable(scope.row.table_name)" size="mini">
                 <el-option
                   v-for="item in fieldList"
                   :label="item.field_name"
@@ -130,7 +126,7 @@
           </el-table-column>
           <el-table-column prop="rel" :label="$t('metadata_details_connectionRelation')">
             <template v-slot="scope">
-              <el-select v-model:value="scope.row.rel" size="mini">
+              <el-select v-model="scope.row.rel" size="mini">
                 <el-option
                   v-for="item in relationshipList"
                   :label="item.name"
@@ -169,23 +165,23 @@
     <el-dialog
       :title="$t('metadata_details_chooseTemplate')"
       :close-on-click-modal="false"
-      v-model:visible="dialogDictionaryVisible"
+      v-model="dialogDictionaryVisible"
       :append-to-body="true"
       custom-class="dialogDictionary"
     >
-      <el-radio-group v-model:value="selectDictionaryTem">
+      <el-radio-group v-model="selectDictionaryTem">
         <el-radio v-for="item in dictionaryList" :key="item.id" :label="item.name"></el-radio>
       </el-radio-group>
       <!-- <ul>
-  				<li
-  					v-for="(item, index) in dictionaryList"
-  					:key="item.id"
-  					:class="{ active: activeIndex === index }"
-  					@dblclick="handleSelectDictionary(item, index)"
-  				>
-  					{{ item.name }}
-  				</li>
-  			</ul> -->
+    				<li
+    					v-for="(item, index) in dictionaryList"
+    					:key="item.id"
+    					:class="{ active: activeIndex === index }"
+    					@dblclick="handleSelectDictionary(item, index)"
+    				>
+    					{{ item.name }}
+    				</li>
+    			</ul> -->
       <template v-slot:footer>
         <div class="dialog-footer">
           <el-button class="cancel" @click="dialogDictionaryVisible = false" size="mini">{{

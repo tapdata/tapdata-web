@@ -1,7 +1,7 @@
 <template>
   <div class="el-transfer-panel">
     <p class="el-transfer-panel__header">
-      <el-checkbox v-model:value="allChecked" @change="handleAllCheckedChange" :indeterminate="isIndeterminate">
+      <el-checkbox v-model="allChecked" @change="handleAllCheckedChange" :indeterminate="isIndeterminate">
         {{ title }}
         <span>{{ checkedSummary }}</span>
       </el-checkbox>
@@ -10,7 +10,7 @@
     <div :class="['el-transfer-panel__body', hasFooter ? 'is-with-footer' : '']">
       <el-input
         class="el-transfer-panel__filter"
-        v-model:value="query"
+        v-model="query"
         size="small"
         :placeholder="placeholder"
         @input="handleQueryInput"
@@ -23,7 +23,7 @@
         </template>
       </el-input>
       <el-checkbox-group
-        v-model:value="checked"
+        v-model="checked"
         v-show="!hasNoMatch && data.length > 0"
         :class="{ 'is-filterable': filterable }"
         class="el-transfer-panel__list"
@@ -65,7 +65,7 @@
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
 import { cloneDeep } from 'lodash'
-import { Transfer } from 'element-ui'
+import { ElTransfer as Transfer } from 'element-plus'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 const TransferPanel = cloneDeep(Transfer.components.TransferPanel)

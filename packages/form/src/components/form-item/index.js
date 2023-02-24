@@ -4,7 +4,7 @@ import { connect, mapProps, h } from '@formily/vue'
 import { useFormLayout, FormLayoutShallowContext } from '@formily/element'
 import { composeExport, resolveComponent } from '@formily/element/lib/__builtins__/shared'
 import { stylePrefix } from '@formily/element/lib/__builtins__/configs'
-import { Tooltip } from 'element-ui'
+import { ElTooltip as Tooltip } from 'element-plus'
 import ResizeObserver from 'resize-observer-polyfill'
 
 const useOverflow = containerRef => {

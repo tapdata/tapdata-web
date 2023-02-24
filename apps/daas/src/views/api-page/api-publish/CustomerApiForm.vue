@@ -6,7 +6,7 @@
     :title="$t('module_form_customer_Api')"
     :close-on-click-modal="false"
     :append-to-body="true"
-    v-model:visible="dialogFormVisible"
+    v-model="dialogFormVisible"
   >
     <ElForm :model="model" ref="form" label-width="120px">
       <ElFormItem :label="$t('module_form_describtion')">

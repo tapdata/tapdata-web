@@ -51,13 +51,13 @@
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
-                <i class="el-icon-success"></i>
+                <el-icon><el-icon-success /></el-icon>
                 <span>
                   {{ $t('packages_business_connection_status_ready') }}
                 </span>
               </span>
               <span class="warning" v-if="['testing'].includes(status)">
-                <i class="el-icon-warning"></i>
+                <el-icon><el-icon-warning /></el-icon>
                 <span>
                   {{ $t('packages_business_connection_status_testing') }}
                 </span>
@@ -89,12 +89,12 @@
     <el-dialog
       :title="$t('packages_business_connection_rename')"
       :close-on-click-modal="false"
-      v-model:visible="dialogEditNameVisible"
+      v-model="dialogEditNameVisible"
       width="30%"
     >
       <el-form :model="renameData" :rules="renameRules" ref="renameForm" @submit.prevent>
         <el-form-item prop="rename">
-          <el-input v-model:value="renameData.rename" maxlength="100" show-word-limit></el-input>
+          <el-input v-model="renameData.rename" maxlength="100" show-word-limit></el-input>
         </el-form-item>
         <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
           $t('packages_business_connections_databaseform_zhongyingkaitouge')
@@ -113,6 +113,7 @@
 </template>
 
 <script>
+import { Success as ElIconSuccess, Warning as ElIconWarning } from '@element-plus/icons'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
@@ -125,8 +126,16 @@ import { getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 
 export default {
+  components: {
+    Test,
+    DatabaseTypeDialog,
+    VIcon,
+    SchemaToForm,
+    GitBook,
+    ElIconSuccess,
+    ElIconWarning
+  },
   name: 'DatabaseForm',
-  components: { Test, DatabaseTypeDialog, VIcon, SchemaToForm, GitBook },
   inject: ['checkAgent', 'buried'],
   data() {
     let validateRename = (rule, value, callback) => {
@@ -639,23 +648,23 @@ export default {
           {
             fulfill: {
               run: `if ($self.dataSource?.length && $self.value) {
-                const current = $self.dataSource.find(item => item.value === $self.value)
-                if (!current) {
-                  $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
-                }
-              }`
+          const current = $self.dataSource.find(item => item.value === $self.value)
+          if (!current) {
+            $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
+          }
+        }`
             }
           }
         ],
         // 校验下拉数据判断是否存在已选的agent
         'x-validator': `{{(value, rule, ctx)=> {
-            if (value && ctx.field.dataSource?.length) {
-              const current = ctx.field.dataSource.find(item => item.value === value)
-              if (!current) {
-                return '${this.$t('packages_business_agent_select_not_found')}'
-              }
-            }
-          }}}`
+      if (value && ctx.field.dataSource?.length) {
+        const current = ctx.field.dataSource.find(item => item.value === value)
+        if (!current) {
+          return '${this.$t('packages_business_agent_select_not_found')}'
+        }
+      }
+    }}}`
       }
 
       END.properties.__TAPDATA.properties.schemaUpdateHour = {

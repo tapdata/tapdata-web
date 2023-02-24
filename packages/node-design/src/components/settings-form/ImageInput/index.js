@@ -1,5 +1,5 @@
 import { useContext } from '@tap/shared'
-import { Input, Upload } from 'element-ui'
+import { ElInput as Input, ElUpload as Upload } from 'element-plus'
 import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import { SettingsFormContext } from '../../../context'

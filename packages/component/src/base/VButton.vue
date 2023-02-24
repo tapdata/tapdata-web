@@ -1,7 +1,7 @@
 <script>
 import { plantRenderPara } from '../utils/gogocodeTransfer'
 import * as Vue from 'vue'
-import { Button } from 'element-ui'
+import { ElButton as Button } from 'element-plus'
 export default {
   name: 'VButton',
   props: {

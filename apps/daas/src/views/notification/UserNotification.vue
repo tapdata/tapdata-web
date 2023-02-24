@@ -7,18 +7,18 @@
     </div>
     <div class="search-bar px-6">
       <!-- <el-date-picker
-            class="search-item"
-            popper-class="user-notification-data-picker"
-            style="width: 320px"
-            size="mini"
-            v-model="search.range"
-            type="datetimerange"
-            range-separator="-"
-            :start-placeholder="$t('dataFlow_startTime')"
-            :end-placeholder="$t('dataFlow_endTime')"
-            @change="getData(1)"
-          >
-          </el-date-picker> -->
+              class="search-item"
+              popper-class="user-notification-data-picker"
+              style="width: 320px"
+              size="mini"
+              v-model="search.range"
+              type="datetimerange"
+              range-separator="-"
+              :start-placeholder="$t('dataFlow_startTime')"
+              :end-placeholder="$t('dataFlow_endTime')"
+              @change="getData(1)"
+            >
+            </el-date-picker> -->
       <DatetimeRange
         v-model:value="search.range"
         value-format="timestamp"
@@ -41,21 +41,21 @@
         clearable
         class="search-item pl-4"
         size="small"
-        v-model:value="search.keyword"
+        v-model="search.keyword"
         :placeholder="$t('notification_placeholder_keyword')"
         @change="getData(1)"
       ></el-input>
       <!-- <el-select
-            clearable
-            v-if="isAdmin"
-            class="search-item"
-            size="mini"
-            v-model="search.userId"
-            :placeholder="$t('notification_placeholder_user')"
-            @change="getData(1)"
-          >
-            <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
-          </el-select> -->
+              clearable
+              v-if="isAdmin"
+              class="search-item"
+              size="mini"
+              v-model="search.userId"
+              :placeholder="$t('notification_placeholder_user')"
+              @change="getData(1)"
+            >
+              <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
+            </el-select> -->
     </div>
     <ul class="list pl-6">
       <li class="item" v-for="record in list" :key="record._id">

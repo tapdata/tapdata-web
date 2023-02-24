@@ -1,7 +1,7 @@
 import { useHover, useSelection, usePrefix } from '../../../hooks'
 import { IconWidget } from '../IconWidget'
 import { NodeTitleWidget } from '../NodeTitleWidget'
-import { Button } from 'element-ui'
+import { ElButton as Button } from 'element-plus'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent, computed, onMounted, onBeforeUnmount, ref } from 'vue-demi'
 

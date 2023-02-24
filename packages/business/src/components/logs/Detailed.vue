@@ -21,7 +21,7 @@
     </div>
     <div ref="logs" class="log-container flex-fit py-6 overflow-auto" @scroll="loadOld">
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
-        <i class="el-icon-loading"></i>
+        <el-icon><el-icon-loading /></el-icon>
       </div>
       <div v-show="noMore" class="font-color-light text-center pb-4">
         {{ $t('packages_business_task_info_no_more') }}
@@ -44,11 +44,15 @@
 </template>
 
 <script>
+import { Loading as ElIconLoading } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { logsApi } from '@tap/api'
 import { delayTrigger, toRegExp } from '@tap/shared'
 
 export default {
+  components: {
+    ElIconLoading
+  },
   props: {
     id: String
   },

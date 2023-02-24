@@ -6,7 +6,7 @@
     :title="$t('dataExplorer_query')"
     :close-on-click-modal="false"
     :append-to-body="true"
-    v-model:visible="dialogFormVisible"
+    v-model="dialogFormVisible"
   >
     <div class="dialog-content">
       <!-- 过滤条件 -->
@@ -22,17 +22,17 @@
           {{ $t('dataExplorer_add_favorite') }}
         </el-button>
         <!-- <el-button type="primary" @click="search(1)" size="small">
-            {{ $t('dataExplorer_query') }}
-          </el-button> -->
+              {{ $t('dataExplorer_query') }}
+            </el-button> -->
       </div>
     </div>
     <div class="browse_rows">
       <h3 class="pb-4">{{ $t('dataExplorer_show_column') }}</h3>
-      <el-checkbox :indeterminate="isIndeterminate" v-model:value="showAllColumn" @change="showAllColumns">{{
+      <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">{{
         $t('role_all_check')
       }}</el-checkbox>
       <div style="margin: 15px 0"></div>
-      <el-checkbox-group v-model:value="selectionRow" @change="handleCheckedFieldChange">
+      <el-checkbox-group v-model="selectionRow" @change="handleCheckedFieldChange">
         <el-checkbox
           v-for="item in header.filter(v => v.value !== '__operation' && v.value !== '__tapd8' && v.value !== '_id')"
           :label="item.text"

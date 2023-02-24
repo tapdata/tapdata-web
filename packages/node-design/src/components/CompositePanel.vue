@@ -1,21 +1,21 @@
 <template>
   <div class="composite-panel flex">
     <!--<div class="composite-panel-tabs border-end">
-        <div
-          v-for="(item, i) in tabItems"
-          :key="i"
-          class="composite-panel-tab p-3 flex justify-center align-center cursor-pointer"
-          :class="{ active: activeTab === i }"
-          tabindex="0"
-          aria-selected="true"
-          role="tab"
-          @click="handleActiveTab(i)"
-        >
-          <ElTooltip placement="right" :content="item.title" :open-delay="300">
-            <VIcon size="20">{{ item.name }}</VIcon>
-          </ElTooltip>
-        </div>
-      </div>-->
+          <div
+            v-for="(item, i) in tabItems"
+            :key="i"
+            class="composite-panel-tab p-3 flex justify-center align-center cursor-pointer"
+            :class="{ active: activeTab === i }"
+            tabindex="0"
+            aria-selected="true"
+            role="tab"
+            @click="handleActiveTab(i)"
+          >
+            <ElTooltip placement="right" :content="item.title" :open-delay="300">
+              <VIcon size="20">{{ item.name }}</VIcon>
+            </ElTooltip>
+          </div>
+        </div>-->
     <div class="composite-panel-tabs-content h-100 border-end">
       <div class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom">
         <div class="composite-panel-tabs-header-title">

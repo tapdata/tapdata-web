@@ -70,9 +70,9 @@
                               </div>
                             </template>
                             <!-- <span
-                              class="icon iconfont icon-tishi1"
-                              style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
-                            ></span> -->
+                                class="icon iconfont icon-tishi1"
+                                style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
+                              ></span> -->
                             <VIcon class="color-primary ml-3" size="14">info</VIcon>
                           </el-tooltip>
                         </span>
@@ -80,7 +80,7 @@
                       <el-input
                         v-if="!childItem.enums || childItem.enums.length === 0"
                         :type="childItem.key.match(/password/) ? 'password' : 'text'"
-                        v-model:value="childItem.value"
+                        v-model="childItem.value"
                         :disabled="item.category === 'license'"
                         :mask="childItem.mask"
                         size="mini"
@@ -90,7 +90,7 @@
                       >
                       </el-input>
 
-                      <el-select v-else v-model:value="childItem.value" size="mini">
+                      <el-select v-else v-model="childItem.value" size="mini">
                         <el-option
                           v-for="options in childItem.enums"
                           :key="options"
@@ -124,7 +124,7 @@
       :title="$t('setting_email_template')"
       :close-on-click-modal="false"
       custom-class="dialog-email-template"
-      v-model:visible="emailTemplateDialog"
+      v-model="emailTemplateDialog"
       width="800px"
     >
       <el-row>

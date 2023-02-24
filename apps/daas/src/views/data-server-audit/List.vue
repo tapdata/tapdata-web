@@ -30,13 +30,13 @@
       <el-table-column prop="code" width="80" :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span v-if="row.code == 200" class="success">
-            <i class="connections-status__icon el-icon-success"></i>
+            <el-icon class="connections-status__icon"><el-icon-success /></el-icon>
             <span>
               {{ $t('apiaudit_success') }}
             </span>
           </span>
           <span v-else class="error">
-            <i class="connections-status__icon el-icon-error"></i>
+            <el-icon class="connections-status__icon"><el-icon-error /></el-icon>
             <span>
               {{ $t('apiaudit_fail') }}
             </span>
@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { Success as ElIconSuccess, Error as ElIconError } from '@element-plus/icons'
 import dayjs from 'dayjs'
 
 import { apiCallsApi } from '@tap/api'
@@ -71,7 +72,9 @@ import { toRegExp } from '../../utils/util'
 export default {
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
+    ElIconSuccess,
+    ElIconError
   },
   data() {
     return {

@@ -35,10 +35,10 @@
       </el-table-column>
       <el-table-column :label="$t('metadata_details_index_create_by')" prop="create_by">
         <!-- <template slot-scope="scope">
-            <span>{{
-              $t('metadata_details_index_create_by_' + scope.row.create_by)
-            }}</span>
-          </template> -->
+              <span>{{
+                $t('metadata_details_index_create_by_' + scope.row.create_by)
+              }}</span>
+            </template> -->
       </el-table-column>
       <el-table-column :label="$t('metadata_details_opera')" width="120">
         <template v-slot="scope">
@@ -60,14 +60,14 @@
       custom-class="create-dialog"
       :title="$t('metadata_details_index_create')"
       :close-on-click-modal="false"
-      v-model:visible="createDialogVisible"
+      v-model="createDialogVisible"
     >
       <el-form ref="form" :model="createForm" class="dataRule-form">
         <el-form-item :label="$t('metadata_details_index_name')">
           <el-input
             type="text"
             size="mini"
-            v-model:value="createForm.task_data.name"
+            v-model="createForm.task_data.name"
             :placeholder="$t('dataRule_pleaseSelect') + $t('metadata_details_index_name')"
           ></el-input>
         </el-form-item>
@@ -88,7 +88,7 @@
                   allow-create
                   default-first-option
                 >
-                  <el-select v-model:value="item.key" size="mini">
+                  <el-select v-model="item.key" size="mini">
                     <el-option
                       v-for="fieldsItem in fieldsArr"
                       :key="fieldsItem"
@@ -100,7 +100,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-select v-model:value="item.value" size="mini">
+                <el-select v-model="item.value" size="mini">
                   <el-option
                     v-for="unitItem in [
                       { name: '1(asc)', value: 1 },
@@ -139,22 +139,20 @@
           </el-col>
         </el-row>
         <el-form-item :label="$t('metadata_details_index_options')">
-          <el-checkbox v-model:value="createForm.task_data.background">{{
+          <el-checkbox v-model="createForm.task_data.background">{{
             $t('metadata_details_index_build_in_background')
           }}</el-checkbox>
-          <el-checkbox v-model:value="createForm.task_data.unique">{{
+          <el-checkbox v-model="createForm.task_data.unique">{{
             $t('metadata_details_index_create_unique')
           }}</el-checkbox>
-          <el-checkbox v-model:value="createForm.task_data.ttl">{{
-            $t('metadata_details_index_create_ttl')
-          }}</el-checkbox>
+          <el-checkbox v-model="createForm.task_data.ttl">{{ $t('metadata_details_index_create_ttl') }}</el-checkbox>
         </el-form-item>
         <el-form-item v-if="createForm.task_data.ttl">
           <el-col :span="16">
-            <el-input type="text" size="mini" v-model:value="createForm.task_data.expireAfterSeconds"></el-input>
+            <el-input type="text" size="mini" v-model="createForm.task_data.expireAfterSeconds"></el-input>
           </el-col>
           <el-col :span="6" class="fr">
-            <el-select v-model:value="createForm.task_data.data_type" size="mini">
+            <el-select v-model="createForm.task_data.data_type" size="mini">
               <el-option v-for="item in dataTypeList" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
